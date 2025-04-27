@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-04-27 16:56:16
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-04-27 17:00:08
+ * @LastEditTime: 2025-04-27 20:13:24
  * @FilePath: \Robot_Admin\src\utils\parseRoutes.ts
  * @Description: 解析动态路由数据为 vue-router 可用的格式
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -13,7 +13,7 @@ import type { RouteRecordRaw } from 'vue-router'
 const modules = import.meta.glob('@/views/**/*.vue')
 
 /**
- * 递归解析后端菜单 JSON 为 RouteRecordRaw[]
+ *? 递归解析后端菜单 JSON 为 RouteRecordRaw[]
  */
 interface MenuItem {
   path: string
