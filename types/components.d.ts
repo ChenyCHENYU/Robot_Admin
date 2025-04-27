@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    C_Container: typeof import('./../src/components/global/C_Container/index.vue')['default']
     C_Demo: typeof import('./src/components/global/C_Demo/index.vue')['Demo']
     C_DemoTwo: typeof import('./../src/components/global/C_DemoTwo/index.vue')['default']
     C_dgg: typeof import('./../src/components/local/c_dgg.vue')['default']
