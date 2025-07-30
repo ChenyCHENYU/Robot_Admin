@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.0.1...v1.0.2) (2025-07-30)
+
+
+### Performance Improvements
+
+* **vercel.json:** add vercel json set regions ([3b9b5c6](https://github.com/ChenyCHENYU/Robot_Admin/commit/3b9b5c6e3b78fb99143b37434839d5904866d2d3))
+
 ## [1.0.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.0.0...v1.0.1) (2025-07-30)
 
 
