@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.1.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.0.1...v1.1.0) (2025-07-31)
+
+
+### Features
+
+* **vite:** update version 7 and optimiza vite.config up README ([36dc7b1](https://github.com/ChenyCHENYU/Robot_Admin/commit/36dc7b177f028d327a4a2d007782248953d07ccc))
+
+
+### Bug Fixes
+
+* **vercel.json:** delete error file ([9712f8c](https://github.com/ChenyCHENYU/Robot_Admin/commit/9712f8cb4a948579b7ccadd85b007d7e0615af30))
+* **vite.config:** build config optimiza ([91dac19](https://github.com/ChenyCHENYU/Robot_Admin/commit/91dac1938e6e36f1f6f904ebd740e9eb96d8826a))
+
+
+### Performance Improvements
+
+* **vercel.json:** add vercel json set regions ([3b9b5c6](https://github.com/ChenyCHENYU/Robot_Admin/commit/3b9b5c6e3b78fb99143b37434839d5904866d2d3))
+* **vite.config:** build config optimiza ([0c470d8](https://github.com/ChenyCHENYU/Robot_Admin/commit/0c470d8165247b334a5388b5d9d532f44f4fa386))
+* **vite.config:** optimiza build config ([d53cc17](https://github.com/ChenyCHENYU/Robot_Admin/commit/d53cc17918b4303be8ab13255b904816197b3cac))
+
 ## [1.0.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.0.0...v1.0.1) (2025-07-30)
 
 
