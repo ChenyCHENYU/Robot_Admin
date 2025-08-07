@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.1.1...v1.1.2) (2025-08-07)
+
+
+### Performance Improvements
+
+* **vite.config:** config optimization ([e25957a](https://github.com/ChenyCHENYU/Robot_Admin/commit/e25957a8c5c31ef21b0d8c9331c579779d0f0fc0))
+* **vite.config:** viteBuildConfig optimization ([a5ff177](https://github.com/ChenyCHENYU/Robot_Admin/commit/a5ff177b6c39f930f96c81f53050dd09e594dd34))
+
 ## [1.1.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.1.0...v1.1.1) (2025-08-01)
 
 
