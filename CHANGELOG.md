@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.1.2...v1.2.0) (2025-08-21)
+
+
+### Features
+
+* **login:** use apifox api ([76d66c0](https://github.com/ChenyCHENYU/Robot_Admin/commit/76d66c08fb659f9ec8ec7b20ba0c24f9ddf5bef2))
+
 ## [1.1.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.1.1...v1.1.2) (2025-08-10)
 
 
