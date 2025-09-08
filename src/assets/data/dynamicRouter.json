@@ -771,6 +771,8 @@
       ]
     },
     {
+      "path": "/about",
+      "name": "关于",
       "component": "layout",
       "redirect": "/about",
       "children": [

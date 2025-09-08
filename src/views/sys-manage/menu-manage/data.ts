@@ -263,13 +263,13 @@ export const getRouteMeta = (route: any) => {
   if (!route.meta) {
     return {
       title: route.name || route.path || '未命名菜单',
-      icon: 'menu',
+      icon: 'mdi:menu',
       hidden: false,
     }
   }
   return {
     title: route.meta.title || route.name || route.path || '未命名菜单',
-    icon: route.meta.icon || 'menu',
+    icon: route.meta.icon || 'mdi:menu',
     hidden: route.meta.hidden || false,
   }
 }

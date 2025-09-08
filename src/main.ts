@@ -31,7 +31,7 @@ import {
 
 /**
  * @description: 应用启动入口
- * @return {*}
+ * @return void
  */
 async function bootstrap() {
   // 第一阶段：非Vue相关的初始化
