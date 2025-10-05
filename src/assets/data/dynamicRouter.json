@@ -441,8 +441,8 @@
       },
       "children": [
         {
-          "path": "code-editor",
-          "name": "editor-code",
+          "path": "production-cost",
+          "name": "production-cost",
           "component": "/demo/34-production-cost/index",
           "meta": {
             "icon": "mdi:attach-money",
@@ -454,8 +454,8 @@
           }
         },
         {
-          "path": "markdown-editor",
-          "name": "editor-markdown",
+          "path": "xxx-xxx",
+          "name": "xxx-xxx",
           "component": "/demo/35-xxx/index",
           "meta": {
             "icon": "mdi:performance",
