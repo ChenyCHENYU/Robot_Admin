@@ -33,7 +33,7 @@
 
   <!-- Quick Navigation -->
   <p>
-    <a href="https://www.robotadmin.cn">
+    <a href="https://robotadmin.cn">
       <img src="https://img.shields.io/badge/🚀-Live Demo-00D8FF?style=for-the-badge&logo=vercel" alt="Live Demo">
     </a>
     <a href="https://www.tzagileteam.com">
