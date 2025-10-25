@@ -5,528 +5,504 @@
 
 /* 主布局容器样式 */
 .layout-container {
-  height: 100vh; /* 视口高度 */
-  overflow: hidden; /* 隐藏溢出内容 */
+  height: 100vh;
+  overflow: hidden;
 }
 
 /*
  * ==== 内容区域样式 ====
- * 定义主要内容区域的样式
  */
 
-/* 带标题的内容区域 */
 .layout-container :deep(.content-with-header) {
-  margin-top: 100px; /* 顶部留出标题空间 */
-  height: calc(100vh - 150px); /* 计算高度：100px标题 + 50px页脚 */
+  margin-top: 100px;
+  height: calc(100vh - 150px);
 }
 
-/* Naive UI布局内容区域 */
 .layout-container :deep(.n-layout-content) {
   display: flex;
-  flex-direction: column; /* 垂直排列 */
-  flex: 1; /* 填充剩余空间 */
-  overflow-x: hidden; /* 禁用横向滚动 */
+  flex-direction: column;
+  flex: 1;
+  overflow-x: hidden;
 }
 
-/* 主内容区域 */
 .main-content {
-  flex: 1; /* 填充剩余空间 */
-  padding: 16px; /* 内边距 */
-  overflow-y: auto; /* 允许垂直滚动 */
-  overflow-x: hidden; /* 禁用横向滚动 */
-  width: 100%; /* 宽度自适应 */
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
   border-radius: 8px;
 }
 
 /*
  * ==== 主题相关样式 ====
- * 定义不同主题下的颜色和过渡效果
  */
 
-/* 明亮主题 */
 .layout-container :deep(.light-theme) {
-  background-color: #ffffff !important; /* 白色背景 */
+  background-color: #ffffff !important;
 }
 
-/* 暗黑主题 */
 .layout-container :deep(.dark-theme) {
-  background-color: #1c1c1c !important; /* 深色背景 */
+  background-color: #1c1c1c !important;
 }
 
-/* 明亮模式下的滚动容器 */
 .layout-container.light-mode :deep(.n-layout .n-layout-scroll-container) {
-  background-color: #f4f7f9 !important; /* 浅灰色背景 */
+  background-color: #f4f7f9 !important;
   border-radius: 10px;
 }
 
-/* 暗黑/系统模式下的滚动容器 */
 .layout-container.dark-mode :deep(.n-layout .n-layout-scroll-container),
 .layout-container.system-mode :deep(.n-layout .n-layout-scroll-container) {
-  background-color: #121212 !important; /* 深黑色背景 */
+  background-color: #121212 !important;
 }
 
-/* 主题切换时的过渡效果 */
 .layout-container.theme-transitioning {
-  opacity: 0.95; /* 轻微透明效果 */
+  opacity: 0.95;
 }
 
 /*
  * ==== 侧边栏和菜单样式 ====
- * 定义侧边栏和导航菜单的样式
  */
 
-/* 侧边栏基础样式 */
 .layout-sider {
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑过渡 */
-  transform: translateZ(0); /* 启用GPU加速 */
-  backface-visibility: hidden; /* 优化渲染 */
-  perspective: 1000px; /* 3D透视 */
-  contain: strict; /* 优化性能 */
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  contain: strict;
 }
 
-/* 明亮主题侧边栏 */
 .layout-sider.light-theme {
-  background-color: #081426; /* 深蓝色背景 */
+  background-color: #081426;
 }
 
-/* 暗黑主题侧边栏 */
 .layout-sider.dark-theme {
-  background-color: #1c1c1c; /* 深灰色背景 */
+  background-color: #1c1c1c;
 }
 
-/* 侧边栏滚动条优化 */
 .layout-sider :deep(.n-scrollbar-rail) {
-  width: 0 !important; /* 隐藏滚动条轨道 */
+  width: 0 !important;
 }
+
 .layout-sider :deep(.n-scrollbar-content) {
-  padding-right: 0 !important; /* 移除内容右侧padding */
+  padding-right: 0 !important;
 }
 
-/* 侧边栏布局 */
 .layout-container :deep(.n-layout-sider) {
-  flex-shrink: 0; /* 禁止收缩 */
-  height: 100%; /* 填充高度 */
+  flex-shrink: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* 禁用滚动 */
+  overflow: hidden;
 }
 
-/* 菜单滚动容器 */
 .menu-scroll-container {
-  height: calc(100vh - 56px); /* 计算高度 */
-  overflow-y: scroll; /* 垂直滚动 */
-  scrollbar-width: none; /* 隐藏滚动条(Firefox) */
-  -ms-overflow-style: none; /* 隐藏滚动条(IE) */
-  flex: 1; /* 填充空间 */
+  height: calc(100vh - 56px);
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-/* 隐藏Webkit滚动条 */
 .menu-scroll-container::-webkit-scrollbar {
   display: none;
 }
 
-/* 垂直菜单样式 */
 .layout-container :deep(.n-menu.n-menu--vertical) {
-  flex: 1; /* 填充空间 */
-  min-height: min-content; /* 最小高度 */
-  overflow-y: auto; /* 垂直滚动 */
-  overflow-x: hidden; /* 禁用横向滚动 */
+  flex: 1;
+  min-height: min-content;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* 菜单图标样式 - 精致尺寸优化 */
+/*
+ * ==== 菜单图标和文字样式 ====
+ */
+
 .layout-container :deep(.n-menu-item-content__icon) {
   display: flex;
   align-items: center;
   justify-content: center;
   vertical-align: middle;
   width: 18px !important;
-    height: 18px !important;
-    margin-right: 10px;
+  height: 18px !important;
+  margin-right: 10px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 18px !important;
+}
+
+.layout-container :deep(.n-menu-item-content__icon .n-icon) {
+  width: 18px !important;
+  height: 18px !important;
+  font-size: 18px !important;
+}
+
+.layout-container :deep(.n-menu-item-content__icon svg) {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.layout-container :deep(.n-menu-item-content-header) {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  line-height: 1.5;
+}
+
+.layout-container :deep(.n-menu-item-content__arrow) {
+  font-size: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * ==== 🎨 毛玻璃质感菜单效果（性能优化版）====
+ * 保留文档1的所有视觉效果，仅优化性能
+ */
+
+/* 菜单项基础样式 - 卡片质感默认状态 */
+.layout-container :deep(.n-menu-item) {
+  border-radius: 0;
+  position: relative;
+  overflow: visible;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 启用GPU加速 - 性能优化 */
+  will-change: transform;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.04) 100%);
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+    /* 性能优化：合并阴影层，从4层减少到2层 */
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
-  
-  /* 菜单图标内部 icon 元素 */
-  .layout-container :deep(.n-menu-item-content__icon .n-icon) {
-    width: 18px !important;
-    height: 18px !important;
-    font-size: 18px !important;
-  }
-  
-  /* 菜单图标 SVG */
-  .layout-container :deep(.n-menu-item-content__icon svg) {
-    width: 18px !important;
-    height: 18px !important;
-  }
-  
-  /* 菜单项文字样式 - 精致字体 */
-  .layout-container :deep(.n-menu-item-content-header) {
-    font-size: 14px;
-    /* 更精致的字体大小 */
-    font-weight: 500;
-    letter-spacing: 0.2px;
-    /* 轻微字间距 */
-    line-height: 1.5;
-  }
-  
-  /* 菜单箭头图标样式 */
-  .layout-container :deep(.n-menu-item-content__arrow) {
-    font-size: 14px;
-    /* 箭头大小 */
+}
+
+/* 菜单项内容容器 - 卡片质感 */
+.layout-container :deep(.n-menu-item-content) {
+  border-radius: 8px;
+  background: transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  padding: 10px 16px;
+
+  /* 边框光晕效果 */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-left: 2px solid transparent;
+    border-radius: 8px;
+    pointer-events: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
-  /*
-   * ==== 毛玻璃质感菜单效果 ====
-   * 现代化高级质感设计，兼容深色和浅色主题
-   */
-  
-  /* 菜单项基础样式 - 添加毛玻璃效果，去除左右空白 */
-  .layout-container :deep(.n-menu-item) {
-    margin: 4px 0;
-    /* 只保留上下间距，去除左右间距 */
-    border-radius: 0;
-    /* 去除圆角，避免边角空白 */
-    position: relative;
-    overflow: visible;
-    /* 改为可见，让效果完整显示 */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255, 255, 255, 0.03);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: -1;
-    }
+}
+
+/* Hover 状态 - 增强卡片效果 */
+.layout-container :deep(.n-menu-item:hover) {
+  transform: translateX(2px);
+
+  &::before {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    /* 性能优化：合并阴影，从3层减少到2层 */
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
-  
-  /* 菜单项内容容器 - 确保充满整个宽度 */
-  .layout-container :deep(.n-menu-item-content) {
-    border-radius: 0;
-    /* 去除圆角 */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    padding: 10px 16px;
-    /* 统一内边距 */
-  
-    /* 边框光晕效果 */
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      border-left: 2px solid transparent;
-      /* 左侧高亮条 */
-      pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+}
+
+.layout-container :deep(.n-menu-item:hover .n-menu-item-content) {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 8px;
+
+  &::after {
+    border-left-color: rgba(99, 102, 241, 0.4);
+    border-radius: 8px;
+    box-shadow:
+      0 0 15px rgba(99, 102, 241, 0.15),
+      inset 0 1px 1px rgba(255, 255, 255, 0.1);
   }
-  
-  /* Hover 状态 - 毛玻璃效果增强 */
-  .layout-container :deep(.n-menu-item:hover) {
-    transform: translateX(2px);
-    /* 减小右移距离 */
-  
-    &::before {
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow:
-        0 2px 12px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
+}
+
+/* Hover 状态图标效果 */
+.layout-container :deep(.n-menu-item:hover .n-menu-item-content__icon) {
+  transform: scale(1.08);
+  color: var(--n-item-icon-color-active-hover);
+}
+
+/* Active/选中状态 - 高级卡片激活效果 */
+.layout-container :deep(.n-menu-item--selected),
+.layout-container :deep(.n-menu-item-content--selected) {
+  &::before {
+    background: linear-gradient(90deg,
+      rgba(99, 102, 241, 0.18) 0%,
+      rgba(139, 92, 246, 0.12) 100%);
+    border-radius: 8px;
+    /* 性能优化：合并阴影，从3层减少到2层 */
+    box-shadow:
+      0 3px 12px rgba(99, 102, 241, 0.25),
+      inset 0 1px 0 rgba(99, 102, 241, 0.2);
   }
-  
-  .layout-container :deep(.n-menu-item:hover .n-menu-item-content) {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  
-    &::after {
-      border-left-color: rgba(99, 102, 241, 0.4);
-      /* 左侧高亮条 */
-      box-shadow:
-        0 0 15px rgba(99, 102, 241, 0.15),
-        inset 0 1px 1px rgba(255, 255, 255, 0.1);
-    }
+}
+
+.layout-container :deep(.n-menu-item--selected .n-menu-item-content),
+.layout-container :deep(.n-menu-item-content--selected) {
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+
+  &::after {
+    border-left: 3px solid rgba(99, 102, 241, 0.8);
+    box-shadow:
+      0 0 20px rgba(99, 102, 241, 0.25),
+      inset 0 1px 1px rgba(255, 255, 255, 0.15);
   }
-  
-  /* Hover 状态图标效果 */
-  .layout-container :deep(.n-menu-item:hover .n-menu-item-content__icon) {
-    transform: scale(1.08);
-    /* 减小放大幅度，去除旋转 */
-    color: var(--n-item-icon-color-active-hover);
+}
+
+/* 选中状态图标发光 */
+.layout-container :deep(.n-menu-item--selected .n-menu-item-content__icon) {
+  filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.5));
+  transform: scale(1.05);
+  color: var(--n-item-icon-color-active);
+}
+
+/* Active 按下状态 */
+.layout-container :deep(.n-menu-item:active) {
+  transform: scale(0.98);
+}
+
+/* 子菜单父项样式 */
+.layout-container :deep(.n-menu-item-content--child-active) {
+  &::before {
+    background: rgba(99, 102, 241, 0.1);
+    box-shadow:
+      0 2px 12px rgba(99, 102, 241, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
-  
-  /* Active/选中状态 - 高级毛玻璃激活效果 */
-  .layout-container :deep(.n-menu-item--selected),
-  .layout-container :deep(.n-menu-item-content--selected) {
-    &::before {
-      background: linear-gradient(90deg,
-          rgba(99, 102, 241, 0.15) 0%,
-          rgba(139, 92, 246, 0.1) 100%);
-      box-shadow:
-        0 4px 16px rgba(99, 102, 241, 0.2),
-        inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    }
+
+  &::after {
+    border-left: 2px solid rgba(99, 102, 241, 0.5);
   }
-  
-  .layout-container :deep(.n-menu-item--selected .n-menu-item-content),
-  .layout-container :deep(.n-menu-item-content--selected) {
-    backdrop-filter: blur(14px) saturate(130%);
-    -webkit-backdrop-filter: blur(14px) saturate(130%);
-  
-    &::after {
-      border-left: 3px solid rgba(99, 102, 241, 0.8);
-      /* 加粗左侧高亮条 */
-      box-shadow:
-        0 0 20px rgba(99, 102, 241, 0.25),
-        inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    }
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 一级菜单项对齐 */
+.layout-container :deep(.n-menu > .n-menu-item),
+.layout-container :deep(.n-menu > .n-submenu) {
+  margin: 4px 12px;
+}
+
+/* 二级及以下菜单项 */
+.layout-container :deep(.n-submenu-children .n-menu-item) {
+  margin: 4px 0;
+}
+
+/* 子菜单内容缩进 */
+.layout-container :deep(.n-submenu-children .n-menu-item-content) {
+  padding-left: 46px;
+}
+
+/*
+ * ==== 主题优化 ====
+ */
+
+/* 暗色主题优化 */
+.dark-theme {
+  .layout-container :deep(.n-menu-item::before) {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.04) 100%);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
-  
-  /* 选中状态图标发光 */
-  .layout-container :deep(.n-menu-item--selected .n-menu-item-content__icon) {
-    filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.5));
-    transform: scale(1.05);
-    color: var(--n-item-icon-color-active);
+
+  .layout-container :deep(.n-menu-item:hover::before) {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.08) 100%);
   }
-  
-  /* Active 按下状态 */
-  .layout-container :deep(.n-menu-item:active) {
-    transform: scale(0.98);
-    /* 按下反馈 */
+}
+
+/* 浅色主题优化 */
+.light-theme {
+  .layout-container :deep(.n-menu-item::before) {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 255, 255, 0.4) 100%);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
   }
-  
-  /* 子菜单父项样式 - 确保对齐 */
-  .layout-container :deep(.n-menu-item-content--child-active) {
-    &::before {
-      background: rgba(99, 102, 241, 0.1);
-      box-shadow:
-        0 2px 12px rgba(99, 102, 241, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    }
-  
-    &::after {
-      border-left: 2px solid rgba(99, 102, 241, 0.5);
-      /* 左侧指示条 */
-    }
-  
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+
+  .layout-container :deep(.n-menu-item:hover::before) {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(255, 255, 255, 0.6) 100%);
   }
-  
-  /* 确保所有一级菜单项对齐 */
-  .layout-container :deep(.n-menu > .n-menu-item),
-  .layout-container :deep(.n-menu > .n-submenu) {
-    margin: 4px 0;
-    /* 统一间距 */
+
+  .layout-container :deep(.n-menu-item-content::after) {
+    border-color: rgba(0, 0, 0, 0.08);
   }
-  
-  /* 子菜单标题对齐 */
-  .layout-container :deep(.n-submenu-children .n-menu-item-content) {
-    padding-left: 46px;
-    /* 子菜单缩进，与一级菜单图标对齐 */
-  }
-  
-  /* 暗色主题优化 */
-  .dark-theme {
-    .layout-container :deep(.n-menu-item::before) {
-      background: rgba(255, 255, 255, 0.02);
-    }
-  
-    .layout-container :deep(.n-menu-item:hover::before) {
-      background: rgba(255, 255, 255, 0.06);
-    }
-  }
-  
-  /* 浅色主题优化（如果有） */
-  .light-theme {
-    .layout-container :deep(.n-menu-item::before) {
-      background: rgba(0, 0, 0, 0.02);
-    }
-  
-    .layout-container :deep(.n-menu-item:hover::before) {
-      background: rgba(0, 0, 0, 0.05);
-    }
-  
-    .layout-container :deep(.n-menu-item-content::after) {
-      border-color: rgba(0, 0, 0, 0.05);
-    }
 }
 
 /*
  * ==== 折叠菜单样式 ====
- * 定义菜单折叠状态下的样式
  */
 
-/* 折叠菜单容器 */
 .layout-container :deep(.n-menu.n-menu--collapsed) {
-  width: 64px !important; /* 固定宽度 */
+  width: 64px !important;
   display: flex;
   flex-direction: column;
-  align-items: center; /* 居中对齐 */
+  align-items: center;
 }
 
-/* 折叠菜单项内容 */
 .layout-container :deep(.n-menu.n-menu--collapsed .n-menu-item-content) {
-  justify-content: center !important; /* 居中对齐 */
+  justify-content: center !important;
   padding: 0 !important;
   display: flex;
   align-items: center;
-  width: 62px; /* 固定宽度 */
+  width: 62px;
 }
 
-/* 折叠菜单图标定位 */
 .layout-container :deep(.n-menu.n-menu--collapsed .n-icon) {
-  margin-left: 38px !important; /* 精确居中 */
-  margin-top: 4px !important; /* 垂直居中 */
+  margin-left: 40px !important;
+  margin-top: 4px !important;
 }
 
-/* 折叠菜单项 */
 .layout-container :deep(.n-menu.n-menu--collapsed .n-menu-item) {
   padding: 0 !important;
   display: flex;
   justify-content: center;
-  width: 100%; /* 填充宽度 */
+  width: 100%;
 }
 
-/* 折叠菜单项标题 */
 .layout-container :deep(.n-menu.n-menu--collapsed .n-menu-item-content-header) {
-  margin: 0 auto; /* 水平居中 */
+  margin: 0 auto;
   margin-top: -10px;
   padding: 0;
 }
 
-/* 折叠菜单图标间距 */
 .layout-container :deep(.n-menu.n-menu--collapsed .n-menu-item-content__icon) {
-  margin-right: 0; /* 移除右侧间距 */
+  margin-right: 0;
 }
 
-/* 折叠菜单选中状态图标 */
 .layout-container :deep(
   .n-menu.n-menu--collapsed
     .n-menu-item-content--child-active
     .n-menu-item-content__icon
 ) {
-  color: var(--n-item-color-active) !important; /* 使用主题色 */
+  color: var(--n-item-color-active) !important;
 }
 
 /* 折叠菜单选中状态 - 毛玻璃效果 */
 .layout-container :deep(.n-menu.n-menu--collapsed .n-menu-item-content--child-active) {
   &::before {
-      background: linear-gradient(135deg,
-          rgba(99, 102, 241, 0.25) 0%,
-          rgba(139, 92, 246, 0.2) 100%);
-      border-radius: 10px;
-      box-shadow:
-        0 8px 24px rgba(99, 102, 241, 0.3),
-        inset 0 1px 1px rgba(255, 255, 255, 0.2);
-    }
-  
-    backdrop-filter: blur(16px) saturate(150%);
-    -webkit-backdrop-filter: blur(16px) saturate(150%);
-  
-    &::after {
-      // border: 1px solid rgba(99, 102, 241, 0.4);
-      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-    }
+    background: linear-gradient(135deg,
+      rgba(99, 102, 241, 0.25) 0%,
+      rgba(139, 92, 246, 0.2) 100%);
+    border-radius: 10px;
+    box-shadow:
+      0 8px 24px rgba(99, 102, 241, 0.3),
+      inset 0 1px 1px rgba(255, 255, 255, 0.2);
   }
-  
-  /* 折叠菜单 Hover 效果 */
-  .layout-container :deep(.n-menu.n-menu--collapsed .n-menu-item:hover) {
-    transform: scale(1.05);
-    /* 放大效果 */
+
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+
+  &::after {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  }
+}
+
+/* 折叠菜单 Hover 效果 */
+.layout-container :deep(.n-menu.n-menu--collapsed .n-menu-item:hover) {
+  transform: scale(1.05);
+
   &::before {
     background: rgba(255, 255, 255, 0.1);
-      box-shadow:
-        0 4px 16px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
   }
 }
 
 /* 折叠菜单图标颜色 */
 :deep(.n-menu--collapsed .n-menu-item-content__icon) {
-  color: rgba(229, 231, 235, 0.9) !important; /* 浅灰色图标 */
+  color: rgba(229, 231, 235, 0.9) !important;
 }
 
 /*
  * ==== 其他辅助样式 ====
- * 各种辅助类和布局优化
  */
 
-/* 确保Naive UI布局自适应 */
 .layout-container :deep(.n-layout) {
-  width: 100%; /* 填充宽度 */
-  min-width: 0; /* 允许收缩 */
+  width: 100%;
+  min-width: 0;
 }
 
-/* 布局容器高度 */
 .layout-container {
-  height: 100vh; /* 视口高度 */
+  height: 100vh;
   display: flex;
-  flex-direction: column; /* 垂直布局 */
+  flex-direction: column;
 }
 
-/* 彻底禁用横向滚动 */
 .no-horizontal-scroll {
-  overflow-x: hidden !important; /* 强制隐藏横向滚动 */
+  overflow-x: hidden !important;
 }
 
 /*
  * ==== 子菜单和菜单组毛玻璃效果 ====
- * 为多级菜单添加高级质感
  */
 
-/* 子菜单容器 */
 .layout-container :deep(.n-submenu) {
   margin: 4px 0;
-  /* 与一级菜单对齐 */
 }
 
-/* 子菜单标题样式 */
 .layout-container :deep(.n-submenu > .n-menu-item-content) {
   padding: 10px 16px;
-  /* 与一级菜单统一 */
 }
 
-/* 子菜单项 */
 .layout-container :deep(.n-submenu-children .n-menu-item) {
   margin: 2px 0;
-  /* 减小子菜单间距 */
   position: relative;
 
   &::before {
     content: none;
-    /* 移除左边界线，保持简洁 */
   }
 }
 
-/* 子菜单项内容 */
 .layout-container :deep(.n-submenu-children .n-menu-item-content) {
   padding: 8px 16px 8px 46px;
-  /* 左侧缩进对齐 */
   font-size: 13px;
-  /* 略小于一级菜单 */
 }
 
-/* 子菜单项图标 */
 .layout-container :deep(.n-submenu-children .n-menu-item-content__icon) {
   width: 16px !important;
-    height: 16px !important;
-    font-size: 16px !important;
+  height: 16px !important;
+  font-size: 16px !important;
   margin-right: 8px;
 }
 
-/* 子菜单图标内部元素 */
 .layout-container :deep(.n-submenu-children .n-menu-item-content__icon .n-icon) {
   width: 16px !important;
   height: 16px !important;
@@ -538,13 +514,10 @@
   height: 16px !important;
 }
 
-/* 子菜单项 Hover 效果 */
 .layout-container :deep(.n-submenu-children .n-menu-item:hover) {
   transform: translateX(2px);
-  /* 与一级菜单一致 */
 }
 
-/* 展开的子菜单容器 */
 .layout-container :deep(.n-submenu-children) {
   background: rgba(0, 0, 0, 0.05);
   backdrop-filter: blur(6px);
@@ -552,13 +525,11 @@
   margin: 2px 0;
   padding: 4px 0;
   border-left: 2px solid rgba(99, 102, 241, 0.3);
-  /* 左侧指示条 */
 }
 
 /* 菜单组标题 */
 .layout-container :deep(.n-menu-item-group-title) {
   font-size: 11px;
-  /* 更小的标题 */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.2px;
@@ -574,9 +545,9 @@
     right: 16px;
     height: 1px;
     background: linear-gradient(to right,
-        transparent,
-        rgba(99, 102, 241, 0.2),
-        transparent);
+      transparent,
+      rgba(99, 102, 241, 0.2),
+      transparent);
   }
 }
 
@@ -585,9 +556,9 @@
   margin: 8px 16px;
   height: 1px;
   background: linear-gradient(to right,
-      transparent,
-      rgba(255, 255, 255, 0.1),
-      transparent);
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
@@ -596,9 +567,9 @@
 .layout-container :deep(.n-menu-item.n-menu-item--loading) {
   &::before {
     background: linear-gradient(90deg,
-        rgba(99, 102, 241, 0.1) 0%,
-        rgba(139, 92, 246, 0.2) 50%,
-        rgba(99, 102, 241, 0.1) 100%);
+      rgba(99, 102, 241, 0.1) 0%,
+      rgba(139, 92, 246, 0.2) 50%,
+      rgba(99, 102, 241, 0.1) 100%);
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
   }
@@ -608,7 +579,6 @@
   0% {
     background-position: -200% 0;
   }
-
   100% {
     background-position: 200% 0;
   }
