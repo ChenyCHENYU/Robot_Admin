@@ -118,7 +118,7 @@
               <p class="author-bio">I'M CHENY，希望可以这个应用可以帮到你</p>
               <div class="author-stats">
                 <div
-                  v-for="stat in authorStats"
+                  v-for="stat in reactiveAuthorStats"
                   :key="stat.label"
                   class="author-stat"
                 >
@@ -397,7 +397,6 @@
   import {
     projectStats,
     actionButtons,
-    authorStats,
     coreModules,
     techLayers,
     demoList,
@@ -441,11 +440,13 @@
 
   // GitHub API 数据获取
   const githubRepo = ref('ChenyCHENYU/Robot_Admin')
-  const githubData = ref({
-    stars: '12K+',
-    forks: '212+',
-    commits: '1.2K+',
-  })
+
+  // 创建响应式的作者统计数据
+  const reactiveAuthorStats = ref([
+    { number: '520+', label: '⭐Star' },
+    { number: '52+', label: '🍴Forks' },
+    { number: '397+', label: '📝Commits' },
+  ])
 
   // 获取 GitHub 仓库数据
   const fetchGitHubData = async () => {
@@ -459,38 +460,34 @@
       if (repoData && !repoData.message) {
         // 格式化星标数
         const stars = repoData.stargazers_count
-        githubData.value.stars =
+        const starsFormatted =
           stars >= 1000 ? `${(stars / 1000).toFixed(1)}K+` : `${stars}+`
 
-        // 格式化分支数
+        // 格式化forks数
         const forks = repoData.forks_count
-        githubData.value.forks =
-          forks >= 100 ? `${(forks / 100).toFixed(0)}00+` : `${forks}+`
+        const forksFormatted =
+          forks >= 100 ? `${Math.round(forks / 100) * 100}+` : `${forks}+`
+
+        // 更新stars和forks
+        reactiveAuthorStats.value[0].number = starsFormatted
+        reactiveAuthorStats.value[1].number = forksFormatted
       }
 
-      // 获取提交数（GitHub API 需要额外请求）
+      // 获取提交数
       const commitsResponse = await fetch(
         `https://api.github.com/repos/${githubRepo.value}/commits?per_page=1`
       )
       const linkHeader = commitsResponse.headers.get('Link')
 
       if (linkHeader) {
-        // 从 Link 头部提取总提交数
         const match = linkHeader.match(/page=(\d+)>; rel="last"/)
         if (match && match[1]) {
           const commits = parseInt(match[1])
-          githubData.value.commits =
+          const commitsFormatted =
             commits >= 1000 ? `${(commits / 1000).toFixed(1)}K+` : `${commits}+`
+          reactiveAuthorStats.value[2].number = commitsFormatted
         }
       }
-
-      // 更新作者统计数据
-      authorStats[0].number = githubData.value.stars
-      authorStats[1].number = githubData.value.forks
-      authorStats[2].number = githubData.value.commits
-
-      // 更新项目统计数据
-      projectStats[0].number = githubData.value.stars
     } catch (error) {
       console.error('获取 GitHub 数据失败:', error)
       // 保持默认值

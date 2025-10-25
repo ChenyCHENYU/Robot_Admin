@@ -410,6 +410,7 @@ $shadows: (
       font-weight: 600;
       margin-bottom: 0.75rem;
       color: var(--n-text-color);
+      text-align: center;
     }
 
     .author-bio {
@@ -417,34 +418,43 @@ $shadows: (
       line-height: 1.6;
       margin-bottom: 1.5rem;
       color: var(--n-text-color-3);
+      text-align: center;
     }
 
     .author-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
+      gap: 1.25rem;
 
       .author-stat {
         text-align: center;
-        padding: 0.5rem;
+        padding: 1rem 0rem;
         border-radius: map.get($radii, md);
         background: var(--n-modal-color);
         transition: map.get($transitions, hover);
+
         
         &:hover {
-          transform: translateY(-2px);
+          transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .stat-number {
-          font-size: 1.5rem;
-          font-weight: 700;
-          margin-bottom: 0.25rem;
+          font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
           color: var(--n-text-color);
+          line-height: 1;
         }
 
         .stat-label {
-          font-size: 0.75rem;
-          color: var(--n-text-color-3);
+          font-size: 0.875rem;
+            color: var(--n-text-color-2);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
         }
       }
     }
