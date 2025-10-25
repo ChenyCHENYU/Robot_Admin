@@ -141,14 +141,24 @@
   align-items: center;
   justify-content: center;
   vertical-align: middle;
-    width: 20px;
-    /* 缩小图标 */
-    height: 20px;
+  width: 18px !important;
+    height: 18px !important;
     margin-right: 10px;
-    /* 调整间距 */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 20px;
-    /* 图标字体大小 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 18px !important;
+  }
+  
+  /* 菜单图标内部 icon 元素 */
+  .layout-container :deep(.n-menu-item-content__icon .n-icon) {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 18px !important;
+  }
+  
+  /* 菜单图标 SVG */
+  .layout-container :deep(.n-menu-item-content__icon svg) {
+    width: 18px !important;
+    height: 18px !important;
   }
   
   /* 菜单项文字样式 - 精致字体 */
@@ -510,10 +520,22 @@
 
 /* 子菜单项图标 */
 .layout-container :deep(.n-submenu-children .n-menu-item-content__icon) {
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
+  width: 16px !important;
+    height: 16px !important;
+    font-size: 16px !important;
   margin-right: 8px;
+}
+
+/* 子菜单图标内部元素 */
+.layout-container :deep(.n-submenu-children .n-menu-item-content__icon .n-icon) {
+  width: 16px !important;
+  height: 16px !important;
+  font-size: 16px !important;
+}
+
+.layout-container :deep(.n-submenu-children .n-menu-item-content__icon svg) {
+  width: 16px !important;
+  height: 16px !important;
 }
 
 /* 子菜单项 Hover 效果 */
