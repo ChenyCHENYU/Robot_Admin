@@ -372,7 +372,7 @@
   padding: 0 !important;
   display: flex;
   align-items: center;
-  width: 64px; /* 固定宽度 */
+  width: 62px; /* 固定宽度 */
 }
 
 /* 折叠菜单图标定位 */
@@ -426,7 +426,7 @@
     -webkit-backdrop-filter: blur(16px) saturate(150%);
   
     &::after {
-      border: 1px solid rgba(99, 102, 241, 0.4);
+      // border: 1px solid rgba(99, 102, 241, 0.4);
       box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
     }
   }
