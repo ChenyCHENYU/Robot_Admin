@@ -39,11 +39,11 @@
           </h1>
 
           <p class="project-description">
-            基于业务驱动，开箱即用的需求，也基于项目产品化，起步通用设计，亦或计划构建业务场景模板。
-            逐步完善一个的高性能、可扩展的企业级管理平台，
-            能支持单体、单一、微服务等架构方式，满足多租户、RBAC权限管理、工作流、数据可视化等功能的通用平台。
-            也基于项目作为一个基点，引导团队伙伴相对标准化、工程化的的方式解构业务。
-            最后，开源不易，若这个项目对你有所帮助，请点个Star予以支持。
+            本项目旨在构建一个高性能、可扩展的企业级管理平台，支持单体、模块化与微服务架构，开箱即用。
+            平台内置多租户、RBAC
+            权限管理、工作流、数据可视化等通用能力，为业务快速搭建提供统一基座。
+            通过标准化、工程化的方式，帮助团队以业务驱动的模式高效解构与实现复杂场景。
+            如果本项目对你有所帮助，欢迎点个 ⭐ 支持！
           </p>
 
           <!-- 项目状态 - 数据驱动 -->
@@ -373,7 +373,7 @@
               </div>
               <div class="author-info-card">
                 <h4>作者信息</h4>
-                <p><strong>ChenY</strong> - ycyplus@gmail.com</p>
+                <p><strong>CHENY</strong> - ycyplus@gmail.com</p>
                 <p>
                   GitHub:
                   <a
@@ -407,6 +407,15 @@
     projectStructure,
     type TreeNode as TreeNodeType,
   } from './data'
+  import {
+    ref,
+    computed,
+    onMounted,
+    defineComponent,
+    h,
+    type PropType,
+    type VNode,
+  } from 'vue'
 
   // 主题检测
   const themeVars = useThemeVars()
@@ -429,6 +438,69 @@
   const stopAnimation = () => {
     isAnimating.value = false
   }
+
+  // GitHub API 数据获取
+  const githubRepo = ref('ChenyCHENYU/Robot_Admin')
+  const githubData = ref({
+    stars: '12K+',
+    forks: '212+',
+    commits: '1.2K+',
+  })
+
+  // 获取 GitHub 仓库数据
+  const fetchGitHubData = async () => {
+    try {
+      // 获取仓库基本信息
+      const repoResponse = await fetch(
+        `https://api.github.com/repos/${githubRepo.value}`
+      )
+      const repoData = await repoResponse.json()
+
+      if (repoData && !repoData.message) {
+        // 格式化星标数
+        const stars = repoData.stargazers_count
+        githubData.value.stars =
+          stars >= 1000 ? `${(stars / 1000).toFixed(1)}K+` : `${stars}+`
+
+        // 格式化分支数
+        const forks = repoData.forks_count
+        githubData.value.forks =
+          forks >= 100 ? `${(forks / 100).toFixed(0)}00+` : `${forks}+`
+      }
+
+      // 获取提交数（GitHub API 需要额外请求）
+      const commitsResponse = await fetch(
+        `https://api.github.com/repos/${githubRepo.value}/commits?per_page=1`
+      )
+      const linkHeader = commitsResponse.headers.get('Link')
+
+      if (linkHeader) {
+        // 从 Link 头部提取总提交数
+        const match = linkHeader.match(/page=(\d+)>; rel="last"/)
+        if (match && match[1]) {
+          const commits = parseInt(match[1])
+          githubData.value.commits =
+            commits >= 1000 ? `${(commits / 1000).toFixed(1)}K+` : `${commits}+`
+        }
+      }
+
+      // 更新作者统计数据
+      authorStats[0].number = githubData.value.stars
+      authorStats[1].number = githubData.value.forks
+      authorStats[2].number = githubData.value.commits
+
+      // 更新项目统计数据
+      projectStats[0].number = githubData.value.stars
+    } catch (error) {
+      console.error('获取 GitHub 数据失败:', error)
+      // 保持默认值
+    }
+  }
+
+  // 组件挂载时获取数据
+  onMounted(() => {
+    fetchGitHubData()
+  })
 
   // 递归文件树组件 - 解决重复代码问题
   const TreeNode = defineComponent({

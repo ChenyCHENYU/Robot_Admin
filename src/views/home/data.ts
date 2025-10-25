@@ -18,6 +18,7 @@ export const actionButtons = [
     secondary: true,
     strong: true,
     type: 'primary',
+    url: 'https://robotadmin.cn',
   },
   {
     text: 'GitHub 仓库',
@@ -32,11 +33,11 @@ export const actionButtons = [
   },
 ]
 
-// 作者统计
+// 作者统计 - 动态获取GitHub仓库数据
 export const authorStats = [
   { number: '12K+', label: '⭐Star' },
   { number: '212+', label: '🍴Forks' },
-  { number: '1K+', label: '👁️Views' },
+  { number: '1.2K+', label: '📝Commits' },
 ]
 
 // 核心功能模块
