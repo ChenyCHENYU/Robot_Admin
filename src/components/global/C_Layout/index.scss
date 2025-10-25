@@ -135,16 +135,222 @@
   overflow-x: hidden; /* 禁用横向滚动 */
 }
 
-/* 菜单图标样式 */
+/* 菜单图标样式 - 精致尺寸优化 */
 .layout-container :deep(.n-menu-item-content__icon) {
   display: flex;
   align-items: center;
   justify-content: center;
-  // margin-top: -8px; /* 微调位置 */
-  vertical-align: top;
-  width: 24px; /* 固定宽度 */
-  height: 24px; /* 固定高度 */
-  margin-right: 8px; /* 右侧间距 */
+  vertical-align: middle;
+    width: 20px;
+    /* 缩小图标 */
+    height: 20px;
+    margin-right: 10px;
+    /* 调整间距 */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 20px;
+    /* 图标字体大小 */
+  }
+  
+  /* 菜单项文字样式 - 精致字体 */
+  .layout-container :deep(.n-menu-item-content-header) {
+    font-size: 14px;
+    /* 更精致的字体大小 */
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    /* 轻微字间距 */
+    line-height: 1.5;
+  }
+  
+  /* 菜单箭头图标样式 */
+  .layout-container :deep(.n-menu-item-content__arrow) {
+    font-size: 14px;
+    /* 箭头大小 */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /*
+   * ==== 毛玻璃质感菜单效果 ====
+   * 现代化高级质感设计，兼容深色和浅色主题
+   */
+  
+  /* 菜单项基础样式 - 添加毛玻璃效果，去除左右空白 */
+  .layout-container :deep(.n-menu-item) {
+    margin: 4px 0;
+    /* 只保留上下间距，去除左右间距 */
+    border-radius: 0;
+    /* 去除圆角，避免边角空白 */
+    position: relative;
+    overflow: visible;
+    /* 改为可见，让效果完整显示 */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: -1;
+    }
+  }
+  
+  /* 菜单项内容容器 - 确保充满整个宽度 */
+  .layout-container :deep(.n-menu-item-content) {
+    border-radius: 0;
+    /* 去除圆角 */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    padding: 10px 16px;
+    /* 统一内边距 */
+  
+    /* 边框光晕效果 */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-left: 2px solid transparent;
+      /* 左侧高亮条 */
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+  
+  /* Hover 状态 - 毛玻璃效果增强 */
+  .layout-container :deep(.n-menu-item:hover) {
+    transform: translateX(2px);
+    /* 减小右移距离 */
+  
+    &::before {
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 2px 12px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  .layout-container :deep(.n-menu-item:hover .n-menu-item-content) {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  
+    &::after {
+      border-left-color: rgba(99, 102, 241, 0.4);
+      /* 左侧高亮条 */
+      box-shadow:
+        0 0 15px rgba(99, 102, 241, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  /* Hover 状态图标效果 */
+  .layout-container :deep(.n-menu-item:hover .n-menu-item-content__icon) {
+    transform: scale(1.08);
+    /* 减小放大幅度，去除旋转 */
+    color: var(--n-item-icon-color-active-hover);
+  }
+  
+  /* Active/选中状态 - 高级毛玻璃激活效果 */
+  .layout-container :deep(.n-menu-item--selected),
+  .layout-container :deep(.n-menu-item-content--selected) {
+    &::before {
+      background: linear-gradient(90deg,
+          rgba(99, 102, 241, 0.15) 0%,
+          rgba(139, 92, 246, 0.1) 100%);
+      box-shadow:
+        0 4px 16px rgba(99, 102, 241, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    }
+  }
+  
+  .layout-container :deep(.n-menu-item--selected .n-menu-item-content),
+  .layout-container :deep(.n-menu-item-content--selected) {
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+  
+    &::after {
+      border-left: 3px solid rgba(99, 102, 241, 0.8);
+      /* 加粗左侧高亮条 */
+      box-shadow:
+        0 0 20px rgba(99, 102, 241, 0.25),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    }
+  }
+  
+  /* 选中状态图标发光 */
+  .layout-container :deep(.n-menu-item--selected .n-menu-item-content__icon) {
+    filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.5));
+    transform: scale(1.05);
+    color: var(--n-item-icon-color-active);
+  }
+  
+  /* Active 按下状态 */
+  .layout-container :deep(.n-menu-item:active) {
+    transform: scale(0.98);
+    /* 按下反馈 */
+  }
+  
+  /* 子菜单父项样式 - 确保对齐 */
+  .layout-container :deep(.n-menu-item-content--child-active) {
+    &::before {
+      background: rgba(99, 102, 241, 0.1);
+      box-shadow:
+        0 2px 12px rgba(99, 102, 241, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+  
+    &::after {
+      border-left: 2px solid rgba(99, 102, 241, 0.5);
+      /* 左侧指示条 */
+    }
+  
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  
+  /* 确保所有一级菜单项对齐 */
+  .layout-container :deep(.n-menu > .n-menu-item),
+  .layout-container :deep(.n-menu > .n-submenu) {
+    margin: 4px 0;
+    /* 统一间距 */
+  }
+  
+  /* 子菜单标题对齐 */
+  .layout-container :deep(.n-submenu-children .n-menu-item-content) {
+    padding-left: 46px;
+    /* 子菜单缩进，与一级菜单图标对齐 */
+  }
+  
+  /* 暗色主题优化 */
+  .dark-theme {
+    .layout-container :deep(.n-menu-item::before) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+  
+    .layout-container :deep(.n-menu-item:hover::before) {
+      background: rgba(255, 255, 255, 0.06);
+    }
+  }
+  
+  /* 浅色主题优化（如果有） */
+  .light-theme {
+    .layout-container :deep(.n-menu-item::before) {
+      background: rgba(0, 0, 0, 0.02);
+    }
+  
+    .layout-container :deep(.n-menu-item:hover::before) {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  
+    .layout-container :deep(.n-menu-item-content::after) {
+      border-color: rgba(0, 0, 0, 0.05);
+    }
 }
 
 /*
@@ -204,12 +410,36 @@
   color: var(--n-item-color-active) !important; /* 使用主题色 */
 }
 
-/* 折叠菜单选中状态 */
+/* 折叠菜单选中状态 - 毛玻璃效果 */
 .layout-container :deep(.n-menu.n-menu--collapsed .n-menu-item-content--child-active) {
-  opacity: 0.85; /* 半透明效果 */
   &::before {
-    background: rgba(251, 255, 253, 0.15); /* 半透明背景 */
-    border-radius: 6px; /* 圆角 */
+      background: linear-gradient(135deg,
+          rgba(99, 102, 241, 0.25) 0%,
+          rgba(139, 92, 246, 0.2) 100%);
+      border-radius: 10px;
+      box-shadow:
+        0 8px 24px rgba(99, 102, 241, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    }
+  
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+  
+    &::after {
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    }
+  }
+  
+  /* 折叠菜单 Hover 效果 */
+  .layout-container :deep(.n-menu.n-menu--collapsed .n-menu-item:hover) {
+    transform: scale(1.05);
+    /* 放大效果 */
+  &::before {
+    background: rgba(255, 255, 255, 0.1);
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
   }
 }
 
@@ -239,4 +469,140 @@
 /* 彻底禁用横向滚动 */
 .no-horizontal-scroll {
   overflow-x: hidden !important; /* 强制隐藏横向滚动 */
+}
+
+/*
+ * ==== 子菜单和菜单组毛玻璃效果 ====
+ * 为多级菜单添加高级质感
+ */
+
+/* 子菜单容器 */
+.layout-container :deep(.n-submenu) {
+  margin: 4px 0;
+  /* 与一级菜单对齐 */
+}
+
+/* 子菜单标题样式 */
+.layout-container :deep(.n-submenu > .n-menu-item-content) {
+  padding: 10px 16px;
+  /* 与一级菜单统一 */
+}
+
+/* 子菜单项 */
+.layout-container :deep(.n-submenu-children .n-menu-item) {
+  margin: 2px 0;
+  /* 减小子菜单间距 */
+  position: relative;
+
+  &::before {
+    content: none;
+    /* 移除左边界线，保持简洁 */
+  }
+}
+
+/* 子菜单项内容 */
+.layout-container :deep(.n-submenu-children .n-menu-item-content) {
+  padding: 8px 16px 8px 46px;
+  /* 左侧缩进对齐 */
+  font-size: 13px;
+  /* 略小于一级菜单 */
+}
+
+/* 子菜单项图标 */
+.layout-container :deep(.n-submenu-children .n-menu-item-content__icon) {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+/* 子菜单项 Hover 效果 */
+.layout-container :deep(.n-submenu-children .n-menu-item:hover) {
+  transform: translateX(2px);
+  /* 与一级菜单一致 */
+}
+
+/* 展开的子菜单容器 */
+.layout-container :deep(.n-submenu-children) {
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  margin: 2px 0;
+  padding: 4px 0;
+  border-left: 2px solid rgba(99, 102, 241, 0.3);
+  /* 左侧指示条 */
+}
+
+/* 菜单组标题 */
+.layout-container :deep(.n-menu-item-group-title) {
+  font-size: 11px;
+  /* 更小的标题 */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 12px 16px 6px;
+  opacity: 0.5;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 16px;
+    right: 16px;
+    height: 1px;
+    background: linear-gradient(to right,
+        transparent,
+        rgba(99, 102, 241, 0.2),
+        transparent);
+  }
+}
+
+/* 菜单分割线 */
+.layout-container :deep(.n-menu-divider) {
+  margin: 8px 16px;
+  height: 1px;
+  background: linear-gradient(to right,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* 加载状态优化 */
+.layout-container :deep(.n-menu-item.n-menu-item--loading) {
+  &::before {
+    background: linear-gradient(90deg,
+        rgba(99, 102, 241, 0.1) 0%,
+        rgba(139, 92, 246, 0.2) 50%,
+        rgba(99, 102, 241, 0.1) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 禁用状态 */
+.layout-container :deep(.n-menu-item.n-menu-item--disabled) {
+  opacity: 0.4;
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+
+  &::before {
+    background: rgba(255, 255, 255, 0.01);
+  }
+
+  &:hover {
+    transform: none;
+  }
 }
