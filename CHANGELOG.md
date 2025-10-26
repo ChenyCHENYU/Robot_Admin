@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.4.0...v1.5.0) (2025-10-26)
+
+
+### Features
+
+* **首页:** 增加统计真实数据获取 ([f8c4d8f](https://github.com/ChenyCHENYU/Robot_Admin/commit/f8c4d8fb8b22266147bdc985b422d603bb466a83))
+
 ## [1.4.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.3.0...v1.4.0) (2025-09-22)
 
 
