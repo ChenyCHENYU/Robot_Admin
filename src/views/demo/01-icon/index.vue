@@ -17,7 +17,6 @@
         提供动态能力</p
       >
     </div>
-
     <!-- 演示区块 -->
     <section
       v-for="demo in demoSections"
