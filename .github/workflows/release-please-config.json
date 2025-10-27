@@ -4,13 +4,16 @@
       "release-type": "node",
       "package-name": "robot-admin",
       "extra-files": ["src/lib/version.ts"],
-      "changelog-sections": [
-        { "type": "feat", "section": "🎯 新功能" },
-        { "type": "fix", "section": "🐛 Bug修复" },
-        { "type": "perf", "section": "⚡️ 性能优化" },
+      "changelog-types": [
+        { "type": "feat",     "section": "🎯 新功能" },
+        { "type": "fix",      "section": "🐛 Bug 修复" },
+        { "type": "perf",     "section": "⚡️ 性能优化" },
         { "type": "refactor", "section": "♻️ 重构" },
-        { "type": "docs", "section": "📚 文档" },
-        { "type": "chore", "section": "🔧 其他" }
+        { "type": "deps",     "section": "📦 依赖更新" },
+        { "type": "docs",     "section": "📚 文档" },
+        { "type": "chore",    "section": "🔧 其他" },
+        { "type": "test",     "section": "🧪 测试" },
+        { "type": "build",    "section": "🏗️ 构建" }
       ]
     }
   }
