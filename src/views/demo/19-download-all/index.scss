@@ -1,6 +1,5 @@
 .download-demo {
   padding: 24px;
-  background: #f5f7fa;
   min-height: 100vh;
 
   .demo-header {
@@ -32,11 +31,11 @@
     .demo-card {
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
-      
+
       :deep(.n-card-header) {
         border-bottom: 1px solid #e2e8f0;
         padding: 20px 24px;
-        
+
         .n-card-header__main {
           font-size: 18px;
           font-weight: 600;
@@ -74,7 +73,6 @@
       gap: 12px;
       margin-bottom: 24px;
       padding: 16px;
-      background: #f8fafc;
       border-radius: 8px;
     }
 
