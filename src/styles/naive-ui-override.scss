@@ -1,0 +1,33 @@
+/**
+ * Naive UI 全局样式覆盖
+ * 用于统一暗色主题下的组件样式
+ */
+
+/* ===========================================
+ * NCard 卡片组件暗色主题适配
+ * =========================================== */
+
+/**
+ * 核心思路：
+ * 1. 使用全局深度选择器确保优先级
+ * 2. 直接覆盖 Naive UI 的默认样式
+ * 3. 不依赖 themeOverrides 配置（避免合并冲突）
+ * 4. 只在暗色主题下生效
+ */
+
+html.dark,
+html[data-theme='dark'] {
+  /* 卡片头部暗色适配 */
+  .n-card-header {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+
+    .n-card-header__main {
+      color: rgba(255, 255, 255, 0.82) !important;
+    }
+  }
+
+  /* 嵌入式卡片（更深的背景） */
+  .n-card--embedded .n-card-header {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+  }
+}
