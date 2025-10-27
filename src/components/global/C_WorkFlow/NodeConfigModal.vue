@@ -16,7 +16,8 @@
       <div class="max-h-60vh overflow-y-auto">
         <div class="config-section">
           <h4
-            class="flex items-center gap-2 mb-4 text-base font-semibold text-gray-800"
+            class="flex items-center gap-2 mb-4 text-base font-semibold"
+            :style="{ color: 'var(--n-text-color-1)' }"
           >
             <div
               :class="userSelectConfig.icon"
@@ -37,7 +38,11 @@
           </NInput>
 
           <div
-            class="border border-gray-200 rounded-lg p-3 mb-4 bg-gray-50 max-h-50 overflow-y-auto"
+            class="border rounded-lg p-3 mb-4 max-h-50 overflow-y-auto"
+            :style="{
+              borderColor: 'var(--n-border-color)',
+              background: 'var(--n-color-embedded)',
+            }"
           >
             <NTree
               :data="departmentUserTree"
@@ -53,9 +58,16 @@
 
           <div
             v-if="userSelectConfig.selectedUsers.length > 0"
-            class="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-200"
+            class="rounded-lg p-4 mb-4 border"
+            :style="{
+              borderColor: 'var(--n-border-color)',
+              background: 'var(--n-color-embedded)',
+            }"
           >
-            <h5 class="mb-2 text-gray-800 text-sm font-medium">
+            <h5
+              class="mb-2 text-sm font-medium"
+              :style="{ color: 'var(--n-text-color-1)' }"
+            >
               {{ userSelectConfig.selectedLabel }}
               ({{ userSelectConfig.selectedUsers.length }})
             </h5>
@@ -75,7 +87,11 @@
                   />
                   <span class="font-medium text-sm">{{ user.name }}</span>
                   <span
-                    class="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded"
+                    class="text-xs px-1.5 py-0.5 rounded"
+                    :style="{
+                      color: 'var(--n-text-color-3)',
+                      background: 'var(--n-color-embedded)',
+                    }"
                     >{{ user.department }}</span
                   >
                 </div>
@@ -86,7 +102,11 @@
         <!-- 审批节点时附带审批模式 -->
         <template v-if="props.currentNode?.type === 'approval'">
           <div class="mt-4">
-            <h5 class="mb-3 text-sm font-medium text-gray-800">审批模式</h5>
+            <h5
+              class="mb-3 text-sm font-medium"
+              :style="{ color: 'var(--n-text-color-1)' }"
+              >审批模式</h5
+            >
             <NRadioGroup v-model:value="approvalMode">
               <NSpace vertical>
                 <NRadio
@@ -96,7 +116,11 @@
                 >
                   <div class="flex flex-col gap-1">
                     <strong class="text-sm">{{ mode.label }}</strong>
-                    <span class="text-xs text-gray-500">{{ mode.desc }}</span>
+                    <span
+                      class="text-xs"
+                      :style="{ color: 'var(--n-text-color-3)' }"
+                      >{{ mode.desc }}</span
+                    >
                   </div>
                 </NRadio>
               </NSpace>
@@ -113,7 +137,8 @@
     >
       <div class="config-section">
         <h4
-          class="flex items-center gap-2 mb-4 text-base font-semibold text-gray-800"
+          class="flex items-center gap-2 mb-4 text-base font-semibold"
+          :style="{ color: 'var(--n-text-color-1)' }"
         >
           <div class="i-mdi:source-branch w-4 h-4"></div>
           条件分支设置

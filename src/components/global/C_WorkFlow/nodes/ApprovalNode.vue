@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-07-03 13:48:45
  * @FilePath: \Robot_Admin\src\components\global\C_WorkFlow\nodes\ApprovalNode.vue
  * @Description: 审批节点组件
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -283,7 +283,7 @@
 
   .node-title {
     font-weight: 600;
-    color: #262626;
+    color: var(--n-text-color-1);
     font-size: 14px;
     flex: 1;
   }
