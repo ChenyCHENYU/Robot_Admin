@@ -564,6 +564,13 @@
 // 暗色主题适配
 html.dark,
 [data-theme="dark"] {
+  // SCSS变量 - 暗色主题通用颜色
+    $dark-text-primary: rgba(255, 255, 255, 0.85);
+    $dark-text-secondary: rgba(255, 255, 255, 0.65);
+    $dark-text-tertiary: rgba(255, 255, 255, 0.45);
+    $dark-border: rgba(255, 255, 255, 0.1);
+    $dark-bg-subtle: rgba(255, 255, 255, 0.03);
+    $dark-bg-hover: rgba(255, 255, 255, 0.08);
   .workflow-demo-page {
     background: var(--n-color-embedded);
   }
@@ -571,8 +578,8 @@ html.dark,
   // 统计卡片增强
   .stats-grid {
     .stat-item {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid $dark-border;
+        background: $dark-bg-subtle;
 
       &:hover {
         border-color: rgba(24, 144, 255, 0.4);
@@ -584,7 +591,7 @@ html.dark,
       }
 
       .stat-label {
-        color: rgba(255, 255, 255, 0.65);
+        color: $dark-text-secondary;
       }
     }
   }
@@ -592,7 +599,7 @@ html.dark,
   // 流程步骤箭头
   .flow-steps {
     .step-arrow {
-      color: rgba(255, 255, 255, 0.45);
+      color: $dark-text-tertiary;
     }
   }
 
@@ -600,29 +607,30 @@ html.dark,
   .flow-timeline {
     .flow-compact {
       .selected-node-info {
-        background: rgba(255, 255, 255, 0.03);
-        border-color: rgba(255, 255, 255, 0.1);
+        background: $dark-bg-subtle;
+          border-color: $dark-border;
 
         .node-title {
-          color: rgba(255, 255, 255, 0.85);
+          color: $dark-text-primary;
         }
 
         .detail-label {
-          color: rgba(255, 255, 255, 0.65);
+          color: $dark-text-secondary;
         }
       }
     }
 
     .flow-expanded {
       .step-node {
-        background: rgba(255, 255, 255, 0.03);
-        border-color: rgba(255, 255, 255, 0.1);
+        background: $dark-bg-subtle;
+          border-color: $dark-border;
 
         &:hover {
           border-color: rgba(24, 144, 255, 0.4);
           box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
         }
 
+                // 节点类型样式
         &.node-start {
           background: rgba(114, 46, 209, 0.12);
           border-color: rgba(114, 46, 209, 0.4);
@@ -649,19 +657,19 @@ html.dark,
           }
 
           .node-title {
-            color: rgba(255, 255, 255, 0.85);
+            color: $dark-text-primary;
           }
         }
 
         .node-content {
           .content-item {
             .content-label {
-              color: rgba(255, 255, 255, 0.65);
+              color: $dark-text-secondary;
             }
 
             .more-users {
-              background: rgba(255, 255, 255, 0.08);
-              color: rgba(255, 255, 255, 0.65);
+              background: $dark-bg-hover;
+                color: $dark-text-secondary;
             }
           }
         }
@@ -672,14 +680,14 @@ html.dark,
   // 配置详情
   .config-details {
     .config-item {
-      border-bottom-color: rgba(255, 255, 255, 0.1);
+      border-bottom-color: $dark-border;
 
       .label {
-        color: rgba(255, 255, 255, 0.65);
+        color: $dark-text-secondary;
       }
 
       .value {
-        color: rgba(255, 255, 255, 0.85);
+        color: $dark-text-primary;
       }
     }
   }
@@ -706,11 +714,11 @@ html.dark,
 
         .error-content {
           .error-message {
-            color: rgba(255, 255, 255, 0.85);
+            color: $dark-text-primary;
           }
 
           .error-node {
-            color: rgba(255, 255, 255, 0.45);
+            color: $dark-text-tertiary;
           }
         }
       }
