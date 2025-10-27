@@ -6,14 +6,12 @@
     background: transparent;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 12px;
-    padding: 24px;
     margin-bottom: 20px;
   }
 
   .controls-row {
     display: flex;
     align-items: center;
-    gap: 24px;
     flex-wrap: wrap;
   }
 
@@ -230,45 +228,45 @@
       }
     :deep(.n-data-table) {
       min-width: 900px;
-  
+
       .n-data-table-th,
       .n-data-table-td {
-  
+
         // 移动端列宽优化
         @for $i from 1 through 9 {
           &:nth-child(#{$i}) {
             @if $i ==1 {
               min-width: 70px;
             }
-  
+
             @else if $i ==2 {
               min-width: 70px;
             }
-  
+
             @else if $i ==3 {
               min-width: 50px;
             }
-  
+
             @else if $i ==4 {
               min-width: 180px;
             }
-  
+
             @else if $i ==5 {
               min-width: 90px;
             }
-  
+
             @else if $i ==6 {
               min-width: 120px;
             }
-  
+
             @else if $i ==7 {
               min-width: 70px;
             }
-  
+
             @else if $i ==8 {
               min-width: 150px;
             }
-  
+
             @else if $i ==9 {
               min-width: 100px;
             }
