@@ -1,4 +1,4 @@
-@import '@/styles/antv-common.scss';
+@use '@/styles/antv-common.scss' as *;
 .uml-layout {
   @include antv-layout;
 

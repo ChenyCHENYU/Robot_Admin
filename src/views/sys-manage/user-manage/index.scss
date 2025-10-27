@@ -7,7 +7,7 @@
 %flex-full {
   flex: 1;
   overflow: hidden;
-  }
+}
 
 %disabled-base {
   opacity: 0.6;
@@ -43,8 +43,8 @@
 
   :deep(.n-card__content) {
     @extend %flex-column, %flex-full;
-    }
-    }
+  }
+}
 
 // ==================== 主容器样式 ====================
 .user-management {
@@ -63,126 +63,126 @@
   }
 
   // ==================== 部门树样式 ====================
-    .dept-tree {
+  .dept-tree {
     @extend %flex-full;
-      overflow: auto;
+    overflow: auto;
 
     :deep(.c-tree-container) {
-        border: none;
-        padding: 0;
-        height: 100%;
-      }
+      border: none;
+      padding: 0;
+      height: 100%;
+    }
 
-                :deep(.tree-instance .n-tree .n-tree-node) {
-                  margin-bottom: 4px;
+    :deep(.tree-instance .n-tree .n-tree-node) {
+      margin-bottom: 4px;
 
       .n-tree-node-content {
-          padding: 12px 8px;
-          border-radius: 6px;
-          transition: all 0.2s ease;
-          min-height: 44px;
-          display: flex;
-          align-items: center;
-        }
-      }
-            }
-
-        // ==================== 用户表格样式 ====================
-    :deep(.n-data-table) {
-      .n-data-table-td {
         padding: 12px 8px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
       }
+    }
+  }
 
-                .n-data-table-th {
-                  background-color: var(--n-color-hover);
-                }
+  // ==================== 用户表格样式 ====================
+  :deep(.n-data-table) {
+    .n-data-table-td {
+      padding: 12px 8px;
+    }
 
-                // 禁用行样式
-                .disabled-row {
-                  background-color: #fafafa !important;
-                  opacity: 0.7;
+    .n-data-table-th {
+      background-color: var(--n-color-hover);
+    }
+
+    // 禁用行样式
+    .disabled-row {
+      background-color: #fafafa !important;
+      opacity: 0.7;
 
       &:hover {
-          background-color: #f0f0f0 !important;
-        }
+        background-color: #f0f0f0 !important;
+      }
 
-                        td {
-                          background-color: transparent !important;
-                        }
-                        }
-
-                // 操作列不换行
-                .n-data-table-td:last-child {
-                  .n-space {
-                    flex-wrap: nowrap !important;
-                  }
-                }
-                }
-        
-                // ==================== 用户名特殊样式 ====================
-                .username-cell {
-                  &.disabled-user {
-                    position: relative;
-                    font-weight: 500;
-        
-                    &::after {
-                      content: '已禁用';
-                      position: absolute;
-                      top: -2px;
-                      right: -8px;
-                      font-size: 10px;
-                      color: #ff4d4f;
-                      background: #fff1f0;
-                      border: 1px solid #ffccc7;
-                      border-radius: 2px;
-                      padding: 0 2px;
-                      transform: scale(0.8);
-                    }
-                  }
-                }
-        
-                // ==================== 禁用状态通用样式 ====================
-                .disabled-text {
-                  @extend %disabled-strikethrough;
-                }
-        
-                .disabled-tag {
-                  @extend %disabled-tag;
+      td {
+        background-color: transparent !important;
+      }
     }
-  
-        // ==================== 用户详情样式 ====================
-    .user-detail {
-      padding: 16px;
+
+    // 操作列不换行
+    .n-data-table-td:last-child {
+      .n-space {
+        flex-wrap: nowrap !important;
+      }
+    }
+  }
+
+  // ==================== 用户名特殊样式 ====================
+  .username-cell {
+    &.disabled-user {
       position: relative;
+      font-weight: 500;
+
+      &::after {
+        content: '已禁用';
+        position: absolute;
+        top: -2px;
+        right: -8px;
+        font-size: 10px;
+        color: #ff4d4f;
+        background: #fff1f0;
+        border: 1px solid #ffccc7;
+        border-radius: 2px;
+        padding: 0 2px;
+        transform: scale(0.8);
+      }
+    }
+  }
+
+  // ==================== 禁用状态通用样式 ====================
+  .disabled-text {
+    @extend %disabled-strikethrough;
+  }
+
+  .disabled-tag {
+    @extend %disabled-tag;
+  }
+
+  // ==================== 用户详情样式 ====================
+  .user-detail {
+    padding: 16px;
+    position: relative;
 
     .disabled-card {
       @extend %disabled-card;
-      }
+    }
 
-                .disabled-avatar {
-                  opacity: 0.5;
-                  filter: grayscale(100%);
-                }
+    .disabled-avatar {
+      opacity: 0.5;
+      filter: grayscale(100%);
+    }
 
-                .disabled-overlay {
-                  position: absolute;
-                  top: 50%;
-                  left: 50%;
-                  transform: translate(-50%, -50%);
-                  background-color: rgba(255, 255, 255, 0.8);
-                  border-radius: 50%;
-                  padding: 8px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                }
+    .disabled-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-                .disabled-text {
+    .disabled-text {
       @extend %disabled-strikethrough;
-      }
+    }
 
-                .disabled-tag {
+    .disabled-tag {
       @extend %disabled-tag;
-      }
-            }
-            }
+    }
+  }
+}
