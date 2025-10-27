@@ -181,22 +181,28 @@
             </template>
 
             <!-- 用户表格 -->
-            <NDataTable
+            <C_Table
               ref="tableRef"
-              v-model:checked-row-keys="selectedUsers"
-              :columns="userColumns"
+              :columns="userColumns as any"
               :data="userList"
-              :pagination="paginationReactive"
               :loading="loading"
-              :row-key="(row: UserData) => row.id"
+              :row-key="row => row.id"
               :scroll-x="1600"
               :row-class-name="getRowClassName"
+              :actions="tableActions as any"
+              :enable-selection="true"
+              :default-checked-keys="selectedUsers"
+              :pagination="{
+                enabled: true,
+                page: pagination.page,
+                pageSize: pagination.pageSize,
+                total: pagination.itemCount,
+                remote: true,
+              }"
               size="small"
-              remote
               striped
-              @update:checked-row-keys="handleSelectionChange"
-              @update:page="handlePageChange"
-              @update:page-size="handlePageSizeChange"
+              edit-mode="none"
+              @pagination-change="handlePaginationChange"
             />
           </NCard>
         </NGi>
@@ -457,11 +463,15 @@
 <script setup lang="ts">
   import {
     type FormInst,
-    type DataTableColumns,
+    NButton,
+    NSpace,
+    NDropdown,
     NTreeSelect,
   } from 'naive-ui/es'
   import C_Tree from '@/components/global/C_Tree/index.vue'
   import C_Icon from '@/components/global/C_Icon/index.vue'
+  import C_Table from '@/components/global/C_Table/index.vue'
+  import type { TableColumn } from '@/types/modules/table'
   import {
     type UserData,
     type UserFormData,
@@ -475,69 +485,18 @@
     DEFAULT_USER_FORM_DATA,
     DEFAULT_RESET_PASSWORD_FORM,
     UI_CONFIG,
+    COMPONENT_CONFIG,
     getUserListApi,
     getDeptListApi,
     getUserRolesApi,
     MOCK_USER_DATA,
-    MOCK_DEPT_DATA,
-    MOCK_ROLE_DATA,
+    getRoleNameById,
+    getDeptNameById,
+    findDeptById,
+    convertDeptListToTreeOptions,
+    getUserStatusConfig,
+    getUserTypeConfig,
   } from './data'
-
-  // ==================== 组件配置 ====================
-  const COMPONENT_CONFIG = {
-    icons: {
-      search: 'mdi:magnify',
-      plus: 'mdi:plus',
-      refresh: 'mdi:refresh',
-      tree: 'mdi:file-tree',
-      toggle: 'mdi:toggle-switch',
-      delete: 'mdi:delete',
-      edit: 'mdi:pencil',
-      eye: 'mdi:eye',
-      pause: 'mdi:pause',
-      play: 'mdi:play',
-      key: 'mdi:key',
-      cancel: 'mdi:cancel',
-      role: 'mdi:account-key',
-      check: 'mdi:check-circle',
-      info: 'mdi:information',
-    },
-    statusConfig: {
-      1: { text: '正常', type: 'success' as const, icon: 'mdi:check-circle' },
-      0: { text: '禁用', type: 'error' as const, icon: 'mdi:pause-circle' },
-    },
-    userTypeConfig: {
-      internal: { text: '内部', type: 'info' as const, icon: 'mdi:account' },
-      external: {
-        text: '外部',
-        type: 'warning' as const,
-        icon: 'mdi:account-group',
-      },
-      partner: {
-        text: '伙伴',
-        type: 'success' as const,
-        icon: 'mdi:handshake',
-      },
-      guest: {
-        text: '访客',
-        type: 'default' as const,
-        icon: 'mdi:account-outline',
-      },
-    },
-    defaultAvatar: 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg',
-    batchConfig: {
-      delete: {
-        title: '批量删除',
-        content: '确认删除选中的用户吗？此操作不可恢复！',
-        type: 'error' as const,
-      },
-      toggle: {
-        title: '批量状态操作',
-        content: '确认对选中的用户进行状态切换吗？',
-        type: 'warning' as const,
-      },
-    },
-  } as const
 
   const message = useMessage()
   const dialog = useDialog()
@@ -613,30 +572,7 @@
     convertDeptListToTreeOptions(deptList)
   )
 
-  const paginationReactive = computed(() => ({
-    ...pagination,
-    onChange: (page: number) => handlePageChange(page),
-    onUpdatePageSize: (pageSize: number) => handlePageSizeChange(pageSize),
-  }))
-
   // ==================== 辅助函数 ====================
-  const getRoleNameById = (roleId: string): string =>
-    MOCK_ROLE_DATA.find(r => r.id === roleId)?.name || ''
-
-  const getDeptNameById = (deptId: string): string => {
-    const findDeptName = (depts: DeptData[], id: string): string | null => {
-      for (const dept of depts) {
-        if (dept.id === id) return dept.name
-        if (dept.children) {
-          const found = findDeptName(dept.children, id)
-          if (found) return found
-        }
-      }
-      return null
-    }
-    return findDeptName(MOCK_DEPT_DATA, deptId) || '未知部门'
-  }
-
   const updateUserInList = (userId: string, updates: Partial<UserData>) => {
     // 更新所有相关的数据源
     const updateTargets = [
@@ -657,37 +593,8 @@
     }
   }
 
-  const getUserStatusConfig = (status: number) =>
-    COMPONENT_CONFIG.statusConfig[
-      status as keyof typeof COMPONENT_CONFIG.statusConfig
-    ] || COMPONENT_CONFIG.statusConfig[1]
-
-  const getUserTypeConfig = (userType: UserType) =>
-    COMPONENT_CONFIG.userTypeConfig[userType] ||
-    COMPONENT_CONFIG.userTypeConfig.internal
-
   const getRowClassName = (row: UserData) =>
     row.status === 0 ? 'disabled-row' : ''
-
-  const findDeptById = (depts: DeptData[], id: string): DeptData | null => {
-    for (const dept of depts) {
-      if (dept.id === id) return dept
-      if (dept.children) {
-        const found = findDeptById(dept.children, id)
-        if (found) return found
-      }
-    }
-    return null
-  }
-
-  const convertDeptListToTreeOptions = (depts: DeptData[]): DeptTreeOption[] =>
-    depts.map(dept => ({
-      id: dept.id,
-      name: dept.name,
-      children: dept.children
-        ? convertDeptListToTreeOptions(dept.children)
-        : undefined,
-    }))
 
   // ==================== 渲染函数 ====================
   const createTagRenderer =
@@ -715,7 +622,7 @@
       h(
         'div',
         { class: { 'disabled-text': row.status === 0 } },
-        row[key] || fallback
+        String(row[key] || fallback)
       )
 
   const createUsernameRenderer = (row: UserData) =>
@@ -764,88 +671,123 @@
     )
   }
 
-  const createActionButtons = (row: UserData) => {
-    const buttons = [
-      {
-        icon: COMPONENT_CONFIG.icons.eye,
-        text: '详情',
-        type: 'info' as const,
-        onClick: () => handleViewUser(row),
-      },
-      {
-        icon: COMPONENT_CONFIG.icons.edit,
-        text: '编辑',
-        onClick: () => handleEditUser(row),
-      },
-      {
-        icon:
-          row.status === 1
-            ? COMPONENT_CONFIG.icons.pause
-            : COMPONENT_CONFIG.icons.play,
-        text: row.status === 1 ? '禁用' : '启用',
-        type: row.status === 1 ? ('warning' as const) : ('success' as const),
-        onClick: () => handleToggleUserStatus(row),
-      },
-      {
-        icon: COMPONENT_CONFIG.icons.key,
-        text: '重置',
-        type: 'warning' as const,
-        onClick: () => handleShowResetPassword(row),
-        disabled: row.status === 0,
-      },
-    ]
-
-    return h(
-      'div',
-      { style: { display: 'flex', gap: '4px', flexWrap: 'nowrap' } },
-      [
-        ...buttons.map(btn =>
-          h(
-            NButton,
-            {
-              size: 'tiny',
-              type: btn.type,
-              disabled: btn.disabled,
-              onClick: btn.onClick,
-            },
-            {
-              icon: () => h(C_Icon, { name: btn.icon, size: 12 }),
-              default: () => btn.text,
-            }
-          )
-        ),
+  // ==================== 表格操作配置 ====================
+  const tableActions = computed(() => ({
+    // 使用完全自定义渲染
+    render: (row: UserData) => {
+      const buttons = [
+        // 详情按钮
         h(
-          NPopconfirm,
+          NButton,
           {
-            onPositiveClick: () => handleDeleteUser(row.id),
+            size: 'small',
+            type: 'info',
+            quaternary: true,
+            onClick: () => handleViewUser(row),
           },
+          () => [
+            h(C_Icon, {
+              name: COMPONENT_CONFIG.icons.eye,
+              size: 14,
+              title: '详情',
+            }),
+          ]
+        ),
+        // 编辑按钮
+        h(
+          NButton,
           {
-            trigger: () =>
-              h(
-                NButton,
-                {
-                  size: 'tiny',
-                  type: 'error',
-                },
-                {
-                  icon: () =>
-                    h(C_Icon, {
-                      name: COMPONENT_CONFIG.icons.delete,
-                      size: 12,
-                    }),
-                  default: () => '删除',
-                }
-              ),
-            default: () => '确认删除该用户吗？',
-          }
+            size: 'small',
+            type: 'warning',
+            quaternary: true,
+            onClick: () => handleEditUser(row),
+          },
+          () => [
+            h(C_Icon, {
+              name: COMPONENT_CONFIG.icons.edit,
+              size: 14,
+              title: '编辑',
+            }),
+          ]
+        ),
+        // 删除按钮
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'error',
+            quaternary: true,
+            onClick: () => handleDeleteUser(row.id),
+          },
+          () => [
+            h(C_Icon, {
+              name: COMPONENT_CONFIG.icons.delete,
+              size: 14,
+              title: '删除',
+            }),
+          ]
         ),
       ]
-    )
-  }
+
+      // 更多操作下拉菜单
+      const moreOptions = [
+        {
+          key: 'toggle',
+          label: row.status === 1 ? '禁用' : '启用',
+          icon: () =>
+            h(C_Icon, {
+              name:
+                row.status === 1
+                  ? COMPONENT_CONFIG.icons.pause
+                  : COMPONENT_CONFIG.icons.play,
+              size: 14,
+            }),
+        },
+        {
+          key: 'reset',
+          label: '重置密码',
+          icon: () => h(C_Icon, { name: COMPONENT_CONFIG.icons.key, size: 14 }),
+          disabled: row.status === 0,
+        },
+      ]
+
+      buttons.push(
+        h(
+          NDropdown,
+          {
+            options: moreOptions,
+            onSelect: (key: string) => {
+              if (key === 'toggle') {
+                handleToggleUserStatus(row)
+              } else if (key === 'reset') {
+                handleShowResetPassword(row)
+              }
+            },
+          },
+          () =>
+            h(
+              NButton,
+              {
+                size: 'small',
+                quaternary: true,
+              },
+              () => [
+                h(C_Icon, {
+                  name: 'mdi:dots-horizontal',
+                  size: 14,
+                  title: '更多操作',
+                }),
+              ]
+            )
+        )
+      )
+
+      return h(NSpace, { size: 2, wrap: false }, () => buttons)
+    },
+  }))
 
   // ==================== 表格列配置 ====================
-  const userColumns: DataTableColumns<UserData> = [
-    { type: 'selection' },
+  const userColumns: TableColumn<UserData>[] = [
     {
       title: '用户类型',
       key: 'userType',
@@ -909,13 +851,6 @@
       key: 'createTime',
       width: 160,
       render: createTextRenderer('createTime'),
-    },
-    {
-      title: '操作',
-      key: 'actions',
-      width: 250,
-      fixed: 'right',
-      render: createActionButtons,
     },
   ]
 
@@ -1333,20 +1268,21 @@
     loadUsers()
   }
 
-  const handleSelectionChange = (keys: string[]) => {
-    selectedUsers.value = keys
-  }
-
-  const handlePageChange = (page: number) => {
+  const handlePaginationChange = async (...args: any[]) => {
+    const [page, pageSize] = args
     pagination.page = page
-    loadUsers()
+    pagination.pageSize = pageSize
+    await loadUsers()
   }
 
-  const handlePageSizeChange = (pageSize: number) => {
-    pagination.pageSize = pageSize
-    pagination.page = 1
-    loadUsers()
-  }
+  // ==================== 监听选中状态 ====================
+  watch(
+    () => tableRef.value?.getManager?.().selection.getSelected?.() || [],
+    newKeys => {
+      selectedUsers.value = newKeys.map((row: UserData) => row.id)
+    },
+    { deep: true }
+  )
 
   const expandAll = () => {
     if (isAllExpanded.value) {

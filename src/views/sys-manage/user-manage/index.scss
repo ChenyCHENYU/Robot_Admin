@@ -87,35 +87,18 @@
     }
   }
 
-  // ==================== 用户表格样式 ====================
-  :deep(.n-data-table) {
-    .n-data-table-td {
-      padding: 12px 8px;
-    }
-
-    .n-data-table-th {
-      background-color: var(--n-color-hover);
-    }
-
+    // ==================== 用户表格样式 ====================
     // 禁用行样式
-    .disabled-row {
+    :deep(.disabled-row) {
       background-color: #fafafa !important;
       opacity: 0.7;
 
-      &:hover {
+    &:hover {
         background-color: #f0f0f0 !important;
       }
 
-      td {
-        background-color: transparent !important;
-      }
-    }
-
-    // 操作列不换行
-    .n-data-table-td:last-child {
-      .n-space {
-        flex-wrap: nowrap !important;
-      }
+        td {
+          background-color: transparent !important;
     }
   }
 

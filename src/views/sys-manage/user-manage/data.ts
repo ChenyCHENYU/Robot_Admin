@@ -1,9 +1,10 @@
 import type { FormRules } from 'naive-ui/es'
+import type { DataRecord } from '@/types/modules/table'
 
 // ==================== 类型定义 ====================
 export type UserType = 'internal' | 'external' | 'partner' | 'guest'
 
-export interface UserData {
+export interface UserData extends DataRecord {
   id: string
   username: string
   nickname: string
@@ -105,6 +106,62 @@ export const UI_CONFIG = {
     defaultPage: 1,
     defaultPageSize: 20,
     pageSizes: [10, 20, 50, 100],
+  },
+} as const
+
+// ==================== 组件配置 ====================
+export const COMPONENT_CONFIG = {
+  icons: {
+    search: 'mdi:magnify',
+    plus: 'mdi:plus',
+    refresh: 'mdi:refresh',
+    tree: 'mdi:file-tree',
+    toggle: 'mdi:toggle-switch',
+    delete: 'mdi:delete',
+    edit: 'mdi:pencil',
+    eye: 'mdi:eye',
+    pause: 'mdi:pause',
+    play: 'mdi:play',
+    key: 'mdi:key',
+    cancel: 'mdi:cancel',
+    role: 'mdi:account-key',
+    check: 'mdi:check-circle',
+    info: 'mdi:information',
+  },
+  statusConfig: {
+    1: { text: '正常', type: 'success' as const, icon: 'mdi:check-circle' },
+    0: { text: '禁用', type: 'error' as const, icon: 'mdi:pause-circle' },
+  },
+  userTypeConfig: {
+    internal: { text: '内部', type: 'info' as const, icon: 'mdi:account' },
+    external: {
+      text: '外部',
+      type: 'warning' as const,
+      icon: 'mdi:account-group',
+    },
+    partner: {
+      text: '伙伴',
+      type: 'success' as const,
+      icon: 'mdi:handshake',
+    },
+    guest: {
+      text: '访客',
+      type: 'default' as const,
+      icon: 'mdi:account-outline',
+    },
+  },
+  defaultAvatar: 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg',
+  batchConfig: {
+    delete: {
+      title: '批量删除',
+      content: '确认删除选中的用户吗？此操作不可恢复！',
+      type: 'error' as const,
+    },
+    toggle: {
+      title: '批量状态操作',
+      content: '确认对选中的用户进行状态切换吗？',
+      type: 'warning' as const,
+    },
   },
 } as const
 
@@ -466,61 +523,72 @@ export const getDeptListApi = async (): Promise<ApiResponse<DeptData[]>> =>
 export const getUserRolesApi = async (): Promise<ApiResponse<RoleData[]>> =>
   createMockApi(MOCK_ROLE_DATA, 300)
 
-// 简化的CRUD操作
-const createUserCRUDApi =
-  (operation: string, delay = 500) =>
-  (...args: any[]) => {
-    console.log(`${operation}:`, ...args)
-    return new Promise<void>(resolve => {
-      setTimeout(() => {
-        // 这里可以添加具体的业务逻辑
-        resolve()
-      }, delay)
-    })
-  }
+// ==================== 工具函数 ====================
+/**
+ * 根据角色ID获取角色名称
+ */
+export const getRoleNameById = (roleId: string): string =>
+  MOCK_ROLE_DATA.find(r => r.id === roleId)?.name || ''
 
-export const addUserApi = createUserCRUDApi('添加用户')
-export const updateUserApi = createUserCRUDApi('更新用户')
-export const deleteUserApi = createUserCRUDApi('删除用户')
-export const resetPasswordApi = createUserCRUDApi('重置密码')
-export const batchDeleteUsersApi = createUserCRUDApi('批量删除用户', 800)
-export const batchToggleUsersStatusApi = createUserCRUDApi(
-  '批量切换用户状态',
-  800
-)
-
-// 状态切换API
-export const toggleUserStatusApi = async (
-  id: string,
-  status: number
-): Promise<void> => {
-  console.log('切换用户状态:', id, status)
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const user = MOCK_USER_DATA.find(u => u.id === id)
-      if (user) {
-        user.status = status
-        user.updateTime = new Date().toLocaleString()
-        console.log('状态已更新:', user.username, '新状态:', status)
-        resolve()
-      } else {
-        reject(new Error('用户不存在'))
+/**
+ * 根据部门ID获取部门名称
+ */
+export const getDeptNameById = (deptId: string): string => {
+  const findDeptName = (depts: DeptData[], id: string): string | null => {
+    for (const dept of depts) {
+      if (dept.id === id) return dept.name
+      if (dept.children) {
+        const found = findDeptName(dept.children, id)
+        if (found) return found
       }
-    }, 300)
-  })
+    }
+    return null
+  }
+  return findDeptName(MOCK_DEPT_DATA, deptId) || '未知部门'
 }
 
-// 工具函数：更新用户列表中的用户状态
-export const updateUserStatus = (
-  userList: UserData[],
-  id: string,
-  status: number
-): boolean => {
-  const userIndex = userList.findIndex(user => user.id === id)
-  if (userIndex !== -1) {
-    userList[userIndex].status = status
-    userList[userIndex].updateTime = new Date().toLocaleString()
-    return true
+/**
+ * 根据部门ID查找部门对象
+ */
+export const findDeptById = (
+  depts: DeptData[],
+  id: string
+): DeptData | null => {
+  for (const dept of depts) {
+    if (dept.id === id) return dept
+    if (dept.children) {
+      const found = findDeptById(dept.children, id)
+      if (found) return found
+    }
   }
-  return false
+  return null
 }
+
+/**
+ * 将部门列表转换为树形选项
+ */
+export const convertDeptListToTreeOptions = (
+  depts: DeptData[]
+): DeptTreeOption[] =>
+  depts.map(dept => ({
+    id: dept.id,
+    name: dept.name,
+    children: dept.children
+      ? convertDeptListToTreeOptions(dept.children)
+      : undefined,
+  }))
+
+/**
+ * 获取用户状态配置
+ */
+export const getUserStatusConfig = (status: number) =>
+  COMPONENT_CONFIG.statusConfig[
+    status as keyof typeof COMPONENT_CONFIG.statusConfig
+  ] || COMPONENT_CONFIG.statusConfig[1]
+
+/**
+ * 获取用户类型配置
+ */
+export const getUserTypeConfig = (userType: UserType) =>
+  COMPONENT_CONFIG.userTypeConfig[userType] ||
+  COMPONENT_CONFIG.userTypeConfig.internal

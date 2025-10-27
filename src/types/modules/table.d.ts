@@ -88,6 +88,7 @@ export interface PaginationConfig {
   pageSizes?: number[]
   simple?: boolean
   size?: 'small' | 'medium' | 'large'
+  remote?: boolean // ✅ 是否为远程分页模式
 }
 
 // ================= Actions 配置类型 =================
