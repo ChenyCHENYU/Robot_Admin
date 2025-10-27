@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 min-h-screen bg-gray-1">
+  <div class="p-6 min-h-screen">
     <NH1>嵌套表格场景示例</NH1>
     <NSpace
       vertical
@@ -179,14 +179,14 @@
     }
 
     if (!expandData?.length) {
-      return h('div', { class: 'text-center py-4 text-gray-4' }, '暂无数据')
+      return h('div', { class: 'text-center py-4 ' }, '暂无数据')
     }
 
     const childColumns = getChildColumns(
       expandData[0] as unknown as ChildDataType
     )
 
-    return h('div', { class: 'p-4 bg-gray-50' }, [
+    return h('div', { class: 'p-4' }, [
       h(
         'div',
         { class: 'mb-2 text-sm text-gray-6' },
