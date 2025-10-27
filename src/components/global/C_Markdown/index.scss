@@ -1,44 +1,155 @@
-  .c-markdown-wrapper {
-    position: relative;
+// C_Markdown 组件样式文件
 
-    :deep(.v-md-editor) {
-      border-radius: 6px;
-      border: 1px solid var(--border-color, #e1e5e9);
+.c-markdown-wrapper {
+  position: relative;
 
-      &:hover {
-        border-color: var(--primary-color, #18a058);
-      }
+  // 基础样式 - 使用 :deep() 穿透
+  :deep(.v-md-editor) {
+    border-radius: 6px;
+    border: 1px solid var(--n-border-color);
+    background-color: var(--n-color);
 
-      &:focus-within {
-        border-color: var(--primary-color, #18a058);
-        box-shadow: 0 0 0 2px var(--primary-color-suppl, rgba(24, 160, 88, 0.2));
-      }
+    &:hover {
+      border-color: var(--n-border-color-hover);
+    }
 
-      // 禁用状态样式
-      &.disabled {
-        background-color: var(--input-color-disabled, #f5f5f5);
+    &:focus-within {
+      border-color: var(--n-border-color-focus);
+      box-shadow: 0 0 0 2px var(--n-box-shadow-focus);
+    }
+
+    // 禁用状态样式
+    &.disabled {
+      background-color: var(--n-color-disabled);
+      cursor: not-allowed;
+
+      .v-md-editor__editor {
         cursor: not-allowed;
+      }
+    }
 
-        .v-md-editor__editor {
-          cursor: not-allowed;
+    // 工具栏
+    .v-md-editor__toolbar {
+      background-color: var(--n-color);
+      border-bottom: 1px solid var(--n-border-color);
+    }
+
+    // 编辑区域
+    .v-md-editor__editor-wrapper {
+      background-color: var(--n-color);
+    }
+
+    .v-md-editor__editor {
+      background-color: var(--n-color);
+      color: var(--n-text-color);
+
+      textarea {
+        color: var(--n-text-color);
+        caret-color: var(--n-text-color);
+      }
+    }
+
+    // 预览区域
+    .v-md-editor__preview-wrapper {
+      background-color: var(--n-color);
+    }
+
+    .v-md-editor__preview {
+      background-color: var(--n-color);
+      color: var(--n-text-color);
+    }
+
+    // 目录导航
+    .v-md-editor__toc-nav-wrapper {
+      background-color: var(--n-color);
+      border-left: 1px solid var(--n-border-color);
+    }
+  }
+
+  // 暗色主题适配
+  &.is-dark {
+    :deep(.v-md-editor) {
+      // 工具栏图标颜色
+      .v-md-editor__toolbar-item {
+        color: #ffffff;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        &.is-active {
+          background-color: rgba(255, 255, 255, 0.12);
+        }
+
+        // 确保图标清晰可见
+        svg {
+          fill: #ffffff;
+          opacity: 0.9;
+        }
+
+        &:hover svg {
+          opacity: 1;
+        }
+      }
+
+      // 右侧工具栏按钮（预览、目录、全屏等）
+      .v-md-editor__toolbar-right {
+        .v-md-editor__toolbar-item {
+          background-color: transparent;
+
+          svg {
+            fill: #ffffff;
+          }
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+          }
+        }
+      }
+
+      // 分隔线
+      .v-md-editor__toolbar-divider {
+        background-color: var(--n-border-color);
+      }
+
+      // 滚动条
+      .v-md-editor__editor,
+      .v-md-editor__preview {
+        &::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: 4px;
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+          }
         }
       }
     }
+  }
 
-    // 字数统计样式
-    .word-count {
-      position: absolute;
-      bottom: 8px;
-      right: 12px;
-      font-size: 12px;
-      color: var(--text-color-3, #a0a0a0);
-      background: var(--card-color, #fff);
-      padding: 2px 6px;
-      border-radius: 4px;
-      z-index: 10;
+  // 字数统计样式
+  .word-count {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 12px;
+    color: var(--n-text-color-3);
+    background: var(--n-color);
+    padding: 2px 6px;
+    border-radius: 4px;
+    z-index: 10;
 
-      &.exceed {
-        color: var(--error-color, #d03050);
-      }
+    &.exceed {
+      color: var(--n-error-color);
     }
   }
+}

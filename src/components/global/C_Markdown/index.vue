@@ -2,14 +2,17 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-20 16:15:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-20 17:19:54
+ * @LastEditTime: 2025-10-27 16:18:53
  * @FilePath: \Robot_Admin\src\components\global\C_Markdown\index.vue
  * @Description: Markdown 编辑器封装组件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
-  <div class="c-markdown-wrapper">
+  <div
+    class="c-markdown-wrapper"
+    :class="{ 'is-dark': isDark }"
+  >
     <v-md-editor
       :model-value="modelValue"
       :height="height"
@@ -35,10 +38,12 @@
 </template>
 
 <script setup lang="ts">
+  import { useThemeVars } from 'naive-ui/es'
+
   /**
    * 类型定义
    */
-  type InsertImageFunction = (config: {
+  export type InsertImageFunction = (config: {
     url: string
     desc?: string
     width?: string | number
@@ -113,6 +118,18 @@
   }
 
   const emit = defineEmits<Emits>()
+
+  // 获取 Naive UI 主题变量
+  const themeVars = useThemeVars()
+
+  // 检测是否为暗色主题
+  const isDark = computed(() => {
+    return (
+      themeVars.value.baseColor === '#000' ||
+      themeVars.value.bodyColor?.includes('18') || // 检测暗色背景
+      document.documentElement.classList.contains('dark')
+    )
+  })
 
   /**
    * 计算属性
