@@ -113,6 +113,27 @@
       })
     }
   }
+
+  /**
+   * * @description: 滚动到指定标签（智能、零开销）
+   * ? @param {string} path - 标签路径
+   * ! @return {void}
+   */
+  const scrollToTag = (path: string) => {
+    nextTick(() => {
+      const targetTag = tagsContainer.value?.querySelector(
+        `[data-path="${path}"]`
+      ) as HTMLElement
+      if (targetTag) {
+        targetTag.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center',
+        })
+      }
+    })
+  }
+
   /**
    * * @description: 导航到指定的标签
    * ? @param {Tag} tag - 要导航到的标签
@@ -122,24 +143,7 @@
     if (tag.path !== route.path) {
       router.push(tag.path)
     }
-
-    // 无论是否切换路由，都要滚动到对应标签
-    nextTick(() => {
-      const container = tagsContainer.value
-      const targetTag = container?.querySelector(`[data-path="${tag.path}"]`)
-
-      if (targetTag && container) {
-        const containerRect = container.getBoundingClientRect()
-        const tagRect = targetTag.getBoundingClientRect()
-        const scrollLeft =
-          targetTag.offsetLeft - containerRect.width / 2 + tagRect.width / 2
-
-        container.scrollTo({
-          left: Math.max(0, scrollLeft),
-          behavior: 'smooth',
-        })
-      }
-    })
+    scrollToTag(tag.path)
   }
 
   /**
@@ -281,6 +285,9 @@
 
       // 更新选中状态
       appStore.setActiveTag(newPath)
+
+      // 自动滚动到当前标签
+      scrollToTag(newPath)
     },
     { immediate: true }
   )
