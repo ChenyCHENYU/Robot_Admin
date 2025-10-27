@@ -25,19 +25,20 @@ export type GanttPreset =
   | 'official'
 
 // ==================== 通用主题配置 ====================
+// 移除硬编码颜色，让背景透明以跟随系统主题
 export const commonTheme = {
   headerStyle: {
-    borderColor: '#e1e4e8',
+    borderColor: 'rgba(128, 128, 128, 0.2)',
     borderLineWidth: 1,
     fontSize: 14,
     fontWeight: 'bold',
-    bgColor: '#EEF1F5',
+    // bgColor 留空或透明，自动跟随主题
   },
   bodyStyle: {
-    borderColor: '#e1e4e8',
+    borderColor: 'rgba(128, 128, 128, 0.2)',
     borderLineWidth: [1, 0, 1, 0],
     fontSize: 13,
-    bgColor: '#FFF',
+    // bgColor 留空或透明，自动跟随主题
   },
 }
 
@@ -68,9 +69,9 @@ export const presetConfigs = {
       verticalSplitLine: { lineColor: '#e1e4e8', lineWidth: 2 },
     },
     grid: {
-      weekendBackgroundColor: '#f8f8f8',
-      verticalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
-      horizontalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
+      // 移除 weekendBackgroundColor，让它透明跟随主题
+      verticalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
+      horizontalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
     },
     taskBar: {
       startDateField: 'start',
@@ -95,10 +96,10 @@ export const presetConfigs = {
       },
     },
     timelineHeader: {
-      backgroundColor: '#EEF1F5',
+      // 移除 backgroundColor，让它透明跟随主题
       colWidth: 60,
-      horizontalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
-      verticalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
+      horizontalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
+      verticalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
       scales: [
         {
           unit: 'week',
@@ -162,9 +163,8 @@ export const presetConfigs = {
       verticalSplitLine: { lineColor: '#e1e4e8', lineWidth: 3 },
     },
     grid: {
-      weekendBackgroundColor: '#f8f8f8',
-      verticalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
-      horizontalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
+      verticalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
+      horizontalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
     },
     taskBar: {
       startDateField: 'start',
@@ -188,10 +188,9 @@ export const presetConfigs = {
       },
     },
     timelineHeader: {
-      backgroundColor: '#EEF1F5',
       colWidth: 60,
-      horizontalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
-      verticalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
+      horizontalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
+      verticalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
       scales: [
         {
           unit: 'week',
@@ -211,8 +210,8 @@ export const presetConfigs = {
     rowSeriesNumber: {
       title: '序号',
       dragOrder: true,
-      headerStyle: { bgColor: '#EEF1F5', borderColor: '#e1e4e8' },
-      style: { borderColor: '#e1e4e8' },
+      headerStyle: { borderColor: 'rgba(128, 128, 128, 0.2)' },
+      style: { borderColor: 'rgba(128, 128, 128, 0.2)' },
     },
     scrollStyle: {
       scrollRailColor: 'rgba(246,246,246,0.5)',
@@ -235,21 +234,21 @@ export const presetConfigs = {
       tableWidth: 400,
       minTableWidth: 300,
       theme: {
-        headerStyle: { ...commonTheme.headerStyle, bgColor: '#f0f2f5' },
+        headerStyle: { ...commonTheme.headerStyle },
         bodyStyle: commonTheme.bodyStyle,
       },
     },
     frame: {
       outerFrameStyle: {
         borderLineWidth: 1,
-        borderColor: '#d9d9d9',
+        borderColor: 'rgba(128, 128, 128, 0.3)',
         cornerRadius: 4,
       },
       verticalSplitLineMoveable: true,
     },
     grid: {
-      verticalLine: { lineWidth: 1, lineColor: '#f0f0f0' },
-      horizontalLine: { lineWidth: 1, lineColor: '#f0f0f0' },
+      verticalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
+      horizontalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
     },
     taskBar: {
       startDateField: 'start',
@@ -268,7 +267,6 @@ export const presetConfigs = {
       },
     },
     timelineHeader: {
-      backgroundColor: '#f0f2f5',
       colWidth: 60,
       scales: [
         {
@@ -310,7 +308,6 @@ export const presetConfigs = {
         headerStyle: {
           ...commonTheme.headerStyle,
           borderColor: '#ffa940',
-          bgColor: '#fff7e6',
         },
         bodyStyle: { ...commonTheme.bodyStyle, borderColor: '#ffa940' },
       },
@@ -324,8 +321,8 @@ export const presetConfigs = {
       verticalSplitLineMoveable: true,
     },
     grid: {
-      verticalLine: { lineWidth: 1, lineColor: '#ffe7ba' },
-      horizontalLine: { lineWidth: 1, lineColor: '#ffe7ba' },
+      verticalLine: { lineWidth: 1, lineColor: 'rgba(255, 168, 64, 0.3)' },
+      horizontalLine: { lineWidth: 1, lineColor: 'rgba(255, 168, 64, 0.3)' },
     },
     taskBar: {
       startDateField: 'start',
@@ -341,7 +338,6 @@ export const presetConfigs = {
       },
     },
     timelineHeader: {
-      backgroundColor: '#fff7e6',
       colWidth: 80,
       scales: [
         {
@@ -438,9 +434,8 @@ export const presetConfigs = {
       horizontalSplitLine: { lineColor: '#e1e4e8', lineWidth: 3 },
     },
     grid: {
-      weekendBackgroundColor: '#f8f8f8',
-      verticalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
-      horizontalLine: { lineWidth: 1, lineColor: '#e1e4e8' },
+      verticalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
+      horizontalLine: { lineWidth: 1, lineColor: 'rgba(128, 128, 128, 0.2)' },
     },
     taskBar: {
       startDateField: 'start',
@@ -519,8 +514,8 @@ export const presetConfigs = {
     rowSeriesNumber: {
       title: '行号',
       dragOrder: true,
-      headerStyle: { bgColor: '#EEF1F5', borderColor: '#e1e4e8' },
-      style: { borderColor: '#e1e4e8' },
+      headerStyle: { borderColor: 'rgba(128, 128, 128, 0.2)' },
+      style: { borderColor: 'rgba(128, 128, 128, 0.2)' },
     },
     scrollStyle: {
       scrollRailColor: 'rgba(246,246,246,0.5)',

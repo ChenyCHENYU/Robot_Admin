@@ -40,6 +40,7 @@
     type GanttOptions,
     type GanttPreset,
   } from './data'
+  import { useThemeStore } from '@/stores/theme'
 
   interface Props {
     data?: GanttTask[]
@@ -76,24 +77,58 @@
     typeof props.height === 'number' ? `${props.height}px` : props.height
   )
 
-  // 深度合并配置
-  const deepMerge = (target: any, source: any): any => {
-    const result = { ...target }
-    for (const key in source) {
-      if (
-        source[key] &&
-        typeof source[key] === 'object' &&
-        !Array.isArray(source[key])
-      ) {
-        result[key] = deepMerge(target[key] || {}, source[key])
-      } else {
-        result[key] = source[key]
-      }
-    }
+  /**
+   * 深度合并对象 - 支持循环引用检测
+   * @param target 目标对象
+   * @param source 源对象
+   * @param seen WeakMap用于检测循环引用
+   */
+  const deepMerge = (target: any, source: any, seen = new WeakMap()): any => {
+    if (!isObject(target)) return source
+    if (!isObject(source)) return target
+    if (seen.has(source)) return seen.get(source)
+
+    const result = createMergeResult(target, source, seen)
     return result
   }
 
-  // 处理数据格式
+  /** 判断是否为对象 */
+  const isObject = (value: any): boolean => {
+    return value !== null && typeof value === 'object'
+  }
+
+  /** 判断是否为特殊对象(Date/RegExp等) */
+  const isSpecialObject = (value: any): boolean => {
+    return value instanceof Date || value instanceof RegExp
+  }
+
+  /** 创建合并结果 */
+  const createMergeResult = (
+    target: any,
+    source: any,
+    seen: WeakMap<any, any>
+  ): any => {
+    const result = Array.isArray(target) ? [...target] : { ...target }
+    seen.set(source, result)
+
+    for (const key in source) {
+      if (!source.hasOwnProperty(key)) continue
+
+      const sourceValue = source[key]
+      const shouldDeepMerge =
+        isObject(sourceValue) &&
+        !Array.isArray(sourceValue) &&
+        !isSpecialObject(sourceValue)
+
+      result[key] = shouldDeepMerge
+        ? deepMerge(target[key] || {}, sourceValue, seen)
+        : sourceValue
+    }
+
+    return result
+  }
+
+  /** 处理任务数据格式 */
   const processData = (data: GanttTask[]): GanttTask[] => {
     return data.map(item => ({
       ...item,
@@ -102,36 +137,122 @@
     }))
   }
 
-  // 初始化甘特图
+  /** 获取主题配置 */
+  const getThemeConfig = (isDark: boolean) => ({
+    underlayBackgroundColor: isDark ? '#1e1e1e' : '#ffffff',
+    timelineHeaderBg: isDark ? '#2d2d2d' : '#EEF1F5',
+    gridBg: isDark ? '#1e1e1e' : '#ffffff',
+    lineColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(128, 128, 128, 0.2)',
+    textColor: isDark ? '#ffffff' : '#000000',
+  })
+
+  /** 应用主题到时间轴配置 */
+  const applyThemeToTimelineHeader = (
+    timelineHeader: any,
+    themeColors: any
+  ) => ({
+    ...timelineHeader,
+    backgroundColor: themeColors.timelineHeaderBg,
+    horizontalLine: {
+      ...timelineHeader?.horizontalLine,
+      lineColor: themeColors.lineColor,
+    },
+    verticalLine: {
+      ...timelineHeader?.verticalLine,
+      lineColor: themeColors.lineColor,
+    },
+    scales: timelineHeader?.scales?.map((scale: any) => ({
+      ...scale,
+      style: {
+        ...scale.style,
+        color: themeColors.textColor,
+      },
+    })),
+  })
+
+  /** 应用主题到网格配置 */
+  const applyThemeToGrid = (grid: any, themeColors: any) => ({
+    ...grid,
+    backgroundColor: themeColors.gridBg,
+    horizontalLine: {
+      ...grid?.horizontalLine,
+      lineColor: themeColors.lineColor,
+    },
+    verticalLine: {
+      ...grid?.verticalLine,
+      lineColor: themeColors.lineColor,
+    },
+  })
+
+  /** 构建甘特图配置 */
+  const buildGanttOptions = (
+    finalConfig: any,
+    processedData: GanttTask[],
+    tableTheme: any,
+    themeColors: any
+  ) => ({
+    ...finalConfig,
+    records: processedData,
+    underlayBackgroundColor: themeColors.underlayBackgroundColor,
+    taskListTable: {
+      ...finalConfig.taskListTable,
+      theme: tableTheme,
+    },
+    timelineHeader: applyThemeToTimelineHeader(
+      finalConfig.timelineHeader,
+      themeColors
+    ),
+    grid: applyThemeToGrid(finalConfig.grid, themeColors),
+  })
+
+  /** 绑定甘特图事件 */
+  const bindGanttEvents = (instance: any) => {
+    instance.on('click_cell', (args: any) => {
+      const { record, event } = args || {}
+      if (record) emit('taskClick', record, event)
+    })
+
+    instance.on('change_data', (args: any) => {
+      const { record, changes } = args || {}
+      if (record && changes) emit('taskChange', record, changes)
+    })
+  }
+
+  /** 初始化甘特图 */
   const initGantt = async () => {
     if (!ganttContainerRef.value) return
 
     try {
       const { Gantt } = await import('@visactor/vtable-gantt')
+      const { themes } = await import('@visactor/vtable')
+      const themeStore = useThemeStore()
+      const { isDark } = themeStore
 
+      // 准备配置
       const presetConfig = presetConfigs[props.preset] || presetConfigs.basic
       const finalConfig = deepMerge(presetConfig, props.options)
       const processedData = processData(props.data || [])
 
+      // 释放旧实例
       if (ganttInstance.value) {
         ganttInstance.value.release()
       }
 
-      ganttInstance.value = new Gantt(ganttContainerRef.value, {
-        ...finalConfig,
-        records: processedData,
-      })
+      // 应用主题
+      const tableTheme = isDark ? themes.DARK : themes.DEFAULT
+      const themeColors = getThemeConfig(isDark)
+      const ganttOptions = buildGanttOptions(
+        finalConfig,
+        processedData,
+        tableTheme,
+        themeColors
+      )
+
+      // 创建实例
+      ganttInstance.value = new Gantt(ganttContainerRef.value, ganttOptions)
 
       // 绑定事件
-      ganttInstance.value.on('click_cell', (args: any) => {
-        const { record, event } = args || {}
-        if (record) emit('taskClick', record, event)
-      })
-
-      ganttInstance.value.on('change_data', (args: any) => {
-        const { record, changes } = args || {}
-        if (record && changes) emit('taskChange', record, changes)
-      })
+      bindGanttEvents(ganttInstance.value)
 
       emit('ganttCreated', ganttInstance.value)
     } catch (error) {
@@ -237,6 +358,15 @@
     document.removeEventListener('fullscreenchange', handleFullscreenChange)
     destroyGantt()
   })
+
+  // 监听主题变化
+  const themeStore = useThemeStore()
+  watch(
+    () => themeStore.isDark,
+    () => {
+      nextTick(() => initGantt())
+    }
+  )
 
   // 暴露方法
   defineExpose({
