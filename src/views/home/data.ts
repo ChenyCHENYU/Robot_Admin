@@ -45,7 +45,7 @@ export const coreModules = [
   {
     name: '权限管理',
     icon: '🔐',
-    desc: 'RBAC权限体系，支持角色、菜单、按钮级权限控制',
+    desc: '权限体系，角色、菜单、按钮级权限控制',
     tech: 'Vue Router • Pinia',
   },
   {
@@ -63,7 +63,7 @@ export const coreModules = [
   {
     name: '工作流',
     icon: '🔄',
-    desc: '可视化流程设计，支持审批、通知等业务流程',
+    desc: '可视化流程设计，审批、通知等业务流程',
     tech: 'Driver.js • Motion',
   },
   {
@@ -75,7 +75,7 @@ export const coreModules = [
   {
     name: '富文本编辑',
     icon: '✏️',
-    desc: '集成多种编辑器，支持Markdown和富文本',
+    desc: '集成多种编辑器，Markdown和富文本',
     tech: 'WangEditor • V-md-editor',
   },
 ]

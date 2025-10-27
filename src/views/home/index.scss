@@ -43,7 +43,7 @@ $shadows: (
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  
+
   .dark-theme & {
     background: rgba(255, 255, 255, $opacity * 0.5);
     border: 1px solid rgba(255, 255, 255, $opacity * 0.8);
@@ -80,12 +80,12 @@ $shadows: (
   @include hover-lift;
   position: relative;
   overflow: hidden;
-  
+
   .dark-theme & {
     box-shadow:
       map.get($shadows, dark, base),
       0 2px 4px -2px rgba(0, 0, 0, 0.2) !important;
-    
+
     &:hover {
       box-shadow:
         map.get($shadows, dark, hover),
@@ -97,7 +97,7 @@ $shadows: (
     box-shadow:
       map.get($shadows, light, base),
       0 2px 4px -2px rgb(0 0 0 / 0.06) !important;
-    
+
     &:hover {
       box-shadow:
         map.get($shadows, light, hover),
@@ -248,7 +248,7 @@ $shadows: (
       &:hover {
         transform: translateY(-6px) scale(1.05);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        
+
         &::before {
           opacity: 1;
         }
@@ -277,14 +277,14 @@ $shadows: (
 
   .project-actions {
     margin-top: 2rem;
-    
+
     :deep(.n-button) {
       border-radius: 12px !important;
       font-weight: 600;
       position: relative;
       overflow: hidden;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      
+
       &::before {
         content: '';
         position: absolute;
@@ -300,20 +300,20 @@ $shadows: (
         );
         transition: left 0.5s;
       }
-      
+
       &:hover {
         transform: translateY(-2px);
-          
+
         &::before {
           left: 100%;
         }
       }
-      
+
       &:active {
         transform: translateY(0);
       }
     }
-    
+
     .btn-icon {
       font-size: 1.125rem;
       margin-right: 6px;
@@ -433,7 +433,7 @@ $shadows: (
         background: var(--n-modal-color);
         transition: map.get($transitions, hover);
 
-        
+
         &:hover {
           transform: translateY(-3px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -496,11 +496,11 @@ $shadows: (
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
-    
+
     @media (max-width: 968px) {
       grid-template-columns: repeat(2, 1fr);
     }
-    
+
     @media (max-width: 640px) {
       grid-template-columns: 1fr;
     }
@@ -522,11 +522,10 @@ $shadows: (
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding: 1.5rem 1rem;
       height: 100%;
 
       .module-icon {
-        font-size: 2.5rem;
+        font-size: 2rem;
         margin-bottom: 1rem;
         display: block;
         transition: map.get($transitions, hover);
@@ -553,10 +552,10 @@ $shadows: (
         margin-top: auto;
       }
     }
-    
+
     &:hover {
       transform: translateY(-4px);
-      
+
       .module-icon {
         transform: scale(1.15) rotate(5deg);
       }
@@ -655,7 +654,7 @@ $shadows: (
         flex-wrap: wrap;
         gap: 0.5rem;
         justify-content: center;
-        
+
         :deep(.n-tag) {
           font-weight: 500;
           font-size: 0.75rem;
@@ -769,7 +768,7 @@ $shadows: (
       &:hover {
         transform: translateY(-4px) scale(1.05);
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        
+
         .demo-icon {
           transform: scale(1.1);
         }
@@ -798,21 +797,21 @@ $shadows: (
       padding: 0.75rem 0;
       border-bottom: 1px solid var(--n-border-color);
       transition: map.get($transitions, hover);
-      
+
       &:hover {
         background: var(--n-modal-color);
         border-radius: map.get($radii, md);
-        
+
         .feature-icon {
           transform: scale(1.1);
         }
       }
-      
+
       &:last-child {
         border-bottom: none;
       }
     }
-    
+
     .feature-icon {
       font-size: 1.5rem;
       width: 40px;
@@ -825,13 +824,13 @@ $shadows: (
       transition: map.get($transitions, hover);
       position: relative;
     }
-    
+
     .n-thing {
       .n-thing-main__title {
         color: var(--n-text-color);
         font-weight: 600;
       }
-      
+
       .n-thing-main__description {
         color: var(--n-text-color-3);
       }
@@ -851,7 +850,7 @@ $shadows: (
       background: var(--n-modal-color);
       border-radius: map.get($radii, lg);
       transition: map.get($transitions, hover);
-      
+
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
@@ -868,11 +867,11 @@ $shadows: (
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
-        
+
         :deep(.n-tag) {
           font-weight: 500;
           transition: map.get($transitions, hover);
-          
+
           &:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -899,7 +898,7 @@ $shadows: (
         transition: map.get($transitions, hover);
         position: relative;
         overflow: hidden;
-        
+
         &:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -954,7 +953,7 @@ $shadows: (
             text-decoration: none;
             font-weight: 500;
             transition: map.get($transitions, hover);
-            
+
             &:hover {
               text-decoration: underline;
               color: var(--n-primary-color-hover);
@@ -997,7 +996,7 @@ $shadows: (
       flex-shrink: 0;
       box-shadow: 0 4px 12px rgba(var(--n-primary-color-rgb), 0.3);
       position: relative;
-      
+
       &::after {
         content: '';
         position: absolute;
@@ -1075,20 +1074,20 @@ $shadows: (
           background: transparent !important;
           padding: 0 !important;
         }
-        
+
         // 语法高亮优化
         .hljs-keyword {
           color: #c792ea !important;
         }
-        
+
         .hljs-string {
           color: #c3e88d !important;
         }
-        
+
         .hljs-comment {
           color: #546e7a !important;
         }
-        
+
         .hljs-function {
           color: #82aaff !important;
         }
