@@ -100,11 +100,9 @@
         @update:current="demo2.current = $event"
       />
 
-      <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+      <div class="mt-6 p-4 rounded-lg">
         <h4 class="font-500 mb-2">{{ registerSteps[demo2.current].title }}</h4>
-        <p class="text-gray-600 text-14px">{{
-          registerSteps[demo2.current].detail
-        }}</p>
+        <p class="text-14px">{{ registerSteps[demo2.current].detail }}</p>
 
         <NSpace class="mt-4">
           <NButton
