@@ -1,37 +1,53 @@
 import { Graph } from '@antv/x6'
 import type { Ref } from 'vue'
+import { useThemeStore } from '@/stores/theme'
+
+/**
+ * 获取主题相关的颜色配置
+ */
+function getThemeColors(isDark: boolean) {
+  return {
+    background: isDark ? '#18181c' : '#f5f5f5',
+    gridPrimary: isDark ? 'rgba(255, 255, 255, 0.08)' : '#eee',
+    gridSecondary: isDark ? 'rgba(255, 255, 255, 0.04)' : '#ddd',
+  }
+}
 
 /**
  * 默认的图表配置选项
  */
-const DEFAULT_OPTIONS = {
-  background: { color: '#f5f5f5' },
-  grid: {
-    visible: true,
-    type: 'doubleMesh',
-    args: [
-      { color: '#eee', thickness: 1 },
-      { color: '#ddd', thickness: 1, factor: 4 },
-    ],
-  },
-  mousewheel: {
-    enabled: true,
-    zoomAtMousePosition: true,
-    modifiers: 'ctrl',
-    minScale: 0.5,
-    maxScale: 2,
-  },
-  selecting: {
-    enabled: true,
-    rubberband: true,
-    movable: true,
-    showNodeSelectionBox: true,
-  },
-  resizing: true,
-  rotating: true,
-  snapline: true,
-  keyboard: true,
-  clipboard: true,
+function getDefaultOptions(isDark: boolean = false) {
+  const colors = getThemeColors(isDark)
+
+  return {
+    background: { color: colors.background },
+    grid: {
+      visible: true,
+      type: 'doubleMesh',
+      args: [
+        { color: colors.gridPrimary, thickness: 1 },
+        { color: colors.gridSecondary, thickness: 1, factor: 4 },
+      ],
+    },
+    mousewheel: {
+      enabled: true,
+      zoomAtMousePosition: true,
+      modifiers: 'ctrl',
+      minScale: 0.5,
+      maxScale: 2,
+    },
+    selecting: {
+      enabled: true,
+      rubberband: true,
+      movable: true,
+      showNodeSelectionBox: true,
+    },
+    resizing: true,
+    rotating: true,
+    snapline: true,
+    keyboard: true,
+    clipboard: true,
+  }
 }
 
 /**
@@ -52,6 +68,7 @@ export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
   // 直接使用 any 类型，在使用时再进行类型断言
   const graph: Ref<any> = ref(null)
   const loading = ref(false)
+  const themeStore = useThemeStore()
 
   /**
    * 初始化图表实例
@@ -81,11 +98,14 @@ export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
         return
       }
 
+      const { isDark } = themeStore
+      const defaultOptions = getDefaultOptions(isDark)
+
       const finalOptions = {
         container: containerRef.value,
         width,
         height,
-        ...DEFAULT_OPTIONS,
+        ...defaultOptions,
         ...options,
       }
 
@@ -100,6 +120,35 @@ export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
       loading.value = false
     }
   }
+
+  /**
+   * 更新主题
+   */
+  function updateTheme(isDark: boolean) {
+    if (!graph.value) return
+
+    const colors = getThemeColors(isDark)
+
+    // 更新背景色
+    graph.value.drawBackground({ color: colors.background })
+
+    // 更新网格颜色
+    graph.value.drawGrid({
+      type: 'doubleMesh',
+      args: [
+        { color: colors.gridPrimary, thickness: 1 },
+        { color: colors.gridSecondary, thickness: 1, factor: 4 },
+      ],
+    })
+  }
+
+  // 监听主题变化
+  watch(
+    () => themeStore.isDark,
+    isDark => {
+      updateTheme(isDark)
+    }
+  )
 
   /**
    * 销毁当前图表实例
@@ -154,5 +203,6 @@ export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
     zoomToFit,
     zoom,
     resizeGraph,
+    updateTheme,
   }
 }

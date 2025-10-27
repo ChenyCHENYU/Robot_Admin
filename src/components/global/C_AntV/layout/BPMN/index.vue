@@ -152,6 +152,7 @@
 <script setup lang="ts">
   import { ref, watch, onMounted, nextTick } from 'vue'
   import { Graph, type Node } from '@antv/x6'
+  import { useThemeStore } from '@/stores/theme'
   import {
     exportOptions,
     elementTypes,
@@ -160,7 +161,7 @@
     createPortAttrs,
     nodeConfigs,
     edgeConfig,
-    graphConfig,
+    getGraphConfig,
     addElementConfigs,
     sampleData,
   } from './data'
@@ -205,6 +206,7 @@
   const showEditor = ref(false)
   const editingElement = ref<BPMNElement>()
   const graph = ref<Graph>()
+  const themeStore = useThemeStore()
 
   const getElementTypeName = (shape: string) =>
     elementTypeNames[shape as keyof typeof elementTypeNames] || shape
@@ -298,6 +300,9 @@
 
     const containerWidth = containerRef.value.clientWidth || 800
     const containerHeight = containerRef.value.clientHeight || 500
+
+    // 获取当前主题配置
+    const graphConfig = getGraphConfig(themeStore.isDark)
 
     // 使用类型断言解决类型问题
     graph.value = new Graph({
@@ -538,6 +543,20 @@
     registerNodes()
     await initGraph()
   })
+
+  // 监听主题切换
+  watch(
+    () => themeStore.isDark,
+    isDark => {
+      if (!graph.value) return
+
+      const config = getGraphConfig(isDark)
+
+      // 动态更新背景和网格
+      graph.value.drawBackground(config.background)
+      graph.value.drawGrid(config.grid)
+    }
+  )
 
   defineExpose({
     getGraph: () => graph.value,

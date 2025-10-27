@@ -145,54 +145,70 @@ export const edgeConfig = {
   },
 }
 
-// 图形配置
-export const graphConfig = {
-  background: { color: '#ffffff' },
-  grid: {
-    visible: true,
-    type: 'doubleMesh',
-    args: [
-      { color: '#eee', thickness: 1 },
-      { color: '#ddd', thickness: 1, factor: 4 },
-    ],
-  },
-  mousewheel: {
-    enabled: true,
-    zoomAtMousePosition: true,
-    modifiers: 'ctrl',
-    minScale: 0.5,
-    maxScale: 3,
-  },
-  connecting: {
-    router: 'manhattan',
-    connector: { name: 'rounded', args: { radius: 8 } },
-    allowBlank: false,
-    allowLoop: false,
-    allowNode: false,
-    snap: true,
-    allowEdge: false,
-  },
-  highlighting: {
-    magnetAvailable: {
-      name: 'stroke',
-      args: { attrs: { fill: '#31d0c6', stroke: '#31d0c6', opacity: 1 } },
+// 图形配置 - 支持主题切换
+/**
+ * 获取图形配置（支持主题切换）
+ * @param isDark 是否为暗色主题
+ * @returns Graph配置对象
+ */
+export function getGraphConfig(isDark = false) {
+  const themeColors = {
+    background: isDark ? '#18181c' : '#ffffff',
+    gridPrimary: isDark ? 'rgba(255, 255, 255, 0.08)' : '#eee',
+    gridSecondary: isDark ? 'rgba(255, 255, 255, 0.04)' : '#ddd',
+  }
+
+  return {
+    background: { color: themeColors.background },
+    grid: {
+      visible: true,
+      type: 'doubleMesh',
+      args: [
+        { color: themeColors.gridPrimary, thickness: 1 },
+        { color: themeColors.gridSecondary, thickness: 1, factor: 4 },
+      ],
     },
-    magnetAdsorbed: {
-      name: 'stroke',
-      args: { attrs: { fill: '#5F95FF', stroke: '#5F95FF', opacity: 1 } },
+    mousewheel: {
+      enabled: true,
+      zoomAtMousePosition: true,
+      modifiers: 'ctrl',
+      minScale: 0.5,
+      maxScale: 3,
     },
-  },
-  selecting: {
-    enabled: true,
-    rubberband: true,
-    showNodeSelectionBox: true,
-  },
-  resizing: true,
-  rotating: false,
-  snapline: true,
-  keyboard: true,
-  clipboard: true,
+    connecting: {
+      router: 'manhattan',
+      connector: { name: 'rounded', args: { radius: 8 } },
+      allowBlank: false,
+      allowLoop: false,
+      allowNode: false,
+      snap: true,
+      allowEdge: false,
+    },
+    highlighting: {
+      magnetAvailable: {
+        name: 'stroke',
+        args: { attrs: { fill: '#31d0c6', stroke: '#31d0c6', opacity: 1 } },
+      },
+      magnetAdsorbed: {
+        name: 'stroke',
+        args: { attrs: { fill: '#5F95FF', stroke: '#5F95FF', opacity: 1 } },
+      },
+    },
+    selecting: {
+      enabled: true,
+      rubberband: true,
+      showNodeSelectionBox: true,
+    },
+    resizing: true,
+    rotating: false,
+    snapline: true,
+    keyboard: true,
+    clipboard: true,
+  }
 }
+
+// 保持向后兼容
+export const graphConfig = getGraphConfig()
 
 // 添加元素配置
 export const addElementConfigs = {

@@ -7,8 +7,8 @@
 
   .toolbar {
     padding: 12px;
-    background: #fafafa;
-    border-bottom: 1px solid #d9d9d9;
+    background: var(--n-color-embedded);
+      border-bottom: 1px solid var(--n-border-color);
     flex-shrink: 0;
   }
 
@@ -17,7 +17,7 @@
     position: relative;
     min-height: 300px;
     width: 100%;
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--n-border-color);
     overflow: hidden;
 
     :deep(.x6-graph) {
