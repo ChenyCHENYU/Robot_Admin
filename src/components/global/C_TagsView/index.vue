@@ -148,6 +148,7 @@
 
   /**
    * * @description: 关闭指定的标签
+   * ? @param {Tag} tag - 要关闭的标签
    * ? @param {number} index - 要关闭的标签索引
    * ! @return {void}
    */
@@ -155,10 +156,32 @@
     if (isAffix(tag)) return
 
     const wasActive = isActive(tag)
+    const tagsBeforeRemove = appStore.tagsViewList.length
     const removedPath = appStore.removeTag(index)
 
+    // 如果关闭的是当前活动标签，需要跳转到其他标签
     if (wasActive && removedPath) {
-      router.push('/')
+      const remainingTags = appStore.tagsViewList
+
+      // 判断关闭的是否是最后一个标签
+      const wasLastTag = index === tagsBeforeRemove - 1
+
+      if (wasLastTag) {
+        // 如果是最后一个，跳转到左边的标签
+        if (remainingTags[index - 1]) {
+          router.push(remainingTags[index - 1].path)
+        } else {
+          router.push('/home')
+        }
+      } else {
+        // 如果不是最后一个，跳转到列表的最后一个标签
+        const lastTag = remainingTags[remainingTags.length - 1]
+        if (lastTag) {
+          router.push(lastTag.path)
+        } else {
+          router.push('/home')
+        }
+      }
     }
   }
 
