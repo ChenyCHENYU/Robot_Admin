@@ -96,6 +96,13 @@
           :loading="loading"
           :row-key="rowKey"
           :actions="tableActions"
+          :pagination="{
+            enabled: true,
+            page: pagination.page,
+            pageSize: pagination.pageSize,
+            total: pagination.itemCount,
+            remote: true,
+          }"
           edit-mode="modal"
           modal-title="编辑角色"
           :modal-width="800"
@@ -104,24 +111,8 @@
           bordered
           single-line
           @save="handleTableSave"
+          @pagination-change="handlePaginationChange"
         />
-
-        <!-- 分页器 -->
-        <NSpace
-          justify="end"
-          style="margin-top: 16px"
-        >
-          <NPagination
-            v-model:page="pagination.page"
-            v-model:page-size="pagination.pageSize"
-            :item-count="pagination.itemCount"
-            :page-sizes="pagination.pageSizes"
-            show-size-picker
-            show-quick-jumper
-            @update:page="handlePageChange"
-            @update:page-size="handlePageSizeChange"
-          />
-        </NSpace>
       </NCard>
     </div>
 
@@ -699,24 +690,14 @@
 
   // ==================== 表格操作配置 ====================
   const tableActions = computed(() => ({
-    detail: {
-      onView: (row: any) => viewRole(row),
-    },
-    edit: {
-      onEdit: (row: any) => editRole(row),
-    },
-    delete: {
-      onDelete: async (row: any) => {
-        if (row.type === 'system') {
-          message.warning('系统角色不能删除')
-          return Promise.reject('系统角色不能删除') // 阻止后续执行
-        }
-        await deleteRole(row.id)
-      },
-      confirmText: (row: any) =>
-        row.type === 'system'
-          ? '系统角色不可删除'
-          : `确认删除角色"${row.name}"吗？`,
+    detail: (row: any) => viewRole(row),
+    edit: (row: any) => editRole(row),
+    delete: async (row: any) => {
+      if (row.type === 'system') {
+        message.warning('系统角色不能删除')
+        return Promise.reject('系统角色不能删除') // 阻止后续执行
+      }
+      await deleteRole(row.id)
     },
     custom: [
       {
@@ -796,14 +777,10 @@
     loadRoles()
   }
 
-  const handlePageChange = (page: number) => {
+  const handlePaginationChange = async (...args: any[]) => {
+    const [page, pageSize] = args
     pagination.page = page
-    loadRoles()
-  }
-
-  const handlePageSizeChange = (pageSize: number) => {
     pagination.pageSize = pageSize
-    pagination.page = 1
     loadRoles()
   }
 
