@@ -1,58 +1,54 @@
 import type { BuildOptions } from 'vite'
 
+// 第三方库分包映射
+const VENDOR_CHUNKS: Record<string, string[]> = {
+  'vue-vendor': ['vue', 'pinia', 'vue-router'],
+  'ui-vendor': ['naive-ui'],
+  'charts-vendor': ['echarts', '@antv/x6', '@vue-flow', '@visactor'],
+  'editor-vendor': ['@kangc/v-md-editor', 'wangeditor', 'highlight.js'],
+  'office-vendor': ['xlsx', 'mammoth', 'file-saver', 'jszip'],
+  'calendar-vendor': ['@fullcalendar'],
+  'spline-vendor': ['@splinetool'],
+}
+
+// 视图分包映射
+const VIEW_CHUNKS: Record<string, string> = {
+  '/views/home/': 'views-primary',
+  '/views/dashboard/': 'views-primary',
+  '/views/sys-manage/': 'views-system',
+  '/views/demo/': 'views-demo',
+}
+
 const buildConfig: BuildOptions = {
-  // 基础构建优化
-  minify: 'esbuild', // Vite 7 默认，比 terser 更快
-  target: 'baseline-widely-available', // Vite 7 新默认值，更好的浏览器兼容性
-  chunkSizeWarningLimit: 800, // 适度调高，减少无意义警告
+  // 减少构建时的无意义警告和耗时统计
+  chunkSizeWarningLimit: 800,
+  reportCompressedSize: false,
 
   rollupOptions: {
     output: {
-      // 简化且有效的分包策略 - 减少网络请求数量
-      manualChunks: {
-        // Vue 生态系统 - 最频繁使用
-        'vue-vendor': [
-          'vue',
-          'vue-router',
-          'pinia',
-          'pinia-plugin-persistedstate',
-        ],
+      /**
+       * 智能分包策略 - 替代 Vite 7 移除的 splitVendorChunkPlugin
+       * 作用：分离稳定的第三方库（利用浏览器缓存）和按业务模块分包
+       */
+      manualChunks(id) {
+        // 1. 第三方库分包
+        if (id.includes('node_modules')) {
+          for (const [chunk, keywords] of Object.entries(VENDOR_CHUNKS)) {
+            if (keywords.some(keyword => id.includes(keyword))) {
+              return chunk
+            }
+          }
+          return 'vendor-misc'
+        }
 
-        // UI 框架 - 体积大且相对稳定
-        'ui-vendor': ['naive-ui'],
+        // 2. 视图组件分包
+        for (const [path, chunk] of Object.entries(VIEW_CHUNKS)) {
+          if (id.includes(path)) return chunk
+        }
 
-        // 可视化图表库 - 体积大，按需加载
-        'charts-vendor': [
-          'echarts',
-          '@antv/x6',
-          '@vue-flow/core',
-          '@visactor/vtable-gantt',
-        ],
-
-        // 内容编辑器 - 低频使用，独立分包
-        'editor-vendor': ['@kangc/v-md-editor', 'wangeditor', 'highlight.js'],
-
-        // 文档处理 - 功能相关，合并打包
-        'office-vendor': [
-          'xlsx',
-          '@tato30/vue-pdf',
-          'mammoth',
-          'file-saver',
-          'jszip',
-          'jszip-utils',
-        ],
-
-        // 日历相关 - 功能内聚
-        'calendar-vendor': [
-          '@fullcalendar/core',
-          '@fullcalendar/daygrid',
-          '@fullcalendar/interaction',
-          '@fullcalendar/list',
-          '@fullcalendar/vue3',
-        ],
-
-        // 3D 渲染 - 独立且体积大
-        'spline-vendor': ['@splinetool/runtime'],
+        // 3. 其他视图按目录分包
+        const match = id.match(/\/views\/([^/]+)/)
+        return match ? `views-${match[1]}` : undefined
       },
 
       // 优化文件组织结构
@@ -76,11 +72,6 @@ const buildConfig: BuildOptions = {
       },
     },
   },
-
-  // 现代构建优化
-  cssCodeSplit: true, // 启用 CSS 代码分割
-  sourcemap: false, // 生产环境关闭 sourcemap
-  reportCompressedSize: false, // 关闭压缩大小报告，加快构建
 } as const
 
 export default buildConfig

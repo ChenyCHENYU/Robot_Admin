@@ -64,36 +64,21 @@
   const permissionStore = s_permissionStore()
   const themeStore = useThemeStore()
 
-  const isReady = ref(false) // 控制布局组件是否准备好显示，避免主题闪烁
+  const isReady = ref(true) // 移除延迟加载，提升响应速度
 
   // 关键修改：使用 themeStore.isDark 来统一判断主题
   const isDarkMode = computed(() => themeStore.isDark)
 
   /**
-   * * @description: 创建预渲染样式，确保黑色主题下页面初始加载不会出现白闪
+   * * @description: 预设主题样式，避免白闪（仅在暗色模式下需要）
    * ! @return {*} void
    */
   const _disposeThemeEffect = () => {
-    // 使用 isDarkMode 判断
+    // 暗色主题预设背景色，避免白闪
     if (isDarkMode.value) {
-      const style = document.createElement('style')
-      style.textContent = `
-        body, #app {
-          background-color: #1c1c21 !important;
-        }
-      `
-      document.head.appendChild(style)
-
-      // 清理临时样式
-      nextTick(() => {
-        setTimeout(() => {
-          document.head.removeChild(style)
-          isReady.value = true
-        }, 10)
-      })
+      document.documentElement.style.backgroundColor = '#1c1c21'
     } else {
-      // 对于浅色主题，直接显示
-      isReady.value = true
+      document.documentElement.style.backgroundColor = '#ffffff'
     }
   }
 

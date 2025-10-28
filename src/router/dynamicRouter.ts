@@ -30,6 +30,19 @@ const COMPONENTS = {
   '404': () => import('@/views/error-page/404.vue'),
 } as const
 
+// ⚡ 最佳实践：根据使用频率使用不同的加载策略
+// 高频页面使用 eager 模式（首页、常用功能）- 打包到主chunk，立即可用
+const EAGER_MODULES = import.meta.glob('@/views/home/**/*.vue', { eager: true })
+const EAGER_DASH = import.meta.glob('@/views/dashboard/**/*.vue', {
+  eager: true,
+})
+
+// 其他页面使用懒加载 - 按需加载，减小初始包体积
+const LAZY_MODULES = import.meta.glob('@/views/**/!(home|dashboard)*.vue')
+
+// 合并所有模块映射
+const VIEW_MODULES = { ...EAGER_MODULES, ...EAGER_DASH, ...LAZY_MODULES }
+
 /**
  * 路径规范化处理
  */
@@ -43,7 +56,7 @@ const normalizePath = (path: string, isChild: boolean): string => {
 }
 
 /**
- * 组件解析
+ * 组件解析 - 最优化版本
  */
 const resolveComponent = (path?: string) => {
   if (!path) return undefined
@@ -56,16 +69,19 @@ const resolveComponent = (path?: string) => {
   try {
     const normalizedPath = path.startsWith('/') ? path : `/${path}`
     const viewPath = `/src/views${normalizedPath}.vue`
-    const modules = import.meta.glob('@/views/**/*.vue')
 
-    // 添加组件不存在的警告
-    if (modules[viewPath]) {
-      return modules[viewPath]
+    const module = VIEW_MODULES[viewPath]
+
+    if (module) {
+      // eager 模式的模块直接返回
+      if (typeof module === 'object' && 'default' in module) {
+        return () => Promise.resolve(module)
+      }
+      // lazy 模式的模块返回函数
+      return module
     }
 
-    console.warn(
-      `[动态路由] 组件不存在，请检查路径及是否未创建 component 对应的 viewPage : ${viewPath}`
-    )
+    console.warn(`[动态路由] 组件不存在: ${viewPath}`)
     return COMPONENTS['404']
   } catch (error) {
     console.error('[动态路由] 组件解析失败:', error)

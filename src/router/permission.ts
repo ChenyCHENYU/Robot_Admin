@@ -77,11 +77,10 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
   }
 }
 
-// 核心路由守卫 - 简化版本
+// 核心路由守卫 - 优化版本
 router.beforeEach(
   async (
     to: RouteLocationNormalized,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     from: RouteLocationNormalized
   ): Promise<string | boolean> => {
     nprogress.start()
@@ -92,8 +91,6 @@ router.beforeEach(
       const { authMenuList } = s_permissionStore()
       const meta = to.meta as ExtendedRouteMeta
 
-      // console.log(`🚦 路由导航: ${from.path} -> ${to.path}`)
-
       // 1. 未登录处理
       if (!token) {
         if (WHITE_LIST.includes(to.path)) {
@@ -103,27 +100,33 @@ router.beforeEach(
         return LOGIN_PATH
       }
 
-      // 2. 已登录但访问登录页 - 关键修复点
+      // 2. 已登录但访问登录页
       if (to.path === LOGIN_PATH) {
-        // console.log('✅ 已登录用户访问登录页，跳转首页')
         return '/home'
       }
 
-      // 3. 动态路由初始化 - 简化逻辑
+      // 3. 动态路由初始化 - 优化：只执行一次
       if (!authMenuList.length && !isInitializing) {
-        // console.log('🔄 需要初始化动态路由')
         const result = await handleDynamicRouterInit(to.fullPath)
 
-        // 如果返回的是错误路径，直接重定向
         if (result !== to.fullPath) {
           return result
         }
 
-        // 初始化成功，重新访问当前路径
+        // 初始化成功后，预加载首页组件（如果还未加载）
+        if (to.path !== '/home') {
+          import('@/views/home/index.vue').catch(() => null)
+        }
+
         return to.fullPath
       }
 
-      // 4. 正常访问
+      // 4. 跳过相同路由的重复检查
+      if (to.path === from.path && to.fullPath === from.fullPath) {
+        nprogress.done()
+        return false
+      }
+
       setPageTitle(meta.title)
       return true
     } catch (error) {

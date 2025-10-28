@@ -87,37 +87,32 @@
     () => themeStore.themeOverrides.Menu || {}
   )
 
-  /**
-   * * @description: 将菜单数据扁平化处理，方便查找
-   * ? @param {*} items 菜单选项数组
-   * ! @return {*} MenuOptions[] 扁平化后的菜单选项数组
-   */
-  const _flattenMenu = (items: MenuOptions[]): MenuOptions[] => {
-    return items.reduce(
-      (acc, item) => [
-        ...acc,
-        item,
-        ...(item.children ? _flattenMenu(item.children) : []),
-      ],
-      [] as MenuOptions[]
-    )
-  }
+  // ⚡ 性能优化：缓存扁平化的菜单数据，避免每次点击都重新计算
+  const flatMenuCache = computed(() => {
+    const flatten = (items: MenuOptions[]): MenuOptions[] => {
+      return items.reduce(
+        (acc, item) => [
+          ...acc,
+          item,
+          ...(item.children ? flatten(item.children) : []),
+        ],
+        [] as MenuOptions[]
+      )
+    }
+    return flatten(props.data)
+  })
 
   /**
-   * * @description: 处理菜单项点击事件
+   * * @description: 处理菜单项点击事件 - 优化版本
    * ? @param {*} key 菜单项key
    * ! @return {*} void
    */
   const handleMenuClick = (key: string) => {
-    const menuItem = _flattenMenu(props.data).find(item => {
-      // 适配key的格式变化，同时处理path可能未定义的情况
-      const itemPath = item.path || '/home'
-      const normalizedPath = itemPath.startsWith('/')
-        ? itemPath
-        : `/${itemPath}`
-      return normalizedPath === key
-    })
-    if (menuItem?.path) router.push(menuItem.path)
+    // 直接使用 key（已经是完整路径）进行跳转，无需查找
+    // 菜单数据中的 key 已经被 normalizeMenuOptions 处理为完整路径
+    if (key && key !== route.path) {
+      router.push(key)
+    }
   }
 
   /**
@@ -175,7 +170,7 @@
     // 添加路径本身
     paths.forEach(path => {
       currentPath += `/${path}`
-      const menuItem = _flattenMenu(props.data).find(item => {
+      const menuItem = flatMenuCache.value.find(item => {
         // 适配路径格式变化，同时处理path可能未定义的情况
         const itemPath = item.path || ''
         return itemPath === currentPath
@@ -213,7 +208,6 @@
   }
 
   // 监听路由变化，更新展开的菜单项，但不折叠现有展开的菜单
-
   watch(
     () => route.path,
     newPath => {
@@ -225,7 +219,7 @@
       // 添加路径本身
       paths.forEach(path => {
         currentPath += `/${path}`
-        const menuItem = _flattenMenu(props.data).find(item => {
+        const menuItem = flatMenuCache.value.find((item: MenuOptions) => {
           const itemPath = item.path || ''
           return itemPath === currentPath
         })

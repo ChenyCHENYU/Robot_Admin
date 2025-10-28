@@ -225,11 +225,19 @@
         // 2. 保存用户信息（包括密码，用于重新登录）
         userStore.setUserInfo(tempLoginInfo)
 
-        // 3. 加载动态路由
-        await initDynamicRouter()
+        // 3. 并行加载动态路由和预加载首页组件
+        const [routeSuccess] = await Promise.all([
+          initDynamicRouter(),
+          // 预加载首页组件，减少跳转后的白屏
+          import('@/views/home/index.vue').catch(() => null),
+        ])
 
-        // 4. 跳转
-        router.push('/home')
+        if (!routeSuccess) {
+          throw new Error('动态路由初始化失败')
+        }
+
+        // 4. 使用 replace 替代 push，避免返回到登录页
+        router.replace('/home')
       } catch (error) {
         console.error('登录成功后操作失败:', error)
         resetCaptcha()
