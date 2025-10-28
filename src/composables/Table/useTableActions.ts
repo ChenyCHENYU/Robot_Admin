@@ -203,12 +203,24 @@ export function useTableActions<T extends DataRecord = DataRecord>(
     if (!visibleActions.length) return null
 
     // 构建下拉选项
-    const options = visibleActions.map(action => ({
-      label: action.label,
-      key: action.key,
-      icon: () => h(C_Icon, { name: action.icon, size: 14 }),
-      disabled: action.disabled?.(row, index) || false,
-    }))
+    const options = visibleActions.map(action => {
+      // 解析可能是函数的属性
+      const label =
+        typeof action.label === 'function'
+          ? action.label(row, index)
+          : action.label
+      const icon =
+        typeof action.icon === 'function'
+          ? action.icon(row, index)
+          : action.icon
+
+      return {
+        label,
+        key: action.key,
+        icon: () => h(C_Icon, { name: icon, size: 14 }),
+        disabled: action.disabled?.(row, index) || false,
+      }
+    })
 
     return h(
       NDropdown,

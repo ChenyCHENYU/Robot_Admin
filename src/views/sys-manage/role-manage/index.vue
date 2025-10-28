@@ -829,12 +829,14 @@
     }
 
     const newStatus = role.status === 1 ? 0 : 1
+    const action = newStatus === 1 ? '启用' : '禁用'
+
     updateRoleInList(role.id, {
       status: newStatus,
       updateTime: new Date().toLocaleString(),
     })
-    message.success(`${newStatus === 1 ? '启用' : '禁用'}成功`)
-    await loadRoles() // 刷新数据
+    message.success(`${action}成功`)
+    await loadRoles()
   }
 
   const deleteRole = async (id: string) => {

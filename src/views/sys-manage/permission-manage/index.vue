@@ -621,9 +621,11 @@
   const togglePermissionStatus = async (permission: PermissionData) => {
     try {
       const newStatus = permission.status === 1 ? 0 : 1
+      const action = newStatus === 1 ? '启用' : '禁用'
+
       await updatePermissionApi(permission.id, { status: newStatus })
+      message.success(`${action}成功`)
       await refresh()
-      message.success((newStatus === 1 ? '启用' : '禁用') + '成功')
     } catch {
       message.error('操作失败')
     }
@@ -631,36 +633,26 @@
 
   // ============ 表格操作配置 ============
   const tableActions = computed(() => ({
-    edit: async (row: any) => {
-      await updatePermissionApi(row.id, row)
-      await refresh()
-      return true
-    },
-    delete: async (row: any) => {
-      await deletePermissionApi(row.id)
-      await refresh()
-      return true
-    },
-    detail: async (row: any) => {
-      const { data } = await getPermissionByIdApi(row.id)
-      return data
-    },
+    edit: (row: any) => updatePermissionApi(row.id, row),
+    delete: (row: any) => deletePermissionApi(row.id),
+    detail: (row: any) => getPermissionByIdApi(row.id),
     custom: [
       {
         key: 'copy',
         label: '复制',
         icon: 'material-symbols:content-copy',
-        type: 'info',
+        type: 'info' as const,
         onClick: (row: any) => copyPermission(row as PermissionData),
       },
       {
         key: 'toggle',
-        label: (row: any) => (row.status === 1 ? '禁用' : '启用'),
+        label: (row: any) => (row?.status === 1 ? '禁用' : '启用'),
         icon: (row: any) =>
-          row.status === 1
+          row?.status === 1
             ? 'material-symbols:pause'
             : 'material-symbols:play-arrow',
-        type: (row: any) => (row.status === 1 ? 'warning' : 'success'),
+        type: (row: any): 'warning' | 'success' =>
+          row?.status === 1 ? 'warning' : 'success',
         onClick: (row: any) => togglePermissionStatus(row as PermissionData),
       },
     ],
