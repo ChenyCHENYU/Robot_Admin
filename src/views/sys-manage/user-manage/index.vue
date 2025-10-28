@@ -187,7 +187,7 @@
               :data="userList"
               :loading="loading"
               :row-key="row => row.id"
-              :scroll-x="1600"
+              :scroll-x="1500"
               :row-class-name="getRowClassName"
               :actions="tableActions as any"
               :enable-selection="true"
@@ -486,6 +486,7 @@
     DEFAULT_RESET_PASSWORD_FORM,
     UI_CONFIG,
     COMPONENT_CONFIG,
+    TABLE_COLUMN_CONFIG,
     getUserListApi,
     getDeptListApi,
     getUserRolesApi,
@@ -789,40 +790,40 @@
   // ==================== 表格列配置 ====================
   const userColumns: TableColumn<UserData>[] = [
     {
-      title: '用户类型',
+      title: TABLE_COLUMN_CONFIG.userType.title,
       key: 'userType',
-      width: 100,
+      width: TABLE_COLUMN_CONFIG.userType.width,
       render: createTagRenderer(getUserTypeConfig, 'userType'),
     },
     {
-      title: '用户名',
+      title: TABLE_COLUMN_CONFIG.username.title,
       key: 'username',
-      width: 120,
-      fixed: 'left',
+      width: TABLE_COLUMN_CONFIG.username.width,
+      fixed: TABLE_COLUMN_CONFIG.username.fixed,
       render: createUsernameRenderer,
     },
     {
-      title: '昵称',
+      title: TABLE_COLUMN_CONFIG.nickname.title,
       key: 'nickname',
-      width: 120,
+      width: TABLE_COLUMN_CONFIG.nickname.width,
       render: createTextRenderer('nickname'),
     },
     {
-      title: '邮箱',
+      title: TABLE_COLUMN_CONFIG.email.title,
       key: 'email',
-      width: 180,
+      width: TABLE_COLUMN_CONFIG.email.width,
       render: createTextRenderer('email'),
     },
     {
-      title: '手机号',
+      title: TABLE_COLUMN_CONFIG.phone.title,
       key: 'phone',
-      width: 120,
+      width: TABLE_COLUMN_CONFIG.phone.width,
       render: createTextRenderer('phone'),
     },
     {
-      title: '部门/公司',
+      title: TABLE_COLUMN_CONFIG.deptName.title,
       key: 'deptName',
-      width: 120,
+      width: TABLE_COLUMN_CONFIG.deptName.width,
       render: row =>
         h(
           'div',
@@ -835,21 +836,21 @@
         ),
     },
     {
-      title: '角色',
+      title: TABLE_COLUMN_CONFIG.roleNames.title,
       key: 'roleNames',
-      width: 150,
+      width: TABLE_COLUMN_CONFIG.roleNames.width,
       render: createRolesRenderer,
     },
     {
-      title: '状态',
+      title: TABLE_COLUMN_CONFIG.status.title,
       key: 'status',
-      width: 80,
+      width: TABLE_COLUMN_CONFIG.status.width,
       render: createTagRenderer(getUserStatusConfig, 'status'),
     },
     {
-      title: '创建时间',
+      title: TABLE_COLUMN_CONFIG.createTime.title,
       key: 'createTime',
-      width: 160,
+      width: TABLE_COLUMN_CONFIG.createTime.width,
       render: createTextRenderer('createTime'),
     },
   ]

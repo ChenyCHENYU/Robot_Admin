@@ -29,7 +29,7 @@
       :render-expand="renderExpandFunction"
       @update:expanded-row-keys="tableManager.expandState?.handleExpandChange"
       @update:checked-row-keys="tableManager.expandState?.handleSelectionChange"
-      :scroll-x="1200"
+      :scroll-x="props.scrollX"
     />
 
     <!-- 分页组件 -->
@@ -305,10 +305,12 @@
       return {
         ...column,
         width: column.width || props.columnWidth,
-        titleAlign: 'center' as const,
-        align: 'center' as const,
-        render: (rowData: DataRecord, rowIndex: number) =>
-          renderCell(column, rowData, rowIndex),
+        titleAlign: column.titleAlign || ('center' as const),
+        align: column.align || ('center' as const), // 🎯 默认居中对齐
+        render:
+          column.render ||
+          ((rowData: DataRecord, rowIndex: number) =>
+            renderCell(column, rowData, rowIndex)),
         // 🆕 添加固定列支持
         fixed: column.fixed,
       }

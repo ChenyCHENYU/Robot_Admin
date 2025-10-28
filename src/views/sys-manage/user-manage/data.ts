@@ -165,104 +165,87 @@ export const COMPONENT_CONFIG = {
   },
 } as const
 
-// ==================== 表单验证规则 ====================
-const createValidationRule = (
-  required: boolean,
-  message: string,
-  trigger = ['input', 'blur'],
-  extraRules: any[] = []
-) => [
-  ...(required
-    ? [{ required: true, message, trigger }]
-    : [{ required: false }]),
-  ...extraRules,
-]
+// ==================== 表格列配置 ====================
+export const TABLE_COLUMN_CONFIG = {
+  userType: { title: '用户类型', width: 100 },
+  username: { title: '用户名', width: 120, fixed: 'left' as const },
+  nickname: { title: '昵称', width: 120 },
+  email: { title: '邮箱', width: 180 },
+  phone: { title: '手机号', width: 130 },
+  deptName: { title: '部门/公司', width: 150 },
+  roleNames: { title: '角色', width: 180 },
+  status: { title: '状态', width: 90 },
+  createTime: { title: '创建时间', width: 180 },
+} as const
 
+// ==================== 表单验证规则 ====================
 export const USER_FORM_RULES: FormRules = {
-  username: createValidationRule(
-    true,
-    '请输入用户名',
-    ['input', 'blur'],
-    [
-      {
-        min: 3,
-        max: 20,
-        message: '用户名长度在 3 到 20 个字符',
-        trigger: ['input', 'blur'],
-      },
-    ]
-  ),
-  nickname: createValidationRule(true, '请输入昵称'),
-  userType: createValidationRule(true, '请选择用户类型', ['change', 'blur']),
-  email: createValidationRule(
-    false,
-    '',
-    ['input', 'blur'],
-    [
-      {
-        type: 'email',
-        message: '请输入正确的邮箱格式',
-        trigger: ['input', 'blur'],
-      },
-    ]
-  ),
-  phone: createValidationRule(
-    false,
-    '',
-    ['input', 'blur'],
-    [
-      {
-        pattern: /^1[3-9]\d{9}$/,
-        message: '请输入正确的手机号',
-        trigger: ['input', 'blur'],
-      },
-    ]
-  ),
-  password: createValidationRule(
-    true,
-    '请输入密码',
-    ['input', 'blur'],
-    [
-      {
-        min: 6,
-        max: 20,
-        message: '密码长度在 6 到 20 个字符',
-        trigger: ['input', 'blur'],
-      },
-    ]
-  ),
+  username: [
+    { required: true, message: '请输入用户名', trigger: ['input', 'blur'] },
+    {
+      min: 3,
+      max: 20,
+      message: '用户名长度在 3 到 20 个字符',
+      trigger: ['input', 'blur'],
+    },
+  ],
+  nickname: [
+    { required: true, message: '请输入昵称', trigger: ['input', 'blur'] },
+  ],
+  userType: [
+    { required: true, message: '请选择用户类型', trigger: ['change', 'blur'] },
+  ],
+  email: [
+    {
+      type: 'email',
+      message: '请输入正确的邮箱格式',
+      trigger: ['input', 'blur'],
+    },
+  ],
+  phone: [
+    {
+      pattern: /^1[3-9]\d{9}$/,
+      message: '请输入正确的手机号',
+      trigger: ['input', 'blur'],
+    },
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: ['input', 'blur'] },
+    {
+      min: 6,
+      max: 20,
+      message: '密码长度在 6 到 20 个字符',
+      trigger: ['input', 'blur'],
+    },
+  ],
 }
 
 export const RESET_PASSWORD_RULES: FormRules = {
-  newPassword: createValidationRule(
-    true,
-    '请输入新密码',
-    ['input', 'blur'],
-    [
-      {
-        min: 6,
-        max: 20,
-        message: '密码长度在 6 到 20 个字符',
-        trigger: ['input', 'blur'],
+  newPassword: [
+    { required: true, message: '请输入新密码', trigger: ['input', 'blur'] },
+    {
+      min: 6,
+      max: 20,
+      message: '密码长度在 6 到 20 个字符',
+      trigger: ['input', 'blur'],
+    },
+  ],
+  confirmPassword: [
+    {
+      required: true,
+      message: '请再次输入新密码',
+      trigger: ['input', 'blur'],
+    },
+    {
+      validator: (rule: any, value: string) => {
+        const form = rule.form as ResetPasswordForm
+        return value !== form.newPassword
+          ? Promise.reject('两次密码输入不一致')
+          : Promise.resolve()
       },
-    ]
-  ),
-  confirmPassword: createValidationRule(
-    true,
-    '请再次输入新密码',
-    ['input', 'blur'],
-    [
-      {
-        validator: (rule: any, value: string) => {
-          const form = rule.form as ResetPasswordForm
-          return value !== form.newPassword
-            ? Promise.reject('两次密码输入不一致')
-            : Promise.resolve()
-        },
-        trigger: ['input', 'blur'],
-      },
-    ]
-  ),
+      trigger: ['input', 'blur'],
+    },
+  ],
 }
 
 // ==================== 默认数据 ====================
