@@ -11,11 +11,6 @@
 // ⭐ 关键：首屏加载动画必须最先导入，确保立即显示
 import '@/plugins/loading'
 
-// 🧪 开发环境加载 token 测试工具
-if (import.meta.env.DEV) {
-  import('@/utils/test-token-expire')
-}
-
 import './assets/css/main.css'
 import '@/styles/index.scss'
 import 'virtual:uno.css'

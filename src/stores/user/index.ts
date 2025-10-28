@@ -17,14 +17,15 @@ import { s_appStore } from '@/stores/app/index'
 const { notification } = createDiscreteApi(['notification'])
 
 interface UserInfo {
+  username?: string
+  password?: string // 临时存储，仅用于重新登录
   [key: string]: unknown
-  // TODO: 根据实际接口响应补充具体类型
 }
 
 export const s_userStore = defineStore('user', {
   state: () => ({
     token: getItem<string>(TOKEN) ?? '',
-    userInfo: {} as UserInfo,
+    userInfo: getItem<UserInfo>('userInfo') ?? ({} as UserInfo),
   }),
 
   getters: {
@@ -39,6 +40,7 @@ export const s_userStore = defineStore('user', {
 
     setUserInfo(userInfo: UserInfo) {
       this.userInfo = userInfo
+      setItem('userInfo', userInfo)
     },
 
     async logout(isExpired = false) {
@@ -53,6 +55,7 @@ export const s_userStore = defineStore('user', {
         // 3. 只清除认证相关数据（保留用户配置如主题、语言等）
         removeItem(TOKEN)
         removeItem(TIME_STAMP)
+        removeItem('userInfo')
         s_appStore().$reset()
 
         // 4. 清理动态路由

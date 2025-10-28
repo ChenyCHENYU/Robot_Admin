@@ -177,11 +177,20 @@
   }
 
   // 处理登录点击
+  // 临时保存登录信息
+  let tempLoginInfo = { username: '', password: '' }
+
   const handleLogin = (formScope: FormScope): void => {
     // 验证码检查
     if (!captchaValid.value || !captchaData.value) {
       message.error('请先完成人机验证')
       return
+    }
+
+    // 保存账号密码（用于重新登录）
+    tempLoginInfo = {
+      username: formScope.model.username,
+      password: formScope.model.password,
     }
 
     // 将验证码数据添加到 formScope.model
@@ -208,9 +217,18 @@
       try {
         const {
           data: { token },
-        } = response // ✅ 使用解构
+        } = response
+
+        // 1. 更新 token
         userStore.handleLoginSuccess(token)
+
+        // 2. 保存用户信息（包括密码，用于重新登录）
+        userStore.setUserInfo(tempLoginInfo)
+
+        // 3. 加载动态路由
         await initDynamicRouter()
+
+        // 4. 跳转
         router.push('/home')
       } catch (error) {
         console.error('登录成功后操作失败:', error)

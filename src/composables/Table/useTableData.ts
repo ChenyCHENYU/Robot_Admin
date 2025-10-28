@@ -131,7 +131,11 @@ export function useTableData<T = any>(
     tableData.value = []
     total.value = 0
 
-    // ✅ 修复：直接使用预先调用的 message 实例
+    // 如果是重新登录被取消，不显示错误提示
+    if (error?.message === '重新登录已取消') {
+      return
+    }
+
     if (message) {
       message.error('加载数据失败，请重试')
     } else {

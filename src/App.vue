@@ -21,6 +21,12 @@
         <NNotificationProvider>
           <NMessageProvider>
             <RouterView />
+            <!-- 全局重新登录弹框 -->
+            <C_ReLoginDialog
+              v-model="reLoginStore.visible"
+              :username="reLoginStore.username"
+              @success="handleReLoginSuccess"
+            />
           </NMessageProvider>
         </NNotificationProvider>
       </NDialogProvider>
@@ -32,10 +38,17 @@
   import { onMounted, nextTick } from 'vue'
   import { zhCN, dateZhCN } from 'naive-ui/es' // 中文语言包
   import { useThemeStore } from '@/stores/theme'
+  import { s_reLoginStore } from '@/stores/reLogin'
   import { removeLoading } from '@/plugins/loading'
   import '@/lib/version'
 
   const themeStore = useThemeStore()
+  const reLoginStore = s_reLoginStore()
+
+  // 重新登录成功处理
+  const handleReLoginSuccess = () => {
+    reLoginStore.hide()
+  }
 
   // 初始化
   onMounted(async () => {

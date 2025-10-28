@@ -10,14 +10,51 @@
 
 import axios, { type AxiosRequestConfig } from 'axios'
 import { s_userStore } from '@/stores/user'
+import { s_reLoginStore } from '@/stores/reLogin'
 import { d_refreshTokenExpire, d_isCheckTimeout } from '@/utils/d_auth'
 import { createDiscreteApi } from 'naive-ui/es'
 
 const { VITE_API_BASE } = import.meta.env
 const { message } = createDiscreteApi(['message'])
 
-// 防止重复触发退出登录
-let isLoggingOut = false
+// 共享的重新登录 Promise，避免多次弹窗
+let reLoginPromise: Promise<void> | null = null
+let reLoginResolve: (() => void) | null = null
+let reLoginReject: ((reason?: any) => void) | null = null
+
+// 处理 token 过期 - 返回共享的 Promise
+const handleTokenExpire = () => {
+  if (!reLoginPromise) {
+    const { userInfo } = s_userStore()
+    const reLoginStore = s_reLoginStore()
+    reLoginStore.show(userInfo?.username || '')
+
+    // 创建共享的 Promise，在登录成功/失败后自动清除
+    reLoginPromise = new Promise<void>((resolve, reject) => {
+      reLoginResolve = resolve
+      reLoginReject = reject
+    }).finally(() => {
+      reLoginPromise = null
+      reLoginResolve = null
+      reLoginReject = null
+    })
+  }
+  return reLoginPromise
+}
+
+// 重新登录成功后的回调
+export const onReLoginSuccess = () => {
+  if (reLoginResolve) {
+    reLoginResolve()
+  }
+}
+
+// 重新登录取消后的回调
+export const onReLoginCancel = () => {
+  if (reLoginReject) {
+    reLoginReject(new Error('重新登录已取消'))
+  }
+}
 
 const service = axios.create({
   baseURL: VITE_API_BASE || '',
@@ -30,16 +67,23 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    const { token, logout } = s_userStore()
+    const { token } = s_userStore()
     if (token) {
       // 先检查是否已过期
-      if (d_isCheckTimeout() && !isLoggingOut) {
-        isLoggingOut = true
-        logout(true)
-        setTimeout(() => {
-          isLoggingOut = false
-        }, 3000)
-        return Promise.reject(new Error('Token 已过期'))
+      if (d_isCheckTimeout()) {
+        // 等待重新登录完成后继续请求
+        return new Promise((resolve, reject) => {
+          handleTokenExpire()
+            .then(() => {
+              // 重新登录成功，更新 token 后继续请求
+              const { token: newToken } = s_userStore()
+              if (newToken && config.headers) {
+                config.headers.Authorization = `Bearer ${newToken}`
+              }
+              resolve(config)
+            })
+            .catch(reject)
+        })
       }
       // 未过期则续期
       d_refreshTokenExpire()
@@ -58,18 +102,20 @@ service.interceptors.response.use(
     return Promise.reject(new Error(response.statusText || '接口请求失败'))
   },
   error => {
-    // 只处理 401 认证失败
-    if (error?.response?.status === 401 && !isLoggingOut) {
-      isLoggingOut = true
-      const { logout } = s_userStore()
-      logout(true) // 传入 true 表示过期退出
-      // 3秒后重置标志
-      setTimeout(() => {
-        isLoggingOut = false
-      }, 3000)
-    } else if (error?.response?.status !== 401) {
-      message.error(error.message || '请求失败')
+    // 处理 401 认证失败（后端 token 失效）
+    if (error?.response?.status === 401) {
+      // 等待重新登录
+      return handleTokenExpire().then(() => {
+        // 重新登录成功，重试请求
+        const { token } = s_userStore()
+        if (token && error.config?.headers) {
+          error.config.headers.Authorization = `Bearer ${token}`
+        }
+        return service(error.config)
+      })
     }
+
+    message.error(error.message || '请求失败')
     return Promise.reject(error)
   }
 )

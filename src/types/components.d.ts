@@ -34,6 +34,7 @@ declare module 'vue' {
     C_MenuTop: typeof import('./../components/global/C_MenuTop/index.vue')['default']
     C_Notice: typeof import('./../components/global/C_Notice/index.vue')['default']
     C_Progress: typeof import('./../components/global/C_Progress/index.vue')['default']
+    C_ReLoginDialog: typeof import('./../components/global/C_ReLoginDialog/index.vue')['default']
     C_role: typeof import('./../components/local/c_role/index.vue')['default']
     C_Steps: typeof import('./../components/global/C_Steps/index.vue')['default']
     C_Table: typeof import('./../components/global/C_Table/index.vue')['default']
