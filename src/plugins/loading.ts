@@ -2,36 +2,26 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-12 22:07:55
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-07-09 20:19:02
+ * @LastEditTime: 2025-10-28
  * @FilePath: \Robot_Admin\src\plugins\loading.ts
- * @Description: 项目启动时的加载动画
+ * @Description: 首屏加载动画控制 - 立即执行版（保持 index.html 干净）
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-//? 修改样式只需调整STYLE常量
-//? 修改结构只需调整HTML常量
-//? 类名变更只需修改CLASS常量
-
 /**
- * @description: 设置加载动画
- * @return {*} {void}
+ * @description: 创建并立即显示首屏加载动画
+ * @return {void}
  */
-export function setupLoading() {
-  // 常量定义
-  const CLASS = {
-    loading: 'app-loading',
-    wrap: 'app-loading-wrap',
-    logo: 'app-loading-logo',
-    dots: 'loading-dots',
-    title: 'app-loading-title',
+function createLoading(): void {
+  // 避免重复创建
+  if (document.querySelector('.app-loading')) {
+    return
   }
 
-  // 检查是否已存在加载结构，避免重复
-  if (document.querySelector(`.${CLASS.loading}`)) return
-
-  // ====== 内联关键结构到HTML ======
-  const loadingHTML = `
-    <div class="${CLASS.loading}" style="
+  // 内联样式（关键CSS - 确保立即生效）
+  const style = document.createElement('style')
+  style.innerHTML = `
+    .app-loading {
       position: fixed;
       top: 0;
       left: 0;
@@ -42,152 +32,155 @@ export function setupLoading() {
       align-items: center;
       background: #fff;
       z-index: 9999;
-    ">
-      <div class="${CLASS.wrap}" style="
-        text-align: center;
-        transform: translateY(10%);
-        width: 100%;
-      ">
-        <div class="${CLASS.loading}-logo-container" style="
-          display: flex;
-          justify-content: center;
-          margin-bottom: 40px;
-        ">
-        <img src="/robot.gif"
-               class="${CLASS.logo}"
-               style="width: 280px; height: 280px;"
-               alt="Loading" />
-        </div>
-        <div class="${CLASS.dots}" style="
-          display: flex;
-          justify-content: center;
-          gap: 12px;
-          margin: 0 auto 30px;
-        ">
-          <span style="
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #1677ff;
-            animation: pulse 1.4s infinite ease-in-out;
-          "></span>
-          <span style="
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #1677ff;
-            animation: pulse 1.4s infinite ease-in-out 0.2s;
-          "></span>
-          <span style="
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #1677ff;
-            animation: pulse 1.4s infinite ease-in-out 0.4s;
-          "></span>
-          <span style="
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #1677ff;
-            animation: pulse 1.4s infinite ease-in-out 0.6s;
-          "></span>
-        </div>
-        <h1 class="${CLASS.title}" style="
-          color:#1677ff;
-          font-size: 1.6rem;
-          font-weight: bold;
-          letter-spacing: 1.5px;
-          opacity: 0;
-          animation: fadeIn 0.3s ease-out 0.1s forwards;
-        ">Robot Admin</h1>
-      </div>
-    </div>
-  `
+      transition: opacity 0.4s ease-out;
+    }
 
-  // 插入内联结构 - 确保立即显示
-  document.body.insertAdjacentHTML('afterbegin', loadingHTML)
+    .app-loading-wrap {
+      text-align: center;
+      transform: translateY(-10%);
+      width: 100%;
+    }
 
-  // ====== 动态添加关键帧和细节样式 ======
-  const style = document.createElement('style')
-  // 🔧 关键修复：给样式表添加唯一标识
-  style.setAttribute('data-loading-styles', 'true')
-  style.textContent = `
+    .app-loading-logo-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .app-loading-logo {
+      width: 280px;
+      height: 280px;
+      opacity: 0;
+      /* ⭐ 快速平滑淡入：150ms，ease-out 更自然 */
+      transition: opacity 0.15s ease-out;
+    }
+
+    .app-loading-logo.loaded {
+      opacity: 1;
+    }
+
+    .loading-dots {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 0 auto 30px;
+    }    .loading-dots span {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #1677ff;
+      animation: pulse 1.4s infinite ease-in-out;
+    }
+
+    .loading-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loading-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    .loading-dots span:nth-child(4) {
+      animation-delay: 0.6s;
+    }
+
+    .app-loading-title {
+      color: #1677ff;
+      font-size: 1.6rem;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      opacity: 0;
+      animation: fadeIn 0.3s ease-out 0.1s forwards;
+    }
+
     @keyframes pulse {
-      0%, 100% { transform: scale(0.8); opacity: 0.8; }
-      50% { transform: scale(1.2); opacity: 1; }
+      0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    /* 仅保留动态部分样式 */
-    .${CLASS.loading} {
-      z-index: 9999;
-    }
-    .${CLASS.logo} {
-      animation: bounce 1s infinite ease-in-out;
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   `
+
+  // HTML 结构
+  const loadingDiv = document.createElement('div')
+  loadingDiv.className = 'app-loading'
+  loadingDiv.innerHTML = `
+    <div class="app-loading-wrap">
+      <div class="app-loading-logo-container">
+        <img
+          src="/robot.gif"
+          class="app-loading-logo"
+          alt="Loading"
+          onload="this.classList.add('loaded')"
+        />
+      </div>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <h1 class="app-loading-title">Robot Admin</h1>
+    </div>
+  ` // 立即插入到 DOM
   document.head.appendChild(style)
-
-  // 确保图片加载完成
-  const logo = document.querySelector(
-    `.${CLASS.logo}`
-  ) as HTMLImageElement | null
-  if (logo) {
-    logo.onload = () => {
-      logo.style.opacity = '1'
-    }
-    if (logo.complete) logo.style.opacity = '1'
-  }
-
-  // 监听加载完成事件
-  window.addEventListener('load', () => {
-    setTimeout(removeLoading, 300) // 延迟500ms确保动画完整显示
-  })
-
-  // 设置最大等待时间
-  setTimeout(removeLoading, 1000)
+  document.body.appendChild(loadingDiv)
 }
 
 /**
- * @description: 移除加载动画
- * @return {*} {void}
+ * @description: 移除首屏加载动画
+ * @param {number} delay - 延迟时间（毫秒），默认 200ms，让用户感知到加载完成
+ * @return {void}
  */
-export function removeLoading() {
-  const CLASS = {
-    loading: 'app-loading',
-    wrap: 'app-loading-wrap',
-    logo: 'app-loading-logo',
-    dots: 'loading-dots',
-    title: 'app-loading-title',
+export function removeLoading(delay = 200): void {
+  const loading = document.querySelector('.app-loading') as HTMLElement | null
+
+  if (!loading) {
+    console.warn('加载动画元素未找到，可能已被移除')
+    return
   }
 
-  const loading = document.querySelector(
-    `.${CLASS.loading}`
-  ) as HTMLElement | null
-  if (!loading) return
-
-  // 添加淡出动画
-  loading.style.transition = 'opacity 0.4s ease-out'
-  loading.style.opacity = '0'
-
-  // 动画结束后移除
   setTimeout(() => {
-    loading.remove()
+    // 添加淡出动画
+    loading.style.opacity = '0'
 
-    // 只删除我们自己创建的样式表，不要误删其他样式
-    const loadingStyles = document.querySelectorAll(
-      'style[data-loading-styles="true"]'
-    ) as NodeListOf<HTMLStyleElement>
+    // 动画结束后移除元素
+    setTimeout(() => {
+      loading.remove()
 
-    loadingStyles.forEach(style => {
-      style.remove()
-    })
+      // 移除样式
+      const style = document.querySelector('style')
+      if (style && style.innerHTML.includes('.app-loading')) {
+        style.remove()
+      }
 
-    // 恢复默认背景色
-    document.documentElement.style.backgroundColor = ''
-    document.body.style.backgroundColor = ''
-  }, 400)
+      console.log('✅ 首屏加载动画已移除')
+    }, 400) // 等待 CSS transition 完成
+  }, delay)
 }
+
+/**
+ * @description: 立即移除加载动画（无延迟）
+ * @return {void}
+ */
+export function removeLoadingImmediately(): void {
+  removeLoading(0)
+}
+
+// ⭐ 关键：模块加载时立即执行，确保零延迟显示
+createLoading()

@@ -2,11 +2,14 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-07-10 10:01:33
+ * @LastEditTime: 2025-10-28
  * @FilePath: \Robot_Admin\src\main.ts
  * @Description: 根入口文件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
+
+// ⭐ 关键：首屏加载动画必须最先导入，确保立即显示
+import '@/plugins/loading'
 
 import './assets/css/main.css'
 import '@/styles/index.scss'
@@ -18,7 +21,6 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 import {
-  setupLoading,
   setupStore,
   setupNaiveUI,
   setupDynamicComponents,
@@ -34,10 +36,7 @@ import {
  * @return {*}
  */
 async function bootstrap() {
-  // 第一阶段：非Vue相关的初始化
-  setupLoading()
-
-  // 第二阶段：创建Vue实例，初始化Pinia
+  // 第一阶段：创建Vue实例，初始化Pinia
   const app = createApp(App)
   const pinia = createPinia()
   pinia.use(piniaPluginPersistedstate)
@@ -48,7 +47,7 @@ async function bootstrap() {
   // 使用路由
   app.use(router)
 
-  // 第三阶段：Vue相关插件
+  // 第二阶段：Vue相关插件
   setupStore(app)
   setupNaiveUI(app)
   setupDynamicComponents(app)
@@ -57,11 +56,14 @@ async function bootstrap() {
   setupDirectives(app)
   setupAnalytics(app)
 
-  // 第四阶段：异步插件
+  // 第三阶段：等待路由就绪
   await router.isReady()
 
-  // 最终挂载
+  // 第四阶段：挂载应用
   app.mount('#app')
+
+  // 注意：移除加载动画的逻辑已移至 App.vue 的 onMounted 中
+  // 确保首屏内容真正渲染完成后才移除
 }
 
 // 启动应用

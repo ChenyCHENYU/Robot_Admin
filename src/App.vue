@@ -29,13 +29,24 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted } from 'vue'
+  import { onMounted, nextTick } from 'vue'
   import { zhCN, dateZhCN } from 'naive-ui/es' // 中文语言包
   import { useThemeStore } from '@/stores/theme'
+  import { removeLoading } from '@/plugins/loading'
   import '@/lib/version'
 
   const themeStore = useThemeStore()
 
   // 初始化
-  onMounted(() => themeStore.init())
+  onMounted(async () => {
+    themeStore.init()
+
+    // 确保DOM完全渲染后再移除加载动画
+    await nextTick()
+
+    // 使用 requestAnimationFrame 确保浏览器完成渲染
+    requestAnimationFrame(() => {
+      removeLoading(200) // 200ms 延迟，让用户感知加载完成
+    })
+  })
 </script>
