@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.6.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.5.0...v1.6.0) (2025-10-27)
+
+
+### Features
+
+* **工作流组件:** 增加暗色主题并调优演示页面 ([0512ca5](https://github.com/ChenyCHENYU/Robot_Admin/commit/0512ca50009cebeb71f0450c6e49d3a1fe80f56d))
+
+
+### Bug Fixes
+
+* **图编辑器:** 组件及演示页面暗色主题适配修复 ([766118f](https://github.com/ChenyCHENYU/Robot_Admin/commit/766118fa9d5dbaaf6c72a5672fe668cf60e16cc4))
+* **富文本编辑器组件:** 增加全局样式控制，修复暗色主题下样式问题 ([7e3fdde](https://github.com/ChenyCHENYU/Robot_Admin/commit/7e3fdde02ec778ad3b0449f92f89943edc1d1cf6))
+* **甘特图组件/页面:** 修复甘特图主题适配问题，自定义渲染报错 ([ae41cf7](https://github.com/ChenyCHENYU/Robot_Admin/commit/ae41cf71ba9ad6c8c393ddf7374fca2d987d7745))
+
+
+### Performance Improvements
+
+* **TAGS标签组件:** 优化复杂计算，利用浏览器原生方案，提高性能 ([002813f](https://github.com/ChenyCHENYU/Robot_Admin/commit/002813f116e55c7df593af660be5a4d7b30cd02f))
+
 ## [1.5.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.4.0...v1.5.0) (2025-10-26)
 
 
