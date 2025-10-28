@@ -8,8 +8,8 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-// ⭐ 关键：首屏加载动画必须最先导入，确保立即显示
-import '@/plugins/loading'
+// ⭐ 关键：首屏加载动画必须最先执行，确保极速显示（soybean-admin 优化方案）
+import { setupLoading } from '@/plugins/loading'
 
 import './assets/css/main.css'
 import '@/styles/index.scss'
@@ -36,6 +36,9 @@ import {
  * @return {*}
  */
 async function bootstrap() {
+  // ⭐ 第零阶段：立即显示加载动画（innerHTML 方式，极速）
+  setupLoading()
+
   // 第一阶段：创建Vue实例，初始化Pinia
   const app = createApp(App)
   const pinia = createPinia()
