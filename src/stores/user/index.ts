@@ -8,8 +8,8 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 import { defineStore } from 'pinia'
-import { TOKEN } from '@/constant'
-import { setItem, getItem, removeAllItem } from '@/hooks/useStorage'
+import { TOKEN, TIME_STAMP } from '@/constant'
+import { setItem, getItem, removeItem } from '@/hooks/useStorage'
 import router from '@/router'
 import { d_setTimeStamp } from '@/utils/d_auth'
 import { createDiscreteApi } from 'naive-ui/es'
@@ -41,32 +41,41 @@ export const s_userStore = defineStore('user', {
       this.userInfo = userInfo
     },
 
-    async logout() {
+    async logout(isExpired = false) {
       try {
         // 1. 清除用户状态
         this.token = ''
         this.userInfo = {}
 
-        // 2. 重置页面标题（关键修复点）
+        // 2. 重置页面标题
         document.title = import.meta.env.VITE_APP_TITLE
 
-        // 3. 清除存储的数据,重置其他store状态
-        removeAllItem()
+        // 3. 只清除认证相关数据（保留用户配置如主题、语言等）
+        removeItem(TOKEN)
+        removeItem(TIME_STAMP)
         s_appStore().$reset()
 
         // 4. 清理动态路由
         const { clearExistingRoutes } = await import('@/router/dynamicRouter')
         clearExistingRoutes()
 
-        // 5. 确保Vue响应式更新后导航
+        // 5. 跳转登录页
         router.replace('/login')
-        notification.success({
-          content: '已退出登录',
-          duration: 3000,
-        })
+
+        // 6. 根据退出原因显示不同提示
+        if (isExpired) {
+          notification.warning({
+            content: '登录已过期，请重新登录',
+            duration: 2500,
+          })
+        } else {
+          notification.success({
+            content: '已退出登录',
+            duration: 2000,
+          })
+        }
       } catch (error) {
         console.error('退出登录失败:', error)
-        // 如果出错，仍然尝试跳转到登录页
         router.replace('/login')
       }
     },

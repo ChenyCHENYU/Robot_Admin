@@ -22,14 +22,17 @@ export const d_getTimeStamp = (): number => getItem(TIME_STAMP) ?? 0
 export const d_setTimeStamp = (): void => setItem(TIME_STAMP, Date.now())
 
 /**
- * @description: 是否超时
+ * @description: 刷新过期时间（活跃续期）
  */
+export const d_refreshTokenExpire = (): void => {
+  setItem(TIME_STAMP, Date.now())
+}
 
+/**
+ * @description: 是否超时（仅用于主动检查，不在拦截器中使用）
+ */
 export const d_isCheckTimeout = (): boolean => {
-  // 当前时间
   const currentTime = Date.now()
-  // 缓存时间
   const timeStamp = d_getTimeStamp()
-  // 判断是否超时
   return currentTime - timeStamp > TOKEN_TIMEOUT_VALUE
 }

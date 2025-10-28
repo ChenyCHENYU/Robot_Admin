@@ -13,8 +13,8 @@ export const TOKEN: string = 'token'
 // token 时间戳
 export const TIME_STAMP: string = 'timeStamp'
 
-// * 超时时长 预设2小时
-export const TOKEN_TIMEOUT_VALUE: number = 2 * 3600 * 1000
+// * 超时时长：8小时（活跃续期机制）
+export const TOKEN_TIMEOUT_VALUE: number = 8 * 3600 * 1000
 
 // * 国际化
 export const LANG: string = 'language'

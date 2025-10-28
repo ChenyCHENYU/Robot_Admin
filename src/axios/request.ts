@@ -10,11 +10,14 @@
 
 import axios, { type AxiosRequestConfig } from 'axios'
 import { s_userStore } from '@/stores/user'
-import { d_isCheckTimeout } from '@/utils/d_auth'
+import { d_refreshTokenExpire, d_isCheckTimeout } from '@/utils/d_auth'
 import { createDiscreteApi } from 'naive-ui/es'
 
 const { VITE_API_BASE } = import.meta.env
 const { message } = createDiscreteApi(['message'])
+
+// 防止重复触发退出登录
+let isLoggingOut = false
 
 const service = axios.create({
   baseURL: VITE_API_BASE || '',
@@ -29,11 +32,18 @@ service.interceptors.request.use(
   config => {
     const { token, logout } = s_userStore()
     if (token) {
-      if (d_isCheckTimeout()) {
-        logout()
-        return Promise.reject(new Error('token 已过期, 请重新登录'))
+      // 先检查是否已过期
+      if (d_isCheckTimeout() && !isLoggingOut) {
+        isLoggingOut = true
+        logout(true)
+        setTimeout(() => {
+          isLoggingOut = false
+        }, 3000)
+        return Promise.reject(new Error('Token 已过期'))
       }
-      config.headers.Authorization = `Bearer ${token}` // 注意空格
+      // 未过期则续期
+      d_refreshTokenExpire()
+      config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },
@@ -43,18 +53,22 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   response => {
-    // 只返回业务数据，业务层直接拿 data
     if (response.status === 200) return response
     message.error('调用接口失败')
     return Promise.reject(new Error(response.statusText || '接口请求失败'))
   },
   error => {
-    const { logout } = s_userStore()
-    if (error?.response?.status === 401) {
-      logout()
-      message.error('登录已过期，请重新登录')
-    } else {
-      message.error(error.message || '响应拦截请求失败')
+    // 只处理 401 认证失败
+    if (error?.response?.status === 401 && !isLoggingOut) {
+      isLoggingOut = true
+      const { logout } = s_userStore()
+      logout(true) // 传入 true 表示过期退出
+      // 3秒后重置标志
+      setTimeout(() => {
+        isLoggingOut = false
+      }, 3000)
+    } else if (error?.response?.status !== 401) {
+      message.error(error.message || '请求失败')
     }
     return Promise.reject(error)
   }
