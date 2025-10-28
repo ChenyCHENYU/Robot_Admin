@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.0...v1.6.1) (2025-10-28)
+
+
+### Bug Fixes
+
+* **TAGS:** 修复标签页智能跳转逻辑 ([06ec436](https://github.com/ChenyCHENYU/Robot_Admin/commit/06ec43601d18cf33d0ab39ffcf40d8678d9be213))
+* **权限管理:** 修复操作异常 ([28d5c70](https://github.com/ChenyCHENYU/Robot_Admin/commit/28d5c70ccbb335b3c10887ddbb5c9c5785bf1752))
+* **角色管理:** 详情等相关逻辑修复，显示关联内容 ([491c2ad](https://github.com/ChenyCHENYU/Robot_Admin/commit/491c2ada9e8c57b0e00e172c707fb60bfdea77a8))
+
+
+### Performance Improvements
+
+* **加载动画:** 性能优化，调整动画时间和加载时机 ([8fb5f8e](https://github.com/ChenyCHENYU/Robot_Admin/commit/8fb5f8e4e9442ddd91fa291275502e9832ade784))
+
 ## [1.6.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.5.0...v1.6.0) (2025-10-27)
 
 
