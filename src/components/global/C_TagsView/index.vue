@@ -266,7 +266,7 @@
         break
       case 'closeAll':
         appStore.removeAllTags()
-        router.push('/')
+        router.push('/home')
         break
     }
     closeContextMenu()
@@ -283,11 +283,11 @@
     appStore.addTag({
       path: route.path,
       title:
-        route.path === '/'
+        route.path === '/home'
           ? '首页'
           : (route.meta.title as string) || 'Unnamed Page',
-      icon: route.path === '/' ? 'mdi:home' : (route.meta.icon as string),
-      meta: { affix: route.path === '/' },
+      icon: route.path === '/home' ? 'mdi:home' : (route.meta.icon as string),
+      meta: { affix: route.path === '/home' },
     })
   })
 
@@ -299,11 +299,11 @@
       appStore.addTag({
         path: newPath,
         title:
-          newPath === '/'
+          newPath === '/home'
             ? '首页'
             : (route.meta.title as string) || 'Unnamed Page',
-        icon: newPath === '/' ? 'mdi:home' : (route.meta.icon as string),
-        meta: { affix: newPath === '/' },
+        icon: newPath === '/home' ? 'mdi:home' : (route.meta.icon as string),
+        meta: { affix: newPath === '/home' },
       })
 
       // 更新选中状态
