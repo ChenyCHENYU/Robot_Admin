@@ -64,7 +64,9 @@
         </div>
         <div class="info">
           <span class="title">{{ project.name }}</span>
-          <span class="bagName">{{ project.bagName }}</span>
+          <span class="short-desc">{{
+            project.shortDesc || project.bagName
+          }}</span>
         </div>
         <NTag
           :type="getVersionType(project.version ?? '')"
