@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.1...v1.6.2) (2025-10-29)
+
+
+### Bug Fixes
+
+* **TAGS:** 修复关闭所有标签回退错误问题 ([8baee16](https://github.com/ChenyCHENYU/Robot_Admin/commit/8baee16422b42ccaac576aede4290039279d8ade))
+
+
+### Performance Improvements
+
+* **keepAlive:** 增加缓存配置 ([1443bc7](https://github.com/ChenyCHENYU/Robot_Admin/commit/1443bc74799a7116da3cdb7ccd6bd9aecd83b8e1))
+* **vite:** 构建和预加载性能优化 ([74bc2e9](https://github.com/ChenyCHENYU/Robot_Admin/commit/74bc2e9c0f113c2593ad772538cf4b4ff83cc043))
+* **首屏加载动画:** 性能优化 ([61e6dbe](https://github.com/ChenyCHENYU/Robot_Admin/commit/61e6dbe6a27e407244cee0ef6650529f293e68f3))
+
 ## [1.6.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.0...v1.6.1) (2025-10-28)
 
 
