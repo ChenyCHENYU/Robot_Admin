@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.3](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.2...v1.6.3) (2025-10-29)
+
+
+### Bug Fixes
+
+* **viteBuildConfig:** 修复 manualChunks 函数调用构建异常，切为稳定的对象方式 ([feaeb5b](https://github.com/ChenyCHENYU/Robot_Admin/commit/feaeb5b3481fe7d494ddf89607d87a97342e7553))
+
 ## [1.6.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.1...v1.6.2) (2025-10-29)
 
 
