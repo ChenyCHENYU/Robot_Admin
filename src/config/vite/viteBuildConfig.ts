@@ -1,24 +1,5 @@
 import type { BuildOptions } from 'vite'
 
-// 第三方库分包映射
-const VENDOR_CHUNKS: Record<string, string[]> = {
-  'vue-vendor': ['vue', 'pinia', 'vue-router'],
-  'ui-vendor': ['naive-ui'],
-  'charts-vendor': ['echarts', '@antv/x6', '@vue-flow', '@visactor'],
-  'editor-vendor': ['@kangc/v-md-editor', 'wangeditor', 'highlight.js'],
-  'office-vendor': ['xlsx', 'mammoth', 'file-saver', 'jszip'],
-  'calendar-vendor': ['@fullcalendar'],
-  'spline-vendor': ['@splinetool'],
-}
-
-// 视图分包映射
-const VIEW_CHUNKS: Record<string, string> = {
-  '/views/home/': 'views-primary',
-  '/views/dashboard/': 'views-primary',
-  '/views/sys-manage/': 'views-system',
-  '/views/demo/': 'views-demo',
-}
-
 const buildConfig: BuildOptions = {
   // 减少构建时的无意义警告和耗时统计
   chunkSizeWarningLimit: 800,
@@ -27,28 +8,39 @@ const buildConfig: BuildOptions = {
   rollupOptions: {
     output: {
       /**
-       * 智能分包策略 - 替代 Vite 7 移除的 splitVendorChunkPlugin
-       * 作用：分离稳定的第三方库（利用浏览器缓存）和按业务模块分包
+       * 手动分包配置 - 稳定版本
+       * 使用对象方式明确指定每个包的模块，避免模糊匹配导致的问题
        */
-      manualChunks(id) {
-        // 1. 第三方库分包
-        if (id.includes('node_modules')) {
-          for (const [chunk, keywords] of Object.entries(VENDOR_CHUNKS)) {
-            if (keywords.some(keyword => id.includes(keyword))) {
-              return chunk
-            }
-          }
-          return 'vendor-misc'
-        }
+      manualChunks: {
+        // Vue 核心生态
+        'vue-vendor': ['vue', 'vue-router', 'pinia'],
 
-        // 2. 视图组件分包
-        for (const [path, chunk] of Object.entries(VIEW_CHUNKS)) {
-          if (id.includes(path)) return chunk
-        }
+        // UI 组件库
+        'ui-vendor': ['naive-ui'],
 
-        // 3. 其他视图按目录分包
-        const match = id.match(/\/views\/([^/]+)/)
-        return match ? `views-${match[1]}` : undefined
+        // 编辑器相关（不包含 echarts，避免冲突）
+        'editor-vendor': ['@kangc/v-md-editor', 'wangeditor', 'highlight.js'],
+
+        // Office 文档处理
+        'office-vendor': ['xlsx', 'mammoth', 'file-saver', 'jszip'],
+
+        // 日历组件
+        'calendar-vendor': [
+          '@fullcalendar/core',
+          '@fullcalendar/vue3',
+          '@fullcalendar/daygrid',
+          '@fullcalendar/interaction',
+          '@fullcalendar/list',
+        ],
+
+        // 3D 渲染
+        'spline-vendor': ['@splinetool/runtime'],
+
+        // 流程图/图编辑器
+        'graph-vendor': ['@antv/x6', '@vue-flow/core'],
+
+        // 可视化库
+        'viz-vendor': ['@visactor/vtable-gantt'],
       },
 
       // 优化文件组织结构

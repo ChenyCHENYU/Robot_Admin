@@ -243,7 +243,30 @@
 </template>
 
 <script setup lang="ts">
-  import * as echarts from 'echarts'
+  import * as echarts from 'echarts/core'
+  import {
+    GridComponent,
+    TooltipComponent,
+    LegendComponent,
+    TitleComponent,
+  } from 'echarts/components'
+  import { PieChart, LineChart } from 'echarts/charts'
+  import { LabelLayout, UniversalTransition } from 'echarts/features'
+  import { CanvasRenderer } from 'echarts/renderers'
+
+  // 注册 echarts 组件
+  echarts.use([
+    GridComponent,
+    TooltipComponent,
+    LegendComponent,
+    TitleComponent,
+    PieChart,
+    LineChart,
+    LabelLayout,
+    UniversalTransition,
+    CanvasRenderer,
+  ])
+
   import {
     pageConfig,
     factoryHeaders,
