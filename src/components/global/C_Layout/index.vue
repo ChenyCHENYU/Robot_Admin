@@ -49,7 +49,23 @@
           class="content-with-header p16px"
           :style="{ backgroundColor: isDarkMode ? '#1c1c1c' : '#ffffff' }"
         >
-          <RouterView class="main-content" />
+          <!-- ⚡ 智能 KeepAlive 缓存控制 -->
+          <RouterView v-slot="{ Component, route }">
+            <Transition
+              name="fade-slide"
+              mode="out-in"
+            >
+              <KeepAlive
+                :include="cachedViews"
+                :max="maxCacheCount"
+              >
+                <component
+                  :is="Component"
+                  :key="route.path"
+                />
+              </KeepAlive>
+            </Transition>
+          </RouterView>
         </NLayoutContent>
         <C_Footer :isLightTheme="!isDarkMode" />
       </NLayout>
@@ -60,14 +76,91 @@
   import { type LayoutSiderInst } from 'naive-ui/es'
   import { s_permissionStore } from '@/stores/permission'
   import { useThemeStore } from '@/stores/theme'
+  import { MAX_CACHE_COUNT, DEV_CONFIG } from '@/config/keepAliveConfig'
 
   const permissionStore = s_permissionStore()
   const themeStore = useThemeStore()
+  const route = useRoute()
 
-  const isReady = ref(true) // 移除延迟加载，提升响应速度
-
-  // 关键修改：使用 themeStore.isDark 来统一判断主题
+  const isReady = ref(true)
   const isDarkMode = computed(() => themeStore.isDark)
+
+  // ⚡ KeepAlive 缓存管理（极简版）
+  const cachedViews = ref<string[]>([])
+  const maxCacheCount = ref(MAX_CACHE_COUNT)
+
+  /**
+   * * @description: 判断页面是否应该被缓存
+   * * 极简策略：只有明确配置 meta.keepAlive = true 才缓存
+   */
+  const shouldCache = (routeName: string | symbol | undefined | null) => {
+    if (!routeName || typeof routeName !== 'string') return false
+
+    // 只看 meta.keepAlive 的值
+    const keepAlive = route.meta?.keepAlive
+    return keepAlive === true
+  }
+
+  /**
+   * * @description: 添加缓存
+   */
+  const addCache = (name: string) => {
+    if (!cachedViews.value.includes(name) && shouldCache(name)) {
+      cachedViews.value.push(name)
+
+      // 控制缓存数量
+      if (cachedViews.value.length > maxCacheCount.value) {
+        cachedViews.value.shift() // 移除最早的缓存
+      }
+
+      if (import.meta.env.DEV && DEV_CONFIG.enableLog) {
+        console.debug(
+          `[KeepAlive] ✅ 缓存: ${name} (${cachedViews.value.length}/${maxCacheCount.value})`
+        )
+      }
+    }
+  }
+
+  /**
+   * * @description: 移除缓存
+   */
+  const removeCache = (name: string) => {
+    const index = cachedViews.value.indexOf(name)
+    if (index > -1) {
+      cachedViews.value.splice(index, 1)
+      if (import.meta.env.DEV && DEV_CONFIG.enableLog) {
+        console.debug(`[KeepAlive] ❌ 移除: ${name}`)
+      }
+    }
+  }
+
+  /**
+   * * @description: 清空所有缓存
+   */
+  const clearAllCache = () => {
+    cachedViews.value = []
+    if (import.meta.env.DEV && DEV_CONFIG.enableLog) {
+      console.debug('[KeepAlive] 🗑️ 清空所有缓存')
+    }
+  }
+
+  // 暴露缓存管理方法到 window（便于调试）
+  if (import.meta.env.DEV && DEV_CONFIG.exposeToWindow) {
+    ;(window as any).__clearCache__ = clearAllCache
+    ;(window as any).__removeCache__ = removeCache
+    ;(window as any).__getCachedViews__ = () => cachedViews.value
+  }
+
+  // 监听路由变化，动态管理缓存
+  watch(
+    () => route.name,
+    newName => {
+      if (newName && typeof newName === 'string') {
+        addCache(newName)
+      }
+    },
+    { immediate: true }
+  )
 
   /**
    * * @description: 预设主题样式，避免白闪（仅在暗色模式下需要）
@@ -122,4 +215,20 @@
 
 <style scoped lang="scss">
   @use './index.scss';
+
+  // ⚡ 页面切换过渡动画
+  .fade-slide-enter-active,
+  .fade-slide-leave-active {
+    transition: all 0.2s ease;
+  }
+
+  .fade-slide-enter-from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+
+  .fade-slide-leave-to {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
 </style>

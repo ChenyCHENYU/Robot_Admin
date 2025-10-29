@@ -36,14 +36,21 @@ export default defineConfig({
     Icons({ autoInstall: true }),
     viteAutoImportPlugin,
     viteComponentsPlugin,
+    // ⚡ 预加载配置（配合 KeepAlive 使用）
+    // 只预加载核心页面 + 重量级组件，其他依靠 KeepAlive 缓存
     preloader({
       routes: [
-        '/demo/13-calendar',
-        '/demo/29-antv-x6-editor',
-        '/demo/16-text-editor',
-        '/demo/33-v-table-gantt',
-        '/demo/20-dragable',
-        // 后续还觉得哪些页面初次切换等待时间长，添加到预加载里面来耍
+        // 🔥 核心页面（登录后必访问）
+        '/home',
+        '/dashboard',
+
+        // ⚡ 重量级组件（chunk > 200KB）
+        '/demo/13-calendar', // 216KB
+        '/demo/16-text-editor', // 1.6MB
+        '/demo/29-antv-x6-editor', // AntV X6
+
+        // 🎯 可根据实际业务再加 1-2 个高频页面
+        // '/sys-manage/user-manage',
       ],
     }),
     // 可视化分析 vite 打包结果
