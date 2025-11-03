@@ -15,7 +15,6 @@
     "build:test": "env-manager test && vite build --mode test --emptyOutDir",
     "build:staging": "env-manager staging && vite build --mode staging --profile",
     "preview": "bun run build && vite preview",
-    "test:unit": "vitest",
     "type-watch": "vue-tsc --noEmit --watch",
     "type-build": "vue-tsc --build tsconfig/tsconfig.app.json --force",
     "build:check": "bun run type-build && bun run build",
@@ -85,7 +84,6 @@
     "@types/nprogress": "^0.2.3",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitejs/plugin-vue-jsx": "^4.1.1",
-    "@vitest/eslint-plugin": "^1.1.36",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.5.0",
     "@vue/runtime-core": "^3.5.13",
@@ -119,7 +117,6 @@
     "vite": "7",
     "vite-console-plugin": "^2.0.15",
     "vite-plugin-vue-devtools": "^7.7.2",
-    "vitest": "^3.0.8",
     "vue-tsc": "^2.2.8"
   },
   "config": {
