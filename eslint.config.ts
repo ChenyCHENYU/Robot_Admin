@@ -26,7 +26,12 @@ export default defineConfigWithVueTs(
 
   {
     name: 'app/files-to-ignore',
-    ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
+    ignores: [
+      '**/dist/**',
+      '**/dist-ssr/**',
+      '**/coverage/**',
+      '**/src/api/generated/**', // 忽略自动生成的 API 文件
+    ],
   },
 
   //MARK： 核心规则组（按优先级排序）

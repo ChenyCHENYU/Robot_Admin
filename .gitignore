@@ -42,8 +42,8 @@ type-reports
 
 src/types/auto-imports.d.ts
 
-openapi.json 
-src/api/generated/  
+# openapi.json 
+# src/api/generated/  
 
 
 .mgit-push.json

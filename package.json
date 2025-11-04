@@ -12,9 +12,9 @@
   "scripts": {
     "dev": "env-manager dev && vite && vite",
     "dev:devtools": "VITE_DEVTOOLS=true bun run dev",
-    "build": "bun run generate-api && env-manager prod && vite build",
-    "build:test": "bun run generate-api && env-manager test && vite build --mode test --emptyOutDir",
-    "build:staging": "bun run generate-api && env-manager staging && vite build --mode staging --profile",
+    "build": "env-manager prod && vite build",
+    "build:test": "env-manager test && vite build --mode test --emptyOutDir",
+    "build:staging": "env-manager staging && vite build --mode staging --profile",
     "preview": "bun run build && vite preview",
     "type-watch": "vue-tsc --noEmit --watch",
     "type-build": "vue-tsc --build tsconfig/tsconfig.app.json --force",

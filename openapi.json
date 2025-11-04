@@ -1,0 +1,1976 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "robot-admin",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "10-table"
+    },
+    {
+      "name": "11-table-expand"
+    },
+    {
+      "name": "12-table-dynamic"
+    },
+    {
+      "name": "permission-manage"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "登录",
+        "deprecated": false,
+        "description": "用户通过用户名/邮箱和密码进行登录认证",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              },
+              "example": null
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userId": {
+                          "type": "integer"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "nickname": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "roles": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "token": {
+                          "type": "string"
+                        },
+                        "refreshToken": {
+                          "type": "string"
+                        },
+                        "expiresIn": {
+                          "type": "integer"
+                        },
+                        "lastLoginTime": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "userId",
+                        "username",
+                        "email",
+                        "nickname",
+                        "avatar",
+                        "roles",
+                        "token",
+                        "refreshToken",
+                        "expiresIn",
+                        "lastLoginTime"
+                      ]
+                    },
+                    "timestamp": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data",
+                    "timestamp"
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "message": "登录成功",
+                  "data": {
+                    "userId": 10001,
+                    "username": "admin",
+                    "email": "admin@example.com",
+                    "nickname": "管理员",
+                    "avatar": "https://example.com/avatar/admin.jpg",
+                    "roles": [
+                      "admin",
+                      "user"
+                    ],
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "expiresIn": 3600,
+                    "lastLoginTime": 1693123456789
+                  },
+                  "timestamp": 1693123456789
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/employees/list": {
+      "get": {
+        "summary": "获取员工列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "10-table"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "业务状态码，0表示成功"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "响应消息",
+                      "examples": [
+                        "获取员工列表成功"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "list": {
+                          "type": "array",
+                          "description": "员工列表",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "员工ID",
+                                "examples": [
+                                  1
+                                ]
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "员工姓名",
+                                "examples": [
+                                  "张三"
+                                ]
+                              },
+                              "age": {
+                                "type": "integer",
+                                "description": "年龄",
+                                "examples": [
+                                  28
+                                ]
+                              },
+                              "gender": {
+                                "type": "string",
+                                "description": "性别",
+                                "enum": [
+                                  "male",
+                                  "female"
+                                ],
+                                "examples": [
+                                  "male"
+                                ]
+                              },
+                              "email": {
+                                "type": "string",
+                                "description": "邮箱地址",
+                                "examples": [
+                                  "zhangsan@example.com"
+                                ]
+                              },
+                              "department": {
+                                "type": "string",
+                                "description": "部门代码",
+                                "enum": [
+                                  "tech",
+                                  "hr",
+                                  "market",
+                                  "finance"
+                                ],
+                                "examples": [
+                                  "tech"
+                                ]
+                              },
+                              "joinDate": {
+                                "type": "integer",
+                                "description": "入职时间戳（毫秒）",
+                                "examples": [
+                                  1642204800000
+                                ]
+                              },
+                              "status": {
+                                "type": "string",
+                                "description": "员工状态",
+                                "enum": [
+                                  "active",
+                                  "inactive",
+                                  "probation"
+                                ],
+                                "examples": [
+                                  "active"
+                                ]
+                              },
+                              "description": {
+                                "type": "string",
+                                "description": "员工描述",
+                                "examples": [
+                                  "优秀的前端开发工程师，擅长Vue.js和React开发"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "age",
+                              "gender",
+                              "email",
+                              "department",
+                              "joinDate",
+                              "status"
+                            ]
+                          }
+                        },
+                        "total": {
+                          "type": "integer",
+                          "description": "总记录数",
+                          "examples": [
+                            18
+                          ]
+                        },
+                        "page": {
+                          "type": "integer",
+                          "description": "当前页码",
+                          "examples": [
+                            1
+                          ]
+                        },
+                        "pageSize": {
+                          "type": "integer",
+                          "description": "每页数量",
+                          "examples": [
+                            10
+                          ]
+                        }
+                      },
+                      "required": [
+                        "list",
+                        "total",
+                        "page",
+                        "pageSize"
+                      ]
+                    },
+                    "timestamp": {
+                      "type": "integer",
+                      "description": "响应时间戳",
+                      "examples": [
+                        1693123456789
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data",
+                    "timestamp"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/employees/{id}": {
+      "delete": {
+        "summary": "删除员工",
+        "deprecated": false,
+        "description": "通过id删除列表中的员工",
+        "tags": [
+          "10-table"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "响应状态码"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "响应消息"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "deletedId": {
+                          "type": "integer",
+                          "description": "被删除的员工ID"
+                        },
+                        "deletedEmployee": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "员工ID"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "员工姓名"
+                            },
+                            "age": {
+                              "type": "integer",
+                              "description": "员工年龄"
+                            },
+                            "gender": {
+                              "type": "string",
+                              "description": "员工性别"
+                            },
+                            "email": {
+                              "type": "string",
+                              "format": "email",
+                              "description": "员工邮箱"
+                            },
+                            "department": {
+                              "type": "string",
+                              "description": "员工部门"
+                            },
+                            "joinDate": {
+                              "type": "integer",
+                              "description": "入职日期"
+                            },
+                            "status": {
+                              "type": "string",
+                              "description": "员工状态"
+                            },
+                            "description": {
+                              "type": "string",
+                              "description": "员工描述"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "status"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "deletedId",
+                        "deletedEmployee"
+                      ]
+                    },
+                    "timestamp": {
+                      "type": "integer",
+                      "description": "时间戳"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data",
+                    "timestamp"
+                  ]
+                },
+                "example": {
+                  "code": 0,
+                  "message": "员工删除成功",
+                  "data": {
+                    "deletedId": 1,
+                    "deletedEmployee": {
+                      "id": 1,
+                      "name": "张小明",
+                      "age": 28,
+                      "gender": "male",
+                      "email": "zhang.xiaoming@company.com",
+                      "department": "tech",
+                      "joinDate": 20220315,
+                      "status": "active",
+                      "description": "负责前端开发工作，熟练掌握Vue、React等前端框架，工作积极主动。"
+                    }
+                  },
+                  "timestamp": 1693123456789
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "summary": "编辑员工",
+        "deprecated": false,
+        "description": "更新指定员工的信息",
+        "tags": [
+          "10-table"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "员工姓名，长度2-20字符"
+                        },
+                        "age": {
+                          "type": "integer",
+                          "description": "员工年龄，范围18-65"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "description": "员工性别：male(男)/female(女)"
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "员工邮箱地址，需符合邮箱格式\"z"
+                        },
+                        "department": {
+                          "type": "string",
+                          "description": "所属部门：tech(技术部)/hr(人事部)/market(市场部)/finance(财务部)"
+                        },
+                        "joinDate": {
+                          "type": "integer",
+                          "description": "入职时间戳（毫秒）"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "员工状态：active(在职)/inactive(离职)/probation(试用期)"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "员工描述信息，最大200字符"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "age",
+                        "gender",
+                        "email",
+                        "department",
+                        "joinDate",
+                        "status",
+                        "description"
+                      ]
+                    },
+                    "timestamp": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data",
+                    "timestamp"
+                  ]
+                },
+                "example": {
+                  "code": "0",
+                  "message": "员工信息更新成功",
+                  "data": {
+                    "id": 1,
+                    "name": "张小明",
+                    "age": 28,
+                    "gender": "male",
+                    "email": "zhang.xiaoming@company.com",
+                    "department": "tech",
+                    "joinDate": 1640995200000,
+                    "status": "active",
+                    "description": "资深前端开发工程师，擅长Vue、React等前端技术"
+                  },
+                  "timestamp": 1693123456789
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "get": {
+        "summary": "查询员工",
+        "deprecated": false,
+        "description": "根据员工ID获取员工详细信息",
+        "tags": [
+          "10-table"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "age": {
+                          "type": "integer"
+                        },
+                        "gender": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "department": {
+                          "type": "string"
+                        },
+                        "joinDate": {
+                          "type": "integer"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "age",
+                        "gender",
+                        "email",
+                        "department",
+                        "joinDate",
+                        "status",
+                        "description"
+                      ]
+                    },
+                    "timestamp": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data",
+                    "timestamp"
+                  ]
+                },
+                "example": {
+                  "code": "0",
+                  "message": "查询成功",
+                  "data": {
+                    "id": 1,
+                    "name": "张小明",
+                    "age": 28,
+                    "gender": "male",
+                    "email": "zhang.xiaoming@company.com",
+                    "department": "tech",
+                    "joinDate": 1640995200000,
+                    "status": "active",
+                    "description": "资深前端开发工程师，擅长Vue、React等前端技术，工作积极主动。"
+                  },
+                  "timestamp": 1693123456789
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/employees/expandList": {
+      "get": {
+        "summary": "获取员工列表",
+        "deprecated": false,
+        "description": "获取展开表格的员工列表",
+        "tags": [
+          "11-table-expand"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "department": {
+                                "type": "string"
+                              },
+                              "role": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "hasChildren": {
+                                "type": "boolean"
+                              },
+                              "childData": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "integer"
+                                    },
+                                    "project": {
+                                      "type": "string"
+                                    },
+                                    "progress": {
+                                      "type": "string"
+                                    },
+                                    "status": {
+                                      "type": "string"
+                                    },
+                                    "requirement": {
+                                      "type": "string"
+                                    },
+                                    "priority": {
+                                      "type": "string"
+                                    },
+                                    "service": {
+                                      "type": "string"
+                                    },
+                                    "version": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "project",
+                                    "progress",
+                                    "status",
+                                    "requirement",
+                                    "priority",
+                                    "service",
+                                    "version"
+                                  ]
+                                }
+                              },
+                              "children": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "integer"
+                                    },
+                                    "project": {
+                                      "type": "string"
+                                    },
+                                    "progress": {
+                                      "type": "string"
+                                    },
+                                    "status": {
+                                      "type": "string"
+                                    },
+                                    "requirement": {
+                                      "type": "string"
+                                    },
+                                    "priority": {
+                                      "type": "string"
+                                    },
+                                    "service": {
+                                      "type": "string"
+                                    },
+                                    "version": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "project",
+                                    "progress",
+                                    "status",
+                                    "requirement",
+                                    "priority",
+                                    "service",
+                                    "version"
+                                  ]
+                                }
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "department",
+                              "role",
+                              "status",
+                              "hasChildren",
+                              "childData",
+                              "children"
+                            ]
+                          }
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "pageSize": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "list",
+                        "total",
+                        "page",
+                        "pageSize"
+                      ]
+                    },
+                    "timestamp": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data",
+                    "timestamp"
+                  ]
+                },
+                "example": {
+                  "code": "0",
+                  "message": "操作成功",
+                  "data": {
+                    "list": [
+                      {
+                        "id": 1,
+                        "name": "张三",
+                        "department": "技术部",
+                        "role": "前端工程师",
+                        "status": "在职",
+                        "hasChildren": true,
+                        "childData": [
+                          {
+                            "id": 101,
+                            "project": "管理系统前端",
+                            "progress": "80%",
+                            "status": "进行中"
+                          },
+                          {
+                            "id": 102,
+                            "project": "移动应用开发",
+                            "progress": "60%",
+                            "status": "设计中"
+                          },
+                          {
+                            "id": 103,
+                            "project": "组件库建设",
+                            "progress": "90%",
+                            "status": "测试中"
+                          }
+                        ]
+                      },
+                      {
+                        "id": 2,
+                        "name": "李四",
+                        "department": "产品部",
+                        "role": "产品经理",
+                        "status": "在职",
+                        "hasChildren": true,
+                        "childData": [
+                          {
+                            "id": 201,
+                            "requirement": "用户需求调研",
+                            "status": "已完成",
+                            "priority": "高"
+                          },
+                          {
+                            "id": 202,
+                            "requirement": "竞品分析报告",
+                            "status": "进行中",
+                            "priority": "中"
+                          },
+                          {
+                            "id": 203,
+                            "requirement": "原型设计评审",
+                            "status": "待开始",
+                            "priority": "高"
+                          }
+                        ]
+                      },
+                      {
+                        "id": 3,
+                        "name": "王五",
+                        "department": "设计部",
+                        "role": "UI设计师",
+                        "status": "离职",
+                        "hasChildren": false,
+                        "childData": []
+                      },
+                      {
+                        "id": 4,
+                        "name": "赵六",
+                        "department": "技术部",
+                        "role": "后端工程师",
+                        "status": "在职",
+                        "hasChildren": true,
+                        "childData": [
+                          {
+                            "id": 401,
+                            "service": "API接口开发",
+                            "version": "v2.1",
+                            "status": "已部署"
+                          },
+                          {
+                            "id": 402,
+                            "service": "数据库优化",
+                            "version": "v1.3",
+                            "status": "测试中"
+                          }
+                        ]
+                      }
+                    ],
+                    "total": 4,
+                    "page": 1,
+                    "pageSize": 10
+                  },
+                  "timestamp": 1693123456789
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/employees/dynamicList": {
+      "get": {
+        "summary": "获取员工列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "12-table-dynamic"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "age": {
+                                "type": "integer"
+                              },
+                              "email": {
+                                "type": "string"
+                              },
+                              "department": {
+                                "type": "string"
+                              },
+                              "role": {
+                                "type": "string"
+                              },
+                              "salary": {
+                                "type": "integer"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "hasChildren": {
+                                "type": "boolean"
+                              },
+                              "childData": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "integer"
+                                    },
+                                    "project": {
+                                      "type": "string"
+                                    },
+                                    "progress": {
+                                      "type": "string"
+                                    },
+                                    "status": {
+                                      "type": "string"
+                                    },
+                                    "requirement": {
+                                      "type": "string"
+                                    },
+                                    "priority": {
+                                      "type": "string"
+                                    },
+                                    "service": {
+                                      "type": "string"
+                                    },
+                                    "version": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "project",
+                                    "progress",
+                                    "status",
+                                    "requirement",
+                                    "priority",
+                                    "service",
+                                    "version"
+                                  ]
+                                }
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "age",
+                              "email",
+                              "department",
+                              "role",
+                              "salary",
+                              "status",
+                              "hasChildren",
+                              "childData"
+                            ]
+                          }
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "pageSize": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "list",
+                        "total",
+                        "page",
+                        "pageSize"
+                      ]
+                    },
+                    "timestamp": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data",
+                    "timestamp"
+                  ]
+                },
+                "example": {
+                  "code": "0",
+                  "message": "操作成功",
+                  "data": {
+                    "list": [
+                      {
+                        "id": 1,
+                        "name": "张三",
+                        "age": 28,
+                        "email": "zhang@example.com",
+                        "department": "技术部",
+                        "role": "前端工程师",
+                        "salary": 15000,
+                        "status": "在职",
+                        "hasChildren": true,
+                        "childData": [
+                          {
+                            "id": 101,
+                            "project": "管理系统前端",
+                            "progress": "80%",
+                            "status": "进行中"
+                          },
+                          {
+                            "id": 102,
+                            "project": "移动应用开发",
+                            "progress": "60%",
+                            "status": "设计中"
+                          },
+                          {
+                            "id": 103,
+                            "project": "组件库建设",
+                            "progress": "90%",
+                            "status": "测试中"
+                          }
+                        ]
+                      },
+                      {
+                        "id": 2,
+                        "name": "李四",
+                        "age": 32,
+                        "email": "li@example.com",
+                        "department": "产品部",
+                        "role": "产品经理",
+                        "salary": 18000,
+                        "status": "在职",
+                        "hasChildren": true,
+                        "childData": [
+                          {
+                            "id": 201,
+                            "requirement": "用户需求调研",
+                            "status": "已完成",
+                            "priority": "高"
+                          },
+                          {
+                            "id": 202,
+                            "requirement": "竞品分析报告",
+                            "status": "进行中",
+                            "priority": "中"
+                          },
+                          {
+                            "id": 203,
+                            "requirement": "原型设计评审",
+                            "status": "待开始",
+                            "priority": "高"
+                          }
+                        ]
+                      },
+                      {
+                        "id": 3,
+                        "name": "王五",
+                        "age": 26,
+                        "email": "wang@example.com",
+                        "department": "设计部",
+                        "role": "UI设计师",
+                        "salary": 12000,
+                        "status": "离职",
+                        "hasChildren": false,
+                        "childData": []
+                      },
+                      {
+                        "id": 4,
+                        "name": "赵六",
+                        "age": 35,
+                        "email": "zhao@example.com",
+                        "department": "技术部",
+                        "role": "后端工程师",
+                        "salary": 20000,
+                        "status": "在职",
+                        "hasChildren": true,
+                        "childData": [
+                          {
+                            "id": 401,
+                            "service": "API接口开发",
+                            "version": "v2.1",
+                            "status": "已部署"
+                          },
+                          {
+                            "id": 402,
+                            "service": "数据库优化",
+                            "version": "v1.3",
+                            "status": "测试中"
+                          }
+                        ]
+                      },
+                      {
+                        "id": 5,
+                        "name": "钱七",
+                        "age": 29,
+                        "email": "qian@example.com",
+                        "department": "运营部",
+                        "role": "运营专员",
+                        "salary": 13000,
+                        "status": "在职",
+                        "hasChildren": false,
+                        "childData": []
+                      },
+                      {
+                        "id": 6,
+                        "name": "孙八",
+                        "age": 27,
+                        "email": "sun@example.com",
+                        "department": "技术部",
+                        "role": "测试工程师",
+                        "salary": 14000,
+                        "status": "在职",
+                        "hasChildren": true,
+                        "childData": [
+                          {
+                            "id": 601,
+                            "project": "自动化测试框架",
+                            "progress": "70%",
+                            "status": "开发中"
+                          },
+                          {
+                            "id": 602,
+                            "project": "性能测试优化",
+                            "progress": "95%",
+                            "status": "收尾中"
+                          }
+                        ]
+                      },
+                      {
+                        "id": 7,
+                        "name": "周九",
+                        "age": 31,
+                        "email": "zhou@example.com",
+                        "department": "产品部",
+                        "role": "产品运营",
+                        "salary": 16000,
+                        "status": "在职",
+                        "hasChildren": true,
+                        "childData": [
+                          {
+                            "id": 701,
+                            "requirement": "用户画像分析",
+                            "status": "进行中",
+                            "priority": "中"
+                          },
+                          {
+                            "id": 702,
+                            "requirement": "数据埋点需求",
+                            "status": "待开始",
+                            "priority": "高"
+                          },
+                          {
+                            "id": 703,
+                            "requirement": "AB测试方案",
+                            "status": "已完成",
+                            "priority": "中"
+                          }
+                        ]
+                      },
+                      {
+                        "id": 8,
+                        "name": "吴十",
+                        "age": 24,
+                        "email": "wu@example.com",
+                        "department": "设计部",
+                        "role": "交互设计师",
+                        "salary": 11000,
+                        "status": "在职",
+                        "hasChildren": false,
+                        "childData": []
+                      }
+                    ],
+                    "total": 8,
+                    "page": 1,
+                    "pageSize": 10
+                  },
+                  "timestamp": 1693123456789
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/sys/permissionsList": {
+      "get": {
+        "summary": "获取权限列表",
+        "deprecated": false,
+        "description": "系统管理 =>  权限管理 => 获取权限列表接口",
+        "tags": [
+          "permission-manage"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "list": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "module": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "resources": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "status": {
+                                "type": "integer"
+                              },
+                              "sort": {
+                                "type": "integer"
+                              },
+                              "createTime": {
+                                "type": "integer"
+                              },
+                              "updateTime": {
+                                "type": "integer"
+                              },
+                              "remark": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "code",
+                              "type",
+                              "module",
+                              "description",
+                              "resources",
+                              "status",
+                              "sort",
+                              "createTime",
+                              "updateTime",
+                              "remark"
+                            ]
+                          }
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "pageSize": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "list",
+                        "total",
+                        "page",
+                        "pageSize"
+                      ]
+                    },
+                    "timestamp": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data",
+                    "timestamp"
+                  ]
+                },
+                "example": {
+                  "code": "0",
+                  "message": "获取成功",
+                  "data": {
+                    "list": [
+                      {
+                        "id": 1,
+                        "name": "系统管理模块",
+                        "code": "system",
+                        "type": "module",
+                        "module": "system",
+                        "description": "系统管理功能模块访问权限",
+                        "resources": [
+                          "/system"
+                        ],
+                        "status": 1,
+                        "sort": 1,
+                        "createTime": 1704093600000,
+                        "updateTime": 1704170000000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 2,
+                        "name": "系统监控",
+                        "code": "system:monitor",
+                        "type": "function",
+                        "module": "system",
+                        "description": "系统监控功能访问权限",
+                        "resources": [
+                          "/system/monitor"
+                        ],
+                        "status": 1,
+                        "sort": 2,
+                        "createTime": 1704093900000,
+                        "updateTime": 1704170300000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 3,
+                        "name": "刷新监控数据",
+                        "code": "system:monitor:refresh",
+                        "type": "button",
+                        "module": "system",
+                        "description": "刷新系统监控数据的按钮权限",
+                        "resources": [
+                          "refresh-btn"
+                        ],
+                        "status": 1,
+                        "sort": 3,
+                        "createTime": 1704094200000,
+                        "updateTime": 1704170600000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 4,
+                        "name": "监控数据API",
+                        "code": "system:monitor:data",
+                        "type": "api",
+                        "module": "system",
+                        "description": "获取系统监控数据的API权限",
+                        "resources": [
+                          "/api/system/monitor/data"
+                        ],
+                        "status": 1,
+                        "sort": 4,
+                        "createTime": 1704094500000,
+                        "updateTime": 1704170900000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 5,
+                        "name": "用户管理模块",
+                        "code": "user",
+                        "type": "module",
+                        "module": "user",
+                        "description": "用户管理功能模块访问权限",
+                        "resources": [
+                          "/user"
+                        ],
+                        "status": 1,
+                        "sort": 10,
+                        "createTime": 1704094800000,
+                        "updateTime": 1704171200000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 6,
+                        "name": "用户列表查看",
+                        "code": "user:list",
+                        "type": "function",
+                        "module": "user",
+                        "description": "查看用户列表功能权限",
+                        "resources": [
+                          "/user/list"
+                        ],
+                        "status": 1,
+                        "sort": 11,
+                        "createTime": 1704095100000,
+                        "updateTime": 1704171500000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 7,
+                        "name": "新增用户",
+                        "code": "user:add",
+                        "type": "button",
+                        "module": "user",
+                        "description": "新增用户按钮权限",
+                        "resources": [
+                          "add-user-btn"
+                        ],
+                        "status": 1,
+                        "sort": 12,
+                        "createTime": 1704095400000,
+                        "updateTime": 1704171800000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 8,
+                        "name": "编辑用户",
+                        "code": "user:edit",
+                        "type": "button",
+                        "module": "user",
+                        "description": "编辑用户按钮权限",
+                        "resources": [
+                          "edit-user-btn"
+                        ],
+                        "status": 1,
+                        "sort": 13,
+                        "createTime": 1704095700000,
+                        "updateTime": 1704172100000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 9,
+                        "name": "删除用户",
+                        "code": "user:delete",
+                        "type": "button",
+                        "module": "user",
+                        "description": "删除用户按钮权限",
+                        "resources": [
+                          "delete-user-btn"
+                        ],
+                        "status": 1,
+                        "sort": 14,
+                        "createTime": 1704096000000,
+                        "updateTime": 1704172400000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 10,
+                        "name": "用户详情API",
+                        "code": "user:detail",
+                        "type": "api",
+                        "module": "user",
+                        "description": "获取用户详情的API权限",
+                        "resources": [
+                          "/api/user/{id}"
+                        ],
+                        "status": 1,
+                        "sort": 15,
+                        "createTime": 1704096300000,
+                        "updateTime": 1704172700000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 11,
+                        "name": "创建用户API",
+                        "code": "user:create",
+                        "type": "api",
+                        "module": "user",
+                        "description": "创建用户的API权限",
+                        "resources": [
+                          "/api/user"
+                        ],
+                        "status": 1,
+                        "sort": 16,
+                        "createTime": 1704096600000,
+                        "updateTime": 1704173000000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 12,
+                        "name": "角色管理模块",
+                        "code": "role",
+                        "type": "module",
+                        "module": "role",
+                        "description": "角色管理功能模块访问权限",
+                        "resources": [
+                          "/role"
+                        ],
+                        "status": 1,
+                        "sort": 20,
+                        "createTime": 1704096900000,
+                        "updateTime": 1704173300000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 13,
+                        "name": "角色列表查看",
+                        "code": "role:list",
+                        "type": "function",
+                        "module": "role",
+                        "description": "查看角色列表功能权限",
+                        "resources": [
+                          "/role/list"
+                        ],
+                        "status": 1,
+                        "sort": 21,
+                        "createTime": 1704097200000,
+                        "updateTime": 1704173600000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 14,
+                        "name": "分配权限",
+                        "code": "role:assign",
+                        "type": "button",
+                        "module": "role",
+                        "description": "为角色分配权限的按钮权限",
+                        "resources": [
+                          "assign-permission-btn"
+                        ],
+                        "status": 1,
+                        "sort": 22,
+                        "createTime": 1704097500000,
+                        "updateTime": 1704173900000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 15,
+                        "name": "权限管理模块",
+                        "code": "permission",
+                        "type": "module",
+                        "module": "permission",
+                        "description": "权限管理功能模块访问权限",
+                        "resources": [
+                          "/permission"
+                        ],
+                        "status": 1,
+                        "sort": 30,
+                        "createTime": 1704097800000,
+                        "updateTime": 1704174200000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 16,
+                        "name": "权限列表查看",
+                        "code": "permission:list",
+                        "type": "function",
+                        "module": "permission",
+                        "description": "查看权限列表功能权限",
+                        "resources": [
+                          "/permission/list"
+                        ],
+                        "status": 1,
+                        "sort": 31,
+                        "createTime": 1704098100000,
+                        "updateTime": 1704174500000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 17,
+                        "name": "导出权限",
+                        "code": "permission:export",
+                        "type": "button",
+                        "module": "permission",
+                        "description": "导出权限数据的按钮权限",
+                        "resources": [
+                          "export-permission-btn"
+                        ],
+                        "status": 1,
+                        "sort": 32,
+                        "createTime": 1704098400000,
+                        "updateTime": 1704174800000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 18,
+                        "name": "菜单管理模块",
+                        "code": "menu",
+                        "type": "module",
+                        "module": "menu",
+                        "description": "菜单管理功能模块访问权限",
+                        "resources": [
+                          "/menu"
+                        ],
+                        "status": 1,
+                        "sort": 40,
+                        "createTime": 1704098700000,
+                        "updateTime": 1704175100000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 19,
+                        "name": "菜单排序",
+                        "code": "menu:sort",
+                        "type": "button",
+                        "module": "menu",
+                        "description": "菜单排序的按钮权限",
+                        "resources": [
+                          "sort-menu-btn"
+                        ],
+                        "status": 1,
+                        "sort": 41,
+                        "createTime": 1704099000000,
+                        "updateTime": 1704175400000,
+                        "remark": ""
+                      },
+                      {
+                        "id": 20,
+                        "name": "操作日志查看",
+                        "code": "log:operation:view",
+                        "type": "function",
+                        "module": "log",
+                        "description": "查看操作日志功能权限",
+                        "resources": [
+                          "/log/operation"
+                        ],
+                        "status": 0,
+                        "sort": 50,
+                        "createTime": 1704099300000,
+                        "updateTime": 1704175700000,
+                        "remark": "暂时禁用，等待安全审核"
+                      }
+                    ],
+                    "total": 20,
+                    "page": 1,
+                    "pageSize": 20
+                  },
+                  "timestamp": 1693123456789
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/sys/permissions/{id}": {
+      "put": {
+        "summary": "编辑权限",
+        "deprecated": false,
+        "description": "系统管理 =>  权限管理 => 编辑权限列表项接口",
+        "tags": [
+          "permission-manage"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "删除权限",
+        "deprecated": false,
+        "description": "系统管理 =>  权限管理 => 删除权限列表项接口",
+        "tags": [
+          "permission-manage"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "get": {
+        "summary": "查询权限",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {}
+  },
+  "servers": []
+}
