@@ -131,7 +131,6 @@
     getTableColumns,
     createNewEmployee,
     detailConfig,
-    DEFAULT_PAGINATION,
     type Employee,
   } from './data'
   import {
@@ -175,11 +174,11 @@
 
   const paginationConfig = computed((): PaginationConfig | boolean => {
     if (!paginationEnabled.value) return false
+    // 只传必要参数，其余使用 C_Table 组件的默认配置
     return {
       enabled: true,
       page: currentPage.value,
       pageSize: defaultPageSize.value,
-      ...DEFAULT_PAGINATION,
     }
   })
 

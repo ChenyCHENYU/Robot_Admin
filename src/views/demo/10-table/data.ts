@@ -304,12 +304,3 @@ export const detailConfig: any = {
     },
   ],
 }
-
-// ================= 分页配置 =================
-export const DEFAULT_PAGINATION = {
-  showSizePicker: true,
-  showQuickJumper: true,
-  pageSizes: [10, 20, 50, 100],
-  simple: false,
-  size: 'medium' as const,
-}
