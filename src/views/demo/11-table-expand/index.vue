@@ -128,7 +128,7 @@
     DemoConfig,
   } from '@/types/modules/table'
   import C_Table from '@/components/global/C_Table/index.vue'
-  import { getEmployeesExpandListApi } from '@/api/11-table-expand'
+  import { getEmployeesExpandList } from '@/api/generated'
   import { useTableData } from '@/composables/Table/useTableData'
   import {
     defaultConfig,
@@ -141,9 +141,9 @@
   const config = reactive<DemoConfig>({ ...defaultConfig })
   const tableRef = ref()
 
-  // 使用 useTableData 自动加载数据 - 与第一个文件保持一致
-  const { tableData, loading, refresh } = useTableData(
-    getEmployeesExpandListApi
+  // 直接使用 SDK - useTableData 自动适配
+  const { tableData, loading, refresh } = useTableData(params =>
+    getEmployeesExpandList({ query: params })
   )
 
   // 工具函数

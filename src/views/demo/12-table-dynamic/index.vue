@@ -96,7 +96,7 @@
 <script setup lang="ts">
   import type { DataRecord, SimpleTableActions } from '@/types/modules/table'
   import C_Table from '@/components/global/C_Table/index.vue'
-  import { getDynamicEmployeesListApi } from '@/api/12-table-dynamic'
+  import { getEmployeesDynamicList } from '@/api/generated'
   import { useTableData } from '@/composables/Table/useTableData'
   import {
     type DynamicEmployee,
@@ -114,9 +114,9 @@
   const selectedEmployee = ref<DynamicEmployee | null>(null)
   const logs = ref<Log[]>([])
 
-  // 最简单的使用方式 - 自动加载数据
-  const { tableData, loading, refresh } = useTableData(
-    getDynamicEmployeesListApi
+  // 直接使用 SDK - useTableData 自动适配
+  const { tableData, loading, refresh } = useTableData(params =>
+    getEmployeesDynamicList({ query: params })
   )
 
   // 自动水印样式
