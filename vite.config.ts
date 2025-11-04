@@ -33,7 +33,9 @@ export default defineConfig({
     Unocss(),
     vue(),
     vueJsx(),
-    vueDevTools(),
+    // 🔧 Vue DevTools - 默认关闭以提升启动速度
+    // 需要调试时运行: VITE_DEVTOOLS=true bun run dev
+    ...(process.env.VITE_DEVTOOLS === 'true' ? [vueDevTools()] : []),
     Icons({ autoInstall: true }),
     viteAutoImportPlugin,
     viteComponentsPlugin,
