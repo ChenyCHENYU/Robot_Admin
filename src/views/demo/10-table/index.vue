@@ -125,28 +125,32 @@
 
 <script setup lang="ts">
   import type { EditMode, PaginationConfig } from '@/types/modules/table'
-  import type { DetailConfig } from '@/components/local/c_detail/data'
   import {
     EDIT_MODES,
     MODE_CONFIG,
     getTableColumns,
     createNewEmployee,
+    detailConfig,
+    DEFAULT_PAGINATION,
     type Employee,
   } from './data'
   import {
-    getEmployeesListApi,
-    deleteEmployeeApi,
-    updateEmployeeApi,
-    getEmployeeByIdApi,
-  } from '@/api/10-table'
+    getEmployeesList,
+    deleteEmployeesById,
+    putEmployeesById,
+    getEmployeesById,
+  } from '@/api/generated'
   import { useTableData } from '@/composables/Table/useTableData'
+  import { createTableActions } from '@/composables/Table/createTableActions'
 
   // ================= 组合式函数 =================
   const message = useMessage()
   const dialog = useDialog()
 
-  // 使用 useTableData 自动加载数据 - 与第一个文件保持一致
-  const { tableData, loading, refresh } = useTableData(getEmployeesListApi)
+  // 数据加载
+  const { tableData, loading, refresh } = useTableData(params =>
+    getEmployeesList({ query: params })
+  )
 
   // ================= 响应式状态 =================
   const tableRef = ref()
@@ -165,68 +169,6 @@
   const detailModalTitle = ref('')
   const currentEmployee = ref<Employee | null>(null)
 
-  // ================= 详情配置 =================
-  const detailConfig: DetailConfig = {
-    sections: [
-      {
-        title: '基本信息',
-        columns: 2,
-        items: [
-          { label: '员工ID', key: 'id', type: 'number' },
-          { label: '姓名', key: 'name', type: 'text' },
-          {
-            label: '年龄',
-            key: 'age',
-            type: 'number',
-            formatter: (val: number): string => `${val}岁`,
-          },
-          {
-            label: '性别',
-            key: 'gender',
-            type: 'tag',
-            tagType: 'info',
-            formatter: (val: string): string =>
-              val === 'male' ? '男' : val === 'female' ? '女' : val,
-          },
-        ],
-      },
-      {
-        title: '工作信息',
-        columns: 2,
-        items: [
-          {
-            label: '部门',
-            key: 'department',
-            type: 'tag',
-            tagType: 'success',
-          },
-          {
-            label: '状态',
-            key: 'status',
-            type: 'tag',
-            tagType: 'success',
-          },
-          { label: '入职日期', key: 'joinDate', type: 'date' },
-          { label: '邮箱', key: 'email', type: 'email' },
-        ],
-      },
-      {
-        title: '其他信息',
-        columns: 1,
-        items: [
-          {
-            label: '描述',
-            key: 'description',
-            type: 'text',
-            span: 2,
-            formatter: (val: string | undefined): string =>
-              val || '暂无描述信息',
-          },
-        ],
-      },
-    ],
-  }
-
   // ================= 计算属性 =================
   const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])
   const tableColumns = computed(() => getTableColumns())
@@ -237,11 +179,7 @@
       enabled: true,
       page: currentPage.value,
       pageSize: defaultPageSize.value,
-      showSizePicker: true,
-      showQuickJumper: true,
-      pageSizes: [10, 20, 50, 100],
-      simple: false,
-      size: 'medium',
+      ...DEFAULT_PAGINATION,
     }
   })
 
@@ -280,35 +218,30 @@
     })
   }
 
-  // ================= 简化的表格操作配置  =================
-  const tableActions = computed(() => ({
-    // 编辑API：保存时调用，组件内部处理模态框/行编辑
-    edit: (row: Employee) => updateEmployeeApi(row.id, row),
-
-    // 删除API：确认后调用，组件内部处理确认对话框
-    delete: (row: Employee) => deleteEmployeeApi(row.id),
-
-    // 详情API：点击详情时调用，组件内部处理数据提取
-    detail: (row: Employee) => getEmployeeByIdApi(row.id),
-
-    // 自定义操作按钮
+  // ================= 简化的表格操作配置 =================
+  const tableActions = createTableActions<Employee>({
+    apis: {
+      update: putEmployeesById,
+      delete: deleteEmployeesById,
+      detail: getEmployeesById,
+    },
     custom: [
       {
         key: 'copy',
         label: '复制',
         icon: 'mdi:content-copy',
-        type: 'default' as const,
+        type: 'default',
         onClick: handleCopy,
       },
       {
         key: 'authorize',
         label: '授权',
         icon: 'mdi:shield-key',
-        type: 'warning' as const,
+        type: 'warning',
         onClick: handleAuthorize,
       },
     ],
-  }))
+  })
 
   // ================= 事件处理 =================
 

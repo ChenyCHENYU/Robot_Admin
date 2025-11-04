@@ -17,6 +17,7 @@ import 'virtual:uno.css'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import '@/router/permission'
+import '@/api/generated/client-config' // 🆕 全局配置 SDK 客户端
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'

@@ -243,3 +243,73 @@ export const createNewEmployee = (): Employee => ({
   status: 'probation',
   description: '新入职员工，待完善信息',
 })
+
+// ================= 详情弹窗配置 =================
+export const detailConfig: any = {
+  sections: [
+    {
+      title: '基本信息',
+      columns: 2,
+      items: [
+        { label: '员工ID', key: 'id', type: 'number' },
+        { label: '姓名', key: 'name', type: 'text' },
+        {
+          label: '年龄',
+          key: 'age',
+          type: 'number',
+          formatter: (val: number): string => `${val}岁`,
+        },
+        {
+          label: '性别',
+          key: 'gender',
+          type: 'tag',
+          tagType: 'info',
+          formatter: (val: string): string =>
+            val === 'male' ? '男' : val === 'female' ? '女' : val,
+        },
+      ],
+    },
+    {
+      title: '工作信息',
+      columns: 2,
+      items: [
+        {
+          label: '部门',
+          key: 'department',
+          type: 'tag',
+          tagType: 'success',
+        },
+        {
+          label: '状态',
+          key: 'status',
+          type: 'tag',
+          tagType: 'success',
+        },
+        { label: '入职日期', key: 'joinDate', type: 'date' },
+        { label: '邮箱', key: 'email', type: 'email' },
+      ],
+    },
+    {
+      title: '其他信息',
+      columns: 1,
+      items: [
+        {
+          label: '描述',
+          key: 'description',
+          type: 'text',
+          span: 2,
+          formatter: (val: string | undefined): string => val || '暂无描述信息',
+        },
+      ],
+    },
+  ],
+}
+
+// ================= 分页配置 =================
+export const DEFAULT_PAGINATION = {
+  showSizePicker: true,
+  showQuickJumper: true,
+  pageSizes: [10, 20, 50, 100],
+  simple: false,
+  size: 'medium' as const,
+}

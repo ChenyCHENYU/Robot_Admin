@@ -42,7 +42,7 @@ const filterValidParams = (
  * @param options 配置选项
  */
 export function useTableData<T = any>(
-  apiFn: ListApiFn<T>,
+  apiFn: ListApiFn<T> | ((params?: Record<string, any>) => Promise<any>),
   options: UseTableDataOptions<T> = {}
 ): UseTableDataReturn<T> {
   const {
@@ -146,6 +146,45 @@ export function useTableData<T = any>(
   }
 
   /**
+   * 智能检测并解包响应格式
+   * @param response 原始响应
+   * @returns 解包后的响应数据
+   */
+  const unwrapResponse = (response: any): any => {
+    // 检测是否是 SDK 格式 { data, response, request }
+    const isSdkFormat =
+      response &&
+      typeof response === 'object' &&
+      'data' in response &&
+      ('response' in response || 'error' in response)
+
+    if (isSdkFormat) {
+      // SDK 格式
+      if (response.error) {
+        throw response.error
+      }
+      return response.data // 解包 SDK 响应
+    }
+
+    // 旧版格式（直接返回响应对象）
+    return response
+  }
+
+  /**
+   * 验证响应数据
+   * @param response 响应数据
+   */
+  const validateResponse = (response: any): void => {
+    if (!response) {
+      throw new Error('响应数据为空')
+    }
+
+    if (response.code !== '0') {
+      throw new Error(response.message || '数据加载失败')
+    }
+  }
+
+  /**
    * 加载数据
    * @param params 额外参数
    */
@@ -153,15 +192,11 @@ export function useTableData<T = any>(
     try {
       loading.value = true
       const requestParams = buildRequestParams(params)
-      console.log('🚀 API请求参数:', requestParams)
-
       const response = await apiFn(requestParams)
+      const actualResponse = unwrapResponse(response)
 
-      if (response.code === '0') {
-        handleSuccess(response)
-      } else {
-        throw new Error(response.message || '数据加载失败')
-      }
+      validateResponse(actualResponse)
+      handleSuccess(actualResponse)
     } catch (error) {
       handleError(error)
     } finally {

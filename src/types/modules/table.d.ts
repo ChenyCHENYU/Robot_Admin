@@ -13,8 +13,9 @@ import type { VNodeChild, Ref, ComputedRef } from 'vue'
 import type { FormItemRule } from 'naive-ui/es/form'
 
 // ================= useTableData Hook 相关类型 =================
-/** 列表API函数类型 - 支持timestamp等额外字段 */
-export type ListApiFn<T = any> = (params?: Record<string, any>) => Promise<{
+
+/** 标准响应格式 */
+type StandardResponse<T = any> = {
   data: {
     list: T[]
     total: number
@@ -24,7 +25,22 @@ export type ListApiFn<T = any> = (params?: Record<string, any>) => Promise<{
   code: string
   message: string
   [key: string]: any // 允许任意额外字段，如 timestamp
-}>
+}
+
+/** SDK 响应格式 */
+type SdkResponse<T = any> = {
+  data?: StandardResponse<T>
+  error?: any
+}
+
+/**
+ * 列表API函数类型 - 兼容两种格式
+ * - 旧版：直接返回响应对象
+ * - SDK：返回 { data, error } 格式
+ */
+export type ListApiFn<T = any> = (
+  params?: Record<string, any>
+) => Promise<StandardResponse<T> | SdkResponse<T>>
 
 /** useTableData 配置选项 */
 export interface UseTableDataOptions<T = any> {
