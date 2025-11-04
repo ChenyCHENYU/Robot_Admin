@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.6.4](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.3...v1.6.4) (2025-11-04)
+
+
+### Bug Fixes
+
+* **generate-api/build:** 构建前自动生成 API 文件以修复 Vercel 部署失败 ([05bb594](https://github.com/ChenyCHENYU/Robot_Admin/commit/05bb59493902a1c206a469400f2fc4749ef39a05))
+* **generated/openapi.json:** 在 ESLint 中忽略 generated/ 自动生成文件,修复 Vercel 构建失败 ([c4f800a](https://github.com/ChenyCHENYU/Robot_Admin/commit/c4f800a187cb186e4aa3e58070a6cb75fb9c1195))
+
+
+### Performance Improvements
+
+* **API:** 优化[@api](https://github.com/api)，增加sdk配置，自动生成接口，避免类型体操 ([18a079a](https://github.com/ChenyCHENYU/Robot_Admin/commit/18a079a89a818252ac56a89bc84cfccdb4d26a33))
+* **Pagination:** 剔除冗余配置，保持精简默认 ([464282a](https://github.com/ChenyCHENYU/Robot_Admin/commit/464282a0d6e1aefd3df5af34807df54dbb0c11a0))
+* **Table/Expand/Dynamic:** 示范组件表格相关的接口全部替换成sdk，验证完成 ([db6ca5b](https://github.com/ChenyCHENYU/Robot_Admin/commit/db6ca5ba1128c38ba5ea0ece565b065cef2d5302))
+* **TypeScript moduleResolution:** typeScript moduleResolution 和 resolve.extensions 配置优化 ([7679c80](https://github.com/ChenyCHENYU/Robot_Admin/commit/7679c80dd3f9a3b56790abacc1f2163ccbd52c91))
+* **vite.warmup:** 增加大文件预热配置 ([83b357e](https://github.com/ChenyCHENYU/Robot_Admin/commit/83b357e94e8dcbf7b60c3ab191573ca1cbb7ee45))
+* **加载/启动/分包/构建:** 全面优化一版，后面在考虑收拾scss ([d210e26](https://github.com/ChenyCHENYU/Robot_Admin/commit/d210e26349930eb440eb010b30f9e7afab954032))
+
 ## [1.6.3](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.2...v1.6.3) (2025-10-29)
 
 
