@@ -25,6 +25,7 @@ import {
   serverConfig,
   buildConfig,
 } from './src/config/vite'
+import { HEAVY_PAGE_ROUTES } from './src/config/vite/heavyPages'
 
 export default defineConfig({
   plugins: [
@@ -36,15 +37,9 @@ export default defineConfig({
     Icons({ autoInstall: true }),
     viteAutoImportPlugin,
     viteComponentsPlugin,
-    // ⚡ 预加载重量级组件（只预加载实际存在组件文件的路由）
+    // ⚡ 预加载重量级组件（生产环境优化 - 页面切换更快）
     preloader({
-      routes: [
-        // 只预加载有实际组件文件的路由路径
-        // ❌ 不要添加父路由（如 /dashboard），它们会重定向，没有对应组件
-        '/demo/13-calendar', // ✅ 对应 /src/views/demo/13-calendar/index.vue
-        '/demo/16-text-editor', // ✅ 对应 /src/views/demo/16-text-editor/index.vue
-        '/demo/29-antv-x6-editor', // ✅ 对应 /src/views/demo/29-antv-x6-editor/index.vue
-      ],
+      routes: HEAVY_PAGE_ROUTES,
     }),
     // 可视化分析 vite 打包结果
     ...(process.env.ANALYZE
