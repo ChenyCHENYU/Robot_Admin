@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-08-06 22:40:02
+ * @LastEditTime: 2025-11-04 14:20:57
  * @FilePath: \Robot_Admin\vite.config.ts
  * @Description: 基于 Vite 7 实际特性的优化配置，移除负优化，保留有效优化
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -56,7 +56,7 @@ export default defineConfig({
 
   resolve: resolveConfig,
 
-  // 简化的依赖优化
+  // 简化的依赖优化 - Vite 7 默认策略已经很优秀
   optimizeDeps: {
     // 只包含确实需要强制预构建的核心依赖
     include: [

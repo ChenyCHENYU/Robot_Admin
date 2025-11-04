@@ -29,10 +29,11 @@
     "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.app.tsbuildinfo", // 增量编译信息存储位置
 
     // ==================== 模块解析配置 ====================
-    "moduleResolution": "node", // 使用 Node.js 模块解析策略
-    "allowImportingTsExtensions": false, // 禁止导入 .ts 扩展名（Vite 会处理）
+    "moduleResolution": "Bundler", // 使用 Bundler 解析策略（Vite 7 + Vue 官方推荐）
+    "allowImportingTsExtensions": true, // 允许导入 .ts 扩展名（bundler 模式必需）
     "allowSyntheticDefaultImports": true, // 允许从没有默认导出的模块中合成默认导入
     "esModuleInterop": true, // 启用 ES 模块与 CommonJS 模块的互操作性
+    "resolveJsonModule": true, // 允许导入 JSON 文件
 
     // ==================== 路径映射配置 ====================
     "baseUrl": "../", // 基础路径为项目根目录
