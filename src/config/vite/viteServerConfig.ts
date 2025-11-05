@@ -15,6 +15,11 @@ export default {
   hmr: { overlay: true },
   open: true,
 
+  // 🚫 忽略 lang 目录的文件变化，避免自动刷新页面
+  watch: {
+    ignored: ['**/lang/**', '**/node_modules/**'],
+  },
+
   // ⚡ 预热高频文件（开发环境优化 - 首次访问更快）
   // 经测试：不影响启动速度（6s → 6s），但能加快首次访问 50-70%
   warmup: {

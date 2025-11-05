@@ -8574,5 +8574,385 @@
 	"p0zl2": {
 		"zh-cn": "遵化",
 		"en": "Zunhua"
+	},
+	"fs2ze3": {
+		"zh-cn": "查看 ",
+		"en": "View"
+	},
+	"hzx3i6": {
+		"zh-cn": " 的详细信息",
+		"en": "Detailed information"
+	},
+	"dljwkg4": {
+		"zh-cn": "查看了 ",
+		"en": "Checked"
+	},
+	"iloub4": {
+		"zh-cn": " 的详情",
+		"en": "Details"
+	},
+	"s54c2m7": {
+		"zh-cn": "添加了新员工：",
+		"en": "New employees have been added"
+	},
+	"v095ud6": {
+		"zh-cn": "删除了员工：",
+		"en": "Deleted employee:"
+	},
+	"uyiu1c5": {
+		"zh-cn": "保存成功：",
+		"en": "Saved successfully"
+	},
+	"6ctcns6": {
+		"zh-cn": "编辑了员工 ",
+		"en": "Edited the staff"
+	},
+	"ibh8y4": {
+		"zh-cn": " 的信息",
+		"en": "\"Information"
+	},
+	"gmh3wr5": {
+		"zh-cn": "数据已重置",
+		"en": "The data has been reset."
+	},
+	"em38y05": {
+		"zh-cn": "添加员工：",
+		"en": "Add employee"
+	},
+	"wrgep58": {
+		"zh-cn": "手动添加了员工：",
+		"en": "Manually added employees:"
+	},
+	"qkakzr5": {
+		"zh-cn": "已清空选择",
+		"en": "The selection has been cleared"
+	},
+	"yztqkt8": {
+		"zh-cn": "动态表格场景示例",
+		"en": "Dynamic table scenario example"
+	},
+	"jbkqhy9": {
+		"zh-cn": "员工信息管理（例）",
+		"en": "Employee Information Management (Example)"
+	},
+	"ix6nsv4": {
+		"zh-cn": "重置数据",
+		"en": "Reset the data"
+	},
+	"e7w76a4": {
+		"zh-cn": "添加员工",
+		"en": "Add employees"
+	},
+	"cg2pes4": {
+		"zh-cn": "已选中：",
+		"en": "Selected"
+	},
+	"d1tfy94": {
+		"zh-cn": "操作日志",
+		"en": "Operation log"
+	},
+	"jdw52": {
+		"zh-cn": "清空",
+		"en": "Clear"
+	},
+	"kb5kcu6": {
+		"zh-cn": "暂无操作记录",
+		"en": "There are no operation records for the time being"
+	},
+	"d1spvi4": {
+		"zh-cn": "操作成功",
+		"en": "Operation successful"
+	},
+	"ttowhh6": {
+		"zh-cn": "管理系统前端",
+		"en": "Front end of the management system"
+	},
+	"lq5q43": {
+		"zh-cn": "进行中",
+		"en": "In progress"
+	},
+	"8tamj26": {
+		"zh-cn": "移动应用开发",
+		"en": "Mobile application development"
+	},
+	"l51be3": {
+		"zh-cn": "设计中",
+		"en": "In the design"
+	},
+	"8shoth5": {
+		"zh-cn": "组件库建设",
+		"en": "Component library construction"
+	},
+	"goigz3": {
+		"zh-cn": "测试中",
+		"en": "Under test"
+	},
+	"sf164e6": {
+		"zh-cn": "用户需求调研",
+		"en": "User Demand research"
+	},
+	"e7hbq3": {
+		"zh-cn": "已完成",
+		"en": "Completed"
+	},
+	"ul41": {
+		"zh-cn": "高",
+		"en": "high"
+	},
+	"y73rqq6": {
+		"zh-cn": "竞品分析报告",
+		"en": "Competitive product analysis report"
+	},
+	"ffx1": {
+		"zh-cn": "中",
+		"en": "In the"
+	},
+	"gf0buc6": {
+		"zh-cn": "原型设计评审",
+		"en": "Prototype design review"
+	},
+	"egbo03": {
+		"zh-cn": "待开始",
+		"en": "Wait to start"
+	},
+	"bj5icp7": {
+		"zh-cn": "API接口开发",
+		"en": "API interface development"
+	},
+	"egpvg3": {
+		"zh-cn": "已部署",
+		"en": "Deployed"
+	},
+	"gmpdrh5": {
+		"zh-cn": "数据库优化",
+		"en": "Database optimization"
+	},
+	"nie22": {
+		"zh-cn": "薪资",
+		"en": "Salary"
+	},
+	"ld6s4f5": {
+		"zh-cn": "🟢 在职",
+		"en": "🟢 in service"
+	},
+	"l16mu25": {
+		"zh-cn": "🔴 离职",
+		"en": "🔴 resign"
+	},
+	"fb22l3": {
+		"zh-cn": "新员工",
+		"en": "New employee"
+	},
+	"i0272": {
+		"zh-cn": "李九",
+		"en": "Li Jiu"
+	},
+	"etax2": {
+		"zh-cn": "周十",
+		"en": "Monday 10"
+	},
+	"cql8z3": {
+		"zh-cn": "吴十一",
+		"en": "Wu Shiyi"
+	},
+	"j6kwyg5": {
+		"zh-cn": "测试工程师",
+		"en": "Test Engineer"
+	},
+	"1gaui213": {
+		"zh-cn": "{\"name\": \"张三\", \"age\": 25, \"city\": \"北京\"}",
+		"en": "{\"name\": Zhang SAN, \"age\": 25, \"city\": \"Beijing \"}"
+	},
+	"oxo5zpb": {
+		"zh-cn": "JSON 文本复制成功",
+		"en": "The JSON text copy was successful"
+	},
+	"8gg887q": {
+		"zh-cn": " 复制 Text - [useCopy] 场景示例 ",
+		"en": "Copy the Text - [useCopy] scene example"
+	},
+	"tl6by514": {
+		"zh-cn": " 基于原生 Clipboard API 封装的 useCopy Hook 演示 ",
+		"en": "A demonstration of useCopy Hook encapsulated based on the native Clipboard API"
+	},
+	"4v2hd86": {
+		"zh-cn": "基础文本复制",
+		"en": "Copy of basic text"
+	},
+	"b32pov8": {
+		"zh-cn": "输入要复制的文本",
+		"en": "Enter the text you want to copy"
+	},
+	"7xlypha": {
+		"zh-cn": "自定义文本复制成功！",
+		"en": "The custom text copy was successful!"
+	},
+	"iz8o1e6": {
+		"zh-cn": " 复制文本 ",
+		"en": "Copy the text"
+	},
+	"nmk7xp9": {
+		"zh-cn": "示例文本复制成功！",
+		"en": "The sample text has been copied successfully!"
+	},
+	"crs75r8": {
+		"zh-cn": " 复制示例文本 ",
+		"en": "Copy the sample text"
+	},
+	"flb15t8": {
+		"zh-cn": "URL 链接复制",
+		"en": "Copy the URL link"
+	},
+	"26jbpcc": {
+		"zh-cn": "输入网址（自动添加协议）",
+		"en": "Enter the website address (automatically add the agreement)"
+	},
+	"j66ck06": {
+		"zh-cn": " 复制链接 ",
+		"en": "Copy the link"
+	},
+	"u5nx4x9": {
+		"zh-cn": "JSON 数据复制",
+		"en": "JSON data replication"
+	},
+	"kwo954a": {
+		"zh-cn": "输入 JSON 数据",
+		"en": "Enter JSON data"
+	},
+	"ky66dqc": {
+		"zh-cn": " 复制格式化 JSON ",
+		"en": "Copy formatted JSON"
+	},
+	"55927zb": {
+		"zh-cn": " 复制压缩 JSON ",
+		"en": "Copy the compressed JSON"
+	},
+	"otco5t5": {
+		"zh-cn": "预设示例：",
+		"en": "Preset example"
+	},
+	"dzz9z4": {
+		"zh-cn": " 复制 ",
+		"en": "Copy"
+	},
+	"uisvf96": {
+		"zh-cn": "代码片段复制",
+		"en": "Code snippet copy"
+	},
+	"7equyp8": {
+		"zh-cn": "CSV 数据复制",
+		"en": "CSV data copy"
+	},
+	"ntsnf3b": {
+		"zh-cn": "CSV 数据复制成功！",
+		"en": "The CSV data copy was successful!"
+	},
+	"yyia159": {
+		"zh-cn": " 复制为 CSV ",
+		"en": "Copy as CSV"
+	},
+	"icw9fta": {
+		"zh-cn": " 复制为 JSON ",
+		"en": "Copy as JSON"
+	},
+	"q69i66": {
+		"zh-cn": "联系信息复制",
+		"en": "Copy of contact information"
+	},
+	"3t8e7d5": {
+		"zh-cn": "复制成功！",
+		"en": "Copy successful!"
+	},
+	"k21php4": {
+		"zh-cn": "高级功能",
+		"en": "Advanced functions"
+	},
+	"9zxyli5": {
+		"zh-cn": "读取剪贴板",
+		"en": "Read the clipboard"
+	},
+	"k9d0hj": {
+		"zh-cn": "读取当前剪贴板中的内容（需要用户授权）",
+		"en": "Read the content in the current clipboard (user authorization required)"
+	},
+	"ho86p27": {
+		"zh-cn": " 读取剪贴板 ",
+		"en": "Read the clipboard"
+	},
+	"sr6ej36": {
+		"zh-cn": "剪贴板内容：",
+		"en": "Clipboard content"
+	},
+	"cxmaes6": {
+		"zh-cn": "清除复制历史",
+		"en": "Clear the copy history"
+	},
+	"ovxtc2d": {
+		"zh-cn": "清除当前会话的复制历史记录",
+		"en": "Clear the copy history of the current session"
+	},
+	"wkl91n6": {
+		"zh-cn": " 清除历史 ",
+		"en": "Clear history"
+	},
+	"8k3o2p7": {
+		"zh-cn": "最后复制的内容",
+		"en": "The last copied content"
+	},
+	"izkb6b6": {
+		"zh-cn": " 复制时间：",
+		"en": "Copy time"
+	},
+	"khixp1i": {
+		"zh-cn": "这是一段演示文本，用于测试复制功能。",
+		"en": "This is a demonstration text used to test the copy function."
+	},
+	"f6qmm54": {
+		"zh-cn": "用户信息",
+		"en": "User Information"
+	},
+	"iuvjm14": {
+		"zh-cn": "配置对象",
+		"en": "Configuration object"
+	},
+	"dbnfpu4": {
+		"zh-cn": "数组数据",
+		"en": "Array data"
+	},
+	"cw2923": {
+		"zh-cn": "商品A",
+		"en": "Product A"
+	},
+	"cw2933": {
+		"zh-cn": "商品B",
+		"en": "Product B"
+	},
+	"cw2943": {
+		"zh-cn": "商品C",
+		"en": "Product C"
+	},
+	"qt648u46": {
+		"zh-cn": "const useCopy = () => {\n  const copy = async (text) => {\n    await navigator.clipboard.writeText(text)\n    console.log('复制成功')\n  }\n  return { copy }\n}",
+		"en": "const useCopy = () => {\nconst copy = async (text) => {\nawait navigator.clipboard.writeText(text)\nconsole.log(' Copy successful ')\n}\nreturn { copy }\n}"
+	},
+	"o5ha8y48": {
+		"zh-cn": "<template>\n  <NButton @click=\"handleCopy\">\n    <template #icon>\n      <i class=\"i-mdi:content-copy\" />\n    </template>\n    复制内容\n  </NButton>\n</template>",
+		"en": "<template>\n<NButton @click=\"handleCopy\">\n<template #icon>\n<i class=\"i-mdi:content-copy\" />\n</template>\nCopy the content\n</NButton>\n</template>"
+	},
+	"irh79v4": {
+		"zh-cn": "邮箱地址",
+		"en": "Email address"
+	},
+	"gpkj3j4": {
+		"zh-cn": "联系电话",
+		"en": "Contact number"
+	},
+	"amfh984": {
+		"zh-cn": "公司地址",
+		"en": "Company Address"
+	},
+	"wvdwqhf": {
+		"zh-cn": "北京市朝阳区某某大厦1008室",
+		"en": "Room 1008, XX Building, Chaoyang District, Beijing"
 	}
 }
