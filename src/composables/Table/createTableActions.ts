@@ -2,13 +2,13 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-11-04 10:03:45
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-04 10:41:10
+ * @LastEditTime: 2025-11-05 14:07:45
  * @FilePath: \Robot_Admin\src\composables\Table\createTableActions.ts
  * @Description: 简化表格增删改查的工厂函数
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { unwrapSdk } from '@/utils/sdk-helper'
+import { unwrapSdk } from '@/utils/plugins/sdk-helper'
 
 /**
  * 自定义操作按钮配置

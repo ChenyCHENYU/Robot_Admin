@@ -60,6 +60,7 @@
   import { ref, computed, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { s_appStore } from '@/stores/app'
+  import { translateRouteTitle } from '@/utils/plugins/i18n-route'
 
   interface Tag {
     path: string
@@ -282,10 +283,11 @@
     // 添加当前路由标签（包括首页）
     appStore.addTag({
       path: route.path,
-      title:
+      title: translateRouteTitle(
         route.path === '/home'
           ? '首页'
-          : (route.meta.title as string) || 'Unnamed Page',
+          : (route.meta.title as string) || 'Unnamed Page'
+      ),
       icon: route.path === '/home' ? 'mdi:home' : (route.meta.icon as string),
       meta: { affix: route.path === '/home' },
     })
@@ -294,14 +296,15 @@
   // 监听路由变化更新标签
   watch(
     () => route.path,
-    newPath => {
+    (newPath: string) => {
       // 添加或更新当前路由标签
       appStore.addTag({
         path: newPath,
-        title:
+        title: translateRouteTitle(
           newPath === '/home'
             ? '首页'
-            : (route.meta.title as string) || 'Unnamed Page',
+            : (route.meta.title as string) || 'Unnamed Page'
+        ),
         icon: newPath === '/home' ? 'mdi:home' : (route.meta.icon as string),
         meta: { affix: newPath === '/home' },
       })
@@ -318,7 +321,7 @@
   // 监听标签列表变化并保存到localStorage
   watch(
     () => appStore.tagsViewList,
-    tags => {
+    (tags: any) => {
       localStorage.setItem('tagsViewList', JSON.stringify(tags))
     },
     { deep: true }
@@ -327,7 +330,7 @@
   // 监听选中标签变化并保存
   watch(
     () => appStore.activeTag,
-    activeTag => {
+    (activeTag: string) => {
       localStorage.setItem('activeTag', activeTag)
     }
   )

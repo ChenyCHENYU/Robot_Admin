@@ -2,13 +2,13 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-04 14:20:57
+ * @LastEditTime: 2025-11-05
  * @FilePath: \Robot_Admin\vite.config.ts
  * @Description: 基于 Vite 7 实际特性的优化配置，移除负优化，保留有效优化
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { defineConfig, PluginOption } from 'vite'
+import { defineConfig, type PluginOption, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
@@ -24,56 +24,56 @@ import {
   resolveConfig,
   serverConfig,
   buildConfig,
+  createI18nPlugin,
+  createVuePluginOptions,
 } from './src/config/vite'
 import { HEAVY_PAGE_ROUTES } from './src/config/vite/heavyPages'
 
-export default defineConfig({
-  plugins: [
-    viteConsolePlugin,
-    Unocss(),
-    vue(),
-    vueJsx(),
-    // 🔧 Vue DevTools - 默认关闭以提升启动速度
-    // 需要调试时运行: VITE_DEVTOOLS=true bun run dev
-    ...(process.env.VITE_DEVTOOLS === 'true' ? [vueDevTools()] : []),
-    Icons({ autoInstall: true }),
-    viteAutoImportPlugin,
-    viteComponentsPlugin,
-    // ⚡ 预加载重量级组件（生产环境优化 - 页面切换更快）
-    preloader({
-      routes: HEAVY_PAGE_ROUTES,
-    }),
-    // 可视化分析 vite 打包结果
-    ...(process.env.ANALYZE
-      ? [
-          visualizer({
-            filename: 'dist/report.html',
-            open: true,
-            gzipSize: true,
-            brotliSize: true,
-          }) as PluginOption,
-        ]
-      : []),
-  ],
+export default defineConfig(({ mode }: { mode: string }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  process.env = { ...process.env, ...env }
 
-  resolve: resolveConfig,
+  return {
+    plugins: [
+      viteConsolePlugin,
+      Unocss(),
+      vue(createVuePluginOptions()),
+      vueJsx(),
+      ...(process.env.VITE_DEVTOOLS === 'true' ? [vueDevTools()] : []),
+      Icons({ autoInstall: true }),
+      viteAutoImportPlugin,
+      viteComponentsPlugin,
+      preloader({
+        routes: HEAVY_PAGE_ROUTES,
+      }),
+      createI18nPlugin(),
+      ...(process.env.ANALYZE
+        ? [
+            visualizer({
+              filename: 'dist/report.html',
+              open: true,
+              gzipSize: true,
+              brotliSize: true,
+            }) as PluginOption,
+          ]
+        : []),
+    ].filter(Boolean),
 
-  // 简化的依赖优化 - Vite 7 默认策略已经很优秀
-  optimizeDeps: {
-    // 只包含确实需要强制预构建的核心依赖
-    include: [
-      'naive-ui', // UI 框架通常需要预构建
-    ],
-    // 只排除真正有问题的包
-    exclude: [
-      'pinia-plugin-persistedstate', // 有特殊加载逻辑
-    ],
-  },
+    resolve: resolveConfig,
 
-  server: serverConfig,
-  build: buildConfig,
+    optimizeDeps: {
+      include: ['naive-ui'],
+      exclude: ['pinia-plugin-persistedstate'],
+    },
 
-  esbuild: {
-    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
-  },
+    server: serverConfig,
+    build: buildConfig,
+
+    esbuild:
+      process.env.NODE_ENV === 'production'
+        ? {
+            drop: ['console' as const, 'debugger' as const],
+          }
+        : undefined,
+  }
 })

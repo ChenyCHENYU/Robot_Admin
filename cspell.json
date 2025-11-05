@@ -136,7 +136,8 @@
     "wangeditor",
     "wechat",
     "wordprocessingml",
-    "xiong"
+    "xiong",
+    "YOUDAO"
   ],
   "ignorePaths": [
     "README.md"

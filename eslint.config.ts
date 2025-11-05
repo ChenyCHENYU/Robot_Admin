@@ -31,6 +31,7 @@ export default defineConfigWithVueTs(
       '**/dist-ssr/**',
       '**/coverage/**',
       '**/src/api/generated/**', // 忽略自动生成的 API 文件
+      '**/lang/**', // 忽略 i18n 插件生成的文件
     ],
   },
 

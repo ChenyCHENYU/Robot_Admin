@@ -6,7 +6,8 @@
     "../cypress.config.*", // Cypress 配置文件
     "../nightwatch.conf.*", // Nightwatch 配置文件
     "../playwright.config.*", // Playwright 配置文件
-    "../eslint.config.*" // ESLint 配置文件
+    "../eslint.config.*", // ESLint 配置文件
+    "../src/config/vite/**/*" // Vite 相关配置文件
   ],
   "compilerOptions": {
     "noEmit": true, // 不生成输出文件

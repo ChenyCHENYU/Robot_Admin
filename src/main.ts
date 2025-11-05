@@ -2,11 +2,14 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-10-28
+ * @LastEditTime: 2025-11-05
  * @FilePath: \Robot_Admin\src\main.ts
  * @Description: 根入口文件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
+
+import '../lang/index.js'
+import './utils/plugins/i18n-route.js' // 🌐 扩展路由翻译
 
 // ⭐ 关键：首屏加载动画必须最先执行，确保极速显示（soybean-admin 优化方案）
 import { setupLoading } from '@/plugins/loading'

@@ -4,8 +4,8 @@
  * @LastEditors: ChenYu ycyplus@gmail.com
  * @LastEditTime: 2025-07-01 22:26:57
  * @FilePath: \Robot_Admin\src\components\global\C_Breadcrumb\index.vue
- * @Description: 
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * @Description:
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 <template>
   <div
@@ -46,6 +46,8 @@
 </template>
 
 <script setup lang="ts">
+  import { translateRouteTitle } from '@/utils/plugins/i18n-route'
+
   defineOptions({ name: 'C_Breadcrumb' })
   const route = useRoute()
   const router = useRouter()
@@ -56,17 +58,19 @@
       .filter(record => record.meta?.title)
       .map(record => ({
         key: record.path,
-        label: record.meta.title,
+        label: translateRouteTitle((record.meta.title || '') as string),
         icon: record.meta.icon,
         children: record.children?.length
           ? record.children.map(child => ({
               key: child.path,
-              label: child.meta?.title,
+              label: translateRouteTitle((child.meta?.title || '') as string),
               // 仅当存在孙子菜单时添加 children 属性
               ...(child.children?.length && {
                 children: child.children.map(grandChild => ({
                   key: grandChild.path,
-                  label: grandChild.meta?.title,
+                  label: translateRouteTitle(
+                    (grandChild.meta?.title || '') as string
+                  ),
                 })),
               }),
             }))

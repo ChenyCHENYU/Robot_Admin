@@ -19,22 +19,34 @@
 
   const languageOptions = [
     {
-      key: 'zh-CN',
+      key: 'zh-cn',
       label: '简体中文',
       icon: () => h('span', { class: 'i-mdi:alpha-c' }),
     },
     {
-      key: 'en-US',
+      key: 'en',
       label: 'English',
       icon: () => h('span', { class: 'i-mdi:alpha-u' }),
     },
   ]
 
-  const currentLanguage = ref('zh-CN')
+  const currentLanguage = ref(
+    (typeof window !== 'undefined' &&
+      window.localStorage.getItem('robot-admin')) ||
+      'zh-cn'
+  )
 
   const handleLanguageChange = (key: string) => {
+    if (key === currentLanguage.value) return
     currentLanguage.value = key
-    // 这里添加您的语言切换逻辑
-    console.info('切换语言到:', key)
+    window.localStorage.setItem('robot-admin', key)
+    window.location.reload()
   }
+
+  onMounted(() => {
+    const savedLang = window.localStorage.getItem('robot-admin')
+    if (savedLang && savedLang !== currentLanguage.value) {
+      currentLanguage.value = savedLang
+    }
+  })
 </script>

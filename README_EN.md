@@ -23,6 +23,7 @@
     <img src="https://img.shields.io/badge/components-30+-success?style=flat" alt="Components">
     <img src="https://img.shields.io/badge/demos-30+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
+    <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
     <img src="https://img.shields.io/badge/test_coverage-85%25-brightgreen?style=flat" alt="Test Coverage">
   </p>
   <p>
@@ -364,6 +365,60 @@ graph LR
 - `desc:` For quick console print statement generation
 - `use:` Select variable, press shortcut to generate print statement
 - `key:` `ctrl+alt+l` generate `alt+shift+c` comment all **+u** enable all **+d** delete all
+</details>
+
+---
+
+## 🌍 Internationalization (i18n)
+
+### Automated Route Translation
+
+The project integrates **vite-auto-i18n-plugin** for automatic route title translation.
+
+<details>
+<parameter name="summary"><b>View Detailed Usage Guide</b></summary>
+
+#### Quick Start
+
+```bash
+# 1. Add new menu in dynamicRouter.json (Chinese only)
+{
+  "meta": {
+    "title": "新功能模块"
+  }
+}
+
+# 2. Run auto-generation script
+bun run gen:route-i18n
+
+# 3. Restart dev server (first time only)
+bun run dev
+```
+
+**That's it!** The plugin automatically calls Youdao Translation API to translate Chinese to English.
+
+#### How It Works
+
+```mermaid
+graph LR
+    A[dynamicRouter.json] --> B[gen:route-i18n]
+    B --> C[Extract Route Titles]
+    C --> D[vite-auto-i18n-plugin]
+    D --> E[Youdao Translation API]
+    E --> F[lang/index.json]
+    F --> G[Build Mapping at Compile Time]
+    G --> H[O(1) Lookup at Runtime]
+```
+
+#### Features
+- ✅ **Zero Configuration** - Just run one command after adding Chinese titles
+- ✅ **Auto Translation** - Youdao Translation API generates English automatically
+- ✅ **High Performance** - O(1) lookup with compile-time mapping
+- ✅ **Zero Maintenance** - HMR auto-updates, no manual translation management
+
+#### Documentation
+📖 Complete Guide: [i18n Practice Guide - Online Docs](https://www.tzagileteam.com/robot/guide/i18n-practice)
+
 </details>
 
 ---

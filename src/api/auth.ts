@@ -1,5 +1,6 @@
 import DynamicRouter from '@/assets/data/dynamicRouter.json'
 import { postAuthLogin, type PostAuthLoginResponse } from './generated'
+import type { DynamicRoute } from '@/router/dynamicRouter'
 
 export type LoginResponse = PostAuthLoginResponse
 
@@ -30,4 +31,8 @@ export const loginApi = async (data: {
  * * @description: 获取用户菜单权限列表
  * ! @return {any} 动态菜单路由配置数据
  */
-export const getAuthMenuListApi = () => DynamicRouter
+export const getAuthMenuListApi = (): {
+  code: string
+  data: DynamicRoute[]
+  msg: string
+} => DynamicRouter as any

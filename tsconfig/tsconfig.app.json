@@ -12,6 +12,7 @@
   // 排除不需要编译的文件和目录
   "exclude": [
     "../src/**/__tests__/*", // 测试文件
+    "../src/config/vite/**/*", // Vite 配置文件（由 tsconfig.node.json 处理）
     "../node_modules", // 依赖包目录
     "../dist" // 构建输出目录
   ],
