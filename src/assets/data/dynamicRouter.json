@@ -823,7 +823,7 @@
             "icon": "ix:about-filled",
             "title": "关于",
             "hidden": false,
-            "affix": true,
+            "affix": false,
             "keepAlive": false,
             "full": false
           }

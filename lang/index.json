@@ -4214,5 +4214,4365 @@
 	"idspp24": {
 		"zh-cn": "超级表格",
 		"en": "Super Table"
+	},
+	"yg3jwf8": {
+		"zh-cn": "图标组件场景示例",
+		"en": "Icon component scene example"
+	},
+	"9b9jnq1i": {
+		"zh-cn": "支持 Iconify、UnoCSS、组件、SVG、图片等多种图标类型，默认使用 Iconify 提供动态能力",
+		"en": "Supports multiple icon types such as Iconify, UnoCSS, components, SVG, and images. By default, Iconify is used to provide dynamic capabilities"
+	},
+	"f67rz66r": {
+		"zh-cn": "<!-- 基础用法 -->\n<C_Icon name=\"mdi:home\" />\n\n<!-- 自定义大小和颜色 -->\n<C_Icon name=\"mdi:settings\" size=\"24\" />\n<C_Icon name=\"material-symbols:favorite\" color=\"red\" size=\"32\" />\n\n<!-- 可点击交互 -->\n<C_Icon name=\"lucide:star\" clickable @click=\"handleClick\" />",
+		"en": "<! -- Basic Usage -->\n<C_Icon name=\"mdi:home\" />\n\n<! -- Customize size and color -->\n<C_Icon name=\"mdi:settings\" size=\"24\" />\n<C_Icon name=\"material-symbols:favorite\" color=\"red\" size=\"32\" />\n\n<! -- Clickable interaction -->\n<C_Icon name=\"lucide:star\" clickable @click=\"handleClick\" />"
+	},
+	"edokxr7y": {
+		"zh-cn": "<!-- UnoCSS 图标需要指定 type -->\n<C_Icon type=\"unocss\" name=\"i-mdi-home\" />\n<C_Icon type=\"unocss\" name=\"i-mdi-settings\" size=\"24\" />\n<C_Icon type=\"unocss\" name=\"i-mdi-user\" color=\"#42b883\" size=\"32\" />\n\n<!-- 支持交互 -->\n<C_Icon type=\"unocss\" name=\"i-mdi-heart\" clickable @click=\"handleClick\" />",
+		"en": "<! -- UnoCSS ICONS need to specify type -->\n<C_Icon type=\"unocss\" name=\"i-mdi-home\" />\n<C_Icon type=\"unocss\" name=\"i-mdi-settings\" size=\"24\" />\n<C_Icon type=\"unocss\" name=\"i-mdi-user\" color=\"#42b883\" size=\"32\" />\n\n<! -- Support interaction --\n<C_Icon type=\"unocss\" name=\"i-mdi-heart\" clickable @click=\"handleClick\" />"
+	},
+	"u1j2mw5i": {
+		"zh-cn": "<!-- SVG 路径图标 -->\n<C_Icon\n  type=\"svg\"\n  name=\"custom-check\"\n  :svg-path=\"checkPath\"\n  color=\"green\"\n  size=\"24\"\n/>\n\n<script setup>\nconst checkPath = \"M9 16.17L4.83 12l-1.42 1.41L9 19...\"\n<\\/script>",
+		"en": "<! -- SVG Path icon -->\n<C_Icon\ntype=\"svg\"\nname=\"custom-check\"\n:svg-path=\"checkPath\"\ncolor=\"green\"\nsize=\"24\"\n/>\n\n<script setup>\nconst checkPath = \"M9 16.17l 4.8312L -1.42 1.41L9 19...\"\n<\\/script>"
+	},
+	"3ld8eo5s": {
+		"zh-cn": "<!-- 组件方式图标 -->\n<script setup>\nimport IconCommunity from '@/components/icons/IconCommunity.vue'\n<\\/script>\n\n<C_Icon\n  type=\"component\"\n  :name=\"IconCommunity\"\n  :component-props=\"{ width: 32, height: 32 }\"\n/>",
+		"en": "<! -- Component Mode Icon -->\n<script setup>\nimport IconCommunity from '@/components/icons/IconCommunity.vue'\n<\\/script>\n\n<C_Icon\ntype=\"component\"\n:name=\"IconCommunity\"\n:component-props=\"{ width: 32, height: 32 }\"\n/>"
+	},
+	"r24uyc9w": {
+		"zh-cn": "<!-- 本地图片 - 自动使用 useImage -->\n<C_Icon type=\"image\" name=\"avatar\" size=\"32\" />\n<C_Icon type=\"image\" name=\"icons/home\" size=\"32\" />\n\n<!-- 远程图片 - 直接使用 URL -->\n<C_Icon\n  type=\"image\"\n  name=\"https://cdn.jsdelivr.net/gh/devicons/...\"\n  size=\"32\"\n/>\n\n<!-- 手动控制本地处理 -->\n<C_Icon\n  type=\"image\"\n  name=\"logo\"\n  :use-local-image=\"true\"\n  fallback-icon=\"mdi:image\"\n/>",
+		"en": "<! -- Local Image -- Use useImage automatically -->\n<C_Icon type=\"image\" name=\"avatar\" size=\"32\" />\n<C_Icon type=\"image\" name=\"icons/home\" size=\"32\" />\n\n<! -- Remote Image -- Use the URL directly -->\n<C_Icon\ntype=\"image\"\nname=\"https://cdn.jsdelivr.net/gh/devicons/...\"\nsize=\"32\"\n/>\n\n<! -- Manually control local processing -->\n<C_Icon\ntype=\"image\"\nname=\"logo\"\n:use-local-image=\"true\"\nfallback-icon=\"mdi:image\"\n/>"
+	},
+	"3k2ofy8f": {
+		"zh-cn": "<!-- 可点击图标 -->\n<C_Icon name=\"mdi:thumb-up\" clickable @click=\"handleLike\" />\n\n<!-- 加载状态 -->\n<C_Icon name=\"mdi:loading\" :loading=\"loading\" clickable />\n\n<!-- 旋转和翻转效果 -->\n<C_Icon name=\"mdi:refresh\" :rotate=\"rotation\" clickable />\n<C_Icon name=\"mdi:arrow-right\" :flip=\"flipped ? 'horizontal' : undefined\" />",
+		"en": "<! -- Click the icon -->\n<C_Icon name=\"mdi:thumb-up\" clickable @click=\"handleLike\" />\n\n<! -- Loading status -->\n<C_Icon name=\"mdi:loading\" :loading=\"loading\" clickable />\n\n<! -- Rotation and Flipping effects -->\n<C_Icon name=\"mdi:refresh\" :rotate=\"rotation\" clickable />\n<C_Icon name=\"mdi:arrow-right\" :flip=\"flipped ? 'horizontal' : undefined\" />"
+	},
+	"37zoq56w": {
+		"zh-cn": "<!-- 错误时显示 fallback 图标 -->\n<C_Icon\n  name=\"nonexistent:icon\"\n  fallback-icon=\"mdi:help-circle\"\n  @error=\"handleError\"\n/>\n\n<C_Icon\n  type=\"image\"\n  name=\"https://nonexistent.com/image.png\"\n  fallback-icon=\"mdi:image-broken\"\n  @error=\"handleError\"\n/>",
+		"en": "<! -- Display the fallback icon when an error occurs -->\n<C_Icon\nname=\"nonexistent:icon\"\nfallback-icon=\"mdi:help-circle\"\n@error=\"handleError\"\n/>\n\n<C_Icon\ntype=\"image\"\nname=\"https://nonexistent.com/image.png\"\nfallback-icon=\"mdi:image-broken\"\n@error=\"handleError\"\n/>"
+	},
+	"xjet1c54": {
+		"zh-cn": "<!-- 自定义动画样式 -->\n<C_Icon\n  name=\"mdi:star\"\n  size=\"48\"\n  color=\"gold\"\n  custom-class=\"sparkle-icon\"\n/>\n\n<style>\n.sparkle-icon {\n  animation: sparkle 2s ease-in-out infinite;\n}\n</style>",
+		"en": "<! -- Custom Animation Style -->\n<C_Icon\nname=\"mdi:star\"\nsize=\"48\"\ncolor=\"gold\"\ncustom-class=\"sparkle-icon\"\n/>\n\n<style>\n.sparkle-icon {\nanimation: sparkle 2s ease-in-out infinite;\n}\n</style>"
+	},
+	"edxdv3": {
+		"zh-cn": "已翻转",
+		"en": "Has been flipped"
+	},
+	"is6t2": {
+		"zh-cn": "正常",
+		"en": "Normal"
+	},
+	"qxtz7uj": {
+		"zh-cn": "1. Iconify 图标（默认推荐）",
+		"en": "1. Iconify icon (Default recommended)"
+	},
+	"rs982": {
+		"zh-cn": "默认",
+		"en": "Default"
+	},
+	"cu7bl3": {
+		"zh-cn": "可点击",
+		"en": "Click"
+	},
+	"49hq54c": {
+		"zh-cn": "2. UnoCSS 图标",
+		"en": "2. UnoCSS icon"
+	},
+	"q9qg2": {
+		"zh-cn": "静态",
+		"en": "Static"
+	},
+	"jum2dbb": {
+		"zh-cn": "3. SVG 路径图标",
+		"en": "3. SVG path ICONS"
+	},
+	"jh1ll3": {
+		"zh-cn": "自定义",
+		"en": "\"Custom\""
+	},
+	"4xwybg4": {
+		"zh-cn": "✓ 成功",
+		"en": "✓ Success"
+	},
+	"4y8i3j4": {
+		"zh-cn": "✗ 错误",
+		"en": "Youdaoplaceholder0 error"
+	},
+	"khnbhd7": {
+		"zh-cn": "4. 组件图标",
+		"en": "4. Component ICONS"
+	},
+	"qnyisq17": {
+		"zh-cn": "<strong>注意：</strong>组件方式需要确保对应的图标组件已正确导入和注册",
+		"en": "Note: The component method requires ensuring that the corresponding icon component has been correctly imported and registered"
+	},
+	"vll87ik": {
+		"zh-cn": "5. 图片图标（集成 useImage）",
+		"en": "5. Image Icon (Integrated useImage)"
+	},
+	"i4zn2": {
+		"zh-cn": "智能",
+		"en": "\"Intelligent\""
+	},
+	"fm6z2": {
+		"zh-cn": "头像",
+		"en": "Avatar"
+	},
+	"tbnqmba": {
+		"zh-cn": "本地: avatar",
+		"en": "Local: avatar"
+	},
+	"k04rzc4": {
+		"zh-cn": "首页图标",
+		"en": "Home page icon"
+	},
+	"ib1q8ye": {
+		"zh-cn": "本地: icons/home",
+		"en": "Local: icons/home"
+	},
+	"ow73xab": {
+		"zh-cn": "远程: Vue CDN",
+		"en": "Remote: Vue CDN"
+	},
+	"h8otts9": {
+		"zh-cn": "本地: robot",
+		"en": "Local: robot"
+	},
+	"t0ftqr3f": {
+		"zh-cn": "<strong>图片处理说明：</strong><br>• 本地图片：自动使用 useImage hook 处理<br>• 远程图片：HTTP/HTTPS URL 直接使用<br>• 手动控制：use-local-image 属性强制指定处理方式",
+		"en": "<strong> Image processing instructions: </strong><br>• Local images: Automatically use useImage hook for processing <br>• Remote images: HTTP/HTTPS urls directly use <br>• Manual control: The use-local-image attribute forces the specification of the processing method"
+	},
+	"7ftwxj8": {
+		"zh-cn": "6. 交互式功能",
+		"en": "6. Interactive functions"
+	},
+	"dt2m2": {
+		"zh-cn": "交互",
+		"en": "Interaction"
+	},
+	"jy6d2": {
+		"zh-cn": "点赞",
+		"en": "give a like"
+	},
+	"sfi0f16": {
+		"zh-cn": "切换加载状态",
+		"en": "Switch the loading state"
+	},
+	"b0qpwo4": {
+		"zh-cn": "加载状态",
+		"en": "Loading status"
+	},
+	"dfmxsa4": {
+		"zh-cn": "旋转图标",
+		"en": "Rotate icon"
+	},
+	"df7lyf4": {
+		"zh-cn": "旋转: ",
+		"en": "Rotation"
+	},
+	"gqjlui4": {
+		"zh-cn": "翻转图标",
+		"en": "Flip icon"
+	},
+	"3fxisf7": {
+		"zh-cn": "7. 错误处理",
+		"en": "7. Error Handling"
+	},
+	"gf402": {
+		"zh-cn": "容错",
+		"en": "Fault tolerance"
+	},
+	"quqx006": {
+		"zh-cn": "不存在的图标",
+		"en": "A non-existent icon"
+	},
+	"wv4w5z5": {
+		"zh-cn": "错误的图片",
+		"en": "Wrong picture"
+	},
+	"15kjsz6": {
+		"zh-cn": "本地图片错误",
+		"en": "Local image error"
+	},
+	"7rq52039": {
+		"zh-cn": "<strong>错误处理机制：</strong><br>• 自动显示 fallback-icon 作为备用图标<br>• 触发 error 事件供业务逻辑处理<br>• 支持 Iconify 和 UnoCSS 格式的 fallback",
+		"en": "<strong> error handling mechanism: </strong><br>• Automatically display fallback-icon as a backup icon <br>• Trigger error events for business logic processing <br>• Support Iconify and UnoCSS formats for fallback"
+	},
+	"gzcqmx8": {
+		"zh-cn": "8. 自定义样式",
+		"en": "8. Custom styles"
+	},
+	"i8xk2": {
+		"zh-cn": "样式",
+		"en": "Style"
+	},
+	"jdmjmy4": {
+		"zh-cn": "闪烁动画",
+		"en": "Flashing animation"
+	},
+	"gm9uzg4": {
+		"zh-cn": "脉冲动画",
+		"en": "Pulse animation"
+	},
+	"ft0ve3": {
+		"zh-cn": "未选择",
+		"en": "\"Not selected\""
+	},
+	"ffcp3": {
+		"zh-cn": " 分钟",
+		"en": "Minutes"
+	},
+	"gvl33": {
+		"zh-cn": " 小时",
+		"en": "\"Hour"
+	},
+	"ej76h4": {
+		"zh-cn": " 小时 ",
+		"en": "\"Hour"
+	},
+	"lvn42": {
+		"zh-cn": "精确",
+		"en": "\"Precise"
+	},
+	"862w9v5": {
+		"zh-cn": "时间段: ",
+		"en": "Time period"
+	},
+	"t8arsn6": {
+		"zh-cn": " (时长: ",
+		"en": "(Duration:"
+	},
+	"og2ga67": {
+		"zh-cn": "提醒设置为: ",
+		"en": "The reminder is set as"
+	},
+	"87e0235": {
+		"zh-cn": "时间已重置",
+		"en": "The time has been reset"
+	},
+	"qqdtn7e": {
+		"zh-cn": "已设置为当前时间 + 1小时",
+		"en": "It has been set to the current time plus 1 hour"
+	},
+	"c0zvna8": {
+		"zh-cn": "当前值: 开始=",
+		"en": "Current value: Start ="
+	},
+	"17tpel5": {
+		"zh-cn": ", 结束=",
+		"en": "\"End"
+	},
+	"4qmu6b": {
+		"zh-cn": "时间选择器组件场景示例",
+		"en": "Time selector component scenario example"
+	},
+	"8alylrc": {
+		"zh-cn": "场景1: 基础时间段选择",
+		"en": "Scene 1: Basic time period selection"
+	},
+	"km4ojl4": {
+		"zh-cn": "默认场景",
+		"en": "Default scene"
+	},
+	"mmio215": {
+		"zh-cn": " 适用于选择工作时间段、会议时间等场景，支持30分钟步进，时间格式为 HH:mm ",
+		"en": "It is suitable for scenarios such as selecting working time periods and meeting times, supports 30-minute steps, and the time format is HH:mm"
+	},
+	"il40894": {
+		"zh-cn": "选择结果",
+		"en": "Select the result"
+	},
+	"9lp3zjc": {
+		"zh-cn": "场景2: 精确时分秒选择",
+		"en": "Scene 2: Precise selection of hours, minutes and seconds"
+	},
+	"na83k3": {
+		"zh-cn": "高精度",
+		"en": "High precision"
+	},
+	"8q4ffz10": {
+		"zh-cn": " 适用于需要精确到秒的场景，如定时任务、倒计时设置等，默认显示当前时间 ",
+		"en": "It is suitable for scenarios that require precision to the second, such as scheduled tasks and countdown Settings, and displays the current time by default"
+	},
+	"hf81nr6": {
+		"zh-cn": "精确选择结果",
+		"en": "Precise selection of results"
+	},
+	"16pwl3b": {
+		"zh-cn": "场景3: 单个时间选择",
+		"en": "Scene 3: Single time selection"
+	},
+	"b3zplu4": {
+		"zh-cn": "单选模式",
+		"en": "Single-choice mode"
+	},
+	"s8646to": {
+		"zh-cn": " 适用于闹钟设置、提醒时间等单个时间点选择场景 ",
+		"en": "It is applicable to scenarios where individual time points such as alarm clock Settings and reminder times are selected"
+	},
+	"wzn4c77": {
+		"zh-cn": "请选择提醒时间",
+		"en": "Please select the reminder time"
+	},
+	"d71c004": {
+		"zh-cn": "提醒时间",
+		"en": "Reminder time"
+	},
+	"485190d": {
+		"zh-cn": "场景4: 智能时间限制选择",
+		"en": "Scene 4: Intelligent time limit selection"
+	},
+	"dhnhgk4": {
+		"zh-cn": "时间限制",
+		"en": "Time limit"
+	},
+	"9qwhjd17": {
+		"zh-cn": " 启用智能时间限制功能，结束时间选择器中会自动隐藏早于开始时间的选项，确保逻辑正确性 ",
+		"en": "Enable the intelligent time limit function. The end time selector will automatically hide options that are earlier than the start time to ensure logical correctness"
+	},
+	"h4zjyq6": {
+		"zh-cn": "智能限制结果",
+		"en": "Intelligent limitation of results"
+	},
+	"aypy6w4": {
+		"zh-cn": "功能说明",
+		"en": "Function Description"
+	},
+	"z4a9gp16": {
+		"zh-cn": " 当选择开始时间后，结束时间选择器会自动过滤掉早于开始时间的选项，实现智能时间限制 ",
+		"en": "After the start time is selected, the end time selector will automatically filter out options that are earlier than the start time, achieving intelligent time limiting"
+	},
+	"27rwfld": {
+		"zh-cn": "场景5: 自定义样式和行为",
+		"en": "Scene 5: Custom styles and behaviors"
+	},
+	"z1qxjsp": {
+		"zh-cn": " 展示组件的自定义能力，包括样式定制、事件处理等 ",
+		"en": "Demonstrate the customization capabilities of components, including style customization, event handling, etc"
+	},
+	"a3z1d88": {
+		"zh-cn": " 设为当前时间 ",
+		"en": "Set it to the current time"
+	},
+	"hgbjcz5": {
+		"zh-cn": " 获取值 ",
+		"en": "Get the value"
+	},
+	"caqbu97": {
+		"zh-cn": "自定义操作结果",
+		"en": "Customize the operation result"
+	},
+	"w5mcg07": {
+		"zh-cn": "请选择开始时间",
+		"en": "Please select the start time"
+	},
+	"yt01wf7": {
+		"zh-cn": "请选择结束时间",
+		"en": "Please select the end time"
+	},
+	"2ek9u35": {
+		"zh-cn": "请选择时间",
+		"en": "Please select the time"
+	},
+	"po31": {
+		"zh-cn": "至",
+		"en": "to"
+	},
+	"y1qw7ob": {
+		"zh-cn": "城市选择器组件场景示例",
+		"en": "An example of the city selector component scenario"
+	},
+	"muy75": {
+		"zh-cn": "默认触发器",
+		"en": "Default trigger"
+	},
+	"blng6r4": {
+		"zh-cn": "基础用法",
+		"en": "Basic usage"
+	},
+	"c4lo4ou": {
+		"zh-cn": " 最基础的城市选择器，适用于大多数场景，支持搜索和分类切换 ",
+		"en": "The most basic city selector, suitable for most scenarios, supports search and category switching"
+	},
+	"p52k946": {
+		"zh-cn": " 已选择: ",
+		"en": "Selected"
+	},
+	"n7z4qf6": {
+		"zh-cn": "输入框触发器",
+		"en": "Input box trigger"
+	},
+	"8vdyhu6": {
+		"zh-cn": " 表单场景 ",
+		"en": "Form scenario"
+	},
+	"n9z5vvp": {
+		"zh-cn": " 适用于表单场景，与其他输入框保持一致的视觉风格 ",
+		"en": "Suitable for form scenarios, maintaining a consistent visual style with other input boxes"
+	},
+	"wb8agx7": {
+		"zh-cn": "请选择配送城市",
+		"en": "Please select the delivery city"
+	},
+	"xpv0x16": {
+		"zh-cn": " 配送至: ",
+		"en": "Delivered to:"
+	},
+	"jmv2dk5": {
+		"zh-cn": "按钮触发器",
+		"en": "Button trigger"
+	},
+	"d1qzfo4": {
+		"zh-cn": "操作场景",
+		"en": "Operation scenario"
+	},
+	"4vzulgj": {
+		"zh-cn": " 适用于操作栏或工具栏，突出操作意图 ",
+		"en": "Applicable to the operation bar or toolbar, highlighting the operation intention"
+	},
+	"ikxbec4": {
+		"zh-cn": "选择城市",
+		"en": "Choose a city"
+	},
+	"he57l4": {
+		"zh-cn": " 清除 ",
+		"en": "Clear"
+	},
+	"3aj7h65": {
+		"zh-cn": "标签触发器",
+		"en": "Tag trigger"
+	},
+	"evdia84": {
+		"zh-cn": "状态展示",
+		"en": "Status display"
+	},
+	"j6nfk4n": {
+		"zh-cn": " 适用于状态展示，可以清晰地显示当前选择状态 ",
+		"en": "It is suitable for status display and can clearly show the current selected status"
+	},
+	"48glpe5": {
+		"zh-cn": "未选择城市",
+		"en": "No selected city"
+	},
+	"q8pkyd9": {
+		"zh-cn": " 当前城市标签: ",
+		"en": "Current city tag"
+	},
+	"c72inl7": {
+		"zh-cn": "文本链接触发器",
+		"en": "Text link trigger"
+	},
+	"atdfs44": {
+		"zh-cn": "内联场景",
+		"en": "Inline scene"
+	},
+	"1mkorrm": {
+		"zh-cn": " 适用于文本内容中的内联选择，不破坏文本流 ",
+		"en": "It is applicable to inline selection in text content without disrupting the text flow"
+	},
+	"wsmljg7": {
+		"zh-cn": "您当前的位置是",
+		"en": "Your current location is"
+	},
+	"ekj84i4": {
+		"zh-cn": "点击选择",
+		"en": "Click to select"
+	},
+	"1i4pdad": {
+		"zh-cn": "，我们将为您提供本地化服务",
+		"en": "We will provide you with localization services"
+	},
+	"c158907": {
+		"zh-cn": " 服务地区: ",
+		"en": "Service area"
+	},
+	"hnd3324": {
+		"zh-cn": "表格集成",
+		"en": "Table integration"
+	},
+	"d7kw6r4": {
+		"zh-cn": "数据场景",
+		"en": "Data scenario"
+	},
+	"8vc7bwm": {
+		"zh-cn": " 适用于表格或列表中的城市选择，紧凑且高效 ",
+		"en": "Suitable for city selection in tables or lists, compact and efficient"
+	},
+	"c6ft73": {
+		"zh-cn": "信息项",
+		"en": "Information item"
+	},
+	"edas2": {
+		"zh-cn": "内容",
+		"en": "\"Content"
+	},
+	"dcnrsx4": {
+		"zh-cn": "收货地址",
+		"en": "Delivery address"
+	},
+	"fsg7u3": {
+		"zh-cn": "未设置",
+		"en": "Not set"
+	},
+	"e5fv2": {
+		"zh-cn": "修改",
+		"en": "\"Modify"
+	},
+	"ogvk2": {
+		"zh-cn": "设置",
+		"en": "\"Settings"
+	},
+	"k95nni6": {
+		"zh-cn": "原生下拉选择",
+		"en": "Native drop-down selection"
+	},
+	"fxeebu4": {
+		"zh-cn": "简单场景",
+		"en": "Simple scene"
+	},
+	"lx9s2zt": {
+		"zh-cn": " 使用原生 Select 组件，适用于简单快速的选择场景 ",
+		"en": "Using the native Select component, it is suitable for simple and fast selection scenarios"
+	},
+	"2emzkl5": {
+		"zh-cn": "请选择城市",
+		"en": "Please select a city"
+	},
+	"yew82i7": {
+		"zh-cn": " 快速选择: ",
+		"en": "Quick Selection"
+	},
+	"xg0uji8": {
+		"zh-cn": "自定义卡片触发器",
+		"en": "Custom card trigger"
+	},
+	"k27gzg4": {
+		"zh-cn": "高级用法",
+		"en": "Advanced Usage"
+	},
+	"u6o8wpn": {
+		"zh-cn": " 完全自定义的触发器样式，展示组件的扩展能力 ",
+		"en": "Fully customizable trigger styles to showcase the scalability of components"
+	},
+	"iekfuk5": {
+		"zh-cn": "配送地址 ",
+		"en": "Delivery address"
+	},
+	"92gj866": {
+		"zh-cn": "点击选择城市",
+		"en": "Click to select a city"
+	},
+	"dtdf9f6": {
+		"zh-cn": " 使用说明 ",
+		"en": "Instructions for Use"
+	},
+	"gbmdk24": {
+		"zh-cn": "组件引入",
+		"en": "Component introduction"
+	},
+	"8m7xek6": {
+		"zh-cn": "自定义触发器",
+		"en": "Custom trigger"
+	},
+	"i46cg3": {
+		"zh-cn": "直辖市",
+		"en": "Municipality directly under the Central Government"
+	},
+	"jcro2": {
+		"zh-cn": "港澳",
+		"en": "Hong Kong and Macao"
+	},
+	"exnst3": {
+		"zh-cn": "按城市",
+		"en": "By city"
+	},
+	"f2vvp3": {
+		"zh-cn": "按省份",
+		"en": "By province"
+	},
+	"d5bdoa4": {
+		"zh-cn": "搜索城市",
+		"en": "Search for cities"
+	},
+	"q1a62": {
+		"zh-cn": "阿坝",
+		"en": "Aba"
+	},
+	"mesf73": {
+		"zh-cn": "阿克苏",
+		"en": "Aksu"
+	},
+	"jd3nph4": {
+		"zh-cn": "阿拉善盟",
+		"en": "Alxa League"
+	},
+	"mexgd3": {
+		"zh-cn": "阿勒泰",
+		"en": "Altay"
+	},
+	"qctp2": {
+		"zh-cn": "阿里",
+		"en": "\"Alibaba"
+	},
+	"g37y2": {
+		"zh-cn": "安康",
+		"en": "\"Ankang\""
+	},
+	"g36l2": {
+		"zh-cn": "安庆",
+		"en": "Anqing"
+	},
+	"qa9w2": {
+		"zh-cn": "鞍山",
+		"en": "Anshan (in Liaoning Province)"
+	},
+	"gemp2": {
+		"zh-cn": "安顺",
+		"en": "Anshun"
+	},
+	"ge6i2": {
+		"zh-cn": "安阳",
+		"en": "Anyang"
+	},
+	"q1db2": {
+		"zh-cn": "阿城",
+		"en": "Acheng"
+	},
+	"g8iu2": {
+		"zh-cn": "安福",
+		"en": "Anfu"
+	},
+	"g1402": {
+		"zh-cn": "安吉",
+		"en": "Anji"
+	},
+	"g2l42": {
+		"zh-cn": "安宁",
+		"en": "An Ning"
+	},
+	"fzxr2": {
+		"zh-cn": "安丘",
+		"en": "Anqiu"
+	},
+	"g6dd2": {
+		"zh-cn": "安溪",
+		"en": "Anxi"
+	},
+	"fzz42": {
+		"zh-cn": "安义",
+		"en": "An Yi"
+	},
+	"gcxf2": {
+		"zh-cn": "安远",
+		"en": "An Yuan"
+	},
+	"ekc52": {
+		"zh-cn": "北京",
+		"en": "Beijing"
+	},
+	"kmwh2": {
+		"zh-cn": "白城",
+		"en": "Bai Cheng"
+	},
+	"kvck2": {
+		"zh-cn": "百色",
+		"en": "Baise"
+	},
+	"kntg2": {
+		"zh-cn": "白山",
+		"en": "Baishan"
+	},
+	"kyzd2": {
+		"zh-cn": "白银",
+		"en": "Silver"
+	},
+	"nd902": {
+		"zh-cn": "蚌埠",
+		"en": "Bengbu"
+	},
+	"e34t2": {
+		"zh-cn": "保定",
+		"en": "Baoding"
+	},
+	"gg842": {
+		"zh-cn": "宝鸡",
+		"en": "Baoji"
+	},
+	"e3as2": {
+		"zh-cn": "保山",
+		"en": "Baoshan"
+	},
+	"elzj2": {
+		"zh-cn": "包头",
+		"en": "Baotou"
+	},
+	"c940hc4": {
+		"zh-cn": "巴彦淖尔",
+		"en": "Bayannur"
+	},
+	"chk8uo4": {
+		"zh-cn": "巴音郭楞",
+		"en": "Bayingolin"
+	},
+	"gerd2": {
+		"zh-cn": "巴中",
+		"en": "Bazhong"
+	},
+	"eqf42": {
+		"zh-cn": "北海",
+		"en": "Beihai"
+	},
+	"i5mm2": {
+		"zh-cn": "本溪",
+		"en": "Benxi"
+	},
+	"j2312": {
+		"zh-cn": "毕节",
+		"en": "Bijie"
+	},
+	"jdo62": {
+		"zh-cn": "滨州",
+		"en": "Binzhou"
+	},
+	"awdxf34": {
+		"zh-cn": "博尔塔拉",
+		"en": "Bortala"
+	},
+	"dwgb2": {
+		"zh-cn": "亳州",
+		"en": "Bozhou"
+	},
+	"g3o72": {
+		"zh-cn": "宝应",
+		"en": "Baoying"
+	},
+	"gi5u2": {
+		"zh-cn": "巴彦",
+		"en": "Bayan"
+	},
+	"jgr32": {
+		"zh-cn": "滨海",
+		"en": "Coastal"
+	},
+	"g2bl2": {
+		"zh-cn": "宾县",
+		"en": "Bin County"
+	},
+	"gfg52": {
+		"zh-cn": "宾阳",
+		"en": "Binyang"
+	},
+	"kckq2": {
+		"zh-cn": "璧山",
+		"en": "Bishan"
+	},
+	"esyf2": {
+		"zh-cn": "博爱",
+		"en": "\"Universal love\""
+	},
+	"evjx2": {
+		"zh-cn": "博罗",
+		"en": "Boro"
+	},
+	"emhm2": {
+		"zh-cn": "博兴",
+		"en": "Boxing"
+	},
+	"pbh52": {
+		"zh-cn": "重庆",
+		"en": "Chongqing"
+	},
+	"pzly2": {
+		"zh-cn": "长春",
+		"en": "Changchun"
+	},
+	"q0vu2": {
+		"zh-cn": "长沙",
+		"en": "Changsha"
+	},
+	"gjhi2": {
+		"zh-cn": "常州",
+		"en": "Changzhou"
+	},
+	"hh4d2": {
+		"zh-cn": "成都",
+		"en": "Chengdu"
+	},
+	"izvb2": {
+		"zh-cn": "沧州",
+		"en": "Cangzhou"
+	},
+	"gjun2": {
+		"zh-cn": "常德",
+		"en": "Changde"
+	},
+	"i5ip2": {
+		"zh-cn": "昌都",
+		"en": "Chamdo"
+	},
+	"hth92": {
+		"zh-cn": "昌吉",
+		"en": "Changji"
+	},
+	"q0ws2": {
+		"zh-cn": "长治",
+		"en": "Changzhi"
+	},
+	"gkok2": {
+		"zh-cn": "巢湖",
+		"en": "Chaohu"
+	},
+	"id2u2": {
+		"zh-cn": "朝阳",
+		"en": "\"Chaoyang\""
+	},
+	"jgvk2": {
+		"zh-cn": "潮州",
+		"en": "Chaozhou"
+	},
+	"ha1k2": {
+		"zh-cn": "承德",
+		"en": "Chengde"
+	},
+	"p65m2": {
+		"zh-cn": "郴州",
+		"en": "Chenzhou"
+	},
+	"ok5o2": {
+		"zh-cn": "赤峰",
+		"en": "Chifeng"
+	},
+	"iy662": {
+		"zh-cn": "池州",
+		"en": "Chizhou"
+	},
+	"gc732": {
+		"zh-cn": "崇左",
+		"en": "Chongzuo"
+	},
+	"iqwa2": {
+		"zh-cn": "楚雄",
+		"en": "Chuxiong"
+	},
+	"jcql2": {
+		"zh-cn": "滁州",
+		"en": "Chuzhou"
+	},
+	"mpey2": {
+		"zh-cn": "苍南",
+		"en": "Cangnan"
+	},
+	"mr7o2": {
+		"zh-cn": "苍山",
+		"en": "Cangshan"
+	},
+	"hz3a2": {
+		"zh-cn": "曹县",
+		"en": "Cao County"
+	},
+	"pxq42": {
+		"zh-cn": "长岛",
+		"en": "Long Island"
+	},
+	"puvl2": {
+		"zh-cn": "长丰",
+		"en": "Changfeng"
+	},
+	"q1202": {
+		"zh-cn": "长海",
+		"en": "Changhai"
+	},
+	"puwh2": {
+		"zh-cn": "长乐",
+		"en": "Changle"
+	},
+	"hsck2": {
+		"zh-cn": "昌乐",
+		"en": "Changle"
+	},
+	"gj7d2": {
+		"zh-cn": "常山",
+		"en": "Changshan"
+	},
+	"gndz2": {
+		"zh-cn": "常熟",
+		"en": "Changshu"
+	},
+	"q0y92": {
+		"zh-cn": "长泰",
+		"en": "\"Changtai"
+	},
+	"q0td2": {
+		"zh-cn": "长汀",
+		"en": "Changting"
+	},
+	"pvit2": {
+		"zh-cn": "长兴",
+		"en": "Changxing"
+	},
+	"i5fp2": {
+		"zh-cn": "昌邑",
+		"en": "Changyi"
+	},
+	"jgez2": {
+		"zh-cn": "潮安",
+		"en": "Chao 'an"
+	},
+	"f3yx2": {
+		"zh-cn": "呈贡",
+		"en": "Chenggong"
+	},
+	"fe8l2": {
+		"zh-cn": "城口",
+		"en": "Chengkou"
+	},
+	"h9p22": {
+		"zh-cn": "成武",
+		"en": "Cheng Wu"
+	},
+	"mt472": {
+		"zh-cn": "茌平",
+		"en": "Chiping"
+	},
+	"g97e2": {
+		"zh-cn": "崇仁",
+		"en": "Chongren"
+	},
+	"g9422": {
+		"zh-cn": "崇义",
+		"en": "Chongyi"
+	},
+	"gc6v2": {
+		"zh-cn": "崇州",
+		"en": "Chongzhou"
+	},
+	"j7cm2": {
+		"zh-cn": "淳安",
+		"en": "Chun 'an"
+	},
+	"h5k22": {
+		"zh-cn": "慈溪",
+		"en": "Cixi"
+	},
+	"duyw2": {
+		"zh-cn": "从化",
+		"en": "Conghua"
+	},
+	"ig5x2": {
+		"zh-cn": "枞阳",
+		"en": "Zongyang"
+	},
+	"fyc72": {
+		"zh-cn": "大连",
+		"en": "Dalian"
+	},
+	"e0aq2": {
+		"zh-cn": "东莞",
+		"en": "Dongguan"
+	},
+	"fsu72": {
+		"zh-cn": "大理",
+		"en": "Dali"
+	},
+	"dqf72": {
+		"zh-cn": "丹东",
+		"en": "Dandong"
+	},
+	"folb2": {
+		"zh-cn": "大庆",
+		"en": "Daqing"
+	},
+	"fmit2": {
+		"zh-cn": "大同",
+		"en": "Datong"
+	},
+	"bl6mgh4": {
+		"zh-cn": "大兴安岭",
+		"en": "Greater Xing 'an Range"
+	},
+	"oyqo2": {
+		"zh-cn": "达州",
+		"en": "Dazhou"
+	},
+	"gs6w2": {
+		"zh-cn": "德宏",
+		"en": "Dehong"
+	},
+	"h3rw2": {
+		"zh-cn": "德阳",
+		"en": "Deyang"
+	},
+	"gsnb2": {
+		"zh-cn": "德州",
+		"en": "Texas"
+	},
+	"gc2t2": {
+		"zh-cn": "定西",
+		"en": "Dingxi"
+	},
+	"ozx82": {
+		"zh-cn": "迪庆",
+		"en": "Diqing"
+	},
+	"e0eh2": {
+		"zh-cn": "东营",
+		"en": "Dongying"
+	},
+	"fld52": {
+		"zh-cn": "大丰",
+		"en": "Dafeng"
+	},
+	"g9uo2": {
+		"zh-cn": "岱山",
+		"en": "Daishan"
+	},
+	"kx2p2": {
+		"zh-cn": "砀山",
+		"en": "Dangshan"
+	},
+	"gtcf2": {
+		"zh-cn": "当涂",
+		"en": "Dangtu"
+	},
+	"emtm2": {
+		"zh-cn": "单县",
+		"en": "Shan County"
+	},
+	"e4nu2": {
+		"zh-cn": "丹阳",
+		"en": "Danyang"
+	},
+	"fn9p2": {
+		"zh-cn": "大埔",
+		"en": "Tai Po"
+	},
+	"ft2h2": {
+		"zh-cn": "大田",
+		"en": "Daejeon"
+	},
+	"fyh62": {
+		"zh-cn": "大邑",
+		"en": "Dayi"
+	},
+	"flle2": {
+		"zh-cn": "大余",
+		"en": "Dayu"
+	},
+	"fxws2": {
+		"zh-cn": "大足",
+		"en": "\"Big Foot\""
+	},
+	"gs6q2": {
+		"zh-cn": "德安",
+		"en": "De 'an"
+	},
+	"gqin2": {
+		"zh-cn": "德化",
+		"en": "Dehua"
+	},
+	"gt8p2": {
+		"zh-cn": "德惠",
+		"en": "Deok-hye"
+	},
+	"knom2": {
+		"zh-cn": "登封",
+		"en": "Dengfeng"
+	},
+	"gvu62": {
+		"zh-cn": "德清",
+		"en": "Deqing"
+	},
+	"gsrz2": {
+		"zh-cn": "德庆",
+		"en": "Deqing"
+	},
+	"gq712": {
+		"zh-cn": "德兴",
+		"en": "Dexing"
+	},
+	"kl482": {
+		"zh-cn": "电白",
+		"en": "\"Dian Bai\""
+	},
+	"fi8k2": {
+		"zh-cn": "垫江",
+		"en": "Dianjiang"
+	},
+	"g1dp2": {
+		"zh-cn": "定南",
+		"en": "Dingnan"
+	},
+	"gen02": {
+		"zh-cn": "定陶",
+		"en": "Dingtao"
+	},
+	"gdc22": {
+		"zh-cn": "定远",
+		"en": "Dingyuan"
+	},
+	"e3z72": {
+		"zh-cn": "东阿",
+		"en": "Dong 'e"
+	},
+	"dvx72": {
+		"zh-cn": "东海",
+		"en": "East China Sea"
+	},
+	"dugi2": {
+		"zh-cn": "东明",
+		"en": "Dongming"
+	},
+	"dsyf2": {
+		"zh-cn": "东平",
+		"en": "Dongping"
+	},
+	"dsk52": {
+		"zh-cn": "东山",
+		"en": "Dongshan"
+	},
+	"dqvo2": {
+		"zh-cn": "东台",
+		"en": "Dongtai"
+	},
+	"j1sm2": {
+		"zh-cn": "洞头",
+		"en": "\"Dongtou\""
+	},
+	"dps52": {
+		"zh-cn": "东乡",
+		"en": "Dongxiang"
+	},
+	"e3yv2": {
+		"zh-cn": "东阳",
+		"en": "Dongyang"
+	},
+	"dw502": {
+		"zh-cn": "东源",
+		"en": "Dongyuan"
+	},
+	"dzyv2": {
+		"zh-cn": "东至",
+		"en": "East to"
+	},
+	"p7zj2": {
+		"zh-cn": "都昌",
+		"en": "Du Chang"
+	},
+	"lrfqm3": {
+		"zh-cn": "都江堰",
+		"en": "Dujiangyan"
+	},
+	"iocjon4": {
+		"zh-cn": "鄂尔多斯",
+		"en": "Ordos"
+	},
+	"gygk2": {
+		"zh-cn": "恩施",
+		"en": "Enshi"
+	},
+	"p6ho2": {
+		"zh-cn": "鄂州",
+		"en": "Ezhou"
+	},
+	"gx0q2": {
+		"zh-cn": "恩平",
+		"en": "Enping"
+	},
+	"e06u2": {
+		"zh-cn": "佛山",
+		"en": "Foshan"
+	},
+	"l6wf2": {
+		"zh-cn": "福州",
+		"en": "Fuzhou"
+	},
+	"mfikz3": {
+		"zh-cn": "防城港",
+		"en": "Fangchenggang"
+	},
+	"hlwg2": {
+		"zh-cn": "抚顺",
+		"en": "Fushun"
+	},
+	"q39w2": {
+		"zh-cn": "阜新",
+		"en": "Fuxin"
+	},
+	"qcuv2": {
+		"zh-cn": "阜阳",
+		"en": "Fuyang"
+	},
+	"habo2": {
+		"zh-cn": "抚州",
+		"en": "Fuzhou"
+	},
+	"j13y2": {
+		"zh-cn": "法库",
+		"en": "Faku"
+	},
+	"m19n2": {
+		"zh-cn": "繁昌",
+		"en": "Fan Chang"
+	},
+	"hw3u2": {
+		"zh-cn": "方正",
+		"en": "Fangzheng"
+	},
+	"md3d2": {
+		"zh-cn": "肥城",
+		"en": "Feicheng"
+	},
+	"mb6f2": {
+		"zh-cn": "肥东",
+		"en": "Feidong"
+	},
+	"mmwq2": {
+		"zh-cn": "肥西",
+		"en": "Feixi"
+	},
+	"ohba2": {
+		"zh-cn": "费县",
+		"en": "Feixian"
+	},
+	"ds4e2": {
+		"zh-cn": "丰城",
+		"en": "Fengcheng"
+	},
+	"e3f12": {
+		"zh-cn": "丰都",
+		"en": "Fengdu"
+	},
+	"fn592": {
+		"zh-cn": "奉化",
+		"en": "Fenghua"
+	},
+	"fwih2": {
+		"zh-cn": "奉节",
+		"en": "Fengjie"
+	},
+	"g65b2": {
+		"zh-cn": "封开",
+		"en": "Seal and open"
+	},
+	"e4wa2": {
+		"zh-cn": "丰顺",
+		"en": "Fengshun"
+	},
+	"ee182": {
+		"zh-cn": "凤台",
+		"en": "Fengtai"
+	},
+	"drbj2": {
+		"zh-cn": "丰县",
+		"en": "Fengxian"
+	},
+	"fqtj2": {
+		"zh-cn": "奉新",
+		"en": "Fengxin"
+	},
+	"er4f2": {
+		"zh-cn": "凤阳",
+		"en": "Fengyang"
+	},
+	"egd22": {
+		"zh-cn": "分宜",
+		"en": "\"Fen yi\""
+	},
+	"dy192": {
+		"zh-cn": "佛冈",
+		"en": "Fogan"
+	},
+	"l6fu2": {
+		"zh-cn": "福安",
+		"en": "Fu 'an"
+	},
+	"ljrz2": {
+		"zh-cn": "福鼎",
+		"en": "Fuding"
+	},
+	"j6qb2": {
+		"zh-cn": "浮梁",
+		"en": "Floating beam"
+	},
+	"g7gl2": {
+		"zh-cn": "富民",
+		"en": "Fumin"
+	},
+	"pznf2": {
+		"zh-cn": "阜南",
+		"en": "Funan"
+	},
+	"q19h2": {
+		"zh-cn": "阜宁",
+		"en": "Funing"
+	},
+	"la3a2": {
+		"zh-cn": "福清",
+		"en": "Fuqing"
+	},
+	"gfs72": {
+		"zh-cn": "富阳",
+		"en": "Fuyang"
+	},
+	"gl6n2": {
+		"zh-cn": "广州",
+		"en": "Guangzhou"
+	},
+	"ouce2": {
+		"zh-cn": "贵阳",
+		"en": "Guiyang"
+	},
+	"kdhb2": {
+		"zh-cn": "甘南",
+		"en": "Gannan"
+	},
+	"okbf2": {
+		"zh-cn": "赣州",
+		"en": "Ganzhou"
+	},
+	"kf2c2": {
+		"zh-cn": "甘孜",
+		"en": "Ganzi"
+	},
+	"gkq22": {
+		"zh-cn": "广安",
+		"en": "Guang 'an"
+	},
+	"gip02": {
+		"zh-cn": "广元",
+		"en": "Guangyuan"
+	},
+	"omfu2": {
+		"zh-cn": "贵港",
+		"en": "Guigang"
+	},
+	"iavp2": {
+		"zh-cn": "桂林",
+		"en": "Guilin"
+	},
+	"i7zz2": {
+		"zh-cn": "果洛",
+		"en": "Guoluo"
+	},
+	"f9452": {
+		"zh-cn": "固原",
+		"en": "Guyuan"
+	},
+	"oibg2": {
+		"zh-cn": "赣县",
+		"en": "Gannan County"
+	},
+	"ommb2": {
+		"zh-cn": "赣榆",
+		"en": "Ganyu"
+	},
+	"qu9d2": {
+		"zh-cn": "高安",
+		"en": "Gao An"
+	},
+	"n8dp2": {
+		"zh-cn": "藁城",
+		"en": "Gaocheng"
+	},
+	"qxwb2": {
+		"zh-cn": "高淳",
+		"en": "Gao Chun"
+	},
+	"klz92": {
+		"zh-cn": "皋兰",
+		"en": "Gao LAN"
+	},
+	"r5wd2": {
+		"zh-cn": "高陵",
+		"en": "Gao Ling"
+	},
+	"qub22": {
+		"zh-cn": "高密",
+		"en": "Gaomi"
+	},
+	"r62i2": {
+		"zh-cn": "高青",
+		"en": "Gao Qing"
+	},
+	"qszc2": {
+		"zh-cn": "高唐",
+		"en": "Gao Tang"
+	},
+	"r3c92": {
+		"zh-cn": "高要",
+		"en": "Gao Yao"
+	},
+	"r4qh2": {
+		"zh-cn": "高邑",
+		"en": "Gaoyi"
+	},
+	"r4ra2": {
+		"zh-cn": "高邮",
+		"en": "Gaoyou"
+	},
+	"qupy2": {
+		"zh-cn": "高州",
+		"en": "Gaozhou"
+	},
+	"geio2": {
+		"zh-cn": "巩义",
+		"en": "Gongyi"
+	},
+	"gmst2": {
+		"zh-cn": "广昌",
+		"en": "Guangchang"
+	},
+	"gljs2": {
+		"zh-cn": "广德",
+		"en": "Guangde"
+	},
+	"gi352": {
+		"zh-cn": "广丰",
+		"en": "Guangfeng"
+	},
+	"gkpu2": {
+		"zh-cn": "广宁",
+		"en": "Guangning"
+	},
+	"gwyf2": {
+		"zh-cn": "广饶",
+		"en": "Guangrao"
+	},
+	"ef9w2": {
+		"zh-cn": "光泽",
+		"en": "Luster"
+	},
+	"jk3v2": {
+		"zh-cn": "灌南",
+		"en": "Guannan"
+	},
+	"ecdb2": {
+		"zh-cn": "冠县",
+		"en": "Guan County"
+	},
+	"jj5x2": {
+		"zh-cn": "灌云",
+		"en": "Guan Yun"
+	},
+	"omj92": {
+		"zh-cn": "贵溪",
+		"en": "Guixi"
+	},
+	"ewuk2": {
+		"zh-cn": "古田",
+		"en": "Gutian"
+	},
+	"fm312": {
+		"zh-cn": "固镇",
+		"en": "Guzhen"
+	},
+	"cvbj03": {
+		"zh-cn": "哈尔滨",
+		"en": "Harbin"
+	},
+	"j2vg2": {
+		"zh-cn": "海口",
+		"en": "Haikou"
+	},
+	"pell2": {
+		"zh-cn": "邯郸",
+		"en": "Handan"
+	},
+	"i3v52": {
+		"zh-cn": "杭州",
+		"en": "Hangzhou"
+	},
+	"ezz12": {
+		"zh-cn": "合肥",
+		"en": "Hefei"
+	},
+	"gzr22": {
+		"zh-cn": "惠州",
+		"en": "Huizhou"
+	},
+	"j2ps2": {
+		"zh-cn": "海北",
+		"en": "Haibei"
+	},
+	"j1qd2": {
+		"zh-cn": "海东",
+		"en": "Haidong"
+	},
+	"j2rk2": {
+		"zh-cn": "海南",
+		"en": "Hainan"
+	},
+	"jdgo2": {
+		"zh-cn": "海西",
+		"en": "Hai Xi"
+	},
+	"exa62": {
+		"zh-cn": "哈密",
+		"en": "Hami"
+	},
+	"iuis2": {
+		"zh-cn": "汉中",
+		"en": "Hanzhong"
+	},
+	"rffh2": {
+		"zh-cn": "鹤壁",
+		"en": "Hebi"
+	},
+	"j30t2": {
+		"zh-cn": "河池",
+		"en": "Hechi"
+	},
+	"rg6r2": {
+		"zh-cn": "鹤岗",
+		"en": "Hegang"
+	},
+	"rlz62": {
+		"zh-cn": "黑河",
+		"en": "Heihe"
+	},
+	"nshf2": {
+		"zh-cn": "衡水",
+		"en": "Hengshui"
+	},
+	"o0s22": {
+		"zh-cn": "衡阳",
+		"en": "Hengyang"
+	},
+	"cy83w3": {
+		"zh-cn": "和田地",
+		"en": "And fields"
+	},
+	"j3gd2": {
+		"zh-cn": "河源",
+		"en": "Heyuan"
+	},
+	"n0ni2": {
+		"zh-cn": "菏泽",
+		"en": "Heze"
+	},
+	"ojc42": {
+		"zh-cn": "贺州",
+		"en": "Hezhou"
+	},
+	"m4wh2": {
+		"zh-cn": "红河",
+		"en": "Red River"
+	},
+	"j78b2": {
+		"zh-cn": "淮安",
+		"en": "Huai 'an"
+	},
+	"j5k92": {
+		"zh-cn": "淮北",
+		"en": "Huaibei"
+	},
+	"gs9i2": {
+		"zh-cn": "怀化",
+		"en": "Huaihua"
+	},
+	"j5m12": {
+		"zh-cn": "淮南",
+		"en": "Huainan"
+	},
+	"rgas2": {
+		"zh-cn": "黄冈",
+		"en": "Huanggang"
+	},
+	"rgnn2": {
+		"zh-cn": "黄南",
+		"en": "Huang Nan"
+	},
+	"rigd2": {
+		"zh-cn": "黄山",
+		"en": "Huangshan"
+	},
+	"rnvz2": {
+		"zh-cn": "黄石",
+		"en": "Huangshi"
+	},
+	"b0j2684": {
+		"zh-cn": "呼和浩特",
+		"en": "Hohhot"
+	},
+	"k0yu83": {
+		"zh-cn": "葫芦岛",
+		"en": "Huludao"
+	},
+	"azvv414": {
+		"zh-cn": "呼伦贝尔",
+		"en": "Hulun Buir"
+	},
+	"ja6g2": {
+		"zh-cn": "湖州",
+		"en": "Huzhou"
+	},
+	"j4du2": {
+		"zh-cn": "海安",
+		"en": "Hai 'an"
+	},
+	"j1qx2": {
+		"zh-cn": "海丰",
+		"en": "Haifeng"
+	},
+	"jfwx2": {
+		"zh-cn": "海门",
+		"en": "Haimen"
+	},
+	"j4dm2": {
+		"zh-cn": "海宁",
+		"en": "Haining"
+	},
+	"j9rt2": {
+		"zh-cn": "海盐",
+		"en": "Sea salt"
+	},
+	"jfz02": {
+		"zh-cn": "海阳",
+		"en": "Haiyang"
+	},
+	"etnq2": {
+		"zh-cn": "含山",
+		"en": "Hanshan"
+	},
+	"et3p2": {
+		"zh-cn": "合川",
+		"en": "Hechuan"
+	},
+	"ikg62": {
+		"zh-cn": "横峰",
+		"en": "Hengfeng"
+	},
+	"iimt2": {
+		"zh-cn": "横县",
+		"en": "Hengxian"
+	},
+	"ewdj2": {
+		"zh-cn": "和平",
+		"en": "Peace"
+	},
+	"rg5p2": {
+		"zh-cn": "鹤山",
+		"en": "Heshan"
+	},
+	"eu9f2": {
+		"zh-cn": "和县",
+		"en": "He County"
+	},
+	"j5zn2": {
+		"zh-cn": "洪泽",
+		"en": "Hong Ze"
+	},
+	"eo6z2": {
+		"zh-cn": "华安",
+		"en": "Hua 'an"
+	},
+	"iefm2": {
+		"zh-cn": "桦甸",
+		"en": "Huadian"
+	},
+	"h5mu2": {
+		"zh-cn": "怀集",
+		"en": "Huaiji"
+	},
+	"gtxd2": {
+		"zh-cn": "怀宁",
+		"en": "Huaining"
+	},
+	"h49o2": {
+		"zh-cn": "怀远",
+		"en": "Huaiyuan"
+	},
+	"i7el2": {
+		"zh-cn": "桓台",
+		"en": "Huantai"
+	},
+	"enbc2": {
+		"zh-cn": "化州",
+		"en": "Huazhou"
+	},
+	"gzah2": {
+		"zh-cn": "惠安",
+		"en": "Hui 'an"
+	},
+	"e0j62": {
+		"zh-cn": "会昌",
+		"en": "Huichang"
+	},
+	"gwn02": {
+		"zh-cn": "惠东",
+		"en": "Huidong"
+	},
+	"h1mt2": {
+		"zh-cn": "惠来",
+		"en": "Huilai"
+	},
+	"h2k12": {
+		"zh-cn": "惠民",
+		"en": "Benefit the people"
+	},
+	"j87h2": {
+		"zh-cn": "湖口",
+		"en": "Hukou"
+	},
+	"etf82": {
+		"zh-cn": "呼兰",
+		"en": "Hulan"
+	},
+	"qhj82": {
+		"zh-cn": "霍邱",
+		"en": "Huo Qiu"
+	},
+	"q77o2": {
+		"zh-cn": "霍山",
+		"en": "Huo Shan"
+	},
+	"h5yg2": {
+		"zh-cn": "户县",
+		"en": "Huxian"
+	},
+	"joja2": {
+		"zh-cn": "焦作",
+		"en": "Jiaozuo"
+	},
+	"f2x72": {
+		"zh-cn": "嘉兴",
+		"en": "Jiaxing"
+	},
+	"ev1q2": {
+		"zh-cn": "吉林",
+		"en": "Ji Lin"
+	},
+	"j1s92": {
+		"zh-cn": "济南",
+		"en": "Jinan"
+	},
+	"c51dm3": {
+		"zh-cn": "佳木斯",
+		"en": "Jiamusi"
+	},
+	"j97t2": {
+		"zh-cn": "江门",
+		"en": "Jiangmen"
+	},
+	"eso02": {
+		"zh-cn": "吉安",
+		"en": "Ji 'an"
+	},
+	"d1wuq3": {
+		"zh-cn": "嘉峪关",
+		"en": "Jiayuguan"
+	},
+	"htk62": {
+		"zh-cn": "揭阳",
+		"en": "Jieyang"
+	},
+	"pd232": {
+		"zh-cn": "金昌",
+		"en": "Jinchang"
+	},
+	"hvqb2": {
+		"zh-cn": "晋城",
+		"en": "Jincheng"
+	},
+	"fh89r3": {
+		"zh-cn": "景德镇",
+		"en": "Jingdezhen"
+	},
+	"n5gi2": {
+		"zh-cn": "荆门",
+		"en": "Jingmen"
+	},
+	"mue02": {
+		"zh-cn": "荆州",
+		"en": "Jingzhou"
+	},
+	"p9ct2": {
+		"zh-cn": "金华",
+		"en": "Jinhua"
+	},
+	"j3eb2": {
+		"zh-cn": "济宁",
+		"en": "Jining"
+	},
+	"httu2": {
+		"zh-cn": "晋中",
+		"en": "Jinzhong"
+	},
+	"pvug2": {
+		"zh-cn": "锦州",
+		"en": "Jinzhou"
+	},
+	"dx9e2": {
+		"zh-cn": "九江",
+		"en": "Jiujiang"
+	},
+	"pbcn2": {
+		"zh-cn": "酒泉",
+		"en": "Jiuquan"
+	},
+	"rnge2": {
+		"zh-cn": "鸡西",
+		"en": "Ji Xi"
+	},
+	"gohp2": {
+		"zh-cn": "建德",
+		"en": "Jiande"
+	},
+	"j88u2": {
+		"zh-cn": "江都",
+		"en": "Jiangdu"
+	},
+	"j15y2": {
+		"zh-cn": "江津",
+		"en": "Jiangjin"
+	},
+	"g2yy2": {
+		"zh-cn": "将乐",
+		"en": "\"Jiale\""
+	},
+	"ixv62": {
+		"zh-cn": "江山",
+		"en": "\"Jiangshan\""
+	},
+	"fro42": {
+		"zh-cn": "姜堰",
+		"en": "Jiangyan"
+	},
+	"j99x2": {
+		"zh-cn": "江阴",
+		"en": "Jiangyin"
+	},
+	"grdo2": {
+		"zh-cn": "建湖",
+		"en": "Jianhu"
+	},
+	"gnnr2": {
+		"zh-cn": "建宁",
+		"en": "Jianning"
+	},
+	"gsol2": {
+		"zh-cn": "建瓯",
+		"en": "Jian 'ou"
+	},
+	"gz952": {
+		"zh-cn": "建阳",
+		"en": "Jianyang"
+	},
+	"njck2": {
+		"zh-cn": "蛟河",
+		"en": "Jiaohe"
+	},
+	"n6h02": {
+		"zh-cn": "蕉岭",
+		"en": "Jiaoling"
+	},
+	"me5d2": {
+		"zh-cn": "胶南",
+		"en": "Jiaonan"
+	},
+	"mg882": {
+		"zh-cn": "胶州",
+		"en": "Jiaozhou"
+	},
+	"f3q32": {
+		"zh-cn": "嘉善",
+		"en": "Jiashan"
+	},
+	"fat82": {
+		"zh-cn": "嘉祥",
+		"en": "Jiaxiang"
+	},
+	"hfbj2": {
+		"zh-cn": "揭东",
+		"en": "Jiedong"
+	},
+	"kslm2": {
+		"zh-cn": "界首",
+		"en": "Jieshou"
+	},
+	"hr1u2": {
+		"zh-cn": "揭西",
+		"en": "Jie Xi"
+	},
+	"eoid2": {
+		"zh-cn": "即墨",
+		"en": "Jimo"
+	},
+	"q8s32": {
+		"zh-cn": "靖安",
+		"en": "Jing 'an"
+	},
+	"hu972": {
+		"zh-cn": "旌德",
+		"en": "Jingde"
+	},
+	"bwqim3": {
+		"zh-cn": "井冈山",
+		"en": "Jinggangshan"
+	},
+	"qc3t2": {
+		"zh-cn": "靖江",
+		"en": "Jingjiang"
+	},
+	"hxbm2": {
+		"zh-cn": "景宁",
+		"en": "Jing Ning"
+	},
+	"izy92": {
+		"zh-cn": "泾县",
+		"en": "Jing County"
+	},
+	"e6vo2": {
+		"zh-cn": "井陉",
+		"en": "Jingxing"
+	},
+	"pep12": {
+		"zh-cn": "金湖",
+		"en": "Jinhu"
+	},
+	"hzsk2": {
+		"zh-cn": "晋江",
+		"en": "Jinjiang"
+	},
+	"pmif2": {
+		"zh-cn": "金门",
+		"en": "Kinmen"
+	},
+	"hwgm2": {
+		"zh-cn": "晋宁",
+		"en": "Jinning"
+	},
+	"pa5m2": {
+		"zh-cn": "金坛",
+		"en": "Jintan"
+	},
+	"paa92": {
+		"zh-cn": "金堂",
+		"en": "Jintang"
+	},
+	"p8rt2": {
+		"zh-cn": "进贤",
+		"en": "Jinxian"
+	},
+	"perd2": {
+		"zh-cn": "金溪",
+		"en": "Jinxi"
+	},
+	"p8ds2": {
+		"zh-cn": "金乡",
+		"en": "Jinxiang"
+	},
+	"m1so2": {
+		"zh-cn": "缙云",
+		"en": "Jinyun"
+	},
+	"pb1z2": {
+		"zh-cn": "金寨",
+		"en": "Jinzhai"
+	},
+	"hwxf2": {
+		"zh-cn": "晋州",
+		"en": "Jinzhou"
+	},
+	"evyj2": {
+		"zh-cn": "吉水",
+		"en": "Jishui"
+	},
+	"dsfn2": {
+		"zh-cn": "九台",
+		"en": "Jiutai"
+	},
+	"m6zl2": {
+		"zh-cn": "绩溪",
+		"en": "Jixi"
+	},
+	"jezp2": {
+		"zh-cn": "济阳",
+		"en": "Jiyang"
+	},
+	"j75u2": {
+		"zh-cn": "济源",
+		"en": "Jiyuan"
+	},
+	"p5ca2": {
+		"zh-cn": "鄄城",
+		"en": "Juancheng"
+	},
+	"mu4l2": {
+		"zh-cn": "莒南",
+		"en": "Junan"
+	},
+	"eruc2": {
+		"zh-cn": "句容",
+		"en": "Jurong"
+	},
+	"mu7h2": {
+		"zh-cn": "莒县",
+		"en": "Ju County"
+	},
+	"grty2": {
+		"zh-cn": "巨野",
+		"en": "Juye"
+	},
+	"hww82": {
+		"zh-cn": "昆明",
+		"en": "Kunming"
+	},
+	"gnwh2": {
+		"zh-cn": "开封",
+		"en": "Kaifeng"
+	},
+	"cwpo03": {
+		"zh-cn": "喀什地",
+		"en": "Kashgar"
+	},
+	"ao5br44": {
+		"zh-cn": "克拉玛依",
+		"en": "Karamay"
+	},
+	"ccnep3": {
+		"zh-cn": "克孜勒",
+		"en": "Kizil"
+	},
+	"gm522": {
+		"zh-cn": "开化",
+		"en": "Enlightenment"
+	},
+	"godv2": {
+		"zh-cn": "开平",
+		"en": "Kaiping"
+	},
+	"gm9r2": {
+		"zh-cn": "开县",
+		"en": "Kai County"
+	},
+	"gzeb2": {
+		"zh-cn": "开阳",
+		"en": "Kaiyang"
+	},
+	"gmn02": {
+		"zh-cn": "康平",
+		"en": "Kang Ping"
+	},
+	"fcxv2": {
+		"zh-cn": "垦利",
+		"en": "Kenli"
+	},
+	"huzv2": {
+		"zh-cn": "昆山",
+		"en": "Kunshan"
+	},
+	"ed7y2": {
+		"zh-cn": "兰州",
+		"en": "Lanzhou"
+	},
+	"i72j2": {
+		"zh-cn": "柳州",
+		"en": "Liuzhou"
+	},
+	"jdrs2": {
+		"zh-cn": "洛阳",
+		"en": "Luoyang"
+	},
+	"i3952": {
+		"zh-cn": "来宾",
+		"en": "Guest"
+	},
+	"n47f2": {
+		"zh-cn": "莱芜",
+		"en": "Laiwu"
+	},
+	"glog2": {
+		"zh-cn": "廊坊",
+		"en": "Langfang"
+	},
+	"hj0f2": {
+		"zh-cn": "拉萨",
+		"en": "Lhasa"
+	},
+	"dtsx2": {
+		"zh-cn": "乐山",
+		"en": "Leshan"
+	},
+	"ef2g2": {
+		"zh-cn": "凉山",
+		"en": "Liangshan"
+	},
+	"lgkrg3": {
+		"zh-cn": "连云港",
+		"en": "Lianyungang"
+	},
+	"max02": {
+		"zh-cn": "聊城",
+		"en": "Liaocheng"
+	},
+	"p9ue2": {
+		"zh-cn": "辽阳",
+		"en": "Liaoyang"
+	},
+	"p20j2": {
+		"zh-cn": "辽源",
+		"en": "Liaoyuan"
+	},
+	"dwhu2": {
+		"zh-cn": "丽江",
+		"en": "Lijiang"
+	},
+	"dwc32": {
+		"zh-cn": "临沧",
+		"en": "Lincang"
+	},
+	"dway2": {
+		"zh-cn": "临汾",
+		"en": "Linfen"
+	},
+	"dsgr2": {
+		"zh-cn": "临夏",
+		"en": "Linxia"
+	},
+	"dwb22": {
+		"zh-cn": "临沂",
+		"en": "Linyi"
+	},
+	"ic4m2": {
+		"zh-cn": "林芝",
+		"en": "Nyingchi"
+	},
+	"dwgn2": {
+		"zh-cn": "丽水",
+		"en": "Lishui"
+	},
+	"ecos2": {
+		"zh-cn": "六安",
+		"en": "Lu 'an"
+	},
+	"ci5xl3": {
+		"zh-cn": "六盘水",
+		"en": "Liupanshui"
+	},
+	"q0og2": {
+		"zh-cn": "陇南",
+		"en": "Longnan"
+	},
+	"rnlc2": {
+		"zh-cn": "龙岩",
+		"en": "Longyan"
+	},
+	"ftw12": {
+		"zh-cn": "娄底",
+		"en": "Loudi"
+	},
+	"jias2": {
+		"zh-cn": "漯河",
+		"en": "Luohe"
+	},
+	"j1t22": {
+		"zh-cn": "泸州",
+		"en": "Luzhou"
+	},
+	"evik2": {
+		"zh-cn": "吕梁",
+		"en": "Luliang"
+	},
+	"i37o2": {
+		"zh-cn": "来安",
+		"en": "Lai An"
+	},
+	"n5ke2": {
+		"zh-cn": "莱西",
+		"en": "Lacey"
+	},
+	"n82q2": {
+		"zh-cn": "莱阳",
+		"en": "Laiyang"
+	},
+	"mwy52": {
+		"zh-cn": "莱州",
+		"en": "Laizhou"
+	},
+	"p8kc2": {
+		"zh-cn": "郎溪",
+		"en": "Langxi"
+	},
+	"n8qb2": {
+		"zh-cn": "蓝田",
+		"en": "Lantian"
+	},
+	"egje2": {
+		"zh-cn": "兰溪",
+		"en": "Lanxi"
+	},
+	"dtmh2": {
+		"zh-cn": "乐安",
+		"en": "Le 'an"
+	},
+	"dvp82": {
+		"zh-cn": "乐昌",
+		"en": "Lechang"
+	},
+	"q6yv2": {
+		"zh-cn": "雷州",
+		"en": "Leizhou"
+	},
+	"e59h2": {
+		"zh-cn": "乐陵",
+		"en": "Leling"
+	},
+	"du772": {
+		"zh-cn": "乐平",
+		"en": "Le Ping"
+	},
+	"dx9x2": {
+		"zh-cn": "乐清",
+		"en": "Yueqing"
+	},
+	"dr312": {
+		"zh-cn": "乐亭",
+		"en": "Leting"
+	},
+	"oyb42": {
+		"zh-cn": "连城",
+		"en": "Liancheng"
+	},
+	"iaky2": {
+		"zh-cn": "梁平",
+		"en": "Liang Ping"
+	},
+	"ia6o2": {
+		"zh-cn": "梁山",
+		"en": "Liangshan"
+	},
+	"n48v2": {
+		"zh-cn": "莲花",
+		"en": "Lotus"
+	},
+	"p2dd2": {
+		"zh-cn": "连江",
+		"en": "Lianjiang"
+	},
+	"gpti2": {
+		"zh-cn": "廉江",
+		"en": "Lianjiang"
+	},
+	"oxfd2": {
+		"zh-cn": "连南",
+		"en": "Lian Nan"
+	},
+	"ozmd2": {
+		"zh-cn": "连平",
+		"en": "Lian Ping"
+	},
+	"oz832": {
+		"zh-cn": "连山",
+		"en": "Lianshan"
+	},
+	"j8mt2": {
+		"zh-cn": "涟水",
+		"en": "Lianshui"
+	},
+	"ozi82": {
+		"zh-cn": "连州",
+		"en": "Lianzhou"
+	},
+	"ovm82": {
+		"zh-cn": "辽中",
+		"en": "Liaozhong"
+	},
+	"riz32": {
+		"zh-cn": "黎川",
+		"en": "Li Chuan"
+	},
+	"eknw2": {
+		"zh-cn": "利津",
+		"en": "Lijin"
+	},
+	"dsyd2": {
+		"zh-cn": "临安",
+		"en": "Lin 'an"
+	},
+	"jro22": {
+		"zh-cn": "灵璧",
+		"en": "Lingbi"
+	},
+	"jmsq2": {
+		"zh-cn": "灵寿",
+		"en": "Ling Shou"
+	},
+	"q1uy2": {
+		"zh-cn": "陵县",
+		"en": "Ling County"
+	},
+	"dwhv2": {
+		"zh-cn": "临海",
+		"en": "Linhai"
+	},
+	"dwlt2": {
+		"zh-cn": "临清",
+		"en": "Linqing"
+	},
+	"dwd12": {
+		"zh-cn": "临泉",
+		"en": "Linquan"
+	},
+	"dv8c2": {
+		"zh-cn": "临朐",
+		"en": "Linqu"
+	},
+	"dwc92": {
+		"zh-cn": "临沭",
+		"en": "Linshu"
+	},
+	"e3fh2": {
+		"zh-cn": "临邑",
+		"en": "Linyi"
+	},
+	"jey52": {
+		"zh-cn": "溧水",
+		"en": "Lishui"
+	},
+	"i5vf2": {
+		"zh-cn": "柳城",
+		"en": "Liu Cheng"
+	},
+	"i9xo2": {
+		"zh-cn": "柳江",
+		"en": "Liu Jiang"
+	},
+	"jf0k2": {
+		"zh-cn": "浏阳",
+		"en": "Liuyang"
+	},
+	"ergy2": {
+		"zh-cn": "利辛",
+		"en": "Lixin"
+	},
+	"jn8s2": {
+		"zh-cn": "溧阳",
+		"en": "Liyang"
+	},
+	"q3sz2": {
+		"zh-cn": "隆安",
+		"en": "Long 'an"
+	},
+	"rntw2": {
+		"zh-cn": "龙川",
+		"en": "Longchuan"
+	},
+	"rqwu2": {
+		"zh-cn": "龙海",
+		"en": "Longhai"
+	},
+	"rluy2": {
+		"zh-cn": "龙口",
+		"en": "Longkou"
+	},
+	"rywf2": {
+		"zh-cn": "龙门",
+		"en": "Longmen"
+	},
+	"rlr22": {
+		"zh-cn": "龙南",
+		"en": "Longnan"
+	},
+	"rqs02": {
+		"zh-cn": "龙泉",
+		"en": "Longquan"
+	},
+	"rr272": {
+		"zh-cn": "龙游",
+		"en": "Longyou"
+	},
+	"i7o02": {
+		"zh-cn": "栾城",
+		"en": "Luancheng"
+	},
+	"i8v32": {
+		"zh-cn": "栾川",
+		"en": "Luanchuan"
+	},
+	"jbjl2": {
+		"zh-cn": "滦南",
+		"en": "Luan Nan"
+	},
+	"jbmh2": {
+		"zh-cn": "滦县",
+		"en": "Luan County"
+	},
+	"pzmy2": {
+		"zh-cn": "陆丰",
+		"en": "Lufeng"
+	},
+	"q5nx2": {
+		"zh-cn": "陆河",
+		"en": "Lu He"
+	},
+	"gogf2": {
+		"zh-cn": "庐江",
+		"en": "Lujiang"
+	},
+	"m5ur2": {
+		"zh-cn": "罗定",
+		"en": "Luo Ding"
+	},
+	"j26e2": {
+		"zh-cn": "洛宁",
+		"en": "Luoning"
+	},
+	"m9ll2": {
+		"zh-cn": "罗源",
+		"en": "Luo Yuan"
+	},
+	"rk162": {
+		"zh-cn": "鹿泉",
+		"en": "Luquan"
+	},
+	"l4ex2": {
+		"zh-cn": "禄劝",
+		"en": "Lu Quan"
+	},
+	"mtvo2": {
+		"zh-cn": "芦溪",
+		"en": "Luxi"
+	},
+	"rgp52": {
+		"zh-cn": "鹿寨",
+		"en": "Luzhai"
+	},
+	"ncjqo3": {
+		"zh-cn": "马鞍山",
+		"en": "Ma 'anshan"
+	},
+	"mqtn2": {
+		"zh-cn": "茂名",
+		"en": "Maoming"
+	},
+	"kr602": {
+		"zh-cn": "眉山",
+		"en": "Meishan"
+	},
+	"iak92": {
+		"zh-cn": "梅州",
+		"en": "Meizhou"
+	},
+	"mf322": {
+		"zh-cn": "绵阳",
+		"en": "Mianyang"
+	},
+	"h50mf3": {
+		"zh-cn": "牡丹江",
+		"en": "Mudanjiang"
+	},
+	"qrut2": {
+		"zh-cn": "马山",
+		"en": "Ma Shan"
+	},
+	"i8ka2": {
+		"zh-cn": "梅县",
+		"en": "Meixian"
+	},
+	"n1at2": {
+		"zh-cn": "蒙城",
+		"en": "Mengcheng"
+	},
+	"g52e2": {
+		"zh-cn": "孟津",
+		"en": "Meng Jin"
+	},
+	"ndmj2": {
+		"zh-cn": "蒙阴",
+		"en": "Mengyin"
+	},
+	"g21r2": {
+		"zh-cn": "孟州",
+		"en": "Mengzhou"
+	},
+	"hszf2": {
+		"zh-cn": "明光",
+		"en": "Mingguang"
+	},
+	"hysc2": {
+		"zh-cn": "明溪",
+		"en": "Mingxi"
+	},
+	"py6q2": {
+		"zh-cn": "闽侯",
+		"en": "Minhou"
+	},
+	"q46g2": {
+		"zh-cn": "闽清",
+		"en": "Minqing"
+	},
+	"hzrc2": {
+		"zh-cn": "木兰",
+		"en": "Mulan"
+	},
+	"eqhh2": {
+		"zh-cn": "南昌",
+		"en": "Nanchang"
+	},
+	"elv92": {
+		"zh-cn": "南京",
+		"en": "Nanjing"
+	},
+	"eoei2": {
+		"zh-cn": "南宁",
+		"en": "Nanning"
+	},
+	"eysj2": {
+		"zh-cn": "南通",
+		"en": "Nantong"
+	},
+	"g5tt2": {
+		"zh-cn": "宁波",
+		"en": "Ningbo"
+	},
+	"emdq2": {
+		"zh-cn": "南充",
+		"en": "Nanchong"
+	},
+	"eozg2": {
+		"zh-cn": "南平",
+		"en": "Nanping"
+	},
+	"ezzw2": {
+		"zh-cn": "南阳",
+		"en": "Nanyang"
+	},
+	"p60f2": {
+		"zh-cn": "那曲",
+		"en": "Naqu"
+	},
+	"egl62": {
+		"zh-cn": "内江",
+		"en": "Neijiang"
+	},
+	"g3862": {
+		"zh-cn": "宁德",
+		"en": "Ningde"
+	},
+	"gxot2": {
+		"zh-cn": "怒江",
+		"en": "Nu Chiang"
+	},
+	"eoeq2": {
+		"zh-cn": "南安",
+		"en": "Nan 'an"
+	},
+	"ese42": {
+		"zh-cn": "南澳",
+		"en": "South Australia"
+	},
+	"eno72": {
+		"zh-cn": "南城",
+		"en": "Nan Cheng"
+	},
+	"eova2": {
+		"zh-cn": "南川",
+		"en": "Nanchuan"
+	},
+	"elrt2": {
+		"zh-cn": "南丰",
+		"en": "Nan Feng"
+	},
+	"f07z2": {
+		"zh-cn": "南靖",
+		"en": "Nanjing"
+	},
+	"ep1c2": {
+		"zh-cn": "南康",
+		"en": "Nankang"
+	},
+	"f01q2": {
+		"zh-cn": "南陵",
+		"en": "Nanling"
+	},
+	"f03x2": {
+		"zh-cn": "南雄",
+		"en": "Nan Xiong"
+	},
+	"gcyk2": {
+		"zh-cn": "宁都",
+		"en": "Ningdu"
+	},
+	"g1i42": {
+		"zh-cn": "宁国",
+		"en": "Ningguo"
+	},
+	"g5xy2": {
+		"zh-cn": "宁海",
+		"en": "Ninghai"
+	},
+	"g0qd2": {
+		"zh-cn": "宁化",
+		"en": "Ninghua"
+	},
+	"g5vo2": {
+		"zh-cn": "宁津",
+		"en": "Ningjin"
+	},
+	"fzsw2": {
+		"zh-cn": "宁乡",
+		"en": "Ningxiang"
+	},
+	"gdzm2": {
+		"zh-cn": "宁阳",
+		"en": "Ningyang"
+	},
+	"edt92": {
+		"zh-cn": "农安",
+		"en": "Nong 'an"
+	},
+	"l1722": {
+		"zh-cn": "盘锦",
+		"en": "Panjin"
+	},
+	"fawtw3": {
+		"zh-cn": "攀枝花",
+		"en": "Panzhihua"
+	},
+	"ekgvi3": {
+		"zh-cn": "平顶山",
+		"en": "Pingdingshan"
+	},
+	"giie2": {
+		"zh-cn": "平凉",
+		"en": "Pingliang"
+	},
+	"mw382": {
+		"zh-cn": "萍乡",
+		"en": "Pingxiang"
+	},
+	"i0sj2": {
+		"zh-cn": "普洱",
+		"en": "Pu 'er"
+	},
+	"n0iy2": {
+		"zh-cn": "莆田",
+		"en": "Putian"
+	},
+	"jv2d2": {
+		"zh-cn": "濮阳",
+		"en": "Puyang"
+	},
+	"l1vd2": {
+		"zh-cn": "磐安",
+		"en": "Pan 'an"
+	},
+	"l7hf2": {
+		"zh-cn": "磐石",
+		"en": "\"Panshi"
+	},
+	"ixl02": {
+		"zh-cn": "沛县",
+		"en": "Pei County"
+	},
+	"nbyd2": {
+		"zh-cn": "蓬莱",
+		"en": "Penglai"
+	},
+	"gtpj2": {
+		"zh-cn": "彭水",
+		"en": "Pengshui"
+	},
+	"gtv42": {
+		"zh-cn": "彭泽",
+		"en": "Peng Ze"
+	},
+	"gqvl2": {
+		"zh-cn": "彭州",
+		"en": "Pengzhou"
+	},
+	"gl1v2": {
+		"zh-cn": "平度",
+		"en": "Flatness"
+	},
+	"gj212": {
+		"zh-cn": "平和",
+		"en": "Peace"
+	},
+	"go5f2": {
+		"zh-cn": "平湖",
+		"en": "Pinghu"
+	},
+	"g5pk2": {
+		"zh-cn": "屏南",
+		"en": "Pingnan"
+	},
+	"gkm62": {
+		"zh-cn": "平山",
+		"en": "Hirayama"
+	},
+	"god62": {
+		"zh-cn": "平潭",
+		"en": "Pingtan"
+	},
+	"gw0w2": {
+		"zh-cn": "平阳",
+		"en": "Pingyang"
+	},
+	"gw0x2": {
+		"zh-cn": "平阴",
+		"en": "Pingyin"
+	},
+	"guwu2": {
+		"zh-cn": "平邑",
+		"en": "Pingyi"
+	},
+	"givg2": {
+		"zh-cn": "平原",
+		"en": "Plain"
+	},
+	"gurt2": {
+		"zh-cn": "平远",
+		"en": "Pingyuan"
+	},
+	"p3xw2": {
+		"zh-cn": "郫县",
+		"en": "Pixian"
+	},
+	"p4ln2": {
+		"zh-cn": "邳州",
+		"en": "Pizhou"
+	},
+	"piqq2": {
+		"zh-cn": "鄱阳",
+		"en": "Poyang"
+	},
+	"j38o2": {
+		"zh-cn": "浦城",
+		"en": "Pucheng"
+	},
+	"j7ax2": {
+		"zh-cn": "浦江",
+		"en": "Pujiang"
+	},
+	"n5yl2": {
+		"zh-cn": "蒲江",
+		"en": "Pu Jiang"
+	},
+	"fehat3": {
+		"zh-cn": "普兰店",
+		"en": "Pulandian"
+	},
+	"hxar2": {
+		"zh-cn": "普宁",
+		"en": "Puning"
+	},
+	"q8w92": {
+		"zh-cn": "青岛",
+		"en": "Qingdao"
+	},
+	"j0ol2": {
+		"zh-cn": "泉州",
+		"en": "Quanzhou"
+	},
+	"rg082": {
+		"zh-cn": "黔东",
+		"en": "Qiandong"
+	},
+	"rh1f2": {
+		"zh-cn": "黔南",
+		"en": "Qiannan"
+	},
+	"nxcb03": {
+		"zh-cn": "黔西南",
+		"en": "Qiannan"
+	},
+	"gwh92": {
+		"zh-cn": "庆阳",
+		"en": "Qingyang"
+	},
+	"ji472": {
+		"zh-cn": "清远",
+		"en": "Qingyuan"
+	},
+	"iffq23": {
+		"zh-cn": "秦皇岛",
+		"en": "Qinhuangdao"
+	},
+	"pss82": {
+		"zh-cn": "钦州",
+		"en": "Qinzhou"
+	},
+	"kr4k7g4": {
+		"zh-cn": "齐齐哈尔",
+		"en": "Qiqihar"
+	},
+	"bu87a3": {
+		"zh-cn": "七台河",
+		"en": "Qitaihe"
+	},
+	"ic9w2": {
+		"zh-cn": "曲靖",
+		"en": "Qu Jing"
+	},
+	"npoc2": {
+		"zh-cn": "衢州",
+		"en": "Quzhou"
+	},
+	"oyco2": {
+		"zh-cn": "迁安",
+		"en": "Qian 'an"
+	},
+	"jg5x2": {
+		"zh-cn": "潜山",
+		"en": "Qianshan"
+	},
+	"pt8s2": {
+		"zh-cn": "铅山",
+		"en": "Yanshan"
+	},
+	"p7fi2": {
+		"zh-cn": "迁西",
+		"en": "Qianxi"
+	},
+	"eqx92": {
+		"zh-cn": "启东",
+		"en": "Qidong"
+	},
+	"rp0j2": {
+		"zh-cn": "齐河",
+		"en": "Qihe"
+	},
+	"lyt52": {
+		"zh-cn": "綦江",
+		"en": "Qijiang"
+	},
+	"lg3r2": {
+		"zh-cn": "祁门",
+		"en": "Qimen"
+	},
+	"jba42": {
+		"zh-cn": "清流",
+		"en": "Clear stream"
+	},
+	"qdr22": {
+		"zh-cn": "青田",
+		"en": "Qingtian"
+	},
+	"j9sb2": {
+		"zh-cn": "清新",
+		"en": "Fresh"
+	},
+	"qk9t2": {
+		"zh-cn": "青阳",
+		"en": "Qingyang"
+	},
+	"giv12": {
+		"zh-cn": "庆元",
+		"en": "Qingyuan"
+	},
+	"gibv2": {
+		"zh-cn": "庆云",
+		"en": "Qingyun"
+	},
+	"jj6q2": {
+		"zh-cn": "清镇",
+		"en": "Qingzhen"
+	},
+	"q9582": {
+		"zh-cn": "青州",
+		"en": "Qingzhou"
+	},
+	"ja362": {
+		"zh-cn": "沁阳",
+		"en": "Qinyang"
+	},
+	"p3uw2": {
+		"zh-cn": "邛崃",
+		"en": "Qionglai"
+	},
+	"ij7s2": {
+		"zh-cn": "栖霞",
+		"en": "Qixia"
+	},
+	"ef8q2": {
+		"zh-cn": "全椒",
+		"en": "Whole pepper"
+	},
+	"eay72": {
+		"zh-cn": "全南",
+		"en": "Jeonnam"
+	},
+	"ic162": {
+		"zh-cn": "曲阜",
+		"en": "Qufu"
+	},
+	"i3sd2": {
+		"zh-cn": "曲江",
+		"en": "Qujiang"
+	},
+	"fca4e3": {
+		"zh-cn": "日喀则",
+		"en": "Xigaze"
+	},
+	"hyci2": {
+		"zh-cn": "日照",
+		"en": "Rizhao"
+	},
+	"qmd92": {
+		"zh-cn": "饶平",
+		"en": "Rao Ping"
+	},
+	"dunp2": {
+		"zh-cn": "仁化",
+		"en": "In Hwa"
+	},
+	"nk4c2": {
+		"zh-cn": "融安",
+		"en": "Rong 'an"
+	},
+	"mwp52": {
+		"zh-cn": "荣昌",
+		"en": "Rongchang"
+	},
+	"mvwt2": {
+		"zh-cn": "荣成",
+		"en": "Rongcheng"
+	},
+	"nnev2": {
+		"zh-cn": "融水",
+		"en": "Meltwater"
+	},
+	"fniy2": {
+		"zh-cn": "如东",
+		"en": "Rudong"
+	},
+	"fvih2": {
+		"zh-cn": "如皋",
+		"en": "Rugao"
+	},
+	"kanf2": {
+		"zh-cn": "瑞安",
+		"en": "Ryan"
+	},
+	"kcq62": {
+		"zh-cn": "瑞昌",
+		"en": "Ruichang"
+	},
+	"kldf2": {
+		"zh-cn": "瑞金",
+		"en": "Ruijin"
+	},
+	"dun22": {
+		"zh-cn": "乳山",
+		"en": "Rushan"
+	},
+	"j9862": {
+		"zh-cn": "汝阳",
+		"en": "Ruyang"
+	},
+	"dy7x2": {
+		"zh-cn": "乳源",
+		"en": "Milk source"
+	},
+	"dvhp2": {
+		"zh-cn": "上海",
+		"en": "Shanghai"
+	},
+	"ja972": {
+		"zh-cn": "沈阳",
+		"en": "Shenyang"
+	},
+	"j6g22": {
+		"zh-cn": "深圳",
+		"en": "Shenzhen"
+	},
+	"i0lvl3": {
+		"zh-cn": "石家庄",
+		"en": "Shijiazhuang"
+	},
+	"mrjj2": {
+		"zh-cn": "苏州",
+		"en": "Suzhou"
+	},
+	"c5hhe3": {
+		"zh-cn": "三门峡",
+		"en": "Sanmenxia"
+	},
+	"du052": {
+		"zh-cn": "三明",
+		"en": "Sanming"
+	},
+	"dpdd2": {
+		"zh-cn": "三亚",
+		"en": "Sanya"
+	},
+	"f3px2": {
+		"zh-cn": "商洛",
+		"en": "Shangluo"
+	},
+	"exle2": {
+		"zh-cn": "商丘",
+		"en": "Shangqiu"
+	},
+	"e46k2": {
+		"zh-cn": "上饶",
+		"en": "Shangrao"
+	},
+	"g6iu2": {
+		"zh-cn": "山南",
+		"en": "Shannan"
+	},
+	"iwzj2": {
+		"zh-cn": "汕头",
+		"en": "Shantou"
+	},
+	"ixl52": {
+		"zh-cn": "汕尾",
+		"en": "Shanwei"
+	},
+	"qam52": {
+		"zh-cn": "韶关",
+		"en": "Shaoguan"
+	},
+	"m0jr2": {
+		"zh-cn": "绍兴",
+		"en": "Shaoxing"
+	},
+	"pfry2": {
+		"zh-cn": "邵阳",
+		"en": "Shaoyang"
+	},
+	"en7z2": {
+		"zh-cn": "十堰",
+		"en": "Shiyan"
+	},
+	"hznqo3": {
+		"zh-cn": "石嘴山",
+		"en": "Shizuishan"
+	},
+	"d19rk3": {
+		"zh-cn": "双鸭山",
+		"en": "Shuangyashan"
+	},
+	"i1qi2": {
+		"zh-cn": "朔州",
+		"en": "Shuozhou"
+	},
+	"faig2": {
+		"zh-cn": "四平",
+		"en": "Siping"
+	},
+	"i28x2": {
+		"zh-cn": "松原",
+		"en": "Songyuan"
+	},
+	"m1g12": {
+		"zh-cn": "绥化",
+		"en": "Suihua"
+	},
+	"p1fj2": {
+		"zh-cn": "遂宁",
+		"en": "Suining"
+	},
+	"q4hb2": {
+		"zh-cn": "随州",
+		"en": "Suizhou"
+	},
+	"ge762": {
+		"zh-cn": "宿迁",
+		"en": "Suqian"
+	},
+	"g4cf2": {
+		"zh-cn": "宿州",
+		"en": "Suzhou"
+	},
+	"dv922": {
+		"zh-cn": "三江",
+		"en": "Sanjiang"
+	},
+	"e3gf2": {
+		"zh-cn": "三门",
+		"en": "\"Three Gates"
+	},
+	"oa6y2": {
+		"zh-cn": "诏安",
+		"en": "Zhao 'an"
+	},
+	"e4ge2": {
+		"zh-cn": "上高",
+		"en": "\"Shanggao\""
+	},
+	"duar2": {
+		"zh-cn": "上杭",
+		"en": "Shanghang"
+	},
+	"f3n12": {
+		"zh-cn": "商河",
+		"en": "Shanghe"
+	},
+	"dufh2": {
+		"zh-cn": "上栗",
+		"en": "Shangli"
+	},
+	"dubx2": {
+		"zh-cn": "上林",
+		"en": "Shanglin"
+	},
+	"dwj32": {
+		"zh-cn": "上犹",
+		"en": "Shang You"
+	},
+	"e0es2": {
+		"zh-cn": "上虞",
+		"en": "Shangyu"
+	},
+	"g6wt2": {
+		"zh-cn": "尚志",
+		"en": "Shang Zhi"
+	},
+	"p7bl2": {
+		"zh-cn": "邵武",
+		"en": "Shao Wu"
+	},
+	"ixja2": {
+		"zh-cn": "沙县",
+		"en": "Shaxian"
+	},
+	"ggr12": {
+		"zh-cn": "嵊泗",
+		"en": "Shengsi"
+	},
+	"gdsk2": {
+		"zh-cn": "嵊州",
+		"en": "Shengzhou"
+	},
+	"mucn2": {
+		"zh-cn": "莘县",
+		"en": "Xin County"
+	},
+	"jar02": {
+		"zh-cn": "深泽",
+		"en": "Fukasawa"
+	},
+	"ipvq2": {
+		"zh-cn": "歙县",
+		"en": "Shexian"
+	},
+	"gh4f2": {
+		"zh-cn": "射阳",
+		"en": "Sheyang"
+	},
+	"kvuj2": {
+		"zh-cn": "石城",
+		"en": "Shicheng"
+	},
+	"kyys2": {
+		"zh-cn": "石林",
+		"en": "Stone Forest"
+	},
+	"l17f2": {
+		"zh-cn": "石狮",
+		"en": "Stone lion"
+	},
+	"kv312": {
+		"zh-cn": "石台",
+		"en": "Shitai"
+	},
+	"fpxl2": {
+		"zh-cn": "始兴",
+		"en": "Shixing"
+	},
+	"kz1a2": {
+		"zh-cn": "石柱",
+		"en": "Stone pillar"
+	},
+	"g3e22": {
+		"zh-cn": "寿光",
+		"en": "Shouguang"
+	},
+	"g5eq2": {
+		"zh-cn": "寿宁",
+		"en": "Shouning"
+	},
+	"g3vk2": {
+		"zh-cn": "寿县",
+		"en": "Shouxian"
+	},
+	"eqgy2": {
+		"zh-cn": "双城",
+		"en": "Twin Cities"
+	},
+	"euph2": {
+		"zh-cn": "双流",
+		"en": "\"Double flow\""
+	},
+	"mlto2": {
+		"zh-cn": "舒城",
+		"en": "Shucheng"
+	},
+	"mkke2": {
+		"zh-cn": "舒兰",
+		"en": "Shulan"
+	},
+	"qhua2": {
+		"zh-cn": "顺昌",
+		"en": "Shunchang"
+	},
+	"jb522": {
+		"zh-cn": "沭阳",
+		"en": "Shuyang"
+	},
+	"j41f2": {
+		"zh-cn": "泗洪",
+		"en": "Si Hong"
+	},
+	"f7hb2": {
+		"zh-cn": "四会",
+		"en": "\"Four Meetings\""
+	},
+	"j3ul2": {
+		"zh-cn": "泗水",
+		"en": "Sishui"
+	},
+	"iz0o2": {
+		"zh-cn": "泗县",
+		"en": "Si County"
+	},
+	"jc582": {
+		"zh-cn": "泗阳",
+		"en": "Siyang"
+	},
+	"gg5h2": {
+		"zh-cn": "嵩明",
+		"en": "Songming"
+	},
+	"i7l82": {
+		"zh-cn": "松溪",
+		"en": "Songxi"
+	},
+	"gcja2": {
+		"zh-cn": "嵩县",
+		"en": "Song County"
+	},
+	"ifed2": {
+		"zh-cn": "松阳",
+		"en": "Songyang"
+	},
+	"p3ii2": {
+		"zh-cn": "遂昌",
+		"en": "Suichang"
+	},
+	"p1wb2": {
+		"zh-cn": "遂川",
+		"en": "Sui Chuan"
+	},
+	"kt3z2": {
+		"zh-cn": "睢宁",
+		"en": "Suining"
+	},
+	"jmdd2": {
+		"zh-cn": "濉溪",
+		"en": "Suixi"
+	},
+	"p57s2": {
+		"zh-cn": "遂溪",
+		"en": "Suixi"
+	},
+	"g68v2": {
+		"zh-cn": "宿松",
+		"en": "Susong"
+	},
+	"gdjg2": {
+		"zh-cn": "宿豫",
+		"en": "Su Yu"
+	},
+	"frj02": {
+		"zh-cn": "天津",
+		"en": "Tianjin"
+	},
+	"esj22": {
+		"zh-cn": "台州",
+		"en": "Taizhou"
+	},
+	"ez4x2": {
+		"zh-cn": "唐山",
+		"en": "Tangshan"
+	},
+	"dd5yu3": {
+		"zh-cn": "塔城地",
+		"en": "Tacheng Di"
+	},
+	"j15l2": {
+		"zh-cn": "泰安",
+		"en": "Tai 'an"
+	},
+	"fmid2": {
+		"zh-cn": "太原",
+		"en": "Taiyuan"
+	},
+	"j1m62": {
+		"zh-cn": "泰州",
+		"en": "Taizhou"
+	},
+	"frcb2": {
+		"zh-cn": "天水",
+		"en": "Tianshui"
+	},
+	"pt702": {
+		"zh-cn": "铁岭",
+		"en": "Tieling"
+	},
+	"pu2p2": {
+		"zh-cn": "铜川",
+		"en": "Tongchuan"
+	},
+	"oyt82": {
+		"zh-cn": "通化",
+		"en": "Tonghua"
+	},
+	"pasj2": {
+		"zh-cn": "通辽",
+		"en": "Tongliao"
+	},
+	"q5952": {
+		"zh-cn": "铜陵",
+		"en": "Tongling"
+	},
+	"pr392": {
+		"zh-cn": "铜仁",
+		"en": "Tongren"
+	},
+	"d2ivt3": {
+		"zh-cn": "吐鲁番",
+		"en": "Turpan"
+	},
+	"flk92": {
+		"zh-cn": "太仓",
+		"en": "Taicang"
+	},
+	"fmoy2": {
+		"zh-cn": "太和",
+		"en": "Taihe"
+	},
+	"izrw2": {
+		"zh-cn": "泰和",
+		"en": "Taihe"
+	},
+	"frsc2": {
+		"zh-cn": "太湖",
+		"en": "Taihu Lake"
+	},
+	"j15d2": {
+		"zh-cn": "泰宁",
+		"en": "Taining"
+	},
+	"es8x2": {
+		"zh-cn": "台山",
+		"en": "Taishan"
+	},
+	"jd6y2": {
+		"zh-cn": "泰顺",
+		"en": "Taishun"
+	},
+	"iz5w2": {
+		"zh-cn": "泰兴",
+		"en": "Taixing"
+	},
+	"p4u72": {
+		"zh-cn": "郯城",
+		"en": "Tancheng"
+	},
+	"f2hz2": {
+		"zh-cn": "唐海",
+		"en": "Tang Hai"
+	},
+	"jd7t2": {
+		"zh-cn": "滕州",
+		"en": "Tengzhou"
+	},
+	"fzhy2": {
+		"zh-cn": "天长",
+		"en": "\"Tianchang\""
+	},
+	"fmjr2": {
+		"zh-cn": "天台",
+		"en": "Rooftop"
+	},
+	"i83i2": {
+		"zh-cn": "桐城",
+		"en": "Tongcheng"
+	},
+	"q6yf2": {
+		"zh-cn": "铜鼓",
+		"en": "Bronze drum"
+	},
+	"p3vd2": {
+		"zh-cn": "通河",
+		"en": "Tonghe"
+	},
+	"pw6d2": {
+		"zh-cn": "铜梁",
+		"en": "Copper beam"
+	},
+	"i9fk2": {
+		"zh-cn": "桐庐",
+		"en": "Tonglu"
+	},
+	"jf4r2": {
+		"zh-cn": "潼南",
+		"en": "Tongnan"
+	},
+	"ptsl2": {
+		"zh-cn": "铜山",
+		"en": "Tongshan"
+	},
+	"i68h2": {
+		"zh-cn": "桐乡",
+		"en": "Tongxiang"
+	},
+	"p0xw2": {
+		"zh-cn": "通州",
+		"en": "Tongzhou"
+	},
+	"jesd2": {
+		"zh-cn": "潍坊",
+		"en": "Weifang"
+	},
+	"fwra2": {
+		"zh-cn": "威海",
+		"en": "Weihai"
+	},
+	"iv1f2": {
+		"zh-cn": "武汉",
+		"en": "Wuhan"
+	},
+	"i5a92": {
+		"zh-cn": "无锡",
+		"en": "Wuxi"
+	},
+	"j74a2": {
+		"zh-cn": "渭南",
+		"en": "Weinan"
+	},
+	"hryi2": {
+		"zh-cn": "文山",
+		"en": "Wenshan"
+	},
+	"j93p2": {
+		"zh-cn": "温州",
+		"en": "Wenzhou"
+	},
+	"dx2j2": {
+		"zh-cn": "乌海",
+		"en": "Wuhai"
+	},
+	"mtkq2": {
+		"zh-cn": "芜湖",
+		"en": "Wuhu"
+	},
+	"a7w59k4": {
+		"zh-cn": "乌兰察布",
+		"en": "Ulanqab"
+	},
+	"aiy8wt4": {
+		"zh-cn": "乌鲁木齐",
+		"en": "Urumqi"
+	},
+	"irff2": {
+		"zh-cn": "武威",
+		"en": "Wuwei"
+	},
+	"eujw2": {
+		"zh-cn": "吴忠",
+		"en": "Wu Zhong"
+	},
+	"ibdj2": {
+		"zh-cn": "梧州",
+		"en": "Wuzhou"
+	},
+	"hlmse3": {
+		"zh-cn": "瓦房店",
+		"en": "Wafangdian"
+	},
+	"drvm2": {
+		"zh-cn": "万安",
+		"en": "Wan 'an"
+	},
+	"i0pf2": {
+		"zh-cn": "望城",
+		"en": "Wangcheng"
+	},
+	"i4ro2": {
+		"zh-cn": "望江",
+		"en": "Wangjiang"
+	},
+	"dsgd2": {
+		"zh-cn": "万年",
+		"en": "Ten thousand years"
+	},
+	"e2522": {
+		"zh-cn": "万载",
+		"en": "Wan Zai"
+	},
+	"gs5f2": {
+		"zh-cn": "微山",
+		"en": "Weishan"
+	},
+	"ht2h2": {
+		"zh-cn": "文成",
+		"en": "Wen Cheng"
+	},
+	"hx3o2": {
+		"zh-cn": "文登",
+		"en": "Wenden"
+	},
+	"mc4v2": {
+		"zh-cn": "翁源",
+		"en": "Weng Yuan"
+	},
+	"j8v82": {
+		"zh-cn": "温岭",
+		"en": "Wenling"
+	},
+	"ivkk2": {
+		"zh-cn": "汶上",
+		"en": "Wen Shang"
+	},
+	"j73q2": {
+		"zh-cn": "温县",
+		"en": "Wen County"
+	},
+	"jgz62": {
+		"zh-cn": "涡阳",
+		"en": "Woyang"
+	},
+	"dvs42": {
+		"zh-cn": "五常",
+		"en": "Five Constants"
+	},
+	"iqzs2": {
+		"zh-cn": "武城",
+		"en": "Wucheng"
+	},
+	"eu5l2": {
+		"zh-cn": "吴川",
+		"en": "Wu Chuan"
+	},
+	"hwjn2": {
+		"zh-cn": "无棣",
+		"en": "Wudi"
+	},
+	"dyn32": {
+		"zh-cn": "五河",
+		"en": "Wuhe"
+	},
+	"dtmi2": {
+		"zh-cn": "五华",
+		"en": "Wuhua"
+	},
+	"hw9t2": {
+		"zh-cn": "无极",
+		"en": "Wuji"
+	},
+	"ex0r2": {
+		"zh-cn": "吴江",
+		"en": "Wujiang"
+	},
+	"e36m2": {
+		"zh-cn": "五莲",
+		"en": "Wulian"
+	},
+	"j3ds2": {
+		"zh-cn": "武隆",
+		"en": "Wulong"
+	},
+	"j4vx2": {
+		"zh-cn": "武鸣",
+		"en": "Wu Ming"
+	},
+	"irq32": {
+		"zh-cn": "武宁",
+		"en": "Wu Ning"
+	},
+	"isb12": {
+		"zh-cn": "武平",
+		"en": "Wu Ping"
+	},
+	"ghd22": {
+		"zh-cn": "巫山",
+		"en": "Wushan"
+	},
+	"hra22": {
+		"zh-cn": "无为",
+		"en": "\"Non-action\""
+	},
+	"gkyn2": {
+		"zh-cn": "巫溪",
+		"en": "Wuxi"
+	},
+	"ip432": {
+		"zh-cn": "武义",
+		"en": "Wu Yi"
+	},
+	"g5zpc3": {
+		"zh-cn": "武夷山",
+		"en": "Wuyi Mountain"
+	},
+	"fzva2": {
+		"zh-cn": "婺源",
+		"en": "Wuyuan"
+	},
+	"j3cp2": {
+		"zh-cn": "武陟",
+		"en": "Wuzhi"
+	},
+	"f1tu2": {
+		"zh-cn": "厦门",
+		"en": "Xiamen"
+	},
+	"obpw2": {
+		"zh-cn": "许昌",
+		"en": "Xuchang"
+	},
+	"grpq2": {
+		"zh-cn": "徐州",
+		"en": "Xuzhou"
+	},
+	"nxhi2": {
+		"zh-cn": "襄樊",
+		"en": "Xiangfan"
+	},
+	"jdp12": {
+		"zh-cn": "湘潭",
+		"en": "Xiangtan"
+	},
+	"jiuf2": {
+		"zh-cn": "湘西",
+		"en": "Xiangxi"
+	},
+	"ewuh2": {
+		"zh-cn": "咸宁",
+		"en": "Xianning"
+	},
+	"f8fv2": {
+		"zh-cn": "咸阳",
+		"en": "Xianyang"
+	},
+	"g2n62": {
+		"zh-cn": "孝感",
+		"en": "Xiaogan"
+	},
+	"siczok5": {
+		"zh-cn": "锡林郭勒盟",
+		"en": "Xilingol League"
+	},
+	"cdq0a3": {
+		"zh-cn": "兴安盟",
+		"en": "Xing 'an League"
+	},
+	"p28e2": {
+		"zh-cn": "邢台",
+		"en": "Xingtai"
+	},
+	"nw0y2": {
+		"zh-cn": "西宁",
+		"en": "Xining"
+	},
+	"hq5t2": {
+		"zh-cn": "新乡",
+		"en": "Xinxiang"
+	},
+	"eesy2": {
+		"zh-cn": "信阳",
+		"en": "Xinyang"
+	},
+	"hqcp2": {
+		"zh-cn": "新余",
+		"en": "Xinyu"
+	},
+	"gu9v2": {
+		"zh-cn": "忻州",
+		"en": "Xinzhou"
+	},
+	"hp5f144": {
+		"zh-cn": "西双版纳",
+		"en": "Xishuangbanna"
+	},
+	"g2h72": {
+		"zh-cn": "宣城",
+		"en": "Xuancheng"
+	},
+	"ge5a2": {
+		"zh-cn": "峡江",
+		"en": "Xiajiang"
+	},
+	"fqwm2": {
+		"zh-cn": "夏津",
+		"en": "Xia Jin"
+	},
+	"odv42": {
+		"zh-cn": "象山",
+		"en": "Xiangshan"
+	},
+	"f0nb2": {
+		"zh-cn": "响水",
+		"en": "Xiangshui"
+	},
+	"dx1o2": {
+		"zh-cn": "仙居",
+		"en": "Xianju"
+	},
+	"e0lb2": {
+		"zh-cn": "仙游",
+		"en": "\"Xianyou\""
+	},
+	"mxrs2": {
+		"zh-cn": "萧县",
+		"en": "Xiaoxian"
+	},
+	"qayw2": {
+		"zh-cn": "霞浦",
+		"en": "Xiapu"
+	},
+	"h0tq2": {
+		"zh-cn": "息烽",
+		"en": "Xifeng"
+	},
+	"hsrd2": {
+		"zh-cn": "新安",
+		"en": "Xin 'an"
+	},
+	"huu42": {
+		"zh-cn": "新昌",
+		"en": "Xinchang"
+	},
+	"e0kv2": {
+		"zh-cn": "信丰",
+		"en": "Xinfeng"
+	},
+	"hq4g2": {
+		"zh-cn": "新丰",
+		"en": "\"Xinfeng"
+	},
+	"htc22": {
+		"zh-cn": "新干",
+		"en": "New dry"
+	},
+	"ebyh2": {
+		"zh-cn": "兴国",
+		"en": "Xingguo"
+	},
+	"eb6q2": {
+		"zh-cn": "兴化",
+		"en": "Xinghua"
+	},
+	"ecul2": {
+		"zh-cn": "兴宁",
+		"en": "Xingning"
+	},
+	"nnes2": {
+		"zh-cn": "行唐",
+		"en": "Xing Tang"
+	},
+	"n69a2": {
+		"zh-cn": "荥阳",
+		"en": "Xingyang"
+	},
+	"hvdd2": {
+		"zh-cn": "星子",
+		"en": "\"Star sub-"
+	},
+	"p9572": {
+		"zh-cn": "辛集",
+		"en": "Xinji"
+	},
+	"htfu2": {
+		"zh-cn": "新建",
+		"en": "Newly built"
+	},
+	"hw8l2": {
+		"zh-cn": "新津",
+		"en": "Xinjin"
+	},
+	"hq5c2": {
+		"zh-cn": "新乐",
+		"en": "Xinle"
+	},
+	"hw0x2": {
+		"zh-cn": "新民",
+		"en": "Xinmin"
+	},
+	"hst22": {
+		"zh-cn": "新密",
+		"en": "New Secret"
+	},
+	"hw742": {
+		"zh-cn": "新泰",
+		"en": "Xintai"
+	},
+	"hqro2": {
+		"zh-cn": "新兴",
+		"en": "Emerging"
+	},
+	"hw422": {
+		"zh-cn": "新沂",
+		"en": "Xinyi"
+	},
+	"e38b2": {
+		"zh-cn": "信宜",
+		"en": "Xinyi"
+	},
+	"i3a92": {
+		"zh-cn": "新郑",
+		"en": "Xinzheng"
+	},
+	"dy8g2": {
+		"zh-cn": "休宁",
+		"en": "Xiuning"
+	},
+	"l7sh2": {
+		"zh-cn": "秀山",
+		"en": "Xiushan"
+	},
+	"e6ti2": {
+		"zh-cn": "修水",
+		"en": "Xiu Shui"
+	},
+	"e5i12": {
+		"zh-cn": "修文",
+		"en": "Xiu Wen"
+	},
+	"e6ns2": {
+		"zh-cn": "修武",
+		"en": "Xiu Wu"
+	},
+	"gae52": {
+		"zh-cn": "寻甸",
+		"en": "Xundian"
+	},
+	"g2pd2": {
+		"zh-cn": "寻乌",
+		"en": "Xunwu"
+	},
+	"h2sr2": {
+		"zh-cn": "徐闻",
+		"en": "Xu Wen"
+	},
+	"kvuw2": {
+		"zh-cn": "盱眙",
+		"en": "Xuyi"
+	},
+	"h9822": {
+		"zh-cn": "扬州",
+		"en": "Yangzhou"
+	},
+	"jnqp2": {
+		"zh-cn": "烟台",
+		"en": "Yantai"
+	},
+	"q5b82": {
+		"zh-cn": "雅安",
+		"en": "Ya 'an"
+	},
+	"gnkj2": {
+		"zh-cn": "延安",
+		"en": "Yan'an"
+	},
+	"gxvn2": {
+		"zh-cn": "延边",
+		"en": "Yanbian"
+	},
+	"kovy2": {
+		"zh-cn": "盐城",
+		"en": "Yancheng"
+	},
+	"q5582": {
+		"zh-cn": "阳江",
+		"en": "Yangjiang"
+	},
+	"q5862": {
+		"zh-cn": "阳泉",
+		"en": "Yangquan"
+	},
+	"g3362": {
+		"zh-cn": "宜宾",
+		"en": "Yibin"
+	},
+	"g54g2": {
+		"zh-cn": "宜昌",
+		"en": "Yichang"
+	},
+	"e0632": {
+		"zh-cn": "伊春",
+		"en": "Yichun"
+	},
+	"g5552": {
+		"zh-cn": "宜春",
+		"en": "Yichun"
+	},
+	"vb465o5": {
+		"zh-cn": "伊犁哈萨克",
+		"en": "Yili Kazakh"
+	},
+	"pup32": {
+		"zh-cn": "银川",
+		"en": "Yinchuan"
+	},
+	"mxr22": {
+		"zh-cn": "营口",
+		"en": "Yingkou"
+	},
+	"rk712": {
+		"zh-cn": "鹰潭",
+		"en": "Yingtan"
+	},
+	"l12h2": {
+		"zh-cn": "益阳",
+		"en": "Yiyang"
+	},
+	"ix7q2": {
+		"zh-cn": "永州",
+		"en": "Yongzhou"
+	},
+	"glb42": {
+		"zh-cn": "岳阳",
+		"en": "Yueyang"
+	},
+	"k7xq2": {
+		"zh-cn": "玉林",
+		"en": "Yulin"
+	},
+	"iimp2": {
+		"zh-cn": "榆林",
+		"en": "Yulin"
+	},
+	"oxz22": {
+		"zh-cn": "运城",
+		"en": "Yuncheng"
+	},
+	"dypp2": {
+		"zh-cn": "云浮",
+		"en": "Yunfu"
+	},
+	"k8142": {
+		"zh-cn": "玉树",
+		"en": "Yushu"
+	},
+	"k9c12": {
+		"zh-cn": "玉溪",
+		"en": "Yuxi"
+	},
+	"q3wy2": {
+		"zh-cn": "阳春",
+		"en": "Yangchun"
+	},
+	"pz612": {
+		"zh-cn": "阳东",
+		"en": "Yangdong"
+	},
+	"qbfo2": {
+		"zh-cn": "阳谷",
+		"en": "Yanggu"
+	},
+	"q1zy2": {
+		"zh-cn": "阳山",
+		"en": "Yangshan"
+	},
+	"pzim2": {
+		"zh-cn": "阳信",
+		"en": "Yang Xin"
+	},
+	"qawc2": {
+		"zh-cn": "阳西",
+		"en": "Yangxi"
+	},
+	"h64h2": {
+		"zh-cn": "扬中",
+		"en": "Yangzhong"
+	},
+	"e61x2": {
+		"zh-cn": "偃师",
+		"en": "Yanshi"
+	},
+	"gnnt2": {
+		"zh-cn": "延寿",
+		"en": "Prolong life"
+	},
+	"eclk2": {
+		"zh-cn": "兖州",
+		"en": "Yanzhou"
+	},
+	"dyj72": {
+		"zh-cn": "伊川",
+		"en": "Yichuan"
+	},
+	"g0es2": {
+		"zh-cn": "宜丰",
+		"en": "Yifeng"
+	},
+	"ggbs2": {
+		"zh-cn": "宜黄",
+		"en": "Yihuang"
+	},
+	"dzlf2": {
+		"zh-cn": "依兰",
+		"en": "Yilan"
+	},
+	"gaqb2": {
+		"zh-cn": "宜良",
+		"en": "Yiliang"
+	},
+	"iwwl2": {
+		"zh-cn": "沂南",
+		"en": "Yinan"
+	},
+	"mspy2": {
+		"zh-cn": "英德",
+		"en": "\"Yingde"
+	},
+	"qdjx2": {
+		"zh-cn": "颍上",
+		"en": "Ying Shang"
+	},
+	"j1te2": {
+		"zh-cn": "沂水",
+		"en": "Yishui"
+	},
+	"dqub2": {
+		"zh-cn": "义乌",
+		"en": "Yiwu"
+	},
+	"rhds2": {
+		"zh-cn": "黟县",
+		"en": "Yi County"
+	},
+	"g1202": {
+		"zh-cn": "宜兴",
+		"en": "Yixing"
+	},
+	"gzns2": {
+		"zh-cn": "弋阳",
+		"en": "Yiyang"
+	},
+	"gemv2": {
+		"zh-cn": "宜阳",
+		"en": "Yiyang"
+	},
+	"j2a62": {
+		"zh-cn": "沂源",
+		"en": "Yiyuan"
+	},
+	"dy3b2": {
+		"zh-cn": "仪征",
+		"en": "Yi Zheng"
+	},
+	"iwr52": {
+		"zh-cn": "永安",
+		"en": "Yong 'an"
+	},
+	"ix7p2": {
+		"zh-cn": "永川",
+		"en": "Yongchuan"
+	},
+	"iyul2": {
+		"zh-cn": "永春",
+		"en": "Yongchun"
+	},
+	"j22r2": {
+		"zh-cn": "永登",
+		"en": "Yongdeng"
+	},
+	"iwrm2": {
+		"zh-cn": "永定",
+		"en": "Yongding"
+	},
+	"iu482": {
+		"zh-cn": "永丰",
+		"en": "Yongfeng"
+	},
+	"iv9t2": {
+		"zh-cn": "永吉",
+		"en": "Yongji"
+	},
+	"ivo12": {
+		"zh-cn": "永嘉",
+		"en": "Yongjia"
+	},
+	"ixdr2": {
+		"zh-cn": "永康",
+		"en": "Yongkang"
+	},
+	"p3f02": {
+		"zh-cn": "邕宁",
+		"en": "Yongning"
+	},
+	"j06w2": {
+		"zh-cn": "永泰",
+		"en": "Yongtai"
+	},
+	"iyrc2": {
+		"zh-cn": "永新",
+		"en": "Yongxin"
+	},
+	"iugm2": {
+		"zh-cn": "永修",
+		"en": "Yongxiu"
+	},
+	"ga2u2": {
+		"zh-cn": "尤溪",
+		"en": "Youxi"
+	},
+	"pjbe2": {
+		"zh-cn": "酉阳",
+		"en": "Youyang"
+	},
+	"eey42": {
+		"zh-cn": "元氏",
+		"en": "Yuan Shi"
+	},
+	"l6ph2": {
+		"zh-cn": "禹城",
+		"en": "Yucheng"
+	},
+	"e5nz2": {
+		"zh-cn": "于都",
+		"en": "Yudu"
+	},
+	"giss2": {
+		"zh-cn": "岳西",
+		"en": "Yue Xi"
+	},
+	"e0jd2": {
+		"zh-cn": "余干",
+		"en": "Yu Gan"
+	},
+	"kabq2": {
+		"zh-cn": "玉环",
+		"en": "\"Yuhuan\""
+	},
+	"e3ae2": {
+		"zh-cn": "余江",
+		"en": "Yujiang"
+	},
+	"p2uu2": {
+		"zh-cn": "郁南",
+		"en": "Yu Nan"
+	},
+	"dv6g2": {
+		"zh-cn": "云安",
+		"en": "Yun 'an"
+	},
+	"p4632": {
+		"zh-cn": "郓城",
+		"en": "Yuncheng"
+	},
+	"dtsr2": {
+		"zh-cn": "云和",
+		"en": "Yunhe"
+	},
+	"e6xf2": {
+		"zh-cn": "云霄",
+		"en": "Yunxiao"
+	},
+	"e6rm2": {
+		"zh-cn": "云阳",
+		"en": "Yunyang"
+	},
+	"k5qg2": {
+		"zh-cn": "玉山",
+		"en": "Yushan"
+	},
+	"iiq32": {
+		"zh-cn": "榆树",
+		"en": "Elm tree"
+	},
+	"r2t02": {
+		"zh-cn": "鱼台",
+		"en": "Fish platform"
+	},
+	"kamf2": {
+		"zh-cn": "玉田",
+		"en": "Yutian"
+	},
+	"dzmp2": {
+		"zh-cn": "余姚",
+		"en": "Yuyao"
+	},
+	"idlz2": {
+		"zh-cn": "榆中",
+		"en": "Yuzhong"
+	},
+	"jfgr2": {
+		"zh-cn": "漳州",
+		"en": "Zhangzhou"
+	},
+	"p5bh2": {
+		"zh-cn": "郑州",
+		"en": "Zhengzhou"
+	},
+	"dsys2": {
+		"zh-cn": "中山",
+		"en": "Zhongshan"
+	},
+	"kb6f2": {
+		"zh-cn": "珠海",
+		"en": "Zhuhai"
+	},
+	"edu2e3": {
+		"zh-cn": "张家界",
+		"en": "Zhangjiajie"
+	},
+	"edngt3": {
+		"zh-cn": "张家口",
+		"en": "Zhangjiakou"
+	},
+	"gq5y2": {
+		"zh-cn": "张掖",
+		"en": "Zhangye"
+	},
+	"jd5w2": {
+		"zh-cn": "湛江",
+		"en": "Zhanjiang"
+	},
+	"mdpb2": {
+		"zh-cn": "肇庆",
+		"en": "Zhaoqing"
+	},
+	"i64t2": {
+		"zh-cn": "昭通",
+		"en": "Zhaotong"
+	},
+	"pzi02": {
+		"zh-cn": "镇江",
+		"en": "Zhenjiang"
+	},
+	"dr6m2": {
+		"zh-cn": "中卫",
+		"en": "Central defender"
+	},
+	"etff2": {
+		"zh-cn": "周口",
+		"en": "Zhoukou"
+	},
+	"mn1u2": {
+		"zh-cn": "舟山",
+		"en": "Zhoushan"
+	},
+	"ndcva3": {
+		"zh-cn": "驻马店",
+		"en": "Zhumadian"
+	},
+	"ibew2": {
+		"zh-cn": "株洲",
+		"en": "Zhuzhou"
+	},
+	"j4ly2": {
+		"zh-cn": "淄博",
+		"en": "Zibo"
+	},
+	"mvef2": {
+		"zh-cn": "自贡",
+		"en": "Zigong"
+	},
+	"oupb2": {
+		"zh-cn": "资阳",
+		"en": "Ziyang"
+	},
+	"p01g2": {
+		"zh-cn": "遵义",
+		"en": "Zunyi"
+	},
+	"op2h2": {
+		"zh-cn": "赞皇",
+		"en": "Praise the Emperor"
+	},
+	"fjzk2": {
+		"zh-cn": "增城",
+		"en": "Zengcheng"
+	},
+	"edsnt3": {
+		"zh-cn": "张家港",
+		"en": "Zhangjiagang"
+	},
+	"jfkw2": {
+		"zh-cn": "漳平",
+		"en": "Zhangping"
+	},
+	"jij72": {
+		"zh-cn": "漳浦",
+		"en": "Zhangpu"
+	},
+	"lbug2": {
+		"zh-cn": "章丘",
+		"en": "Zhangqiu"
+	},
+	"imdu2": {
+		"zh-cn": "樟树",
+		"en": "Camphor tree"
+	},
+	"iyag2": {
+		"zh-cn": "沾化",
+		"en": "Zhanhua"
+	},
+	"oiqy2": {
+		"zh-cn": "赵县",
+		"en": "Zhao County"
+	},
+	"hlr52": {
+		"zh-cn": "招远",
+		"en": "Zhaoyuan"
+	},
+	"iro72": {
+		"zh-cn": "正定",
+		"en": "\"Positive determination\""
+	},
+	"hood2": {
+		"zh-cn": "政和",
+		"en": "Zhenghe"
+	},
+	"idu32": {
+		"zh-cn": "柘荣",
+		"en": "Zherong"
+	},
+	"dxaq2": {
+		"zh-cn": "中牟",
+		"en": "Zhongmu"
+	},
+	"grmn2": {
+		"zh-cn": "忠县",
+		"en": "Zhongxian"
+	},
+	"euxl2": {
+		"zh-cn": "周宁",
+		"en": "Zhou Ning"
+	},
+	"f2iz2": {
+		"zh-cn": "周至",
+		"en": "Zhou Zhi"
+	},
+	"go8f2": {
+		"zh-cn": "庄河",
+		"en": "Zhuanghe"
+	},
+	"oafq2": {
+		"zh-cn": "诸城",
+		"en": "Zhucheng"
+	},
+	"oddc2": {
+		"zh-cn": "诸暨",
+		"en": "Zhuji"
+	},
+	"m39i2": {
+		"zh-cn": "紫金",
+		"en": "Purple gold"
+	},
+	"omw62": {
+		"zh-cn": "资溪",
+		"en": "Zixi"
+	},
+	"p3jp2": {
+		"zh-cn": "邹城",
+		"en": "Zoucheng"
+	},
+	"p4uy2": {
+		"zh-cn": "邹平",
+		"en": "Zou Ping"
+	},
+	"p0zl2": {
+		"zh-cn": "遵化",
+		"en": "Zunhua"
 	}
 }

@@ -280,7 +280,7 @@
       appStore.initTags(JSON.parse(savedTags))
     }
 
-    // 添加当前路由标签（包括首页）
+    // 添加当前路由标签（使用路由配置的 affix，而不是硬编码）
     appStore.addTag({
       path: route.path,
       title: translateRouteTitle(
@@ -289,7 +289,7 @@
           : (route.meta.title as string) || 'Unnamed Page'
       ),
       icon: route.path === '/home' ? 'mdi:home' : (route.meta.icon as string),
-      meta: { affix: route.path === '/home' },
+      meta: { affix: route.meta.affix as boolean }, // ✅ 使用路由配置
     })
   })
 
@@ -297,7 +297,7 @@
   watch(
     () => route.path,
     (newPath: string) => {
-      // 添加或更新当前路由标签
+      // 添加或更新当前路由标签（使用路由配置的 affix）
       appStore.addTag({
         path: newPath,
         title: translateRouteTitle(
@@ -306,7 +306,7 @@
             : (route.meta.title as string) || 'Unnamed Page'
         ),
         icon: newPath === '/home' ? 'mdi:home' : (route.meta.icon as string),
-        meta: { affix: newPath === '/home' },
+        meta: { affix: route.meta.affix as boolean }, // ✅ 使用路由配置
       })
 
       // 更新选中状态
