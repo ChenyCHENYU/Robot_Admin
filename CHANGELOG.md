@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.7.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.4...v1.7.0) (2025-11-06)
+
+
+### Features
+
+* **i18n:** 增加 i18n 功能，插件和脚本，以及文档的编写 ([e5ae03f](https://github.com/ChenyCHENYU/Robot_Admin/commit/e5ae03ffb417df560379036bbbc591650686595c))
+
+
+### Bug Fixes
+
+* **TAGS:** 修复关闭所有导致出现关于页的固定配置 ([d64bea3](https://github.com/ChenyCHENYU/Robot_Admin/commit/d64bea3cada9d3d00e7abca675899f67b57f70d4))
+
+
+### Performance Improvements
+
+* **i18n:** 增加配置，解决切换菜单触发HMR导致刷新的问题 ([0afaa23](https://github.com/ChenyCHENYU/Robot_Admin/commit/0afaa235d33f4e850d5f55d19f7b8b4d7db3992c))
+
 ## [1.6.4](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.3...v1.6.4) (2025-11-04)
 
 
