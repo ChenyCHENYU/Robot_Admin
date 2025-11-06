@@ -18,6 +18,11 @@
   height: calc(100vh - 150px);
 }
 
+/* 内容区域背景色使用 CSS Variables */
+.layout-container :deep(.app-content) {
+  background-color: var(--app-bg-content);
+  transition: background-color var(--app-transition-slow);
+}
 .layout-container :deep(.n-layout-content) {
   display: flex;
   flex-direction: column;
@@ -36,24 +41,29 @@
 
 /*
  * ==== 主题相关样式 ====
+ * 优先使用 CSS Variables，保留 class 作为向后兼容
  */
 
+/* 使用 data-theme 属性的现代方案 */
+[data-theme='light'] .layout-container :deep(.light-theme),
 .layout-container :deep(.light-theme) {
-  background-color: #ffffff !important;
+  background-color: var(--app-bg-body);
 }
 
+[data-theme='dark'] .layout-container :deep(.dark-theme),
 .layout-container :deep(.dark-theme) {
-  background-color: #1c1c1c !important;
+  background-color: var(--app-bg-body);
 }
 
+/* 布局容器背景色 */
 .layout-container.light-mode :deep(.n-layout .n-layout-scroll-container) {
-  background-color: #f4f7f9 !important;
+  background-color: var(--app-bg-surface);
   border-radius: 10px;
 }
 
 .layout-container.dark-mode :deep(.n-layout .n-layout-scroll-container),
 .layout-container.system-mode :deep(.n-layout .n-layout-scroll-container) {
-  background-color: #121212 !important;
+  background-color: var(--app-bg-surface);
 }
 
 .layout-container.theme-transitioning {
@@ -65,19 +75,20 @@
  */
 
 .layout-sider {
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color var(--app-transition-base);
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
   contain: strict;
 }
 
+/* 侧边栏背景色使用 CSS Variables */
 .layout-sider.light-theme {
-  background-color: #081426;
+  background-color: var(--app-menu-bg);
 }
 
 .layout-sider.dark-theme {
-  background-color: #1c1c1c;
+  background-color: var(--app-menu-bg);
 }
 
 .layout-sider :deep(.n-scrollbar-rail) {

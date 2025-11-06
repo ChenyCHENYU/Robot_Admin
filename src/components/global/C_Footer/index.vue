@@ -3,7 +3,7 @@
     bordered
     :class="[
       'layout-footer',
-      isLightTheme ? 'light-theme' : 'dark-theme',
+      themeStore.isDark ? 'dark-theme' : 'light-theme',
       'h-50px px-20px flex items-center justify-center',
     ]"
   >
@@ -13,13 +13,9 @@
 </template>
 
 <script setup lang="ts">
-  // Composition API 自动导入已配置
+  import { useThemeStore } from '@/stores/theme'
+
   defineOptions({ name: 'C_Footer' })
 
-  defineProps({
-    isLightTheme: {
-      type: Boolean,
-      default: true,
-    },
-  })
+  const themeStore = useThemeStore()
 </script>

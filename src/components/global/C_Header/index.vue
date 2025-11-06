@@ -4,7 +4,7 @@
     position="absolute"
     :class="[
       'layout-header',
-      isLightTheme ? 'light-theme' : 'dark-theme',
+      themeStore.isDark ? 'dark-theme' : 'light-theme',
       'h-100px px-20px flex flex-col items-center top-0 left-0 right-0 z-1000',
     ]"
   >
@@ -107,14 +107,11 @@
 
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
+  import { useThemeStore } from '@/stores/theme'
 
   defineOptions({ name: 'C_Header' })
-  defineProps({
-    isLightTheme: {
-      type: Boolean,
-      default: true,
-    },
-  })
+
+  const themeStore = useThemeStore()
 
   interface MenuCollapse {
     isCollapsed: Ref<boolean>

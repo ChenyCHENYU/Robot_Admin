@@ -43,12 +43,9 @@
       </NLayoutSider>
 
       <NLayout>
-        <C_Header :isLightTheme="!isDarkMode" />
+        <C_Header />
 
-        <NLayoutContent
-          class="content-with-header p16px"
-          :style="{ backgroundColor: isDarkMode ? '#1c1c1c' : '#ffffff' }"
-        >
+        <NLayoutContent class="content-with-header p16px app-content">
           <!-- ⚡ 智能 KeepAlive 缓存控制 -->
           <RouterView v-slot="{ Component, route }">
             <Transition
@@ -67,7 +64,7 @@
             </Transition>
           </RouterView>
         </NLayoutContent>
-        <C_Footer :isLightTheme="!isDarkMode" />
+        <C_Footer />
       </NLayout>
     </NLayout>
   </div>

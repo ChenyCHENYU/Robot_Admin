@@ -1,6 +1,11 @@
-// 暗色主题下的 Markdown 编辑器样式覆盖
-html.dark,
+/**
+ * 暗色主题下的 Markdown 编辑器样式覆盖
+ *
+ * 主选择器：[data-theme="dark"]
+ * 兼容选择器：html.dark, body[data-theme="dark"]（向后兼容）
+ */
 [data-theme="dark"],
+html.dark,
 body[data-theme="dark"] {
   // 编辑区域样式
   .v-md-editor__editor {

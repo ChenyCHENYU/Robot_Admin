@@ -71,9 +71,9 @@
   defineOptions({ name: 'C_MenuTop' })
 
   const themeStore = useThemeStore()
-  const menuBgColor = computed(() =>
-    themeStore.isDark ? themeStore.darkModeBgColor : '#0d1425'
-  )
+
+  // 使用 Store 的工具方法获取菜单背景色
+  const menuBgColor = themeStore.getBgColor('menu')
 
   // 获取容器引用
   const menuContainer = ref<HTMLElement>()

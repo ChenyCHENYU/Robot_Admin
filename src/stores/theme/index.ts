@@ -1,9 +1,10 @@
 // stores/theme.ts
 import { darkTheme, lightTheme, type GlobalTheme } from 'naive-ui/es'
 import {
-  themeOverrides,
+  lightThemeOverrides,
   darkThemeOverrides,
   type GlobalThemeOverrides,
+  THEME_TOKENS,
 } from '@/config/theme'
 
 // 本地存储键名常量
@@ -20,7 +21,7 @@ export const useThemeStore = defineStore('theme', () => {
   const savedMode = localStorage.getItem(THEME_MODE_KEY) as ThemeMode
 
   // 读取自定义主题配置
-  let savedCustomOverrides = themeOverrides
+  let savedCustomOverrides = lightThemeOverrides
   const savedOverrides = localStorage.getItem(THEME_OVERRIDES_KEY)
   if (savedOverrides) {
     try {
@@ -49,10 +50,12 @@ export const useThemeStore = defineStore('theme', () => {
     )
   })
 
-  const darkModeBgColor = computed(() => '#1c1c1c')
+  const darkModeBgColor = computed(() => THEME_TOKENS.background.dark.body)
 
   const themeOverridesComputed = computed<GlobalThemeOverrides>(() => {
-    const baseOverrides = isDark.value ? darkThemeOverrides : themeOverrides
+    const baseOverrides = isDark.value
+      ? darkThemeOverrides
+      : lightThemeOverrides
     return {
       ...baseOverrides,
       ...customOverrides.value,
@@ -78,10 +81,32 @@ export const useThemeStore = defineStore('theme', () => {
     // 确保状态同步
     systemIsDark.value = mediaQuery.matches
 
+    // 同步 data-theme 属性到 html 元素
+    syncThemeAttr()
+
     // 添加变化监听器
     mediaQuery.addEventListener('change', e => {
       systemIsDark.value = e.matches
+      syncThemeAttr()
     })
+  }
+
+  /**
+   * 同步主题属性到 HTML 元素
+   * 设置 [data-theme] 属性，方便 CSS 使用
+   */
+  const syncThemeAttr = () => {
+    const themeValue = isDark.value ? 'dark' : 'light'
+    document.documentElement.setAttribute('data-theme', themeValue)
+
+    // 向后兼容：同时设置 class
+    if (isDark.value) {
+      document.documentElement.classList.add('dark')
+      document.documentElement.classList.remove('light')
+    } else {
+      document.documentElement.classList.add('light')
+      document.documentElement.classList.remove('dark')
+    }
   }
 
   const setMode = async (newMode: ThemeMode) => {
@@ -119,6 +144,9 @@ export const useThemeStore = defineStore('theme', () => {
     mode.value = newMode
     localStorage.setItem(THEME_MODE_KEY, newMode)
 
+    // 同步主题属性
+    syncThemeAttr()
+
     // 确保DOM更新
     await new Promise(resolve => requestAnimationFrame(resolve))
 
@@ -149,8 +177,32 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   const resetThemeOverrides = () => {
-    customOverrides.value = themeOverrides
+    customOverrides.value = lightThemeOverrides
     localStorage.removeItem(THEME_OVERRIDES_KEY)
+  }
+
+  /**
+   * 获取背景颜色（基于 Token）
+   * @param key - 背景色键名
+   * @returns 响应式的背景颜色值
+   */
+  const getBgColor = (key: keyof typeof THEME_TOKENS.background.light) => {
+    return computed(() =>
+      isDark.value
+        ? THEME_TOKENS.background.dark[key]
+        : THEME_TOKENS.background.light[key]
+    )
+  }
+
+  /**
+   * 获取菜单颜色（基于 Token）
+   * @param key - 菜单色键名
+   * @returns 响应式的菜单颜色值
+   */
+  const getMenuColor = (key: keyof typeof THEME_TOKENS.menu.light) => {
+    return computed(() =>
+      isDark.value ? THEME_TOKENS.menu.dark[key] : THEME_TOKENS.menu.light[key]
+    )
   }
 
   return {
@@ -170,5 +222,10 @@ export const useThemeStore = defineStore('theme', () => {
     setMode,
     updateThemeOverrides,
     resetThemeOverrides,
+
+    // 新增工具方法
+    getBgColor,
+    getMenuColor,
+    syncThemeAttr,
   }
 })

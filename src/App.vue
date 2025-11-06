@@ -16,6 +16,9 @@
     :date-locale="dateZhCN"
     class="global-config-provider"
   >
+    <!-- 添加 NGlobalStyle 同步 body 样式 -->
+    <NGlobalStyle />
+
     <NLoadingBarProvider>
       <NDialogProvider>
         <NNotificationProvider>
