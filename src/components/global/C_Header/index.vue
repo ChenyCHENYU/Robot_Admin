@@ -5,11 +5,17 @@
     :class="[
       'layout-header',
       themeStore.isDark ? 'dark-theme' : 'light-theme',
-      'h-100px px-20px flex flex-col items-center top-0 left-0 right-0 z-1000',
+      'px-20px flex flex-col items-center top-0 left-0 right-0 z-1000',
     ]"
+    :style="{
+      height: `${settingsStore.headerHeight + (settingsStore.showTagsView ? settingsStore.tagsViewHeight : 0)}px`,
+    }"
   >
     <!--* 头部 - 上方 -->
-    <div class="header-top h56px w-full">
+    <div
+      class="header-top w-full"
+      :style="{ height: `${settingsStore.headerHeight}px` }"
+    >
       <div
         class="header-content w-full h-full flex items-center justify-between"
       >
@@ -39,7 +45,14 @@
         </div>
 
         <!-- 中间：面包屑导航 -->
-        <C_Breadcrumb />
+        <div
+          class="flex-1 min-w-0"
+          :style="{
+            visibility: settingsStore.showBreadcrumb ? 'visible' : 'hidden',
+          }"
+        >
+          <C_Breadcrumb />
+        </div>
 
         <C_GlobalSearch />
 
@@ -99,19 +112,31 @@
     </div>
 
     <!--* 头部 - 下方 -->
-    <div class="header-bottom h44px w-full flex items-end">
+    <div
+      v-if="settingsStore.showTagsView"
+      class="header-bottom w-full flex items-end"
+      :style="{ height: `${settingsStore.tagsViewHeight}px` }"
+    >
       <C_TagsView />
     </div>
+
+    <!-- 设置面板 -->
+    <C_Settings v-model:show="showSettings" />
   </NLayoutHeader>
 </template>
 
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
   import { useThemeStore } from '@/stores/theme'
+  import { useSettingsStore } from '@/stores/settings'
 
   defineOptions({ name: 'C_Header' })
 
   const themeStore = useThemeStore()
+  const settingsStore = useSettingsStore()
+
+  // 设置面板状态
+  const showSettings = ref(false)
 
   interface MenuCollapse {
     isCollapsed: Ref<boolean>
@@ -150,7 +175,7 @@
       icon: 'i-mdi:settings-transfer-outline',
       tooltip: '布局配置',
       action: () => {
-        // 布局配置逻辑
+        showSettings.value = true
       },
     },
   ]

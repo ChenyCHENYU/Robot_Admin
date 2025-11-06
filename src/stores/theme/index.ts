@@ -56,24 +56,31 @@ export const useThemeStore = defineStore('theme', () => {
     const baseOverrides = isDark.value
       ? darkThemeOverrides
       : lightThemeOverrides
-    return {
+
+    // 深度合并配置，customOverrides 优先级最高
+    // 需要合并所有可能的组件配置
+    const result: GlobalThemeOverrides = {
       ...baseOverrides,
       ...customOverrides.value,
       common: {
         ...baseOverrides.common,
         ...customOverrides.value.common,
-        primaryColor:
-          customOverrides.value.common?.primaryColor ||
-          baseOverrides.common?.primaryColor,
-        primaryColorHover:
-          customOverrides.value.common?.primaryColorHover ||
-          baseOverrides.common?.primaryColorHover,
-      },
-      Menu: {
-        ...baseOverrides.Menu,
-        ...customOverrides.value.Menu,
       },
     }
+
+    // 合并组件级别的配置
+    const components = ['Menu', 'Button', 'Radio', 'Card', 'Input']
+
+    components.forEach(comp => {
+      if (baseOverrides[comp] || customOverrides.value[comp]) {
+        result[comp] = {
+          ...baseOverrides[comp],
+          ...customOverrides.value[comp],
+        }
+      }
+    })
+
+    return result
   })
 
   // Actions
@@ -165,15 +172,20 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   const updateThemeOverrides = (overrides: Partial<GlobalThemeOverrides>) => {
-    customOverrides.value = {
+    // 深度合并，确保不丢失已有配置
+    const mergedOverrides: GlobalThemeOverrides = {
       ...customOverrides.value,
       ...overrides,
+      common: {
+        ...customOverrides.value.common,
+        ...overrides.common,
+      },
     }
+
+    customOverrides.value = mergedOverrides
+
     // 将自定义主题保存到本地存储
-    localStorage.setItem(
-      THEME_OVERRIDES_KEY,
-      JSON.stringify(customOverrides.value)
-    )
+    localStorage.setItem(THEME_OVERRIDES_KEY, JSON.stringify(mergedOverrides))
   }
 
   const resetThemeOverrides = () => {

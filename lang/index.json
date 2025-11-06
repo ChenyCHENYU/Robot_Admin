@@ -8954,5 +8954,617 @@
 	"wvdwqhf": {
 		"zh-cn": "北京市朝阳区某某大厦1008室",
 		"en": "Room 1008, XX Building, Chaoyang District, Beijing"
+	},
+	"y7o7ijb": {
+		"zh-cn": "确定要恢复默认配置吗？",
+		"en": "Are you sure you want to restore the default configuration?"
+	},
+	"lvismi7": {
+		"zh-cn": "已恢复默认配置",
+		"en": "The default configuration has been restored"
+	},
+	"kcu83sf": {
+		"zh-cn": " 主题配置 (Ctrl+K) ",
+		"en": "Theme configuration (Ctrl+K"
+	},
+	"c6nqre4": {
+		"zh-cn": "左侧菜单",
+		"en": "\"Left menu\""
+	},
+	"ju4l2j4": {
+		"zh-cn": "顶部菜单",
+		"en": "Top menu"
+	},
+	"c8zex24": {
+		"zh-cn": "已应用「",
+		"en": "Has been applied"
+	},
+	"epoqpz5": {
+		"zh-cn": "」主题方案",
+		"en": "\"Theme Plan\""
+	},
+	"teskwqj": {
+		"zh-cn": "确定要恢复默认配置吗？此操作不可撤销。",
+		"en": "Are you sure you want to restore the default configuration? This operation is irrevocable."
+	},
+	"gcc2hb5": {
+		"zh-cn": "配置已导出",
+		"en": "The configuration has been exported."
+	},
+	"948k8p6": {
+		"zh-cn": "配置导入成功",
+		"en": "The configuration import was successful."
+	},
+	"1i27ms7": {
+		"zh-cn": "配置导入失败：",
+		"en": "Configuration import failed"
+	},
+	"k45fskb": {
+		"zh-cn": "分享链接已复制到剪贴板",
+		"en": "The sharing link has been copied to the clipboard"
+	},
+	"a7ir5ea": {
+		"zh-cn": "复制失败，请手动复制",
+		"en": "Copy failed. Please copy manually"
+	},
+	"aoofws4": {
+		"zh-cn": "分享链接",
+		"en": "Share link"
+	},
+	"y04pe07": {
+		"zh-cn": "⚙️ 主题配置",
+		"en": "⚙️ Theme configuration"
+	},
+	"lbmbz45": {
+		"zh-cn": "🎨 外观",
+		"en": "🎨 appearance"
+	},
+	"cpdmj24": {
+		"zh-cn": "快速预设",
+		"en": "Quick presets"
+	},
+	"c7ooq0a": {
+		"zh-cn": "一键应用预设主题方案",
+		"en": "One-click application of preset theme schemes"
+	},
+	"ai2xe34": {
+		"zh-cn": "主题模式",
+		"en": "Theme Mode"
+	},
+	"h6spf4": {
+		"zh-cn": " 浅色 ",
+		"en": "Light color"
+	},
+	"hac8v4": {
+		"zh-cn": " 深色 ",
+		"en": "Dark color"
+	},
+	"jziyq4": {
+		"zh-cn": " 自动 ",
+		"en": "\"Automatic"
+	},
+	"c76fp3": {
+		"zh-cn": "主题色",
+		"en": "Theme color"
+	},
+	"bjrfx04": {
+		"zh-cn": "圆角大小",
+		"en": "Fillet size"
+	},
+	"4cqf5w7": {
+		"zh-cn": "小 (4px)",
+		"en": "Small (4px"
+	},
+	"ngp9i87": {
+		"zh-cn": "中 (6px)",
+		"en": "Medium (6px"
+	},
+	"mwy5eg7": {
+		"zh-cn": "大 (8px)",
+		"en": "Large (8px"
+	},
+	"jutwww4": {
+		"zh-cn": "页面动画",
+		"en": "Page animation"
+	},
+	"b3tb1o4": {
+		"zh-cn": "启用动画",
+		"en": "Enable animation"
+	},
+	"j6iw2": {
+		"zh-cn": "渐变",
+		"en": "\"Gradient\""
+	},
+	"jawn2": {
+		"zh-cn": "滑动",
+		"en": "Slide"
+	},
+	"m6np2": {
+		"zh-cn": "缩放",
+		"en": "Zoom"
+	},
+	"k4g1": {
+		"zh-cn": "无",
+		"en": "no"
+	},
+	"kz9vai5": {
+		"zh-cn": "📐 布局",
+		"en": "📐 layout"
+	},
+	"c8wdij4": {
+		"zh-cn": "布局模式",
+		"en": "Layout pattern"
+	},
+	"ff6d034": {
+		"zh-cn": "界面元素",
+		"en": "Interface elements"
+	},
+	"bcsd904": {
+		"zh-cn": "固定头部",
+		"en": "Fixed head"
+	},
+	"ai4j1q5": {
+		"zh-cn": "显示面包屑",
+		"en": "Show breadcrumbs"
+	},
+	"7ghb8l7": {
+		"zh-cn": "显示面包屑图标",
+		"en": "Display the breadcrumb icon"
+	},
+	"aov0ou5": {
+		"zh-cn": "显示标签页",
+		"en": "Display TAB page"
+	},
+	"deqltt4": {
+		"zh-cn": "显示页脚",
+		"en": "Display the footer"
+	},
+	"c0wvv34": {
+		"zh-cn": "尺寸调整",
+		"en": "Size adjustment"
+	},
+	"p5hgm25": {
+		"zh-cn": "侧边栏宽度",
+		"en": "Sidebar width"
+	},
+	"bv0agy4": {
+		"zh-cn": "头部高度",
+		"en": "Head height"
+	},
+	"4w627i4": {
+		"zh-cn": "⚡ 高级",
+		"en": "⚡ Senior"
+	},
+	"iv0sna4": {
+		"zh-cn": "配置管理",
+		"en": "Configuration Management"
+	},
+	"xnu0la6": {
+		"zh-cn": " 重置配置 ",
+		"en": "Reset configuration"
+	},
+	"ulmsdd6": {
+		"zh-cn": " 导出配置 ",
+		"en": "Export configuration"
+	},
+	"uiznbq6": {
+		"zh-cn": " 导入配置 ",
+		"en": "Import configuration"
+	},
+	"iutihy4": {
+		"zh-cn": "配置分享",
+		"en": "Configuration sharing"
+	},
+	"k341": {
+		"zh-cn": "新",
+		"en": "new"
+	},
+	"vzj7aye": {
+		"zh-cn": "生成配置链接，分享给团队成员",
+		"en": "Generate configuration links and share them with team members"
+	},
+	"nwsmr98": {
+		"zh-cn": " 复制分享链接 ",
+		"en": "Copy and share the link"
+	},
+	"ejide3": {
+		"zh-cn": "快捷键",
+		"en": "Shortcut key"
+	},
+	"atg1br5": {
+		"zh-cn": "启用快捷键",
+		"en": "Enable shortcut keys"
+	},
+	"j2opcq6": {
+		"zh-cn": "打开设置面板",
+		"en": "Open the Settings panel"
+	},
+	"p4ipj76": {
+		"zh-cn": "切换深浅模式",
+		"en": "Switch between light and dark modes"
+	},
+	"ixe9xe4": {
+		"zh-cn": "重置配置",
+		"en": "Reset configuration"
+	},
+	"iuz4v94": {
+		"zh-cn": "配置版本",
+		"en": "Configuration version"
+	},
+	"jqan954": {
+		"zh-cn": "项目版本",
+		"en": "Project version"
+	},
+	"ij01047": {
+		"zh-cn": "无效的配置文件",
+		"en": "Invalid configuration file"
+	},
+	"ap600y6": {
+		"zh-cn": "文件读取失败",
+		"en": "File reading failed"
+	},
+	"eyvqk3": {
+		"zh-cn": "拂晓蓝",
+		"en": "Dawn Blue"
+	},
+	"k26ns3": {
+		"zh-cn": "薄暮红",
+		"en": "\"Twilight Red\""
+	},
+	"gx31v3": {
+		"zh-cn": "火山橙",
+		"en": "Volcanic orange"
+	},
+	"ffmgr3": {
+		"zh-cn": "日暮黄",
+		"en": "Sunset yellow"
+	},
+	"fkaon3": {
+		"zh-cn": "极光绿",
+		"en": "Aurora Green"
+	},
+	"i6tg2": {
+		"zh-cn": "明青",
+		"en": "Mingqing"
+	},
+	"fm37g3": {
+		"zh-cn": "极客蓝",
+		"en": "Geek Blue"
+	},
+	"pfbu2": {
+		"zh-cn": "酱紫",
+		"en": "Soy sauce purple"
+	},
+	"ibtgu3": {
+		"zh-cn": "科技蓝",
+		"en": "\"Tech Blue\""
+	},
+	"2tkc09d": {
+		"zh-cn": "蓝色科技风，适合技术型项目",
+		"en": "Blue tech style, suitable for technical projects"
+	},
+	"gm4gk3": {
+		"zh-cn": "清新绿",
+		"en": "Fresh green"
+	},
+	"ad5bb5g": {
+		"zh-cn": "绿色清新风，适合环保/健康类项目",
+		"en": "Green fresh air, suitable for environmental protection and health projects"
+	},
+	"cwbed3": {
+		"zh-cn": "商务灰",
+		"en": "Business Grey"
+	},
+	"21k99dd": {
+		"zh-cn": "灰色商务风，适合企业级应用",
+		"en": "The grey business style is suitable for enterprise-level applications"
+	},
+	"gelqx3": {
+		"zh-cn": "活力橙",
+		"en": "Vigorous Orange"
+	},
+	"v150a9g": {
+		"zh-cn": "橙色活力风，适合创意/设计类项目",
+		"en": "The orange energetic style is suitable for creative/design projects"
+	},
+	"cbe3i3": {
+		"zh-cn": "优雅紫",
+		"en": "Elegant purple"
+	},
+	"z4pd1bg": {
+		"zh-cn": "紫色优雅风，适合艺术/文化类项目",
+		"en": "The elegant purple style is suitable for art/cultural projects"
+	},
+	"iz7ll3": {
+		"zh-cn": "经典红",
+		"en": "Classic Red"
+	},
+	"1rhbt8g": {
+		"zh-cn": "红色经典风，适合电商/营销类项目",
+		"en": "The classic red style is suitable for e-commerce/marketing projects"
+	},
+	"ma72mv6": {
+		"zh-cn": " 恢复默认 ",
+		"en": "Restore to default"
+	},
+	"clagp9a": {
+		"zh-cn": " 恢复外观默认设置 ",
+		"en": "Restore the default appearance Settings"
+	},
+	"avwlvf9": {
+		"zh-cn": "已恢复外观默认设置",
+		"en": "The default appearance Settings have been restored"
+	},
+	"6j3gxoa": {
+		"zh-cn": " 恢复布局默认设置 ",
+		"en": "Restore the default layout Settings"
+	},
+	"hyen7u9": {
+		"zh-cn": "已恢复布局默认设置",
+		"en": "The default layout Settings have been restored"
+	},
+	"e7hcbv8": {
+		"zh-cn": " 重置所有配置 ",
+		"en": "Reset all configurations"
+	},
+	"3swvmk8": {
+		"zh-cn": " 当前圆角值: ",
+		"en": "Current fillet value:"
+	},
+	"j4x02": {
+		"zh-cn": "淡入",
+		"en": "Fade in"
+	},
+	"b6p6zp9": {
+		"zh-cn": " 当前动画类名: ",
+		"en": "Current animation class name:"
+	},
+	"aw5x1v4": {
+		"zh-cn": "前端开发",
+		"en": "Front-end development"
+	},
+	"e5s0c3": {
+		"zh-cn": "工具链",
+		"en": "Toolchain"
+	},
+	"b44m5u4": {
+		"zh-cn": "后端开发",
+		"en": "Back-end development"
+	},
+	"fcb4l3": {
+		"zh-cn": "数据库",
+		"en": "Database"
+	},
+	"cj7vn3": {
+		"zh-cn": "关系型",
+		"en": "Relational"
+	},
+	"jfu1l14": {
+		"zh-cn": "非关系型",
+		"en": "Non-relational"
+	},
+	"fhw10z4": {
+		"zh-cn": "研发中心",
+		"en": "Research and Development Center"
+	},
+	"inz5ui4": {
+		"zh-cn": "运维中心",
+		"en": "Operation and Maintenance Center"
+	},
+	"ixam83": {
+		"zh-cn": "系统组",
+		"en": "System Group"
+	},
+	"j9lyx3": {
+		"zh-cn": "网络组",
+		"en": "Network Group"
+	},
+	"9otcer6": {
+		"zh-cn": "产品设计中心",
+		"en": "Product Design Center"
+	},
+	"1x6fe55": {
+		"zh-cn": "UI设计组",
+		"en": "UI Design Team"
+	},
+	"1xg0725": {
+		"zh-cn": "UX设计组",
+		"en": "UX Design Team"
+	},
+	"97eqv26": {
+		"zh-cn": "产品规划中心",
+		"en": "Product Planning Center"
+	},
+	"ymkd3n5": {
+		"zh-cn": "产品经理组",
+		"en": "Product Manager Team"
+	},
+	"gof5s45": {
+		"zh-cn": "数据分析组",
+		"en": "Data Analysis Group"
+	},
+	"wuxi096": {
+		"zh-cn": "市场营销中心",
+		"en": "Marketing Center"
+	},
+	"cz1ix3": {
+		"zh-cn": "品牌组",
+		"en": "Brand Group"
+	},
+	"f29593": {
+		"zh-cn": "推广组",
+		"en": "Promotion Team"
+	},
+	"j5eup04": {
+		"zh-cn": "销售中心",
+		"en": "Sales Center"
+	},
+	"44ro425": {
+		"zh-cn": "国内销售组",
+		"en": "Domestic Sales Team"
+	},
+	"do99pz5": {
+		"zh-cn": "海外销售组",
+		"en": "Overseas Sales Team"
+	},
+	"h1dhz56": {
+		"zh-cn": "城市级联选择",
+		"en": "City cascading selection"
+	},
+	"2ehrhp5": {
+		"zh-cn": "请选择省份",
+		"en": "Please select the province."
+	},
+	"2entms5": {
+		"zh-cn": "请选择区县",
+		"en": "Please select the district or county"
+	},
+	"ku392kq": {
+		"zh-cn": "支持全国省市区三级联动选择，数据覆盖全国所有行政区域",
+		"en": "Support the selection of three-level linkage among provinces, municipalities and autonomous regions across the country, and the data covers all administrative regions of the country"
+	},
+	"fg8k2": {
+		"zh-cn": "城市",
+		"en": "City"
+	},
+	"em6d2": {
+		"zh-cn": "区县",
+		"en": "District and county"
+	},
+	"5y11p86": {
+		"zh-cn": "技术分类选择",
+		"en": "Technical classification selection"
+	},
+	"wngo4e7": {
+		"zh-cn": "请选择技术方向",
+		"en": "Please select the technical direction"
+	},
+	"wnh7me7": {
+		"zh-cn": "请选择技术框架",
+		"en": "Please select the technical framework"
+	},
+	"ueohuf7": {
+		"zh-cn": "请选择具体版本",
+		"en": "Please select the specific version"
+	},
+	"ermirno": {
+		"zh-cn": "用于选择技术栈，包含前端、后端和数据库等技术分类",
+		"en": "It is used to select the technology stack, including technology classifications such as front-end, back-end and database"
+	},
+	"hri02": {
+		"zh-cn": "方向",
+		"en": "Direction"
+	},
+	"ib002": {
+		"zh-cn": "框架",
+		"en": "Framework"
+	},
+	"h9uiil6": {
+		"zh-cn": "部门组织选择",
+		"en": "Departmental organizational selection"
+	},
+	"2eom6r5": {
+		"zh-cn": "请选择中心",
+		"en": "Please select the center"
+	},
+	"2em31w5": {
+		"zh-cn": "请选择小组",
+		"en": "Please select a group"
+	},
+	"n4d60ek": {
+		"zh-cn": "企业组织架构选择器，支持多级部门层级选择",
+		"en": "Enterprise organizational structure selector, supporting multi-level departmental level selection"
+	},
+	"dtme2": {
+		"zh-cn": "中心",
+		"en": "Center"
+	},
+	"gcr92": {
+		"zh-cn": "小组",
+		"en": "Group"
+	},
+	"mota8db": {
+		"zh-cn": "级联选择器组件场景示例",
+		"en": "Example of a cascading selector component scenario"
+	},
+	"bcrrey4": {
+		"zh-cn": "地区选择",
+		"en": "Regional selection"
+	},
+	"exid53": {
+		"zh-cn": "技术栈",
+		"en": "Technology stack"
+	},
+	"gio3m94": {
+		"zh-cn": "组织架构",
+		"en": "Organizational structure"
+	},
+	"xnihpb6": {
+		"zh-cn": " 重置选择 ",
+		"en": "Reset selection"
+	},
+	"sjh3hm5": {
+		"zh-cn": "当前选择的",
+		"en": "The currently selected"
+	},
+	"xq0g4w6": {
+		"zh-cn": " 尚未选择 ",
+		"en": "Not yet chosen"
+	},
+	"srub1re": {
+		"zh-cn": " 请点击上方选择器进行选择 ",
+		"en": "Please click the selector above to make your selection"
+	},
+	"l72nr3": {
+		"zh-cn": "请选择",
+		"en": "Please select"
+	},
+	"ancvvv4": {
+		"zh-cn": "侧边菜单",
+		"en": "Side menu"
+	},
+	"gc6i1y4": {
+		"zh-cn": "经典布局",
+		"en": "Classic layout"
+	},
+	"bygecw4": {
+		"zh-cn": "宽屏优化",
+		"en": "Widescreen optimization"
+	},
+	"a6p749a": {
+		"zh-cn": "选择适合你的工作方式",
+		"en": "Choose the working style that suits you"
+	},
+	"ddiqvl4": {
+		"zh-cn": "敬请期待",
+		"en": "Stay tuned"
+	},
+	"c6k0tu4": {
+		"zh-cn": "左侧混合",
+		"en": "Left side mixing"
+	},
+	"ju0v4z4": {
+		"zh-cn": "顶部混合",
+		"en": "Top mix"
+	},
+	"b61oxc4": {
+		"zh-cn": "反转混合",
+		"en": "Reverse mixing"
+	},
+	"ax5ddw4": {
+		"zh-cn": "双列菜单",
+		"en": "Double-column menu"
+	},
+	"ogn73z5": {
+		"zh-cn": "布局开发中",
+		"en": "Layout development in progress"
+	},
+	"4xqs2ef": {
+		"zh-cn": "该布局模式正在开发中，敬请期待",
+		"en": "This layout pattern is under development. Stay tuned"
+	},
+	"g4yvcxa": {
+		"zh-cn": " 返回左侧菜单布局 ",
+		"en": "Return to the menu layout on the left"
 	}
 }

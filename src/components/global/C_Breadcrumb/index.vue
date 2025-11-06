@@ -24,6 +24,7 @@
         >
           <div class="trigger">
             <C_Icon
+              v-if="settingsStore.showBreadcrumbIcon"
               :name="item.icon"
               class="vertical-top"
             />
@@ -35,6 +36,7 @@
           :to="item.key"
         >
           <C_Icon
+            v-if="settingsStore.showBreadcrumbIcon"
             :name="item.icon"
             class="vertical-top mr-1"
           />
@@ -47,10 +49,12 @@
 
 <script setup lang="ts">
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
+  import { useSettingsStore } from '@/stores/settings'
 
   defineOptions({ name: 'C_Breadcrumb' })
   const route = useRoute()
   const router = useRouter()
+  const settingsStore = useSettingsStore()
 
   // 当前路径对应的面包屑
   const currentBreadcrumb = computed(() => {
