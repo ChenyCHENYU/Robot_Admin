@@ -112,9 +112,13 @@ export interface MenuTag {
    */
   path: string
   /**
-   * 标签显示的标题
+   * 标签显示的标题（已翻译）
    */
   title: string
+  /**
+   * 原始标题（中文，用于重新翻译）
+   */
+  originalTitle?: string
   /**
    * 显示的图标
    */

@@ -277,36 +277,41 @@
     // 从持久化存储初始化标签
     const savedTags = localStorage.getItem('tagsViewList')
     if (savedTags) {
-      appStore.initTags(JSON.parse(savedTags))
+      const tags = JSON.parse(savedTags)
+
+      // ✅ 重新翻译所有标签的 title（解决语言切换后标签未翻译的问题）
+      const translatedTags = tags.map((tag: any) => {
+        const originalTitle = tag.originalTitle || tag.title
+        return {
+          ...tag,
+          originalTitle, // 保留原始中文
+          title: translateRouteTitle(originalTitle), // 重新翻译
+        }
+      })
+
+      appStore.initTags(translatedTags)
     }
 
-    // 添加当前路由标签（使用路由配置的 affix，而不是硬编码）
-    appStore.addTag({
-      path: route.path,
-      title: translateRouteTitle(
-        route.path === '/home'
-          ? '首页'
-          : (route.meta.title as string) || 'Unnamed Page'
-      ),
-      icon: route.path === '/home' ? 'mdi:home' : (route.meta.icon as string),
-      meta: { affix: route.meta.affix as boolean }, // ✅ 使用路由配置
-    })
+    // ⚡ 不需要在这里添加当前路由标签，watch 的 immediate: true 会处理
   })
 
   // 监听路由变化更新标签
   watch(
     () => route.path,
     (newPath: string) => {
-      // 添加或更新当前路由标签（使用路由配置的 affix）
+      // 获取原始标题
+      const originalTitle =
+        newPath === '/home'
+          ? '首页'
+          : (route.meta.title as string) || 'Unnamed Page'
+
+      // 添加或更新当前路由标签（保存原始 title）
       appStore.addTag({
         path: newPath,
-        title: translateRouteTitle(
-          newPath === '/home'
-            ? '首页'
-            : (route.meta.title as string) || 'Unnamed Page'
-        ),
+        originalTitle, // ✅ 保存原始中文
+        title: translateRouteTitle(originalTitle), // 翻译后的标题
         icon: newPath === '/home' ? 'mdi:home' : (route.meta.icon as string),
-        meta: { affix: route.meta.affix as boolean }, // ✅ 使用路由配置
+        meta: { affix: route.meta.affix as boolean },
       })
 
       // 更新选中状态
@@ -315,7 +320,7 @@
       // 自动滚动到当前标签
       scrollToTag(newPath)
     },
-    { immediate: true }
+    { immediate: true } // ⚡ 首次挂载时自动添加当前路由标签
   )
 
   // 监听标签列表变化并保存到localStorage

@@ -50,10 +50,27 @@ export const s_appStore = defineStore('app', {
     },
 
     addTag(tag: MenuTag) {
-      if (!this.tagsViewList.some((item: MenuTag) => item.path === tag.path)) {
+      // ⚡ 使用 findIndex 但提前返回，避免不必要的查找
+      const existingTagIndex = this.tagsViewList.findIndex(
+        (item: MenuTag) => item.path === tag.path
+      )
+
+      if (existingTagIndex === -1) {
+        // 标签不存在，添加新标签
         this.tagsViewList.push(tag)
-        this.setActiveTag(tag.path)
+      } else {
+        // ✅ 标签已存在，仅更新必要字段（减少响应式开销）
+        const existingTag = this.tagsViewList[existingTagIndex]
+
+        // 只在值真正变化时才更新
+        if (existingTag.title !== tag.title || !existingTag.originalTitle) {
+          existingTag.title = tag.title
+          existingTag.originalTitle =
+            tag.originalTitle || existingTag.originalTitle
+        }
       }
+
+      this.setActiveTag(tag.path)
     },
 
     removeTag(index: number) {
