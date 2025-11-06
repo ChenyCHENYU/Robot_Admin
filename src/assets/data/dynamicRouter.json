@@ -812,11 +812,12 @@
       ]
     },
     {
+      "path": "/about",
       "component": "layout",
-      "redirect": "/about",
+      "redirect": "/about/index",
       "children": [
         {
-          "path": "about",
+          "path": "index",
           "name": "about",
           "component": "/about/index",
           "meta": {
