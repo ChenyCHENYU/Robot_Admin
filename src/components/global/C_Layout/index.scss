@@ -1,28 +1,21 @@
-/*
- * ==== 基础布局样式 ====
- * 定义整个应用的基础布局结构
- */
 
-/* 主布局容器样式 */
+// ==================== 基础布局样式 ====================
 .layout-container {
   height: 100vh;
   overflow: hidden;
 }
 
-/*
- * ==== 内容区域样式 ====
- */
-
+// ==================== 内容区域样式 ====================
 .layout-container :deep(.content-with-header) {
   margin-top: 100px;
   height: calc(100vh - 150px);
 }
 
-/* 内容区域背景色使用 CSS Variables */
 .layout-container :deep(.app-content) {
   background-color: var(--app-bg-content);
   transition: background-color var(--app-transition-slow);
 }
+
 .layout-container :deep(.n-layout-content) {
   display: flex;
   flex-direction: column;
@@ -39,12 +32,7 @@
   border-radius: 8px;
 }
 
-/*
- * ==== 主题相关样式 ====
- * 优先使用 CSS Variables，保留 class 作为向后兼容
- */
-
-/* 使用 data-theme 属性的现代方案 */
+// ==================== 主题相关样式 ====================
 [data-theme='light'] .layout-container :deep(.light-theme),
 .layout-container :deep(.light-theme) {
   background-color: var(--app-bg-body);
@@ -55,7 +43,6 @@
   background-color: var(--app-bg-body);
 }
 
-/* 布局容器背景色 */
 .layout-container.light-mode :deep(.n-layout .n-layout-scroll-container) {
   background-color: var(--app-bg-surface);
   border-radius: 10px;
@@ -70,10 +57,7 @@
   opacity: 0.95;
 }
 
-/*
- * ==== 侧边栏和菜单样式 ====
- */
-
+// ==================== 侧边栏和菜单样式 ====================
 .layout-sider {
   transition: background-color var(--app-transition-base);
   transform: translateZ(0);
@@ -82,7 +66,6 @@
   contain: strict;
 }
 
-/* 侧边栏背景色使用 CSS Variables */
 .layout-sider.light-theme {
   background-color: var(--app-menu-bg);
 }
@@ -128,10 +111,7 @@
   overflow-x: hidden;
 }
 
-/*
- * ==== 菜单图标和文字样式 ====
- */
-
+// ==================== 菜单图标和文字样式 ====================
 .layout-container :deep(.n-menu-item-content__icon) {
   display: flex;
   align-items: center;
@@ -167,10 +147,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/*
- * ==== 🎨 毛玻璃质感菜单效果（性能优化版）====
- * 保留文档1的所有视觉效果，仅优化性能
- */
+// ==================== 🎨 毛玻璃质感菜单效果（性能优化版）====================
 
 /* 菜单项基础样式 - 卡片质感默认状态 */
 .layout-container :deep(.n-menu-item) {
@@ -178,7 +155,6 @@
   position: relative;
   overflow: visible;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  /* 启用GPU加速 - 性能优化 */
   will-change: transform;
 
   &::before {
@@ -194,7 +170,6 @@
     border-radius: 8px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: -1;
-    /* 性能优化：合并阴影层，从4层减少到2层 */
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -209,7 +184,6 @@
   position: relative;
   padding: 10px 16px;
 
-  /* 边框光晕效果 */
   &::after {
     content: '';
     position: absolute;
@@ -232,7 +206,6 @@
   &::before {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    /* 性能优化：合并阴影，从3层减少到2层 */
     box-shadow:
       0 4px 16px rgba(0, 0, 0, 0.12),
       inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -253,7 +226,6 @@
   }
 }
 
-/* Hover 状态图标效果 */
 .layout-container :deep(.n-menu-item:hover .n-menu-item-content__icon) {
   transform: scale(1.08);
   color: var(--n-item-icon-color-active-hover);
@@ -267,7 +239,6 @@
       rgba(99, 102, 241, 0.18) 0%,
       rgba(139, 92, 246, 0.12) 100%);
     border-radius: 8px;
-    /* 性能优化：合并阴影，从3层减少到2层 */
     box-shadow:
       0 3px 12px rgba(99, 102, 241, 0.25),
       inset 0 1px 0 rgba(99, 102, 241, 0.2);
@@ -287,7 +258,6 @@
   }
 }
 
-/* 选中状态图标发光 */
 .layout-container :deep(.n-menu-item--selected .n-menu-item-content__icon) {
   filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.5));
   transform: scale(1.05);
@@ -327,16 +297,11 @@
   margin: 4px 0;
 }
 
-/* 子菜单内容缩进 */
 .layout-container :deep(.n-submenu-children .n-menu-item-content) {
   padding-left: 46px;
 }
 
-/*
- * ==== 主题优化 ====
- */
-
-/* 暗色主题优化 */
+// ==================== 主题优化 ====================
 .dark-theme {
   .layout-container :deep(.n-menu-item::before) {
     background: linear-gradient(135deg,
@@ -354,7 +319,6 @@
   }
 }
 
-/* 浅色主题优化 */
 .light-theme {
   .layout-container :deep(.n-menu-item::before) {
     background: linear-gradient(135deg,
@@ -376,10 +340,7 @@
   }
 }
 
-/*
- * ==== 折叠菜单样式 ====
- */
-
+// ==================== 折叠菜单样式 ====================
 .layout-container :deep(.n-menu.n-menu--collapsed) {
   width: 64px !important;
   display: flex;
@@ -462,10 +423,7 @@
   color: rgba(229, 231, 235, 0.9) !important;
 }
 
-/*
- * ==== 其他辅助样式 ====
- */
-
+// ==================== 其他辅助样式 ====================
 .layout-container :deep(.n-layout) {
   width: 100%;
   min-width: 0;
@@ -481,10 +439,7 @@
   overflow-x: hidden !important;
 }
 
-/*
- * ==== 子菜单和菜单组毛玻璃效果 ====
- */
-
+// ==================== 子菜单和菜单组毛玻璃效果 ====================
 .layout-container :deep(.n-submenu) {
   margin: 4px 0;
 }
@@ -608,4 +563,93 @@
   &:hover {
     transform: none;
   }
+}
+
+// ==================== ⚡ 页面切换过渡动画 ====================
+// 从 index.vue 的 style 移动过来
+
+// 滑动效果
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+// 淡入效果
+.fade-transform-enter-active,
+.fade-transform-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-transform-enter-from {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+// 缩放效果
+.fade-zoom-enter-active,
+.fade-zoom-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-zoom-enter-from {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.fade-zoom-leave-to {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+// ==================== 🎨 布局开发中提示样式 ====================
+// 从 index.vue 的 style 移动过来
+
+.layout-coming-soon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: var(--app-bg-content);
+}
+
+.coming-soon-content {
+  text-align: center;
+  max-width: 400px;
+  padding: 40px;
+  border-radius: 12px;
+  background-color: var(--app-bg-surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.coming-soon-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.coming-soon-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--app-text-primary);
+}
+
+.coming-soon-desc {
+  font-size: 16px;
+  color: var(--app-text-secondary);
+  line-height: 1.5;
 }

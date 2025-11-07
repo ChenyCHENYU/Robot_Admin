@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-11 14:22:31
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-06 17:03:12
+ * @LastEditTime: 2025-11-08 01:02:39
  * @FilePath: \Robot_Admin\src\components\global\C_Layout\index.vue
  * @Description: 布局组件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -93,6 +93,7 @@
     </NLayout>
   </div>
 </template>
+
 <script setup lang="ts">
   import { type LayoutSiderInst } from 'naive-ui/es'
   import { s_permissionStore } from '@/stores/permission'
@@ -237,89 +238,6 @@
 </script>
 
 <style scoped lang="scss">
+  // 所有样式已移至 index.scss 统一管理
   @use './index.scss';
-
-  // ⚡ 页面切换过渡动画 - 滑动效果
-  .fade-slide-enter-active,
-  .fade-slide-leave-active {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .fade-slide-enter-from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-
-  .fade-slide-leave-to {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-
-  // ⚡ 页面切换过渡动画 - 淡入效果
-  .fade-transform-enter-active,
-  .fade-transform-leave-active {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .fade-transform-enter-from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-
-  .fade-transform-leave-to {
-    opacity: 0;
-    transform: scale(1.05);
-  }
-
-  // ⚡ 页面切换过渡动画 - 缩放效果
-  .fade-zoom-enter-active,
-  .fade-zoom-leave-active {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .fade-zoom-enter-from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-
-  .fade-zoom-leave-to {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-
-  // 🎨 布局开发中提示样式
-  .layout-coming-soon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: var(--app-bg-content);
-  }
-
-  .coming-soon-content {
-    text-align: center;
-    max-width: 400px;
-    padding: 40px;
-    border-radius: 12px;
-    background-color: var(--app-bg-surface);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  }
-
-  .coming-soon-icon {
-    font-size: 64px;
-    margin-bottom: 16px;
-  }
-
-  .coming-soon-title {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--app-text-primary);
-  }
-
-  .coming-soon-desc {
-    font-size: 16px;
-    color: var(--app-text-secondary);
-    line-height: 1.5;
-  }
 </style>
