@@ -9570,5 +9570,525 @@
 	"i0122": {
 		"zh-cn": "更多",
 		"en": "More"
+	},
+	"qqvrl77": {
+		"zh-cn": "机器人管理系统",
+		"en": "Robot Management System"
+	},
+	"d7c8dj4": {
+		"zh-cn": "新增菜单",
+		"en": "New menu added"
+	},
+	"gmpnxw4": {
+		"zh-cn": "编辑菜单",
+		"en": "Edit menu"
+	},
+	"fubds3": {
+		"zh-cn": "根目录",
+		"en": "Root directory"
+	},
+	"kr3b2": {
+		"zh-cn": "目录",
+		"en": "Directory"
+	},
+	"mvw92": {
+		"zh-cn": "菜单",
+		"en": "Menu"
+	},
+	"hnt12": {
+		"zh-cn": "按钮",
+		"en": "Button"
+	},
+	"c81rva4": {
+		"zh-cn": "已将 \"",
+		"en": "\"Already\""
+	},
+	"7gkq6f7": {
+		"zh-cn": "\" 移动到 \"",
+		"en": "\"Move to\""
+	},
+	"ensz2": {
+		"zh-cn": "内部",
+		"en": "\"Internal"
+	},
+	"etv92": {
+		"zh-cn": "前面",
+		"en": "\"Ahead\""
+	},
+	"f4lw2": {
+		"zh-cn": "后面",
+		"en": "behind"
+	},
+	"asocrs4": {
+		"zh-cn": "刷新成功",
+		"en": "Refresh successful"
+	},
+	"azeh8z4": {
+		"zh-cn": "删除成功",
+		"en": "\"Deleted successfully"
+	},
+	"azdahk4": {
+		"zh-cn": "删除失败",
+		"en": "Deletion failed"
+	},
+	"rm9rsw6": {
+		"zh-cn": "删除权限成功",
+		"en": "The permission was deleted successfully."
+	},
+	"rmaykb6": {
+		"zh-cn": "删除权限失败",
+		"en": "Failed to delete the permission"
+	},
+	"tfjz9d6": {
+		"zh-cn": "添加权限成功",
+		"en": "Permission added successfully"
+	},
+	"b9cnrb6": {
+		"zh-cn": "修改权限成功",
+		"en": "The permission modification was successful."
+	},
+	"e7ygyc4": {
+		"zh-cn": "添加成功",
+		"en": "Added successfully"
+	},
+	"ai8d7e4": {
+		"zh-cn": "修改成功",
+		"en": "Modification successful"
+	},
+	"agg8dr4": {
+		"zh-cn": "保存失败",
+		"en": "Save failed"
+	},
+	"9bxnoq6": {
+		"zh-cn": "加载菜单失败",
+		"en": "Menu loading failed"
+	},
+	"32ds8u6": {
+		"zh-cn": "搜索菜单名称",
+		"en": "Search menu name"
+	},
+	"1pp7k76": {
+		"zh-cn": " 新增菜单 ",
+		"en": "New menu added"
+	},
+	"dcor414": {
+		"zh-cn": "收起全部",
+		"en": "\"Pack up everything\""
+	},
+	"c1kdmz4": {
+		"zh-cn": "展开全部",
+		"en": "Expand all"
+	},
+	"d38w74": {
+		"zh-cn": " 刷新 ",
+		"en": "Refresh"
+	},
+	"gzjky24": {
+		"zh-cn": "菜单结构",
+		"en": "Menu structure"
+	},
+	"r6sori8": {
+		"zh-cn": "选择菜单查看详情",
+		"en": "Select the menu to view details"
+	},
+	"gepbbui": {
+		"zh-cn": "请从左侧选择一个菜单节点查看详细信息",
+		"en": "Please select a menu node from the left to view detailed information"
+	},
+	"t7xn4u5": {
+		"zh-cn": "菜单名称：",
+		"en": "Menu Name"
+	},
+	"tdoz695": {
+		"zh-cn": "菜单类型：",
+		"en": "Menu type"
+	},
+	"22yfoj5": {
+		"zh-cn": "路由路径：",
+		"en": "Routing path"
+	},
+	"8zg5035": {
+		"zh-cn": "组件路径：",
+		"en": "Component path"
+	},
+	"f2ikd3": {
+		"zh-cn": "排序：",
+		"en": "Sorting"
+	},
+	"halin3": {
+		"zh-cn": "状态：",
+		"en": "Status"
+	},
+	"eymx2": {
+		"zh-cn": "启用",
+		"en": "Enabled"
+	},
+	"lb5z2": {
+		"zh-cn": "禁用",
+		"en": "Disabled"
+	},
+	"anesp95": {
+		"zh-cn": "显示状态：",
+		"en": "Display status"
+	},
+	"i20s2": {
+		"zh-cn": "显示",
+		"en": "\"Display"
+	},
+	"qce72": {
+		"zh-cn": "隐藏",
+		"en": "Hide"
+	},
+	"d3yvw24": {
+		"zh-cn": "按钮权限",
+		"en": "Button permission"
+	},
+	"tuj3ta6": {
+		"zh-cn": " 添加权限 ",
+		"en": "Add permissions"
+	},
+	"zfa98gb": {
+		"zh-cn": " 确认删除该权限吗？ ",
+		"en": "Are you sure you want to delete this permission?"
+	},
+	"iv24yz5": {
+		"zh-cn": "子菜单统计",
+		"en": "Submenu statistics"
+	},
+	"h4ue2": {
+		"zh-cn": "总计",
+		"en": "In total"
+	},
+	"bokzlb4": {
+		"zh-cn": "备注信息",
+		"en": "Remarks"
+	},
+	"frt6yj4": {
+		"zh-cn": "确认添加",
+		"en": "Confirm addition"
+	},
+	"fro6m94": {
+		"zh-cn": "确认修改",
+		"en": "Confirm the modification"
+	},
+	"gzj3ft4": {
+		"zh-cn": "菜单类型",
+		"en": "Menu type"
+	},
+	"gzcenw4": {
+		"zh-cn": "菜单名称",
+		"en": "Menu name"
+	},
+	"gjqm6z7": {
+		"zh-cn": "请输入菜单名称",
+		"en": "Please enter the menu name"
+	},
+	"exrwfe4": {
+		"zh-cn": "父级菜单",
+		"en": "Parent menu"
+	},
+	"yqdorl7": {
+		"zh-cn": "请选择父级菜单",
+		"en": "Please select the parent menu"
+	},
+	"iebehj4": {
+		"zh-cn": "路由路径",
+		"en": "Routing path"
+	},
+	"ybecusm": {
+		"zh-cn": "请输入路由路径，如：/system/menu",
+		"en": "Please enter the routing path, such as: /system/menu"
+	},
+	"gbuf8n4": {
+		"zh-cn": "组件路径",
+		"en": "Component path"
+	},
+	"frjzyqr": {
+		"zh-cn": "请输入组件路径，如：system/menu/index",
+		"en": "Please enter the component path, such as: system/menu/index"
+	},
+	"fd8p2": {
+		"zh-cn": "图标",
+		"en": "Icon"
+	},
+	"atnd3ei": {
+		"zh-cn": "请输入图标名称，如：mdi:menu",
+		"en": "Please enter the icon name, for example: mdi:menu"
+	},
+	"dneg984": {
+		"zh-cn": "权限标识",
+		"en": "Permission identifier"
+	},
+	"i4lreqp": {
+		"zh-cn": "请输入权限标识，如：system:menu:add",
+		"en": "Please enter the permission identifier, such as: system:menu:add"
+	},
+	"f1kre3": {
+		"zh-cn": "排序号",
+		"en": "Sorting number"
+	},
+	"gzhhac4": {
+		"zh-cn": "菜单状态",
+		"en": "Menu status"
+	},
+	"d917x24": {
+		"zh-cn": "是否隐藏",
+		"en": "Whether to hide"
+	},
+	"fqo12": {
+		"zh-cn": "备注",
+		"en": "Remarks"
+	},
+	"lui19k7": {
+		"zh-cn": "请输入备注信息",
+		"en": "Please enter the remarks information"
+	},
+	"iz5k2g5": {
+		"zh-cn": "搜索...",
+		"en": "Search..."
+	},
+	"hs6m2": {
+		"zh-cn": "新增",
+		"en": "New addition"
+	},
+	"h0u7hh5": {
+		"zh-cn": "新增子菜单",
+		"en": "New sub-menu added"
+	},
+	"xl2r909": {
+		"zh-cn": "确认删除该菜单吗？",
+		"en": "Are you sure you want to delete this menu?"
+	},
+	"h8ul2": {
+		"zh-cn": "打开",
+		"en": "Open"
+	},
+	"lrmwt3": {
+		"zh-cn": "重命名",
+		"en": "Rename"
+	},
+	"xlo3tu9": {
+		"zh-cn": "确认删除该文件吗？",
+		"en": "Are you sure you want to delete this file?"
+	},
+	"d73be24": {
+		"zh-cn": "新增下级",
+		"en": "\"New subordinate\""
+	},
+	"by61a44": {
+		"zh-cn": "导出数据",
+		"en": "Export data"
+	},
+	"o6tnt98": {
+		"zh-cn": "导出分析数据权限",
+		"en": "Export the permission for analyzing data"
+	},
+	"asp0rb4": {
+		"zh-cn": "刷新数据",
+		"en": "Refresh the data"
+	},
+	"zi5jci8": {
+		"zh-cn": "刷新分析数据权限",
+		"en": "Refresh the permission for analyzing data"
+	},
+	"cr5sio4": {
+		"zh-cn": "打印报表",
+		"en": "Print the report"
+	},
+	"y4e8rt8": {
+		"zh-cn": "打印分析报表权限",
+		"en": "Permission to print analysis reports"
+	},
+	"e81syc4": {
+		"zh-cn": "添加用户",
+		"en": "Add a user"
+	},
+	"uz1r9d6": {
+		"zh-cn": "添加用户权限",
+		"en": "Add user permissions"
+	},
+	"gmn8ui4": {
+		"zh-cn": "编辑用户",
+		"en": "\"Edit User\""
+	},
+	"1fas956": {
+		"zh-cn": "编辑用户权限",
+		"en": "Edit user permissions"
+	},
+	"azht8z4": {
+		"zh-cn": "删除用户",
+		"en": "Delete the user"
+	},
+	"q2rzsw6": {
+		"zh-cn": "删除用户权限",
+		"en": "Delete user permissions"
+	},
+	"by8pal4": {
+		"zh-cn": "导出用户",
+		"en": "Export user"
+	},
+	"mi1lko8": {
+		"zh-cn": "导出用户数据权限",
+		"en": "Export user data permission"
+	},
+	"e85hut4": {
+		"zh-cn": "添加角色",
+		"en": "Add roles"
+	},
+	"xpli366": {
+		"zh-cn": "添加角色权限",
+		"en": "Add role permissions"
+	},
+	"gmqxqz4": {
+		"zh-cn": "编辑角色",
+		"en": "\"Editing role\""
+	},
+	"1b8yko6": {
+		"zh-cn": "编辑角色权限",
+		"en": "Edit role permissions"
+	},
+	"azli5g4": {
+		"zh-cn": "删除角色",
+		"en": "Delete the character"
+	},
+	"nc88z36": {
+		"zh-cn": "删除角色权限",
+		"en": "Delete role permissions"
+	},
+	"ay8alw4": {
+		"zh-cn": "分配权限",
+		"en": "Assign permissions"
+	},
+	"fh9plg6": {
+		"zh-cn": "分配角色权限",
+		"en": "Assign role permissions"
+	},
+	"e7zq5u4": {
+		"zh-cn": "添加权限",
+		"en": "Add permissions"
+	},
+	"gml6204": {
+		"zh-cn": "编辑权限",
+		"en": "Editing permission"
+	},
+	"azfqgh4": {
+		"zh-cn": "删除权限",
+		"en": "Delete permission"
+	},
+	"pl3ugc6": {
+		"zh-cn": "新增菜单权限",
+		"en": "Add menu permissions"
+	},
+	"da57l6": {
+		"zh-cn": "编辑菜单权限",
+		"en": "Edit menu permission"
+	},
+	"azk8cd4": {
+		"zh-cn": "删除菜单",
+		"en": "Delete menu"
+	},
+	"oa72c66": {
+		"zh-cn": "删除菜单权限",
+		"en": "Delete menu permissions"
+	},
+	"gzewae4": {
+		"zh-cn": "菜单排序",
+		"en": "Menu sorting"
+	},
+	"fqqazh6": {
+		"zh-cn": "菜单排序权限",
+		"en": "Menu sorting permission"
+	},
+	"a6fdb94": {
+		"zh-cn": "上传文件",
+		"en": "Upload files"
+	},
+	"lvdzlvb": {
+		"zh-cn": "上传Excel文件权限",
+		"en": "Permission to upload Excel files"
+	},
+	"by2ysn4": {
+		"zh-cn": "导入数据",
+		"en": "Import data"
+	},
+	"xof3ndb": {
+		"zh-cn": "导入Excel数据权限",
+		"en": "Import Excel data permissions"
+	},
+	"afwb804": {
+		"zh-cn": "下载模板",
+		"en": "Download the template"
+	},
+	"rlnhm8b": {
+		"zh-cn": "下载Excel模板权限",
+		"en": "Permission to download Excel templates"
+	},
+	"agny2w4": {
+		"zh-cn": "保存表单",
+		"en": "Save the form"
+	},
+	"j64hjh8": {
+		"zh-cn": "保存表单数据权限",
+		"en": "Save the form data permission"
+	},
+	"ixcir24": {
+		"zh-cn": "重置表单",
+		"en": "Reset the form"
+	},
+	"4awwkb6": {
+		"zh-cn": "重置表单权限",
+		"en": "Reset form permissions"
+	},
+	"bybw8b4": {
+		"zh-cn": "导出表单",
+		"en": "Export form"
+	},
+	"oll8pi8": {
+		"zh-cn": "导出表单数据权限",
+		"en": "Export form data permission"
+	},
+	"e7z4xv4": {
+		"zh-cn": "添加数据",
+		"en": "Add data"
+	},
+	"g149ok8": {
+		"zh-cn": "添加表格数据权限",
+		"en": "Add table data permissions"
+	},
+	"7gclza8": {
+		"zh-cn": "编辑表格数据权限",
+		"en": "Permission to edit table data"
+	},
+	"azf58i4": {
+		"zh-cn": "删除数据",
+		"en": "Delete data"
+	},
+	"q4v7k38": {
+		"zh-cn": "删除表格数据权限",
+		"en": "Delete the table data permission"
+	},
+	"byc0cy4": {
+		"zh-cn": "导出表格",
+		"en": "Export the table"
+	},
+	"zao9tp8": {
+		"zh-cn": "导出表格数据权限",
+		"en": "Permission to export table data"
+	},
+	"y8z6747": {
+		"zh-cn": "请选择菜单类型",
+		"en": "Please select the menu type"
+	},
+	"7jcujz6": {
+		"zh-cn": "请输入排序号",
+		"en": "Please enter the sorting number"
+	},
+	"bst6st5": {
+		"zh-cn": "未命名菜单",
+		"en": "Unnamed menu"
+	},
+	"h4sv2": {
+		"zh-cn": "成功",
+		"en": "Success"
 	}
 }

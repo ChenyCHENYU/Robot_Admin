@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-11 16:26:10
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-02 22:41:41
+ * @LastEditTime: 2025-11-10 10:39:55
  * @FilePath: \Robot_Admin\src\components\global\C_Menu\index.vue
  * @Description: 菜单组件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -52,6 +52,7 @@
     collapsedWidth?: number
     collapsedIconSize?: number
     inverted?: boolean
+    themeOverrides?: Record<string, any>
   }
 
   // 下拉菜单配置 - 用于折叠模式下的子菜单显示
@@ -82,10 +83,13 @@
 
   const options = computed<MenuOption[]>(() => normalizeMenuOptions(props.data))
 
-  // 菜单主题样式
-  const menuThemeOverrides = computed(
-    () => themeStore.themeOverrides.Menu || {}
-  )
+  // 菜单主题样式 - 优先使用传入的 themeOverrides，否则使用全局主题
+  const menuThemeOverrides = computed(() => {
+    if (props.themeOverrides) {
+      return props.themeOverrides
+    }
+    return themeStore.themeOverrides.Menu || {}
+  })
 
   // ⚡ 性能优化：缓存扁平化的菜单数据，避免每次点击都重新计算
   const flatMenuCache = computed(() => {

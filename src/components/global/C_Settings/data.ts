@@ -1,3 +1,12 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-11-10 08:08:33
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-11-10 08:27:12
+ * @FilePath: \Robot_Admin\src\components\global\C_Settings\data.ts
+ * @Description:
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ */
 /**
  * C_Settings 组件数据定义
  */
@@ -32,7 +41,7 @@ export const LAYOUT_MODES = [
   {
     label: '顶部菜单',
     value: 'top',
-    disabled: true,
+    disabled: false,
     svg: `
       <rect x="0" y="0" width="56" height="10" rx="1" fill="currentColor" fill-opacity="0.9"/>
       <rect x="0" y="12" width="56" height="8" rx="1" fill="currentColor" fill-opacity="0.7"/>

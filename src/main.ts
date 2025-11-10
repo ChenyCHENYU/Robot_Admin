@@ -21,7 +21,6 @@ import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import '@/router/permission'
 import '@/api/generated/client-config' // 🆕 全局配置 SDK 客户端
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 import {
@@ -43,10 +42,8 @@ async function bootstrap() {
   // ⭐ 第零阶段：立即显示加载动画（innerHTML 方式，极速）
   setupLoading()
 
-  // 第一阶段：创建Vue实例，初始化Pinia
+  // 第一阶段：创建Vue实例
   const app = createApp(App)
-  const pinia = createPinia()
-  pinia.use(piniaPluginPersistedstate)
 
   // 使用去除滚动警告的插件
   app.use(PassiveScrollPlugin)
@@ -54,8 +51,8 @@ async function bootstrap() {
   // 使用路由
   app.use(router)
 
-  // 第二阶段：Vue相关插件
-  setupStore(app)
+  // 第二阶段：Vue相关插件（使用统一的插件化配置）
+  setupStore(app) // 配置 Pinia（包含持久化插件）
   setupNaiveUI(app)
   setupDynamicComponents(app)
   setupHighlight(app)

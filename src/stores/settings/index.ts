@@ -48,6 +48,16 @@ export const useSettingsStore = defineStore(
     // 布局设置
     const layoutMode = ref<LayoutMode>(DEFAULT_SETTINGS.layoutMode)
     const fixedHeader = ref<boolean>(DEFAULT_SETTINGS.fixedHeader)
+
+    // 开发环境：输出当前布局模式，用于调试
+    if (import.meta.env.DEV) {
+      console.log('[Settings Store] 初始化布局模式:', layoutMode.value)
+
+      // 监听布局模式变化
+      watch(layoutMode, (newMode, oldMode) => {
+        console.log('[Settings Store] 布局模式变化:', oldMode, '->', newMode)
+      })
+    }
     const showBreadcrumb = ref<boolean>(DEFAULT_SETTINGS.showBreadcrumb)
     const showBreadcrumbIcon = ref<boolean>(DEFAULT_SETTINGS.showBreadcrumbIcon)
     const showTagsView = ref<boolean>(DEFAULT_SETTINGS.showTagsView)
@@ -293,6 +303,9 @@ export const useSettingsStore = defineStore(
     }
   },
   {
+    // 使用 pinia-plugin-persistedstate 实现持久化
+    // 所有的 ref 状态（包括 layoutMode）都会自动保存到 localStorage
+    // 刷新页面后会自动恢复
     persist: {
       key: 'robot-admin-settings',
       storage: localStorage,
