@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-11-10 13:57:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-10 16:26:02
+ * @LastEditTime: 2025-11-10 16:28:19
  * @FilePath: \Robot_Admin\src\components\global\C_Layout\layouts\MixLayout\index.scss
  * @Description: 混合布局样式 - 悬浮展开式（复用头部导航样式）
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -152,7 +152,7 @@
   .first-menu-list {
     flex: 1;
     width: 100%;
-    padding: 16px 0;
+    padding: 0 0 16px 0;
     overflow-y: auto;
     overflow-x: hidden;
 
