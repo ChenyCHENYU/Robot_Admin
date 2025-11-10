@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-11-10 13:57:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-10 16:14:48
+ * @LastEditTime: 2025-11-10 16:26:02
  * @FilePath: \Robot_Admin\src\components\global\C_Layout\layouts\MixLayout\index.scss
  * @Description: 混合布局样式 - 悬浮展开式（复用头部导航样式）
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -95,7 +95,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid rgba(94, 92, 92, 0.08);
 
     .light-theme & {
       border-bottom-color: rgba(0, 0, 0, 0.06);
@@ -223,11 +223,15 @@
     &:hover {
       .menu-item-content {
         transform: translateY(-2px);
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(255, 255, 255, 0.8) 100%
+        );
         backdrop-filter: blur(10px) saturate(150%);
         -webkit-backdrop-filter: blur(10px) saturate(150%);
         color: #2080f0;
-        box-shadow: 
+        box-shadow:
           0 4px 12px rgba(32, 128, 240, 0.1),
           0 2px 4px rgba(0, 0, 0, 0.05),
           inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -243,11 +247,15 @@
     /* 激活状态 - 精致高亮 */
     &.active {
       .menu-item-content {
-        background: linear-gradient(135deg, rgba(32, 128, 240, 0.15) 0%, rgba(64, 152, 252, 0.12) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(32, 128, 240, 0.15) 0%,
+          rgba(64, 152, 252, 0.12) 100%
+        );
         backdrop-filter: blur(10px) saturate(150%);
         -webkit-backdrop-filter: blur(10px) saturate(150%);
         color: #2080f0 !important;
-        box-shadow: 
+        box-shadow:
           0 4px 16px rgba(32, 128, 240, 0.2),
           0 2px 8px rgba(32, 128, 240, 0.1),
           inset 0 1px 0 rgba(255, 255, 255, 0.6),
@@ -272,7 +280,7 @@
         height: 28px;
         background: linear-gradient(180deg, #2080f0 0%, #4098fc 100%);
         border-radius: 0 2px 2px 0;
-        box-shadow: 
+        box-shadow:
           2px 0 8px rgba(32, 128, 240, 0.5),
           0 0 12px rgba(32, 128, 240, 0.3);
       }
@@ -293,11 +301,15 @@
     &:hover {
       .menu-item-content {
         transform: translateY(-2px);
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.08) 100%
+        );
         backdrop-filter: blur(10px) saturate(150%);
         -webkit-backdrop-filter: blur(10px) saturate(150%);
         color: #4098fc;
-        box-shadow: 
+        box-shadow:
           0 4px 12px rgba(32, 128, 240, 0.15),
           0 2px 4px rgba(0, 0, 0, 0.1),
           inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -313,11 +325,15 @@
     /* 激活状态 - 精致高亮 */
     &.active {
       .menu-item-content {
-        background: linear-gradient(135deg, rgba(32, 128, 240, 0.25) 0%, rgba(64, 152, 252, 0.18) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(32, 128, 240, 0.25) 0%,
+          rgba(64, 152, 252, 0.18) 100%
+        );
         backdrop-filter: blur(10px) saturate(150%);
         -webkit-backdrop-filter: blur(10px) saturate(150%);
         color: #4098fc !important;
-        box-shadow: 
+        box-shadow:
           0 4px 16px rgba(32, 128, 240, 0.25),
           0 2px 8px rgba(32, 128, 240, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.2),
@@ -342,7 +358,7 @@
         height: 28px;
         background: linear-gradient(180deg, #2080f0 0%, #4098fc 100%);
         border-radius: 0 2px 2px 0;
-        box-shadow: 
+        box-shadow:
           2px 0 8px rgba(32, 128, 240, 0.6),
           0 0 12px rgba(32, 128, 240, 0.4);
       }
@@ -391,7 +407,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid rgba(94, 92, 92, 0.08);
     flex-shrink: 0;
 
     .light-theme & {
@@ -497,23 +513,23 @@
       .dark-theme & {
         color: rgba(255, 255, 255, 0.45);
       }
-      
+
       // 组标题图标和文字颜色
       .menu-icon {
         .light-theme & {
           color: rgba(0, 0, 0, 0.45) !important;
         }
-        
+
         .dark-theme & {
           color: rgba(255, 255, 255, 0.45) !important;
         }
       }
-      
+
       .menu-text {
         .light-theme & {
           color: rgba(0, 0, 0, 0.45) !important;
         }
-        
+
         .dark-theme & {
           color: rgba(255, 255, 255, 0.45) !important;
         }
@@ -569,7 +585,11 @@
 
     /* 激活状态 */
     &.active {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+      background: linear-gradient(
+        135deg,
+        rgba(99, 102, 241, 0.12) 0%,
+        rgba(139, 92, 246, 0.08) 100%
+      ) !important;
       color: #6366f1 !important;
       font-weight: 600 !important;
       box-shadow:
@@ -594,7 +614,11 @@
         transform: translateY(-50%) !important;
         width: 3px !important;
         height: 20px !important;
-        background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%) !important;
+        background: linear-gradient(
+          180deg,
+          #6366f1 0%,
+          #8b5cf6 100%
+        ) !important;
         border-radius: 0 2px 2px 0 !important;
         box-shadow: 2px 0 8px rgba(99, 102, 241, 0.3) !important;
       }
@@ -620,7 +644,11 @@
 
     /* 激活状态 */
     &.active {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.15) 100%) !important;
+      background: linear-gradient(
+        135deg,
+        rgba(99, 102, 241, 0.2) 0%,
+        rgba(139, 92, 246, 0.15) 100%
+      ) !important;
       color: #8b5cf6 !important;
       font-weight: 600 !important;
       box-shadow:
@@ -645,7 +673,11 @@
         transform: translateY(-50%) !important;
         width: 3px !important;
         height: 20px !important;
-        background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%) !important;
+        background: linear-gradient(
+          180deg,
+          #6366f1 0%,
+          #8b5cf6 100%
+        ) !important;
         border-radius: 0 2px 2px 0 !important;
         box-shadow: 2px 0 8px rgba(99, 102, 241, 0.3) !important;
       }
