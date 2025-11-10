@@ -46,7 +46,7 @@ export const LAYOUT_MODES = [
     `,
   },
   {
-    label: '混合布局（左侧）',
+    label: '左侧混合（灵巧）',
     value: 'mix',
     disabled: false,
     svg: `
@@ -54,16 +54,6 @@ export const LAYOUT_MODES = [
       <rect x="10" y="0" width="14" height="48" rx="1" fill="currentColor" fill-opacity="0.7"/>
       <rect x="26" y="0" width="30" height="10" rx="1" fill="currentColor" fill-opacity="0.6"/>
       <rect x="26" y="12" width="30" height="34" rx="1" fill="currentColor" fill-opacity="0.4"/>
-    `,
-  },
-  {
-    label: '左侧混合',
-    value: 'vertical-mix',
-    disabled: true,
-    svg: `
-      <rect x="0" y="0" width="12" height="48" rx="1" fill="currentColor" fill-opacity="0.9"/>
-      <rect x="14" y="0" width="42" height="10" rx="1" fill="currentColor" fill-opacity="0.7"/>
-      <rect x="14" y="12" width="42" height="34" rx="1" fill="currentColor" fill-opacity="0.4"/>
     `,
   },
   {
