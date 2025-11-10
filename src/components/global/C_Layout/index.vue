@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-11 14:22:31
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-10 08:27:48
+ * @LastEditTime: 2025-11-10 14:02:28
  * @FilePath: \Robot_Admin\src\components\global\C_Layout\index.vue
  * @Description: 布局组件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -75,6 +75,9 @@
     <!-- 顶部导航布局 (top) -->
     <TopLayout v-else-if="settingsStore.layoutMode === 'top'" />
 
+    <!-- 混合布局【左侧】 (mix) -->
+    <MixLayout v-else-if="settingsStore.layoutMode === 'mix'" />
+
     <!-- 其他布局暂未实现 -->
     <NLayout v-else>
       <NLayoutContent class="content-with-header p16px app-content">
@@ -104,6 +107,7 @@
   import { useSettingsStore } from '@/stores/settings'
   import { MAX_CACHE_COUNT, DEV_CONFIG } from '@/config/keepAliveConfig'
   import TopLayout from './layouts/TopLayout/index.vue'
+  import MixLayout from './layouts/MixLayout/index.vue'
 
   const permissionStore = s_permissionStore()
   const themeStore = useThemeStore()

@@ -5,8 +5,8 @@
 // 主题模式
 export type ThemeMode = 'light' | 'dark' | 'auto'
 
-// 布局模式：左侧菜单、顶部菜单
-export type LayoutMode = 'side' | 'top'
+// 布局模式：左侧菜单、顶部菜单、混合菜单
+export type LayoutMode = 'side' | 'top' | 'mix'
 
 // 页面动画类型
 export type TransitionType = 'fade' | 'slide' | 'zoom' | 'none'

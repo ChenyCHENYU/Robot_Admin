@@ -10090,5 +10090,881 @@
 	"h4sv2": {
 		"zh-cn": "成功",
 		"en": "Success"
+	},
+	"e82p1q4": {
+		"zh-cn": "混合布局",
+		"en": "Mixed layout"
+	},
+	"enl52": {
+		"zh-cn": "厂别",
+		"en": "Factory type"
+	},
+	"e6fc2": {
+		"zh-cn": "产量",
+		"en": "Output"
+	},
+	"gddhuw4": {
+		"zh-cn": "综合成本",
+		"en": "Comprehensive cost"
+	},
+	"gdaznn4": {
+		"zh-cn": "综合单本",
+		"en": "Comprehensive single book"
+	},
+	"dgszcr4": {
+		"zh-cn": "标准成本",
+		"en": "Standard cost"
+	},
+	"e6bj2": {
+		"zh-cn": "偏差",
+		"en": "Deviation"
+	},
+	"c82qw3": {
+		"zh-cn": "偏差率",
+		"en": "Deviation rate"
+	},
+	"eerg2": {
+		"zh-cn": "分厂",
+		"en": "Branch factory"
+	},
+	"k9ol2": {
+		"zh-cn": "环比",
+		"en": "Month-on-month comparison"
+	},
+	"evyg2": {
+		"zh-cn": "同比",
+		"en": "Year-on-year"
+	},
+	"hyezq14": {
+		"zh-cn": "计划产量",
+		"en": "Planned output"
+	},
+	"hyezm84": {
+		"zh-cn": "计划偏差",
+		"en": "Planning deviation"
+	},
+	"t1xlnx7": {
+		"zh-cn": "原材料消耗成本",
+		"en": "Cost of raw material consumption"
+	},
+	"abp6874": {
+		"zh-cn": "人工成本",
+		"en": "Labor cost"
+	},
+	"mn5m2": {
+		"zh-cn": "能耗",
+		"en": "Energy consumption"
+	},
+	"az30op4": {
+		"zh-cn": "制造费用",
+		"en": "Manufacturing cost"
+	},
+	"31l2786": {
+		"zh-cn": " 暂无数据 ",
+		"en": "No data available for the time being."
+	},
+	"5u04jg8": {
+		"zh-cn": "数据加载中...",
+		"en": "Data loading in progress..."
+	},
+	"pcfwsr9": {
+		"zh-cn": " 数据加载失败: ",
+		"en": "Data loading failed"
+	},
+	"aar8hd": {
+		"zh-cn": "日 成 本 管 控 大 屏",
+		"en": "Daily cost control large screen"
+	},
+	"nhfhmj5": {
+		"zh-cn": "分厂日成本",
+		"en": "Daily cost of the branch factory"
+	},
+	"aw5wsb4": {
+		"zh-cn": "关键指标",
+		"en": "Key indicators"
+	},
+	"csvors4": {
+		"zh-cn": "成本构成",
+		"en": "Cost composition"
+	},
+	"54zjbl9": {
+		"zh-cn": "成本构成数据数据库",
+		"en": "Cost composition data database"
+	},
+	"1np9sh7": {
+		"zh-cn": "成本中心日成本",
+		"en": "Daily cost of the cost center"
+	},
+	"q5kcx9d": {
+		"zh-cn": "分厂原材料成本数据（占比）",
+		"en": "Raw material cost data of branch factories (proportion)"
+	},
+	"ji6rpze": {
+		"zh-cn": "分厂日单本成本近30日趋势图",
+		"en": "Trend chart of daily unit cost of branch factories over the past 30 days"
+	},
+	"1nsc857": {
+		"zh-cn": "成本中心日产量",
+		"en": "Daily output of the cost center"
+	},
+	"llwd9v7": {
+		"zh-cn": "厂成本实际产量",
+		"en": "Factory cost actual output"
+	},
+	"mzqn2a7": {
+		"zh-cn": "日成本单本分析",
+		"en": "Daily cost single book analysis"
+	},
+	"a8o0md5": {
+		"zh-cn": "综合单成本",
+		"en": "Comprehensive unit cost"
+	},
+	"z2csok9": {
+		"zh-cn": "分厂日成本实际产量",
+		"en": "The actual daily cost and output of the branch factory"
+	},
+	"c6hkg34": {
+		"zh-cn": "实际成本",
+		"en": "Actual cost"
+	},
+	"csrpuj4": {
+		"zh-cn": "成本偏差",
+		"en": "Cost deviation"
+	},
+	"hf5wg3": {
+		"zh-cn": "球团矿",
+		"en": "Pelletized ore"
+	},
+	"flt9m34": {
+		"zh-cn": "石灰车间",
+		"en": "Lime workshop"
+	},
+	"h5k8j3": {
+		"zh-cn": "烧结矿",
+		"en": "Sintered ore"
+	},
+	"z9wdw78": {
+		"zh-cn": "炼铁厂-炼钢铁水",
+		"en": "Ironmaking plant - Molten iron for steelmaking"
+	},
+	"eu1a3s4": {
+		"zh-cn": "炼钢一厂",
+		"en": "Steelmaking Plant One"
+	},
+	"eu1dgc4": {
+		"zh-cn": "炼钢二厂",
+		"en": "Steelmaking Plant No. 2"
+	},
+	"gu4dtl": {
+		"zh-cn": "棒线厂-高棒(RRB613,YRY613)",
+		"en": "Bar and Wire Factory - High Bar (RRB613,YRY613)"
+	},
+	"xuqr4pl": {
+		"zh-cn": "棒线厂-普棒(RRB612,YRY612)",
+		"en": "Rod and Wire Factory - Common Rod (RRB612,YRY612)"
+	},
+	"v1tplza": {
+		"zh-cn": "热轧厂-1580轧线",
+		"en": "Hot Rolling Mill -1580 Rolling Line"
+	},
+	"scxh849": {
+		"zh-cn": "热轧厂-900轧线",
+		"en": "Hot Rolling Mill -900 Rolling Line"
+	},
+	"yb3stm6": {
+		"zh-cn": "冷轧厂-酸轧",
+		"en": "Cold Rolling mill - Acid rolling"
+	},
+	"yb0gkl6": {
+		"zh-cn": "冷轧厂-罩平",
+		"en": "Cold Rolling Mill - Zhaoping"
+	},
+	"cm6tkl8": {
+		"zh-cn": "冷轧厂-镀锌#1",
+		"en": "Cold Rolling Mill - Galvanizing #1"
+	},
+	"cm6tkm8": {
+		"zh-cn": "冷轧厂-镀锌#2",
+		"en": "Cold Rolling Mill - Galvanizing #2"
+	},
+	"cm6tkn8": {
+		"zh-cn": "冷轧厂-镀锌#3",
+		"en": "Cold Rolling Mill - Galvanizing #3"
+	},
+	"yav3lg6": {
+		"zh-cn": "冷轧厂-彩涂",
+		"en": "Cold Rolling mill - Color coating"
+	},
+	"yb3j5i6": {
+		"zh-cn": "冷轧厂-酸平",
+		"en": "Cold Rolling Mill - Acid flat"
+	},
+	"fej7l3": {
+		"zh-cn": "日成本",
+		"en": "Daily cost"
+	},
+	"w38pi15": {
+		"zh-cn": "钢铁料偏差",
+		"en": "Steel material deviation"
+	},
+	"z7rrc76": {
+		"zh-cn": "综合成本偏差",
+		"en": "Comprehensive cost deviation"
+	},
+	"g1v1": {
+		"zh-cn": "元",
+		"en": "yuan"
+	},
+	"2hvjo46": {
+		"zh-cn": "计划成本偏差",
+		"en": "Planned cost deviation"
+	},
+	"e83033": {
+		"zh-cn": "差异率",
+		"en": "Rate of difference"
+	},
+	"x4gmei6": {
+		"zh-cn": "原料成本占比",
+		"en": "Proportion of raw material costs"
+	},
+	"m0dnyd6": {
+		"zh-cn": "人工成本占比",
+		"en": "Proportion of labor costs"
+	},
+	"o6vlu26": {
+		"zh-cn": "能耗成本占比",
+		"en": "Proportion of energy consumption costs"
+	},
+	"f3th2f4": {
+		"zh-cn": "生产效率",
+		"en": "Production efficiency"
+	},
+	"jw7fmb8": {
+		"zh-cn": "实际计划成本偏差",
+		"en": "Actual planned cost deviation"
+	},
+	"upytwz8": {
+		"zh-cn": "模拟数据加载失败",
+		"en": "The simulation data loading failed"
+	},
+	"epyfqj9": {
+		"zh-cn": "KPI数据获取失败",
+		"en": "The acquisition of KPI data failed"
+	},
+	"vss8h18": {
+		"zh-cn": "趋势数据获取失败",
+		"en": "The acquisition of trend data failed"
+	},
+	"it71r3o": {
+		"zh-cn": "导出 Zip - [useJsZip] 场景示例",
+		"en": "Export Zip - [useJsZip] Scenario example"
+	},
+	"toe8nlp": {
+		"zh-cn": "JSZip Hooks 配置驱动的文件压缩导出工具",
+		"en": "JSZip Hooks configuration-driven file compression and export tool"
+	},
+	"ttox9a6": {
+		"zh-cn": "准备中...",
+		"en": "In preparation..."
+	},
+	"q57zg19": {
+		"zh-cn": "📝 代码项目导出",
+		"en": "📝 code project export"
+	},
+	"iuwtzk4": {
+		"zh-cn": "配置文件",
+		"en": "Configuration file"
+	},
+	"5m873e9": {
+		"zh-cn": "输入代码内容...",
+		"en": "Enter the code content..."
+	},
+	"umn5ql6": {
+		"zh-cn": " 导出项目 ",
+		"en": "Export project"
+	},
+	"67rkpa9": {
+		"zh-cn": "📊 数据报表导出",
+		"en": "📊 data report export"
+	},
+	"d0egic4": {
+		"zh-cn": "报表标题",
+		"en": "Report Title"
+	},
+	"i91v2": {
+		"zh-cn": "格式",
+		"en": "Format"
+	},
+	"d7nbfr4": {
+		"zh-cn": "数据摘要",
+		"en": "Data summary"
+	},
+	"1y5t1m6": {
+		"zh-cn": "预览数据 (",
+		"en": "Preview data"
+	},
+	"ueuapr6": {
+		"zh-cn": " 导出报表 ",
+		"en": "Export report"
+	},
+	"udz40ra": {
+		"zh-cn": "🖼️ 媒体资源导出",
+		"en": "🖼️ media resource export"
+	},
+	"1lvais5": {
+		"zh-cn": "资源包名称",
+		"en": "Resource package name"
+	},
+	"kwj45e8": {
+		"zh-cn": "最大文件(MB)",
+		"en": "Maximum file size (MB"
+	},
+	"mwwoa15": {
+		"zh-cn": "按类别分组",
+		"en": "Group by category"
+	},
+	"jl8a9x5": {
+		"zh-cn": "包含元数据",
+		"en": "Including metadata"
+	},
+	"ogvwjp6": {
+		"zh-cn": " 上传文件 ",
+		"en": "Upload files"
+	},
+	"5y2vua8": {
+		"zh-cn": " 导出媒体包 (",
+		"en": "Export media package"
+	},
+	"6k7jx28": {
+		"zh-cn": "🚀 模板库导出",
+		"en": "🚀 template library export"
+	},
+	"285a8o5": {
+		"zh-cn": "模板库名称",
+		"en": "Template library name"
+	},
+	"cr4mu84": {
+		"zh-cn": "打包模式",
+		"en": "Packaging mode"
+	},
+	"ats7wi4": {
+		"zh-cn": "包含文档",
+		"en": "\"Including documents"
+	},
+	"7uim4c5": {
+		"zh-cn": "选择模板:",
+		"en": "Select template"
+	},
+	"d1qa818": {
+		"zh-cn": " 导出模板库 (",
+		"en": "Export template library"
+	},
+	"aus6yr4": {
+		"zh-cn": "分离模式",
+		"en": "Separation mode"
+	},
+	"azwlq44": {
+		"zh-cn": "合并模式",
+		"en": "Merge mode"
+	},
+	"sghhec6": {
+		"zh-cn": "Vue 组件",
+		"en": "Vue components"
+	},
+	"1c4sj75": {
+		"zh-cn": "TS 工具",
+		"en": "TS Tool"
+	},
+	"bx5dz3": {
+		"zh-cn": "产品A",
+		"en": "Product A"
+	},
+	"bx5e03": {
+		"zh-cn": "产品B",
+		"en": "Product B"
+	},
+	"bx5e13": {
+		"zh-cn": "产品C",
+		"en": "Product C"
+	},
+	"bx5e23": {
+		"zh-cn": "产品D",
+		"en": "Product D"
+	},
+	"bx5e33": {
+		"zh-cn": "产品E",
+		"en": "Product E"
+	},
+	"88a4kxc7": {
+		"zh-cn": "<template>\n  <div class=\"app\">\n    <h1>{{ title }}</h1>\n    <NButton @click=\"handleClick\" type=\"primary\">\n      点击计数: {{ count }}\n    </NButton>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { ref } from 'vue'\nimport { NButton } from 'naive-ui'\n\nconst title = ref('Hello Vue 3!')\nconst count = ref(0)\n\nconst handleClick = () => {\n  count.value++\n}\n<\\/script>\n\n<style scoped>\n.app {\n  text-align: center;\n  padding: 20px;\n}\n</style>",
+		"en": "<template>\n<div class=\"app\">\n<h1>{{ title }}</h1>\n<NButton @click=\"handleClick\" type=\"primary\">\nClick to count: {{count}}\n</NButton>\n</div>\n</template>\n\n<script setup lang=\"ts\">\nimport { ref } from 'vue'\nimport { NButton } from 'naive-ui'\n\nconst title = ref('Hello Vue 3! ')\nconst count = ref(0)\n\nconst handleClick = () => {\ncount.value++\n}\n<\\/script>\n\n<style scoped>\n.app {\ntext-align: center;\npadding: 20px;\n}\n</style>"
+	},
+	"eavifs8": {
+		"zh-cn": "这是动态文本内容",
+		"en": "This is dynamic text content"
+	},
+	"ffrutcf": {
+		"zh-cn": "v-copy 复制指令场景示例",
+		"en": "An example of the v-copy copy instruction scenario"
+	},
+	"izpb1c6": {
+		"zh-cn": " 复制标签 ",
+		"en": "Copy tag"
+	},
+	"k32uw16": {
+		"zh-cn": "这是标签内容",
+		"en": "This is the tag content"
+	},
+	"rkyw81p": {
+		"zh-cn": "点击按钮或标签复制内容到剪贴板，会自动显示消息提示",
+		"en": "Click the button or tag to copy the content to the clipboard, and a message prompt will be automatically displayed"
+	},
+	"puv2066": {
+		"zh-cn": "复制元素内容",
+		"en": "Copy the element content"
+	},
+	"9t6ecoy": {
+		"zh-cn": " 点击这个提示框复制整段内容：这是一段重要信息，可以通过点击复制。 ",
+		"en": "Click this prompt box to copy the entire content: This is an important piece of information and can be copied by clicking."
+	},
+	"j9xf2ah": {
+		"zh-cn": "不传参数时，自动复制元素的文本内容",
+		"en": "When no parameters are passed, the text content of the element is automatically copied"
+	},
+	"y8f0526": {
+		"zh-cn": "动态内容复制",
+		"en": "Dynamic content replication"
+	},
+	"b366gw8": {
+		"zh-cn": "输入要复制的内容",
+		"en": "Enter the content you want to copy"
+	},
+	"3q5x5d8": {
+		"zh-cn": " 复制输入内容 ",
+		"en": "Copy the input content"
+	},
+	"oockx7f": {
+		"zh-cn": "复制响应式数据，内容会实时更新",
+		"en": "Copy responsive data, and the content will be updated in real time"
+	},
+	"k2cd004": {
+		"zh-cn": "高级配置",
+		"en": "Advanced configuration"
+	},
+	"yrox8g7": {
+		"zh-cn": " 自定义消息 ",
+		"en": "Custom message"
+	},
+	"dgnowk7": {
+		"zh-cn": "自定义消息内容",
+		"en": "Customize the message content"
+	},
+	"yznmka9": {
+		"zh-cn": "🎉 复制成功了！",
+		"en": "🎉 copy successfully!"
+	},
+	"bvr8el6": {
+		"zh-cn": " 静默模式 ",
+		"en": "Silent mode"
+	},
+	"c56b246": {
+		"zh-cn": "静默复制内容",
+		"en": "Silent copy of content"
+	},
+	"ndiupgl": {
+		"zh-cn": "支持自定义回调函数、消息提示和独立消息实例",
+		"en": "Supports custom callback functions, message prompts, and independent message instances"
+	},
+	"aiig934": {
+		"zh-cn": "使用代码",
+		"en": "Use code"
+	},
+	"e7yd1t4": {
+		"zh-cn": "消息提示",
+		"en": "Message prompt"
+	},
+	"bl0aaz4": {
+		"zh-cn": "复制统计",
+		"en": "Replication statistics"
+	},
+	"ksqrzy7": {
+		"zh-cn": " 复制次数: ",
+		"en": "Copy count:"
+	},
+	"bok9nh7": {
+		"zh-cn": " 最后复制: ",
+		"en": "Finally copy:"
+	},
+	"hhlbyi4w": {
+		"zh-cn": "<!-- 基础文本复制 -->\n<NButton v-copy=\"'Hello World!'\">复制文本</NButton>\n\n<!-- 复制元素内容 -->\n<NAlert v-copy>点击复制这段文本</NAlert>\n\n<!-- 复制响应式数据 -->\n<NButton v-copy=\"inputText\">复制输入内容</NButton>",
+		"en": "<! -- Basic Text Copy -->\n<NButton v-copy=\"'Hello World! \"> Copy text </NButton>\n\n<! -- Copy element content -->\n<NAlert v-copy> Click to copy this text </NAlert>\n\n<! -- Copy Responsive data -->\n<NButton v-copy=\"inputText\"> copy the input content </NButton>"
+	},
+	"j3x8cu3j": {
+		"zh-cn": "\nconst message = useMessage()\n\n// 统计回调\nconst handleCopySuccess = (text) => {\n  copyCount.value++\n  lastCopyText.value = text\n}\n",
+		"en": "const message = useMessage()\n\n// Statistical pullback\nconst handleCopySuccess = (text) => {\ncopyCount.value++\nlastCopyText.value = text\n}"
+	},
+	"ilh7ew7g": {
+		"zh-cn": "\n\n<!-- 使用 useMessage 显示提示 -->\n<NButton v-copy=\"{\n  text: 'Hello World!',\n  messageInstance: message,\n  onSuccess: handleCopySuccess\n}\">复制并提示</NButton>\n\n<!-- 复制元素内容并提示 -->\n<NAlert v-copy=\"{\n  messageInstance: message,\n  onSuccess: handleCopySuccess\n}\">点击复制这段文本</NAlert>",
+		"en": "<! -- Use useMessage to display prompts -->\n<NButton v-copy=\"{\ntext: 'Hello World! ',\nmessageInstance: message,\nonSuccess: handleCopySuccess\n}\"> Copy and prompt </NButton>\n\n<! -- Copy the element content and prompt -->\n<NAlert v-copy=\"{\nmessageInstance: message,\nonSuccess: handleCopySuccess\n}\"> Click to copy this text </NAlert>"
+	},
+	"gtwl2s80": {
+		"zh-cn": "<!-- 自定义成功消息 -->\n<NButton v-copy=\"{\n  text: '内容',\n  successMessage: '🎉 复制成功了！',\n  messageInstance: message,\n  onSuccess: handleCopySuccess\n}\">自定义消息</NButton>\n\n<!-- 静默复制，不显示消息 -->\n<NButton v-copy=\"{\n  text: '内容',\n  successMessage: false,\n  onSuccess: handleSilentSuccess\n}\">静默模式</NButton>",
+		"en": "<! -- Custom Success Message -->\n<NButton v-copy=\"{\ntext: 'Content'\nsuccessMessage: '🎉 copied successfully! ',\nmessageInstance: message,\nonSuccess: handleCopySuccess\n}\"> Custom Message </NButton>\n\n<! -- Silent copy, no message displayed -->\n<NButton v-copy=\"{\ntext: 'Content'\nsuccessMessage: false,\nonSuccess: handleSilentSuccess\n}\"> Silent Mode </NButton>"
+	},
+	"dysj6i6": {
+		"zh-cn": " 打开页面 ",
+		"en": "Open the page"
+	},
+	"hm11": {
+		"zh-cn": "天",
+		"en": "day"
+	},
+	"4hnrsn5": {
+		"zh-cn": "基础甘特图",
+		"en": "Basic Gantt chart"
+	},
+	"j0wbtam": {
+		"zh-cn": "基础甘特图 (preset=\"basic\")",
+		"en": "basic Gantt Chart (preset=\"basic\")"
+	},
+	"20mqlto": {
+		"zh-cn": "简洁的基础配置，适用于简单的任务管理和项目概览。",
+		"en": "The simple basic configuration is suitable for simple task management and project overview."
+	},
+	"1mqb8g6": {
+		"zh-cn": "基础项目管理",
+		"en": "Basic Project Management"
+	},
+	"e7v83v4": {
+		"zh-cn": "添加任务",
+		"en": "Add task"
+	},
+	"df24x34": {
+		"zh-cn": "更新进度",
+		"en": "Update progress"
+	},
+	"jqcb164": {
+		"zh-cn": "项目管理",
+		"en": "Project Management"
+	},
+	"87lndbq": {
+		"zh-cn": "项目管理甘特图 (preset=\"project\")",
+		"en": "Gantt chart for project Management (preset=\"project\")"
+	},
+	"uatx0vv": {
+		"zh-cn": "功能完整的项目管理配置，包含编辑器、优先级、行序号等专业功能。",
+		"en": "A complete project management configuration, including professional functions such as an editor, priority, and line numbers."
+	},
+	"jv9j4d6": {
+		"zh-cn": "软件开发项目",
+		"en": "Software development project"
+	},
+	"xrjfpx12": {
+		"zh-cn": "双击表格单元格可以编辑任务信息（任务名称、开始时间、结束时间、优先级、进度）",
+		"en": "Double-clicking on a table cell allows you to edit task information (task name, start time, end time, priority, progress)."
+	},
+	"stusdwo": {
+		"zh-cn": "拖拽任务条可以移动任务时间，支持实时调整项目进度",
+		"en": "Dragging the task bar can move the task time and support real-time adjustment of the project progress"
+	},
+	"t7959mh": {
+		"zh-cn": "拖拽任务条两端可以调整任务持续时间",
+		"en": "Dragging both ends of the task bar can adjust the duration of the task"
+	},
+	"r32x47q": {
+		"zh-cn": "支持树形结构展示，清晰展现任务层级关系，默认展开2层",
+		"en": "Supports tree structure display, clearly showing the hierarchical relationship of tasks, with a default expansion of 2 layers"
+	},
+	"awstgn": {
+		"zh-cn": "点击全屏按钮进入浏览器全屏模式，按ESC键退出",
+		"en": "Click the full-screen button to enter the full-screen mode of the browser, and press the ESC key to exit"
+	},
+	"en0iep5": {
+		"zh-cn": "添加子任务",
+		"en": "Add sub-tasks"
+	},
+	"fnu813": {
+		"zh-cn": "时间线",
+		"en": "Timeline"
+	},
+	"ux8gj4q": {
+		"zh-cn": "时间线甘特图 (preset=\"timeline\")",
+		"en": "Gantt chart (preset=\"timeline\")"
+	},
+	"gzfwtnn": {
+		"zh-cn": "适用于事件时间线、历史记录展示和重要事件跟踪。",
+		"en": "It is applicable to event timelines, historical record displays and important event tracking."
+	},
+	"k35mob6": {
+		"zh-cn": "公司发展历程",
+		"en": "The development history of the company"
+	},
+	"ly7ci3": {
+		"zh-cn": "里程碑",
+		"en": "Milestone"
+	},
+	"th1tpcr": {
+		"zh-cn": "里程碑甘特图 (preset=\"milestone\")",
+		"en": "milestone Gantt chart (preset=\"milestone\")"
+	},
+	"k97jauo": {
+		"zh-cn": "专门用于重要节点和里程碑的展示，突出关键时间点。",
+		"en": "Specifically designed for the display of important nodes and milestones, highlighting key time points."
+	},
+	"88la8p6": {
+		"zh-cn": "项目关键节点",
+		"en": "Key nodes of the project"
+	},
+	"bzdk6q4": {
+		"zh-cn": "官方示例",
+		"en": "Official example"
+	},
+	"t8nq6vr": {
+		"zh-cn": "官方示例甘特图 (preset=\"official\")",
+		"en": "official sample Gantt chart (preset=\"official\")"
+	},
+	"hu5cist": {
+		"zh-cn": "完全复刻官方演示的配置和数据，展示最真实的效果和完整功能。",
+		"en": "Fully replicate the configuration and data demonstrated by the official, presenting the most realistic effects and complete functions."
+	},
+	"mmqmm25": {
+		"zh-cn": "自定义渲染",
+		"en": "Custom rendering"
+	},
+	"55wubh8": {
+		"zh-cn": "自定义渲染甘特图",
+		"en": "Customize the rendering of Gantt charts"
+	},
+	"1qlqs5w": {
+		"zh-cn": "展示自定义渲染的强大功能，包含头像、进度、渐变色等高级视觉效果。",
+		"en": "Showcase the powerful features of custom rendering, including advanced visual effects such as avatars, progress, and gradient colors."
+	},
+	"nkamcp6": {
+		"zh-cn": "团队任务看板",
+		"en": "Team task board"
+	},
+	"d5ol624": {
+		"zh-cn": "新任务 ",
+		"en": "New task"
+	},
+	"ja6acb8": {
+		"zh-cn": "添加了新任务: ",
+		"en": "New tasks have been added"
+	},
+	"fdc6w3": {
+		"zh-cn": "新成员",
+		"en": "New member"
+	},
+	"6kr1659": {
+		"zh-cn": "添加了新子任务: ",
+		"en": "New sub-tasks have been added:"
+	},
+	"mc40vg5": {
+		"zh-cn": "批量更新了",
+		"en": "Batch updated"
+	},
+	"abf0kx4": {
+		"zh-cn": "任务进度",
+		"en": "Task progress"
+	},
+	"fmh22": {
+		"zh-cn": "基础",
+		"en": "\"Basic\""
+	},
+	"ql5h2": {
+		"zh-cn": "项目",
+		"en": "Project"
+	},
+	"d3gu328": {
+		"zh-cn": "甘特图实例未找到",
+		"en": "The Gantt chart instance was not found"
+	},
+	"ik21": {
+		"zh-cn": "已",
+		"en": "has"
+	},
+	"ctlcwf4": {
+		"zh-cn": "所有任务",
+		"en": "All tasks"
+	},
+	"hzpd2": {
+		"zh-cn": "收起",
+		"en": "\"Collapse"
+	},
+	"g85n2": {
+		"zh-cn": "展开",
+		"en": "\"Unfold"
+	},
+	"xt5ut3a": {
+		"zh-cn": "操作失败，请稍后重试",
+		"en": "The operation failed. Please try again later"
+	},
+	"mf60wg7": {
+		"zh-cn": "点击了任务: ",
+		"en": "Clicked on the task"
+	},
+	"arcg7tf": {
+		"zh-cn": "甘特图加载失败，请刷新页面重试",
+		"en": "The Gantt chart failed to load. Please refresh the page and try again"
+	},
+	"eebsl19": {
+		"zh-cn": "甘特图组件场景示例",
+		"en": "Gantt chart component scenario example"
+	},
+	"syrxih5": {
+		"zh-cn": "使用说明：",
+		"en": "Instructions for Use"
+	},
+	"fa4i516": {
+		"zh-cn": "预设配置说明",
+		"en": "Preset configuration description"
+	},
+	"4aei4po": {
+		"zh-cn": "基础配置，简洁易用，适合快速开始和轻量级项目管理",
+		"en": "The basic configuration is simple and easy to use, suitable for quick start and lightweight project management"
+	},
+	"csuh25o": {
+		"zh-cn": "项目管理配置，功能丰富，支持编辑、排序、优先级等",
+		"en": "Project management configuration, rich in functions, supports editing, sorting, prioritization, etc"
+	},
+	"aizh0a1a": {
+		"zh-cn": "• 双击单元格编辑 • 拖拽任务条移动/调整大小 • 树形结构展现层级关系 • 默认展开2层",
+		"en": "• Double-click the cell to edit • Drag the taskbar to move/resize • The tree structure shows the hierarchical relationship • By default, it expands to 2 layers"
+	},
+	"8c0gzhh": {
+		"zh-cn": "时间线配置，适合事件展示和历史记录",
+		"en": "Timeline configuration, suitable for event display and historical record"
+	},
+	"xqz2v6e": {
+		"zh-cn": "里程碑配置，专门展示重要节点",
+		"en": "Milestone configuration, specifically designed to showcase important nodes"
+	},
+	"pcba5oo": {
+		"zh-cn": "官方示例配置，完全复刻官方demo，默认展开2层",
+		"en": "Official sample configuration, fully replicating the official demo, expands by default to 2 layers"
+	},
+	"47l36no": {
+		"zh-cn": "自定义渲染，展示高级customLayout功能",
+		"en": "Customize rendering to showcase advanced customLayout features"
+	},
+	"jq5ewe4": {
+		"zh-cn": "项目启动",
+		"en": "Project initiation"
+	},
+	"jhw5xo4": {
+		"zh-cn": "需求分析",
+		"en": "Demand analysis"
+	},
+	"gar46f4": {
+		"zh-cn": "系统设计",
+		"en": "System design"
+	},
+	"cc33hf4": {
+		"zh-cn": "开发实现",
+		"en": "Development and implementation"
+	},
+	"edhg9g4": {
+		"zh-cn": "测试验收",
+		"en": "Test acceptance"
+	},
+	"d9bn86": {
+		"zh-cn": "项目需求评审",
+		"en": "Project requirements review"
+	},
+	"cfijxq6": {
+		"zh-cn": "确定项目范围",
+		"en": "Determine the project scope"
+	},
+	"ayi7bj4": {
+		"zh-cn": "功能开发",
+		"en": "Function development"
+	},
+	"amhivb4": {
+		"zh-cn": "公司成立",
+		"en": "The company was established"
+	},
+	"56dkzz5": {
+		"zh-cn": "第一轮融资",
+		"en": "The first round of financing"
+	},
+	"a9xkdr4": {
+		"zh-cn": "产品上线",
+		"en": "Product launch"
+	},
+	"c845734": {
+		"zh-cn": "市场推广",
+		"en": "Marketing promotion"
+	},
+	"53w6u35": {
+		"zh-cn": "第二轮融资",
+		"en": "The second round of financing"
+	},
+	"rrc89g5": {
+		"zh-cn": "项目启动会",
+		"en": "Project kick-off meeting"
+	},
+	"wwkhak9": {
+		"zh-cn": "Alpha版本发布",
+		"en": "Alpha version released"
+	},
+	"oi922i8": {
+		"zh-cn": "Beta版本发布",
+		"en": "Beta version release"
+	},
+	"65rjm65": {
+		"zh-cn": "正式版发布",
+		"en": "Official version released"
+	},
+	"ys9ld36": {
+		"zh-cn": "用户培训完成",
+		"en": "User training completed"
+	},
+	"ab4zrd4": {
+		"zh-cn": "任务名称",
+		"en": "Task Name"
+	},
+	"obw1": {
+		"zh-cn": "第",
+		"en": "The first"
+	},
+	"lina23": {
+		"zh-cn": "进度%",
+		"en": "Progress %"
+	},
+	"a8m4y64": {
+		"zh-cn": "事件名称",
+		"en": "Event name"
+	},
+	"i5z22": {
+		"zh-cn": "时间",
+		"en": "Time"
+	},
+	"ffqy5v4": {
+		"zh-cn": "目标日期",
+		"en": "Target date"
+	},
+	"m0pxv3": {
+		"zh-cn": "重要性",
+		"en": "\"Importance\""
+	},
+	"nn6z2": {
+		"zh-cn": "行号",
+		"en": "Line number"
+	},
+	"il1qem8": {
+		"zh-cn": "混合布局（左侧）",
+		"en": "Mixed layout (left)"
+	},
+	"i1ij9t8": {
+		"zh-cn": "左侧菜单（默认）",
+		"en": "Left menu (default"
+	},
+	"qzgj586": {
+		"zh-cn": "顶部菜单（）",
+		"en": "Top menu ("
+	},
+	"5pj7f88": {
+		"zh-cn": "顶部菜单（清爽）",
+		"en": "Top Menu (Refreshing"
 	}
 }
