@@ -12414,5 +12414,409 @@
 	"hd1czx8": {
 		"zh-cn": "顶部混合（侧优）",
 		"en": "Top mixing (Side optimization"
+	},
+	"rzsos29": {
+		"zh-cn": "进度条组件场景示例",
+		"en": "An example of the progress bar component scenario"
+	},
+	"4lhlqo5": {
+		"zh-cn": "基础进度条",
+		"en": "Basic progress bar"
+	},
+	"m7fl8l1r": {
+		"zh-cn": " 用于展示操作进度，如文件上传、数据加载等场景。支持动画效果，让进度展示更加生动。 适用于需要明确显示进度百分比的线性任务。 ",
+		"en": "It is used to display the operation progress, such as in scenarios like file upload and data loading. Support animation effects to make the progress display more vivid. It is suitable for linear tasks that require a clear display of the progress percentage."
+	},
+	"29l1ja5": {
+		"zh-cn": "圆形进度条",
+		"en": "Circular progress bar"
+	},
+	"z2nzev1t": {
+		"zh-cn": " 适用于在限定空间内展示进度的场景，如任务完成度、项目进度等。圆形设计更加紧凑美观， 适合在卡片、仪表板等空间受限的界面中使用。 ",
+		"en": "It is suitable for scenarios where progress is displayed within a limited space, such as task completion degree, project progress, etc. The circular design is more compact and aesthetically pleasing, making it suitable for use in interfaces with limited space such as cards and dashboards."
+	},
+	"bcm28m4": {
+		"zh-cn": "圈圈赛跑",
+		"en": "Loop race"
+	},
+	"26m8to1q": {
+		"zh-cn": " 多圆环动态进度展示，适用于多任务并行处理、多维度数据加载等场景。动画效果增强用户体验， 可以同时对比多个任务的完成情况。 ",
+		"en": "Multi-ring dynamic progress display, suitable for scenarios such as multi-task parallel processing and multi-dimensional data loading. The animation effect enhances the user experience and enables simultaneous comparison of the completion status of multiple tasks."
+	},
+	"3aiy395": {
+		"zh-cn": "圈圈赛跑！",
+		"en": "Lap race!"
+	},
+	"cbkotp5": {
+		"zh-cn": "双环进度条",
+		"en": "Double-loop progress bar"
+	},
+	"678o4j20": {
+		"zh-cn": " 使用 NaiveUI 原生组件的双环进度条，适用于需要同时展示两个相关指标的场景， 如内存使用率与CPU使用率、完成任务与总任务等对比展示。 ",
+		"en": "The dual-loop progress bar using the native components of NaiveUI is suitable for scenarios where two related indicators need to be displayed simultaneously, such as the comparison display of memory usage and CPU usage, completed tasks and total tasks, etc."
+	},
+	"rnudto6": {
+		"zh-cn": "仪表盘进度条",
+		"en": "Dashboard progress bar"
+	},
+	"6ob7341r": {
+		"zh-cn": " 仪表盘形式展示进度，适用于系统性能监控、资源使用率等场景。直观展示当前状态， 仪表盘的显示效果，适合监控类应用的数据展示。 ",
+		"en": "The progress is displayed in the form of a dashboard, which is suitable for scenarios such as system performance monitoring and resource utilization. Intuitively display the current status, the display effect of the dashboard, and suitable for data display in monitoring applications."
+	},
+	"cxegg74": {
+		"zh-cn": "提交订单",
+		"en": "Submit the order"
+	},
+	"ae6lit4": {
+		"zh-cn": "付款成功",
+		"en": "Payment successful"
+	},
+	"b40cwk4": {
+		"zh-cn": "商品出库",
+		"en": "Goods out of the warehouse"
+	},
+	"fya4ul4": {
+		"zh-cn": "等待收货",
+		"en": "Waiting for the delivery"
+	},
+	"ftvdnl6": {
+		"zh-cn": "收集用户需求",
+		"en": "Collect user demands"
+	},
+	"28bav4": {
+		"zh-cn": "UI设计",
+		"en": "UI design"
+	},
+	"p5uccb6": {
+		"zh-cn": "界面原型设计",
+		"en": "Interface prototype design"
+	},
+	"o521pl8": {
+		"zh-cn": "正在开发中...",
+		"en": "Under development..."
+	},
+	"edgqzt4": {
+		"zh-cn": "测试阶段",
+		"en": "Testing phase"
+	},
+	"djxvdb6": {
+		"zh-cn": "等待开发完成",
+		"en": "Wait for the development to be completed"
+	},
+	"it0ovz4": {
+		"zh-cn": "部署上线",
+		"en": "Deployment and launch"
+	},
+	"ffxza7": {
+		"zh-cn": "发布到生产环境",
+		"en": "Publish to the production environment"
+	},
+	"cxay9k4": {
+		"zh-cn": "提交申请",
+		"en": "Submit the application"
+	},
+	"cbu8hp4": {
+		"zh-cn": "张三提交",
+		"en": "Submitted by Zhang SAN"
+	},
+	"adrqym4": {
+		"zh-cn": "主管审批",
+		"en": "Approval by the supervisor"
+	},
+	"awz5vy5": {
+		"zh-cn": "李四已批准",
+		"en": "Li Si has approved"
+	},
+	"gh8c3z4": {
+		"zh-cn": "经理审批",
+		"en": "Manager's approval"
+	},
+	"z50u225": {
+		"zh-cn": "王五已批准",
+		"en": "Wang Wu has approved"
+	},
+	"1rdm34": {
+		"zh-cn": "HR备案",
+		"en": "HR filing"
+	},
+	"dljhn3": {
+		"zh-cn": "处理中",
+		"en": "In processing"
+	},
+	"fy7uyl4": {
+		"zh-cn": "等待备案",
+		"en": "Awaiting filing"
+	},
+	"argjkk4": {
+		"zh-cn": "创建项目",
+		"en": "Create a project"
+	},
+	"cc1n0v4": {
+		"zh-cn": "开发功能",
+		"en": "Development function"
+	},
+	"ag7xpe4": {
+		"zh-cn": "代码审查",
+		"en": "Code review"
+	},
+	"it1hss4": {
+		"zh-cn": "部署发布",
+		"en": "Deployment and release"
+	},
+	"are5wy4": {
+		"zh-cn": "创建订单",
+		"en": "Create an order"
+	},
+	"v6zr56": {
+		"zh-cn": "订单创建成功",
+		"en": "The order was created successfully."
+	},
+	"d3nnek4": {
+		"zh-cn": "支付订单",
+		"en": "Payment order"
+	},
+	"d3fdy54": {
+		"zh-cn": "支付失败",
+		"en": "Payment failed"
+	},
+	"iterm44": {
+		"zh-cn": "重新支付",
+		"en": "Re-payment"
+	},
+	"fy9sdh4": {
+		"zh-cn": "等待支付",
+		"en": "Waiting for payment"
+	},
+	"hyo7qv4": {
+		"zh-cn": "订单完成",
+		"en": "Order completed"
+	},
+	"fy7x7i4": {
+		"zh-cn": "等待处理",
+		"en": "Waiting for processing"
+	},
+	"bhtdq44": {
+		"zh-cn": "填写信息",
+		"en": "Fill in the information"
+	},
+	"eykqqf11": {
+		"zh-cn": "请填写您的基本信息，包括用户名、邮箱和密码。所有带 * 的字段都是必填项。",
+		"en": "Please fill in your basic information, including your username, email address and password. All fields marked with * are required."
+	},
+	"k2wshk4": {
+		"zh-cn": "验证邮箱",
+		"en": "Verify email"
+	},
+	"gbgxdpx": {
+		"zh-cn": "我们已经发送了一封验证邮件到您的邮箱，请点击邮件中的链接完成验证。",
+		"en": "We have sent a verification email to your mailbox. Please click on the link in the email to complete the verification."
+	},
+	"bwvyvh4": {
+		"zh-cn": "完善资料",
+		"en": "Improve the materials"
+	},
+	"reu4krq": {
+		"zh-cn": "请完善您的个人资料，这将帮助我们为您提供更好的服务。",
+		"en": "Please complete your personal information. This will help us provide you with better services."
+	},
+	"e2x6wj4": {
+		"zh-cn": "注册成功",
+		"en": "Registration successful"
+	},
+	"exohoxq": {
+		"zh-cn": "恭喜！您已经成功注册，现在可以开始使用我们的服务了。",
+		"en": "Congratulations! You have successfully registered and can now start using our services."
+	},
+	"ab2a8p5": {
+		"zh-cn": "注册完成！",
+		"en": "Registration completed!"
+	},
+	"84uzqnd": {
+		"zh-cn": " 进度步骤条组件场景示例 ",
+		"en": "Example of the progress step bar component scenario"
+	},
+	"hyx0m64": {
+		"zh-cn": "订单跟踪",
+		"en": "Order tracking"
+	},
+	"jqfmo04": {
+		"zh-cn": "项目进度",
+		"en": "Project progress"
+	},
+	"bz0d7m4": {
+		"zh-cn": "审批流程",
+		"en": "Approval process"
+	},
+	"ljkxvb5": {
+		"zh-cn": "切换到第 ",
+		"en": "Switch to the first"
+	},
+	"lz92": {
+		"zh-cn": " 步",
+		"en": "step"
+	},
+	"mmmoki5": {
+		"zh-cn": "自定义图标",
+		"en": "Custom icon"
+	},
+	"ubhoe16": {
+		"zh-cn": "包含错误状态",
+		"en": "Contains error status"
+	},
+	"e2zb7y4": {
+		"zh-cn": "注册流程",
+		"en": "Registration process"
+	},
+	"mrhp3": {
+		"zh-cn": " 至 ",
+		"en": "to"
+	},
+	"1ej2d87": {
+		"zh-cn": "所有日期已清空",
+		"en": "All dates have been cleared"
+	},
+	"t52mbs7": {
+		"zh-cn": "已设置默认日期",
+		"en": "The default date has been set"
+	},
+	"7sik0k9": {
+		"zh-cn": "数据已输出到控制台",
+		"en": "The data has been output to the console"
+	},
+	"o5yfuib": {
+		"zh-cn": "日期选择器组件场景示例",
+		"en": "Date picker component scenario example"
+	},
+	"qpnzho8": {
+		"zh-cn": "1. 单日期选择",
+		"en": "1. Single date selection"
+	},
+	"a0sz5o7": {
+		"zh-cn": "选择的日期: ",
+		"en": "Selected date"
+	},
+	"1hpldw9": {
+		"zh-cn": "2. 日期时间选择",
+		"en": "2. Date and time selection"
+	},
+	"x2vmbz7": {
+		"zh-cn": "请选择日期时间",
+		"en": "Please select the date and time"
+	},
+	"svfada9": {
+		"zh-cn": "选择的日期时间: ",
+		"en": "Selected date and time"
+	},
+	"rz53u89": {
+		"zh-cn": "3. 日期范围选择",
+		"en": "3. Date range selection"
+	},
+	"cd0ag54": {
+		"zh-cn": "开始日期",
+		"en": "Start date"
+	},
+	"gfhy2u4": {
+		"zh-cn": "结束日期",
+		"en": "End date"
+	},
+	"pgqs179": {
+		"zh-cn": "选择的日期范围: ",
+		"en": "Selected date range"
+	},
+	"38rdv5b": {
+		"zh-cn": "4. 日期时间范围选择",
+		"en": "4. Selection of date and time range"
+	},
+	"h3fwwz6": {
+		"zh-cn": "开始日期时间",
+		"en": "Start date and time"
+	},
+	"kvkp386": {
+		"zh-cn": "结束日期时间",
+		"en": "End date and time"
+	},
+	"rym2i5b": {
+		"zh-cn": "选择的日期时间范围: ",
+		"en": "Selected date and time range"
+	},
+	"bynh37g": {
+		"zh-cn": "5. 智能双日期选择（联动限制）",
+		"en": "5. Intelligent dual date selection (Linkage limit)"
+	},
+	"w5m2sc7": {
+		"zh-cn": "请选择开始日期",
+		"en": "Please select the start date"
+	},
+	"yt0bk37": {
+		"zh-cn": "请选择结束日期",
+		"en": "Please select the end date"
+	},
+	"45se0u9": {
+		"zh-cn": "选择的智能范围: ",
+		"en": "Selected range of intelligence"
+	},
+	"lfuykuu": {
+		"zh-cn": "💡 选择开始日期后，结束日期会自动启用，且不能早于开始日期",
+		"en": "💡 after selecting the start date, the end date will be automatically enabled and cannot be earlier than the start date"
+	},
+	"njs1g2k": {
+		"zh-cn": "6. 限制未来日期（只能选择今天及以前）",
+		"en": "6. Limit future dates (only today and before can be selected)"
+	},
+	"3pz6chd": {
+		"zh-cn": "请选择日期（不能超过今天）",
+		"en": "Please select the date (it cannot be later than today)"
+	},
+	"kmhsc4a": {
+		"zh-cn": "7. 自定义格式示例",
+		"en": "7. Custom format example"
+	},
+	"u4gu7m6": {
+		"zh-cn": "时间戳格式:",
+		"en": "Timestamp format"
+	},
+	"dxfj8e9": {
+		"zh-cn": "选择日期（时间戳）",
+		"en": "Select the date (timestamp)"
+	},
+	"87h1455": {
+		"zh-cn": "时间戳: ",
+		"en": "Timestamp"
+	},
+	"ys7zt95": {
+		"zh-cn": "中文格式:",
+		"en": "Chinese format"
+	},
+	"xoa7dea": {
+		"zh-cn": "选择日期（中文格式）",
+		"en": "Select the date (in Chinese format)"
+	},
+	"gyqa7lb": {
+		"zh-cn": "yyyy年MM月dd日",
+		"en": "yyyy year MM month dd day"
+	},
+	"ckr1x66": {
+		"zh-cn": "中文日期: ",
+		"en": "Chinese date"
+	},
+	"866m2z7": {
+		"zh-cn": "8. 组件操作",
+		"en": "8. Component Operations"
+	},
+	"wmg0e08": {
+		"zh-cn": " 清空所有日期 ",
+		"en": "Clear all dates"
+	},
+	"l5b87q8": {
+		"zh-cn": " 设置默认日期 ",
+		"en": "Set the default date"
+	},
+	"eczvf38": {
+		"zh-cn": " 获取组件数据 ",
+		"en": "Obtain component data"
+	},
+	"qn0lb56": {
+		"zh-cn": "当前所有数据",
+		"en": "All current data"
 	}
 }
