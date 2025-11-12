@@ -54,60 +54,8 @@
           <C_Breadcrumb />
         </div>
 
-        <C_GlobalSearch />
-
-        <!-- 右侧：操作区 -->
-        <div
-          id="guide-actions"
-          class="w-220px flex items-center justify-end gap-4 mr16px"
-        >
-          <template
-            v-for="(item, index) in headerActions"
-            :key="index"
-          >
-            <!-- 渲染自定义组件 -->
-            <DynamicComponent
-              v-if="item.type === 'component'"
-              :name="item.componentName"
-            />
-
-            <!-- 渲染普通图标按钮 -->
-            <NTooltip
-              v-else
-              placement="bottom"
-              trigger="hover"
-            >
-              <template #trigger>
-                <NButton
-                  text
-                  @click="item.action"
-                >
-                  <span :class="item.icon"></span>
-                </NButton>
-              </template>
-              <span>{{ item.tooltip }}</span>
-            </NTooltip>
-          </template>
-        </div>
-
-        <!-- 右侧：用户信息 -->
-        <div class="flex items-center gap-2">
-          <NAvatar
-            round
-            size="small"
-            src="/robot-avatar.png"
-          />
-          <NDropdown
-            size="small"
-            :options="userOptions"
-            @select="handleSelect"
-          >
-            <div class="flex items-center cursor-pointer">
-              <span>CHENY</span>
-              <span class="i-mdi:chevron-down"></span>
-            </div>
-          </NDropdown>
-        </div>
+        <!-- 右侧：统一操作区 -->
+        <C_NavbarRight v-model:show-settings="showSettings" />
       </div>
     </div>
 
@@ -126,9 +74,9 @@
 </template>
 
 <script setup lang="ts">
-  import { s_userStore } from '@/stores/user'
   import { useThemeStore } from '@/stores/theme'
   import { useSettingsStore } from '@/stores/settings'
+  import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
   defineOptions({ name: 'C_Header' })
 
@@ -145,73 +93,4 @@
 
   const { isCollapsed, handleCollapsedChange } =
     inject<MenuCollapse>('menuCollapse')!
-
-  const headerActions = [
-    {
-      type: 'component',
-      componentName: 'C_Notice',
-    },
-    {
-      icon: 'i-mdi:fullscreen',
-      tooltip: '全屏',
-      action: () => {
-        // 全屏切换逻辑
-        toggleFullscreen()
-      },
-    },
-    {
-      type: 'component',
-      componentName: 'C_Language',
-    },
-    {
-      type: 'component',
-      componentName: 'C_Theme',
-    },
-    {
-      type: 'component',
-      componentName: 'C_Guide',
-    },
-    {
-      icon: 'i-mdi:settings-transfer-outline',
-      tooltip: '布局配置',
-      action: () => {
-        showSettings.value = true
-      },
-    },
-  ]
-
-  /**
-   * * @description: 全屏切换函数示例
-   * ! @return {*} {void}
-   */
-  function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen()
-    } else {
-      document.exitFullscreen()
-    }
-  }
-
-  // 用户菜单选项
-  const userOptions = [
-    {
-      key: 'profile',
-      label: '个人中心',
-      icon: () => h('span', { class: 'i-mdi:account' }),
-    },
-    {
-      key: 'logout',
-      label: '退出登录',
-      icon: () => h('span', { class: 'i-mdi:logout' }),
-    },
-  ]
-
-  const handleSelect = (key: string) => {
-    if (key === 'profile') {
-      // router.push('/profile')
-      console.info('个人中心')
-    } else if (key === 'logout') {
-      s_userStore().logout()
-    }
-  }
 </script>

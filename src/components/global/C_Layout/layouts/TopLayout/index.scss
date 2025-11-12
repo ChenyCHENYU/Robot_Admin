@@ -229,59 +229,6 @@
   }
 }
 
-// ==================== 右侧操作区 ====================
-
-.navbar-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-shrink: 0;
-}
-
-.action-buttons {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.action-btn {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  span {
-    color: var(--app-text-secondary);
-    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  &:hover span {
-    color: #6366f1;
-  }
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.user-dropdown {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--app-text-primary);
-
-  span:last-child {
-    font-size: 16px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  &:hover span:last-child {
-    transform: rotate(180deg);
-  }
-}
-
 // ==================== 标签页区域 ====================
 
 .tags-view-container {

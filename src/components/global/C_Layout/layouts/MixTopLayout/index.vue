@@ -1,17 +1,17 @@
 <!--
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2025-11-10 13:57:00
+ * @Date: 2025-11-11 11:33:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-10 15:05:12
- * @FilePath: \Robot_Admin\src\components\global\C_Layout\layouts\MixLayout\index.vue
- * @Description: 混合布局 - 左侧一级菜单 + 悬停展开二级菜单 + 右侧内容
+ * @LastEditTime: 2025-11-12 08:56:39
+ * @FilePath: \Robot_Admin\src\components\global\C_Layout\layouts\MixTopLayout\index.vue
+ * @Description: 顶部混合布局（侧边优先）- 左侧一级菜单 + 顶部二三级菜单
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <div class="mix-layout-container">
+  <div class="mix-top-layout-container">
     <!-- 左侧一级菜单栏 -->
     <div
-      class="first-level-menu"
+      class="first-level-sidebar"
       :class="[isDarkMode ? 'dark-theme' : 'light-theme']"
     >
       <!-- Logo 区域 -->
@@ -60,102 +60,73 @@
       </div>
     </div>
 
-    <!-- 悬浮二级菜单 -->
-    <Transition name="slide-fade">
+    <!-- 右侧主区域 -->
+    <div class="main-area">
+      <!-- 顶部导航栏 -->
       <div
-        v-if="showSecondMenu && hoveredMenuItem"
-        class="second-level-menu-popup"
+        class="top-navbar"
         :class="[isDarkMode ? 'dark-theme' : 'light-theme']"
       >
-        <!-- 二级菜单标题 - 显示品牌信息 -->
-        <div class="second-menu-header">
-          <div class="brand-info">
+        <!-- 左侧：品牌信息 -->
+        <div class="navbar-left">
+          <div class="brand-name">
             <span class="brand-title">Robot Admin</span>
             <span class="brand-subtitle">机器人管理系统</span>
           </div>
+          <div class="navbar-divider"></div>
         </div>
 
-        <!-- 二级菜单列表 -->
-        <div class="second-menu-list">
-          <template
-            v-for="child in hoveredMenuItem.children"
-            :key="child.path"
-          >
-            <!-- 有子菜单的项 -->
-            <div
-              v-if="child.children && child.children.length > 0"
-              class="second-menu-group"
-            >
-              <div class="group-title">
-                <C_Icon
-                  v-if="child.meta?.icon"
-                  :name="child.meta.icon"
-                  :size="16"
-                />
-                <span>{{ child.meta?.title }}</span>
-              </div>
-              <div
-                v-for="subChild in child.children"
-                :key="subChild.path"
-                class="second-menu-item sub-item"
-                :class="{ active: isMenuItemActive(subChild.path) }"
-                @click="handleSecondMenuClick(subChild)"
-              >
-                <C_Icon
-                  v-if="subChild.meta?.icon"
-                  :name="subChild.meta.icon"
-                  :size="16"
-                />
-                <span class="item-title">{{ subChild.meta?.title }}</span>
-              </div>
-            </div>
-            <!-- 没有子菜单的项 -->
-            <div
-              v-else
-              class="second-menu-item"
-              :class="{ active: isMenuItemActive(child.path) }"
-              @click="handleSecondMenuClick(child)"
-            >
-              <C_Icon
-                v-if="child.meta?.icon"
-                :name="child.meta.icon"
-                :size="18"
-              />
-              <span class="item-title">{{ child.meta?.title }}</span>
-            </div>
-          </template>
+        <!-- 中间：二级菜单（使用ResponsiveMenu组件）-->
+        <div class="navbar-center">
+          <ResponsiveMenu
+            v-if="currentSecondMenus.length > 0"
+            :data="currentSecondMenus"
+          />
         </div>
+
+        <!-- 右侧：操作区 -->
+        <C_NavbarRight v-model:show-settings="showSettings" />
       </div>
-    </Transition>
 
-    <!-- 右侧主内容区 -->
-    <NLayout class="main-layout">
-      <!-- 头部 -->
-      <C_Header />
+      <!-- 标签页区域 -->
+      <div
+        v-if="settingsStore.showTagsView"
+        class="tags-view-container"
+        :style="{ height: `${settingsStore.tagsViewHeight}px` }"
+      >
+        <C_TagsView />
+      </div>
 
-      <!-- 内容区 -->
-      <NLayoutContent class="content-with-header p16px app-content">
-        <RouterView v-slot="{ Component, route }">
-          <Transition
-            :name="settingsStore.transitionName"
-            mode="out-in"
-          >
-            <KeepAlive
-              :include="cachedViews"
-              :max="maxCacheCount"
-            >
-              <component
-                :is="Component"
-                :key="route.path"
-              />
-            </KeepAlive>
-          </Transition>
-        </RouterView>
-      </NLayoutContent>
+      <!-- 主内容区域 -->
+      <NLayout class="content-layout">
+        <NLayoutContent class="main-content">
+          <div class="page-content">
+            <RouterView v-slot="{ Component, route }">
+              <Transition
+                :name="settingsStore.transitionName"
+                mode="out-in"
+              >
+                <KeepAlive
+                  :include="cachedViews"
+                  :max="maxCacheCount"
+                >
+                  <component
+                    :is="Component"
+                    :key="route.path"
+                  />
+                </KeepAlive>
+              </Transition>
+            </RouterView>
+          </div>
+        </NLayoutContent>
 
-      <!-- 页脚 -->
-      <C_Footer v-if="settingsStore.showFooter" />
-    </NLayout>
+        <!-- 页脚 -->
+        <C_Footer v-if="settingsStore.showFooter" />
+      </NLayout>
+    </div>
+
+    <!-- 设置面板 -->
+    <C_Settings v-model:show="showSettings" />
   </div>
 </template>
 
@@ -165,8 +136,10 @@
   import { useThemeStore } from '@/stores/theme'
   import { useSettingsStore } from '@/stores/settings'
   import { MAX_CACHE_COUNT, DEV_CONFIG } from '@/config/keepAliveConfig'
+  import ResponsiveMenu from '../components/ResponsiveMenu.vue'
+  import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
-  defineOptions({ name: 'MixLayout' })
+  defineOptions({ name: 'MixTopLayout' })
 
   const permissionStore = s_permissionStore()
   const themeStore = useThemeStore()
@@ -174,15 +147,14 @@
   const route = useRoute()
   const router = useRouter()
 
+  // 设置面板状态
+  const showSettings = ref(false)
+
   const isDarkMode = computed(() => themeStore.isDark)
   const menuData = permissionStore.showMenuListGet
 
   // 当前激活的一级菜单
   const activeFirstMenu = ref<string>('')
-  // 当前悬停的菜单项
-  const hoveredMenuItem = ref<MenuOptions | null>(null)
-  // 是否显示二级菜单
-  const showSecondMenu = ref(false)
 
   /**
    * 检查当前路由是否匹配菜单项
@@ -216,39 +188,24 @@
   }
 
   /**
+   * 获取当前一级菜单的二级菜单列表
+   */
+  const currentSecondMenus = computed(() => {
+    const firstMenu = menuData.find(item => item.path === activeFirstMenu.value)
+    return firstMenu?.children || []
+  })
+
+  /**
    * 处理一级菜单点击
    */
   const handleFirstMenuClick = (item: MenuOptions) => {
     activeFirstMenu.value = item.path || ''
 
-    // 如果有子菜单，切换显示/隐藏二级菜单
-    if (item.children && item.children.length > 0) {
-      // 如果点击的是当前已展开的菜单，则关闭
-      if (showSecondMenu.value && hoveredMenuItem.value?.path === item.path) {
-        showSecondMenu.value = false
-        hoveredMenuItem.value = null
-      } else {
-        // 否则展开新菜单
-        hoveredMenuItem.value = item
-        showSecondMenu.value = true
-      }
-    } else {
-      // 没有子菜单，关闭右侧面板并直接导航
-      showSecondMenu.value = false
-      hoveredMenuItem.value = null
-
+    // 如果没有子菜单，直接导航
+    if (!item.children || item.children.length === 0) {
       if (item.path) {
         router.push(item.path)
       }
-    }
-  }
-
-  /**
-   * 处理二级菜单点击
-   */
-  const handleSecondMenuClick = (item: MenuOptions) => {
-    if (item.path) {
-      router.push(item.path)
     }
   }
 
@@ -280,7 +237,6 @@
 
     if (matchedFirstMenu) {
       activeFirstMenu.value = matchedFirstMenu.path || ''
-      // 二级菜单默认不展开，需要用户手动点击一级菜单才展开
     } else if (menuData.length > 0 && !activeFirstMenu.value) {
       // 如果没有匹配到，默认激活第一个
       activeFirstMenu.value = menuData[0].path || ''
@@ -336,6 +292,6 @@
   })
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   @use './index.scss';
 </style>

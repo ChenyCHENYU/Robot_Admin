@@ -95,7 +95,7 @@
 
   /* --------- 激活状态 --------- */
   &[type='primary'] {
-    background: rgba(32, 128, 240, 0.08) !important;
+    background: var(--tag-active-bg, rgba(32, 128, 240, 0.08)) !important;
     color: var(--color-primary) !important;
     border-color: var(--color-primary) !important;
     font-weight: 600;
@@ -124,7 +124,7 @@
 
     /* 激活状态悬停 */
     &:hover {
-      background: rgba(32, 128, 240, 0.12) !important;
+      background: var(--tag-active-hover-bg, rgba(32, 128, 240, 0.12)) !important;
       transform: scale(1.03);
     }
 
