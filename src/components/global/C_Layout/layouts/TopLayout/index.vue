@@ -51,59 +51,7 @@
       </div>
 
       <!-- 右侧：操作区 -->
-      <div class="navbar-right">
-        <C_GlobalSearch />
-
-        <div class="action-buttons">
-          <template
-            v-for="(item, index) in headerActions"
-            :key="index"
-          >
-            <!-- 渲染自定义组件 -->
-            <DynamicComponent
-              v-if="item.type === 'component'"
-              :name="item.componentName"
-            />
-
-            <!-- 渲染普通图标按钮 -->
-            <NTooltip
-              v-else
-              placement="bottom"
-              trigger="hover"
-            >
-              <template #trigger>
-                <NButton
-                  text
-                  @click="item.action"
-                  class="action-btn"
-                >
-                  <span :class="item.icon"></span>
-                </NButton>
-              </template>
-              <span>{{ item.tooltip }}</span>
-            </NTooltip>
-          </template>
-        </div>
-
-        <!-- 用户信息 -->
-        <div class="user-info">
-          <NAvatar
-            round
-            size="small"
-            src="/robot-avatar.png"
-          />
-          <NDropdown
-            size="small"
-            :options="userOptions"
-            @select="handleSelect"
-          >
-            <div class="user-dropdown">
-              <span>CHENY</span>
-              <span class="i-mdi:chevron-down"></span>
-            </div>
-          </NDropdown>
-        </div>
-      </div>
+      <C_NavbarRight v-model:show-settings="showSettings" />
     </div>
 
     <!-- 标签页区域 -->
@@ -152,9 +100,9 @@
   import { s_permissionStore } from '@/stores/permission'
   import { useThemeStore } from '@/stores/theme'
   import { useSettingsStore } from '@/stores/settings'
-  import { s_userStore } from '@/stores/user'
   import { MAX_CACHE_COUNT, DEV_CONFIG } from '@/config/keepAliveConfig'
   import ResponsiveMenu from '../components/ResponsiveMenu.vue'
+  import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
   defineOptions({ name: 'TopLayout' })
 
@@ -163,9 +111,11 @@
   const settingsStore = useSettingsStore()
   const route = useRoute()
 
+  // 设置面板状态
+  const showSettings = ref(false)
+
   const isDarkMode = computed(() => themeStore.isDark)
   const menuData = permissionStore.showMenuListGet
-  const showSettings = ref(false)
 
   // KeepAlive 缓存管理
   const cachedViews = ref<string[]>([])
@@ -200,74 +150,6 @@
     },
     { immediate: true }
   )
-
-  // 头部操作按钮
-  const headerActions = [
-    {
-      type: 'component',
-      componentName: 'C_Notice',
-    },
-    {
-      icon: 'i-mdi:fullscreen',
-      tooltip: '全屏',
-      action: () => {
-        toggleFullscreen()
-      },
-    },
-    {
-      type: 'component',
-      componentName: 'C_Language',
-    },
-    {
-      type: 'component',
-      componentName: 'C_Theme',
-    },
-    {
-      type: 'component',
-      componentName: 'C_Guide',
-    },
-    {
-      icon: 'i-mdi:settings-transfer-outline',
-      tooltip: '布局配置',
-      action: () => {
-        showSettings.value = true
-      },
-    },
-  ]
-
-  /**
-   * * @description: 全屏切换函数
-   * ! @return {*} {void}
-   */
-  function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen()
-    } else {
-      document.exitFullscreen()
-    }
-  }
-
-  // 用户菜单选项
-  const userOptions = [
-    {
-      key: 'profile',
-      label: '个人中心',
-      icon: () => h('span', { class: 'i-mdi:account' }),
-    },
-    {
-      key: 'logout',
-      label: '退出登录',
-      icon: () => h('span', { class: 'i-mdi:logout' }),
-    },
-  ]
-
-  const handleSelect = (key: string) => {
-    if (key === 'profile') {
-      console.info('个人中心')
-    } else if (key === 'logout') {
-      s_userStore().logout()
-    }
-  }
 </script>
 
 <style scoped lang="scss">

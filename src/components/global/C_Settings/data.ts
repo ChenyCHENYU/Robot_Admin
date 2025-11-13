@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-11-10 08:08:33
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-10 16:19:25
+ * @LastEditTime: 2025-11-13 09:38:39
  * @FilePath: \Robot_Admin\src\components\global\C_Settings\data.ts
  * @Description: 设置组件 - 静态数据
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -57,19 +57,20 @@ export const LAYOUT_MODES = [
     `,
   },
   {
-    label: '顶部混合',
-    value: 'horizontal-mix',
-    disabled: true,
+    label: '顶部混合（侧优）',
+    value: 'mix-top',
+    disabled: false,
     svg: `
-      <rect x="0" y="0" width="56" height="10" rx="1" fill="currentColor" fill-opacity="0.9"/>
-      <rect x="0" y="12" width="12" height="34" rx="1" fill="currentColor" fill-opacity="0.7"/>
-      <rect x="14" y="12" width="42" height="34" rx="1" fill="currentColor" fill-opacity="0.4"/>
+      <rect x="0" y="0" width="8" height="48" rx="1" fill="currentColor" fill-opacity="0.9"/>
+      <rect x="10" y="0" width="46" height="10" rx="1" fill="currentColor" fill-opacity="0.7"/>
+      <rect x="10" y="12" width="46" height="34" rx="1" fill="currentColor" fill-opacity="0.4"/>
     `,
   },
+
   {
-    label: '反转混合',
+    label: '反转混合（另类）',
     value: 'reverse-horizontal-mix',
-    disabled: true,
+    disabled: false,
     svg: `
       <rect x="0" y="0" width="56" height="10" rx="1" fill="currentColor" fill-opacity="0.9"/>
       <rect x="44" y="12" width="12" height="34" rx="1" fill="currentColor" fill-opacity="0.7"/>
@@ -77,14 +78,14 @@ export const LAYOUT_MODES = [
     `,
   },
   {
-    label: '双列菜单',
-    value: 'two-column',
-    disabled: true,
+    label: '卡片网格（新颖）',
+    value: 'card-layout',
+    disabled: false,
     svg: `
-      <rect x="0" y="0" width="8" height="48" rx="1" fill="currentColor" fill-opacity="0.9"/>
-      <rect x="10" y="0" width="16" height="48" rx="1" fill="currentColor" fill-opacity="0.7"/>
-      <rect x="28" y="0" width="28" height="10" rx="1" fill="currentColor" fill-opacity="0.6"/>
-      <rect x="28" y="12" width="28" height="34" rx="1" fill="currentColor" fill-opacity="0.4"/>
+      <rect x="0" y="0" width="24" height="20" rx="2" fill="currentColor" fill-opacity="0.9"/>
+      <rect x="32" y="0" width="24" height="20" rx="2" fill="currentColor" fill-opacity="0.7"/>
+      <rect x="0" y="24" width="24" height="20" rx="2" fill="currentColor" fill-opacity="0.6"/>
+      <rect x="32" y="24" width="24" height="20" rx="2" fill="currentColor" fill-opacity="0.4"/>
     `,
   },
 ]

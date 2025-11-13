@@ -1,0 +1,739 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-11-11 15:30:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-11-12 09:46:34
+ * @FilePath: \Robot_Admin\src\components\global\C_Layout\layouts\MixTopLayout\index.scss
+ * @Description: 顶部混合布局样式 - 完全复用混合布局和顶部导航样式
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ */
+
+.mix-top-layout-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  /* 不设置背景色，让子元素的背景显示 */
+}
+
+/* ==================== 顶部导航栏（完全复用 TopLayout 样式）==================== */
+.top-navbar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 亮色主题 - 完全复用 TopLayout */
+  &.light-theme {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.98) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.03),
+      0 1px 2px rgba(0, 0, 0, 0.02);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(99, 102, 241, 0.2) 50%,
+        transparent
+      );
+    }
+  }
+
+  /* 暗色主题 - 完全复用 TopLayout */
+  &.dark-theme {
+    background: linear-gradient(
+      135deg,
+      rgba(28, 28, 33, 0.95) 0%,
+      rgba(28, 28, 33, 0.98) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      0 1px 2px rgba(0, 0, 0, 0.1);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(99, 102, 241, 0.3) 50%,
+        transparent
+      );
+    }
+  }
+
+  /* 左侧：Logo 和品牌 */
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .logo-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+  }
+
+  .logo-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle,
+      rgba(99, 102, 241, 0.25) 0%,
+      transparent 70%
+    );
+    border-radius: 8px;
+    filter: blur(8px);
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+
+  .logo-video {
+    position: relative;
+    z-index: 10;
+    border-radius: 8px;
+    box-shadow:
+      0 4px 12px rgba(99, 102, 241, 0.2),
+      0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      transform: scale(1.05) rotate(2deg);
+      box-shadow:
+        0 6px 16px rgba(99, 102, 241, 0.3),
+        0 3px 6px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .brand-name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .brand-title {
+    font-size: 18px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+
+  .brand-subtitle {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    line-height: 1;
+    opacity: 0.7;
+
+    .light-theme & {
+      color: rgba(0, 0, 0, 0.45);
+    }
+
+    .dark-theme & {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  .navbar-divider {
+    width: 1px;
+    height: 24px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(99, 102, 241, 0.3) 50%,
+      transparent
+    );
+    margin: 0 8px;
+  }
+
+  /* 中间：一级菜单 */
+  .navbar-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 0 24px;
+
+    /* 覆盖 Naive UI 菜单的默认背景 */
+    :deep(.n-menu) {
+      background-color: transparent !important;
+    }
+
+    /* 菜单项样式优化 */
+    :deep(.n-menu-item) {
+      margin: 0 4px;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 激活状态的菜单项底部指示器 */
+    :deep(.n-menu-item--selected) {
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 3px;
+        background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+        border-radius: 2px 2px 0 0;
+        box-shadow: 0 -2px 8px rgba(99, 102, 241, 0.3);
+      }
+    }
+
+    /* 菜单项图标样式 */
+    :deep(.n-menu-item-content__icon) {
+      font-size: 18px !important;
+      margin-right: 8px;
+    }
+
+    /* 激活状态的图标添加光效 */
+    :deep(.n-menu-item--selected .n-menu-item-content__icon) {
+      filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.4));
+    }
+
+    /* 子菜单样式 */
+    :deep(.n-submenu) {
+      margin: 0 4px;
+    }
+
+    /* 子菜单下拉面板样式 */
+    :deep(.n-submenu-children) {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      border-radius: 12px;
+      padding: 8px;
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      margin-top: 8px;
+    }
+  }
+
+  /* 暗色主题下的子菜单样式 */
+  &.dark-theme .navbar-center {
+    :deep(.n-submenu-children) {
+      background: rgba(28, 28, 33, 0.98);
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+/* ==================== 左侧一级菜单（完全复用 MixLayout 样式）==================== */
+.first-level-sidebar {
+  position: relative;
+  width: 80px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 999;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* 亮色主题 - 完全复用 MixLayout */
+  &.light-theme {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.98) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+      2px 0 8px rgba(0, 0, 0, 0.03),
+      1px 0 2px rgba(0, 0, 0, 0.02);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(99, 102, 241, 0.2) 50%,
+        transparent
+      );
+    }
+  }
+
+  /* 暗色主题 - 完全复用 MixLayout */
+  &.dark-theme {
+    background: linear-gradient(
+      180deg,
+      rgba(28, 28, 33, 0.95) 0%,
+      rgba(28, 28, 33, 0.98) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      2px 0 8px rgba(0, 0, 0, 0.2),
+      1px 0 2px rgba(0, 0, 0, 0.1);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(99, 102, 241, 0.3) 50%,
+        transparent
+      );
+    }
+  }
+
+  /* Logo 区域 - 完全复用 MixLayout */
+  .logo-container {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(94, 92, 92, 0.08);
+
+    .light-theme & {
+      border-bottom-color: rgba(0, 0, 0, 0.06);
+    }
+
+    .dark-theme & {
+      border-bottom-color: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .logo-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle,
+      rgba(99, 102, 241, 0.25) 0%,
+      transparent 70%
+    );
+    border-radius: 12px;
+    filter: blur(12px);
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+  }
+
+  .logo-video {
+    position: relative;
+    z-index: 10;
+    border-radius: 10px;
+    box-shadow:
+      0 4px 12px rgba(99, 102, 241, 0.2),
+      0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      transform: scale(1.05) rotate(2deg);
+      box-shadow:
+        0 6px 16px rgba(99, 102, 241, 0.3),
+        0 3px 6px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  /* 一级菜单列表 */
+  .first-menu-list {
+    flex: 1;
+    width: 100%;
+    padding: 0 0 16px 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* 隐藏滚动条 */
+    &::-webkit-scrollbar {
+      width: 0;
+      display: none;
+    }
+  }
+
+  /* 一级菜单项 */
+  .first-menu-item {
+    position: relative;
+    width: 100%;
+    height: 72px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 8px;
+
+    .menu-item-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      border: 1px solid transparent;
+    }
+
+    .menu-item-label {
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      max-width: 64px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: 0.7;
+      letter-spacing: 0.3px;
+    }
+
+    .menu-item-text {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1;
+    }
+  }
+
+  /* 浅色主题一级菜单样式 */
+  &.light-theme .first-menu-item {
+    .menu-item-content {
+      color: rgba(0, 0, 0, 0.65);
+    }
+
+    .menu-item-label {
+      color: rgba(0, 0, 0, 0.85);
+    }
+
+    /* 悬停效果 - 玻璃质感 */
+    &:hover {
+      .menu-item-content {
+        transform: translateY(-2px);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(255, 255, 255, 0.8) 100%
+        );
+        backdrop-filter: blur(10px) saturate(150%);
+        -webkit-backdrop-filter: blur(10px) saturate(150%);
+        color: #2080f0;
+        box-shadow:
+          0 4px 12px rgba(32, 128, 240, 0.1),
+          0 2px 4px rgba(0, 0, 0, 0.05),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(32, 128, 240, 0.2);
+      }
+
+      .menu-item-label {
+        color: #2080f0;
+        opacity: 1;
+      }
+    }
+
+    /* 激活状态 - 精致高亮 */
+    &.active {
+      .menu-item-content {
+        background: linear-gradient(
+          135deg,
+          rgba(32, 128, 240, 0.15) 0%,
+          rgba(64, 152, 252, 0.12) 100%
+        );
+        backdrop-filter: blur(10px) saturate(150%);
+        -webkit-backdrop-filter: blur(10px) saturate(150%);
+        color: #2080f0 !important;
+        box-shadow:
+          0 4px 16px rgba(32, 128, 240, 0.2),
+          0 2px 8px rgba(32, 128, 240, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6),
+          inset 0 -1px 0 rgba(32, 128, 240, 0.1);
+        border: 1px solid rgba(32, 128, 240, 0.3);
+      }
+
+      .menu-item-label {
+        color: #2080f0 !important;
+        opacity: 1;
+        font-weight: 600;
+      }
+
+      /* 左侧激活指示器 - 渐变光效 */
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 28px;
+        background: linear-gradient(180deg, #2080f0 0%, #4098fc 100%);
+        border-radius: 0 2px 2px 0;
+        box-shadow:
+          2px 0 8px rgba(32, 128, 240, 0.5),
+          0 0 12px rgba(32, 128, 240, 0.3);
+      }
+    }
+  }
+
+  /* 深色主题一级菜单样式 */
+  &.dark-theme .first-menu-item {
+    .menu-item-content {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .menu-item-label {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* 悬停效果 - 玻璃质感 */
+    &:hover {
+      .menu-item-content {
+        transform: translateY(-2px);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.08) 100%
+        );
+        backdrop-filter: blur(10px) saturate(150%);
+        -webkit-backdrop-filter: blur(10px) saturate(150%);
+        color: #4098fc;
+        box-shadow:
+          0 4px 12px rgba(32, 128, 240, 0.15),
+          0 2px 4px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(64, 152, 252, 0.25);
+      }
+
+      .menu-item-label {
+        color: #4098fc;
+        opacity: 1;
+      }
+    }
+
+    /* 激活状态 - 精致高亮 */
+    &.active {
+      .menu-item-content {
+        background: linear-gradient(
+          135deg,
+          rgba(32, 128, 240, 0.25) 0%,
+          rgba(64, 152, 252, 0.18) 100%
+        );
+        backdrop-filter: blur(10px) saturate(150%);
+        -webkit-backdrop-filter: blur(10px) saturate(150%);
+        color: #4098fc !important;
+        box-shadow:
+          0 4px 16px rgba(32, 128, 240, 0.25),
+          0 2px 8px rgba(32, 128, 240, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2),
+          inset 0 -1px 0 rgba(32, 128, 240, 0.2);
+        border: 1px solid rgba(64, 152, 252, 0.35);
+      }
+
+      .menu-item-label {
+        color: #4098fc !important;
+        opacity: 1;
+        font-weight: 600;
+      }
+
+      /* 左侧激活指示器 - 渐变光效 */
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 28px;
+        background: linear-gradient(180deg, #2080f0 0%, #4098fc 100%);
+        border-radius: 0 2px 2px 0;
+        box-shadow:
+          2px 0 8px rgba(32, 128, 240, 0.6),
+          0 0 12px rgba(32, 128, 240, 0.4);
+      }
+    }
+  }
+}
+
+/* ==================== 右侧主区域 ==================== */
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* 不设置背景色，让子元素的背景显示 */
+}
+
+/* 内容布局 */
+.content-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* 使用浅色背景，与顶部导航和左侧菜单保持一致 */
+  background: #f4f7f9;
+  transition: background-color var(--app-transition-slow);
+
+  .dark-theme & {
+    background: #121212;
+  }
+}
+
+.page-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* 自定义滚动条 */
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    transition: background 0.3s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .dark-theme &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+/* 标签页区域 */
+.tags-view-container {
+  flex-shrink: 0;
+  background: var(--app-bg-color);
+  border-bottom: 1px solid var(--color-border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== 响应式设计 ==================== */
+@media (max-width: 1200px) {
+  .top-navbar {
+    .navbar-center {
+      padding: 0 16px;
+    }
+
+    .brand-subtitle {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .top-navbar {
+    padding: 0 16px;
+
+    .navbar-divider {
+      display: none;
+    }
+
+    .navbar-right {
+      gap: 16px;
+    }
+  }
+
+  .first-level-sidebar {
+    width: 64px;
+
+    .first-menu-item {
+      height: 60px;
+
+      .menu-item-content {
+        width: 32px;
+        height: 32px;
+      }
+
+      .menu-item-label {
+        font-size: 10px;
+      }
+    }
+  }
+}
