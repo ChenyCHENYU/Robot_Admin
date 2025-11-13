@@ -10974,5 +10974,2185 @@
 	"tumogx8": {
 		"zh-cn": "左侧混合（灵巧）",
 		"en": "Left side mixed (dexterous"
+	},
+	"eo8t1ea": {
+		"zh-cn": "顶部混合（侧边优先）",
+		"en": "Top mix (Side priority"
+	},
+	"fb4v03": {
+		"zh-cn": "早上好",
+		"en": "Good morning"
+	},
+	"buvj63": {
+		"zh-cn": "中午好",
+		"en": "good afternoon"
+	},
+	"bu6bk3": {
+		"zh-cn": "下午好",
+		"en": "Good afternoon"
+	},
+	"fdgnh3": {
+		"zh-cn": "晚上好",
+		"en": "Good evening"
+	},
+	"dl0413": {
+		"zh-cn": "夜深了",
+		"en": "It's late at night."
+	},
+	"8dftzpz": {
+		"zh-cn": "{greeting}，{username}！欢迎回来～ {emoji}",
+		"en": "{greeting}, {username}! Welcome back ~ {emoji}"
+	},
+	"9spjg612": {
+		"zh-cn": "{emoji} {greeting}，{username}！开始今天的工作吧",
+		"en": "{emoji} {greeting}, {username}! Let's start today's work"
+	},
+	"bvhvt5y": {
+		"zh-cn": "欢迎回来，{username}！{greeting} {emoji}",
+		"en": "Welcome back, {username}! {greeting} {emoji}"
+	},
+	"b4rvai10": {
+		"zh-cn": "{greeting}，{username}！准备好了吗？ {emoji}",
+		"en": "{greeting}, {username}! Are you ready? {emoji}"
+	},
+	"lr35506": {
+		"zh-cn": "人机验证成功",
+		"en": "Human-machine verification successful"
+	},
+	"1l4ufq8": {
+		"zh-cn": "请先完成人机验证",
+		"en": "Please complete the human-machine verification first"
+	},
+	"fcewjt4": {
+		"zh-cn": "登录成功",
+		"en": "Login successful"
+	},
+	"yvob6y7": {
+		"zh-cn": "账号或密码错误",
+		"en": "Account or password is incorrect"
+	},
+	"8gw9z7g": {
+		"zh-cn": "Hey！伙计，欢迎来到我的世界。",
+		"en": "Hey! Hey, man, welcome to my world."
+	},
+	"25n6nkg": {
+		"zh-cn": "Robot Admin 管理系统",
+		"en": "Robot Admin management system"
+	},
+	"w7pp9e": {
+		"zh-cn": "请先点击下方图标完成人机验证",
+		"en": "Please click the icon below first to complete the human-machine verification"
+	},
+	"u4qffs8": {
+		"zh-cn": "点击进行人机验证",
+		"en": "Click to conduct human-machine verification"
+	},
+	"1c8u0l6": {
+		"zh-cn": "拼图验证失败",
+		"en": "Puzzle verification failed"
+	},
+	"k2omx04": {
+		"zh-cn": "验证成功",
+		"en": "Verification successful"
+	},
+	"tgazdw8": {
+		"zh-cn": "验证失败，请重试",
+		"en": "Verification failed. Please try again"
+	},
+	"ito6ew4": {
+		"zh-cn": "重新验证",
+		"en": "Re-verification"
+	},
+	"7grhuz6": {
+		"zh-cn": "请输入用户名",
+		"en": "Please enter your username"
+	},
+	"hmxge3": {
+		"zh-cn": "用户名",
+		"en": "User name"
+	},
+	"gar1ro4": {
+		"zh-cn": "系统设置",
+		"en": "System Settings"
+	},
+	"gept2": {
+		"zh-cn": "左侧",
+		"en": "On the left"
+	},
+	"qq7m2": {
+		"zh-cn": "顶部",
+		"en": "Top"
+	},
+	"bhww4k4": {
+		"zh-cn": "填充测试",
+		"en": "Filling test"
+	},
+	"jt6v9e4": {
+		"zh-cn": "预览数据",
+		"en": "Preview data"
+	},
+	"edznpv4": {
+		"zh-cn": "清空数据",
+		"en": "Clear the data"
+	},
+	"k2v5uq4": {
+		"zh-cn": "验证表单",
+		"en": "Verification form"
+	},
+	"nrv82": {
+		"zh-cn": "表格",
+		"en": "Table"
+	},
+	"m8ru33": {
+		"zh-cn": "键值对",
+		"en": "Key-value pair"
+	},
+	"e2ri2": {
+		"zh-cn": "代码",
+		"en": "Code"
+	},
+	"l9tu2": {
+		"zh-cn": "空值",
+		"en": "Null value"
+	},
+	"fu3b1l4": {
+		"zh-cn": "空字符串",
+		"en": "Empty string"
+	},
+	"qlgk3": {
+		"zh-cn": " 项]",
+		"en": "Item"
+	},
+	"eju9g4": {
+		"zh-cn": " 属性}",
+		"en": "\"Attribute}"
+	},
+	"nnz2ny5": {
+		"zh-cn": "已填写字段",
+		"en": "Filled fields"
+	},
+	"ttk5sh5": {
+		"zh-cn": "待填写字段",
+		"en": "Fields to be filled in"
+	},
+	"dw1dv3": {
+		"zh-cn": "完成率",
+		"en": "Completion rate"
+	},
+	"k2xmqz4": {
+		"zh-cn": "验证错误",
+		"en": "Verification error"
+	},
+	"ciuk7r4": {
+		"zh-cn": "总字段数",
+		"en": "Total number of fields"
+	},
+	"e6uww3": {
+		"zh-cn": "已填写",
+		"en": "Filled in"
+	},
+	"idxyw3": {
+		"zh-cn": "空字段",
+		"en": "Empty field"
+	},
+	"neb8dcc": {
+		"zh-cn": "// 表单数据对象 - ",
+		"en": "// Form data object -"
+	},
+	"reigc22d": {
+		"zh-cn": ";\n\n// 数据统计\nconsole.log('总字段数:', Object.keys(formData).length);\nconsole.log('已填写字段:', ",
+		"en": ";\n\n// Data statistics\nconsole.log(' total number of fields :', Object.keys(formData).length);\nconsole.log(' Filled field :')"
+	},
+	"4gq8h5o": {
+		"zh-cn": ");\nconsole.log('完成率:', '",
+		"en": ");\nconsole.log(' completion rate :', '"
+	},
+	"2pxh3812": {
+		"zh-cn": "%');\n\n// 导出数据\nexport default formData;",
+		"en": "% ');\n\n// Export data\nexport default formData;"
+	},
+	"c72ecj4": {
+		"zh-cn": "已切换到",
+		"en": "Switched to"
+	},
+	"e7rpxw7": {
+		"zh-cn": "已填充测试数据",
+		"en": "The test data has been filled in"
+	},
+	"lwa3ri7": {
+		"zh-cn": "已清空所有数据",
+		"en": "All data has been cleared"
+	},
+	"9chhzvb": {
+		"zh-cn": "当前布局不支持验证功能",
+		"en": "The current layout does not support the verification function"
+	},
+	"pqqucx6": {
+		"zh-cn": "表单验证通过",
+		"en": "The form verification is successful."
+	},
+	"pr074a6": {
+		"zh-cn": "表单验证失败",
+		"en": "Form validation failed"
+	},
+	"9t7bem9": {
+		"zh-cn": "数据已复制到剪贴板",
+		"en": "The data has been copied to the clipboard"
+	},
+	"734w19e": {
+		"zh-cn": "复制失败，请手动选择文本复制",
+		"en": "Copy failed. Please manually select text copy"
+	},
+	"2havv87": {
+		"zh-cn": "数据已下载为 ",
+		"en": "The data has been downloaded as"
+	},
+	"wwg9io6": {
+		"zh-cn": "表单提交成功",
+		"en": "The form was submitted successfully."
+	},
+	"sn0nmly": {
+		"zh-cn": "表单选择器组件场景示例 - 展示所有8种布局类型的完整功能和配置选项",
+		"en": "Form selector component scenario example - Showcases the complete functionality and configuration options for all 8 layout types"
+	},
+	"e0hwzi8": {
+		"zh-cn": " 布局控制中心 ",
+		"en": "Layout Control Center"
+	},
+	"ktmrqyd": {
+		"zh-cn": "/ 实时配置表单布局和行为",
+		"en": "Real-time configuration of form layout and behavior"
+	},
+	"c8zgel4": {
+		"zh-cn": "布局类型",
+		"en": "Layout type"
+	},
+	"hka3ji4": {
+		"zh-cn": "表单配置",
+		"en": "Form configuration"
+	},
+	"dmtwm04": {
+		"zh-cn": "标签位置",
+		"en": "Label position"
+	},
+	"bzon9p4": {
+		"zh-cn": "实时验证",
+		"en": "Real-time verification"
+	},
+	"bzjxru4": {
+		"zh-cn": "实时统计",
+		"en": "Real-time statistics"
+	},
+	"75qcg6b": {
+		"zh-cn": "当前布局包含的字段总数",
+		"en": "The total number of fields included in the current layout"
+	},
+	"co26uk4": {
+		"zh-cn": "性能监控",
+		"en": "Performance monitoring"
+	},
+	"ec2elb4": {
+		"zh-cn": "渲染时间",
+		"en": "Rendering time"
+	},
+	"anx6po4": {
+		"zh-cn": "内存使用",
+		"en": "Memory usage"
+	},
+	"iyd955": {
+		"zh-cn": " - 演示",
+		"en": "\"Demonstration"
+	},
+	"gsbi3": {
+		"zh-cn": " 字段",
+		"en": "Field"
+	},
+	"hlrsym6": {
+		"zh-cn": "状态监控面板",
+		"en": "Status Monitoring panel"
+	},
+	"kdjtbl7": {
+		"zh-cn": "数据预览 - ",
+		"en": "Data Preview"
+	},
+	"qrknti6": {
+		"zh-cn": "复制中...",
+		"en": "\"Copying...\""
+	},
+	"kz5rzv5": {
+		"zh-cn": "📋 复制",
+		"en": "📋 copy"
+	},
+	"kyvxv55": {
+		"zh-cn": "💾 下载",
+		"en": "Download 💾"
+	},
+	"4xvrut4": {
+		"zh-cn": "✕ 关闭",
+		"en": "Youdaoplaceholder0 is closed"
+	},
+	"celxuvc": {
+		"zh-cn": "🔍 JSON 数据格式",
+		"en": "🔍 JSON data format"
+	},
+	"ajjhmw9": {
+		"zh-cn": "📊 表格数据格式",
+		"en": "📊 table data format"
+	},
+	"cgpu04": {
+		"zh-cn": " 个字段",
+		"en": "A field"
+	},
+	"d7r5da4": {
+		"zh-cn": "数据类型",
+		"en": "Data type"
+	},
+	"ed2xu3": {
+		"zh-cn": "当前值",
+		"en": "Current value"
+	},
+	"b4l5yr5": {
+		"zh-cn": "✓ 已填写",
+		"en": "✓ Filled in"
+	},
+	"65l9b75": {
+		"zh-cn": "○ 未填写",
+		"en": "\"〇 Not filled in"
+	},
+	"beq99e8": {
+		"zh-cn": "📝 键值对格式",
+		"en": "📝 key-value pair format"
+	},
+	"ixl2": {
+		"zh-cn": " 对",
+		"en": "right"
+	},
+	"bwnanbg": {
+		"zh-cn": "💻 JavaScript 对象",
+		"en": "💻 JavaScript object"
+	},
+	"cjlc9c7": {
+		"zh-cn": "ES6+ 格式",
+		"en": "ES6+ format"
+	},
+	"feqn214": {
+		"zh-cn": "真实姓名",
+		"en": "Real name"
+	},
+	"i4cdsu7": {
+		"zh-cn": "请输入真实姓名",
+		"en": "Please enter your real name"
+	},
+	"ewbd43": {
+		"zh-cn": "手机号",
+		"en": "Mobile phone number"
+	},
+	"7ji3y96": {
+		"zh-cn": "请输入手机号",
+		"en": "Please enter your mobile phone number"
+	},
+	"fcv4h37": {
+		"zh-cn": "请输入详细地址",
+		"en": "Please enter the detailed address"
+	},
+	"a71frv4": {
+		"zh-cn": "个人简介",
+		"en": "Personal Profile"
+	},
+	"jp7y0aa": {
+		"zh-cn": "请输入个人简介...",
+		"en": "Please enter your personal profile..."
+	},
+	"vyqfdkb": {
+		"zh-cn": "默认布局表单提交成功！",
+		"en": "The default layout form has been submitted successfully!"
+	},
+	"mc2jps9": {
+		"zh-cn": "请完善表单必填信息",
+		"en": "Please complete the required information on the form"
+	},
+	"ev0tfv6": {
+		"zh-cn": "提交中...",
+		"en": "Submission in progress..."
+	},
+	"cxdwox4": {
+		"zh-cn": "提交表单",
+		"en": "Submit form"
+	},
+	"x6g2vcc": {
+		"zh-cn": "表单验证失败，请检查输入",
+		"en": "Form validation failed. Please check the input"
+	},
+	"p86jql8": {
+		"zh-cn": " 内联布局配置 ",
+		"en": "Inline layout configuration"
+	},
+	"as1ahy4": {
+		"zh-cn": "元素间距",
+		"en": "Element spacing"
+	},
+	"c9fxnx4": {
+		"zh-cn": "对齐方式",
+		"en": "Alignment method"
+	},
+	"a6qf6h6": {
+		"zh-cn": "搜索中...",
+		"en": "Searching..."
+	},
+	"r1732": {
+		"zh-cn": "高级",
+		"en": "Advanced"
+	},
+	"19n4g58": {
+		"zh-cn": " 高级搜索选项 ",
+		"en": "Advanced Search Options"
+	},
+	"y4a5716": {
+		"zh-cn": "注册时间范围",
+		"en": "Registration time range"
+	},
+	"tv79n36": {
+		"zh-cn": "选择时间范围",
+		"en": "Select the time range"
+	},
+	"vkjl966": {
+		"zh-cn": "选择用户状态",
+		"en": "Select the user status"
+	},
+	"cygf3n4": {
+		"zh-cn": "排序方式",
+		"en": "Sorting method"
+	},
+	"tc3gj76": {
+		"zh-cn": "选择排序方式",
+		"en": "Selection sort method"
+	},
+	"5c14na5": {
+		"zh-cn": "正在验证 ",
+		"en": "Under verification"
+	},
+	"pie11r7": {
+		"zh-cn": "表单提交成功！",
+		"en": "The form has been submitted successfully!"
+	},
+	"vx0zhz5": {
+		"zh-cn": "草稿已保存",
+		"en": "The draft has been saved."
+	},
+	"6pz4vv6": {
+		"zh-cn": "草稿保存失败",
+		"en": "Draft saving failed"
+	},
+	"vx1qpl5": {
+		"zh-cn": "草稿已加载",
+		"en": "The draft has been loaded."
+	},
+	"65sqpl6": {
+		"zh-cn": "草稿加载失败",
+		"en": "Draft loading failed"
+	},
+	"inblv96": {
+		"zh-cn": "数据导出成功",
+		"en": "Data export was successful."
+	},
+	"incsmo6": {
+		"zh-cn": "数据导出失败",
+		"en": "Data export failed"
+	},
+	"oqiovg7": {
+		"zh-cn": "标签页表单配置",
+		"en": "TAB page form configuration"
+	},
+	"f2rsl57": {
+		"zh-cn": " 切换前验证 ",
+		"en": "Verification before switching"
+	},
+	"ojrv3g8": {
+		"zh-cn": " 显示标签描述 ",
+		"en": "Display label description"
+	},
+	"6d4he88": {
+		"zh-cn": " 显示操作按钮 ",
+		"en": "Display operation buttons"
+	},
+	"ivyhhu8": {
+		"zh-cn": " 显示计数徽章 ",
+		"en": "Display counting badge"
+	},
+	"4a45786": {
+		"zh-cn": " 启用动画 ",
+		"en": "Enable animation"
+	},
+	"3cgefh5": {
+		"zh-cn": "标签类型：",
+		"en": "Tag type:"
+	},
+	"m4jm2": {
+		"zh-cn": "线条",
+		"en": "\"Lines\""
+	},
+	"et522": {
+		"zh-cn": "卡片",
+		"en": "Card"
+	},
+	"ejjj2": {
+		"zh-cn": "分段",
+		"en": "\"Segmented"
+	},
+	"3hlx0l5": {
+		"zh-cn": "标签大小：",
+		"en": "Label size"
+	},
+	"i6n1": {
+		"zh-cn": "小",
+		"en": "small"
+	},
+	"hlz1": {
+		"zh-cn": "大",
+		"en": "big"
+	},
+	"3ivuim5": {
+		"zh-cn": "标签位置：",
+		"en": "Label position"
+	},
+	"nv4kr4": {
+		"zh-cn": " 验证 ",
+		"en": "Verification"
+	},
+	"hk2hez4": {
+		"zh-cn": "表单数据",
+		"en": "Form data"
+	},
+	"1pfstp6": {
+		"zh-cn": " 加载草稿 ",
+		"en": "Load the draft"
+	},
+	"uf2qh06": {
+		"zh-cn": " 导出数据 ",
+		"en": "Export data"
+	},
+	"edb2pl4": {
+		"zh-cn": "测试用户",
+		"en": "Test user"
+	},
+	"1hi4lp6": {
+		"zh-cn": "步骤表单配置",
+		"en": "Step form configuration"
+	},
+	"bj7ykv4": {
+		"zh-cn": "垂直布局",
+		"en": "Vertical layout"
+	},
+	"h0me755": {
+		"zh-cn": "验证后继续",
+		"en": "Continue after verification"
+	},
+	"oahxl86": {
+		"zh-cn": "显示步骤标题",
+		"en": "Display the title of the step"
+	},
+	"dlsbv75": {
+		"zh-cn": "步骤大小：",
+		"en": "Step size"
+	},
+	"km5s2x4": {
+		"zh-cn": "默认布局",
+		"en": "Default layout"
+	},
+	"atejbg4": {
+		"zh-cn": "内联布局",
+		"en": "Inline layout"
+	},
+	"ghtjvs4": {
+		"zh-cn": "网格布局",
+		"en": "Grid layout"
+	},
+	"azsdur4": {
+		"zh-cn": "卡片布局",
+		"en": "Card layout"
+	},
+	"38co9x5": {
+		"zh-cn": "标签页布局",
+		"en": "TAB page layout"
+	},
+	"e6qv984": {
+		"zh-cn": "步骤布局",
+		"en": "Step layout"
+	},
+	"attwhi4": {
+		"zh-cn": "动态布局",
+		"en": "Dynamic layout"
+	},
+	"opye2xx": {
+		"zh-cn": "标准的垂直表单布局，适用于大多数场景，支持富文本编辑器等复杂组件。",
+		"en": "The standard vertical form layout is suitable for most scenarios and supports complex components such as rich text editors."
+	},
+	"hhvtelw": {
+		"zh-cn": "水平排列的表单布局，适用于简单表单或搜索条件，自动过滤复杂组件。",
+		"en": "The horizontally arranged form layout is suitable for simple forms or search conditions and automatically filters out complex components."
+	},
+	"fett48v": {
+		"zh-cn": "基于栅格系统的响应式布局，可以灵活控制每个表单项的宽度和位置。",
+		"en": "The responsive layout based on the grid system can flexibly control the width and position of each form item."
+	},
+	"m9qwekt": {
+		"zh-cn": "将表单项按功能分组，每个分组显示在独立的卡片中，层次清晰。",
+		"en": "Group the form items by function, and display each group on an independent card, with clear hierarchy."
+	},
+	"6hkafzq": {
+		"zh-cn": "将表单项分散到不同的标签页中，适用于内容较多的表单。",
+		"en": "Distributing form items across different tabs is suitable for forms with a large amount of content."
+	},
+	"8712vxo": {
+		"zh-cn": "引导用户按步骤填写表单，适用于注册、向导等场景。",
+		"en": "Guide users to fill in the form step by step, suitable for scenarios such as registration and guidance."
+	},
+	"43hv08n": {
+		"zh-cn": "支持动态添加、删除、显示/隐藏字段的表单布局。",
+		"en": "A form layout that supports dynamic addition, deletion, display/hiding of fields."
+	},
+	"ihvryk": {
+		"zh-cn": "支持自定义渲染效果和高级控件的表单布局。",
+		"en": "A form layout that supports custom rendering effects and advanced controls."
+	},
+	"7u9v6oe": {
+		"zh-cn": "西安市未央区某某街道188号",
+		"en": "No. 188, XX Street, Weiyang District, Xi 'an City"
+	},
+	"wws6rjy": {
+		"zh-cn": "<p>这是<strong>富文本编辑器</strong>示例</p>",
+		"en": "This is an example of a rich text editor."
+	},
+	"h85peq7": {
+		"zh-cn": "已加载示例数据",
+		"en": "Sample data has been loaded"
+	},
+	"3yayx5b": {
+		"zh-cn": "网格布局表单提交成功！",
+		"en": "The grid layout form has been submitted successfully!"
+	},
+	"jt5kdd4": {
+		"zh-cn": "预览布局",
+		"en": "Preview layout"
+	},
+	"dk6ul74": {
+		"zh-cn": "栅格系统",
+		"en": "Grid system"
+	},
+	"g7r1": {
+		"zh-cn": "列",
+		"en": "column"
+	},
+	"ji3e294": {
+		"zh-cn": "间距大小",
+		"en": "Spacing size"
+	},
+	"cvrew3": {
+		"zh-cn": "响应式",
+		"en": "Reactive"
+	},
+	"e6c0b3": {
+		"zh-cn": "已启用",
+		"en": "Enabled"
+	},
+	"ecojd3": {
+		"zh-cn": "已禁用",
+		"en": "Disabled"
+	},
+	"bugxpl6": {
+		"zh-cn": "网格布局配置",
+		"en": "Grid layout configuration"
+	},
+	"djzexc4": {
+		"zh-cn": "栅格列数",
+		"en": "Number of grid columns"
+	},
+	"gi3c8k4": {
+		"zh-cn": "网格间距",
+		"en": "Grid spacing"
+	},
+	"je2t7b6": {
+		"zh-cn": "网格预览 (",
+		"en": "Grid Preview"
+	},
+	"avn6y64": {
+		"zh-cn": "列系统)",
+		"en": "Column system"
+	},
+	"bui7xo6": {
+		"zh-cn": "网格布局预览",
+		"en": "Grid layout Preview"
+	},
+	"bhbvv25": {
+		"zh-cn": " 占用: ",
+		"en": "Occupation"
+	},
+	"emfd3": {
+		"zh-cn": " 列 ",
+		"en": "column"
+	},
+	"cg0a6n5": {
+		"zh-cn": " 宽度: ",
+		"en": "Width"
+	},
+	"18juqo6": {
+		"zh-cn": "字段更新: ",
+		"en": "Field update"
+	},
+	"ubhk8e": {
+		"zh-cn": "表单验证失败，请检查填写内容",
+		"en": "The form validation failed. Please check the filled content"
+	},
+	"vpnioc": {
+		"zh-cn": "🎉 员工信息提交成功！",
+		"en": "🎉 employee information submission successful!"
+	},
+	"byiles4": {
+		"zh-cn": "字段: ",
+		"en": "Field"
+	},
+	"rxq9fe6": {
+		"zh-cn": "个，数据: ",
+		"en": "One, data:"
+	},
+	"ffu1": {
+		"zh-cn": "个",
+		"en": "a"
+	},
+	"6wjzkoc": {
+		"zh-cn": "请先在设计模式中添加字段",
+		"en": "Please add fields in the design pattern first"
+	},
+	"sbvkr1a": {
+		"zh-cn": "没有找到可填充的字段",
+		"en": "No fillable fields were found"
+	},
+	"e4oew3": {
+		"zh-cn": "已为 ",
+		"en": "\"Already\""
+	},
+	"hahlyia": {
+		"zh-cn": " 个字段填充测试数据",
+		"en": "Fill in the test data for each field"
+	},
+	"nzsh3a5": {
+		"zh-cn": "表单已清空",
+		"en": "The form has been cleared."
+	},
+	"ftnmfz9": {
+		"zh-cn": "表单不可用或无字段",
+		"en": "The form is unavailable or has no fields"
+	},
+	"mav93t8": {
+		"zh-cn": "没有可提交的数据",
+		"en": "There is no data to submit"
+	},
+	"c8fho04": {
+		"zh-cn": "已导出 ",
+		"en": "Exported"
+	},
+	"cl6kii8": {
+		"zh-cn": " 个字段的数据 ",
+		"en": "The data of each field"
+	},
+	"bnhuko5": {
+		"zh-cn": "(含数据)",
+		"en": "(Including data"
+	},
+	"b2pyt75": {
+		"zh-cn": "(仅结构)",
+		"en": "(Structure only"
+	},
+	"wblxrf7": {
+		"zh-cn": "🔧 演示操作",
+		"en": "🔧 demonstration operation"
+	},
+	"cg40ec5": {
+		"zh-cn": " 字段: ",
+		"en": "Field"
+	},
+	"doqy845": {
+		"zh-cn": " 数据: ",
+		"en": "Data"
+	},
+	"kcp1": {
+		"zh-cn": "有",
+		"en": "have"
+	},
+	"7jeah99": {
+		"zh-cn": " 🔍 调试状态 ",
+		"en": "🔍 debugging status"
+	},
+	"q9v6edb": {
+		"zh-cn": " 🔄 填充测试数据 ",
+		"en": "🔄 fill in test data"
+	},
+	"c0kyo7a": {
+		"zh-cn": " 🗑️ 清空表单 ",
+		"en": "🗑️ clear the form"
+	},
+	"4wp91f8": {
+		"zh-cn": " ✅ 验证表单 ",
+		"en": "✅ verification form"
+	},
+	"gsc10i9": {
+		"zh-cn": " 🚀 提交表单 ",
+		"en": "🚀 Submit form"
+	},
+	"n4ccph9": {
+		"zh-cn": " 📤 导出数据 ",
+		"en": "📤 export data"
+	},
+	"l3qca59": {
+		"zh-cn": "📊 实时数据预览",
+		"en": "📊 real-time data preview"
+	},
+	"cddom04": {
+		"zh-cn": "当前数据",
+		"en": "Current data"
+	},
+	"axc64q4": {
+		"zh-cn": "原始数据",
+		"en": "Original data"
+	},
+	"bz2le14": {
+		"zh-cn": "字段状态",
+		"en": "Field status"
+	},
+	"fqh7bn6": {
+		"zh-cn": "实际字段 (",
+		"en": "Actual field"
+	},
+	"bg6or3": {
+		"zh-cn": "个):",
+		"en": "(One):"
+	},
+	"ft2y7r6": {
+		"zh-cn": "暂无表单数据",
+		"en": "There is no form data for the time being"
+	},
+	"de39ni8": {
+		"zh-cn": " 填充测试数据 ",
+		"en": "Fill in the test data"
+	},
+	"2j0utw5": {
+		"zh-cn": "请输入邮箱",
+		"en": "Please enter your email address."
+	},
+	"eae82": {
+		"zh-cn": "其他",
+		"en": "Others"
+	},
+	"g4g82": {
+		"zh-cn": "居中",
+		"en": "In the middle"
+	},
+	"e7n4t3": {
+		"zh-cn": "左对齐",
+		"en": "Left alignment"
+	},
+	"cr6i23": {
+		"zh-cn": "右对齐",
+		"en": "Right alignment"
+	},
+	"edb1874": {
+		"zh-cn": "活跃用户",
+		"en": "Active users"
+	},
+	"e5ola3": {
+		"zh-cn": "已停用",
+		"en": "Discontinued"
+	},
+	"eqq623": {
+		"zh-cn": "待验证",
+		"en": "To be verified"
+	},
+	"y4irmp6": {
+		"zh-cn": "注册时间倒序",
+		"en": "The registration time is in reverse order"
+	},
+	"y4e4cy6": {
+		"zh-cn": "注册时间正序",
+		"en": "Registration time in chronological order"
+	},
+	"xpl9o06": {
+		"zh-cn": "用户名A-Z",
+		"en": "User name: A-Z"
+	},
+	"xpls6o6": {
+		"zh-cn": "用户名Z-A",
+		"en": "User name: Z-A"
+	},
+	"biklmm8": {
+		"zh-cn": "填写个人基本信息",
+		"en": "Fill in your personal basic information"
+	},
+	"gphnfh4": {
+		"zh-cn": "联系方式",
+		"en": "Contact information"
+	},
+	"odzbkh9": {
+		"zh-cn": "填写联系方式和地址",
+		"en": "Fill in your contact information and address"
+	},
+	"bw89m74": {
+		"zh-cn": "安全设置",
+		"en": "Security Settings"
+	},
+	"lyjefv6": {
+		"zh-cn": "设置登录密码",
+		"en": "Set the login password"
+	},
+	"frrfwq4": {
+		"zh-cn": "确认提交",
+		"en": "Confirm submission"
+	},
+	"4ligsa9": {
+		"zh-cn": "确认信息并完成注册",
+		"en": "Confirm the information and complete the registration"
+	},
+	"ic1keg4": {
+		"zh-cn": "身份证号",
+		"en": "Id number"
+	},
+	"f71ggf7": {
+		"zh-cn": "请输入身份证号",
+		"en": "Please enter your ID number"
+	},
+	"atvjsv4": {
+		"zh-cn": "出生日期",
+		"en": "Date of birth"
+	},
+	"ctufzt4": {
+		"zh-cn": "手机号码",
+		"en": "Mobile phone number"
+	},
+	"kp8kv27": {
+		"zh-cn": "请输入手机号码",
+		"en": "Please enter your mobile phone number"
+	},
+	"gpf4vr4": {
+		"zh-cn": "联系地址",
+		"en": "Contact Address"
+	},
+	"c6da7j4": {
+		"zh-cn": "工作单位",
+		"en": "Workplace"
+	},
+	"lcpqnc7": {
+		"zh-cn": "请输入工作单位",
+		"en": "Please enter your workplace"
+	},
+	"fce1f94": {
+		"zh-cn": "登录密码",
+		"en": "Login password"
+	},
+	"frqaup4": {
+		"zh-cn": "确认密码",
+		"en": "Confirm password"
+	},
+	"pyymjc7": {
+		"zh-cn": "请再次输入密码",
+		"en": "Please enter the password again"
+	},
+	"epap619": {
+		"zh-cn": "两次密码输入不一致",
+		"en": "The two password entries are inconsistent"
+	},
+	"bx4y9t4": {
+		"zh-cn": "密保问题",
+		"en": "Security issue"
+	},
+	"lly2l27": {
+		"zh-cn": "请输入密保问题",
+		"en": "Please enter the security question"
+	},
+	"bx05u34": {
+		"zh-cn": "密保答案",
+		"en": "\"Confidential answer\""
+	},
+	"lm2v0s7": {
+		"zh-cn": "请输入密保答案",
+		"en": "Please enter the security answer"
+	},
+	"b097uq4": {
+		"zh-cn": "同意协议",
+		"en": "Agree to the agreement"
+	},
+	"jecnudd": {
+		"zh-cn": "我已阅读并同意《用户协议》",
+		"en": "I have read and agreed to the \"User Agreement\""
+	},
+	"azsm8rd": {
+		"zh-cn": "我已阅读并同意《隐私政策》",
+		"en": "I have read and agreed to the \"Privacy Policy\""
+	},
+	"exq72": {
+		"zh-cn": "协议",
+		"en": "Agreement"
+	},
+	"99vygs6": {
+		"zh-cn": "接收邮件通知",
+		"en": "Receive email notifications"
+	},
+	"w16dupb": {
+		"zh-cn": "请输入备注信息（可选）",
+		"en": "Please enter the remarks information (optional)"
+	},
+	"b1c7am4": {
+		"zh-cn": "员工编号",
+		"en": "Employee ID"
+	},
+	"mhqtk97": {
+		"zh-cn": "请输入员工编号",
+		"en": "Please enter the employee number"
+	},
+	"aminwud": {
+		"zh-cn": "格式: EMP123456",
+		"en": "Format: EMP123456"
+	},
+	"umhc527": {
+		"zh-cn": "请选择出生日期",
+		"en": "Please select your date of birth"
+	},
+	"bz037e4": {
+		"zh-cn": "居住地址",
+		"en": "Residential address"
+	},
+	"cscota4": {
+		"zh-cn": "所属部门",
+		"en": "Department to which"
+	},
+	"m9a92": {
+		"zh-cn": "职位",
+		"en": "Position"
+	},
+	"2eg6iw5": {
+		"zh-cn": "请选择职位",
+		"en": "Please select the position"
+	},
+	"nc6bvi5": {
+		"zh-cn": "全栈工程师",
+		"en": "Full-stack engineer"
+	},
+	"2j2mt95": {
+		"zh-cn": "请输入薪资",
+		"en": "Please enter the salary."
+	},
+	"cynk444": {
+		"zh-cn": "技能标签",
+		"en": "Skill Tag"
+	},
+	"i7l89t4": {
+		"zh-cn": "设计能力",
+		"en": "Design ability"
+	},
+	"gfratd4": {
+		"zh-cn": "绩效评分",
+		"en": "Performance scoring"
+	},
+	"bj3ay74": {
+		"zh-cn": "在职状态",
+		"en": "\"Employed status\""
+	},
+	"gn6ztke": {
+		"zh-cn": "北京市朝阳区某某街道123号",
+		"en": "No. 123, XX Street, Chaoyang District, Beijing"
+	},
+	"dnl6l8e": {
+		"zh-cn": "上海市浦东新区某某路456号",
+		"en": "No. 456, xx Road, Pudong New Area, Shanghai"
+	},
+	"bduv9xe": {
+		"zh-cn": "深圳市南山区某某大道789号",
+		"en": "No. 789, XX Avenue, Nanshan District, Shenzhen City"
+	},
+	"q884y3l": {
+		"zh-cn": "技术能力强，工作认真负责，团队合作能力佳。",
+		"en": "Strong technical skills, serious and responsible at work, and excellent teamwork ability."
+	},
+	"oxxfq68": {
+		"zh-cn": "员工信息提交成功",
+		"en": "The employee information has been submitted successfully"
+	},
+	"1hqu3": {
+		"zh-cn": "12列",
+		"en": "\"12 columns"
+	},
+	"1hw03": {
+		"zh-cn": "18列",
+		"en": "Column 18"
+	},
+	"1ij93": {
+		"zh-cn": "24列",
+		"en": "Column 24"
+	},
+	"crb6xo4": {
+		"zh-cn": "所在城市",
+		"en": "The city where it is located"
+	},
+	"i67wds4": {
+		"zh-cn": "详细地址",
+		"en": "Detailed address"
+	},
+	"iodtbw4": {
+		"zh-cn": "邮政编码",
+		"en": "Postal code"
+	},
+	"2j0u5r5": {
+		"zh-cn": "请输入邮编",
+		"en": "Please enter the postal code"
+	},
+	"2ekjhr5": {
+		"zh-cn": "请选择日期",
+		"en": "Please select the date"
+	},
+	"m91q2": {
+		"zh-cn": "职业",
+		"en": "Occupation"
+	},
+	"2eg6rf5": {
+		"zh-cn": "请选择职业",
+		"en": "Please select a career"
+	},
+	"eekbo3": {
+		"zh-cn": "微信号",
+		"en": "Wechat ID"
+	},
+	"7jzuzp6": {
+		"zh-cn": "请输入微信号",
+		"en": "Please enter your wechat ID"
+	},
+	"av59wb4": {
+		"zh-cn": "兴趣爱好",
+		"en": "Hobbies and interests"
+	},
+	"qaae2": {
+		"zh-cn": "阅读",
+		"en": "Read"
+	},
+	"q9x92": {
+		"zh-cn": "音乐",
+		"en": "Music"
+	},
+	"owyg2": {
+		"zh-cn": "运动",
+		"en": "Sports"
+	},
+	"i23r2": {
+		"zh-cn": "旅行",
+		"en": "Travel"
+	},
+	"i8osff4": {
+		"zh-cn": "订阅邮件",
+		"en": "Subscribe to our email"
+	},
+	"jzsgre5": {
+		"zh-cn": "满意度评分",
+		"en": "Satisfaction score"
+	},
+	"jrza244": {
+		"zh-cn": "音量设置",
+		"en": "Volume setting"
+	},
+	"blh1h04": {
+		"zh-cn": "基础信息",
+		"en": "Basic information"
+	},
+	"u0diav9": {
+		"zh-cn": "用户的基本身份信息",
+		"en": "The user's basic identity information"
+	},
+	"8zurn79": {
+		"zh-cn": "联系方式和地址信息",
+		"en": "Contact information and address details"
+	},
+	"aifri64": {
+		"zh-cn": "偏好设置",
+		"en": "Preference Settings"
+	},
+	"8ia68y9": {
+		"zh-cn": "个人偏好和系统设置",
+		"en": "Personal preferences and system Settings"
+	},
+	"bz7ywv4": {
+		"zh-cn": "字段配置",
+		"en": "Field configuration"
+	},
+	"wwhga36": {
+		"zh-cn": "表单提交失败",
+		"en": "The form submission failed."
+	},
+	"i8m2xs4": {
+		"zh-cn": "调试信息",
+		"en": "Debugging information"
+	},
+	"gvsj2": {
+		"zh-cn": "底部",
+		"en": "Bottom"
+	},
+	"epsk2": {
+		"zh-cn": "右侧",
+		"en": "Right side"
+	},
+	"rwerp3b": {
+		"zh-cn": "填写用户的基本个人信息",
+		"en": "Fill in the user's basic personal information"
+	},
+	"g4gd9sc": {
+		"zh-cn": "填写联系电话、邮箱等信息",
+		"en": "Fill in your contact number, email address and other information"
+	},
+	"i7qcgg4": {
+		"zh-cn": "账户安全",
+		"en": "Account security"
+	},
+	"jbass0b": {
+		"zh-cn": "设置登录密码和安全问题",
+		"en": "Set a login password and security questions"
+	},
+	"jja124a": {
+		"zh-cn": "个性化设置和通知偏好",
+		"en": "Personalized Settings and notification preferences"
+	},
+	"jask224": {
+		"zh-cn": "附加信息",
+		"en": "Additional information"
+	},
+	"8we5dt9": {
+		"zh-cn": "其他补充信息和备注",
+		"en": "Other supplementary information and remarks"
+	},
+	"i1y32": {
+		"zh-cn": "昵称",
+		"en": "Nickname"
+	},
+	"2j83985": {
+		"zh-cn": "请输入昵称",
+		"en": "Please enter your nickname."
+	},
+	"g0682": {
+		"zh-cn": "学历",
+		"en": "Educational background"
+	},
+	"nmpkdh5": {
+		"zh-cn": "高中及以下",
+		"en": "High school and below"
+	},
+	"dy5a2": {
+		"zh-cn": "专科",
+		"en": "Junior college"
+	},
+	"i7tx2": {
+		"zh-cn": "本科",
+		"en": "Undergraduate"
+	},
+	"kyeu2": {
+		"zh-cn": "硕士",
+		"en": "Master's degree"
+	},
+	"enyp2": {
+		"zh-cn": "博士",
+		"en": "Doctor"
+	},
+	"f69pdq4": {
+		"zh-cn": "电子邮箱",
+		"en": "Email address"
+	},
+	"ictbh57": {
+		"zh-cn": "请输入电子邮箱",
+		"en": "Please enter your email address"
+	},
+	"1wbuy4": {
+		"zh-cn": "QQ号码",
+		"en": "QQ number"
+	},
+	"xh6ozx7": {
+		"zh-cn": "请输入QQ号码",
+		"en": "Please enter the QQ number"
+	},
+	"ldc62o9": {
+		"zh-cn": "请输入详细联系地址",
+		"en": "Please enter your detailed contact address"
+	},
+	"i6ozfm7": {
+		"zh-cn": "请输入登录密码",
+		"en": "Please enter your login password"
+	},
+	"lytqoo7": {
+		"zh-cn": "请设置密保问题",
+		"en": "Please set the security question"
+	},
+	"i7yept4": {
+		"zh-cn": "语言偏好",
+		"en": "Language preference"
+	},
+	"g99vos4": {
+		"zh-cn": "繁体中文",
+		"en": "Traditional Chinese"
+	},
+	"fflhz3": {
+		"zh-cn": "日本語",
+		"en": "\"Japanese\""
+	},
+	"hssk2": {
+		"zh-cn": "时区",
+		"en": "Time zone"
+	},
+	"kmp2ulc": {
+		"zh-cn": "北京时间 (UTC+8)",
+		"en": "Beijing Time (UTC+8"
+	},
+	"rpqhcdc": {
+		"zh-cn": "东京时间 (UTC+9)",
+		"en": "Tokyo Time (UTC+9"
+	},
+	"522kc4c": {
+		"zh-cn": "纽约时间 (UTC-5)",
+		"en": "New York Time (UTC-5"
+	},
+	"fjc2zqc": {
+		"zh-cn": "伦敦时间 (UTC+0)",
+		"en": "London Time (UTC+0"
+	},
+	"ioju7v4": {
+		"zh-cn": "通知设置",
+		"en": "Notification Settings"
+	},
+	"il776b4": {
+		"zh-cn": "邮件通知",
+		"en": "Email notification"
+	},
+	"fgxpjz4": {
+		"zh-cn": "短信通知",
+		"en": "SMS notification"
+	},
+	"ceudz24": {
+		"zh-cn": "微信通知",
+		"en": "Wechat notification"
+	},
+	"cf3gj14": {
+		"zh-cn": "应用推送",
+		"en": "Application push"
+	},
+	"eetoj34": {
+		"zh-cn": "深色模式",
+		"en": "Dark mode"
+	},
+	"gqdz894": {
+		"zh-cn": "自动保存",
+		"en": "\"Automatic save"
+	},
+	"2j3vx25": {
+		"zh-cn": "请输入职位",
+		"en": "Please enter the position"
+	},
+	"nc1l307": {
+		"zh-cn": "请输入个人简介",
+		"en": "Please enter your personal profile"
+	},
+	"g6i92": {
+		"zh-cn": "小张",
+		"en": "Xiao Zhang"
+	},
+	"d8uhea4": {
+		"zh-cn": "是否激活",
+		"en": "Whether activated"
+	},
+	"o81u2": {
+		"zh-cn": "评分",
+		"en": "\"Score\""
+	},
+	"kcezl47": {
+		"zh-cn": "请输入描述信息",
+		"en": "Please enter the description information"
+	},
+	"k2ng5l4": {
+		"zh-cn": "验证失败",
+		"en": "Verification failed"
+	},
+	"eykj26": {
+		"zh-cn": "字段添加成功",
+		"en": "The field was added successfully."
+	},
+	"1dgaxi6": {
+		"zh-cn": "字段移除成功",
+		"en": "The field was removed successfully"
+	},
+	"8eldw6": {
+		"zh-cn": "字段状态切换",
+		"en": "Field status switching"
+	},
+	"1p3kdj9": {
+		"zh-cn": "所有动态字段已清空",
+		"en": "All dynamic fields have been cleared"
+	},
+	"au2ti24": {
+		"zh-cn": "动态配置",
+		"en": "Dynamic configuration"
+	},
+	"ctnljb4": {
+		"zh-cn": "所有字段",
+		"en": "All fields"
+	},
+	"fd3d4i4": {
+		"zh-cn": "电话号码",
+		"en": "Telephone number"
+	},
+	"i5znqd7": {
+		"zh-cn": "请输入电话号码",
+		"en": "Please enter your phone number"
+	},
+	"wjwz9v7": {
+		"zh-cn": "请选择所在城市",
+		"en": "Please select your city"
+	},
+	"u9ei7c9": {
+		"zh-cn": "顶部混合（侧边优）",
+		"en": "Top mixing (Side optimization"
+	},
+	"hd1czx8": {
+		"zh-cn": "顶部混合（侧优）",
+		"en": "Top mixing (Side optimization"
+	},
+	"rzsos29": {
+		"zh-cn": "进度条组件场景示例",
+		"en": "An example of the progress bar component scenario"
+	},
+	"4lhlqo5": {
+		"zh-cn": "基础进度条",
+		"en": "Basic progress bar"
+	},
+	"m7fl8l1r": {
+		"zh-cn": " 用于展示操作进度，如文件上传、数据加载等场景。支持动画效果，让进度展示更加生动。 适用于需要明确显示进度百分比的线性任务。 ",
+		"en": "It is used to display the operation progress, such as in scenarios like file upload and data loading. Support animation effects to make the progress display more vivid. It is suitable for linear tasks that require a clear display of the progress percentage."
+	},
+	"29l1ja5": {
+		"zh-cn": "圆形进度条",
+		"en": "Circular progress bar"
+	},
+	"z2nzev1t": {
+		"zh-cn": " 适用于在限定空间内展示进度的场景，如任务完成度、项目进度等。圆形设计更加紧凑美观， 适合在卡片、仪表板等空间受限的界面中使用。 ",
+		"en": "It is suitable for scenarios where progress is displayed within a limited space, such as task completion degree, project progress, etc. The circular design is more compact and aesthetically pleasing, making it suitable for use in interfaces with limited space such as cards and dashboards."
+	},
+	"bcm28m4": {
+		"zh-cn": "圈圈赛跑",
+		"en": "Loop race"
+	},
+	"26m8to1q": {
+		"zh-cn": " 多圆环动态进度展示，适用于多任务并行处理、多维度数据加载等场景。动画效果增强用户体验， 可以同时对比多个任务的完成情况。 ",
+		"en": "Multi-ring dynamic progress display, suitable for scenarios such as multi-task parallel processing and multi-dimensional data loading. The animation effect enhances the user experience and enables simultaneous comparison of the completion status of multiple tasks."
+	},
+	"3aiy395": {
+		"zh-cn": "圈圈赛跑！",
+		"en": "Lap race!"
+	},
+	"cbkotp5": {
+		"zh-cn": "双环进度条",
+		"en": "Double-loop progress bar"
+	},
+	"678o4j20": {
+		"zh-cn": " 使用 NaiveUI 原生组件的双环进度条，适用于需要同时展示两个相关指标的场景， 如内存使用率与CPU使用率、完成任务与总任务等对比展示。 ",
+		"en": "The dual-loop progress bar using the native components of NaiveUI is suitable for scenarios where two related indicators need to be displayed simultaneously, such as the comparison display of memory usage and CPU usage, completed tasks and total tasks, etc."
+	},
+	"rnudto6": {
+		"zh-cn": "仪表盘进度条",
+		"en": "Dashboard progress bar"
+	},
+	"6ob7341r": {
+		"zh-cn": " 仪表盘形式展示进度，适用于系统性能监控、资源使用率等场景。直观展示当前状态， 仪表盘的显示效果，适合监控类应用的数据展示。 ",
+		"en": "The progress is displayed in the form of a dashboard, which is suitable for scenarios such as system performance monitoring and resource utilization. Intuitively display the current status, the display effect of the dashboard, and suitable for data display in monitoring applications."
+	},
+	"cxegg74": {
+		"zh-cn": "提交订单",
+		"en": "Submit the order"
+	},
+	"ae6lit4": {
+		"zh-cn": "付款成功",
+		"en": "Payment successful"
+	},
+	"b40cwk4": {
+		"zh-cn": "商品出库",
+		"en": "Goods out of the warehouse"
+	},
+	"fya4ul4": {
+		"zh-cn": "等待收货",
+		"en": "Waiting for the delivery"
+	},
+	"ftvdnl6": {
+		"zh-cn": "收集用户需求",
+		"en": "Collect user demands"
+	},
+	"28bav4": {
+		"zh-cn": "UI设计",
+		"en": "UI design"
+	},
+	"p5uccb6": {
+		"zh-cn": "界面原型设计",
+		"en": "Interface prototype design"
+	},
+	"o521pl8": {
+		"zh-cn": "正在开发中...",
+		"en": "Under development..."
+	},
+	"edgqzt4": {
+		"zh-cn": "测试阶段",
+		"en": "Testing phase"
+	},
+	"djxvdb6": {
+		"zh-cn": "等待开发完成",
+		"en": "Wait for the development to be completed"
+	},
+	"it0ovz4": {
+		"zh-cn": "部署上线",
+		"en": "Deployment and launch"
+	},
+	"ffxza7": {
+		"zh-cn": "发布到生产环境",
+		"en": "Publish to the production environment"
+	},
+	"cxay9k4": {
+		"zh-cn": "提交申请",
+		"en": "Submit the application"
+	},
+	"cbu8hp4": {
+		"zh-cn": "张三提交",
+		"en": "Submitted by Zhang SAN"
+	},
+	"adrqym4": {
+		"zh-cn": "主管审批",
+		"en": "Approval by the supervisor"
+	},
+	"awz5vy5": {
+		"zh-cn": "李四已批准",
+		"en": "Li Si has approved"
+	},
+	"gh8c3z4": {
+		"zh-cn": "经理审批",
+		"en": "Manager's approval"
+	},
+	"z50u225": {
+		"zh-cn": "王五已批准",
+		"en": "Wang Wu has approved"
+	},
+	"1rdm34": {
+		"zh-cn": "HR备案",
+		"en": "HR filing"
+	},
+	"dljhn3": {
+		"zh-cn": "处理中",
+		"en": "In processing"
+	},
+	"fy7uyl4": {
+		"zh-cn": "等待备案",
+		"en": "Awaiting filing"
+	},
+	"argjkk4": {
+		"zh-cn": "创建项目",
+		"en": "Create a project"
+	},
+	"cc1n0v4": {
+		"zh-cn": "开发功能",
+		"en": "Development function"
+	},
+	"ag7xpe4": {
+		"zh-cn": "代码审查",
+		"en": "Code review"
+	},
+	"it1hss4": {
+		"zh-cn": "部署发布",
+		"en": "Deployment and release"
+	},
+	"are5wy4": {
+		"zh-cn": "创建订单",
+		"en": "Create an order"
+	},
+	"v6zr56": {
+		"zh-cn": "订单创建成功",
+		"en": "The order was created successfully."
+	},
+	"d3nnek4": {
+		"zh-cn": "支付订单",
+		"en": "Payment order"
+	},
+	"d3fdy54": {
+		"zh-cn": "支付失败",
+		"en": "Payment failed"
+	},
+	"iterm44": {
+		"zh-cn": "重新支付",
+		"en": "Re-payment"
+	},
+	"fy9sdh4": {
+		"zh-cn": "等待支付",
+		"en": "Waiting for payment"
+	},
+	"hyo7qv4": {
+		"zh-cn": "订单完成",
+		"en": "Order completed"
+	},
+	"fy7x7i4": {
+		"zh-cn": "等待处理",
+		"en": "Waiting for processing"
+	},
+	"bhtdq44": {
+		"zh-cn": "填写信息",
+		"en": "Fill in the information"
+	},
+	"eykqqf11": {
+		"zh-cn": "请填写您的基本信息，包括用户名、邮箱和密码。所有带 * 的字段都是必填项。",
+		"en": "Please fill in your basic information, including your username, email address and password. All fields marked with * are required."
+	},
+	"k2wshk4": {
+		"zh-cn": "验证邮箱",
+		"en": "Verify email"
+	},
+	"gbgxdpx": {
+		"zh-cn": "我们已经发送了一封验证邮件到您的邮箱，请点击邮件中的链接完成验证。",
+		"en": "We have sent a verification email to your mailbox. Please click on the link in the email to complete the verification."
+	},
+	"bwvyvh4": {
+		"zh-cn": "完善资料",
+		"en": "Improve the materials"
+	},
+	"reu4krq": {
+		"zh-cn": "请完善您的个人资料，这将帮助我们为您提供更好的服务。",
+		"en": "Please complete your personal information. This will help us provide you with better services."
+	},
+	"e2x6wj4": {
+		"zh-cn": "注册成功",
+		"en": "Registration successful"
+	},
+	"exohoxq": {
+		"zh-cn": "恭喜！您已经成功注册，现在可以开始使用我们的服务了。",
+		"en": "Congratulations! You have successfully registered and can now start using our services."
+	},
+	"ab2a8p5": {
+		"zh-cn": "注册完成！",
+		"en": "Registration completed!"
+	},
+	"84uzqnd": {
+		"zh-cn": " 进度步骤条组件场景示例 ",
+		"en": "Example of the progress step bar component scenario"
+	},
+	"hyx0m64": {
+		"zh-cn": "订单跟踪",
+		"en": "Order tracking"
+	},
+	"jqfmo04": {
+		"zh-cn": "项目进度",
+		"en": "Project progress"
+	},
+	"bz0d7m4": {
+		"zh-cn": "审批流程",
+		"en": "Approval process"
+	},
+	"ljkxvb5": {
+		"zh-cn": "切换到第 ",
+		"en": "Switch to the first"
+	},
+	"lz92": {
+		"zh-cn": " 步",
+		"en": "step"
+	},
+	"mmmoki5": {
+		"zh-cn": "自定义图标",
+		"en": "Custom icon"
+	},
+	"ubhoe16": {
+		"zh-cn": "包含错误状态",
+		"en": "Contains error status"
+	},
+	"e2zb7y4": {
+		"zh-cn": "注册流程",
+		"en": "Registration process"
+	},
+	"mrhp3": {
+		"zh-cn": " 至 ",
+		"en": "to"
+	},
+	"1ej2d87": {
+		"zh-cn": "所有日期已清空",
+		"en": "All dates have been cleared"
+	},
+	"t52mbs7": {
+		"zh-cn": "已设置默认日期",
+		"en": "The default date has been set"
+	},
+	"7sik0k9": {
+		"zh-cn": "数据已输出到控制台",
+		"en": "The data has been output to the console"
+	},
+	"o5yfuib": {
+		"zh-cn": "日期选择器组件场景示例",
+		"en": "Date picker component scenario example"
+	},
+	"qpnzho8": {
+		"zh-cn": "1. 单日期选择",
+		"en": "1. Single date selection"
+	},
+	"a0sz5o7": {
+		"zh-cn": "选择的日期: ",
+		"en": "Selected date"
+	},
+	"1hpldw9": {
+		"zh-cn": "2. 日期时间选择",
+		"en": "2. Date and time selection"
+	},
+	"x2vmbz7": {
+		"zh-cn": "请选择日期时间",
+		"en": "Please select the date and time"
+	},
+	"svfada9": {
+		"zh-cn": "选择的日期时间: ",
+		"en": "Selected date and time"
+	},
+	"rz53u89": {
+		"zh-cn": "3. 日期范围选择",
+		"en": "3. Date range selection"
+	},
+	"cd0ag54": {
+		"zh-cn": "开始日期",
+		"en": "Start date"
+	},
+	"gfhy2u4": {
+		"zh-cn": "结束日期",
+		"en": "End date"
+	},
+	"pgqs179": {
+		"zh-cn": "选择的日期范围: ",
+		"en": "Selected date range"
+	},
+	"38rdv5b": {
+		"zh-cn": "4. 日期时间范围选择",
+		"en": "4. Selection of date and time range"
+	},
+	"h3fwwz6": {
+		"zh-cn": "开始日期时间",
+		"en": "Start date and time"
+	},
+	"kvkp386": {
+		"zh-cn": "结束日期时间",
+		"en": "End date and time"
+	},
+	"rym2i5b": {
+		"zh-cn": "选择的日期时间范围: ",
+		"en": "Selected date and time range"
+	},
+	"bynh37g": {
+		"zh-cn": "5. 智能双日期选择（联动限制）",
+		"en": "5. Intelligent dual date selection (Linkage limit)"
+	},
+	"w5m2sc7": {
+		"zh-cn": "请选择开始日期",
+		"en": "Please select the start date"
+	},
+	"yt0bk37": {
+		"zh-cn": "请选择结束日期",
+		"en": "Please select the end date"
+	},
+	"45se0u9": {
+		"zh-cn": "选择的智能范围: ",
+		"en": "Selected range of intelligence"
+	},
+	"lfuykuu": {
+		"zh-cn": "💡 选择开始日期后，结束日期会自动启用，且不能早于开始日期",
+		"en": "💡 after selecting the start date, the end date will be automatically enabled and cannot be earlier than the start date"
+	},
+	"njs1g2k": {
+		"zh-cn": "6. 限制未来日期（只能选择今天及以前）",
+		"en": "6. Limit future dates (only today and before can be selected)"
+	},
+	"3pz6chd": {
+		"zh-cn": "请选择日期（不能超过今天）",
+		"en": "Please select the date (it cannot be later than today)"
+	},
+	"kmhsc4a": {
+		"zh-cn": "7. 自定义格式示例",
+		"en": "7. Custom format example"
+	},
+	"u4gu7m6": {
+		"zh-cn": "时间戳格式:",
+		"en": "Timestamp format"
+	},
+	"dxfj8e9": {
+		"zh-cn": "选择日期（时间戳）",
+		"en": "Select the date (timestamp)"
+	},
+	"87h1455": {
+		"zh-cn": "时间戳: ",
+		"en": "Timestamp"
+	},
+	"ys7zt95": {
+		"zh-cn": "中文格式:",
+		"en": "Chinese format"
+	},
+	"xoa7dea": {
+		"zh-cn": "选择日期（中文格式）",
+		"en": "Select the date (in Chinese format)"
+	},
+	"gyqa7lb": {
+		"zh-cn": "yyyy年MM月dd日",
+		"en": "yyyy year MM month dd day"
+	},
+	"ckr1x66": {
+		"zh-cn": "中文日期: ",
+		"en": "Chinese date"
+	},
+	"866m2z7": {
+		"zh-cn": "8. 组件操作",
+		"en": "8. Component Operations"
+	},
+	"wmg0e08": {
+		"zh-cn": " 清空所有日期 ",
+		"en": "Clear all dates"
+	},
+	"l5b87q8": {
+		"zh-cn": " 设置默认日期 ",
+		"en": "Set the default date"
+	},
+	"eczvf38": {
+		"zh-cn": " 获取组件数据 ",
+		"en": "Obtain component data"
+	},
+	"qn0lb56": {
+		"zh-cn": "当前所有数据",
+		"en": "All current data"
+	},
+	"ka4txo": {
+		"zh-cn": "🎯 ResponsiveMenu 智能计算调试",
+		"en": "🎯 ResponsiveMenu intelligent computing debugging"
+	},
+	"dz2j9b5": {
+		"zh-cn": "(有图标)",
+		"en": "(With ICONS"
+	},
+	"dtsw5k5": {
+		"zh-cn": "(无图标)",
+		"en": "(No icon"
+	},
+	"epjq2": {
+		"zh-cn": "可以",
+		"en": "OK"
+	},
+	"bu9pf3": {
+		"zh-cn": "不可以",
+		"en": "No way"
+	},
+	"2nov9n7": {
+		"zh-cn": "反转混合（l）",
+		"en": "Reverse Mixing (l"
+	},
+	"b1ni9w8": {
+		"zh-cn": "反转混合（另类）",
+		"en": "Reversal Hybrid (Alternative"
+	},
+	"as4xly4": {
+		"zh-cn": "分栏布局",
+		"en": "Column layout"
+	},
+	"gzc2r24": {
+		"zh-cn": "菜单分类",
+		"en": "Menu classification"
+	},
+	"e0dhl3": {
+		"zh-cn": "子菜单",
+		"en": "Submenu"
+	},
+	"nf93vm6": {
+		"zh-cn": " 个功能模块",
+		"en": "One functional module"
+	},
+	"crcpj4": {
+		"zh-cn": " 个页面",
+		"en": "A page"
+	},
+	"t5ifbr8": {
+		"zh-cn": "点击进入功能页面",
+		"en": "Click to enter the function page"
+	},
+	"24ilhj7": {
+		"zh-cn": " 返回上一级 ",
+		"en": "Return to the previous level"
+	},
+	"ayogxj4": {
+		"zh-cn": "功能菜单",
+		"en": "Function Menu"
+	},
+	"iit66v6": {
+		"zh-cn": "文件上传预览",
+		"en": "File upload preview"
+	},
+	"33xpmma": {
+		"zh-cn": "上传本地文件进行预览",
+		"en": "Upload local files for preview"
+	},
+	"m6hgyq7": {
+		"zh-cn": "URL文件预览",
+		"en": "URL file preview"
+	},
+	"3azgilb": {
+		"zh-cn": "通过URL加载远程文件",
+		"en": "Load remote files via URL"
+	},
+	"hm88nd6": {
+		"zh-cn": "批量文件预览",
+		"en": "Batch file preview"
+	},
+	"u98x1p8": {
+		"zh-cn": "同时预览多个文件",
+		"en": "Preview multiple files simultaneously"
+	},
+	"iv4gsx4": {
+		"zh-cn": "配置选项",
+		"en": "Configuration options"
+	},
+	"augrlc9": {
+		"zh-cn": "自定义预览组件配置",
+		"en": "Customize the preview component configuration"
+	},
+	"xzdgrl7": {
+		"zh-cn": "本地PDF示例",
+		"en": "Local PDF example"
+	},
+	"71uezo9": {
+		"zh-cn": "本地Excel示例",
+		"en": "Local Excel example"
+	},
+	"ficclb8": {
+		"zh-cn": "本地Word示例",
+		"en": "Local Word example"
+	},
+	"19q8su5": {
+		"zh-cn": "PDF文档",
+		"en": "PDF document"
+	},
+	"5p1jfv7": {
+		"zh-cn": "Excel表格",
+		"en": "Excel table"
+	},
+	"p4jptp7": {
+		"zh-cn": "已上传文件: ",
+		"en": "Uploaded file"
+	},
+	"6rwb878": {
+		"zh-cn": "请输入文件URL",
+		"en": "Please enter the file URL"
+	},
+	"hotq116": {
+		"zh-cn": "文件加载成功",
+		"en": "The file has been loaded successfully."
+	},
+	"cb2hs94": {
+		"zh-cn": "已添加 ",
+		"en": "Added"
+	},
+	"ciajd4": {
+		"zh-cn": " 个文件",
+		"en": "A file"
+	},
+	"hynzw5a": {
+		"zh-cn": "文件预览组件场景示例",
+		"en": "An example of the file preview component scenario"
+	},
+	"i6nkknd": {
+		"zh-cn": "点击或拖拽文件到此区域上传",
+		"en": "Click or drag the file to this area to upload"
+	},
+	"dunkde1c": {
+		"zh-cn": " 支持 PDF、Word (.doc/.docx)、Excel (.xls/.xlsx) 格式 ",
+		"en": "Supports PDF, Word (.doc/.docx), and Excel (.xls/.xlsx) formats"
+	},
+	"9j2cuc8": {
+		"zh-cn": "URL 文件预览",
+		"en": "URL file preview"
+	},
+	"386hsls": {
+		"zh-cn": "请输入文件URL (支持 PDF、Word、Excel)",
+		"en": "Please enter the file URL (PDF, Word, Excel supported)"
+	},
+	"p0h55n13": {
+		"zh-cn": "快速示例：(需要将示例文件放在 public/demo-files/ 目录下)",
+		"en": "Quick example: (The sample file needs to be placed in the public/demo-files/ directory)"
+	},
+	"ttxtnw6": {
+		"zh-cn": " 添加文件 ",
+		"en": "Add file"
+	},
+	"yxr4236": {
+		"zh-cn": " 清空全部 ",
+		"en": "Clear everything"
+	},
+	"fz24c76": {
+		"zh-cn": "配置选项演示",
+		"en": "Demonstration of configuration options"
+	},
+	"jtehdx4": {
+		"zh-cn": "预览配置",
+		"en": "Preview configuration"
+	},
+	"lyckv26": {
+		"zh-cn": "显示头部信息",
+		"en": "Display header information"
+	},
+	"aqjv335": {
+		"zh-cn": "显示工具栏",
+		"en": "Display toolbar"
+	},
+	"atsqsp4": {
+		"zh-cn": "允许下载",
+		"en": "Download allowed"
+	},
+	"uw91th6": {
+		"zh-cn": "选择演示文件",
+		"en": "Select the presentation file"
+	},
+	"aisqn74": {
+		"zh-cn": "使用说明",
+		"en": "Instructions for Use"
+	},
+	"cewpl915": {
+		"zh-cn": " 这是一个功能完善的文件预览组件，支持 PDF、Word、Excel 文件预览。 ",
+		"en": "This is a fully functional file preview component that supports preview of PDF, Word and Excel files."
+	},
+	"rwgcrho": {
+		"zh-cn": " • PDF: 支持缩放、翻页、内置浏览器预览 ",
+		"en": "• PDF: Supports zooming, page turning, and built-in browser preview"
+	},
+	"jhxjxdp": {
+		"zh-cn": " • Word: 支持目录导航、缩放、格式化显示 ",
+		"en": "• Word: Supports directory navigation, zooming, and formatted display"
+	},
+	"wlj36vz": {
+		"zh-cn": " • Excel: 支持多工作表、分页、数据类型识别、合并单元格显示 ",
+		"en": "• Excel: Supports multiple worksheets, pagination, data type recognition, and merged cell display"
+	},
+	"dyj7zle": {
+		"zh-cn": "推荐使用文件上传功能进行测试",
+		"en": "It is recommended to use the file upload function for testing"
+	},
+	"dihc3u4": {
+		"zh-cn": "未知文件",
+		"en": "Unknown file"
+	},
+	"dbiz259": {
+		"zh-cn": "未提供文件或URL",
+		"en": "No file or URL was provided"
+	},
+	"5qodvr8": {
+		"zh-cn": "不支持的文件格式",
+		"en": "Unsupported file formats"
+	},
+	"o785sq8": {
+		"zh-cn": "文件加载失败: ",
+		"en": "File loading failed"
+	},
+	"cocxa4": {
+		"zh-cn": " 下载 ",
+		"en": "Download"
+	},
+	"dws3b64": {
+		"zh-cn": "正在加载",
+		"en": "Loading"
+	},
+	"j97lmp5": {
+		"zh-cn": "文件...",
+		"en": "\"Document...\""
+	},
+	"jt50ig4": {
+		"zh-cn": "预览失败",
+		"en": "Preview failed"
+	},
+	"pkfc2": {
+		"zh-cn": "重试",
+		"en": "Retry"
+	},
+	"19z3me5": {
+		"zh-cn": "PDF预览",
+		"en": "PDF Preview"
+	},
+	"xtibdso": {
+		"zh-cn": "PDF文件无法显示，可能是文件损坏或浏览器不支持",
+		"en": "The PDF file cannot be displayed. It might be that the file is damaged or the browser does not support it"
+	},
+	"hvbvd3": {
+		"zh-cn": "目录 ",
+		"en": "Directory"
+	},
+	"d8v2lf4": {
+		"zh-cn": "文档目录",
+		"en": "Document Directory"
+	},
+	"mj9xcn5": {
+		"zh-cn": "工作表: ",
+		"en": "Worksheet"
+	},
+	"g4x0jm4": {
+		"zh-cn": "紧凑视图",
+		"en": "Compact View"
+	},
+	"bz1o6z4": {
+		"zh-cn": "完整格式",
+		"en": "Complete format"
+	},
+	"niv0m58": {
+		"zh-cn": " 当前工作表: ",
+		"en": "Current worksheet"
+	},
+	"q0ps5d8": {
+		"zh-cn": " | 总行数: ",
+		"en": "Total number of lines:"
+	},
+	"j6kz6e8": {
+		"zh-cn": " | 总列数: ",
+		"en": "Total number of columns:"
+	},
+	"fvg7p98": {
+		"zh-cn": " | 当前页: ",
+		"en": "Current page:"
+	},
+	"5kzse3d": {
+		"zh-cn": "该工作表没有数据或解析失败",
+		"en": "This worksheet has no data or the parsing failed"
+	},
+	"itl58w4": {
+		"zh-cn": "重新解析",
+		"en": "Re-analysis"
+	},
+	"wrwyrl7": {
+		"zh-cn": "暂不支持预览 ",
+		"en": "Preview is not supported for the time being"
+	},
+	"e1aqyq5": {
+		"zh-cn": " 格式文件",
+		"en": "Format file"
+	},
+	"2ce5dcf": {
+		"zh-cn": "Excel文件中没有找到工作表",
+		"en": "The worksheet was not found in the Excel file"
+	},
+	"c545es4": {
+		"zh-cn": "导航中心",
+		"en": "Navigation Center"
+	},
+	"28jv9k6": {
+		"zh-cn": " 关闭导航 ",
+		"en": "Turn off the navigation"
+	},
+	"ayhy0c4": {
+		"zh-cn": "功能导航",
+		"en": "Function Navigation"
+	},
+	"dcisz24": {
+		"zh-cn": "更多 (",
+		"en": "\"More"
+	},
+	"xs9rb68": {
+		"zh-cn": "卡片布局（新颖）",
+		"en": "Card layout (Novel"
+	},
+	"15dm988": {
+		"zh-cn": "卡片网格（新颖）",
+		"en": "Card Grid (Novel"
 	}
 }
