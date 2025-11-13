@@ -32,6 +32,7 @@ declare module 'vue' {
     C_Markdown: typeof import('./../components/global/C_Markdown/index.vue')['default']
     C_Menu: typeof import('./../components/global/C_Menu/index.vue')['default']
     C_MenuTop: typeof import('./../components/global/C_MenuTop/index.vue')['default']
+    C_NavbarRight: typeof import('./src/components/global/C_NavbarRight/index.vue')['NavbarRight']
     C_Notice: typeof import('./../components/global/C_Notice/index.vue')['default']
     C_Progress: typeof import('./../components/global/C_Progress/index.vue')['default']
     C_ReLoginDialog: typeof import('./../components/global/C_ReLoginDialog/index.vue')['default']
