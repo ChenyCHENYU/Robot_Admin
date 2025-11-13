@@ -126,14 +126,14 @@
       }
     }
 
-    // 中间区域 - 优化：去除深色背景
+        // 中间区域 - 优化：去除深色背景和居中对齐
     .navbar-center {
       flex: 1;
       display: flex;
       align-items: center;
-      justify-content: center;
+      min-width: 0;
       overflow: hidden;
-      padding: 0 20px;
+      padding: 0 24px;
       
       // 确保菜单容器背景透明
       & > * {

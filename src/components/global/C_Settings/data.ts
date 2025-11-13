@@ -68,7 +68,7 @@ export const LAYOUT_MODES = [
   },
 
   {
-    label: '反转混合',
+    label: '反转混合（另类）',
     value: 'reverse-horizontal-mix',
     disabled: false,
     svg: `

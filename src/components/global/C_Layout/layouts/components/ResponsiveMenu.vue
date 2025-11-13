@@ -218,17 +218,18 @@
    * ! @return {number} 菜单项宽度
    */
   const estimateItemWidth = (item: MenuOptions): number => {
-    // 参考优化后的菜单项样式
+    // 参考优化后的菜单项样式和实际DOM测量结果
     const ITEM_PADDING = 36 // 左右 padding: 0 18px = 36px
     const ITEM_MARGIN = 8 // 左右 margin: 0 4px = 8px
-    const CHAR_WIDTH = 14 // 字符宽度
+    const CHAR_WIDTH = 12 // 字符宽度（根据实际测量优化：中文字符约11-12px）
     const ICON_WIDTH = 26 // 图标宽度（18px + 8px margin-right）
+    const EXTRA_SPACE = 5 // 额外安全空间（减小到 5px，避免过度保守）
 
     const title = item.meta?.title || item.name || ''
     const textWidth = title.length * CHAR_WIDTH
     const iconWidth = item.meta?.icon ? ICON_WIDTH : 0
 
-    return textWidth + iconWidth + ITEM_PADDING + ITEM_MARGIN
+    return textWidth + iconWidth + ITEM_PADDING + ITEM_MARGIN + EXTRA_SPACE
   }
 
   /**
@@ -240,7 +241,7 @@
     if (!props.data.length) return 0
 
     const MORE_BUTTON_WIDTH = 80 // "..."按钮的宽度（包含 padding 和 margin）
-    const SAFETY_MARGIN = 10 // 安全边距
+    const SAFETY_MARGIN = 15 // 安全边距（减小到 15px，避免过度保守）
 
     // 计算所有菜单项的总宽度
     let totalWidthWithoutMore = 0
