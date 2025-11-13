@@ -12846,5 +12846,313 @@
 	"b1ni9w8": {
 		"zh-cn": "反转混合（另类）",
 		"en": "Reversal Hybrid (Alternative"
+	},
+	"as4xly4": {
+		"zh-cn": "分栏布局",
+		"en": "Column layout"
+	},
+	"gzc2r24": {
+		"zh-cn": "菜单分类",
+		"en": "Menu classification"
+	},
+	"e0dhl3": {
+		"zh-cn": "子菜单",
+		"en": "Submenu"
+	},
+	"nf93vm6": {
+		"zh-cn": " 个功能模块",
+		"en": "One functional module"
+	},
+	"crcpj4": {
+		"zh-cn": " 个页面",
+		"en": "A page"
+	},
+	"t5ifbr8": {
+		"zh-cn": "点击进入功能页面",
+		"en": "Click to enter the function page"
+	},
+	"24ilhj7": {
+		"zh-cn": " 返回上一级 ",
+		"en": "Return to the previous level"
+	},
+	"ayogxj4": {
+		"zh-cn": "功能菜单",
+		"en": "Function Menu"
+	},
+	"iit66v6": {
+		"zh-cn": "文件上传预览",
+		"en": "File upload preview"
+	},
+	"33xpmma": {
+		"zh-cn": "上传本地文件进行预览",
+		"en": "Upload local files for preview"
+	},
+	"m6hgyq7": {
+		"zh-cn": "URL文件预览",
+		"en": "URL file preview"
+	},
+	"3azgilb": {
+		"zh-cn": "通过URL加载远程文件",
+		"en": "Load remote files via URL"
+	},
+	"hm88nd6": {
+		"zh-cn": "批量文件预览",
+		"en": "Batch file preview"
+	},
+	"u98x1p8": {
+		"zh-cn": "同时预览多个文件",
+		"en": "Preview multiple files simultaneously"
+	},
+	"iv4gsx4": {
+		"zh-cn": "配置选项",
+		"en": "Configuration options"
+	},
+	"augrlc9": {
+		"zh-cn": "自定义预览组件配置",
+		"en": "Customize the preview component configuration"
+	},
+	"xzdgrl7": {
+		"zh-cn": "本地PDF示例",
+		"en": "Local PDF example"
+	},
+	"71uezo9": {
+		"zh-cn": "本地Excel示例",
+		"en": "Local Excel example"
+	},
+	"ficclb8": {
+		"zh-cn": "本地Word示例",
+		"en": "Local Word example"
+	},
+	"19q8su5": {
+		"zh-cn": "PDF文档",
+		"en": "PDF document"
+	},
+	"5p1jfv7": {
+		"zh-cn": "Excel表格",
+		"en": "Excel table"
+	},
+	"p4jptp7": {
+		"zh-cn": "已上传文件: ",
+		"en": "Uploaded file"
+	},
+	"6rwb878": {
+		"zh-cn": "请输入文件URL",
+		"en": "Please enter the file URL"
+	},
+	"hotq116": {
+		"zh-cn": "文件加载成功",
+		"en": "The file has been loaded successfully."
+	},
+	"cb2hs94": {
+		"zh-cn": "已添加 ",
+		"en": "Added"
+	},
+	"ciajd4": {
+		"zh-cn": " 个文件",
+		"en": "A file"
+	},
+	"hynzw5a": {
+		"zh-cn": "文件预览组件场景示例",
+		"en": "An example of the file preview component scenario"
+	},
+	"i6nkknd": {
+		"zh-cn": "点击或拖拽文件到此区域上传",
+		"en": "Click or drag the file to this area to upload"
+	},
+	"dunkde1c": {
+		"zh-cn": " 支持 PDF、Word (.doc/.docx)、Excel (.xls/.xlsx) 格式 ",
+		"en": "Supports PDF, Word (.doc/.docx), and Excel (.xls/.xlsx) formats"
+	},
+	"9j2cuc8": {
+		"zh-cn": "URL 文件预览",
+		"en": "URL file preview"
+	},
+	"386hsls": {
+		"zh-cn": "请输入文件URL (支持 PDF、Word、Excel)",
+		"en": "Please enter the file URL (PDF, Word, Excel supported)"
+	},
+	"p0h55n13": {
+		"zh-cn": "快速示例：(需要将示例文件放在 public/demo-files/ 目录下)",
+		"en": "Quick example: (The sample file needs to be placed in the public/demo-files/ directory)"
+	},
+	"ttxtnw6": {
+		"zh-cn": " 添加文件 ",
+		"en": "Add file"
+	},
+	"yxr4236": {
+		"zh-cn": " 清空全部 ",
+		"en": "Clear everything"
+	},
+	"fz24c76": {
+		"zh-cn": "配置选项演示",
+		"en": "Demonstration of configuration options"
+	},
+	"jtehdx4": {
+		"zh-cn": "预览配置",
+		"en": "Preview configuration"
+	},
+	"lyckv26": {
+		"zh-cn": "显示头部信息",
+		"en": "Display header information"
+	},
+	"aqjv335": {
+		"zh-cn": "显示工具栏",
+		"en": "Display toolbar"
+	},
+	"atsqsp4": {
+		"zh-cn": "允许下载",
+		"en": "Download allowed"
+	},
+	"uw91th6": {
+		"zh-cn": "选择演示文件",
+		"en": "Select the presentation file"
+	},
+	"aisqn74": {
+		"zh-cn": "使用说明",
+		"en": "Instructions for Use"
+	},
+	"cewpl915": {
+		"zh-cn": " 这是一个功能完善的文件预览组件，支持 PDF、Word、Excel 文件预览。 ",
+		"en": "This is a fully functional file preview component that supports preview of PDF, Word and Excel files."
+	},
+	"rwgcrho": {
+		"zh-cn": " • PDF: 支持缩放、翻页、内置浏览器预览 ",
+		"en": "• PDF: Supports zooming, page turning, and built-in browser preview"
+	},
+	"jhxjxdp": {
+		"zh-cn": " • Word: 支持目录导航、缩放、格式化显示 ",
+		"en": "• Word: Supports directory navigation, zooming, and formatted display"
+	},
+	"wlj36vz": {
+		"zh-cn": " • Excel: 支持多工作表、分页、数据类型识别、合并单元格显示 ",
+		"en": "• Excel: Supports multiple worksheets, pagination, data type recognition, and merged cell display"
+	},
+	"dyj7zle": {
+		"zh-cn": "推荐使用文件上传功能进行测试",
+		"en": "It is recommended to use the file upload function for testing"
+	},
+	"dihc3u4": {
+		"zh-cn": "未知文件",
+		"en": "Unknown file"
+	},
+	"dbiz259": {
+		"zh-cn": "未提供文件或URL",
+		"en": "No file or URL was provided"
+	},
+	"5qodvr8": {
+		"zh-cn": "不支持的文件格式",
+		"en": "Unsupported file formats"
+	},
+	"o785sq8": {
+		"zh-cn": "文件加载失败: ",
+		"en": "File loading failed"
+	},
+	"cocxa4": {
+		"zh-cn": " 下载 ",
+		"en": "Download"
+	},
+	"dws3b64": {
+		"zh-cn": "正在加载",
+		"en": "Loading"
+	},
+	"j97lmp5": {
+		"zh-cn": "文件...",
+		"en": "\"Document...\""
+	},
+	"jt50ig4": {
+		"zh-cn": "预览失败",
+		"en": "Preview failed"
+	},
+	"pkfc2": {
+		"zh-cn": "重试",
+		"en": "Retry"
+	},
+	"19z3me5": {
+		"zh-cn": "PDF预览",
+		"en": "PDF Preview"
+	},
+	"xtibdso": {
+		"zh-cn": "PDF文件无法显示，可能是文件损坏或浏览器不支持",
+		"en": "The PDF file cannot be displayed. It might be that the file is damaged or the browser does not support it"
+	},
+	"hvbvd3": {
+		"zh-cn": "目录 ",
+		"en": "Directory"
+	},
+	"d8v2lf4": {
+		"zh-cn": "文档目录",
+		"en": "Document Directory"
+	},
+	"mj9xcn5": {
+		"zh-cn": "工作表: ",
+		"en": "Worksheet"
+	},
+	"g4x0jm4": {
+		"zh-cn": "紧凑视图",
+		"en": "Compact View"
+	},
+	"bz1o6z4": {
+		"zh-cn": "完整格式",
+		"en": "Complete format"
+	},
+	"niv0m58": {
+		"zh-cn": " 当前工作表: ",
+		"en": "Current worksheet"
+	},
+	"q0ps5d8": {
+		"zh-cn": " | 总行数: ",
+		"en": "Total number of lines:"
+	},
+	"j6kz6e8": {
+		"zh-cn": " | 总列数: ",
+		"en": "Total number of columns:"
+	},
+	"fvg7p98": {
+		"zh-cn": " | 当前页: ",
+		"en": "Current page:"
+	},
+	"5kzse3d": {
+		"zh-cn": "该工作表没有数据或解析失败",
+		"en": "This worksheet has no data or the parsing failed"
+	},
+	"itl58w4": {
+		"zh-cn": "重新解析",
+		"en": "Re-analysis"
+	},
+	"wrwyrl7": {
+		"zh-cn": "暂不支持预览 ",
+		"en": "Preview is not supported for the time being"
+	},
+	"e1aqyq5": {
+		"zh-cn": " 格式文件",
+		"en": "Format file"
+	},
+	"2ce5dcf": {
+		"zh-cn": "Excel文件中没有找到工作表",
+		"en": "The worksheet was not found in the Excel file"
+	},
+	"c545es4": {
+		"zh-cn": "导航中心",
+		"en": "Navigation Center"
+	},
+	"28jv9k6": {
+		"zh-cn": " 关闭导航 ",
+		"en": "Turn off the navigation"
+	},
+	"ayhy0c4": {
+		"zh-cn": "功能导航",
+		"en": "Function Navigation"
+	},
+	"dcisz24": {
+		"zh-cn": "更多 (",
+		"en": "\"More"
+	},
+	"xs9rb68": {
+		"zh-cn": "卡片布局（新颖）",
+		"en": "Card layout (Novel"
+	},
+	"15dm988": {
+		"zh-cn": "卡片网格（新颖）",
+		"en": "Card Grid (Novel"
 	}
 }

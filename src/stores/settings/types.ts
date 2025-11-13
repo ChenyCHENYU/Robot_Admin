@@ -5,13 +5,14 @@
 // 主题模式
 export type ThemeMode = 'light' | 'dark' | 'auto'
 
-// 布局模式：左侧菜单、顶部菜单、混合菜单、顶部混合（侧边优先）、反转混合
+// 布局模式：左侧菜单、顶部菜单、混合菜单、顶部混合（侧边优先）、反转混合、卡片布局
 export type LayoutMode =
   | 'side'
   | 'top'
   | 'mix'
   | 'mix-top'
   | 'reverse-horizontal-mix'
+  | 'card-layout'
 
 // 页面动画类型
 export type TransitionType = 'fade' | 'slide' | 'zoom' | 'none'
