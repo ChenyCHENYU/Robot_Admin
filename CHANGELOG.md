@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.8.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.7.0...v1.8.0) (2025-11-13)
+
+
+### Features
+
+* **C_Layout:** 增加反向菜单布局 ([e9b47c5](https://github.com/ChenyCHENYU/Robot_Admin/commit/e9b47c56dc13ed4b3e37409dd058be59404e649d))
+* **C_Layout:** 增加反转菜单布局 ([a2c6fa6](https://github.com/ChenyCHENYU/Robot_Admin/commit/a2c6fa6f60f6ec7f3530fbe1f79815b968e39bac))
+* **C_Layout:** 增加头部导航布局 ([9ca1525](https://github.com/ChenyCHENYU/Robot_Admin/commit/9ca1525a4f97614090b54f460bee5b1d37a61471))
+* **C_Layout:** 增加左侧菜单混合布局 ([648ee8c](https://github.com/ChenyCHENYU/Robot_Admin/commit/648ee8c41c1ce9b81f658fa9e3086210333219c9))
+* **C_Layout:** 增加新颖的卡片网格布局 ([d0843f6](https://github.com/ChenyCHENYU/Robot_Admin/commit/d0843f6e0c6d1173c0f82be370a999b9f40aa6e9))
+* **C_Layout:** 增加顶部混合布局，剥离公共右侧部分 ([860c297](https://github.com/ChenyCHENYU/Robot_Admin/commit/860c2975d7a6b6e47efc92752e214108c1480623))
+* **scripts:** 自动处理自动生成文件，避免合并冲突 ([d64fc2c](https://github.com/ChenyCHENYU/Robot_Admin/commit/d64fc2ce4a531f9bc87b31e64dfbeb826ba9dd3a))
+* **布局设置:** 增加布局配置功能/外观部分 ([b1bebb6](https://github.com/ChenyCHENYU/Robot_Admin/commit/b1bebb652aa99426ff37e2435ab0130f8360e80f))
+
+
+### Bug Fixes
+
+* **dynamicRouter:** 修复重启后单页面路由跳转陷阱 ([c11434c](https://github.com/ChenyCHENYU/Robot_Admin/commit/c11434cee03db0024f75dbb11295428131499b57))
+* **i18n:** 修复历史TAGS切换语言未变化的问题 ([5170b62](https://github.com/ChenyCHENYU/Robot_Admin/commit/5170b6296c07361467cdadf3fe7372b7b04af5f0))
+
 ## [1.7.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.4...v1.7.0) (2025-11-06)
 
 

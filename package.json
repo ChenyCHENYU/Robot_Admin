@@ -1,6 +1,6 @@
 {
   "name": "robot-admin",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "private": true,
   "description": "Robot 中后台管理系统团队架构模板 - 基于 Vue3 + Vite 的企业级中后台解决方案",
   "author": {
