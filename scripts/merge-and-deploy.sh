@@ -97,6 +97,49 @@ safe_push() {
     fi
 }
 
+# 自动提交自动生成文件
+auto_commit_generated_files() {
+    local branch_name=$1
+    
+    # 定义自动生成的文件列表（只处理这些文件，不影响其他文件）
+    local generated_files=(
+        "lang/index.json"                # 国际化翻译文件（由 vite-auto-i18n-plugin 自动生成）
+        "src/types/components.d.ts"      # 组件类型声明（由 unplugin-vue-components 自动生成）
+        "src/types/auto-imports.d.ts"    # 自动导入类型声明（由 unplugin-auto-import 自动生成）
+    )
+    
+    # 检查是否有这些文件需要提交
+    local has_changes=false
+    for file in "${generated_files[@]}"; do
+        if [ -f "$file" ] && git diff --quiet "$file" 2>/dev/null; then
+            continue
+        elif [ -f "$file" ]; then
+            has_changes=true
+            break
+        fi
+    done
+    
+    # 如果有未提交的自动生成文件，自动提交
+    if [ "$has_changes" = true ]; then
+        print_step "检测到自动生成文件有更新，自动提交到 $branch_name 分支..."
+        
+        # 添加存在的自动生成文件
+        for file in "${generated_files[@]}"; do
+            if [ -f "$file" ]; then
+                git add "$file" 2>/dev/null || true
+            fi
+        done
+        
+        # 提交
+        if git diff --cached --quiet; then
+            print_info "自动生成文件无需提交"
+        else
+            git commit -m "chore: 更新自动生成文件（国际化翻译和类型声明）" --no-verify
+            print_success "自动生成文件已提交到 $branch_name 分支"
+        fi
+    fi
+}
+
 # 安全合并函数
 safe_merge() {
     local source_branch=$1
@@ -241,6 +284,9 @@ echo "================================================"
 print_step "切换到dev分支..."
 git checkout dev
 
+# 自动提交dev分支上的自动生成文件
+auto_commit_generated_files "dev"
+
 # 拉取最新的dev分支
 if check_remote "origin" && check_remote_connection "origin"; then
     print_step "拉取最新的dev分支..."
@@ -270,6 +316,9 @@ echo "================================================"
 
 print_step "切换到main分支..."
 git checkout main
+
+# 自动提交main分支上的自动生成文件
+auto_commit_generated_files "main"
 
 # 拉取最新的main分支
 if check_remote "origin" && check_remote_connection "origin"; then
