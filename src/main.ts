@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-05
+ * @LastEditTime: 2025-11-13 23:16:10
  * @FilePath: \Robot_Admin\src\main.ts
  * @Description: 根入口文件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -33,6 +33,7 @@ import {
   setupDirectives,
   setupAnalytics,
 } from '@/plugins'
+import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
 /**
  * @description: 应用启动入口
@@ -44,6 +45,9 @@ async function bootstrap() {
 
   // 第一阶段：创建Vue实例
   const app = createApp(App)
+
+  // ⭐ 关键：全局错误处理必须最先设置，确保捕获所有错误
+  setupGlobalErrorHandler(app)
 
   // 使用去除滚动警告的插件
   app.use(PassiveScrollPlugin)
