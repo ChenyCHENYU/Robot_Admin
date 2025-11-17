@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.8.0...v1.8.1) (2025-11-17)
+
+
+### Performance Improvements
+
+* **axios:** 增加插件系统，重新/缓存/取消/性能单测 ([9f57861](https://github.com/ChenyCHENYU/Robot_Admin/commit/9f57861d25131f790887c3eac8f4792f07969f5e))
+* **Global Error Handle:** 增加全局错误处理，避免异常崩溃，作为异常兜底方案 ([56628f7](https://github.com/ChenyCHENYU/Robot_Admin/commit/56628f7967cc12c9d302f96763e2339ee26ec913))
+
 ## [1.8.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.7.0...v1.8.0) (2025-11-13)
 
 
