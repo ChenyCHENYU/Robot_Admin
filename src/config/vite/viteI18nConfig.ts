@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-11-05
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-05
+ * @LastEditTime: 2025-11-18 10:03:51
  * @FilePath: \Robot_Admin\src\config\vite\viteI18nConfig.ts
  * @Description: Vite 国际化插件配置（独立维护）
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -108,7 +108,7 @@ export default function createI18nPlugin(): Plugin | null {
       globalPath: './lang',
       distPath: './dist',
       distKey: 'index',
-      namespace: 'robot-admin',
+      namespace: 'robot_admin',
 
       // ========== 高级配置 ==========
       deepScan: false, //  深度扫描（可能过度切割模板字符串，建议关闭）

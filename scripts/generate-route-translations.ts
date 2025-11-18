@@ -51,17 +51,17 @@ function generateCode(titles: Set<string>): string {
 
   return `/**
  * @Description: 路由标题翻译 - 自动生成文件
- * 
+ *
  * ⚠️ 请勿手动编辑此文件！
  * 此文件由 scripts/generate-route-translations.ts 自动生成
  * 运行 \`bun run gen:route-i18n\` 重新生成
- * 
+ *
  * 🔑 工作原理（优雅方案 - 直接读取 JSON）：
  * 1. 脚本从 dynamicRouter.json 提取所有路由标题（${titleArray.length} 个）
  * 2. 生成导入 lang/index.json 的代码
  * 3. 编译时构建 中文 -> 英文 直接映射表
  * 4. 运行时 O(1) 查找，无需遍历 hash key
- * 
+ *
  * ✨ 优势：
  * - 不依赖 window.langMap（避免加载时机问题）
  * - 不需要反向查找 hash key（性能更好）
@@ -75,14 +75,14 @@ type LangData = Record<string, { 'zh-cn': string; en: string }>
 
 /**
  * 构建翻译映射表（编译时执行）
- * 
+ *
  * @param json 插件生成的翻译 JSON
  * @param targetLang 目标语言
  * @returns 中文 -> 目标语言 的映射表
  */
 function buildTranslationMap(json: LangData, targetLang: 'en' = 'en'): Record<string, string> {
   const map: Record<string, string> = {}
-  
+
   // 遍历所有 hash key，构建 中文 -> 英文 映射
   for (const hashKey in json) {
     const item = json[hashKey]
@@ -90,7 +90,7 @@ function buildTranslationMap(json: LangData, targetLang: 'en' = 'en'): Record<st
       map[item['zh-cn']] = item[targetLang]
     }
   }
-  
+
   return map
 }
 
@@ -99,7 +99,7 @@ const translationMap = buildTranslationMap(langJSON as LangData, 'en')
 
 /**
  * 翻译路由标题（优雅方案）
- * 
+ *
  * @param title 原始标题（中文）
  * @returns 翻译后的标题（根据当前语言）
  */
@@ -107,8 +107,8 @@ export function translateRouteTitle(title: string): string {
   if (!title || typeof window === 'undefined') return title
 
   // 获取当前语言
-  const currentLang = (window as any).localStorage?.getItem('robot-admin') || 'zh-cn'
-  
+  const currentLang = (window as any).localStorage?.getItem('robot_admin') || 'zh-cn'
+
   // 中文环境直接返回
   if (currentLang === 'zh-cn') return title
 

@@ -32,19 +32,19 @@
 
   const currentLanguage = ref(
     (typeof window !== 'undefined' &&
-      window.localStorage.getItem('robot-admin')) ||
+      window.localStorage.getItem('robot_admin')) ||
       'zh-cn'
   )
 
   const handleLanguageChange = (key: string) => {
     if (key === currentLanguage.value) return
     currentLanguage.value = key
-    window.localStorage.setItem('robot-admin', key)
+    window.localStorage.setItem('robot_admin', key)
     window.location.reload()
   }
 
   onMounted(() => {
-    const savedLang = window.localStorage.getItem('robot-admin')
+    const savedLang = window.localStorage.getItem('robot_admin')
     if (savedLang && savedLang !== currentLanguage.value) {
       currentLanguage.value = savedLang
     }

@@ -1,7 +1,16 @@
-/* eslint-disable */
-// 导入国际化JSON文件
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-11-18 08:31:13
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-11-18 10:17:39
+ * @FilePath: \Robot_Admin\lang\index.js
+ * @Description:  国际化入口文件
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ */
+
+// 导入国际化JSON文件（合并模式）
 import langJSON from './index.json'
-;(function () {
+;;(function () {
   // 定义翻译函数
   let $t = function (key, val, nameSpace) {
     // 获取指定命名空间下的语言包
@@ -23,7 +32,7 @@ import langJSON from './index.json'
     }
     try {
       // 使用更安全的正则表达式替换方式
-      return val.replace(/\$(?:\{|\｛)(\d+)(?:\}|\｝)/g, (match, index) => {
+      return val.replace(/\$(?:\{|｛)(\d+)(?:\}|｝)/g, (match, index) => {
         // 将index转换为数字
         const position = parseInt(index, 10)
         // 如果args[position]存在则替换，否则保留原占位符
@@ -43,7 +52,7 @@ import langJSON from './index.json'
   globalThis.$t = globalThis.$t || $t
   // 将简单翻译函数挂载到globalThis对象上
   globalThis.$$t = $$t
-  // 定义从JSON文件中获取指定键的语言对象的方法
+  // 定义从JSON文件中获取指定键的语言对象的方法（合并模式）
   globalThis._getJSONKey = function (key, insertJSONObj = undefined) {
     // 获取JSON对象
     const JSONObj = insertJSONObj
@@ -61,14 +70,12 @@ import langJSON from './index.json'
 // 定义语言映射对象
 const langMap = {
   en:
-    globalThis && globalThis['robot_admin'] && globalThis['robot_admin'].en
-      ? globalThis['robot_admin'].en
+    globalThis && globalThis.robot_admin && globalThis.robot_admin.en
+      ? globalThis.robot_admin.en
       : globalThis._getJSONKey('en', langJSON),
-  'zh-cn':
-    globalThis &&
-    globalThis['robot_admin'] &&
-    globalThis['robot_admin']['zh-cn']
-      ? globalThis['robot_admin']['zh-cn']
+  zhcn:
+    globalThis && globalThis.robot_admin && globalThis.robot_admin.zhcn
+      ? globalThis.robot_admin.zhcn
       : globalThis._getJSONKey('zh-cn', langJSON),
 }
 globalThis.langMap = langMap
@@ -83,7 +90,7 @@ const withStorageLang =
   globalThis &&
   globalThis.localStorage &&
   isFunction(globalThis.localStorage.getItem) &&
-  globalThis.localStorage.getItem('robot-admin')
+  globalThis.localStorage.getItem('robot_admin')
 const withStorageCommonLang =
   isFunction &&
   globalThis &&
@@ -96,11 +103,11 @@ const commonLang = withStorageCommonLang
   : ''
 // 从本地存储中获取当前语言，如果不存在则使用源语言
 const baseLang = withStorageLang
-  ? globalThis.localStorage.getItem('robot-admin')
-  : 'zh-cn'
+  ? globalThis.localStorage.getItem('robot_admin')
+  : 'zhcn'
 const lang = commonLang ? commonLang : baseLang
 // 根据当前语言设置翻译函数的语言包
-globalThis.$t.locale(globalThis.langMap[lang], 'robot-admin')
+globalThis.$t.locale(globalThis.langMap[lang], 'robot_admin')
 globalThis.$changeLang = lang => {
-  globalThis.$t.locale(globalThis.langMap[lang], 'robot-admin')
+  globalThis.$t.locale(globalThis.langMap[lang], 'robot_admin')
 }

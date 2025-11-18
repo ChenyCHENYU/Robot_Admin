@@ -137,7 +137,8 @@
     "wechat",
     "wordprocessingml",
     "xiong",
-    "YOUDAO"
+    "YOUDAO",
+    "zhcn"
   ],
   "ignorePaths": [
     "README.md"

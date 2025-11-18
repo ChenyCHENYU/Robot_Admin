@@ -1,3 +1,12 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-11-06 09:09:51
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-11-18 10:05:46
+ * @FilePath: \Robot_Admin\src\utils\plugins\i18n-route.ts
+ * @Description: 路由标题翻译插件
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ */
 /**
  * @Description: 路由标题翻译 - 自动生成文件
  *
@@ -60,7 +69,7 @@ export function translateRouteTitle(title: string): string {
 
   // 获取当前语言
   const currentLang =
-    (window as any).localStorage?.getItem('robot-admin') || 'zh-cn'
+    (window as any).localStorage?.getItem('robot_admin') || 'zh-cn'
 
   // 中文环境直接返回
   if (currentLang === 'zh-cn') return title
