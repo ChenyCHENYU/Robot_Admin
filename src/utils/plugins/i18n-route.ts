@@ -29,7 +29,10 @@
 
 import langJSON from '../../../lang/index.json'
 
-type LangData = Record<string, { 'zh-cn': string; en: string }>
+type LangData = Record<
+  string,
+  { 'zh-cn': string; en: string; ja: string; ko: string }
+>
 
 /**
  * 构建翻译映射表（编译时执行）
@@ -40,11 +43,11 @@ type LangData = Record<string, { 'zh-cn': string; en: string }>
  */
 function buildTranslationMap(
   json: LangData,
-  targetLang: 'en' = 'en'
+  targetLang: 'en' | 'ja' | 'ko' = 'en'
 ): Record<string, string> {
   const map: Record<string, string> = {}
 
-  // 遍历所有 hash key，构建 中文 -> 英文 映射
+  // 遍历所有 hash key，构建 中文 -> 目标语言 映射
   for (const hashKey in json) {
     const item = json[hashKey]
     if (item['zh-cn'] && item[targetLang]) {
@@ -55,8 +58,12 @@ function buildTranslationMap(
   return map
 }
 
-// 编译时构建映射表（只执行一次）
-const translationMap = buildTranslationMap(langJSON as LangData, 'en')
+// 编译时构建所有语言的映射表（只执行一次）
+const translationMaps = {
+  en: buildTranslationMap(langJSON as LangData, 'en'),
+  ja: buildTranslationMap(langJSON as LangData, 'ja'),
+  ko: buildTranslationMap(langJSON as LangData, 'ko'),
+}
 
 /**
  * 翻译路由标题（优雅方案）
@@ -74,8 +81,10 @@ export function translateRouteTitle(title: string): string {
   // 中文环境直接返回
   if (currentLang === 'zh-cn') return title
 
-  // 🎯 直接从映射表查找（O(1) 时间复杂度）
-  return translationMap[title] || title
+  // 🎯 直接从对应语言的映射表查找（O(1) 时间复杂度）
+  const translationMap =
+    translationMaps[currentLang as keyof typeof translationMaps]
+  return translationMap?.[title] || title
 }
 
 /**
@@ -83,9 +92,14 @@ export function translateRouteTitle(title: string): string {
  */
 if (import.meta.env.DEV && typeof window !== 'undefined') {
   setTimeout(() => {
-    const totalTranslations = Object.keys(translationMap).length
+    const enCount = Object.keys(translationMaps.en).length
+    const jaCount = Object.keys(translationMaps.ja).length
+    const koCount = Object.keys(translationMaps.ko).length
     console.log(
-      `✅ 已加载 ${totalTranslations} 个翻译映射（来自 lang/index.json）`
+      `✅ 已加载翻译映射（来自 lang/index.json）：`,
+      `英文 ${enCount} 个，`,
+      `日文 ${jaCount} 个，`,
+      `韩文 ${koCount} 个`
     )
   }, 1000)
 }

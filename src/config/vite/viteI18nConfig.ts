@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-11-05
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-18 10:03:51
+ * @LastEditTime: 2025-11-19 08:35:33
  * @FilePath: \Robot_Admin\src\config\vite\viteI18nConfig.ts
  * @Description: Vite 国际化插件配置（独立维护）
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -102,7 +102,7 @@ export default function createI18nPlugin(): Plugin | null {
 
       // ========== 语言配置 ==========
       originLang: 'zh-cn', // 源语言
-      targetLangList: ['en'], // 目标语言列表（可添加 'ja', 'ko' 等）
+      targetLangList: ['en', 'ja', 'ko'], // 目标语言列表（已添加日语和韩语）
 
       // ========== 输出配置 ==========
       globalPath: './lang',

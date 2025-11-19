@@ -2,15 +2,15 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-11-18 08:31:13
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-18 10:17:39
+ * @LastEditTime: 2025-11-19 09:41:25
  * @FilePath: \Robot_Admin\lang\index.js
- * @Description:  国际化入口文件
+ * @Description: 国际化入口文件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
 // 导入国际化JSON文件（合并模式）
 import langJSON from './index.json'
-;;(function () {
+;(function () {
   // 定义翻译函数
   let $t = function (key, val, nameSpace) {
     // 获取指定命名空间下的语言包
@@ -73,10 +73,18 @@ const langMap = {
     globalThis && globalThis.robot_admin && globalThis.robot_admin.en
       ? globalThis.robot_admin.en
       : globalThis._getJSONKey('en', langJSON),
-  zhcn:
-    globalThis && globalThis.robot_admin && globalThis.robot_admin.zhcn
-      ? globalThis.robot_admin.zhcn
+  'zh-cn':
+    globalThis && globalThis.robot_admin && globalThis.robot_admin['zh-cn']
+      ? globalThis.robot_admin['zh-cn']
       : globalThis._getJSONKey('zh-cn', langJSON),
+  ja:
+    globalThis && globalThis.robot_admin && globalThis.robot_admin.ja
+      ? globalThis.robot_admin.ja
+      : globalThis._getJSONKey('ja', langJSON),
+  ko:
+    globalThis && globalThis.robot_admin && globalThis.robot_admin.ko
+      ? globalThis.robot_admin.ko
+      : globalThis._getJSONKey('ko', langJSON),
 }
 globalThis.langMap = langMap
 // 存储语言是否存在
@@ -104,10 +112,11 @@ const commonLang = withStorageCommonLang
 // 从本地存储中获取当前语言，如果不存在则使用源语言
 const baseLang = withStorageLang
   ? globalThis.localStorage.getItem('robot_admin')
-  : 'zhcn'
+  : 'zh-cn'
 const lang = commonLang ? commonLang : baseLang
 // 根据当前语言设置翻译函数的语言包
 globalThis.$t.locale(globalThis.langMap[lang], 'robot_admin')
+// 提供全局语言切换函数（仅更新 $t.locale，页面刷新由 C_Language 组件负责）
 globalThis.$changeLang = lang => {
   globalThis.$t.locale(globalThis.langMap[lang], 'robot_admin')
 }

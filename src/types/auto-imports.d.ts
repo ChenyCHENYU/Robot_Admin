@@ -6,6 +6,8 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const $formatT: typeof import('../composables/useI18n')['$formatT']
+  const $t: typeof import('../composables/useI18n')['$t']
   const EffectScope: typeof import('vue')['EffectScope']
   const NAlert: typeof import('naive-ui')['NAlert']
   const NBadge: typeof import('naive-ui')['NBadge']
@@ -93,6 +95,7 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useDebounceFn: typeof import('@vueuse/core')['useDebounceFn']
   const useDialog: typeof import('naive-ui')['useDialog']
+  const useI18n: typeof import('../composables/useI18n')['useI18n']
   const useId: typeof import('vue')['useId']
   const useLink: typeof import('vue-router')['useLink']
   const useLoadingBar: typeof import('naive-ui')['useLoadingBar']

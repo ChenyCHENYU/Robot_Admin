@@ -63,7 +63,14 @@ export default defineConfig(({ mode }: { mode: string }) => {
 
     optimizeDeps: {
       include: ['naive-ui'],
-      exclude: ['pinia-plugin-persistedstate'],
+      exclude: [
+        'pinia-plugin-persistedstate',
+        'echarts',
+        'echarts/core',
+        'echarts/charts',
+        'echarts/components',
+        'echarts/renderers',
+      ],
     },
 
     server: serverConfig,
