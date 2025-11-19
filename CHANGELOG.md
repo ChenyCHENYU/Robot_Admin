@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.8.1...v1.9.0) (2025-11-19)
+
+
+### Features
+
+* **i18n:** 增加日韩语翻译功能 ([ebe4c0e](https://github.com/ChenyCHENYU/Robot_Admin/commit/ebe4c0eddf482f4ab766e60760b74164d4381238))
+
+
+### Bug Fixes
+
+* **i18n/vite-auto-i18n-plugin:** 修复配置语法不被识别的问题，同步替换工具代码 ([a9a9cce](https://github.com/ChenyCHENYU/Robot_Admin/commit/a9a9ccec3361d1554ea3501592e07f7b12425872))
+
 ## [1.8.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.8.0...v1.8.1) (2025-11-17)
 
 
