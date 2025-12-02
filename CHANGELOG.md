@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.10.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.9.0...v1.10.0) (2025-12-02)
+
+
+### Features
+
+* 启用TypeScript文件翻译支持 ([6a875c4](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a875c46740a1c972e4cf282cb319b5671468129))
+
+
+### Bug Fixes
+
+* **i18n:** 修复js内容翻译的问题，以及增加自动翻译临时开关命令 ([7eb4e28](https://github.com/ChenyCHENYU/Robot_Admin/commit/7eb4e28ae1f9a0212126defbc3a85f04c5507762))
+* 生产环境启用i18n翻译功能 ([b766c39](https://github.com/ChenyCHENYU/Robot_Admin/commit/b766c39e6c5f119b4e05664ef045fdadfce57955))
+
 ## [1.9.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.8.1...v1.9.0) (2025-12-02)
 
 
