@@ -5,6 +5,7 @@
       "name": "bun_vite_uno_naive",
       "dependencies": {
         "@antv/x6": "^2.18.1",
+        "@chenfengyuan/vue-barcode": "^2.0.2",
         "@commitlint/cli": "12.1.4",
         "@commitlint/config-conventional": "12.1.4",
         "@fullcalendar/core": "^6.1.17",
@@ -308,6 +309,8 @@
     "@babel/types": ["@babel/types@7.27.0", "https://registry.npmmirror.com/@babel/types/-/types-7.27.0.tgz", { "dependencies": { "@babel/helper-string-parser": "^7.25.9", "@babel/helper-validator-identifier": "^7.25.9" } }, "sha512-H45s8fVLYjbhFH62dIJ3WtmJ6RSPt/3DRO0ZcT2SUiYiQyz3BLVb9ADEnLl91m74aQPS3AzzeajZHYOalWe3bg=="],
 
     "@braintree/sanitize-url": ["@braintree/sanitize-url@6.0.4", "", {}, "sha512-s3jaWicZd0pkP0jf5ysyHUI/RE7MHos6qlToFcGWXVp+ykHOy77OUMrfbgJ9it2C5bow7OIQwYYaHjk9XlBQ2A=="],
+
+    "@chenfengyuan/vue-barcode": ["@chenfengyuan/vue-barcode@2.0.2", "https://registry.npmmirror.com/@chenfengyuan/vue-barcode/-/vue-barcode-2.0.2.tgz", { "peerDependencies": { "jsbarcode": "^3.11.0", "vue": "^3.0.0" } }, "sha512-lHQhYfcqWeeA/UYoe4O+O6c8WD+t9WO8SiWohKOVVIiwPhcvC58YxhvlFvJme0/CPL7+Sh1XCpMaC9Mo2Dt5jQ=="],
 
     "@commitlint/cli": ["@commitlint/cli@12.1.4", "https://registry.npmmirror.com/@commitlint/cli/-/cli-12.1.4.tgz", { "dependencies": { "@commitlint/format": "^12.1.4", "@commitlint/lint": "^12.1.4", "@commitlint/load": "^12.1.4", "@commitlint/read": "^12.1.4", "@commitlint/types": "^12.1.4", "lodash": "^4.17.19", "resolve-from": "5.0.0", "resolve-global": "1.0.0", "yargs": "^16.2.0" }, "bin": { "commitlint": "cli.js" } }, "sha512-ZR1WjXLvqEffYyBPT0XdnSxtt3Ty1TMoujEtseW5o3vPnkA1UNashAMjQVg/oELqfaiAMnDw8SERPMN0e/0kLg=="],
 
@@ -1624,6 +1627,8 @@
     "js-tokens": ["js-tokens@4.0.0", "https://registry.npmmirror.com/js-tokens/-/js-tokens-4.0.0.tgz", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
 
     "js-yaml": ["js-yaml@4.1.0", "https://registry.npmmirror.com/js-yaml/-/js-yaml-4.1.0.tgz", { "dependencies": { "argparse": "^2.0.1" }, "bin": { "js-yaml": "bin/js-yaml.js" } }, "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA=="],
+
+    "jsbarcode": ["jsbarcode@3.12.1", "https://registry.npmmirror.com/jsbarcode/-/jsbarcode-3.12.1.tgz", {}, "sha512-QZQSqIknC2Rr/YOUyOkCBqsoiBAOTYK+7yNN3JsqfoUtJtkazxNw1dmPpxuv7VVvqW13kA3/mKiLq+s/e3o9hQ=="],
 
     "jsdoc-type-pratt-parser": ["jsdoc-type-pratt-parser@4.1.0", "", {}, "sha512-Hicd6JK5Njt2QB6XYFS7ok9e37O8AYk3jTcppG4YVQnYjOemymvTcmc7OWsmq/Qqj5TdRFO5/x/tIPmBeRtGHg=="],
 

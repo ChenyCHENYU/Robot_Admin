@@ -343,6 +343,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "barcode",
+          "name": "demo-barcode",
+          "component": "/demo/35-barcode/index",
+          "meta": {
+            "icon": "mdi:barcode",
+            "title": "条形码",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },

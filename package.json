@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@antv/x6": "^2.18.1",
+    "@chenfengyuan/vue-barcode": "^2.0.2",
     "@commitlint/cli": "12.1.4",
     "@commitlint/config-conventional": "12.1.4",
     "@fullcalendar/core": "^6.1.17",

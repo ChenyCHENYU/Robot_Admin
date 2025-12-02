@@ -19864,5 +19864,299 @@
 		"en": "Refresh and retry",
 		"ja": "リトライをします",
 		"ko": "새로 고침 다시 시도"
+	},
+	"szpbw59": {
+		"zh-cn": "条形码生成失败: ",
+		"en": "Barcode generation failed",
+		"ja": "バーコード生成に失敗します。",
+		"ko": "바코드 생성 실패:"
+	},
+	"5atf0ya": {
+		"zh-cn": "导出功能开发中...",
+		"en": "The export function is under development...",
+		"ja": "エクスポート機能開発中です…",
+		"ko": "내보내기 기능 개발 중..."
+	},
+	"adxg1ob": {
+		"zh-cn": "条形码值已复制到剪贴板",
+		"en": "The barcode value has been copied to the clipboard",
+		"ja": "バーコード値はクリップボードにコピーしてあります",
+		"ko": "클립보드에 바코드 값을 복사했습니다"
+	},
+	"gclh025": {
+		"zh-cn": "配置已重置",
+		"en": "The configuration has been reset",
+		"ja": "構成がリセットされました",
+		"ko": "설정이 초기화되었습니다"
+	},
+	"yxzsnj7": {
+		"zh-cn": " 条形码示例 ",
+		"en": "Barcode example",
+		"ja": "バーコード例です",
+		"ko": "바코드 예제"
+	},
+	"ggem0w24": {
+		"zh-cn": " 以下是常见的条形码格式示例，展示了不同应用场景下的条形码效果。CODE128是最通用的格式，支持所有ASCII字符；EAN13是商品条码的标准格式。 ",
+		"en": "The following are common examples of barcode formats, demonstrating the barcode effects in different application scenarios. CODE128 is the most universal format, supporting all ASCII characters. EAN13 is the standard format for product barcodes.",
+		"ja": "以下は、一般的なバーコードフォーマットの例で、さまざまなアプリケーションシーンでのバーコード効果を示しています。CODE128は最も汎用的なフォーマットで、すべてのASCII文字をサポートしています。EAN13は商品のバーコードの標準フォーマットです。",
+		"ko": "아래는 바코드 형식의 일반적인 예제이며, 다양한 응용 환경에서 바코드 효과를 보여 준다.code128은 가장 일반적인 형식이며 모든 ascii 문자를 지원한다.ean13은 상품 바코드의 표준 형식이다."
+	},
+	"yx2t2e7": {
+		"zh-cn": " 自定义配置 ",
+		"en": "Custom configuration",
+		"ja": "カスタム構成です",
+		"ko": "사용자 정의 설정"
+	},
+	"bxvcx212": {
+		"zh-cn": " 通过以下配置选项，您可以自定义条形码的外观和行为。实时预览您的配置效果。 ",
+		"en": "Through the following configuration options, you can customize the appearance and behavior of the barcode. Preview your configuration effect in real time.",
+		"ja": "以下のオプション設定により、バーコードの外観と挙動をカスタマイズすることができます。リアルタイムであなたの構成の効果をプレビューします。",
+		"ko": "다음 설정 옵션으로 바코드의 모양과 동작을 설정할 수 있습니다.설정을 실시간으로 미리 봅니다."
+	},
+	"9g3beq5": {
+		"zh-cn": "条形码值:",
+		"en": "Barcode value",
+		"ja": "バーコード値です:",
+		"ko": "바코드 값:"
+	},
+	"k34o2j7": {
+		"zh-cn": "请输入条形码值",
+		"en": "Please enter the barcode value",
+		"ja": "バーコード値を入力願います。",
+		"ko": "바코드 값을 입력해 주세요"
+	},
+	"dxybg3": {
+		"zh-cn": "尺寸:",
+		"en": "Size",
+		"ja": "サイズです:",
+		"ko": "크기:"
+	},
+	"dfrtv3": {
+		"zh-cn": "宽: ",
+		"en": "Kuan",
+		"ja": "寛です。",
+		"ko": "너비:"
+	},
+	"moiym3": {
+		"zh-cn": "高: ",
+		"en": "Gao",
+		"ja": "高いです",
+		"ko": "높이:"
+	},
+	"fcwgl3": {
+		"zh-cn": "文本:",
+		"en": "Text",
+		"ja": "テキストです。",
+		"ko": "텍스트:"
+	},
+	"bv1ehy4": {
+		"zh-cn": "字号: ",
+		"en": "Font size:",
+		"ja": "フォントサイズです。",
+		"ko": "글꼴 크기:"
+	},
+	"dehsu94": {
+		"zh-cn": "显示文本",
+		"en": "Display text",
+		"ja": "テキストを表示します",
+		"ko": "텍스트 보이기"
+	},
+	"myw843": {
+		"zh-cn": "颜色:",
+		"en": "Color",
+		"ja": "色です:",
+		"ko": "색상:"
+	},
+	"mgwz2": {
+		"zh-cn": "背景",
+		"en": "Background",
+		"ja": "背景です",
+		"ko": "배경"
+	},
+	"vpsmg46": {
+		"zh-cn": " 实时预览 ",
+		"en": "Real-time preview",
+		"ja": "リアルタイムプレビューです",
+		"ko": "실시간 미리 보기"
+	},
+	"n2pue07": {
+		"zh-cn": "条形码预览效果",
+		"en": "Barcode preview effect",
+		"ja": "バーコードプレビュー効果です",
+		"ko": "바코드 미리 보기 효과"
+	},
+	"fpsnb3": {
+		"zh-cn": "格式:",
+		"en": "Format",
+		"ja": "フォーマットです:",
+		"ko": "형식:"
+	},
+	"dncu2": {
+		"zh-cn": "值:",
+		"en": "Value",
+		"ja": "値です:",
+		"ko": "값:"
+	},
+	"o6y1": {
+		"zh-cn": "空",
+		"en": "empty",
+		"ja": "空です",
+		"ko": "빈"
+	},
+	"ud13a16": {
+		"zh-cn": " 导出图片 ",
+		"en": "Export image",
+		"ja": "画像を導出します",
+		"ko": "그림 내보내기"
+	},
+	"c2d05p5": {
+		"zh-cn": " 复制值 ",
+		"en": "Copy value",
+		"ja": "コピー値です",
+		"ko": "복사 값"
+	},
+	"tlafftc": {
+		"zh-cn": "CODE128 (通用)",
+		"en": "CODE128 (General)",
+		"ja": "CODE128(汎用)です。",
+		"ko": "code128 (일반)"
+	},
+	"9fdnkvb": {
+		"zh-cn": "EAN13 (商品码)",
+		"en": "EAN13 (Product Code)",
+		"ja": "EAN13(商品コードです)",
+		"ko": "ean13 (상품번호)"
+	},
+	"v8isuab": {
+		"zh-cn": "UPC (美国商品码)",
+		"en": "UPC (United States Commodity Code",
+		"ja": "UPC(米国の商品コードです)",
+		"ko": "upc (미국 제품 코드)"
+	},
+	"am3ifv5": {
+		"zh-cn": "商品条形码",
+		"en": "Product barcode",
+		"ja": "商品バーコードです",
+		"ko": "상품 바코드"
+	},
+	"jeohj2d": {
+		"zh-cn": "常见的商品EAN13条形码",
+		"en": "Common product EAN13 barcodes",
+		"ja": "よくある商品EAN13バーコードです",
+		"ko": "흔한 상품 ean13 바코드"
+	},
+	"b47z184": {
+		"zh-cn": "商品编号",
+		"en": "Product number",
+		"ja": "商品番号です",
+		"ko": "상품 번호"
+	},
+	"zdan7s5": {
+		"zh-cn": "物流条形码",
+		"en": "Logistics barcode",
+		"ja": "物流バーコードです",
+		"ko": "물류 바코드"
+	},
+	"ov1otyg": {
+		"zh-cn": "CODE128格式，支持更多字符",
+		"en": "CODE128 format, supporting more characters",
+		"ja": "CODE128フォーマットでより多くの文字をサポートします",
+		"ko": "code128 형식, 더 많은 문자를 지원한다"
+	},
+	"evwh164": {
+		"zh-cn": "物流单号",
+		"en": "Logistics tracking number",
+		"ja": "物流伝票番号です",
+		"ko": "물류 송장 번호"
+	},
+	"qkzt8b5": {
+		"zh-cn": "库存条形码",
+		"en": "Inventory barcode",
+		"ja": "在庫バーコードです。",
+		"ko": "재고 바코드"
+	},
+	"4zvid8g": {
+		"zh-cn": "CODE39格式，常用在库存管理",
+		"en": "The CODE39 format is commonly used in inventory management",
+		"ja": "CODE39フォーマットは在庫管理によく使われます。",
+		"ko": "code39 형식, 재고 관리에서 자주 사용된다"
+	},
+	"cbf1qe4": {
+		"zh-cn": "库存编号",
+		"en": "Inventory number",
+		"ja": "在庫番号です",
+		"ko": "재고 번호"
+	},
+	"rt55e65": {
+		"zh-cn": "药品条形码",
+		"en": "Drug barcode",
+		"ja": "医薬品バーコードです",
+		"ko": "약품 바코드"
+	},
+	"q671qk9": {
+		"zh-cn": "药品专用条形码格式",
+		"en": "Special barcode format for pharmaceuticals",
+		"ja": "医薬品専用バーコード形式です",
+		"ko": "약품 전용 바코드 형식"
+	},
+	"gxtf0z4": {
+		"zh-cn": "药品编号",
+		"en": "Drug number",
+		"ja": "薬の番号です",
+		"ko": "약품 번호"
+	},
+	"dftmju4": {
+		"zh-cn": "条形宽度",
+		"en": "Bar width",
+		"ja": "バー幅です。",
+		"ko": "막대 너비"
+	},
+	"dg4cz34": {
+		"zh-cn": "条形高度",
+		"en": "Bar height",
+		"ja": "棒状の高さです",
+		"ko": "막대 높이"
+	},
+	"busk9w4": {
+		"zh-cn": "字体大小",
+		"en": "Font size",
+		"ja": "フォントサイズです",
+		"ko": "글꼴 크기"
+	},
+	"kmgy3c4": {
+		"zh-cn": "默认黑白",
+		"en": "Default black and white",
+		"ja": "白黒を黙認しています",
+		"ko": "기본 흑백"
+	},
+	"n8zk2": {
+		"zh-cn": "蓝白",
+		"en": "Blue and white",
+		"ja": "青と白です",
+		"ko": "블루 화이트"
+	},
+	"m6u32": {
+		"zh-cn": "红白",
+		"en": "Red and white",
+		"ja": "紅白",
+		"ko": "홍 백"
+	},
+	"m9262": {
+		"zh-cn": "绿白",
+		"en": "Green and white",
+		"ja": "緑と白です",
+		"ko": "뤼 백"
+	},
+	"rvv72": {
+		"zh-cn": "黑黄",
+		"en": "Black and yellow",
+		"ja": "黒黄色です",
+		"ko": "검은 황"
+	},
+	"ef76844": {
+		"zh-cn": "深蓝浅蓝",
+		"en": "Dark blue, light blue",
+		"ja": "濃い青と薄い青です",
+		"ko": "짙은 남색과 연한 남색"
 	}
 }
