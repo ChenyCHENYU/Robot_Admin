@@ -77,7 +77,32 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
   }
 }
 
-// 核心路由守卫 - 优化版本
+// 检查是否需要初始化动态路由
+const shouldInitDynamicRouter = (
+  authMenuList: any[],
+  isInitializing: boolean
+): boolean => {
+  return !authMenuList.length && !isInitializing
+}
+
+// 处理未登录场景
+const handleUnauthenticated = (
+  to: RouteLocationNormalized,
+  meta: ExtendedRouteMeta
+): string | boolean => {
+  if (WHITE_LIST.includes(to.path)) {
+    setPageTitle(meta.title)
+    return true
+  }
+  return LOGIN_PATH
+}
+
+// 处理已登录访问登录页
+const handleLoginPageRedirect = (): string => {
+  return '/home'
+}
+
+// 核心路由守卫 - 降低复杂度版本
 router.beforeEach(
   async (
     to: RouteLocationNormalized,
@@ -93,27 +118,23 @@ router.beforeEach(
 
       // 1. 未登录处理
       if (!token) {
-        if (WHITE_LIST.includes(to.path)) {
-          setPageTitle(meta.title)
-          return true
-        }
-        return LOGIN_PATH
+        return handleUnauthenticated(to, meta)
       }
 
       // 2. 已登录但访问登录页
       if (to.path === LOGIN_PATH) {
-        return '/home'
+        return handleLoginPageRedirect()
       }
 
-      // 3. 动态路由初始化 - 优化：只执行一次
-      if (!authMenuList.length && !isInitializing) {
+      // 3. 动态路由初始化
+      if (shouldInitDynamicRouter(authMenuList, isInitializing)) {
         const result = await handleDynamicRouterInit(to.fullPath)
 
         if (result !== to.fullPath) {
           return result
         }
 
-        // 初始化成功后，预加载首页组件（如果还未加载）
+        // 初始化成功后，预加载首页组件
         if (to.path !== '/home') {
           import('@/views/home/index.vue').catch(() => null)
         }

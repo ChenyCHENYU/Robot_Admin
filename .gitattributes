@@ -5,3 +5,11 @@
 *.cmd  text eol=crlf
 
 .env*  text eol=lf
+
+# 自动生成文件的合并策略
+# lang/index.json - 国际化翻译文件，使用自定义合并驱动（智能合并 JSON）
+lang/index.json merge=i18n-json
+
+# 类型声明文件 - 使用ours策略（保留当前分支，因为这些文件运行时会自动重新生成）
+src/types/components.d.ts merge=ours
+src/types/auto-imports.d.ts merge=ours

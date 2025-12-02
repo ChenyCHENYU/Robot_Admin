@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     C_AntV: typeof import('./../components/global/C_AntV/index.vue')['default']
+    C_Barcode: typeof import('./../components/global/C_Barcode/index.vue')['default']
     C_Breadcrumb: typeof import('./../components/global/C_Breadcrumb/index.vue')['default']
     C_Captcha: typeof import('./../components/global/C_Captcha/index.vue')['default']
     C_Cascade: typeof import('./../components/global/C_Cascade/index.vue')['default']
@@ -29,6 +30,7 @@ declare module 'vue' {
     C_Icon: typeof import('./../components/global/C_Icon/index.vue')['default']
     C_Language: typeof import('./../components/global/C_Language/index.vue')['default']
     C_Layout: typeof import('./../components/global/C_Layout/index.vue')['default']
+    C_Map: typeof import('./../components/global/C_Map/index.vue')['default']
     C_Markdown: typeof import('./../components/global/C_Markdown/index.vue')['default']
     C_Menu: typeof import('./../components/global/C_Menu/index.vue')['default']
     C_MenuTop: typeof import('./../components/global/C_MenuTop/index.vue')['default']

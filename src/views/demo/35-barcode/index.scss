@@ -1,0 +1,410 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-12-02 09:13:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-12-02 10:49:41
+ * @FilePath: \Robot_Admin\src\views\demo\35-barcode\index.scss
+ * @Description: 条形码演示页面样式
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ */
+
+.barcode-demo {
+  padding: 20px;
+
+  .demo-section {
+    margin-bottom: 32px;
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .title-icon {
+        color: var(--primary-color, #409eff);
+      }
+    }
+
+    .section-desc {
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+  }
+
+  .examples-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+
+    .example-card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 8px;
+      padding: 16px;
+      transition: all 0.3s ease;
+      height: fit-content;
+
+      &:hover {
+        border-color: var(--primary-color, #409eff);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .example-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+        line-height: 1.3;
+      }
+
+      .example-desc {
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 16px;
+        line-height: 1.4;
+      }
+
+      .example-barcode {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 12px;
+        background: #fafafa;
+        border-radius: 4px;
+        border: 1px dashed #d9d9d9;
+        min-height: 60px;
+        overflow: hidden;
+        width: 100%;
+
+        :deep(svg) {
+          max-width: 100%;
+          height: auto;
+          display: block;
+        }
+      }
+    }
+  }
+
+  .control-panel {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 32px;
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      gap: 16px;
+      flex-wrap: wrap;
+
+      .control-label {
+        min-width: 80px;
+        font-weight: 500;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .control-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        min-width: 0;
+      }
+
+      .color-presets {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        .color-preset {
+          width: 32px;
+          height: 32px;
+          border-radius: 4px;
+          cursor: pointer;
+          border: 2px solid transparent;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+
+          &:hover {
+            transform: scale(1.1);
+          }
+
+          &.active {
+            border-color: var(--primary-color, #409eff);
+            box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+          }
+        }
+      }
+    }
+  }
+
+  .preview-section {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+
+    .preview-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .preview-barcode {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      background: #fafafa;
+      border: 1px dashed #d9d9d9;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      width: 100%;
+      min-height: 80px;
+
+      :deep(svg) {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        overflow: visible;
+      }
+    }
+
+    .preview-info {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      font-size: 14px;
+      color: #666;
+      flex-wrap: wrap;
+
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 8px;
+
+        .info-label {
+          font-weight: 500;
+          white-space: nowrap;
+        }
+
+        .info-value {
+          color: var(--primary-color, #409eff);
+          font-family: 'Courier New', monospace;
+          word-break: break-all;
+        }
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+
+    .action-button {
+      min-width: 120px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 1024px) {
+  .barcode-demo {
+    padding: 16px;
+
+    .examples-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+    }
+
+    .control-panel {
+      padding: 16px;
+
+      .control-row {
+        gap: 12px;
+
+        .control-content {
+          gap: 8px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .barcode-demo {
+    padding: 12px;
+
+    .demo-section {
+      margin-bottom: 24px;
+
+      .section-title {
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+
+      .section-desc {
+        font-size: 13px;
+        margin-bottom: 16px;
+      }
+    }
+
+    .examples-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+
+      .example-card {
+        padding: 12px;
+
+        .example-title {
+          font-size: 15px;
+        }
+
+        .example-desc {
+          font-size: 12px;
+          margin-bottom: 12px;
+        }
+
+        .example-barcode {
+          padding: 8px;
+        }
+      }
+    }
+
+    .control-panel {
+      padding: 12px;
+
+      .control-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 12px;
+
+        .control-label {
+          min-width: auto;
+          margin-bottom: 4px;
+        }
+
+        .control-content {
+          width: 100%;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        .color-presets {
+          gap: 6px;
+
+          .color-preset {
+            width: 28px;
+            height: 28px;
+          }
+        }
+      }
+    }
+
+    .preview-section {
+      padding: 16px;
+
+      .preview-title {
+        font-size: 15px;
+        margin-bottom: 16px;
+      }
+
+      .preview-barcode {
+        padding: 12px;
+      }
+
+      .preview-info {
+        gap: 16px;
+        font-size: 13px;
+
+        .info-item {
+          margin-bottom: 6px;
+        }
+      }
+    }
+
+    .action-buttons {
+      gap: 8px;
+      margin-top: 16px;
+
+      .action-button {
+        min-width: 100px;
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .barcode-demo {
+    padding: 8px;
+
+    .examples-grid {
+      .example-card {
+        padding: 10px;
+
+        .example-barcode {
+          padding: 6px;
+          min-height: 50px;
+        }
+      }
+    }
+
+    .control-panel {
+      padding: 10px;
+
+      .control-row {
+        .control-content {
+          gap: 6px;
+        }
+
+        .color-presets {
+          .color-preset {
+            width: 24px;
+            height: 24px;
+          }
+        }
+      }
+    }
+
+    .preview-section {
+      padding: 12px;
+
+      .preview-barcode {
+        padding: 8px;
+      }
+
+      .preview-info {
+        gap: 12px;
+        font-size: 12px;
+      }
+    }
+
+    .action-buttons {
+      .action-button {
+        min-width: 80px;
+        padding: 8px 12px;
+      }
+    }
+  }
+}
