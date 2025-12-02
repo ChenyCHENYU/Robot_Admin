@@ -437,7 +437,13 @@ echo "================================================"
 print_step "切换到main分支..."
 git checkout main
 
-# 自动提交main分支上的自动生成文件
+# 切换分支后立即清理可能存在的自动生成文件修改
+print_step "清理自动生成文件的未提交修改..."
+git restore lang/index.json 2>/dev/null || true
+git restore src/types/components.d.ts 2>/dev/null || true
+git restore src/types/auto-imports.d.ts 2>/dev/null || true
+
+# 自动提交main分支上的自动生成文件（如果有已暂存的修改）
 auto_commit_generated_files "main"
 
 # 拉取最新的main分支
