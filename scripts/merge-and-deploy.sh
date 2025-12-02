@@ -76,6 +76,30 @@ check_remote_connection() {
     fi
 }
 
+# 禁用 i18n 自动扫描（避免切换分支时自动生成翻译）
+disable_i18n_auto_scan() {
+    print_step "临时禁用 i18n 自动扫描功能..."
+    
+    # 备份原始环境变量文件
+    if [ -f "envs/.env.development" ]; then
+        cp envs/.env.development envs/.env.development.backup
+        # 临时禁用 i18n
+        sed -i 's/^VITE_I18N_ENABLED=true/VITE_I18N_ENABLED=false/' envs/.env.development
+        print_success "已临时禁用 i18n 自动扫描（部署完成后将恢复）"
+    fi
+}
+
+# 恢复 i18n 自动扫描
+restore_i18n_auto_scan() {
+    print_step "恢复 i18n 自动扫描功能..."
+    
+    # 恢复原始环境变量文件
+    if [ -f "envs/.env.development.backup" ]; then
+        mv envs/.env.development.backup envs/.env.development
+        print_success "已恢复 i18n 自动扫描配置"
+    fi
+}
+
 # 安全推送函数
 safe_push() {
     local remote_name=$1
@@ -303,6 +327,12 @@ get_version() {
 echo -e "${PURPLE}🚀 功能分支发布自动化脚本启动...${NC}"
 echo "================================================"
 
+# 0. 禁用 i18n 自动扫描（避免切换分支时自动生成翻译）
+disable_i18n_auto_scan
+
+# 设置退出时自动恢复
+trap restore_i18n_auto_scan EXIT
+
 # 1. 获取当前分支和参数
 FEATURE_BRANCH=""
 if [ $# -eq 1 ]; then
@@ -338,14 +368,26 @@ fi
 
 print_success "所有必要分支都存在"
 
-# 4. 检查工作区是否干净
+# 4. 检查工作区状态（忽略脚本创建的临时文件）
 print_step "检查工作区状态..."
+
+# 临时忽略脚本修改的配置文件
+if [ -f "envs/.env.development.backup" ]; then
+    git update-index --assume-unchanged envs/.env.development 2>/dev/null || true
+fi
+
 if ! git diff-index --quiet HEAD --; then
+    # 恢复 git 追踪
+    git update-index --no-assume-unchanged envs/.env.development 2>/dev/null || true
+    
     print_warning "工作区有未提交的更改，请先提交或暂存！"
     echo "使用 'git status' 查看详情："
     git status --short
     exit 1
 fi
+
+# 恢复 git 追踪
+git update-index --no-assume-unchanged envs/.env.development 2>/dev/null || true
 
 print_success "工作区状态干净"
 
