@@ -812,6 +812,74 @@
       ]
     },
     {
+      "path": "/error-page",
+      "name": "error-page",
+      "component": "layout",
+      "redirect": "/error-page/404",
+      "meta": {
+        "icon": "mdi:alert-circle-outline",
+        "title": "异常页面",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "401",
+          "name": "error-401",
+          "component": "/error-page/401",
+          "meta": {
+            "icon": "mdi:lock-alert",
+            "title": "401",
+            "hidden": false,
+            "full": true,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "403",
+          "name": "error-403",
+          "component": "/error-page/403",
+          "meta": {
+            "icon": "mdi:cancel",
+            "title": "403",
+            "hidden": false,
+            "full": true,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "404",
+          "name": "error-404",
+          "component": "/error-page/404",
+          "meta": {
+            "icon": "mdi:file-remove-outline",
+            "title": "404",
+            "hidden": false,
+            "full": true,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "500",
+          "name": "error-500",
+          "component": "/error-page/500",
+          "meta": {
+            "icon": "mdi:server-network-off",
+            "title": "500",
+            "hidden": false,
+            "full": true,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
       "path": "/about",
       "component": "layout",
       "redirect": "/about/index",

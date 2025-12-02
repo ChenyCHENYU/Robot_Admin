@@ -1,9 +1,9 @@
 /*
  * @Author: ChenYu
  * @Date: 2022-04-06 01:23:50
- * @LastEditors: Cheny ycyplus@gmail.com
- * @LastEditTime: 2022-12-13 20:13:58
- * @FilePath: \vue3_vite3_elementPlus_admin\src\constant\index.ts
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-12-02 08:28:36
+ * @FilePath: \Robot_Admin\src\constant\index.ts
  * @Description: 常量文件夹
  * Copyright (c) ${2022} by ChenYu/天智AgileTeam, All Rights Reserved.
  */

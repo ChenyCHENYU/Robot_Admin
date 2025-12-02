@@ -19732,5 +19732,137 @@
 		"en": "Card Grid (Novel",
 		"ja": "カードグリッド(斬新です)",
 		"ko": "카드 그리드 (새로움)"
+	},
+	"5tnunu7": {
+		"zh-cn": "401 未授权",
+		"en": "401 Unauthorized",
+		"ja": "401ノーライセンスです",
+		"ko": "401 승인되지 않음"
+	},
+	"t937qf8": {
+		"zh-cn": "403 禁止访问",
+		"en": "403. No access allowed",
+		"ja": "403アクセス禁止です",
+		"ko": "접근 금지"
+	},
+	"97z8ov9": {
+		"zh-cn": "500 服务器错误",
+		"en": "500 Server error",
+		"ja": "500サーバーエラーです",
+		"ko": "서버 오류 500"
+	},
+	"cdxrpf4": {
+		"zh-cn": "异常页面",
+		"en": "Abnormal page",
+		"ja": "異常ページです",
+		"ko": "예외 페이지"
+	},
+	"5thy3m7": {
+		"zh-cn": "401 无权限",
+		"en": "401 No permission",
+		"ja": "401権限ありません",
+		"ko": "401권한 없음"
+	},
+	"fiahag9": {
+		"zh-cn": "404 页面不存在",
+		"en": "The 404 page does not exist",
+		"ja": "404ページは存在しません",
+		"ko": "404 페이지가 존재하지 않습니다"
+	},
+	"fs44i84": {
+		"zh-cn": "禁止访问",
+		"en": "Access prohibited",
+		"ja": "アクセス禁止です",
+		"ko": "접근 금지"
+	},
+	"nr1d005": {
+		"zh-cn": "页面不存在",
+		"en": "The page does not exist.",
+		"ja": "ページは存在しません",
+		"ko": "페이지가 존재하지 않습니다."
+	},
+	"cgrhw65": {
+		"zh-cn": "服务器错误",
+		"en": "Server error",
+		"ja": "サーバーエラーです",
+		"ko": "서버 오류"
+	},
+	"trdinb7": {
+		"zh-cn": " 访问被拒绝 ",
+		"en": "The access was denied",
+		"ja": "アクセスが拒否されました",
+		"ko": "접근이 거부되었습니다"
+	},
+	"2a0il0q": {
+		"zh-cn": " 抱歉，您没有权限访问此页面，请先登录或联系管理员 ",
+		"en": "Sorry, you do not have the permission to access this page. Please log in first or contact the administrator",
+		"ja": "申し訳ありませんが、このページにアクセスする権限がありませんので、まずログインするか、管理者に連絡してください",
+		"ko": "죄송합니다.이 페이지에 접근할 수 있는 권한이 없습니다. 먼저 로그인하거나 관리자에게 연락하십시오"
+	},
+	"tpt1la8": {
+		"zh-cn": "秒后自动跳转首页",
+		"en": "The homepage will be automatically redirected in seconds",
+		"ja": "1秒後にトップページに遷移します",
+		"ko": "초 후 자동으로 홈 페이지로 이동합니다"
+	},
+	"iijhd54": {
+		"zh-cn": "返回首页",
+		"en": "Return to the homepage",
+		"ja": "トップページに戻ります",
+		"ko": "홈 페이지로 돌아가기"
+	},
+	"fucpxe4": {
+		"zh-cn": "立即登录",
+		"en": "Log in now",
+		"ja": "すぐにログインします",
+		"ko": "지금 로그인"
+	},
+	"ii6mr94": {
+		"zh-cn": "返回上页",
+		"en": "Return to the previous page",
+		"ja": "前ページに戻ります",
+		"ko": "이전 쪽으로 돌아가기"
+	},
+	"pgtbjt7": {
+		"zh-cn": " 页面走丢了 ",
+		"en": "The page is lost",
+		"ja": "ページを失くしました",
+		"ko": "페이지가 분실되었다"
+	},
+	"yuazufj": {
+		"zh-cn": " 抱歉，您访问的页面不存在或已被移除 ",
+		"en": "Sorry, the page you visited does not exist or has been removed",
+		"ja": "申し訳ありませんが、あなたがアクセスしたページは存在しないか、削除されています。",
+		"ko": "죄송합니다. 방문하신 페이지가 존재하지 않거나 제거되었습니다"
+	},
+	"757ei86": {
+		"zh-cn": " 禁止访问 ",
+		"en": "Access prohibited",
+		"ja": "アクセス禁止です",
+		"ko": "접근 금지"
+	},
+	"qxjy6on": {
+		"zh-cn": " 抱歉，您的访问权限不足，无法查看此页面内容 ",
+		"en": "Sorry, your access is insufficient to view the content of this page",
+		"ja": "申し訳ありませんが、アクセスが不十分で、このページを見ることができません。",
+		"ko": "이 페이지의 내용을 볼 수 없습니다"
+	},
+	"c7wmhi7": {
+		"zh-cn": " 服务器错误 ",
+		"en": "Server error",
+		"ja": "サーバーエラーです",
+		"ko": "서버 오류"
+	},
+	"983qy2q": {
+		"zh-cn": " 抱歉，服务器遇到了问题，我们正在努力修复中... ",
+		"en": "Sorry, there is a problem with the server. We are working hard to fix it...",
+		"ja": "申し訳ありませんが、サーバーに問題が発生しています。",
+		"ko": "죄송합니다. 서버에 문제가 있습니다. 고치는 중입니다..."
+	},
+	"aswse94": {
+		"zh-cn": "刷新重试",
+		"en": "Refresh and retry",
+		"ja": "リトライをします",
+		"ko": "새로 고침 다시 시도"
 	}
 }
