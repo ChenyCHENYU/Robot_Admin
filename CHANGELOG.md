@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.9.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.8.1...v1.9.0) (2025-12-02)
+
+
+### Features
+
+* **C_Barcode:** 增加条形码组件，扩展插件组件菜单 ([570cd0a](https://github.com/ChenyCHENYU/Robot_Admin/commit/570cd0a9e659bdb7bb4fba22da41572a5eaad548))
+* **error-page:** 增加异常页面菜单，包含401、403、404、500 ([c233016](https://github.com/ChenyCHENYU/Robot_Admin/commit/c233016b12a42f09fad52d1870e1f3c3c211691d))
+* **i18n:** 增加日韩语翻译功能 ([ebe4c0e](https://github.com/ChenyCHENYU/Robot_Admin/commit/ebe4c0eddf482f4ab766e60760b74164d4381238))
+* **Map:** 增加地图组件及演示页面 ([f82e340](https://github.com/ChenyCHENYU/Robot_Admin/commit/f82e3400a20b664dc319f034faa532677b1ba472))
+* **merge:** 添加智能 JSON 合并驱动，解决翻译文件冲突 ([8250712](https://github.com/ChenyCHENYU/Robot_Admin/commit/8250712555dc1912bade15cde92032825ca6abca))
+* 优化i18n配置，默认关闭开发环境自动翻译 ([820ef35](https://github.com/ChenyCHENYU/Robot_Admin/commit/820ef35859a0be6b100d95a3200914e961df900b))
+* 优化i18n配置，默认关闭开发环境自动翻译 ([30167a3](https://github.com/ChenyCHENYU/Robot_Admin/commit/30167a3a93686099e8ba007193286dda6d78b4a1))
+* 优化部署脚本，临时禁用i18n自动扫描 ([a168e75](https://github.com/ChenyCHENYU/Robot_Admin/commit/a168e75dcbbfaacad2cdb620f5880801cbb6f2d6))
+
+
+### Bug Fixes
+
+* **i18n/vite-auto-i18n-plugin:** 修复配置语法不被识别的问题，同步替换工具代码 ([a9a9cce](https://github.com/ChenyCHENYU/Robot_Admin/commit/a9a9ccec3361d1554ea3501592e07f7b12425872))
+* **menu-manager:** 完善菜单逻辑，考虑非标菜单的有效展示 ([26d0b97](https://github.com/ChenyCHENYU/Robot_Admin/commit/26d0b97f70859a5c69adc091a008da9a923f286d))
+* **merge:** 同步自动冲突解决功能 ([a25ca3f](https://github.com/ChenyCHENYU/Robot_Admin/commit/a25ca3f6c77a0001055d2eaf830ae30dd19182fd))
+* **merge:** 增强自动合并功能，智能解决翻译文件冲突 ([95ded00](https://github.com/ChenyCHENYU/Robot_Admin/commit/95ded00e46439798b21e8fbc6676e57f337d3368))
+* 部署脚本切换分支后清理自动生成文件修改 ([76df231](https://github.com/ChenyCHENYU/Robot_Admin/commit/76df231d50247703e4fd50eedf2e755ce592131e))
+
+
+### Performance Improvements
+
+* **permission.ts:** 优化代码逻辑，降低复杂圈数 ([afb80ce](https://github.com/ChenyCHENYU/Robot_Admin/commit/afb80ce874007259df8f4c0ab0331b2a58c84674))
+
 ## [1.8.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.8.0...v1.8.1) (2025-11-17)
 
 
