@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-12-02 09:13:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-12-02 10:50:14
+ * @LastEditTime: 2025-12-02 14:24:16
  * @FilePath: \Robot_Admin\src\components\global\C_Barcode\index.vue
  * @Description: 条形码组件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -103,47 +103,6 @@
   }
 </script>
 
-<style scoped lang="scss">
-  .c-barcode {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    max-width: 100%;
-
-    .barcode-wrapper {
-      display: inline-block;
-      padding: 8px;
-      background: #ffffff;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-      overflow: hidden;
-      max-width: 100%;
-
-      &.with-border {
-        border: 1px dashed #e0e0e0;
-      }
-
-      &:hover {
-        border-color: var(--primary-color, #409eff);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      :deep(svg) {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        overflow: visible;
-      }
-    }
-
-    .barcode-label {
-      font-size: 14px;
-      color: #666;
-      text-align: center;
-      font-weight: 500;
-      word-break: break-all;
-      max-width: 100%;
-    }
-  }
+<style lang="scss" scoped>
+  @use './index.scss';
 </style>

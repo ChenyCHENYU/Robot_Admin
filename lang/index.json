@@ -20158,5 +20158,395 @@
 		"en": "Dark blue, light blue",
 		"ja": "濃い青と薄い青です",
 		"ko": "짙은 남색과 연한 남색"
+	},
+	"pt942b7": {
+		"zh-cn": "点击了标记: ",
+		"en": "Clicked the mark",
+		"ja": "マークをクリックしました",
+		"ko": "태그 클릭:"
+	},
+	"2ftfzn6": {
+		"zh-cn": "预览标记: ",
+		"en": "Preview mark",
+		"ja": "プレビューマークです:",
+		"ko": "미리 보기 태그:"
+	},
+	"xw7o7g5": {
+		"zh-cn": "随机标记 ",
+		"en": "Random marking",
+		"ja": "ランダムマークです",
+		"ko": "무작위 마커"
+	},
+	"sndb0w7": {
+		"zh-cn": "添加了标记: ",
+		"en": "Added tags:",
+		"ja": "タグを付けました:",
+		"ko": "태그 추가됨:"
+	},
+	"b0rk717": {
+		"zh-cn": "已清除所有标记",
+		"en": "All marks have been cleared",
+		"ja": "全てのマークを消去しました",
+		"ko": "모든 태그를 지웠습니다"
+	},
+	"dy53t87": {
+		"zh-cn": "已获取当前位置",
+		"en": "The current location has been obtained",
+		"ja": "現在位置を取得しました",
+		"ko": "현재 위치를 가져왔습니다"
+	},
+	"ahvrnq8": {
+		"zh-cn": "获取位置失败: ",
+		"en": "Failed to obtain location",
+		"ja": "位置の取得に失敗します。",
+		"ko": "위치 가져오기 실패:"
+	},
+	"4rmwjda": {
+		"zh-cn": "浏览器不支持地理定位",
+		"en": "Browsers do not support geolocation",
+		"ja": "ブラウザは地理的位置情報をサポートしません。",
+		"ko": "브라우저가 위치 설정을 지원하지 않습니다"
+	},
+	"cdg7pd6": {
+		"zh-cn": " 地图示例 ",
+		"en": "Map example",
+		"ja": "地図例です",
+		"ko": "지도 예시"
+	},
+	"75eat11g": {
+		"zh-cn": " 展示不同地图类型的使用示例，包括OpenStreetMap（免费）和高德地图（需要API Key）。 ",
+		"en": "Show usage examples of different map types, including OpenStreetMap (free) and Autonavi Map (API Key required).",
+		"ja": "OpenStreetMap(無料)や高徳マップ(API Keyが必要)など、異なる種類のマップの利用例を示します。",
+		"ko": "openstreetmap (무료), 고덕맵 (api key 필요) 등 다양한 유형의 지도 사용 예제를 보여 준다."
+	},
+	"ch7avl6": {
+		"zh-cn": " 地图配置 ",
+		"en": "Map configuration",
+		"ja": "地図の配置です",
+		"ko": "지도 설정"
+	},
+	"cdb91g13": {
+		"zh-cn": " 配置地图参数，实时预览效果。可以切换地图类型、调整缩放级别、添加标记点等。 ",
+		"en": "Configure map parameters and preview the effect in real time. You can switch map types, adjust zoom levels, add marker points, etc.",
+		"ja": "マップパラメータを配置し、リアルタイムで効果をプレビューします。マップタイプの切り替え、スケーリングレベルの調整、マーカーの追加などが可能です。",
+		"ko": "지도 매개변수 설정, 실시간 미리 보기 효과.지도 종류 변경, 확대/축소, 마커 포인트 추가 등이 가능하다."
+	},
+	"2rh6845": {
+		"zh-cn": "地图类型:",
+		"en": "Map type",
+		"ja": "地図タイプです。",
+		"ko": "지도 형식:"
+	},
+	"m06ayt7": {
+		"zh-cn": " 申请Key ",
+		"en": "Apply for Key",
+		"ja": "Keyを申請します",
+		"ko": "key 신청"
+	},
+	"a9iwyf4": {
+		"zh-cn": "中心点:",
+		"en": "Central point",
+		"ja": "中心点です",
+		"ko": "중심점:"
+	},
+	"j01ds3": {
+		"zh-cn": "纬度:",
+		"en": "Latitude",
+		"ja": "緯度です",
+		"ko": "라벨 크기:"
+	},
+	"j0rc33": {
+		"zh-cn": "经度:",
+		"en": "Longitude",
+		"ja": "経度です:",
+		"ko": "경도:"
+	},
+	"ecxnx4": {
+		"zh-cn": " 定位 ",
+		"en": "\"Positioning\"",
+		"ja": "位置づけです",
+		"ko": "위치"
+	},
+	"d9t98h5": {
+		"zh-cn": "缩放级别:",
+		"en": "Zoom level",
+		"ja": "スケーリングレベルです。",
+		"ko": "확대/축소 단계:"
+	},
+	"2mzuxu5": {
+		"zh-cn": "地图高度:",
+		"en": "Map height",
+		"ja": "地図の高さです:",
+		"ko": "지도 높이:"
+	},
+	"1ay4es5": {
+		"zh-cn": "标记管理:",
+		"en": "Tag Management",
+		"ja": "マーク管理です:",
+		"ko": "태그 관리:"
+	},
+	"tulc366": {
+		"zh-cn": " 添加标记 ",
+		"en": "Add tags",
+		"ja": "マークを付けます。",
+		"ko": "태그 추가"
+	},
+	"whbnig6": {
+		"zh-cn": " 清除标记 ",
+		"en": "Clear the mark",
+		"ja": "マークを消します",
+		"ko": "태그 지우기"
+	},
+	"aviyai6": {
+		"zh-cn": "地图预览效果",
+		"en": "Map preview effect",
+		"ja": "マッププレビュー効果です",
+		"ko": "지도 미리 보기 효과"
+	},
+	"1e22jy5": {
+		"zh-cn": "标记数量:",
+		"en": "Number of marks:",
+		"ja": "マークの数です:",
+		"ko": "태그 개수:"
+	},
+	"jxj4dp4": {
+		"zh-cn": "高德地图",
+		"en": "Gaode Map",
+		"ja": "高徳地図",
+		"ko": "가오더지도"
+	},
+	"jz65gt5": {
+		"zh-cn": "北京天安门",
+		"en": "Tian 'anmen Square in Beijing",
+		"ja": "北京の天安門です",
+		"ko": "베이징 천안문"
+	},
+	"ediixuc": {
+		"zh-cn": "中国北京市中心的著名地标",
+		"en": "A famous landmark in the center of Beijing, China",
+		"ja": "北京中心部の有名なランドマークです",
+		"ko": "중국 북경시 중심의 유명한 랜드마크"
+	},
+	"5ml9fn5": {
+		"zh-cn": "天安门广场",
+		"en": "Tian 'anmen Square",
+		"ja": "天安門広場です",
+		"ko": "천안문 광장"
+	},
+	"ib230z5": {
+		"zh-cn": "故宫博物院",
+		"en": "The Palace Museum",
+		"ja": "故宮博物院です",
+		"ko": "고궁 박물관"
+	},
+	"aaterk4": {
+		"zh-cn": "上海外滩",
+		"en": "The Bund of Shanghai",
+		"ja": "上海バンドです",
+		"ko": "상하이와이탄"
+	},
+	"hyee9b": {
+		"zh-cn": "上海市黄浦区的著名景点",
+		"en": "The famous scenic spots in Huangpu District, Shanghai",
+		"ja": "上海市黄浦区の名物です",
+		"ko": "상해시 황포구의 유명한 관광지"
+	},
+	"7qdiy85": {
+		"zh-cn": "外滩观景台",
+		"en": "The Bund Observation Deck",
+		"ja": "ワイタン展望台",
+		"ko": "와이탄 전망대"
+	},
+	"khbder4": {
+		"zh-cn": "黄浦公园",
+		"en": "Huangpu Park",
+		"ja": "黄浦公園です",
+		"ko": "황푸궁위안"
+	},
+	"eaq5x3": {
+		"zh-cn": "广州塔",
+		"en": "Canton Tower",
+		"ja": "広州タワーです",
+		"ko": "광저우타"
+	},
+	"o64ifn9": {
+		"zh-cn": "广州市的标志性建筑",
+		"en": "The landmark buildings of Guangzhou City",
+		"ja": "広州市のシンボルです",
+		"ko": "광저우시의 상징적인 건물"
+	},
+	"bddfks4": {
+		"zh-cn": "地图高度",
+		"en": "Map height",
+		"ja": "地図の高さです",
+		"ko": "지도 높이"
+	},
+	"ggtqah4": {
+		"zh-cn": "缩放级别",
+		"en": "Scaling level",
+		"ja": "スケーリングレベルです",
+		"ko": "크기 조정 단계"
+	},
+	"mh7d1623": {
+		"zh-cn": "高德地图需要API Key，如需使用请申请：https://lbs.amap.com/api/javascript-api/guide/create/",
+		"en": "Scott map need API Key, if you want to use, please apply for: https://lbs.amap.com/api/javascript-api/guide/create/",
+		"ja": "地図を払わapi keyが必要で、例えばなければ使用申請してください:https://lbs.amap.com/api/javascript-api/guide/create/",
+		"ko": "고덕 지도 필요 api key, 사용 하여야 할 경우에는 신청:https://lbs.amap.com/api/javascript-api/guide/create/"
+	},
+	"u0m73xe": {
+		"zh-cn": "请输入高德地图API Key",
+		"en": "Please enter the API Key of Autonavi Map",
+		"ja": "高徳地図API Keyを入力していただきます。",
+		"ko": "고덕맵 api key를 입력해 주세요"
+	},
+	"ggp4ys4": {
+		"zh-cn": "缩放控制",
+		"en": "Zoom control",
+		"ja": "ズーム制御です",
+		"ko": "크기 조절"
+	},
+	"bcwwu74": {
+		"zh-cn": "图层切换",
+		"en": "Layer switching",
+		"ja": "レイヤ切り替え",
+		"ko": "레이어 전환"
+	},
+	"dpes3y4": {
+		"zh-cn": "标记管理",
+		"en": "Tag Management",
+		"ja": "タグ管理です",
+		"ko": "태그 관리"
+	},
+	"edhqjo4": {
+		"zh-cn": "测距工具",
+		"en": "Ranging tool",
+		"ja": "距離測定ツールです",
+		"ko": "거리 측정 도구"
+	},
+	"gd5al44": {
+		"zh-cn": "绘图工具",
+		"en": "Drawing tool",
+		"ja": "描画ツールです",
+		"ko": "그림 도구"
+	},
+	"73b6vb9": {
+		"zh-cn": "等待地图加载...",
+		"en": "Waiting for the map to load...",
+		"ja": "地図がロードされるのを待ちます…",
+		"ko": "지도 불러오기 대기 중..."
+	},
+	"tkbsxz7": {
+		"zh-cn": "地图加载成功！",
+		"en": "The map has been loaded successfully!",
+		"ja": "マップロード成功です!",
+		"ko": "지도를 성공적으로 불러왔습니다!"
+	},
+	"gb8g1n6": {
+		"zh-cn": "地图测试页面",
+		"en": "Map test page",
+		"ja": "地図テストページです",
+		"ko": "지도 테스트 페이지"
+	},
+	"ow6pits": {
+		"zh-cn": "这是一个简单的地图测试，用于验证地图组件是否能正常显示。",
+		"en": "This is a simple map test used to verify whether the map component can be displayed normally.",
+		"ja": "これは、マップパーツが正常に表示されるかどうかを確認する簡単なマップテストです。",
+		"ko": "이것은 지도 구성 요소가 제대로 표시되는지 확인하기 위한 간단한 지도 테스트이다."
+	},
+	"ftsn296": {
+		"zh-cn": "地图状态: ",
+		"en": "Map status",
+		"ja": "地図の状態です:",
+		"ko": "지도 상태:"
+	},
+	"46cde96": {
+		"zh-cn": "点击标记: ",
+		"en": "Click the mark",
+		"ja": "マークをクリックします。",
+		"ko": "태그 누르기:"
+	},
+	"mzll5j7": {
+		"zh-cn": "初始化中...",
+		"en": "Initializing...",
+		"ja": "初期化中です…",
+		"ko": "초기화 중..."
+	},
+	"z8a82z7": {
+		"zh-cn": "等待加载...",
+		"en": "Wait for loading...",
+		"ja": "ロードを待ちます…",
+		"ko": "불러오기 대기 중..."
+	},
+	"epghgu5": {
+		"zh-cn": "容器不存在",
+		"en": "The container does not exist.",
+		"ja": "容器は存在しません",
+		"ko": "컨테이너가 존재하지 않습니다."
+	},
+	"lc6yk78": {
+		"zh-cn": "地图实例创建成功",
+		"en": "The map instance has been created successfully",
+		"ja": "マップ作成に成功しました",
+		"ko": "지도 인스턴스를 성공적으로 생성했습니다"
+	},
+	"5ckj776": {
+		"zh-cn": "瓦片加载成功",
+		"en": "The tile has been loaded successfully",
+		"ja": "タイルの読み込みに成功しました",
+		"ko": "타일을 성공적으로 불러왔습니다"
+	},
+	"5clpym6": {
+		"zh-cn": "瓦片加载失败",
+		"en": "The tile loading failed",
+		"ja": "タイルの読み込みに失敗しました",
+		"ko": "타일을 불러올 수 없습니다"
+	},
+	"kqba7y7": {
+		"zh-cn": "地图初始化完成",
+		"en": "The map initialization is complete",
+		"ja": "マップ初期化完了です",
+		"ko": "지도 초기화 완료"
+	},
+	"l0xmwu7": {
+		"zh-cn": "初始化失败: ",
+		"en": "Initialization failed",
+		"ja": "初期化の失敗です:",
+		"ko": "초기화 실패:"
+	},
+	"yw88zx6": {
+		"zh-cn": "简单地图测试",
+		"en": "Simple map test",
+		"ja": "簡単な地図テストです",
+		"ko": "간단한 지도 테스트"
+	},
+	"5d1ml86": {
+		"zh-cn": "瓦片加载: ",
+		"en": "Tile loading",
+		"ja": "瓦のローディングです",
+		"ko": "타일 불러오기:"
+	},
+	"ed0pau6": {
+		"zh-cn": "地图组件测试",
+		"en": "Map component testing",
+		"ja": "地図コンポーネントテストです",
+		"ko": "지도 구성 요소 테스트"
+	},
+	"3krqgkv": {
+		"zh-cn": "这是一个简单的测试页面，用于验证 C_Map 组件是否正常工作",
+		"en": "This is a simple test page used to verify whether the C_Map component works properly",
+		"ja": "これはC_Mapコンポーネントが正常に動作するかを検証する簡単なテストページです",
+		"ko": "이것은 c_map 구성 요소가 제대로 작동하는지 검증하기 위한 간단한 테스트 페이지이다"
+	},
+	"dkutcih": {
+		"zh-cn": "如果地图正常显示，说明组件封装成功",
+		"en": "If the map is displayed normally, it indicates that the component encapsulation is successful",
+		"ja": "地図が正常に表示されていれば,パッケージの実装に成功したことになります",
+		"ko": "지도가 정상적으로 나타나면, 구성 요소 캡슐이 성공적으로 포장된 것이다"
+	},
+	"6u8dord": {
+		"zh-cn": "控制台应该会输出初始化日志",
+		"en": "The console should output the initialization log",
+		"ja": "コンソールから初期化ログが出力されるはずです",
+		"ko": "콘솔에서 초기화 로그를 출력할 것입니다"
 	}
 }

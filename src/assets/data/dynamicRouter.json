@@ -356,6 +356,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "map",
+          "name": "demo-map",
+          "component": "/demo/36-map/index",
+          "meta": {
+            "icon": "mdi:map-marker-multiple",
+            "title": "地图",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },

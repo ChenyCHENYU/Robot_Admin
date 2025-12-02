@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-12-02 09:13:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-12-02 09:16:55
+ * @LastEditTime: 2025-12-02 14:25:18
  * @FilePath: \Robot_Admin\src\views\demo\35-barcode\index.vue
  * @Description: 条形码演示页面
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -237,7 +237,6 @@
     type BarcodeFormat,
     type TextPosition,
   } from './data'
-  import './index.scss'
 
   // message 是自动导入的
   declare const message: {
@@ -302,3 +301,7 @@
     message.success('配置已重置')
   }
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>
