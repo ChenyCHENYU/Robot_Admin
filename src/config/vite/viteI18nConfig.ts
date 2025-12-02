@@ -111,7 +111,7 @@ export default function createI18nPlugin(): Plugin | null {
       namespace: 'robot_admin',
 
       // ========== 高级配置 ==========
-      deepScan: true, // ✅ 深度扫描（精确切割模板字符串，支持 TS 文件）
+      deepScan: true, // ✅ 深度扫描（精确切割模板字符串，自动识别对象属性中的中文）
       isClearSpace: true, // 清除字符串前后空格
       buildToDist: true, // 构建时打包翻译文件到主包
       rewriteConfig: false, // 🔒 不重写配置文件（避免覆盖手动修改）
@@ -122,8 +122,9 @@ export default function createI18nPlugin(): Plugin | null {
       // 需要配合 commonTranslateKey 使用
       commonTranslateKey: '', // 通用翻译 key 前缀
 
-      // ========== 文件扩展名 ==========
-      insertFileExtensions: ['ts', 'tsx'], // ✅ 扫描 TypeScript 文件
+      // ========== 文件扩展名配置 ==========
+      // ✅ 扫描 .ts 和 .tsx 文件（对象属性、数组元素中的中文字符串）
+      insertFileExtensions: ['ts', 'tsx'],
     })
   } catch (error) {
     console.warn(
