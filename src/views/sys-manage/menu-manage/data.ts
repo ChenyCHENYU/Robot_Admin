@@ -285,12 +285,22 @@ const shouldSkipRoute = (route: any, meta: any): boolean => {
 
 // 检查是否是需要扁平化的单子菜单容器
 const shouldFlattenContainer = (route: any): boolean => {
-  return (
+  // 情况1: 没有 path 的 layout 容器，只有一个子菜单
+  const isAnonymousContainer =
     !route.path &&
     !route.name &&
     route.component === 'layout' &&
     route.children?.length === 1
-  )
+
+  // 情况2: 有 path 的 layout 容器，但只有一个子菜单且父级没有独立的 meta 信息
+  // 例如: /about -> layout -> /about/index 这种结构
+  const isSingleChildContainer =
+    route.component === 'layout' &&
+    route.children?.length === 1 &&
+    !route.name && // 父级没有 name
+    (!route.meta || !route.meta.title) // 父级没有自己的 title
+
+  return isAnonymousContainer || isSingleChildContainer
 }
 
 // 构建基础菜单数据
