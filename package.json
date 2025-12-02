@@ -26,6 +26,8 @@
     "check-branch": "gbd",
     "check-types": "ts-type-cleaner analyze",
     "gen:route-i18n": "bun run scripts/generate-route-translations.ts",
+    "translate": "VITE_I18N_ENABLED=true vite build --mode development",
+    "translate:watch": "VITE_I18N_ENABLED=true vite --mode development",
     "deploy": "bash ./scripts/merge-and-deploy.sh",
     "sync-deploy-branch": "bash ./scripts/sync-dev.sh",
     "analyze": "vite build --mode analyze",
