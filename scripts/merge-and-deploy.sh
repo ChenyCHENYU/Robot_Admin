@@ -140,24 +140,102 @@ auto_commit_generated_files() {
     fi
 }
 
-# 安全合并函数
+# 智能解决翻译文件冲突
+resolve_i18n_conflicts() {
+    local source_branch=$1
+    local target_branch=$2
+    
+    # 检查是否有 lang/index.json 冲突
+    if git status | grep -q "lang/index.json"; then
+        print_step "检测到翻译文件冲突，自动合并..."
+        
+        # 使用自定义合并脚本
+        if [ -f "scripts/merge-i18n-json.js" ]; then
+            # 获取三方文件：基础版本、当前分支、对方分支
+            git show :1:lang/index.json > /tmp/lang-base.json 2>/dev/null || echo "{}" > /tmp/lang-base.json
+            git show :2:lang/index.json > /tmp/lang-ours.json 2>/dev/null || cp lang/index.json /tmp/lang-ours.json
+            git show :3:lang/index.json > /tmp/lang-theirs.json 2>/dev/null || echo "{}" > /tmp/lang-theirs.json
+            
+            # 调用合并脚本
+            if node scripts/merge-i18n-json.js /tmp/lang-ours.json /tmp/lang-theirs.json lang/index.json; then
+                git add lang/index.json
+                print_success "翻译文件冲突已自动解决"
+                return 0
+            else
+                print_error "自动合并翻译文件失败"
+                return 1
+            fi
+        else
+            print_warning "未找到合并脚本，使用简单策略（保留当前分支版本）"
+            git checkout --ours lang/index.json
+            git add lang/index.json
+            print_success "已保留 $target_branch 分支的翻译文件"
+            return 0
+        fi
+    fi
+    
+    return 0
+}
+
+# 安全合并函数（增强版）
 safe_merge() {
     local source_branch=$1
     local target_branch=$2
     
     print_step "合并 $source_branch 到 $target_branch..."
+    
     if git merge $source_branch --no-edit; then
         print_success "合并 $source_branch 到 $target_branch 成功"
         return 0
     else
-        print_error "合并 $source_branch 到 $target_branch 失败，存在冲突"
-        print_warning "请按以下步骤解决："
-        echo "  1. 使用 'git status' 查看冲突文件"
-        echo "  2. 手动编辑冲突文件"
-        echo "  3. 使用 'git add <文件>' 标记已解决"
-        echo "  4. 使用 'git commit' 完成合并"
-        echo "  5. 重新运行此脚本"
-        return 1
+        # 检查是否只是翻译文件或类型声明文件冲突
+        local conflict_files=$(git diff --name-only --diff-filter=U)
+        local auto_resolvable=true
+        
+        while IFS= read -r file; do
+            if [[ "$file" != "lang/index.json" ]] && [[ "$file" != src/types/* ]]; then
+                auto_resolvable=false
+                break
+            fi
+        done <<< "$conflict_files"
+        
+        if [ "$auto_resolvable" = true ]; then
+            print_step "检测到可自动解决的冲突，尝试自动处理..."
+            
+            # 解决翻译文件冲突
+            if ! resolve_i18n_conflicts "$source_branch" "$target_branch"; then
+                print_error "自动解决冲突失败"
+                return 1
+            fi
+            
+            # 解决类型声明文件冲突（保留当前分支）
+            if git status | grep -q "src/types/"; then
+                print_step "解决类型声明文件冲突（保留当前分支版本）..."
+                git checkout --ours 'src/types/*.d.ts' 2>/dev/null || true
+                git add 'src/types/*.d.ts' 2>/dev/null || true
+                print_success "类型声明文件冲突已解决"
+            fi
+            
+            # 完成合并
+            if git commit --no-edit; then
+                print_success "冲突已自动解决，合并完成"
+                return 0
+            else
+                print_error "提交合并失败"
+                return 1
+            fi
+        else
+            print_error "合并 $source_branch 到 $target_branch 失败，存在无法自动解决的冲突"
+            print_warning "冲突文件："
+            echo "$conflict_files"
+            print_warning "请按以下步骤解决："
+            echo "  1. 使用 'git status' 查看冲突文件"
+            echo "  2. 手动编辑冲突文件"
+            echo "  3. 使用 'git add <文件>' 标记已解决"
+            echo "  4. 使用 'git commit' 完成合并"
+            echo "  5. 重新运行此脚本"
+            return 1
+        fi
     fi
 }
 
