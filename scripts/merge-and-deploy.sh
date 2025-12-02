@@ -76,30 +76,6 @@ check_remote_connection() {
     fi
 }
 
-# 禁用 i18n 自动扫描（避免切换分支时自动生成翻译）
-disable_i18n_auto_scan() {
-    print_step "临时禁用 i18n 自动扫描功能..."
-    
-    # 备份原始环境变量文件
-    if [ -f "envs/.env.development" ]; then
-        cp envs/.env.development envs/.env.development.backup
-        # 临时禁用 i18n
-        sed -i 's/^VITE_I18N_ENABLED=true/VITE_I18N_ENABLED=false/' envs/.env.development
-        print_success "已临时禁用 i18n 自动扫描（部署完成后将恢复）"
-    fi
-}
-
-# 恢复 i18n 自动扫描
-restore_i18n_auto_scan() {
-    print_step "恢复 i18n 自动扫描功能..."
-    
-    # 恢复原始环境变量文件
-    if [ -f "envs/.env.development.backup" ]; then
-        mv envs/.env.development.backup envs/.env.development
-        print_success "已恢复 i18n 自动扫描配置"
-    fi
-}
-
 # 安全推送函数
 safe_push() {
     local remote_name=$1
@@ -118,49 +94,6 @@ safe_push() {
         echo "  - 远程仓库不存在或无写入权限"
         echo "  - 分支被保护"
         return 1
-    fi
-}
-
-# 自动提交自动生成文件
-auto_commit_generated_files() {
-    local branch_name=$1
-    
-    # 定义自动生成的文件列表（只处理这些文件，不影响其他文件）
-    local generated_files=(
-        "lang/index.json"                # 国际化翻译文件（由 vite-auto-i18n-plugin 自动生成）
-        "src/types/components.d.ts"      # 组件类型声明（由 unplugin-vue-components 自动生成）
-        "src/types/auto-imports.d.ts"    # 自动导入类型声明（由 unplugin-auto-import 自动生成）
-    )
-    
-    # 检查是否有这些文件需要提交
-    local has_changes=false
-    for file in "${generated_files[@]}"; do
-        if [ -f "$file" ] && git diff --quiet "$file" 2>/dev/null; then
-            continue
-        elif [ -f "$file" ]; then
-            has_changes=true
-            break
-        fi
-    done
-    
-    # 如果有未提交的自动生成文件，自动提交
-    if [ "$has_changes" = true ]; then
-        print_step "检测到自动生成文件有更新，自动提交到 $branch_name 分支..."
-        
-        # 添加存在的自动生成文件
-        for file in "${generated_files[@]}"; do
-            if [ -f "$file" ]; then
-                git add "$file" 2>/dev/null || true
-            fi
-        done
-        
-        # 提交
-        if git diff --cached --quiet; then
-            print_info "自动生成文件无需提交"
-        else
-            git commit -m "chore: 更新自动生成文件（国际化翻译和类型声明）" --no-verify
-            print_success "自动生成文件已提交到 $branch_name 分支"
-        fi
     fi
 }
 
@@ -327,12 +260,6 @@ get_version() {
 echo -e "${PURPLE}🚀 功能分支发布自动化脚本启动...${NC}"
 echo "================================================"
 
-# 0. 禁用 i18n 自动扫描（避免切换分支时自动生成翻译）
-disable_i18n_auto_scan
-
-# 设置退出时自动恢复
-trap restore_i18n_auto_scan EXIT
-
 # 1. 获取当前分支和参数
 FEATURE_BRANCH=""
 if [ $# -eq 1 ]; then
@@ -404,9 +331,6 @@ echo "================================================"
 print_step "切换到dev分支..."
 git checkout dev
 
-# 自动提交dev分支上的自动生成文件
-auto_commit_generated_files "dev"
-
 # 拉取最新的dev分支
 if check_remote "origin" && check_remote_connection "origin"; then
     print_step "拉取最新的dev分支..."
@@ -436,15 +360,6 @@ echo "================================================"
 
 print_step "切换到main分支..."
 git checkout main
-
-# 切换分支后立即清理可能存在的自动生成文件修改
-print_step "清理自动生成文件的未提交修改..."
-git restore lang/index.json 2>/dev/null || true
-git restore src/types/components.d.ts 2>/dev/null || true
-git restore src/types/auto-imports.d.ts 2>/dev/null || true
-
-# 自动提交main分支上的自动生成文件（如果有已暂存的修改）
-auto_commit_generated_files "main"
 
 # 拉取最新的main分支
 if check_remote "origin" && check_remote_connection "origin"; then
