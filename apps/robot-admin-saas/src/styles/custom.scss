@@ -1,0 +1,179 @@
+/**
+ * ================================
+ * Custom Card 卡片渐变效果
+ * ================================
+ * 使用方式：class="custom-card"
+ * 一键获得完整的卡片渐变和动画效果
+ */
+
+.custom-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  /* 顶部渐变装饰条 */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #18a058, #2080f0, #f0a020);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  /* 悬停效果：浮起 + 阴影 + 显示渐变条 */
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    &::before {
+      opacity: 1;
+    }
+
+    /* 悬停时图标缩放 */
+    .card-icon {
+      transform: scale(1.1);
+    }
+
+    /* 悬停时图标光晕效果 */
+    .icon-wrapper::after {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* 悬停时统计区域背景变化 */
+    .card-stats {
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  /* 图标包装器 */
+  .icon-wrapper {
+    position: relative;
+
+    /* 图标光晕效果 */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(
+        circle,
+        rgba(32, 128, 240, 0.1) 0%,
+        transparent 70%
+      );
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.3s ease;
+    }
+  }
+
+  /* 卡片图标基础样式 */
+  .card-icon {
+    transition: transform 0.3s ease;
+  }
+
+  /* 统计区域样式 */
+  .card-stats {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: background 0.3s ease;
+  }
+
+  /* 浮动按钮增强效果 */
+  .float-btn {
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05) rotate(15deg);
+    }
+  }
+}
+
+/**
+ * ================================
+ * 扩展样式（可选组合使用）
+ * ================================
+ */
+
+/* 卡片背景效果 */
+.custom-card-bg {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* 统计卡片专用样式 */
+.custom-statistic {
+  @extend .custom-card;
+  padding: 16px 24px;
+
+  /* 统计图标前缀 */
+  .n-statistic__prefix {
+    position: relative;
+    margin-right: 8px;
+
+    i {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+
+    /* 统计图标光晕 */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(
+        circle,
+        rgba(24, 160, 88, 0.2) 0%,
+        transparent 70%
+      );
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &:hover .n-statistic__prefix {
+    i {
+      transform: scale(1.1);
+    }
+
+    &::after {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+}
+
+
+
+// TAG: 例子
+// <!-- 基础使用 -->
+// <div class="custom-card custom-card-bg p-6">
+//   <div class="icon-wrapper">
+//     <i class="card-icon">📊</i>
+//   </div>
+//   <!-- 内容 -->
+// </div>
+
+// <!-- 与 Naive UI 组合 -->
+// <NCard class="custom-card">
+//   <!-- 内容 -->
+// </NCard>
+
+// <!-- 统计卡片 -->
+// <NStatistic class="custom-statistic custom-card-bg" />

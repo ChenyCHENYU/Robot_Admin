@@ -1,0 +1,20 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": [
+    "../vite.config.*", // Vite 配置文件
+    "../vitest.config.*", // Vitest 配置文件
+    "../cypress.config.*", // Cypress 配置文件
+    "../nightwatch.conf.*", // Nightwatch 配置文件
+    "../playwright.config.*", // Playwright 配置文件
+    "../eslint.config.*", // ESLint 配置文件
+    "../src/config/vite/**/*" // Vite 相关配置文件
+  ],
+  "compilerOptions": {
+    "noEmit": true, // 不生成输出文件
+    "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.node.tsbuildinfo", // 增量编译信息
+
+    "module": "ESNext", // 使用最新的 ES 模块语法
+    "moduleResolution": "Bundler", // 使用打包工具的模块解析策略
+    "types": ["node"] // 包含 Node.js 类型定义
+  }
+}

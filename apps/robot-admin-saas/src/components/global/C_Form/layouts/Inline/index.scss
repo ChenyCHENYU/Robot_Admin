@@ -1,0 +1,86 @@
+  .c-form-inline {
+    width: 100%;
+    min-height: 0;
+    transition: all 0.3s ease; /* 添加过渡动画 */
+  }
+
+  .c-form-inline-item {
+    min-width: 0;
+    transition: all 0.3s ease; /* 添加过渡动画 */
+  }
+
+  /* 确保内部所有表单组件都占满容器宽度 */
+  .c-form-inline-item :deep(.n-form-item) {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .c-form-inline-item :deep(.n-form-item-blank) {
+    width: 100%;
+  }
+
+  .c-form-inline-item :deep(.n-input),
+  .c-form-inline-item :deep(.n-select),
+  .c-form-inline-item :deep(.n-date-picker),
+  .c-form-inline-item :deep(.n-time-picker),
+  .c-form-inline-item :deep(.n-input-number),
+  .c-form-inline-item :deep(.n-cascader),
+  .c-form-inline-item :deep(.n-color-picker),
+  .c-form-inline-item :deep(.n-auto-complete),
+  .c-form-inline-item :deep(.n-tree-select) {
+    width: 100% !important;
+  }
+
+  /* 单选框和复选框组保持自然宽度 */
+  .c-form-inline-item :deep(.n-radio-group),
+  .c-form-inline-item :deep(.n-checkbox-group) {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* 开关组件居左对齐 */
+  .c-form-inline-item :deep(.n-switch) {
+    width: auto;
+  }
+
+  /* ================= 对齐方式样式增强 ================= */
+
+  /* 当容器使用 center 对齐时，确保表单项也居中 */
+  .c-form-inline[style*='justify-content: center'] .c-form-inline-item {
+    text-align: center;
+  }
+
+  /* 当容器使用 end 对齐时，确保表单项也右对齐 */
+  .c-form-inline[style*='justify-content: flex-end'] .c-form-inline-item {
+    text-align: right;
+  }
+
+  /* 当容器使用 start 对齐时，确保表单项左对齐 */
+  .c-form-inline[style*='justify-content: flex-start'] .c-form-inline-item {
+    text-align: left;
+  }
+
+  /* ================= 响应式设计 ================= */
+
+  /* 移动设备 - 改为垂直布局 */
+  @media (max-width: 768px) {
+    .c-form-inline {
+      flex-direction: column !important;
+      gap: 12px !important;
+      justify-content: flex-start !important; /* 移动端强制左对齐 */
+    }
+
+    .c-form-inline-item {
+      width: 100% !important;
+      text-align: left !important; /* 移动端文本左对齐 */
+    }
+  }
+
+  /* 小屏手机 */
+  @media (max-width: 480px) {
+    .c-form-inline {
+      gap: 8px !important;
+    }
+  }

@@ -1,0 +1,135 @@
+.gantt-demo-page {
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.demo-header {
+  margin-bottom: 32px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+
+
+  .demo-description {
+    font-size: 18px;
+    margin: 0;
+    font-weight: 400;
+  }
+}
+
+.demo-content {
+  margin-bottom: 32px;
+  border-radius: 12px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.demo-section {
+  .section-header {
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    p {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .usage-tips {
+      border: 1px solid var(--info-color, #409eff);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+
+      strong {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 16px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 24px;
+
+        li {
+          margin-bottom: 8px;
+          line-height: 1.6;
+          font-size: 14px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .demo-controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+
+.config-docs {
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  .config-list {
+    .config-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color, #e1e4e8);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      strong {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin-right: 12px;
+        font-size: 13px;
+      }
+
+      .config-note {
+        font-size: 13px;
+        margin-top: 6px;
+        margin-left: 12px;
+        font-style: italic;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .gantt-demo-page {
+    padding: 16px;
+  }
+
+  .demo-header {
+    padding: 24px 16px;
+
+    .demo-title {
+      font-size: 28px;
+    }
+
+    .demo-description {
+      font-size: 16px;
+    }
+  }
+
+  .demo-content {
+    padding: 16px;
+  }
+}

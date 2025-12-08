@@ -1,0 +1,105 @@
+  .c-form-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .single-panel {
+    width: 100%;
+  }
+
+  .steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .steps-indicator {
+    padding: 24px;
+    border-radius: 8px;
+  }
+
+  .steps-content {
+    min-height: 400px;
+  }
+
+  .step-panel {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .step-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--n-border-color);
+  }
+
+  .step-title {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .step-description {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .step-form-items {
+    width: 100%;
+  }
+
+  .steps-actions {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--n-border-color);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 垂直步骤样式 */
+  .steps-container:has(.steps-indicator:deep(.n-steps--vertical)) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .steps-container:has(.steps-indicator:deep(.n-steps--vertical))
+    .steps-indicator {
+    flex-shrink: 0;
+    width: 250px;
+    margin-right: 24px;
+  }
+
+  .steps-container:has(.steps-indicator:deep(.n-steps--vertical))
+    .steps-content {
+    flex: 1;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .steps-container:has(.steps-indicator:deep(.n-steps--vertical)) {
+      flex-direction: column !important;
+    }
+
+    .steps-container:has(.steps-indicator:deep(.n-steps--vertical))
+      .steps-indicator {
+      width: 100% !important;
+      margin-right: 0 !important;
+      margin-bottom: 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step-panel {
+      animation: none !important;
+    }
+  }

@@ -1,0 +1,35 @@
+.debounce-demo-page {
+  padding: 24px;
+}
+
+.demo-container {
+  padding: 20px;
+  border: 1px solid rgb(238, 235, 235);
+  border-radius: 6px;
+}
+
+.demo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-status {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .debounce-demo-page {
+    padding: 16px;
+  }
+}
+

@@ -1,0 +1,241 @@
+.permission-management {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  height: calc(100vh - 120px);
+  gap: 16px;
+
+  // ========== 顶部搜索区域 ==========
+  .header-card {
+    flex-shrink: 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    :deep(.n-card__content) {
+      padding: 20px;
+    }
+
+    .search-filters {
+      :deep(.n-input) {
+        border-radius: 6px;
+        transition: border-color 0.2s ease;
+
+        &:hover {
+          border-color: var(--n-primary-color-hover);
+        }
+      }
+
+      :deep(.n-select) {
+        .n-base-selection {
+          border-radius: 6px;
+          transition: border-color 0.2s ease;
+
+          &:hover {
+            border-color: var(--n-primary-color-hover);
+          }
+        }
+      }
+    }
+
+    :deep(.n-button) {
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+
+      &.n-button--primary-type {
+        box-shadow: 0 2px 4px var(--n-primary-color-suppl);
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px var(--n-primary-color-suppl);
+        }
+      }
+
+      &:not(.n-button--primary-type):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  // ========== 统计卡片区域 ==========
+
+  .stat-card-clickable {
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    &.stat-card-active {
+      border: 2px solid var(--n-primary-color);
+      box-shadow: 0 4px 12px var(--n-primary-color-suppl);
+    }
+
+  }
+
+  .stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--n-primary-color-suppl);
+    transition: transform 0.2s ease;
+  }
+
+  .stat-card-clickable:hover .stat-icon-wrapper {
+    transform: scale(1.1);
+  }
+
+  .stat-content {
+    .stat-label {
+      font-size: 12px;
+      color: var(--n-text-color-disabled);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--n-text-color-base);
+      line-height: 1;
+    }
+  }
+
+  // ========== 筛选标签区域 ==========
+  .filter-tags {
+    background: var(--n-color-base);
+    border: 1px solid var(--n-border-color);
+    border-radius: 6px;
+
+    :deep(.n-space) {
+        align-items: center;
+        gap: 8px !important;
+      }
+
+      :deep(.n-text) {
+        font-size: 13px;
+        color: var(--n-text-color-disabled);
+        margin-right: 4px;
+      }
+    :deep(.n-tag) {
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 12px;
+        height: 24px;
+        padding: 0 8px;
+        line-height: 22px;
+      }
+
+      :deep(.n-button) {
+        font-size: 12px;
+        height: 24px;
+        padding: 0 8px;
+        border-radius: 4px;
+        min-width: auto;
+    }
+  }
+
+  // ========== 主内容区域 ==========
+  .content-card {
+    flex: 1;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    :deep(.n-card__header) {
+      padding: 16px 20px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--n-border-color);
+    }
+  }
+
+  // ========== 完全不影响表格，保持原有功能 ==========
+  // 表格区域不添加任何样式
+
+  // ========== 响应式设计 ==========
+  @media (max-width: 1200px) {
+    .stat-grid {
+      :deep(.n-grid-item) {
+        &:nth-child(n+3) {
+          margin-top: 16px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    gap: 12px;
+
+    .header-card {
+      :deep(.n-card__content) {
+        padding: 16px;
+      }
+
+      :deep(.n-space) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+
+        .search-filters {
+          :deep(.n-space) {
+            flex-wrap: wrap;
+            gap: 8px;
+          }
+
+          .n-input,
+          .n-select {
+            min-width: 150px;
+            flex: 1;
+          }
+        }
+      }
+    }
+
+    .stat-grid {
+      :deep(.n-grid) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-content {
+      .stat-value {
+        font-size: 20px;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px;
+
+    .stat-grid {
+      :deep(.n-grid) {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+  }
+
+  // ========== 减少动画模式支持 ==========
+  @media (prefers-reduced-motion: reduce) {
+    .header-card :deep(.n-button),
+    .stat-card-clickable,
+    .stat-icon-wrapper {
+      transition: none !important;
+    }
+  }
+
+  // ========== 无障碍支持 ==========
+  :focus-visible {
+    outline: 2px solid var(--n-primary-color);
+    outline-offset: 2px;
+  }
+}
+

@@ -1,0 +1,34 @@
+@use '@/styles/antv-common.scss' as *;
+.uml-layout {
+  @include antv-layout;
+
+  .toolbar {
+    @include antv-toolbar;
+  }
+
+  .graph-container {
+    @include antv-graph-container;
+  }
+}
+
+// 抽屉编辑器样式 - 使用单独的样式块避免 scoped 问题
+.class-editor {
+  padding: 20px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  @include antv-scrollbar;
+
+  .section {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 4px;
+    @include antv-scrollbar;
+
+    .item {
+      margin-bottom: 8px;
+    }
+
+        @include antv-card-item;
+        @include antv-form-item;
+  }
+}

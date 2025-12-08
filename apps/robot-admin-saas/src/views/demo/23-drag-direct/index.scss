@@ -1,0 +1,142 @@
+ .drag-demo-page {
+    padding: 24px;
+  }
+
+  .demo-container {
+    position: relative;
+    min-height: 200px;
+    padding: 20px;
+    border: 1px solid rgb(238, 235, 235);
+    border-radius: 6px;
+    overflow: hidden;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(0, 0, 0, 0.02) 10px,
+      rgba(0, 0, 0, 0.02) 20px
+    );
+  }
+
+  .drag-box {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 80px;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: move;
+    user-select: none;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .drag-list-item {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: calc(100% - 40px);
+    height: 60px;
+    padding: 0 16px;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: move;
+  }
+
+  .cards-container {
+    min-height: 300px;
+  }
+
+  .drag-card {
+    position: absolute;
+    width: 150px;
+    padding: 16px;
+    border-radius: 8px;
+    color: white;
+    cursor: move;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:nth-child(1) {
+      top: 20px;
+      left: 20px;
+    }
+    &:nth-child(2) {
+      top: 20px;
+      left: 190px;
+    }
+    &:nth-child(3) {
+      top: 170px;
+      left: 20px;
+    }
+
+    h4 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0 0 12px 0;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+  }
+
+  .list-container {
+    min-height: 400px;
+    padding: 10px;
+  }
+
+  .canvas-container {
+    min-height: 350px;
+    position: relative;
+  }
+
+  .canvas-shape {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: move;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &.circle {
+      border-radius: 50%;
+    }
+
+    &.square {
+      border-radius: 8px;
+    }
+  }
+
+  .canvas-toolbar {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    .drag-demo-page {
+      padding: 16px;
+    }
+  }

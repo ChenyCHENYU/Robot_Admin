@@ -1,0 +1,446 @@
+// ==================== 权限抽屉样式 ====================
+.permission-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+
+  .header-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--n-text-color);
+    }
+
+    p {
+      margin: 4px 0 0 0;
+      font-size: 14px;
+      color: var(--n-text-color-disabled);
+    }
+                }
+}
+
+.tree-permission-layout {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 140px);
+  background: var(--n-color-base);
+  overflow: hidden;
+
+  // ==================== 工具栏样式 ====================
+  .permission-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, var(--n-color-hover) 0%, rgba(24, 160, 88, 0.05) 100%);
+    border-bottom: 1px solid var(--n-border-color);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    flex-shrink: 0;
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+  }
+
+  // ==================== 统计信息栏 ====================
+  .permission-stats {
+    padding: 16px 24px;
+    background: var(--n-color-hover);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid var(--n-border-color);
+    flex-shrink: 0;
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .stat-label {
+        font-size: 14px;
+        color: var(--n-text-color-disabled);
+      }
+
+      .stat-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--n-text-color);
+
+        &.highlight {
+          color: var(--n-color-primary);
+        }
+      }
+    }
+  }
+
+  // ==================== 权限树容器 ====================
+  .tree-permissions-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 4px;
+    min-height: 0;
+
+    .permission-module {
+      margin-bottom: 24px;
+      background: var(--n-color-base);
+      border: 1px solid var(--n-border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: box-shadow 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      }
+
+      // 模块头部
+      .module-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        background: linear-gradient(135deg, var(--n-color-hover) 0%, rgba(24, 160, 88, 0.03) 100%);
+        border-bottom: 1px solid var(--n-border-color);
+
+        .module-info {
+          flex: 1;
+
+          .module-title-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+
+            .expand-button {
+              padding: 4px;
+              margin-right: 4px;
+            }
+
+            h4 {
+              margin: 0;
+              font-size: 18px;
+              font-weight: 600;
+              color: var(--n-text-color);
+            }
+          }
+
+          .module-description {
+            margin: 0 0 0 42px;
+            font-size: 14px;
+            color: var(--n-text-color-disabled);
+          }
+        }
+
+        .module-controls {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+
+          .module-progress {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+
+            .progress-text {
+              font-size: 12px;
+              color: var(--n-text-color-disabled);
+              font-weight: 500;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ==================== 权限卡片样式 ====================
+  .permission-content {
+    padding: 0;
+  }
+
+  .permission-tree-node {
+    border-bottom: 1px solid var(--n-border-color);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .permission-card {
+    padding: 20px 24px;
+    background: var(--n-color-base);
+    border: none;
+    border-left: 4px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+
+    &:hover {
+      background: var(--n-color-hover);
+      border-left-color: var(--n-color-primary);
+    }
+
+    &.selected {
+      background: linear-gradient(135deg, rgba(24, 160, 88, 0.05) 0%, rgba(24, 160, 88, 0.02) 100%);
+      border-left-color: var(--n-color-success);
+
+      .permission-name {
+        color: var(--n-color-success);
+        font-weight: 600;
+      }
+    }
+
+    &.has-children {
+      border-left-color: var(--n-color-info);
+    }
+
+    .permission-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .permission-main {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        gap: 16px;
+      }
+
+      .permission-info {
+        flex: 1;
+
+        .permission-title {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+
+          .permission-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--n-text-color);
+          }
+        }
+
+        .permission-details {
+          .permission-code {
+            display: inline-block;
+            font-size: 11px;
+            color: var(--n-text-color-disabled);
+            font-family: 'Monaco', 'Consolas', 'SF Mono', monospace;
+            background: var(--n-color-hover);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 8px;
+          }
+
+          .permission-description {
+            font-size: 13px;
+            color: var(--n-text-color-disabled);
+          }
+        }
+      }
+    }
+
+    .selection-indicator {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      color: var(--n-color-success);
+      z-index: 2;
+    }
+  }
+
+  // ==================== 子权限样式 ====================
+  .child-permissions {
+    margin-left: 60px;
+    margin-right: 20px;
+    padding: 12px 0;
+
+    .child-permissions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      padding: 12px 0;
+    }
+
+    .child-permission-card {
+      padding: 12px 16px;
+      background: var(--n-color-base);
+      border: 1px solid var(--n-border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        border-color: var(--n-color-primary);
+      }
+
+      &.selected {
+        background: linear-gradient(135deg, rgba(24, 160, 88, 0.05) 0%, rgba(24, 160, 88, 0.02) 100%);
+        border-color: var(--n-color-success);
+        box-shadow: 0 2px 8px rgba(24, 160, 88, 0.1);
+
+        .child-permission-name {
+          color: var(--n-color-success);
+          font-weight: 500;
+        }
+      }
+
+      &.button-type {
+        border-left: 3px solid var(--n-color-success);
+      }
+
+      &.api-type {
+        border-left: 3px solid var(--n-color-warning);
+      }
+
+      .child-permission-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+
+        .child-permission-info {
+          flex: 1;
+
+          .child-permission-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+
+            .child-permission-name {
+              font-size: 14px;
+              font-weight: 400;
+              color: var(--n-text-color);
+            }
+          }
+
+          .child-permission-details {
+            .child-permission-code {
+              display: inline-block;
+              font-size: 10px;
+              color: var(--n-text-color-disabled);
+              font-family: 'Monaco', 'Consolas', 'SF Mono', monospace;
+              background: var(--n-color-hover);
+              padding: 1px 4px;
+              border-radius: 3px;
+              margin-right: 6px;
+            }
+
+            .child-permission-description {
+              font-size: 11px;
+              color: var(--n-text-color-disabled);
+              line-height: 1.3;
+            }
+          }
+        }
+      }
+
+      .child-selection-indicator {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        color: var(--n-color-success);
+        background: var(--n-color-base);
+        border-radius: 50%;
+        padding: 2px;
+      }
+    }
+  }
+
+  // ==================== 预览区域 ====================
+  .selected-preview {
+    background: var(--n-color-hover);
+    border-top: 1px solid var(--n-border-color);
+    border-radius: 0 0 12px 12px;
+    margin-top: auto;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+    flex-shrink: 0;
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--n-border-color);
+
+      h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--n-text-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &::before {
+          content: '';
+          width: 4px;
+          height: 16px;
+          background: var(--n-color-primary);
+          border-radius: 2px;
+        }
+      }
+    }
+
+    .preview-summary {
+      padding: 16px 24px;
+    }
+  }
+
+  // ==================== 响应式设计 ====================
+  @media (max-width: 1400px) {
+    .child-permissions-grid {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .permission-toolbar {
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+
+      .toolbar-left,
+      .toolbar-right {
+        justify-content: center;
+      }
+    }
+
+                                .permission-module .module-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+
+      .module-controls {
+        justify-content: space-between;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .child-permissions-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .child-permissions {
+      margin-left: 20px;
+      margin-right: 10px;
+    }
+  }
+}

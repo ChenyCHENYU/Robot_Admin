@@ -1,0 +1,61 @@
+  .c-form-tabs {
+    width: 100%;
+  }
+
+  .single-panel {
+    width: 100%;
+  }
+
+  .tabs-container {
+    width: 100%;
+  }
+
+  .form-tabs {
+    width: 100%;
+  }
+
+  .tab-icon {
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tab-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--n-border-color);
+  }
+
+  .tab-description {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.8;
+  }
+
+  .tab-form-items {
+    width: 100%;
+  }
+
+  .tab-empty {
+    padding: 40px 0;
+  }
+
+  .tabs-actions {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--n-border-color);
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .tabs-actions {
+      margin-top: 12px;
+      padding-top: 8px;
+    }
+
+    .tabs-actions :deep(.n-space) {
+      flex-wrap: wrap;
+    }
+  }

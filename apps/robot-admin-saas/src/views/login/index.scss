@@ -1,0 +1,267 @@
+@use 'sass:color';
+
+/* 基础变量定义 */
+$bg: #fff;
+$text-color: #fdf6f6;
+$primary-color: #1859e9;
+$border-radius: 10px;
+$form-width: 380px;
+$transition-time: 0.3s;
+
+/* 登录页容器 */
+.login-container {
+  position: relative;
+  min-height: 100vh;
+  padding-left: 10%;
+  display: flex;
+  align-items: center;
+  overflow: hidden; // 防止3D场景溢出视口
+
+  /* 品牌Logo */
+  .login-logo {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 999; // 提升层级确保可见
+    width: 320px;
+    height: 80px;
+    cursor: pointer;
+    transition: opacity $transition-time ease;
+
+    &:hover {
+      opacity: 0.9; // 悬停效果
+    }
+
+    // Logo图像（使用背景图实现）
+    &::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: url(@/assets/images/login-logo.png) center/100% auto no-repeat;
+    }
+  }
+
+  /* 3D背景容器 */
+  .spline-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  /* 登录表单包装器 - 玻璃风格 */
+  .login-wrapper {
+    width: $form-width;
+    position: relative;
+    margin-top: 6%;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, 0.12); // 极低不透明度
+    padding: 35px 30px;
+    border-radius: 16px; // 更圆润的边角
+    backdrop-filter: blur(20px); // 增强模糊效果
+    box-shadow:
+      0 8px 32px rgba(0, 10, 60, 0.08),
+      0 2px 8px rgba(0, 10, 40, 0.03); // 更轻盈的阴影
+    transition: all $transition-time;
+    border: 1px solid rgba(255, 255, 255, 0.18); // 细微边框
+    overflow: hidden;
+
+    // 玻璃质感增强
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(24, 89, 233, 0.05) 100%
+      );
+      z-index: -1;
+    }
+
+    // 顶部玻璃反光效果
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 200%;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.5) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      background-color: rgba(255, 255, 255, 0.15);
+      box-shadow:
+        0 12px 40px rgba(0, 10, 60, 0.1),
+        0 3px 12px rgba(0, 10, 40, 0.05);
+    }
+  }
+
+  /* 登录标题 */
+  .login-title {
+    margin-top: 16px;
+    margin-bottom:36px;
+    top: 10px;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    color: $text-color;
+    font-size: 20px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(185, 182, 182, 0.2); // 文字阴影增强可读性
+  }
+
+  /* 登录表单 */
+  .login-form {
+    width: 100%;
+
+    /* Naive UI组件样式覆盖 */
+    .n-form,
+    .n-button {
+      border: none !important;
+      box-shadow: none !important;
+      background-color: transparent !important;
+      color: $text-color;
+      transition: all $transition-time;
+    }
+
+    /* 输入框样式定制 - 极简底线 */
+    .n-input {
+      // 移除默认样式
+      --n-border: none !important;
+      --n-border-hover: none !important;
+      --n-border-focus: none !important;
+      --n-border-disabled: none !important;
+      --n-box-shadow: none !important;
+      --n-color: transparent !important;
+      --n-text-color: rgba(255, 255, 255, 0.95) !important; // 更亮的文字颜色
+      --n-placeholder-color: rgba(255, 255, 255, 0.5) !important; // 半透明占位符
+
+      // 自定义下划线样式
+      background-color: transparent !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.25) !important; // 柔和的白色边框
+      border-radius: 0 !important;
+      padding: 8px 2px !important;
+      transition: all $transition-time;
+
+      // 交互状态
+      &:hover {
+        border-bottom-color: rgba(255, 255, 255, 0.5) !important;
+      }
+
+      &:focus-within {
+        border-bottom-color: rgba(24, 89, 233, 0.8) !important; // 聚焦时显示蓝色
+      }
+
+      // 输入框内部元素
+      .n-input__input-el {
+        color: rgba(255, 255, 255, 0.95) !important; // 确保文本颜色正确
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.5) !important;
+        }
+      }
+    }
+
+    /* 输入框图标样式 */
+    .n-input__prefix {
+      color: rgba(255, 255, 255, 0.7) !important; // 更明亮的图标颜色
+      margin-right: 8px;
+    }
+
+    .n-input__suffix {
+      color: rgba(255, 255, 255, 0.7) !important;
+      margin-left: 8px;
+    }
+
+    /* 登录按钮 - 发光效果 */
+    .login-btn {
+      width: 100%;
+      height: 42px;
+      margin-top: 24px;
+      border-radius: 10px; // 圆形按钮更现代
+      background: linear-gradient(135deg, #1859e9, #1040a0) !important; // 渐变蓝
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      box-shadow:
+        0 4px 15px rgba(24, 89, 233, 0.3),
+        0 1px 5px rgba(24, 89, 233, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2); // 内阴影添加质感
+      transition: all $transition-time;
+      position: relative;
+      overflow: hidden;
+
+      // 光泽效果
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.3) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: skewX(-25deg);
+        transition: all 0.75s ease;
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, #2464f0, #1545ad) !important;
+        transform: translateY(-1px);
+        box-shadow:
+          0 6px 20px rgba(24, 89, 233, 0.35),
+          0 2px 8px rgba(24, 89, 233, 0.25);
+
+        &::before {
+          left: 150%; // 光泽动画
+        }
+      }
+
+      &:active {
+        background: linear-gradient(135deg, #1651cc, #0e3aa6) !important;
+        transform: translateY(0);
+        box-shadow:
+          0 3px 10px rgba(24, 89, 233, 0.3),
+          0 1px 3px rgba(24, 89, 233, 0.2);
+      }
+    }
+  }
+
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    padding-left: 0;
+    justify-content: center;
+
+    .login-wrapper {
+      width: min(90%, $form-width);
+      margin-top: 0;
+    }
+
+    .login-logo {
+      top: 10px;
+      left: 10px;
+      width: 200px;
+      height: 50px;
+    }
+  }
+}
+
+
+
+

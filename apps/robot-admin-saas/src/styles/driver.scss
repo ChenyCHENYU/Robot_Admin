@@ -1,0 +1,77 @@
+
+/*
+? Driver.js Theme Styles (三方功能引导库)
+**/
+
+.driver-popover.driverjs-theme {
+  background-color: #fde047;
+  color: #000;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+
+  &,
+  .driver-popover-content,
+  .driver-popover-inner {
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+  }
+
+
+  .driver-popover-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #000;
+    padding-top: 16px;
+  }
+
+  .driver-popover-description {
+    color: #000;
+    font-size: 18px;
+    padding-bottom: 16px;
+  }
+
+  .driver-popover-footer {
+    padding: 0 16px 16px;
+
+    button {
+      background-color: #000;
+      color: #fff;
+      border: 1px solid #000;
+      border-radius: 4px;
+      font-size: 14px;
+      padding: 6px 12px;
+      line-height: 1.5;
+      margin: 0 4px;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: #7e7023;
+        border: 1px solid #7e7023;
+      }
+    }
+  }
+
+  .driver-popover-close-btn {
+    display: none;
+    /* 隐藏关闭按钮 */
+  }
+
+  .driver-popover-arrow {
+    &-side-left {
+      border-left-color: #fde047;
+    }
+
+    &-side-right {
+      border-right-color: #fde047;
+    }
+
+    &-side-top {
+      border-top-color: #fde047;
+    }
+
+    &-side-bottom {
+      border-bottom-color: #fde047;
+    }
+  }
+}

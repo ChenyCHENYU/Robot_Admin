@@ -1,0 +1,57 @@
+@use '@/styles/antv-common.scss' as *;
+.er-layout {
+  @include antv-layout;
+
+  .toolbar {
+    @include antv-toolbar;
+  }
+
+  .graph-container {
+    @include antv-graph-container;
+  }
+
+  .table-editor {
+    @include antv-editor-container;
+
+    .fields-container {
+      max-height: calc(100vh - 400px);
+      overflow-y: auto;
+      @include antv-scrollbar;
+
+      .field-card {
+        margin-bottom: 16px;
+
+        .field-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 13px;
+          font-weight: 500;
+        }
+
+        :deep(.n-card-header) {
+          padding: 10px 16px 8px;
+        }
+
+        :deep(.n-card__content) {
+          padding: 12px 16px 16px;
+        }
+      }
+
+      :deep(.n-select) {
+        min-width: 140px;
+
+        .n-select-menu {
+          max-height: 200px;
+          z-index: 9999;
+        }
+      }
+
+            @include antv-form-item;
+
+      :deep(.n-input) {
+        min-width: 100px;
+      }
+    }
+  }
+}

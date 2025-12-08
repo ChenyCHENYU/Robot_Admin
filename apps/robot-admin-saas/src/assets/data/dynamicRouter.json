@@ -1,0 +1,930 @@
+{
+  "code": "0",
+  "data": [
+    {
+      "path": "/",
+      "component": "layout",
+      "redirect": "/home",
+      "children": [
+        {
+          "path": "home",
+          "name": "home",
+          "component": "/home/index",
+          "meta": {
+            "icon": "mdi:home-assistant",
+            "title": "首页",
+            "hidden": false,
+            "affix": true,
+            "keepAlive": false,
+            "full": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/dashboard",
+      "name": "dashboard",
+      "component": "layout",
+      "redirect": "/dashboard/analysis",
+      "meta": {
+        "icon": "mdi:monitor-dashboard",
+        "title": "仪表盘",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "analysis",
+          "name": "dashboard-analysis",
+          "component": "/dashboard/analysis/index",
+          "meta": {
+            "icon": "mdi:google-analytics",
+            "title": "分析页",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "statistics",
+          "name": "dashboard-statistics",
+          "component": "/dashboard/statistics/index",
+          "meta": {
+            "icon": "uil:statistics",
+            "title": "统计页",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/demo",
+      "name": "demo",
+      "component": "layout",
+      "redirect": "/demo/01-icon",
+      "meta": {
+        "icon": "mdi:ev-plug-chademo",
+        "title": "示范组件",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "icon",
+          "name": "demo-icon",
+          "component": "/demo/01-icon/index",
+          "meta": {
+            "icon": "mdi:simple-icons",
+            "title": "图标选择器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "area-cascade",
+          "name": "demo-area-cascade",
+          "component": "/demo/02-area-cascade/index",
+          "meta": {
+            "icon": "mdi:multicast",
+            "title": "级联选择器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "progress",
+          "name": "demo-progress",
+          "component": "/demo/03-progress/index",
+          "meta": {
+            "icon": "mdi:progress-helper",
+            "title": "进度条",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "steps",
+          "name": "demo-steps",
+          "component": "/demo/31-steps/index",
+          "meta": {
+            "icon": "streamline-sharp:steps-number",
+            "title": "步骤条",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "time",
+          "name": "demo-time",
+          "component": "/demo/04-time/index",
+          "meta": {
+            "icon": "mdi:clock-time-eight-outline",
+            "title": "时间选择器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "date",
+          "name": "demo-date",
+          "component": "/demo/05-date/index",
+          "meta": {
+            "icon": "mdi:weather-date",
+            "title": "日期选择器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "city",
+          "name": "demo-city",
+          "component": "/demo/06-city/index",
+          "meta": {
+            "icon": "mdi:city",
+            "title": "城市选择器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "form-manage",
+          "name": "demo-form-manage",
+          "redirect": "/demo/form-manage/form",
+          "meta": {
+            "icon": "mdi:form",
+            "title": "表单模块",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          },
+          "children": [
+            {
+              "path": "form",
+              "name": "demo-form",
+              "component": "/demo/07-form/index",
+              "meta": {
+                "icon": "mdi:form-outline",
+                "title": "多场景表单",
+                "hidden": false,
+                "full": false,
+                "affix": false,
+                "keepAlive": false
+              }
+            },
+            {
+              "path": "form-modal",
+              "name": "demo-form-modal",
+              "component": "/demo/08-form-modal/index",
+              "meta": {
+                "icon": "mdi:form-dropdown",
+                "title": "多模态表单",
+                "hidden": false,
+                "full": false,
+                "affix": false,
+                "keepAlive": false
+              }
+            },
+            {
+              "path": "form-search",
+              "name": "demo-form-search",
+              "component": "/demo/09-form-search/index",
+              "meta": {
+                "icon": "mdi:text-box-search-outline",
+                "title": "搜索表单",
+                "hidden": false,
+                "full": false,
+                "affix": false,
+                "keepAlive": false
+              }
+            }
+          ]
+        },
+        {
+          "path": "table-manage",
+          "name": "demo-table-manage",
+          "redirect": "/demo/table-manage/table",
+          "meta": {
+            "icon": "mdi:file-table-outline",
+            "title": "表格模块",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          },
+          "children": [
+            {
+              "path": "table",
+              "name": "demo-table",
+              "component": "/demo/10-table/index",
+              "meta": {
+                "icon": "mdi:file-table-box-multiple-outline",
+                "title": "超级表格",
+                "hidden": false,
+                "full": false,
+                "affix": false,
+                "keepAlive": false
+              }
+            },
+            {
+              "path": "table-expand",
+              "name": "demo-table-expand",
+              "component": "/demo/11-table-expand/index",
+              "meta": {
+                "icon": "mdi:table-pivot",
+                "title": "Expand表格",
+                "hidden": false,
+                "full": false,
+                "affix": false,
+                "keepAlive": false
+              }
+            },
+            {
+              "path": "table-dynamic",
+              "name": "demo-table-dynamic",
+              "component": "/demo/12-table-dynamic/index",
+              "meta": {
+                "icon": "mdi:table-multiple",
+                "title": "表格动态行",
+                "hidden": false,
+                "full": false,
+                "affix": false,
+                "keepAlive": false
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/plugins",
+      "name": "plugins",
+      "component": "layout",
+      "redirect": "/plugins/calendar",
+      "meta": {
+        "icon": "mdi:plugin",
+        "title": "插件组件 ",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "calendar",
+          "name": "demo-calendar",
+          "component": "/demo/13-calendar/index",
+          "meta": {
+            "icon": "mdi:calendar-month",
+            "title": "日历",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "dragable",
+          "name": "dragable",
+          "component": "/demo/20-dragable/index",
+          "meta": {
+            "icon": "mdi:drag-variant",
+            "title": "拖拽组件",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "file-preview",
+          "name": "file-preview",
+          "component": "/demo/32-file-preview/index",
+          "meta": {
+            "icon": "material-symbols-light:preview-outline-sharp",
+            "title": "文件预览",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "v-table-gantt",
+          "name": "v-table-gantt",
+          "component": "/demo/33-v-table-gantt/index",
+          "meta": {
+            "icon": "fluent:gantt-chart-24-regular",
+            "title": "甘特图",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "barcode",
+          "name": "demo-barcode",
+          "component": "/demo/35-barcode/index",
+          "meta": {
+            "icon": "mdi:barcode",
+            "title": "条形码",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "map",
+          "name": "demo-map",
+          "component": "/demo/36-map/index",
+          "meta": {
+            "icon": "mdi:map-marker-multiple",
+            "title": "地图",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/editor",
+      "name": "editor",
+      "component": "layout",
+      "redirect": "/editor/code-editor",
+      "meta": {
+        "icon": "mdi:data-matrix-edit",
+        "title": "编辑器组件",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "code-editor",
+          "name": "editor-code",
+          "component": "/demo/14-code-editor/index",
+          "meta": {
+            "icon": "mdi:microsoft-visual-studio-code",
+            "title": "代码编辑器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "markdown-editor",
+          "name": "editor-markdown",
+          "component": "/demo/15-markdown-editor/index",
+          "meta": {
+            "icon": "mdi:language-markdown",
+            "title": "Markdown编辑器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "text-editor",
+          "name": "editor-text",
+          "component": "/demo/16-text-editor/index",
+          "meta": {
+            "icon": "mdi:text-shadow",
+            "title": "富文本编辑器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "work-flow-editor",
+          "name": "work-flow",
+          "component": "/demo/28-work-flow-editor/index",
+          "meta": {
+            "icon": "streamline-freehand:business-workflow-merge-2",
+            "title": "工作流编辑器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "antv-x6-editor",
+          "name": "antv-x6",
+          "component": "/demo/29-antv-x6-editor/index",
+          "meta": {
+            "icon": "simple-icons:antv",
+            "title": "图编辑引擎",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/large-screen",
+      "name": "large-screen",
+      "redirect": "/large-screen/production-cost",
+      "meta": {
+        "icon": "mdi:monitor-screenshot",
+        "title": "大屏模板",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "production-cost",
+          "name": "production-cost",
+          "component": "/demo/34-production-cost/index",
+          "meta": {
+            "icon": "mdi:attach-money",
+            "title": "日成本看板",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "xxx-xxx",
+          "name": "xxx-xxx",
+          "component": "/demo/35-xxx/index",
+          "meta": {
+            "icon": "mdi:performance",
+            "title": "绩效看板",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/hooks",
+      "name": "hooks",
+      "component": "layout",
+      "redirect": "/export-zip",
+      "meta": {
+        "icon": "mdi:hook",
+        "title": "独立 Hooks ",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "export-zip",
+          "name": "export-zip",
+          "component": "/demo/17-export-zip/index",
+          "meta": {
+            "icon": "mdi:file-export-outline",
+            "title": "导出 Zip",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "copy-text",
+          "name": "copy-text",
+          "component": "/demo/18-copy-text/index",
+          "meta": {
+            "icon": "mdi:alpha-t-circle",
+            "title": "复制 Text",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "download-all",
+          "name": "download-all",
+          "component": "/demo/19-download-all/index",
+          "meta": {
+            "icon": "mdi:download-circle-outline",
+            "title": "下载 All",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "excel-all",
+          "name": "excel-all",
+          "component": "/demo/30-excel-all/index",
+          "meta": {
+            "icon": "mdi:microsoft-excel",
+            "title": "Excel All",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/directives",
+      "name": "directives",
+      "component": "layout",
+      "redirect": "/directives/copy-direct",
+      "meta": {
+        "icon": "mdi:directions",
+        "title": "自定义指令",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "copy-direct",
+          "name": "directives-copy",
+          "component": "/demo/21-copy-direct/index",
+          "meta": {
+            "icon": "mdi:content-copy",
+            "title": "复制指令",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "watermark-direct",
+          "name": "directives-watermark",
+          "component": "/demo/22-watermark-direct/index",
+          "meta": {
+            "icon": "mdi:watermark",
+            "title": "水印指令",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "drag-direct",
+          "name": "directives-drag",
+          "component": "/demo/23-drag-direct/index",
+          "meta": {
+            "icon": "mdi:drag",
+            "title": "拖拽指令",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "debounce-direct",
+          "name": "directives-debounce",
+          "component": "/demo/24-debounce-direct/index",
+          "meta": {
+            "icon": "mdi:debian",
+            "title": "防抖指令",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "throttle-direct",
+          "name": "directives-throttle",
+          "component": "/demo/25-throttle-direct/index",
+          "meta": {
+            "icon": "mdi:bathroom-tap",
+            "title": "节流指令",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "longpress-direct",
+          "name": "directives-longpress",
+          "component": "/demo/26-longpress-direct/index",
+          "meta": {
+            "icon": "mdi:hand-double-tap",
+            "title": "长按指令",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "permission-direct",
+          "name": "directives-permission",
+          "component": "/demo/27-permission-direct/index",
+          "meta": {
+            "icon": "mdi:lock-smart",
+            "title": "权限指令",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/sys-manage",
+      "name": "sys-manage",
+      "component": "layout",
+      "redirect": "/sys-manage/menu-manage",
+      "meta": {
+        "icon": "mdi:microsoft-windows",
+        "title": "系统管理",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "menu-manage",
+          "name": "sys-menu-manage",
+          "component": "/sys-manage/menu-manage/index",
+          "meta": {
+            "icon": "mdi:menu-open",
+            "title": "菜单管理",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "dictionary-manage",
+          "name": "sys-dictionary-manage",
+          "component": "/sys-manage/dictionary-manage/index",
+          "meta": {
+            "icon": "material-symbols:dictionary-outline-rounded",
+            "title": "字典管理",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "user-manage",
+          "name": "sys-user-manage",
+          "component": "/sys-manage/user-manage/index",
+          "meta": {
+            "icon": "mdi:user-badge",
+            "title": "用户管理",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "role-manage",
+          "name": "sys-role-manage",
+          "component": "/sys-manage/role-manage/index",
+          "meta": {
+            "icon": "oui:app-users-roles",
+            "title": "角色管理",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "permission-manage",
+          "name": "sys-permission-manage",
+          "component": "/sys-manage/permission-manage/index",
+          "meta": {
+            "icon": "mdi:account-multiple-check-outline",
+            "title": "权限管理",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/iframe",
+      "name": "iframe",
+      "component": "layout",
+      "redirect": "/iframe/embedded-docs",
+      "meta": {
+        "icon": "mdi:iframe-array",
+        "title": "外部页面",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "embedded-docs",
+          "name": "iframe-embedded",
+          "component": "/iframe/blank-docs",
+          "meta": {
+            "icon": "mdi:file-document-edit",
+            "title": "内嵌文档",
+            "link": "https://www.tzagileteam.com/",
+            "external": false,
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "online-docs",
+          "name": "iframe-online",
+          "component": "/iframe/blank-docs",
+          "meta": {
+            "icon": "mdi:file-document-box-search",
+            "title": "线上文档",
+            "link": "https://www.tzagileteam.com",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "github",
+          "name": "iframe-github",
+          "component": "/iframe/blank-docs",
+          "meta": {
+            "icon": "mdi:github",
+            "title": "Github 仓库",
+            "link": "https://github.com/ChenyCHENYU/Robot_Admin",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "gitee",
+          "name": "iframe-gitee",
+          "component": "/iframe/blank-docs",
+          "meta": {
+            "icon": "mdi:gitlab",
+            "title": "Gitee 仓库",
+            "link": "https://gitee.com/ycyplus163/Robot_Admin",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "blog",
+          "name": "iframe-blog",
+          "component": "/iframe/blank-docs",
+          "meta": {
+            "icon": "mdi:blog",
+            "title": "CHENY 博客",
+            "link": "https://www.yangchenyu.com/",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/error-page",
+      "name": "error-page",
+      "component": "layout",
+      "redirect": "/error-page/404",
+      "meta": {
+        "icon": "mdi:alert-circle-outline",
+        "title": "异常页面",
+        "hidden": false,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "401",
+          "name": "error-401",
+          "component": "/error-page/401",
+          "meta": {
+            "icon": "mdi:lock-alert",
+            "title": "401",
+            "hidden": false,
+            "full": true,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "403",
+          "name": "error-403",
+          "component": "/error-page/403",
+          "meta": {
+            "icon": "mdi:cancel",
+            "title": "403",
+            "hidden": false,
+            "full": true,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "404",
+          "name": "error-404",
+          "component": "/error-page/404",
+          "meta": {
+            "icon": "mdi:file-remove-outline",
+            "title": "404",
+            "hidden": false,
+            "full": true,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "500",
+          "name": "error-500",
+          "component": "/error-page/500",
+          "meta": {
+            "icon": "mdi:server-network-off",
+            "title": "500",
+            "hidden": false,
+            "full": true,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
+      "path": "/about",
+      "component": "layout",
+      "redirect": "/about/index",
+      "children": [
+        {
+          "path": "index",
+          "name": "about",
+          "component": "/about/index",
+          "meta": {
+            "icon": "ix:about-filled",
+            "title": "关于",
+            "hidden": false,
+            "affix": false,
+            "keepAlive": false,
+            "full": false
+          }
+        }
+      ]
+    }
+  ],
+  "msg": "成功"
+}

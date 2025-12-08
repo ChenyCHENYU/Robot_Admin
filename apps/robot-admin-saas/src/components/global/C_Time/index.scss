@@ -1,0 +1,23 @@
+  .c-time-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .time-range-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .time-single-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .range-separator {
+    color: #666;
+    font-size: 14px;
+    white-space: nowrap;
+    user-select: none;
+  }

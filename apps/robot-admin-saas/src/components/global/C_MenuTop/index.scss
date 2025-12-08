@@ -1,0 +1,102 @@
+/* 🎯 背景流光动画 */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 8s linear infinite;
+}
+
+/* 🎯 慢速脉冲动画 */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* 🎯 标题文字样式 */
+.text-title {
+  background: linear-gradient(135deg, #646cff 0%, #8b5cf6 50%, #06b6d4 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 6s ease-in-out infinite;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(100, 108, 255, 0.3);
+  position: relative;
+  line-height: 1.2;
+}
+
+/* 🎯 副标题文字样式 */
+.text-subtitle {
+  background: linear-gradient(135deg, #94a3b8 0%, #cbd5e1 50%, #e2e8f0 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 8s ease-in-out infinite reverse;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  opacity: 0.9;
+  margin-top: 1px;
+  line-height: 1.2;
+}
+
+/* 🎯 渐变动画 */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🎯 菜单淡入动画 */
+.menu-top {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* 🎯 折叠状态优化 */
+.menu-top.justify-center {
+  /* 确保Logo居中 */
+  .relative {
+    margin: 0 auto;
+  }
+}
+
+/* 🎯 响应式优化 */
+@media (max-width: 768px) {
+  .text-title {
+    font-size: 14px;
+  }
+
+  .text-subtitle {
+    font-size: 11px;
+  }
+}
+
+/* 🎯 浏览器兼容性 */
+@supports not (-webkit-background-clip: text) {
+  .text-title {
+    background: none;
+    color: #646cff;
+    -webkit-text-fill-color: unset;
+  }
+
+  .text-subtitle {
+    background: none;
+    color: #94a3b8;
+    -webkit-text-fill-color: unset;
+  }
+}

@@ -1,0 +1,37 @@
+  .demo-page {
+    padding: 24px;
+    background: var(--n-color);
+  }
+
+  .form-section,
+  .preview-section {
+    margin-bottom: 24px;
+  }
+
+  .form-actions {
+    padding: 24px 0;
+    border-top: 1px solid var(--n-divider-color);
+    margin-top: 24px;
+  }
+
+  .json-preview {
+    border: 1px solid var(--n-border-color);
+    border-radius: 6px;
+    padding: 16px;
+    max-height: 400px;
+    overflow: auto;
+  }
+
+  .json-preview pre {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .demo-page {
+      padding: 16px;
+    }
+  }

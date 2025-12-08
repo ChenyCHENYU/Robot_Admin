@@ -1,0 +1,133 @@
+  .c-captcha-modern {
+    width: 100%;
+    font-family: inherit;
+  }
+
+  /* 触发按钮样式 - 始终居中版本 */
+  .captcha-trigger {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .captcha-trigger:hover:not(.disabled) {
+    transform: translateY(-1px);
+  }
+
+  .captcha-trigger.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* 内容区域 - 始终居中 */
+  .captcha-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+  }
+
+  /* 图标样式 */
+  .captcha-icon {
+    font-size: 18px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* 文字样式 */
+  .captcha-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* 刷新按钮 - 绝对定位到右侧 */
+  .refresh-button {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .refresh-button:hover {
+    color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  /* 成功状态 */
+  .success-icon,
+  .success-text {
+    color: #43c23a;
+  }
+
+  /* 错误状态 */
+
+  .error-icon,
+  .error-text {
+    color: #f56c6c;
+  }
+
+  /* 错误动画 */
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-4px);
+    }
+    75% {
+      transform: translateX(4px);
+    }
+  }
+
+  /* 响应式适配 */
+  @media (max-width: 768px) {
+    .captcha-trigger {
+      max-width: 240px;
+      padding: 10px 14px;
+    }
+
+    .captcha-icon {
+      font-size: 16px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .captcha-text {
+      font-size: 13px;
+    }
+
+    .refresh-button {
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      right: 10px;
+    }
+  }

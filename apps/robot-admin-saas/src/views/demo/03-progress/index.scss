@@ -1,0 +1,87 @@
+.progress-demo {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .demo-section {
+    .section-header {
+      h3 {
+        margin: 0 0 8px 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .description {
+        margin: 0;
+        color: var(--text-color-3);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+    }
+
+    // 卡片内容区域 - 进度条居中展示
+    :deep(.n-card__content) {
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 260px;
+    }
+  }
+
+  // 圈圈赛跑指示器样式
+  .race-indicator {
+    text-align: center;
+
+    .race-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-color-1);
+    }
+
+    .race-speeds {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 14px;
+      color: var(--text-color-2);
+
+      span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+    }
+  }
+}
+
+// 进度条尺寸设置
+:deep(.n-progress-graph-circle),
+:deep(.n-progress-graph-circle svg) {
+  width: 160px !important;
+  height: 160px !important;
+}
+
+:deep(.n-progress-graph-multiple-circle),
+:deep(.n-progress-graph-multiple-circle svg) {
+  width: 160px !important;
+  height: 160px !important;
+}
+
+:deep(.n-progress-graph-dashboard),
+:deep(.n-progress-graph-dashboard svg) {
+  width: 200px !important;
+  height: 160px !important;
+}
+
+// 确保内容居中
+:deep(.n-progress-content) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}

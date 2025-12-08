@@ -1,0 +1,150 @@
+/**
+ * 主题 CSS Variables 系统
+ *
+ * 核心理念：
+ * 1. 使用 CSS Variables 实现主题切换，减少 JS 运行时计算
+ * 2. 浏览器原生支持，性能更好
+ * 3. 统一使用 [data-theme] 选择器，规范化主题切换
+ *
+ * 使用方式：
+ * .my-component {
+ *   background-color: var(--app-bg-body);
+ *   color: var(--app-text-primary);
+ * }
+ */
+
+/* ===========================================
+ * 亮色主题 CSS Variables
+ * =========================================== */
+
+:root,
+[data-theme='light'] {
+  /* 主色系 */
+  --app-primary: #2080f0;
+  --app-primary-hover: #4098fc;
+  --app-primary-pressed: #1060c9;
+  --app-primary-suppl: #4098fc;
+
+  /* 背景色系 */
+  --app-bg-body: #ffffff;
+  --app-bg-surface: #f4f7f9;
+  --app-bg-menu: #0d1425;
+  --app-bg-content: #ffffff;
+  --app-bg-layout: #f4f7f9;
+
+  /* 文本色系 */
+  --app-text-primary: #000000;
+  --app-text-secondary: #666666;
+  --app-text-disabled: #c0c0c0;
+  --app-text-placeholder: #999999;
+
+  /* 菜单色系 */
+  --app-menu-bg: #0d1425;
+  --app-menu-item-text: #e5e7eb;
+  --app-menu-item-text-hover: #f8fafc;
+  --app-menu-item-text-active: #e5e7eb;
+  --app-menu-item-icon: #e5e7eb;
+  --app-menu-item-icon-hover: #f8fafc;
+  --app-menu-item-bg-active: #2080f0;
+  --app-menu-item-bg-hover: rgba(255, 255, 255, 0.1);
+
+  /* 边框色系 */
+  --app-border-default: #e5e7eb;
+  --app-border-light: #f3f4f6;
+  --app-border-deep: #d1d5db;
+
+  /* 阴影 */
+  --app-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --app-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --app-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+
+  /* 过渡 */
+  --app-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --app-transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --app-transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===========================================
+ * 暗色主题 CSS Variables
+ * =========================================== */
+
+[data-theme='dark'] {
+  /* 主色系（与亮色保持一致） */
+  --app-primary: #2080f0;
+  --app-primary-hover: #4098fc;
+  --app-primary-pressed: #1060c9;
+  --app-primary-suppl: #4098fc;
+
+  /* 背景色系 */
+  --app-bg-body: #1c1c1c;
+  --app-bg-surface: #121212;
+  --app-bg-menu: #1c1c1c;
+  --app-bg-content: #1c1c1c;
+  --app-bg-layout: #121212;
+
+  /* 文本色系 */
+  --app-text-primary: #ffffff;
+  --app-text-secondary: #9ca3af;
+  --app-text-disabled: #4a5568;
+  --app-text-placeholder: #6b7280;
+
+  /* 菜单色系 */
+  --app-menu-bg: #1c1c1c;
+  --app-menu-item-text: #e5e7eb;
+  --app-menu-item-text-hover: #f8fafc;
+  --app-menu-item-text-active: #e5e7eb;
+  --app-menu-item-icon: #9ca3af;
+  --app-menu-item-icon-hover: #d1d5db;
+  --app-menu-item-bg-active: rgba(32, 128, 240, 0.2);
+  --app-menu-item-bg-hover: rgba(255, 255, 255, 0.08);
+
+  /* 边框色系 */
+  --app-border-default: rgba(255, 255, 255, 0.15);
+  --app-border-light: rgba(255, 255, 255, 0.08);
+  --app-border-deep: rgba(255, 255, 255, 0.25);
+
+  /* 阴影（暗色下的阴影更深） */
+  --app-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --app-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --app-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3), 0 4px 6px rgba(0, 0, 0, 0.2);
+
+  /* 过渡（与亮色保持一致） */
+  --app-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --app-transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --app-transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===========================================
+ * 全局样式应用
+ * =========================================== */
+
+/**
+ * 为 body 元素应用主题变量
+ * 确保主题切换时整个页面背景色变化
+ */
+body {
+  background-color: var(--app-bg-body);
+  color: var(--app-text-primary);
+  transition: background-color var(--app-transition-slow),
+              color var(--app-transition-slow);
+}
+
+/**
+ * 为 HTML 元素添加过渡
+ * 确保主题切换更平滑
+ */
+html {
+  transition: background-color var(--app-transition-slow);
+}
+
+/* ===========================================
+ * 向后兼容
+ * 保留旧的选择器以确保现有样式不受影响
+ * 未来版本将逐步移除这些兼容性选择器
+ * =========================================== */
+
+/*
+ * 兼容旧的 html.dark 和 body[data-theme] 选择器
+ * 实际样式由 [data-theme='dark'] 处理
+ * 保留注释以确保不会破坏现有代码的引用
+ */

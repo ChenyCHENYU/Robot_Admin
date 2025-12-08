@@ -1,0 +1,395 @@
+.custom-layout {
+  .toolbar-card {
+    margin-bottom: 16px;
+
+    .toolbar-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      .mode-section,
+      .stats-section,
+      .actions-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .section-label {
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .stat-item {
+        text-align: center;
+        min-width: 60px;
+
+        .stat-value {
+          display: block;
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--n-primary-color);
+        }
+
+        .stat-label {
+          font-size: 12px;
+          opacity: 0.7;
+          margin-top: 4px;
+        }
+      }
+    }
+  }
+
+  .design-panel {
+    margin-bottom: 16px;
+
+    .design-tools {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+
+      .tool-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .group-label {
+          font-size: 14px;
+          font-weight: 500;
+          margin-right: 4px;
+        }
+      }
+    }
+  }
+
+  .layout-canvas {
+    min-height: 200px;
+
+    &.design-mode {
+      border: 2px dashed var(--n-border-color);
+      border-radius: 8px;
+      padding: 16px;
+      background: var(--n-body-color);
+    }
+
+    .canvas-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 120px;
+      text-align: center;
+
+      .hint-content h3 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+      }
+
+      .hint-content p {
+        margin: 0;
+        opacity: 0.7;
+        font-size: 14px;
+      }
+    }
+
+    .areas-container {
+      .c-draggable-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+    }
+
+    .custom-area {
+      border: 1px solid var(--n-border-color);
+      border-radius: 8px;
+      background: var(--n-card-color);
+      padding: 16px;
+      min-height: 120px;
+      flex: 1;
+      min-width: 250px;
+
+      .area-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--n-divider-color);
+
+        .area-info {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .area-title {
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background: var(--n-button-color-hover);
+              color: var(--n-primary-color);
+            }
+          }
+
+          .title-input {
+            min-width: 120px;
+            max-width: 200px;
+          }
+        }
+
+        .area-controls {
+          display: flex;
+          gap: 4px;
+        }
+      }
+
+      .area-fields {
+        .c-draggable-list {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          min-height: 60px;
+        }
+      }
+
+      .area-drop-zone {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 60px;
+        border: 2px dashed var(--n-border-color);
+        border-radius: 6px;
+        font-size: 14px;
+        opacity: 0.6;
+        transition: all 0.2s ease;
+        background: var(--n-body-color);
+        margin-top: 8px;
+
+        &:hover {
+          border-color: var(--n-primary-color);
+          opacity: 1;
+        }
+      }
+
+      &.area-horizontal .area-fields .c-draggable-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      &.area-grid .area-fields .c-draggable-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+    }
+
+    .field-item {
+      border: 1px solid var(--n-border-color);
+      border-radius: 6px;
+      background: var(--n-body-color);
+      padding: 12px;
+      min-height: 40px;
+      cursor: move;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: var(--n-primary-color);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .field-preview {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+
+        .field-label {
+          font-size: 13px;
+          font-weight: 500;
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .field-type {
+          font-size: 11px;
+          opacity: 0.6;
+          background: var(--n-tag-color);
+          padding: 2px 6px;
+          border-radius: 4px;
+          flex-shrink: 0;
+        }
+      }
+    }
+
+    .field-pool {
+      margin-top: 16px;
+
+      .pool-field {
+        border: 1px solid var(--n-border-color);
+        border-radius: 6px;
+        background: var(--n-card-color);
+        padding: 12px;
+        min-height: 40px;
+        cursor: move;
+        transition: all 0.2s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &:hover {
+          border-color: var(--n-primary-color);
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .field-name {
+          font-size: 13px;
+          font-weight: 500;
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .field-type-tag {
+          font-size: 11px;
+          padding: 2px 8px;
+          border-radius: 4px;
+          background: var(--n-tag-color);
+          flex-shrink: 0;
+        }
+      }
+    }
+
+    .empty-layout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 120px;
+      padding: 16px;
+    }
+
+    .form-areas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-start;
+
+      .form-area {
+        flex: 1;
+        min-width: 250px;
+
+        &.area-vertical {
+          width: 100%;
+        }
+
+        .area-form-items {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+
+          // 统一表单项宽度
+          :deep(.n-form-item) {
+            width: 100%;
+
+            .n-form-item-blank {
+              width: 100%;
+
+              // 统一输入控件宽度
+              .n-input,
+              .n-select,
+              .n-date-picker,
+              .n-input-number,
+              .n-textarea,
+              .n-radio-group,
+              .n-checkbox-group,
+              .n-cascader,
+              .n-tree-select,
+              .n-time-picker,
+              .n-color-picker {
+                width: 100% !important;
+                max-width: 100% !important;
+              }
+
+              // 特殊控件的额外处理
+              .n-radio-group,
+              .n-checkbox-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+              }
+            }
+          }
+
+          &.layout-horizontal {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 12px;
+
+            :deep(.n-form-item) {
+              flex: 1;
+              min-width: 200px;
+            }
+          }
+
+          &.layout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+
+            :deep(.n-form-item) {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 拖拽状态
+.area-ghost,
+.field-ghost {
+  opacity: 0.5;
+  background: var(--n-primary-color-suppl);
+  border: 2px dashed var(--n-primary-color);
+  transform: rotate(2deg);
+}
+
+// 响应式
+@media (max-width: 1024px) {
+  .custom-layout .toolbar-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .custom-layout .layout-canvas .areas-container .c-draggable-list {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .custom-layout .design-tools {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .custom-layout .layout-canvas.design-mode {
+    padding: 12px;
+  }
+
+  .custom-layout .custom-area {
+    padding: 12px;
+    min-height: 100px;
+  }
+}

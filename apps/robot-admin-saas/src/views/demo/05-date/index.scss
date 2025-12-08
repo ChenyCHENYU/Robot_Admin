@@ -1,0 +1,64 @@
+  .examples-container {
+    padding: 20px;
+  }
+
+  .example-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border-left: 4px solid #18a058;
+    border-radius: 6px;
+  }
+
+  .example-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+
+  .result {
+    margin: 10px 0;
+    padding: 8px 12px;
+    border: 1px solid #bae6fd;
+    border-radius: 4px;
+    color: #0369a1;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  }
+
+  .tip {
+    margin: 10px 0;
+    padding: 8px 12px;
+    background-color: #fffbeb;
+    border: 1px solid #fed7aa;
+    border-radius: 4px;
+    color: #92400e;
+    font-size: 14px;
+  }
+
+  .custom-format-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .custom-format-group > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .custom-format-group label {
+    font-weight: 500;
+    color: #374151;
+  }
+
+  .data-display {
+    background-color: #1e293b;
+    color: #e2e8f0;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-x: auto;
+    max-height: 400px;
+    overflow-y: auto;
+  }

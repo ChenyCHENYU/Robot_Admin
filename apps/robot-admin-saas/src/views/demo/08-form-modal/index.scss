@@ -1,0 +1,259 @@
+/**
+ * ================================
+ * 演示容器主样式文件（已清理重复样式）
+ * ================================
+ * 包含：主容器、头部区域、卡片网格、侧边栏、弹出层及响应式设计
+ * 维护人员：请在修改时保持样式的一致性
+ * 注意：悬停效果请使用 custom-card 类实现
+ */
+
+/* ================================
+   主容器样式
+   ================================ */
+.demo-container {
+  padding: 24px;
+
+  /* ================================
+     头部区域样式
+     ================================ */
+  .header {
+    margin-bottom: 30px;
+
+    /* 主标题样式 */
+    .main-title {
+      display: flex;
+      gap: 12px; /* 标题元素间距 */
+    }
+
+    /* 面板标题样式 */
+    .panel-title {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    /* 副标题样式 */
+    .subtitle {
+      font-size: 14px;
+      color: #999;
+      font-weight: normal;
+    }
+
+    /* 统计概览区域 */
+    .stats-overview {
+      margin-bottom: 16px;
+
+      /* 间距容器居中对齐 */
+      .n-space {
+        justify-content: center;
+      }
+
+      /* 统计卡片基础样式 - 悬停效果由 custom-card 类提供 */
+      .n-statistic {
+        padding: 16px 24px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  /* ================================
+     卡片网格布局
+     ================================ */
+  .cards-grid {
+    /* 响应式网格布局 - 最小宽度380px，自动填充 */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+
+    /* 卡片包装器 */
+    .card-wrapper {
+      /* 单个卡片容器 - 悬停效果由 custom-card 类提供 */
+      .container-card {
+        height: 100%;
+        border-radius: 12px;
+
+        /* 卡片头部 */
+        .card-header {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+
+          /* 图标包装器 - 基础定位样式 */
+          .icon-wrapper {
+            position: relative;
+
+            /* 卡片图标基础样式 */
+            .card-icon {
+              font-size: 2rem;
+            }
+          }
+        }
+
+        /* 卡片主体内容 */
+        .card-body {
+          padding: 16px 0;
+
+          /* 卡片描述文本 */
+          .card-description {
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            opacity: 0.8;
+          }
+
+          /* 卡片特性列表 */
+          .card-features {
+            margin-bottom: 20px;
+          }
+
+          /* 卡片统计数据区域 - 布局样式 */
+          .card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* 三列等宽布局 */
+            gap: 16px;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--n-border-color);
+            background: rgba(255, 255, 255, 0.02);
+
+            /* 单个统计项 */
+            .stat-item {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 8px;
+
+              /* 统计标签 */
+              .stat-label {
+                font-size: 0.8rem;
+                opacity: 0.7;
+              }
+            }
+          }
+        }
+
+        /* 卡片浮动按钮定位 */
+        .card-float-btn {
+          position: absolute;
+          top: 16px;
+          right: 16px;
+          z-index: 10;
+
+          /* 按钮基础样式 - 悬停效果由 custom-card 类的 .float-btn 提供 */
+          .n-button {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          }
+        }
+      }
+    }
+  }
+
+  /* ================================
+     侧边栏样式
+     ================================ */
+  .sidebar {
+    position: fixed;
+    right: 0;
+    top: 80px;
+    height: calc(100vh - 80px); /* 计算高度，减去顶部导航栏 */
+    width: 360px;
+    transition: all 0.3s ease;
+    z-index: 1000;
+
+    /* 折叠状态 */
+    &.collapsed {
+      width: 0;
+      overflow: hidden;
+    }
+
+    /* 侧边栏卡片容器 */
+    .sidebar-card {
+      height: 100%;
+      border-radius: 0;
+      border-left: 3px solid var(--n-primary-color); /* 左侧边框突出显示 */
+
+      /* 侧边栏头部 */
+      .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 16px 20px;
+
+        /* 头部信息区域 */
+        .header-info {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+  }
+
+  /* ================================
+     弹出层内容样式
+     ================================ */
+  .popover-content {
+    padding: 20px;
+    min-width: 350px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    /* 弹出层头部 */
+    .popover-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+      /* 标题样式重置 */
+      h4 {
+        margin: 0;
+      }
+    }
+  }
+
+  /* ================================
+     响应式设计
+     ================================ */
+
+  /* 大屏幕适配 (1400px以下) */
+  @media (max-width: 1400px) {
+    .cards-grid {
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+  }
+
+  /* 中等屏幕适配 (1200px以下) */
+  @media (max-width: 1200px) {
+    .cards-grid {
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+  }
+
+  /* 移动设备适配 (768px以下) */
+  @media (max-width: 768px) {
+    padding: 16px; /* 减少内边距 */
+
+    /* 单列布局 */
+    .cards-grid {
+      grid-template-columns: 1fr;
+      gap: 16px; /* 减少间距 */
+    }
+
+    /* 侧边栏全屏显示 */
+    .sidebar {
+      width: 100vw; /* 全屏宽度 */
+      top: 60px; /* 适配移动端导航栏高度 */
+    }
+
+    /* 移动端标题字体调整 */
+    .header .main-title {
+      font-size: 2rem;
+    }
+  }
+}

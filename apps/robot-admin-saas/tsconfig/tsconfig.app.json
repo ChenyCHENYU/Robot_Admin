@@ -1,0 +1,59 @@
+{
+  // 继承 Vue 官方的 DOM 环境 TypeScript 配置
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+
+  // 指定需要编译的文件和目录（相对于 tsconfig 目录）
+  "include": [
+    "../src/**/*", // src 目录下所有文件（包含 .ts, .vue, .d.ts, .json 等）
+    "../package.json", // 项目包配置文件
+    "../src/**/*.json" // 匹配所有 JSON 文件
+  ],
+
+  // 排除不需要编译的文件和目录
+  "exclude": [
+    "../src/**/__tests__/*", // 测试文件
+    "../src/config/vite/**/*", // Vite 配置文件（由 tsconfig.node.json 处理）
+    "../node_modules", // 依赖包目录
+    "../dist" // 构建输出目录
+  ],
+
+  "compilerOptions": {
+    "rootDir": "../src", // 指定 TypeScript 编译器编译的根目录
+    // ==================== 编译输出配置 ====================
+    "declaration": true, // 生成 .d.ts 类型声明文件
+    "emitDeclarationOnly": true, // 只生成类型声明，不生成 JS 文件
+    "outDir": "../dist/types", // 类型声明文件输出目录
+
+    // ==================== 增量编译配置 ====================
+    "composite": true, // 启用项目组合模式，支持增量构建
+    "incremental": true, // 启用增量编译，提高编译速度
+    "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.app.tsbuildinfo", // 增量编译信息存储位置
+
+    // ==================== 模块解析配置 ====================
+    "moduleResolution": "Bundler", // 使用 Bundler 解析策略（Vite 7 + Vue 官方推荐）
+    "allowImportingTsExtensions": true, // 允许导入 .ts 扩展名（bundler 模式必需）
+    "allowSyntheticDefaultImports": true, // 允许从没有默认导出的模块中合成默认导入
+    "esModuleInterop": true, // 启用 ES 模块与 CommonJS 模块的互操作性
+    "resolveJsonModule": true, // 允许导入 JSON 文件
+
+    // ==================== 路径映射配置 ====================
+    "baseUrl": "../", // 基础路径为项目根目录
+    "paths": {
+      "@/*": ["src/*"], // @ 符号映射到 src 目录
+      "_views/*": ["src/views/*"], // _views 映射到 src/views 目录
+      "@vue-flow/*": ["node_modules/@vue-flow/*"]
+    },
+
+    // ==================== Vue 框架配置 ====================
+    "jsx": "preserve", // 保留 JSX 语法，交给构建工具处理
+    "jsxImportSource": "vue", // 指定 JSX 的导入源为 Vue
+
+    // ==================== 类型检查配置 ====================
+    "strict": true, // 启用所有严格类型检查选项
+    "noUnusedLocals": false, // 允许未使用的局部变量（开发阶段友好）
+    "noUnusedParameters": false, // 允许未使用的参数（开发阶段友好）
+
+    // ==================== 性能优化配置 ====================
+    "skipLibCheck": true // 跳过库文件的类型检查，提高编译性能
+  }
+}

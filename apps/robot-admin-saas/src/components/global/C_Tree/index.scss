@@ -1,0 +1,170 @@
+.c-tree {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .c-tree-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #fafafa;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+
+    .toolbar-left {
+      .search-input {
+        width: 260px;
+      }
+    }
+
+    .toolbar-right {
+      display: flex;
+      gap: 8px;
+    }
+  }
+
+  .c-tree-container {
+    flex: 1;
+    border: 1px solid #e0e0e6;
+    border-radius: 6px;
+    padding: 12px;
+    overflow: auto;
+
+    .tree-instance {
+      :deep(.n-tree) {
+        .n-tree-node {
+          margin-bottom: 4px;
+
+          .n-tree-node-wrapper {
+            padding: 2px 0;
+          }
+
+          .n-tree-node-content {
+            padding: 12px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            align-items: center;
+            min-height: 44px;
+
+            &:hover {
+              background-color: #f0f9ff;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+              // ✅ 修复1：增加更具体的选择器
+              .tree-actions {
+                opacity: 1 !important;
+              }
+            }
+
+            .n-tree-node-content__prefix {
+              margin-right: 0;
+              display: flex;
+              align-items: center;
+            }
+
+            .n-tree-node-content__text {
+              flex: 1;
+              display: flex;
+              align-items: center;
+            }
+
+            .n-tree-node-content__suffix {
+              margin-left: auto;
+              display: flex;
+              align-items: center;
+            }
+          }
+
+          .n-tree-node-switcher {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+
+            .n-tree-node-switcher__icon {
+              font-size: 14px;
+              transition: transform 0.2s ease;
+            }
+          }
+
+          &.n-tree-node--selected {
+            .n-tree-node-content {
+              background-color: #e6f3ff;
+              border: 1px solid #1890ff;
+            }
+          }
+
+          &.n-tree-node--disabled {
+            .n-tree-node-content {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+          }
+        }
+
+        .n-tree-node-indent {
+          width: 24px;
+        }
+      }
+
+      :deep(.n-tree-node) {
+        &:hover {
+          .tree-actions {
+            opacity: 1 !important;
+          }
+        }
+      }
+
+      :deep(.tree-actions) {
+        opacity: 0;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+          opacity: 1 !important;
+        }
+      }
+
+    }
+  }
+}
+
+.c-tree {
+  // 确保tree-actions在hover时显示
+  :deep(.n-tree-node-content:hover .tree-actions),
+  :deep(.n-tree-node:hover .tree-actions) {
+    opacity: 1 !important;
+  }
+
+  // 基础样式
+  :deep(.tree-actions) {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .c-tree {
+    .c-tree-toolbar {
+      flex-direction: column;
+      gap: 12px;
+
+      .toolbar-left .search-input {
+        width: 100%;
+      }
+
+      .toolbar-right {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    :deep(.tree-actions) {
+      opacity: 1 !important;
+    }
+  }
+}

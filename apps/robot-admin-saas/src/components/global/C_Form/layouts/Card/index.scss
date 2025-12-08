@@ -1,0 +1,191 @@
+.c-form-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ================= 配置面板 ================= */
+.layout-config-panel {
+  margin-bottom: 0;
+}
+
+.config-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+}
+
+.config-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  
+  @media (max-width: 768px) {
+    justify-content: space-between;
+  }
+}
+
+/* ================= 表单内容区域 ================= */
+.form-content {
+  display: flex;
+}
+
+.layout-single,
+.layout-vertical {
+  flex-direction: column;
+}
+
+.layout-horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  
+  .group-card {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
+}
+
+/* ================= 卡片样式 ================= */
+.single-card,
+.group-card {
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-left-width: 4px;
+}
+
+.single-card,
+.basic-card {
+  border-left-color: #3b82f6;
+}
+
+.contact-card {
+  border-left-color: #22c55e;
+}
+
+.preferences-card {
+  border-left-color: #a855f7;
+}
+
+.group-card {
+  &.collapsed {
+    .card-content {
+      display: none;
+    }
+  }
+}
+
+/* ================= 卡片头部 ================= */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(to bottom right, #3b82f6, #9333ea);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+}
+
+.header-text {
+  h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+  }
+  
+  p {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.field-stats {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ================= 卡片内容 ================= */
+.card-content {
+  padding-top: 1rem;
+}
+
+.progress-section {
+  padding-bottom: 1rem;
+}
+
+/* ================= 操作面板 ================= */
+.action-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+}
+
+.status-summary {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  .label {
+    font-size: 0.875rem;
+  }
+}
+
+.progress-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 8rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}

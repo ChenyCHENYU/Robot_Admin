@@ -13,8 +13,8 @@
         "typescript": "~5.8.0",
       },
     },
-    "apps/admin": {
-      "name": "@robot/admin",
+    "apps/robot-admin-internal": {
+      "name": "@robot/admin-internal",
       "version": "2.0.0",
       "dependencies": {
         "@antv/x6": "^2.18.1",
@@ -29,6 +29,11 @@
         "@iconify-json/ri": "^1.2.5",
         "@iconify/vue": "^5.0.0",
         "@kangc/v-md-editor": "^2.3.18",
+        "@robot/business": "workspace:*",
+        "@robot/core": "workspace:*",
+        "@robot/integrations": "workspace:*",
+        "@robot/shared": "workspace:*",
+        "@robot/ui": "workspace:*",
         "@splinetool/runtime": "^1.9.92",
         "@tato30/vue-pdf": "^1.11.4",
         "@types/leaflet": "^1.9.21",
@@ -113,6 +118,147 @@
         "vue-tsc": "^2.2.8",
       },
     },
+    "apps/robot-admin-saas": {
+      "name": "@robot/admin-saas",
+      "version": "1.0.0",
+      "dependencies": {
+        "@antv/x6": "^2.18.1",
+        "@chenfengyuan/vue-barcode": "^2.0.2",
+        "@commitlint/cli": "12.1.4",
+        "@commitlint/config-conventional": "12.1.4",
+        "@fullcalendar/core": "^6.1.17",
+        "@fullcalendar/daygrid": "^6.1.17",
+        "@fullcalendar/interaction": "^6.1.17",
+        "@fullcalendar/list": "^6.1.17",
+        "@fullcalendar/vue3": "^6.1.17",
+        "@iconify-json/ri": "^1.2.5",
+        "@iconify/vue": "^5.0.0",
+        "@kangc/v-md-editor": "^2.3.18",
+        "@robot/business": "workspace:*",
+        "@robot/core": "workspace:*",
+        "@robot/integrations": "workspace:*",
+        "@robot/shared": "workspace:*",
+        "@robot/ui": "workspace:*",
+        "@splinetool/runtime": "^1.9.92",
+        "@tato30/vue-pdf": "^1.11.4",
+        "@types/leaflet": "^1.9.21",
+        "@vercel/analytics": "^1.5.0",
+        "@visactor/vtable-gantt": "^1.19.3",
+        "@vue-flow/core": "1.45.0",
+        "@vueuse/core": "^13.1.0",
+        "axios": "^1.9.0",
+        "date-fns": "3.6.0",
+        "date-fns-tz": "3.2.0",
+        "driver.js": "^1.3.6",
+        "echarts": "^5.6.0",
+        "file-saver": "^2.0.5",
+        "highlight.js": "^11.11.1",
+        "html2canvas": "^1.4.1",
+        "jszip": "^3.10.1",
+        "jszip-utils": "^0.1.0",
+        "leaflet": "^1.9.4",
+        "mammoth": "^1.9.1",
+        "motion-v": "^1.1.0-alpha.1",
+        "nprogress": "^0.2.0",
+        "pinia": "^3.0.1",
+        "pinia-plugin-persistedstate": "^4.3.0",
+        "print-js": "^1.6.0",
+        "robot-admin-env-manager": "^1.0.5",
+        "vite-plugin-preloader": "^1.1.3",
+        "vue": "^3.5.13",
+        "vue-command-palette": "^0.2.3",
+        "vue-draggable-plus": "^0.6.0",
+        "vue-router": "^4.5.0",
+        "vue3-puzzle-vcode": "^1.1.7",
+        "wangeditor": "^4.7.15",
+        "xlsx": "^0.18.5",
+      },
+      "devDependencies": {
+        "@hey-api/openapi-ts": "^0.81.1",
+        "@iconify-json/ic": "^1.2.2",
+        "@iconify-json/la": "^1.2.1",
+        "@iconify-json/mdi": "^1.2.3",
+        "@inspira-ui/plugins": "^0.0.1",
+        "@tsconfig/node22": "^22.0.0",
+        "@types/file-saver": "^2.0.7",
+        "@types/jsdom": "^21.1.7",
+        "@types/node": "^22.13.9",
+        "@types/nprogress": "^0.2.3",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "@vitejs/plugin-vue-jsx": "^4.1.1",
+        "@vue/eslint-config-prettier": "^10.2.0",
+        "@vue/eslint-config-typescript": "^14.5.0",
+        "@vue/runtime-core": "^3.5.13",
+        "@vue/test-utils": "^2.4.6",
+        "@vue/tsconfig": "^0.7.0",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "commitizen": "4.2.4",
+        "cz-customizable": "6.3.0",
+        "eslint": "^9.21.0",
+        "eslint-plugin-jsdoc": "^50.6.11",
+        "eslint-plugin-oxlint": "^0.15.13",
+        "eslint-plugin-vue": "~10.0.0",
+        "git-branch-check-diff-commits": "^1.2.2",
+        "husky": "^9.1.7",
+        "jiti": "^2.4.2",
+        "jsdom": "^26.0.0",
+        "lint-staged": "^16.1.6",
+        "naive-ui": "^2.41.0",
+        "npm-run-all2": "^7.0.2",
+        "oxlint": "^0.15.13",
+        "prettier": "3.5.3",
+        "rollup-plugin-visualizer": "^6.0.3",
+        "sass": "^1.87.0",
+        "ts-type-cleaner": "^5.0.8",
+        "typescript": "~5.8.0",
+        "unocss": "^66.3.3",
+        "unplugin-auto-import": "^19.1.2",
+        "unplugin-icons": "^22.1.0",
+        "unplugin-vue-components": "^28.5.0",
+        "vite": "7",
+        "vite-auto-i18n-plugin": "^1.1.12",
+        "vite-console-plugin": "^2.0.15",
+        "vite-plugin-vue-devtools": "^7.7.2",
+        "vue-tsc": "^2.2.8",
+      },
+    },
+    "packages/business": {
+      "name": "@robot/business",
+      "version": "1.0.0",
+      "dependencies": {
+        "@robot/core": "workspace:*",
+        "vue": "^3.5.13",
+      },
+      "peerDependencies": {
+        "vue": ">=3.5.0",
+      },
+    },
+    "packages/core": {
+      "name": "@robot/core",
+      "version": "1.0.0",
+      "dependencies": {
+        "axios": "^1.7.9",
+        "pinia": "^2.3.0",
+        "vue": "^3.5.13",
+        "vue-router": "^4.5.0",
+      },
+      "peerDependencies": {
+        "pinia": ">=2.0.0",
+        "vue": ">=3.5.0",
+        "vue-router": ">=4.0.0",
+      },
+    },
+    "packages/integrations": {
+      "name": "@robot/integrations",
+      "version": "1.0.0",
+      "dependencies": {
+        "vue": "^3.5.13",
+      },
+      "peerDependencies": {
+        "vue": ">=3.5.0",
+      },
+    },
     "packages/shared": {
       "name": "@robot/shared",
       "version": "1.0.0",
@@ -121,6 +267,18 @@
       },
       "devDependencies": {
         "typescript": "~5.8.0",
+      },
+    },
+    "packages/ui": {
+      "name": "@robot/ui",
+      "version": "1.0.0",
+      "dependencies": {
+        "naive-ui": "^2.41.0",
+        "vue": "^3.5.13",
+      },
+      "peerDependencies": {
+        "naive-ui": ">=2.40.0",
+        "vue": ">=3.5.0",
       },
     },
   },
@@ -625,9 +783,19 @@
 
     "@resvg/resvg-js-win32-x64-msvc": ["@resvg/resvg-js-win32-x64-msvc@2.4.1", "", { "os": "win32", "cpu": "x64" }, "sha512-vY4kTLH2S3bP+puU5x7hlAxHv+ulFgcK6Zn3efKSr0M0KnZ9A3qeAjZteIpkowEFfUeMPNg2dvvoFRJA9zqxSw=="],
 
-    "@robot/admin": ["@robot/admin@workspace:apps/admin"],
+    "@robot/admin-internal": ["@robot/admin-internal@workspace:apps/robot-admin-internal"],
+
+    "@robot/admin-saas": ["@robot/admin-saas@workspace:apps/robot-admin-saas"],
+
+    "@robot/business": ["@robot/business@workspace:packages/business"],
+
+    "@robot/core": ["@robot/core@workspace:packages/core"],
+
+    "@robot/integrations": ["@robot/integrations@workspace:packages/integrations"],
 
     "@robot/shared": ["@robot/shared@workspace:packages/shared"],
+
+    "@robot/ui": ["@robot/ui@workspace:packages/ui"],
 
     "@rollup/pluginutils": ["@rollup/pluginutils@5.1.4", "https://registry.npmmirror.com/@rollup/pluginutils/-/pluginutils-5.1.4.tgz", { "dependencies": { "@types/estree": "^1.0.0", "estree-walker": "^2.0.2", "picomatch": "^4.0.2" }, "peerDependencies": { "rollup": "^1.20.0||^2.0.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ=="],
 
@@ -2801,6 +2969,8 @@
 
     "@nuxt/kit/unimport": ["unimport@5.0.1", "", { "dependencies": { "acorn": "^8.14.1", "escape-string-regexp": "^5.0.0", "estree-walker": "^3.0.3", "local-pkg": "^1.1.1", "magic-string": "^0.30.17", "mlly": "^1.7.4", "pathe": "^2.0.3", "picomatch": "^4.0.2", "pkg-types": "^2.1.0", "scule": "^1.3.0", "strip-literal": "^3.0.0", "tinyglobby": "^0.2.13", "unplugin": "^2.3.2", "unplugin-utils": "^0.2.4" } }, "sha512-1YWzPj6wYhtwHE+9LxRlyqP4DiRrhGfJxdtH475im8ktyZXO3jHj/3PZ97zDdvkYoovFdi0K4SKl3a7l92v3sQ=="],
 
+    "@robot/core/pinia": ["pinia@2.3.1", "https://registry.npmmirror.com/pinia/-/pinia-2.3.1.tgz", { "dependencies": { "@vue/devtools-api": "^6.6.3", "vue-demi": "^0.14.10" }, "peerDependencies": { "typescript": ">=4.4.4", "vue": "^2.7.0 || ^3.5.11" }, "optionalPeers": ["typescript"] }, "sha512-khUlZSwt9xXCaTbbxFYBKDc/bWAGWJjOgvxETwkTN7KRm66EeT1ZdZj6i2ceh9sP2Pzqsbc704r2yngBrxBVug=="],
+
     "@rollup/pluginutils/estree-walker": ["estree-walker@2.0.2", "https://registry.npmmirror.com/estree-walker/-/estree-walker-2.0.2.tgz", {}, "sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w=="],
 
     "@typescript-eslint/typescript-estree/minimatch": ["minimatch@9.0.5", "https://registry.npmmirror.com/minimatch/-/minimatch-9.0.5.tgz", { "dependencies": { "brace-expansion": "^2.0.1" } }, "sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow=="],
@@ -3490,6 +3660,8 @@
     "@nuxt/kit/unimport/escape-string-regexp": ["escape-string-regexp@5.0.0", "https://registry.npmmirror.com/escape-string-regexp/-/escape-string-regexp-5.0.0.tgz", {}, "sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw=="],
 
     "@nuxt/kit/unimport/unplugin": ["unplugin@2.3.2", "https://registry.npmmirror.com/unplugin/-/unplugin-2.3.2.tgz", { "dependencies": { "acorn": "^8.14.1", "picomatch": "^4.0.2", "webpack-virtual-modules": "^0.6.2" } }, "sha512-3n7YA46rROb3zSj8fFxtxC/PqoyvYQ0llwz9wtUPUutr9ig09C8gGo5CWCwHrUzlqC1LLR43kxp5vEIyH1ac1w=="],
+
+    "@robot/core/pinia/@vue/devtools-api": ["@vue/devtools-api@6.6.4", "https://registry.npmmirror.com/@vue/devtools-api/-/devtools-api-6.6.4.tgz", {}, "sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g=="],
 
     "@typescript-eslint/typescript-estree/minimatch/brace-expansion": ["brace-expansion@2.0.1", "https://registry.npmmirror.com/brace-expansion/-/brace-expansion-2.0.1.tgz", { "dependencies": { "balanced-match": "^1.0.0" } }, "sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA=="],
 

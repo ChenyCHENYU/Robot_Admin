@@ -1,0 +1,277 @@
+// ================= 页面布局样式 =================
+.table-demo-page {
+  padding: 20px;
+
+  .controls-section {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  .controls-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .mode-selection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .action-button {
+    border-radius: 8px !important;
+    font-weight: 500;
+    padding: 0 20px !important;
+    height: 36px !important;
+  }
+
+  .pagination-status {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+
+    .status-label {
+      font-weight: 500;
+      margin-right: 4px;
+    }
+  }
+
+  .elegant-divider {
+    height: 32px;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.15);
+    margin: 0 8px;
+  }
+}
+
+// ================= 单选按钮样式 =================
+:deep(.n-radio-group) {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 6px;
+  gap: 8px;
+}
+
+:deep(.n-radio-button) {
+  border-radius: 6px !important;
+  margin: 0 4px;
+  min-height: 32px;
+
+  .n-radio-button__label {
+    font-weight: 500;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+:deep(.n-radio-button--checked .n-radio-button__label) {
+  font-weight: 600;
+}
+
+:deep(.n-switch) {
+  transform: scale(1.05);
+}
+
+// ================= 表格编辑输入框宽度修复（精简版）=================
+:deep(.n-data-table .n-data-table-td) {
+
+  // 统一处理所有表单组件的宽度
+  .n-input,
+  .n-input-number,
+  .n-select,
+  .n-date-picker,
+  .n-time-picker,
+  .n-auto-complete,
+  .n-checkbox-group,
+  .n-radio-group {
+    width: 100% !important;
+    min-width: 120px !important;
+  }
+
+  // 特殊处理：数字输入框最小宽度
+  .n-input-number {
+    min-width: 100px !important;
+  }
+
+  // 特殊处理：日期选择器最小宽度
+  .n-date-picker {
+    min-width: 140px !important;
+  }
+
+  // 特殊处理：开关组件
+  .n-switch {
+    min-width: 60px !important;
+  }
+
+  // 深度穿透：确保内部元素也是100%宽度
+  .n-input-wrapper,
+  .n-input__input-el,
+  .n-base-selection,
+  .n-base-selection-label,
+  .n-base-selection-input,
+  .n-input-number-input {
+    width: 100% !important;
+  }
+
+  // 编辑状态优化
+  &.n-data-table-td--editing {
+    padding: 4px 8px !important;
+
+    >* {
+      width: 100% !important;
+    }
+  }
+}
+
+// ================= 表格列宽设置 =================
+:deep(.n-data-table) {
+
+  .n-data-table-th,
+  .n-data-table-td {
+
+    // 使用循环简化列宽设置
+    @for $i from 1 through 9 {
+      &:nth-child(#{$i}) {
+        @if $i ==1 {
+          min-width: 80px;
+        }
+
+        // 姓名
+        @else if $i ==2 {
+          min-width: 80px;
+        }
+
+        // 年龄
+        @else if $i ==3 {
+          min-width: 60px;
+        }
+
+        // 性别
+        @else if $i ==4 {
+          min-width: 200px;
+        }
+
+        // 邮箱
+        @else if $i ==5 {
+          min-width: 100px;
+        }
+
+        // 部门
+        @else if $i ==6 {
+          min-width: 140px;
+        }
+
+        // 入职日期
+        @else if $i ==7 {
+          min-width: 80px;
+        }
+
+        // 状态
+        @else if $i ==8 {
+          min-width: 200px;
+        }
+
+        // 描述
+        @else if $i ==9 {
+          min-width: 120px;
+        }
+
+        // 操作
+      }
+    }
+  }
+}
+
+// ================= 表单项优化 =================
+:deep(.n-data-table .n-form-item) {
+  margin: 0 !important;
+
+  .n-form-item-blank,
+  .n-form-item-feedback-wrapper {
+    min-height: auto !important;
+    width: 100% !important;
+  }
+}
+
+// ================= 表格容器优化 =================
+:deep(.n-data-table-wrapper) {
+  overflow-x: auto;
+}
+// ================= 响应式适配 =================
+@media (max-width: 768px) {
+  .table-demo-page {
+    padding: 12px;
+
+    .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+
+      .elegant-divider {
+          display: none;
+        }
+      }
+      }
+    :deep(.n-data-table) {
+      min-width: 900px;
+
+      .n-data-table-th,
+      .n-data-table-td {
+
+        // 移动端列宽优化
+        @for $i from 1 through 9 {
+          &:nth-child(#{$i}) {
+            @if $i ==1 {
+              min-width: 70px;
+            }
+
+            @else if $i ==2 {
+              min-width: 70px;
+            }
+
+            @else if $i ==3 {
+              min-width: 50px;
+            }
+
+            @else if $i ==4 {
+              min-width: 180px;
+            }
+
+            @else if $i ==5 {
+              min-width: 90px;
+            }
+
+            @else if $i ==6 {
+              min-width: 120px;
+            }
+
+            @else if $i ==7 {
+              min-width: 70px;
+            }
+
+            @else if $i ==8 {
+              min-width: 150px;
+            }
+
+            @else if $i ==9 {
+              min-width: 100px;
+            }
+          }
+        }
+      }
+    }
+    }

@@ -1,0 +1,340 @@
+ .draggable-demo {
+    padding: 24px;
+    min-height: 100vh;
+
+
+  .kanban-card {
+    margin-bottom: 24px;
+  }
+
+  .kanban-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    min-height: 500px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .kanban-column {
+    border-radius: 8px;
+    border: 1px solid var(--n-border-color);
+    overflow: hidden;
+
+    .column-header {
+      padding: 16px;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+
+      h4 {
+        margin: 0;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      &.todo-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      &.progress-header {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+      &.review-header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+      &.done-header {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      }
+    }
+
+    .task-list {
+      padding: 16px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+
+  .task-card {
+    border: 1px solid var(--n-border-color);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: grab;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .task-date {
+        font-size: 12px;
+        opacity: 0.7;
+      }
+    }
+
+    .task-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      line-height: 1.4;
+    }
+
+    .task-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        opacity: 0.8;
+
+        div {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .task-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .assignee {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        span {
+          font-size: 12px;
+          font-weight: 500;
+        }
+      }
+
+      .handle {
+        opacity: 0.6;
+        cursor: grab;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          opacity: 1;
+          background: var(--n-close-icon-color-hover);
+        }
+
+        div {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    opacity: 0.6;
+
+    div {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+
+  .bottom-section {
+    margin-top: 24px;
+  }
+
+  .tech-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .tech-card {
+    border: 1px solid var(--n-border-color);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: grab;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: var(--n-primary-color);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    .tech-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .tech-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+
+        .tech-logo {
+          width: 32px;
+          height: 32px;
+          border-radius: 4px;
+          flex-shrink: 0;
+        }
+
+        .tech-name {
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: var(--n-primary-color);
+          }
+        }
+      }
+
+      .tech-handle {
+        opacity: 0.6;
+        cursor: grab;
+        padding: 4px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+
+        &:hover {
+          opacity: 1;
+          background: var(--n-close-icon-color-hover);
+        }
+
+        div {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .tech-desc p {
+      margin: 0;
+      font-size: 14px;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+  }
+
+  .activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 8px;
+    cursor: grab;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      flex-shrink: 0;
+    }
+
+    .activity-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .draggable-demo {
+      padding: 16px;
+    }
+    .page-title {
+      font-size: 20px;
+    }
+
+    .tech-card .tech-header .tech-info {
+      .tech-logo {
+        width: 24px;
+        height: 24px;
+      }
+      .tech-name {
+        font-size: 14px;
+      }
+    }
+
+    .task-card {
+      padding: 12px;
+      .task-title {
+        font-size: 14px;
+      }
+    }
+
+    .activity-item {
+      padding: 12px;
+      font-size: 12px;
+    }
+
+    .bottom-section :deep(.n-grid-item) {
+      grid-column: span 4;
+    }
+  }
+}

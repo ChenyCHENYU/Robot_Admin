@@ -1,0 +1,281 @@
+  .grid-layout {
+    .grid-config {
+      margin-bottom: 24px;
+
+      .config-card {
+        .config-title {
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 16px;
+        }
+
+        .config-controls {
+          display: flex;
+          gap: 24px;
+          align-items: center;
+          flex-wrap: wrap;
+
+          .config-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+
+            .input-with-badge {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+
+              .badge {
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-size: 12px;
+                background: #667eea;
+                color: white;
+              }
+            }
+
+            .number-input {
+              padding: 4px 8px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              font-size: 14px;
+              min-width: 80px;
+            }
+
+            .switch {
+              width: 40px;
+              height: 20px;
+              border-radius: 10px;
+              background: #ddd;
+              position: relative;
+              cursor: pointer;
+              transition: all 0.3s ease;
+
+              &::after {
+                content: '';
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background: white;
+                transition: all 0.3s ease;
+              }
+
+              &.active {
+                background: #52c41a;
+
+                &::after {
+                  transform: translateX(20px);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .grid-preview {
+      margin-bottom: 24px;
+
+      .preview-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        color: #666;
+      }
+
+      .grid-demo {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+
+        .grid-col {
+          height: 32px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          font-weight: 500;
+          border-radius: 4px;
+          margin-bottom: 8px;
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-end;
+      margin-top: 24px;
+
+      button {
+        padding: 8px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border: none;
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        &.submit-btn {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+
+          &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          }
+
+          .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+          }
+        }
+
+        &.reset-btn {
+          background: #f5f5f5;
+          color: #666;
+          border: 1px solid #ddd;
+
+          &:hover {
+            background: #e8e8e8;
+            border-color: #bbb;
+          }
+        }
+
+        &.preview-btn {
+          background: #52c41a;
+          color: white;
+
+          &:hover {
+            background: #73d13d;
+          }
+        }
+      }
+    }
+
+    .layout-preview-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+
+      .preview-content {
+        background: white;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 800px;
+        max-height: 80vh;
+        overflow-y: auto;
+
+        .preview-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 20px 24px;
+          border-bottom: 1px solid #f0f0f0;
+
+          h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+          }
+
+          .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+
+            &:hover {
+              color: #666;
+            }
+          }
+        }
+
+        .preview-body {
+          padding: 24px;
+
+          .layout-info {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+
+            .info-item {
+              display: flex;
+              flex-direction: column;
+              gap: 4px;
+
+              .label {
+                font-size: 12px;
+                color: #666;
+              }
+
+              .value {
+                font-size: 14px;
+                font-weight: 600;
+              }
+            }
+          }
+
+          .field-layout-preview {
+            display: grid;
+            gap: 12px;
+
+            .field-preview {
+              padding: 12px;
+              border: 1px solid #e9ecef;
+              border-radius: 8px;
+              background: #fff;
+
+              .field-name {
+                font-weight: 600;
+                margin-bottom: 8px;
+              }
+
+              .field-span,
+              .field-width {
+                font-size: 12px;
+                color: #666;
+                margin-bottom: 4px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }

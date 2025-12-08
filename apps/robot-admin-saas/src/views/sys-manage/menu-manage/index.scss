@@ -1,0 +1,65 @@
+  .menu-management {
+    padding: 16px;
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .main-content {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .content-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      :deep(.n-card__content) {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+    }
+
+    .menu-tree {
+      flex: 1;
+      overflow: auto;
+
+      :deep(.c-tree-container) {
+        border: none;
+        padding: 0;
+        height: 100%;
+      }
+
+      :deep(.tree-instance) {
+        height: 100%;
+
+        .n-tree .n-tree-node {
+          margin-bottom: 4px;
+
+          .n-tree-node-content {
+            padding: 12px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+
+            &:hover .tree-actions {
+              opacity: 1 !important;
+            }
+          }
+
+          .n-tree-node-switcher {
+            margin-right: 8px;
+          }
+
+          .n-tree-node-indent {
+            width: 24px;
+          }
+        }
+      }
+    }
+  }

@@ -1,0 +1,741 @@
+/* index.scss - 日成本管控大屏SCSS样式 */
+
+// ========== SCSS变量定义 ==========
+$primary-blue: #40a9f3;
+$dark-blue: #1d3b78;
+$text-white: #ffffff;
+$border-radius: 15px;
+$border-radius-small: 8px;
+$transition-duration: 0.3s;
+
+// 渐变色定义
+$blue-gradient: linear-gradient(90deg, rgba($primary-blue, 0.3), rgba($dark-blue, 0.3));
+$header-gradient: linear-gradient(90deg, rgba($primary-blue, 0.1), transparent 50%, rgba($primary-blue, 0.1));
+$glass-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 50%, rgba(255, 255, 255, 0.05));
+
+// 阴影定义
+$box-shadow-main: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+$box-shadow-header: 0 2px 15px rgba(0, 0, 0, 0.4);
+$box-shadow-indicator: 0 4px 15px rgba($primary-blue, 0.3);
+
+// ========== SCSS混合器 ==========
+@mixin hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@mixin glass-panel($blur: 20px, $opacity: 0.15) {
+  background: rgba($dark-blue, $opacity);
+  border: 1px solid rgba($primary-blue, 0.25);
+  border-radius: $border-radius;
+  backdrop-filter: blur($blur);
+  box-shadow: $box-shadow-main;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: $glass-gradient;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin text-gradient($color1: $primary-blue, $color2: #2196f3) {
+  background: linear-gradient(45deg, $color1, $color2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin hover-lift($translate: -2px) {
+  transition: all $transition-duration ease;
+  &:hover {
+    transform: translateY($translate);
+    box-shadow: $box-shadow-indicator;
+  }
+}
+
+// ========== 主容器样式 ==========
+.jingang-dashboard {
+  width: 100%;
+  height: 100vh;
+  background:
+    url('@/assets/images/cost-day-bg.png') center/cover,
+    linear-gradient(135deg, #1a2f5a 0%, #2d4a8a 50%, #1a2f5a 100%);
+  color: $text-white;
+  font-family: 'Microsoft YaHei', Arial, sans-serif;
+  overflow: hidden;
+  position: relative;
+
+  // 背景纹理层
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(66, 165, 245, 0.08), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(156, 39, 176, 0.08), transparent 50%),
+      linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.02) 50%, transparent),
+      repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255, 255, 255, 0.005) 4px);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  // ========== 头部样式 ==========
+  .dashboard-header {
+    @include flex-between;
+    padding: 15px 40px;
+    background: rgba($dark-blue, 0.3);
+    border-bottom: 2px solid rgba($primary-blue, 0.3);
+    backdrop-filter: blur(25px);
+    box-shadow: $box-shadow-header;
+    z-index: 10;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: $header-gradient;
+      pointer-events: none;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-left: 40%;
+      text-shadow: 0 0 20px rgba($primary-blue, 0.8);
+    }
+
+    .header-info {
+      display: flex;
+      gap: 25px;
+      font-size: 15px;
+
+      .date, .time, .temp {
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba($primary-blue, 0.3);
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
+        box-shadow:
+          0 4px 15px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  // ========== 主内容区域 ==========
+  .dashboard-content {
+    display: flex;
+    height: calc(100vh - 75px);
+    gap: 8px; // 减少间距
+    padding: 8px 8px 10px; // 减少内边距
+    z-index: 5;
+    position: relative;
+
+    // 面板布局
+    .left-panel {
+      width: 280px;
+      .panel-container:last-child {
+        margin-bottom: 0px; // 去掉底边距
+      }
+    }
+
+    .center-panel {
+      flex: 1;
+    }
+
+    .right-panel {
+      width: 320px;
+    }
+
+    .left-panel, .center-panel, .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px; // 减少间距
+    }
+  }
+
+  // ========== 面板容器 ==========
+  .panel-container {
+    @include glass-panel;
+    overflow: hidden;
+
+    // 特殊面板样式
+    &.cost-chart-container {
+      background: transparent !important;
+      backdrop-filter: none !important;
+      flex: 1.2;
+      &::before {
+        display: none !important;
+      }
+    }
+
+    &.data-table-container {
+      height: 300px; // 增加高度
+      margin-bottom: 0px; // 去掉底边距
+    }
+
+    &.analysis-table-container,
+    &.production-table-container {
+      height: 280px; // 增加高度
+    }
+
+    &.trend-container {
+      height: 260px; // 增加高度
+    }
+
+    .panel-title {
+      background: $blue-gradient;
+      padding: 8px 20px; // 减少标题padding
+      font-weight: bold;
+      font-size: 14px;
+      text-align: center;
+      border-bottom: 1px solid rgba($primary-blue, 0.2);
+      backdrop-filter: blur(10px);
+    }
+  }
+
+  // ========== 分厂列表 ==========
+  .factory-header {
+    @include flex-between;
+    padding: 8px 15px 8px 20px; // 左侧稍微增加padding
+    padding-right: 6px;
+    background: rgba($primary-blue, 0.15);
+    border-bottom: 1px solid rgba($primary-blue, 0.2);
+    font-weight: bold;
+    color: $primary-blue;
+
+    .factory-name-header {
+      width: 115px; // 适度增加宽度
+        font-size: 12px;
+    }
+
+    .factory-data-header {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px; // 保持原有间距
+        padding-left: 15px; // 适当的间距，不贴太紧
+
+      .progress-label {
+        width: 46px; // 稍微减小宽度
+        text-align: center;
+        font-size: 10px;
+        opacity: 0.9;
+      }
+    }
+  }
+
+  .factory-list {
+    max-height: 400px !important; // 增加最大高度
+    min-height: 300px !important; // 增加最小高度
+    overflow-y: auto;
+    @include hide-scrollbar;
+
+    .no-data-placeholder {
+      @include flex-center;
+      height: 100%;
+      color: $text-white !important;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .factory-item {
+      @include flex-between;
+      padding: 10px 8px;
+      border-bottom: 1px solid rgba($primary-blue, 0.15);
+      cursor: pointer;
+      transition: all $transition-duration ease;
+
+      &:hover {
+        background: rgba($primary-blue, 0.2);
+        transform: translateX(2px);
+      }
+
+      &.active {
+        background: rgba($primary-blue, 0.3);
+        border-left: 3px solid $primary-blue;
+        box-shadow: inset 0 0 10px rgba($primary-blue, 0.3);
+      }
+
+      .factory-name {
+        font-size: 11px !important;
+        line-height: 1.4 !important;
+        width: 115px !important; // 与表头保持一致
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .factory-data {
+        display: flex;
+        align-items: center;
+        gap: 15px; // 适当的间距
+      }
+    }
+  }
+
+  // ========== 进度条样式 ==========
+  .progress-bar {
+    width: 46px; // 与表头标签宽度保持一致
+    height: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffa726, #ff9800);
+      border-radius: 5px;
+      transition: width $transition-duration ease;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: shimmer 2s infinite;
+      }
+
+      &.cyan {
+        background: linear-gradient(90deg, #26c6da, #00bcd4);
+      }
+
+      .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font: bold 8px/1 inherit;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      }
+    }
+  }
+
+  .status-indicator {
+    font: bold 10px/1 inherit;
+    color: $primary-blue;
+  }
+
+  // ========== 关键指标 ==========
+  .key-indicators {
+    padding: 10px; // 减少内边距
+    min-height: 280px;
+
+    .indicators-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px; // 减少卡片间距
+    }
+
+    .indicator-card {
+      display: flex;
+      align-items: center;
+      gap: 8px; // 减少内部间距
+      padding: 8px; // 减少内边距
+      background: rgba($primary-blue, 0.15);
+      border: 1px solid rgba($primary-blue, 0.25);
+      border-radius: $border-radius-small;
+      @include hover-lift;
+      margin-bottom: 8px;
+
+      .indicator-icon {
+        width: 26px; // 稍微减小图标
+        height: 26px;
+        background: linear-gradient(45deg, $primary-blue, #2196f3);
+        border-radius: 50%;
+        @include flex-center;
+        font-size: 12px; // 减小图标字体
+        box-shadow: 0 2px 8px rgba($primary-blue, 0.4);
+        flex-shrink: 0; // 防止图标被压缩
+      }
+
+      .indicator-content {
+        flex: 1;
+        min-width: 0; // 允许内容收缩
+
+        .indicator-value-line {
+          display: flex;
+          align-items: baseline;
+          gap: 2px; // 数值和单位的间距
+          line-height: 1;
+        }
+
+        .indicator-value {
+          font: bold 14px/1 inherit; // 稍微减小数值字体
+          color: $primary-blue;
+          white-space: nowrap; // 防止数值换行
+        }
+
+        .indicator-unit {
+          font-size: 9px; // 减小单位字体
+          color: $primary-blue;
+          opacity: 0.8;
+          white-space: nowrap; // 防止单位换行
+          flex-shrink: 0; // 防止单位被压缩
+        }
+
+        .indicator-name {
+          font-size: 9px; // 减小名称字体
+          margin-top: 2px;
+          opacity: 0.7;
+          line-height: 1.2;
+          white-space: nowrap; // 防止名称换行
+          overflow: hidden;
+          text-overflow: ellipsis; // 名称过长时显示省略号
+        }
+      }
+    }
+  }
+
+  // ========== 图表区域 ==========
+  .chart-header {
+    @include flex-between;
+    padding: 10px 20px; // 减少padding
+    background: linear-gradient(90deg, rgba($primary-blue, 0.8), rgba($dark-blue, 0.8));
+    border-bottom: 1px solid rgba($primary-blue, 0.3);
+
+    .chart-title {
+      font: bold 14px/1 inherit;
+    }
+
+    .completion-rate {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+  }
+
+  .chart-content {
+    display: flex;
+    height: 280px;
+    background: transparent !important;
+    margin-top: 30px !important;
+
+    .cost-chart {
+      flex: 1;
+    }
+
+    .cost-legend {
+      width: 200px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 15px;
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .legend-color {
+          width: 20px;
+          height: 12px;
+          border-radius: 6px;
+        }
+
+        .legend-text {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  // ========== 表格和状态 ==========
+  .table-wrapper {
+    height: auto;
+    overflow: visible;
+  }
+
+  .status-cell {
+    @include flex-center;
+    gap: 5px;
+  }
+
+  .status-light {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+
+    &.green {
+      background: #4caf50;
+      box-shadow: 0 0 8px #4caf50;
+    }
+
+    &.yellow {
+      background: #ffeb3b;
+      box-shadow: 0 0 8px #ffeb3b;
+    }
+
+    &.red {
+      background: #f44336;
+      box-shadow: 0 0 8px #f44336;
+    }
+  }
+
+  .cost-value {
+    margin-right: 5px;
+    color: $primary-blue;
+    font-weight: bold;
+  }
+
+  // ========== 趋势图 ==========
+  .trend-container {
+    position: relative;
+
+    .trend-chart {
+      height: 180px !important; // 增加趋势图高度
+      padding: 8px; // 适当内边距
+    }
+
+    .trend-value {
+      position: absolute;
+      right: 15px;
+      bottom: 15px;
+      font: bold 18px/1 inherit; // 适中字体
+      color: $primary-blue;
+      text-shadow: 0 0 10px rgba($primary-blue, 0.8);
+    }
+  }
+
+  // ========== 其他元素 ==========
+  .completion-notice {
+    padding: 6px; // 适当内边距
+    text-align: center;
+    font-size: 11px;
+    background: rgba($primary-blue, 0.1);
+    color: $primary-blue;
+  }
+
+  .loading-state,
+  .error-state,
+  .no-data-state {
+    color: $text-white !important;
+    text-align: center;
+    padding: 20px 15px;
+    height: 100%;
+    @include flex-center;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .error-state {
+    color: #ff6b6b !important;
+  }
+}
+
+// ========== Naive UI 表格样式覆盖 ==========
+.jingang-dashboard {
+
+  // 全局表格样式重置
+  :deep(.n-data-table) {
+    // 去掉默认背景
+    --n-td-color: transparent !important;
+    --n-th-color: rgba(29, 59, 120, 0.4) !important;
+    --n-border-color: rgba(64, 169, 243, 0.2) !important;
+    --n-th-text-color: #ffffff !important;
+    --n-td-text-color: #ffffff !important;
+
+    background: transparent !important;
+
+    // 表格wrapper
+    .n-data-table-wrapper {
+      background: transparent !important;
+      border: none !important;
+    }
+
+    // 表格基础容器
+    .n-data-table-base-table {
+      background: transparent !important;
+    }
+
+    // 表头
+    .n-data-table-th {
+      background: rgba($dark-blue, 0.4) !important;
+      color: $text-white !important;
+      font-size: 12px !important;
+      font-weight: bold !important;
+      border: none !important;
+      border-bottom: 1px solid rgba($primary-blue, 0.3) !important;
+      padding: 8px 12px !important;
+      text-align: center !important; // 表头居中
+    }
+
+    // 表体单元格
+    .n-data-table-td {
+      background: transparent !important;
+      color: $text-white !important;
+      font-size: 12px !important;
+      border: none !important;
+      border-bottom: 1px solid rgba($primary-blue, 0.15) !important;
+      padding: 8px 12px !important;
+      text-align: center !important; // 表体居中
+    }
+
+    // 表体行
+    .n-data-table-tbody .n-data-table-tr {
+      background: transparent !important;
+
+      &:hover .n-data-table-td {
+        background: rgba($primary-blue, 0.1) !important;
+      }
+
+      // 斑马纹效果
+      &:nth-child(even) .n-data-table-td {
+        background: rgba($primary-blue, 0.05) !important;
+      }
+
+      &:nth-child(even):hover .n-data-table-td {
+        background: rgba($primary-blue, 0.15) !important;
+      }
+    }
+
+    // 最后一行去掉下边框
+    .n-data-table-tbody .n-data-table-tr:last-child .n-data-table-td {
+      border-bottom: none !important;
+    }
+  }
+
+  // 左侧分厂列表字体统一
+  .factory-list {
+    .factory-name {
+      font-size: 12px !important;
+      line-height: 1.4 !important;
+      width: 130px !important; // 与表头对齐，增加宽度
+    }
+
+    .progress-text {
+      font-size: 8px !important;
+    }
+
+    .status-indicator {
+      font-size: 10px !important;
+    }
+  }
+
+  // 不同表格容器的特殊设置
+  .data-table-container {
+    :deep(.n-data-table-th),
+    :deep(.n-data-table-td) {
+      font-size: 12px !important;
+      padding: 8px 6px !important; // 优化padding
+    }
+  }
+
+  .analysis-table-container,
+  .production-table-container {
+    :deep(.n-data-table-th),
+    :deep(.n-data-table-td) {
+      font-size: 11px !important;
+      padding: 6px 8px !important;
+    }
+  }
+
+  // 滚动条
+  :deep(.n-scrollbar-rail) {
+    background-color: rgba($primary-blue, 0.1) !important;
+  }
+
+  :deep(.n-scrollbar-handle) {
+    background-color: rgba($primary-blue, 0.4) !important;
+  }
+
+  // 空状态
+  :deep(.n-empty) {
+    color: rgba($text-white, 0.6) !important;
+    background: transparent !important;
+  }
+}
+
+// ========== 动画定义 ==========
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+// ========== 响应式设计 ==========
+@media (max-width: 1920px) {
+  .jingang-dashboard {
+    .dashboard-content {
+      .left-panel {
+        width: 260px;
+      }
+      .right-panel {
+        width: 300px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1600px) {
+  .jingang-dashboard {
+    .dashboard-header {
+      padding: 12px 30px;
+
+      h1 {
+        font-size: 24px;
+        margin-left: 35%;
+      }
+    }
+
+    .dashboard-content {
+      padding: 8px;
+      gap: 8px;
+
+      .left-panel {
+        width: 240px;
+      }
+      .right-panel {
+        width: 280px;
+      }
+    }
+  }
+}
+
+// ========== 打印样式 ==========
+@media print {
+  .jingang-dashboard {
+    background: white !important;
+    color: black !important;
+
+    * {
+      background: transparent !important;
+      color: black !important;
+      box-shadow: none !important;
+    }
+  }
+}

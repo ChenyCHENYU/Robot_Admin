@@ -15,7 +15,12 @@
     }
   },
   "references": [
-    { "path": "./apps/admin" },
-    { "path": "./packages/shared" }
+    { "path": "./apps/robot-admin-internal" },
+    { "path": "./apps/robot-admin-saas" },
+    { "path": "./packages/shared" },
+    { "path": "./packages/core" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/business" },
+    { "path": "./packages/integrations" }
   ]
 }

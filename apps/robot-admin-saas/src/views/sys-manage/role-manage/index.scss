@@ -1,0 +1,60 @@
+  .role-management {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    height: calc(100vh - 120px);
+    gap: 16px;
+
+    .main-content {
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .content-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      :deep(.n-card__content) {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+      }
+    }
+
+    .role-detail {
+      padding: 16px;
+    }
+
+    .permission-templates {
+      .template-selected {
+        border-color: var(--n-color-primary) !important;
+        background-color: var(--n-color-primary-suppl) !important;
+        box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15) !important;
+      }
+
+      :deep(.n-card:hover) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+    }
+
+    // 禁用状态样式
+    .disabled-text {
+      opacity: 0.6;
+      color: #999 !important;
+      text-decoration: line-through;
+    }
+
+    .disabled-tag {
+      opacity: 0.6;
+      color: #999 !important;
+      filter: grayscale(50%);
+
+      :deep(.n-tag__content) {
+        text-decoration: line-through;
+      }
+    }
+  }

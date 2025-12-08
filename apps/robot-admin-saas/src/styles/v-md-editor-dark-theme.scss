@@ -1,0 +1,270 @@
+/**
+ * 暗色主题下的 Markdown 编辑器样式覆盖
+ *
+ * 主选择器：[data-theme="dark"]
+ * 兼容选择器：html.dark, body[data-theme="dark"]（向后兼容）
+ */
+[data-theme="dark"],
+html.dark,
+body[data-theme="dark"] {
+  // 编辑区域样式
+  .v-md-editor__editor {
+    textarea,
+    .CodeMirror,
+    .cm-s-default {
+      color: #e8e8e8 !important;
+
+      .cm-header, .cm-strong, .cm-em, .cm-link, .cm-quote,
+      .cm-keyword, .cm-atom, .cm-number, .cm-def, .cm-variable,
+      .cm-punctuation, .cm-property, .cm-operator, .cm-variable-2,
+      .cm-variable-3, .cm-comment, .cm-string, .cm-string-2,
+      .cm-meta, .cm-qualifier, .cm-builtin, .cm-bracket,
+      .cm-tag, .cm-attribute {
+        color: #e8e8e8 !important;
+      }
+    }
+
+    .CodeMirror-cursor {
+      border-left-color: #ffffff !important;
+    }
+
+    .CodeMirror-selected {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+
+  // 预览区域样式
+  .github-markdown-body {
+    color: #e8e8e8 !important;
+    background-color: transparent !important;
+
+    * {
+      color: #e8e8e8 !important;
+    }
+
+    // 标题
+    h1, h2, h3, h4, h5, h6 {
+      color: #ffffff !important;
+      border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    // 强调文本
+    strong, b {
+      color: #ffffff !important;
+    }
+
+    // 链接
+    a {
+      color: #63e2b7 !important;
+
+      &:hover {
+        color: #7fe7c4 !important;
+      }
+    }
+
+    // 代码块 - 恢复背景色
+    code {
+      background-color: rgba(0, 0, 0, 0.3) !important;
+      color: #e8e8e8 !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    pre {
+      background-color: rgba(0, 0, 0, 0.4) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+
+      code {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    }
+
+    // 引用块
+    blockquote {
+      border-left-color: #63e2b7;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #e8e8e8 !important;
+    }
+
+    // 表格 - 修复表头背景
+    table {
+      border-color: rgba(255, 255, 255, 0.15);
+      background-color: transparent !important;
+
+      thead {
+        background-color: #000000 !important;
+
+        tr {
+          background-color: #000000 !important;
+        }
+
+        th {
+          color: #ffffff !important;
+          border-color: rgba(255, 255, 255, 0.15);
+          font-weight: 600;
+          background-color: #000000 !important;
+          background: #000000 !important;
+        }
+      }
+
+      tbody {
+        tr {
+          background-color: transparent !important;
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+          }
+
+          td {
+            color: #e8e8e8 !important;
+            border-color: rgba(255, 255, 255, 0.15);
+            background-color: transparent !important;
+          }
+        }
+      }
+    }
+
+    // 列表
+    ul, ol {
+      li::marker {
+        color: #e8e8e8 !important;
+      }
+    }
+
+    // 任务列表
+    .task-list-item input[type="checkbox"] {
+      opacity: 0.8;
+    }
+
+    // 分隔线
+    hr {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    // 图片
+    img {
+      opacity: 0.9;
+    }
+  }
+
+  // 目录导航
+  .v-md-editor__toc-nav,
+  .v-md-editor__left-area,
+  .v-md-editor__right-area {
+    * {
+      color: #e8e8e8 !important;
+    }
+
+    .v-md-editor__toc-nav-title,
+    h1, h2, h3, h4, h5, h6 {
+      color: #ffffff !important;
+      font-weight: 600;
+    }
+
+    .v-md-editor__toc-link {
+      color: rgba(255, 255, 255, 0.75) !important;
+
+      &:hover {
+        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      &.active {
+        color: #63e2b7 !important;
+        background-color: rgba(99, 226, 183, 0.1);
+      }
+    }
+  }
+
+  // 工具栏
+  .v-md-editor__toolbar {
+    background-color: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+
+    .v-md-editor__toolbar-item {
+      background-color: transparent !important;
+      color: #ffffff;
+
+      svg {
+        fill: #ffffff !important;
+        opacity: 0.85;
+      }
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08) !important;
+
+        svg {
+          opacity: 1;
+        }
+      }
+
+      &.is-active {
+        background-color: rgba(255, 255, 255, 0.12) !important;
+      }
+    }
+
+    .v-md-editor__toolbar-divider {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  // 下拉菜单
+  .v-md-editor__toolbar-item-menu {
+    background-color: #2c2c2c;
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.48),
+                0 6px 16px 0 rgba(0, 0, 0, 0.32),
+                0 9px 28px 8px rgba(0, 0, 0, 0.2);
+
+    .v-md-editor__toolbar-item-menu-item {
+      color: #e8e8e8;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+      }
+    }
+  }
+
+  // 滚动条
+  .v-md-editor__editor,
+  .v-md-editor__preview {
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+
+  // 全屏模式
+  .v-md-editor--fullscreen {
+    .v-md-editor__toolbar,
+    .v-md-editor__editor,
+    .v-md-editor__preview {
+      background-color: #1a1a1a;
+    }
+  }
+
+  // 额外的表格表头修复 - 最高优先级
+  .github-markdown-body table thead th {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .github-markdown-body table thead tr {
+    background-color: #000000 !important;
+    background: #000000 !important;
+  }
+}

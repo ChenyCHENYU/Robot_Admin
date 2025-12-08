@@ -1,0 +1,113 @@
+.download-demo {
+  padding: 24px;
+  min-height: 100vh;
+
+  .demo-header {
+    text-align: center;
+    margin-bottom: 32px;
+
+    .demo-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 28px;
+      font-weight: 600;
+      color: #1a202c;
+      margin: 0 0 12px 0;
+    }
+
+    .demo-description {
+      font-size: 16px;
+      color: #64748b;
+      margin: 0;
+    }
+  }
+
+  .demo-content {
+    display: grid;
+    gap: 24px;
+
+    .demo-card {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+
+      :deep(.n-card-header) {
+        border-bottom: 1px solid #e2e8f0;
+        padding: 20px 24px;
+
+        .n-card-header__main {
+          font-size: 18px;
+          font-weight: 600;
+        }
+      }
+    }
+
+      .demo-section {
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+  }
+  }
+
+  .button-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+
+    .n-button {
+      height: 48px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+  .batch-controls {
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    .batch-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .demo-header .demo-title {
+      font-size: 24px;
+    }
+
+    .button-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .checkbox-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .batch-actions {
+      flex-direction: column;
+    }
+  }
+}
+
+// 图标样式
+span[class*="i-carbon"] {
+  width: 1.2em;
+  height: 1.2em;
+  display: inline-block;
+}

@@ -1,0 +1,91 @@
+.markdown-demo-page {
+  padding: 24px;
+
+  .demo-header {
+    margin-bottom: 24px;
+  }
+
+  .demo-card {
+    margin-bottom: 24px;
+  }
+
+  .editor-info {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--n-border-color);
+  }
+
+  .echo-info {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--n-color-embedded);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--n-text-color);
+  }
+
+  // 表单中的 Markdown 编辑器
+  .form-markdown-item {
+    :deep(.n-form-item-blank) {
+      width: 100%;
+    }
+  }
+
+  .form-markdown-wrapper {
+    width: 100%;
+
+    .form-word-count {
+      margin-top: 8px;
+      padding: 8px;
+      background: var(--n-color-embedded);
+      border-radius: 4px;
+      border: 1px solid var(--n-border-color);
+    }
+
+    // 隐藏编辑器自带的字数统计
+    :deep(.word-count-display),
+    :deep(.editor-word-count) {
+      display: none !important;
+    }
+  }
+}
+
+// 文章预览区域
+.article-preview {
+  .article-meta {
+    margin: 16px 0;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--n-border-color);
+
+    .create-time {
+      color: var(--n-text-color-3);
+      font-size: 14px;
+    }
+  }
+
+  .article-summary {
+    margin: 16px 0;
+    padding: 12px;
+    background: var(--n-color-embedded);
+    border-radius: 6px;
+    border-left: 4px solid var(--n-color-target);
+
+    p {
+      margin: 0;
+      color: var(--n-text-color);
+    }
+  }
+
+  .article-content {
+    margin-top: 24px;
+
+    :deep(.markdown-editor) {
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+
+:deep(.n-tabs-nav) {
+  margin-bottom: 24px;
+}

@@ -1,0 +1,157 @@
+  .demo-header {
+    margin-bottom: 40px;
+    padding: 30px 0;
+    border-bottom: 1px solid #e5e7eb;
+
+    p {
+      font-size: 1rem;
+      margin: 0;
+      opacity: 0.7;
+      line-height: 1.5;
+    }
+  }
+
+  .demo-section {
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &-primary {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    &-secondary {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    &-success {
+      background: #d1fae5;
+      color: #047857;
+    }
+    &-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    &-danger {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    &-info {
+      background: #cffafe;
+      color: #0891b2;
+    }
+    &-purple {
+      background: #ede9fe;
+      color: #7c3aed;
+    }
+  }
+
+  .demo-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+  }
+
+  .demo-preview {
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+
+  }
+
+  .icon-list {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    min-width: 70px;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    span {
+      font-size: 1rem;
+      text-align: center;
+      font-family: monospace;
+      line-height: 1.3;
+    }
+  }
+
+  .note {
+    margin-top: 15px;
+    padding: 12px;
+
+    border-left: 3px solid #0ea5e9;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  // 自定义动画效果
+  .sparkle-icon {
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  .pulse-icon {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes sparkle {
+    0%,
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }

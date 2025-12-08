@@ -1,0 +1,86 @@
+  .c-form-dynamic {
+    width: 100%;
+  }
+
+  .dynamic-controls,
+  .dynamic-controls-fallback {
+    margin-bottom: 16px;
+  }
+
+  .dynamic-stats {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--n-divider-color);
+  }
+
+  .dynamic-item-wrapper {
+    position: relative;
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.3s ease-out;
+  }
+
+  .dynamic-item-wrapper.is-dynamic-field {
+    border: 1px dashed var(--n-color-primary);
+    border-radius: 6px;
+    padding: 8px;
+    background-color: var(--n-color-primary-suppl);
+  }
+
+  .max-fields-config {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  .max-fields-config span {
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--n-text-color-2);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .dynamic-controls,
+    .dynamic-controls-fallback {
+      margin-bottom: 12px;
+    }
+
+    .dynamic-stats {
+      margin-top: 12px;
+    }
+
+    .dynamic-item-wrapper.is-dynamic-field {
+      padding: 6px;
+    }
+
+    .max-fields-config {
+      margin-top: 8px;
+    }
+  }
+
+  /* 辅助功能 */
+  @media (prefers-reduced-motion: reduce) {
+    .dynamic-item-wrapper {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  @media (prefers-contrast: high) {
+    .dynamic-item-wrapper.is-dynamic-field {
+      border-width: 2px;
+      border-color: currentColor;
+    }
+  }

@@ -1,0 +1,342 @@
+
+.throttle-demo-page {
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.demo-container {
+  padding: 20px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.demo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .n-button {
+    min-width: 180px;
+    white-space: nowrap;
+  }
+
+  .n-text {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+// 搜索场景样式
+.search-stats {
+  padding: 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.search-results {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+
+  .n-list {
+    padding: 8px;
+  }
+
+  .n-list-item {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+  }
+
+  .n-thing {
+    .n-thing__header {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .n-thing__description {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+}
+
+// 滚动加载场景样式
+.scroll-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 16px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+}
+
+.scroll-item {
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .n-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+  }
+
+  .n-thing {
+    .n-thing__header {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .n-thing__description {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+}
+
+.load-more-container {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.load-stats {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+}
+
+// 高频操作场景样式
+.action-demo {
+  .demo-row {
+    padding: 16px;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .n-button {
+      min-width: 200px;
+      font-size: 14px;
+      font-weight: 500;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .n-text {
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+}
+
+// 动态配置区域样式
+.dynamic-config {
+  .n-space {
+    flex-wrap: wrap;
+    gap: 12px 16px;
+  }
+
+  .n-switch {
+    flex-shrink: 0;
+  }
+
+  .n-input-number {
+    min-width: 120px;
+  }
+
+  .n-text {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+}
+
+// 状态标签样式
+.status-tags {
+  .n-tag {
+    font-size: 12px;
+    padding: 4px 8px;
+    margin-right: 8px;
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+// 代码展示区域样式
+.code-display {
+  .n-tabs {
+    .n-tab-pane {
+      padding: 0;
+    }
+  }
+
+  .c-code {
+    border-radius: 6px;
+    overflow: hidden;
+
+    pre {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  }
+}
+
+// 卡片标题样式
+.n-card {
+  .n-card-header {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .n-divider {
+    margin: 16px 0;
+  }
+}
+
+// 响应式设计
+@media (max-width: 1200px) {
+  .throttle-demo-page {
+    .n-grid {
+      .n-grid-item {
+        &:nth-child(2) {
+          margin-top: 24px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .throttle-demo-page {
+    padding: 16px;
+
+    .demo-container {
+      padding: 16px;
+    }
+
+    .demo-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+
+      .n-button {
+        min-width: 100%;
+        width: 100%;
+      }
+    }
+
+    .dynamic-config {
+      .n-space {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .n-input-number {
+        width: 100%;
+      }
+    }
+
+    .scroll-container {
+      max-height: 300px;
+    }
+
+    .search-results {
+      max-height: 250px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .throttle-demo-page {
+    padding: 12px;
+
+    .demo-container {
+      padding: 12px;
+    }
+
+    .n-card {
+      .n-card-header {
+        font-size: 14px;
+      }
+    }
+
+    .scroll-container {
+      max-height: 250px;
+      padding: 12px;
+    }
+
+    .search-results {
+      max-height: 200px;
+    }
+  }
+}
+
+// 动画效果
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.demo-container {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.scroll-item {
+  animation: fadeIn 0.3s ease-out;
+}
+

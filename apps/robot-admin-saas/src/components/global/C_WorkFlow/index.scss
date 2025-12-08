@@ -1,0 +1,412 @@
+.approval-workflow-container {
+  width: 100%;
+  height: 600px;
+  position: relative;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.floating-toolbar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--n-card-color);
+  backdrop-filter: blur(10px);
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--n-border-color);
+
+  .toolbar-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--n-border-color);
+    margin: 0 4px;
+  }
+}
+
+.workflow-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.add-node-menu {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+
+  .add-menu-content {
+    background: var(--n-card-color);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--n-border-color);
+    display: flex;
+    gap: 8px;
+    pointer-events: auto;
+    animation: menuSlideUp 0.3s ease;
+  }
+}
+
+.add-menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 70px;
+  background: var(--n-color-embedded);
+
+  &:hover {
+    background: var(--n-color-hover);
+  }
+}
+
+.menu-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  color: white;
+
+  &.approval-icon { background: linear-gradient(135deg, #1890ff, #722ed1); }
+  &.copy-icon { background: linear-gradient(135deg, #52c41a, #389e0d); }
+  &.condition-icon { background: linear-gradient(135deg, #fa8c16, #d48806); }
+}
+
+.menu-text {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@keyframes menuSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 保留“流程/数据校验结果”显示样式：
+.validation-success {
+  text-align: center;
+  padding: 40px 20px;
+  color: #52c41a;
+
+  .success-icon {
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+.validation-errors {
+  .error-summary {
+    text-align: center;
+    padding: 20px;
+    background: #fff2f0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ffccc7;
+
+    .error-icon {
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      margin: 0 0 8px 0;
+      color: #ff4d4f;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: var(--n-text-color-2);
+      font-size: 14px;
+    }
+  }
+
+  .error-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .error-item {
+    background: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #d9d9d9;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .error-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+
+      .error-number {
+        width: 24px;
+        height: 24px;
+        background: #ff4d4f;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+
+      .error-info {
+        flex: 1;
+        min-width: 0;
+
+        .error-node {
+          display: block;
+          color: var(--n-text-color-1);
+          font-size: 14px;
+          margin-bottom: 2px;
+        }
+
+        .error-field {
+          color: var(--n-text-color-3);
+          font-size: 12px;
+        }
+      }
+
+      .error-type {
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+
+        &.required {
+          background: #fff2f0;
+          color: #ff4d4f;
+          border: 1px solid #ffccc7;
+        }
+
+        &.incomplete {
+          background: #fff7e6;
+          color: #fa8c16;
+          border: 1px solid #ffd591;
+        }
+
+        &.warning {
+          background: #fffbe6;
+          color: #faad14;
+          border: 1px solid #ffe58f;
+        }
+      }
+    }
+
+    .error-message {
+      color: var(--n-text-color-2);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      padding-left: 36px;
+    }
+
+    .error-actions {
+      padding-left: 36px;
+    }
+  }
+
+  .validation-tips {
+    margin-top: 24px;
+    padding: 16px;
+    background: #f6ffed;
+    border-radius: 8px;
+    border: 1px solid #b7eb8f;
+
+    h4 {
+      margin: 0 0 12px 0;
+      color: #389e0d;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 16px;
+      color: var(--n-text-color-2);
+      font-size: 13px;
+      line-height: 1.6;
+
+      li {
+        margin-bottom: 6px;
+
+        strong {
+          color: var(--n-text-color-1);
+        }
+      }
+    }
+  }
+}
+
+.validation-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+// 边的样式（Vue Flow）
+:deep(.vue-flow__edge) {
+  stroke: #1890ff;
+  stroke-width: 2px;
+}
+
+:deep(.vue-flow__edge-path) {
+  stroke: #1890ff;
+  stroke-width: 2px;
+}
+
+:deep(.vue-flow__arrowhead) {
+  fill: #1890ff;
+}
+
+:deep(.vue-flow__edge.animated) {
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}
+
+@keyframes dashdraw {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+// 暗色主题适配
+html.dark,
+[data-theme="dark"] {
+  .approval-workflow-container {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  // 添加节点菜单文字
+  .add-menu-item span {
+    color: white;
+  }
+
+  .validation-success {
+    color: #52c41a;
+
+    h3 {
+      color: #52c41a;
+    }
+
+    p {
+      color: var(--n-text-color-2);
+    }
+  }
+
+  .validation-errors {
+    .error-summary {
+      background: rgba(255, 77, 79, 0.1);
+      border-color: rgba(255, 77, 79, 0.3);
+
+      h3 {
+        color: #ff4d4f;
+      }
+
+      p {
+        color: var(--n-text-color-2);
+      }
+    }
+
+    .error-item {
+      background: var(--n-card-color);
+      border-color: var(--n-border-color);
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .error-info {
+        .error-node {
+          color: var(--n-text-color-1);
+        }
+
+        .error-field {
+          color: var(--n-text-color-3);
+        }
+      }
+
+      .error-type {
+        &.required {
+          background: rgba(255, 77, 79, 0.15);
+          color: #ff7875;
+          border-color: rgba(255, 77, 79, 0.3);
+        }
+
+        &.incomplete {
+          background: rgba(250, 140, 22, 0.15);
+          color: #ffa940;
+          border-color: rgba(250, 140, 22, 0.3);
+        }
+
+        &.warning {
+          background: rgba(250, 173, 20, 0.15);
+          color: #ffc53d;
+          border-color: rgba(250, 173, 20, 0.3);
+        }
+      }
+
+      .error-message {
+        color: var(--n-text-color-2);
+      }
+    }
+
+    .validation-tips {
+      background: rgba(82, 196, 26, 0.1);
+      border-color: rgba(82, 196, 26, 0.3);
+
+      h4 {
+        color: #73d13d;
+      }
+
+      ul {
+        color: var(--n-text-color-2);
+
+        li strong {
+          color: var(--n-text-color-1);
+        }
+      }
+    }
+  }
+}

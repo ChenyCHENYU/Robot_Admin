@@ -1,0 +1,223 @@
+.c-steps {
+    --step-gap: 24px;
+    --icon-size: 32px;
+    --line-width: 2px;
+    --primary: var(--n-primary-color, #18a058);
+    --success: var(--n-success-color, #18a058);
+    --warning: var(--n-warning-color, #f0a020);
+    --error: var(--n-error-color, #d03050);
+    --border: var(--n-border-color, rgba(0, 0, 0, 0.09));
+    --bg-hover: var(--n-color-hover, rgba(0, 0, 0, 0.04));
+
+    display: flex;
+  }
+
+  /* 布局 */
+  .steps-horizontal {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .steps-vertical {
+    flex-direction: column;
+  }
+
+  /* 步骤项 */
+  .step-item {
+    display: flex;
+    position: relative;
+    flex: 1;
+    gap: 12px;
+  }
+
+  .steps-horizontal .step-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+  }
+
+  .steps-vertical .step-item {
+    flex-direction: row;
+    min-height: 72px;
+    flex: none;
+    width: 100%;
+  }
+
+  /* 指示器区域 */
+  .step-indicator {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .steps-horizontal .step-indicator {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .steps-vertical .step-indicator {
+    flex-direction: column;
+  }
+
+  /* 图标 */
+  .step-icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--line-width) solid var(--border);
+    background: var(--n-color, #fff);
+    position: relative;
+    z-index: 1;
+    transition: all 0.2s ease;
+    font-size: 16px;
+    color: var(--text-secondary);
+  }
+
+  .step-finish .step-icon {
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  .step-process .step-icon {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary);
+    color: white;
+  }
+
+  .step-error .step-icon {
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  .step-index {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* 连接线 */
+  .step-line {
+    background: var(--border);
+    position: absolute;
+    transition: background 0.2s ease;
+  }
+
+  .steps-horizontal .step-line {
+    height: var(--line-width);
+    left: calc(50% + var(--icon-size) / 2);
+    right: calc(-50% + var(--icon-size) / 2 + var(--step-gap));
+    top: calc(var(--icon-size) / 2);
+  }
+
+  .steps-vertical .step-line {
+    width: var(--line-width);
+    top: calc(var(--icon-size) + 4px);
+    bottom: calc(-72px + var(--icon-size) + 4px);
+    left: calc(var(--icon-size) / 2 - 1px);
+  }
+
+  .step-finish .step-line {
+    background: var(--success);
+  }
+
+  /* 内容区域 */
+  .step-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .steps-vertical .step-content {
+    padding-top: 4px;
+  }
+
+  .step-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 22px;
+    margin-bottom: 2px;
+    word-break: break-word;
+  }
+
+  .step-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 20px;
+    margin-bottom: 2px;
+  }
+
+  .step-finish .step-time {
+    color: var(--success);
+  }
+
+  .step-description {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 20px;
+  }
+
+  /* 状态样式 */
+  .step-wait .step-title {
+    color: var(--text-secondary);
+  }
+
+  .step-process .step-title {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .step-error .step-title {
+    color: var(--error);
+  }
+
+  /* 交互样式 */
+  .step-clickable {
+    cursor: pointer;
+  }
+
+  .step-clickable:hover .step-icon {
+    transform: scale(1.05);
+  }
+
+  .step-clickable:not(.step-process):hover .step-icon {
+    background: var(--bg-hover);
+  }
+
+  .step-clickable:hover .step-title {
+    color: var(--primary);
+  }
+
+  /* 当前步骤保持样式不变 */
+  .step-process.step-clickable:hover .step-title {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    .steps-horizontal {
+      flex-wrap: wrap;
+    }
+
+    .steps-horizontal .step-item {
+      flex: 0 0 50%;
+      margin-bottom: 24px;
+    }
+
+    .steps-horizontal .step-line {
+      display: none;
+    }
+  }
+
+  /* 减少动效 */
+  @media (prefers-reduced-motion: reduce) {
+    .step-icon,
+    .step-line {
+      transition: none;
+    }
+  }

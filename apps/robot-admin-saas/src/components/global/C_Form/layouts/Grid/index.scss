@@ -1,0 +1,155 @@
+// 变量定义
+$transition: all 0.2s ease;
+$border-radius: 8px;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+
+.c-grid-layout {
+  width: 100%;
+
+  // 配置面板
+  .config-panel {
+    margin-bottom: $spacing-md;
+
+    .config-header {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .config-controls {
+      display: flex;
+      gap: $spacing-md;
+      flex-wrap: wrap;
+
+      .config-item {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        .config-label {
+          font-size: 0.875rem;
+          white-space: nowrap;
+          min-width: 3rem;
+        }
+      }
+    }
+  }
+
+  // 网格容器
+  .grid-container {
+    width: 100%;
+
+    .grid-item {
+      // 进场动画
+      animation: fadeInUp 0.3s ease-out both;
+
+      @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+          animation-delay: #{$i * 0.05}s;
+        }
+      }
+    }
+  }
+
+  // 统计信息
+  .grid-stats {
+    margin-top: $spacing-md;
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
+}
+
+// 动画定义
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// 表单控件统一宽度
+:deep(.n-form-item) {
+  .n-form-item-blank {
+    // 统一所有表单控件的宽度
+    .n-input,
+    .n-input-number,
+    .n-select,
+    .n-date-picker,
+    .n-time-picker,
+    .n-cascader,
+    .n-tree-select,
+    .n-auto-complete,
+    .n-dynamic-tags {
+      width: 100% !important;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .c-grid-layout {
+    .config-panel {
+      .config-controls {
+        flex-direction: column;
+        gap: 0.75rem;
+
+        .config-item {
+          justify-content: space-between;
+        }
+      }
+    }
+
+    .grid-container {
+      :deep(.n-grid) {
+        gap: $spacing-sm !important;
+      }
+
+      .grid-item .item-wrapper {
+        padding: 0.125rem;
+      }
+    }
+
+    .grid-stats {
+      margin-top: 0.75rem;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .c-grid-layout {
+    .config-panel {
+      margin-bottom: 0.75rem;
+    }
+  }
+}
+
+// 主题适配
+:deep(.n-card) {
+  --n-border-radius: #{$border-radius};
+}
+
+:deep(.n-input-number) {
+  --n-width: 100%;
+}
+
+// 暗色主题
+@media (prefers-color-scheme: dark) {
+  .c-grid-layout {
+    .grid-container {
+      .grid-item {
+        .item-wrapper:hover {
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+      }
+    }
+  }
+}

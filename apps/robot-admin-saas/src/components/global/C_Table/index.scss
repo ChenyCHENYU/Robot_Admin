@@ -1,0 +1,456 @@
+
+// ================= 1. 组件根容器 =================
+.c-table-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+// ================= 2. 动态行工具栏 =================
+.dynamic-rows-toolbar {
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--n-border-color);
+  background-color: var(--n-card-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--n-primary-color-suppl);
+  }
+}
+
+// ================= 3. 表格布局基础 =================
+:deep(.n-data-table) {
+  table-layout: auto !important;
+  width: 100% !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+// ================= 4. 表格列宽度管理 =================
+
+// 普通列的最小宽度保护
+:deep(.n-data-table-th:not(:last-child), 
+       .n-data-table-td:not(:last-child)) {
+  min-width: 80px !important;
+}
+
+// 操作列固定宽度（适应4个按钮的布局）
+:deep(.n-data-table-th:last-child, 
+       .n-data-table-td:last-child) {
+  width: 180px !important;
+  min-width: 160px !important;
+  max-width: 200px !important;
+  text-align: center !important;
+  padding: 8px 12px !important;
+}
+
+// 操作按钮容器居中
+:deep(.n-data-table-td:last-child .n-space) {
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+// ================= 5. 可编辑单元格样式 =================
+
+// 单元格编辑容器 - 精致化设计
+.cell-edit-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 8px;
+  min-height: 36px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+
+  // 悬停效果
+  &:hover {
+    background-color: var(--n-color-target);
+    
+    .cell-edit-icon {
+      opacity: 1;
+      color: #10b981; // 淡绿色
+      transform: scale(1.05);
+    }
+  }
+
+  // 激活状态
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// 单元格内容
+.cell-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 16px; // 增加与编辑图标的间距
+  line-height: 1.4;
+  font-size: 13px;
+}
+
+// 编辑图标 - 使用全局选择器确保动态创建的元素也能被选中
+.cell-edit-icon,
+:global(.cell-edit-icon) {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-left:4px;
+  transition: all 0.25s ease;
+  color: #10b981; // 淡绿色作为默认色
+  opacity: 0;
+  position: relative;
+
+  // 悬停效果 - 简化
+  &:hover {
+    opacity: 1 !important;
+    color: #059669 !important; // 稍深的绿色
+    background-color: rgba(16, 185, 129, 0.1);
+    transform: scale(1.1);
+  }
+
+  // 激活效果
+  &:active {
+    transform: scale(0.95);
+  }
+
+  // 图标尺寸
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// ================= 6. 单元格编辑状态样式 =================
+
+// 编辑容器 - 确保水平布局不换行
+.cell-editing-container,
+:deep(.cell-editing-container) {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 36px !important;
+  background-color: var(--n-input-color) !important;
+  border: 1px solid var(--n-primary-color) !important;
+  border-radius: 6px !important;
+  padding: 4px 6px !important;
+  box-shadow: 0 0 0 2px var(--n-primary-color-suppl) !important;
+  gap: 8px !important; // 输入框和按钮组之间的间距
+}
+
+// 编辑输入区域 - 占据剩余空间
+.cell-editing-input,
+:deep(.cell-editing-input) {
+  flex: 1 !important;
+  min-width: 0 !important; // 确保可以收缩
+}
+
+// 深度选择器处理输入框样式
+:deep(.cell-editing-input) {
+  .n-input {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    
+    &.n-input--focus {
+      border: none !important;
+      box-shadow: none !important;
+    }
+  }
+  
+  .n-input-number {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+  
+  .n-select {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    
+    .n-base-selection {
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+  }
+}
+
+// 编辑操作按钮容器 - 简化设计
+.cell-editing-actions,
+:deep(.cell-editing-actions) {
+  display: flex !important;
+  flex-shrink: 0 !important;
+  align-items: center !important;
+  gap: 4px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid var(--n-border-color) !important;
+  border-radius: 4px !important;
+  padding: 2px !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+// 编辑操作按钮 - 简化交互效果
+.cell-action-btn,
+:deep(.cell-action-btn) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  border: none !important;
+  border-radius: 3px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  
+  // 保存按钮
+  &.cell-action-save {
+    color: #059669 !important;
+    
+    &:hover {
+      background: rgba(16, 185, 129, 0.1) !important;
+      transform: scale(1.1) !important;
+    }
+  }
+  
+  // 取消按钮
+  &.cell-action-cancel {
+    color: #dc2626 !important;
+    
+    &:hover {
+      background: rgba(239, 68, 68, 0.1) !important;
+      transform: scale(1.1) !important;
+    }
+  }
+
+  // 图标尺寸
+  svg {
+    width: 11px !important;
+    height: 11px !important;
+  }
+}
+
+// ================= 7. 操作按钮样式 =================
+
+// 通用按钮样式
+:deep(.n-button) {
+  white-space: nowrap;
+  font-size: 12px !important;
+  flex-shrink: 0 !important;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+
+  // 图标间距
+  .n-icon {
+    margin-right: 4px !important; // 增加图标与文字间距
+  }
+
+  // 小尺寸按钮优化
+  &.n-button--small-type {
+    padding: 4px 8px;
+    height: 28px;
+    line-height: 20px;
+  }
+
+  // 四元按钮样式
+  &.n-button--quaternary-type {
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// ================= 8. 按钮组间距优化 =================
+
+// 操作按钮组
+:deep(.n-space) {
+  &.n-space--horizontal {
+    .n-space-item:not(:last-child) {
+      margin-right: 6px !important; // 统一按钮间距
+    }
+  }
+}
+
+// ================= 9. 模态框样式优化 =================
+
+// 编辑模态框
+:deep(.n-modal) {
+  .n-card {
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+  
+  .n-card__header {
+    padding: 20px 24px 16px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .n-card__content {
+    padding: 0 24px 16px;
+  }
+  
+  .n-card__action {
+    padding: 16px 24px 20px;
+    border-top: 1px solid var(--n-divider-color);
+  }
+}
+
+// ================= 10. 描述列表样式 =================
+
+// 详情模态框描述列表
+:deep(.n-descriptions) {
+  .n-descriptions-item-label {
+    font-weight: 500;
+    color: var(--n-text-color-2);
+  }
+  
+  .n-descriptions-item-content {
+    color: var(--n-text-color-1);
+    word-break: break-all;
+  }
+}
+
+// ================= 11. 响应式设计 =================
+
+// 移动端适配
+@media (max-width: 768px) {
+  .c-table-wrapper {
+    overflow-x: auto;
+  }
+  
+  // 操作列在移动端的适配
+  :deep(.n-data-table-th:last-child, 
+         .n-data-table-td:last-child) {
+    width: 160px !important;
+    min-width: 160px !important;
+  }
+  
+  // 按钮在移动端的优化
+  :deep(.n-button) {
+    font-size: 11px !important;
+    padding: 3px 6px;
+    
+    .n-icon {
+      margin-right: 2px !important;
+    }
+  }
+  
+  // 单元格编辑图标在移动端始终显示
+  .cell-edit-icon {
+    opacity: 0.6;
+  }
+}
+
+// ================= 12. 主题适配 =================
+
+// 暗色主题适配
+[data-theme="dark"] {
+  .cell-editing-actions,
+  :deep(.cell-editing-actions) {
+    background: rgba(48, 48, 48, 0.95) !important;
+    border-color: var(--n-border-color) !important;
+  }
+  
+  .cell-edit-wrapper:hover {
+    background-color: var(--n-color-target);
+    
+    .cell-edit-icon {
+      color: #34d399 !important;
+      
+      &:hover {
+        color: #10b981 !important;
+        background-color: rgba(52, 211, 153, 0.1) !important;
+      }
+    }
+  }
+}
+
+// ================= 13. 响应式优化 =================
+
+// 小屏幕下的单元格编辑优化
+@media (max-width: 768px) {
+  .cell-editing-container,
+  :deep(.cell-editing-container) {
+    gap: 6px !important;
+  }
+  
+  .cell-editing-actions,
+  :deep(.cell-editing-actions) {
+    gap: 3px !important;
+    padding: 2px !important;
+  }
+  
+  .cell-action-btn,
+  :deep(.cell-action-btn) {
+    width: 18px !important;
+    height: 18px !important;
+    
+    svg {
+      width: 10px !important;
+      height: 10px !important;
+    }
+  }
+  
+  // 移动端编辑图标
+  .cell-edit-icon {
+    opacity: 0.6 !important;
+  }
+  
+  .cell-value {
+    margin-right: 12px !important; // 移动端减少间距
+  }
+}
+
+// ================= 14. 性能优化 =================
+
+// 使用 GPU 加速的动画
+.cell-edit-icon,
+.cell-action-btn {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+:deep(.n-button) {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+// ================= 15. 可访问性优化 =================
+
+// 聚焦状态
+.cell-edit-wrapper:focus-within,
+.cell-editing-container:focus-within {
+  outline: 2px solid var(--n-primary-color);
+  outline-offset: 2px;
+}
+
+// 高对比度模式支持
+@media (prefers-contrast: high) {
+  .cell-edit-icon {
+    opacity: 0.8;
+  }
+  
+  .cell-editing-actions {
+    border-width: 2px;
+  }
+}

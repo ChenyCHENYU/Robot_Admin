@@ -1,0 +1,156 @@
+  // 默认触发器样式
+  .city-selector-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 200px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid #e0e0e6;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      border-color: #1890ff;
+    }
+
+    &__text {
+      flex: 1;
+      font-size: 14px;
+    }
+
+    &__icon {
+      margin-left: 8px;
+      color: #999;
+      font-size: 16px;
+      transition: transform 0.3s;
+
+      &.is-active {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  // 内容区域样式
+  .city-selector-content {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    padding: 0;
+  }
+
+  // 头部样式 - 固定不动
+  .city-selector-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-bottom: 1px solid rgba(247, 247, 247, 0.514);
+    flex-shrink: 0;
+
+    .city-selector-search {
+      flex: 1;
+    }
+  }
+
+  // 字母导航样式 - 固定不动
+  .city-selector-letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 12px 10px;
+    padding: 8px;
+    flex-shrink: 0;
+
+    .city-selector-letter {
+      padding: 2px 6px;
+      cursor: pointer;
+      color: #1890ff;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s;
+      min-width: 24px;
+      text-align: center;
+
+      &:hover {
+        background-color: #1890ff;
+        color: #fff;
+        border-radius: 2px;
+      }
+    }
+  }
+
+  // 城市列表样式 - 可滚动区域
+  .city-selector-body {
+    flex: 1;
+    margin: 12px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .city-list,
+  .province-list {
+    padding: 0 8px;
+  }
+
+  .city-group,
+  .province-group {
+    display: flex;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(247, 247, 247, 0.514);
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    &__letter,
+    &__name {
+      flex-shrink: 0;
+      width: 70px;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 28px;
+    }
+
+    &__cities {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: flex-start;
+    }
+  }
+
+  .city-item {
+    padding: 3px 10px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 2px;
+    transition: all 0.3s;
+    line-height: 20px;
+
+    &:hover {
+      background-color: #f0f0f0;
+      color: #1890ff;
+    }
+
+    &.is-active {
+      background-color: #1890ff;
+      color: #fff;
+    }
+  }
+
+  // 针对 NScrollbar 的样式调整
+  :deep(.n-scrollbar) {
+    .n-scrollbar-rail {
+      right: 2px;
+    }
+
+    .n-scrollbar-content {
+      padding-right: 12px;
+    }
+  }

@@ -1,0 +1,51 @@
+.longpress-demo-page {
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.demo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .n-button {
+    min-width: 180px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.progress-demo {
+  .progress-button {
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: var(--progress, 0%);
+      background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0.2) 0%, 
+        rgba(255, 255, 255, 0.3) 100%);
+      transition: width 0.1s ease;
+      z-index: 1;
+    }
+
+    .n-button__content {
+      position: relative;
+      z-index: 2;
+    }
+  }
+}

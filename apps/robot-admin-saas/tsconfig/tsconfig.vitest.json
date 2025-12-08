@@ -1,0 +1,29 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.json",
+  "include": [
+    "../src/**/*.spec.ts", // 匹配所有测试文件
+    "../src/**/*.test.ts", // 匹配测试文件（另一种命名约定）
+    "../src/**/*.vue", // 包含 Vue 组件
+    "../src/**/*.ts", // TypeScript 文件
+    "../src/**/*.tsx", // TypeScript JSX 文件
+    "../env.d.ts", // 环境类型声明
+    "../vitest.d.ts" // Vitest 类型声明
+  ],
+  "compilerOptions": {
+    "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.vitest.tsbuildinfo", // 增量编译信息
+
+    "types": [
+      "node", // Node.js 类型
+      "jsdom", // JSDOM 环境类型（用于浏览器环境模拟）
+      "vitest/globals" // Vitest 全局类型（describe, it, expect 等）
+    ],
+
+    "lib": ["ES2022"], // 明确指定 ECMAScript 版本
+
+    // 路径映射配置
+    "baseUrl": "..", // 基础路径指向项目根目录
+    "paths": {
+      "@/*": ["src/*"] // 确保路径别名解析（相对于项目根目录）
+    }
+  }
+}

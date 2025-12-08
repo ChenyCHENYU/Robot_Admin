@@ -1,0 +1,21 @@
+:root {
+  // 主题色
+  --workflow-primary: #1890ff;
+  --workflow-secondary: #722ed1;
+  --workflow-success: #52c41a;
+  --workflow-warning: #faad14;
+  --workflow-danger: #ff4d4f;
+
+  // 渐变
+  --workflow-gradient-primary: linear-gradient(135deg, #1890ff, #722ed1);
+  --workflow-gradient-success: linear-gradient(135deg, #52c41a, #389e0d);
+  --workflow-gradient-warning: linear-gradient(135deg, #fa8c16, #d48806);
+
+  // 阴影
+  --workflow-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --workflow-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --workflow-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.15);
+
+  // 动画
+  --workflow-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

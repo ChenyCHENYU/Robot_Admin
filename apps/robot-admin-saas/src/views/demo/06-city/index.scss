@@ -1,0 +1,48 @@
+  .city-demo-page {
+    padding: 24px;
+    min-height: 100vh;
+
+    :deep(.n-h1) {
+      margin-bottom: 24px;
+    }
+  }
+
+  .demo-card {
+    height: 100%;
+    transition: all 0.3s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .card-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .custom-trigger-card {
+    transition: all 0.3s;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  // 响应式布局
+  @media (max-width: 768px) {
+    .city-demo-page {
+      padding: 16px;
+
+      :deep(.n-grid) {
+        --n-item-col: 1 !important;
+      }
+    }
+  }

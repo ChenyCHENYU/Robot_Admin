@@ -1,0 +1,188 @@
+.home-container {
+  color: black;
+  padding: 0 20px;
+  flex: 1;
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  flex-direction: column;
+}
+
+/* 页面标题区域 */
+.page-title-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #6c757d;
+  height: 60px;
+  padding-right: 20px; /* 让右侧内容与下方卡片右侧对齐 */
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.page-title-right {
+  display: flex;
+  align-items: center;
+}
+
+/* 卡片容器 - 确保卡片之间有间距 */
+.card-container {
+  margin-bottom: 20px; /* 卡片容器底部间距 */
+}
+
+
+:deep(.n-card.bg-primary) {
+  background-color: #46a0fc;
+}
+
+:deep(.text-white.n-icon-ellipsis) {
+  color: white;
+}
+
+/* 基础布局工具类 */
+.flex {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-between {
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 常用间距工具类 */
+.m-t-1 { margin-top: 10px; }
+.m-b-1 { margin-bottom: 10px; }
+.m-b-2 { margin-bottom: 20px; }
+.m-r-1 { margin-right: 10px; }
+
+/* 常用文本样式 */
+.text-muted { color: #98a6ad; }
+.text-success { color: #0acf97; }
+.text-danger { color: #fa5c7c; }
+.text-primary { color: #409eff; }
+.text-white { color: white; }
+.font-13 { font-size: 13px; }
+
+/* 徽章和指示器 */
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.4em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: 0.25rem;
+}
+
+.badge-danger {
+  color: #fff;
+  background-color: #fa5c7c;
+}
+
+/* 图标和指示器 */
+.icon, .dot {
+  display: inline-block;
+  border-radius: 50%;
+}
+
+.icon {
+  width: 14px;
+  height: 14px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+}
+
+.total { background-color: #5572c3; }
+.reached, .green { background-color: #93cb79; }
+.open, .yellow { background-color: #f9c761; }
+.red { background-color: #ec6769; }
+
+/* 卡片组件样式 */
+.card {
+  height: 100%;
+}
+
+.card .chart-widget-list p {
+  border-bottom: 1px solid #f1f3fa;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card .header-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.card .header-title .dropdown {
+  cursor: pointer;
+}
+
+.card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* 图标容器 - 垂直排列图标和数字 */
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.widget-icon {
+  color: #248fed;
+  background-color: rgba(127, 189, 243, 0.23);
+  height: 40px;
+  width: 40px;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px; /* 图标和数字之间的间距 */
+}
+
+.widget-icon .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.card-middle {
+  display: flex;
+  align-items: center;
+  color: #6c757d;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+}
+
+.e-chart {
+  width: 100%;
+  height: 100%;
+}

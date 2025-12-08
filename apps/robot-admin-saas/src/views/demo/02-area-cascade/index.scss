@@ -1,0 +1,15 @@
+  :deep(.n-card) {
+    border-radius: 8px;
+  }
+
+  :deep(.n-card .n-card-header) {
+    padding-bottom: 12px;
+  }
+
+  :deep(.n-alert) {
+    border-radius: 4px;
+  }
+
+  :deep(.n-tag) {
+    font-weight: 500;
+  }

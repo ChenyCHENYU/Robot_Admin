@@ -1,0 +1,135 @@
+.excel-demo {
+  padding: 1.5rem;
+}
+
+.demo-title {
+  font-size: 1.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+//  "对于.demo-content下的所有直接子元素，从第二个子元素开始（即前面有兄弟元素的元素），都添加1.5rem的上边距"
+.demo-content {
+  > * + * {
+    margin-top: 1.5rem;
+  }
+}
+
+.demo-section {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.upload-area {
+  .upload-dragger {
+    width: 100%;
+  }
+
+  .upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+
+  .upload-text {
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+
+  .upload-hint {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+}
+
+.sheet-selector {
+  display: flex;
+  align-items: center;
+}
+
+.preview-table {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.export-card {
+  height: 100%;
+
+  .export-card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 11rem;
+
+    .export-form {
+      flex: 1;
+      margin-bottom: 1rem;
+    }
+
+    .export-button {
+      margin-top: auto;
+    }
+  }
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.template-card {
+  height: 100%;
+}
+
+.data-process-controls {
+  margin-bottom: 1rem;
+}
+
+.processed-data {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+}
+
+.data-summary {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #eff6ff;
+  border-radius: 0.375rem;
+}
+
+.history-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

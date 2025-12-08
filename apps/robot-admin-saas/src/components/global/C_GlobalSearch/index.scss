@@ -1,0 +1,743 @@
+// 高亮样式
+  :deep(.robot-highlight) {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.25), rgba(255, 193, 7, 0.35));
+    color: inherit;
+    border-radius: 3px;
+    padding: 1px 2px;
+    font-weight: 600;
+    box-shadow: 0 0 0 1px rgba(255, 193, 7, 0.2);
+  }
+
+  .dialog-dark :deep(.robot-highlight) {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.3), rgba(255, 193, 7, 0.45));
+    box-shadow: 0 0 0 1px rgba(255, 193, 7, 0.3);
+  }
+
+  // 触发按钮 - 科技感蓝紫色渐变
+  .robot-search-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 14px;
+    background: linear-gradient(145deg, rgba(99, 102, 241, 0.12), rgba(139, 92, 246, 0.08));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 14px;
+    font-size: 13px;
+    color: #4f46e5;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    min-width: 160px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .robot-trigger-icon {
+      font-size: 16px;
+      opacity: 0.9;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .robot-trigger-text {
+      flex: 1;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    .robot-trigger-shortcut {
+      font-size: 11px;
+      opacity: 0.9;
+      font-family: ui-monospace, 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.12));
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      margin-left: auto;
+      color: #3730a3;
+      transition: all 0.3s ease;
+    }
+
+    &:hover {
+      background: linear-gradient(145deg, rgba(99, 102, 241, 0.18), rgba(139, 92, 246, 0.12));
+      border-color: rgba(99, 102, 241, 0.3);
+      color: #3730a3;
+      transform: translateY(-1px);
+
+      &::before {
+        left: 100%;
+      }
+
+      .robot-trigger-icon {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+
+      .robot-trigger-shortcut {
+        opacity: 1;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.18));
+        border-color: rgba(99, 102, 241, 0.35);
+        color: #312e81;
+        transform: scale(1.05);
+      }
+    }
+
+    &:active {
+      transform: translateY(0) scale(0.98);
+      transition: all 0.1s ease;
+    }
+
+    // 暗色主题
+    &.trigger-dark {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #d1d5db;
+
+      &::before {
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      }
+
+      .robot-trigger-shortcut {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.15);
+        color: #b4b8c0;
+      }
+
+      &:hover {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+        border-color: rgba(255, 255, 255, 0.18);
+        color: #e5e7eb;
+
+        .robot-trigger-shortcut {
+          background: rgba(255, 255, 255, 0.15);
+          border-color: rgba(255, 255, 255, 0.25);
+          color: #d1d5db;
+        }
+      }
+    }
+  }
+
+  // 对话框遮罩
+  .robot-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+    backdrop-filter: blur(12px);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 80px 16px 16px;
+    overflow-y: auto;
+  }
+
+  // 对话框容器
+  .robot-dialog-container {
+    width: 100%;
+    max-width: 580px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92));
+    backdrop-filter: blur(24px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 24px 32px -8px rgba(0, 0, 0, 0.12), 0 16px 24px -8px rgba(0, 0, 0, 0.08), 0 8px 16px -4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    margin: 0 auto;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    }
+
+    &.dialog-dark {
+      background: linear-gradient(145deg, rgba(24, 24, 27, 0.98), rgba(18, 18, 20, 0.95));
+      backdrop-filter: blur(32px);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 24px 32px -8px rgba(0, 0, 0, 0.4), 0 16px 24px -8px rgba(0, 0, 0, 0.3), 0 8px 16px -4px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+      &::before {
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      }
+    }
+  }
+
+  // 搜索头部
+  .robot-search-header {
+    display: flex;
+    align-items: center;
+    padding: 20px 24px;
+    gap: 14px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
+
+    .robot-search-icon {
+      color: #6b7280;
+      font-size: 20px;
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+
+    .robot-search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 16px;
+      color: #1f2937;
+      line-height: 1.6;
+      font-weight: 400;
+
+      &::placeholder {
+        color: #9ca3af;
+        font-weight: 400;
+      }
+    }
+
+    .robot-close-btn {
+      padding: 8px;
+      border: none;
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 8px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.08);
+        color: #374151;
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .dialog-dark & {
+      border-bottom-color: rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+
+      .robot-search-icon,
+      .robot-close-btn {
+        color: #9ca3af;
+      }
+
+      .robot-close-btn {
+        background: rgba(255, 255, 255, 0.06);
+
+        &:hover {
+          color: #d1d5db;
+          background: rgba(255, 255, 255, 0.12);
+        }
+      }
+
+      .robot-search-input {
+        color: #f9fafb;
+
+        &::placeholder {
+          color: #6b7280;
+        }
+      }
+    }
+  }
+
+  // 搜索内容区域
+  .robot-search-content {
+    max-height: 420px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .dialog-dark &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+    }
+  }
+
+  // 空状态
+  .robot-empty-state {
+    padding: 40px 24px;
+    text-align: center;
+
+    .robot-empty-icon {
+      font-size: 36px;
+      color: #d1d5db;
+      margin-bottom: 16px;
+      opacity: 0.8;
+    }
+
+    p {
+      margin: 0;
+      font-size: 15px;
+      color: #6b7280;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .dialog-dark & {
+      .robot-empty-icon {
+        color: #6b7280;
+      }
+
+      p {
+        color: #9ca3af;
+      }
+    }
+  }
+
+  // 搜索结果区域
+  .robot-search-results {
+    padding: 12px 0 8px;
+  }
+
+  .robot-result-group {
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
+  }
+
+  // 组标题
+  .robot-group-title {
+    padding: 16px 24px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.02), transparent);
+
+    .robot-group-icon {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .robot-group-count {
+      margin-left: auto;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
+      color: #6366f1;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      box-shadow: 0 1px 2px rgba(99, 102, 241, 0.1);
+    }
+
+    .robot-clear-history {
+      padding: 4px;
+      margin-left: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 6px;
+      color: #ef4444;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      width: 24px;
+      height: 24px;
+
+      div {
+        width: 12px;
+        height: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #dc2626;
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .dialog-dark & {
+      color: #9ca3af;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent);
+
+      .robot-group-count {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.08));
+        color: #a5b4fc;
+        border-color: rgba(99, 102, 241, 0.2);
+      }
+    }
+  }
+
+  .robot-group-items {
+    padding: 0 12px;
+  }
+
+  // 结果项
+  .robot-result-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    margin: 2px 0;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.01));
+      border-radius: 10px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    &:hover,
+    &.robot-result-item-selected {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(99, 102, 241, 0.03));
+      transform: translateX(2px);
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(99, 102, 241, 0.1);
+
+      &::before {
+        opacity: 1;
+      }
+
+      .robot-item-icon {
+        transform: scale(1.05);
+        color: #6366f1;
+      }
+
+      .robot-item-label {
+        color: #4f46e5;
+      }
+
+      &.robot-history-item .robot-history-delete {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .robot-item-icon {
+      font-size: 18px;
+      color: #6b7280;
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.02);
+
+      &.robot-default-icon {
+        opacity: 0.6;
+        background: rgba(0, 0, 0, 0.04);
+      }
+    }
+
+    .robot-item-content {
+      flex: 1;
+      min-width: 0;
+
+      .robot-item-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+        line-height: 1.4;
+        transition: color 0.2s ease;
+        margin-bottom: 1px;
+      }
+
+      .robot-item-desc {
+        font-size: 12px;
+        color: #6b7280;
+        line-height: 1.3;
+        opacity: 0.8;
+        font-weight: 400;
+      }
+    }
+
+    .robot-item-badge {
+      font-size: 10px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.08));
+      color: #6366f1;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      min-width: 22px;
+      text-align: center;
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      box-shadow: 0 1px 2px rgba(99, 102, 241, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .robot-history-delete {
+      padding: 4px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+      border-radius: 6px;
+      color: #ef4444;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      opacity: 0;
+      transform: scale(0.8);
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.25);
+        color: #dc2626;
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.9);
+      }
+    }
+
+    .dialog-dark & {
+      &:hover,
+      &.robot-result-item-selected {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.06));
+        border-color: rgba(99, 102, 241, 0.15);
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        .robot-item-icon {
+          color: #a5b4fc;
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .robot-item-label {
+          color: #c7d2fe;
+        }
+      }
+
+      .robot-item-icon {
+        color: #9ca3af;
+        background: rgba(255, 255, 255, 0.04);
+
+        &.robot-default-icon {
+          background: rgba(255, 255, 255, 0.06);
+        }
+      }
+
+      .robot-item-content {
+        .robot-item-label {
+          color: #f9fafb;
+        }
+
+        .robot-item-desc {
+          color: #9ca3af;
+        }
+      }
+
+      .robot-item-badge {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.12));
+        color: #a5b4fc;
+        border-color: rgba(99, 102, 241, 0.25);
+      }
+    }
+  }
+
+  // 搜索底部
+  .robot-search-footer {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.01));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(8px);
+
+    .robot-footer-info {
+      font-size: 11px;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+
+    .dialog-dark & {
+      border-top-color: rgba(255, 255, 255, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+
+      .robot-footer-info {
+        color: #6b7280;
+      }
+    }
+  }
+
+  .robot-footer-actions {
+    display: flex;
+    gap: 18px;
+
+    .robot-action-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 500;
+
+      kbd {
+        padding: 3px 8px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 5px;
+        font-family: ui-monospace, 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+        font-size: 10px;
+        line-height: 1;
+        color: #4b5563;
+        min-width: 22px;
+        text-align: center;
+        font-weight: 600;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+        .dialog-dark & {
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+          border-color: rgba(255, 255, 255, 0.18);
+          color: #d1d5db;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+      }
+
+      span {
+        font-size: 11px;
+        font-weight: 500;
+      }
+    }
+
+    .dialog-dark & .robot-action-item {
+      color: #9ca3af;
+    }
+  }
+
+  // 动画
+  .robot-dialog-enter-active,
+  .robot-dialog-leave-active {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .robot-dialog-enter-from,
+  .robot-dialog-leave-to {
+    opacity: 0;
+
+    .robot-dialog-container {
+      transform: scale(0.92) translateY(-40px);
+      opacity: 0;
+    }
+  }
+
+  .robot-dialog-enter-to {
+    opacity: 1;
+
+    .robot-dialog-container {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+  }
+
+  // 响应式
+  @media (max-width: 640px) {
+    .robot-dialog-overlay {
+      padding: 60px 12px 12px;
+    }
+
+    .robot-dialog-container {
+      border-radius: 12px;
+    }
+
+    .robot-search-header {
+      padding: 16px 18px;
+    }
+
+    .robot-group-title {
+      padding: 14px 18px 8px;
+    }
+
+    .robot-group-items {
+      padding: 0 6px;
+    }
+
+    .robot-result-item {
+      padding: 10px 12px;
+      gap: 12px;
+    }
+
+    .robot-search-footer {
+      padding: 14px 18px;
+      flex-direction: column;
+      gap: 8px;
+      align-items: stretch;
+
+      .robot-footer-actions {
+        justify-content: center;
+        gap: 14px;
+      }
+
+      .robot-footer-info {
+        text-align: center;
+        order: -1;
+      }
+    }
+  }

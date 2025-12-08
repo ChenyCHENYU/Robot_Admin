@@ -1,0 +1,149 @@
+  .permission-demo-page {
+    padding: 24px;
+    min-height: 100vh;
+  }
+
+  // 用户选项样式
+  .user-option {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .user-name {
+      font-weight: 500;
+    }
+  }
+
+  // 当前权限显示
+  .current-permissions {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+
+    .permission-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+  }
+
+  // 演示区域样式
+  .demo-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .demo-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 200px;
+
+      .permission-hint {
+        align-self: flex-start;
+      }
+    }
+
+    .status-indicator {
+      margin-left: auto;
+
+      .status-granted {
+        color: #36ad6a;
+        font-weight: 500;
+        font-size: 12px;
+      }
+
+      .status-denied {
+        color: #ff4d4f;
+        font-weight: 500;
+        font-size: 12px;
+      }
+    }
+  }
+
+  // 策略演示行
+  .strategy-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+
+    .n-text {
+      min-width: 200px;
+
+      &[depth='3'] {
+        min-width: auto;
+        flex: 1;
+        color: #666;
+      }
+    }
+
+    .n-button {
+      min-width: 120px;
+    }
+  }
+
+  // 管理员面板样式
+  .admin-panel {
+    padding: 16px;
+    border: 2px dashed #ff4d4f;
+    border-radius: 8px;
+    background: rgba(255, 77, 79, 0.05);
+
+    .n-alert {
+      border: none;
+      background: transparent;
+    }
+  }
+
+  .user-panel {
+    padding: 16px;
+    border: 2px dashed #36ad6a;
+    border-radius: 8px;
+    background: rgba(54, 173, 106, 0.05);
+
+    .n-alert {
+      border: none;
+      background: transparent;
+    }
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    .permission-demo-page {
+      padding: 16px;
+    }
+
+    .demo-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+
+      .status-indicator {
+        margin-left: 0;
+        align-self: flex-end;
+      }
+    }
+
+    .strategy-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+
+      .n-text {
+        min-width: auto;
+      }
+    }
+  }

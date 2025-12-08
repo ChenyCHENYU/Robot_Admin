@@ -1,0 +1,119 @@
+// src/components/C_Detail/index.scss
+
+.c-detail-modal {
+  :deep(.n-card) {
+    border-radius: 12px;
+  }
+
+  :deep(.n-card__header) {
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+    .n-card-header__main {
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+
+  :deep(.n-card__content) {
+    padding: 24px;
+  }
+
+  :deep(.n-card__action) {
+    padding: 16px 24px;
+    background: rgba(0, 0, 0, 0.02);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.c-detail-content {
+  .detail-section {
+    &.not-last {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .section-title {
+      margin: 0 0 16px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.85);
+      padding-bottom: 8px;
+      border-bottom: 2px solid #18a058;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 16px 24px;
+
+      &.single-column {
+        grid-template-columns: 1fr;
+      }
+
+      &.double-column {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .detail-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+
+        &.full-width {
+          grid-column: 1 / -1;
+        }
+
+        .item-label {
+          font-size: 13px;
+          color: rgba(0, 0, 0, 0.6);
+          font-weight: 500;
+          min-width: 60px;
+          flex-shrink: 0;
+          margin-top: 2px; // 与文本对齐
+        }
+
+        .item-value {
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.85);
+          flex: 1;
+          word-break: break-all;
+
+          .email-value {
+            color: #1890ff;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ================= 响应式适配 =================
+@media (max-width: 768px) {
+  .c-detail-modal {
+    :deep(.n-card) {
+      margin: 16px;
+      width: calc(100vw - 32px) !important;
+    }
+
+    :deep(.n-card__content) {
+      padding: 16px;
+    }
+
+    :deep(.n-card__action) {
+      padding: 12px 16px;
+    }
+  }
+
+  .c-detail-content {
+    .detail-section .detail-grid {
+      &.double-column {
+        grid-template-columns: 1fr !important;
+      }
+
+      gap: 12px !important;
+    }
+  }
+}

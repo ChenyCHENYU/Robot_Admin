@@ -1,0 +1,20 @@
+{
+  "name": "@robot/business",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Robot Admin 业务逻辑包 - API 服务、数据模型、业务 Hooks",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./utils": "./src/utils/index.ts"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "@robot/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": ">=3.5.0"
+  }
+}

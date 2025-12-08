@@ -1,0 +1,157 @@
+@use '@/styles/antv-common.scss' as *;
+.bpmn-layout {
+  @include antv-layout;
+  background: var(--n-color-embedded);
+  border-radius: 6px;
+  overflow: hidden;
+
+  .top-toolbar {
+    background: var(--n-card-color);
+    border-bottom: 1px solid var(--n-border-color);
+    padding: 10px 16px;
+    flex-shrink: 0;
+
+    .toolbar-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .toolbar-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+  }
+
+  .main-content {
+    display: flex;
+    flex: 1;
+    height: 0;
+
+    .left-panel {
+      width: 180px;
+      background: var(--n-card-color);
+      border-right: 1px solid var(--n-border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+
+      .panel-title {
+        padding: 16px;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--n-text-color-1);
+        border-bottom: 1px solid var(--n-border-color);
+      }
+
+      .element-grid {
+        padding: 16px 12px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+
+        .element-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          padding: 16px 8px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 12px;
+          color: var(--n-text-color-2);
+          transition: all 0.2s;
+          border: 1px solid transparent;
+
+          &:hover {
+            background: rgba(24, 144, 255, 0.1);
+            border-color: rgba(24, 144, 255, 0.4);
+              color: var(--n-primary-color);
+          }
+
+          .element-icon {
+            flex-shrink: 0;
+            border: 2px solid var(--n-border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.circle {
+              width: 24px;
+              height: 24px;
+              border-radius: 50%;
+            }
+
+            &.rect {
+              width: 32px;
+              height: 20px;
+              border-radius: 4px;
+            }
+
+            &.diamond {
+              width: 24px;
+              height: 24px;
+              transform: rotate(45deg);
+              border-radius: 3px;
+            }
+
+            &.start-event {
+              border-color: #52c41a;
+              background: #f6ffed;
+            }
+
+            &.end-event {
+              border-color: #ff4d4f;
+              background: #fff2f0;
+            }
+
+            &.activity {
+              border-color: #1890ff;
+              background: #e6f7ff;
+            }
+
+            &.gateway {
+              border-color: #722ed1;
+              background: #f9f0ff;
+            }
+          }
+        }
+      }
+    }
+
+    .graph-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      .graph-container {
+        @include antv-graph-container;
+          border-radius: 4px;
+      }
+    }
+  }
+}
+
+.n-drawer {
+  .property-panel {
+    padding: 16px;
+
+    .property-item {
+      margin-bottom: 16px;
+
+      .property-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--n-text-color-1);
+        margin-bottom: 8px;
+      }
+    }
+
+    .form-actions {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--n-border-color);
+    }
+  }
+}

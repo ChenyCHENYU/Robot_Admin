@@ -1,0 +1,66 @@
+.c-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: all 0.2s ease-in-out;
+
+  &--clickable {
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  &--loading {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  &--error {
+    opacity: 0.5;
+  }
+
+  &__loading {
+    position: relative;
+  }
+
+  &__spinner {
+    width: 100%;
+    height: 100%;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+
+  &__error {
+    font-size: 0.8em;
+    opacity: 0.5;
+  }
+
+  &__rotatable {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  &__flippable {
+    transition: transform 0.3s ease-in-out;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

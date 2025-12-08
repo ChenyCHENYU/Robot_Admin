@@ -1,0 +1,50 @@
+  .watermark-demo-page {
+    padding: 24px;
+  }
+
+  .demo-box {
+    position: relative;
+    min-height: 180px;
+    padding: 20px;
+    border: 1px solid rgb(238, 235, 235);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .document-style {
+    border-color: #d4af37;
+  }
+
+  .image-style {
+    color: white;
+
+    .image-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 120px;
+
+      .placeholder-image {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 20px;
+        border: 2px dashed rgba(255, 255, 255, 0.5);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  // 水印相关样式
+  :deep(.vue-watermark) {
+    transition: opacity 0.3s ease;
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    .watermark-demo-page {
+      padding: 16px;
+    }
+  }
