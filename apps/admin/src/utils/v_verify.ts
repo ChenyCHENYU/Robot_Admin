@@ -2,28 +2,27 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-04-15 21:01:38
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-12-08
- * @FilePath: \Robot_Admin\apps\admin\src\utils\v_verify.ts
- * @Description: 表单校验规则 - 使用 @robot/shared 工具
+ * @LastEditTime: 2025-05-01 22:58:54
+ * @FilePath: \Robot_Admin\src\utils\v_verify.ts
+ * @Description: 表单校验规则
  */
 
 import type { FormItemRule } from 'naive-ui/es/form'
-import {
-  isEmpty,
-  isLength,
-  isInRange,
-  isMobile,
-  isIdCard,
-  isEmail,
-  isUsername,
-  isStrongPassword,
-  isUrl,
-  isIP,
-} from '@robot/shared'
 
 export type FieldRule = Omit<FormItemRule, 'validator'> & {
   validator: NonNullable<FormItemRule['validator']>
 }
+
+// 常用正则表达式
+const REGEX_PATTERNS = {
+  MOBILE: /^(?:(?:\+|00)86)?1[3-9]\d{9}$/,
+  ID_CARD: /^\d{15}$|^\d{18}$|^\d{17}[\dXx]$/,
+  EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  USERNAME: /^[a-zA-Z0-9_]{3,20}$/,
+  PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{6,20}$/,
+  URL: /^https?:\/\/.+/,
+  IP: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+} as const
 
 /**
  * @description: 核心生成器，生成规则
@@ -79,7 +78,17 @@ export const PRESET_RULES = {
     field: string,
     trigger: FieldRule['trigger'] = ['blur', 'input']
   ) =>
-    createRule(trigger, v => !isEmpty(v), `${field}不能为空`),
+    createRule(
+      trigger,
+      v => {
+        if (v === null || v === undefined) return false
+        if (typeof v === 'string') return v.trim() !== ''
+        if (Array.isArray(v)) return v.length > 0
+        if (typeof v === 'object') return Object.keys(v).length > 0
+        return !!v
+      },
+      `${field}不能为空`
+    ),
 
   /**
    * 长度验证
@@ -90,7 +99,14 @@ export const PRESET_RULES = {
   length: (field: string, min: number, max?: number) =>
     createRule(
       'blur',
-      v => !v || isLength(String(v), min, max),
+      v => {
+        if (!v) return true // 空值不验证长度
+        const len = String(v).length
+        if (max !== undefined) {
+          return len >= min && len <= max
+        }
+        return len >= min
+      },
       max ? `${field}长度需在${min}-${max}位之间` : `${field}长度至少${min}位`
     ),
 
@@ -103,7 +119,12 @@ export const PRESET_RULES = {
   range: (field: string, min: number, max: number) =>
     createRule(
       'blur',
-      v => !v && v !== 0 ? true : isInRange(Number(v), min, max),
+      v => {
+        if (!v && v !== 0) return true
+        const num = Number(v)
+        if (isNaN(num)) return false
+        return num >= min && num <= max
+      },
       `${field}必须在${min}-${max}之间`
     ),
 
@@ -112,21 +133,33 @@ export const PRESET_RULES = {
    * @param field 字段名，默认为"手机号"
    */
   mobile: (field: string = '手机号') =>
-    createRule('blur', v => !v || isMobile(v), `${field}格式错误`),
+    createRule(
+      'blur',
+      v => !v || REGEX_PATTERNS.MOBILE.test(v),
+      `${field}格式错误`
+    ),
 
   /**
    * 身份证验证
    * @param field 字段名，默认为"身份证号"
    */
   idCard: (field: string = '身份证号') =>
-    createRule('blur', v => !v || isIdCard(v), `${field}格式错误`),
+    createRule(
+      'blur',
+      v => !v || REGEX_PATTERNS.ID_CARD.test(v),
+      `${field}格式错误`
+    ),
 
   /**
    * 邮箱验证
    * @param field 字段名，默认为"邮箱"
    */
   email: (field: string = '邮箱') =>
-    createRule('blur', v => !v || isEmail(v), `${field}格式错误`),
+    createRule(
+      'blur',
+      v => !v || REGEX_PATTERNS.EMAIL.test(v),
+      `${field}格式错误`
+    ),
 
   /**
    * 用户名验证（字母数字下划线，3-20位）
@@ -135,7 +168,7 @@ export const PRESET_RULES = {
   username: (field: string = '用户名') =>
     createRule(
       'blur',
-      v => !v || isUsername(v),
+      v => !v || REGEX_PATTERNS.USERNAME.test(v),
       `${field}只能包含字母、数字、下划线，长度3-20位`
     ),
 
@@ -146,7 +179,7 @@ export const PRESET_RULES = {
   strongPassword: (field: string = '密码') =>
     createRule(
       'blur',
-      v => !v || isStrongPassword(v),
+      v => !v || REGEX_PATTERNS.PASSWORD.test(v),
       `${field}必须包含大小写字母和数字，长度6-20位`
     ),
 
@@ -155,14 +188,22 @@ export const PRESET_RULES = {
    * @param field 字段名，默认为"链接"
    */
   url: (field: string = '链接') =>
-    createRule('blur', v => !v || isUrl(v), `${field}格式错误`),
+    createRule(
+      'blur',
+      v => !v || REGEX_PATTERNS.URL.test(v),
+      `${field}格式错误`
+    ),
 
   /**
    * IP地址验证
    * @param field 字段名，默认为"IP地址"
    */
   ip: (field: string = 'IP地址') =>
-    createRule('blur', v => !v || isIP(v), `${field}格式错误`),
+    createRule(
+      'blur',
+      v => !v || REGEX_PATTERNS.IP.test(v),
+      `${field}格式错误`
+    ),
 
   /**
    * 确认密码验证
