@@ -10,7 +10,45 @@
     <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=4FC08D&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=700&height=100&lines=🤖+Robot+Admin;Redefining+Enterprise+Admin+Development" alt="Robot Admin" />
   </h1>
   
-  <p><strong>Robot Admin</strong></p>
+  <p><strong>Robot Admin - Multi-Architecture Enterprise Solution</strong></p>
+
+  <!-- Architecture Selector -->
+  <table>
+    <tr>
+      <td align="center" width="200">
+        <img src="https://img.shields.io/badge/🏗️-Monolithic-4A90E2?style=for-the-badge" alt="Monolithic"><br>
+        <sub><strong>Current Branch</strong></sub><br>
+        <sub>Traditional SPA</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/main">
+          <img src="https://img.shields.io/badge/View Code-main-blue?style=flat-square" alt="Main Branch">
+        </a>
+      </td>
+      <td align="center" width="200">
+        <img src="https://img.shields.io/badge/📦-Monorepo-00D8FF?style=for-the-badge" alt="Monorepo"><br>
+        <sub><strong>Bun Workspaces</strong></sub><br>
+        <sub>Multi-App Management</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
+          <img src="https://img.shields.io/badge/View Code-monorepo-00D8FF?style=flat-square" alt="Monorepo Branch">
+        </a>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo/docs/GUIDE.md">
+          <img src="https://img.shields.io/badge/Full Docs-GUIDE-orange?style=flat-square" alt="Monorepo Docs">
+        </a>
+      </td>
+      <td align="center" width="200">
+        <img src="https://img.shields.io/badge/🔮-Module Federation-9B59B6?style=for-the-badge" alt="Module Federation"><br>
+        <sub><strong>Webpack/Vite Federation</strong></sub><br>
+        <sub>Coming Soon</sub><br>
+        <img src="https://img.shields.io/badge/Status-Planning-lightgrey?style=flat-square" alt="Coming Soon">
+      </td>
+      <td align="center" width="200">
+        <img src="https://img.shields.io/badge/🚀-Micro Frontend-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
+        <sub><strong>MicroApp</strong></sub><br>
+        <sub>Coming Soon</sub><br>
+        <img src="https://img.shields.io/badge/Status-Planning-lightgrey?style=flat-square" alt="Coming Soon">
+      </td>
+    </tr>
+  </table>
+
   <p>
     <a href="https://github.com/ChenyCHENYU/robot_admin/actions"><img src="https://img.shields.io/github/actions/workflow/status/ChenyCHENYU/robot_admin/main.yml" alt="Build Status"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
@@ -59,6 +97,53 @@
     <strong>English</strong> | <a href="./README.md">中文</a>
   </p>
 </div>
+
+## 🎯 Multi-Architecture Support
+
+Robot Admin provides multiple architecture options to meet different scales and scenarios:
+
+| Architecture | Use Cases | Features | Branch | Documentation |
+|-------------|-----------|----------|--------|---------------|
+| **🏗️ Monolithic** | Small-Medium Projects, Rapid Prototyping | Simple & Direct, Out-of-Box | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main) | This Document |
+| **📦 Monorepo** | Multi-App Management | Code Reuse, Unified Toolchain, Independent Deployment | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo) | [Complete Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md) |
+| **🔮 Module Federation** | Dynamic Micro-App Loading | Runtime Sharing, Independent Deployment, Version Isolation | Planning | - |
+| **🚀 Micro Frontend** | Large Apps, Team Collaboration | Tech Stack Agnostic, Independent Deployment, Progressive Migration | Planning | - |
+
+### 📦 Monorepo Architecture Highlights
+
+**Bun Workspaces** based Monorepo architecture is ready! [View Branch](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)
+
+```
+Robot_Admin (Monorepo)
+├── apps/                          # Application Layer
+│   ├── robot-admin-internal/      # Internal Edition (Port 1988)
+│   └── robot-admin-saas/          # SaaS Edition (Port 1989)
+└── packages/                      # Shared Packages Layer
+    ├── shared/                    # Utility Functions
+    ├── core/                      # Core Logic
+    ├── ui/                        # UI Component Library (30+)
+    ├── business/                  # Business Components
+    └── integrations/              # Third-party Integrations
+```
+
+**Core Features:**
+- ✅ Multi-app unified management (Internal / SaaS)
+- ✅ 5 shared packages for code reuse
+- ✅ HMR hot reload (modify shared packages, apps auto refresh)
+- ✅ Independent build and deployment
+- ✅ Unified toolchain (ESLint/Prettier/TypeScript/Commitizen)
+
+**Quick Start:**
+```bash
+git clone -b monorepo https://github.com/ChenyCHENYU/Robot_Admin.git
+cd Robot_Admin
+bun install
+bun run dev:internal  # Start Internal Edition
+```
+
+📖 **[View Complete Monorepo Documentation](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)**
+
+---
 
 ## 🚀 Redefining Enterprise Admin Development Experience
 
