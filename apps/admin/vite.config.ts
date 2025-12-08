@@ -62,7 +62,6 @@ export default defineConfig(({ mode }: { mode: string }) => {
     resolve: resolveConfig,
 
     optimizeDeps: {
-      include: ['naive-ui'],
       exclude: [
         'pinia-plugin-persistedstate',
         'echarts',
@@ -70,6 +69,8 @@ export default defineConfig(({ mode }: { mode: string }) => {
         'echarts/charts',
         'echarts/components',
         'echarts/renderers',
+        'date-fns',
+        'date-fns-tz',
       ],
     },
 

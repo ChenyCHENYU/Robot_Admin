@@ -2,6 +2,9 @@
 # 启用 workspace
 workspace = true
 
+# 禁用 symlink，解决 date-fns 解析问题
+symlink = false
+
 # 自动安装 peer dependencies
 auto = "auto"
 

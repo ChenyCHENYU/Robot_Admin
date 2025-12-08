@@ -36,5 +36,9 @@
   "engines": {
     "bun": ">=1.2.19",
     "node": ">=20.19.0"
+  },
+  "dependencies": {
+    "date-fns": "^3.6.0",
+    "date-fns-tz": "^3.2.0"
   }
 }
