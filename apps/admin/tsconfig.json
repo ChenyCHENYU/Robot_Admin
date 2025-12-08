@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "_views/*": ["src/views/*"],
+      "@robot/shared": ["../../packages/shared/src"]
+    },
+    "jsx": "preserve",
+    "jsxImportSource": "vue"
+  },
+  "include": ["src/**/*", "tsconfig/**/*", "*.ts"],
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    { "path": "./tsconfig/tsconfig.node.json" },
+    { "path": "./tsconfig/tsconfig.app.json" }
+  ]
+}
