@@ -1,14 +1,21 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig/tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig/tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig/tsconfig.vitest.json"
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@robot/*": ["packages/*/src"]
     }
+  },
+  "references": [
+    { "path": "./apps/admin" },
+    { "path": "./packages/shared" }
   ]
 }

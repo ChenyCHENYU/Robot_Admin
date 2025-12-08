@@ -1,0 +1,18 @@
+[install]
+# 启用 workspace
+workspace = true
+
+# 自动安装 peer dependencies
+auto = "auto"
+
+# 缓存配置
+cache = true
+cache-dir = ".bun-cache"
+
+# 更快的安装
+production = false
+frozen-lockfile = false
+
+[install.scopes]
+# 可以配置私有 npm registry
+# "@robot" = { url = "https://registry.npmjs.org/" }
