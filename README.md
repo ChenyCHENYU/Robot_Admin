@@ -10,7 +10,45 @@
     <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=4FC08D&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=600&height=100&lines=🤖+Robot+Admin;重新定义企业级中后台开发体验" alt="Robot Admin" />
   </h1>
   
-  <p><strong>Robot Admin</strong></p>
+  <p><strong>Robot Admin - 多架构企业级解决方案</strong></p>
+
+  <!-- 架构选择器 -->
+  <table>
+    <tr>
+      <td align="center" width="200">
+        <img src="https://img.shields.io/badge/🏗️-单体架构-4A90E2?style=for-the-badge" alt="Monolithic"><br>
+        <sub><strong>当前分支</strong></sub><br>
+        <sub>传统 SPA 架构</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/main">
+          <img src="https://img.shields.io/badge/查看代码-main-blue?style=flat-square" alt="Main Branch">
+        </a>
+      </td>
+      <td align="center" width="200">
+        <img src="https://img.shields.io/badge/📦-Monorepo-00D8FF?style=for-the-badge" alt="Monorepo"><br>
+        <sub><strong>Bun Workspaces</strong></sub><br>
+        <sub>多应用管理</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
+          <img src="https://img.shields.io/badge/查看代码-monorepo-00D8FF?style=flat-square" alt="Monorepo Branch">
+        </a>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo/docs/GUIDE.md">
+          <img src="https://img.shields.io/badge/完整文档-GUIDE-orange?style=flat-square" alt="Monorepo Docs">
+        </a>
+      </td>
+      <td align="center" width="200">
+        <img src="https://img.shields.io/badge/🔮-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
+        <sub><strong>Module Federation</strong></sub><br>
+        <sub>即将推出</sub><br>
+        <img src="https://img.shields.io/badge/状态-规划中-lightgrey?style=flat-square" alt="Coming Soon">
+      </td>
+      <td align="center" width="200">
+        <img src="https://img.shields.io/badge/🚀-微前端-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
+        <sub><strong>MicroApp</strong></sub><br>
+        <sub>即将推出</sub><br>
+        <img src="https://img.shields.io/badge/状态-规划中-lightgrey?style=flat-square" alt="Coming Soon">
+      </td>
+    </tr>
+  </table>
+
   <p>
     <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
@@ -59,6 +97,53 @@
     <strong>中文</strong> | <a href="./README_EN.md">English</a>
   </p>
 </div>
+
+## 🎯 多架构支持说明
+
+Robot Admin 提供多种架构选择，满足不同规模和场景的需求：
+
+| 架构类型 | 适用场景 | 特点 | 分支 | 文档 |
+|---------|---------|------|------|------|
+| **🏗️ 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用 | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main) | 本文档 |
+| **📦 Monorepo** | 多应用统一管理 | 代码复用、统一工具链、独立部署 | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo) | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md) |
+| **🔮 模块联邦** | 微应用动态加载 | 运行时共享、独立部署、版本隔离 | 规划中 | - |
+| **🚀 微前端** | 大型应用、团队协作 | 技术栈无关、独立部署、渐进式迁移 | 规划中 | - |
+
+### 📦 Monorepo 架构亮点
+
+基于 **Bun Workspaces** 的 Monorepo 架构已就绪！[查看分支](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)
+
+```
+Robot_Admin (Monorepo)
+├── apps/                          # 应用层
+│   ├── robot-admin-internal/      # 内部版 (端口 1988)
+│   └── robot-admin-saas/          # SaaS 版 (端口 1989)
+└── packages/                      # 共享包层
+    ├── shared/                    # 工具函数
+    ├── core/                      # 核心逻辑
+    ├── ui/                        # UI 组件库 (30+)
+    ├── business/                  # 业务组件
+    └── integrations/              # 第三方集成
+```
+
+**核心特性：**
+- ✅ 多应用统一管理（Internal / SaaS）
+- ✅ 5 个共享包代码复用
+- ✅ HMR 热更新（修改共享包，应用自动刷新）
+- ✅ 独立构建部署
+- ✅ 统一工具链（ESLint/Prettier/TypeScript/Commitizen）
+
+**快速开始：**
+```bash
+git clone -b monorepo https://github.com/ChenyCHENYU/Robot_Admin.git
+cd Robot_Admin
+bun install
+bun run dev:internal  # 启动 Internal 版本
+```
+
+📖 **[查看完整 Monorepo 文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)**
+
+---
 
 ## 🚀 重新定义企业级中后台开发体验
 
