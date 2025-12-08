@@ -81,7 +81,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
       ...serverConfig,
       port: SAAS_PORT, // SaaS 版本端口
     },
-    
+
     build: buildConfig,
 
     esbuild:

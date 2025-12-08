@@ -81,7 +81,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
       ...serverConfig,
       port: INTERNAL_PORT, // Internal 版本端口
     },
-    
+
     build: buildConfig,
 
     esbuild:
