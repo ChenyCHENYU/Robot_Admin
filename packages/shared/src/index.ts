@@ -1,14 +1,16 @@
-// Robot Admin 共享工具包
-// 阶段二将从 apps/admin 提取共享代码到这里
+/**
+ * @robot/shared v1.0.0
+ * Robot Admin 共享工具包
+ */
 
-export const version = '1.0.0'
+export const SHARED_VERSION = '1.0.0'
 
-// 占位函数
-export function log(message: string) {
-  console.log(`[Robot Shared] ${message}`)
-}
+// 导出工具函数
+export * from './utils'
 
-// 导出子模块（阶段二添加）
-// export * from './utils'
-// export * from './types'
-// export * from './constants'
+// 导出类型定义
+export * from './types'
+
+// 导出常量
+export * from './constants'
+

@@ -5,8 +5,8 @@
     "": {
       "name": "bun_vite_uno_naive",
       "dependencies": {
-        "date-fns": "3.6.0",
-        "date-fns-tz": "3.2.0",
+        "date-fns": "^3.6.0",
+        "date-fns-tz": "^3.2.0",
       },
       "devDependencies": {
         "@types/node": "^22.13.9",
@@ -116,6 +116,9 @@
     "packages/shared": {
       "name": "@robot/shared",
       "version": "1.0.0",
+      "dependencies": {
+        "clsx": "^2.1.1",
+      },
       "devDependencies": {
         "typescript": "~5.8.0",
       },
