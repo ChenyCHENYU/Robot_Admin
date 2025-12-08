@@ -63,7 +63,7 @@ Robot Admin Monorepo 共享工具包。
 - `set()` - 设置路径值
 - `omit()` - 省略属性
 - `pick()` - 选取属性
-- `isEmpty()` - 判断为空
+- `isEmptyObject()` - 判断对象为空
 - `has()` - 检查属性
 
 ### 类型定义 (`types`)

@@ -118,7 +118,7 @@ export function pick<T extends Record<string, any>, K extends keyof T>(
 /**
  * 判断对象是否为空
  */
-export function isEmpty(obj: any): boolean {
+export function isEmptyObject(obj: any): boolean {
   if (obj === null || obj === undefined) return true
   if (typeof obj === 'string' || Array.isArray(obj)) return obj.length === 0
   if (obj instanceof Map || obj instanceof Set) return obj.size === 0
