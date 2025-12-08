@@ -135,12 +135,19 @@
   "config": {
     "commitizen": {
       "path": "node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": "../../.cz-config.cjs"
     }
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,vue}": [
-      "oxlint --max-warnings 0 --deny-warnings",
-      "eslint --fix --no-cache",
+      "prettier --write"
+    ],
+    "lang/**/*.{js,json}": [
+      "prettier --write"
+    ],
+    "*.{json,md}": [
       "prettier --write"
     ]
   }

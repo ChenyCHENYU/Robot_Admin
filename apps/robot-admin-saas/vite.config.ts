@@ -2,9 +2,9 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-05
- * @FilePath: \Robot_Admin\vite.config.ts
- * @Description: 基于 Vite 7 实际特性的优化配置，移除负优化，保留有效优化
+ * @LastEditTime: 2025-12-08
+ * @FilePath: \Robot_Admin\apps\robot-admin-saas\vite.config.ts
+ * @Description: Robot Admin SaaS - Vite 配置（继承根目录基础配置）
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
@@ -28,6 +28,9 @@ import {
   createVuePluginOptions,
 } from './src/config/vite'
 import { HEAVY_PAGE_ROUTES } from './src/config/vite/heavyPages'
+
+// SaaS 版本特定配置
+const SAAS_PORT = 1989
 
 export default defineConfig(({ mode }: { mode: string }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -74,7 +77,11 @@ export default defineConfig(({ mode }: { mode: string }) => {
       ],
     },
 
-    server: serverConfig,
+    server: {
+      ...serverConfig,
+      port: SAAS_PORT, // SaaS 版本端口
+    },
+    
     build: buildConfig,
 
     esbuild:

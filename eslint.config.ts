@@ -2,8 +2,8 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-24 18:08:57
- * @FilePath: \Robot_Admin\eslint.config.ts
+ * @LastEditTime: 2025-12-08 14:14:01
+ * @FilePath: \Robot_Admin\apps\robot-admin-internal\eslint.config.ts
  * @Description: oxlint 和 eslint 配置文件，不要随便改，改了要同步干系人（注意）
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
@@ -12,7 +12,6 @@ import {
   defineConfigWithVueTs,
   vueTsConfigs,
 } from '@vue/eslint-config-typescript'
-import pluginVitest from '@vitest/eslint-plugin'
 import oxlint from 'eslint-plugin-oxlint'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 import jsdocPlugin from 'eslint-plugin-jsdoc'
@@ -65,12 +64,6 @@ export default defineConfigWithVueTs(
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'error',
     },
-  },
-
-  //MARK: 测试文件规则组
-  {
-    ...pluginVitest.configs.recommended,
-    files: ['src/**/__tests__/*'],
   },
 
   //MARK: 自定义规则组（优先级最高）

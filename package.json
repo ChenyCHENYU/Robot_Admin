@@ -2,7 +2,6 @@
   "name": "robot-admin-monorepo",
   "version": "2.0.0",
   "private": true,
-  "type": "module",
   "description": "Robot Admin Monorepo - 企业级多应用管理平台",
   "author": {
     "name": "ChenY",
@@ -43,5 +42,13 @@
   "dependencies": {
     "date-fns": "^3.6.0",
     "date-fns-tz": "^3.2.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": ".cz-config.cjs"
+    }
   }
 }

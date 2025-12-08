@@ -584,14 +584,6 @@ export const devDependencies: ProjectItem[] = [
     url: 'https://vitejs.dev/',
   },
   {
-    name: 'Vitest ESLint Plugin',
-    bagName: '@vitest/eslint-plugin',
-    desc: 'Vitest ESLint 规则插件',
-    version: '^1.1.36',
-    icon: 'https://vitest.dev/logo.svg',
-    url: 'https://vitest.dev/',
-  },
-  {
     name: 'Vue ESLint Config Prettier',
     bagName: '@vue/eslint-config-prettier',
     desc: 'Vue ESLint Prettier 配置',
