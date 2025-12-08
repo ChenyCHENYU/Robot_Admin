@@ -51,10 +51,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "username",
-                  "password"
-                ]
+                "required": ["username", "password"]
               },
               "example": null
             }
@@ -128,12 +125,7 @@
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message",
-                    "data",
-                    "timestamp"
-                  ]
+                  "required": ["code", "message", "data", "timestamp"]
                 },
                 "example": {
                   "code": 0,
@@ -144,10 +136,7 @@
                     "email": "admin@example.com",
                     "nickname": "管理员",
                     "avatar": "https://example.com/avatar/admin.jpg",
-                    "roles": [
-                      "admin",
-                      "user"
-                    ],
+                    "roles": ["admin", "user"],
                     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
                     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
                     "expiresIn": 3600,
@@ -168,9 +157,7 @@
         "summary": "获取员工列表",
         "deprecated": false,
         "description": "",
-        "tags": [
-          "10-table"
-        ],
+        "tags": ["10-table"],
         "parameters": [
           {
             "name": "page",
@@ -208,9 +195,7 @@
                     "message": {
                       "type": "string",
                       "description": "响应消息",
-                      "examples": [
-                        "获取员工列表成功"
-                      ]
+                      "examples": ["获取员工列表成功"]
                     },
                     "data": {
                       "type": "object",
@@ -224,73 +209,45 @@
                               "id": {
                                 "type": "integer",
                                 "description": "员工ID",
-                                "examples": [
-                                  1
-                                ]
+                                "examples": [1]
                               },
                               "name": {
                                 "type": "string",
                                 "description": "员工姓名",
-                                "examples": [
-                                  "张三"
-                                ]
+                                "examples": ["张三"]
                               },
                               "age": {
                                 "type": "integer",
                                 "description": "年龄",
-                                "examples": [
-                                  28
-                                ]
+                                "examples": [28]
                               },
                               "gender": {
                                 "type": "string",
                                 "description": "性别",
-                                "enum": [
-                                  "male",
-                                  "female"
-                                ],
-                                "examples": [
-                                  "male"
-                                ]
+                                "enum": ["male", "female"],
+                                "examples": ["male"]
                               },
                               "email": {
                                 "type": "string",
                                 "description": "邮箱地址",
-                                "examples": [
-                                  "zhangsan@example.com"
-                                ]
+                                "examples": ["zhangsan@example.com"]
                               },
                               "department": {
                                 "type": "string",
                                 "description": "部门代码",
-                                "enum": [
-                                  "tech",
-                                  "hr",
-                                  "market",
-                                  "finance"
-                                ],
-                                "examples": [
-                                  "tech"
-                                ]
+                                "enum": ["tech", "hr", "market", "finance"],
+                                "examples": ["tech"]
                               },
                               "joinDate": {
                                 "type": "integer",
                                 "description": "入职时间戳（毫秒）",
-                                "examples": [
-                                  1642204800000
-                                ]
+                                "examples": [1642204800000]
                               },
                               "status": {
                                 "type": "string",
                                 "description": "员工状态",
-                                "enum": [
-                                  "active",
-                                  "inactive",
-                                  "probation"
-                                ],
-                                "examples": [
-                                  "active"
-                                ]
+                                "enum": ["active", "inactive", "probation"],
+                                "examples": ["active"]
                               },
                               "description": {
                                 "type": "string",
@@ -315,46 +272,28 @@
                         "total": {
                           "type": "integer",
                           "description": "总记录数",
-                          "examples": [
-                            18
-                          ]
+                          "examples": [18]
                         },
                         "page": {
                           "type": "integer",
                           "description": "当前页码",
-                          "examples": [
-                            1
-                          ]
+                          "examples": [1]
                         },
                         "pageSize": {
                           "type": "integer",
                           "description": "每页数量",
-                          "examples": [
-                            10
-                          ]
+                          "examples": [10]
                         }
                       },
-                      "required": [
-                        "list",
-                        "total",
-                        "page",
-                        "pageSize"
-                      ]
+                      "required": ["list", "total", "page", "pageSize"]
                     },
                     "timestamp": {
                       "type": "integer",
                       "description": "响应时间戳",
-                      "examples": [
-                        1693123456789
-                      ]
+                      "examples": [1693123456789]
                     }
                   },
-                  "required": [
-                    "code",
-                    "message",
-                    "data",
-                    "timestamp"
-                  ]
+                  "required": ["code", "message", "data", "timestamp"]
                 }
               }
             },
@@ -369,9 +308,7 @@
         "summary": "删除员工",
         "deprecated": false,
         "description": "通过id删除列表中的员工",
-        "tags": [
-          "10-table"
-        ],
+        "tags": ["10-table"],
         "parameters": [
           {
             "name": "id",
@@ -447,29 +384,17 @@
                               "description": "员工描述"
                             }
                           },
-                          "required": [
-                            "id",
-                            "name",
-                            "status"
-                          ]
+                          "required": ["id", "name", "status"]
                         }
                       },
-                      "required": [
-                        "deletedId",
-                        "deletedEmployee"
-                      ]
+                      "required": ["deletedId", "deletedEmployee"]
                     },
                     "timestamp": {
                       "type": "integer",
                       "description": "时间戳"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message",
-                    "data",
-                    "timestamp"
-                  ]
+                  "required": ["code", "message", "data", "timestamp"]
                 },
                 "example": {
                   "code": 0,
@@ -501,9 +426,7 @@
         "summary": "编辑员工",
         "deprecated": false,
         "description": "更新指定员工的信息",
-        "tags": [
-          "10-table"
-        ],
+        "tags": ["10-table"],
         "parameters": [
           {
             "name": "id",
@@ -584,12 +507,7 @@
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message",
-                    "data",
-                    "timestamp"
-                  ]
+                  "required": ["code", "message", "data", "timestamp"]
                 },
                 "example": {
                   "code": "0",
@@ -618,9 +536,7 @@
         "summary": "查询员工",
         "deprecated": false,
         "description": "根据员工ID获取员工详细信息",
-        "tags": [
-          "10-table"
-        ],
+        "tags": ["10-table"],
         "parameters": [
           {
             "name": "id",
@@ -693,12 +609,7 @@
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message",
-                    "data",
-                    "timestamp"
-                  ]
+                  "required": ["code", "message", "data", "timestamp"]
                 },
                 "example": {
                   "code": "0",
@@ -729,9 +640,7 @@
         "summary": "获取员工列表",
         "deprecated": false,
         "description": "获取展开表格的员工列表",
-        "tags": [
-          "11-table-expand"
-        ],
+        "tags": ["11-table-expand"],
         "parameters": [
           {
             "name": "page",
@@ -901,23 +810,13 @@
                           "type": "integer"
                         }
                       },
-                      "required": [
-                        "list",
-                        "total",
-                        "page",
-                        "pageSize"
-                      ]
+                      "required": ["list", "total", "page", "pageSize"]
                     },
                     "timestamp": {
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message",
-                    "data",
-                    "timestamp"
-                  ]
+                  "required": ["code", "message", "data", "timestamp"]
                 },
                 "example": {
                   "code": "0",
@@ -1031,9 +930,7 @@
         "summary": "获取员工列表",
         "deprecated": false,
         "description": "",
-        "tags": [
-          "12-table-dynamic"
-        ],
+        "tags": ["12-table-dynamic"],
         "parameters": [
           {
             "name": "page",
@@ -1172,23 +1069,13 @@
                           "type": "integer"
                         }
                       },
-                      "required": [
-                        "list",
-                        "total",
-                        "page",
-                        "pageSize"
-                      ]
+                      "required": ["list", "total", "page", "pageSize"]
                     },
                     "timestamp": {
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message",
-                    "data",
-                    "timestamp"
-                  ]
+                  "required": ["code", "message", "data", "timestamp"]
                 },
                 "example": {
                   "code": "0",
@@ -1394,9 +1281,7 @@
         "summary": "获取权限列表",
         "deprecated": false,
         "description": "系统管理 =>  权限管理 => 获取权限列表接口",
-        "tags": [
-          "permission-manage"
-        ],
+        "tags": ["permission-manage"],
         "parameters": [
           {
             "name": "page",
@@ -1507,23 +1392,13 @@
                           "type": "integer"
                         }
                       },
-                      "required": [
-                        "list",
-                        "total",
-                        "page",
-                        "pageSize"
-                      ]
+                      "required": ["list", "total", "page", "pageSize"]
                     },
                     "timestamp": {
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message",
-                    "data",
-                    "timestamp"
-                  ]
+                  "required": ["code", "message", "data", "timestamp"]
                 },
                 "example": {
                   "code": "0",
@@ -1537,9 +1412,7 @@
                         "type": "module",
                         "module": "system",
                         "description": "系统管理功能模块访问权限",
-                        "resources": [
-                          "/system"
-                        ],
+                        "resources": ["/system"],
                         "status": 1,
                         "sort": 1,
                         "createTime": 1704093600000,
@@ -1553,9 +1426,7 @@
                         "type": "function",
                         "module": "system",
                         "description": "系统监控功能访问权限",
-                        "resources": [
-                          "/system/monitor"
-                        ],
+                        "resources": ["/system/monitor"],
                         "status": 1,
                         "sort": 2,
                         "createTime": 1704093900000,
@@ -1569,9 +1440,7 @@
                         "type": "button",
                         "module": "system",
                         "description": "刷新系统监控数据的按钮权限",
-                        "resources": [
-                          "refresh-btn"
-                        ],
+                        "resources": ["refresh-btn"],
                         "status": 1,
                         "sort": 3,
                         "createTime": 1704094200000,
@@ -1585,9 +1454,7 @@
                         "type": "api",
                         "module": "system",
                         "description": "获取系统监控数据的API权限",
-                        "resources": [
-                          "/api/system/monitor/data"
-                        ],
+                        "resources": ["/api/system/monitor/data"],
                         "status": 1,
                         "sort": 4,
                         "createTime": 1704094500000,
@@ -1601,9 +1468,7 @@
                         "type": "module",
                         "module": "user",
                         "description": "用户管理功能模块访问权限",
-                        "resources": [
-                          "/user"
-                        ],
+                        "resources": ["/user"],
                         "status": 1,
                         "sort": 10,
                         "createTime": 1704094800000,
@@ -1617,9 +1482,7 @@
                         "type": "function",
                         "module": "user",
                         "description": "查看用户列表功能权限",
-                        "resources": [
-                          "/user/list"
-                        ],
+                        "resources": ["/user/list"],
                         "status": 1,
                         "sort": 11,
                         "createTime": 1704095100000,
@@ -1633,9 +1496,7 @@
                         "type": "button",
                         "module": "user",
                         "description": "新增用户按钮权限",
-                        "resources": [
-                          "add-user-btn"
-                        ],
+                        "resources": ["add-user-btn"],
                         "status": 1,
                         "sort": 12,
                         "createTime": 1704095400000,
@@ -1649,9 +1510,7 @@
                         "type": "button",
                         "module": "user",
                         "description": "编辑用户按钮权限",
-                        "resources": [
-                          "edit-user-btn"
-                        ],
+                        "resources": ["edit-user-btn"],
                         "status": 1,
                         "sort": 13,
                         "createTime": 1704095700000,
@@ -1665,9 +1524,7 @@
                         "type": "button",
                         "module": "user",
                         "description": "删除用户按钮权限",
-                        "resources": [
-                          "delete-user-btn"
-                        ],
+                        "resources": ["delete-user-btn"],
                         "status": 1,
                         "sort": 14,
                         "createTime": 1704096000000,
@@ -1681,9 +1538,7 @@
                         "type": "api",
                         "module": "user",
                         "description": "获取用户详情的API权限",
-                        "resources": [
-                          "/api/user/{id}"
-                        ],
+                        "resources": ["/api/user/{id}"],
                         "status": 1,
                         "sort": 15,
                         "createTime": 1704096300000,
@@ -1697,9 +1552,7 @@
                         "type": "api",
                         "module": "user",
                         "description": "创建用户的API权限",
-                        "resources": [
-                          "/api/user"
-                        ],
+                        "resources": ["/api/user"],
                         "status": 1,
                         "sort": 16,
                         "createTime": 1704096600000,
@@ -1713,9 +1566,7 @@
                         "type": "module",
                         "module": "role",
                         "description": "角色管理功能模块访问权限",
-                        "resources": [
-                          "/role"
-                        ],
+                        "resources": ["/role"],
                         "status": 1,
                         "sort": 20,
                         "createTime": 1704096900000,
@@ -1729,9 +1580,7 @@
                         "type": "function",
                         "module": "role",
                         "description": "查看角色列表功能权限",
-                        "resources": [
-                          "/role/list"
-                        ],
+                        "resources": ["/role/list"],
                         "status": 1,
                         "sort": 21,
                         "createTime": 1704097200000,
@@ -1745,9 +1594,7 @@
                         "type": "button",
                         "module": "role",
                         "description": "为角色分配权限的按钮权限",
-                        "resources": [
-                          "assign-permission-btn"
-                        ],
+                        "resources": ["assign-permission-btn"],
                         "status": 1,
                         "sort": 22,
                         "createTime": 1704097500000,
@@ -1761,9 +1608,7 @@
                         "type": "module",
                         "module": "permission",
                         "description": "权限管理功能模块访问权限",
-                        "resources": [
-                          "/permission"
-                        ],
+                        "resources": ["/permission"],
                         "status": 1,
                         "sort": 30,
                         "createTime": 1704097800000,
@@ -1777,9 +1622,7 @@
                         "type": "function",
                         "module": "permission",
                         "description": "查看权限列表功能权限",
-                        "resources": [
-                          "/permission/list"
-                        ],
+                        "resources": ["/permission/list"],
                         "status": 1,
                         "sort": 31,
                         "createTime": 1704098100000,
@@ -1793,9 +1636,7 @@
                         "type": "button",
                         "module": "permission",
                         "description": "导出权限数据的按钮权限",
-                        "resources": [
-                          "export-permission-btn"
-                        ],
+                        "resources": ["export-permission-btn"],
                         "status": 1,
                         "sort": 32,
                         "createTime": 1704098400000,
@@ -1809,9 +1650,7 @@
                         "type": "module",
                         "module": "menu",
                         "description": "菜单管理功能模块访问权限",
-                        "resources": [
-                          "/menu"
-                        ],
+                        "resources": ["/menu"],
                         "status": 1,
                         "sort": 40,
                         "createTime": 1704098700000,
@@ -1825,9 +1664,7 @@
                         "type": "button",
                         "module": "menu",
                         "description": "菜单排序的按钮权限",
-                        "resources": [
-                          "sort-menu-btn"
-                        ],
+                        "resources": ["sort-menu-btn"],
                         "status": 1,
                         "sort": 41,
                         "createTime": 1704099000000,
@@ -1841,9 +1678,7 @@
                         "type": "function",
                         "module": "log",
                         "description": "查看操作日志功能权限",
-                        "resources": [
-                          "/log/operation"
-                        ],
+                        "resources": ["/log/operation"],
                         "status": 0,
                         "sort": 50,
                         "createTime": 1704099300000,
@@ -1870,9 +1705,7 @@
         "summary": "编辑权限",
         "deprecated": false,
         "description": "系统管理 =>  权限管理 => 编辑权限列表项接口",
-        "tags": [
-          "permission-manage"
-        ],
+        "tags": ["permission-manage"],
         "parameters": [
           {
             "name": "id",
@@ -1904,9 +1737,7 @@
         "summary": "删除权限",
         "deprecated": false,
         "description": "系统管理 =>  权限管理 => 删除权限列表项接口",
-        "tags": [
-          "permission-manage"
-        ],
+        "tags": ["permission-manage"],
         "parameters": [
           {
             "name": "id",

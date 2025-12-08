@@ -25,11 +25,11 @@
     "commit": "bunx cz",
     "check-branch": "gbd",
     "check-types": "ts-type-cleaner analyze",
-    "gen:route-i18n": "bun run scripts/generate-route-translations.ts",
+    "gen:route-i18n": "bun run ./scripts/generate-route-translations.ts",
     "deploy": "bash ./scripts/merge-and-deploy.sh",
     "sync-deploy-branch": "bash ./scripts/sync-dev.sh",
     "analyze": "vite build --mode analyze",
-    "generate-api": "node scripts/download-openapi.js && openapi-ts"
+    "generate-api": "node ./scripts/download-openapi.js && openapi-ts"
   },
   "dependencies": {
     "@robot/shared": "workspace:*",

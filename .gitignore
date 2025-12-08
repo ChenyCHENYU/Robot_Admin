@@ -14,6 +14,10 @@ dist-ssr
 coverage
 *.local
 
+# 遗留目录（Monorepo 迁移后已移除）
+/lang/
+/src/
+
 /cypress/videos/
 /cypress/screenshots/
 
