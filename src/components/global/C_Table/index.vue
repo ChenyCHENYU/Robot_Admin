@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-13 18:38:58
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-09-22 21:46:48
+ * @LastEditTime: 2025-12-10 09:27:22
  * @FilePath: \Robot_Admin\src\components\global\C_Table\index.vue
  * @Description: 超级表格组件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -16,12 +16,41 @@
       :is="tableManager.dynamicRowsState.renderToolbar()"
     />
 
+    <!-- 表格工具栏 -->
+    <div
+      v-if="showToolbar"
+      class="table-toolbar"
+    >
+      <div class="toolbar-left">
+        <slot name="toolbar-left" />
+      </div>
+      <div class="toolbar-right">
+        <slot name="toolbar-right" />
+        <!-- 设置面板按钮 -->
+        <NButton
+          v-if="enableColumnSettings"
+          quaternary
+          circle
+          size="small"
+          @click="showSettingsPanel = true"
+          title="列设置"
+        >
+          <template #icon>
+            <C_Icon
+              name="mdi:cog"
+              size="16"
+            />
+          </template>
+        </NButton>
+      </div>
+    </div>
+
     <!-- 表格主体 -->
     <NDataTable
       ref="tableRef"
       v-bind="tableProps"
       :columns="computedColumns"
-      :data="pagination.paginatedData.value"
+      :data="props.data"
       :loading="loading"
       :row-key="rowKey"
       :expanded-row-keys="tableManager.expandedKeys.value"
@@ -29,7 +58,7 @@
       :render-expand="renderExpandFunction"
       @update:expanded-row-keys="tableManager.expandState?.handleExpandChange"
       @update:checked-row-keys="tableManager.expandState?.handleSelectionChange"
-      :scroll-x="props.scrollX"
+      :scroll-x="computedScrollX"
     />
 
     <!-- 分页组件 -->
@@ -57,10 +86,18 @@
       v-if="tableManager.dynamicRowsState"
       :is="tableManager.dynamicRowsState.renderConfirmModal()"
     />
+
+    <!-- 🆕 表格设置面板 -->
+    <TableSettings
+      v-model:visible="showSettingsPanel"
+      :columns="reactiveColumns"
+      @column-change="handleColumnChange"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+  import { ref, computed, toRef, watch } from 'vue'
   import type { VNodeChild, ComponentPublicInstance } from 'vue'
   import { type DataTableRowKey, type DataTableColumn } from 'naive-ui/es'
   import type {
@@ -76,6 +113,8 @@
   import { usePagination } from '@/composables/Table/usePagination'
   import { useTableActions } from '@/composables/Table/useTableActions'
   import TableEditModal from './components/TableEditModal.vue'
+  import TableSettings from './components/TableSettings/index.vue'
+  import C_Icon from '@/components/global/C_Icon/index.vue'
   import {
     generateFormOptions,
     getTableProps,
@@ -85,6 +124,7 @@
     renderDisplayCell,
     renderEditingCell,
     renderEditableCell,
+    buildSettingsConfig,
     type TablePresetConfig,
   } from './data'
 
@@ -112,6 +152,9 @@
     enableParentChildLink?: boolean
     parentChildLinkMode?: ParentChildLinkMode
     dynamicRowsOptions?: DynamicRowsOptions<T>
+    // 🆕 设置面板相关属性
+    showToolbar?: boolean
+    enableColumnSettings?: boolean
   }
 
   // ================= Props & Emit =================
@@ -137,6 +180,9 @@
     preset: undefined,
     actions: () => ({}),
     pagination: () => true,
+    // 🆕 设置面板相关默认值
+    showToolbar: true,
+    enableColumnSettings: true,
   })
 
   const emit = defineEmits<
@@ -151,11 +197,45 @@
       ]
       'pagination-change': [page: number, pageSize: number]
       'view-detail': [data: DataRecord]
+      // 🆕 设置面板相关事件
+      'column-change': [columns: TableColumn[]]
     }
   >()
 
   // ================= 响应式状态 =================
   const tableRef = ref<ComponentPublicInstance>()
+
+  // 🆕 设置面板相关状态
+  const showSettingsPanel = ref(false)
+
+  // 🆕 响应式列状态（用于实时更新）
+  const reactiveColumns = ref<TableColumn[]>([...props.columns])
+
+  // 🆕 计算 scroll-x：当有固定列时，必须设置 scroll-x 才能让固定列生效
+  const computedScrollX = computed(() => {
+    // 如果用户手动设置了 scrollX，优先使用用户设置
+    if (props.scrollX !== undefined) {
+      return props.scrollX
+    }
+
+    // 检查是否有固定列
+    const hasFixedColumn = reactiveColumns.value.some(col => col.fixed)
+
+    // 如果有固定列，自动计算总宽度
+    if (hasFixedColumn) {
+      const totalWidth = reactiveColumns.value
+        .filter(col => col.visible !== false)
+        .reduce((sum, col) => {
+          return sum + (col.width || props.columnWidth || 180)
+        }, 0)
+
+      // 加上操作列的宽度（假设 150px）
+      return totalWidth + 150
+    }
+
+    // 没有固定列时不设置 scroll-x
+    return undefined
+  })
 
   // ================= 计算属性 =================
   const config = computed(() => ({
@@ -220,6 +300,37 @@
     }
   }
 
+  // 🆕 设置面板事件处理函数
+  const handleColumnChange = (columns: TableColumn[]) => {
+    // 更新列配置，确保修改生效
+    console.log('列配置变化:', columns)
+
+    // 更新响应式列状态
+    reactiveColumns.value = columns.map(col => ({
+      ...col,
+      // 确保必要的属性存在
+      visible: col.visible !== false,
+      fixed: col.fixed,
+      width: col.width || props.columnWidth,
+      align: col.align || 'center',
+      titleAlign: col.titleAlign || 'center',
+    }))
+
+    // 触发外部事件
+    emit('column-change', reactiveColumns.value)
+  }
+
+  // 监听外部列变化，同步到响应式状态
+  watch(
+    () => props.columns,
+    newColumns => {
+      if (newColumns && newColumns !== reactiveColumns.value) {
+        reactiveColumns.value = [...newColumns]
+      }
+    },
+    { deep: true, immediate: true }
+  )
+
   // ================= 单元格渲染函数 =================
   const renderCell = (
     column: TableColumn,
@@ -282,39 +393,42 @@
   }
 
   // ================= 计算列配置 =================
-  // 🆕 修改 computedColumns 支持固定列
+  // 🆕 修改 computedColumns 支持固定列，使用响应式列状态
   const computedColumns = computed((): DataTableColumn[] => {
-    let columns: DataTableColumn[] = props.columns.map(column => {
-      // 🔥 自动处理序号列
-      if (column.type === 'index') {
+    // 🆕 过滤可见列
+    let columns: DataTableColumn[] = reactiveColumns.value
+      .filter(column => column.visible !== false)
+      .map(column => {
+        // 🔥 自动处理序号列
+        if (column.type === 'index') {
+          return {
+            key: '_index',
+            title: column.title || '序号',
+            width: column.width || 50,
+            titleAlign: 'center' as const,
+            align: 'center' as const,
+            render: (_: DataRecord, index: number) => index + 1,
+            // 序号列不参与编辑系统
+            editable: false,
+            // 🆕 支持序号列固定
+            fixed: column.fixed,
+          }
+        }
+
+        // 其他原有处理逻辑 + 固定列处理
         return {
-          key: '_index',
-          title: column.title || '序号',
-          width: column.width || 50,
-          titleAlign: 'center' as const,
-          align: 'center' as const,
-          render: (_: DataRecord, index: number) => index + 1,
-          // 序号列不参与编辑系统
-          editable: false,
-          // 🆕 支持序号列固定
+          ...column,
+          width: column.width || props.columnWidth,
+          titleAlign: column.titleAlign || ('center' as const),
+          align: column.align || ('center' as const), // 🎯 默认居中对齐
+          render:
+            column.render ||
+            ((rowData: DataRecord, rowIndex: number) =>
+              renderCell(column, rowData, rowIndex)),
+          // 🆕 添加固定列支持
           fixed: column.fixed,
         }
-      }
-
-      // 其他原有处理逻辑 + 固定列处理
-      return {
-        ...column,
-        width: column.width || props.columnWidth,
-        titleAlign: column.titleAlign || ('center' as const),
-        align: column.align || ('center' as const), // 🎯 默认居中对齐
-        render:
-          column.render ||
-          ((rowData: DataRecord, rowIndex: number) =>
-            renderCell(column, rowData, rowIndex)),
-        // 🆕 添加固定列支持
-        fixed: column.fixed,
-      }
-    }) as DataTableColumn[]
+      }) as DataTableColumn[]
 
     // 功能列增强
     if (tableManager.dynamicRowsState) {

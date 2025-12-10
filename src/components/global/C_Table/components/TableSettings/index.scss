@@ -1,0 +1,307 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-12-10 08:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-12-10 08:00:00
+ * @FilePath: \Robot_Admin\src\components\global\C_Table\components\TableSettings\index.scss
+ * @Description: 表格设置面板样式
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+*/
+
+// 主设置面板样式
+.table-settings-panel {
+  :deep(.n-drawer-content) {
+    padding: 0;
+  }
+
+  :deep(.n-tabs-nav) {
+    padding: 0 16px;
+    margin-bottom: 0;
+  }
+
+  :deep(.n-tab-pane) {
+    padding: 16px;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+
+  // 通用头部样式
+  .tab-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--n-border-color);
+    background: var(--n-card-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  // 通用卡片样式
+  .field-card,
+  .column-item,
+  .field-item {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // 状态指示器
+  .sort-badge,
+  .filter-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+  }
+
+  .sort-badge {
+    background: var(--n-primary-color);
+  }
+
+  .filter-badge {
+    background: var(--n-info-color);
+  }
+
+  // 优先级标记
+  .priority,
+  .sort-priority {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: bold;
+  }
+
+  // 网格布局
+  .field-grid {
+    display: grid;
+    gap: 12px;
+    
+    // 响应式网格
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+    
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // 列表布局
+  .column-list,
+  .field-list {
+    .column-item,
+    .field-item {
+      border: 1px solid var(--n-border-color);
+      border-radius: 8px;
+      background: var(--n-card-color);
+      padding: 12px;
+      margin-bottom: 8px;
+
+      &.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      &.has-filter,
+      &.sort-asc,
+      &.sort-desc {
+        border-width: 2px;
+      }
+
+      &.has-filter {
+        border-color: var(--n-info-color);
+        background: rgba(var(--n-info-color-rgb), 0.05);
+      }
+
+      &.sort-asc {
+        border-color: var(--n-success-color);
+        background: rgba(var(--n-success-color-rgb), 0.05);
+      }
+
+      &.sort-desc {
+        border-color: var(--n-warning-color);
+        background: rgba(var(--n-warning-color-rgb), 0.05);
+      }
+    }
+  }
+
+  // 活跃状态显示
+  .active-sorts,
+  .active-filters {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--n-modal-color);
+    border-radius: 8px;
+    border: 1px solid var(--n-border-color);
+
+    :deep(.n-divider) {
+      margin: 0 0 12px 0;
+    }
+
+    :deep(.n-space) {
+      flex-wrap: wrap;
+    }
+
+    :deep(.n-tag) {
+      margin: 4px;
+    }
+  }
+
+  // 控制按钮组
+  .column-controls,
+  .field-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .drag-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+  }
+
+  // 字段信息
+  .column-info,
+  .field-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+
+    .column-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+  }
+
+  // 指示器
+  .column-actions,
+  .sort-indicator,
+  .filter-indicator {
+    display: flex;
+    align-items: center;
+
+    .inactive {
+      color: var(--n-text-color-3);
+    }
+  }
+
+  // 筛选表单
+  .filter-form {
+    padding: 16px 0;
+
+    :deep(.n-form-item) {
+      margin-bottom: 16px;
+    }
+  }
+
+  // 搜索框样式
+  :deep(.n-input) {
+    max-width: 200px;
+  }
+
+  // 视图切换
+  :deep(.n-radio-group) {
+    background: var(--n-card-color);
+    border: 1px solid var(--n-border-color);
+    border-radius: 6px;
+    padding: 2px;
+  }
+
+  :deep(.n-radio-button) {
+    border: none;
+    border-radius: 4px;
+    
+    &.n-radio-button--checked {
+      background: var(--n-primary-color);
+      color: white;
+    }
+  }
+
+  // 响应式设计
+  @media (max-width: 768px) {
+    :deep(.n-drawer) {
+      width: 100% !important;
+    }
+
+    .tab-header {
+      :deep(.n-space) {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+    }
+
+    .field-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // 动画效果
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .field-card,
+  .column-item,
+  .field-item {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  // 滚动条样式
+  :deep(.n-tab-pane) {
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--n-scrollbar-track-color);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--n-scrollbar-color);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--n-scrollbar-color-hover);
+    }
+  }
+}
+
+// 深色主题适配
+.dark {
+  .table-settings-panel {
+    .field-card,
+    .column-item,
+    .field-item {
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .active-sorts,
+    .active-filters {
+      background: var(--n-popover-color);
+    }
+  }
+}
