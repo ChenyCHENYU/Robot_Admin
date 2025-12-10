@@ -22,35 +22,38 @@
       </template>
     </NInput>
 
-    <!-- 快捷操作 -->
-    <div class="quick-actions">
-      <NSpace>
-        <NButton
-          size="small"
-          @click="selectAll"
+    <!-- 顶部操作栏：统计信息和快捷操作按钮 -->
+    <div class="top-actions-bar">
+      <div class="stats-info">
+        <NText
+          depth="3"
+          :style="{ fontSize: '13px' }"
         >
-          全选
-        </NButton>
-        <NButton
-          size="small"
-          @click="selectNone"
-        >
-          全不选
-        </NButton>
-        <NButton
-          size="small"
-          @click="resetColumns"
-        >
-          重置
-        </NButton>
-      </NSpace>
-    </div>
-
-    <!-- 统计信息 -->
-    <div class="stats-info">
-      <NText depth="3">
-        已选 {{ visibleCount }} / 总共 {{ totalCount }} 列
-      </NText>
+          已选 {{ visibleCount }} / 总共 {{ totalCount }} 列
+        </NText>
+      </div>
+      <div class="quick-actions">
+        <NSpace :size="6">
+          <NButton
+            size="tiny"
+            @click="selectAll"
+          >
+            全选
+          </NButton>
+          <NButton
+            size="tiny"
+            @click="selectNone"
+          >
+            全不选
+          </NButton>
+          <NButton
+            size="tiny"
+            @click="resetColumns"
+          >
+            重置
+          </NButton>
+        </NSpace>
+      </div>
     </div>
 
     <!-- 列列表 -->
@@ -62,10 +65,10 @@
         v-for="(column, index) in filteredColumns"
         :key="column.key"
         class="column-item"
-        :class="{ 
+        :class="{
           disabled: column.key === '_actions',
           'fixed-left': column.fixed === 'left',
-          'fixed-right': column.fixed === 'right'
+          'fixed-right': column.fixed === 'right',
         }"
         :draggable="column.key !== '_actions'"
         @dragstart="handleDragStart(index, $event)"
@@ -77,7 +80,7 @@
           <div class="column-controls">
             <C_Icon
               name="mdi:drag"
-              size="18"
+              size="16"
               class="drag-handle"
               :class="{ disabled: column.key === '_actions' }"
             />
@@ -86,45 +89,28 @@
               :disabled="column.key === '_actions'"
               @update:checked="value => toggleColumnVisibility(index, value)"
             />
-            <div class="drag-controls">
-              <NButton
-                quaternary
-                size="small"
-                :disabled="index === 0"
-                @click="moveColumn(index, index - 1)"
-              >
-                <template #icon>
-                  <C_Icon name="mdi:chevron-up" />
-                </template>
-              </NButton>
-              <NButton
-                quaternary
-                size="small"
-                :disabled="index === filteredColumns.length - 1"
-                @click="moveColumn(index, index + 1)"
-              >
-                <template #icon>
-                  <C_Icon name="mdi:chevron-down" />
-                </template>
-              </NButton>
-            </div>
           </div>
           <div class="column-details">
             <NSpace
               align="center"
-              :size="8"
+              :size="6"
             >
-              <NText strong>{{ column.title || column.key }}</NText>
+              <NText
+                strong
+                :style="{ fontSize: '13px' }"
+              >
+                {{ column.title || column.key }}
+              </NText>
               <NTag
                 v-if="column.fixed === 'left'"
-                size="small"
+                size="tiny"
                 type="info"
               >
                 左固定
               </NTag>
               <NTag
                 v-if="column.fixed === 'right'"
-                size="small"
+                size="tiny"
                 type="warning"
               >
                 右固定
@@ -132,26 +118,47 @@
             </NSpace>
             <NText
               depth="3"
-              style="font-size: 12px"
+              :style="{ fontSize: '11px' }"
             >
               {{ column.key }}
             </NText>
           </div>
         </div>
         <div class="column-actions">
+          <div class="drag-controls">
+            <C_Icon
+              name="mdi:chevron-up"
+              size="14"
+              title="上移"
+              :clickable="index !== 0"
+              :class="{ disabled: index === 0 }"
+              @click="index !== 0 && moveColumn(index, index - 1)"
+            />
+            <C_Icon
+              name="mdi:chevron-down"
+              size="14"
+              title="下移"
+              :clickable="index !== filteredColumns.length - 1"
+              :class="{ disabled: index === filteredColumns.length - 1 }"
+              @click="
+                index !== filteredColumns.length - 1 &&
+                moveColumn(index, index + 1)
+              "
+            />
+          </div>
           <NDropdown
             :options="getFixedOptions(column)"
             @select="value => handleFixedSelect(index, value)"
           >
-            <NButton
-              quaternary
-              size="small"
-              :type="column.fixed ? 'primary' : 'default'"
-            >
-              <template #icon>
-                <C_Icon name="mdi:pin" />
-              </template>
-            </NButton>
+            <C_Icon
+              name="mdi:pin"
+              size="14"
+              title="固定列"
+              clickable
+              :style="{
+                color: column.fixed ? 'var(--n-primary-color)' : undefined,
+              }"
+            />
           </NDropdown>
         </div>
       </div>
@@ -231,40 +238,26 @@
     applyChanges()
   }
 
-  const toggleColumnVisibility = (index: number, visible: boolean) => {
-    // 🔥 修复：需要找到原始列的索引
-    const column = filteredColumns.value[index]
-    const originalIndex = localColumns.value.findIndex(
-      col => col.key === column.key
-    )
-    if (originalIndex !== -1) {
-      localColumns.value[originalIndex].visible = visible
-      // 立即应用变化
-      emit('change', [...localColumns.value])
-    }
+  // 通用的索引查找函数
+  const findOriginalIndex = (filteredIndex: number): number => {
+    const column = filteredColumns.value[filteredIndex]
+    return localColumns.value.findIndex(col => col.key === column.key)
   }
 
-  const setColumnFixed = (
-    index: number,
-    fixed: 'left' | 'right' | undefined
-  ) => {
-    // 🔥 修复：需要找到原始列的索引
-    const column = filteredColumns.value[index]
-    const originalIndex = localColumns.value.findIndex(
-      col => col.key === column.key
-    )
+  const toggleColumnVisibility = (index: number, visible: boolean) => {
+    const originalIndex = findOriginalIndex(index)
     if (originalIndex !== -1) {
-      localColumns.value[originalIndex].fixed = fixed
-      // 立即应用变化
+      localColumns.value[originalIndex].visible = visible
       emit('change', [...localColumns.value])
     }
   }
 
   const handleFixedSelect = (index: number, value: string) => {
-    if (value === 'none') {
-      setColumnFixed(index, undefined)
-    } else {
-      setColumnFixed(index, value as 'left' | 'right')
+    const originalIndex = findOriginalIndex(index)
+    if (originalIndex !== -1) {
+      localColumns.value[originalIndex].fixed =
+        value === 'none' ? undefined : (value as 'left' | 'right')
+      applyChanges()
     }
   }
 
@@ -298,20 +291,12 @@
   }
 
   const moveColumn = (fromIndex: number, toIndex: number) => {
-    // 🔥 修复：需要找到原始列的索引
-    const fromColumn = filteredColumns.value[fromIndex]
-    const toColumn = filteredColumns.value[toIndex]
-
-    const originalFromIndex = localColumns.value.findIndex(
-      col => col.key === fromColumn.key
-    )
-    const originalToIndex = localColumns.value.findIndex(
-      col => col.key === toColumn.key
-    )
+    const originalFromIndex = findOriginalIndex(fromIndex)
+    const originalToIndex = findOriginalIndex(toIndex)
 
     if (originalFromIndex !== -1 && originalToIndex !== -1) {
-      const column = localColumns.value.splice(originalFromIndex, 1)[0]
-      localColumns.value.splice(originalToIndex, 0, column)
+      const [movedColumn] = localColumns.value.splice(originalFromIndex, 1)
+      localColumns.value.splice(originalToIndex, 0, movedColumn)
       applyChanges()
     }
   }
@@ -365,15 +350,22 @@
       margin-bottom: 12px;
     }
 
-    .quick-actions {
-      margin-bottom: 12px;
-    }
-
-    .stats-info {
+    .top-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 16px;
-      padding: 8px 12px;
+      padding: 10px 12px;
       background: var(--n-color-target);
       border-radius: 6px;
+
+      .stats-info {
+        flex: 1;
+      }
+
+      .quick-actions {
+        flex-shrink: 0;
+      }
     }
 
     .column-list {
@@ -381,17 +373,15 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px;
-        margin-bottom: 8px;
-        border: 1px solid var(--n-border-color);
-        border-radius: 6px;
-        background: var(--n-card-color);
+        padding: 6px 4px;
+        margin-bottom: 4px;
+        border-radius: 4px;
+        background: transparent;
         cursor: move;
         transition: all 0.2s ease;
 
         &:hover {
-          border-color: var(--n-primary-color);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          background: var(--n-color-target);
         }
 
         &.disabled {
@@ -400,23 +390,25 @@
         }
 
         &.fixed-left {
-          border-left: 3px solid var(--n-info-color);
+          background: rgba(24, 160, 88, 0.08);
         }
 
         &.fixed-right {
-          border-right: 3px solid var(--n-warning-color);
+          background: rgba(240, 138, 0, 0.08);
         }
 
         .column-info {
           display: flex;
           align-items: center;
           flex: 1;
-          gap: 12px;
+          gap: 10px;
+          min-width: 0;
 
           .column-controls {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-shrink: 0;
 
             .drag-handle {
               color: var(--n-text-color-3);
@@ -431,24 +423,52 @@
                 opacity: 0.3;
               }
             }
-
-            .drag-controls {
-              display: flex;
-              flex-direction: column;
-              gap: 2px;
-            }
           }
 
           .column-details {
             display: flex;
             flex-direction: column;
             gap: 4px;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
           }
         }
 
         .column-actions {
           display: flex;
           align-items: center;
+          gap: 6px;
+          flex-shrink: 0;
+
+          .drag-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+
+            .c-icon {
+              opacity: 0.6;
+              transition: all 0.2s ease;
+
+              &:not(.disabled):hover {
+                opacity: 1;
+                transform: scale(1.15);
+              }
+
+              &.disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+              }
+            }
+          }
+
+          .c-icon {
+            transition: all 0.2s ease;
+
+            &:hover {
+              transform: scale(1.15);
+            }
+          }
         }
       }
     }

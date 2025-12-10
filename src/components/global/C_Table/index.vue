@@ -27,21 +27,15 @@
       <div class="toolbar-right">
         <slot name="toolbar-right" />
         <!-- 设置面板按钮 -->
-        <NButton
+        <C_Icon
           v-if="enableColumnSettings"
-          quaternary
-          circle
-          size="small"
+          name="mdi:cog"
+          size="18"
+          title="表格设置"
+          clickable
+          class="column-settings-btn"
           @click="showSettingsPanel = true"
-          title="列设置"
-        >
-          <template #icon>
-            <C_Icon
-              name="mdi:cog"
-              size="16"
-            />
-          </template>
-        </NButton>
+        />
       </div>
     </div>
 
@@ -59,6 +53,7 @@
       @update:expanded-row-keys="tableManager.expandState?.handleExpandChange"
       @update:checked-row-keys="tableManager.expandState?.handleSelectionChange"
       :scroll-x="computedScrollX"
+      style="width: 100%"
     />
 
     <!-- 分页组件 -->
@@ -97,7 +92,6 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, toRef, watch } from 'vue'
   import type { VNodeChild, ComponentPublicInstance } from 'vue'
   import { type DataTableRowKey, type DataTableColumn } from 'naive-ui/es'
   import type {
@@ -124,7 +118,6 @@
     renderDisplayCell,
     renderEditingCell,
     renderEditableCell,
-    buildSettingsConfig,
     type TablePresetConfig,
   } from './data'
 
@@ -209,7 +202,18 @@
   const showSettingsPanel = ref(false)
 
   // 🆕 响应式列状态（用于实时更新）
-  const reactiveColumns = ref<TableColumn[]>([...props.columns])
+  const reactiveColumns = ref<TableColumn[]>([
+    ...props.columns,
+    // 添加操作列，默认固定在右侧
+    {
+      key: '_actions',
+      title: '操作',
+      width: 180,
+      editable: false,
+      visible: true,
+      fixed: 'right', // 默认固定在右侧
+    } as TableColumn,
+  ])
 
   // 🆕 计算 scroll-x：当有固定列时，必须设置 scroll-x 才能让固定列生效
   const computedScrollX = computed(() => {
@@ -219,21 +223,23 @@
     }
 
     // 检查是否有固定列
-    const hasFixedColumn = reactiveColumns.value.some(col => col.fixed)
+    const hasFixedColumn = reactiveColumns.value.some(
+      col => col.fixed && col.visible !== false
+    )
 
-    // 如果有固定列，自动计算总宽度
+    // 如果有固定列，必须设置 scroll-x
     if (hasFixedColumn) {
       const totalWidth = reactiveColumns.value
         .filter(col => col.visible !== false)
         .reduce((sum, col) => {
-          return sum + (col.width || props.columnWidth || 180)
+          const colWidth = col.width || props.columnWidth || 180
+          return sum + (typeof colWidth === 'number' ? colWidth : 180)
         }, 0)
 
-      // 加上操作列的宽度（假设 150px）
-      return totalWidth + 150
+      // 返回总宽度 + 缓冲区，确保能触发横向滚动
+      return totalWidth + 200
     }
 
-    // 没有固定列时不设置 scroll-x
     return undefined
   })
 
@@ -302,13 +308,20 @@
 
   // 🆕 设置面板事件处理函数
   const handleColumnChange = (columns: TableColumn[]) => {
-    // 更新列配置，确保修改生效
-    console.log('列配置变化:', columns)
+    const fixedColumns = columns.filter(col => col.fixed)
+    if (fixedColumns.length > 0) {
+      console.log(
+        '🔧 固定列设置:',
+        fixedColumns.map(col => ({
+          key: col.key,
+          fixed: col.fixed,
+        }))
+      )
+    }
 
     // 更新响应式列状态
     reactiveColumns.value = columns.map(col => ({
       ...col,
-      // 确保必要的属性存在
       visible: col.visible !== false,
       fixed: col.fixed,
       width: col.width || props.columnWidth,
@@ -316,7 +329,6 @@
       titleAlign: col.titleAlign || 'center',
     }))
 
-    // 触发外部事件
     emit('column-change', reactiveColumns.value)
   }
 
@@ -324,12 +336,63 @@
   watch(
     () => props.columns,
     newColumns => {
-      if (newColumns && newColumns !== reactiveColumns.value) {
-        reactiveColumns.value = [...newColumns]
+      if (newColumns && newColumns.length > 0) {
+        // 保留操作列的固定状态
+        const actionsCol = reactiveColumns.value.find(
+          col => col.key === '_actions'
+        )
+        reactiveColumns.value = [
+          ...newColumns,
+          actionsCol ||
+            ({
+              key: '_actions',
+              title: '操作',
+              width: 180,
+              editable: false,
+              visible: true,
+              fixed: 'right',
+            } as TableColumn),
+        ]
       }
     },
     { deep: true, immediate: true }
   )
+
+  // ================= 单元格渲染辅助函数 =================
+  const renderCellEdit = (
+    column: TableColumn,
+    rowData: DataRecord,
+    rowIndex: number,
+    rowKey: DataTableRowKey
+  ): VNodeChild => {
+    const value = rowData[column.key]
+    const isEditingCell = tableManager.editStates.cellEdit.isEditingCell(
+      rowKey,
+      column.key
+    )
+
+    if (isEditingCell) {
+      return renderEditingCell(
+        column,
+        tableManager.editStates.cellEdit.getEditingCellValue(
+          rowKey,
+          column.key
+        ) ?? value,
+        val =>
+          tableManager.editStates.cellEdit.updateEditingCellValue(
+            rowKey,
+            column.key,
+            val
+          ),
+        () => tableManager.editStates.cellEdit.saveEditCell(),
+        () => tableManager.editStates.cellEdit.cancelEditCell()
+      )
+    }
+
+    return renderEditableCell(column, rowData, rowIndex, value, () =>
+      tableManager.editStates.cellEdit.startEditCell(rowKey, column.key)
+    )
+  }
 
   // ================= 单元格渲染函数 =================
   const renderCell = (
@@ -363,71 +426,73 @@
     }
 
     if (editModeChecker.value.isCellEditMode()) {
-      const isEditingCell = tableManager.editStates.cellEdit.isEditingCell(
-        rowKey,
-        column.key
-      )
-
-      return isEditingCell
-        ? renderEditingCell(
-            column,
-            tableManager.editStates.cellEdit.getEditingCellValue(
-              rowKey,
-              column.key
-            ) ?? rowData[column.key],
-            val =>
-              tableManager.editStates.cellEdit.updateEditingCellValue(
-                rowKey,
-                column.key,
-                val
-              ),
-            () => tableManager.editStates.cellEdit.saveEditCell(),
-            () => tableManager.editStates.cellEdit.cancelEditCell()
-          )
-        : renderEditableCell(column, rowData, rowIndex, value, () =>
-            tableManager.editStates.cellEdit.startEditCell(rowKey, column.key)
-          )
+      return renderCellEdit(column, rowData, rowIndex, rowKey)
     }
 
     return renderDisplayCell(column, rowData, rowIndex, value)
   }
 
+  // 列映射辅助函数
+  const mapIndexColumn = (column: TableColumn): DataTableColumn => {
+    const indexWidth = column.width || 50
+    return {
+      key: '_index',
+      title: column.title || '序号',
+      width: typeof indexWidth === 'number' ? indexWidth : 50,
+      titleAlign: 'center' as const,
+      align: 'center' as const,
+      render: (_: DataRecord, index: number) => index + 1,
+      editable: false,
+      fixed: column.fixed,
+    }
+  }
+
+  const mapRegularColumn = (column: TableColumn): DataTableColumn => {
+    const columnWidth = column.width || props.columnWidth || 180
+    const baseColumn: any = {
+      ...column,
+      width: typeof columnWidth === 'number' ? columnWidth : 180,
+      titleAlign: column.titleAlign || ('center' as const),
+      align: column.align || ('center' as const),
+      render:
+        column.render ||
+        ((rowData: DataRecord, rowIndex: number) =>
+          renderCell(column, rowData, rowIndex)),
+    }
+
+    if (column.fixed) {
+      baseColumn.fixed = column.fixed
+    }
+
+    return baseColumn
+  }
+
+  // 日志辅助函数
+  const logFixedColumns = (columns: DataTableColumn[]) => {
+    const fixedCols = columns.filter(c => 'fixed' in c && c.fixed)
+    if (fixedCols.length > 0) {
+      console.log(
+        '📌 固定列:',
+        fixedCols.map(c => ({
+          key: 'key' in c ? c.key : '',
+          fixed: 'fixed' in c ? c.fixed : undefined,
+          width: 'width' in c ? c.width : undefined,
+        }))
+      )
+    }
+  }
+
   // ================= 计算列配置 =================
   // 🆕 修改 computedColumns 支持固定列，使用响应式列状态
   const computedColumns = computed((): DataTableColumn[] => {
-    // 🆕 过滤可见列
+    // 🆕 过滤可见列，同时排除操作列（操作列会在最后单独添加）
     let columns: DataTableColumn[] = reactiveColumns.value
-      .filter(column => column.visible !== false)
+      .filter(column => column.visible !== false && column.key !== '_actions')
       .map(column => {
-        // 🔥 自动处理序号列
         if (column.type === 'index') {
-          return {
-            key: '_index',
-            title: column.title || '序号',
-            width: column.width || 50,
-            titleAlign: 'center' as const,
-            align: 'center' as const,
-            render: (_: DataRecord, index: number) => index + 1,
-            // 序号列不参与编辑系统
-            editable: false,
-            // 🆕 支持序号列固定
-            fixed: column.fixed,
-          }
+          return mapIndexColumn(column)
         }
-
-        // 其他原有处理逻辑 + 固定列处理
-        return {
-          ...column,
-          width: column.width || props.columnWidth,
-          titleAlign: column.titleAlign || ('center' as const),
-          align: column.align || ('center' as const), // 🎯 默认居中对齐
-          render:
-            column.render ||
-            ((rowData: DataRecord, rowIndex: number) =>
-              renderCell(column, rowData, rowIndex)),
-          // 🆕 添加固定列支持
-          fixed: column.fixed,
-        }
+        return mapRegularColumn(column)
       }) as DataTableColumn[]
 
     // 功能列增强
@@ -446,17 +511,20 @@
       ) as DataTableColumn[]
     }
 
-    // 🆕 操作列 - 支持固定
+    // 🆕 操作列 - 默认不固定，用户可以在设置中选择固定
+    const actionsColumn = reactiveColumns.value.find(
+      col => col.key === '_actions'
+    )
     columns.push({
       key: '_actions',
       title: '操作',
       align: 'center' as const,
       titleAlign: 'center' as const,
       render: tableActions.renderActions,
-      // 🆕 操作列固定到右侧
-      fixed: 'right',
+      fixed: actionsColumn?.fixed,
     })
 
+    logFixedColumns(columns)
     return columns
   })
 
@@ -487,10 +555,4 @@
 
 <style scoped lang="scss">
   @use './index.scss';
-
-  .pagination-wrapper {
-    margin-top: 16px;
-    display: flex;
-    justify-content: flex-end;
-  }
 </style>

@@ -21,8 +21,7 @@
       title="列设置"
       closable
     >
-      <!-- 直接显示列管理内容，不需要 Tab -->
-      <ColumnManagementTab
+      <ColumnManagement
         :columns="columns"
         @change="handleColumnChange"
       />
@@ -34,7 +33,7 @@
   import { computed } from 'vue'
   import { NDrawer, NDrawerContent } from 'naive-ui/es'
   import type { TableColumn } from '@/types/modules/table'
-  import ColumnManagementTab from './tabs/ColumnManagementTab.vue'
+  import ColumnManagement from './ColumnManagement.vue'
 
   interface Props {
     visible: boolean
