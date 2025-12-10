@@ -6,9 +6,6 @@
     },
     {
       "path": "./tsconfig/tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig/tsconfig.vitest.json"
     }
   ]
 }

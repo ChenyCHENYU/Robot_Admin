@@ -442,7 +442,6 @@
       titleAlign: 'center' as const,
       align: 'center' as const,
       render: (_: DataRecord, index: number) => index + 1,
-      editable: false,
       fixed: column.fixed,
     }
   }
