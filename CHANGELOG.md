@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.11.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.10.0...v1.11.0) (2025-12-11)
+
+
+### Features
+
+* **table-setting:** 增加表格列宽调整配置 ([8c74ee0](https://github.com/ChenyCHENYU/Robot_Admin/commit/8c74ee003baa6372f7b537b8e679881e8a70cc6e))
+* 增加表格高级配置能力 ([7fedaac](https://github.com/ChenyCHENYU/Robot_Admin/commit/7fedaacf0ec1b68e4abce329934a887e5d1cff09))
+
+
+### Performance Improvements
+
+* **config:** 优化清理vitest配置文件 ([0d31b35](https://github.com/ChenyCHENYU/Robot_Admin/commit/0d31b357d9ed9dfbbe44cf96381fc65684b6248f))
+* **table-setting:** 表格高级设置功能完成 ([da2a803](https://github.com/ChenyCHENYU/Robot_Admin/commit/da2a8031e458201f2dad6044123aba5138ca0575))
+* 优化表格列配置 ([6a9916c](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a9916c42e10f9a1df09675408494a2c7e585e5f))
+
 ## [1.10.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.9.0...v1.10.0) (2025-12-02)
 
 
