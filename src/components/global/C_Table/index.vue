@@ -463,6 +463,13 @@
       baseColumn.fixed = column.fixed
     }
 
+    // 🆕 支持列宽拖拽调整
+    if (column.resizable && typeof baseColumn.width === 'number') {
+      baseColumn.resizable = true
+      baseColumn.minWidth = column.minWidth || 80
+      baseColumn.maxWidth = column.maxWidth || 500
+    }
+
     return baseColumn
   }
 

@@ -10,17 +10,38 @@
 
 <template>
   <div class="column-management-tab">
-    <!-- 搜索框 -->
-    <NInput
-      v-model:value="searchText"
-      placeholder="搜索列名..."
-      clearable
-      class="search-input"
-    >
-      <template #prefix>
-        <C_Icon name="mdi:magnify" />
-      </template>
-    </NInput>
+    <!-- 搜索框和列宽调整开关 -->
+    <div class="search-row">
+      <NInput
+        v-model:value="searchText"
+        placeholder="搜索列名..."
+        clearable
+        class="search-input"
+      >
+        <template #prefix>
+          <C_Icon name="mdi:magnify" />
+        </template>
+      </NInput>
+
+      <div class="resizable-control">
+        <C_Icon
+          name="mdi:arrow-split-vertical"
+          size="14"
+          :title="
+            enableResizable ? '开启后可拖拽列边界调整宽度' : '允许调整列宽'
+          "
+        />
+        <NText :style="{ fontSize: '12px', marginLeft: '4px' }">
+          列宽调整
+        </NText>
+        <NSwitch
+          v-model:value="enableResizable"
+          size="small"
+          style="margin-left: 6px"
+          @update:value="handleResizableChange"
+        />
+      </div>
+    </div>
 
     <!-- 顶部操作栏：统计信息和快捷操作按钮 -->
     <div class="top-actions-bar">
@@ -167,7 +188,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import {
     NCheckbox,
     NButton,
@@ -176,6 +197,7 @@
     NDropdown,
     NInput,
     NTag,
+    NSwitch,
   } from 'naive-ui/es'
   import C_Icon from '@/components/global/C_Icon/index.vue'
   import type { TableColumn } from '@/types/modules/table'
@@ -194,10 +216,16 @@
   const localColumns = ref<TableColumn[]>([...props.columns])
   const searchText = ref('')
   const listRef = ref<HTMLElement>()
-
-  // 拖拽相关状态
   const draggedIndex = ref<number | null>(null)
   const dragOverIndex = ref<number | null>(null)
+  const enableResizable = ref(false)
+
+  // 初始化：检查是否有列已启用 resizable
+  onMounted(() => {
+    enableResizable.value = localColumns.value.some(
+      col => col.resizable === true
+    )
+  })
 
   // 过滤后的列
   const filteredColumns = computed(() => {
@@ -212,31 +240,21 @@
   })
 
   // 统计信息
-  const visibleCount = computed(() => {
-    return localColumns.value.filter(col => col.visible !== false).length
-  })
-
+  const visibleCount = computed(
+    () => localColumns.value.filter(col => col.visible !== false).length
+  )
   const totalCount = computed(() => localColumns.value.length)
 
-  // 全选
-  const selectAll = () => {
+  // 批量设置列可见性
+  const setAllColumnsVisible = (visible: boolean) => {
     localColumns.value.forEach(col => {
-      if (col.key !== '_actions') {
-        col.visible = true
-      }
+      if (col.key !== '_actions') col.visible = visible
     })
     applyChanges()
   }
 
-  // 全不选
-  const selectNone = () => {
-    localColumns.value.forEach(col => {
-      if (col.key !== '_actions') {
-        col.visible = false
-      }
-    })
-    applyChanges()
-  }
+  const selectAll = () => setAllColumnsVisible(true)
+  const selectNone = () => setAllColumnsVisible(false)
 
   // 通用的索引查找函数
   const findOriginalIndex = (filteredIndex: number): number => {
@@ -244,21 +262,28 @@
     return localColumns.value.findIndex(col => col.key === column.key)
   }
 
-  const toggleColumnVisibility = (index: number, visible: boolean) => {
+  // 更新列属性的通用函数
+  const updateColumnProperty = (
+    index: number,
+    updater: (col: TableColumn) => void
+  ) => {
     const originalIndex = findOriginalIndex(index)
     if (originalIndex !== -1) {
-      localColumns.value[originalIndex].visible = visible
-      emit('change', [...localColumns.value])
+      updater(localColumns.value[originalIndex])
+      applyChanges()
     }
   }
 
+  const toggleColumnVisibility = (index: number, visible: boolean) => {
+    updateColumnProperty(index, col => {
+      col.visible = visible
+    })
+  }
+
   const handleFixedSelect = (index: number, value: string) => {
-    const originalIndex = findOriginalIndex(index)
-    if (originalIndex !== -1) {
-      localColumns.value[originalIndex].fixed =
-        value === 'none' ? undefined : (value as 'left' | 'right')
-      applyChanges()
-    }
+    updateColumnProperty(index, col => {
+      col.fixed = value === 'none' ? undefined : (value as 'left' | 'right')
+    })
   }
 
   const getFixedOptions = (column: TableColumn) => {
@@ -281,13 +306,27 @@
     ]
   }
 
+  const applyChanges = () => emit('change', [...localColumns.value])
   const resetColumns = () => {
     localColumns.value = [...props.columns]
     applyChanges()
   }
 
-  const applyChanges = () => {
-    emit('change', [...localColumns.value])
+  // 处理列宽调整开关变化
+  const handleResizableChange = (value: boolean) => {
+    localColumns.value.forEach(col => {
+      const isSpecialColumn =
+        ['_actions'].includes(col.key as string) ||
+        ['selection', 'expand'].includes(col.type!)
+      if (!isSpecialColumn) {
+        col.resizable = value
+        if (value) {
+          col.minWidth = col.minWidth || 80
+          col.maxWidth = col.maxWidth || 500
+        }
+      }
+    })
+    applyChanges()
   }
 
   const moveColumn = (fromIndex: number, toIndex: number) => {
@@ -301,7 +340,7 @@
     }
   }
 
-  // 🆕 拖拽功能
+  // 拖拽功能
   const handleDragStart = (index: number, event: DragEvent) => {
     const column = filteredColumns.value[index]
     if (column.key === '_actions') {
@@ -309,30 +348,26 @@
       return
     }
     draggedIndex.value = index
-    if (event.dataTransfer) {
-      event.dataTransfer.effectAllowed = 'move'
-    }
+    if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move'
   }
 
   const handleDragOver = (index: number, event: DragEvent) => {
     event.preventDefault()
-    if (draggedIndex.value === null) return
-
-    const column = filteredColumns.value[index]
-    if (column.key === '_actions') return
-
+    if (
+      draggedIndex.value === null ||
+      filteredColumns.value[index].key === '_actions'
+    )
+      return
     dragOverIndex.value = index
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = 'move'
-    }
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'
   }
 
   const handleDrop = (toIndex: number) => {
-    if (draggedIndex.value === null) return
-
-    const toColumn = filteredColumns.value[toIndex]
-    if (toColumn.key === '_actions') return
-
+    if (
+      draggedIndex.value === null ||
+      filteredColumns.value[toIndex].key === '_actions'
+    )
+      return
     moveColumn(draggedIndex.value, toIndex)
     draggedIndex.value = null
     dragOverIndex.value = null
@@ -346,8 +381,27 @@
 
 <style scoped lang="scss">
   .column-management-tab {
-    .search-input {
+    .search-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       margin-bottom: 12px;
+
+      .search-input {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .resizable-control {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: 0 10px;
+        height: 34px;
+        background: var(--n-color-target);
+        border-radius: 6px;
+        white-space: nowrap;
+      }
     }
 
     .top-actions-bar {

@@ -96,6 +96,35 @@
     }
   }
 
+  // 🆕 列宽调整开关样式
+  .resizable-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    background: var(--n-color-embedded);
+    border-radius: 8px;
+    border: 1px solid var(--n-border-color);
+    
+    .switch-label {
+      display: flex;
+      align-items: center;
+      color: var(--n-text-color-1);
+    }
+  }
+
+  .resizable-tip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    margin-bottom: 12px;
+    background: var(--n-info-color-suppl);
+    border-radius: 6px;
+    border-left: 3px solid var(--n-info-color);
+  }
+
   // 列表布局
   .column-list,
   .field-list {
