@@ -12,7 +12,7 @@ import {
   defineConfigWithVueTs,
   vueTsConfigs,
 } from '@vue/eslint-config-typescript'
-import pluginVitest from '@vitest/eslint-plugin'
+// import pluginVitest from '@vitest/eslint-plugin'
 import oxlint from 'eslint-plugin-oxlint'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 import jsdocPlugin from 'eslint-plugin-jsdoc'
@@ -68,10 +68,10 @@ export default defineConfigWithVueTs(
   },
 
   //MARK: 测试文件规则组
-  {
-    ...pluginVitest.configs.recommended,
-    files: ['src/**/__tests__/*'],
-  },
+  // {
+  //   ...pluginVitest.configs.recommended,
+  //   files: ['src/**/__tests__/*'],
+  // },
 
   //MARK: 自定义规则组（优先级最高）
   {

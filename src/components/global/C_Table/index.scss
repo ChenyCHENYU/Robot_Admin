@@ -5,7 +5,38 @@
   position: relative;
 }
 
-// ================= 2. 动态行工具栏 =================
+// ================= 2. 表格工具栏 =================
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .column-settings-btn {
+      opacity: 0.6;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+// ================= 3. 动态行工具栏 =================
 .dynamic-rows-toolbar {
   margin-bottom: 16px;
   padding: 16px;
@@ -20,7 +51,7 @@
   }
 }
 
-// ================= 3. 表格布局基础 =================
+// ================= 4. 表格布局基础 =================
 :deep(.n-data-table) {
   table-layout: auto !important;
   width: 100% !important;
@@ -28,7 +59,18 @@
   overflow: hidden;
 }
 
-// ================= 4. 表格列宽度管理 =================
+// 🆕 确保表格容器允许横向滚动（固定列必需）
+:deep(.n-data-table-wrapper) {
+  overflow-x: auto !important;
+}
+
+// 分页组件样式
+.pagination-wrapper {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+// ================= 5. 表格列宽度管理 =================
 
 // 普通列的最小宽度保护
 :deep(.n-data-table-th:not(:last-child), 
@@ -52,7 +94,7 @@
   align-items: center !important;
 }
 
-// ================= 5. 可编辑单元格样式 =================
+// ================= 6. 可编辑单元格样式 =================
 
 // 单元格编辑容器 - 精致化设计
 .cell-edit-wrapper {
@@ -132,7 +174,7 @@
   }
 }
 
-// ================= 6. 单元格编辑状态样式 =================
+// ================= 7. 单元格编辑状态样式 =================
 
 // 编辑容器 - 确保水平布局不换行
 .cell-editing-container,

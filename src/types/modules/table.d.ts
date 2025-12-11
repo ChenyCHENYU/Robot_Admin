@@ -245,6 +245,10 @@ interface BaseTableColumn<T extends DataRecord = DataRecord>
   render?: (rowData: T, rowIndex: number) => VNodeChild
   // 🆕 添加固定列支持
   fixed?: 'left' | 'right'
+  // 🆕 列宽调整支持
+  resizable?: boolean // 是否允许拖拽调整列宽
+  minWidth?: number // 列的最小宽度
+  maxWidth?: number // 列的最大宽度
 }
 
 interface NormalTableColumn<T extends DataRecord = DataRecord>

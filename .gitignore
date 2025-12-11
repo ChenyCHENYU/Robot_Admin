@@ -40,7 +40,9 @@ project_path.txt
 
 type-reports
 
+# 自动生成的类型声明文件
 src/types/auto-imports.d.ts
+src/types/components.d.ts
 
 # openapi.json 
 # src/api/generated/  

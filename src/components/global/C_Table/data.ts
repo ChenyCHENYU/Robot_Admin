@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-14 22:06:22
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-09-02 10:41:40
+ * @LastEditTime: 2025-12-10 08:07:47
  * @FilePath: \Robot_Admin\src\components\global\C_Table\data.ts
  * @Description: 表格数据处理模块
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -450,3 +450,81 @@ export const getDisplayValue = (
  */
 export const getDescriptionSpan = (column: TableColumn): number =>
   column.key === 'description' || column.editProps?.type === 'textarea' ? 2 : 1
+
+// ================= 设置面板配置构建器 =================
+
+/**
+ * 构建设置面板配置
+ */
+export function buildSettingsConfig(props: any) {
+  const {
+    columns,
+    settingsPersistKey,
+    sortMode = 'single',
+    enableColumnSettings = true,
+    enableSortSettings = true,
+    enableFilterSettings = true,
+  } = props
+
+  // 预处理列数据，避免重复计算
+  const processedColumns = columns.map((col: TableColumn) => ({
+    key: col.key,
+    title: col.title || col.key,
+    visible: col.visible !== false,
+    fixed: col.fixed,
+    width: col.width,
+    resizable: col.resizable !== false,
+    sortable: col.sortable !== false,
+    filterable: col.filterable !== false,
+    sorter: col.sorter,
+    defaultSortOrder: col.defaultSortOrder,
+    filterOptions: col.filterOptions,
+    filterMultiple: col.filterMultiple,
+    filterValue: col.filterValue,
+    filter: col.filter,
+  }))
+
+  return {
+    // 基础配置
+    settingsPersistKey: settingsPersistKey || `table-settings-${Date.now()}`,
+
+    // 功能开关
+    features: {
+      columnSettings: enableColumnSettings,
+      sortSettings: enableSortSettings,
+      filterSettings: enableFilterSettings,
+    },
+
+    // 列设置配置
+    columnSettings: {
+      columns: processedColumns,
+    },
+
+    // 排序设置配置
+    sortSettings: {
+      mode: sortMode,
+      columns: processedColumns
+        .filter((col: any) => col.sortable !== false)
+        .map((col: any) => ({
+          key: col.key,
+          title: col.title,
+          sorter: col.sorter,
+          defaultSortOrder: col.defaultSortOrder,
+        })),
+    },
+
+    // 筛选设置配置
+    filterSettings: {
+      columns: processedColumns
+        .filter((col: any) => col.filterable !== false)
+        .map((col: any) => ({
+          key: col.key,
+          title: col.title,
+          filterOptions: col.filterOptions,
+          filterMultiple: col.filterMultiple,
+          filterValue: col.filterValue,
+          filter: col.filter,
+        })),
+    },
+  }
+}
