@@ -122,8 +122,9 @@
   } from './data'
 
   // ================= 类型定义 =================
-  interface EnhancedTableProps<T extends DataRecord = DataRecord>
-    extends TableProps<T> {
+  interface EnhancedTableProps<
+    T extends DataRecord = DataRecord,
+  > extends TableProps<T> {
     preset?: TablePresetConfig<T>
     actions?: SimpleTableActions<T>
     expandable?: boolean
@@ -446,11 +447,29 @@
     }
   }
 
-  const mapRegularColumn = (column: TableColumn): DataTableColumn => {
+  /**
+   * 计算列宽度
+   */
+  const getColumnWidth = (column: TableColumn): number => {
     const columnWidth = column.width || props.columnWidth || 180
+    return typeof columnWidth === 'number' ? columnWidth : 180
+  }
+
+  /**
+   * 应用可调整大小配置
+   */
+  const applyResizable = (baseColumn: any, column: TableColumn): void => {
+    if (column.resizable && typeof baseColumn.width === 'number') {
+      baseColumn.resizable = true
+      baseColumn.minWidth = column.minWidth || 80
+      baseColumn.maxWidth = column.maxWidth || 500
+    }
+  }
+
+  const mapRegularColumn = (column: TableColumn): DataTableColumn => {
     const baseColumn: any = {
       ...column,
-      width: typeof columnWidth === 'number' ? columnWidth : 180,
+      width: getColumnWidth(column),
       titleAlign: column.titleAlign || ('center' as const),
       align: column.align || ('center' as const),
       render:
@@ -463,12 +482,7 @@
       baseColumn.fixed = column.fixed
     }
 
-    // 🆕 支持列宽拖拽调整
-    if (column.resizable && typeof baseColumn.width === 'number') {
-      baseColumn.resizable = true
-      baseColumn.minWidth = column.minWidth || 80
-      baseColumn.maxWidth = column.maxWidth || 500
-    }
+    applyResizable(baseColumn, column)
 
     return baseColumn
   }
@@ -489,10 +503,11 @@
   }
 
   // ================= 计算列配置 =================
-  // 🆕 修改 computedColumns 支持固定列，使用响应式列状态
-  const computedColumns = computed((): DataTableColumn[] => {
-    // 🆕 过滤可见列，同时排除操作列（操作列会在最后单独添加）
-    let columns: DataTableColumn[] = reactiveColumns.value
+  /**
+   * 过滤并映射基础列（不包括操作列）
+   */
+  const getBaseColumns = (): DataTableColumn[] => {
+    return reactiveColumns.value
       .filter(column => column.visible !== false && column.key !== '_actions')
       .map(column => {
         if (column.type === 'index') {
@@ -500,24 +515,39 @@
         }
         return mapRegularColumn(column)
       }) as DataTableColumn[]
+  }
 
-    // 功能列增强
-    if (tableManager.dynamicRowsState) {
-      columns = tableManager.dynamicRowsState.enhanceColumns(
-        columns as any
-      ) as DataTableColumn[]
-    }
+  /**
+   * 应用动态行增强
+   */
+  const applyDynamicEnhancement = (
+    columns: DataTableColumn[]
+  ): DataTableColumn[] => {
+    if (!tableManager.dynamicRowsState) return columns
+    return tableManager.dynamicRowsState.enhanceColumns(
+      columns as any
+    ) as DataTableColumn[]
+  }
 
-    if (
+  /**
+   * 应用展开和选择功能
+   */
+  const applyExpandAndSelection = (
+    columns: DataTableColumn[]
+  ): DataTableColumn[] => {
+    const shouldApply =
       tableManager.expandState &&
       (config.value.expandable || config.value.enableSelection)
-    ) {
-      columns = tableManager.expandState.getTableColumns(
-        columns as any
-      ) as DataTableColumn[]
-    }
+    if (!shouldApply) return columns
+    return tableManager.expandState!.getTableColumns(
+      columns as any
+    ) as DataTableColumn[]
+  }
 
-    // 🆕 操作列 - 默认不固定，用户可以在设置中选择固定
+  /**
+   * 添加操作列
+   */
+  const addActionsColumn = (columns: DataTableColumn[]): DataTableColumn[] => {
     const actionsColumn = reactiveColumns.value.find(
       col => col.key === '_actions'
     )
@@ -529,7 +559,15 @@
       render: tableActions.renderActions,
       fixed: actionsColumn?.fixed,
     })
+    return columns
+  }
 
+  // 🆕 修改 computedColumns 支持固定列，使用响应式列状态
+  const computedColumns = computed((): DataTableColumn[] => {
+    let columns = getBaseColumns()
+    columns = applyDynamicEnhancement(columns)
+    columns = applyExpandAndSelection(columns)
+    columns = addActionsColumn(columns)
     logFixedColumns(columns)
     return columns
   })
