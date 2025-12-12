@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.11.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.0...v1.11.1) (2025-12-12)
+
+
+### Bug Fixes
+
+* permanently remove auto-imports.d.ts from git ([d59e69b](https://github.com/ChenyCHENYU/Robot_Admin/commit/d59e69b65caba4eee7834c01d0de5df7e95ce9b1))
+* remove auto-imports tracking and fix lint errors ([426f626](https://github.com/ChenyCHENYU/Robot_Admin/commit/426f6266b8c2f72a5e33127a871202337b553403))
+* **table/C_Table:** 降低组件函数复杂圈度 ([eb98519](https://github.com/ChenyCHENYU/Robot_Admin/commit/eb9851908297fa5f806930f7d89055df3f609ee0))
+
 ## [1.11.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.10.0...v1.11.0) (2025-12-11)
 
 
