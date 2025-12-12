@@ -62,15 +62,22 @@ export default defineConfig(({ mode }: { mode: string }) => {
     resolve: resolveConfig,
 
     optimizeDeps: {
-      include: ['naive-ui'],
-      exclude: [
-        'pinia-plugin-persistedstate',
-        'echarts',
+      // ✅ 预构建大型依赖以提升启动速度
+      include: [
+        'naive-ui',
+        'vue',
+        'vue-router',
+        'pinia',
+        '@vueuse/core',
         'echarts/core',
         'echarts/charts',
         'echarts/components',
         'echarts/renderers',
+        '@antv/x6',
+        'driver.js',
+        'axios',
       ],
+      exclude: ['pinia-plugin-persistedstate'],
     },
 
     server: serverConfig,
