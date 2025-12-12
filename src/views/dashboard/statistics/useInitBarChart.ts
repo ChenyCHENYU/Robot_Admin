@@ -57,7 +57,7 @@ export const useInitBarChart = (chartDom: HTMLElement | undefined) => {
     },
   }
 
-  option && myChart.setOption(option)
+  if (option) myChart.setOption(option)
 }
 
 export default { useInitBarChart }

@@ -182,8 +182,8 @@
 
   // 组件卸载前清理定时器，避免内存泄漏
   onBeforeUnmount(() => {
-    raceTimer && clearInterval(raceTimer)
-    doubleTimer && clearInterval(doubleTimer)
+    if (raceTimer) clearInterval(raceTimer)
+    if (doubleTimer) clearInterval(doubleTimer)
   })
 </script>
 
