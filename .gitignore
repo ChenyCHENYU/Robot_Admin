@@ -49,3 +49,6 @@ src/types/components.d.ts
 
 
 .mgit-push.json
+# Monorepo 目录（仅在 monorepo 分支使用）
+packages/
+apps/robot-admin-*/
