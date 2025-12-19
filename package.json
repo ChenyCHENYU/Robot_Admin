@@ -44,6 +44,7 @@
     "@iconify-json/ri": "^1.2.5",
     "@iconify/vue": "^5.0.0",
     "@kangc/v-md-editor": "^2.3.18",
+    "@micro-zoe/micro-app": "^1.0.0-rc.28",
     "@splinetool/runtime": "^1.9.92",
     "@tato30/vue-pdf": "^1.11.4",
     "@types/leaflet": "^1.9.21",

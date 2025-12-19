@@ -99,7 +99,7 @@ const handleUnauthenticated = (
 
 // 处理已登录访问登录页
 const handleLoginPageRedirect = (): string => {
-  return '/home'
+  return '/portal' // 登录后跳转到门户页面
 }
 
 // 核心路由守卫 - 降低复杂度版本

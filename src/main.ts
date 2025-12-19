@@ -34,6 +34,7 @@ import {
   setupAnalytics,
 } from '@/plugins'
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
+import microApp from '@micro-zoe/micro-app'  // 🔥 引入 micro-app
 
 /**
  * @description: 应用启动入口
@@ -42,6 +43,13 @@ import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 async function bootstrap() {
   // ⭐ 第零阶段：立即显示加载动画（innerHTML 方式，极速）
   setupLoading()
+
+  // 🔥 启动 micro-app（作为主应用）
+  microApp.start({
+    'disable-memory-router': false, // 启用虚拟路由
+    'disable-patch-request': false, // 启用请求拦截
+  })
+  console.log('🚀 [主应用] micro-app 已启动')
 
   // 第一阶段：创建Vue实例
   const app = createApp(App)
