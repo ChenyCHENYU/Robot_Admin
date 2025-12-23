@@ -134,7 +134,7 @@
               <a
                 href="#"
                 class="card-more"
-                >更多</a
+                >more+</a
               >
             </div>
             <div class="external-list">
@@ -199,7 +199,7 @@
               <a
                 href="#"
                 class="card-more"
-                >更多</a
+                >more+</a
               >
             </div>
             <div class="tab-group">
@@ -249,36 +249,42 @@
           <div class="weather-card">
             <div class="weather-circle"></div>
             <div class="weather-header">
-              <div class="weather-date">
-                <span class="date-num">{{ currentDay }}</span>
-                <div class="date-info">
+              <div class="weather-main">
+                <span class="temp-large">{{ currentDay }}</span>
+                <div class="temp-small-wrapper">
                   <span class="temp-divider">/</span>
-                  <span class="temp-value">{{ temperature }}°C</span>
-                  <div class="weather-label">{{ weatherDesc }}</div>
+                  <span class="temp-small">{{ temperature }}°C</span>
                 </div>
               </div>
+              <div class="weather-desc">{{ weatherDesc }}</div>
             </div>
             <div class="weather-details">
-              <div class="detail-row">
+              <div class="detail-item">
                 <Icon
-                  icon="ri:drop-line"
-                  :size="12"
+                  icon="ri:water-percent-line"
+                  :size="20"
                 />
-                <span>湿度：{{ humidity }}</span>
+                <div class="detail-text">
+                  <span class="detail-label">湿度: {{ humidity }}</span>
+                </div>
               </div>
-              <div class="detail-row">
+              <div class="detail-item">
+                <Icon
+                  icon="ri:navigation-line"
+                  :size="20"
+                />
+                <div class="detail-text">
+                  <span class="detail-label">风向:{{ windDirection }}</span>
+                </div>
+              </div>
+              <div class="detail-item">
                 <Icon
                   icon="ri:windy-line"
-                  :size="12"
+                  :size="20"
                 />
-                <span>风向：西南</span>
-              </div>
-              <div class="detail-row">
-                <Icon
-                  icon="ri:eye-line"
-                  :size="12"
-                />
-                <span>风力：≤3</span>
+                <div class="detail-text">
+                  <span class="detail-label">风力:{{ windPower }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -369,85 +375,154 @@
   })
   const activeAppId = ref('data-analytics')
   const messageTab = ref('all')
-
-  // 快捷栏展开状态
   const isShortcutsExpanded = ref(false)
 
-  const currentDay = ref('27')
-  const temperature = ref('16')
-  const weatherDesc = ref('晴')
-  const humidity = ref('85')
+  // ===== 天气模块 =====
+  interface WeatherData {
+    temp_C?: string
+    humidity?: string
+    winddir16Point?: string
+    windspeedKmph?: string
+    lang_zh?: Array<{ value: string }>
+    weatherDesc?: Array<{ value: string }>
+  }
 
-  const currentDate = ref(new Date(2030, 9, 1)) // 2030年10月
+  const currentDay = ref('27')
+  const temperature = ref('--')
+  const weatherDesc = ref('加载中...')
+  const humidity = ref('--')
+  const windDirection = ref('--')
+  const windPower = ref('--')
+
+  const WIND_DIR_MAP: Record<string, string> = {
+    N: '北',
+    NNE: '东北偏北',
+    NE: '东北',
+    ENE: '东北偏东',
+    E: '东',
+    ESE: '东南偏东',
+    SE: '东南',
+    SSE: '东南偏南',
+    S: '南',
+    SSW: '西南偏南',
+    SW: '西南',
+    WSW: '西南偏西',
+    W: '西',
+    WNW: '西北偏西',
+    NW: '西北',
+    NNW: '西北偏北',
+  }
+
+  const WIND_LEVELS: Array<[number, string]> = [
+    [1, '微风'],
+    [5, '≤1'],
+    [11, '≤2'],
+    [19, '≤3'],
+    [28, '≤4'],
+    [38, '≤5'],
+    [49, '≤6'],
+    [Infinity, '7级以上'],
+  ]
+
+  const getWindLevel = (speed: number) =>
+    WIND_LEVELS.find(([max]) => speed < max)?.[1] || '≤3'
+
+  const getWeatherDesc = (w: WeatherData) =>
+    w.lang_zh?.[0]?.value || w.weatherDesc?.[0]?.value || '晴'
+
+  const getWindDir = (w: WeatherData) =>
+    WIND_DIR_MAP[w.winddir16Point || ''] || w.winddir16Point || '西南'
+
+  const setDefaultWeather = () => {
+    temperature.value = '16'
+    weatherDesc.value = '晴'
+    humidity.value = '85'
+    windDirection.value = '西南'
+    windPower.value = '≤3'
+  }
+
+  const updateWeatherData = (w: WeatherData) => {
+    temperature.value = w.temp_C || '16'
+    weatherDesc.value = getWeatherDesc(w)
+    humidity.value = w.humidity || '85'
+    windDirection.value = getWindDir(w)
+    windPower.value = getWindLevel(Number(w.windspeedKmph) || 0)
+  }
+
+  const fetchWeather = async () => {
+    try {
+      const res = await fetch('https://wttr.in/西安?format=j1')
+      const data = await res.json()
+      if (data.current_condition?.[0]) {
+        updateWeatherData(data.current_condition[0])
+      } else {
+        setDefaultWeather()
+      }
+    } catch {
+      setDefaultWeather()
+    }
+  }
+
+  // ===== 日历模块 =====
+  const currentDate = ref(new Date(2030, 9, 1))
 
   const calendarTitle = computed(() => {
-    const year = currentDate.value.getFullYear()
-    const month = currentDate.value.getMonth() + 1
-    return `${year}年 ${month}月`
+    const d = currentDate.value
+    return `${d.getFullYear()}年 ${d.getMonth() + 1}月`
   })
+
+  const generateDates = (
+    length: number,
+    offset: number,
+    isOther: boolean,
+    prefix: string
+  ) =>
+    Array.from({ length }, (_, i) => ({
+      day: offset + i,
+      isOtherMonth: isOther,
+      isToday:
+        !isOther &&
+        currentDate.value.getFullYear() === 2030 &&
+        currentDate.value.getMonth() === 9 &&
+        offset + i === 12,
+      key: `${prefix}-${i}`,
+    }))
 
   const calendarDates = computed(() => {
     const year = currentDate.value.getFullYear()
     const month = currentDate.value.getMonth()
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
-    const prevLastDay = new Date(year, month, 0)
+    const firstDayWeek = new Date(year, month, 1).getDay() || 7
+    const totalDays = new Date(year, month + 1, 0).getDate()
+    const prevMonthLastDay = new Date(year, month, 0).getDate()
 
-    const firstDayWeek = firstDay.getDay() || 7
-    const dates = []
+    const prevDates = generateDates(
+      firstDayWeek - 1,
+      prevMonthLastDay - firstDayWeek + 2,
+      true,
+      'prev'
+    )
+    const currentDates = generateDates(totalDays, 1, false, 'current')
+    const nextDates = generateDates(
+      42 - prevDates.length - currentDates.length,
+      1,
+      true,
+      'next'
+    )
 
-    for (let i = firstDayWeek - 1; i > 0; i--) {
-      dates.push({
-        day: prevLastDay.getDate() - i + 1,
-        isOtherMonth: true,
-        isToday: false,
-        key: `prev-${i}`,
-      })
-    }
-
-    for (let i = 1; i <= lastDay.getDate(); i++) {
-      const isToday = year === 2030 && month === 9 && i === 12
-      dates.push({
-        day: i,
-        isOtherMonth: false,
-        isToday,
-        key: `current-${i}`,
-      })
-    }
-
-    const remainingDays = 42 - dates.length
-    for (let i = 1; i <= remainingDays; i++) {
-      dates.push({
-        day: i,
-        isOtherMonth: true,
-        isToday: false,
-        key: `next-${i}`,
-      })
-    }
-
-    return dates
+    return [...prevDates, ...currentDates, ...nextDates]
   })
 
-  const prevMonth = () => {
-    currentDate.value = new Date(
-      currentDate.value.getFullYear(),
-      currentDate.value.getMonth() - 1
-    )
+  const changeMonth = (offset: number) => {
+    const d = currentDate.value
+    currentDate.value = new Date(d.getFullYear(), d.getMonth() + offset)
   }
 
-  const nextMonth = () => {
-    currentDate.value = new Date(
-      currentDate.value.getFullYear(),
-      currentDate.value.getMonth() + 1
-    )
-  }
+  const prevMonth = () => changeMonth(-1)
+  const nextMonth = () => changeMonth(1)
 
+  // ===== 应用交互 =====
   const handleShortcutClick = (app: App) => {
     activeAppId.value = app.id
-    handleAppClick(app)
-  }
-
-  const handleAppClick = (app: App) => {
     if (app.url) {
       router.push(app.url)
     } else if (app.port) {
@@ -455,20 +530,26 @@
     }
   }
 
+  const handleAppClick = handleShortcutClick
+
+  // ===== 定时器 =====
   const updateDateTime = () => {
-    const now = new Date()
-    currentDay.value = now.getDate().toString()
+    currentDay.value = new Date().getDate().toString()
   }
 
   let timer: ReturnType<typeof setInterval> | null = null
 
   onMounted(() => {
     updateDateTime()
-    timer = setInterval(updateDateTime, 60000)
+    fetchWeather()
+    timer = setInterval(() => {
+      updateDateTime()
+      fetchWeather()
+    }, 3600000)
   })
 
   onUnmounted(() => {
-    if (timer) clearInterval(timer)
+    timer && clearInterval(timer)
   })
 </script>
 

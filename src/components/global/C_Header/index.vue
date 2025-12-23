@@ -145,10 +145,10 @@
                   v-if="system.isGroup"
                   class="system-item group-title"
                 >
-                  <i
-                    :class="system.icon"
-                    class="system-icon"
-                  ></i>
+                  <C_Icon
+                    :name="system.icon.replace('i-', '')"
+                    :size="16"
+                  />
                   <span>{{ system.name }}</span>
                 </div>
                 <div
@@ -160,10 +160,10 @@
                   }"
                   @mouseenter="handleSystemHover(system)"
                 >
-                  <i
-                    :class="system.icon"
-                    class="system-icon"
-                  ></i>
+                  <C_Icon
+                    :name="system.icon.replace('i-', '')"
+                    :size="16"
+                  />
                   <span>{{ system.name }}</span>
                 </div>
               </template>
@@ -173,10 +173,11 @@
           <!-- 右侧菜单内容 -->
           <div class="menu-content">
             <div class="content-header">
-              <i
-                :class="activeSystem?.icon"
-                class="text-20px"
-              ></i>
+              <C_Icon
+                v-if="activeSystem?.icon"
+                :name="activeSystem.icon.replace('i-', '')"
+                :size="20"
+              />
               <span class="system-name">{{ activeSystem?.name }}</span>
             </div>
 
@@ -308,6 +309,7 @@
   import { s_permissionStore } from '@/stores/permission'
   import { useRouter } from 'vue-router'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
+  import C_Icon from '@/components/global/C_Icon/index.vue'
   import { systemList, mockSystemMenus, type SystemMenu } from './data'
   import { s_favoritesStore } from '@/stores/favorites'
   import C_Favorites from '@/components/global/C_Favorites/index.vue'

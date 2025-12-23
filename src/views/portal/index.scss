@@ -184,7 +184,7 @@
 // 主内容区
 .main-content {
   flex: 1;
-  padding: 16px 100px;
+  padding: 16px 60px;
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -207,11 +207,37 @@
 }
 
 .content-grid {
-  display: grid;
-  grid-template-columns: 600px 600px 480px;
+  display: flex;
   gap: 12px;
-  max-width: 1680px;
+  max-width: 1800px;
   margin: 0 auto;
+}
+
+.left-column {
+  flex: 1.25;
+  min-width: 300px;
+  max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.center-column {
+  flex: 1.25;
+  min-width: 300px;
+  max-width: 650px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.right-column {
+  flex: 1;
+  min-width: 280px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 // 通用卡片
@@ -649,70 +675,70 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
 
-.weather-card {
-  background: linear-gradient(135deg, #FFEBB8 0%, #FFD875 50%, #FFC940 100%);
-  border-radius: 10px;
-  padding: 26px 22px;
+  .weather-card {
+  background: linear-gradient(135deg, #F5E6B3 0%, #FFD966 40%, #FFCC4D 70%, #FFB930 100%);
+  border-radius: 14px;
+  padding: 24px 20px 20px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(255, 201, 64, 0.25);
+  box-shadow: 0 3px 12px rgba(255, 185, 48, 0.18);
 
   .weather-circle {
     position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 140px;
-    height: 140px;
-    background: rgba(255, 255, 255, 0.15);
+    top: -55px;
+    right: -55px;
+    width: 160px;
+    height: 160px;
+    background: rgba(255, 255, 255, 0.12);
     border-radius: 50%;
   }
 
   .weather-header {
     position: relative;
     z-index: 1;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 
-    .weather-date {
+    .weather-main {
       display: flex;
-      align-items: flex-start;
-      gap: 4px;
+      align-items: baseline;
+      gap: 2px;
+      margin-bottom: 6px;
 
-      .date-num {
-        font-size: 68px;
-        font-weight: 800;
-        color: #fff;
-        line-height: 0.9;
-        letter-spacing: -2px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      .temp-large {
+        font-size: 60px;
+        font-weight: 600;
+        color: #2A2A2A;
+        line-height: 1;
+        letter-spacing: -1.5px;
       }
 
-      .date-info {
+      .temp-small-wrapper {
         display: flex;
-        flex-direction: column;
-        padding-top: 6px;
-        gap: 2px;
+        align-items: baseline;
+        padding-bottom: 4px;
 
         .temp-divider {
           font-size: 18px;
           font-weight: 300;
-          color: #fff;
+          color: #4A4A4A;
+          margin: 0 1px;
         }
 
-        .temp-value {
-          font-size: 20px;
-          font-weight: 600;
-          color: #fff;
-          margin-bottom: 2px;
-        }
-
-        .weather-label {
-          font-size: 13px;
-          color: rgba(255, 255, 255, 0.95);
-          font-weight: 400;
+        .temp-small {
+          font-size: 18px;
+          font-weight: 500;
+          color: #4A4A4A;
         }
       }
+    }
+
+    .weather-desc {
+      font-size: 24px;
+      font-weight: 500;
+      color: #2A2A2A;
+      letter-spacing: 1px;
+      margin-left: 2px;
     }
   }
 
@@ -720,28 +746,47 @@
     position: relative;
     z-index: 1;
     display: flex;
-    gap: 16px;
-    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 12px;
+    padding: 16px 14px;
+    backdrop-filter: blur(4px);
 
-    .detail-row {
+    .detail-item {
+      flex: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: #fff;
-      font-weight: 400;
-      white-space: nowrap;
+      gap: 8px;
 
-      svg {
-        color: #fff;
-        opacity: 0.95;
+      :deep(.iconify),
+      :deep(svg) {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 20px !important;
+        color: #4A4A4A;
+        opacity: 0.85;
+      }
+
+      .detail-text {
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        color: #3A3A3A;
+        font-weight: 400;
+        white-space: nowrap;
+
+        .detail-label {
+          font-weight: 400;
+        }
       }
     }
   }
-}
+  }
 
-.calendar-card {
-  .calendar-nav {
+  .calendar-card {
+    .calendar-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -821,22 +866,40 @@
       }
     }
   }
+  }
 }
 
 // 响应式
-@media (max-width: 1400px) {
-  .content-grid {
-    grid-template-columns: 260px 1fr 300px;
+@media (max-width: 1600px) {
+  .main-content {
+    padding: 16px 40px;
   }
+}
 
+@media (max-width: 1400px) {
   .app-function-card .app-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 1200px) {
+  .main-content {
+    padding: 16px 24px;
+  }
+
   .content-grid {
-    grid-template-columns: 280px 1fr;
+    flex-wrap: wrap;
+  }
+
+  .left-column {
+    min-width: 260px;
+    max-width: none;
+  }
+
+  .center-column {
+    flex: 1 1 calc(100% - 280px);
+    min-width: 0;
+    max-width: none;
   }
 
   .right-column {
@@ -849,8 +912,18 @@
 }
 
 @media (max-width: 900px) {
+  .main-content {
+    padding: 16px 16px;
+  }
+
   .content-grid {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .left-column,
+  .center-column {
+    flex: 1 1 100%;
+    max-width: none;
   }
 
   .left-column {
