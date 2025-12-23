@@ -47,7 +47,7 @@
       </NLayoutSider>
 
       <NLayout>
-        <C_Header />
+        <C_Header :show-portal-button="true" />
 
         <NLayoutContent class="content-with-header p16px app-content">
           <!-- ⚡ 智能 KeepAlive 缓存控制 -->

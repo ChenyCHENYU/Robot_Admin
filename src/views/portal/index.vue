@@ -1,1 +1,477 @@
-<!-- * @Description: 系统门户页面 - 展示所有可访问的系统 * @Author: ChenYu * @Date: 2025-12-19--><template>  <div class="portal-container">    <!-- 欢迎区域 -->    <div class="welcome-section">      <div class="welcome-card">        <div class="welcome-icon">👋</div>        <h1 class="welcome-title">欢迎回来，{{ userStore.userInfo.name || 'ChenYu' }}</h1>        <p class="welcome-desc">{{ greeting }}，开始您的工作吧</p>                <div class="stats-row">          <div class="stat-item">            <i class="i-ri:apps-line stat-icon"></i>            <div class="stat-content">              <div class="stat-value">{{ systemList.length }}</div>              <div class="stat-label">可用系统</div>            </div>          </div>          <div class="stat-item">            <i class="i-ri:time-line stat-icon"></i>            <div class="stat-content">              <div class="stat-value">{{ currentTime }}</div>              <div class="stat-label">当前时间</div>            </div>          </div>        </div>      </div>    </div>    <!-- 系统列表 -->    <div class="systems-section">      <div class="section-header">        <h2 class="section-title">          <i class="i-ri:dashboard-line"></i>          所有系统        </h2>        <NInput          v-model:value="searchKeyword"          placeholder="搜索系统..."          clearable          style="width: 300px"        >          <template #prefix>            <i class="i-ri:search-line"></i>          </template>        </NInput>      </div>      <div class="systems-grid">        <div          v-for="system in filteredSystems"          :key="system.id"          class="system-card"          :class="{ 'is-current': system.isCurrent }"          @click="handleSystemClick(system)"        >          <div class="system-badge" v-if="system.badge">            <span>{{ system.badge }}</span>          </div>                    <div class="system-icon" :style="{ background: system.color }">            <i :class="system.icon"></i>          </div>                    <div class="system-info">            <h3 class="system-name">{{ system.name }}</h3>            <p class="system-desc">{{ system.description }}</p>          </div>                    <div class="system-footer">            <NTag :type="system.status === 'running' ? 'success' : 'warning'" size="small">              {{ system.statusText }}            </NTag>            <span class="system-version">{{ system.version }}</span>          </div>          <div class="system-hover-overlay">            <NButton type="primary" size="large">              {{ system.isCurrent ? '进入系统' : '打开系统' }}            </NButton>          </div>        </div>      </div>    </div>    <!-- 最近访问 -->    <div class="recent-section" v-if="recentVisits.length > 0">      <h2 class="section-title">        <i class="i-ri:history-line"></i>        最近访问      </h2>      <div class="recent-list">        <div          v-for="item in recentVisits"          :key="item.id"          class="recent-item"          @click="handleSystemClick(item.system)"        >          <div class="recent-icon" :style="{ background: item.system.color }">            <i :class="item.system.icon"></i>          </div>          <div class="recent-info">            <div class="recent-name">{{ item.system.name }}</div>            <div class="recent-time">{{ item.visitTime }}</div>          </div>        </div>      </div>    </div>  </div></template><script setup lang="ts">import { s_userStore } from '@/stores/user'import { useRouter } from 'vue-router'const router = useRouter()const userStore = s_userStore()// 搜索关键词const searchKeyword = ref('')// 当前时间const currentTime = ref('')const updateTime = () => {  const now = new Date()  currentTime.value = now.toLocaleTimeString('zh-CN', {     hour: '2-digit',     minute: '2-digit',  })}updateTime()setInterval(updateTime, 60000)// 问候语const greeting = computed(() => {  const hour = new Date().getHours()  if (hour < 6) return '夜深了，注意休息'  if (hour < 9) return '早上好'  if (hour < 12) return '上午好'  if (hour < 14) return '中午好'  if (hour < 18) return '下午好'  if (hour < 22) return '晚上好'  return '夜深了，注意休息'})// 系统列表const systemList = ref([  {    id: 'robot-admin',    name: 'Robot Admin',    description: '企业后台管理系统，提供完整的权限管理、数据统计等功能',    icon: 'i-ri:robot-2-line',    color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',    status: 'running',    statusText: '运行中',    version: 'v1.11.0',    badge: 'HOT',    isCurrent: true,  // 当前系统    url: '/home',      // 当前系统用路由    port: null,  },  {    id: 'data-analytics',    name: '数据分析平台',    description: '实时数据分析与可视化，支持多维度数据挖掘',    icon: 'i-ri:bar-chart-line',    color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',    status: 'running',    statusText: '运行中',    version: 'v2.0.0',    badge: null,    isCurrent: false,    url: null,    port: 3002,  // 子应用端口  },  {    id: 'logistics',    name: '物流管理系统',    description: '订单追踪、库存管理、配送优化一体化解决方案',    icon: 'i-ri:truck-line',    color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',    status: 'maintenance',    statusText: '维护中',    version: 'v1.5.2',    badge: null,    isCurrent: false,    url: null,    port: 3003,  },  {    id: 'crm',    name: '客户关系管理',    description: '客户信息管理、销售跟进、商机管理',    icon: 'i-ri:customer-service-line',    color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',    status: 'running',    statusText: '运行中',    version: 'v1.8.0',    badge: null,    isCurrent: false,    url: null,    port: 3004,  },])// 过滤后的系统列表const filteredSystems = computed(() => {  if (!searchKeyword.value) return systemList.value  const keyword = searchKeyword.value.toLowerCase()  return systemList.value.filter(sys =>     sys.name.toLowerCase().includes(keyword) ||     sys.description.toLowerCase().includes(keyword),  )})// 最近访问记录const recentVisits = ref([  {    id: 1,    system: systemList.value[0],    visitTime: '17小时前',  },])// 点击系统卡片const handleSystemClick = (system: any) => {  if (system.isCurrent) {    // 当前系统，使用路由跳转    router.push(system.url)    recordVisit(system)  } else if (system.port) {    // 子应用，跳转到微应用页面    router.push(`/micro-app/${system.id}`)    recordVisit(system)  } else {    window.$message?.warning('该系统暂未配置')  }}// 记录访问const recordVisit = (system: any) => {  const existIndex = recentVisits.value.findIndex(v => v.system.id === system.id)  if (existIndex > -1) {    recentVisits.value.splice(existIndex, 1)  }  recentVisits.value.unshift({    id: Date.now(),    system,    visitTime: '刚刚',  })  if (recentVisits.value.length > 5) {    recentVisits.value.pop()  }}</script><style scoped lang="scss">.portal-container {  min-height: 100vh;  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  padding: 40px 20px;}.welcome-section {  max-width: 1200px;  margin: 0 auto 40px;}.welcome-card {  background: rgba(255, 255, 255, 0.95);  backdrop-filter: blur(10px);  border-radius: 24px;  padding: 48px;  text-align: center;  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);}.welcome-icon {  font-size: 64px;  margin-bottom: 20px;  animation: wave 2s ease-in-out infinite;}@keyframes wave {  0%, 100% { transform: rotate(0deg); }  25% { transform: rotate(20deg); }  75% { transform: rotate(-20deg); }}.welcome-title {  font-size: 32px;  font-weight: 600;  color: #333;  margin-bottom: 12px;}.welcome-desc {  font-size: 16px;  color: #666;  margin-bottom: 32px;}.stats-row {  display: flex;  justify-content: center;  gap: 48px;}.stat-item {  display: flex;  align-items: center;  gap: 16px;}.stat-icon {  font-size: 40px;  color: #667eea;}.stat-content {  text-align: left;}.stat-value {  font-size: 28px;  font-weight: 600;  color: #333;}.stat-label {  font-size: 14px;  color: #999;  margin-top: 4px;}.systems-section,.recent-section {  max-width: 1200px;  margin: 0 auto 40px;}.section-header {  display: flex;  justify-content: space-between;  align-items: center;  margin-bottom: 24px;}.section-title {  font-size: 24px;  font-weight: 600;  color: white;  display: flex;  align-items: center;  gap: 12px;    i {    font-size: 28px;  }}.systems-grid {  display: grid;  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));  gap: 24px;}.system-card {  background: white;  border-radius: 16px;  padding: 24px;  cursor: pointer;  transition: all 0.3s ease;  position: relative;  overflow: hidden;    &:hover {    transform: translateY(-8px);    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);        .system-hover-overlay {      opacity: 1;    }  }    &.is-current {    border: 2px solid #667eea;  }}.system-badge {  position: absolute;  top: 16px;  right: 16px;  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);  color: white;  padding: 4px 12px;  border-radius: 12px;  font-size: 12px;  font-weight: 600;}.system-icon {  width: 64px;  height: 64px;  border-radius: 16px;  display: flex;  align-items: center;  justify-content: center;  margin-bottom: 16px;    i {    font-size: 32px;    color: white;  }}.system-info {  margin-bottom: 20px;}.system-name {  font-size: 20px;  font-weight: 600;  color: #333;  margin-bottom: 8px;}.system-desc {  font-size: 14px;  color: #666;  line-height: 1.6;}.system-footer {  display: flex;  justify-content: space-between;  align-items: center;}.system-version {  font-size: 12px;  color: #999;}.system-hover-overlay {  position: absolute;  inset: 0;  background: rgba(102, 126, 234, 0.95);  display: flex;  align-items: center;  justify-content: center;  opacity: 0;  transition: opacity 0.3s ease;}.recent-list {  display: flex;  gap: 16px;  flex-wrap: wrap;}.recent-item {  background: rgba(255, 255, 255, 0.95);  border-radius: 12px;  padding: 16px;  display: flex;  align-items: center;  gap: 12px;  cursor: pointer;  transition: all 0.3s ease;    &:hover {    transform: translateY(-4px);    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);  }}.recent-icon {  width: 48px;  height: 48px;  border-radius: 12px;  display: flex;  align-items: center;  justify-content: center;    i {    font-size: 24px;    color: white;  }}.recent-info {  display: flex;  flex-direction: column;  gap: 4px;}.recent-name {  font-size: 14px;  font-weight: 600;  color: #333;}.recent-time {  font-size: 12px;  color: #999;}</style>
+<template>
+  <div class="portal-workspace">
+    <!-- 使用统一的 C_Header 组件，控制显示内容 -->
+    <C_Header
+      class="portal-c-header"
+      :show-collapse="false"
+      :show-breadcrumb="false"
+      :show-tags-view="false"
+      :full-width="true"
+      :show-logo="true"
+      :show-platform-title="true"
+    />
+
+    <!-- 顶部快捷栏 -->
+    <div
+      class="app-shortcuts"
+      :class="{ expanded: isShortcutsExpanded }"
+    >
+      <div class="shortcuts-container">
+        <div
+          v-for="app in systems"
+          :key="app.id"
+          class="shortcut-item"
+          :class="{ active: activeAppId === app.id }"
+          @click="handleShortcutClick(app)"
+        >
+          <div
+            class="shortcut-icon"
+            :style="{ background: app.color }"
+          >
+            <Icon
+              :icon="app.icon"
+              :size="12"
+            />
+          </div>
+          <span class="shortcut-label">{{ app.name }}</span>
+          <span
+            v-if="app.integrated"
+            class="integrated-badge"
+          >
+            <i class="i-ri:checkbox-circle-fill"></i>
+            已集成
+          </span>
+          <span
+            v-else
+            class="integrated-badge pending"
+          >
+            <i class="i-ri:time-line"></i>
+            待集成
+          </span>
+        </div>
+      </div>
+
+      <!-- 展开/收起按钮 -->
+      <div
+        v-if="systems.length > 5"
+        class="expand-toggle"
+        :title="isShortcutsExpanded ? '收起' : '点击加载更多'"
+        @click="isShortcutsExpanded = !isShortcutsExpanded"
+      >
+        <Icon
+          :icon="
+            isShortcutsExpanded
+              ? 'ri:arrow-up-double-line'
+              : 'ri:arrow-down-double-line'
+          "
+          :size="14"
+        />
+      </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <div class="content-grid">
+        <!-- 左侧栏 -->
+        <aside class="left-column">
+          <!-- 用户卡片 -->
+          <div class="user-card">
+            <div class="user-info">
+              <div class="user-avatar">
+                <Icon
+                  icon="ri:user-smile-line"
+                  :size="24"
+                />
+              </div>
+              <div class="user-text">
+                <div class="user-name">Hi, {{ userName }}</div>
+                <div class="user-subtitle">欢迎回来！</div>
+              </div>
+            </div>
+
+            <div class="user-stats">
+              <div class="stat-box">
+                <div class="stat-num">249</div>
+                <div class="stat-label">待处理</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num">1,852</div>
+                <div class="stat-label">我发起</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num">505</div>
+                <div class="stat-label">已完成</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 待办任务 -->
+          <div class="card">
+            <div class="task-list">
+              <div
+                v-for="todo in todoList"
+                :key="todo.id"
+                class="task-item"
+              >
+                <div class="task-content">
+                  <div class="task-title">{{ todo.title }}</div>
+                  <div class="task-time">{{ todo.time }}</div>
+                </div>
+                <div
+                  class="task-badge"
+                  :class="todo.statusClass"
+                >
+                  {{ todo.statusText }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 外部协办 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">外部协办</span>
+              <a
+                href="#"
+                class="card-more"
+                >更多</a
+              >
+            </div>
+            <div class="external-list">
+              <div
+                v-for="item in externalItems"
+                :key="item.id"
+                class="external-item"
+              >
+                <div class="external-indicator">
+                  <div
+                    class="indicator-bar"
+                    :style="{ background: item.color }"
+                  ></div>
+                  <span
+                    class="indicator-label"
+                    :style="{ color: item.color }"
+                    >通知</span
+                  >
+                </div>
+                <div class="external-content">
+                  <div class="external-text">{{ item.title }}</div>
+                  <div class="external-time">{{ item.time }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- 中间内容区 -->
+        <section class="center-column">
+          <!-- 常用功能 -->
+          <div class="card app-function-card">
+            <div class="card-header">
+              <span class="card-title">常用功能</span>
+            </div>
+            <div class="app-grid">
+              <div
+                v-for="app in appCenterItems"
+                :key="app.id"
+                class="app-cell"
+                @click="handleAppClick(app)"
+              >
+                <div
+                  class="app-icon-box"
+                  :style="{ backgroundColor: app.bgColor }"
+                >
+                  <Icon
+                    :icon="app.icon"
+                    :size="24"
+                    :style="{ color: app.color }"
+                  />
+                </div>
+                <div class="app-name">{{ app.name }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 消息中心 -->
+          <div class="card message-card">
+            <div class="card-header">
+              <span class="card-title">消息中心</span>
+              <a
+                href="#"
+                class="card-more"
+                >更多</a
+              >
+            </div>
+            <div class="tab-group">
+              <button
+                class="tab-btn"
+                :class="{ active: messageTab === 'all' }"
+                @click="messageTab = 'all'"
+                >全部</button
+              >
+              <button
+                class="tab-btn"
+                :class="{ active: messageTab === 'unread' }"
+                @click="messageTab = 'unread'"
+                >未读</button
+              >
+            </div>
+            <div class="message-list">
+              <div
+                v-for="msg in messages"
+                :key="msg.id"
+                class="message-item"
+              >
+                <div class="message-icon-wrapper">
+                  <div
+                    class="message-icon"
+                    :style="{ backgroundColor: msg.bgColor }"
+                  >
+                    <Icon
+                      :icon="msg.icon"
+                      :size="8"
+                      :style="{ color: msg.color }"
+                    />
+                  </div>
+                </div>
+                <div class="message-content">
+                  <div class="message-text">{{ msg.title }}</div>
+                </div>
+                <div class="message-time">{{ msg.time }}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 右侧栏 -->
+        <aside class="right-column">
+          <!-- 天气卡片 -->
+          <div class="weather-card">
+            <div class="weather-circle"></div>
+            <div class="weather-header">
+              <div class="weather-date">
+                <span class="date-num">{{ currentDay }}</span>
+                <div class="date-info">
+                  <span class="temp-divider">/</span>
+                  <span class="temp-value">{{ temperature }}°C</span>
+                  <div class="weather-label">{{ weatherDesc }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="weather-details">
+              <div class="detail-row">
+                <Icon
+                  icon="ri:drop-line"
+                  :size="12"
+                />
+                <span>湿度：{{ humidity }}</span>
+              </div>
+              <div class="detail-row">
+                <Icon
+                  icon="ri:windy-line"
+                  :size="12"
+                />
+                <span>风向：西南</span>
+              </div>
+              <div class="detail-row">
+                <Icon
+                  icon="ri:eye-line"
+                  :size="12"
+                />
+                <span>风力：≤3</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 日历 -->
+          <div class="card calendar-card">
+            <div class="calendar-nav">
+              <button
+                @click="prevMonth"
+                class="nav-arrow"
+              >
+                <Icon
+                  icon="ri:arrow-left-s-line"
+                  :size="14"
+                />
+              </button>
+              <span class="calendar-title">{{ calendarTitle }}</span>
+              <button
+                @click="nextMonth"
+                class="nav-arrow"
+              >
+                <Icon
+                  icon="ri:arrow-right-s-line"
+                  :size="14"
+                />
+              </button>
+            </div>
+            <div class="calendar-body">
+              <div class="calendar-weekdays">
+                <div
+                  v-for="day in weekDays"
+                  :key="day"
+                  class="weekday"
+                  >{{ day }}</div
+                >
+              </div>
+              <div class="calendar-dates">
+                <div
+                  v-for="date in calendarDates"
+                  :key="date.key"
+                  class="date-cell"
+                  :class="{
+                    today: date.isToday,
+                    'other-month': date.isOtherMonth,
+                  }"
+                >
+                  {{ date.day }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+</template>
+
+<script setup lang="ts">
+  import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
+  import { Icon } from '@iconify/vue'
+  import { s_userStore } from '@/stores/user'
+  import { useRouter } from 'vue-router'
+  import C_Header from '@/components/global/C_Header/index.vue'
+  import {
+    systems,
+    todoList,
+    externalItems,
+    appCenterItems,
+    messages,
+    weekDays,
+    type App,
+  } from './data'
+
+  const router = useRouter()
+  const userStore = s_userStore()
+
+  const userName = computed(() => userStore.userInfo?.username || '李梦')
+
+  // 为 C_Header 提供必要的上下文
+  const isCollapsed = ref(false)
+  const handleCollapsedChange = (collapsed: boolean) => {
+    isCollapsed.value = collapsed
+  }
+
+  provide('menuCollapse', {
+    isCollapsed,
+    handleCollapsedChange,
+  })
+  const activeAppId = ref('data-analytics')
+  const messageTab = ref('all')
+
+  // 快捷栏展开状态
+  const isShortcutsExpanded = ref(false)
+
+  const currentDay = ref('27')
+  const temperature = ref('16')
+  const weatherDesc = ref('晴')
+  const humidity = ref('85')
+
+  const currentDate = ref(new Date(2030, 9, 1)) // 2030年10月
+
+  const calendarTitle = computed(() => {
+    const year = currentDate.value.getFullYear()
+    const month = currentDate.value.getMonth() + 1
+    return `${year}年 ${month}月`
+  })
+
+  const calendarDates = computed(() => {
+    const year = currentDate.value.getFullYear()
+    const month = currentDate.value.getMonth()
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+    const prevLastDay = new Date(year, month, 0)
+
+    const firstDayWeek = firstDay.getDay() || 7
+    const dates = []
+
+    for (let i = firstDayWeek - 1; i > 0; i--) {
+      dates.push({
+        day: prevLastDay.getDate() - i + 1,
+        isOtherMonth: true,
+        isToday: false,
+        key: `prev-${i}`,
+      })
+    }
+
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+      const isToday = year === 2030 && month === 9 && i === 12
+      dates.push({
+        day: i,
+        isOtherMonth: false,
+        isToday,
+        key: `current-${i}`,
+      })
+    }
+
+    const remainingDays = 42 - dates.length
+    for (let i = 1; i <= remainingDays; i++) {
+      dates.push({
+        day: i,
+        isOtherMonth: true,
+        isToday: false,
+        key: `next-${i}`,
+      })
+    }
+
+    return dates
+  })
+
+  const prevMonth = () => {
+    currentDate.value = new Date(
+      currentDate.value.getFullYear(),
+      currentDate.value.getMonth() - 1
+    )
+  }
+
+  const nextMonth = () => {
+    currentDate.value = new Date(
+      currentDate.value.getFullYear(),
+      currentDate.value.getMonth() + 1
+    )
+  }
+
+  const handleShortcutClick = (app: App) => {
+    activeAppId.value = app.id
+    handleAppClick(app)
+  }
+
+  const handleAppClick = (app: App) => {
+    if (app.url) {
+      router.push(app.url)
+    } else if (app.port) {
+      router.push(`/micro-app/${app.id}`)
+    }
+  }
+
+  const updateDateTime = () => {
+    const now = new Date()
+    currentDay.value = now.getDate().toString()
+  }
+
+  let timer: ReturnType<typeof setInterval> | null = null
+
+  onMounted(() => {
+    updateDateTime()
+    timer = setInterval(updateDateTime, 60000)
+  })
+
+  onUnmounted(() => {
+    if (timer) clearInterval(timer)
+  })
+</script>
+
+<style scoped lang="scss">
+  @use './index.scss';
+</style>

@@ -17,7 +17,7 @@ import type { RouteLocationNormalized } from 'vue-router'
 
 const { message } = createDiscreteApi(['message'])
 const nprogress = setupNProgress()
-const WHITE_LIST = ['/login', '/404', '/401']
+const WHITE_LIST = ['/login', '/404', '/401', '/portal']
 const LOGIN_PATH = '/login'
 const DEFAULT_TITLE = 'Robot Admin'
 
@@ -47,15 +47,11 @@ const setPageTitle = (title?: string): void => {
 // 初始化动态路由
 const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
   // 防止重复初始化
-  if (isInitializing) {
-    console.log('⏳ 动态路由正在初始化，跳过重复请求')
-    return fullPath
-  }
+  if (isInitializing) return fullPath
 
   isInitializing = true
 
   try {
-    // console.log('🚀 开始初始化动态路由...')
     const success = await initDynamicRouter()
 
     if (!success) {
@@ -64,11 +60,11 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
 
     // 再次检查菜单列表
     const { authMenuList } = s_permissionStore()
+
     if (!authMenuList.length) {
       throw new Error('菜单数据为空')
     }
 
-    console.log('✅ 动态路由初始化成功')
     return fullPath
   } catch (error) {
     return handleRouteError(error, '动态路由加载失败')
@@ -82,7 +78,19 @@ const shouldInitDynamicRouter = (
   authMenuList: any[],
   isInitializing: boolean
 ): boolean => {
-  return !authMenuList.length && !isInitializing
+  // 如果正在初始化，跳过
+  if (isInitializing) return false
+
+  // 如果菜单列表为空，需要初始化
+  if (!authMenuList.length) return true
+
+  // 检查动态路由是否真的已经注册到router中
+  const hasHomeRoute = router
+    .getRoutes()
+    .some(r => r.path === '/home' || r.name === 'home')
+
+  // 如果有菜单数据但路由未注册，也需要初始化
+  return !hasHomeRoute
 }
 
 // 处理未登录场景
@@ -127,7 +135,12 @@ router.beforeEach(
       }
 
       // 3. 动态路由初始化
-      if (shouldInitDynamicRouter(authMenuList, isInitializing)) {
+      const needInitByCheck = shouldInitDynamicRouter(
+        authMenuList,
+        isInitializing
+      )
+
+      if (needInitByCheck) {
         const result = await handleDynamicRouterInit(to.fullPath)
 
         if (result !== to.fullPath) {

@@ -236,8 +236,8 @@
           throw new Error('动态路由初始化失败')
         }
 
-        // 4. 使用 replace 替代 push，避免返回到登录页
-        router.replace('/home')
+        // 4. 使用 replace 替代 push，避免返回到登录页 - 跳转到门户页面
+        router.replace('/portal')
       } catch (error) {
         console.error('登录成功后操作失败:', error)
         resetCaptcha()

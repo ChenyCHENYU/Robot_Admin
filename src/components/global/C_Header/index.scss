@@ -1,0 +1,370 @@
+// C_Header 组件样式
+
+.portal-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  margin-left: 12px;
+  border: none;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  // 玻璃质感效果
+  background: rgba(91, 143, 249, 0.12);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(91, 143, 249, 0.25);
+  color: #5B8FF9;
+
+  i {
+    font-size: 13px;
+  }
+
+  &:hover {
+    background: rgba(91, 143, 249, 0.22);
+    border-color: rgba(91, 143, 249, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(91, 143, 249, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.platform-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-left: 16px;
+
+  .title-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2C3E50;
+    letter-spacing: 0.5px;
+  }
+
+  .title-subtitle {
+    font-size: 12px;
+    color: #8A92A6;
+    font-weight: 400;
+  }
+}
+
+// 系统菜单抽屉样式
+:deep(.system-drawer) {
+  .n-drawer-body-content-wrapper {
+    padding: 0;
+  }
+}
+
+.system-drawer-content {
+  background: #1a1d24;
+
+  :deep(.n-drawer-header) {
+    background: #252932;
+    border-bottom: 1px solid #3a3f4b;
+    padding: 16px 24px;
+
+    .n-drawer-header__main {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+
+  :deep(.n-drawer-body) {
+    padding: 0;
+  }
+}
+
+.drawer-layout {
+  display: flex;
+  height: 100%;
+}
+
+.system-list {
+  width: 256px;
+  background: #252932;
+  border-right: 1px solid #3a3f4b;
+  display: flex;
+  flex-direction: column;
+
+  .search-box {
+    padding: 16px;
+    border-bottom: 1px solid #3a3f4b;
+
+    :deep(.n-input) {
+      background: #1a1d24;
+      border-color: #3a3f4b;
+
+      .n-input__input-el {
+        color: #fff;
+
+        &::placeholder {
+          color: #6c737f;
+        }
+      }
+
+      .n-input__prefix {
+        color: #6c737f;
+      }
+    }
+  }
+
+  .system-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .system-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: #8a92a6;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+
+    .system-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    &.group-title {
+      font-size: 12px;
+      color: #6c737f;
+      font-weight: 600;
+      padding: 16px 20px 8px;
+      cursor: default;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      &:hover {
+        background: transparent;
+        color: #6c737f;
+      }
+    }
+
+    &.child-item {
+      padding-left: 32px;
+      font-size: 13px;
+    }
+
+    &:hover:not(.group-title) {
+      background: #2f3541;
+      color: #fff;
+    }
+
+    &.active {
+      background: #1890ff;
+      color: #fff;
+    }
+  }
+}
+
+.menu-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+
+  .content-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #3a3f4b;
+
+    i {
+      color: #1890ff;
+    }
+
+    .system-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+    }
+  }
+
+  .menu-groups {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .menu-group {
+    .group-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #3a3f4b;
+    }
+
+    .menu-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    // 二级分组（如表单模块、表格模块）
+    .sub-group {
+      margin-bottom: 16px;
+
+      .sub-group-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        color: #e8e8e8;
+        font-size: 13px;
+        font-weight: 500;
+        background: #2a2f3a;
+        border-radius: 4px;
+        margin-bottom: 8px;
+
+        i {
+          color: #1890ff;
+        }
+      }
+
+      .sub-group-items {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding-left: 8px;
+      }
+    }
+
+    // 三级分组（表单模块下的子分组）
+    .third-level-group {
+      margin-bottom: 8px;
+
+      .third-level-title {
+        padding: 4px 12px;
+        color: #b8bdc8;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+    }
+
+    // 普通菜单项
+    .menu-item {
+      padding: 8px 12px;
+      color: #8a92a6;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+
+      .item-name {
+        flex: 1;
+        transition: transform 0.2s;
+      }
+
+      .favorite-icon {
+        font-size: 14px;
+        color: #5a6270;
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        padding: 2px;
+
+        &:hover {
+          color: #ffd700;
+          transform: scale(1.2) rotate(72deg);
+        }
+
+        &.is-favorite {
+          color: #ffd700;
+          opacity: 1;
+          animation: starPulse 0.5s ease;
+        }
+      }
+
+      &:hover {
+        background: #2f3541;
+        color: #1890ff;
+
+        .item-name {
+          transform: translateX(-4px);
+        }
+
+        .favorite-icon {
+          opacity: 1;
+          color: #8a92a6;
+        }
+      }
+
+      // 二级子项（带缩进）
+      &.sub-item {
+        padding-left: 20px;
+        font-size: 12px;
+
+        .item-dot {
+          display: inline-block;
+          width: 4px;
+          height: 4px;
+          background: #5a6270;
+          border-radius: 50%;
+          margin-right: 8px;
+          vertical-align: middle;
+          flex-shrink: 0;
+        }
+
+        &:hover .item-dot {
+          background: #1890ff;
+        }
+      }
+
+      // 三级子项（更多缩进）
+      &.third-level {
+        padding-left: 28px;
+        font-size: 12px;
+
+        .item-dot {
+          display: inline-block;
+          width: 3px;
+          height: 3px;
+          background: #5a6270;
+          border-radius: 50%;
+          margin-right: 8px;
+          vertical-align: middle;
+          flex-shrink: 0;
+        }
+
+        &:hover .item-dot {
+          background: #1890ff;
+        }
+      }
+    }
+  }
+}
+
+// 五角星动画
+@keyframes starPulse {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.3) rotate(180deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}

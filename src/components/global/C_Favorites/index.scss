@@ -1,0 +1,143 @@
+// ==================== 收藏卡片网格 ====================
+.favorites-grid-container {
+  padding-top: 12px;
+}
+
+.empty-favorites {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 60px 20px;
+
+  .empty-icon {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    border-radius: 50%;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
+
+    i {
+      font-size: 52px;
+      color: white;
+    }
+  }
+
+  .empty-text {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .empty-desc {
+    font-size: 13px;
+    color: #8a92a6;
+  }
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.favorite-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 130px;
+  padding: 16px;
+  background: #2a2e37;
+  border: 2px solid #3a3f4b;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(229, 181, 79, 0.3);
+    border-color: #ffd700;
+    background: #2f3541;
+
+    .card-icon {
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      transform: scale(1.1);
+
+      i {
+        color: white;
+      }
+    }
+
+    .card-star {
+      opacity: 1;
+    }
+  }
+
+  .card-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffb84d 0%, #ffd700 100%);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    i {
+      font-size: 26px;
+      color: white;
+      transition: all 0.3s;
+    }
+  }
+
+  .card-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+    line-height: 1.4;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .card-star {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 215, 0, 0.15);
+    border-radius: 6px;
+    opacity: 0.7;
+    transition: all 0.3s;
+
+    i {
+      font-size: 14px;
+      color: #ffd700;
+    }
+
+    &:hover {
+      opacity: 1;
+      background: rgba(255, 215, 0, 0.25);
+      transform: scale(1.15) rotate(72deg);
+    }
+  }
+}

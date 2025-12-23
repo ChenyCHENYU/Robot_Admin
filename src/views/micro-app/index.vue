@@ -5,39 +5,19 @@
 -->
 <template>
   <div class="micro-app-container">
-    <!-- 返回按钮 -->
-    <div class="back-bar">
-      <NButton
-        @click="handleBack"
-        type="primary"
-        text
-      >
-        <template #icon>
-          <i class="i-ri:arrow-left-line"></i>
-        </template>
-        返回门户
-      </NButton>
-      <div class="app-title">
-        <span class="app-icon">{{ currentApp?.icon || '📊' }}</span>
-        <span>{{ currentApp?.name || '加载中...' }}</span>
-        <NTag
-          v-if="isLoading"
-          type="warning"
-          size="small"
-          >加载中</NTag
-        >
-        <NTag
-          v-else
-          type="success"
-          size="small"
-          >已加载</NTag
-        >
-      </div>
-    </div>
+    <!-- 使用统一的 C_Header 组件 -->
+    <C_Header
+      :show-collapse="false"
+      :show-breadcrumb="false"
+      :show-tags-view="false"
+      :full-width="true"
+      :show-logo="true"
+      :show-portal-button="true"
+    />
 
     <!-- 微应用容器 -->
     <div class="micro-app-wrapper">
-      <micro-app
+      <MicroApp
         v-if="appUrl"
         :name="appId"
         :url="appUrl"
@@ -48,7 +28,7 @@
         @unmount="handleUnmount"
         @error="handleError"
         @datachange="handleDataChange"
-      ></micro-app>
+      ></MicroApp>
 
       <!-- 加载中状态 -->
       <div
@@ -64,14 +44,26 @@
 </template>
 
 <script setup lang="ts">
-  import { useRoute, useRouter } from 'vue-router'
+  import { provide } from 'vue'
+  import { useRoute } from 'vue-router'
   import { s_userStore } from '@/stores/user'
-  import { s_themeStore } from '@/stores/theme'
+  import { useThemeStore } from '@/stores/theme'
+  import C_Header from '@/components/global/C_Header/index.vue'
 
   const route = useRoute()
-  const router = useRouter()
   const userStore = s_userStore()
-  const themeStore = s_themeStore()
+  const themeStore = useThemeStore()
+
+  // 为 C_Header 提供必要的上下文
+  const isCollapsed = ref(false)
+  const handleCollapsedChange = (collapsed: boolean) => {
+    isCollapsed.value = collapsed
+  }
+
+  provide('menuCollapse', {
+    isCollapsed,
+    handleCollapsedChange,
+  })
 
   const appId = computed(() => route.params.id as string)
   const isLoading = ref(true)
@@ -112,7 +104,7 @@
 
     // 传递主题信息
     theme: {
-      mode: themeStore.themeMode,
+      mode: themeStore.mode,
       isDark: themeStore.isDark,
     },
 
@@ -128,7 +120,6 @@
   const handleMounted = () => {
     isLoading.value = false
     console.log(`✅ [主应用] 子应用 ${appId.value} 已挂载`)
-    window.$message?.success(`${currentApp.value?.name} 加载成功`)
   }
 
   // 监听子应用卸载
@@ -140,9 +131,6 @@
   const handleError = (e: CustomEvent) => {
     isLoading.value = false
     console.error(`❌ [主应用] 子应用 ${appId.value} 加载失败:`, e.detail)
-    window.$message?.error(
-      `${currentApp.value?.name} 加载失败，请检查服务是否启动`
-    )
   }
 
   // 监听子应用数据变化
@@ -157,24 +145,19 @@
 
     switch (type) {
       case 'CHILD_APP_MOUNTED':
-        window.$message?.info(`收到消息: ${data.appName} 已启动`)
+        console.log(`收到消息: ${data.appName} 已启动`)
         break
       case 'CHILD_MESSAGE':
-        window.$message?.info(`子应用消息: ${data.message}`)
+        console.log(`子应用消息: ${data.message}`)
         break
       default:
         console.log('未处理的消息类型:', type)
     }
   }
 
-  // 返回门户
-  const handleBack = () => {
-    router.push('/portal')
-  }
-
   // 监听主题变化，同步给子应用
   watch(
-    () => themeStore.themeMode,
+    () => themeStore.mode,
     newMode => {
       if (window.microApp) {
         window.microApp.setData(appId.value, {
@@ -195,30 +178,6 @@
     display: flex;
     flex-direction: column;
     background: #f5f5f5;
-  }
-
-  .back-bar {
-    height: 56px;
-    background: white;
-    border-bottom: 1px solid #e0e0e0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-
-  .app-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-  }
-
-  .app-icon {
-    font-size: 24px;
   }
 
   .micro-app-wrapper {

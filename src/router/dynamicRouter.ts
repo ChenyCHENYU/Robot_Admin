@@ -137,18 +137,19 @@ export const initDynamicRouter = async (): Promise<boolean> => {
       throw new Error(msg || '无效的路由数据格式')
     }
 
-    clearExistingRoutes(['login', '404', '401'])
+    clearExistingRoutes(['login', '404', '401', 'portal', 'micro-app'])
 
-    routes
-      .map(route => processRoute(route as DynamicRoute))
-      .forEach(route => router.addRoute(route))
+    const processedRoutes = routes.map(route =>
+      processRoute(route as DynamicRoute)
+    )
 
-    if (import.meta.env.DEV) {
-      console.debug('[动态路由] 初始化完成:', router.getRoutes())
-    }
+    processedRoutes.forEach(route => {
+      router.addRoute(route)
+    })
 
     return true
   } catch (error) {
+    console.error('动态路由初始化失败:', error)
     handleRouteError(error)
     return false
   }

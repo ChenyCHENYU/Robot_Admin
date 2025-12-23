@@ -131,7 +131,7 @@
     <!-- 右侧主内容区 -->
     <NLayout class="main-layout">
       <!-- 头部 -->
-      <C_Header />
+      <C_Header :show-portal-button="true" />
 
       <!-- 内容区 -->
       <NLayoutContent class="content-with-header p16px app-content">
