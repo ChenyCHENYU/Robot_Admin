@@ -1,37 +1,124 @@
 // C_Header 组件样式
 
-.portal-button {
+// 折叠按钮对齐调整
+#guide-menu-collapse {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  margin-left: 12px;
+  transform: translateY(1px);
+
+  :deep(.n-button) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+.portal-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+    padding: 8px 16px;
+    margin-right: 12px;
   border: none;
-  border-radius: 16px;
+  border-bottom: 2px solid rgba(91, 143, 249, 0.3);
+    border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 
-  // 玻璃质感效果
-  background: rgba(91, 143, 249, 0.12);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(91, 143, 249, 0.25);
+  // 亮色主题
+    background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
   color: #5B8FF9;
+  box-shadow:
+      0 2px 8px rgba(91, 143, 249, 0.12),
+      0 4px 16px rgba(91, 143, 249, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      0 1px 2px rgba(0, 0, 0, 0.04);
+
+    // 顶部高光效果
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 100%);
+      pointer-events: none;
+    }
 
   i {
-    font-size: 13px;
+    font-size: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    span {
+      position: relative;
+      z-index: 1;
   }
 
   &:hover {
-    background: rgba(91, 143, 249, 0.22);
-    border-color: rgba(91, 143, 249, 0.4);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(91, 143, 249, 0.15);
-  }
+    transform: translateY(-2px);
+      border-bottom-color: rgba(91, 143, 249, 0.5);
+      background: linear-gradient(135deg, #ffffff 0%, #f0f5ff 100%);
+      box-shadow:
+        0 4px 12px rgba(91, 143, 249, 0.18),
+        0 8px 24px rgba(91, 143, 249, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 2px 4px rgba(0, 0, 0, 0.06);
+    }
 
-  &:active {
-    transform: translateY(0);
+    &:active {
+    transform: translateY(-1px);
+    border-bottom-color: rgba(91, 143, 249, 0.6);
+      box-shadow:
+        0 2px 6px rgba(91, 143, 249, 0.14),
+        0 4px 12px rgba(91, 143, 249, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    // 暗色主题适配
+    [data-theme='dark'] & {
+      background: linear-gradient(135deg, #2a2a2a 0%, #1f2937 100%);
+      color: #6EA8FE;
+      border-bottom-color: rgba(110, 168, 254, 0.4);
+      box-shadow:
+        0 2px 8px rgba(110, 168, 254, 0.15),
+        0 4px 16px rgba(110, 168, 254, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 1px 2px rgba(0, 0, 0, 0.2);
+
+      &::before {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, #2f3542 0%, #232936 100%);
+        border-bottom-color: rgba(110, 168, 254, 0.6);
+        box-shadow:
+          0 4px 12px rgba(110, 168, 254, 0.2),
+          0 8px 24px rgba(110, 168, 254, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+        &:active {
+      border-bottom-color: rgba(110, 168, 254, 0.7);
+        box-shadow:
+          0 2px 6px rgba(110, 168, 254, 0.18),
+          0 4px 12px rgba(110, 168, 254, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06),
+          0 1px 2px rgba(0, 0, 0, 0.25);
+      }
   }
 }
 
@@ -44,13 +131,13 @@
   .title-text {
     font-size: 16px;
     font-weight: 600;
-    color: #2C3E50;
+    color: var(--app-text-primary);
     letter-spacing: 0.5px;
   }
 
   .title-subtitle {
     font-size: 12px;
-    color: #8A92A6;
+    color: var(--app-text-secondary);
     font-weight: 400;
   }
 }

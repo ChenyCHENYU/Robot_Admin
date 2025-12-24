@@ -2,7 +2,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #F5F6F8;
+  background: var(--portal-bg-page);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   overflow: hidden;
 }
@@ -23,9 +23,9 @@
 // 顶部快捷栏
 .app-shortcuts {
   flex-shrink: 0;
-  background: #fff;
+  background: var(--portal-bg-card);
   padding: 24px 24px 28px;
-  border-bottom: 1px solid #E8EAED;
+  border-bottom: 1px solid var(--portal-border);
   position: relative;
   transition: padding 0.3s ease;
 
@@ -55,7 +55,7 @@
     align-items: center;
     gap: 10px;
     padding: 8px 16px;
-    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFB 100%);
+    background: var(--portal-bg-card);
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -63,9 +63,9 @@
     border: 1px solid rgba(0, 0, 0, 0.06);
 
     &:hover {
-      border-color: rgba(0, 0, 0, 0.1);
+      border-color: var(--portal-border);
       transform: translateY(-2px);
-      background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%);
+      background: var(--portal-bg-hover);
 
       .shortcut-icon {
         transform: scale(1.08);
@@ -73,15 +73,15 @@
     }
 
     &.active {
-      background: linear-gradient(135deg, #EBF5FF 0%, #E0EFFF 100%);
-      border-color: rgba(91, 163, 255, 0.3);
+      background: var(--portal-status-info-bg);
+        border-color: var(--portal-status-info);
 
       .shortcut-icon {
         transform: scale(1.1);
       }
 
       .shortcut-label {
-        color: #1E6FFF;
+        color: var(--portal-status-info);
       }
     }
 
@@ -107,7 +107,7 @@
 
     .shortcut-label {
       font-size: 13px;
-      color: #1F2329;
+      color: var(--portal-text-primary);
       font-weight: 500;
       flex: 1;
       white-space: nowrap;
@@ -121,11 +121,11 @@
       align-items: center;
       gap: 3px;
       padding: 2px 8px;
-      background: linear-gradient(135deg, #E6F7FF 0%, #D9F7BE 100%);
-      border: 1px solid #91D5FF;
+      background: var(--portal-status-success-bg);
+        border: 1px solid var(--portal-status-success);
       border-radius: 10px;
       font-size: 11px;
-      color: #0958D9;
+      color: var(--portal-status-success);
       font-weight: 500;
       white-space: nowrap;
       flex-shrink: 0;
@@ -137,12 +137,12 @@
       }
 
       &.pending {
-        background: linear-gradient(135deg, #F5F5F5 0%, #FAFAFA 100%);
-        border-color: #D9D9D9;
-        color: #8C8C8C;
+        background: var(--portal-bg-hover);
+          border-color: var(--portal-border);
+          color: var(--portal-text-tertiary);
 
         i {
-          color: #BFBFBF;
+          color: var(--portal-text-tertiary);
         }
       }
     }
@@ -155,21 +155,21 @@
     transform: translateX(-50%);
     width: 32px;
     height: 32px;
-    background: #fff;
-    border: 1px solid #E8EAED;
+    background: var(--portal-bg-card);
+      border: 1px solid var(--portal-border);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s;
-    color: #5B8FF9;
+    color: var(--portal-status-info);
     z-index: 10;
     box-shadow: 0 2px 8px rgba(91, 143, 249, 0.15);
 
     &:hover {
-      background: #5B8FF9;
-      color: #fff;
+      background: var(--portal-status-info);
+        color: var(--portal-bg-card);
       transform: translateX(-50%) translateY(-2px);
       box-shadow: 0 4px 12px rgba(91, 143, 249, 0.3);
       border-color: #5B8FF9;
@@ -197,11 +197,11 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #D1D5DB;
+    background: var(--portal-border);
     border-radius: 3px;
 
     &:hover {
-      background: #9CA3AF;
+      background: var(--portal-text-tertiary);
     }
   }
 }
@@ -242,10 +242,10 @@
 
 // 通用卡片
 .card {
-  background: #fff;
+  background: var(--portal-bg-card);
   border-radius: 8px;
   padding: 18px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px var(--portal-shadow);
 }
 
 .card-header {
@@ -258,16 +258,16 @@
 .card-title {
   font-size: 15px;
   font-weight: 600;
-  color: #2C3E50;
+  color: var(--portal-text-primary);
 }
 
 .card-more {
   font-size: 13px;
-  color: #5B8FF9;
+  color: var(--portal-status-info);
   text-decoration: none;
 
   &:hover {
-    color: #4E7FE8;
+    color: var(--portal-status-info);
     text-decoration: underline;
   }
 }
@@ -280,22 +280,22 @@
 }
 
 .user-card {
-  background: #fff;
+  background: var(--portal-bg-card);
   border-radius: 8px;
   padding: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px var(--portal-shadow);
   display: flex;
   align-items: stretch;
   justify-content: space-between;
   overflow: visible;
-  border-bottom: 3px solid #5B8FF9;
+  border-bottom: 3px solid var(--portal-status-info);
   position: relative;
 
   .user-info {
     display: flex;
     align-items: center;
     gap: 14px;
-    background: #E8F4FF;
+    background: var(--portal-status-info-bg);
     padding: 20px 28px;
     flex-shrink: 0;
     min-width: 220px;
@@ -307,12 +307,12 @@
     .user-avatar {
       width: 48px;
       height: 48px;
-      background: #fff;
+      background: var(--portal-bg-card);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #5B8FF9;
+      color: var(--portal-status-info);
       box-shadow: 0 2px 8px rgba(91, 143, 249, 0.15);
       flex-shrink: 0;
     }
@@ -321,13 +321,13 @@
       .user-name {
         font-size: 16px;
         font-weight: 700;
-        color: #2C3E50;
+        color: var(--portal-text-primary);
         margin-bottom: 4px;
       }
 
       .user-subtitle {
         font-size: 13px;
-        color: #6B7785;
+        color: var(--portal-text-secondary);
         font-weight: 400;
       }
     }
@@ -338,7 +338,7 @@
     gap: 32px;
     flex: 1;
     padding: 24px 20px;
-    background: #fff;
+    background: var(--portal-bg-card);
     align-items: center;
     justify-content: space-around;
 
@@ -348,14 +348,14 @@
       .stat-num {
         font-size: 22px;
         font-weight: 700;
-        color: #5B8FF9;
+        color: var(--portal-status-info);
         margin-bottom: 4px;
         line-height: 1;
       }
 
       .stat-label {
         font-size: 12px;
-        color: #7B8694;
+        color: var(--portal-text-secondary);
         white-space: nowrap;
       }
     }
@@ -377,15 +377,15 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 12px;
-  background: #F8F9FB;
+  background: var(--portal-bg-hover);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
   border: 1px solid transparent;
 
   &:hover {
-    background: #F0F2F5;
-    border-color: #E8EAED;
+    background: var(--portal-bg-hover);
+      border-color: var(--portal-border);
   }
 
   .task-content {
@@ -394,7 +394,7 @@
 
     .task-title {
       font-size: 13px;
-      color: #3D4557;
+      color: var(--portal-text-primary);
       margin-bottom: 6px;
       line-height: 1.5;
       overflow: hidden;
@@ -407,7 +407,7 @@
 
     .task-time {
       font-size: 12px;
-      color: #9BA3AF;
+      color: var(--portal-text-tertiary);
     }
   }
 
@@ -420,23 +420,23 @@
     flex-shrink: 0;
 
     &.rejected {
-      background: #FFE8E8;
-      color: #F56C6C;
+      background: var(--portal-status-error-bg);
+        color: var(--portal-status-error);
     }
 
     &.progress {
-      background: #D4F4DD;
-      color: #52C41A;
+      background: var(--portal-status-success-bg);
+        color: var(--portal-status-success);
     }
 
     &.done {
-      background: #E8F4FD;
-      color: #1890FF;
+      background: var(--portal-status-info-bg);
+        color: var(--portal-status-info);
     }
 
     &.revoked {
-      background: #F0F2F5;
-      color: #8A92A6;
+      background: var(--portal-bg-hover);
+        color: var(--portal-text-muted);
     }
   }
 }
@@ -446,7 +446,7 @@
   align-items: center;
   gap: 10px;
   padding: 14px 0;
-  border-bottom: 1px solid #F0F2F5;
+  border-bottom: 1px solid var(--portal-border);
   cursor: pointer;
 
   &:last-child {
@@ -460,7 +460,7 @@
 
   &:hover {
     .external-text {
-      color: #2C3E50;
+      color: var(--portal-text-primary);
     }
   }
 
@@ -481,7 +481,7 @@
       font-weight: 400;
       padding: 2px 6px;
       border-radius: 8px;
-      background: #F3F4F6;
+      background: var(--portal-bg-hover);
     }
   }
 
@@ -495,7 +495,7 @@
 
     .external-text {
       font-size: 13px;
-      color: #3D4557;
+      color: var(--portal-text-primary);
       line-height: 1.6;
       transition: color 0.2s;
       flex: 1;
@@ -504,7 +504,7 @@
 
     .external-time {
       font-size: 12px;
-      color: #9BA3AF;
+      color: var(--portal-text-secondary);
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -523,7 +523,7 @@
     display: inline-flex;
     gap: 0;
     margin-bottom: 16px;
-    background: #F5F7FA;
+    background: var(--portal-bg-hover);
     padding: 2px;
     border-radius: 6px;
 
@@ -533,20 +533,20 @@
       background: transparent;
       border-radius: 4px;
       font-size: 13px;
-      color: #6B7785;
+      color: var(--portal-text-secondary);
       cursor: pointer;
       transition: all 0.2s;
       font-weight: 400;
 
       &:hover {
-        color: #3D4557;
+        color: var(--portal-text-primary);
       }
 
       &.active {
-        background: #fff;
-        color: #5B8FF9;
+        background: var(--portal-bg-card);
+          color: var(--portal-status-info);
         font-weight: 500;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 1px 2px var(--portal-shadow);
       }
     }
   }
@@ -571,8 +571,8 @@
       border: 1px solid transparent;
 
       &:hover {
-        border-color: #E5E8EB;
-        background: #F8F9FB;
+        border-color: var(--portal-border);
+          background: var(--portal-bg-hover);
 
         .app-icon-box {
           transform: translateY(-2px);
@@ -593,7 +593,7 @@
 
       .app-name {
         font-size: 13px;
-        color: #3D4557;
+        color: var(--portal-text-primary);
         font-weight: 400;
         text-align: center;
       }
@@ -613,7 +613,7 @@
     align-items: center;
     gap: 10px;
     padding: 12px 8px;
-    border-bottom: 1px solid #F0F2F5;
+    border-bottom: 1px solid var(--portal-border);
     cursor: pointer;
     transition: all 0.2s;
 
@@ -622,10 +622,10 @@
     }
 
     &:hover {
-      background: #F8F9FB;
+      background: var(--portal-bg-hover);
 
       .message-text {
-        color: #2C3E50;
+        color: var(--portal-text-primary);
       }
     }
 
@@ -655,7 +655,7 @@
 
       .message-text {
         font-size: 13px;
-        color: #4B5563;
+        color: var(--portal-text-primary);
         line-height: 1.6;
         transition: color 0.2s;
       }
@@ -663,7 +663,7 @@
 
     .message-time {
       font-size: 12px;
-      color: #9BA3AF;
+      color: var(--portal-text-secondary);
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -748,7 +748,7 @@
     display: flex;
     justify-content: space-between;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.45);
     border-radius: 12px;
     padding: 16px 14px;
     backdrop-filter: blur(4px);
@@ -759,22 +759,34 @@
       flex-direction: column;
       align-items: center;
       gap: 8px;
+      position: relative;
+
+        &:not(:last-child)::after {
+          content: '';
+          position: absolute;
+          right: -4px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 1px;
+          height: 50%;
+          background: rgba(74, 74, 74, 0.2);
+        }
 
       :deep(.iconify),
       :deep(svg) {
         width: 20px !important;
         height: 20px !important;
         font-size: 20px !important;
-        color: #4A4A4A;
-        opacity: 0.85;
+        color: #3A3A3A;
+          opacity: 1;
       }
 
       .detail-text {
         display: flex;
         align-items: center;
         font-size: 13px;
-        color: #3A3A3A;
-        font-weight: 400;
+        color: #2A2A2A;
+          font-weight: 500;
         white-space: nowrap;
 
         .detail-label {

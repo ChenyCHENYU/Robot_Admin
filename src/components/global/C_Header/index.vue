@@ -60,15 +60,6 @@
             ></i>
           </div>
 
-          <!-- 工作台按钮 - 玻璃质感设计 -->
-          <button
-            class="portal-button"
-            @click="handleGoToPortal"
-          >
-            <i class="i-ri:computer-line"></i>
-            <span>工作台</span>
-          </button>
-
           <!-- 平台标题 -->
           <div
             v-if="props.showPlatformTitle"
@@ -91,10 +82,22 @@
         </div>
 
         <!-- 右侧：统一操作区 -->
-        <C_NavbarRight
-          v-if="props.showNavbarRight"
-          v-model:show-settings="showSettings"
-        />
+        <div class="flex items-center gap-3">
+          <!-- 工作台按钮 - 玻璃质感设计 -->
+          <button
+            v-if="props.showPortalButton"
+            class="portal-button"
+            @click="handleGoToPortal"
+          >
+            <i class="i-ri:computer-line"></i>
+            <span>工作台</span>
+          </button>
+
+          <C_NavbarRight
+            v-if="props.showNavbarRight"
+            v-model:show-settings="showSettings"
+          />
+        </div>
       </div>
     </div>
 

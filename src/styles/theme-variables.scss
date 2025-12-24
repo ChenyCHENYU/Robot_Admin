@@ -53,6 +53,25 @@
   --app-border-light: #f3f4f6;
   --app-border-deep: #d1d5db;
 
+  /* 门户页面专用色系 */
+    --portal-bg-page: #F5F6F8;
+    --portal-bg-card: #ffffff;
+    --portal-bg-hover: #F8F9FB;
+    --portal-text-primary: #2C3E50;
+    --portal-text-secondary: #6B7785;
+    --portal-text-tertiary: #9BA3AF;
+    --portal-text-muted: #8A92A6;
+    --portal-border: #E8EAED;
+    --portal-shadow: rgba(0, 0, 0, 0.08);
+
+    /* 状态色 */
+    --portal-status-success: #52C41A;
+    --portal-status-info: #1890FF;
+    --portal-status-warning: #FA8C16;
+    --portal-status-error: #F56C6C;
+    --portal-status-success-bg: #D4F4DD;
+    --portal-status-info-bg: #E8F4FD;
+    --portal-status-error-bg: #FFE8E8;
   /* 阴影 */
   --app-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --app-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
@@ -103,6 +122,25 @@
   --app-border-light: rgba(255, 255, 255, 0.08);
   --app-border-deep: rgba(255, 255, 255, 0.25);
 
+  /* 门户页面专用色系 */
+    --portal-bg-page: #121212;
+    --portal-bg-card: #1c1c1c;
+    --portal-bg-hover: #2a2a2a;
+    --portal-text-primary: #ffffff;
+    --portal-text-secondary: #d1d5db;
+    --portal-text-tertiary: #9ca3af;
+    --portal-text-muted: #6b7280;
+    --portal-border: rgba(255, 255, 255, 0.1);
+    --portal-shadow: rgba(0, 0, 0, 0.3);
+
+    /* 状态色（暗色主题稍微调整透明度） */
+    --portal-status-success: #52C41A;
+    --portal-status-info: #1890FF;
+    --portal-status-warning: #FA8C16;
+    --portal-status-error: #F56C6C;
+    --portal-status-success-bg: rgba(82, 196, 26, 0.15);
+    --portal-status-info-bg: rgba(24, 144, 255, 0.15);
+    --portal-status-error-bg: rgba(245, 108, 108, 0.15);
   /* 阴影（暗色下的阴影更深） */
   --app-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
   --app-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
