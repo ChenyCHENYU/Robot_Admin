@@ -16,6 +16,29 @@ app.use(createPinia())
 // 路由
 const router = setupRouter(app)
 
+// 🎯 核心优化：注册主应用共享的组件
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  const mainAppData = window.microApp?.getData() || {}
+
+  // 全局注册头部组件
+  if (mainAppData.components?.Header) {
+    app.component('SharedHeader', mainAppData.components.Header)
+    console.log('✅ 已注册主应用共享头部组件')
+  }
+
+  // 注入全局工具
+  if (mainAppData.utils) {
+    app.config.globalProperties.$utils = mainAppData.utils
+    console.log('✅ 已注入全局工具函数')
+  }
+
+  // 注入全局方法
+  if (mainAppData.methods) {
+    app.config.globalProperties.$mainApp = mainAppData.methods
+    console.log('✅ 已注入主应用全局方法')
+  }
+}
+
 // 微前端通信初始化
 setupMicroApp(app, router)
 
