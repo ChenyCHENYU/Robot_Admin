@@ -49,6 +49,7 @@
   import { provide } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { s_userStore } from '@/stores/user'
+  import { getMicroAppUrl, getMicroAppConfig } from '@/config/microApps'
   import { useThemeStore } from '@/stores/theme'
   import C_Header from '@/components/global/C_Header/index.vue'
 
@@ -72,33 +73,18 @@
   const appId = computed(() => route.params.id as string)
   const isLoading = ref(true)
 
-  // 系统配置映射
-  const systemsMap: Record<string, any> = {
-    'data-analytics': {
-      id: 'data-analytics',
-      name: '数据分析平台',
-      icon: '📊',
-      url: 'http://localhost:3002',
-      baseroute: '/data-analytics',
-    },
-    logistics: {
-      id: 'logistics',
-      name: '物流管理系统',
-      icon: '🚚',
-      url: 'http://localhost:3003',
-      baseroute: '/logistics',
-    },
-    crm: {
-      id: 'crm',
-      name: '客户关系管理',
-      icon: '👥',
-      url: 'http://localhost:3004',
-      baseroute: '/crm',
-    },
-  }
+  // 使用环境变量配置获取子应用URL
+  const appUrl = computed(() => {
+    const url = getMicroAppUrl(appId.value)
+    if (!url) {
+      console.error(`[MicroApp] 未找到应用 ${appId.value} 的配置`)
+    }
+    return url
+  })
 
-  const currentApp = computed(() => systemsMap[appId.value])
-  const appUrl = computed(() => currentApp.value?.url)
+  // 获取应用配置信息
+  const appConfig = computed(() => getMicroAppConfig(appId.value))
+  const currentApp = computed(() => appConfig.value)
 
   // 传递给子应用的数据
   const appData = computed(() => ({
