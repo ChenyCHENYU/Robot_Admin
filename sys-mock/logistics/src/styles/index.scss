@@ -1,0 +1,64 @@
+// 全局样式
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+// CSS 变量 - 主题配置（与主应用保持一致）
+:root,
+[data-theme='light'] {
+  --app-bg-color: #f5f6f8;
+  --app-bg-card: #ffffff;
+  --app-bg-hover: #f5f5f5;
+  --app-text-primary: #2c3e50;
+  --app-text-secondary: #6b7785;
+  --app-text-tertiary: #9ba3af;
+  --app-border-color: #e5e7eb;
+  --app-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] {
+  --app-bg-color: #121212;
+  --app-bg-card: #1c1c1c;
+  --app-bg-hover: #2a2a2a;
+  --app-text-primary: #ffffff;
+  --app-text-secondary: #d1d5db;
+  --app-text-tertiary: #9ca3af;
+  --app-border-color: #3a3a3a;
+  --app-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--app-bg-hover);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--app-border-color);
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--app-text-tertiary);
+  }
+}

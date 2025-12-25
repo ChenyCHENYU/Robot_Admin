@@ -950,3 +950,177 @@
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+// 子应用推送数据卡片 - 优雅设计
+.micro-app-data-card {
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 1px solid var(--portal-border);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(24, 160, 88, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(24, 160, 88, 0.12);
+    border-color: rgba(24, 160, 88, 0.3);
+  }
+
+  .data-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(24, 160, 88, 0.05);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .data-icon {
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      .data-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--portal-text-primary);
+      }
+
+      .data-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 6px;
+        background: linear-gradient(135deg, #18a058 0%, #36ad6a 100%);
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 11px;
+        box-shadow: 0 2px 6px rgba(24, 160, 88, 0.3);
+      }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      :deep(.n-button) {
+        color: var(--portal-text-secondary);
+        transition: all 0.2s ease;
+
+        &:hover {
+          color: #18a058;
+          background: rgba(24, 160, 88, 0.1) !important;
+        }
+      }
+
+      .expand-icon {
+        color: var(--portal-text-secondary);
+        transition: transform 0.3s ease;
+        margin-left: 4px;
+        font-size: 16px !important;
+        width: 16px !important;
+        height: 16px !important;
+      }
+    }
+  }
+
+  .data-card-content {
+    border-top: 1px solid var(--portal-border);
+    padding: 16px 20px;
+    background: var(--portal-bg-page);
+    animation: slideDown 0.3s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .data-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 4px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 3px;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.25);
+      }
+    }
+  }
+
+  .data-item {
+    padding: 12px;
+    background: var(--portal-bg-card);
+    border: 1px solid var(--portal-border);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border-color: rgba(24, 160, 88, 0.3);
+    }
+
+    .data-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+
+      .data-time {
+        font-size: 12px;
+        color: var(--portal-text-tertiary);
+      }
+    }
+
+    .data-item-content {
+      background: rgba(24, 160, 88, 0.04);
+      border: 1px solid rgba(24, 160, 88, 0.12);
+      border-radius: 6px;
+      padding: 10px;
+      overflow: auto;
+      max-height: 200px;
+
+      pre {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.6;
+        color: var(--portal-text-primary);
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      }
+    }
+  }
+}

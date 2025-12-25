@@ -1,0 +1,39 @@
+.warehouse-page {
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--app-bg-color);
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--app-text-primary);
+  }
+}
+
+.warehouse-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .label {
+      font-weight: 500;
+      color: var(--app-text-secondary);
+      min-width: 70px;
+    }
+
+    .value {
+      flex: 1;
+      color: var(--app-text-primary);
+    }
+  }
+}

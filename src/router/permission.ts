@@ -189,8 +189,14 @@ router.onError((error: Error) => {
 // 后置钩子 - 只记录日志
 router.afterEach((to, from, failure) => {
   if (failure) {
-    console.error('❌ 路由跳转失败:', failure.message)
-  } else {
-    // console.log(`✅ 路由跳转成功: ${from.path} -> ${to.path}`)
+    // 过滤掉 micro-app 导航冲突的无害错误
+    const ignoredErrors = [
+      'Navigation cancelled',
+      'Navigation aborted',
+      'redundant navigation',
+    ]
+    if (!ignoredErrors.some(msg => failure.message.includes(msg))) {
+      console.error('❌ 路由跳转失败:', failure.message)
+    }
   }
 })

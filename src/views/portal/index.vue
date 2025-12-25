@@ -165,6 +165,96 @@
 
         <!-- 中间内容区 -->
         <section class="center-column">
+          <!-- 子应用推送数据 -->
+          <div
+            v-if="microAppData.length > 0 || isDataExpanded"
+            class="micro-app-data-card card"
+          >
+            <div
+              class="data-card-header"
+              @click="isDataExpanded = !isDataExpanded"
+            >
+              <div class="header-left">
+                <span class="data-icon">📊</span>
+                <span class="data-title">子应用推送数据</span>
+                <span class="data-badge">{{ microAppData.length }}</span>
+              </div>
+              <div class="header-right">
+                <NButton
+                  size="small"
+                  text
+                  @click.stop="loadMicroAppData"
+                >
+                  <template #icon>
+                    <Icon
+                      icon="ri:refresh-line"
+                      :size="16"
+                    />
+                  </template>
+                </NButton>
+                <NButton
+                  size="small"
+                  text
+                  @click.stop="clearMicroAppData"
+                >
+                  <template #icon>
+                    <Icon
+                      icon="ri:delete-bin-line"
+                      :size="16"
+                    />
+                  </template>
+                </NButton>
+                <Icon
+                  :icon="
+                    isDataExpanded
+                      ? 'ri:arrow-up-s-line'
+                      : 'ri:arrow-down-s-line'
+                  "
+                  :size="16"
+                  class="expand-icon"
+                />
+              </div>
+            </div>
+
+            <div
+              v-show="isDataExpanded"
+              class="data-card-content"
+            >
+              <NEmpty
+                v-if="microAppData.length === 0"
+                description="暂无推送数据"
+                size="small"
+                style="padding: 20px 0"
+              />
+              <div
+                v-else
+                class="data-list"
+              >
+                <div
+                  v-for="(item, index) in microAppData"
+                  :key="index"
+                  class="data-item"
+                >
+                  <div class="data-item-header">
+                    <NTag
+                      type="success"
+                      size="small"
+                      :bordered="false"
+                    >
+                      {{ item.module }}
+                    </NTag>
+                    <span class="data-time">{{
+                      formatTime(item.timestamp)
+                    }}</span>
+                  </div>
+                  <div class="data-item-content">
+                    <pre>{{ JSON.stringify(item.data, null, 2) }}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- 常用功能 -->
           <div class="card app-function-card">
             <div class="card-header">
@@ -376,6 +466,7 @@
   const activeAppId = ref('data-analytics')
   const messageTab = ref('all')
   const isShortcutsExpanded = ref(false)
+  const isDataExpanded = ref(false)
 
   // ===== 天气模块 =====
   interface WeatherData {
@@ -466,6 +557,38 @@
   // ===== 日历模块 =====
   const currentDate = ref(new Date(2030, 9, 1))
 
+  // ===== 子应用推送数据 =====
+  const microAppData = ref<any[]>([])
+
+  const loadMicroAppData = () => {
+    const data = sessionStorage.getItem('microAppData')
+    if (data) {
+      try {
+        microAppData.value = JSON.parse(data)
+      } catch (error) {
+        console.error('[门户工作台] 数据解析失败:', error)
+      }
+    }
+  }
+
+  const clearMicroAppData = () => {
+    sessionStorage.removeItem('microAppData')
+    microAppData.value = []
+  }
+
+  const formatTime = (timestamp: number) => {
+    const date = new Date(timestamp)
+    return date.toLocaleString('zh-CN', {
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
+  }
+
+  // ===== 日历模块 =====
+
   const calendarTitle = computed(() => {
     const d = currentDate.value
     return `${d.getFullYear()}年 ${d.getMonth() + 1}月`
@@ -542,14 +665,29 @@
   onMounted(() => {
     updateDateTime()
     fetchWeather()
+    loadMicroAppData()
+
+    // 监听子应用数据更新事件
+    const handleDataUpdate = (event: CustomEvent) => {
+      microAppData.value = event.detail
+    }
+    window.addEventListener(
+      'microAppDataUpdate',
+      handleDataUpdate as EventListener
+    )
+
     timer = setInterval(() => {
       updateDateTime()
       fetchWeather()
     }, 3600000)
-  })
 
-  onUnmounted(() => {
-    timer && clearInterval(timer)
+    onUnmounted(() => {
+      window.removeEventListener(
+        'microAppDataUpdate',
+        handleDataUpdate as EventListener
+      )
+      timer && clearInterval(timer)
+    })
   })
 </script>
 

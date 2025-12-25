@@ -1,0 +1,28 @@
+{
+  "name": "@robot-admin/logistics-mock",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "智慧物流管理系统 - 微前端子应用",
+  "scripts": {
+    "dev": "vite --port 3003",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview --port 3003"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "pinia": "^2.3.0",
+    "@micro-zoe/micro-app": "^1.0.0-rc.8",
+    "naive-ui": "^2.40.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "^5.7.2",
+    "vite": "^7.0.6",
+    "vue-tsc": "^2.2.0",
+    "sass": "^1.83.2",
+    "unplugin-auto-import": "^0.18.7",
+    "unplugin-vue-components": "^0.27.6"
+  }
+}

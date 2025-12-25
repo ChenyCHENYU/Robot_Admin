@@ -1,0 +1,16 @@
+.orders-page {
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--app-bg-color);
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--app-text-primary);
+  }
+}

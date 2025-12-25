@@ -33,6 +33,7 @@ export default defineConfigWithVueTs(
       '**/coverage/**',
       '**/src/api/generated/**', // 忽略自动生成的 API 文件
       '**/lang/**', // 忽略 i18n 插件生成的文件
+      '**/sys-mock/**', // 忽略子应用 Mock 目录
     ],
   },
 

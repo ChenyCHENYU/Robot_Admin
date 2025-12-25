@@ -11,6 +11,7 @@
 import { HEAVY_PAGE_ROUTES } from './heavyPages'
 
 export default {
+  host: 'localhost',
   port: 1988,
   hmr: { overlay: true },
   open: true,

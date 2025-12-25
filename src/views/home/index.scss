@@ -1171,3 +1171,67 @@ $shadows: (
     font-size: 2.5rem !important;
   }
 }
+
+// 子应用推送数据展示区域
+.micro-app-data-section {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+
+  .data-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .data-item {
+      .data-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+
+        .data-time {
+          font-size: 0.875rem;
+          color: var(--n-text-color-disabled);
+        }
+      }
+
+      .data-content {
+        pre {
+          margin: 0;
+          padding: 0.75rem;
+          background: var(--n-modal-color);
+          border-radius: map.get($radii, sm);
+          font-size: 0.875rem;
+          line-height: 1.6;
+          color: var(--n-text-color);
+          overflow-x: auto;
+        }
+      }
+    }
+  }
+}
+
+// 子应用数据展示区域 - 置顶样式
+.micro-app-data-section-top {
+  margin-bottom: 2rem;
+  animation: slideDown 0.5s ease-out;
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .data-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}

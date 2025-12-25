@@ -13,11 +13,13 @@
       :full-width="true"
       :show-logo="true"
       :show-portal-button="true"
+      :show-platform-title="true"
     />
 
     <!-- 微应用容器 -->
     <div class="micro-app-wrapper">
-      <MicroApp
+      <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
+      <micro-app
         v-if="appUrl"
         :name="appId"
         :url="appUrl"
@@ -28,7 +30,7 @@
         @unmount="handleUnmount"
         @error="handleError"
         @datachange="handleDataChange"
-      ></MicroApp>
+      ></micro-app>
 
       <!-- 加载中状态 -->
       <div
@@ -45,14 +47,16 @@
 
 <script setup lang="ts">
   import { provide } from 'vue'
-  import { useRoute } from 'vue-router'
+  import { useRoute, useRouter } from 'vue-router'
   import { s_userStore } from '@/stores/user'
   import { useThemeStore } from '@/stores/theme'
   import C_Header from '@/components/global/C_Header/index.vue'
 
   const route = useRoute()
+  const router = useRouter()
   const userStore = s_userStore()
   const themeStore = useThemeStore()
+  const message = useMessage()
 
   // 为 C_Header 提供必要的上下文
   const isCollapsed = ref(false)
@@ -116,43 +120,24 @@
     },
   }))
 
-  // 监听子应用挂载
+  // 监听子应用生命周期
   const handleMounted = () => {
     isLoading.value = false
-    console.log(`✅ [主应用] 子应用 ${appId.value} 已挂载`)
   }
 
-  // 监听子应用卸载
   const handleUnmount = () => {
-    console.log(`🔄 [主应用] 子应用 ${appId.value} 已卸载`)
+    // 子应用卸载时的清理逻辑
   }
 
-  // 监听子应用错误
   const handleError = (e: CustomEvent) => {
     isLoading.value = false
-    console.error(`❌ [主应用] 子应用 ${appId.value} 加载失败:`, e.detail)
+    console.error(`子应用加载失败:`, e.detail)
   }
 
-  // 监听子应用数据变化
-  const handleDataChange = (e: CustomEvent) => {
-    console.log(
-      `📨 [主应用] 接收到子应用 ${appId.value} 的数据:`,
-      e.detail.data
-    )
-
-    // 处理子应用发送的消息
-    const { type, data } = e.detail.data
-
-    switch (type) {
-      case 'CHILD_APP_MOUNTED':
-        console.log(`收到消息: ${data.appName} 已启动`)
-        break
-      case 'CHILD_MESSAGE':
-        console.log(`子应用消息: ${data.message}`)
-        break
-      default:
-        console.log('未处理的消息类型:', type)
-    }
+  // 监听子应用数据变化（通过 micro-app 的 datachange 事件）
+  const handleDataChange = () => {
+    // 预留：处理子应用通过 microApp.dispatch 发送的消息
+    // 当前主要使用 postMessage 进行通信
   }
 
   // 监听主题变化，同步给子应用
@@ -170,10 +155,109 @@
       }
     }
   )
+
+  // 监听来自 iframe 子应用的 postMessage（用于子应用请求路由跳转）
+  const handlePostMessage = (event: MessageEvent) => {
+    const { type, payload } = event.data || {}
+
+    switch (type) {
+      case 'MICRO_APP_NAVIGATE':
+        // 路由跳转 - 静默处理导航冲突
+        router.push(payload.path).catch((err: Error) => {
+          // 忽略以下无害的导航错误
+          const ignoredErrors = [
+            'redundant navigation',
+            'Navigation cancelled',
+            'Navigation aborted',
+          ]
+          if (!ignoredErrors.some(msg => err.message.includes(msg))) {
+            console.error('路由跳转失败:', err)
+          }
+        })
+        break
+
+      case 'CUSTOM_MESSAGE':
+        // 自定义消息 - 只在主应用显示弹窗
+        console.log('📨 [主应用] 收到子应用消息:', payload)
+        message.info(
+          `收到来自 ${currentApp.value?.name || '子应用'} 的消息：${payload.message}`,
+          {
+            duration: 5000,
+          }
+        )
+        // 回传确认
+        sendAckToChild(event.source as Window, 'CUSTOM_MESSAGE_ACK', {
+          received: true,
+          timestamp: Date.now(),
+        })
+        break
+
+      case 'DATA_UPDATE':
+        // 数据更新 - 显示弹窗并存储数据
+        message.success(`收到 ${payload.module || '子应用'} 推送的数据更新`, {
+          duration: 3000,
+        })
+        // 存储到 sessionStorage 供工作台显示
+        try {
+          const existingData = JSON.parse(
+            sessionStorage.getItem('microAppData') || '[]'
+          )
+          const newData = {
+            module: payload.module,
+            data: payload.data,
+            timestamp: Date.now(),
+          }
+          existingData.unshift(newData)
+          const dataToSave = existingData.slice(0, 10) // 只保留最近10条
+          sessionStorage.setItem('microAppData', JSON.stringify(dataToSave))
+
+          // 触发自定义事件通知工作台更新（事件驱动，无需轮询）
+          window.dispatchEvent(
+            new CustomEvent('microAppDataUpdate', { detail: dataToSave })
+          )
+        } catch (error) {
+          console.error('[主应用] 存储数据失败:', error)
+        }
+        // 回传确认
+        sendAckToChild(event.source as Window, 'DATA_UPDATE_ACK', {
+          received: true,
+          timestamp: Date.now(),
+        })
+        break
+
+      case 'MOUNTED':
+        // 子应用挂载完成
+        console.log('✅ [主应用] 子应用已挂载:', payload)
+        break
+
+      case 'ROUTE_CHANGE':
+        // 子应用路由变化
+        console.log('🔀 [主应用] 子应用路由变化:', payload)
+        break
+    }
+  }
+
+  /**
+   * 向子应用回传确认消息
+   */
+  const sendAckToChild = (childWindow: Window, type: string, payload: any) => {
+    childWindow.postMessage({ type, payload }, '*')
+    console.log('✅ [主应用] 回传确认给子应用:', type)
+  }
+
+  // 生命周期：添加和移除 postMessage 监听
+  onMounted(() => {
+    window.addEventListener('message', handlePostMessage)
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener('message', handlePostMessage)
+  })
 </script>
 
 <style scoped lang="scss">
   .micro-app-container {
+    width: 100%;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -184,11 +268,21 @@
     flex: 1;
     position: relative;
     overflow: hidden;
+    background: #ffffff;
+    min-height: 0;
   }
 
-  micro-app {
+  :deep(micro-app) {
+    display: block;
     width: 100%;
     height: 100%;
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
   }
 
   .loading-placeholder {

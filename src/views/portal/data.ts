@@ -79,6 +79,7 @@ export const systems: App[] = [
     icon: 'ri:truck-line',
     color: '#6FC5E8',
     port: 3003,
+    integrated: true,
   },
   {
     id: 'procurement',

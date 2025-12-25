@@ -65,8 +65,8 @@
             v-if="props.showPlatformTitle"
             class="platform-title"
           >
-            <span class="title-text">Robot Admin</span>
-            <span class="title-subtitle">工业互联网平台</span>
+            <span class="title-text">{{ platformTitle.main }}</span>
+            <span class="title-subtitle">{{ platformTitle.subtitle }}</span>
           </div>
         </div>
 
@@ -310,7 +310,8 @@
   import { useThemeStore } from '@/stores/theme'
   import { useSettingsStore } from '@/stores/settings'
   import { s_permissionStore } from '@/stores/permission'
-  import { useRouter } from 'vue-router'
+  import { useRouter, useRoute } from 'vue-router'
+  import { getSystemTitle } from '@/config/systemTitles'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
   import C_Icon from '@/components/global/C_Icon/index.vue'
   import { systemList, mockSystemMenus, type SystemMenu } from './data'
@@ -343,8 +344,12 @@
   })
 
   const router = useRouter()
+  const route = useRoute()
   const themeStore = useThemeStore()
   const settingsStore = useSettingsStore()
+
+  // 动态平台标题 - 根据当前路由自动切换
+  const platformTitle = computed(() => getSystemTitle(route.path))
 
   // 设置面板状态
   const showSettings = ref(false)
@@ -464,17 +469,37 @@
   }
 
   // 处理菜单点击
+  // 处理菜单点击
   const handleMenuClick = async (item: any) => {
-    if (item.path) {
-      showSystemDrawer.value = false
-      await nextTick()
-      await router.push(item.path)
+    if (!item.path) return
+
+    showSystemDrawer.value = false
+    await nextTick()
+
+    // 标准化路径格式
+    const path = item.path.startsWith('/') ? item.path : `/${item.path}`
+
+    // 判断是否在微前端子应用中（iframe 环境）
+    const isInMicroApp = window !== window.parent
+
+    if (isInMicroApp) {
+      // 子应用：通过 postMessage 通知主应用进行路由跳转
+      window.parent.postMessage(
+        {
+          type: 'MICRO_APP_NAVIGATE',
+          payload: { path },
+        },
+        '*'
+      )
+    } else {
+      // 主应用：直接跳转
+      await router.push(path)
     }
   }
 
   // 跳转到工作台
   const handleGoToPortal = () => {
-    router.push('/portal')
+    router.replace('/portal')
   }
 
   interface MenuCollapse {
