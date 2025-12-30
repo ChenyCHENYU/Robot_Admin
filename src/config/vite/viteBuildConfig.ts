@@ -1,6 +1,9 @@
 import type { BuildOptions } from 'vite'
 
 const buildConfig: BuildOptions = {
+  // Module Federation 支持
+  target: 'esnext', // 🆕 支持 top-level await
+
   // 减少构建时的无意义警告和耗时统计
   chunkSizeWarningLimit: 800,
   reportCompressedSize: false,
@@ -8,40 +11,11 @@ const buildConfig: BuildOptions = {
   rollupOptions: {
     output: {
       /**
-       * 手动分包配置 - 稳定版本
-       * 使用对象方式明确指定每个包的模块，避免模糊匹配导致的问题
+       * 手动分包配置 - 🔴 Module Federation 模式下禁用 manualChunks
+       * 原因：manualChunks 会导致 federation 构建后白屏
+       * 参考：https://github.com/originjs/vite-plugin-federation/issues/711
        */
-      manualChunks: {
-        // Vue 核心生态
-        'vue-vendor': ['vue', 'vue-router', 'pinia'],
-
-        // UI 组件库
-        'ui-vendor': ['naive-ui'],
-
-        // 编辑器相关（不包含 echarts，避免冲突）
-        'editor-vendor': ['@kangc/v-md-editor', 'wangeditor', 'highlight.js'],
-
-        // Office 文档处理
-        'office-vendor': ['xlsx', 'mammoth', 'file-saver', 'jszip'],
-
-        // 日历组件
-        'calendar-vendor': [
-          '@fullcalendar/core',
-          '@fullcalendar/vue3',
-          '@fullcalendar/daygrid',
-          '@fullcalendar/interaction',
-          '@fullcalendar/list',
-        ],
-
-        // 3D 渲染
-        'spline-vendor': ['@splinetool/runtime'],
-
-        // 流程图/图编辑器
-        'graph-vendor': ['@antv/x6', '@vue-flow/core'],
-
-        // 可视化库
-        'viz-vendor': ['@visactor/vtable-gantt'],
-      },
+      // manualChunks 在使用 Module Federation 时会导致白屏，已禁用
 
       // 优化文件组织结构
       chunkFileNames: 'js/[name]-[hash].js',

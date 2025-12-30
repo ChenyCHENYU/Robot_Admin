@@ -12,6 +12,8 @@ import { HEAVY_PAGE_ROUTES } from './heavyPages'
 
 export default {
   port: 1988,
+  host: '0.0.0.0', // 🆕 Module Federation: 允许外部访问
+  cors: true, // 🆕 Module Federation: 跨域支持
   hmr: { overlay: true },
   open: true,
 

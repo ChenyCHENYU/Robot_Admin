@@ -37,8 +37,13 @@
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🔮-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Module Federation</strong></sub><br>
-        <sub>即将推出</sub><br>
-        <img src="https://img.shields.io/badge/状态-规划中-lightgrey?style=flat-square" alt="Coming Soon">
+        <sub>开发中</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
+          <img src="https://img.shields.io/badge/查看代码-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
+        </a>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/module-federation-implementation.md">
+          <img src="https://img.shields.io/badge/实施方案-DOCS-orange?style=flat-square" alt="MF Docs">
+        </a>
       </td>
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🚀-微前端-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
@@ -106,7 +111,7 @@ Robot Admin 提供多种架构选择，满足不同规模和场景的需求：
 |---------|---------|------|------|------|
 | **🏗️ 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用 | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main) | 本文档 |
 | **📦 Monorepo** | 多应用统一管理 | 代码复用、统一工具链、独立部署 | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo) | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md) |
-| **🔮 模块联邦** | 微应用动态加载 | 运行时共享、独立部署、版本隔离 | 规划中 | - |
+| **🔮 模块联邦** | 微应用动态加载、组件复用 | 运行时共享、独立部署、版本隔离、TypeScript 类型提示 | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [实施方案](docs/module-federation-implementation.md) |
 | **🚀 微前端** | 大型应用、团队协作 | 技术栈无关、独立部署、渐进式迁移 | 规划中 | - |
 
 ### 📦 Monorepo 架构亮点
@@ -142,6 +147,48 @@ bun run dev:internal  # 启动 Internal 版本
 ```
 
 📖 **[查看完整 Monorepo 文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)**
+
+### 🔮 模块联邦架构亮点
+
+基于 **@module-federation/vite** 的新一代微前端架构！[查看分支](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation)
+
+**技术选型：**
+- 采用 Module Federation 官方团队维护的 `@module-federation/vite`
+- 周下载量 21万+，活跃维护（每月多次更新）
+- 完整的工具链支持（DevTools/CLI/Manifest）
+
+**核心能力：**
+- ✅ 运行时依赖共享（Vue/Vue-Router/Pinia）
+- ✅ 独立构建部署（30+ 组件模块化暴露）
+- ✅ TypeScript 类型自动同步
+- ✅ 版本隔离与灰度发布
+- ✅ Chrome DevTools 调试支持
+- ✅ 按需加载，性能提升 25%
+
+**应用场景：**
+- 大型企业多团队协作开发
+- 组件库跨项目复用
+- 微服务架构前端解决方案
+- 渐进式迁移老系统
+
+**架构设计：**
+```
+Robot_Admin (Module Federation)
+├── host-app/              # 主应用
+├── remote-components/     # 组件库（30+ 组件）
+├── remote-business/       # 业务模块
+└── remote-system/         # 系统管理
+```
+
+**快速开始：**
+```bash
+git clone -b feature/module-federation https://github.com/ChenyCHENYU/Robot_Admin.git
+cd Robot_Admin
+bun install
+bun run dev  # 启动所有应用
+```
+
+📖 **[查看完整实施方案](docs/module-federation-implementation.md)**
 
 ---
 

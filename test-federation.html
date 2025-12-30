@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Module Federation 测试</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        border-bottom: 2px solid #5e72e4;
+        padding-bottom: 10px;
+      }
+      .test-section {
+        margin: 30px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 4px;
+      }
+      .test-section h2 {
+        color: #5e72e4;
+        margin-top: 0;
+      }
+      #result {
+        padding: 15px;
+        background: #e9ecef;
+        border-left: 4px solid #5e72e4;
+        margin-top: 15px;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 14px;
+      }
+      .success {
+        color: #28a745;
+      }
+      .error {
+        color: #dc3545;
+      }
+      .info {
+        color: #17a2b8;
+      }
+      button {
+        padding: 10px 20px;
+        background: #5e72e4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      button:hover {
+        background: #4c63d2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 Module Federation 集成测试</h1>
+
+      <div class="test-section">
+        <h2>📋 测试说明</h2>
+        <p>这个页面用于测试 Robot Admin 的模块联邦配置是否正常工作。</p>
+        <ul>
+          <li
+            ><strong>Remote Entry URL:</strong>
+            http://localhost:4173/assets/remoteEntry.js</li
+          >
+          <li><strong>暴露的组件:</strong> Table, Form, Tree, Icon, Editor</li>
+        </ul>
+      </div>
+
+      <div class="test-section">
+        <h2>🔍 测试步骤</h2>
+        <button onclick="runTest()">开始测试</button>
+        <div id="result"></div>
+      </div>
+
+      <div class="test-section">
+        <h2>💡 预期结果</h2>
+        <ul>
+          <li>✅ remoteEntry.js 可以成功加载</li>
+          <li>✅ 能够访问 __FEDERATION__.robotAdmin</li>
+          <li>✅ 能够获取到 5 个暴露的组件</li>
+        </ul>
+      </div>
+    </div>
+
+    <script type="module">
+      window.runTest = async function () {
+        const resultDiv = document.getElementById('result')
+        let log = ''
+
+        function addLog(message, type = 'info') {
+          const timestamp = new Date().toLocaleTimeString()
+          log += `[${timestamp}] <span class="${type}">${message}</span>\n`
+          resultDiv.innerHTML = log
+        }
+
+        try {
+          addLog('🚀 开始测试 Module Federation...', 'info')
+
+          // 测试 1: 检查 remoteEntry.js 是否存在
+          addLog('\n📥 测试 1: 检查 remoteEntry.js 访问性...', 'info')
+          const remoteUrl = 'http://localhost:4173/assets/remoteEntry.js'
+
+          try {
+            const response = await fetch(remoteUrl, { method: 'HEAD' })
+            if (response.ok) {
+              addLog('✅ remoteEntry.js 可以访问', 'success')
+              addLog(`   Status: ${response.status}`, 'info')
+              addLog(
+                `   Content-Type: ${response.headers.get('content-type')}`,
+                'info'
+              )
+            } else {
+              addLog(`❌ remoteEntry.js 访问失败: ${response.status}`, 'error')
+              return
+            }
+          } catch (error) {
+            addLog(`❌ 无法连接到 remoteEntry.js: ${error.message}`, 'error')
+            addLog(
+              '   请确认 Robot Admin 预览服务已启动在 http://localhost:4173',
+              'error'
+            )
+            return
+          }
+
+          // 测试 2: 动态加载 remoteEntry.js
+          addLog('\n📦 测试 2: 动态加载 remoteEntry.js...', 'info')
+
+          const script = document.createElement('script')
+          script.src = remoteUrl
+          script.type = 'module'
+
+          await new Promise((resolve, reject) => {
+            script.onload = () => {
+              addLog('✅ remoteEntry.js 加载成功', 'success')
+              resolve()
+            }
+            script.onerror = error => {
+              addLog(`❌ remoteEntry.js 加载失败: ${error}`, 'error')
+              reject(error)
+            }
+            document.head.appendChild(script)
+          })
+
+          // 等待一下确保初始化完成
+          await new Promise(resolve => setTimeout(resolve, 500))
+
+          // 测试 3: 检查 __FEDERATION__ 对象
+          addLog('\n🔍 测试 3: 检查 __FEDERATION__ 对象...', 'info')
+
+          if (typeof window.__FEDERATION__ !== 'undefined') {
+            addLog('✅ __FEDERATION__ 对象存在', 'success')
+            addLog(
+              `   Keys: ${Object.keys(window.__FEDERATION__).join(', ')}`,
+              'info'
+            )
+
+            if (window.__FEDERATION__.robotAdmin) {
+              addLog('✅ robotAdmin 远程模块已注册', 'success')
+
+              // 测试 4: 获取暴露的组件
+              addLog('\n📦 测试 4: 获取暴露的组件...', 'info')
+
+              const exposedModules = ['Table', 'Form', 'Tree', 'Icon', 'Editor']
+
+              for (const moduleName of exposedModules) {
+                try {
+                  addLog(`   尝试加载: ${moduleName}...`, 'info')
+                  const module = await window.__FEDERATION__.robotAdmin.get(
+                    `./${moduleName}`
+                  )
+                  if (module) {
+                    addLog(`   ✅ ${moduleName} 加载成功`, 'success')
+                  } else {
+                    addLog(`   ❌ ${moduleName} 返回空`, 'error')
+                  }
+                } catch (error) {
+                  addLog(
+                    `   ❌ ${moduleName} 加载失败: ${error.message}`,
+                    'error'
+                  )
+                }
+              }
+
+              addLog('\n🎉 测试完成！', 'success')
+            } else {
+              addLog('❌ robotAdmin 远程模块未找到', 'error')
+            }
+          } else {
+            addLog('❌ __FEDERATION__ 对象不存在', 'error')
+            addLog('   这意味着 remoteEntry.js 没有正确初始化联邦配置', 'error')
+          }
+        } catch (error) {
+          addLog(`\n❌ 测试过程出错: ${error.message}`, 'error')
+          console.error('详细错误:', error)
+        }
+      }
+    </script>
+  </body>
+</html>

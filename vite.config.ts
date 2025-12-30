@@ -16,6 +16,7 @@ import Unocss from 'unocss/vite'
 import Icons from 'unplugin-icons/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import preloader from 'vite-plugin-preloader'
+import federation from '@originjs/vite-plugin-federation'
 
 import {
   viteConsolePlugin,
@@ -34,6 +35,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
   process.env = { ...process.env, ...env }
 
   return {
+    base: '/',
     plugins: [
       viteConsolePlugin,
       Unocss(),
@@ -43,10 +45,43 @@ export default defineConfig(({ mode }: { mode: string }) => {
       Icons({ autoInstall: true }),
       viteAutoImportPlugin,
       viteComponentsPlugin,
-      preloader({
-        routes: HEAVY_PAGE_ROUTES,
-      }),
+      // 🔧 只在开发环境启用 preloader
+      ...(mode === 'development'
+        ? [
+            preloader({
+              routes: HEAVY_PAGE_ROUTES,
+            }),
+          ]
+        : []),
       createI18nPlugin(),
+      // 🆕 Module Federation 配置
+      federation({
+        name: 'robotAdmin',
+        filename: 'remoteEntry.js',
+        // 暴露组件给其他项目使用
+        exposes: {
+          './Table': './src/components/global/C_Table/index.vue',
+          './Form': './src/components/global/C_Form/index.vue',
+          './Tree': './src/components/global/C_Tree/index.vue',
+          './Icon': './src/components/global/C_Icon/index.vue',
+          './Editor': './src/components/global/C_Editor/index.vue',
+        },
+        // 引用其他项目的模块（未来添加）
+        remotes: {},
+        // 共享依赖
+        shared: {
+          vue: {
+            singleton: true,
+            requiredVersion: '^3.0.0',
+          },
+          'vue-router': {
+            singleton: true,
+          },
+          pinia: {
+            singleton: true,
+          },
+        },
+      }),
       ...(process.env.ANALYZE
         ? [
             visualizer({
