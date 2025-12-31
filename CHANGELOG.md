@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.11.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.1...v1.11.2) (2025-12-31)
+
+
+### Bug Fixes
+
+* **git-hooks:** 修复 husky commitlint 配置 ([961120e](https://github.com/ChenyCHENYU/Robot_Admin/commit/961120eb649bd9feef395a9a343c3b1c7a729c74))
+
+
+### Performance Improvements
+
+* 优化启动速度配置 ([de3134c](https://github.com/ChenyCHENYU/Robot_Admin/commit/de3134c8008a64686ce207d425e715cfc570df73))
+
 ## [1.11.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.0...v1.11.1) (2025-12-12)
 
 
