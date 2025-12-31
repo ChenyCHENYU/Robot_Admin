@@ -125,7 +125,7 @@
     "vite-auto-i18n-plugin": "^1.1.12",
     "vite-console-plugin": "^2.0.15",
     "vite-plugin-vue-devtools": "^7.7.2",
-    "vue-tsc": "^2.2.8"
+    "vue-tsc": "^2.2.8   "
   },
   "config": {
     "commitizen": {

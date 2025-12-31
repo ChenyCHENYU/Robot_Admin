@@ -1,2 +1,3 @@
+#!/usr/bin/env sh
 bunx oxlint --max-warnings 0
 npx lint-staged
