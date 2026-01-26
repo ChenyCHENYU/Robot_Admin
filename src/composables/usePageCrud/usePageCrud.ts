@@ -264,8 +264,8 @@ function createHelpers<Row, Query>(
       const r = config.mapListResult(rawRes)
       items.value = r.items || []
       total.value = r.total || 0
-      if (r.page != null) page.current = r.page
-      if (r.pageSize != null) page.size = r.pageSize
+      // ⚠️ 注意：不要用后端返回的 page/pageSize 覆盖前端状态
+      // 前端的分页状态由用户控制，应该保持不变
       return
     }
 
@@ -274,8 +274,7 @@ function createHelpers<Row, Query>(
 
     items.value = extracted.items
     total.value = extracted.total
-    if (extracted.page != null) page.current = extracted.page
-    if (extracted.pageSize != null) page.size = extracted.pageSize
+    // ⚠️ 注意：不要用后端返回的 page/pageSize 覆盖前端状态
   }
 
   const handleError = (action: string, error: any) => {
