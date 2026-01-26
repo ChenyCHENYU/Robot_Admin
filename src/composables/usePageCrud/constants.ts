@@ -63,8 +63,8 @@ export const TOTAL_FIELD_ALIASES = [
 /** 数据字段可能的名称（按优先级排序） */
 export const DATA_FIELD_ALIASES = ['data', 'list', 'items', 'records'] as const
 
-/** 成功状态码 */
-export const SUCCESS_CODES = [200, 0] as const
+/** 成功状态码（支持数字和字符串） */
+export const SUCCESS_CODES = [200, 0, '200', '0'] as const
 
 // ==================== 默认选项值 ====================
 

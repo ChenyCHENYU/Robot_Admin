@@ -53,6 +53,7 @@ await crud.action('POST', '/api/user/export', data) // 临时操作
 - ✅ **自动刷新**：增删改后智能刷新列表
 - ✅ **自动通知**：自动检测 UI 框架消息系统（Naive UI、Element Plus、Ant Design）
 - ✅ **业务扩展**：通过 actions 无缝扩展业务操作
+- ✅ **表格适配**：一行代码适配表格组件（`toTableApis`）
 - ✅ **灵活适配**：支持各种后端响应格式
 
 ## 快速开始
@@ -91,7 +92,23 @@ await crud.actions.resetPassword({ id: 1, password: 'new123' })
 // 2️⃣ 通用 action 方法（不需要预定义）
 await crud.action('POST', '/api/user/send-email', { id: 1, content: 'xxx' })
 
-// 3️⃣ 带类型定义
+// 3️⃣ 与表格组件配合使用（超简洁！）
+import { usePageCrud, toTableApis } from '@/composables/usePageCrud'
+import { createTableActions } from '@/composables/Table/createTableActions'
+
+const crud = usePageCrud<User>({
+  list: '/api/user/list',
+  get: '/api/user/:id',
+  update: '/api/user/:id',
+  remove: '/api/user/:id',
+})
+
+const tableActions = createTableActions({
+  apis: toTableApis(crud), // ✨ 一行搞定！自动适配 update/delete/detail
+  custom: [...] // 自定义操作按钮
+})
+
+// 4️⃣ 带类型定义
 interface User {
   id: number
   name: string

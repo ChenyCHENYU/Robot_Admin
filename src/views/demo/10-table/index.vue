@@ -133,23 +133,60 @@
     detailConfig,
     type Employee,
   } from './data'
-  import {
-    getEmployeesList,
-    deleteEmployeesById,
-    putEmployeesById,
-    getEmployeesById,
-  } from '@/api/generated'
-  import { useTableData } from '@/composables/Table/useTableData'
+  import { usePageCrud, toTableApis } from '@/composables/usePageCrud'
   import { createTableActions } from '@/composables/Table/createTableActions'
 
   // ================= 组合式函数 =================
   const message = useMessage()
   const dialog = useDialog()
 
-  // 数据加载
-  const { tableData, loading, refresh } = useTableData(params =>
-    getEmployeesList({ query: params })
+  // 使用 usePageCrud 统一管理所有 API 调用
+  const crud = usePageCrud<Employee>(
+    {
+      list: '/employees/list',
+      get: '/employees/:id',
+      update: '/employees/:id',
+      remove: '/employees/:id',
+    },
+    {
+      // 自定义列表结果映射
+      mapListResult: res => {
+        console.log('🔍 列表 API 返回:', res)
+        const data = res.data || res
+        const items = data.list || data.items || data.records || data || []
+        const total = data.total || data.totalCount || 0
+        return { items, total }
+      },
+      // 自定义响应标准化
+      normalize: res => {
+        console.log('🔍 normalize 接收原始响应:', res)
+
+        // 标准化响应
+        const normalized = {
+          data: res.data,
+          message: res.message,
+          success:
+            res.code === 0 ||
+            res.code === '0' ||
+            res.code === 200 ||
+            res.code === '200',
+          raw: res,
+        }
+
+        console.log('✅ normalize 返回标准化结果:', normalized)
+        return normalized
+      },
+    }
   )
+
+  // 映射数据到表格
+  const tableData = computed({
+    get: () => crud.items.value,
+    set: val => {
+      crud.items.value = val
+    },
+  })
+  const { loading, refresh } = crud
 
   // ================= 响应式状态 =================
   const tableRef = ref()
@@ -219,11 +256,7 @@
 
   // ================= 简化的表格操作配置 =================
   const tableActions = createTableActions<Employee>({
-    apis: {
-      update: putEmployeesById,
-      delete: deleteEmployeesById,
-      detail: getEmployeesById,
-    },
+    apis: toTableApis(crud), // ✨ 一行搞定！自动适配所有 CRUD 方法
     custom: [
       {
         key: 'copy',
@@ -327,6 +360,11 @@
     currentEmployee.value = null
     detailModalTitle.value = ''
   }
+
+  // 初始化加载数据
+  onMounted(() => {
+    crud.fetch()
+  })
 </script>
 
 <style scoped lang="scss">

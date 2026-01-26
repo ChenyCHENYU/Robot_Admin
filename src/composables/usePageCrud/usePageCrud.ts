@@ -292,8 +292,16 @@ function createHelpers<Row, Query>(
   }
 
   const handleSuccess = <T>(res: any, successMsg?: string): T => {
+    const normalized = config.normalize<any>(res)
+
+    // 检查响应是否真的成功
+    if (!normalized.success) {
+      const errorMsg = normalized.message || '操作失败'
+      throw new Error(errorMsg)
+    }
+
     if (successMsg) config.notifier?.success?.(successMsg)
-    return config.normalize<any>(res).data as T
+    return normalized.data as T
   }
 
   const extractId = (data: any): string | number => {
@@ -470,21 +478,30 @@ function createMethods<Row, Query>(
     const isBatch = typeof input === 'object' && 'ids' in input
 
     try {
-      await withLoading(async () => {
+      const res = await withLoading(async () => {
         if (isBatch) {
-          await executeBatchRemove(
+          return await executeBatchRemove(
             api.remove!,
             (input as { ids: Array<string | number> }).ids,
             opt,
             config
           )
-          config.notifier?.success?.(config.messages.batchDeleteSuccess)
         } else {
-          await executeSingleRemove(api.remove!, input as string | number, opt)
-          config.notifier?.success?.(config.messages.removeSuccess)
+          return await executeSingleRemove(
+            api.remove!,
+            input as string | number,
+            opt
+          )
         }
       })
-      await afterMutate('remove', null, refresh)
+
+      // 统一使用 handleSuccess 处理响应并显示消息
+      const message = isBatch
+        ? config.messages.batchDeleteSuccess
+        : config.messages.removeSuccess
+      handleSuccess(res, message)
+
+      await afterMutate('remove', res, refresh)
     } catch (e) {
       handleError('remove', e)
       throw e
@@ -662,15 +679,15 @@ function createMethods<Row, Query>(
  * @param {Array<string | number>} ids - 要删除的 ID 数组
  * @param {EndpointOpt} opt - 端点配置选项
  * @param {ResolvedConfig} config - 解析后的配置对象
- * @returns {Promise<void>}
+ * @returns {Promise<any>} 返回响应结果
  */
 async function executeBatchRemove(
   url: string,
   ids: Array<string | number>,
   opt: EndpointOpt,
   config: ResolvedConfig
-): Promise<void> {
-  if (!ids.length) return
+): Promise<any> {
+  if (!ids.length) return null
 
   const {
     url: reqUrl,
@@ -680,7 +697,7 @@ async function executeBatchRemove(
   const headers = { ...config.headers, ...opt.headers }
   const reqConfig = useBody ? { data, headers } : { params: data, headers }
 
-  await deleteData(reqUrl, reqConfig)
+  return await deleteData(reqUrl, reqConfig)
 }
 
 const DELETE_STRATEGIES: Record<
@@ -699,14 +716,14 @@ const DELETE_STRATEGIES: Record<
  * @param {string} url - 删除接口 URL
  * @param {string | number} id - 要删除的数据 ID
  * @param {EndpointOpt} opt - 端点配置选项
- * @returns {Promise<void>}
+ * @returns {Promise<any>} 返回响应结果
  */
 async function executeSingleRemove(
   url: string,
   id: string | number,
   opt: EndpointOpt
-): Promise<void> {
+): Promise<any> {
   const reqConfig = RequestBuilder.withId(url, id, opt)
   const strategy = DELETE_STRATEGIES[opt.idIn || 'path']
-  await strategy(reqConfig.url, reqConfig.data, reqConfig.headers)
+  return await strategy(reqConfig.url, reqConfig.data, reqConfig.headers)
 }

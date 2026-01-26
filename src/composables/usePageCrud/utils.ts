@@ -184,7 +184,11 @@ export const ResponseNormalizer = {
   /** 判断响应是否成功 */
   isSuccess(res: any): boolean {
     if (typeof res.success === 'boolean') return res.success
-    return SUCCESS_CODES.includes(res.code)
+    // 支持数字和字符串类型的 code
+    return (
+      SUCCESS_CODES.includes(res.code) ||
+      SUCCESS_CODES.includes(String(res.code))
+    )
   },
 
   /** 标准化响应 */

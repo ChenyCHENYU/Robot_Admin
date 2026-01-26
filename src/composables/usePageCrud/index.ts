@@ -7,7 +7,8 @@
 
 // ==================== 主函数 ====================
 export { usePageCrud } from './usePageCrud'
-
+// ==================== 适配器 ====================
+export { toTableApis } from './tableAdapter'
 // ==================== 全局配置 ====================
 export {
   configureCrud,
