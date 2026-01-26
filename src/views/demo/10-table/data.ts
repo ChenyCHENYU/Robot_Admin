@@ -6,6 +6,23 @@ import type {
   EditMode,
 } from '@/types/modules/table'
 import { PRESET_RULES } from '@/utils/v_verify'
+import { toTableApis, usePageCrud } from '@/composables/usePageCrud'
+import { createTableActions } from '@/composables/Table/createTableActions'
+import type { Ref } from 'vue'
+
+// ================= CRUD 初始化配置 =================
+/**
+ * 创建员工 CRUD 实例
+ * 集中管理所有 API 配置和数据映射逻辑
+ */
+export const createEmployeeCrud = () => {
+  return usePageCrud<Employee>({
+    list: '/employees/list',
+    get: '/employees/:id',
+    update: '/employees/:id',
+    remove: '/employees/:id',
+  })
+}
 
 // ================= 业务类型定义 =================
 export interface Employee extends DataRecord {
@@ -303,4 +320,205 @@ export const detailConfig: any = {
       ],
     },
   ],
+}
+
+// ================= 操作列配置（完整封装）=================
+/**
+ * 创建表格操作配置（包含 CRUD + 自定义操作）
+ * @description 将所有操作列的配置和逻辑封装在 data.ts，保持数据集中管理
+ * @param deps 必要的依赖
+ * @returns 完整的 tableActions 对象
+ */
+export interface TableActionsDeps {
+  crud: any // usePageCrud 返回的实例
+  tableData: any[] // 表格数据数组（直接是 crud.items.value）
+  currentPage: Ref<number>
+  defaultPageSize: Ref<number>
+  paginationEnabled: Ref<boolean>
+  message: any
+  dialog: any
+}
+
+export const createEmployeeTableActions = (deps: TableActionsDeps) => {
+  return createTableActions<Employee>({
+    // 🎯 自动适配 CRUD 操作（编辑、删除、详情）
+    apis: toTableApis(deps.crud),
+
+    // 🎯 自定义操作（复制、授权等）
+    custom: [
+      {
+        key: 'copy',
+        label: '复制',
+        icon: 'mdi:content-copy',
+        type: 'default' as const,
+        onClick: (row: Employee, index: number) => {
+          const newRow: Employee = {
+            ...row,
+            id: Date.now(),
+            name: `${row.name}_副本`,
+          }
+          // 计算实际插入位置（考虑分页）
+          const actualIndex = deps.paginationEnabled.value
+            ? (deps.currentPage.value - 1) * deps.defaultPageSize.value +
+              index +
+              1
+            : index + 1
+          deps.tableData.splice(actualIndex, 0, newRow)
+          deps.message.success('复制成功')
+        },
+      },
+      {
+        key: 'authorize',
+        label: '授权',
+        icon: 'mdi:shield-key',
+        type: 'warning' as const,
+        onClick: (row: Employee) => {
+          deps.dialog.info({
+            title: '员工授权',
+            content: `正在为员工 "${row.name}" 配置系统权限...`,
+            positiveText: '确定',
+            onPositiveClick: () => {
+              deps.message.success('授权配置完成')
+            },
+          })
+        },
+      },
+    ],
+  })
+}
+
+// ================= 分页配置工厂 =================
+export const createPaginationConfig = (params: {
+  enabled: Ref<boolean>
+  page: { current: number; size: number }
+}) => {
+  return computed(() => {
+    if (!params.enabled.value) return false
+    return {
+      enabled: true,
+      page: params.page.current,
+      pageSize: params.page.size,
+    }
+  })
+}
+
+// ================= 事件处理工厂 =================
+export interface EventHandlersDeps {
+  crud: any
+  tableData: Ref<any[]>
+  page: { current: number; size: number }
+  paginationEnabled: Ref<boolean>
+  editMode: Ref<EditMode>
+  tableRef: Ref<any>
+  message: any
+}
+
+export const createEventHandlers = (deps: EventHandlersDeps) => {
+  const pendingNewRowId = ref<number | null>(null)
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleRowDelete = (deletedRow: Employee, index: number): void => {
+    const idx = deps.tableData.value.findIndex(
+      (emp: Employee) => emp.id === deletedRow.id
+    )
+    if (idx !== -1) {
+      deps.tableData.value.splice(idx, 1)
+    }
+  }
+
+  const handlePaginationChange = (pageNum: number, pageSize: number): void => {
+    deps.page.current = pageNum
+    deps.page.size = pageSize
+    deps.crud.fetch()
+  }
+
+  const addNewRow = (): void => {
+    const newRow = createNewEmployee()
+    pendingNewRowId.value = newRow.id
+    deps.tableData.value.unshift(newRow)
+
+    if (deps.paginationEnabled.value && deps.page.current !== 1) {
+      deps.page.current = 1
+    }
+
+    nextTick(() => {
+      if (
+        deps.editMode.value === 'modal' ||
+        ['row', 'both'].includes(deps.editMode.value)
+      ) {
+        deps.tableRef.value?.startEdit(newRow.id)
+      }
+    })
+
+    deps.message.info('请填写新员工信息后保存')
+  }
+
+  const handleSave = async (
+    rowData: Record<string, unknown>
+  ): Promise<void> => {
+    try {
+      const employee = rowData as Employee
+
+      if (pendingNewRowId.value && employee.id === pendingNewRowId.value) {
+        pendingNewRowId.value = null
+        deps.message.success('新员工信息保存成功')
+      } else {
+        deps.message.success('员工信息更新成功')
+      }
+    } catch (error) {
+      console.error('保存失败:', error)
+      deps.message.error('保存失败，请重试')
+      throw error
+    }
+  }
+
+  const handleCancel = (): void => {
+    if (pendingNewRowId.value) {
+      const tempIndex = deps.tableData.value.findIndex(
+        (item: Employee) => item.id === pendingNewRowId.value
+      )
+      if (tempIndex !== -1) {
+        deps.tableData.value.splice(tempIndex, 1)
+      }
+      pendingNewRowId.value = null
+      deps.message.info('已取消新增')
+    } else {
+      deps.message.info('已取消编辑')
+    }
+  }
+
+  return {
+    handleRowDelete,
+    handlePaginationChange,
+    addNewRow,
+    handleSave,
+    handleCancel,
+  }
+}
+
+// ================= 详情弹窗管理 =================
+export const createDetailModal = () => {
+  const visible = ref(false)
+  const title = ref('')
+  const currentData = ref<Employee | null>(null)
+
+  const show = (employee: Employee) => {
+    currentData.value = employee
+    title.value = `员工详情 - ${employee.name}`
+    visible.value = true
+  }
+
+  const close = () => {
+    currentData.value = null
+    title.value = ''
+    visible.value = false
+  }
+
+  return {
+    visible,
+    title,
+    currentData,
+    show,
+    close,
+  }
 }
