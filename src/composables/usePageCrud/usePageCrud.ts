@@ -33,6 +33,21 @@ import { normalizeApi } from './apiParser'
 import { createAutoNotifier } from './notifier'
 import { getGlobalConfig, applyPreset } from './config'
 
+// ==================== 删除策略常量 ====================
+
+/**
+ * 删除操作策略映射
+ * 根据 idIn 配置选择不同的删除方式
+ */
+const DELETE_STRATEGIES: Record<
+  IdIn,
+  (url: string, data: any, headers: any) => Promise<any>
+> = {
+  body: (url, data, headers) => deleteData(url, { data, headers }),
+  params: (url, data, headers) => deleteData(url, { params: data, headers }),
+  path: (url, _, headers) => deleteData(url, { headers }),
+}
+
 // ==================== 主函数 ====================
 
 /**
@@ -257,7 +272,7 @@ function createHelpers<Row, Query>(
     const normalized = config.normalize<any>(rawRes)
     const extracted = ResponseNormalizer.extractList(normalized.data ?? rawRes)
 
-    items.value = extracted.list
+    items.value = extracted.items
     total.value = extracted.total
     if (extracted.page != null) page.current = extracted.page
     if (extracted.pageSize != null) page.size = extracted.pageSize
@@ -698,15 +713,6 @@ async function executeBatchRemove(
   const reqConfig = useBody ? { data, headers } : { params: data, headers }
 
   return await deleteData(reqUrl, reqConfig)
-}
-
-const DELETE_STRATEGIES: Record<
-  IdIn,
-  (url: string, data: any, headers: any) => Promise<any>
-> = {
-  body: (url, data, headers) => deleteData(url, { data, headers }),
-  params: (url, data, headers) => deleteData(url, { params: data, headers }),
-  path: (url, _, headers) => deleteData(url, { headers }),
 }
 
 /**

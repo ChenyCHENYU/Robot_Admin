@@ -187,7 +187,7 @@ export const ResponseNormalizer = {
     // 支持数字和字符串类型的 code
     return (
       SUCCESS_CODES.includes(res.code) ||
-      SUCCESS_CODES.includes(String(res.code))
+      SUCCESS_CODES.includes(String(res.code) as any)
     )
   },
 
@@ -200,14 +200,14 @@ export const ResponseNormalizer = {
     return {
       data: FieldFinder.findFirst(res, DATA_FIELD_ALIASES, res),
       message: res.message,
-      success: this.isSuccess(res),
+      success: ResponseNormalizer.isSuccess(res),
       raw: res,
     }
   },
 
   /** 提取列表数据 */
   extractList(data: any): {
-    list: any[]
+    items: any[]
     total: number
     page?: number
     pageSize?: number
@@ -215,7 +215,7 @@ export const ResponseNormalizer = {
     const list = FieldFinder.findFirst<any[]>(data, LIST_FIELD_ALIASES, [])
 
     return {
-      list: Array.isArray(list) ? list : [],
+      items: Array.isArray(list) ? list : [],
       total: FieldFinder.findNumber(data, TOTAL_FIELD_ALIASES, 0),
       page: data?.page,
       pageSize: data?.pageSize,

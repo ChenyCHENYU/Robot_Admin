@@ -185,6 +185,17 @@ export interface UsePageCrudReturn<Row = any, Query = any> {
   get: (id: string | number, params?: Record<string, any>) => Promise<any>
   create: (data: Partial<Row>, params?: Record<string, any>) => Promise<any>
   update: (data: Partial<Row>, params?: Record<string, any>) => Promise<any>
+  /**
+   * 删除数据（支持单个和批量）
+   * @example
+   * // 单个删除
+   * await crud.remove(1)
+   * await crud.remove('user-123')
+   *
+   * // 批量删除
+   * await crud.remove({ ids: [1, 2, 3] })
+   * await crud.remove({ ids: ['user-1', 'user-2'] })
+   */
   remove: (
     input: string | number | { ids: Array<string | number> }
   ) => Promise<void>

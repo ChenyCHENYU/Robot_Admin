@@ -43,6 +43,22 @@ export const DEFAULT_ENDPOINT_OPTIONS: Record<string, EndpointOpt> = {
 
 // ==================== 字段别名映射 ====================
 
+/**
+ * 数据字段别名（按优先级排序）
+ * 用于从后端响应中提取数据对象
+ *
+ * 处理流程：
+ * 1. normalize() 使用 DATA_FIELD_ALIASES 从响应中提取数据层
+ *    例如：{ code: 0, data: {...} } → 提取 data
+ * 2. extractList() 使用 LIST_FIELD_ALIASES 从数据层提取列表
+ *    例如：{ list: [...], total: 10 } → 提取 list
+ *
+ * 支持的响应结构：
+ * - 嵌套：{ data: { list: [...], total: 10 } }  ✅ 常用
+ * - 扁平：{ list: [...], total: 10 }            ✅ 支持
+ */
+export const DATA_FIELD_ALIASES = ['data', 'list', 'items', 'records'] as const
+
 /** 列表字段可能的名称（按优先级排序） */
 export const LIST_FIELD_ALIASES = [
   'list',
@@ -59,9 +75,6 @@ export const TOTAL_FIELD_ALIASES = [
   'count',
   'totalElements',
 ] as const
-
-/** 数据字段可能的名称（按优先级排序） */
-export const DATA_FIELD_ALIASES = ['data', 'list', 'items', 'records'] as const
 
 /** 成功状态码（支持数字和字符串） */
 export const SUCCESS_CODES = [200, 0, '200', '0'] as const
