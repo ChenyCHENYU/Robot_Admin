@@ -4,73 +4,13 @@
  * @LastEditors: ChenYu ycyplus@gmail.com
  * @LastEditTime: 2025-09-22 21:04:34
  * @FilePath: \Robot_Admin\src\types\modules\table.d.ts
- * @Description: 表格类型系统（包含useTableData相关类型）
+ * @Description: 表格类型系统
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
 import type { VNodeChild, Ref, ComputedRef } from 'vue'
 import type { FormItemRule } from 'naive-ui/es/form'
-
-// ================= useTableData Hook 相关类型 =================
-
-/** 标准响应格式 */
-type StandardResponse<T = any> = {
-  data: {
-    list: T[]
-    total: number
-    page: number
-    pageSize: number
-  }
-  code: string
-  message: string
-  [key: string]: any // 允许任意额外字段，如 timestamp
-}
-
-/** SDK 响应格式 */
-type SdkResponse<T = any> = {
-  data?: StandardResponse<T>
-  error?: any
-}
-
-/**
- * 列表API函数类型 - 兼容两种格式
- * - 旧版：直接返回响应对象
- * - SDK：返回 { data, error } 格式
- */
-export type ListApiFn<T = any> = (
-  params?: Record<string, any>
-) => Promise<StandardResponse<T> | SdkResponse<T>>
-
-/** useTableData 配置选项 */
-export interface UseTableDataOptions<T = any> {
-  immediate?: boolean // 是否立即加载，默认true
-  defaultParams?: Record<string, any> // 默认参数
-  transform?: (data: any[]) => T[] // 数据转换函数
-  onSuccess?: (data: T[]) => void // 成功回调
-  onError?: (error: any) => void // 错误回调
-}
-
-/** useTableData 返回类型 */
-export type UseTableDataReturn<T = any> = {
-  loading: Ref<boolean>
-  tableData: Ref<T[]>
-  total: Ref<number>
-  pagination: {
-    readonly page: number
-    readonly pageSize: number
-  }
-  searchParams: Ref<Record<string, any>>
-  loadData: (params?: Record<string, any>) => Promise<void>
-  search: (params: Record<string, any>) => Promise<void>
-  refresh: () => Promise<void>
-  resetSearch: () => Promise<void>
-  handlePageChange: (page: number, pageSize?: number) => Promise<void>
-  resetToFirstPage: () => Promise<void>
-  isEmpty: Ref<boolean>
-  hasData: Ref<boolean>
-  currentParams: Ref<Record<string, any>>
-}
 
 // ================= 核心类型定义 =================
 export type DataRecord = Record<string, unknown>

@@ -128,8 +128,7 @@
     DemoConfig,
   } from '@/types/modules/table'
   import C_Table from '@/components/global/C_Table/index.vue'
-  import { getEmployeesExpandList } from '@/api/generated'
-  import { useTableData } from '@/composables/Table/useTableData'
+  import { usePageCrud } from '@/composables/usePageCrud'
   import {
     defaultConfig,
     dataColumns,
@@ -141,10 +140,14 @@
   const config = reactive<DemoConfig>({ ...defaultConfig })
   const tableRef = ref()
 
-  // 直接使用 SDK - useTableData 自动适配
-  const { tableData, loading, refresh } = useTableData(params =>
-    getEmployeesExpandList({ query: params })
-  )
+  // 使用 usePageCrud 统一管理
+  const {
+    items: tableData,
+    loading,
+    refresh,
+  } = usePageCrud({
+    list: '/api/employees/expand/list',
+  })
 
   // 工具函数
   const getRowKey = (row: DataRecord): DataTableRowKey => (row as TestRecord).id

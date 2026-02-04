@@ -1,28 +1,10 @@
 // src/api/permissions.ts
 import { getData, deleteData, putData } from '@/axios/request'
 import type {
-  GetSysPermissionsListResponse,
   GetSysPermissionsByIdResponse,
   PutSysPermissionsByIdResponse,
   DeleteSysPermissionsByIdResponse,
 } from './generated'
-
-/**
- * * @description: 获取权限列表接口
- * ? @param {object} params 分页参数 { page?: number|string, pageSize?: number|string }
- * ! @return {Promise<GetSysPermissionsListResponse>} 权限列表响应数据（分页）
- */
-export const getPermissionsListApi = (params?: {
-  page?: number | string
-  pageSize?: number | string
-}) =>
-  getData<GetSysPermissionsListResponse>('/sys/permissionsList', {
-    // 兼容 number | string，统一传字符串，贴合 generated 中的 query 类型
-    params: {
-      page: params?.page != null ? String(params.page) : undefined,
-      pageSize: params?.pageSize != null ? String(params.pageSize) : undefined,
-    },
-  })
 
 /**
  * * @description: 根据ID查询权限详情接口

@@ -96,8 +96,7 @@
 <script setup lang="ts">
   import type { DataRecord, SimpleTableActions } from '@/types/modules/table'
   import C_Table from '@/components/global/C_Table/index.vue'
-  import { getEmployeesDynamicList } from '@/api/generated'
-  import { useTableData } from '@/composables/Table/useTableData'
+  import { usePageCrud } from '@/composables/usePageCrud'
   import {
     type DynamicEmployee,
     type Log,
@@ -114,10 +113,14 @@
   const selectedEmployee = ref<DynamicEmployee | null>(null)
   const logs = ref<Log[]>([])
 
-  // 直接使用 SDK - useTableData 自动适配
-  const { tableData, loading, refresh } = useTableData(params =>
-    getEmployeesDynamicList({ query: params })
-  )
+  // 使用 usePageCrud 统一管理
+  const {
+    items: tableData,
+    loading,
+    refresh,
+  } = usePageCrud({
+    list: '/api/employees/dynamic/list',
+  })
 
   // 自动水印样式
   const watermarkStyle = ref('')

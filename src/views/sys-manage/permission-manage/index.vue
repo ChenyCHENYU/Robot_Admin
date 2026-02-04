@@ -371,7 +371,7 @@
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
   import type { DetailConfig } from '@/components/local/c_detail/data'
-  import { useTableData } from '@/composables/Table/useTableData'
+  import { usePageCrud } from '@/composables/usePageCrud'
   import {
     type PermissionData,
     type PermissionFormData,
@@ -385,7 +385,6 @@
     getTableColumns,
   } from './data'
   import {
-    getPermissionsListApi,
     updatePermissionApi,
     deletePermissionApi,
     getPermissionByIdApi,
@@ -419,48 +418,13 @@
   })
 
   // ============ 表格数据管理 ============
-  const wrappedGetPermissionsListApi = async (params?: {
-    page?: number | string
-    pageSize?: number | string
-  }) => {
-    const result = await getPermissionsListApi(params)
-    const transformedResult = {
-      ...result,
-      data: {
-        ...result.data,
-        list: result.data.list.map(item => ({
-          ...item,
-          type: item.type as PermissionType,
-        })) as PermissionData[],
-      },
-    }
-    return transformedResult as {
-      [key: string]: any
-      data: {
-        list: PermissionData[]
-        total: number
-        page: number
-        pageSize: number
-      }
-      code: string
-      message: string
-    }
-  }
-
-  const { tableData, loading, refresh } = useTableData<PermissionData>(
-    wrappedGetPermissionsListApi,
-    {
-      immediate: true,
-      defaultParams: {
-        page: 1,
-        pageSize: 10,
-      },
-      onError: error => {
-        console.error('获取权限列表失败:', error)
-        message.error('获取权限列表失败')
-      },
-    }
-  )
+  const {
+    items: tableData,
+    loading,
+    refresh,
+  } = usePageCrud({
+    list: '/api/permissions/list',
+  })
 
   // ============ 计算属性 ============
   const modalTitle = computed(() =>
