@@ -81,15 +81,15 @@ export const getChildColumns = (
 // ================= 主表格列配置 =================
 export const dataColumns: TableColumn[] = [
   {
-    type: 'index',
-    title: '序号',
-    width: 50,
-  },
-  {
     type: 'selection',
   },
   {
     type: 'expand',
+  },
+  {
+    type: 'index',
+    title: '序号',
+    width: 50,
   },
   {
     key: 'name',

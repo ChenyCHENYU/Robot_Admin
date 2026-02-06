@@ -33,8 +33,6 @@ export interface ApiEndpoints {
   remove?: string
   /** 批量删除接口 */
   batchRemove?: string
-  /** 批量更新接口 */
-  batchUpdate?: string
 }
 
 // ==================== 自定义操作 ====================

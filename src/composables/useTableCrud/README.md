@@ -75,7 +75,6 @@ const table = useTableCrud<Employee>({
     :columns="table.columns.value"
     :loading="table.loading.value"
     :actions="table.actions.value"
-    :edit-mode="table.editMode.value"
     :pagination="table.pagination.value"
     @save="table.save"
     @cancel="table.handleCancel"
@@ -85,6 +84,29 @@ const table = useTableCrud<Employee>({
 ```
 
 ## 📚 API 文档
+
+### ApiEndpoints 配置
+
+| 字段          | 类型     | 必填 | 说明                               |
+| ------------- | -------- | ---- | ---------------------------------- |
+| `list`        | `string` | ✅   | 列表查询接口                       |
+| `get`         | `string` | ❌   | 详情查询接口（支持 `:id` 占位符）  |
+| `create`      | `string` | ❌   | 新增接口                           |
+| `update`      | `string` | ❌   | 更新接口（支持 `:id` 占位符）      |
+| `remove`      | `string` | ❌   | 删除接口（支持 `:id` 占位符）      |
+| `batchRemove` | `string` | ❌   | 批量删除接口（可选，用于优化性能） |
+
+**示例**：
+```typescript
+api: {
+  list: '/employees/list',      // GET /employees/list?page=1&pageSize=10
+  get: '/employees/:id',        // GET /employees/123
+  create: '/employees',         // POST /employees
+  update: '/employees/:id',     // PUT /employees/123
+  remove: '/employees/:id',     // DELETE /employees/123
+  batchRemove: '/employees/batch', // POST /employees/batch { ids: [1,2,3] }
+}
+```
 
 ### 配置选项
 
@@ -122,6 +144,65 @@ const table = useTableCrud({
   api: { list: '/employees/list' },
   columns: [...],
   defaultPaginationEnabled: false, // 不传分页参数
+})
+```
+
+#### 🔧 配置作用域（重要）
+
+**每个 useTableCrud 实例独立配置**，互不影响：
+
+```typescript
+// 场景：同一页面多个表格
+const mainTable = useTableCrud({
+  api: { list: '/employees/list' },    // ← 传分页
+  columns: [...],
+  defaultPageSize: 20,                  // ← 独立配置
+})
+
+const subTable = useTableCrud({
+  api: { list: '/departments/all' },   // ← 不传分页
+  columns: [...],
+  defaultPaginationEnabled: false,     // ← 只影响这个实例
+})
+
+// ✅ mainTable: /employees/list?page=1&pageSize=20
+// ✅ subTable:  /departments/all（无分页参数）
+```
+
+**分页配置只影响 `api.list`**，其他接口不受影响：
+```typescript
+// ✅ 正确理解
+defaultPaginationEnabled: false  
+// → 只影响 api.list，不传分页参数
+// → api.get/create/update/remove 本来就不传分页
+```
+
+#### 🚀 自动加载说明
+
+**默认自动加载**（推荐）：
+```typescript
+const table = useTableCrud({ 
+  api: { list: '/employees/list' },
+  columns: [...],
+  // autoLoad: true（默认）→ 初始化时自动调用 refresh()
+})
+
+// 无需 onMounted(() => table.refresh())
+```
+
+**禁用自动加载**（手动控制）：
+```typescript
+const table = useTableCrud({ 
+  api: { list: '/employees/list' },
+  columns: [...],
+  autoLoad: false, // 不自动加载
+})
+
+// 手动触发
+onMounted(() => {
+  if (someCondition) {
+    table.refresh()
+  }
 })
 ```
 
@@ -184,7 +265,201 @@ await table.batchRemove(selectedRows)
 
 ## 🎨 完整示例
 
-查看 [`src/views/demo/10-table`](../../../views/demo/10-table) 获取完整示例
+```typescript
+// data.ts - 配置文件
+import type { UseTableCrudConfig } from '@/composables/useTableCrud'
+
+interface Employee {
+  id: number
+  name: string
+  email: string
+  department: string
+}
+
+export const employeeTableConfig: UseTableCrudConfig<Employee> = {
+  // API 配置
+  api: {
+    list: '/employees/list',
+    get: '/employees/:id',
+    create: '/employees',
+    update: '/employees/:id',
+    remove: '/employees/:id',
+    batchRemove: '/employees/batch', // 可选：批量删除
+  },
+
+  // 列配置
+  columns: [
+    { key: 'name', title: '姓名', editable: true, editType: 'input' },
+    { key: 'email', title: '邮箱', editable: true, editType: 'email' },
+    { key: 'department', title: '部门', editable: true, editType: 'select' },
+  ],
+
+  // 自定义操作
+  customActions: [
+    {
+      key: 'export',
+      label: '导出',
+      icon: 'mdi:download',
+      handler: async (row, ctx) => {
+        // 导出逻辑
+        ctx.message.success(`导出 ${row.name} 的数据`)
+      },
+    },
+  ],
+
+  // 可选配置
+  idKey: 'id',
+  createNewRow: () => ({
+    id: Date.now(),
+    name: '',
+    email: '',
+    department: '',
+  }),
+}
+```
+
+```vue
+<!-- index.vue - 使用组件 -->
+<script setup lang="ts">
+import { useTableCrud } from '@/composables/useTableCrud'
+import { employeeTableConfig } from './data'
+
+// 初始化（自动加载数据）
+const table = useTableCrud(employeeTableConfig)
+
+// 批量删除示例
+const selectedRows = ref<Employee[]>([])
+const handleBatchDelete = async () => {
+  await table.batchRemove(selectedRows.value)
+  selectedRows.value = []
+}
+</script>
+
+<template>
+  <c-table
+    v-model:data="table.data.value"
+    v-model:selected="selectedRows"
+    :columns="table.columns.value"
+    :loading="table.loading.value"
+    :actions="table.actions.value"
+    :pagination="table.pagination.value"
+    @save="table.save"
+    @pagination-change="table.handlePaginationChange"
+  />
+  
+  <NButton 
+    v-if="selectedRows.length" 
+    @click="handleBatchDelete"
+  >
+    批量删除 ({{ selectedRows.length }})
+  </NButton>
+</template>
+```
+
+更多示例：[`src/views/demo/10-table`](../../../views/demo/10-table)
+
+## ❓ 常见问题
+
+### 1. 为什么数据不显示？
+
+**检查清单**：
+- ✅ 接口是否正确返回数据？
+- ✅ 响应格式是否支持？（支持 6+ 种格式，见下方）
+- ✅ 是否传递了正确的分页参数？
+
+**支持的响应格式**：
+```typescript
+// 格式 1：嵌套结构（最常见）
+{ code: 0, data: { list: [...], total: 10 } }
+
+// 格式 2：data + items
+{ data: { items: [...], total: 10 } }
+
+// 格式 3：扁平结构
+{ list: [...], total: 10 }
+
+// 格式 4：不同字段名
+{ items: [...], totalCount: 10 }
+
+// 格式 5：直接数组
+{ data: [...] }
+
+// 格式 6：纯数组
+[...]
+```
+
+### 2. 批量删除如何实现？
+
+```typescript
+// 方式 1：有专门的批量接口（推荐）
+api: {
+  remove: '/employees/:id',
+  batchRemove: '/employees/batch', // POST { ids: [1,2,3] }
+}
+
+// 方式 2：没有批量接口（自动并发调用）
+api: {
+  remove: '/employees/:id',
+  // 不配置 batchRemove
+  // 调用 batchRemove 时会用 Promise.all 并发删除
+}
+
+// 使用
+await table.batchRemove(selectedRows)
+```
+
+### 3. 多个表格如何配置？
+
+每个 `useTableCrud` 实例**完全独立**：
+
+```typescript
+// 主表格：带分页
+const mainTable = useTableCrud({
+  api: { list: '/employees/list' },
+  columns: [...],
+  defaultPageSize: 20, // 独立配置
+})
+
+// 子表格：不分页
+const subTable = useTableCrud({
+  api: { list: '/departments/all' },
+  columns: [...],
+  defaultPaginationEnabled: false, // 只影响这个实例
+})
+```
+
+### 4. 如何禁用自动加载？
+
+```typescript
+const table = useTableCrud({
+  api: { list: '/employees/list' },
+  columns: [...],
+  autoLoad: false, // 禁用自动加载
+})
+
+// 手动控制
+onMounted(() => {
+  if (someCondition) {
+    table.refresh()
+  }
+})
+```
+
+### 5. 如何自定义数据提取？
+
+```typescript
+const table = useTableCrud({
+  api: { list: '/employees/list' },
+  columns: [...],
+  // 自定义提取逻辑（适用于特殊格式）
+  extractListData: (response) => {
+    return {
+      items: response.result.employeeList,
+      total: response.result.count,
+    }
+  },
+})
+```
 
 ## 🔄 对比 usePageCrud
 
