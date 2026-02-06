@@ -128,7 +128,6 @@
     DemoConfig,
   } from '@/types/modules/table'
   import C_Table from '@/components/global/C_Table/index.vue'
-  import { usePageCrud } from '@/composables/usePageCrud'
   import {
     defaultConfig,
     dataColumns,
@@ -137,17 +136,20 @@
     type EnhancedTestRecord,
   } from './data'
 
+  import { useTableCrud } from '@/composables/useTableCrud'
+
   const config = reactive<DemoConfig>({ ...defaultConfig })
   const tableRef = ref()
 
-  // 使用 usePageCrud 统一管理
-  const {
-    items: tableData,
-    loading,
-    refresh,
-  } = usePageCrud({
-    list: '/api/employees/expand/list',
+  // 使用 useTableCrud 管理数据
+  const table = useTableCrud<TestRecord>({
+    api: {
+      list: 'employees/expandList',
+    },
+    columns: dataColumns,
   })
+
+  const { data: tableData, loading, refresh } = table
 
   // 工具函数
   const getRowKey = (row: DataRecord): DataTableRowKey => (row as TestRecord).id

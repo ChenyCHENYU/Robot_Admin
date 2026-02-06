@@ -371,7 +371,6 @@
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
   import type { DetailConfig } from '@/components/local/c_detail/data'
-  import { usePageCrud } from '@/composables/usePageCrud'
   import {
     type PermissionData,
     type PermissionFormData,
@@ -389,6 +388,7 @@
     deletePermissionApi,
     getPermissionByIdApi,
   } from '@/api/permission-manage'
+  import { useTableCrud } from '@/composables/useTableCrud'
 
   // 引入样式文件
   import './index.scss'
@@ -418,13 +418,14 @@
   })
 
   // ============ 表格数据管理 ============
-  const {
-    items: tableData,
-    loading,
-    refresh,
-  } = usePageCrud({
-    list: '/api/permissions/list',
+  const table = useTableCrud<PermissionData>({
+    api: {
+      list: '/api/permissions/list',
+    },
+    columns: getTableColumns(),
   })
+
+  const { data: tableData, loading, refresh } = table
 
   // ============ 计算属性 ============
   const modalTitle = computed(() =>

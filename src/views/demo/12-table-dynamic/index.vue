@@ -96,7 +96,6 @@
 <script setup lang="ts">
   import type { DataRecord, SimpleTableActions } from '@/types/modules/table'
   import C_Table from '@/components/global/C_Table/index.vue'
-  import { usePageCrud } from '@/composables/usePageCrud'
   import {
     type DynamicEmployee,
     type Log,
@@ -105,22 +104,25 @@
     createDefaultEmployee,
     generateRandomEmployee,
   } from './data'
+  import { useTableCrud } from '@/composables/useTableCrud'
 
   const message = useMessage()
+
   const tableRef = ref()
   const tableContainer = ref<HTMLElement>()
   const watermarkLayer = ref<HTMLElement>()
   const selectedEmployee = ref<DynamicEmployee | null>(null)
   const logs = ref<Log[]>([])
 
-  // 使用 usePageCrud 统一管理
-  const {
-    items: tableData,
-    loading,
-    refresh,
-  } = usePageCrud({
-    list: '/api/employees/dynamic/list',
+  // 使用 useTableCrud 管理数据
+  const table = useTableCrud<DynamicEmployee>({
+    api: {
+      list: 'employees/dynamicList',
+    },
+    columns: dynamicTableColumns,
   })
+
+  const { data: tableData, loading, refresh } = table
 
   // 自动水印样式
   const watermarkStyle = ref('')
