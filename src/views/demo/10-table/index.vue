@@ -31,18 +31,18 @@
 
             <div class="elegant-divider"></div>
 
-            <!-- 添加新行按钮 -->
+            <!-- 新增员工按钮 -->
             <NButton
-              @click="table.add()"
+              @click="handleAddEmployee"
               type="primary"
               :disabled="editMode === 'none'"
               class="action-button"
               size="medium"
             >
               <template #icon>
-                <C_Icon name="mdi:plus" />
+                <C_Icon name="mdi:plus-circle" />
               </template>
-              添加新行
+              新增员工
             </NButton>
 
             <div class="elegant-divider"></div>
@@ -120,6 +120,139 @@
       :loading="table.loading.value"
       @close="table.detail.close"
     />
+
+    <!-- 新增员工模态框 -->
+    <NModal
+      v-model:show="showAddModal"
+      preset="card"
+      title="新增员工"
+      :style="{ width: '600px' }"
+      :segmented="{
+        content: 'soft',
+        footer: 'soft',
+      }"
+    >
+      <NForm
+        ref="addFormRef"
+        :model="addFormData"
+        :rules="addFormRules"
+        label-placement="left"
+        label-width="80"
+        require-mark-placement="right-hanging"
+      >
+        <NFormItem
+          label="姓名"
+          path="name"
+        >
+          <NInput
+            v-model:value="addFormData.name"
+            placeholder="请输入姓名"
+          />
+        </NFormItem>
+
+        <NFormItem
+          label="年龄"
+          path="age"
+        >
+          <NInputNumber
+            v-model:value="addFormData.age"
+            :min="18"
+            :max="65"
+            :show-button="false"
+            placeholder="请输入年龄"
+            style="width: 100%"
+          />
+        </NFormItem>
+
+        <NFormItem
+          label="性别"
+          path="gender"
+        >
+          <NRadioGroup v-model:value="addFormData.gender">
+            <NRadio value="male">男</NRadio>
+            <NRadio value="female">女</NRadio>
+          </NRadioGroup>
+        </NFormItem>
+
+        <NFormItem
+          label="邮箱"
+          path="email"
+        >
+          <NInput
+            v-model:value="addFormData.email"
+            placeholder="请输入邮箱地址"
+          />
+        </NFormItem>
+
+        <NFormItem
+          label="部门"
+          path="department"
+        >
+          <NSelect
+            v-model:value="addFormData.department"
+            :options="[
+              { label: '技术部', value: 'tech' },
+              { label: '人事部', value: 'hr' },
+              { label: '市场部', value: 'market' },
+              { label: '财务部', value: 'finance' },
+            ]"
+            placeholder="请选择部门"
+          />
+        </NFormItem>
+
+        <NFormItem
+          label="入职日期"
+          path="joinDate"
+        >
+          <NDatePicker
+            v-model:value="addFormData.joinDate"
+            type="date"
+            placeholder="请选择入职日期"
+            style="width: 100%"
+          />
+        </NFormItem>
+
+        <NFormItem
+          label="状态"
+          path="status"
+        >
+          <NSelect
+            v-model:value="addFormData.status"
+            :options="[
+              { label: '在职', value: 'active' },
+              { label: '离职', value: 'inactive' },
+              { label: '试用期', value: 'probation' },
+            ]"
+            placeholder="请选择状态"
+          />
+        </NFormItem>
+
+        <NFormItem
+          label="描述"
+          path="description"
+        >
+          <NInput
+            v-model:value="addFormData.description"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入员工描述信息（选填）"
+          />
+        </NFormItem>
+      </NForm>
+
+      <template #footer>
+        <NSpace justify="end">
+          <NButton @click="showAddModal = false">取消</NButton>
+          <NButton
+            type="primary"
+            @click="handleAddSubmit"
+            :loading="table.loading.value"
+          >
+            保存
+          </NButton>
+        </NSpace>
+      </template>
+    </NModal>
   </div>
 </template>
 
@@ -127,15 +260,66 @@
   import type { EditMode } from '@/types/modules/table'
   import { useTableCrud } from '@/composables/useTableCrud'
   import { EDIT_MODES, MODE_CONFIG, employeeTableConfig } from './data'
+  import { PRESET_RULES } from '@/utils/v_verify'
 
   // ================= 初始化表格 CRUD =================
   const table = useTableCrud(employeeTableConfig)
 
   // ================= UI 状态管理 =================
   const editMode = ref<EditMode>('modal')
+  const showAddModal = ref(false) // 新增模态框显示状态
+  const addFormRef = ref() // 表单引用
+  const addFormData = ref<any>({}) // 表单数据
 
   // ================= 计算属性 =================
   const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])
+
+  // 表单验证规则（使用封装的 PRESET_RULES）
+  const addFormRules = {
+    name: [PRESET_RULES.required('姓名'), PRESET_RULES.length('姓名', 2, 20)],
+    age: [
+      PRESET_RULES.required('年龄', ['blur', 'change']),
+      { ...PRESET_RULES.range('年龄', 18, 65), trigger: ['blur', 'change'] }, // 修改 trigger
+    ],
+    gender: [PRESET_RULES.required('性别', 'change')],
+    email: [PRESET_RULES.required('邮箱'), PRESET_RULES.email('邮箱')],
+    department: [PRESET_RULES.required('部门', 'change')],
+    joinDate: [PRESET_RULES.required('入职日期', ['blur', 'change'])],
+    status: [PRESET_RULES.required('状态', 'change')],
+  }
+
+  // ================= 新增员工处理 =================
+  const handleAddEmployee = () => {
+    // 初始化表单数据（使用默认值）
+    addFormData.value = {
+      name: '',
+      age: 25,
+      gender: 'male',
+      email: '',
+      department: 'tech',
+      joinDate: Date.now(),
+      status: 'probation',
+      description: '',
+    }
+    showAddModal.value = true
+  }
+
+  // 提交新增表单
+  const handleAddSubmit = () => {
+    addFormRef.value?.validate(async (errors: any) => {
+      if (!errors) {
+        try {
+          await table.create({
+            ...addFormData.value,
+            id: Date.now(), // 临时ID
+          })
+          showAddModal.value = false
+        } catch (error) {
+          console.error('新增失败:', error)
+        }
+      }
+    })
+  }
 </script>
 
 <style scoped lang="scss">

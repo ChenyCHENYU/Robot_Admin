@@ -50,7 +50,6 @@ export const SUCCESS_CODES = [200, 0, '200', '0'] as const
  * 默认消息文本
  */
 export const DEFAULT_MESSAGES = {
-  addInfo: '请填写信息后保存',
   createSuccess: '新增成功',
   updateSuccess: '更新成功',
   deleteSuccess: '删除成功',
@@ -58,7 +57,5 @@ export const DEFAULT_MESSAGES = {
   deleteError: '删除失败',
   loadError: '数据加载失败',
   detailError: '详情获取失败',
-  cancelAdd: '已取消新增',
-  cancelEdit: '已取消编辑',
   noDeleteApi: '未配置删除接口',
 } as const

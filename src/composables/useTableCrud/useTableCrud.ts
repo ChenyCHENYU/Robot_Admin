@@ -75,7 +75,6 @@ export function useTableCrud<T extends DataRecord>(
     defaultPageSize = DEFAULT_CONFIG.pageSize,
     defaultPaginationEnabled = DEFAULT_CONFIG.paginationEnabled,
     autoLoad = true,
-    createNewRow,
     extractListData,
   } = config
 
@@ -95,9 +94,6 @@ export function useTableCrud<T extends DataRecord>(
     current: DEFAULT_CONFIG.currentPage,
     size: defaultPageSize,
   })
-
-  // 追踪待保存的新行 ID
-  const pendingNewRowId = ref<any>(null)
 
   // ==================== 详情弹窗 ====================
   const detailVisible = ref(false)
@@ -182,28 +178,45 @@ export function useTableCrud<T extends DataRecord>(
   }
 
   /**
-   * 保存数据（新增或更新）
+   * 新增数据
    */
-  const save = async (row: T): Promise<void> => {
-    const isNew = pendingNewRowId.value && row[idKey] === pendingNewRowId.value
+  const create = async (row: T): Promise<void> => {
+    if (!api.create) {
+      message.warning('未配置新增接口')
+      return
+    }
 
     loading.value = true
     try {
-      if (isNew && api.create) {
-        // 新增
-        await postData(api.create, row)
-        message.success(DEFAULT_MESSAGES.createSuccess)
-        pendingNewRowId.value = null
-      } else if (api.update) {
-        // 更新
-        const url = UrlUtils.buildUrl(api.update, row[idKey] as any)
-        await putData(url, row)
-        message.success(DEFAULT_MESSAGES.updateSuccess)
-      }
-
+      await postData(api.create, row)
+      message.success(DEFAULT_MESSAGES.createSuccess)
       await refresh()
     } catch (error) {
-      console.error('[useTableCrud] 保存失败:', error)
+      console.error('[useTableCrud] 新增失败:', error)
+      message.error('新增失败')
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * 更新数据
+   */
+  const save = async (row: T): Promise<void> => {
+    if (!api.update) {
+      message.warning('未配置更新接口')
+      return
+    }
+
+    loading.value = true
+    try {
+      const url = UrlUtils.buildUrl(api.update, row[idKey] as any)
+      await putData(url, row)
+      message.success(DEFAULT_MESSAGES.updateSuccess)
+      await refresh()
+    } catch (error) {
+      console.error('[useTableCrud] 更新失败:', error)
       message.error(DEFAULT_MESSAGES.saveError)
       throw error
     } finally {
@@ -280,54 +293,14 @@ export function useTableCrud<T extends DataRecord>(
     }
   }
 
-  /**
-   * 添加新行
-   */
-  const add = (defaultData?: Partial<T>): void => {
-    let newRow: T
-
-    if (createNewRow) {
-      // 使用自定义工厂函数
-      newRow = createNewRow()
-    } else if (defaultData) {
-      // 使用提供的默认数据
-      newRow = {
-        [idKey]: RowUtils.generateId(),
-        ...defaultData,
-      } as T
-    } else {
-      // 创建最基础的行
-      newRow = { [idKey]: RowUtils.generateId() } as T
-    }
-
-    // 标记为待保存的新行
-    pendingNewRowId.value = newRow[idKey]
-
-    // 添加到列表开头
-    data.value.unshift(newRow)
-
-    // 如果启用分页且不在第一页，跳转到第一页
-    if (paginationEnabled.value && page.current !== 1) {
-      page.current = 1
-    }
-
-    message.info(DEFAULT_MESSAGES.addInfo)
-  }
-
   // ==================== 事件处理 ====================
 
   /**
    * 处理取消编辑
    */
-  const handleCancel = (): void => {
-    if (pendingNewRowId.value) {
-      // 取消新增，删除临时行
-      RowUtils.remove(data.value, idKey, pendingNewRowId.value)
-      pendingNewRowId.value = null
-      message.info(DEFAULT_MESSAGES.cancelAdd)
-    } else {
-      message.info(DEFAULT_MESSAGES.cancelEdit)
-    }
+  const handleCancel = async (): Promise<void> => {
+    // 取消编辑，刷新数据恢复原始状态
+    await refresh()
   }
 
   /**
@@ -457,7 +430,7 @@ export function useTableCrud<T extends DataRecord>(
 
     // 核心方法
     refresh,
-    add,
+    create,
     save,
     remove,
     batchRemove,

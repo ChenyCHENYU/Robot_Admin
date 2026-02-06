@@ -229,11 +229,43 @@ onMounted(() => {
 #### 核心方法
 
 - `refresh()` - 刷新数据
-- `add(defaultData?)` - 添加新行
-- `save(row)` - 保存数据（新增或更新）
+- `create(row)` - 新增数据
+- `save(row)` - 更新数据
 - `remove(row)` - 删除单条数据
 - `batchRemove(rows)` - 批量删除数据
 - `getDetail(row)` - 获取详情
+
+#### 新增数据示例
+
+```typescript
+// 方式1：通过自定义按钮 + 表单模态框新增（推荐）
+const handleAdd = () => {
+  // 1. 打开表单模态框
+  // 2. 用户填写完整信息
+  // 3. 点击保存
+  const newEmployee = {
+    id: Date.now(), // 临时ID（后端会返回真实ID）
+    name: '张三',
+    email: 'zhangsan@example.com',
+    // ...其他字段
+  }
+  
+  // 调用 create 方法
+  await table.create(newEmployee)
+  // 自动刷新列表，新数据出现
+}
+
+// 方式2：使用 createNewRow 工厂函数生成默认值
+import { createNewEmployee } from './data'
+
+const newEmployee = createNewEmployee() // 生成带默认值的新数据
+await table.create(newEmployee)
+```
+
+**重要说明**：
+- ❌ **不要**直接插入行到 `table.data.value`（这是伪代码逻辑）
+- ✅ **应该**通过表单收集数据后调用 `table.create()`
+- ✅ 新增成功后会自动调用 `refresh()` 刷新列表
 
 #### 批量操作示例
 
@@ -408,7 +440,62 @@ api: {
 await table.batchRemove(selectedRows)
 ```
 
-### 3. 多个表格如何配置？
+### 3. 如何实现新增功能？
+
+**推荐方式**：通过自定义按钮 + 表单模态框
+
+```vue
+<template>
+  <!-- 新增按钮 -->
+  <NButton @click="showAddModal = true">
+    新增员工
+  </NButton>
+
+  <!-- 表格 -->
+  <c-table v-model:data="table.data.value" ... />
+
+  <!-- 新增表单模态框 -->
+  <NModal v-model:show="showAddModal" title="新增员工">
+    <NForm ref="formRef" :model="formData">
+      <NFormItem label="姓名" path="name">
+        <NInput v-model:value="formData.name" />
+      </NFormItem>
+      <!-- 其他表单项... -->
+    </NForm>
+    <template #footer>
+      <NButton @click="handleSubmit">保存</NButton>
+    </template>
+  </NModal>
+</template>
+
+<script setup>
+const table = useTableCrud({ api: {...}, columns: [...] })
+const showAddModal = ref(false)
+const formData = ref({})
+
+const handleSubmit = async () => {
+  await table.create(formData.value) // 调用 create 方法
+  showAddModal.value = false
+  // 自动刷新列表，新数据出现
+}
+</script>
+```
+
+**小技巧**：使用 `createNewRow` 配置生成默认值
+```typescript
+// data.ts
+export const createNewEmployee = () => ({
+  id: Date.now(),
+  name: '',
+  email: '',
+  // ...默认值
+})
+
+// 使用
+formData.value = createNewEmployee()
+```
+
+### 4. 多个表格如何配置？
 
 每个 `useTableCrud` 实例**完全独立**：
 
@@ -428,7 +515,7 @@ const subTable = useTableCrud({
 })
 ```
 
-### 4. 如何禁用自动加载？
+### 5. 如何禁用自动加载？
 
 ```typescript
 const table = useTableCrud({
@@ -445,7 +532,7 @@ onMounted(() => {
 })
 ```
 
-### 5. 如何自定义数据提取？
+### 6. 如何自定义数据提取？
 
 ```typescript
 const table = useTableCrud({

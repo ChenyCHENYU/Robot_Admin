@@ -202,9 +202,9 @@ export interface UseTableCrudReturn<T extends DataRecord> {
   // ========== 核心方法 ==========
   /** 刷新数据 */
   refresh: () => Promise<void>
-  /** 添加新行 */
-  add: (defaultData?: Partial<T>) => void
-  /** 保存数据（新增或更新） */
+  /** 新增数据 */
+  create: (row: T) => Promise<void>
+  /** 更新数据 */
   save: (row: T) => Promise<void>
   /** 删除数据 */
   remove: (row: T) => Promise<void>
@@ -215,7 +215,7 @@ export interface UseTableCrudReturn<T extends DataRecord> {
 
   // ========== 事件处理 ==========
   /** 处理取消编辑 */
-  handleCancel: () => void
+  handleCancel: () => Promise<void>
   /** 处理分页变化 */
   handlePaginationChange: (pageNum: number, pageSize: number) => void
   /** 处理行删除（UI层） */
