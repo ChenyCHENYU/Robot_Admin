@@ -37,14 +37,21 @@
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🔮-Module Federation-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Webpack/Vite Federation</strong></sub><br>
-        <sub>Coming Soon</sub><br>
-        <img src="https://img.shields.io/badge/Status-Planning-lightgrey?style=flat-square" alt="Coming Soon">
+        <sub>Initial Release</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
+          <img src="https://img.shields.io/badge/View Code-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
+        </a>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/module-federation-implementation.md">
+          <img src="https://img.shields.io/badge/Implementation-DOCS-orange?style=flat-square" alt="MF Docs">
+        </a>
       </td>
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🚀-Micro Frontend-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
         <sub><strong>MicroApp</strong></sub><br>
-        <sub>Coming Soon</sub><br>
-        <img src="https://img.shields.io/badge/Status-Planning-lightgrey?style=flat-square" alt="Coming Soon">
+        <sub>Initial Release</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal">
+          <img src="https://img.shields.io/badge/View Code-feature/microapp--portal-E74C3C?style=flat-square" alt="MicroApp Branch">
+        </a>
       </td>
     </tr>
   </table>
@@ -106,8 +113,8 @@ Robot Admin provides multiple architecture options to meet different scales and 
 |-------------|-----------|----------|--------|---------------|
 | **🏗️ Monolithic** | Small-Medium Projects, Rapid Prototyping | Simple & Direct, Out-of-Box | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main) | This Document |
 | **📦 Monorepo** | Multi-App Management | Code Reuse, Unified Toolchain, Independent Deployment | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo) | [Complete Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md) |
-| **🔮 Module Federation** | Dynamic Micro-App Loading | Runtime Sharing, Independent Deployment, Version Isolation | Planning | - |
-| **🚀 Micro Frontend** | Large Apps, Team Collaboration | Tech Stack Agnostic, Independent Deployment, Progressive Migration | Planning | - |
+| **🔮 Module Federation** | Dynamic Micro-App Loading | Runtime Sharing, Independent Deployment, Version Isolation | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [Implementation Plan](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/module-federation-implementation.md) |
+| **🚀 Micro Frontend** | Large Apps, Team Collaboration | Tech Stack Agnostic, Independent Deployment, Progressive Migration | [`feature/microapp-portal`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal) | In Progress |
 
 ### 📦 Monorepo Architecture Highlights
 
@@ -378,8 +385,10 @@ Robot_Admin/
 ```mermaid
 graph LR
     A[🏠 Monomer<br/>Monolithic] --> B[📦 Monorepo<br/>Multi-package]
-    B --> C[🔗 MicroApp<br/>Micro-frontend]
-    C --> D[🚀 NestJS<br/>Full-stack]
+    B --> C[� Module Federation<br/>Federation]
+    B --> D[🔗 MicroApp<br/>Micro-frontend]
+    C --> E[🚀 NestJS<br/>Full-stack]
+    D --> E
 ```
 
 ---
@@ -630,7 +639,8 @@ location / {
 
 ### 🚀 Medium-term Planning (Q2-Q3 2025)
 - [ ] 🏢 Multi-tenant system support
-- [ ] 🔗 Micro-frontend architecture support
+- [x] 🔮 Module Federation architecture support
+- [x] 🔗 Micro-frontend architecture support
 - [ ] 📚 Independent component library release
 - [ ] 🎨 Visual page templates
 

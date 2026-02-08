@@ -37,14 +37,21 @@
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🔮-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Module Federation</strong></sub><br>
-        <sub>即将推出</sub><br>
-        <img src="https://img.shields.io/badge/状态-规划中-lightgrey?style=flat-square" alt="Coming Soon">
+        <sub>初版完成</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
+          <img src="https://img.shields.io/badge/查看代码-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
+        </a>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/module-federation-implementation.md">
+          <img src="https://img.shields.io/badge/实施方案-DOCS-orange?style=flat-square" alt="MF Docs">
+        </a>
       </td>
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🚀-微前端-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
         <sub><strong>MicroApp</strong></sub><br>
-        <sub>即将推出</sub><br>
-        <img src="https://img.shields.io/badge/状态-规划中-lightgrey?style=flat-square" alt="Coming Soon">
+        <sub>初版完成</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal">
+          <img src="https://img.shields.io/badge/查看代码-feature/microapp--portal-E74C3C?style=flat-square" alt="MicroApp Branch">
+        </a>
       </td>
     </tr>
   </table>
@@ -106,8 +113,8 @@ Robot Admin 提供多种架构选择，满足不同规模和场景的需求：
 |---------|---------|------|------|------|
 | **🏗️ 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用 | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main) | 本文档 |
 | **📦 Monorepo** | 多应用统一管理 | 代码复用、统一工具链、独立部署 | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo) | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md) |
-| **🔮 模块联邦** | 微应用动态加载 | 运行时共享、独立部署、版本隔离 | 规划中 | - |
-| **🚀 微前端** | 大型应用、团队协作 | 技术栈无关、独立部署、渐进式迁移 | 规划中 | - |
+| **🔮 模块联邦** | 微应用动态加载 | 运行时共享、独立部署、版本隔离 | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [实施方案](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/module-federation-implementation.md) |
+| **🚀 微前端** | 大型应用、团队协作 | 技术栈无关、独立部署、渐进式迁移 | [`feature/microapp-portal`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal) | 开发中 |
 
 ### 📦 Monorepo 架构亮点
 
@@ -396,8 +403,10 @@ Robot_Admin/
 ```mermaid
 graph LR
     A[🏠 Monomer<br/>单体架构] --> B[📦 Monorepo<br/>单仓多包]
-    B --> C[🔗 MicroApp<br/>微前端]
-    C --> D[🚀 NestJS<br/>全栈方案]
+    B --> C[� Module Federation<br/>模块联邦]
+    B --> D[🔗 MicroApp<br/>微前端]
+    C --> E[🚀 NestJS<br/>全栈方案]
+    D --> E
 ```
 
 ---
@@ -676,7 +685,8 @@ location / {
 ### 🚀 中期规划 (Q2-Q3 2025)
 
 - [ ] 🏢 多租户系统支持
-- [ ] 🔗 微前端架构支持
+- [x] 🔮 模块联邦架构支持
+- [x] 🔗 微前端架构支持
 - [ ] 📚 组件库独立发布
 - [ ] 🎨 可视化页面模板
 
