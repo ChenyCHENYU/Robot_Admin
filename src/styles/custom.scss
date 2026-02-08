@@ -177,3 +177,27 @@
 
 // <!-- 统计卡片 -->
 // <NStatistic class="custom-statistic custom-card-bg" />
+
+/**
+ * ================================
+ * 系统模式
+ * ================================
+ */
+
+/* 灰色模式（哀悼日） */
+html.gray-mode {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+}
+
+/* 色弱模式（无障碍） */
+html.color-weak-mode {
+  filter: invert(80%);
+  -webkit-filter: invert(80%);
+  -moz-filter: invert(80%);
+  -ms-filter: invert(80%);
+  -o-filter: invert(80%);
+}

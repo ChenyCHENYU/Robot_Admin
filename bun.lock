@@ -17,7 +17,10 @@
         "@iconify-json/ri": "^1.2.5",
         "@iconify/vue": "^5.0.0",
         "@kangc/v-md-editor": "^2.3.18",
+        "@robot-admin/form-validate": "^2.0.0",
+        "@robot-admin/layout": "link:@robot-admin/layout",
         "@robot-admin/request-core": "link:@robot-admin/request-core",
+        "@robot-admin/theme": "link:@robot-admin/theme",
         "@splinetool/runtime": "^1.9.92",
         "@tato30/vue-pdf": "^1.11.4",
         "@types/leaflet": "^1.9.21",
@@ -595,7 +598,13 @@
 
     "@resvg/resvg-js-win32-x64-msvc": ["@resvg/resvg-js-win32-x64-msvc@2.4.1", "", { "os": "win32", "cpu": "x64" }, "sha512-vY4kTLH2S3bP+puU5x7hlAxHv+ulFgcK6Zn3efKSr0M0KnZ9A3qeAjZteIpkowEFfUeMPNg2dvvoFRJA9zqxSw=="],
 
+    "@robot-admin/form-validate": ["@robot-admin/form-validate@2.0.0", "", { "peerDependencies": { "naive-ui": ">=2.34.0" } }, "sha512-vii3VSusR8B6QRrzWrKxQTyvBCBK9DBIlX14h/VxGexl0TgR1sFVbhUG03ddBTZiBw7KH29b8jW4TovCeDvTTg=="],
+
+    "@robot-admin/layout": ["@robot-admin/layout@link:@robot-admin/layout", {}],
+
     "@robot-admin/request-core": ["@robot-admin/request-core@link:@robot-admin/request-core", {}],
+
+    "@robot-admin/theme": ["@robot-admin/theme@link:@robot-admin/theme", {}],
 
     "@rollup/pluginutils": ["@rollup/pluginutils@5.1.4", "https://registry.npmmirror.com/@rollup/pluginutils/-/pluginutils-5.1.4.tgz", { "dependencies": { "@types/estree": "^1.0.0", "estree-walker": "^2.0.2", "picomatch": "^4.0.2" }, "peerDependencies": { "rollup": "^1.20.0||^2.0.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ=="],
 

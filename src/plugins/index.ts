@@ -16,6 +16,7 @@ export * from './markdown'
 export * from './directives'
 export * from './analytics'
 export * from './request-core' // 🆕 Request Core 插件
+export * from './layout' // 🆕 布局系统插件
 
 export {
   setupHighlight,

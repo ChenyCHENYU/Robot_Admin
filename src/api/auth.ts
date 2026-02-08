@@ -1,5 +1,6 @@
 import DynamicRouter from '@/assets/data/dynamicRouter.json'
-import { postAuthLogin, type PostAuthLoginResponse } from './generated'
+import { postData } from '@robot-admin/request-core'
+import type { PostAuthLoginResponse } from './generated'
 import type { DynamicRoute } from '@/router/dynamicRouter'
 
 export type LoginResponse = PostAuthLoginResponse
@@ -9,23 +10,8 @@ export type LoginResponse = PostAuthLoginResponse
  * ? @param {object} data 登录表单数据，包含用户名和密码
  * ! @return {Promise<PostAuthLoginResponse>} 登录响应数据，包含用户信息和token
  */
-export const loginApi = async (data: {
-  username: string
-  password: string
-}) => {
-  const { data: result, error } = await postAuthLogin({
-    body: data,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-
-  if (error) {
-    throw error
-  }
-
-  return result
-}
+export const loginApi = (data: { username: string; password: string }) =>
+  postData<PostAuthLoginResponse>('/auth/login', data)
 
 /**
  * * @description: 获取用户菜单权限列表

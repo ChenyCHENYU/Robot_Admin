@@ -32,6 +32,7 @@ import {
   setupDirectives,
   setupAnalytics,
   setupRequestCore, //  Request Core 插件
+  setupLayoutSystem, // 🆕 布局系统插件
 } from '@/plugins'
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
@@ -58,6 +59,7 @@ async function bootstrap() {
   // 第二阶段：Vue相关插件（使用统一的插件化配置）
   setupStore(app) // 配置 Pinia（包含持久化插件）
   setupRequestCore(app) // 配置 Request Core（axios + 7 个插件 + CRUD）
+  setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）
   setupNaiveUI(app)
   setupDynamicComponents(app)
   setupHighlight(app)
