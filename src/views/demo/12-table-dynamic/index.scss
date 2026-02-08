@@ -61,3 +61,18 @@
       }
     }
   }
+
+  // 操作日志项背景 - 自适应主题
+  .log-item-bg {
+    background: var(--n-color-hover);
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: var(--n-color-pressed);
+    }
+  }
+
+  // 操作日志时间文本 - 自适应主题
+  .log-time-text {
+    color: var(--n-text-color-3);
+  }

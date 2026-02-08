@@ -70,7 +70,7 @@
         <div
           v-for="log in logs.slice(0, 6)"
           :key="log.time"
-          class="flex items-center gap-3 p-2 rounded bg-gray-50"
+          class="flex items-center gap-3 p-2 rounded log-item-bg"
         >
           <NTag
             :type="getLogTagType(log.type)"
@@ -81,7 +81,7 @@
           <NTime
             :time="new Date(log.time)"
             type="relative"
-            class="text-sm text-gray-5"
+            class="text-sm log-time-text"
           />
         </div>
         <NEmpty

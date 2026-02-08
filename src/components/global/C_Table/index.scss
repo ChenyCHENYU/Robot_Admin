@@ -115,7 +115,7 @@
     
     .cell-edit-icon {
       opacity: 1;
-      color: #10b981; // 淡绿色
+      color: var(--n-color-success); // 使用成功色变量
       transform: scale(1.05);
     }
   }
@@ -150,15 +150,15 @@
   cursor: pointer;
   margin-left:4px;
   transition: all 0.25s ease;
-  color: #10b981; // 淡绿色作为默认色
+  color: var(--n-color-success); // 使用成功色变量
   opacity: 0;
   position: relative;
 
   // 悬停效果 - 简化
   &:hover {
     opacity: 1 !important;
-    color: #059669 !important; // 稍深的绿色
-    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--n-color-success-hover) !important; // 使用悬停色变量
+    background-color: var(--n-color-success-pressed);
     transform: scale(1.1);
   }
 
@@ -237,11 +237,11 @@
   flex-shrink: 0 !important;
   align-items: center !important;
   gap: 4px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: var(--n-color-popover) !important; // 使用弹出层背景色自动适配主题
   border: 1px solid var(--n-border-color) !important;
   border-radius: 4px !important;
   padding: 2px !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: var(--n-box-shadow) !important; // 使用主题阴影
 }
 
 // 编辑操作按钮 - 简化交互效果
@@ -260,20 +260,20 @@
   
   // 保存按钮
   &.cell-action-save {
-    color: #059669 !important;
+    color: var(--n-color-success) !important; // 使用成功色变量
     
     &:hover {
-      background: rgba(16, 185, 129, 0.1) !important;
+      background: var(--n-color-success-pressed) !important; // 使用按压态变量
       transform: scale(1.1) !important;
     }
   }
   
   // 取消按钮
   &.cell-action-cancel {
-    color: #dc2626 !important;
+    color: var(--n-color-error) !important; // 使用错误色变量
     
     &:hover {
-      background: rgba(239, 68, 68, 0.1) !important;
+      background: var(--n-color-error-pressed) !important; // 使用按压态变量
       transform: scale(1.1) !important;
     }
   }
@@ -405,26 +405,9 @@
 
 // ================= 12. 主题适配 =================
 
-// 暗色主题适配
+// 暗色主题适配 - 已通过 CSS 变量自动适配，此段可简化或移除
 [data-theme="dark"] {
-  .cell-editing-actions,
-  :deep(.cell-editing-actions) {
-    background: rgba(48, 48, 48, 0.95) !important;
-    border-color: var(--n-border-color) !important;
-  }
-  
-  .cell-edit-wrapper:hover {
-    background-color: var(--n-color-target);
-    
-    .cell-edit-icon {
-      color: #34d399 !important;
-      
-      &:hover {
-        color: #10b981 !important;
-        background-color: rgba(52, 211, 153, 0.1) !important;
-      }
-    }
-  }
+  // CSS 变量已自动适配，如有特殊需求可在此添加
 }
 
 // ================= 13. 响应式优化 =================

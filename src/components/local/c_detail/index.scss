@@ -7,7 +7,7 @@
 
   :deep(.n-card__header) {
     padding-bottom: 16px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid var(--n-border-color);
 
     .n-card-header__main {
       font-weight: 600;
@@ -21,8 +21,8 @@
 
   :deep(.n-card__action) {
     padding: 16px 24px;
-    background: rgba(0, 0, 0, 0.02);
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    background: var(--n-color-modal);
+    border-top: 1px solid var(--n-border-color);
     display: flex;
     justify-content: flex-end;
   }
@@ -33,16 +33,16 @@
     &.not-last {
       margin-bottom: 24px;
       padding-bottom: 20px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      border-bottom: 1px solid var(--n-border-color);
     }
 
     .section-title {
       margin: 0 0 16px 0;
       font-size: 14px;
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.85);
+      color: var(--n-text-color-1);
       padding-bottom: 8px;
-      border-bottom: 2px solid #18a058;
+      border-bottom: 2px solid var(--n-color-success);
     }
 
     .detail-grid {
@@ -68,7 +68,7 @@
 
         .item-label {
           font-size: 13px;
-          color: rgba(0, 0, 0, 0.6);
+          color: var(--n-text-color-3);
           font-weight: 500;
           min-width: 60px;
           flex-shrink: 0;
@@ -77,12 +77,12 @@
 
         .item-value {
           font-size: 14px;
-          color: rgba(0, 0, 0, 0.85);
+          color: var(--n-text-color-1);
           flex: 1;
           word-break: break-all;
 
           .email-value {
-            color: #1890ff;
+            color: var(--n-color-info);
           }
         }
       }

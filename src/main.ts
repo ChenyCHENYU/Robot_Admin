@@ -11,7 +11,7 @@
 import '../lang/index.js'
 import './utils/plugins/i18n-route.js' // 🌐 扩展路由翻译
 
-// ⭐ 关键：首屏加载动画必须最先执行，确保极速显示（soybean-admin 优化方案）
+// 键：首屏加载动画必须最先执行，确保极速显示
 import { setupLoading } from '@/plugins/loading'
 
 import './assets/css/main.css'
@@ -20,7 +20,6 @@ import 'virtual:uno.css'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import '@/router/permission'
-import '@/api/generated/client-config' // 🆕 全局配置 SDK 客户端
 import App from './App.vue'
 import router from './router'
 import {
@@ -32,7 +31,7 @@ import {
   setupMarkdown,
   setupDirectives,
   setupAnalytics,
-  setupRequestCore, // 🆕 Request Core 插件
+  setupRequestCore, //  Request Core 插件
 } from '@/plugins'
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
@@ -41,13 +40,13 @@ import { setupGlobalErrorHandler } from '@/utils/errorHandler'
  * @return {*}
  */
 async function bootstrap() {
-  // ⭐ 第零阶段：立即显示加载动画（innerHTML 方式，极速）
+  // 第零阶段：立即显示加载动画（innerHTML 方式，极速）
   setupLoading()
 
   // 第一阶段：创建Vue实例
   const app = createApp(App)
 
-  // ⭐ 关键：全局错误处理必须最先设置，确保捕获所有错误
+  // 关键：全局错误处理必须最先设置，确保捕获所有错误
   setupGlobalErrorHandler(app)
 
   // 使用去除滚动警告的插件
