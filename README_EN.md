@@ -41,8 +41,8 @@
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
           <img src="https://img.shields.io/badge/View Code-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/module-federation-implementation.md">
-          <img src="https://img.shields.io/badge/Implementation-DOCS-orange?style=flat-square" alt="MF Docs">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md">
+          <img src="https://img.shields.io/badge/Usage Guide-DOCS-orange?style=flat-square" alt="MF Docs">
         </a>
       </td>
       <td align="center" width="200">
@@ -51,6 +51,9 @@
         <sub>Initial Release</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal">
           <img src="https://img.shields.io/badge/View Code-feature/microapp--portal-E74C3C?style=flat-square" alt="MicroApp Branch">
+        </a>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md">
+          <img src="https://img.shields.io/badge/View Docs-README-orange?style=flat-square" alt="MicroApp Docs">
         </a>
       </td>
     </tr>
@@ -113,8 +116,8 @@ Robot Admin provides multiple architecture options to meet different scales and 
 |-------------|-----------|----------|--------|---------------|
 | **🏗️ Monolithic** | Small-Medium Projects, Rapid Prototyping | Simple & Direct, Out-of-Box | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main) | This Document |
 | **📦 Monorepo** | Multi-App Management | Code Reuse, Unified Toolchain, Independent Deployment | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo) | [Complete Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md) |
-| **🔮 Module Federation** | Dynamic Micro-App Loading | Runtime Sharing, Independent Deployment, Version Isolation | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [Implementation Plan](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/module-federation-implementation.md) |
-| **🚀 Micro Frontend** | Large Apps, Team Collaboration | Tech Stack Agnostic, Independent Deployment, Progressive Migration | [`feature/microapp-portal`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal) | In Progress |
+| **🔮 Module Federation** | Dynamic Micro-App Loading | Runtime Sharing, Independent Deployment, Version Isolation | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [Usage Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
+| **🚀 Micro Frontend** | Large Apps, Team Collaboration | Tech Stack Agnostic, Independent Deployment, Progressive Migration | [`feature/microapp-portal`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal) | [View Docs](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md) |
 
 ### 📦 Monorepo Architecture Highlights
 

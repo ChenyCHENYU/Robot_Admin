@@ -3,11 +3,16 @@ export const projectStats = [
   { icon: 'fluent-color:approvals-app-16', number: '当前', label: 'Monomer' },
   {
     icon: 'fluent-color:animal-paw-print-20',
-    number: '接下来',
+    number: '已完成',
     label: 'Monorepo',
   },
-  { icon: 'fluent-color:flag-24', number: '计划', label: 'MicroApp' },
-  { icon: 'fluent-color:beach-28', number: '最后', label: 'NestJS' },
+  {
+    icon: 'fluent-color:puzzle-piece-20',
+    number: '已完成',
+    label: 'Module Federation',
+  },
+  { icon: 'fluent-color:flag-24', number: '已完成', label: 'MicroApp' },
+  { icon: 'fluent-color:beach-28', number: '规划中', label: 'NestJS' },
 ]
 
 // 操作按钮
