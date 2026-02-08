@@ -104,7 +104,7 @@
     createDefaultEmployee,
     generateRandomEmployee,
   } from './data'
-  import { useTableCrud } from '@/composables/useTableCrud'
+  import { useTableCrud } from '@robot-admin/request-core'
 
   const message = useMessage()
 

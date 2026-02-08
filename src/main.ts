@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-13 23:16:10
+ * @LastEditTime: 2026-02-08 01:22:35
  * @FilePath: \Robot_Admin\src\main.ts
  * @Description: 根入口文件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -32,6 +32,7 @@ import {
   setupMarkdown,
   setupDirectives,
   setupAnalytics,
+  setupRequestCore, // 🆕 Request Core 插件
 } from '@/plugins'
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
@@ -57,6 +58,7 @@ async function bootstrap() {
 
   // 第二阶段：Vue相关插件（使用统一的插件化配置）
   setupStore(app) // 配置 Pinia（包含持久化插件）
+  setupRequestCore(app) // 配置 Request Core（axios + 7 个插件 + CRUD）
   setupNaiveUI(app)
   setupDynamicComponents(app)
   setupHighlight(app)

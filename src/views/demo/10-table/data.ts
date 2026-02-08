@@ -1,12 +1,11 @@
 import type {
   SelectOption,
   EditType,
-  TableColumn,
   DataRecord,
   EditMode,
 } from '@/types/modules/table'
+import type { TableColumn, UseTableCrudConfig } from '@robot-admin/request-core'
 import { PRESET_RULES } from '@/utils/v_verify'
-import type { UseTableCrudConfig } from '@/composables/useTableCrud'
 
 // ================= 业务类型定义 =================
 export interface Employee extends DataRecord {

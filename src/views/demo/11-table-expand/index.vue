@@ -76,10 +76,10 @@
             清空所有选择
           </NButton>
           <NButton
-            @click="refresh"
+            @click="table.refresh"
             type="info"
             size="small"
-            :loading="loading"
+            :loading="table.loading"
           >
             刷新数据
           </NButton>
@@ -94,9 +94,9 @@
         <C_Table
           ref="tableRef"
           :columns="dataColumns"
-          :data="tableData"
+          :data="table.data"
           :rowKey="getRowKey"
-          :loading="loading"
+          :loading="table.loading"
           size="small"
           striped
           expandable
@@ -121,13 +121,13 @@
 <script setup lang="ts">
   import { type DataTableRowKey, NSpin } from 'naive-ui/es'
   import type { VNodeChild } from 'vue'
+  import C_Table from '@/components/global/C_Table/index.vue'
   import type {
     DataRecord,
     TableColumn,
     TestRecord,
     DemoConfig,
   } from '@/types/modules/table'
-  import C_Table from '@/components/global/C_Table/index.vue'
   import {
     defaultConfig,
     dataColumns,
@@ -136,7 +136,7 @@
     type EnhancedTestRecord,
   } from './data'
 
-  import { useTableCrud } from '@/composables/useTableCrud'
+  import { useTableCrud } from '@robot-admin/request-core'
 
   const config = reactive<DemoConfig>({ ...defaultConfig })
   const tableRef = ref()
@@ -148,8 +148,6 @@
     },
     columns: dataColumns,
   })
-
-  const { data: tableData, loading, refresh } = table
 
   // 工具函数
   const getRowKey = (row: DataRecord): DataTableRowKey => (row as TestRecord).id

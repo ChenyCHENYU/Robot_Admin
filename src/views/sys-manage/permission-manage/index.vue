@@ -388,7 +388,7 @@
     deletePermissionApi,
     getPermissionByIdApi,
   } from '@/api/permission-manage'
-  import { useTableCrud } from '@/composables/useTableCrud'
+  import { useTableCrud } from '@robot-admin/request-core'
 
   // 引入样式文件
   import './index.scss'

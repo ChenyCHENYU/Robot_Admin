@@ -8,9 +8,15 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
+import type { MaybeRef } from 'vue'
+
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
 import type { VNodeChild, Ref, ComputedRef } from 'vue'
 import type { FormItemRule } from 'naive-ui/es/form'
+
+// ✨ 宽松的 Ref-like 类型，支持跨 Vue 实例的 Ref 传递
+type RefLike<T> = { value: T } | T
+type MaybeRefLike<T> = RefLike<T> | MaybeRef<T>
 
 // ================= 核心类型定义 =================
 export type DataRecord = Record<string, unknown>
@@ -242,9 +248,9 @@ export interface SelectionConfig<T extends DataRecord = DataRecord>
 // ================= 表格组件核心类型 =================
 export interface TableBaseProps<T extends DataRecord = DataRecord> {
   columns: TableColumn<T>[]
-  data: T[]
+  data: MaybeRefLike<T[]> // 支持跨 Vue 实例的 Ref 传递
   rowKey?: (row: T) => DataTableRowKey
-  loading?: boolean
+  loading?: MaybeRefLike<boolean> // 支持跨 Vue 实例的 Ref 传递
 }
 
 export interface TableDisplayProps {

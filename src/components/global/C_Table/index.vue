@@ -44,8 +44,8 @@
       ref="tableRef"
       v-bind="tableProps"
       :columns="computedColumns"
-      :data="props.data"
-      :loading="loading"
+      :data="normalizedData"
+      :loading="normalizedLoading"
       :row-key="rowKey"
       :expanded-row-keys="tableManager.expandedKeys.value"
       :checked-row-keys="tableManager.checkedKeys.value"
@@ -122,9 +122,8 @@
   } from './data'
 
   // ================= 类型定义 =================
-  interface EnhancedTableProps<
-    T extends DataRecord = DataRecord,
-  > extends TableProps<T> {
+  interface EnhancedTableProps<T extends DataRecord = DataRecord>
+    extends TableProps<T> {
     preset?: TablePresetConfig<T>
     actions?: SimpleTableActions<T>
     expandable?: boolean
@@ -199,7 +198,24 @@
   // ================= 响应式状态 =================
   const tableRef = ref<ComponentPublicInstance>()
 
-  // 🆕 设置面板相关状态
+  // � 统一处理 props.data 和 props.loading（兼容跨 Vue 实例的 Ref）
+  const normalizedData = computed(() => {
+    const { data } = props
+    // 处理 Ref 类型（包括跨 Vue 实例）
+    return data && typeof data === 'object' && 'value' in data
+      ? data.value
+      : data
+  })
+
+  const normalizedLoading = computed(() => {
+    const { loading } = props
+    // 处理 Ref 类型（包括跨 Vue 实例）
+    return loading && typeof loading === 'object' && 'value' in loading
+      ? loading.value
+      : loading
+  })
+
+  // �🆕 设置面板相关状态
   const showSettingsPanel = ref(false)
 
   // 🆕 响应式列状态（用于实时更新）
@@ -271,7 +287,7 @@
 
   // 分页 Hook
   const pagination = usePagination({
-    data: toRef(props, 'data'),
+    data: normalizedData,
     config: computed(() => config.value.pagination),
     emit,
   })
@@ -279,7 +295,7 @@
   // 表格管理器
   const tableManager = useTableManager({
     config: config.value,
-    data: () => props.data,
+    data: () => normalizedData.value,
     rowKey: props.rowKey,
     emit,
   })

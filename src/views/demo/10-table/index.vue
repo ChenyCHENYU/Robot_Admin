@@ -258,7 +258,7 @@
 
 <script setup lang="ts">
   import type { EditMode } from '@/types/modules/table'
-  import { useTableCrud } from '@/composables/useTableCrud'
+  import { useTableCrud } from '@robot-admin/request-core'
   import { EDIT_MODES, MODE_CONFIG, employeeTableConfig } from './data'
   import { PRESET_RULES } from '@/utils/v_verify'
 
