@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.12.0...v1.12.1) (2026-02-08)
+
+
+### Performance Improvements
+
+* optimize theme switching with View Transition API ([8064b4a](https://github.com/ChenyCHENYU/Robot_Admin/commit/8064b4aa6c83970cf1f70738de9d67614b798e5e))
+
 ## [1.12.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.2...v1.12.0) (2026-02-08)
 
 
