@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.12.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.2...v1.12.0) (2026-02-08)
+
+
+### Features
+
+* **request/api:** 增加了请求接口适配器组合函数，精简的使用和调用api ([b2acec1](https://github.com/ChenyCHENYU/Robot_Admin/commit/b2acec1a4cfea9a341cff963b5890aedd7350d56))
+
+
+### Bug Fixes
+
+* **usePageCrud:** 修复分页和条数被后端数据覆盖的问题 ([03076ae](https://github.com/ChenyCHENYU/Robot_Admin/commit/03076aef7115935804c7dea1a224715119f89044))
+* 修复 permission-manage.ts 中的导入路径 ([78110c5](https://github.com/ChenyCHENYU/Robot_Admin/commit/78110c5fb6c1759809a68dc6669d9111bca97d50))
+
+
+### Performance Improvements
+
+* **10-table:** 优化表格新增的默认配置 ([10b355e](https://github.com/ChenyCHENYU/Robot_Admin/commit/10b355e4d53dbb7e8e9eeae9ac012b5ebd1ba6b8))
+* **request/api:** 优化表格增删改查组合函数使用 ([12acd7f](https://github.com/ChenyCHENYU/Robot_Admin/commit/12acd7f321fccf2f1f0e972f6fb29370d6bd6c4f))
+* **request/api:** 添加 toTableApis 适配器简化表格集成 ([93fed3f](https://github.com/ChenyCHENYU/Robot_Admin/commit/93fed3fd91ab51b60b3884f55e11f8b4b8e92293))
+* **request/api:** 精简优化表格的增删改查组合函数 ([b711e8b](https://github.com/ChenyCHENYU/Robot_Admin/commit/b711e8bc82f425ce966dd547431b9c9c242b850b))
+* **request/core:** 优化基于抽取的request/core包的精简使用 ([e5d7e20](https://github.com/ChenyCHENYU/Robot_Admin/commit/e5d7e20d917c32ff5b8592f2ec7f9fb753b92000))
+
 ## [1.11.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.1...v1.11.2) (2025-12-31)
 
 
