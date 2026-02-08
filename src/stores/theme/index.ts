@@ -101,74 +101,62 @@ export const useThemeStore = defineStore('theme', () => {
   /**
    * 同步主题属性到 HTML 元素
    * 设置 [data-theme] 属性，方便 CSS 使用
+   * 优化版本：避免样式冲突，确保平滑过渡
    */
   const syncThemeAttr = () => {
     const themeValue = isDark.value ? 'dark' : 'light'
-    document.documentElement.setAttribute('data-theme', themeValue)
+    const root = document.documentElement
 
-    // 向后兼容：同时设置 class
-    if (isDark.value) {
-      document.documentElement.classList.add('dark')
-      document.documentElement.classList.remove('light')
-    } else {
-      document.documentElement.classList.add('light')
-      document.documentElement.classList.remove('dark')
-    }
+    // 批量更新 DOM，减少 reflow
+    requestAnimationFrame(() => {
+      // 1. 先移除旧的 class（避免冲突）
+      root.classList.remove('light', 'dark')
+
+      // 2. 设置新的 data-theme
+      root.setAttribute('data-theme', themeValue)
+
+      // 3. 添加新的 class（向后兼容）
+      root.classList.add(themeValue)
+    })
   }
 
   const setMode = async (newMode: ThemeMode) => {
-    // 预先创建丝滑过渡的style
-    const transitionStyle = document.createElement('style')
-    transitionStyle.textContent = `
-      /* 添加全局过渡效果 */
-      .layout-container :deep(.n-layout .n-layout-scroll-container),
-      .layout-sider,
-      .n-menu,
-      .layout-header,
-      .layout-footer,
-      .light-theme,
-      .dark-theme {
-        transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      }
+    // 检测浏览器是否支持 View Transition API
+    const supportsViewTransition = 'startViewTransition' in document
 
-      /* 减少内容闪烁 */
-      .layout-container {
-        opacity: 0.95;
-        transition: opacity 0.35s ease-in-out;
-      }
-    `
-    document.head.appendChild(transitionStyle)
+    // 更新主题的核心逻辑
+    const updateTheme = () => {
+      mode.value = newMode
+      localStorage.setItem(THEME_MODE_KEY, newMode)
+      syncThemeAttr()
+    }
 
-    // 应用主题前等待DOM更新
-    await new Promise(resolve => setTimeout(resolve, 10))
+    // 使用 View Transition API（现代浏览器）
+    if (supportsViewTransition) {
+      // @ts-ignore - View Transition API 尚未完全标准化
+      await document.startViewTransition(() => {
+        updateTheme()
+      }).ready
+      return
+    }
 
-    // 增加透明度过渡
-    document
-      .querySelector('.layout-container')
-      ?.classList.add('theme-transitioning')
+    // 降级方案：传统过渡（兼容旧浏览器）
+    const root = document.documentElement
 
-    // 设置主题
-    mode.value = newMode
-    localStorage.setItem(THEME_MODE_KEY, newMode)
+    // 1. 添加过渡标记（CSS 中定义过渡样式）
+    root.classList.add('theme-transitioning')
 
-    // 同步主题属性
-    syncThemeAttr()
-
-    // 确保DOM更新
+    // 2. 等待一帧，确保 CSS 类生效
     await new Promise(resolve => requestAnimationFrame(resolve))
 
-    // 等待过渡完成后清理
-    setTimeout(() => {
-      // 恢复透明度
-      document
-        .querySelector('.layout-container')
-        ?.classList.remove('theme-transitioning')
+    // 3. 更新主题
+    updateTheme()
 
-      // 移除临时样式
-      setTimeout(() => {
-        document.head.removeChild(transitionStyle)
-      }, 400)
-    }, 350)
+    // 4. 等待过渡完成（300ms，与 CSS 中定义的时间一致）
+    await new Promise(resolve => setTimeout(resolve, 300))
+
+    // 5. 移除过渡标记
+    root.classList.remove('theme-transitioning')
   }
 
   const updateThemeOverrides = (overrides: Partial<GlobalThemeOverrides>) => {

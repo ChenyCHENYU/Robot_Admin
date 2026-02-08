@@ -55,26 +55,13 @@
   })
 
   // 主题模式循环切换
-  const cycleThemeMode = () => {
-    // 添加加载状态
-    const app = document.getElementById('app')
-    if (app) {
-      app.style.pointerEvents = 'none'
-      app.style.opacity = '0.99'
-    }
-
+  const cycleThemeMode = async () => {
     // 按照 system -> light -> dark -> system 顺序循环
     const modes: ThemeMode[] = ['system', 'light', 'dark']
     const currentIndex = modes.indexOf(themeStore.mode)
     const nextIndex = (currentIndex + 1) % modes.length
-    themeStore.setMode(modes[nextIndex])
 
-    // 恢复交互
-    setTimeout(() => {
-      if (app) {
-        app.style.pointerEvents = ''
-        app.style.opacity = ''
-      }
-    }, 300)
+    // 调用优化后的 setMode，内部已处理过渡效果
+    await themeStore.setMode(modes[nextIndex])
   }
 </script>

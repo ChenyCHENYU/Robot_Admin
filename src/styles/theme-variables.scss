@@ -61,7 +61,7 @@
   /* 过渡 */
   --app-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --app-transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --app-transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --app-transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ===========================================
@@ -111,7 +111,7 @@
   /* 过渡（与亮色保持一致） */
   --app-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --app-transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --app-transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --app-transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ===========================================
@@ -125,8 +125,8 @@
 body {
   background-color: var(--app-bg-body);
   color: var(--app-text-primary);
-  transition: background-color var(--app-transition-slow),
-              color var(--app-transition-slow);
+  transition: background-color var(--app-transition-base),
+              color var(--app-transition-base);
 }
 
 /**
@@ -134,7 +134,62 @@ body {
  * 确保主题切换更平滑
  */
 html {
-  transition: background-color var(--app-transition-slow);
+  transition: background-color var(--app-transition-base);
+}
+
+/**
+ * 主题切换过渡优化
+ * 使用 will-change 提示浏览器优化性能
+ */
+html.theme-transitioning {
+  /* 提示浏览器即将变化的属性 */
+  will-change: background-color;
+  
+  /* 为所有可能变化的元素添加过渡 */
+  & * {
+    transition: background-color var(--app-transition-base),
+                color var(--app-transition-base),
+                border-color var(--app-transition-base) !important;
+  }
+  
+  /* 特殊元素优化 */
+  & .layout-container,
+  & .layout-sider,
+  & .n-menu,
+  & .n-layout,
+  & .n-card {
+    transition: background-color var(--app-transition-base),
+                box-shadow var(--app-transition-base) !important;
+  }
+}
+
+/**
+ * View Transition API 支持
+ * 为支持的浏览器提供原生过渡动画
+ */
+@supports (view-transition-name: root) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.3s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* 淡入淡出动画 */
+  ::view-transition-old(root) {
+    animation-name: fade-out;
+  }
+  
+  ::view-transition-new(root) {
+    animation-name: fade-in;
+  }
+}
+
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
 }
 
 /* ===========================================
