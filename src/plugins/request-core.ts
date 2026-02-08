@@ -12,7 +12,6 @@ import type { App } from 'vue'
 import { createRequestCore, onReLoginSuccess } from '@robot-admin/request-core'
 import { s_userStore } from '@/stores/user'
 import { s_reLoginStore } from '@/stores/reLogin'
-import { resolveReLogin } from '@/axios/plugins/request'
 import { createDiscreteApi } from 'naive-ui/es'
 
 const { message } = createDiscreteApi(['message'])
@@ -103,8 +102,6 @@ export function setupRequestCore(app: App) {
                     if (userStore.token) {
                       // 通知 Request Core 重新登录成功
                       onReLoginSuccess()
-                      // 通知原有的 axios 实例
-                      resolveReLogin()
                       resolve()
                     } else {
                       reject(new Error('重新登录失败'))

@@ -79,7 +79,7 @@
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
   import { loginApi, type LoginResponse } from '@/api/auth'
-  import { onReLoginSuccess, onReLoginCancel } from '@/axios/request'
+  import { onReLoginSuccess, onReLoginCancel } from '@robot-admin/request-core'
 
   // Props
   interface Props {

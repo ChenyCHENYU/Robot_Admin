@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 env-manager dev && vite && vite",
     "dev:translate ": "VITE_DEVTOOLS=true bun run dev",
+    "dev:local": "bun run link:packages && bun run dev",
     "build": "env-manager prod && vite build",
     "build:test": "env-manager test && vite build --mode test --emptyOutDir",
     "build:staging": "env-manager staging && vite build --mode staging --profile",
@@ -28,7 +29,9 @@
     "gen:route-i18n": "bun run scripts/generate-route-translations.ts",
     "deploy": "bash ./scripts/merge-and-deploy.sh",
     "sync-deploy-branch": "bash ./scripts/sync-dev.sh",
-    "analyze": "vite build --mode analyze"
+    "analyze": "vite build --mode analyze",
+    "link:packages": "test -d ../robot-admin-packages/packages/request-core && bun link @robot-admin/request-core || echo '⚠️  Monorepo not found, using npm package'",
+    "unlink:packages": "bun unlink @robot-admin/request-core && bun install --force"
   },
   "dependencies": {
     "@antv/x6": "^2.18.1",
