@@ -1,5 +1,5 @@
 // src/api/permissions.ts
-import { getData, deleteData, putData } from '@/axios/request'
+import { getData, deleteData, putData } from '@robot-admin/request-core'
 import type {
   GetSysPermissionsByIdResponse,
   PutSysPermissionsByIdResponse,
