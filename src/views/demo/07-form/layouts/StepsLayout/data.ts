@@ -1,5 +1,5 @@
 import type { FormOption } from '@/types/modules/form'
-import { PRESET_RULES } from '@/utils/v_verify'
+import { PRESET_RULES } from '@robot-admin/form-validate'
 
 const { required, length, email } = PRESET_RULES
 

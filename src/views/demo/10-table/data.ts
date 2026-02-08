@@ -1,6 +1,6 @@
 import type { SelectOption, DataRecord } from '@/types/modules/table'
 import type { TableColumn, UseTableCrudConfig } from '@robot-admin/request-core'
-import { PRESET_RULES } from '@/utils/v_verify'
+import { PRESET_RULES } from '@robot-admin/form-validate'
 
 // ================= 业务类型定义 =================
 export interface Employee extends DataRecord {

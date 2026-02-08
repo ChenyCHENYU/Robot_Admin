@@ -9,7 +9,7 @@
  */
 
 import type { FormOption } from '@/types/modules/form'
-import { PRESET_RULES, RULE_COMBOS } from '@/utils/v_verify'
+import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
 
 // 解构校验规则
 const { required, range, length } = PRESET_RULES

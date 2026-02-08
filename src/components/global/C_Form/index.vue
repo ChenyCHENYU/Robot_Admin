@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-08 20:51:51
  * @FilePath: \Robot_Admin\src\components\global\C_Form\index.vue
  * @Description: 表单组件
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -76,7 +76,7 @@
 
 <script lang="ts" setup>
   import type { FormInst, FormRules } from 'naive-ui/es/form'
-  import { _mergeRules } from '@/utils/v_verify'
+  import { mergeRules } from '@robot-admin/form-validate'
   import type {
     FormProps,
     FormOption,
@@ -445,7 +445,7 @@
             : getDefaultValue(item.type as ComponentType)
 
         if (item.rules?.length) {
-          formRules[item.prop] = _mergeRules(item.rules)
+          formRules[item.prop] = mergeRules(item.rules)
         }
       })
     } catch (error) {

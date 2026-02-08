@@ -17,7 +17,7 @@ import type {
   PaginationConfig,
 } from '@/types/modules/table'
 import type { FormOption, ComponentType } from '@/types/modules/form'
-import type { FieldRule } from '@/utils/v_verify'
+import type { FieldRule } from '@robot-admin/form-validate'
 import type { DynamicRowsOptions } from '@/composables/Table/useDynamicRow'
 import type { VNodeChild } from 'vue'
 import C_Icon from '@/components/global/C_Icon/index.vue'

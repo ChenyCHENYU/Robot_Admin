@@ -260,7 +260,7 @@
   import type { EditMode } from '@/types/modules/table'
   import { useTableCrud } from '@robot-admin/request-core'
   import { EDIT_MODES, MODE_CONFIG, employeeTableConfig } from './data'
-  import { PRESET_RULES } from '@/utils/v_verify'
+  import { PRESET_RULES } from '@robot-admin/form-validate'
 
   // ================= 初始化表格 CRUD =================
   const table = useTableCrud(employeeTableConfig)

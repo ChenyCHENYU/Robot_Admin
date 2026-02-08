@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { PRESET_RULES, type FieldRule } from '@/utils/v_verify'
+import { PRESET_RULES, type FieldRule } from '@robot-admin/form-validate'
 import { reactive } from 'vue'
 
 // ================= 类型定义 =================

@@ -10,7 +10,7 @@
 
 import type { VNode, DefineComponent, CSSProperties } from 'vue'
 import type { FormInst, UploadFileInfo } from 'naive-ui/es'
-import type { FieldRule } from '@/utils/v_verify'
+import type { FieldRule } from '@robot-admin/form-validate'
 import type Editor from 'wangeditor'
 
 /**

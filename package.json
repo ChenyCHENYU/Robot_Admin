@@ -30,8 +30,8 @@
     "deploy": "bash ./scripts/merge-and-deploy.sh",
     "sync-deploy-branch": "bash ./scripts/sync-dev.sh",
     "analyze": "vite build --mode analyze",
-    "link:packages": "test -d ../robot-admin-packages/packages/request-core && bun link @robot-admin/request-core || echo '⚠️  Monorepo not found, using npm package'",
-    "unlink:packages": "bun unlink @robot-admin/request-core && bun install --force"
+    "link:packages": "test -d ../robot-admin-packages/packages/request-core && bun link @robot-admin/request-core || echo '⚠️  Monorepo not found, using npm package' && test -d ../robot-admin-packages/packages/form-validate && bun link @robot-admin/form-validate || echo '⚠️  form-validate not found'",
+    "unlink:packages": "bun unlink @robot-admin/request-core @robot-admin/form-validate && bun install --force"
   },
   "dependencies": {
     "@antv/x6": "^2.18.1",
@@ -47,6 +47,7 @@
     "@iconify/vue": "^5.0.0",
     "@kangc/v-md-editor": "^2.3.18",
     "@robot-admin/request-core": "^0.1.0",
+    "@robot-admin/form-validate": "^2.0.0",
     "@splinetool/runtime": "^1.9.92",
     "@tato30/vue-pdf": "^1.11.4",
     "@types/leaflet": "^1.9.21",

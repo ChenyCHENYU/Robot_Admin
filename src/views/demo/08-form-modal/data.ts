@@ -5,7 +5,7 @@ import type {
   OptionItem,
   ItemLayoutConfig,
 } from '@/types/modules/form'
-import { PRESET_RULES, RULE_COMBOS } from '@/utils/v_verify'
+import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
 
 // 类型定义
 export type ContainerType =

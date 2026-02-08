@@ -54,7 +54,7 @@
     FormModel,
     FormOption,
   } from '@/types/modules/form'
-  import { PRESET_RULES, RULE_COMBOS } from '@/utils/v_verify'
+  import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
 
   // ==================== 表单字段配置 ====================
   const getFormOptions = (): FormOption[] => [

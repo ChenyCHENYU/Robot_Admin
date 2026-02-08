@@ -9,7 +9,7 @@
  */
 
 import type { FormOption } from '@/types/modules/form'
-import { RULE_COMBOS, PRESET_RULES } from '@/utils/v_verify'
+import { RULE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
 
 // 类型定义
 export interface EmployeeFormData {
