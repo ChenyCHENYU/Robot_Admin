@@ -1,9 +1,4 @@
-import type {
-  SelectOption,
-  EditType,
-  DataRecord,
-  EditMode,
-} from '@/types/modules/table'
+import type { SelectOption, DataRecord } from '@/types/modules/table'
 import type { TableColumn, UseTableCrudConfig } from '@robot-admin/request-core'
 import { PRESET_RULES } from '@/utils/v_verify'
 
@@ -21,11 +16,7 @@ export interface Employee extends DataRecord {
 }
 
 // ================= 编辑模式配置 =================
-export const EDIT_MODES: Array<{
-  value: EditMode
-  label: string
-  icon: string
-}> = [
+export const EDIT_MODES = [
   { value: 'row', label: '仅行编辑', icon: 'mdi:table-row' },
   { value: 'cell', label: '仅单元格编辑', icon: 'mdi:table-cell' },
   { value: 'both', label: '混合模式', icon: 'mdi:table-edit' },
@@ -33,14 +24,7 @@ export const EDIT_MODES: Array<{
   { value: 'none', label: '禁用编辑', icon: 'mdi:lock' },
 ]
 
-export const MODE_CONFIG: Record<
-  EditMode,
-  {
-    title: string
-    description: string
-    alertType: 'success' | 'info' | 'warning' | 'error'
-  }
-> = {
+export const MODE_CONFIG = {
   row: {
     title: '行内编辑模式',
     description:
@@ -91,13 +75,13 @@ const genderOptions: SelectOption[] = [
 ]
 
 // ================= 简化的格式化函数 =================
-const formatGender = (gender: string): string =>
+const formatGender = (gender: string) =>
   gender === 'male' ? '男' : gender === 'female' ? '女' : gender
 
-const formatDate = (timestamp: number): string =>
+const formatDate = (timestamp: number) =>
   timestamp ? new Date(timestamp).toLocaleDateString() : '-'
 
-const formatDepartment = (department: string): string => {
+const formatDepartment = (department: string) => {
   const map: Record<string, string> = {
     tech: '技术部',
     hr: '人事部',
@@ -107,7 +91,7 @@ const formatDepartment = (department: string): string => {
   return map[department] || department
 }
 
-const formatStatus = (status: string): string => {
+const formatStatus = (status: string) => {
   const map: Record<string, string> = {
     active: '在职',
     inactive: '离职',
@@ -116,18 +100,18 @@ const formatStatus = (status: string): string => {
   return map[status] || status
 }
 
-const formatDescription = (desc?: string): string =>
+const formatDescription = (desc?: string) =>
   desc ? (desc.length > 30 ? desc.substring(0, 30) + '...' : desc) : '暂无描述'
 
 // ================= 表格列配置 =================
-export const getTableColumns = (): TableColumn<Employee>[] => [
+export const getTableColumns = (): TableColumn[] => [
   {
     key: 'name',
     title: '姓名',
     width: 120,
     editable: true,
     required: true,
-    editType: 'input' as EditType,
+    editType: 'input',
     editProps: {
       rules: [PRESET_RULES.length('姓名', 2, 20)],
       placeholder: '请输入姓名',
@@ -139,7 +123,7 @@ export const getTableColumns = (): TableColumn<Employee>[] => [
     width: 100,
     editable: true,
     required: true,
-    editType: 'number' as EditType,
+    editType: 'number',
     editProps: {
       min: 18,
       max: 65,
@@ -154,7 +138,7 @@ export const getTableColumns = (): TableColumn<Employee>[] => [
     width: 100,
     editable: true,
     required: true,
-    editType: 'select' as EditType,
+    editType: 'select',
     editProps: {
       options: genderOptions,
       placeholder: '请选择性别',
@@ -167,7 +151,7 @@ export const getTableColumns = (): TableColumn<Employee>[] => [
     width: 200,
     editable: true,
     required: true,
-    editType: 'email' as EditType,
+    editType: 'email',
     editProps: {
       rules: [PRESET_RULES.email('邮箱')],
       placeholder: '请输入邮箱地址',
@@ -179,7 +163,7 @@ export const getTableColumns = (): TableColumn<Employee>[] => [
     width: 120,
     editable: true,
     required: true,
-    editType: 'select' as EditType,
+    editType: 'select',
     editProps: {
       options: departmentOptions,
       placeholder: '请选择部门',
@@ -192,7 +176,7 @@ export const getTableColumns = (): TableColumn<Employee>[] => [
     width: 140,
     editable: true,
     required: true,
-    editType: 'date' as EditType,
+    editType: 'date',
     editProps: {
       type: 'date',
       format: 'yyyy-MM-dd',
@@ -207,7 +191,7 @@ export const getTableColumns = (): TableColumn<Employee>[] => [
     width: 100,
     editable: true,
     required: false,
-    editType: 'select' as EditType,
+    editType: 'select',
     editProps: {
       options: statusOptions,
       placeholder: '请选择状态',
@@ -220,7 +204,7 @@ export const getTableColumns = (): TableColumn<Employee>[] => [
     width: 200,
     editable: true,
     required: false,
-    editType: 'textarea' as EditType,
+    editType: 'textarea',
     editProps: {
       type: 'textarea',
       rows: 3,
@@ -245,7 +229,7 @@ export const createNewEmployee = (): Employee => ({
 })
 
 // ================= 详情弹窗配置 =================
-export const detailConfig: any = {
+export const detailConfig = {
   sections: [
     {
       title: '基本信息',
@@ -257,14 +241,14 @@ export const detailConfig: any = {
           label: '年龄',
           key: 'age',
           type: 'number',
-          formatter: (val: number): string => `${val}岁`,
+          formatter: (val: number) => `${val}岁`,
         },
         {
           label: '性别',
           key: 'gender',
           type: 'tag',
           tagType: 'info',
-          formatter: (val: string): string =>
+          formatter: (val: string) =>
             val === 'male' ? '男' : val === 'female' ? '女' : val,
         },
       ],
@@ -298,7 +282,7 @@ export const detailConfig: any = {
           key: 'description',
           type: 'text',
           span: 2,
-          formatter: (val: string | undefined): string => val || '暂无描述信息',
+          formatter: (val?: string) => val || '暂无描述信息',
         },
       ],
     },
