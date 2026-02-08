@@ -6,7 +6,6 @@
   flex-direction: column;
   overflow: hidden;
   background-color: var(--app-bg-body);
-  transition: background-color var(--app-transition-slow);
 }
 
 // ==================== 顶部导航栏 ====================
@@ -252,7 +251,6 @@
   flex-direction: column;
   overflow: hidden;
   background-color: var(--app-bg-content);
-  transition: background-color var(--app-transition-slow);
 }
 
 .page-content {

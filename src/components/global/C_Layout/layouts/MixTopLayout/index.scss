@@ -644,7 +644,6 @@
   overflow: hidden;
   /* 使用浅色背景，与顶部导航和左侧菜单保持一致 */
   background: #f4f7f9;
-  transition: background-color var(--app-transition-slow);
 
   .dark-theme & {
     background: #121212;

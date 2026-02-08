@@ -4,9 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <title>%VITE_APP_TITLE%</title>
     <!-- 预加载加载动画图片，消除网络慢时的闪烁 -->
     <link rel="preload" href="/robot.gif" as="image" />
+    
+    <!-- 防止主题闪烁：在页面渲染前立即设置主题 -->
+    <script>
+      (function() {
+        const key = 'theme-mode';
+        const mode = localStorage.getItem(key) || 'system';
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = mode === 'dark' || (mode === 'system' && prefersDark);
+        const theme = isDark ? 'dark' : 'light';
+        
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

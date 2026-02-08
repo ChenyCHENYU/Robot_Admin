@@ -60,8 +60,7 @@
 
   /* 过渡 */
   --app-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --app-transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --app-transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --app-transition-base: 0.4s cubic-bezier(0.4, 0, 0.6, 1);
 }
 
 /* ===========================================
@@ -110,8 +109,7 @@
 
   /* 过渡（与亮色保持一致） */
   --app-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  --app-transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --app-transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --app-transition-base: 0.4s cubic-bezier(0.4, 0, 0.6, 1);
 }
 
 /* ===========================================
@@ -120,86 +118,64 @@
 
 /**
  * 为 body 元素应用主题变量
- * 确保主题切换时整个页面背景色变化
  */
 body {
   background-color: var(--app-bg-body);
   color: var(--app-text-primary);
-  transition: background-color var(--app-transition-base),
-              color var(--app-transition-base);
 }
 
 /**
- * 为 HTML 元素添加过渡
- * 确保主题切换更平滑
+ * color-scheme 支持 * 让浏览器原生组件（滚动条、输入框等）自动适配主题
  */
-html {
-  transition: background-color var(--app-transition-base);
+[data-theme='light'] {
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 /**
- * 主题切换过渡优化
- * 使用 will-change 提示浏览器优化性能
+ * View Transition API 配置 * 现代浏览器的原生过渡动画（丝滑流畅）
  */
-html.theme-transitioning {
-  /* 提示浏览器即将变化的属性 */
-  will-change: background-color;
-  
-  /* 为所有可能变化的元素添加过渡 */
-  & * {
-    transition: background-color var(--app-transition-base),
-                color var(--app-transition-base),
-                border-color var(--app-transition-base) !important;
-  }
-  
-  /* 特殊元素优化 */
-  & .layout-container,
-  & .layout-sider,
-  & .n-menu,
-  & .n-layout,
-  & .n-card {
-    transition: background-color var(--app-transition-base),
-                box-shadow var(--app-transition-base) !important;
-  }
-}
-
-/**
- * View Transition API 支持
- * 为支持的浏览器提供原生过渡动画
- */
-@supports (view-transition-name: root) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 0.3s;
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.5s;
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
-  /* 淡入淡出动画 */
-  ::view-transition-old(root) {
-    animation-name: fade-out;
+::view-transition-old(root) {
+  animation-name: theme-fade-out;
   }
   
   ::view-transition-new(root) {
-    animation-name: fade-in;
+  animation-name: theme-fade-in;
+  }
+  
+  @keyframes theme-fade-out {
+    to {
+      opacity: 0;
   }
 }
 
-@keyframes fade-out {
-  to { opacity: 0; }
+@keyframes theme-fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
-@keyframes fade-in {
-  from { opacity: 0; }
-}
-
-/* ===========================================
- * 向后兼容
- * 保留旧的选择器以确保现有样式不受影响
- * 未来版本将逐步移除这些兼容性选择器
- * =========================================== */
-
-/*
- * 兼容旧的 html.dark 和 body[data-theme] 选择器
- * 实际样式由 [data-theme='dark'] 处理
- * 保留注释以确保不会破坏现有代码的引用
+/**
+ * 🔥 关键优化：在 View Transition 期间禁用所有 CSS transitions
+ * 防止与 View Transition API 产生冲突，避免双重动画导致卡顿
+ *
+ * 工作原理：
+ * 1. theme store 在调用 startViewTransition 前给 html 添加 .theme-transitioning 类
+ * 2. 此选择器禁用所有元素的 transition 和 animation
+ * 3. startViewTransition 完成后移除该类，恢复正常动画
+ * 4. 结果：只有 View Transition API 的原生过渡在工作，丝滑流畅
  */
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: none !important;
+  animation-duration: 0s !important;
+}

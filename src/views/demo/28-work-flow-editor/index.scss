@@ -562,7 +562,6 @@
 }
 
 // 暗色主题适配
-html.dark,
 [data-theme="dark"] {
   // SCSS变量 - 暗色主题通用颜色
     $dark-text-primary: rgba(255, 255, 255, 0.85);

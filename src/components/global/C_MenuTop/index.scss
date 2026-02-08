@@ -59,6 +59,7 @@
 
 /* 🎯 菜单淡入动画 */
 .menu-top {
+  background-color: var(--app-bg-menu);
   animation: fadeIn 0.6s ease-out;
 }
 

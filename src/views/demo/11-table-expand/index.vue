@@ -76,10 +76,10 @@
             清空所有选择
           </NButton>
           <NButton
-            @click="table.refresh"
+            @click="table.refresh()"
             type="info"
             size="small"
-            :loading="table.loading"
+            :loading="table.loading.value"
           >
             刷新数据
           </NButton>

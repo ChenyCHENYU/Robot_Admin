@@ -4,7 +4,6 @@ import {
   lightThemeOverrides,
   darkThemeOverrides,
   type GlobalThemeOverrides,
-  THEME_TOKENS,
 } from '@/config/theme'
 
 // 本地存储键名常量
@@ -49,8 +48,6 @@ export const useThemeStore = defineStore('theme', () => {
       mode.value === 'dark' || (mode.value === 'system' && systemIsDark.value)
     )
   })
-
-  const darkModeBgColor = computed(() => THEME_TOKENS.background.dark.body)
 
   const themeOverridesComputed = computed<GlobalThemeOverrides>(() => {
     const baseOverrides = isDark.value
@@ -100,63 +97,53 @@ export const useThemeStore = defineStore('theme', () => {
 
   /**
    * 同步主题属性到 HTML 元素
-   * 设置 [data-theme] 属性，方便 CSS 使用
-   * 优化版本：避免样式冲突，确保平滑过渡
    */
   const syncThemeAttr = () => {
     const themeValue = isDark.value ? 'dark' : 'light'
-    const root = document.documentElement
-
-    // 批量更新 DOM，减少 reflow
-    requestAnimationFrame(() => {
-      // 1. 先移除旧的 class（避免冲突）
-      root.classList.remove('light', 'dark')
-
-      // 2. 设置新的 data-theme
-      root.setAttribute('data-theme', themeValue)
-
-      // 3. 添加新的 class（向后兼容）
-      root.classList.add(themeValue)
-    })
+    document.documentElement.setAttribute('data-theme', themeValue)
   }
 
   const setMode = async (newMode: ThemeMode) => {
-    // 检测浏览器是否支持 View Transition API
-    const supportsViewTransition = 'startViewTransition' in document
+    // 记录切换前的视觉状态
+    const oldDark = isDark.value
 
-    // 更新主题的核心逻辑
-    const updateTheme = () => {
-      mode.value = newMode
-      localStorage.setItem(THEME_MODE_KEY, newMode)
+    // 更新状态
+    mode.value = newMode
+    localStorage.setItem(THEME_MODE_KEY, newMode)
+
+    // 新的视觉状态
+    const newDark = isDark.value
+
+    // 如果视觉效果没变化，直接同步 DOM 即可（无需动画）
+    if (oldDark === newDark) {
       syncThemeAttr()
-    }
-
-    // 使用 View Transition API（现代浏览器）
-    if (supportsViewTransition) {
-      // @ts-ignore - View Transition API 尚未完全标准化
-      await document.startViewTransition(() => {
-        updateTheme()
-      }).ready
       return
     }
 
-    // 降级方案：传统过渡（兼容旧浏览器）
-    const root = document.documentElement
+    // 视觉有变化，执行过渡动画
+    // 完全依赖 View Transition API（现代浏览器）
+    if (document.startViewTransition) {
+      const root = document.documentElement
 
-    // 1. 添加过渡标记（CSS 中定义过渡样式）
-    root.classList.add('theme-transitioning')
+      // 添加标记类，用于禁用所有 CSS transitions（防止冲突）
+      root.classList.add('theme-transitioning')
 
-    // 2. 等待一帧，确保 CSS 类生效
-    await new Promise(resolve => requestAnimationFrame(resolve))
+      const transition = document.startViewTransition(() => {
+        syncThemeAttr()
+      })
 
-    // 3. 更新主题
-    updateTheme()
-
-    // 4. 等待过渡完成（300ms，与 CSS 中定义的时间一致）
-    await new Promise(resolve => setTimeout(resolve, 300))
-
-    // 5. 移除过渡标记
-    root.classList.remove('theme-transitioning')
+      // 等待过渡完成后移除标记类
+      await transition.finished
+        .catch(() => {
+          // 忽略用户中断过渡的错误
+        })
+        .finally(() => {
+          root.classList.remove('theme-transitioning')
+        })
+    } else {
+      // 降级方案：不支持的浏览器直接瞬间切换
+      syncThemeAttr()
+    }
   }
 
   const updateThemeOverrides = (overrides: Partial<GlobalThemeOverrides>) => {
@@ -181,30 +168,6 @@ export const useThemeStore = defineStore('theme', () => {
     localStorage.removeItem(THEME_OVERRIDES_KEY)
   }
 
-  /**
-   * 获取背景颜色（基于 Token）
-   * @param key - 背景色键名
-   * @returns 响应式的背景颜色值
-   */
-  const getBgColor = (key: keyof typeof THEME_TOKENS.background.light) => {
-    return computed(() =>
-      isDark.value
-        ? THEME_TOKENS.background.dark[key]
-        : THEME_TOKENS.background.light[key]
-    )
-  }
-
-  /**
-   * 获取菜单颜色（基于 Token）
-   * @param key - 菜单色键名
-   * @returns 响应式的菜单颜色值
-   */
-  const getMenuColor = (key: keyof typeof THEME_TOKENS.menu.light) => {
-    return computed(() =>
-      isDark.value ? THEME_TOKENS.menu.dark[key] : THEME_TOKENS.menu.light[key]
-    )
-  }
-
   return {
     // State
     mode,
@@ -214,7 +177,6 @@ export const useThemeStore = defineStore('theme', () => {
     // Getters
     currentTheme,
     isDark,
-    darkModeBgColor,
     themeOverrides: themeOverridesComputed,
 
     // Actions
@@ -222,10 +184,5 @@ export const useThemeStore = defineStore('theme', () => {
     setMode,
     updateThemeOverrides,
     resetThemeOverrides,
-
-    // 新增工具方法
-    getBgColor,
-    getMenuColor,
-    syncThemeAttr,
   }
 })

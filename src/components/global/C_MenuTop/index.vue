@@ -12,7 +12,6 @@
     ref="menuContainer"
     class="menu-top h-56px shrink-0 flex items-center relative overflow-hidden transition-all duration-300"
     :class="[isCollapsed ? 'justify-center px-2' : 'justify-start pl-14px']"
-    :style="{ backgroundColor: menuBgColor }"
   >
     <!-- 背景装饰 -->
     <div
@@ -66,14 +65,7 @@
 </template>
 
 <script setup lang="ts">
-  import { useThemeStore } from '@/stores/theme'
-
   defineOptions({ name: 'C_MenuTop' })
-
-  const themeStore = useThemeStore()
-
-  // 使用 Store 的工具方法获取菜单背景色
-  const menuBgColor = themeStore.getBgColor('menu')
 
   // 获取容器引用
   const menuContainer = ref<HTMLElement>()

@@ -134,7 +134,7 @@
       min-width: 0;
       overflow: hidden;
       padding: 0 24px;
-      
+
       // 确保菜单容器背景透明
       & > * {
         background: transparent !important;
@@ -170,7 +170,6 @@
         flex-direction: column;
         overflow: hidden;
         background-color: var(--app-bg-content);
-        transition: background-color var(--app-transition-slow);
 
         .page-content {
           flex: 1;
@@ -251,7 +250,7 @@
           );
           opacity: 0.6;
         }
-        
+
         // 添加微妙的内发光
         &::after {
           content: '';
@@ -301,7 +300,7 @@
           );
           opacity: 0.5;
         }
-        
+
         // 暗色主题的内发光
         &::after {
           content: '';
@@ -482,7 +481,7 @@
 
           .light-theme & {
             border-bottom-color: rgba(226, 232, 240, 0.8);
-            
+
             &::after {
               content: '';
               position: absolute;
@@ -501,7 +500,7 @@
 
           .dark-theme & {
             border-bottom-color: rgba(75, 85, 99, 0.3);
-            
+
             &::after {
               content: '';
               position: absolute;
@@ -523,11 +522,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            
+
             .light-theme & {
               color: rgba(59, 130, 246, 0.8);
             }
-            
+
             .dark-theme & {
               color: rgba(147, 197, 253, 0.8);
             }
@@ -537,7 +536,7 @@
             font-size: 15px;
             font-weight: 600;
             letter-spacing: 0.02em;
-            
+
             .light-theme & {
               color: rgba(30, 64, 175, 0.95);
               background: linear-gradient(
@@ -549,7 +548,7 @@
               -webkit-text-fill-color: transparent;
               background-clip: text;
             }
-            
+
             .dark-theme & {
               color: rgba(226, 232, 240, 0.95);
             }
@@ -562,7 +561,7 @@
           overflow-y: auto;
           overflow-x: hidden;
           padding: 12px 8px;
-          
+
           // 自定义滚动条
           &::-webkit-scrollbar {
             width: 4px;
@@ -576,33 +575,33 @@
             border-radius: 2px;
             transition: background 0.2s;
           }
-          
+
           // 亮色主题滚动条
           .light-theme & {
             &::-webkit-scrollbar-thumb {
               background: rgba(59, 130, 246, 0.2);
-              
+
               &:hover {
                 background: rgba(59, 130, 246, 0.3);
               }
             }
           }
-          
+
           // 暗色主题滚动条
           .dark-theme & {
             &::-webkit-scrollbar-thumb {
               background: rgba(99, 102, 241, 0.3);
-              
+
               &:hover {
                 background: rgba(99, 102, 241, 0.4);
               }
             }
           }
-          
+
           // ==================== 菜单组 ====================
           .menu-group {
             margin-bottom: 16px;
-            
+
             .group-title {
               padding: 8px 16px;
               font-size: 12px;
@@ -613,17 +612,17 @@
               align-items: center;
               gap: 8px;
               margin-bottom: 4px;
-              
+
               .light-theme & {
                 color: rgba(100, 116, 139, 0.7);
               }
-              
+
               .dark-theme & {
                 color: rgba(148, 163, 184, 0.6);
               }
             }
           }
-          
+
           // ==================== 菜单项 ====================
           .menu-item {
             margin: 2px 8px;
@@ -638,21 +637,21 @@
             position: relative;
             font-size: 14px;
             color: rgba(51, 65, 85, 0.85);
-            
+
             .item-title {
               flex: 1;
               white-space: nowrap;
               overflow: hidden;
               text-overflow: ellipsis;
             }
-            
+
             // 悬停效果
             &:hover {
               background: rgba(59, 130, 246, 0.08);
               color: rgba(30, 64, 175, 0.95);
               transform: translateX(2px);
             }
-            
+
             // 激活状态
             &.active {
               background: linear-gradient(
@@ -662,7 +661,7 @@
               );
               color: rgba(30, 64, 175, 1);
               font-weight: 600;
-              
+
               // 左侧指示器
               &::before {
                 content: '';
@@ -681,7 +680,7 @@
                 box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
               }
             }
-            
+
             // 子菜单项
             &.sub-item {
               height: 36px;
@@ -689,16 +688,16 @@
               margin-left: 16px;
               padding-left: 28px;
               color: rgba(71, 85, 105, 0.8);
-              
+
               &:hover {
                 background: rgba(59, 130, 246, 0.06);
                 color: rgba(30, 64, 175, 0.9);
               }
-              
+
               &.active {
                 background: rgba(59, 130, 246, 0.1);
                 color: rgba(30, 64, 175, 0.95);
-                
+
                 &::before {
                   width: 2px;
                   height: 16px;
@@ -708,18 +707,18 @@
           }
         }
       }
-      
+
       // ==================== 暗色主题样式 ====================
       &.dark-theme {
         .sidebar-menu-list {
           .menu-item {
             color: rgba(226, 232, 240, 0.8);
-            
+
             &:hover {
               background: rgba(99, 102, 241, 0.15);
               color: rgba(147, 197, 253, 1);
             }
-            
+
             &.active {
               background: linear-gradient(
                 135deg,
@@ -727,7 +726,7 @@
                 rgba(99, 102, 241, 0.15) 100%
               );
               color: rgba(147, 197, 253, 1);
-              
+
               &::before {
                 background: linear-gradient(
                   180deg,
@@ -737,15 +736,15 @@
                 box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
               }
             }
-            
+
             &.sub-item {
               color: rgba(203, 213, 225, 0.7);
-              
+
               &:hover {
                 background: rgba(99, 102, 241, 0.12);
                 color: rgba(147, 197, 253, 0.95);
               }
-              
+
               &.active {
                 background: rgba(99, 102, 241, 0.18);
                 color: rgba(147, 197, 253, 1);

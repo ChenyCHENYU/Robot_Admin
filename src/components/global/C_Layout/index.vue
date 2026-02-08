@@ -237,19 +237,6 @@
     isCollapsed.value = collapsed
   }
 
-  // 监听实际的暗色模式状态，而不是 mode
-  watch(
-    isDarkMode,
-    (isDark: boolean) => {
-      if (isDark) {
-        document.documentElement.classList.add('dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-      }
-    },
-    { immediate: true }
-  )
-
   // 在组件挂载后执行初始化
   onMounted(() => _disposeThemeEffect())
 

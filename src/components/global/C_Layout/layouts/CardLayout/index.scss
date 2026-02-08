@@ -9,7 +9,6 @@
   flex-direction: column;
   overflow: hidden;
   background-color: var(--app-bg-body);
-  transition: background-color var(--app-transition-slow);
 }
 
 // 顶部导航栏
@@ -180,7 +179,7 @@
           color: white;
         }
       }
-  
+
       // 导航中心按钮
       .nav-center-button {
         display: flex;
@@ -197,7 +196,7 @@
         position: relative;
         overflow: hidden;
         margin-left: 8px;
-  
+
         &::before {
           content: '';
           position: absolute;
@@ -209,42 +208,42 @@
           opacity: 0;
           transition: opacity 0.3s ease;
         }
-  
+
         i {
           font-size: 20px;
           position: relative;
           z-index: 1;
           transition: all 0.3s ease;
         }
-  
+
         &:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 16px rgba(24, 160, 88, 0.2);
           border-color: rgba(24, 160, 88, 0.3);
-  
+
           &::before {
             opacity: 0.1;
           }
-  
+
           i {
             color: #36ad6a;
             transform: scale(1.1);
           }
         }
-  
+
         &.active {
           background: linear-gradient(135deg, #18a058 0%, #36ad6a 100%);
           border-color: transparent;
           color: white;
           box-shadow: 0 4px 12px rgba(24, 160, 88, 0.3);
-  
+
           i {
             color: white;
           }
         }
       }
     }
-  
+
     .logo-container {
       position: relative;
       display: flex;
@@ -609,7 +608,6 @@
       flex: 1;
       overflow: auto;
       background-color: var(--app-bg-content);
-      transition: background-color var(--app-transition-slow);
 
       .page-content {
         min-height: 100%;

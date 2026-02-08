@@ -13,7 +13,6 @@
 
 .layout-container :deep(.app-content) {
   background-color: var(--app-bg-content);
-  transition: background-color var(--app-transition-base);
 }
 
 .layout-container :deep(.n-layout-content) {
@@ -55,10 +54,8 @@
 
 // ==================== 侧边栏和菜单样式 ====================
 .layout-sider {
-  transition: background-color var(--app-transition-base);
   transform: translateZ(0);
   backface-visibility: hidden;
-  perspective: 1000px;
   contain: layout style paint;
 }
 
