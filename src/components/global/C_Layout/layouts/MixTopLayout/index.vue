@@ -124,9 +124,6 @@
         <C_Footer v-if="settingsStore.showFooter" />
       </NLayout>
     </div>
-
-    <!-- 设置面板 -->
-    <C_Settings v-model:show="showSettings" />
   </div>
 </template>
 
@@ -135,7 +132,7 @@
   import { s_permissionStore } from '@/stores/permission'
   import { useThemeStore } from '@/stores/theme'
   import { useSettingsStore } from '@/stores/settings'
-  import { MAX_CACHE_COUNT, DEV_CONFIG } from '@/config/keepAliveConfig'
+  import { useLayoutCache } from '@/composables/useLayoutCache'
   import ResponsiveMenu from '../components/ResponsiveMenu.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
@@ -243,39 +240,8 @@
     }
   }
 
-  // KeepAlive 缓存管理
-  const cachedViews = ref<string[]>([])
-  const maxCacheCount = ref(MAX_CACHE_COUNT)
-
-  const shouldCache = (routeName: string | symbol | undefined | null) => {
-    if (!routeName || typeof routeName !== 'string') return false
-    const keepAlive = route.meta?.keepAlive
-    return keepAlive === true
-  }
-
-  const addCache = (name: string) => {
-    if (!cachedViews.value.includes(name) && shouldCache(name)) {
-      cachedViews.value.push(name)
-      if (cachedViews.value.length > maxCacheCount.value) {
-        cachedViews.value.shift()
-      }
-      if (import.meta.env.DEV && DEV_CONFIG.enableLog) {
-        console.debug(
-          `[KeepAlive] ✅ 缓存: ${name} (${cachedViews.value.length}/${maxCacheCount.value})`
-        )
-      }
-    }
-  }
-
-  watch(
-    () => route.name,
-    newName => {
-      if (newName && typeof newName === 'string') {
-        addCache(newName)
-      }
-    },
-    { immediate: true }
-  )
+  // ✅ 使用统一的 KeepAlive 缓存管理
+  const { cachedViews, maxCacheCount } = useLayoutCache()
 
   // 监听路由变化，更新激活的菜单
   watch(

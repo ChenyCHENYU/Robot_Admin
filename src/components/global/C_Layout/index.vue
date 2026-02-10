@@ -108,6 +108,9 @@
         </div>
       </NLayoutContent>
     </NLayout>
+
+    <!-- 全局设置抽屉 - 提升到布局切换之外，避免切换时被销毁 -->
+    <C_Settings v-model:show="showSettings" />
   </div>
 </template>
 
@@ -116,97 +119,23 @@
   import { s_permissionStore } from '@/stores/permission'
   import { useThemeStore } from '@/stores/theme'
   import { useSettingsStore } from '@/stores/settings'
-  import { MAX_CACHE_COUNT, DEV_CONFIG } from '@/config/keepAliveConfig'
+  import { useLayoutCache } from '@/composables/useLayoutCache'
   import TopLayout from './layouts/TopLayout/index.vue'
   import MixLayout from './layouts/MixLayout/index.vue'
   import MixTopLayout from './layouts/MixTopLayout/index.vue'
   import ReverseHorizontalMixLayout from './layouts/ReverseHorizontalMixLayout/index.vue'
   import CardLayout from './layouts/CardLayout/index.vue'
+  import C_Settings from '@/components/global/C_Settings/index.vue'
 
   const permissionStore = s_permissionStore()
   const themeStore = useThemeStore()
   const settingsStore = useSettingsStore()
-  const route = useRoute()
 
   const isReady = ref(true)
   const isDarkMode = computed(() => themeStore.isDark)
 
-  // ⚡ KeepAlive 缓存管理（极简版）
-  const cachedViews = ref<string[]>([])
-  const maxCacheCount = ref(MAX_CACHE_COUNT)
-
-  /**
-   * * @description: 判断页面是否应该被缓存
-   * * 极简策略：只有明确配置 meta.keepAlive = true 才缓存
-   */
-  const shouldCache = (routeName: string | symbol | undefined | null) => {
-    if (!routeName || typeof routeName !== 'string') return false
-
-    // 只看 meta.keepAlive 的值
-    const keepAlive = route.meta?.keepAlive
-    return keepAlive === true
-  }
-
-  /**
-   * * @description: 添加缓存
-   */
-  const addCache = (name: string) => {
-    if (!cachedViews.value.includes(name) && shouldCache(name)) {
-      cachedViews.value.push(name)
-
-      // 控制缓存数量
-      if (cachedViews.value.length > maxCacheCount.value) {
-        cachedViews.value.shift() // 移除最早的缓存
-      }
-
-      if (import.meta.env.DEV && DEV_CONFIG.enableLog) {
-        console.debug(
-          `[KeepAlive] ✅ 缓存: ${name} (${cachedViews.value.length}/${maxCacheCount.value})`
-        )
-      }
-    }
-  }
-
-  /**
-   * * @description: 移除缓存
-   */
-  const removeCache = (name: string) => {
-    const index = cachedViews.value.indexOf(name)
-    if (index > -1) {
-      cachedViews.value.splice(index, 1)
-      if (import.meta.env.DEV && DEV_CONFIG.enableLog) {
-        console.debug(`[KeepAlive] ❌ 移除: ${name}`)
-      }
-    }
-  }
-
-  /**
-   * * @description: 清空所有缓存
-   */
-  const clearAllCache = () => {
-    cachedViews.value = []
-    if (import.meta.env.DEV && DEV_CONFIG.enableLog) {
-      console.debug('[KeepAlive] 🗑️ 清空所有缓存')
-    }
-  }
-
-  // 暴露缓存管理方法到 window（便于调试）
-  if (import.meta.env.DEV && DEV_CONFIG.exposeToWindow) {
-    ;(window as any).__clearCache__ = clearAllCache
-    ;(window as any).__removeCache__ = removeCache
-    ;(window as any).__getCachedViews__ = () => cachedViews.value
-  }
-
-  // 监听路由变化，动态管理缓存
-  watch(
-    () => route.name,
-    newName => {
-      if (newName && typeof newName === 'string') {
-        addCache(newName)
-      }
-    },
-    { immediate: true }
-  )
+  // ✅ 使用统一的 KeepAlive 缓存管理
+  const { cachedViews, maxCacheCount } = useLayoutCache()
 
   /**
    * * @description: 预设主题样式，避免白闪（仅在暗色模式下需要）
@@ -228,6 +157,9 @@
   const siderRef = ref<LayoutSiderInst | null>(null)
   const isCollapsed = ref(false)
 
+  // 设置抽屉状态 - 提升到全局
+  const showSettings = ref(false)
+
   /**
    * * @description: 处理侧边栏折叠状态变化
    * ? @param {*} collapsed 是否折叠
@@ -243,6 +175,11 @@
   provide('menuCollapse', {
     isCollapsed,
     handleCollapsedChange,
+  })
+
+  // 提供设置抽屉状态给子组件
+  provide('settingsDrawer', {
+    showSettings,
   })
 </script>
 

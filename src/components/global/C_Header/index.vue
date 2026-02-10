@@ -67,9 +67,6 @@
     >
       <C_TagsView />
     </div>
-
-    <!-- 设置面板 -->
-    <C_Settings v-model:show="showSettings" />
   </NLayoutHeader>
 </template>
 
@@ -83,8 +80,13 @@
   const themeStore = useThemeStore()
   const settingsStore = useSettingsStore()
 
-  // 设置面板状态
-  const showSettings = ref(false)
+  // 从父组件注入设置抽屉状态
+  interface SettingsDrawer {
+    showSettings: Ref<boolean>
+  }
+  const { showSettings } = inject<SettingsDrawer>('settingsDrawer', {
+    showSettings: ref(false), // 提供默认值以兼容旧代码
+  })
 
   interface MenuCollapse {
     isCollapsed: Ref<boolean>

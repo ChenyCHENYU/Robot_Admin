@@ -187,9 +187,6 @@
         <C_Footer v-if="settingsStore.showFooter" />
       </NLayout>
     </div>
-
-    <!-- 设置面板 -->
-    <C_Settings v-model:show="showSettings" />
   </div>
 </template>
 
@@ -198,18 +195,22 @@
   import { s_permissionStore } from '@/stores/permission'
   import { useThemeStore } from '@/stores/theme'
   import { useSettingsStore } from '@/stores/settings'
-  import { MAX_CACHE_COUNT, DEV_CONFIG } from '@/config/keepAliveConfig'
+  import { useLayoutCache } from '@/composables/useLayoutCache'
 
   defineOptions({ name: 'CardLayout' })
 
   const permissionStore = s_permissionStore()
   const themeStore = useThemeStore()
   const settingsStore = useSettingsStore()
-  const route = useRoute()
   const router = useRouter()
 
-  // 设置面板状态
-  const showSettings = ref(false)
+  // 从父组件注入设置抽屉状态
+  interface SettingsDrawer {
+    showSettings: Ref<boolean>
+  }
+  const { showSettings } = inject<SettingsDrawer>('settingsDrawer', {
+    showSettings: ref(false),
+  })
 
   const isDarkMode = computed(() => themeStore.isDark)
   const menuData = permissionStore.showMenuListGet
@@ -251,50 +252,8 @@
     }
   }
 
-  // KeepAlive 缓存管理
-  const cachedViews = ref<string[]>([])
-  const maxCacheCount = ref(MAX_CACHE_COUNT)
-
-  /**
-   * 判断路由是否需要缓存
-   */
-  const shouldCache = (
-    routeName: string | symbol | undefined | null
-  ): boolean => {
-    return typeof routeName === 'string' && route.meta?.keepAlive === true
-  }
-
-  /**
-   * 添加路由到缓存列表
-   */
-  const addCache = (name: string) => {
-    if (cachedViews.value.includes(name) || !shouldCache(name)) return
-
-    cachedViews.value.push(name)
-
-    // 超出最大缓存数量时移除最早的
-    if (cachedViews.value.length > maxCacheCount.value) {
-      cachedViews.value.shift()
-    }
-
-    // 开发环境日志
-    if (import.meta.env.DEV && DEV_CONFIG.enableLog) {
-      console.debug(
-        `[KeepAlive] ✅ 缓存: ${name} (${cachedViews.value.length}/${maxCacheCount.value})`
-      )
-    }
-  }
-
-  /**
-   * 监听路由变化，管理缓存
-   */
-  watch(
-    () => route.name,
-    newName => {
-      if (typeof newName === 'string') addCache(newName)
-    },
-    { immediate: true }
-  )
+  // ✅ 使用统一的 KeepAlive 缓存管理
+  const { cachedViews, maxCacheCount } = useLayoutCache()
 
   // 组件卸载时清理定时器
   onUnmounted(() => {
