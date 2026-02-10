@@ -420,7 +420,7 @@
   // ============ 表格数据管理 ============
   const table = useTableCrud<PermissionData>({
     api: {
-      list: '/api/permissions/list',
+      list: '/sys/permissionsList',
     },
     columns: getTableColumns(),
   })

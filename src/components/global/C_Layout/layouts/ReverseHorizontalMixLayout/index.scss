@@ -208,553 +208,351 @@
       }
     }
 
-    // ==================== 右侧菜单侧边栏 - 优化版 ====================
+    // ==================== 折叠/展开按钮 - 始终可见 ====================
+    .sidebar-toggle {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 60;
+      border-radius: 8px 0 0 8px;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+
+      &.light-theme {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+        border: 1px solid rgba(226, 232, 240, 0.5);
+        border-right: none;
+        box-shadow: -1px 0 6px rgba(0, 0, 0, 0.03);
+
+        .toggle-icon {
+          color: #94a3b8;
+        }
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.95);
+
+          .toggle-icon {
+            color: #6366f1;
+          }
+        }
+      }
+
+      &.dark-theme {
+        background: rgba(30, 41, 59, 0.75);
+        backdrop-filter: blur(16px) saturate(130%);
+        -webkit-backdrop-filter: blur(16px) saturate(130%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-right: none;
+        box-shadow: -1px 0 6px rgba(0, 0, 0, 0.12);
+
+        .toggle-icon {
+          color: #64748b;
+        }
+
+        &:hover {
+          background: rgba(30, 41, 59, 0.88);
+
+          .toggle-icon {
+            color: #a5b4fc;
+          }
+        }
+      }
+
+      // 侧边栏展开时，按钮跟随侧边栏
+      &.active {
+        right: 240px;
+      }
+
+      .toggle-icon {
+        font-size: 16px;
+        transition: color 0.2s ease;
+      }
+
+      &:active {
+        transform: translateY(-50%) scale(0.95);
+      }
+    }
+
+    // ==================== 右侧菜单侧边栏 - 毛玻璃 ====================
     .right-sidebar {
-      width: 280px;
+      width: 240px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       position: relative;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 50;
+      z-index: 55;
+      overflow: hidden;
 
+      // ====== 亮色毛玻璃 ======
       &.light-theme {
-        background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.95) 0%,
-          rgba(248, 250, 252, 0.98) 50%,
-          rgba(255, 255, 255, 0.95) 100%
-        );
-        backdrop-filter: blur(30px) saturate(180%);
-        -webkit-backdrop-filter: blur(30px) saturate(180%);
-        border-left: 1px solid rgba(226, 232, 240, 0.8);
-        box-shadow:
-          -4px 0 24px rgba(0, 0, 0, 0.04),
-          -2px 0 12px rgba(0, 0, 0, 0.02),
-          -1px 0 4px rgba(0, 0, 0, 0.01);
+        background: rgba(248, 250, 252, 0.82);
+        backdrop-filter: blur(24px) saturate(150%);
+        -webkit-backdrop-filter: blur(24px) saturate(150%);
+        border-left: 1px solid rgba(226, 232, 240, 0.55);
+        box-shadow: -1px 0 0 rgba(0, 0, 0, 0.02);
 
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          width: 1px;
-          background: linear-gradient(
-            180deg,
-            rgba(30, 64, 175, 0.15),
-            rgba(59, 130, 246, 0.2) 30%,
-            rgba(147, 197, 253, 0.25) 50%,
-            rgba(59, 130, 246, 0.2) 70%,
-            rgba(30, 64, 175, 0.15)
-          );
-          opacity: 0.6;
-        }
-
-        // 添加微妙的内发光
-        &::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: radial-gradient(
-            ellipse at top left,
-            rgba(59, 130, 246, 0.03) 0%,
-            transparent 50%
-          );
-          pointer-events: none;
-        }
-      }
-
-      &.dark-theme {
-        background: linear-gradient(
-          135deg,
-          rgba(17, 24, 39, 0.98) 0%,
-          rgba(31, 41, 55, 0.95) 50%,
-          rgba(17, 24, 39, 0.98) 100%
-        );
-        backdrop-filter: blur(30px) saturate(150%);
-        -webkit-backdrop-filter: blur(30px) saturate(150%);
-        border-left: 1px solid rgba(75, 85, 99, 0.3);
-        box-shadow:
-          -4px 0 24px rgba(0, 0, 0, 0.3),
-          -2px 0 12px rgba(0, 0, 0, 0.2),
-          -1px 0 4px rgba(0, 0, 0, 0.1);
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          width: 1px;
-          background: linear-gradient(
-            180deg,
-            rgba(99, 102, 241, 0.2),
-            rgba(129, 140, 248, 0.35) 30%,
-            rgba(147, 197, 253, 0.4) 50%,
-            rgba(129, 140, 248, 0.35) 70%,
-            rgba(99, 102, 241, 0.2)
-          );
-          opacity: 0.5;
-        }
-
-        // 暗色主题的内发光
-        &::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: radial-gradient(
-            ellipse at top left,
-            rgba(99, 102, 241, 0.05) 0%,
-            transparent 50%
-          );
-          pointer-events: none;
-        }
-      }
-
-      // 折叠状态 - 优化版
-      &.collapsed {
-        width: 16px;
-        min-width: 16px;
-        padding: 0;
-        border-left: none;
-        box-shadow: none;
-        overflow: visible;
-        background: transparent;
-
-        &::before,
-        &::after {
-          opacity: 0;
-        }
-
-        .collapse-trigger {
-          left: 0;
-          opacity: 0.85;
-
-          &:hover {
-            opacity: 1;
-          }
-        }
-
-        .sidebar-content {
-          opacity: 0;
-          visibility: hidden;
-          pointer-events: none;
-        }
-      }
-
-      // 折叠按钮 - 优化版
-      .collapse-trigger {
-        position: absolute;
-        left: -16px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 32px;
-        height: 64px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 16px 0 0 16px;
-        cursor: pointer;
-        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 10;
-
-        i {
-          font-size: 20px;
-          transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .light-theme & {
-          background: linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.98) 0%,
-            rgba(249, 250, 251, 0.95) 100%
-          );
-          border: 1px solid rgba(226, 232, 240, 0.6);
-          border-right: none;
-          box-shadow:
-            -3px 0 12px rgba(0, 0, 0, 0.06),
-            -1px 0 4px rgba(0, 0, 0, 0.03),
-            inset 1px 0 0 rgba(255, 255, 255, 0.8);
-
-          i {
-            color: rgba(71, 85, 105, 0.7);
-          }
-
-          &:hover {
-            background: linear-gradient(
-              135deg,
-              rgba(255, 255, 255, 1) 0%,
-              rgba(249, 250, 251, 1) 100%
-            );
-            border-color: rgba(59, 130, 246, 0.3);
-            box-shadow:
-              -4px 0 16px rgba(59, 130, 246, 0.12),
-              -2px 0 6px rgba(0, 0, 0, 0.04),
-              inset 1px 0 0 rgba(255, 255, 255, 1);
-            transform: translateY(-50%) translateX(-3px);
-
-            i {
-              color: rgba(59, 130, 246, 0.9);
-              transform: scale(1.1);
-            }
-          }
-
-          &:active {
-            transform: translateY(-50%) translateX(-1px);
-
-            i {
-              transform: scale(0.95);
-            }
-          }
-        }
-
-        .dark-theme & {
-          background: linear-gradient(
-            135deg,
-            rgba(31, 41, 55, 0.98) 0%,
-            rgba(17, 24, 39, 0.95) 100%
-          );
-          border: 1px solid rgba(75, 85, 99, 0.3);
-          border-right: none;
-          box-shadow:
-            -3px 0 12px rgba(0, 0, 0, 0.3),
-            -1px 0 4px rgba(0, 0, 0, 0.2),
-            inset 1px 0 0 rgba(255, 255, 255, 0.05);
-
-          i {
-            color: rgba(156, 163, 175, 0.7);
-          }
-
-          &:hover {
-            background: linear-gradient(
-              135deg,
-              rgba(31, 41, 55, 1) 0%,
-              rgba(55, 65, 81, 1) 100%
-            );
-            border-color: rgba(99, 102, 241, 0.4);
-            box-shadow:
-              -4px 0 16px rgba(99, 102, 241, 0.2),
-              -2px 0 6px rgba(0, 0, 0, 0.3),
-              inset 1px 0 0 rgba(255, 255, 255, 0.1);
-            transform: translateY(-50%) translateX(-3px);
-
-            i {
-              color: rgba(147, 197, 253, 1);
-              transform: scale(1.1);
-            }
-          }
-
-          &:active {
-            transform: translateY(-50%) translateX(-1px);
-
-            i {
-              transform: scale(0.95);
-            }
-          }
-        }
-      }
-
-      // ==================== 侧边栏内容 ====================
-      .sidebar-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        transition: opacity 0.3s ease;
-
-        // 侧边栏标题 - 优化
         .sidebar-header {
-          padding: 20px 20px 16px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          border-bottom: 1px solid;
-          flex-shrink: 0;
-          position: relative;
+          border-bottom: 1px solid rgba(226, 232, 240, 0.45);
 
-          .light-theme & {
-            border-bottom-color: rgba(226, 232, 240, 0.8);
-
-            &::after {
-              content: '';
-              position: absolute;
-              bottom: -1px;
-              left: 20px;
-              right: 20px;
-              height: 2px;
-              background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(59, 130, 246, 0.3) 50%,
-                transparent
-              );
-            }
-          }
-
-          .dark-theme & {
-            border-bottom-color: rgba(75, 85, 99, 0.3);
-
-            &::after {
-              content: '';
-              position: absolute;
-              bottom: -1px;
-              left: 20px;
-              right: 20px;
-              height: 2px;
-              background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(99, 102, 241, 0.4) 50%,
-                transparent
-              );
-            }
-          }
-
-          .header-icon {
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            .light-theme & {
-              color: rgba(59, 130, 246, 0.8);
-            }
-
-            .dark-theme & {
-              color: rgba(147, 197, 253, 0.8);
-            }
+          .header-icon-badge {
+            background: #eef2ff;
+            color: #6366f1;
+            border: none;
           }
 
           .header-title {
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
+            color: #1e293b;
+          }
+        }
 
-            .light-theme & {
-              color: rgba(30, 64, 175, 0.95);
-              background: linear-gradient(
-                135deg,
-                rgba(30, 64, 175, 1),
-                rgba(59, 130, 246, 0.9)
-              );
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
-              background-clip: text;
+        .sidebar-menu-list {
+          .menu-group .group-label {
+            color: #94a3b8;
+          }
+
+          .menu-item {
+            color: #475569;
+
+            &:hover {
+              background: #f1f5f9;
+              color: #334155;
             }
 
-            .dark-theme & {
-              color: rgba(226, 232, 240, 0.95);
+            &.active {
+              background: #eef2ff;
+              color: #4338ca;
+              border-color: transparent;
+              box-shadow: none;
+
+              &::before {
+                background: #6366f1;
+                box-shadow: none;
+              }
             }
           }
         }
 
-        // ==================== 自定义菜单列表 ====================
-        .sidebar-menu-list {
-          flex: 1;
-          overflow-y: auto;
-          overflow-x: hidden;
-          padding: 12px 8px;
-
-          // 自定义滚动条
-          &::-webkit-scrollbar {
-            width: 4px;
-          }
-
-          &::-webkit-scrollbar-track {
-            background: transparent;
-          }
-
-          &::-webkit-scrollbar-thumb {
-            border-radius: 2px;
-            transition: background 0.2s;
-          }
-
-          // 亮色主题滚动条
-          .light-theme & {
-            &::-webkit-scrollbar-thumb {
-              background: rgba(59, 130, 246, 0.2);
-
-              &:hover {
-                background: rgba(59, 130, 246, 0.3);
-              }
-            }
-          }
-
-          // 暗色主题滚动条
-          .dark-theme & {
-            &::-webkit-scrollbar-thumb {
-              background: rgba(99, 102, 241, 0.3);
-
-              &:hover {
-                background: rgba(99, 102, 241, 0.4);
-              }
-            }
-          }
-
-          // ==================== 菜单组 ====================
-          .menu-group {
-            margin-bottom: 16px;
-
-            .group-title {
-              padding: 8px 16px;
-              font-size: 12px;
-              font-weight: 600;
-              letter-spacing: 0.05em;
-              text-transform: uppercase;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              margin-bottom: 4px;
-
-              .light-theme & {
-                color: rgba(100, 116, 139, 0.7);
-              }
-
-              .dark-theme & {
-                color: rgba(148, 163, 184, 0.6);
-              }
-            }
-          }
-
-          // ==================== 菜单项 ====================
-          .menu-item {
-            margin: 2px 8px;
-            padding: 0 16px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            font-size: 14px;
-            color: rgba(51, 65, 85, 0.85);
-
-            .item-title {
-              flex: 1;
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-
-            // 悬停效果
-            &:hover {
-              background: rgba(59, 130, 246, 0.08);
-              color: rgba(30, 64, 175, 0.95);
-              transform: translateX(2px);
-            }
-
-            // 激活状态
-            &.active {
-              background: linear-gradient(
-                135deg,
-                rgba(59, 130, 246, 0.12) 0%,
-                rgba(59, 130, 246, 0.08) 100%
-              );
-              color: rgba(30, 64, 175, 1);
-              font-weight: 600;
-
-              // 左侧指示器
-              &::before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 3px;
-                height: 20px;
-                background: linear-gradient(
-                  180deg,
-                  rgba(59, 130, 246, 0.8),
-                  rgba(30, 64, 175, 0.9)
-                );
-                border-radius: 0 2px 2px 0;
-                box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
-              }
-            }
-
-            // 子菜单项
-            &.sub-item {
-              height: 36px;
-              font-size: 13px;
-              margin-left: 16px;
-              padding-left: 28px;
-              color: rgba(71, 85, 105, 0.8);
-
-              &:hover {
-                background: rgba(59, 130, 246, 0.06);
-                color: rgba(30, 64, 175, 0.9);
-              }
-
-              &.active {
-                background: rgba(59, 130, 246, 0.1);
-                color: rgba(30, 64, 175, 0.95);
-
-                &::before {
-                  width: 2px;
-                  height: 16px;
-                }
-              }
-            }
-          }
+        // 底部渐隐
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 32px;
+          background: linear-gradient(to top, rgba(248, 250, 252, 0.9), transparent);
+          pointer-events: none;
+          z-index: 3;
         }
       }
 
-      // ==================== 暗色主题样式 ====================
+      // ====== 暗色毛玻璃 ======
       &.dark-theme {
+        background: rgba(15, 23, 42, 0.78);
+        backdrop-filter: blur(24px) saturate(130%);
+        -webkit-backdrop-filter: blur(24px) saturate(130%);
+        border-left: 1px solid rgba(148, 163, 184, 0.08);
+        box-shadow: -1px 0 0 rgba(0, 0, 0, 0.08);
+
+        .sidebar-header {
+          border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+
+          .header-icon-badge {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            border: none;
+          }
+
+          .header-title {
+            color: #e2e8f0;
+          }
+        }
+
         .sidebar-menu-list {
+          .menu-group .group-label {
+            color: #64748b;
+          }
+
           .menu-item {
-            color: rgba(226, 232, 240, 0.8);
+            color: #94a3b8;
 
             &:hover {
-              background: rgba(99, 102, 241, 0.15);
-              color: rgba(147, 197, 253, 1);
+              background: rgba(148, 163, 184, 0.08);
+              color: #cbd5e1;
             }
 
             &.active {
-              background: linear-gradient(
-                135deg,
-                rgba(99, 102, 241, 0.2) 0%,
-                rgba(99, 102, 241, 0.15) 100%
-              );
-              color: rgba(147, 197, 253, 1);
+              background: rgba(99, 102, 241, 0.14);
+              color: #c7d2fe;
+              border-color: transparent;
+              box-shadow: none;
 
               &::before {
-                background: linear-gradient(
-                  180deg,
-                  rgba(99, 102, 241, 0.9),
-                  rgba(147, 197, 253, 0.8)
-                );
-                box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+                background: #818cf8;
+                box-shadow: none;
               }
             }
+          }
+        }
 
-            &.sub-item {
-              color: rgba(203, 213, 225, 0.7);
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 32px;
+          background: linear-gradient(to top, rgba(15, 23, 42, 0.85), transparent);
+          pointer-events: none;
+          z-index: 3;
+        }
+      }
 
-              &:hover {
-                background: rgba(99, 102, 241, 0.12);
-                color: rgba(147, 197, 253, 0.95);
-              }
+      // ====== 标题区 ======
+      .sidebar-header {
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
 
-              &.active {
-                background: rgba(99, 102, 241, 0.18);
-                color: rgba(147, 197, 253, 1);
-              }
-            }
+        .header-icon-badge {
+          width: 30px;
+          height: 30px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .header-title {
+          font-size: 13.5px;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+        }
+      }
+
+      // ====== 菜单列表 ======
+      .sidebar-menu-list {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 6px 10px 48px;
+        position: relative;
+        z-index: 2;
+
+        &::-webkit-scrollbar {
+          width: 3px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          border-radius: 2px;
+          background: rgba(148, 163, 184, 0.15);
+
+          &:hover {
+            background: rgba(148, 163, 184, 0.25);
+          }
+        }
+
+        // 菜单分组
+        .menu-group {
+          margin-bottom: 4px;
+
+          .group-label {
+            padding: 10px 12px 5px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+          }
+        }
+
+        // 菜单项
+        .menu-item {
+          margin: 2px 0;
+          padding: 0 12px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          border-radius: 8px;
+          cursor: pointer;
+          position: relative;
+          font-size: 13px;
+          font-weight: 450;
+          border: 1px solid transparent;
+          transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+
+          .item-text {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          // 激活指示条
+          &.active::before {
+            content: '';
+            position: absolute;
+            left: -1px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 16px;
+            border-radius: 0 2px 2px 0;
+            transition: all 0.2s ease;
+          }
+
+          &.active {
+            font-weight: 550;
           }
         }
       }
     }
   }
+}
+
+// ==================== 玻璃侧边栏滑入动画 ====================
+.glass-slide-enter-active {
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.glass-slide-leave-active {
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 1, 1),
+    opacity 0.2s ease;
+}
+
+.glass-slide-enter-from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.glass-slide-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
 }
 
 // ==================== 动画 ====================
@@ -779,11 +577,11 @@
         right: 0;
         top: 0;
         bottom: 0;
-        box-shadow: -6px 0 24px rgba(0, 0, 0, 0.15);
+        box-shadow: -6px 0 32px rgba(0, 0, 0, 0.15);
+      }
 
-        &.collapsed {
-          transform: translateX(100%);
-        }
+      .sidebar-toggle.active {
+        right: 240px;
       }
     }
   }

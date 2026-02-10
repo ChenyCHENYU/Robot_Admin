@@ -21,8 +21,8 @@
         ref="siderRef"
         bordered
         collapse-mode="width"
-        :collapsed-width="settingsStore.sidebarCollapsedWidth"
-        :width="settingsStore.sidebarWidth"
+        :collapsed-width="layout.sidebarCollapsedWidth"
+        :width="layout.sidebarWidth"
         :native-scrollbar="false"
         :collapsed="isCollapsed"
         @update:collapsed="handleCollapsedChange"
@@ -53,7 +53,7 @@
           <!-- ⚡ 智能 KeepAlive 缓存控制 -->
           <RouterView v-slot="{ Component, route }">
             <Transition
-              :name="settingsStore.transitionName"
+              :name="layout.transitionName.value"
               mode="out-in"
             >
               <KeepAlive
@@ -68,7 +68,7 @@
             </Transition>
           </RouterView>
         </NLayoutContent>
-        <C_Footer v-if="settingsStore.showFooter" />
+        <C_Footer v-if="layout.showFooter" />
       </NLayout>
     </NLayout>
 
@@ -116,10 +116,9 @@
 
 <script setup lang="ts">
   import { type LayoutSiderInst } from 'naive-ui/es'
-  import { s_permissionStore } from '@/stores/permission'
-  import { useThemeStore } from '@/stores/theme'
   import { useSettingsStore } from '@/stores/settings'
   import { useLayoutCache } from '@/composables/useLayoutCache'
+  import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import TopLayout from './layouts/TopLayout/index.vue'
   import MixLayout from './layouts/MixLayout/index.vue'
   import MixTopLayout from './layouts/MixTopLayout/index.vue'
@@ -127,12 +126,12 @@
   import CardLayout from './layouts/CardLayout/index.vue'
   import C_Settings from '@/components/global/C_Settings/index.vue'
 
-  const permissionStore = s_permissionStore()
-  const themeStore = useThemeStore()
+  // ✅ 使用数据桥接层（解耦业务 Store）
+  const layout = useLayoutBridge()
   const settingsStore = useSettingsStore()
 
   const isReady = ref(true)
-  const isDarkMode = computed(() => themeStore.isDark)
+  const isDarkMode = layout.isDark
 
   // ✅ 使用统一的 KeepAlive 缓存管理
   const { cachedViews, maxCacheCount } = useLayoutCache()
@@ -150,8 +149,8 @@
     }
   }
 
-  // 获取菜单数据
-  const menuData = permissionStore.showMenuListGet
+  // ✅ 通过桥接层获取菜单数据
+  const menuData = layout.menus
 
   // 侧边栏相关
   const siderRef = ref<LayoutSiderInst | null>(null)

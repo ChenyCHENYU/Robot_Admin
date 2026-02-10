@@ -90,9 +90,9 @@
 
       <!-- 标签页区域 -->
       <div
-        v-if="settingsStore.showTagsView"
+        v-if="layout.showTagsView"
         class="tags-view-container"
-        :style="{ height: `${settingsStore.tagsViewHeight}px` }"
+        :style="{ height: `${layout.tagsViewHeight}px` }"
       >
         <C_TagsView />
       </div>
@@ -103,7 +103,7 @@
           <div class="page-content">
             <RouterView v-slot="{ Component, route }">
               <Transition
-                :name="settingsStore.transitionName"
+                :name="layout.transitionName.value"
                 mode="out-in"
               >
                 <KeepAlive
@@ -121,7 +121,7 @@
         </NLayoutContent>
 
         <!-- 页脚 -->
-        <C_Footer v-if="settingsStore.showFooter" />
+        <C_Footer v-if="layout.showFooter" />
       </NLayout>
     </div>
   </div>
@@ -129,26 +129,28 @@
 
 <script setup lang="ts">
   import type { MenuOptions } from '@/types/modules/menu'
-  import { s_permissionStore } from '@/stores/permission'
-  import { useThemeStore } from '@/stores/theme'
-  import { useSettingsStore } from '@/stores/settings'
   import { useLayoutCache } from '@/composables/useLayoutCache'
+  import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import ResponsiveMenu from '../components/ResponsiveMenu.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
   defineOptions({ name: 'MixTopLayout' })
 
-  const permissionStore = s_permissionStore()
-  const themeStore = useThemeStore()
-  const settingsStore = useSettingsStore()
+  // ✅ 使用数据桥接层（解耦业务 Store）
+  const layout = useLayoutBridge()
   const route = useRoute()
   const router = useRouter()
 
-  // 设置面板状态
-  const showSettings = ref(false)
+  // 从父组件注入设置抽屉状态
+  interface SettingsDrawer {
+    showSettings: Ref<boolean>
+  }
+  const { showSettings } = inject<SettingsDrawer>('settingsDrawer', {
+    showSettings: ref(false),
+  })
 
-  const isDarkMode = computed(() => themeStore.isDark)
-  const menuData = permissionStore.showMenuListGet
+  const isDarkMode = layout.isDark
+  const menuData = layout.menus
 
   // 当前激活的一级菜单
   const activeFirstMenu = ref<string>('')
@@ -188,7 +190,9 @@
    * 获取当前一级菜单的二级菜单列表
    */
   const currentSecondMenus = computed(() => {
-    const firstMenu = menuData.find(item => item.path === activeFirstMenu.value)
+    const firstMenu = menuData.value.find(
+      item => item.path === activeFirstMenu.value
+    )
     return firstMenu?.children || []
   })
 
@@ -230,13 +234,13 @@
     }
 
     // 查找当前路由属于哪个一级菜单
-    const matchedFirstMenu = findMenuByPath(menuData)
+    const matchedFirstMenu = findMenuByPath(menuData.value)
 
     if (matchedFirstMenu) {
       activeFirstMenu.value = matchedFirstMenu.path || ''
-    } else if (menuData.length > 0 && !activeFirstMenu.value) {
+    } else if (menuData.value.length > 0 && !activeFirstMenu.value) {
       // 如果没有匹配到，默认激活第一个
-      activeFirstMenu.value = menuData[0].path || ''
+      activeFirstMenu.value = menuData.value[0].path || ''
     }
   }
 
@@ -248,6 +252,17 @@
     () => route.path,
     () => {
       updateActiveMenuByRoute()
+    },
+    { immediate: true }
+  )
+
+  // 监听菜单数据变化，重新计算激活菜单
+  watch(
+    () => layout.menus.value,
+    newMenus => {
+      if (newMenus && newMenus.length > 0) {
+        updateActiveMenuByRoute()
+      }
     },
     { immediate: true }
   )

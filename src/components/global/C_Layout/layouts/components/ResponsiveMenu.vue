@@ -51,7 +51,7 @@
 <script setup lang="ts">
   import type { MenuOptions } from '@/types/modules/menu'
   import type { DropdownOption } from 'naive-ui/es/dropdown/src/interface'
-  import { useThemeStore } from '@/stores/theme'
+  import { useLayoutBridge } from '@/composables/useLayoutBridge'
 
   interface Props {
     data: MenuOptions[]
@@ -59,10 +59,15 @@
 
   const props = defineProps<Props>()
   const router = useRouter()
-  const themeStore = useThemeStore()
+
+  // ✅ 安全包装 props.data，确保始终为数组
+  const menuData = computed(() => props.data || [])
+
+  // ✅ 使用数据桥接层（解耦业务 Store）
+  const layout = useLayoutBridge()
 
   // 根据当前主题选择对应的主题覆盖配置
-  const isDarkMode = computed(() => themeStore.isDark)
+  const isDarkMode = layout.isDark
 
   /**
    * * @description: 顶部导航菜单的局部主题覆盖（亮色主题）- 优化版
@@ -238,20 +243,20 @@
    * ! @return {number} 可见菜单项数量
    */
   const calculateVisibleCount = (containerWidth: number): number => {
-    if (!props.data.length) return 0
+    if (!menuData.value.length) return 0
 
     const MORE_BUTTON_WIDTH = 80 // "..."按钮的宽度（包含 padding 和 margin）
     const SAFETY_MARGIN = 15 // 安全边距（减小到 15px，避免过度保守）
 
     // 计算所有菜单项的总宽度
     let totalWidthWithoutMore = 0
-    for (const item of props.data) {
+    for (const item of menuData.value) {
       totalWidthWithoutMore += estimateItemWidth(item)
     }
 
     // 如果所有菜单项都能放下（不需要"..."按钮），直接返回全部
     if (totalWidthWithoutMore + SAFETY_MARGIN <= containerWidth) {
-      return props.data.length
+      return menuData.value.length
     }
 
     // 否则，需要显示"..."按钮，计算可以显示多少个菜单项
@@ -259,7 +264,7 @@
     let count = 0
     const availableWidth = containerWidth - MORE_BUTTON_WIDTH - SAFETY_MARGIN
 
-    for (const item of props.data) {
+    for (const item of menuData.value) {
       const itemWidth = estimateItemWidth(item)
       // 检查添加这个菜单项后是否会超出可用宽度
       if (totalWidth + itemWidth <= availableWidth) {
@@ -280,7 +285,7 @@
    * ! @return {*} void
    */
   const calculateVisibleItems = () => {
-    if (!menuContainerRef.value || !props.data.length) return
+    if (!menuContainerRef.value || !menuData.value.length) return
 
     const containerWidth = menuContainerRef.value.offsetWidth
 
@@ -294,8 +299,8 @@
 
     const visibleCount = calculateVisibleCount(containerWidth)
 
-    visibleMenuItems.value = props.data.slice(0, visibleCount)
-    hiddenMenuItems.value = props.data.slice(visibleCount)
+    visibleMenuItems.value = menuData.value.slice(0, visibleCount)
+    hiddenMenuItems.value = menuData.value.slice(visibleCount)
   }
 
   // 防抖函数

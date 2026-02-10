@@ -56,9 +56,9 @@
 
     <!-- 标签页区域 -->
     <div
-      v-if="settingsStore.showTagsView"
+      v-if="layout.showTagsView"
       class="tags-view-container"
-      :style="{ height: `${settingsStore.tagsViewHeight}px` }"
+      :style="{ height: `${layout.tagsViewHeight}px` }"
     >
       <C_TagsView />
     </div>
@@ -71,7 +71,7 @@
           <div class="page-content">
             <RouterView v-slot="{ Component, route }">
               <Transition
-                :name="settingsStore.transitionName"
+                :name="layout.transitionName.value"
                 mode="out-in"
               >
                 <KeepAlive
@@ -89,46 +89,41 @@
         </NLayoutContent>
 
         <!-- 页脚 -->
-        <C_Footer v-if="settingsStore.showFooter" />
+        <C_Footer v-if="layout.showFooter" />
       </NLayout>
 
-      <!-- 右侧：二级菜单侧边栏 -->
+      <!-- 右侧折叠/展开按钮 - 始终可见 -->
       <div
         v-if="currentSecondMenus.length > 0"
-        class="right-sidebar"
+        class="sidebar-toggle"
         :class="[
           isDarkMode ? 'dark-theme' : 'light-theme',
-          { collapsed: isCollapsed },
+          { active: !isCollapsed },
         ]"
+        @click="toggleCollapse"
       >
-        <!-- 折叠按钮 -->
-        <div
-          class="collapse-trigger"
-          @click="toggleCollapse"
-        >
-          <i
-            :class="[
-              'transition-all duration-300 ease-in-out',
-              isCollapsed ? 'i-ri:menu-fold-4-fill' : 'i-ri:menu-fold-3-fill',
-            ]"
-          ></i>
-        </div>
+        <i
+          :class="[
+            'toggle-icon',
+            isCollapsed ? 'i-ri:side-bar-line' : 'i-ri:arrow-right-s-line',
+          ]"
+        ></i>
+      </div>
 
-        <!-- 菜单内容 -->
+      <!-- 右侧：二级菜单侧边栏 -->
+      <Transition name="glass-slide">
         <div
-          v-show="!isCollapsed"
-          class="sidebar-content"
+          v-if="currentSecondMenus.length > 0 && !isCollapsed"
+          class="right-sidebar"
+          :class="[isDarkMode ? 'dark-theme' : 'light-theme']"
         >
           <!-- 侧边栏标题 -->
-          <div
-            class="sidebar-header"
-            :class="[isDarkMode ? 'dark-theme' : 'light-theme']"
-          >
-            <div class="header-icon">
+          <div class="sidebar-header">
+            <div class="header-icon-badge">
               <C_Icon
                 v-if="activeFirstMenuItem?.meta?.icon"
                 :name="activeFirstMenuItem.meta.icon"
-                :size="20"
+                :size="17"
               />
             </div>
             <span class="header-title">{{
@@ -147,27 +142,27 @@
                 v-if="child.children && child.children.length > 0"
                 class="menu-group"
               >
-                <div class="group-title">
+                <div class="group-label">
                   <C_Icon
                     v-if="child.meta?.icon"
                     :name="child.meta.icon"
-                    :size="16"
+                    :size="14"
                   />
                   <span>{{ child.meta?.title }}</span>
                 </div>
                 <div
                   v-for="subChild in child.children"
                   :key="subChild.path"
-                  class="menu-item sub-item"
+                  class="menu-item"
                   :class="{ active: isMenuItemActive(subChild.path) }"
                   @click="handleMenuClick(subChild)"
                 >
                   <C_Icon
                     v-if="subChild.meta?.icon"
                     :name="subChild.meta.icon"
-                    :size="16"
+                    :size="15"
                   />
-                  <span class="item-title">{{ subChild.meta?.title }}</span>
+                  <span class="item-text">{{ subChild.meta?.title }}</span>
                 </div>
               </div>
               <!-- 没有子菜单的项 -->
@@ -180,32 +175,30 @@
                 <C_Icon
                   v-if="child.meta?.icon"
                   :name="child.meta.icon"
-                  :size="18"
+                  :size="16"
                 />
-                <span class="item-title">{{ child.meta?.title }}</span>
+                <span class="item-text">{{ child.meta?.title }}</span>
               </div>
             </template>
           </div>
         </div>
-      </div>
+      </Transition>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import type { MenuOptions } from '@/types/modules/menu'
-  import { s_permissionStore } from '@/stores/permission'
-  import { useThemeStore } from '@/stores/theme'
-  import { useSettingsStore } from '@/stores/settings'
+  import { useRouter } from 'vue-router'
   import { useLayoutCache } from '@/composables/useLayoutCache'
+  import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import ResponsiveMenu from '../components/ResponsiveMenu.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
   defineOptions({ name: 'ReverseHorizontalMixLayout' })
 
-  const permissionStore = s_permissionStore()
-  const themeStore = useThemeStore()
-  const settingsStore = useSettingsStore()
+  // ✅ 使用数据桥接层（解耦业务 Store）
+  const layout = useLayoutBridge()
   const route = useRoute()
   const router = useRouter()
 
@@ -217,8 +210,8 @@
     showSettings: ref(false),
   })
 
-  const isDarkMode = computed(() => themeStore.isDark)
-  const menuData = permissionStore.showMenuListGet
+  const isDarkMode = layout.isDark
+  const menuData = layout.menus
 
   // 右侧边栏折叠状态
   const isCollapsed = ref(false)
@@ -274,7 +267,7 @@
   /**
    * 当前激活的一级菜单项
    */
-  const activeFirstMenuItem = computed(() => findActiveTopMenu(menuData))
+  const activeFirstMenuItem = computed(() => findActiveTopMenu(menuData.value))
 
   /**
    * 当前一级菜单的二级菜单列表

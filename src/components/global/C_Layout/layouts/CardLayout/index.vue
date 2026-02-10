@@ -62,9 +62,9 @@
 
     <!-- 标签页区域 -->
     <div
-      v-if="settingsStore.showTagsView"
+      v-if="layout.showTagsView"
       class="tags-view-container"
-      :style="{ height: `${settingsStore.tagsViewHeight}px` }"
+      :style="{ height: `${layout.tagsViewHeight}px` }"
     >
       <C_TagsView />
     </div>
@@ -166,7 +166,7 @@
           <div class="page-content">
             <RouterView v-slot="{ Component, route }">
               <Transition
-                :name="settingsStore.transitionName"
+                :name="layout.transitionName.value"
                 mode="out-in"
               >
                 <KeepAlive
@@ -184,7 +184,7 @@
         </NLayoutContent>
 
         <!-- 页脚 -->
-        <C_Footer v-if="settingsStore.showFooter" />
+        <C_Footer v-if="layout.showFooter" />
       </NLayout>
     </div>
   </div>
@@ -192,16 +192,15 @@
 
 <script setup lang="ts">
   import type { MenuOptions } from '@/types/modules/menu'
-  import { s_permissionStore } from '@/stores/permission'
-  import { useThemeStore } from '@/stores/theme'
-  import { useSettingsStore } from '@/stores/settings'
+  import { useRouter } from 'vue-router'
   import { useLayoutCache } from '@/composables/useLayoutCache'
+  import { useLayoutBridge } from '@/composables/useLayoutBridge'
+  import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
   defineOptions({ name: 'CardLayout' })
 
-  const permissionStore = s_permissionStore()
-  const themeStore = useThemeStore()
-  const settingsStore = useSettingsStore()
+  // ✅ 使用数据桥接层（解耦业务 Store）
+  const layout = useLayoutBridge()
   const router = useRouter()
 
   // 从父组件注入设置抽屉状态
@@ -212,8 +211,8 @@
     showSettings: ref(false),
   })
 
-  const isDarkMode = computed(() => themeStore.isDark)
-  const menuData = permissionStore.showMenuListGet
+  const isDarkMode = layout.isDark
+  const menuData = layout.menus
 
   // 抽屉菜单显示状态
   const showDrawerMenu = ref(false)

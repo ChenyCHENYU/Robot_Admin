@@ -5,21 +5,11 @@
  */
 
 import { watch } from 'vue'
-import { useSettingsStore as useLayoutSettingsStore } from '@robot-admin/layout'
+import {
+  useSettingsStore as useLayoutSettingsStore,
+  adjustColor,
+} from '@robot-admin/layout'
 import { useThemeStore } from '@/stores/theme'
-
-/**
- * 调整颜色亮度
- * @param color - 十六进制颜色值
- * @param amount - 调整量，正数变亮，负数变暗
- */
-function adjustColor(color: string, amount: number): string {
-  const num = parseInt(color.replace('#', ''), 16)
-  const r = Math.min(255, Math.max(0, (num >> 16) + amount))
-  const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00ff) + amount))
-  const b = Math.min(255, Math.max(0, (num & 0x0000ff) + amount))
-  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`
-}
 
 /**
  * 初始化 settings store 与 Naive UI 的同步
