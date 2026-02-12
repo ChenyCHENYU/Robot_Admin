@@ -47,7 +47,7 @@
     "@iconify/vue": "^5.0.0",
     "@kangc/v-md-editor": "^2.3.18",
     "@robot-admin/form-validate": "^2.0.0",
-    "@robot-admin/layout": "^2.1.0",
+    "@robot-admin/layout": "^2.2.0",
     "@robot-admin/request-core": "^0.1.0",
     "@robot-admin/theme": "^0.1.1",
     "@splinetool/runtime": "^1.9.92",
