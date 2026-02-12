@@ -35,4 +35,17 @@ export default defineConfig({
   transformers: [transformerDirectives()],
   shortcuts: shortcutsArr,
   safelist: iconSafelist,
+
+  // 扫描 @robot-admin/layout 包源码中的 UnoCSS 类名（图标、工具类等）
+  content: {
+    pipeline: {
+      include: [
+        /\.(vue|ts|tsx|html)($|\?)/,
+        // 本地 link 开发时
+        '../robot-admin-packages/packages/layout/src/**/*.{vue,ts}',
+        // 发布安装后（node_modules 中）
+        'node_modules/@robot-admin/layout/src/**/*.{vue,ts}',
+      ],
+    },
+  },
 })

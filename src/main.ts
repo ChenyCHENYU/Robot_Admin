@@ -16,6 +16,7 @@ import { setupLoading } from '@/plugins/loading'
 
 import './assets/css/main.css'
 import '@/styles/index.scss'
+import '@robot-admin/layout/style' // 布局包完整样式（组件 + 布局）
 import 'virtual:uno.css'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
