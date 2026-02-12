@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.13.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.12.0...v1.13.0) (2026-02-12)
+
+
+### Features
+
+* **layout:** 升级到 @robot-admin/layout v2.2.0 ([9bfd984](https://github.com/ChenyCHENYU/Robot_Admin/commit/9bfd984d255985a69b8407ad7313a7471fc7c987))
+
+
+### Bug Fixes
+
+* **layout:** 修复布局切换时设置抽屉自动关闭的问题 ([d52717c](https://github.com/ChenyCHENYU/Robot_Admin/commit/d52717c263b8c9b29868da129da32784b9802c1d))
+
+
+### Performance Improvements
+
+* optimize theme switching with View Transition API ([8064b4a](https://github.com/ChenyCHENYU/Robot_Admin/commit/8064b4aa6c83970cf1f70738de9d67614b798e5e))
+
 ## [1.12.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.2...v1.12.0) (2026-02-08)
 
 
