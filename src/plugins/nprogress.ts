@@ -17,12 +17,12 @@ const customStyle = `
     background: linear-gradient(to right, #1677ff, #36cfc9);
     height: 3px;
   }
-  
+
   /* 进度条闪光效果 */
   #nprogress .peg {
     box-shadow: 0 0 10px #1677ff, 0 0 5px #1677ff;
   }
-  
+
   /* 加载圆圈样式 */
   #nprogress .spinner-icon {
     border-top-color: #1677ff;
@@ -40,13 +40,13 @@ export function setupNProgress() {
   styleEl.innerHTML = customStyle
   document.head.appendChild(styleEl)
 
-  // 配置NProgress
+  // 配置NProgress - 优化过渡速度，减少跳转延迟感
   NProgress.configure({
-    showSpinner: true, // 启用加载圆圈
-    easing: 'ease',
-    speed: 400,
-    trickleSpeed: 200,
-    minimum: 0.2,
+    showSpinner: false, // 禁用加载圆圈，减少视觉干扰
+    easing: 'ease-out',
+    speed: 200,
+    trickleSpeed: 100,
+    minimum: 0.15,
   })
 
   return NProgress

@@ -225,12 +225,8 @@
         // 2. 保存用户信息（包括密码，用于重新登录）
         userStore.setUserInfo(tempLoginInfo)
 
-        // 3. 并行加载动态路由和预加载首页组件
-        const [routeSuccess] = await Promise.all([
-          initDynamicRouter(),
-          // 预加载首页组件，减少跳转后的白屏
-          import('@/views/home/index.vue').catch(() => null),
-        ])
+        // 3. 初始化动态路由（首页已通过 eager glob 打包到主 bundle，无需额外预加载）
+        const routeSuccess = await initDynamicRouter()
 
         if (!routeSuccess) {
           throw new Error('动态路由初始化失败')

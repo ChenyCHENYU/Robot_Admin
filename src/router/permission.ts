@@ -134,11 +134,7 @@ router.beforeEach(
           return result
         }
 
-        // 初始化成功后，预加载首页组件
-        if (to.path !== '/home') {
-          import('@/views/home/index.vue').catch(() => null)
-        }
-
+        // 首页已通过 eager glob 打包到主 bundle，无需运行时预加载
         return to.fullPath
       }
 

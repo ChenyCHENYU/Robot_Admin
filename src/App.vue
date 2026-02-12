@@ -14,6 +14,7 @@
     :theme-overrides="themeStore.themeOverrides"
     :locale="zhCN"
     :date-locale="dateZhCN"
+    :hljs="hljs"
     class="global-config-provider"
   >
     <!-- 添加 NGlobalStyle 同步 body 样式 -->
@@ -44,6 +45,9 @@
   import { s_reLoginStore } from '@/stores/reLogin'
   import { removeLoading } from '@/plugins/loading'
   import '@/lib/version'
+
+  // 获取 hljs 实例用于 NCode 组件
+  const { hljs } = window
 
   const themeStore = useThemeStore()
   const reLoginStore = s_reLoginStore()

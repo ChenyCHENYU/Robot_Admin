@@ -65,7 +65,6 @@ export default defineConfig(({ mode }: { mode: string }) => {
       // ✅ 预构建大型依赖以提升启动速度
       include: [
         'naive-ui',
-        'vue',
         'vue-router',
         'pinia',
         '@vueuse/core',
@@ -77,7 +76,21 @@ export default defineConfig(({ mode }: { mode: string }) => {
         'driver.js',
         'axios',
       ],
-      exclude: ['pinia-plugin-persistedstate'],
+      // 🔧 排除 Vue 全家桶：esbuild 预构建时会将 Vue 内部模块拆成多个共享 chunk，
+      // 导致 RefImpl / isFunction 等内部符号跨 chunk 引用断裂。
+      // 生产环境不受影响（用的是 Rollup），仅影响 dev server（用的是 esbuild）。
+      // 排除后 Vue 作为原生 ESM 由浏览器直接加载，不经过 esbuild 处理。
+      exclude: [
+        'vue',
+        '@vue/shared',
+        '@vue/reactivity',
+        '@vue/runtime-core',
+        '@vue/runtime-dom',
+        '@vue/compiler-dom',
+        '@vue/compiler-core',
+        '@vue/compiler-sfc',
+        'pinia-plugin-persistedstate',
+      ],
     },
 
     server: serverConfig,
