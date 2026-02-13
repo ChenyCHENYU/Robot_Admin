@@ -12,19 +12,31 @@
 import langJSON from './index.json'
 ;(function () {
   // 定义翻译函数
-  let $t = function (key, val, nameSpace) {
+  /**
+   *
+   */
+  const $t = function (key, val, nameSpace) {
     // 获取指定命名空间下的语言包
     const langPackage = $t[nameSpace]
     // 返回翻译结果，如果不存在则返回默认值
     return (langPackage || {})[key] || val
   }
   // 定义简单翻译函数，直接返回传入的值
-  let $$t = function (val) {
+  /**
+   *
+   */
+  const $$t = function (val) {
     return val
   }
+  /**
+   *
+   */
   globalThis.$deepScan = function (val) {
     return val
   }
+  /**
+   *
+   */
   globalThis.$iS = function (val, args) {
     // 如果参数不是字符串或数组，直接返回原值
     if (typeof val !== 'string' || !Array.isArray(args)) {
@@ -44,6 +56,9 @@ import langJSON from './index.json'
     }
   }
   // 定义设置语言包的方法
+  /**
+   *
+   */
   $t.locale = function (locale, nameSpace) {
     // 将指定命名空间下的语言包设置为传入的locale
     $t[nameSpace] = locale || {}
@@ -53,6 +68,9 @@ import langJSON from './index.json'
   // 将简单翻译函数挂载到globalThis对象上
   globalThis.$$t = $$t
   // 定义从JSON文件中获取指定键的语言对象的方法（合并模式）
+  /**
+   *
+   */
   globalThis._getJSONKey = function (key, insertJSONObj = undefined) {
     // 获取JSON对象
     const JSONObj = insertJSONObj
