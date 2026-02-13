@@ -2,6 +2,9 @@
   "name": "robot-admin",
   "version": "1.13.0",
   "private": true,
+  "workspaces": [
+    "../robot-admin-packages/packages/*"
+  ],
   "description": "Robot 中后台管理系统团队架构模板 - 基于 Vue3 + Vite 的企业级中后台解决方案",
   "author": {
     "name": "ChenY",
@@ -12,7 +15,6 @@
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 env-manager dev && vite && vite",
     "dev:translate ": "VITE_DEVTOOLS=true bun run dev",
-    "dev:local": "bun run link:packages && bun run dev",
     "build": "env-manager prod && vite build",
     "build:test": "env-manager test && vite build --mode test --emptyOutDir",
     "build:staging": "env-manager staging && vite build --mode staging --profile",
@@ -29,9 +31,7 @@
     "gen:route-i18n": "bun run scripts/generate-route-translations.ts",
     "deploy": "bash ./scripts/merge-and-deploy.sh",
     "sync-deploy-branch": "bash ./scripts/sync-dev.sh",
-    "analyze": "vite build --mode analyze",
-    "link:packages": "test -d ../robot-admin-packages/packages/request-core && bun link @robot-admin/request-core || echo '⚠️  request-core not found' && test -d ../robot-admin-packages/packages/form-validate && bun link @robot-admin/form-validate || echo '⚠️  form-validate not found' && test -d ../robot-admin-packages/packages/theme && bun link @robot-admin/theme || echo '⚠️  theme not found' && test -d ../robot-admin-packages/packages/layout && bun link @robot-admin/layout || echo '⚠️  layout not found'",
-    "unlink:packages": "bun unlink @robot-admin/request-core @robot-admin/form-validate @robot-admin/theme @robot-admin/layout && bun install --force"
+    "analyze": "vite build --mode analyze"
   },
   "dependencies": {
     "@antv/x6": "^2.18.1",
@@ -46,10 +46,10 @@
     "@iconify-json/ri": "^1.2.5",
     "@iconify/vue": "^5.0.0",
     "@kangc/v-md-editor": "^2.3.18",
-    "@robot-admin/form-validate": "^2.0.0",
-    "@robot-admin/layout": "^2.2.0",
-    "@robot-admin/request-core": "^0.1.0",
-    "@robot-admin/theme": "^0.1.1",
+    "@robot-admin/form-validate": "*",
+    "@robot-admin/layout": "*",
+    "@robot-admin/request-core": "*",
+    "@robot-admin/theme": "*",
     "@splinetool/runtime": "^1.9.92",
     "@tato30/vue-pdf": "^1.11.4",
     "@types/leaflet": "^1.9.21",
