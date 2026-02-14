@@ -1,0 +1,273 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-14
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-14
+ * @FilePath: \Robot_Admin\src\components\global\C_ActionBar\index.scss
+ * @Description: 通用操作按钮组件样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+// ================= 主容器 =================
+.c-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: var(--n-color);
+  border-radius: var(--n-border-radius);
+  border: 1px solid var(--n-border-color);
+  transition: all 0.3s var(--n-bezier);
+
+  // 对齐方式
+  &.is-align-left {
+    justify-content: flex-start;
+  }
+
+  &.is-align-center {
+    justify-content: center;
+  }
+
+  &.is-align-right {
+    justify-content: flex-end;
+  }
+
+  &.is-align-space-between {
+    justify-content: space-between;
+  }
+
+  &.is-align-space-around {
+    justify-content: space-around;
+  }
+
+  // 紧凑模式
+  &.is-compact {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  // 允许换行
+  &.is-wrap {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  // 响应式处理
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+
+    .actions-group {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// ================= 按钮组 =================
+.actions-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+
+  // 左侧按钮组
+  &.actions-left {
+    justify-content: flex-start;
+  }
+
+  // 右侧按钮组
+  &.actions-right {
+    justify-content: flex-end;
+  }
+
+  // 当只有一侧按钮组时，应用外层容器的对齐方式
+  .c-action-bar.has-only-left.is-align-center &.actions-left,
+  .c-action-bar.has-only-right.is-align-center &.actions-right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .c-action-bar.has-only-left.is-align-space-between &.actions-left,
+  .c-action-bar.has-only-right.is-align-space-between &.actions-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .c-action-bar.has-only-left.is-align-space-around &.actions-left,
+  .c-action-bar.has-only-right.is-align-space-around &.actions-right {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .c-action-bar.has-only-left.is-align-right &.actions-left {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .c-action-bar.has-only-right.is-align-left &.actions-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  // 按钮通用样式增强
+  :deep(.n-button) {
+    transition: all 0.3s ease;
+    font-weight: 500;
+
+    // 按钮图标
+    .n-icon {
+      transition: transform 0.3s ease;
+    }
+
+    // hover 效果
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+      .n-icon {
+        transform: scale(1.1);
+      }
+    }
+
+    // active 效果
+    &:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    // 禁用状态
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    // 加载状态
+    &.n-button--loading {
+      pointer-events: none;
+    }
+  }
+
+  // 不同类型按钮的特殊样式
+  :deep(.n-button--primary-type) {
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(24, 160, 88, 0.3);
+    }
+  }
+
+  :deep(.n-button--info-type) {
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(42, 148, 125, 0.3);
+    }
+  }
+
+  :deep(.n-button--success-type) {
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(99, 226, 183, 0.3);
+    }
+  }
+
+  :deep(.n-button--warning-type) {
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(240, 138, 0, 0.3);
+    }
+  }
+
+  :deep(.n-button--error-type) {
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 12px rgba(208, 48, 80, 0.3);
+    }
+  }
+}
+
+// ================= 中间插槽区域 =================
+.actions-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 0 24px;
+  min-width: 0; // 允许内容收缩
+}
+
+// ================= 分隔线 =================
+.action-divider {
+  margin: 0 8px !important;
+  height: 20px;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.6;
+  }
+}
+
+// ================= 下拉菜单优化 =================
+:deep(.n-dropdown-option) {
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateX(4px);
+  }
+
+  .n-icon {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover .n-icon {
+    transform: scale(1.15);
+  }
+}
+
+// ================= 加载动画 =================
+@keyframes button-loading {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+:deep(.n-button--loading) {
+  animation: button-loading 1.5s ease-in-out infinite;
+}
+
+// ================= Tooltip 样式 =================
+:deep(.n-tooltip) {
+  .n-tooltip__content {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// ================= 暗黑模式适配 =================
+html.dark {
+  .c-action-bar {
+    border-color: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .actions-group {
+    :deep(.n-button) {
+      &:hover:not(:disabled) {
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  .action-divider {
+    opacity: 0.15;
+
+    &:hover {
+      opacity: 0.4;
+    }
+  }
+}
