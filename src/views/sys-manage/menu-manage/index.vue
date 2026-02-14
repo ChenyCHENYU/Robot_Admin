@@ -20,38 +20,10 @@
           </template>
         </NInput>
 
-        <NSpace>
-          <NButton
-            type="primary"
-            @click="handleAddMenu()"
-          >
-            <template #icon>
-              <C_Icon
-                name="mdi:plus"
-                :size="16"
-              />
-            </template>
-            新增菜单
-          </NButton>
-          <NButton @click="expandAll">
-            <template #icon>
-              <C_Icon
-                name="mdi:file-tree"
-                :size="16"
-              />
-            </template>
-            {{ isAllExpanded ? '收起全部' : '展开全部' }}
-          </NButton>
-          <NButton @click="refreshMenus">
-            <template #icon>
-              <C_Icon
-                name="mdi:refresh"
-                :size="16"
-              />
-            </template>
-            刷新
-          </NButton>
-        </NSpace>
+        <C_ActionBar
+          :actions="toolbarActions"
+          :config="{ compact: true }"
+        />
       </NSpace>
     </NCard>
 
@@ -111,19 +83,18 @@
                       : '选择菜单查看详情'
                   }}
                 </NText>
-                <NButton
+                <C_ActionBar
                   v-if="selectedMenu"
-                  size="small"
-                  @click="handleEditMenu(selectedMenu)"
-                >
-                  <template #icon>
-                    <C_Icon
-                      name="mdi:pencil"
-                      :size="14"
-                    />
-                  </template>
-                  编辑
-                </NButton>
+                  :actions="[
+                    {
+                      key: 'edit',
+                      label: '编辑',
+                      icon: 'mdi:pencil',
+                      onClick: () => handleEditMenu(selectedMenu!),
+                    },
+                  ]"
+                  :config="{ compact: true, size: 'small' }"
+                />
               </NSpace>
             </template>
 
@@ -244,19 +215,18 @@
                     align="center"
                   >
                     <NText>按钮权限</NText>
-                    <NButton
-                      size="small"
-                      type="primary"
-                      @click="handleAddPermission"
-                    >
-                      <template #icon>
-                        <C_Icon
-                          name="mdi:plus"
-                          :size="14"
-                        />
-                      </template>
-                      添加权限
-                    </NButton>
+                    <C_ActionBar
+                      :actions="[
+                        {
+                          key: 'add',
+                          label: '添加权限',
+                          icon: 'mdi:plus',
+                          type: 'primary',
+                          onClick: handleAddPermission,
+                        },
+                      ]"
+                      :config="{ compact: true, size: 'small' }"
+                    />
                   </NSpace>
                 </template>
 
@@ -294,41 +264,10 @@
                         </NTag>
                       </NSpace>
 
-                      <NSpace>
-                        <NButton
-                          size="tiny"
-                          @click="handleEditPermission(permission)"
-                        >
-                          <template #icon>
-                            <C_Icon
-                              name="mdi:pencil"
-                              :size="12"
-                              title="编辑"
-                            />
-                          </template>
-                        </NButton>
-                        <NPopconfirm
-                          @positive-click="
-                            handleDeletePermission(permission.id)
-                          "
-                        >
-                          <template #trigger>
-                            <NButton
-                              size="tiny"
-                              type="error"
-                            >
-                              <template #icon>
-                                <C_Icon
-                                  name="mdi:delete"
-                                  :size="12"
-                                  title="删除"
-                                />
-                              </template>
-                            </NButton>
-                          </template>
-                          确认删除该权限吗？
-                        </NPopconfirm>
-                      </NSpace>
+                      <C_ActionBar
+                        :actions="getPermissionActions(permission)"
+                        :config="{ compact: true, size: 'tiny' }"
+                      />
                     </NSpace>
                   </NCard>
                 </NSpace>
@@ -591,6 +530,7 @@
 
 <script setup lang="ts">
   import type { FormInst, TreeSelectOption } from 'naive-ui/es'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import C_Tree from '@/components/global/C_Tree/index.vue'
 
   // 从 data.ts 导入类型和数据配置
@@ -713,6 +653,47 @@
 
     return menuList.value.map(filterMenu).filter(Boolean) as MenuData[]
   })
+
+  // 工具栏按钮配置
+  const toolbarActions = computed<ActionItem[]>(() => [
+    {
+      key: 'add',
+      label: '新增菜单',
+      icon: 'mdi:plus',
+      type: 'primary',
+      onClick: () => handleAddMenu(),
+    },
+    {
+      key: 'expand',
+      label: isAllExpanded.value ? '收起全部' : '展开全部',
+      icon: 'mdi:file-tree',
+      onClick: expandAll,
+    },
+    {
+      key: 'refresh',
+      label: '刷新',
+      icon: 'mdi:refresh',
+      onClick: refreshMenus,
+    },
+  ])
+
+  // 权限操作按钮配置
+  const getPermissionActions = (permission: ButtonPermission): ActionItem[] => [
+    {
+      key: 'edit',
+      icon: 'mdi:pencil',
+      tooltip: '编辑',
+      onClick: () => handleEditPermission(permission),
+    },
+    {
+      key: 'delete',
+      icon: 'mdi:delete',
+      type: 'error',
+      tooltip: '删除',
+      popconfirm: '确认删除该权限吗？',
+      onClick: () => handleDeletePermission(permission.id),
+    },
+  ]
 
   // 工具函数
   const getMenuTypeText = (type: 'directory' | 'menu' | 'button'): string => {

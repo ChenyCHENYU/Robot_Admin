@@ -46,41 +46,10 @@
             @update:value="handleSearch"
           />
         </NSpace>
-        <NSpace>
-          <NButton
-            type="primary"
-            @click="openPermissionModal()"
-          >
-            <template #icon>
-              <C_Icon
-                name="material-symbols:add"
-                :size="16"
-              />
-            </template>
-            新增权限
-          </NButton>
-          <NButton
-            @click="handleExport"
-            :loading="exportLoading"
-          >
-            <template #icon>
-              <C_Icon
-                name="material-symbols:download"
-                :size="16"
-              />
-            </template>
-            导出
-          </NButton>
-          <NButton @click="refresh">
-            <template #icon>
-              <C_Icon
-                name="material-symbols:refresh"
-                :size="16"
-              />
-            </template>
-            刷新
-          </NButton>
-        </NSpace>
+        <C_ActionBar
+          :actions="toolbarActions"
+          :config="{ compact: true }"
+        />
       </NSpace>
     </NCard>
 
@@ -162,14 +131,21 @@
         >
           状态: {{ searchForm.status === 1 ? '启用' : '禁用' }}
         </NTag>
-        <NButton
-          text
-          size="small"
-          @click="clearAllFilters"
-          type="error"
-        >
-          清空筛选
-        </NButton>
+        <C_ActionBar
+          :actions="[
+            {
+              key: 'clear',
+              label: '清空筛选',
+              type: 'error',
+              onClick: clearAllFilters,
+            },
+          ]"
+          :config="{
+            compact: true,
+            size: 'small',
+            buttonProps: { text: true },
+          }"
+        />
       </NSpace>
     </div>
 
@@ -370,6 +346,7 @@
 
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import type { DetailConfig } from '@/components/local/c_detail/data'
   import {
     type PermissionData,
@@ -435,9 +412,9 @@
   const hasActiveFilters = computed(() =>
     Boolean(
       searchForm.keyword ||
-        searchForm.type ||
-        searchForm.module ||
-        searchForm.status !== null
+      searchForm.type ||
+      searchForm.module ||
+      searchForm.status !== null
     )
   )
 
@@ -565,6 +542,30 @@
       },
     ],
   }
+
+  // ============ 工具栏按钮配置 ============
+  const toolbarActions = computed<ActionItem[]>(() => [
+    {
+      key: 'add',
+      label: '新增权限',
+      icon: 'material-symbols:add',
+      type: 'primary',
+      onClick: () => openPermissionModal(),
+    },
+    {
+      key: 'export',
+      label: '导出',
+      icon: 'material-symbols:download',
+      loading: exportLoading.value,
+      onClick: handleExport,
+    },
+    {
+      key: 'refresh',
+      label: '刷新',
+      icon: 'material-symbols:refresh',
+      onClick: refresh,
+    },
+  ])
 
   // ============ 事件处理函数（提前声明） ============
   const handleExport = async () => {

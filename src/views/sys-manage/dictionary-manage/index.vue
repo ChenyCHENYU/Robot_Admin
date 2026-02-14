@@ -20,38 +20,10 @@
           </template>
         </NInput>
 
-        <NSpace>
-          <NButton
-            type="primary"
-            @click="handleAddDict()"
-          >
-            <template #icon>
-              <C_Icon
-                name="mdi:plus"
-                :size="16"
-              />
-            </template>
-            新增字典类型
-          </NButton>
-          <NButton @click="expandAll">
-            <template #icon>
-              <C_Icon
-                name="mdi:file-tree"
-                :size="16"
-              />
-            </template>
-            {{ isAllExpanded ? '收起全部' : '展开全部' }}
-          </NButton>
-          <NButton @click="refreshDicts">
-            <template #icon>
-              <C_Icon
-                name="mdi:refresh"
-                :size="16"
-              />
-            </template>
-            刷新
-          </NButton>
-        </NSpace>
+        <C_ActionBar
+          :actions="toolbarActions"
+          :config="{ compact: true }"
+        />
       </NSpace>
     </NCard>
 
@@ -131,37 +103,11 @@
                     已禁用
                   </NTag>
                 </NSpace>
-                <NSpace>
-                  <NButton
-                    v-if="selectedDict"
-                    size="small"
-                    @click="handleEditDict(selectedDict)"
-                  >
-                    <template #icon>
-                      <C_Icon
-                        name="mdi:pencil"
-                        :size="14"
-                      />
-                    </template>
-                    编辑
-                  </NButton>
-                  <NButton
-                    v-if="selectedDict"
-                    size="small"
-                    :type="selectedDict.status === 1 ? 'warning' : 'success'"
-                    @click="handleToggleStatus(selectedDict)"
-                  >
-                    <template #icon>
-                      <C_Icon
-                        :name="
-                          selectedDict.status === 1 ? 'mdi:pause' : 'mdi:play'
-                        "
-                        :size="14"
-                      />
-                    </template>
-                    {{ selectedDict.status === 1 ? '禁用' : '启用' }}
-                  </NButton>
-                </NSpace>
+                <C_ActionBar
+                  v-if="selectedDict"
+                  :actions="getDetailActions(selectedDict)"
+                  :config="{ compact: true, size: 'small' }"
+                />
               </NSpace>
             </template>
 
@@ -298,20 +244,19 @@
                     align="center"
                   >
                     <NText>字典项</NText>
-                    <NButton
+                    <C_ActionBar
                       v-if="selectedDict.status === 1"
-                      size="small"
-                      type="primary"
-                      @click="handleAddDictItem"
-                    >
-                      <template #icon>
-                        <C_Icon
-                          name="mdi:plus"
-                          :size="14"
-                        />
-                      </template>
-                      添加字典项
-                    </NButton>
+                      :actions="[
+                        {
+                          key: 'add',
+                          label: '添加字典项',
+                          icon: 'mdi:plus',
+                          type: 'primary',
+                          onClick: handleAddDictItem,
+                        },
+                      ]"
+                      :config="{ compact: true, size: 'small' }"
+                    />
                   </NSpace>
                 </template>
 
@@ -387,54 +332,10 @@
                         </NSpace>
                       </NSpace>
 
-                      <NSpace>
-                        <NButton
-                          size="tiny"
-                          @click="handleEditDict(item)"
-                        >
-                          <template #icon>
-                            <C_Icon
-                              name="mdi:pencil"
-                              :size="12"
-                              title="编辑"
-                            />
-                          </template>
-                        </NButton>
-                        <NButton
-                          size="tiny"
-                          :type="item.status === 1 ? 'warning' : 'success'"
-                          @click="handleToggleStatus(item)"
-                        >
-                          <template #icon>
-                            <C_Icon
-                              :name="
-                                item.status === 1 ? 'mdi:pause' : 'mdi:play'
-                              "
-                              :size="12"
-                              :title="item.status === 1 ? '禁用' : '启用'"
-                            />
-                          </template>
-                        </NButton>
-                        <NPopconfirm
-                          @positive-click="handleDeleteDict(item.id)"
-                        >
-                          <template #trigger>
-                            <NButton
-                              size="tiny"
-                              type="error"
-                            >
-                              <template #icon>
-                                <C_Icon
-                                  name="mdi:delete"
-                                  :size="12"
-                                  title="删除"
-                                />
-                              </template>
-                            </NButton>
-                          </template>
-                          确认删除该字典项吗？
-                        </NPopconfirm>
-                      </NSpace>
+                      <C_ActionBar
+                        :actions="getItemActions(item)"
+                        :config="{ compact: true, size: 'tiny' }"
+                      />
                     </NSpace>
                   </NCard>
                 </NSpace>
@@ -661,6 +562,7 @@
 
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import C_Tree from '@/components/global/C_Tree/index.vue'
   import {
     type DictData,
@@ -783,6 +685,71 @@
 
     return dictList.map(filterDict).filter(Boolean) as DictData[]
   })
+
+  // 工具栏按钮配置
+  const toolbarActions = computed<ActionItem[]>(() => [
+    {
+      key: 'add',
+      label: '新增字典类型',
+      icon: 'mdi:plus',
+      type: 'primary',
+      onClick: () => handleAddDict(),
+    },
+    {
+      key: 'expand',
+      label: isAllExpanded.value ? '收起全部' : '展开全部',
+      icon: 'mdi:file-tree',
+      onClick: expandAll,
+    },
+    {
+      key: 'refresh',
+      label: '刷新',
+      icon: 'mdi:refresh',
+      onClick: refreshDicts,
+    },
+  ])
+
+  // 字典项操作按钮配置
+  const getItemActions = (item: DictData): ActionItem[] => [
+    {
+      key: 'edit',
+      icon: 'mdi:pencil',
+      tooltip: '编辑',
+      onClick: () => handleEditDict(item),
+    },
+    {
+      key: 'toggle',
+      icon: item.status === 1 ? 'mdi:pause' : 'mdi:play',
+      type: item.status === 1 ? 'warning' : 'success',
+      tooltip: item.status === 1 ? '禁用' : '启用',
+      onClick: () => handleToggleStatus(item),
+    },
+    {
+      key: 'delete',
+      icon: 'mdi:delete',
+      type: 'error',
+      tooltip: '删除',
+      popconfirm: '确认删除该字典项吗？',
+      onClick: () => handleDeleteDict(item.id),
+    },
+  ]
+
+  // 详情卡片头部操作按钮配置
+  const getDetailActions = (dict: DictData): ActionItem[] => [
+    {
+      key: 'edit',
+      label: '编辑',
+      icon: 'mdi:pencil',
+      onClick: () => handleEditDict(dict),
+    },
+    {
+      key: 'toggle',
+      label: dict.status === 1 ? '禁用' : '启用',
+      icon: dict.status === 1 ? 'mdi:pause' : 'mdi:play',
+      type: dict.status === 1 ? 'warning' : 'success',
+      onClick: () => handleToggleStatus(dict),
+    },
+  ]
 
   // 工具函数
   const getDictTypeText = (type: 'type' | 'item'): string => {

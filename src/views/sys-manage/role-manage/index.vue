@@ -41,29 +41,10 @@
           />
         </NSpace>
 
-        <NSpace>
-          <NButton
-            type="primary"
-            @click="openRoleModal()"
-          >
-            <template #icon>
-              <C_Icon
-                :name="ICONS.plus"
-                :size="16"
-              />
-            </template>
-            新增角色
-          </NButton>
-          <NButton @click="refreshData">
-            <template #icon>
-              <C_Icon
-                :name="ICONS.refresh"
-                :size="16"
-              />
-            </template>
-            刷新
-          </NButton>
-        </NSpace>
+        <C_ActionBar
+          :actions="toolbarActions"
+          :config="{ compact: true }"
+        />
       </NSpace>
     </NCard>
 
@@ -749,6 +730,23 @@
         ),
     },
   ]
+
+  // ==================== 工具栏按钮配置 ====================
+  const toolbarActions = computed<ActionItem[]>(() => [
+    {
+      key: 'add',
+      label: '新增角色',
+      icon: ICONS.plus,
+      type: 'primary',
+      onClick: () => openRoleModal(),
+    },
+    {
+      key: 'refresh',
+      label: '刷新',
+      icon: ICONS.refresh,
+      onClick: refreshData,
+    },
+  ])
 
   // ==================== 工具函数 ====================
   const getPermissionNameById = (permissionId: string): string =>

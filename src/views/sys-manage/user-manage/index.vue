@@ -50,38 +50,10 @@
           />
         </NSpace>
 
-        <NSpace>
-          <NButton
-            type="primary"
-            @click="handleAddUserModal()"
-          >
-            <template #icon>
-              <C_Icon
-                :name="COMPONENT_CONFIG.icons.plus"
-                :size="16"
-              />
-            </template>
-            新增用户
-          </NButton>
-          <NButton @click="expandAll">
-            <template #icon>
-              <C_Icon
-                :name="COMPONENT_CONFIG.icons.tree"
-                :size="16"
-              />
-            </template>
-            {{ isAllExpanded ? '收起全部' : '展开全部' }}
-          </NButton>
-          <NButton @click="refreshData">
-            <template #icon>
-              <C_Icon
-                :name="COMPONENT_CONFIG.icons.refresh"
-                :size="16"
-              />
-            </template>
-            刷新
-          </NButton>
-        </NSpace>
+        <C_ActionBar
+          :actions="toolbarActions"
+          :config="{ compact: true }"
+        />
       </NSpace>
     </NCard>
 
@@ -143,40 +115,11 @@
                     共 {{ pagination.itemCount }} 人
                   </NTag>
                 </NText>
-                <NSpace>
-                  <NButton
-                    v-if="selectedUsers.length > 0"
-                    type="warning"
-                    size="small"
-                    @click="
-                      () => handleBatchOperation('toggle', batchToggleUsers)
-                    "
-                  >
-                    <template #icon>
-                      <C_Icon
-                        :name="COMPONENT_CONFIG.icons.toggle"
-                        :size="14"
-                      />
-                    </template>
-                    批量操作
-                  </NButton>
-                  <NButton
-                    v-if="selectedUsers.length > 0"
-                    type="error"
-                    size="small"
-                    @click="
-                      () => handleBatchOperation('delete', batchDeleteUsers)
-                    "
-                  >
-                    <template #icon>
-                      <C_Icon
-                        :name="COMPONENT_CONFIG.icons.delete"
-                        :size="14"
-                      />
-                    </template>
-                    批量删除
-                  </NButton>
-                </NSpace>
+                <C_ActionBar
+                  v-if="selectedUsers.length > 0"
+                  :actions="batchActions"
+                  :config="{ compact: true, size: 'small' }"
+                />
               </NSpace>
             </template>
 
@@ -350,13 +293,17 @@
             </NCard>
 
             <!-- 操作按钮 -->
-            <NSpace justify="center">
-              <NButton
-                type="primary"
-                @click="showUserDetail = false"
-                >关闭</NButton
-              >
-            </NSpace>
+            <C_ActionBar
+              :actions="[
+                {
+                  key: 'close',
+                  label: '关闭',
+                  type: 'primary',
+                  onClick: () => (showUserDetail = false),
+                },
+              ]"
+              :config="{ align: 'center' }"
+            />
           </NSpace>
         </div>
       </NDrawerContent>
@@ -468,6 +415,7 @@
     NDropdown,
     NTreeSelect,
   } from 'naive-ui/es'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import C_Tree from '@/components/global/C_Tree/index.vue'
   import C_Icon from '@/components/global/C_Icon/index.vue'
   import C_Table from '@/components/global/C_Table/index.vue'
@@ -551,6 +499,48 @@
   const modalTitle = computed(() =>
     modalMode.value === 'add' ? '新增用户' : '编辑用户'
   )
+
+  // 工具栏按钮配置
+  const toolbarActions = computed<ActionItem[]>(() => [
+    {
+      key: 'add',
+      label: '新增用户',
+      icon: COMPONENT_CONFIG.icons.plus,
+      type: 'primary',
+      onClick: () => handleAddUserModal(),
+    },
+    {
+      key: 'expand',
+      label: isAllExpanded.value ? '收起全部' : '展开全部',
+      icon: COMPONENT_CONFIG.icons.tree,
+      onClick: expandAll,
+    },
+    {
+      key: 'refresh',
+      label: '刷新',
+      icon: COMPONENT_CONFIG.icons.refresh,
+      onClick: refreshData,
+    },
+  ])
+
+  // 批量操作按钮配置
+  const batchActions = computed<ActionItem[]>(() => [
+    {
+      key: 'toggle',
+      label: '批量操作',
+      icon: COMPONENT_CONFIG.icons.toggle,
+      type: 'warning',
+      onClick: () => handleBatchOperation('toggle', batchToggleUsers),
+    },
+    {
+      key: 'delete',
+      label: '批量删除',
+      icon: COMPONENT_CONFIG.icons.delete,
+      type: 'error',
+      onClick: () => handleBatchOperation('delete', batchDeleteUsers),
+    },
+  ])
+
   const selectedDept = computed(() => {
     if (!selectedDeptKeys.value.length) return null
     return findDeptById(deptList, selectedDeptKeys.value[0])
