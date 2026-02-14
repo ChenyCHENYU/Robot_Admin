@@ -112,12 +112,12 @@
 
 Robot Admin 提供多种架构选择，满足不同规模和场景的需求：
 
-| 架构类型 | 适用场景 | 特点 | 分支 | 文档 |
-|---------|---------|------|------|------|
-| **🏗️ 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用 | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main) | 本文档 |
-| **📦 Monorepo** | 多应用统一管理 | 代码复用、统一工具链、独立部署 | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo) | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md) |
-| **🔮 模块联邦** | 微应用动态加载 | 运行时共享、独立部署、版本隔离 | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
-| **🚀 微前端** | 大型应用、团队协作 | 技术栈无关、独立部署、渐进式迁移 | [`feature/microapp-portal`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal) | [查看文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md) |
+| 架构类型        | 适用场景             | 特点                             | 分支                                                                                                     | 文档                                                                                                                  |
+| --------------- | -------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **🏗️ 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用               | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | 本文档                                                                                                                |
+| **📦 Monorepo** | 多应用统一管理       | 代码复用、统一工具链、独立部署   | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                    |
+| **🔮 模块联邦** | 微应用动态加载       | 运行时共享、独立部署、版本隔离   | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
+| **🚀 微前端**   | 大型应用、团队协作   | 技术栈无关、独立部署、渐进式迁移 | [`feature/microapp-portal`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal)     | [查看文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md)                         |
 
 ### 📦 Monorepo 架构亮点
 
@@ -137,6 +137,7 @@ Robot_Admin (Monorepo)
 ```
 
 **核心特性：**
+
 - ✅ 多应用统一管理（Internal / SaaS）
 - ✅ 5 个共享包代码复用
 - ✅ HMR 热更新（修改共享包，应用自动刷新）
@@ -144,6 +145,7 @@ Robot_Admin (Monorepo)
 - ✅ 统一工具链（ESLint/Prettier/TypeScript/Commitizen）
 
 **快速开始：**
+
 ```bash
 git clone -b monorepo https://github.com/ChenyCHENYU/Robot_Admin.git
 cd Robot_Admin
@@ -289,6 +291,7 @@ bun clean              # 清理缓存
 
 - `C_Form` - 动态表单引擎，支持8种布局
 - `C_Table` - 超级表格，支持虚拟滚动
+- `C_ActionBar` - 操作按钮组组件，统一按钮布局
 - `C_Header` - 响应式头部组件
 - `C_Menu` - 智能导航菜单
 - `C_Icon` - 图标管理系统
@@ -547,6 +550,7 @@ graph LR
 #### 详细文档
 
 #### 详细文档
+
 📖 完整使用指南：[国际化实践指南 - 在线文档](https://www.tzagileteam.com/robot/guide/i18n-practice)
 
 </details>
@@ -985,15 +989,13 @@ bun run type-build
 
 ## 📄 更新日志
 
-### 🎉 v1.0.0 (2025-01-10)
+### 🎉 v1.13.0 (2026-02-12)
 
-- ✨ 首个正式版本发布
-- 🎨 30+ 核心组件完整实现
-- 📊 30+ 演示页面全部完成
-- 🔧 7个自定义指令实现
-- 🛡️ 完整的权限管理系统
-- 📱 响应式设计全面适配
-- 🧪 测试覆盖率达到 85%+
+- ✨ 升级到 @robot-admin/layout v2.2.0
+- 🎨 优化主题切换，使用 View Transition API
+- 🔧 修复布局切换时设置抽屉自动关闭的问题
+- 📊 增强请求接口适配器组合函数
+- 🛡️ 优化表格增删改查组合函数使用
 
 查看 [CHANGELOG.md](./CHANGELOG.md) 了解详细的版本历史。
 
