@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.14.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.0...v1.14.0) (2026-02-14)
+
+
+### Features
+
+* **sys-manage:** 统一使用 C_ActionBar 组件并优化包管理 ([401a5dd](https://github.com/ChenyCHENYU/Robot_Admin/commit/401a5ddec9df1c1ef6440768d1d2981cd3478252))
+
+
+### Performance Improvements
+
+* **C_ActionBar:** 优化和提取按钮组组件，适应未来90%按钮场景 ([a6d44d3](https://github.com/ChenyCHENYU/Robot_Admin/commit/a6d44d3e17b40973cf907413b1855be05e9de97e))
+* **git-cz:** 将 git cz 提交规范以及代码检查规范相关的提取成 cli 包 ([58e1889](https://github.com/ChenyCHENYU/Robot_Admin/commit/58e1889cad8c3af81fc6dec0949cffdd54d0e888))
+
 ## [1.13.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.12.0...v1.13.0) (2026-02-12)
 
 
