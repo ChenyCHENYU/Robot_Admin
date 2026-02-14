@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-09 23:36:11
  * @FilePath: \Robot_Admin\src\views\demo\07-form-module\form\layouts\GridLayout\index.vue
  * @Description: 表单组件 - 网格组件 - 演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -92,21 +92,10 @@
       @validate-error="handleValidateError"
     >
       <template #action="{ validate, reset }">
-        <div class="form-actions">
-          <button
-            v-for="action in formActions"
-            :key="action.key"
-            :class="action.class"
-            :disabled="action.disabled"
-            @click="action.handler(validate, reset)"
-          >
-            <span
-              v-if="action.loading"
-              class="loading"
-            ></span>
-            {{ action.text }}
-          </button>
-        </div>
+        <C_ActionBar
+          :actions="getFormActions(validate, reset)"
+          :config="{ align: 'right', gap: 12 }"
+        />
       </template>
     </C_Form>
 
@@ -170,6 +159,7 @@
     FormModel,
     LayoutConfig,
   } from '@/types/modules/form'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import { colsOptions, formOptions } from './data'
 
   // ==================== Props & Emits ====================
@@ -215,14 +205,34 @@
     })
   )
 
-  const formActions = computed(() => [
+  // ==================== 表单操作按钮配置 ====================
+  const getFormActions = (
+    validate: () => Promise<void>,
+    reset: () => void
+  ): ActionItem[] => [
+    {
+      key: 'reset',
+      label: '重置表单',
+      icon: 'mdi:lock-reset',
+      onClick: () => {
+        reset()
+        message.info('表单已重置')
+      },
+    },
+    {
+      key: 'preview',
+      label: '预览布局',
+      icon: 'mdi:eye-outline',
+      type: 'success',
+      onClick: () => (showLayoutPreview.value = true),
+    },
     {
       key: 'submit',
-      text: submitLoading.value ? '提交中...' : '提交表单',
-      class: 'submit-btn',
-      disabled: submitLoading.value,
+      label: submitLoading.value ? '提交中...' : '提交表单',
+      icon: 'mdi:check-circle-outline',
+      type: 'primary',
       loading: submitLoading.value,
-      handler: async (validate: () => Promise<void>) => {
+      onClick: async () => {
         try {
           submitLoading.value = true
           await validate()
@@ -236,26 +246,7 @@
         }
       },
     },
-    {
-      key: 'reset',
-      text: '重置表单',
-      class: 'reset-btn',
-      disabled: false,
-      loading: false,
-      handler: (_: any, reset: () => void) => {
-        reset()
-        message.info('表单已重置')
-      },
-    },
-    {
-      key: 'preview',
-      text: '预览布局',
-      class: 'preview-btn',
-      disabled: false,
-      loading: false,
-      handler: () => (showLayoutPreview.value = true),
-    },
-  ])
+  ]
 
   const layoutInfo = computed(() => [
     { label: '栅格系统', value: `${gridCols.value}列` },

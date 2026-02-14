@@ -110,33 +110,7 @@
           </NCheckboxGroup>
 
           <div class="batch-actions">
-            <NButton
-              type="primary"
-              :loading="loading.batch"
-              :disabled="selectedFiles.length === 0"
-              @click="handleBatchDownload"
-            >
-              <template #icon>
-                <span class="i-mdi:download-multiple-outline"></span>
-              </template>
-              批量下载 ({{ selectedFiles.length }})
-            </NButton>
-
-            <NButton
-              quaternary
-              type="info"
-              @click="selectAllFiles"
-            >
-              全选
-            </NButton>
-
-            <NButton
-              quaternary
-              type="warning"
-              @click="clearSelection"
-            >
-              清空
-            </NButton>
+            <C_ActionBar :actions="batchActions" />
           </div>
         </div>
       </NCard>
@@ -249,6 +223,30 @@
       handler: handleDownloadJSON,
     },
   }))
+
+  /** 批量下载操作按钮 */
+  const batchActions = computed(() => [
+    {
+      label: `批量下载 (${selectedFiles.value.length})`,
+      type: 'primary' as const,
+      icon: 'mdi:download-multiple-outline',
+      loading: loading.batch,
+      disabled: selectedFiles.value.length === 0,
+      onClick: handleBatchDownload,
+    },
+    {
+      label: '全选',
+      type: 'info' as const,
+      buttonProps: { quaternary: true },
+      onClick: selectAllFiles,
+    },
+    {
+      label: '清空',
+      type: 'warning' as const,
+      buttonProps: { quaternary: true },
+      onClick: clearSelection,
+    },
+  ])
 
   /**
    * * @description 添加下载历史记录

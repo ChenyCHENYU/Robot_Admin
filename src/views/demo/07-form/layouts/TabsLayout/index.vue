@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-10 00:43:15
  * @FilePath: \Robot_Admin\src\views\demo\07-form-module\form\layouts\TabsLayout\index.vue
  * @Description: 表单标签布局 - 演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -83,14 +83,16 @@
       @fields-change="handleFieldsChange"
     >
       <template #tab-actions="{ validateTab, currentTab }">
-        <NButton
-          type="primary"
-          size="small"
-          @click="validateTab"
-        >
-          <div class="i-mdi:task-auto mr-1" />
-          验证 {{ getTabTitle(currentTab) }}
-        </NButton>
+        <C_ActionBar
+          :actions="getTabActions(validateTab, currentTab)"
+          :config="{ compact: true }"
+        />
+      </template>
+      <template #action="{ validate, reset }">
+        <C_ActionBar
+          :actions="getFormActions(validate, reset)"
+          :config="{ gap: 12 }"
+        />
       </template>
     </C_Form>
 
@@ -112,39 +114,10 @@
       size="small"
       class="mt-4"
     >
-      <NSpace>
-        <NButton
-          type="default"
-          @click="handleSaveDraft"
-        >
-          <div class="i-mdi:content-save mr-1" />
-          保存草稿
-        </NButton>
-
-        <NButton
-          type="default"
-          @click="handleLoadDraft"
-        >
-          <div class="i-mdi:folder-open-outline mr-1" />
-          加载草稿
-        </NButton>
-
-        <NButton
-          type="default"
-          @click="handleReset"
-        >
-          <div class="i-mdi:lock-reset mr-1" />
-          重置表单
-        </NButton>
-
-        <NButton
-          type="warning"
-          @click="handleExportData"
-        >
-          <div class="i-mdi:download-multiple-outline mr-1" />
-          导出数据
-        </NButton>
-      </NSpace>
+      <C_ActionBar
+        :actions="actionButtons"
+        :config="{ gap: 12 }"
+      />
     </NCard>
   </div>
 </template>
@@ -155,6 +128,7 @@
     FormInstance,
     LabelPlacement,
   } from '@/types/modules/form'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import {
     layoutConfig,
     placementOptions,
@@ -191,6 +165,79 @@
   // ================= 计算属性 =================
   const formOptions = computed(() => createFormOptions(() => formData.value))
   const { labelPlacement, validateOnChange } = toRefs(props)
+
+  // ==================== 表单操作按钮配置 ====================
+  const getFormActions = (
+    validate: () => Promise<void>,
+    reset: () => void
+  ): ActionItem[] => [
+    {
+      key: 'submit',
+      label: '提交',
+      icon: 'mdi:check-circle-outline',
+      type: 'primary',
+      onClick: async () => {
+        try {
+          await validate()
+        } catch {
+          message.error('表单验证失败')
+        }
+      },
+    },
+    {
+      key: 'reset',
+      label: '重置',
+      icon: 'mdi:lock-reset',
+      onClick: () => {
+        reset()
+        message.info('表单已重置')
+      },
+    },
+  ]
+
+  // ==================== 标签页验证按钮配置 ====================
+  const getTabActions = (
+    validateTab: () => void,
+    currentTab: string
+  ): ActionItem[] => [
+    {
+      key: 'validateTab',
+      label: `验证 ${getTabTitle(currentTab)}`,
+      icon: 'mdi:task-auto',
+      type: 'primary',
+      size: 'small',
+      onClick: validateTab,
+    },
+  ]
+
+  // ==================== 操作按钮配置 ====================
+  const actionButtons = computed<ActionItem[]>(() => [
+    {
+      key: 'saveDraft',
+      label: '保存草稿',
+      icon: 'mdi:content-save',
+      onClick: handleSaveDraft,
+    },
+    {
+      key: 'loadDraft',
+      label: '加载草稿',
+      icon: 'mdi:folder-open-outline',
+      onClick: handleLoadDraft,
+    },
+    {
+      key: 'reset',
+      label: '重置表单',
+      icon: 'mdi:lock-reset',
+      onClick: handleReset,
+    },
+    {
+      key: 'export',
+      label: '导出数据',
+      icon: 'mdi:download-multiple-outline',
+      type: 'warning',
+      onClick: handleExportData,
+    },
+  ])
 
   // ================= 工具方法 =================
   const getTabTitle = (tabKey: string): string => {

@@ -256,17 +256,17 @@ export const FORM_ACTIONS = {
   submit: {
     type: 'primary' as const,
     size: 'large' as const,
-    icon: 'i-mdi:check-circle-outline',
+    icon: 'mdi:check-circle-outline',
     getText: (loading: boolean) => (loading ? '提交中...' : '提交表单'),
   },
   reset: {
     size: 'large' as const,
-    icon: 'i-mdi:refresh',
+    icon: 'mdi:refresh',
     text: '重置表单',
   },
   preview: {
     size: 'large' as const,
-    icon: 'i-mdi:code-json',
+    icon: 'mdi:code-json',
     text: '预览数据',
   },
 } as const

@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-10 17:24:15
  * @FilePath: \Robot_Admin\src\views\demo\08-form-modal\index.vue
  * @Description: 多模态表单 -  演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -164,23 +164,10 @@
                   @submit="submitForm('popover')"
                 >
                   <template #action="{ validate }">
-                    <NSpace
-                      justify="end"
-                      class="mt-4"
-                    >
-                      <NButton
-                        size="small"
-                        @click="toggleContainer('popover', false)"
-                        >取消</NButton
-                      >
-                      <NButton
-                        size="small"
-                        type="primary"
-                        @click="validateAndSubmit('popover', validate)"
-                      >
-                        保存
-                      </NButton>
-                    </NSpace>
+                    <C_ActionBar
+                      :actions="getPopoverActions(validate)"
+                      :config="{ align: 'right', compact: true }"
+                    />
                   </template>
                 </C_Form>
               </div>
@@ -237,14 +224,10 @@
           :showDefaultActions="false"
         />
         <template #footer>
-          <NSpace justify="end">
-            <NButton @click="toggleContainer('drawer', false)">取消</NButton>
-            <NButton
-              type="primary"
-              @click="submitForm('drawer')"
-              >保存</NButton
-            >
-          </NSpace>
+          <C_ActionBar
+            :actions="drawerActions"
+            :config="{ align: 'right', gap: 12 }"
+          />
         </template>
       </NDrawerContent>
     </NDrawer>
@@ -290,26 +273,10 @@
           @submit="submitForm('sidebar')"
         >
           <template #action="{ validate }">
-            <NSpace
-              justify="space-between"
-              class="mt-4"
-            >
-              <NButton @click="clearFormData('sidebar')">
-                <template #icon>
-                  <i class="i-mdi:vacuum-cleaner"></i>
-                </template>
-                清空
-              </NButton>
-              <NButton
-                type="primary"
-                @click="validateAndSubmit('sidebar', validate)"
-              >
-                <template #icon>
-                  <i class="i-mdi:briefcase-search-outline"></i>
-                </template>
-                应用筛选
-              </NButton>
-            </NSpace>
+            <C_ActionBar
+              :actions="getSidebarActions(validate)"
+              :config="{ align: 'space-between', gap: 12 }"
+            />
           </template>
         </C_Form>
       </NCard>
@@ -339,17 +306,10 @@
         @submit="submitForm('wizard')"
       />
       <template #action>
-        <NSpace justify="space-between">
-          <NButton @click="toggleContainer('wizard', false)">取消</NButton>
-          <NSpace>
-            <NButton @click="clearFormData('wizard')">重置</NButton>
-            <NButton
-              type="primary"
-              @click="submitForm('wizard')"
-              >完成创建</NButton
-            >
-          </NSpace>
-        </NSpace>
+        <C_ActionBar
+          :left-actions="wizardLeftActions"
+          :right-actions="wizardRightActions"
+        />
       </template>
     </NModal>
   </div>
@@ -358,6 +318,7 @@
 <script setup lang="ts">
   import type { Ref } from 'vue'
   import type { FormInstance } from '@/types/modules/form'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import {
     type ContainerType,
     type ContainerCard,
@@ -600,6 +561,75 @@
     formData[type] = {}
     message.info('已清空表单数据')
   }
+
+  // ==================== 各容器操作按钮配置 ====================
+  const getPopoverActions = (validate: () => Promise<void>): ActionItem[] => [
+    {
+      key: 'cancel',
+      label: '取消',
+      onClick: () => toggleContainer('popover', false),
+    },
+    {
+      key: 'save',
+      label: '保存',
+      type: 'primary',
+      onClick: () => validateAndSubmit('popover', validate),
+    },
+  ]
+
+  const drawerActions = computed<ActionItem[]>(() => [
+    {
+      key: 'cancel',
+      label: '取消',
+      onClick: () => toggleContainer('drawer', false),
+    },
+    {
+      key: 'save',
+      label: '保存',
+      type: 'primary',
+      onClick: () => submitForm('drawer'),
+    },
+  ])
+
+  const getSidebarActions = (validate: () => Promise<void>): ActionItem[] => [
+    {
+      key: 'clear',
+      label: '清空',
+      icon: 'mdi:vacuum-cleaner',
+      group: 'left',
+      onClick: () => clearFormData('sidebar'),
+    },
+    {
+      key: 'apply',
+      label: '应用筛选',
+      icon: 'mdi:briefcase-search-outline',
+      type: 'primary',
+      group: 'right',
+      onClick: () => validateAndSubmit('sidebar', validate),
+    },
+  ]
+
+  const wizardLeftActions = computed<ActionItem[]>(() => [
+    {
+      key: 'cancel',
+      label: '取消',
+      onClick: () => toggleContainer('wizard', false),
+    },
+  ])
+
+  const wizardRightActions = computed<ActionItem[]>(() => [
+    {
+      key: 'reset',
+      label: '重置',
+      onClick: () => clearFormData('wizard'),
+    },
+    {
+      key: 'submit',
+      label: '完成创建',
+      type: 'primary',
+      onClick: () => submitForm('wizard'),
+    },
+  ])
 </script>
 
 <style lang="scss" scoped>

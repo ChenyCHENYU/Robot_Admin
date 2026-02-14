@@ -18,7 +18,7 @@
         "@iconify/vue": "^5.0.0",
         "@kangc/v-md-editor": "^2.3.18",
         "@robot-admin/form-validate": "latest",
-        "@robot-admin/git-standards": "latest",
+        "@robot-admin/git-standards": "^1.0.2",
         "@robot-admin/layout": "latest",
         "@robot-admin/request-core": "latest",
         "@robot-admin/theme": "latest",
@@ -661,7 +661,7 @@
 
     "@robot-admin/form-validate": ["@robot-admin/form-validate@2.0.0", "", { "peerDependencies": { "naive-ui": ">=2.34.0" } }, "sha512-vii3VSusR8B6QRrzWrKxQTyvBCBK9DBIlX14h/VxGexl0TgR1sFVbhUG03ddBTZiBw7KH29b8jW4TovCeDvTTg=="],
 
-    "@robot-admin/git-standards": ["@robot-admin/git-standards@1.0.1", "", { "dependencies": { "@commitlint/cli": "^19.6.0", "@commitlint/config-conventional": "^19.6.0", "@inquirer/prompts": "^7.3.2", "chalk": "^5.4.1", "commander": "^12.1.0", "commitizen": "^4.3.1", "cz-customizable": "^7.2.1", "execa": "^9.5.2", "husky": "^9.1.7", "lint-staged": "^15.2.10", "ora": "^8.1.1" }, "bin": { "robot-standards": "bin/robot-standards.js" } }, "sha512-q8vgQ0zAF6hz+nmI0lWpZLC/NLZpR0RAB1dIME+JmEgPIMZtGrgc8QbwwMYlLD2ztk7hllRUeZoIBR7VQ1jSng=="],
+    "@robot-admin/git-standards": ["@robot-admin/git-standards@1.0.2", "", { "dependencies": { "@commitlint/cli": "^19.6.0", "@commitlint/config-conventional": "^19.6.0", "@inquirer/prompts": "^7.3.2", "chalk": "^5.4.1", "commander": "^12.1.0", "commitizen": "^4.3.1", "cz-customizable": "^7.2.1", "execa": "^9.5.2", "husky": "^9.1.7", "lint-staged": "^15.2.10", "ora": "^8.1.1" }, "bin": { "robot-standards": "bin/robot-standards.js" } }, "sha512-4K/e10GfTtw5EPp+ry4O1MQTzmyR9BJcOhsINmDx5C0HrfvCVB4zfOnpsJqidQl2FNuZBbGcR+0yGATr5l3Hcg=="],
 
     "@robot-admin/layout": ["@robot-admin/layout@2.2.0", "", { "peerDependencies": { "@robot-admin/theme": "^0.1.0", "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0", "vue-router": "^4.0.0" } }, "sha512-AD2yXejXnQ0/g7n/Tg3EA+/aV5uqZruvGCZqPkOz6CbPwJ5hgh55Ak9Xc2YL5q33LdlGcQrBxtHe7FZYEkkt6g=="],
 

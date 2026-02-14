@@ -20,6 +20,8 @@
 - ✅ **暗黑模式**: 自动适配主题，无需额外配置
 - ✅ **动画效果**: 流畅的交互动画和反馈
 - ✅ **中间插槽**: 支持自定义中间区域内容
+- ✅ **内联模式**: 默认无容器装饰，即插即用
+- ✅ **指令支持**: 按钮可绑定自定义指令（v-debounce、v-copy 等）
 
 ## 🎯 适用场景
 
@@ -92,6 +94,7 @@ interface ActionItem {
   dropdown?: ActionDropdownItem[] // 下拉菜单子项
   onClick?: () => void | Promise<void> // 点击事件回调
   buttonProps?: Partial<ButtonProps> // NButton 原生属性（扩展）
+  directives?: Array<[Directive, any?, string?, Record<string, boolean>?]> // 自定义指令
 }
 ```
 
@@ -99,15 +102,19 @@ interface ActionItem {
 
 ```typescript
 interface ActionBarConfig {
-  align?: 'left' | 'center' | 'right' | 'space-between' | 'space-around'
-  size?: 'tiny' | 'small' | 'medium' | 'large' // 全局按钮尺寸
-  gap?: number // 按钮间距（px）
-  wrap?: boolean // 允许换行
-  showDivider?: boolean // 显示分隔线
-  dividerType?: 'vertical' | 'horizontal' // 分隔线类型
-  compact?: boolean // 紧凑模式（减少内外边距）
+  align?: 'left' | 'center' | 'right' | 'space-between' | 'space-around' // 默认 'left'
+  size?: 'tiny' | 'small' | 'medium' | 'large' // 全局按钮尺寸，默认 'medium'
+  gap?: number // 按钮间距（px），默认 8
+  wrap?: boolean // 允许换行，默认 false
+  showDivider?: boolean // 显示分隔线，默认 false
+  dividerType?: 'vertical' | 'horizontal' // 分隔线类型，默认 'vertical'
+  compact?: boolean // 紧凑模式（减少内外边距），默认 false
+  inline?: boolean // 内联模式（无容器装饰），默认 true
 }
 ```
+
+> **默认行为**：组件默认以内联模式渲染（无 padding/border/background），靠左对齐，按钮间距 8px。
+> 如需独立容器样式（带边框背景），设置 `inline: false`。
 
 ### Events
 
@@ -214,7 +221,7 @@ interface ActionBarConfig {
 
   <C_ActionBar
     :actions="formActions"
-    :config="{ align: 'center', gap: 16 }"
+    :config="{ align: 'center' }"
   />
 </template>
 
@@ -733,7 +740,7 @@ const actions = computed(() => {
   <!-- 表单操作栏 -->
   <C_ActionBar
     :actions="formActions"
-    :config="{ align: 'center', gap: 16 }"
+    :config="{ align: 'center' }"
   />
 </template>
 

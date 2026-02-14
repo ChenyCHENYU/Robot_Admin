@@ -198,26 +198,7 @@
               "
             />
 
-            <NButtonGroup>
-              <NButton
-                @click="resetCustomTime"
-                type="default"
-              >
-                重置
-              </NButton>
-              <NButton
-                @click="setCurrentTime"
-                type="primary"
-              >
-                设为当前时间
-              </NButton>
-              <NButton
-                @click="getCurrentValues"
-                type="info"
-              >
-                获取值
-              </NButton>
-            </NButtonGroup>
+            <C_ActionBar :actions="customTimeActions" />
           </NSpace>
 
           <NAlert
@@ -346,6 +327,17 @@
   const handleSingleTimeChange = (time: number | null) => {
     results.single = time ? `提醒设置为: ${formatTimeHM(time)}` : ''
   }
+
+  /** 自定义时间操作按钮 */
+  const customTimeActions = computed(() => [
+    { label: '重置', onClick: resetCustomTime },
+    {
+      label: '设为当前时间',
+      type: 'primary' as const,
+      onClick: setCurrentTime,
+    },
+    { label: '获取值', type: 'info' as const, onClick: getCurrentValues },
+  ])
 
   /**
    * 自定义操作方法

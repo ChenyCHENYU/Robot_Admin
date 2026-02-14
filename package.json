@@ -46,7 +46,7 @@
     "@iconify/vue": "^5.0.0",
     "@kangc/v-md-editor": "^2.3.18",
     "@robot-admin/form-validate": "latest",
-    "@robot-admin/git-standards": "latest",
+    "@robot-admin/git-standards": "^1.0.2",
     "@robot-admin/layout": "latest",
     "@robot-admin/request-core": "latest",
     "@robot-admin/theme": "latest",

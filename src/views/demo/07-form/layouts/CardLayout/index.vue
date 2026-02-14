@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-10 00:41:08
  * @FilePath: \Robot_Admin\src\views\demo\07-form-module\form\layouts\CardLayout\index.vue
  * @Description: 卡片布局表单演示 - 修复版本
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -19,12 +19,18 @@
       :layout-config="cardLayoutConfig"
       :validate-on-value-change="validateOnChange"
       :label-placement="labelPlacement"
-      :show-default-actions="true"
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
       @fields-change="handleFieldsChange"
-    />
+    >
+      <template #action="{ validate, reset }">
+        <C_ActionBar
+          :actions="getFormActions(validate, reset)"
+          :config="{ gap: 12 }"
+        />
+      </template>
+    </C_Form>
 
     <!-- 调试面板（开发模式） -->
     <NCard
@@ -66,6 +72,7 @@
     FormInstance,
     LabelPlacement,
   } from '@/types/modules/form'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import {
     FORM_OPTIONS,
     CARD_LAYOUT_CONFIG,
@@ -109,6 +116,36 @@
 
   // ==================== 计算属性 ====================
   const { labelPlacement, validateOnChange } = toRefs(props)
+
+  // ==================== 表单操作按钮配置 ====================
+  const getFormActions = (
+    validate: () => Promise<void>,
+    reset: () => void
+  ): ActionItem[] => [
+    {
+      key: 'submit',
+      label: '提交',
+      icon: 'mdi:check-circle-outline',
+      type: 'primary',
+      onClick: async () => {
+        try {
+          await validate()
+          message.success(MESSAGES.submitSuccess)
+        } catch {
+          message.error(MESSAGES.submitError)
+        }
+      },
+    },
+    {
+      key: 'reset',
+      label: '重置',
+      icon: 'mdi:lock-reset',
+      onClick: () => {
+        reset()
+        message.info(MESSAGES.resetSuccess)
+      },
+    },
+  ]
 
   // ==================== 事件处理 ====================
   const handleSubmit = async (payload: any): Promise<void> => {

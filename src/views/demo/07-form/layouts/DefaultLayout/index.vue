@@ -23,25 +23,10 @@
     >
       <!-- 自定义表单操作区 -->
       <template #action="{ validate, reset }">
-        <div class="form-actions">
-          <button
-            class="submit-btn"
-            @click="submitForm(validate)"
-            :disabled="submitLoading"
-          >
-            <span
-              v-if="submitLoading"
-              class="loading"
-            ></span>
-            {{ submitLoading ? '提交中...' : '提交表单' }}
-          </button>
-          <button
-            class="reset-btn"
-            @click="resetForm(reset)"
-          >
-            重置表单
-          </button>
-        </div>
+        <C_ActionBar
+          :actions="getFormActions(validate, reset)"
+          :config="{ align: 'right', gap: 16 }"
+        />
       </template>
     </C_Form>
   </div>
@@ -54,6 +39,7 @@
     FormModel,
     FormOption,
   } from '@/types/modules/form'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
 
   // ==================== 表单字段配置 ====================
@@ -172,6 +158,25 @@
     emit('fields-change', options)
     return options
   })
+
+  // ==================== 表单操作按钮配置 ====================
+  const getFormActions = (
+    validate: () => Promise<void>,
+    reset: () => void
+  ): ActionItem[] => [
+    {
+      key: 'reset',
+      label: '重置表单',
+      onClick: () => resetForm(reset),
+    },
+    {
+      key: 'submit',
+      label: submitLoading.value ? '提交中...' : '提交表单',
+      type: 'primary',
+      loading: submitLoading.value,
+      onClick: () => submitForm(validate),
+    },
+  ]
 
   // ==================== 表单操作方法 ====================
   const submitForm = async (validate: () => Promise<void>): Promise<void> => {

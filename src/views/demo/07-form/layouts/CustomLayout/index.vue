@@ -55,45 +55,7 @@
           </NButton>
         </NSpace>
       </template>
-      <NSpace>
-        <NButton
-          @click="fillTestData"
-          type="primary"
-          secondary
-        >
-          🔄 填充测试数据
-        </NButton>
-        <NButton
-          @click="clearFormData"
-          secondary
-          :disabled="!hasFormFields"
-        >
-          🗑️ 清空表单
-        </NButton>
-        <NButton
-          @click="validateForm"
-          type="success"
-          secondary
-          :disabled="!hasFormFields"
-        >
-          ✅ 验证表单
-        </NButton>
-        <NButton
-          @click="submitForm"
-          type="primary"
-          :loading="submitLoading"
-          :disabled="!hasFormFields || !hasFormData"
-        >
-          🚀 提交表单
-        </NButton>
-        <NButton
-          @click="exportFormData"
-          secondary
-          :disabled="!hasFormFields"
-        >
-          📤 导出数据
-        </NButton>
-      </NSpace>
+      <C_ActionBar :actions="demoActions" />
     </NCard>
 
     <!-- 实时数据预览 -->
@@ -172,6 +134,7 @@
     FormModel,
     LabelPlacement,
   } from '@/types/modules/form'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import { useFormSubmit } from '@/hooks/useFormSubmit'
   import { useDebounceFn } from '@vueuse/core'
   import {
@@ -301,6 +264,47 @@
 
     return validData
   })
+
+  // ==================== 演示操作按钮配置 ====================
+  const demoActions = computed<ActionItem[]>(() => [
+    {
+      key: 'fill',
+      label: '🔄 填充测试数据',
+      type: 'primary',
+      buttonProps: { secondary: true },
+      onClick: fillTestData,
+    },
+    {
+      key: 'clear',
+      label: '🗑️ 清空表单',
+      buttonProps: { secondary: true },
+      disabled: !hasFormFields.value,
+      onClick: clearFormData,
+    },
+    {
+      key: 'validate',
+      label: '✅ 验证表单',
+      type: 'success',
+      buttonProps: { secondary: true },
+      disabled: !hasFormFields.value,
+      onClick: validateForm,
+    },
+    {
+      key: 'submit',
+      label: '🚀 提交表单',
+      type: 'primary',
+      loading: submitLoading.value,
+      disabled: !hasFormFields.value || !hasFormData.value,
+      onClick: submitForm,
+    },
+    {
+      key: 'export',
+      label: '📤 导出数据',
+      buttonProps: { secondary: true },
+      disabled: !hasFormFields.value,
+      onClick: exportFormData,
+    },
+  ])
 
   // 提交配置
   const { loading: submitLoading, createSubmit } = useFormSubmit()

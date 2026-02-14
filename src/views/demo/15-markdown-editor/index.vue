@@ -33,22 +33,10 @@
           class="demo-card"
         >
           <template #header-extra>
-            <NSpace>
-              <NButton
-                @click="insertTemplateContent"
-                type="primary"
-                size="small"
-              >
-                插入模板
-              </NButton>
-              <NButton
-                @click="clearContent"
-                type="warning"
-                size="small"
-              >
-                清空内容
-              </NButton>
-            </NSpace>
+            <C_ActionBar
+              :actions="basicHeaderActions"
+              :config="{ size: 'small' }"
+            />
           </template>
 
           <C_Markdown
@@ -201,23 +189,10 @@
             </NFormItem>
 
             <NFormItem>
-              <NSpace>
-                <NButton
-                  type="primary"
-                  @click="submitForm"
-                  :loading="submitting"
-                >
-                  发布文章
-                </NButton>
-                <NButton
-                  @click="saveAsDraft"
-                  :loading="savingDraft"
-                >
-                  保存草稿
-                </NButton>
-                <NButton @click="previewArticle"> 预览文章 </NButton>
-                <NButton @click="resetForm"> 重置表单 </NButton>
-              </NSpace>
+              <C_ActionBar
+                :actions="formActions"
+                :config="{ gap: 12 }"
+              />
             </NFormItem>
           </NForm>
         </NCard>
@@ -346,32 +321,7 @@
             title="模拟数据源"
             class="demo-card"
           >
-            <NSpace>
-              <NButton
-                @click="loadArticleData(1)"
-                type="primary"
-              >
-                加载文章 1
-              </NButton>
-              <NButton
-                @click="loadArticleData(2)"
-                type="primary"
-              >
-                加载文章 2
-              </NButton>
-              <NButton
-                @click="loadArticleData(3)"
-                type="primary"
-              >
-                加载文章 3
-              </NButton>
-              <NButton
-                @click="clearEchoContent"
-                type="warning"
-              >
-                清空内容
-              </NButton>
-            </NSpace>
+            <C_ActionBar :actions="echoActions" />
           </NCard>
 
           <NCard
@@ -469,6 +419,7 @@
 
 <script setup lang="ts">
   // 导入数据和类型
+  import type { ActionItem } from '@/types/modules/action-bar'
   import {
     type ArticleData,
     type InsertImageFunction,
@@ -501,6 +452,81 @@
   const submitting = ref(false)
   const savingDraft = ref(false)
   const formWordCount = ref(0)
+
+  // 表单操作按钮配置
+  const formActions = computed<ActionItem[]>(() => [
+    {
+      key: 'submit',
+      label: '发布文章',
+      icon: 'mdi:send',
+      type: 'primary',
+      loading: submitting.value,
+      onClick: submitForm,
+    },
+    {
+      key: 'draft',
+      label: '保存草稿',
+      icon: 'mdi:content-save-outline',
+      loading: savingDraft.value,
+      onClick: saveAsDraft,
+    },
+    {
+      key: 'preview',
+      label: '预览文章',
+      icon: 'mdi:eye-outline',
+      onClick: previewArticle,
+    },
+    {
+      key: 'reset',
+      label: '重置表单',
+      icon: 'mdi:lock-reset',
+      onClick: resetForm,
+    },
+  ])
+
+  // 基础编辑器 header-extra 操作按钮
+  const basicHeaderActions = computed<ActionItem[]>(() => [
+    {
+      key: 'insert-template',
+      label: '插入模板',
+      type: 'primary',
+      onClick: insertTemplateContent,
+    },
+    {
+      key: 'clear',
+      label: '清空内容',
+      type: 'warning',
+      onClick: clearContent,
+    },
+  ])
+
+  // 数据回显操作按钮
+  const echoActions = computed<ActionItem[]>(() => [
+    {
+      key: 'load-article-1',
+      label: '加载文章 1',
+      type: 'primary',
+      onClick: () => loadArticleData(1),
+    },
+    {
+      key: 'load-article-2',
+      label: '加载文章 2',
+      type: 'primary',
+      onClick: () => loadArticleData(2),
+    },
+    {
+      key: 'load-article-3',
+      label: '加载文章 3',
+      type: 'primary',
+      onClick: () => loadArticleData(3),
+    },
+    {
+      key: 'clear-echo',
+      label: '清空内容',
+      type: 'warning',
+      onClick: clearEchoContent,
+    },
+  ])
 
   const articleForm = reactive({
     title: '',

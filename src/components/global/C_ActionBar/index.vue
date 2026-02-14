@@ -13,6 +13,7 @@
     class="c-action-bar"
     :class="{
       'is-compact': finalConfig.compact,
+      'is-inline': finalConfig.inline,
       'is-wrap': finalConfig.wrap,
       [`is-align-${finalConfig.align}`]: true,
       'has-only-left':
@@ -29,6 +30,7 @@
     <div
       v-if="leftButtonList.length > 0"
       class="actions-group actions-left"
+      :style="{ gap: `${finalConfig.gap}px` }"
     >
       <template
         v-for="(action, index) in leftButtonList"
@@ -63,6 +65,7 @@
     <div
       v-if="rightButtonList.length > 0"
       class="actions-group actions-right"
+      :style="{ gap: `${finalConfig.gap}px` }"
     >
       <template
         v-for="(action, index) in rightButtonList"
@@ -88,7 +91,14 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, unref, h, defineComponent, type PropType } from 'vue'
+  import {
+    computed,
+    unref,
+    h,
+    defineComponent,
+    withDirectives,
+    type PropType,
+  } from 'vue'
   import type {
     ActionItem,
     ActionDropdownItem,
@@ -110,13 +120,14 @@
 
   // ================= 配置合并 =================
   const defaultConfig: Required<ActionBarConfig> = {
-    align: 'space-between',
+    align: 'left',
     size: 'medium',
-    gap: 12,
+    gap: 8,
     wrap: false,
     showDivider: false,
     dividerType: 'vertical',
     compact: false,
+    inline: true,
   }
 
   const finalConfig = computed<Required<ActionBarConfig>>(() => ({
@@ -272,23 +283,52 @@
           }
         )
 
+        // 应用自定义指令
+        const vnode =
+          action.value.directives && action.value.directives.length > 0
+            ? withDirectives(button, action.value.directives as any)
+            : button
+
         // 如果有 tooltip，包装 NTooltip
         if (action.value.tooltip) {
           return h(
             NTooltip,
             { placement: 'top' },
             {
-              trigger: () => button,
+              trigger: () => vnode,
               default: () => action.value.tooltip,
             }
           )
         }
 
-        return button
+        return vnode
       }
 
       // 渲染带下拉菜单的按钮
       const renderDropdownButton = () => {
+        const button = h(
+          NButton,
+          {
+            type: action.value.type || 'default',
+            size: action.value.size || finalConfig.value.size,
+            loading: isActionLoading(action.value),
+            disabled: isActionDisabled(action.value),
+            ...action.value.buttonProps,
+          },
+          {
+            default: () => action.value.label,
+            icon: action.value.icon
+              ? () => h(C_Icon, { name: action.value.icon, size: 16 })
+              : undefined,
+          }
+        )
+
+        // 应用自定义指令
+        const vnode =
+          action.value.directives && action.value.directives.length > 0
+            ? withDirectives(button, action.value.directives as any)
+            : button
+
         return h(
           NDropdown,
           {
@@ -296,23 +336,7 @@
             onSelect: handleDropdownSelect,
           },
           {
-            default: () =>
-              h(
-                NButton,
-                {
-                  type: action.value.type || 'default',
-                  size: action.value.size || finalConfig.value.size,
-                  loading: isActionLoading(action.value),
-                  disabled: isActionDisabled(action.value),
-                  ...action.value.buttonProps,
-                },
-                {
-                  default: () => action.value.label,
-                  icon: action.value.icon
-                    ? () => h(C_Icon, { name: action.value.icon, size: 16 })
-                    : undefined,
-                }
-              ),
+            default: () => vnode,
           }
         )
       }

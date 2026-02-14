@@ -6,14 +6,7 @@
       <template #header>
         <div class="flex justify-between items-center">
           <h3 class="text-lg font-semibold">员工信息管理（例）</h3>
-          <NSpace>
-            <NButton @click="resetData">重置数据</NButton>
-            <NButton
-              type="primary"
-              @click="addEmployee"
-              >添加员工</NButton
-            >
-          </NSpace>
+          <C_ActionBar :actions="headerActions" />
         </div>
       </template>
 
@@ -107,6 +100,12 @@
   import { useTableCrud } from '@robot-admin/request-core'
 
   const message = useMessage()
+
+  /** 表头操作按钮 */
+  const headerActions = computed(() => [
+    { label: '重置数据', onClick: resetData },
+    { label: '添加员工', type: 'primary' as const, onClick: addEmployee },
+  ])
 
   const tableRef = ref()
   const tableContainer = ref<HTMLElement>()

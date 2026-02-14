@@ -155,20 +155,10 @@
         <div class="control-row">
           <span class="control-label">标记管理:</span>
           <div class="control-content">
-            <NButton
-              @click="addRandomMarker"
-              type="default"
-              size="small"
-            >
-              添加标记
-            </NButton>
-            <NButton
-              @click="clearMarkers"
-              type="warning"
-              size="small"
-            >
-              清除标记
-            </NButton>
+            <C_ActionBar
+              :actions="markerActions"
+              :config="{ size: 'small' }"
+            />
           </div>
         </div>
       </div>
@@ -249,12 +239,13 @@
   } from './data'
   import type { MapMarker } from '@/components/global/C_Map/data'
 
-  // message 是自动导入的
-  declare const message: {
-    error: (msg: string) => void
-    info: (msg: string) => void
-    success: (msg: string) => void
-  }
+  const message = useMessage()
+
+  /** 标记管理按钮 */
+  const markerActions = computed(() => [
+    { label: '添加标记', onClick: addRandomMarker },
+    { label: '清除标记', type: 'warning' as const, onClick: clearMarkers },
+  ])
 
   // 状态管理
   const mapType = ref<MapType>('osm')

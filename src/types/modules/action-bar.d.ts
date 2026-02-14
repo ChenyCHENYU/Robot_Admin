@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { Ref, ComputedRef } from 'vue'
+import type { Ref, ComputedRef, Directive } from 'vue'
 import type { ButtonProps } from 'naive-ui'
 
 /** 按钮类型 */
@@ -75,6 +75,12 @@ export interface ActionItem {
   onClick?: () => void | Promise<void>
   /** Naive UI Button 原生属性 */
   buttonProps?: Partial<ButtonProps>
+  /** 自定义指令（如 v-debounce、v-copy 等） */
+  directives?: Array<
+    | [Directive, any?]
+    | [Directive, any, string?]
+    | [Directive, any, string?, Record<string, boolean>?]
+  >
 }
 
 /** 工具栏配置 */
@@ -93,6 +99,8 @@ export interface ActionBarConfig {
   dividerType?: 'vertical' | 'horizontal'
   /** 是否紧凑模式（减少内外边距） */
   compact?: boolean
+  /** 是否内联模式（去掉容器装饰，适合嵌入其他容器组件内部） */
+  inline?: boolean
 }
 
 /** 组件 Props */

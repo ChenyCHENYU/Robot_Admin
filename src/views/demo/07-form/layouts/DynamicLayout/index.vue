@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-10 00:48:50
  * @FilePath: \Robot_Admin\src\views\demo\07-form-module\form\layouts\DynamicLayout\index.vue
  * @Description: 动态组件 - 演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -32,41 +32,10 @@
         >
           <!-- 自定义操作按钮 -->
           <template #action="{ validate, reset }">
-            <div class="form-actions">
-              <NSpace justify="center">
-                <NButton
-                  :type="FORM_ACTIONS.submit.type"
-                  :size="FORM_ACTIONS.submit.size"
-                  :loading="submitLoading"
-                  @click="submitWithValidation(validate)"
-                >
-                  <template #icon>
-                    <div :class="FORM_ACTIONS.submit.icon"></div>
-                  </template>
-                  {{ FORM_ACTIONS.submit.getText(submitLoading) }}
-                </NButton>
-
-                <NButton
-                  :size="FORM_ACTIONS.reset.size"
-                  @click="reset"
-                >
-                  <template #icon>
-                    <div :class="FORM_ACTIONS.reset.icon"></div>
-                  </template>
-                  {{ FORM_ACTIONS.reset.text }}
-                </NButton>
-
-                <NButton
-                  :size="FORM_ACTIONS.preview.size"
-                  @click="previewData"
-                >
-                  <template #icon>
-                    <div :class="FORM_ACTIONS.preview.icon"></div>
-                  </template>
-                  {{ FORM_ACTIONS.preview.text }}
-                </NButton>
-              </NSpace>
-            </div>
+            <C_ActionBar
+              :actions="getFormActions(validate, reset)"
+              :config="{ align: 'center', gap: 12 }"
+            />
           </template>
         </C_Form>
       </NCard>
@@ -120,6 +89,7 @@
     DynamicFieldConfig,
     DynamicFormConfig,
   } from '@/types/modules/form'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import {
     useDynamicFormState,
     DYNAMIC_FORM_STATE_KEY,
@@ -180,6 +150,33 @@
   // ================= 计算属性 =================
   const layoutConfig = computed(() => createLayoutConfig(formConfig))
   const { labelPlacement, validateOnChange } = toRefs(props)
+
+  // ================= 表单操作按钮配置 =================
+  const getFormActions = (
+    validate: () => Promise<void>,
+    reset: () => void
+  ): ActionItem[] => [
+    {
+      key: 'reset',
+      label: FORM_ACTIONS.reset.text,
+      icon: FORM_ACTIONS.reset.icon,
+      onClick: reset,
+    },
+    {
+      key: 'submit',
+      label: FORM_ACTIONS.submit.getText(submitLoading.value),
+      icon: FORM_ACTIONS.submit.icon,
+      type: FORM_ACTIONS.submit.type as 'primary',
+      loading: submitLoading.value,
+      onClick: () => submitWithValidation(validate),
+    },
+    {
+      key: 'preview',
+      label: FORM_ACTIONS.preview.text,
+      icon: FORM_ACTIONS.preview.icon,
+      onClick: previewData,
+    },
+  ]
 
   const dynamicConfigSnapshot = computed(() => {
     // 创建字段统计数据

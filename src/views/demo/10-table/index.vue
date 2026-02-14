@@ -241,16 +241,10 @@
       </NForm>
 
       <template #footer>
-        <NSpace justify="end">
-          <NButton @click="showAddModal = false">取消</NButton>
-          <NButton
-            type="primary"
-            @click="handleAddSubmit"
-            :loading="table.loading.value"
-          >
-            保存
-          </NButton>
-        </NSpace>
+        <C_ActionBar
+          :actions="modalActions"
+          :config="{ align: 'right', gap: 12 }"
+        />
       </template>
     </NModal>
   </div>
@@ -258,6 +252,7 @@
 
 <script setup lang="ts">
   import type { EditMode } from '@/types/modules/table'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import { useTableCrud } from '@robot-admin/request-core'
   import { EDIT_MODES, MODE_CONFIG, employeeTableConfig } from './data'
   import { PRESET_RULES } from '@robot-admin/form-validate'
@@ -267,9 +262,25 @@
 
   // ================= UI 状态管理 =================
   const editMode = ref<EditMode>('modal')
-  const showAddModal = ref(false) // 新增模态框显示状态
-  const addFormRef = ref() // 表单引用
-  const addFormData = ref<any>({}) // 表单数据
+  const showAddModal = ref(false)
+  const addFormRef = ref()
+  const addFormData = ref<any>({})
+
+  // ================= 模态框操作按钮 =================
+  const modalActions = computed<ActionItem[]>(() => [
+    {
+      key: 'cancel',
+      label: '取消',
+      onClick: () => (showAddModal.value = false),
+    },
+    {
+      key: 'save',
+      label: '保存',
+      type: 'primary',
+      loading: table.loading.value,
+      onClick: handleAddSubmit,
+    },
+  ])
 
   // ================= 计算属性 =================
   const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])

@@ -75,12 +75,6 @@
       padding: 16px;
       border-radius: 8px;
     }
-
-    .batch-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
   }
 
   // 响应式设计
@@ -97,10 +91,6 @@
 
     .checkbox-grid {
       grid-template-columns: 1fr !important;
-    }
-
-    .batch-actions {
-      flex-direction: column;
     }
   }
 }

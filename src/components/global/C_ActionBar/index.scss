@@ -47,6 +47,15 @@
     margin-bottom: 12px;
   }
 
+    // 内联模式（无容器装饰，适合嵌入其他容器内部）
+    &.is-inline {
+      padding: 0;
+      margin-bottom: 0;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
   // 允许换行
   &.is-wrap {
     flex-wrap: wrap;

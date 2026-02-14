@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-10 00:48:21
  * @FilePath: \Robot_Admin\src\views\demo\07-form-module\form\layouts\StepsLayout\index.vue
  * @Description: 表单步骤布局 - 演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 <template>
   <div class="steps-demo">
@@ -68,35 +68,10 @@
 
     <!-- 操作按钮 -->
     <div class="action-buttons">
-      <NButton
-        type="default"
-        @click="handleSaveDraft"
-      >
-        <template #icon>
-          <div class="i-mdi:content-save" />
-        </template>
-        保存草稿
-      </NButton>
-
-      <NButton
-        type="default"
-        @click="handleLoadDraft"
-      >
-        <template #icon>
-          <div class="i-mdi:folder-open-outline" />
-        </template>
-        加载草稿
-      </NButton>
-
-      <NButton
-        type="default"
-        @click="handleReset"
-      >
-        <template #icon>
-          <div class="i-mdi:lock-reset" />
-        </template>
-        重置表单
-      </NButton>
+      <C_ActionBar
+        :actions="actionButtons"
+        :config="{ gap: 12 }"
+      />
     </div>
   </div>
 </template>
@@ -107,6 +82,7 @@
     FormInstance,
     LabelPlacement,
   } from '@/types/modules/form'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import { getLayoutConfig, getFormOptions } from './data'
 
   // ==================== Props ====================
@@ -141,6 +117,28 @@
   // ================= 表单字段配置 =================
   const formOptions = computed(() => getFormOptions(formData.value))
   const { labelPlacement, validateOnChange } = toRefs(props)
+
+  // ================= 操作按钮配置 =================
+  const actionButtons = computed<ActionItem[]>(() => [
+    {
+      key: 'saveDraft',
+      label: '保存草稿',
+      icon: 'mdi:content-save',
+      onClick: handleSaveDraft,
+    },
+    {
+      key: 'loadDraft',
+      label: '加载草稿',
+      icon: 'mdi:folder-open-outline',
+      onClick: handleLoadDraft,
+    },
+    {
+      key: 'reset',
+      label: '重置表单',
+      icon: 'mdi:lock-reset',
+      onClick: handleReset,
+    },
+  ])
 
   // ================= 事件处理 =================
   const handleStepChange = (stepIndex: number, stepKey: string) => {

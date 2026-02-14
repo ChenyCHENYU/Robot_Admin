@@ -132,26 +132,7 @@
       <!-- 操作按钮 -->
       <div class="example-section">
         <h3>8. 组件操作</h3>
-        <NSpace>
-          <NButton
-            @click="clearAllDates"
-            type="warning"
-          >
-            清空所有日期
-          </NButton>
-          <NButton
-            @click="setDefaultDates"
-            type="primary"
-          >
-            设置默认日期
-          </NButton>
-          <NButton
-            @click="getComponentData"
-            type="info"
-          >
-            获取组件数据
-          </NButton>
-        </NSpace>
+        <C_ActionBar :actions="dateActions" />
       </div>
     </NCard>
 
@@ -254,6 +235,17 @@
     chineseDateResult.value = value
     console.info('中文日期变化:', value)
   }
+
+  /** 日期操作按钮 */
+  const dateActions = computed(() => [
+    { label: '清空所有日期', type: 'warning' as const, onClick: clearAllDates },
+    {
+      label: '设置默认日期',
+      type: 'primary' as const,
+      onClick: setDefaultDates,
+    },
+    { label: '获取组件数据', type: 'info' as const, onClick: getComponentData },
+  ])
 
   /**
    * * @description: 清空所有日期

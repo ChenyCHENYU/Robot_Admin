@@ -303,27 +303,10 @@
                   </div>
 
                   <div class="canvas-toolbar">
-                    <NSpace>
-                      <NButton
-                        size="small"
-                        @click="addShape('circle')"
-                      >
-                        <div class="i-mdi:circle" />
-                        圆形
-                      </NButton>
-                      <NButton
-                        size="small"
-                        @click="addShape('square')"
-                      >
-                        <div class="i-mdi:square" />
-                        方形
-                      </NButton>
-                      <NButton
-                        size="small"
-                        @click="clearCanvas"
-                        >清空</NButton
-                      >
-                    </NSpace>
+                    <C_ActionBar
+                      :actions="canvasActions"
+                      :config="{ size: 'small' }"
+                    />
                   </div>
                 </div>
               </NTabPane>
@@ -403,6 +386,13 @@
     axisOptions,
   } from './data'
   import type { Position } from './drag'
+
+  /** 画布操作按钮 */
+  const canvasActions = computed(() => [
+    { label: '圆形', icon: 'mdi:circle', onClick: () => addShape('circle') },
+    { label: '方形', icon: 'mdi:square', onClick: () => addShape('square') },
+    { label: '清空', onClick: clearCanvas },
+  ])
 
   // 响应式数据
   const activeTab = ref('basic')

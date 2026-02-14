@@ -15,6 +15,7 @@ module.exports = {
         'perf', 'test', 'chore', 'revert', 'build', 'deps',
       ],
     ],
+    'scope-empty': [2, 'never'],  // 强制要求 scope
     'subject-case': [0],
   },
 }

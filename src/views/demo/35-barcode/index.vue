@@ -191,43 +191,17 @@
     </div>
 
     <!-- 操作按钮 -->
-    <div class="action-buttons">
-      <NButton
-        type="primary"
-        class="action-button"
-        @click="exportBarcode"
-      >
-        <template #icon>
-          <C_Icon name="mdi:download" />
-        </template>
-        导出图片
-      </NButton>
-      <NButton
-        type="default"
-        class="action-button"
-        @click="copyBarcodeValue"
-      >
-        <template #icon>
-          <C_Icon name="mdi:content-copy" />
-        </template>
-        复制值
-      </NButton>
-      <NButton
-        type="default"
-        class="action-button"
-        @click="resetConfig"
-      >
-        <template #icon>
-          <C_Icon name="mdi:refresh" />
-        </template>
-        重置配置
-      </NButton>
-    </div>
+    <C_ActionBar
+      :actions="actionButtons"
+      :config="{ align: 'center', gap: 12, wrap: true }"
+      class="action-buttons"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref } from 'vue'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import {
     BARCODE_FORMATS,
     BARCODE_EXAMPLES,
@@ -300,6 +274,29 @@
     selectedColorIndex.value = 0
     message.success('配置已重置')
   }
+
+  // ================= 操作按钮配置 =================
+  const actionButtons: ActionItem[] = [
+    {
+      key: 'export',
+      label: '导出图片',
+      icon: 'mdi:download',
+      type: 'primary',
+      onClick: exportBarcode,
+    },
+    {
+      key: 'copy',
+      label: '复制值',
+      icon: 'mdi:content-copy',
+      onClick: copyBarcodeValue,
+    },
+    {
+      key: 'reset',
+      label: '重置配置',
+      icon: 'mdi:refresh',
+      onClick: resetConfig,
+    },
+  ]
 </script>
 
 <style lang="scss" scoped>

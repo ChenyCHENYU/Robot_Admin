@@ -4,19 +4,10 @@
     <!-- 基础示例 -->
     <NCard title="基础用法">
       <div class="py-3">
-        <NSpace class="mb-4">
-          <NButton
-            @click="demo1.current--"
-            :disabled="demo1.current <= 0"
-            >上一步</NButton
-          >
-          <NButton
-            type="primary"
-            @click="demo1.current++"
-            :disabled="demo1.current >= 4"
-            >下一步</NButton
-          >
-        </NSpace>
+        <C_ActionBar
+          :actions="basicStepActions"
+          class="mb-4"
+        />
 
         <C_Steps
           :steps="basicSteps"
@@ -104,20 +95,10 @@
         <h4 class="font-500 mb-2">{{ registerSteps[demo2.current].title }}</h4>
         <p class="text-14px">{{ registerSteps[demo2.current].detail }}</p>
 
-        <NSpace class="mt-4">
-          <NButton
-            @click="demo2.current--"
-            :disabled="demo2.current <= 0"
-            >上一步</NButton
-          >
-          <NButton
-            type="primary"
-            @click="handleNext"
-            :loading="loading"
-          >
-            {{ demo2.current === registerSteps.length - 1 ? '完成' : '下一步' }}
-          </NButton>
-        </NSpace>
+        <C_ActionBar
+          :actions="registerStepActions"
+          class="mt-4"
+        />
       </div>
     </NCard>
   </div>
@@ -134,6 +115,36 @@
   const demo1 = reactive({ current: 1 })
   const demo2 = reactive({ current: 0 })
   const loading = ref(false)
+
+  /** 基础用法步骤按钮 */
+  const basicStepActions = computed(() => [
+    {
+      label: '上一步',
+      disabled: demo1.current <= 0,
+      onClick: () => demo1.current--,
+    },
+    {
+      label: '下一步',
+      type: 'primary' as const,
+      disabled: demo1.current >= 4,
+      onClick: () => demo1.current++,
+    },
+  ])
+
+  /** 注册流程步骤按钮 */
+  const registerStepActions = computed(() => [
+    {
+      label: '上一步',
+      disabled: demo2.current <= 0,
+      onClick: () => demo2.current--,
+    },
+    {
+      label: demo2.current === registerSteps.length - 1 ? '完成' : '下一步',
+      type: 'primary' as const,
+      loading: loading.value,
+      onClick: handleNext,
+    },
+  ])
 
   // 基础步骤
   const basicSteps: StepItem[] = [

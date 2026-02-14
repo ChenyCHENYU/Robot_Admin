@@ -36,54 +36,10 @@
         size="small"
         class="shadow-md"
       >
-        <NSpace>
-          <NButtonGroup>
-            <NButton
-              @click="tableRef?.expandAll()"
-              type="primary"
-              size="small"
-            >
-              全部展开
-            </NButton>
-            <NButton
-              @click="tableRef?.collapseAll()"
-              size="small"
-            >
-              全部折叠
-            </NButton>
-          </NButtonGroup>
-          <NButtonGroup v-if="config.enableSelection">
-            <NButton
-              @click="tableRef?.selectAll()"
-              type="success"
-              size="small"
-            >
-              父表格全选
-            </NButton>
-            <NButton
-              @click="tableRef?.clearSelection()"
-              size="small"
-            >
-              父表格清空
-            </NButton>
-          </NButtonGroup>
-          <NButton
-            v-if="config.enableSelection || config.enableChildSelection"
-            @click="tableRef?.clearAllSelections()"
-            type="error"
-            size="small"
-          >
-            清空所有选择
-          </NButton>
-          <NButton
-            @click="table.refresh()"
-            type="info"
-            size="small"
-            :loading="table.loading.value"
-          >
-            刷新数据
-          </NButton>
-        </NSpace>
+        <C_ActionBar
+          :actions="toolbarActions"
+          :config="{ size: 'small' }"
+        />
       </NCard>
 
       <!-- 主表格 -->
@@ -122,6 +78,7 @@
   import { type DataTableRowKey, NSpin } from 'naive-ui/es'
   import type { VNodeChild } from 'vue'
   import C_Table from '@/components/global/C_Table/index.vue'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import type {
     DataRecord,
     TableColumn,
@@ -148,6 +105,48 @@
     },
     columns: dataColumns,
   })
+
+  // 工具栏操作按钮
+  const toolbarActions = computed<ActionItem[]>(() => [
+    {
+      key: 'expand-all',
+      label: '全部展开',
+      type: 'primary',
+      onClick: () => tableRef.value?.expandAll(),
+    },
+    {
+      key: 'collapse-all',
+      label: '全部折叠',
+      onClick: () => tableRef.value?.collapseAll(),
+    },
+    {
+      key: 'select-all',
+      label: '父表格全选',
+      type: 'success',
+      show: config.enableSelection,
+      onClick: () => tableRef.value?.selectAll(),
+    },
+    {
+      key: 'clear-selection',
+      label: '父表格清空',
+      show: config.enableSelection,
+      onClick: () => tableRef.value?.clearSelection(),
+    },
+    {
+      key: 'clear-all-selections',
+      label: '清空所有选择',
+      type: 'error',
+      show: config.enableSelection || config.enableChildSelection,
+      onClick: () => tableRef.value?.clearAllSelections(),
+    },
+    {
+      key: 'refresh',
+      label: '刷新数据',
+      type: 'info',
+      loading: table.loading.value,
+      onClick: () => table.refresh(),
+    },
+  ])
 
   // 工具函数
   const getRowKey = (row: DataRecord): DataTableRowKey => (row as TestRecord).id

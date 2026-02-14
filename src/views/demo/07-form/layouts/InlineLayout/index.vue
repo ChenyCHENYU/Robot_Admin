@@ -64,39 +64,10 @@
       @validate-error="handleValidateError"
     >
       <template #action="{ validate, reset }">
-        <div class="flex gap-3 mt-4">
-          <NButton
-            type="primary"
-            :loading="submitLoading"
-            @click="submitForm(validate)"
-          >
-            <template #icon>
-              <div class="i-mdi-magnify"></div>
-            </template>
-            {{ submitLoading ? '搜索中...' : '搜索' }}
-          </NButton>
-
-          <NButton @click="resetForm(reset)">
-            <template #icon>
-              <div class="i-mdi-refresh"></div>
-            </template>
-            重置
-          </NButton>
-
-          <NButton
-            type="info"
-            @click="showAdvanced = !showAdvanced"
-          >
-            <template #icon>
-              <div
-                :class="
-                  showAdvanced ? 'i-mdi-chevron-up' : 'i-mdi-chevron-down'
-                "
-              ></div>
-            </template>
-            {{ showAdvanced ? '收起' : '高级' }}
-          </NButton>
-        </div>
+        <C_ActionBar
+          :actions="getFormActions(validate, reset)"
+          :config="{ gap: 12 }"
+        />
       </template>
     </C_Form>
 
@@ -156,6 +127,7 @@
     FormModel,
     LayoutConfig,
   } from '@/types/modules/form'
+  import type { ActionItem } from '@/types/modules/action-bar'
   import {
     formOptions,
     alignOptions,
@@ -207,6 +179,34 @@
       },
     })
   )
+
+  // ==================== 表单操作按钮配置 ====================
+  const getFormActions = (
+    validate: () => Promise<void>,
+    reset: () => void
+  ): ActionItem[] => [
+    {
+      key: 'search',
+      label: submitLoading.value ? '搜索中...' : '搜索',
+      icon: 'mdi:magnify',
+      type: 'primary',
+      loading: submitLoading.value,
+      onClick: () => submitForm(validate),
+    },
+    {
+      key: 'reset',
+      label: '重置',
+      icon: 'mdi:refresh',
+      onClick: () => resetForm(reset),
+    },
+    {
+      key: 'advanced',
+      label: showAdvanced.value ? '收起' : '高级',
+      icon: showAdvanced.value ? 'mdi:chevron-up' : 'mdi:chevron-down',
+      type: 'info',
+      onClick: () => (showAdvanced.value = !showAdvanced.value),
+    },
+  ]
 
   // ==================== 方法 ====================
   const submitForm = async (validate: () => Promise<void>) => {
