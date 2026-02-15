@@ -324,12 +324,20 @@ export const productionDependencies: ProjectItem[] = [
     url: 'https://driverjs.com/',
   },
   {
-    name: 'FileSaver',
-    bagName: 'file-saver',
-    desc: '客户端文件保存解决方案',
-    version: '^2.0.5',
-    icon: 'https://github.com/eligrey/FileSaver.js/raw/master/demo/logo.png',
-    url: 'https://github.com/eligrey/FileSaver.js',
+    name: 'Robot File Utils',
+    bagName: '@robot-admin/file-utils',
+    desc: '文件处理工具集 - Excel/下载/压缩/CSV/图片/分片',
+    version: '^1.0.0',
+    icon: 'https://robotadmin.cn/favicon.ico',
+    url: 'https://www.npmjs.com/package/@robot-admin/file-utils',
+  },
+  {
+    name: 'Robot Directives',
+    bagName: '@robot-admin/directives',
+    desc: 'Vue3 自定义指令集合',
+    version: '^1.0.0',
+    icon: 'https://robotadmin.cn/favicon.ico',
+    url: 'https://www.npmjs.com/package/@robot-admin/directives',
   },
   {
     name: 'Highlight.js',
@@ -355,22 +363,7 @@ export const productionDependencies: ProjectItem[] = [
     icon: 'https://typicode.github.io/husky/logo.png',
     url: 'https://typicode.github.io/husky/',
   },
-  {
-    name: 'JSZip',
-    bagName: 'jszip',
-    desc: 'JavaScript 创建、读取和编辑 .zip 文件的库',
-    version: '^3.10.1',
-    icon: 'https://stuk.github.io/jszip/documentation/images/jszip-logo.png',
-    url: 'https://stuk.github.io/jszip/',
-  },
-  {
-    name: 'JSZip Utils',
-    bagName: 'jszip-utils',
-    desc: 'JSZip 工具集',
-    version: '^0.1.0',
-    icon: 'https://stuk.github.io/jszip/documentation/images/jszip-logo.png',
-    url: 'https://github.com/Stuk/jszip-utils',
-  },
+
   {
     name: 'Motion V',
     bagName: 'motion-v',
@@ -535,14 +528,7 @@ export const devDependencies: ProjectItem[] = [
     icon: 'https://nodejs.org/static/images/logo.svg',
     url: 'https://nodejs.org/',
   },
-  {
-    name: 'FileSaver Types',
-    bagName: '@types/file-saver',
-    desc: 'FileSaver TypeScript 类型定义',
-    version: '^2.0.7',
-    icon: 'https://www.typescriptlang.org/icons/icon-512x512.png',
-    url: 'https://www.typescriptlang.org/',
-  },
+
   {
     name: 'JSDOM Types',
     bagName: '@types/jsdom',

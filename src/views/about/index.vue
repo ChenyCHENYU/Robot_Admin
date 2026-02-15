@@ -58,7 +58,7 @@
             width="36"
             height="36"
             :src="project.icon"
-            :fallback-src="useImage('notData')"
+            :fallback-src="useImagePath('notData')"
             preview-disabled
           />
         </div>
@@ -122,7 +122,7 @@
               width="40"
               height="40"
               :src="currentItem.icon"
-              :fallback-src="useImage('notData')"
+              :fallback-src="useImagePath('notData')"
               preview-disabled
             />
           </div>
@@ -175,7 +175,7 @@
     type DataTableRowData,
   } from 'naive-ui/es'
 
-  import { useImage } from '@/hooks/useImage'
+  import { useImagePath } from '@/hooks/useImagePath'
   import {
     coreProjects,
     productionDependencies,

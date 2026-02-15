@@ -22,7 +22,7 @@ const buildConfig: BuildOptions = {
         'editor-vendor': ['@kangc/v-md-editor', 'wangeditor', 'highlight.js'],
 
         // Office 文档处理
-        'office-vendor': ['xlsx', 'mammoth', 'file-saver', 'jszip'],
+        'office-vendor': ['xlsx', 'mammoth'],
 
         // 日历组件
         'calendar-vendor': [
