@@ -23,6 +23,7 @@ import '@vue-flow/core/dist/theme-default.css'
 import '@/router/permission'
 import App from './App.vue'
 import router from './router'
+import { setupDirectives } from '@robot-admin/directives' // 👈 直接从包导入
 import {
   setupStore,
   setupNaiveUI,
@@ -30,7 +31,6 @@ import {
   PassiveScrollPlugin,
   setupHighlight,
   setupMarkdown,
-  setupDirectives,
   setupAnalytics,
   setupRequestCore, //  Request Core 插件
   setupLayoutSystem, // 🆕 布局系统插件
