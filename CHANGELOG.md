@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.1...v1.13.2) (2026-02-15)
+
+
+### Miscellaneous Chores
+
+* **deps:** integrate @robot-admin/file-utils package ([69010bf](https://github.com/ChenyCHENYU/Robot_Admin/commit/69010bf5675748aea5db20538dc9f18a2cfceb35))
+
 ## [1.13.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.0...v1.13.1) (2026-02-15)
 
 
