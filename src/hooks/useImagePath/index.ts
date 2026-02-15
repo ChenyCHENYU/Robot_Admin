@@ -3,16 +3,16 @@
  * @Date: 2025-05-29 19:11:35
  * @LastEditors: ChenYu ycyplus@gmail.com
  * @LastEditTime: 2025-06-24 16:39:47
- * @FilePath: \Robot_Admin\src\hooks\useImage\index.ts
- * @Description: 图片引用函数钩子
+ * @FilePath: \Robot_Admin\src\hooks\useImagePath\index.ts
+ * @Description: 图片路径解析函数钩子
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 /**
- * @description:  图片引用处理函数
+ * @description: 图片路径解析处理函数（从 assets/images 目录动态加载本地图片）
  * @param {string} imagePath 处理前的图片路径，带目录或不带
  * @return {*} {string} 处理后图片路径
  */
-export const useImage = (imagePath: string) => {
+export const useImagePath = (imagePath: string) => {
   // 处理路径，支持带或不带扩展名
   const path = imagePath.replace(/\..+$/, '') // 移除扩展名
   const dir = path.includes('/') ? path.split('/')[0] : undefined
@@ -31,13 +31,13 @@ export const useImage = (imagePath: string) => {
     )
 
     if (!matchedPath) {
-      console.error(`[useImage] 未找到图片: ${imagePath}`)
+      console.error(`[useImagePath] 未找到图片: ${imagePath}`)
       return ''
     }
 
     return (modules[matchedPath] as any).default
   } catch (error) {
-    console.error(`[useImage] 加载图片失败: ${imagePath}`, error)
+    console.error(`[useImagePath] 加载图片失败: ${imagePath}`, error)
     return ''
   }
 }
@@ -45,12 +45,12 @@ export const useImage = (imagePath: string) => {
 //? 使用例子
 
 //TAG: 1. 直接使用图片
-// const avatarUrl = useImage('avatar') // 自动查找 assets/images/avatar.png
-// const iconUrl = useImage('icons/home') // 自动查找 assets/images/icons/home.png
+// const avatarUrl = useImagePath('avatar') // 自动查找 assets/images/avatar.png
+// const iconUrl = useImagePath('icons/home') // 自动查找 assets/images/icons/home.png
 
 //TAG: 2. 在模板中使用
 
 // <template>
-//   <img :src="useImage('avatar')" />
-//   <img :src="useImage('nested/folder/image')" />
+//   <img :src="useImagePath('avatar')" />
+//   <img :src="useImagePath('nested/folder/image')" />
 // </template>

@@ -1,6 +1,6 @@
 import { h } from 'vue'
 import type { DataTableColumns } from 'naive-ui/es'
-import type { DownloadApiFunction } from '@/hooks/useDownload'
+import type { DownloadApiFunction } from '@robot-admin/file-utils'
 
 /**
  * * @description 生成Excel兼容的CSV内容
@@ -91,12 +91,12 @@ endobj
 
 xref
 0 6
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000274 00000 n 
-0000000476 00000 n 
+0000000000 65535 f
+0000000009 00000 n
+0000000058 00000 n
+0000000115 00000 n
+0000000274 00000 n
+0000000476 00000 n
 trailer
 <<
 /Size 6

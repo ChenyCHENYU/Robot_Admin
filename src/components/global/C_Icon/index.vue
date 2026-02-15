@@ -108,7 +108,7 @@
 
 <script lang="ts" setup>
   import { Icon } from '@iconify/vue'
-  import { useImage } from '@/hooks/useImage'
+  import { useImagePath } from '@/hooks/useImagePath'
 
   export interface IconProps {
     /** 图标名称/路径/组件实例 */
@@ -286,7 +286,7 @@
     }
 
     // 其他情况都当作本地图片处理
-    return useImage(props.name)
+    return useImagePath(props.name)
   })
 
   // 验证规则映射

@@ -145,7 +145,7 @@
     FileType,
     getSupportedFileTypes,
     type DownloadConfig,
-  } from '@/hooks/useDownload'
+  } from '@robot-admin/file-utils'
   import {
     createMockApi,
     batchFiles,

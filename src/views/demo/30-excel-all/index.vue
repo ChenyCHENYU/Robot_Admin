@@ -433,7 +433,7 @@
     type DataTableColumns,
     type SelectOption,
   } from 'naive-ui/es'
-  import { useExcel, type ExcelTemplate } from '@/hooks/useExcel'
+  import { useExcel, type ExcelTemplate } from '@robot-admin/file-utils'
   import { PREVIEW_ROWS, sampleData, historyColumns } from './data'
   import './index.scss'
 

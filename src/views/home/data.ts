@@ -75,7 +75,7 @@ export const coreModules = [
     name: '文件管理',
     icon: '📁',
     desc: '支持多种文件格式上传、预览和管理',
-    tech: 'File-saver • JSZip',
+    tech: '@robot-admin/file-utils',
   },
   {
     name: '富文本编辑',
@@ -459,12 +459,11 @@ export const projectStructure: TreeNode = {
           children: [
             { name: 'useCopy/', type: 'folder', icon: '📁', desc: '复制功能' },
             {
-              name: 'useDownload/',
+              name: 'useImagePath/',
               type: 'folder',
               icon: '📁',
-              desc: '下载功能',
+              desc: '图片资源路径',
             },
-            { name: 'useJsZip/', type: 'folder', icon: '📁', desc: '压缩功能' },
           ],
         },
         { name: 'router/', type: 'folder', icon: '📁', desc: '路由配置' },

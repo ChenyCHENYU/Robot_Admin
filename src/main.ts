@@ -34,6 +34,7 @@ import {
   setupAnalytics,
   setupRequestCore, //  Request Core 插件
   setupLayoutSystem, // 🆕 布局系统插件
+  setupFileUtils, // 🆕 文件处理工具包
 } from '@/plugins'
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
@@ -66,6 +67,7 @@ async function bootstrap() {
   setupHighlight(app)
   setupMarkdown(app)
   setupDirectives(app)
+  setupFileUtils() // 初始化 file-utils（注入 naive-ui 消息系统）
   setupAnalytics(app)
 
   // 第三阶段：等待路由就绪

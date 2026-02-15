@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-23 14:16:39
  * @FilePath: \Robot_Admin\src\views\demo\17-export-zip\index.vue
  * @Description: 导出zip 场景示例
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -253,7 +253,7 @@
     type ReportConfig,
     type MediaConfig,
     type TemplateConfig,
-  } from '@/hooks/useJsZip'
+  } from '@robot-admin/file-utils'
   import type { UploadFileInfo } from 'naive-ui/es/upload'
   import {
     type FrameworkType,
