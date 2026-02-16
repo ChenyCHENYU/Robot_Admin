@@ -72,6 +72,7 @@
     type MegaFormParams,
     type SearchResult,
   } from './data'
+  import type { SearchFormParams } from '@/types/modules/search'
 
   const message = useMessage()
   const searchResults = ref<SearchResult[]>([])
@@ -105,10 +106,13 @@
    * ? @param {BasicFormParams} params 基础表单搜索参数
    * ! @return {void} 无返回值，执行搜索并更新结果
    */
-  function handleBasicSearch(params: BasicFormParams) {
+  function handleBasicSearch(params: SearchFormParams) {
     console.log('基础搜索参数:', params)
     message.success('搜索成功！')
-    searchResults.value = generateMockResults('basic', params)
+    searchResults.value = generateMockResults(
+      'basic',
+      params as BasicFormParams
+    )
   }
 
   /**
@@ -126,10 +130,13 @@
    * ? @param {AdvancedFormParams} params 高级表单搜索参数
    * ! @return {void} 无返回值，执行搜索并更新结果
    */
-  function handleAdvancedSearch(params: AdvancedFormParams) {
+  function handleAdvancedSearch(params: SearchFormParams) {
     console.log('高级搜索参数:', params)
     message.success('高级搜索成功！')
-    searchResults.value = generateMockResults('advanced', params)
+    searchResults.value = generateMockResults(
+      'advanced',
+      params as AdvancedFormParams
+    )
   }
 
   /**
@@ -147,10 +154,10 @@
    * ? @param {MegaFormParams} params 超多字段表单搜索参数
    * ! @return {void} 无返回值，执行搜索并更新结果
    */
-  function handleMegaSearch(params: MegaFormParams) {
+  function handleMegaSearch(params: SearchFormParams) {
     console.log('超多字段搜索参数:', params)
     message.success('超多字段搜索成功！')
-    searchResults.value = generateMockResults('mega', params)
+    searchResults.value = generateMockResults('mega', params as MegaFormParams)
   }
 
   /**
@@ -168,9 +175,7 @@
    * ? @param {BasicFormParams | AdvancedFormParams | MegaFormParams} params 变化的表单参数
    * ! @return {void} 无返回值，仅用于日志记录和调试
    */
-  function handleParamsChange(
-    params: BasicFormParams | AdvancedFormParams | MegaFormParams
-  ) {
+  function handleParamsChange(params: SearchFormParams) {
     console.log('参数变化:', params)
   }
 </script>

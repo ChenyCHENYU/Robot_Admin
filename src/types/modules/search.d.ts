@@ -4,6 +4,9 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
+/** 搜索字段支持的控件类型 */
+export type SearchFieldType = 'input' | 'select' | 'date-range' | 'spacer'
+
 /**
  * 搜索选项兼容性类型
  * @description 兼容 labelDefault 的选项类型，支持向后兼容
@@ -17,11 +20,10 @@ export interface SearchOptionItem {
 }
 
 /**
- * 搜索组件兼容性类型
- * @description 为了解决 data.ts 中的类型错误而添加的兼容性类型
+ * 搜索表单字段配置
  */
 export interface SearchFormItem {
-  type: 'input' | 'select' | 'date-range'
+  type: SearchFieldType
   prop: string
   placeholder?: string
   list?: SearchOptionItem[]
@@ -38,4 +40,16 @@ export interface SearchFormParams {
   pageNum?: number
   pageSize?: number
   [key: string]: any
+}
+
+/**
+ * C_FormSearch 统一配置对象
+ */
+export interface SearchConfig {
+  /** 超过此数量的字段默认折叠，默认 7 */
+  foldThreshold?: number
+  /** 历史记录最大条数，默认 5 */
+  historyMaxItems?: number
+  /** 搜索前是否要求至少一个有效值，默认 true */
+  requireValue?: boolean
 }
