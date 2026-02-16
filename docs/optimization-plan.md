@@ -11,6 +11,7 @@
 | **C_Table**      | ~1200      | ~300       | `useTableConfig` · `useTableManager` · `useTableColumns` · `useTableActions` · `usePagination` · `useRowEdit` · `useCellEdit` · `useModalEdit` · `useDynamicRow` · `useTableExpand` | Phase 0 |
 | **C_Form**       | ~711       | ~308       | `useFormConfig` · `useFormState` · `useFormRenderer`                                                                                                                                | Phase 0 |
 | **C_FormSearch** | 428        | ~230       | `useSearchHistory` · `useSearchState`                                                                                                                                               | Phase 1 |
+| **C_Draggable**  | 554        | ~170       | `useDraggableLayout`                                                                                                                                                                | Phase 5 |
 
 ---
 
@@ -45,14 +46,14 @@
 | 优化方向 | ① 提取 `useWorkflowNodes` composable（节点 CRUD + provide/inject）<br>② 提取 `useWorkflowValidation` composable（流程校验逻辑） |
 | 目标     | index.vue → ~300 行 + 2 个 composable                                                                                           |
 
-#### 4. C_Draggable
+#### ~~4. C_Draggable~~ ✅ 已完成
 
-| 项目     | 详情                                                                                |
-| -------- | ----------------------------------------------------------------------------------- |
-| 当前行数 | **553 行**（index.vue）+ 202 行（data.ts）+ 110 行（index.scss）                    |
-| 核心问题 | 28 个 Props 内联定义（含 6 个 interface/type）；布局样式计算逻辑内联                |
-| 优化方向 | ① 类型移到 `types/modules/draggable.d.ts`<br>② 提取 `useDraggableLayout` composable |
-| 目标     | index.vue → ~280 行                                                                 |
+| 项目   | 详情                                                                                |
+| ------ | ----------------------------------------------------------------------------------- |
+| 优化前 | **554 行**（index.vue）+ 313 行（index.scss）                                       |
+| 优化后 | **~170 行**（index.vue）+ 257 行（useDraggableLayout.ts）+ 110 行（draggable.d.ts） |
+| 提取   | ① 类型迁移 `types/modules/draggable.d.ts`<br>② `useDraggableLayout` composable      |
+| 瘦身率 | **-69%**（554 → 170 行）                                                            |
 
 ---
 
@@ -132,6 +133,6 @@
 | Phase 2     | C_FilePreview                             | 2 天       | ✅ 已完成 |
 | Phase 3     | C_AntV (ER/UML/BPMN)                      | 2-3 天     | ✅ 已完成 |
 | Phase 4     | C_WorkFlow                                | 1-2 天     | ✅ 已完成 |
-| **Phase 5** | **C_Draggable + C_Tree + C_GlobalSearch** | 2 天       | ⏳ 待开始 |
+| **Phase 5** | **C_Draggable + C_Tree + C_GlobalSearch** | 2 天       | 🔄 进行中 |
 | Phase 6     | P1 剩余组件批量清理                       | 1-2 天     | ⏳ 待开始 |
 | Phase 7     | P2 小改 + console 全局清理                | 1 天       | ⏳ 待开始 |
