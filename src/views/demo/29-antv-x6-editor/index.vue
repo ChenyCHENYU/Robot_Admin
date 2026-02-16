@@ -46,9 +46,9 @@
       style="margin-top: 16px"
     >
       <C_Code
-        :code="JSON.stringify(currentData, null, 2)"
+        :code="JSON.stringify(graphData ?? currentData, null, 2)"
         language="json"
-        title="当前图表数据"
+        title="当前图表数据（实时）"
         :show-header="true"
         :show-line-numbers="true"
         :word-wrap="false"
@@ -68,8 +68,6 @@
 
   // 根据类型提供初始数据 - 精简修复：只改返回类型和default
   const currentData = computed((): DiagramData | undefined => {
-    console.log('计算数据，当前类型:', currentType.value)
-
     switch (currentType.value) {
       case 'er':
         return {
@@ -190,24 +188,13 @@
     }
   })
 
-  // 清理后的handleReady - 移除所有测试代码
-  const handleReady = (graph: any) => {
-    console.log('图表准备就绪:', graph)
-    console.log('当前数据:', currentData.value)
-    console.log('图表容器尺寸:', graph.options.width, 'x', graph.options.height)
-
-    // 不再添加任何测试代码，让BPMN组件自己处理
+  const handleReady = () => {
+    // graph ready
   }
 
   const handleDataChange = (data: DiagramData) => {
     graphData.value = data
-    console.log('数据变化:', data)
   }
-
-  // 监听类型切换
-  watch(currentType, newType => {
-    console.log('切换到:', newType)
-  })
 </script>
 
 <style scoped>

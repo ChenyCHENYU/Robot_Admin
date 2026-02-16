@@ -40,7 +40,7 @@
         </NButton>
         <NDropdown
           :options="exportOptions"
-          @select="handleExport"
+          @select="(key: string) => handleExport(key, getCurrentData)"
         >
           <NButton size="small">
             <template #icon><div class="i-mdi:export"></div></template>
@@ -70,157 +70,29 @@
     ></div>
 
     <!-- 表编辑器 -->
-    <NDrawer
-      v-model:show="showEditor"
-      width="600"
-      placement="right"
-    >
-      <NDrawerContent
-        :title="`编辑表: ${editingTable?.name || '新表'}`"
-        closable
-      >
-        <div class="table-editor">
-          <NForm
-            :model="editingTable"
-            label-placement="top"
-            v-if="editingTable"
-          >
-            <NFormItem label="表名">
-              <NInput
-                v-model:value="editingTable.name"
-                placeholder="请输入表名"
-              />
-            </NFormItem>
-            <NFormItem label="表注释">
-              <NInput
-                v-model:value="editingTable.comment"
-                placeholder="表注释"
-              />
-            </NFormItem>
-
-            <NDivider>字段列表</NDivider>
-
-            <div class="fields-container">
-              <NCard
-                v-for="(field, index) in editingTable.fields"
-                :key="index"
-                size="small"
-                class="field-card"
-              >
-                <template #header>
-                  <div class="field-header">
-                    <span>#{{ index + 1 }} {{ field.name || '新字段' }}</span>
-                    <NButton
-                      @click="removeField(index)"
-                      size="tiny"
-                      type="error"
-                      quaternary
-                      :disabled="editingTable.fields.length <= 1"
-                    >
-                      删除
-                    </NButton>
-                  </div>
-                </template>
-
-                <NGrid
-                  :cols="2"
-                  :x-gap="12"
-                >
-                  <NGi>
-                    <NFormItem
-                      label="字段名"
-                      size="small"
-                    >
-                      <NInput
-                        v-model:value="field.name"
-                        placeholder="字段名"
-                        size="small"
-                      />
-                    </NFormItem>
-                  </NGi>
-                  <NGi>
-                    <NFormItem
-                      label="类型"
-                      size="small"
-                    >
-                      <NSelect
-                        v-model:value="field.type"
-                        :options="fieldTypes"
-                        size="small"
-                        filterable
-                        placeholder="选择类型"
-                      />
-                    </NFormItem>
-                  </NGi>
-                </NGrid>
-
-                <NSpace style="margin-top: 12px">
-                  <NCheckbox
-                    v-model:checked="field.isPrimaryKey"
-                    @update:checked="handlePrimaryKey(field, $event)"
-                  >
-                    主键
-                  </NCheckbox>
-                  <NCheckbox v-model:checked="field.isRequired">必填</NCheckbox>
-                  <NCheckbox v-model:checked="field.isForeignKey"
-                    >外键</NCheckbox
-                  >
-                </NSpace>
-
-                <NFormItem
-                  label="注释"
-                  size="small"
-                  style="margin-top: 12px"
-                >
-                  <NInput
-                    v-model:value="field.comment"
-                    placeholder="字段注释"
-                    size="small"
-                  />
-                </NFormItem>
-              </NCard>
-
-              <NButton
-                @click="addField"
-                dashed
-                block
-                type="primary"
-                ghost
-                style="margin-top: 16px"
-              >
-                <template #icon><div class="i-mdi:plus"></div></template>
-                添加字段
-              </NButton>
-            </div>
-          </NForm>
-        </div>
-
-        <template #footer>
-          <NSpace justify="end">
-            <NButton @click="showEditor = false">取消</NButton>
-            <NButton
-              @click="saveTable"
-              type="primary"
-              >保存</NButton
-            >
-          </NSpace>
-        </template>
-      </NDrawerContent>
-    </NDrawer>
+    <ERTableEditor
+      :show="showEditor"
+      v-model:editing-table="editingTable"
+      @update:show="showEditor = $event"
+      @save="saveTable"
+      @add-field="addField"
+      @remove-field="removeField"
+      @handle-primary-key="handlePrimaryKey"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
   import { Node, Graph, Cell, Edge } from '@antv/x6'
   import { useGraphBase } from '@/composables/AntV/useGraphBase'
-  import { exportJSON } from '../../utils/exportUtils'
+  import { useGraphExport } from '@/composables/AntV/useGraphExport'
   import type {
     ERTable,
     ERField,
     ERDiagramData,
     ERRelation,
   } from '@/types/antv'
-  import { fieldTypes, exportOptions } from './data'
+  import ERTableEditor from './components/ERTableEditor.vue'
 
   interface Props {
     data?: ERDiagramData
@@ -228,78 +100,55 @@
     readonly?: boolean
   }
 
-  interface Emits {
-    (e: 'ready', graph: Graph): void
-    (e: 'data-change', data: ERDiagramData): void
-  }
-
   const props = withDefaults(defineProps<Props>(), {
     showToolbar: true,
     readonly: false,
   })
 
-  const emit = defineEmits<Emits>()
+  const emit = defineEmits<{
+    (e: 'ready', graph: Graph): void
+    (e: 'data-change', data: ERDiagramData): void
+  }>()
 
+  // ==================== Composables ====================
   const containerRef = ref<HTMLDivElement>()
   const { graph, initGraph, centerContent, zoomToFit } =
     useGraphBase(containerRef)
+  const { exportOptions, handleExport } = useGraphExport(graph, 'er-diagram')
+
+  // ==================== 编辑器状态 ====================
   const showEditor = ref(false)
   const editingTable = ref<ERTable>()
   const deleteMode = ref(false)
 
-  // 切换删除模式
-  const toggleDeleteMode = () => {
-    deleteMode.value = !deleteMode.value
-    if (!deleteMode.value && graph.value) {
-      // 退出删除模式时，恢复所有连接线样式
-      graph.value
-        .getEdges()
-        .forEach(
-          (edge: { attr: (arg0: string, arg1: string | number) => void }) => {
-            edge.attr('line/stroke', '#A2B1C3')
-            edge.attr('line/strokeWidth', 2)
-          }
-        )
-    }
-  }
+  // ==================== 工具函数 ====================
+  const truncateText = (text: string, maxLength: number) =>
+    text.length > maxLength ? text.substring(0, maxLength - 1) + '..' : text
 
-  // 文本截断工具函数
-  const truncateText = (text: string, maxLength: number) => {
-    return text.length > maxLength
-      ? text.substring(0, maxLength - 1) + '..'
-      : text
-  }
-
-  // 创建端口配置
-  const createPortConfig = (table: ERTable) => {
-    return (
-      table.fields?.map(field => {
-        const displayName = field.isPrimaryKey
-          ? `🔑 ${field.name}`
-          : field.isRequired
-            ? `* ${field.name}`
-            : field.name
-
-        return {
-          id: `${table.id}_${field.name}`,
-          group: 'list',
-          attrs: {
-            portNameLabel: {
-              text: truncateText(displayName, 12),
-              title: displayName,
-            },
-            portTypeLabel: {
-              text: truncateText(field.type, 10),
-              title: field.type,
-            },
-            portBody: { fill: field.isPrimaryKey ? '#FFF7E6' : '#EFF4FF' },
+  const createPortConfig = (table: ERTable) =>
+    table.fields?.map(field => {
+      const displayName = field.isPrimaryKey
+        ? `🔑 ${field.name}`
+        : field.isRequired
+          ? `* ${field.name}`
+          : field.name
+      return {
+        id: `${table.id}_${field.name}`,
+        group: 'list',
+        attrs: {
+          portNameLabel: {
+            text: truncateText(displayName, 12),
+            title: displayName,
           },
-        }
-      }) || []
-    )
-  }
+          portTypeLabel: {
+            text: truncateText(field.type, 10),
+            title: field.type,
+          },
+          portBody: { fill: field.isPrimaryKey ? '#FFF7E6' : '#EFF4FF' },
+        },
+      }
+    }) || []
 
-  // 创建节点配置
   const createNodeConfig = (table: ERTable) => ({
     id: table.id,
     shape: 'er-rect',
@@ -320,17 +169,17 @@
     ports: createPortConfig(table),
   })
 
+  // ==================== 节点注册 ====================
   const registerNodes = () => {
     if (!graph.value) return
 
     Graph.registerPortLayout(
       'erPortPosition',
-      portsPositionArgs => {
-        return portsPositionArgs.map((_, index) => ({
+      portsPositionArgs =>
+        portsPositionArgs.map((_, index) => ({
           position: { x: 0, y: (index + 1) * 24 },
           angle: 0,
-        }))
-      },
+        })),
       true
     )
 
@@ -389,7 +238,20 @@
     )
   }
 
-  // 创建表节点
+  // ==================== 删除模式 ====================
+  const toggleDeleteMode = () => {
+    deleteMode.value = !deleteMode.value
+    if (!deleteMode.value) resetEdgeStyles()
+  }
+
+  const resetEdgeStyles = () => {
+    graph.value?.getEdges().forEach(edge => {
+      edge.attr('line/stroke', '#A2B1C3')
+      edge.attr('line/strokeWidth', 2)
+    })
+  }
+
+  // ==================== 表 CRUD ====================
   const createTableNode = (table: ERTable) => {
     if (!graph.value) return
     const node = graph.value.createNode(createNodeConfig(table))
@@ -397,7 +259,25 @@
     return node
   }
 
-  // 添加表
+  const findPosition = () => {
+    const nodes = graph.value?.getNodes() || []
+    const spacing = 250
+    for (let row = 0; row < 10; row++) {
+      for (let col = 0; col < 3; col++) {
+        const pos = { x: col * spacing + 50, y: row * spacing + 50 }
+        const hasOverlap = nodes.some(node => {
+          const nodePos = node.getPosition()
+          return (
+            Math.abs(nodePos.x - pos.x) < spacing * 0.8 &&
+            Math.abs(nodePos.y - pos.y) < spacing * 0.8
+          )
+        })
+        if (!hasOverlap) return pos
+      }
+    }
+    return { x: 50, y: 50 }
+  }
+
   const addTable = () => {
     const newTable: ERTable = {
       id: `table_${Date.now()}`,
@@ -423,34 +303,11 @@
       ],
       position: findPosition(),
     }
-
     createTableNode(newTable)
     editTable(newTable)
     emitDataChange()
   }
 
-  // 找到合适位置
-  const findPosition = () => {
-    const nodes = graph.value?.getNodes() || []
-    const spacing = 250
-
-    for (let row = 0; row < 10; row++) {
-      for (let col = 0; col < 3; col++) {
-        const pos = { x: col * spacing + 50, y: row * spacing + 50 }
-        const hasOverlap = nodes.some((node: { getPosition: () => any }) => {
-          const nodePos = node.getPosition()
-          return (
-            Math.abs(nodePos.x - pos.x) < spacing * 0.8 &&
-            Math.abs(nodePos.y - pos.y) < spacing * 0.8
-          )
-        })
-        if (!hasOverlap) return pos
-      }
-    }
-    return { x: 50, y: 50 }
-  }
-
-  // 编辑/保存表
   const editTable = (table: ERTable) => {
     editingTable.value = {
       ...table,
@@ -461,45 +318,39 @@
 
   const saveTable = () => {
     if (!graph.value || !editingTable.value) return
-
     const node = graph.value.getCellById(editingTable.value.id) as Node
     if (node) {
       node.setData(editingTable.value)
-      updateNode(node, editingTable.value)
+      node.prop({
+        size: {
+          width: 200,
+          height: 24 + editingTable.value.fields.length * 24,
+        },
+        attrs: {
+          label: {
+            text: truncateText(editingTable.value.name, 20),
+            title: editingTable.value.name,
+          },
+        },
+        ports: createPortConfig(editingTable.value),
+      })
     }
-
     showEditor.value = false
     emitDataChange()
   }
 
-  // 更新节点
-  const updateNode = (node: Node, table: ERTable) => {
-    node.prop({
-      size: { width: 200, height: 24 + table.fields.length * 24 },
-      attrs: {
-        label: {
-          text: truncateText(table.name, 20),
-          title: table.name,
-        },
-      },
-      ports: createPortConfig(table),
-    })
-  }
-
-  // 处理主键
+  // ==================== 字段操作（由子组件事件触发） ====================
   const handlePrimaryKey = (field: ERField, isPrimaryKey: boolean) => {
     if (!isPrimaryKey) return
-
     field.isRequired = true
     editingTable.value?.fields.forEach(f => {
       if (f !== field) f.isPrimaryKey = false
     })
   }
 
-  // 添加/删除字段
   const addField = () => {
     editingTable.value?.fields.push({
-      name: `field_${editingTable.value.fields.length + 1}`,
+      name: `field_${(editingTable.value?.fields.length || 0) + 1}`,
       type: 'VARCHAR(100)',
       isPrimaryKey: false,
       isRequired: false,
@@ -509,181 +360,133 @@
   }
 
   const removeField = (index: number) => {
-    if (editingTable.value && editingTable.value.fields.length > 1) {
+    if (editingTable.value && editingTable.value.fields.length > 1)
       editingTable.value.fields.splice(index, 1)
-    }
   }
 
-  // 获取数据
+  // ==================== 数据获取 ====================
   const getCurrentData = (): ERDiagramData => {
     if (!graph.value) return { tables: [], relations: [] }
 
-    const tables = graph.value
-      .getNodes()
-      .map((node: { getData: () => any; getPosition: () => any }) => ({
-        ...node.getData(),
-        position: node.getPosition(),
-      }))
+    const tables = graph.value.getNodes().map((node: any) => ({
+      ...node.getData(),
+      position: node.getPosition(),
+    }))
 
     const relations: ERRelation[] = []
-    graph.value
-      .getEdges()
-      .forEach(
-        (edge: {
-          getSourceNode: () => any
-          getTargetNode: () => any
-          getSourcePortId: () => any
-          getTargetPortId: () => any
-          id: any
-        }) => {
-          const source = edge.getSourceNode()
-          const target = edge.getTargetNode()
-          const sourcePort = edge.getSourcePortId()
-          const targetPort = edge.getTargetPortId()
-
-          if (source && target && sourcePort && targetPort) {
-            const sourceField = sourcePort.split('_').slice(1).join('_')
-            const targetField = targetPort.split('_').slice(1).join('_')
-
-            relations.push({
-              id: edge.id,
-              type: 'foreign-key',
-              sourceTable: source.id,
-              sourceField,
-              targetTable: target.id,
-              targetField,
-              name: `${source.getData()?.name || source.id}.${sourceField} -> ${target.getData()?.name || target.id}.${targetField}`,
-            })
-          }
-        }
-      )
-
+    graph.value.getEdges().forEach((edge: any) => {
+      const source = edge.getSourceNode()
+      const target = edge.getTargetNode()
+      const sourcePort = edge.getSourcePortId()
+      const targetPort = edge.getTargetPortId()
+      if (source && target && sourcePort && targetPort) {
+        relations.push({
+          id: edge.id,
+          type: 'foreign-key',
+          sourceTable: source.id,
+          sourceField: sourcePort.split('_').slice(1).join('_'),
+          targetTable: target.id,
+          targetField: targetPort.split('_').slice(1).join('_'),
+          name: `${source.getData()?.name || source.id} -> ${target.getData()?.name || target.id}`,
+        })
+      }
+    })
     return { tables, relations }
-  }
-
-  // 导出 - 修复类型错误
-  const handleExport = (key: string) => {
-    if (!graph.value) {
-      console.error('Graph is not initialized')
-      return
-    }
-
-    const data = getCurrentData()
-
-    switch (key) {
-      case 'png':
-      case 'svg':
-        // 直接使用 graph 的内置导出方法（如果存在）
-        const g = graph.value as any
-        if (g.exportPNG && key === 'png') {
-          g.exportPNG('er-diagram')
-        } else if (g.exportSVG && key === 'svg') {
-          g.exportSVG('er-diagram')
-        } else if (g.toDataURL) {
-          g.toDataURL((dataUri: string) => {
-            const link = document.createElement('a')
-            link.download = `er-diagram.${key}`
-            link.href = dataUri
-            link.click()
-          }, key)
-        }
-        break
-      case 'json':
-        exportJSON(data)
-        break
-    }
   }
 
   const emitDataChange = () => emit('data-change', getCurrentData())
 
-  // 初始化
+  // ==================== Graph 事件绑定 ====================
   watch(
     graph,
     newGraph => {
-      if (newGraph && newGraph instanceof Graph) {
-        // 添加类型检查
-        registerNodes()
+      if (!(newGraph instanceof Graph)) return
 
-        newGraph.on('node:dblclick', ({ node }) => {
-          if (!props.readonly) editTable(node.getData() as ERTable)
-        })
+      registerNodes()
+      newGraph.on('node:dblclick', ({ node }) => {
+        if (!props.readonly) editTable(node.getData() as ERTable)
+      })
+      newGraph.on('edge:connected', emitDataChange)
+      newGraph.on('edge:removed', emitDataChange)
 
-        newGraph.on('edge:connected', emitDataChange)
-        newGraph.on('edge:removed', emitDataChange)
+      let selectedEdge: Edge | null = null
 
-        let selectedEdge: Edge | null = null
-
-        // 连接线点击事件
-        newGraph.on('edge:click', ({ edge }) => {
-          if (deleteMode.value) {
-            // 删除模式下直接删除
-            edge.remove()
-            emitDataChange()
-          } else {
-            // 普通模式下高亮显示并设为选中
-            newGraph.getEdges().forEach(e => {
-              e.attr('line/stroke', '#A2B1C3')
-              e.attr('line/strokeWidth', 2)
-            })
-            edge.attr('line/stroke', '#ff4d4f')
-            edge.attr('line/strokeWidth', 3)
-            selectedEdge = edge
-          }
-        })
-
-        // 双击删除连接线
-        newGraph.on('edge:dblclick', ({ edge }) => {
+      newGraph.on('edge:click', ({ edge }) => {
+        if (deleteMode.value) {
           edge.remove()
           emitDataChange()
-        })
+        } else {
+          resetEdgeStyles()
+          edge.attr('line/stroke', '#ff4d4f')
+          edge.attr('line/strokeWidth', 3)
+          selectedEdge = edge
+        }
+      })
+      newGraph.on('edge:dblclick', ({ edge }) => {
+        edge.remove()
+        emitDataChange()
+      })
+      newGraph.on('blank:click', () => {
+        selectedEdge = null
+        if (!deleteMode.value) resetEdgeStyles()
+      })
 
-        // 点击空白处取消选中
-        newGraph.on('blank:click', () => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        // 忽略来自 input/textarea/contenteditable 元素的按键
+        const tag = (e.target as HTMLElement)?.tagName
+        if (
+          tag === 'INPUT' ||
+          tag === 'TEXTAREA' ||
+          (e.target as HTMLElement)?.isContentEditable
+        )
+          return
+
+        if ((e.key === 'Delete' || e.key === 'Backspace') && selectedEdge) {
+          selectedEdge.remove()
+          emitDataChange()
           selectedEdge = null
-          if (!deleteMode.value) {
-            newGraph.getEdges().forEach(edge => {
-              edge.attr('line/stroke', '#A2B1C3')
-              edge.attr('line/strokeWidth', 2)
+        }
+      }
+      document.addEventListener('keydown', handleKeyDown)
+      onUnmounted(() => document.removeEventListener('keydown', handleKeyDown))
+
+      emit('ready', newGraph)
+
+      nextTick(() => {
+        if (props.data?.tables) {
+          const cells: Cell[] = props.data.tables.map(table =>
+            newGraph.createNode(createNodeConfig(table))
+          )
+
+          if (props.data.relations?.length) {
+            props.data.relations.forEach(relation => {
+              cells.push(
+                newGraph.createEdge({
+                  source: {
+                    cell: relation.sourceTable,
+                    port: `${relation.sourceTable}_${relation.sourceField}`,
+                  },
+                  target: {
+                    cell: relation.targetTable,
+                    port: `${relation.targetTable}_${relation.targetField}`,
+                  },
+                  attrs: { line: { stroke: '#A2B1C3', strokeWidth: 2 } },
+                })
+              )
             })
           }
-        })
 
-        // 键盘删除功能（只绑定一次）
-        const handleKeyDown = (e: KeyboardEvent) => {
-          if ((e.key === 'Delete' || e.key === 'Backspace') && selectedEdge) {
-            selectedEdge.remove()
-            emitDataChange()
-            selectedEdge = null
-          }
+          newGraph.resetCells(cells)
+          setTimeout(
+            () => newGraph.zoomToFit({ padding: 20, maxScale: 1 }),
+            300
+          )
         }
-        document.addEventListener('keydown', handleKeyDown)
-
-        // 清理事件监听器
-        newGraph.on('graph:removed', () => {
-          document.removeEventListener('keydown', handleKeyDown)
-        })
-
-        emit('ready', newGraph) // 现在 TypeScript 知道 newGraph 是 Graph 类型
-
-        // 加载初始数据
-        nextTick(() => {
-          if (props.data?.tables) {
-            const cells: Cell[] = props.data.tables.map(table =>
-              newGraph.createNode(createNodeConfig(table))
-            )
-            newGraph.resetCells(cells)
-            setTimeout(
-              () => newGraph.zoomToFit({ padding: 20, maxScale: 1 }),
-              300
-            )
-          }
-        })
-      }
+      })
     },
     { immediate: true }
   )
 
-  // 监听数据变化
   watch(
     () => props.data,
     newData => {
@@ -691,6 +494,26 @@
         const cells: Cell[] = newData.tables.map(table =>
           graph.value!.createNode(createNodeConfig(table))
         )
+
+        // 加载关系连线
+        if (newData.relations?.length) {
+          newData.relations.forEach(relation => {
+            cells.push(
+              graph.value!.createEdge({
+                source: {
+                  cell: relation.sourceTable,
+                  port: `${relation.sourceTable}_${relation.sourceField}`,
+                },
+                target: {
+                  cell: relation.targetTable,
+                  port: `${relation.targetTable}_${relation.targetField}`,
+                },
+                attrs: { line: { stroke: '#A2B1C3', strokeWidth: 2 } },
+              })
+            )
+          })
+        }
+
         graph.value.resetCells(cells)
       }
     },

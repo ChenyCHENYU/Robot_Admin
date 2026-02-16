@@ -30,9 +30,3 @@ export const fieldTypes = [
   { label: 'BOOLEAN', value: 'BOOLEAN' },
   { label: 'JSON', value: 'JSON' },
 ]
-
-export const exportOptions = [
-  { label: '导出PNG', key: 'png' },
-  { label: '导出SVG', key: 'svg' },
-  { label: '导出JSON', key: 'json' },
-]

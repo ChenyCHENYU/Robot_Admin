@@ -1,9 +1,3 @@
-export const exportOptions = [
-  { label: '导出PNG', key: 'png' },
-  { label: '导出SVG', key: 'svg' },
-  { label: '导出JSON', key: 'json' },
-]
-
 export const elementTypes = {
   'start-event': {
     name: '开始',
@@ -30,9 +24,12 @@ export const elementTypeNames = {
 export const portPositions = ['top', 'right', 'bottom', 'left']
 
 // 端口属性配置函数
-export const createPortAttrs = (positions: string[]) =>
+export const createPortAttrs = (
+  positions: string[],
+  nodeType: 'circle' | 'rect' | 'polygon' = 'rect'
+) =>
   positions.reduce((acc, pos) => {
-    const isCircle = ['event'].includes('circle')
+    const isCircle = nodeType === 'circle'
     const refConfig =
       pos === 'top'
         ? isCircle

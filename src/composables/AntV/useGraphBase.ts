@@ -65,6 +65,9 @@ function getContainerSize(container: HTMLElement | undefined) {
  * 创建和管理 AntV X6 图表实例的组合式 API
  */
 export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
+  const MAX_RETRY = 10
+  let retryCount = 0
+
   // 直接使用 any 类型，在使用时再进行类型断言
   const graph: Ref<any> = ref(null)
   const loading = ref(false)
@@ -78,10 +81,7 @@ export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
     loading.value = true
 
     try {
-      if (!containerRef.value) {
-        console.error('[useGraphBase] 容器引用不存在')
-        return
-      }
+      if (!containerRef.value) return
 
       // 销毁旧实例
       if (graph.value) {
@@ -91,12 +91,15 @@ export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
 
       const { width, height } = getContainerSize(containerRef.value)
 
-      // 容器尺寸为0，延迟重试
+      // 容器尺寸为0，延迟重试（最多 10 次）
       if (width === 0 || height === 0) {
-        console.warn('[useGraphBase] 容器尺寸为0，等待重试...')
-        setTimeout(() => initGraph(options), 100)
+        retryCount++
+        if (retryCount < MAX_RETRY) {
+          setTimeout(() => initGraph(options), 100)
+        }
         return
       }
+      retryCount = 0
 
       const { isDark } = themeStore
       const defaultOptions = getDefaultOptions(isDark)
@@ -109,13 +112,9 @@ export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
         ...options,
       }
 
-      console.log('[useGraphBase] 图表配置:', finalOptions)
-
       graph.value = new Graph(finalOptions)
-
-      console.log('[useGraphBase] 图表初始化完成')
-    } catch (error) {
-      console.error('[useGraphBase] 初始化图表失败:', error)
+    } catch {
+      // 初始化失败静默处理
     } finally {
       loading.value = false
     }

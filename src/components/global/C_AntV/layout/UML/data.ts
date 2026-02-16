@@ -1,11 +1,5 @@
 import type { UMLAttribute, UMLMethod } from '@/types/antv'
 
-export const exportOptions = [
-  { label: '导出PNG', key: 'png' },
-  { label: '导出SVG', key: 'svg' },
-  { label: '导出JSON', key: 'json' },
-]
-
 export const visibilityMap = {
   public: '+',
   private: '-',

@@ -47,11 +47,7 @@
     uml: UMLLayout,
   } as const
 
-  const currentComponent = computed(() => {
-    const component = components[props.type]
-    console.log(`[C_AntV] 当前组件类型: ${props.type}`, component ? '✅' : '❌')
-    return component
-  })
+  const currentComponent = computed(() => components[props.type])
 
   const componentProps = computed(() => {
     const baseProps = {
@@ -92,23 +88,17 @@
       }
     }
 
-    const result = {
+    return {
       ...baseProps,
       data: adaptedData,
-    }
-
-    console.log(`[C_AntV] 传递给${props.type}组件的属性:`, result)
-    return result as any // 使用类型断言避免类型检查
+    } as any
   })
 
   const handleReady = (graph: any) => {
-    console.log(`[C_AntV] ${props.type}图表准备就绪:`, graph)
     emit('ready', graph)
   }
 
   const handleDataChange = (data: any) => {
-    console.log(`[C_AntV] ${props.type}数据变化:`, data)
-
     let convertedData: DiagramData
 
     if (props.type === 'bpmn' && Array.isArray(data)) {
@@ -146,31 +136,9 @@
     emit('data-change', convertedData)
   }
 
-  // 监听类型变化
-  watch(
-    () => props.type,
-    (newType, oldType) => {
-      console.log(`[C_AntV] 图表类型从 ${oldType} 变更为 ${newType}`)
-    },
-    { immediate: true }
-  )
-
-  // 监听数据变化
-  watch(
-    () => props.data,
-    newData => {
-      console.log(`[C_AntV] 数据变化:`, newData)
-    },
-    { deep: true }
-  )
-
   defineExpose({
-    getGraph: () => {
-      console.log(`[C_AntV] 获取${props.type}图表实例`)
-      return layoutRef.value?.getGraph?.()
-    },
+    getGraph: () => layoutRef.value?.getGraph?.(),
     getData: () => {
-      console.log(`[C_AntV] 获取${props.type}数据`)
       const rawData = layoutRef.value?.getData?.()
 
       // 根据组件类型转换回标准格式
