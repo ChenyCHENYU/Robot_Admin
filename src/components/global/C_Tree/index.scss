@@ -27,10 +27,34 @@
 
   .c-tree-container {
     flex: 1;
+    min-height: 0;
     border: 1px solid #e0e0e6;
     border-radius: 6px;
     padding: 12px;
-    overflow: auto;
+    overflow-y: auto;
+
+    // 精致滚动条 — Firefox
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
+
+    // 精致滚动条 — Webkit (Chrome / Edge / Safari)
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 3px;
+      transition: background 0.2s;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
     .tree-instance {
       :deep(.n-tree) {

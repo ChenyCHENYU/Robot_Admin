@@ -71,7 +71,6 @@
 | ~~**C_Time**~~         | ~~394~~            | ~~过度注释；多个 expose getter/setter 可简化~~ | ✅ 已提取 `useTimeSelection` + ref-based expose              |
 
 | **C_Editor** | 390 | 手动事件监听、setTimeout 初始化、`console.log` 残留 | VueUse 事件处理 + 清理调试代码 |
-| **C_VtableGantt** | 382 + 528 data.ts | 自定义 `deepMerge` 内联在组件中 | `deepMerge` → utils 提取 |
 | **C_Code** | 369 | 硬编码 `languageIcon`(24项) + `getLanguageTitle`(24项) | 数据移到 data.ts |
 | **C_City** | 368 + 4813 city.ts | 手动 `clickOutside` 处理 | 改用 VueUse `onClickOutside` |
 | **C_Icon** | 365 | 5 种图标模式验证规则内联 | 规则 map 提取到 data.ts |
