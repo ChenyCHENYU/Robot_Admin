@@ -159,7 +159,7 @@
                 <C_Form
                   ref="popoverFormRef"
                   :options="formOptions.popover"
-                  :layout-type="layoutTypes.popover"
+                  :config="{ layout: layoutTypes.popover }"
                   v-model="formData.popover"
                   @submit="submitForm('popover')"
                 >
@@ -195,7 +195,7 @@
       <C_Form
         ref="modalFormRef"
         :options="formOptions.modal"
-        :layout-type="layoutTypes.modal"
+        :config="{ layout: layoutTypes.modal }"
         v-model="formData.modal"
         @submit="submitForm('modal')"
       />
@@ -218,10 +218,9 @@
         <C_Form
           ref="drawerFormRef"
           :options="formOptions.drawer"
-          :layout-type="layoutTypes.drawer"
+          :config="{ layout: layoutTypes.drawer, showActions: false }"
           v-model="formData.drawer"
           @submit="submitForm('drawer')"
-          :showDefaultActions="false"
         />
         <template #footer>
           <C_ActionBar
@@ -268,7 +267,7 @@
         <C_Form
           ref="sidebarFormRef"
           :options="formOptions.sidebar"
-          :layout-type="layoutTypes.sidebar"
+          :config="{ layout: layoutTypes.sidebar }"
           v-model="formData.sidebar"
           @submit="submitForm('sidebar')"
         >
@@ -301,7 +300,7 @@
       <C_Form
         ref="wizardFormRef"
         :options="formOptions.wizard"
-        :layout-type="layoutTypes.wizard"
+        :config="{ layout: layoutTypes.wizard }"
         v-model="formData.wizard"
         @submit="submitForm('wizard')"
       />

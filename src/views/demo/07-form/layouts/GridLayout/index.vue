@@ -82,10 +82,7 @@
     <C_Form
       ref="formRef"
       :options="formOptions"
-      layout-type="grid"
-      :layout-config="layoutConfig"
-      :validate-on-value-change="validateOnChange"
-      :label-placement="labelPlacement"
+      :config="formConfig"
       v-model="formData"
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
@@ -157,7 +154,6 @@
     LabelPlacement,
     FormInstance,
     FormModel,
-    LayoutConfig,
   } from '@/types/modules/form'
   import type { ActionItem } from '@/types/modules/action-bar'
   import { colsOptions, formOptions } from './data'
@@ -169,10 +165,12 @@
     validateOnChange?: boolean
   }
 
-  withDefaults(defineProps<Props>(), {
+  const props = withDefaults(defineProps<Props>(), {
     labelPlacement: 'left',
     validateOnChange: false,
   })
+
+  const { labelPlacement, validateOnChange } = toRefs(props)
 
   const emit = defineEmits<{
     submit: [payload: any]
@@ -195,15 +193,15 @@
 
   // ==================== 计算属性 ====================
 
-  const layoutConfig = computed(
-    (): LayoutConfig => ({
-      type: 'grid',
-      grid: {
-        cols: gridCols.value,
-        gutter: gridGutter.value,
-      },
-    })
-  )
+  const formConfig = computed(() => ({
+    layout: 'grid' as const,
+    grid: {
+      cols: gridCols.value,
+      gutter: gridGutter.value,
+    },
+    validateOnChange: validateOnChange.value,
+    labelPlacement: labelPlacement.value,
+  }))
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (

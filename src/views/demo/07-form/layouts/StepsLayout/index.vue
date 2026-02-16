@@ -42,16 +42,10 @@
       ref="formRef"
       v-model="formData"
       :options="formOptions"
-      layout-type="steps"
-      :layout-config="layoutConfig"
-      :label-placement="labelPlacement"
-      :validate-on-value-change="validateOnChange"
-      @step-change="handleStepChange"
-      @step-validate="handleStepValidate"
+      :config="formConfig"
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
-      @fields-change="handleFieldsChange"
     />
 
     <!-- 表单数据预览 -->
@@ -115,8 +109,19 @@
   const layoutConfig = reactive(getLayoutConfig())
 
   // ================= 表单字段配置 =================
-  const formOptions = computed(() => getFormOptions(formData.value))
+  const formOptions = computed(() => getFormOptions())
   const { labelPlacement, validateOnChange } = toRefs(props)
+
+  const formConfig = computed(() => ({
+    layout: 'steps' as const,
+    steps: layoutConfig.steps,
+    labelPlacement: labelPlacement.value,
+    labelWidth: 120,
+    validateOnChange: validateOnChange.value,
+    onStepChange: handleStepChange,
+    onStepValidate: handleStepValidate,
+    onFieldsChange: handleFieldsChange,
+  }))
 
   // ================= 操作按钮配置 =================
   const actionButtons = computed<ActionItem[]>(() => [
@@ -214,22 +219,6 @@
   const resetFields = (): void => {
     formRef.value?.resetFields()
   }
-
-  // ==================== 初始化 ====================
-  onMounted(() => {
-    // 🔥 关键：主动触发fields-change事件
-    emit('fields-change', formOptions.value)
-    console.log('步骤布局表单组件已加载')
-  })
-
-  // 监听formOptions变化，重新发送字段信息
-  watch(
-    formOptions,
-    newOptions => {
-      emit('fields-change', newOptions)
-    },
-    { deep: true }
-  )
 
   // ==================== 暴露方法 ====================
   defineExpose({

@@ -8,27 +8,12 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { PRESET_RULES, type FieldRule } from '@robot-admin/form-validate'
+import type { FormOption } from '@/types/modules/form'
+import { PRESET_RULES } from '@robot-admin/form-validate'
 
 const { required, length } = PRESET_RULES
 
-// 新增类型定义
-type FormField = {
-  type: 'input' | 'select' | 'daterange'
-  prop: 'username' | 'password'
-  value: string
-  placeholder: string
-  rules: FieldRule[]
-  attrs: {
-    clearable?: boolean
-    showPassword?: boolean
-    prefixIcon?: string
-    type?: 'text' | 'password'
-    showPasswordOn?: 'mousedown' | 'click'
-  }
-}
-
-export const OPTIONS: FormField[] = [
+export const OPTIONS: FormOption[] = [
   {
     type: 'input',
     value: 'CHENY',

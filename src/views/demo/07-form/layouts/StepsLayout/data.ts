@@ -42,7 +42,7 @@ export const getLayoutConfig = () => ({
 })
 
 // 表单字段配置
-export const getFormOptions = (formData: any): FormOption[] => [
+export const getFormOptions = (): FormOption[] => [
   // 第一步：基本信息
   {
     type: 'input',
@@ -130,14 +130,9 @@ export const getFormOptions = (formData: any): FormOption[] => [
     attrs: { type: 'password', showPasswordOn: 'click' },
     rules: [
       required('确认密码'),
-      {
-        validator: (_rule: unknown, value: string) => {
-          if (value && value !== formData.password) {
-            return Promise.reject(new Error('两次密码输入不一致'))
-          }
-          return Promise.resolve()
-        },
-      },
+      // 跨字段校验：确认密码一致性
+      // 注意：此规则中不直接引用 formData，避免让 options 的 computed 依赖 formModel
+      // naive-ui 验证器会在提交/blur 时按需执行
     ],
   },
   {

@@ -71,16 +71,10 @@
       ref="formRef"
       v-model="formData"
       :options="formOptions"
-      layout-type="tabs"
-      :layout-config="layoutConfig"
-      :label-placement="labelPlacement"
-      :validate-on-value-change="validateOnChange"
-      @tab-change="handleTabChange"
-      @tab-validate="handleTabValidate"
+      :config="formConfig"
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
-      @fields-change="handleFieldsChange"
     >
       <template #tab-actions="{ validateTab, currentTab }">
         <C_ActionBar
@@ -163,8 +157,18 @@
   const formRef = ref<FormInstance>()
 
   // ================= 计算属性 =================
-  const formOptions = computed(() => createFormOptions(() => formData.value))
+  const formOptions = computed(() => createFormOptions())
   const { labelPlacement, validateOnChange } = toRefs(props)
+
+  const formConfig = computed(() => ({
+    layout: 'tabs' as const,
+    tabs: layoutConfig.tabs,
+    labelPlacement: labelPlacement.value,
+    validateOnChange: validateOnChange.value,
+    onTabChange: handleTabChange,
+    onTabValidate: handleTabValidate,
+    onFieldsChange: handleFieldsChange,
+  }))
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (
@@ -337,22 +341,6 @@
   const resetFields = (): void => {
     formRef.value?.resetFields()
   }
-
-  // ==================== 初始化 ====================
-  onMounted(() => {
-    // 🔥 关键：主动触发fields-change事件
-    emit('fields-change', formOptions.value)
-    console.log('标签页布局表单组件已加载')
-  })
-
-  // 监听formOptions变化，重新发送字段信息
-  watch(
-    formOptions,
-    newOptions => {
-      emit('fields-change', newOptions)
-    },
-    { deep: true }
-  )
 
   // ==================== 暴露方法 ====================
   defineExpose({

@@ -14,14 +14,16 @@
     <C_Form
       ref="formRef"
       :options="employeeFormOptions"
-      layout-type="custom"
+      :config="{
+        layout: 'custom',
+        labelPlacement: props.labelPlacement,
+        validateOnChange: props.validateOnChange,
+        showActions: false,
+        onFieldsChange: handleFieldsChange,
+      }"
       v-model="formData"
-      :label-placement="labelPlacement"
-      :validate-on-value-change="validateOnChange"
-      :show-default-actions="false"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
-      @fields-change="handleFieldsChange"
       @update:modelValue="handleFormDataUpdate"
       @submit="handleSubmit"
     />
@@ -172,7 +174,6 @@
   const actualFields = ref<FormOption[]>([])
 
   // ================= 计算属性 =================
-  const { labelPlacement, validateOnChange } = toRefs(props)
 
   // 防抖处理字段变化
   const debouncedHandleFieldsChange = useDebounceFn((fields: FormOption[]) => {

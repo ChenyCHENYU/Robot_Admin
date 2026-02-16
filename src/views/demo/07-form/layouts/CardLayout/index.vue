@@ -2,8 +2,8 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-09 00:21:33
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-10 00:41:08
- * @FilePath: \Robot_Admin\src\views\demo\07-form-module\form\layouts\CardLayout\index.vue
+ * @LastEditTime: 2026-02-16 15:49:18
+ * @FilePath: \Robot_Admin\src\views\demo\07-form\layouts\CardLayout\index.vue
  * @Description: 卡片布局表单演示 - 修复版本
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
@@ -15,14 +15,10 @@
       ref="formRef"
       v-model="formData"
       :options="formOptions"
-      layout-type="card"
-      :layout-config="cardLayoutConfig"
-      :validate-on-value-change="validateOnChange"
-      :label-placement="labelPlacement"
+      :config="formConfig"
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
-      @fields-change="handleFieldsChange"
     >
       <template #action="{ validate, reset }">
         <C_ActionBar
@@ -116,6 +112,14 @@
 
   // ==================== 计算属性 ====================
   const { labelPlacement, validateOnChange } = toRefs(props)
+
+  const formConfig = computed(() => ({
+    layout: 'card' as const,
+    card: cardLayoutConfig.value?.card,
+    labelPlacement: labelPlacement.value,
+    validateOnChange: validateOnChange.value,
+    onFieldsChange: handleFieldsChange,
+  }))
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (

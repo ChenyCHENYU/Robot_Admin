@@ -8,42 +8,12 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { PRESET_RULES, type FieldRule } from '@robot-admin/form-validate'
+import type { FormOption } from '@/types/modules/form'
+import { PRESET_RULES } from '@robot-admin/form-validate'
 import { reactive } from 'vue'
 
-// ================= 类型定义 =================
-export type FormFieldType =
-  | 'input'
-  | 'textarea'
-  | 'select'
-  | 'radio'
-  | 'checkbox'
-  | 'switch'
-  | 'datePicker'
-
-export type FormField = {
-  type: FormFieldType
-  prop: string
-  label: string
-  placeholder?: string
-  value?: any
-  rules?: FieldRule[]
-  layout?: {
-    tab?: string
-  }
-  attrs?: Record<string, any>
-  children?: Array<{ label: string; value: any }>
-}
-
-export type FormModel = Record<string, any>
-
-export type FormInstance = {
-  resetFields: () => void
-  validate: () => Promise<void>
-}
-
 // ================= 验证规则 =================
-export const { required, length, email, mobile, confirmPassword } = PRESET_RULES
+export const { required, length, email, mobile } = PRESET_RULES
 
 // ================= 配置选项 =================
 export const placementOptions = [
@@ -101,9 +71,7 @@ export const layoutConfig = reactive({
 })
 
 // ================= 表单字段配置 =================
-export const createFormOptions = (
-  getFormData: () => FormModel
-): FormField[] => [
+export const createFormOptions = (): FormOption[] => [
   // 基本信息标签
   {
     type: 'input',
@@ -271,7 +239,7 @@ export const createFormOptions = (
     layout: { tab: 'security' },
     rules: [
       required('确认密码'),
-      confirmPassword('确认密码', () => getFormData().password),
+      // 跨字段校验在提交时由 C_Form 统一处理
     ],
     attrs: {
       type: 'password',

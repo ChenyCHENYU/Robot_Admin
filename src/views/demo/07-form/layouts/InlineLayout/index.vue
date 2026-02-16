@@ -54,10 +54,7 @@
     <C_Form
       ref="formRef"
       :options="formOptions"
-      layout-type="inline"
-      :layout-config="layoutConfig"
-      :validate-on-value-change="validateOnChange"
-      :label-placement="labelPlacement"
+      :config="formConfig"
       v-model="formData"
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
@@ -125,7 +122,6 @@
     LabelPlacement,
     FormInstance,
     FormModel,
-    LayoutConfig,
   } from '@/types/modules/form'
   import type { ActionItem } from '@/types/modules/action-bar'
   import {
@@ -143,10 +139,12 @@
     validateOnChange?: boolean
   }
 
-  withDefaults(defineProps<Props>(), {
+  const props = withDefaults(defineProps<Props>(), {
     labelPlacement: 'left',
     validateOnChange: false,
   })
+
+  const { labelPlacement, validateOnChange } = toRefs(props)
 
   // ==================== Emits ====================
   const emit = defineEmits<{
@@ -170,15 +168,15 @@
   const advancedData = ref({ ...defaultAdvancedData })
 
   // ==================== 计算属性 ====================
-  const layoutConfig = computed(
-    (): LayoutConfig => ({
-      type: 'inline',
-      inline: {
-        gap: inlineGap.value,
-        align: alignType.value as any,
-      },
-    })
-  )
+  const formConfig = computed(() => ({
+    layout: 'inline' as const,
+    inline: {
+      gap: inlineGap.value,
+      align: alignType.value as any,
+    },
+    validateOnChange: validateOnChange.value,
+    labelPlacement: labelPlacement.value,
+  }))
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (

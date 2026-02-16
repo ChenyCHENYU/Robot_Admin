@@ -334,15 +334,21 @@
   }
 
   // ================= 生命周期 =================
-  onMounted(() => {
+
+  // 只监听步骤结构变化（key / 数量），不监听表单项内容变化
+  // 否则每次 formModel 更新 → options 重算 → stepsWithItems 重算
+  //       → initializeCurrentStep() 会把 currentStep 重置为 0
+  const stepStructureKey = computed(() =>
+    stepsConfig.value.steps.map(s => s.key).join(',')
+  )
+
+  watch(stepStructureKey, () => {
     initializeCurrentStep()
   })
 
-  watch(
-    () => stepsWithItems.value,
-    () => initializeCurrentStep(),
-    { immediate: true }
-  )
+  onMounted(() => {
+    initializeCurrentStep()
+  })
 
   // ================= 对外暴露 =================
   defineExpose({

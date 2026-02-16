@@ -17,18 +17,10 @@
           ref="formRef"
           v-model="formData"
           :options="allFields"
-          layout-type="dynamic"
-          :layout-config="layoutConfig"
-          :label-placement="labelPlacement"
-          :validate-on-value-change="validateOnChange"
+          :config="cFormConfig"
           @submit="handleSubmit"
           @validate-success="handleValidateSuccess"
           @validate-error="handleValidateError"
-          @field-add="handleFieldAdd"
-          @field-remove="handleFieldRemove"
-          @field-toggle="handleFieldToggle"
-          @fields-clear="handleFieldsClear"
-          @fields-change="handleFieldsChange"
         >
           <!-- 自定义操作按钮 -->
           <template #action="{ validate, reset }">
@@ -150,6 +142,18 @@
   // ================= 计算属性 =================
   const layoutConfig = computed(() => createLayoutConfig(formConfig))
   const { labelPlacement, validateOnChange } = toRefs(props)
+
+  const cFormConfig = computed(() => ({
+    layout: 'dynamic' as const,
+    dynamic: layoutConfig.value.dynamic,
+    labelPlacement: labelPlacement.value,
+    validateOnChange: validateOnChange.value,
+    onFieldAdd: handleFieldAdd,
+    onFieldRemove: handleFieldRemove,
+    onFieldToggle: handleFieldToggle,
+    onFieldsClear: handleFieldsClear,
+    onFieldsChange: handleFieldsChange,
+  }))
 
   // ================= 表单操作按钮配置 =================
   const getFormActions = (

@@ -81,9 +81,11 @@
         :key="formKey"
         v-model="localEditingData"
         :options="formOptions"
-        layout-type="grid"
-        :layout-config="{ grid: { cols: 2, xGap: 16, yGap: 16 } }"
-        :show-default-actions="false"
+        :config="{
+          layout: 'grid',
+          grid: { cols: 2, xGap: 16, yGap: 16 },
+          showActions: false,
+        }"
       />
       <template #action>
         <NSpace justify="end">

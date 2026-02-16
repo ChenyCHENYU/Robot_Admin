@@ -13,9 +13,7 @@
     <C_Form
       ref="formRef"
       :options="formOptions"
-      layout-type="default"
-      :validate-on-value-change="validateOnChange"
-      :label-placement="labelPlacement"
+      :config="formConfig"
       v-model="formData"
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
@@ -131,10 +129,12 @@
     validateOnChange?: boolean
   }
 
-  withDefaults(defineProps<Props>(), {
+  const props = withDefaults(defineProps<Props>(), {
     labelPlacement: 'left',
     validateOnChange: false,
   })
+
+  const { labelPlacement, validateOnChange } = toRefs(props)
 
   // ==================== Emits ====================
   const emit = defineEmits<{
@@ -153,11 +153,19 @@
   const message = useMessage()
 
   // ==================== 计算属性 ====================
-  const formOptions = computed(() => {
-    const options = getFormOptions()
-    emit('fields-change', options)
-    return options
-  })
+  const formOptions = computed(() => getFormOptions())
+
+  const formConfig = computed(() => ({
+    layout: 'default' as const,
+    validateOnChange: validateOnChange.value,
+    labelPlacement: labelPlacement.value,
+    onFieldsChange: handleFieldsChange,
+  }))
+
+  // ==================== 事件处理 ====================
+  const handleFieldsChange = (fields: any[]): void => {
+    emit('fields-change', fields)
+  }
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (

@@ -108,7 +108,7 @@
               size="small"
               @click="validateCurrentTab"
             >
-              <div class="i-carbon：star-check mr-1" />
+              <div class="i-carbon:star-check mr-1" />
               验证当前标签
             </NButton>
           </NSpace>
@@ -360,19 +360,21 @@
     initializeCurrentTab()
   })
 
-  watch(
-    () => tabsWithItems.value,
-    () => {
-      // 当标签数据变化时，确保当前标签仍然有效
-      if (
-        currentTab.value &&
-        !tabsWithItems.value.some(tab => tab.config.key === currentTab.value)
-      ) {
-        initializeCurrentTab()
-      }
-    },
-    { deep: true }
+  // 只监听标签结构变化（key / 数量），不监听表单项内容变化
+  // 避免 formModel 更新 → options 重算 → tabsWithItems 重算 → 无意义 watch 触发
+  const tabStructureKey = computed(() =>
+    tabsConfig.value.tabs.map(t => t.key).join(',')
   )
+
+  watch(tabStructureKey, () => {
+    // 当标签结构变化时，确保当前标签仍然有效
+    if (
+      currentTab.value &&
+      !tabsConfig.value.tabs.some(tab => tab.key === currentTab.value)
+    ) {
+      initializeCurrentTab()
+    }
+  })
 
   // 监听配置变化
   watch(

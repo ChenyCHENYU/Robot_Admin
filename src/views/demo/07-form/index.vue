@@ -134,7 +134,7 @@
         ref="layoutRef"
         v-model="formData"
         :label-placement="labelPlacement"
-        :validate-on-value-change="validateOnChange"
+        :validate-on-change="validateOnChange"
         @submit="handleSubmit"
         @validate-success="errorCount = 0"
         @validate-error="handleValidateError"

@@ -11,7 +11,6 @@
 import type { VNode, DefineComponent, CSSProperties } from 'vue'
 import type { FormInst, UploadFileInfo } from 'naive-ui/es'
 import type { FieldRule } from '@robot-admin/form-validate'
-import type Editor from 'wangeditor'
 
 /**
  * 支持的布局类型
@@ -153,7 +152,7 @@ export interface GridLayoutConfig {
   gutter?: number
   yGutter?: number
   xGap?: number
-  yGap: number
+  yGap?: number
 }
 
 /**
@@ -288,18 +287,12 @@ export interface FormOption {
  * @description 表单组件的属性接口
  */
 export interface FormProps {
+  /** 字段配置数组 */
   options: FormOption[]
+  /** 双向绑定表单数据 */
   modelValue?: Record<string, any>
-  layoutType?: LayoutType
-  layoutConfig?: LayoutConfig
-  validateOnValueChange?: boolean
-  labelPlacement?: LabelPlacement
-  labelWidth?: string | number
-  showRequireMark?: boolean
-  size?: 'small' | 'medium' | 'large'
-  disabled?: boolean
-  readonly?: boolean
-  showDefaultActions?: boolean
+  /** 统一配置对象（收拢原先分散 Props） */
+  config?: import('@/composables/Form/useFormConfig').FormConfig
 }
 
 /**
@@ -329,15 +322,6 @@ export interface UploadEventPayload {
   file: UploadFileInfo
   fileList: UploadFileInfo[]
   event?: Event
-}
-
-/**
- * 编辑器事件参数
- */
-export interface EditorEventPayload {
-  editor: Editor
-  prop: string
-  html: string
 }
 
 // =================== 组件实例类型 ===================
@@ -370,8 +354,8 @@ export interface FormInstance {
   formRef: FormInst | null
   formModel: Record<string, any>
   initialize(): void
-  layoutType: LayoutType
-  isStepsLayout: boolean
+  layoutType: ComputedRef<LayoutType>
+  shouldShowDefaultActions: ComputedRef<boolean>
 }
 
 // =================== 布局组件类型 ===================
@@ -450,56 +434,11 @@ export interface DynamicFormState {
 }
 
 /**
- * 动态表单状态管理器类型
+ * 搜索相关类型已迁移至 search.d.ts
+ * 保留 re-export 以确保向后兼容
  */
-export interface DynamicFormStateType {
-  state: Readonly<DynamicFormState>
-  allFields: ComputedRef<FormOption[]>
-  visibleFields: ComputedRef<FormOption[]>
-  dynamicFieldsCount: ComputedRef<number>
-  canAddMoreFields: ComputedRef<boolean>
-  addField: (config?: Partial<DynamicFieldConfig>) => void
-  removeField: (index?: number) => void
-  clearDynamicFields: () => void
-  toggleFieldVisibility: (fieldId: string) => void
-  initialize: (
-    baseFields: FormOption[],
-    config?: Partial<DynamicFormConfig>
-  ) => void
-}
-
-/**
- * 搜索选项兼容性类型
- * @description 兼容 labelDefault 的选项类型，支持向后兼容
- */
-export interface SearchOptionItem {
-  labelDefault?: string
-  label?: string
-  value?: string | number | boolean // 修复：改为与OptionItem一致的类型
-  disabled?: boolean
-  [key: string]: any
-}
-
-/**
- * 搜索组件兼容性类型
- * @description 为了解决 data.ts 中的类型错误而添加的兼容性类型
- */
-export interface SearchFormItem {
-  type: 'input' | 'select' | 'date-range'
-  prop: string
-  placeholder?: string
-  list?: SearchOptionItem[]
-  hisList?: string[]
-  isFocus?: boolean
-  show?: boolean
-}
-
-/**
- * 搜索表单参数类型
- * @description 通用的搜索表单参数接口，作为所有搜索表单的基础类型
- */
-export interface SearchFormParams {
-  pageNum?: number
-  pageSize?: number
-  [key: string]: any
-}
+export type {
+  SearchOptionItem,
+  SearchFormItem,
+  SearchFormParams,
+} from './search'
