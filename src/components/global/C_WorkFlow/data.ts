@@ -86,6 +86,9 @@ export const ERROR_TYPE_TEXTS: Record<string, string> = {
   error: '错误',
 }
 
+/** 节点之间的 Y 轴间距（px） */
+export const NODE_Y_GAP = 180
+
 // 初始节点数据
 export const INITIAL_NODE: WorkflowNode = {
   id: 'start-1',

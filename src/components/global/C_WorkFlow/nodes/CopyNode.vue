@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-07-03 13:49:43
  * @FilePath: \Robot_Admin\src\components\global\C_WorkFlow\nodes\CopyNode.vue
  * @Description: 复制节点组件
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -107,10 +107,8 @@
   const displayCopyUsers = computed(() => copyUsers.value.slice(0, 3))
   const moreCount = computed(() => Math.max(0, copyCount.value - 3))
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleNodeClick = (event: MouseEvent) => {
-    // 不阻止事件冒泡，让VueFlow的node-click事件自然触发
-    console.log('Copy node clicked:', props.id)
+  const handleNodeClick = () => {
+    // 不阻止事件冒泡，让 VueFlow 的 node-click 事件自然触发
   }
 
   const showAddMenu = (event: MouseEvent) => {

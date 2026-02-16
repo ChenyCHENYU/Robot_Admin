@@ -150,10 +150,8 @@
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleNodeClick = (event: MouseEvent) => {
-    // 不阻止事件冒泡，让VueFlow的node-click事件自然触发
-    console.log('Node clicked:', props.id)
+  const handleNodeClick = () => {
+    // 不阻止事件冒泡，让 VueFlow 的 node-click 事件自然触发
   }
 
   const showAddMenu = (event: MouseEvent) => {

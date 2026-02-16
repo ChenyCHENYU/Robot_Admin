@@ -125,13 +125,13 @@
 
 ## 推荐执行路线图
 
-| 阶段        | 组件                                  | 预估工作量 | 状态      |
-| ----------- | ------------------------------------- | ---------- | --------- |
-| Phase 0     | C_Table + C_Form                      | —          | ✅ 已完成 |
-| Phase 1     | C_FormSearch                          | 0.5 天     | ✅ 已完成 |
-| **Phase 2** | **C_FilePreview**                     | 2 天       | ⏳ 待开始 |
-| Phase 3     | C_AntV (ER/UML/BPMN)                  | 2-3 天     | ⏳ 待开始 |
-| Phase 4     | C_WorkFlow                            | 1-2 天     | ⏳ 待开始 |
-| Phase 5     | C_Draggable + C_Tree + C_GlobalSearch | 2 天       | ⏳ 待开始 |
-| Phase 6     | P1 剩余组件批量清理                   | 1-2 天     | ⏳ 待开始 |
-| Phase 7     | P2 小改 + console 全局清理            | 1 天       | ⏳ 待开始 |
+| 阶段        | 组件                                      | 预估工作量 | 状态      |
+| ----------- | ----------------------------------------- | ---------- | --------- |
+| Phase 0     | C_Table + C_Form                          | —          | ✅ 已完成 |
+| Phase 1     | C_FormSearch                              | 0.5 天     | ✅ 已完成 |
+| Phase 2     | C_FilePreview                             | 2 天       | ✅ 已完成 |
+| Phase 3     | C_AntV (ER/UML/BPMN)                      | 2-3 天     | ✅ 已完成 |
+| Phase 4     | C_WorkFlow                                | 1-2 天     | ✅ 已完成 |
+| **Phase 5** | **C_Draggable + C_Tree + C_GlobalSearch** | 2 天       | ⏳ 待开始 |
+| Phase 6     | P1 剩余组件批量清理                       | 1-2 天     | ⏳ 待开始 |
+| Phase 7     | P2 小改 + console 全局清理                | 1 天       | ⏳ 待开始 |

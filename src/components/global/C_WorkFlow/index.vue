@@ -131,7 +131,7 @@
           <div class="success-icon">
             <div class="i-mdi:check-circle text-32px text-green-500"></div>
           </div>
-          <h3>✅ 验证通过</h3>
+          <h3>验证通过</h3>
           <p>工作流配置正确，所有节点都已正确设置！</p>
         </div>
 
@@ -143,7 +143,7 @@
             <div class="error-icon">
               <div class="i-mdi:alert-circle text-24px text-red-500"></div>
             </div>
-            <h3>❌ 发现 {{ validationErrors.length }} 个问题</h3>
+            <h3>发现 {{ validationErrors.length }} 个问题</h3>
             <p>请修复以下问题后重新验证：</p>
           </div>
 
@@ -217,51 +217,165 @@
         </template>
       </NDrawerContent>
     </NDrawer>
+
+    <!-- 流程预览抽屉 -->
+    <NDrawer
+      v-model:show="showPreview"
+      :width="520"
+      placement="right"
+    >
+      <NDrawerContent
+        title="流程预览"
+        closable
+      >
+        <!-- 统计概览 -->
+        <div class="preview-stats">
+          <div class="stat-item">
+            <span class="stat-value">{{ previewStats.totalNodes }}</span>
+            <span class="stat-label">总节点</span>
+          </div>
+          <div class="stat-item approval">
+            <span class="stat-value">{{ previewStats.approvalNodes }}</span>
+            <span class="stat-label">审批</span>
+          </div>
+          <div class="stat-item copy">
+            <span class="stat-value">{{ previewStats.copyNodes }}</span>
+            <span class="stat-label">抄送</span>
+          </div>
+          <div class="stat-item condition">
+            <span class="stat-value">{{ previewStats.conditionNodes }}</span>
+            <span class="stat-label">条件</span>
+          </div>
+          <div class="stat-item edge">
+            <span class="stat-value">{{ previewStats.totalEdges }}</span>
+            <span class="stat-label">连线</span>
+          </div>
+        </div>
+
+        <!-- 流程步骤时间线 -->
+        <div class="preview-timeline">
+          <div
+            v-for="(step, index) in previewSteps"
+            :key="step.node.id"
+            class="preview-step"
+            :class="step.colorClass"
+          >
+            <!-- 时间线连接线 -->
+            <div class="step-connector">
+              <div class="step-dot">
+                <div
+                  :class="step.icon"
+                  class="w-4 h-4"
+                ></div>
+              </div>
+              <div
+                v-if="index < previewSteps.length - 1"
+                class="step-line"
+              ></div>
+            </div>
+
+            <!-- 步骤内容 -->
+            <div class="step-content">
+              <div class="step-header">
+                <span class="step-order">步骤 {{ step.order }}</span>
+                <span class="step-type-badge">{{ step.nodeTypeLabel }}</span>
+              </div>
+              <div class="step-title">{{ step.node.data.title }}</div>
+              <div
+                v-if="step.details.length > 0"
+                class="step-details"
+              >
+                <div
+                  v-for="(detail, dIdx) in step.details"
+                  :key="dIdx"
+                  class="step-detail-item"
+                  :class="{ 'is-warning': detail.type === 'warning' }"
+                >
+                  <span class="detail-label">{{ detail.label }}：</span>
+
+                  <!-- 审批方式 badge -->
+                  <span
+                    v-if="detail.type === 'mode'"
+                    class="mode-badge"
+                    :class="detail.modeKey"
+                  >
+                    {{ detail.value }}
+                  </span>
+
+                  <!-- 人员 tags -->
+                  <template v-else-if="detail.type === 'users'">
+                    <NTag
+                      v-for="user in detail.users"
+                      :key="user.name"
+                      size="small"
+                      :bordered="false"
+                      round
+                      class="user-tag"
+                    >
+                      <template #icon>
+                        <div class="i-mdi:account w-3 h-3"></div>
+                      </template>
+                      {{ user.name }}
+                    </NTag>
+                  </template>
+
+                  <!-- 警告文案 -->
+                  <span
+                    v-else-if="detail.type === 'warning'"
+                    class="warning-text"
+                  >
+                    ⚠️ {{ detail.value }}
+                  </span>
+
+                  <!-- 普通文本 -->
+                  <span v-else>{{ detail.value }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div
+          v-if="previewSteps.length === 0"
+          class="preview-empty"
+        >
+          <div
+            class="i-mdi:file-document-outline text-48px text-gray-300"
+          ></div>
+          <p>暂无流程节点</p>
+        </div>
+
+        <template #footer>
+          <div class="preview-footer">
+            <NButton @click="closePreview">关闭</NButton>
+            <NButton
+              type="primary"
+              @click="
+                closePreview()
+                saveWorkflow()
+              "
+            >
+              <template #icon
+                ><div class="i-mdi:content-save w-4 h-4"></div
+              ></template>
+              确认并保存
+            </NButton>
+          </div>
+        </template>
+      </NDrawerContent>
+    </NDrawer>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { VueFlow, type NodeMouseEvent } from '@vue-flow/core'
-  import type { Component } from 'vue'
-
-  // 导入类型定义
-  import type {
-    WorkflowNode,
-    WorkflowEdge,
-    WorkflowData,
-    WorkflowProps,
-    WorkflowEmits,
-    NodeType,
-    MenuPosition,
-    ValidationError,
-  } from '@/types/work-flow'
-
-  // 导入数据常量
-  import {
-    NODE_TYPE_OPTIONS,
-    NODE_TITLES,
-    FIELD_DISPLAY_NAMES,
-    ERROR_TYPE_TEXTS,
-    INITIAL_NODE,
-    generateEdgeId,
-  } from './data'
-
-  // 导入节点组件
-  import StartNode from './nodes/StartNode.vue'
-  import ApprovalNode from './nodes/ApprovalNode.vue'
-  import CopyNode from './nodes/CopyNode.vue'
-  import ConditionNode from './nodes/ConditionNode.vue'
-
-  // 导入节点配置弹窗组件
+  import { VueFlow } from '@vue-flow/core'
+  import type { WorkflowProps, WorkflowEmits } from '@/types/work-flow'
+  import { NODE_TYPE_OPTIONS } from './data'
   import NodeConfigModal from './NodeConfigModal.vue'
-
-  // 节点组件映射
-  const NODE_TYPES: Record<string, Component> = {
-    start: markRaw(StartNode),
-    approval: markRaw(ApprovalNode),
-    copy: markRaw(CopyNode),
-    condition: markRaw(ConditionNode),
-  }
+  import { useWorkflowNodes } from '@/composables/WorkFlow/useWorkflowNodes'
+  import { useWorkflowValidation } from '@/composables/WorkFlow/useWorkflowValidation'
+  import { useWorkflowPreview } from '@/composables/WorkFlow/useWorkflowPreview'
 
   // Props & Emits
   const props = withDefaults(defineProps<WorkflowProps>(), {
@@ -273,439 +387,74 @@
   })
 
   const emit = defineEmits<WorkflowEmits>()
-
-  // 响应式数据
   const message = useMessage()
   const vueFlowRef = ref()
 
-  const nodes = ref<WorkflowNode[]>([{ ...INITIAL_NODE }])
-  const edges = ref<WorkflowEdge[]>([])
-  const showAddMenu = ref(false)
-  const menuPosition = ref<MenuPosition>({ x: 0, y: 0 })
-  const showNodeConfig = ref(false)
-  const currentNode = ref<WorkflowNode | null>(null)
-  const validationErrors = ref<ValidationError[]>([])
-  const showValidationErrors = ref(false)
-  const currentAddNodeId = ref<string | null>(null)
+  // ─── 节点管理 ────────────────────────────────────────────
+  const {
+    nodes,
+    edges,
+    showAddMenu,
+    menuPosition,
+    showNodeConfig,
+    currentNode,
+    nodeTypes,
+    workflowStats,
+    addNode,
+    onNodeClick,
+    closeAddMenu,
+    handleConfigSave,
+    resetNodes,
+    getCurrentWorkflowData,
+    fitView,
+    deleteNode,
+  } = useWorkflowNodes(props, emit, vueFlowRef)
 
-  // 计算属性
-  const nodeTypes = computed(() => NODE_TYPES)
-
-  const workflowStats = computed(() => {
-    const stats = {
-      totalNodes: nodes.value.length,
-      approvalNodes: 0,
-      copyNodes: 0,
-      conditionNodes: 0,
-    }
-    nodes.value.forEach(n => {
-      if (n.type === 'approval') stats.approvalNodes++
-      else if (n.type === 'copy') stats.copyNodes++
-      else if (n.type === 'condition') stats.conditionNodes++
-    })
-    return stats
-  })
-
-  // 方法定义
-  const handleShowAddMenu = (position: MenuPosition, nodeId?: string): void => {
-    try {
-      menuPosition.value = {
-        x: typeof position.x === 'number' ? position.x : 0,
-        y: typeof position.y === 'number' ? position.y : 0,
-      }
-      currentAddNodeId.value = nodeId || null
-      showAddMenu.value = true
-    } catch (error) {
-      console.error('Error showing add menu:', error)
-    }
-  }
-
-  const deleteNode = (nodeId: string): void => {
-    if (nodeId === 'start-1') {
-      message?.warning?.('不能删除开始节点')
-      return
-    }
-
-    const nodeIndex = nodes.value.findIndex(n => n.id === nodeId)
-    if (nodeIndex === -1) return
-
-    const incomingEdges = edges.value.filter(edge => edge.target === nodeId)
-    const outgoingEdges = edges.value.filter(edge => edge.source === nodeId)
-
-    nodes.value.splice(nodeIndex, 1)
-    edges.value = edges.value.filter(
-      edge => edge.source !== nodeId && edge.target !== nodeId
-    )
-
-    incomingEdges.forEach(inEdge => {
-      outgoingEdges.forEach(outEdge => {
-        edges.value.push({
-          id: generateEdgeId(inEdge.source, outEdge.target),
-          source: inEdge.source,
-          target: outEdge.target,
-          animated: true,
-          type: 'default',
-        })
-      })
-    })
-
-    nodes.value.forEach((node, index) => {
-      if (index >= nodeIndex) {
-        node.position.y -= 120
-      }
-    })
-
-    emitChange()
-    message?.success?.('节点已删除')
-
-    nextTick(() => {
-      setTimeout(() => {
-        vueFlowRef.value?.fitView?.({ padding: 60, duration: 400 })
-      }, 100)
-    })
-  }
-
-  provide('showAddMenu', handleShowAddMenu)
-  provide('deleteNode', deleteNode)
-
-  // 节点添加逻辑
-  const getTargetNodeInfo = () => {
-    let targetNodeIndex = nodes.value.length - 1
-    let targetNode = nodes.value[targetNodeIndex]
-
-    if (currentAddNodeId.value) {
-      const foundIndex = nodes.value.findIndex(
-        n => n.id === currentAddNodeId.value
-      )
-      if (foundIndex !== -1) {
-        targetNodeIndex = foundIndex
-        targetNode = nodes.value[targetNodeIndex]
-      }
-    }
-    return { targetNodeIndex, targetNode }
-  }
-
-  const createNewNode = (
-    type: NodeType,
-    targetNode: WorkflowNode | null
-  ): WorkflowNode => ({
-    id: `${type}-${Date.now()}`,
-    type,
-    position: {
-      x: targetNode?.position.x || 150,
-      y: (targetNode?.position.y || 130) + 120,
-    },
-    data: {
-      title: NODE_TITLES[type],
-      status: 'pending',
-      ...(type === 'approval' && { approvers: [], approvalMode: 'any' }),
-      ...(type === 'copy' && { copyUsers: [] }),
-      ...(type === 'condition' && { conditions: [] }),
-    },
-  })
-
-  const handleEdgeReconnection = (
-    targetNode: WorkflowNode,
-    newNode: WorkflowNode
-  ) => {
-    const targetOutgoingEdges = edges.value.filter(
-      edge => edge.source === targetNode.id
-    )
-    edges.value = edges.value.filter(edge => edge.source !== targetNode.id)
-
-    edges.value.push({
-      id: generateEdgeId(targetNode.id, newNode.id),
-      source: targetNode.id,
-      target: newNode.id,
-      animated: true,
-      type: 'default',
-    })
-
-    targetOutgoingEdges.forEach(edge => {
-      edges.value.push({
-        id: generateEdgeId(newNode.id, edge.target),
-        source: newNode.id,
-        target: edge.target,
-        animated: true,
-        type: 'default',
-      })
-    })
-  }
-
-  const addNode = (type: NodeType): void => {
-    try {
-      const { targetNodeIndex, targetNode } = getTargetNodeInfo()
-      const newNode = createNewNode(type, targetNode)
-
-      nodes.value.splice(targetNodeIndex + 1, 0, newNode)
-
-      for (let i = targetNodeIndex + 2; i < nodes.value.length; i++) {
-        nodes.value[i].position.y += 120
-      }
-
-      if (targetNode) {
-        handleEdgeReconnection(targetNode, newNode)
-      }
-
-      showAddMenu.value = false
-      currentAddNodeId.value = null
-      emitChange()
-
-      nextTick(() => {
-        setTimeout(() => {
-          vueFlowRef.value?.fitView?.({ padding: 60, duration: 400 })
-        }, 100)
-      })
-    } catch (error) {
-      console.error('Error adding node:', error)
-      message?.error?.('添加节点失败，请重试')
-    }
-  }
-
-  const onNodeClick = (event: NodeMouseEvent): void => {
-    try {
-      const node = event.node as WorkflowNode
+  // ─── 流程验证 ────────────────────────────────────────────
+  const {
+    validationErrors,
+    showValidationErrors,
+    validateWorkflow,
+    validateCurrentWorkflow,
+    jumpToErrorNode,
+    getFieldDisplayName,
+    getErrorTypeText,
+    resetValidation,
+  } = useWorkflowValidation(nodes, edges, vueFlowRef, {
+    onShowNodeConfig: node => {
       currentNode.value = node
       showNodeConfig.value = true
-      emit('node-click', node)
-    } catch (error) {
-      console.error('Error handling node click:', error)
-    }
-  }
+    },
+    onValidateError: errors => emit('validate-error', errors),
+  })
 
-  const closeAddMenu = (): void => {
-    showAddMenu.value = false
-  }
+  // ─── 流程预览 ────────────────────────────────────────────
+  const { showPreview, previewSteps, previewStats, openPreview, closePreview } =
+    useWorkflowPreview(nodes, edges)
 
-  // 处理配置保存
-  const handleConfigSave = (configData: any): void => {
-    if (currentNode.value) {
-      const nodeIndex = nodes.value.findIndex(
-        n => n.id === currentNode.value!.id
-      )
-      if (nodeIndex !== -1) {
-        // 创建新的节点对象，确保响应式更新
-        const updatedNode = {
-          ...nodes.value[nodeIndex],
-          data: {
-            ...nodes.value[nodeIndex].data,
-            ...configData,
-          },
-        }
-
-        // 替换数组中的节点，触发响应式更新
-        nodes.value.splice(nodeIndex, 1, updatedNode)
-
-        // 更新当前节点引用
-        currentNode.value = updatedNode
-      }
-
-      emitChange()
-      showNodeConfig.value = false
-      message?.success?.('节点配置已保存')
-    }
-  }
-
+  // ─── 编排方法（跨 composable 协作） ──────────────────────
   const saveWorkflow = (): void => {
     const errors = validateWorkflow()
     if (errors.length > 0) {
-      message?.error?.(`工作流验证失败: ${errors[0].message}`)
+      message.error(`工作流验证失败: ${errors[0].message}`)
       showValidationErrors.value = true
       return
     }
-
     const data = getCurrentWorkflowData()
     emit('save', data)
-    message?.success?.('工作流保存成功')
+    message.success('工作流保存成功')
   }
 
   const previewWorkflow = (): void => {
-    const data = getCurrentWorkflowData()
-    console.log('预览工作流', data)
-    message?.info?.('预览功能开发中...')
-  }
-
-  const validateCurrentWorkflow = (): void => {
-    const errors = validateWorkflow()
-    validationErrors.value = errors
-
-    if (errors.length === 0) {
-      message?.success?.('✅ 工作流验证通过！所有节点配置正确')
-      showValidationErrors.value = false
-    } else {
-      message?.error?.(`❌ 发现 ${errors.length} 个问题，请查看详细错误`)
-      showValidationErrors.value = true
-      emit('validate-error', errors)
-    }
-  }
-
-  const fitView = (): void => {
-    try {
-      if (vueFlowRef.value?.fitView) {
-        nextTick(() => {
-          vueFlowRef.value.fitView({
-            padding: 50,
-            includeHiddenNodes: false,
-            minZoom: 0.5,
-            maxZoom: 1.5,
-            duration: 800,
-          })
-        })
-        message?.success?.('已适应窗口大小')
-      } else {
-        message?.warning?.('画布未准备就绪，请稍后重试')
-      }
-    } catch (error) {
-      console.error('FitView error:', error)
-      message?.error?.('适应窗口失败')
-    }
+    openPreview()
   }
 
   const clearWorkflow = (): void => {
-    nodes.value = [{ ...INITIAL_NODE }]
-    edges.value = []
-    validationErrors.value = []
-    showValidationErrors.value = false
-    emitChange()
-
-    nextTick(() => {
-      setTimeout(() => {
-        vueFlowRef.value?.fitView?.({ padding: 80, duration: 600 })
-      }, 100)
-    })
-
-    message?.success?.('画布已清空')
+    resetNodes()
+    resetValidation()
   }
 
-  const validateWorkflow = (): ValidationError[] => {
-    const errors: ValidationError[] = []
-
-    nodes.value.forEach(node => {
-      if (node.type === 'approval') {
-        const approvers = (node.data as any).approvers || []
-        if (approvers.length === 0) {
-          errors.push({
-            nodeId: node.id,
-            nodeName: node.data.title,
-            field: 'approvers',
-            message: '审批节点必须设置至少一个审批人，否则流程无法正常运行',
-            type: 'required',
-          })
-        }
-      }
-
-      if (node.type === 'condition') {
-        const conditions = (node.data as any).conditions || []
-        if (conditions.length === 0) {
-          errors.push({
-            nodeId: node.id,
-            nodeName: node.data.title,
-            field: 'conditions',
-            message:
-              '条件分支节点必须配置至少一个分支条件，否则无法进行条件判断',
-            type: 'required',
-          })
-        } else {
-          const incompleteConditions = conditions.filter(
-            (c: any) => !c.name || !c.field || !c.operator || !c.value
-          )
-          if (incompleteConditions.length > 0) {
-            errors.push({
-              nodeId: node.id,
-              nodeName: node.data.title,
-              field: 'conditions',
-              message: `有 ${incompleteConditions.length} 个条件分支配置不完整，请完善所有必填字段`,
-              type: 'incomplete',
-            })
-          }
-        }
-      }
-    })
-
-    const connectedNodes = new Set<string>()
-    edges.value.forEach(edge => {
-      connectedNodes.add(edge.source)
-      connectedNodes.add(edge.target)
-    })
-
-    nodes.value.forEach(node => {
-      if (node.type !== 'start' && !connectedNodes.has(node.id)) {
-        errors.push({
-          nodeId: node.id,
-          nodeName: node.data.title,
-          field: 'connection',
-          message: '此节点未与其他节点连接，可能导致流程中断',
-          type: 'warning',
-        })
-      }
-    })
-
-    return errors
-  }
-
-  const getFieldDisplayName = (field: string): string =>
-    FIELD_DISPLAY_NAMES[field] || field
-  const getErrorTypeText = (type: string): string =>
-    ERROR_TYPE_TEXTS[type] || type
-
-  const jumpToErrorNode = (nodeId: string): void => {
-    const node = nodes.value.find(n => n.id === nodeId)
-    if (node && vueFlowRef.value) {
-      vueFlowRef.value.setCenter(node.position.x, node.position.y, {
-        zoom: 1.2,
-        duration: 800,
-      })
-
-      setTimeout(() => {
-        currentNode.value = node
-        showNodeConfig.value = true
-        showValidationErrors.value = false
-      }, 900)
-
-      message?.info?.(`已定位到节点：${node.data.title}`)
-    }
-  }
-
-  const getCurrentWorkflowData = (): WorkflowData => ({
-    nodes: nodes.value,
-    edges: edges.value,
-    config: {
-      version: '1.0',
-      createdAt: new Date().toISOString(),
-    },
-  })
-
-  const emitChange = (): void => {
-    const data = getCurrentWorkflowData()
-    emit('update:modelValue', data)
-    emit('change', data)
-  }
-
-  watch(
-    () => props.modelValue,
-    newValue => {
-      if (newValue && newValue !== getCurrentWorkflowData()) {
-        nodes.value = newValue.nodes || []
-        edges.value = newValue.edges || []
-      }
-    },
-    { deep: true }
-  )
-
-  onMounted(() => {
-    nextTick(() => {
-      setTimeout(() => {
-        vueFlowRef.value?.fitView?.({
-          padding: 80,
-          includeHiddenNodes: false,
-          minZoom: 0.8,
-          maxZoom: 1.2,
-          duration: 600,
-        })
-      }, 300)
-    })
-  })
-
+  // ─── 暴露方法 ────────────────────────────────────────────
   defineExpose({
     validateWorkflow,
     getCurrentWorkflowData,

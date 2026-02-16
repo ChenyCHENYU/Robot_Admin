@@ -409,3 +409,239 @@
     }
   }
 }
+
+// ─── 流程预览抽屉样式 ──────────────────────────────────────
+.preview-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  .stat-item {
+    flex: 1;
+    min-width: 70px;
+    text-align: center;
+    padding: 12px 8px;
+    border-radius: 10px;
+    background: var(--n-action-color);
+    border: 1px solid var(--n-border-color);
+    transition: all 0.2s;
+
+    .stat-value {
+      display: block;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--n-text-color-1);
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 12px;
+      color: var(--n-text-color-3);
+      margin-top: 4px;
+    }
+
+    &.approval .stat-value {
+      color: #ff6b35;
+    }
+
+    &.copy .stat-value {
+      color: #1890ff;
+    }
+
+    &.condition .stat-value {
+      color: #faad14;
+    }
+
+    &.edge .stat-value {
+      color: #52c41a;
+    }
+  }
+}
+
+.preview-timeline {
+  position: relative;
+  padding: 0 0 0 8px;
+
+  .preview-step {
+    display: flex;
+    gap: 16px;
+    position: relative;
+    padding-bottom: 8px;
+
+    &:last-child .step-line {
+      display: none;
+    }
+  }
+
+  .step-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 32px;
+
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      flex-shrink: 0;
+      z-index: 1;
+      background: #999;
+    }
+
+    .step-line {
+      width: 2px;
+      flex: 1;
+      min-height: 20px;
+      background: var(--n-border-color);
+    }
+  }
+
+  // 不同节点类型的圆点颜色
+  .start .step-dot {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+  }
+
+  .approval .step-dot {
+    background: linear-gradient(135deg, #ff6b35, #ff4500);
+  }
+
+  .copy .step-dot {
+    background: linear-gradient(135deg, #1890ff, #096dd9);
+  }
+
+  .condition .step-dot {
+    background: linear-gradient(135deg, #faad14, #d48806);
+  }
+
+  .step-content {
+    flex: 1;
+    padding-bottom: 20px;
+    min-width: 0;
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+
+      .step-order {
+        font-size: 12px;
+        color: var(--n-text-color-3);
+        font-weight: 500;
+      }
+
+      .step-type-badge {
+        font-size: 11px;
+        padding: 1px 8px;
+        border-radius: 10px;
+        background: var(--n-action-color);
+        color: var(--n-text-color-2);
+        border: 1px solid var(--n-border-color);
+      }
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--n-text-color-1);
+      margin-bottom: 8px;
+    }
+
+    .step-details {
+      background: var(--n-action-color);
+      border-radius: 8px;
+      padding: 10px 14px;
+      border: 1px solid var(--n-border-color);
+
+      .step-detail-item {
+        font-size: 13px;
+        color: var(--n-text-color-2);
+        line-height: 1.8;
+        word-break: break-all;
+        display: flex;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 4px;
+
+        &:not(:last-child) {
+          border-bottom: 1px dashed var(--n-border-color);
+          padding-bottom: 8px;
+          margin-bottom: 8px;
+        }
+
+        &.is-warning {
+          color: #faad14;
+        }
+
+        .detail-label {
+          color: var(--n-text-color-3);
+          font-size: 12px;
+          flex-shrink: 0;
+          line-height: 24px;
+        }
+
+        .mode-badge {
+          display: inline-block;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 2px 10px;
+          border-radius: 12px;
+          line-height: 20px;
+
+          &.any {
+            background: rgba(24, 144, 255, 0.1);
+            color: #1890ff;
+            border: 1px solid rgba(24, 144, 255, 0.25);
+          }
+
+          &.all {
+            background: rgba(255, 77, 79, 0.1);
+            color: #ff4d4f;
+            border: 1px solid rgba(255, 77, 79, 0.25);
+          }
+
+          &.sequence {
+            background: rgba(114, 46, 209, 0.1);
+            color: #722ed1;
+            border: 1px solid rgba(114, 46, 209, 0.25);
+          }
+        }
+
+        .user-tag {
+          margin: 1px 2px;
+        }
+
+        .warning-text {
+          color: #faad14;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+.preview-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+
+  p {
+    margin-top: 12px;
+    color: var(--n-text-color-3);
+    font-size: 14px;
+  }
+}
+
+.preview-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

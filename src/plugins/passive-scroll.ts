@@ -46,6 +46,12 @@ export const PassiveScrollPlugin = {
       if (eventTypes.includes(type)) {
         if (typeof options === 'boolean') {
           options = { capture: options, passive: true }
+        } else if (
+          typeof options === 'object' &&
+          options !== null &&
+          options.passive === false
+        ) {
+          // 尊重第三方库显式设置的 passive: false（如 @vue-flow/core）
         } else {
           options = { ...options, passive: true }
         }

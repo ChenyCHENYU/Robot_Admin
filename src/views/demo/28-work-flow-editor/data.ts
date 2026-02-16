@@ -74,7 +74,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'approval-1',
           type: 'approval',
-          position: { x: 150, y: 250 },
+          position: { x: 150, y: 280 },
           data: {
             title: '直属领导审批',
             status: 'pending',
@@ -112,7 +112,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'approval-1',
           type: 'approval',
-          position: { x: 150, y: 250 },
+          position: { x: 150, y: 280 },
           data: {
             title: '部门经理审批',
             status: 'pending',
@@ -125,7 +125,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'approval-2',
           type: 'approval',
-          position: { x: 150, y: 400 },
+          position: { x: 150, y: 460 },
           data: {
             title: '财务审批',
             status: 'pending',
@@ -138,7 +138,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'copy-1',
           type: 'copy',
-          position: { x: 150, y: 550 },
+          position: { x: 150, y: 640 },
           data: {
             title: '抄送人事',
             status: 'pending',
@@ -189,7 +189,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'condition-1',
           type: 'condition',
-          position: { x: 150, y: 250 },
+          position: { x: 150, y: 280 },
           data: {
             title: '金额判断',
             status: 'pending',
@@ -214,7 +214,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'approval-1',
           type: 'approval',
-          position: { x: 50, y: 400 },
+          position: { x: -30, y: 460 },
           data: {
             title: '直属领导',
             status: 'pending',
@@ -227,7 +227,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'approval-2',
           type: 'approval',
-          position: { x: 250, y: 400 },
+          position: { x: 330, y: 460 },
           data: {
             title: '财务+总监',
             status: 'pending',
@@ -285,7 +285,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'approval-1',
           type: 'approval',
-          position: { x: 150, y: 250 },
+          position: { x: 150, y: 280 },
           data: {
             title: '业务审批',
             status: 'pending',
@@ -303,7 +303,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'approval-2',
           type: 'approval',
-          position: { x: 150, y: 400 },
+          position: { x: 150, y: 460 },
           data: {
             title: '法务审批',
             status: 'pending',
@@ -316,7 +316,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'approval-3',
           type: 'approval',
-          position: { x: 150, y: 550 },
+          position: { x: 150, y: 640 },
           data: {
             title: '财务审批',
             status: 'pending',
@@ -329,7 +329,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'copy-1',
           type: 'copy',
-          position: { x: 150, y: 700 },
+          position: { x: 150, y: 820 },
           data: {
             title: '抄送总监',
             status: 'pending',
