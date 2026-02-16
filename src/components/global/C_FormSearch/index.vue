@@ -15,14 +15,14 @@
   >
     <NForm
       class="form-search"
-      :model="state.formParams"
-      ref="state.formRef"
+      :model="formParams"
+      ref="formRef"
       :size="size"
     >
       <!-- 动态渲染表单项 -->
       <div
         class="form-search-item-box"
-        v-for="(item, index) of state.visibleFields"
+        v-for="(item, index) of visibleFields"
         :key="index"
       >
         <NFormItem
@@ -36,10 +36,10 @@
           <NInput
             v-if="item.type === 'input'"
             clearable
-            v-model:value="state.formParams[item.prop]"
+            v-model:value="formParams[item.prop]"
             :placeholder="item.placeholder"
-            @focus="state.history.handleFocus(item.prop)"
-            @blur="state.history.closeAllPanels"
+            @focus="history.handleFocus(item.prop)"
+            @blur="history.closeAllPanels"
           />
 
           <!-- input 历史记录面板 -->
@@ -50,7 +50,7 @@
           >
             <div
               class="history-item"
-              @click="state.history.selectHistoryItem(hisValue, item.prop)"
+              @click="history.selectHistoryItem(hisValue, item.prop)"
               v-for="(hisValue, hisIndex) of item.hisList"
               :key="hisValue"
             >
@@ -58,9 +58,7 @@
               <NIcon
                 class="delete-icon"
                 size="14"
-                @click.stop="
-                  state.history.deleteHistoryItem(item.prop, hisIndex)
-                "
+                @click.stop="history.deleteHistoryItem(item.prop, hisIndex)"
               >
                 <div class="i-mdi:close" />
               </NIcon>
@@ -71,7 +69,7 @@
             >
               <span
                 class="clear-all"
-                @click.stop="state.history.clearAllHistory(item.prop)"
+                @click.stop="history.clearAllHistory(item.prop)"
               >
                 清空历史记录
               </span>
@@ -81,7 +79,7 @@
           <!-- select 字段 -->
           <NSelect
             v-if="item.type === 'select'"
-            v-model:value="state.formParams[item.prop]"
+            v-model:value="formParams[item.prop]"
             :placeholder="item.placeholder || '请选择'"
             clearable
             :options="normalizeOptions(item.list)"
@@ -91,7 +89,7 @@
           <NDatePicker
             v-if="item.type === 'date-range'"
             type="datetimerange"
-            v-model:value="state.formParams[item.prop]"
+            v-model:value="formParams[item.prop]"
             format="yyyy-MM-dd HH:mm"
             value-format="yyyy-MM-dd HH:mm"
             start-placeholder="开始时间"
@@ -110,8 +108,8 @@
               <template #trigger>
                 <NButton
                   type="primary"
-                  @click="state.searchFn"
-                  :loading="state.searching"
+                  @click="searchFn"
+                  :loading="searching"
                 >
                   <template #icon>
                     <div class="i-mdi:search w-4 h-4" />
@@ -123,7 +121,7 @@
 
             <NTooltip trigger="hover">
               <template #trigger>
-                <NButton @click="state.resetFn">
+                <NButton @click="resetFn">
                   <template #icon>
                     <div class="i-mdi:refresh w-4 h-4" />
                   </template>
@@ -133,15 +131,15 @@
             </NTooltip>
 
             <NTooltip
-              v-if="state.hasExpandButton"
+              v-if="hasExpandButton"
               trigger="hover"
             >
               <template #trigger>
-                <NButton @click="state.toggleFold">
+                <NButton @click="toggleFold">
                   <template #icon>
                     <div
                       :class="
-                        state.expanded
+                        expanded
                           ? 'i-mdi:chevron-up w-4 h-4'
                           : 'i-mdi:chevron-down w-4 h-4'
                       "
@@ -149,7 +147,7 @@
                   </template>
                 </NButton>
               </template>
-              {{ state.expanded ? '收起' : '展开' }}
+              {{ expanded ? '收起' : '展开' }}
             </NTooltip>
           </NSpace>
         </div>
@@ -191,7 +189,19 @@
   }>()
 
   // ================= Composable =================
-  const state = useSearchState(emits, {
+  const {
+    formRef,
+    formParams,
+    expanded,
+    searching,
+    visibleFields,
+    hasExpandButton,
+    history,
+    searchFn,
+    resetFn,
+    toggleFold,
+    syncFromProps,
+  } = useSearchState(emits, {
     formItemList: props.formItemList,
     formParams: props.formParams,
     config: props.config,
@@ -214,17 +224,17 @@
   // ================= 响应 props 变化 =================
   watch(
     () => props.formItemList,
-    newItems => state.syncFromProps(newItems, props.formParams),
+    newItems => syncFromProps(newItems, props.formParams),
     { deep: true }
   )
 
   // ================= Expose =================
   defineExpose({
-    formRef: state.formRef,
-    formParams: state.formParams,
-    searchFn: state.searchFn,
-    cleanFn: state.resetFn,
-    changeFoldState: state.toggleFold,
+    formRef,
+    formParams,
+    searchFn,
+    cleanFn: resetFn,
+    changeFoldState: toggleFold,
   })
 </script>
 
