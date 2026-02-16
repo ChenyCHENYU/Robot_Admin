@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-25 11:19:50
  * @FilePath: \Robot_Admin\src\views\demo\13-calendar\index.vue
  * @Description: 日历组件演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-  import { type CalendarViewType } from '@/components/global/C_FullCalendar/index.vue'
+  import type { CalendarViewType } from '@/types/modules/calendar'
 
   const message = useMessage()
   const dialog = useDialog()

@@ -355,8 +355,8 @@
   const setCurrentTime = () => {
     if (customTimeRef.value) {
       const now = Date.now()
-      customTimeRef.value.setStartTime(now)
-      customTimeRef.value.setEndTime(now + 3600000) // 1小时后
+      customTimeRef.value.startTime = now
+      customTimeRef.value.endTime = now + 3600000 // 1小时后
       results.custom = '已设置为当前时间 + 1小时'
     }
   }
@@ -364,9 +364,9 @@
   // 获取当前值
   const getCurrentValues = () => {
     if (customTimeRef.value) {
-      const startTime = customTimeRef.value.getStartTime()
-      const endTime = customTimeRef.value.getEndTime()
-      results.custom = `当前值: 开始=${formatTimeHM(startTime)}, 结束=${formatTimeHM(endTime)}`
+      const start = customTimeRef.value.startTime
+      const end = customTimeRef.value.endTime
+      results.custom = `当前值: 开始=${formatTimeHM(start)}, 结束=${formatTimeHM(end)}`
     }
   }
 

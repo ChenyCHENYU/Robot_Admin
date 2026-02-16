@@ -6,12 +6,16 @@
 
 ## 已完成 ✅
 
-| 组件             | 优化前行数 | 优化后行数 | 提取的 Composable                                                                                                                                                                   | 阶段    |
-| ---------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| **C_Table**      | ~1200      | ~300       | `useTableConfig` · `useTableManager` · `useTableColumns` · `useTableActions` · `usePagination` · `useRowEdit` · `useCellEdit` · `useModalEdit` · `useDynamicRow` · `useTableExpand` | Phase 0 |
-| **C_Form**       | ~711       | ~308       | `useFormConfig` · `useFormState` · `useFormRenderer`                                                                                                                                | Phase 0 |
-| **C_FormSearch** | 428        | ~230       | `useSearchHistory` · `useSearchState`                                                                                                                                               | Phase 1 |
-| **C_Draggable**  | 554        | ~170       | `useDraggableLayout`                                                                                                                                                                | Phase 5 |
+| 组件               | 优化前行数 | 优化后行数 | 提取的 Composable                                                                                                                                                                   | 阶段    |
+| ------------------ | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| **C_Table**        | ~1200      | ~300       | `useTableConfig` · `useTableManager` · `useTableColumns` · `useTableActions` · `usePagination` · `useRowEdit` · `useCellEdit` · `useModalEdit` · `useDynamicRow` · `useTableExpand` | Phase 0 |
+| **C_Form**         | ~711       | ~308       | `useFormConfig` · `useFormState` · `useFormRenderer`                                                                                                                                | Phase 0 |
+| **C_FormSearch**   | 428        | ~230       | `useSearchHistory` · `useSearchState`                                                                                                                                               | Phase 1 |
+| **C_Draggable**    | 554        | ~170       | `useDraggableLayout`                                                                                                                                                                | Phase 5 |
+| **C_Tree**         | 524        | ~168       | `useTreeOperations`                                                                                                                                                                 | Phase 5 |
+| **C_GlobalSearch** | ~380       | ~230       | `useGlobalSearch`                                                                                                                                                                   | Phase 5 |
+| **C_FullCalendar** | ~340       | ~165       | `useCalendarEvents`                                                                                                                                                                 | Phase 5 |
+| **C_Time**         | ~310       | ~115       | `useTimeSelection`                                                                                                                                                                  | Phase 5 |
 
 ---
 
@@ -59,20 +63,21 @@
 
 ### 🟠 P1 — 中优先级
 
-| 组件               | 行数               | 核心问题                                               | 优化方向                                                   |
-| ------------------ | ------------------ | ------------------------------------------------------ | ---------------------------------------------------------- |
-| **C_Tree**         | 523                | render 函数 + 树操作逻辑全内联                         | 提取 `useTreeOperations` composable                        |
-| **C_GlobalSearch** | 494 + 742 SCSS     | 键盘导航、搜索历史、菜单扁平化全内联                   | 提取 `useSearchNavigation` / `useSearchHistory` composable |
-| **C_FullCalendar** | 496                | 老式 runtime `defineProps`；硬编码颜色/中文            | 改为 type-based defineProps + data.ts 分离                 |
-| **C_Time**         | 394                | 过度注释；多个 expose getter/setter 可简化             | 精简注释 + 合并 expose 方法                                |
-| **C_Editor**       | 390                | 手动事件监听、setTimeout 初始化、`console.log` 残留    | VueUse 事件处理 + 清理调试代码                             |
-| **C_VtableGantt**  | 382 + 528 data.ts  | 自定义 `deepMerge` 内联在组件中                        | `deepMerge` → utils 提取                                   |
-| **C_Code**         | 369                | 硬编码 `languageIcon`(24项) + `getLanguageTitle`(24项) | 数据移到 data.ts                                           |
-| **C_City**         | 368 + 4813 city.ts | 手动 `clickOutside` 处理                               | 改用 VueUse `onClickOutside`                               |
-| **C_Icon**         | 365                | 5 种图标模式验证规则内联                               | 规则 map 提取到 data.ts                                    |
-| **C_ActionBar**    | 364                | 混合模板 + `h()` 渲染函数风格                          | 统一渲染风格                                               |
-| **C_Date**         | 360                | 5 种日期模式重复 handler                               | handler 合并简化                                           |
-| **C_TagsView**     | 346                | 直接操作 localStorage；手动 DOM 滚动                   | 通过 store 管理 + VueUse                                   |
+| 组件                   | 行数               | 核心问题                                       | 优化方向                                                     |
+| ---------------------- | ------------------ | ---------------------------------------------- | ------------------------------------------------------------ |
+| ~~**C_Tree**~~         | ~~523~~            | ~~render 函数 + 树操作逻辑全内联~~             | ✅ 已提取 `useTreeOperations` composable + `data.ts`         |
+| ~~**C_GlobalSearch**~~ | ~~494 + 742 SCSS~~ | ~~键盘导航、搜索历史、菜单扁平化全内联~~       | ✅ 已提取 `useGlobalSearch` composable + `globalSearch.d.ts` |
+| ~~**C_FullCalendar**~~ | ~~496~~            | ~~老式 runtime defineProps；硬编码颜色/中文~~  | ✅ type-based defineProps + `useCalendarEvents` + `data.ts`  |
+| ~~**C_Time**~~         | ~~394~~            | ~~过度注释；多个 expose getter/setter 可简化~~ | ✅ 已提取 `useTimeSelection` + ref-based expose              |
+
+| **C_Editor** | 390 | 手动事件监听、setTimeout 初始化、`console.log` 残留 | VueUse 事件处理 + 清理调试代码 |
+| **C_VtableGantt** | 382 + 528 data.ts | 自定义 `deepMerge` 内联在组件中 | `deepMerge` → utils 提取 |
+| **C_Code** | 369 | 硬编码 `languageIcon`(24项) + `getLanguageTitle`(24项) | 数据移到 data.ts |
+| **C_City** | 368 + 4813 city.ts | 手动 `clickOutside` 处理 | 改用 VueUse `onClickOutside` |
+| **C_Icon** | 365 | 5 种图标模式验证规则内联 | 规则 map 提取到 data.ts |
+| **C_ActionBar** | 364 | 混合模板 + `h()` 渲染函数风格 | 统一渲染风格 |
+| **C_Date** | 360 | 5 种日期模式重复 handler | handler 合并简化 |
+| **C_TagsView** | 346 | 直接操作 localStorage；手动 DOM 滚动 | 通过 store 管理 + VueUse |
 
 ---
 
@@ -126,13 +131,13 @@
 
 ## 推荐执行路线图
 
-| 阶段        | 组件                                      | 预估工作量 | 状态      |
-| ----------- | ----------------------------------------- | ---------- | --------- |
-| Phase 0     | C_Table + C_Form                          | —          | ✅ 已完成 |
-| Phase 1     | C_FormSearch                              | 0.5 天     | ✅ 已完成 |
-| Phase 2     | C_FilePreview                             | 2 天       | ✅ 已完成 |
-| Phase 3     | C_AntV (ER/UML/BPMN)                      | 2-3 天     | ✅ 已完成 |
-| Phase 4     | C_WorkFlow                                | 1-2 天     | ✅ 已完成 |
-| **Phase 5** | **C_Draggable + C_Tree + C_GlobalSearch** | 2 天       | 🔄 进行中 |
-| Phase 6     | P1 剩余组件批量清理                       | 1-2 天     | ⏳ 待开始 |
-| Phase 7     | P2 小改 + console 全局清理                | 1 天       | ⏳ 待开始 |
+| 阶段        | 组件                                                                | 预估工作量 | 状态      |
+| ----------- | ------------------------------------------------------------------- | ---------- | --------- |
+| Phase 0     | C_Table + C_Form                                                    | —          | ✅ 已完成 |
+| Phase 1     | C_FormSearch                                                        | 0.5 天     | ✅ 已完成 |
+| Phase 2     | C_FilePreview                                                       | 2 天       | ✅ 已完成 |
+| Phase 3     | C_AntV (ER/UML/BPMN)                                                | 2-3 天     | ✅ 已完成 |
+| Phase 4     | C_WorkFlow                                                          | 1-2 天     | ✅ 已完成 |
+| **Phase 5** | **C_Draggable + C_Tree + C_GlobalSearch + C_FullCalendar + C_Time** | 2 天       | ✅ 已完成 |
+| Phase 6     | P1 剩余组件批量清理                                                 | 1-2 天     | ⏳ 待开始 |
+| Phase 7     | P2 小改 + console 全局清理                                          | 1 天       | ⏳ 待开始 |
