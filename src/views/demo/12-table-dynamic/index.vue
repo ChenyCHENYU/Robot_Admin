@@ -16,11 +16,10 @@
       >
         <C_Table
           ref="tableRef"
-          v-model:data="tableData"
+          :data="tableData"
           :columns="dynamicTableColumns"
-          :actions="tableActions"
-          :preset="tablePreset"
           :loading="loading"
+          :config="{ ...tableConfig, actions: tableActions }"
           @row-add="handleRowAdd"
           @row-delete="handleRowDelete"
           @save="handleSave"
@@ -191,7 +190,7 @@
     })
   )
 
-  const tablePreset = {
+  const tableConfig = {
     dynamicRows: {
       enableRadioSelection: true,
       enableAdd: true,
@@ -218,9 +217,6 @@
       defaultRowData: createDefaultEmployee,
     },
     edit: {
-      enabled: true,
-      mode: 'modal' as const,
-      showRowActions: true,
       modalTitle: '编辑员工信息',
       modalWidth: 700,
     },

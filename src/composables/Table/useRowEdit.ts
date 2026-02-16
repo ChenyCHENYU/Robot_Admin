@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { type DataTableRowKey, NButton, NSpace, NIcon } from 'naive-ui/es'
+import type { DataTableRowKey } from 'naive-ui/es'
 
 /**
  * * @description 行编辑配置选项
@@ -146,71 +146,6 @@ export function useRowEdit(options: RowEditOptions) {
     editingData.value[rowKey as string][field] = value
   }
 
-  /**
-   * * @description 渲染行操作按钮，根据编辑状态显示编辑按钮或保存取消按钮组
-   * ? @param rowKey - 行唯一标识
-   * ! @return Vue渲染函数创建的按钮元素
-   */
-  const renderRowActions = (rowKey: DataTableRowKey) => {
-    if (isEditingRow(rowKey)) {
-      return h(
-        NSpace,
-        { size: 8 },
-        {
-          default: () => [
-            h(
-              NButton,
-              {
-                size: 'small',
-                type: 'primary',
-                onClick: saveEditRow,
-              },
-              {
-                default: () => [
-                  h(NIcon, { size: 16 }, () =>
-                    h('i', { class: 'i-mdi:content-save' })
-                  ),
-                  '保存',
-                ],
-              }
-            ),
-            h(
-              NButton,
-              {
-                size: 'small',
-                onClick: cancelEditRow,
-              },
-              {
-                default: () => [
-                  h(NIcon, { size: 16 }, () =>
-                    h('i', { class: 'i-mdi:close' })
-                  ),
-                  '取消',
-                ],
-              }
-            ),
-          ],
-        }
-      )
-    }
-
-    return h(
-      NButton,
-      {
-        size: 'small',
-        type: 'primary',
-        quaternary: true,
-        onClick: () => startEditRow(rowKey),
-      },
-      {
-        default: () => [
-          h(NIcon, { size: 16 }, () => h('i', { class: 'i-mdi:pencil' })),
-          '编辑',
-        ],
-      }
-    )
-  }
-
   return {
     editingRowKey,
     isEditingRow,
@@ -219,7 +154,6 @@ export function useRowEdit(options: RowEditOptions) {
     saveEditRow,
     getEditingRowData,
     updateEditingRowData,
-    renderRowActions,
     findRowData,
   }
 }

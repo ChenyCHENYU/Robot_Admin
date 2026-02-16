@@ -1,12 +1,6 @@
 <!--
- * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2025-12-10 08:00:00
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-12-10 10:52:00
- * @FilePath: \Robot_Admin\src\components\global\C_Table\components\TableSettings\tabs\ColumnManagementTab.vue
- * @Description: 列管理Tab
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
--->
+ * @Description: 列设置面板 — 搜索、拖拽排序、可见性、固定列、列宽调整
+ -->
 
 <template>
   <div class="column-management-tab">
@@ -108,7 +102,9 @@
             <NCheckbox
               :checked="column.visible !== false"
               :disabled="column.key === '_actions'"
-              @update:checked="value => toggleColumnVisibility(index, value)"
+              @update:checked="
+                (value: boolean) => toggleColumnVisibility(index, value)
+              "
             />
           </div>
           <div class="column-details">
@@ -169,7 +165,7 @@
           </div>
           <NDropdown
             :options="getFixedOptions(column)"
-            @select="value => handleFixedSelect(index, value)"
+            @select="(value: string) => handleFixedSelect(index, value)"
           >
             <C_Icon
               name="mdi:pin"
@@ -188,30 +184,16 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
-  import {
-    NCheckbox,
-    NButton,
-    NText,
-    NSpace,
-    NDropdown,
-    NInput,
-    NTag,
-    NSwitch,
-  } from 'naive-ui/es'
   import C_Icon from '@/components/global/C_Icon/index.vue'
   import type { TableColumn } from '@/types/modules/table'
+  import { getFixedOptions, isSpecialColumn } from './data'
 
-  interface Props {
-    columns: TableColumn[]
-  }
+  // ================= Props & Emits =================
 
-  interface Emits {
-    (e: 'change', columns: TableColumn[]): void
-  }
+  const props = defineProps<{ columns: TableColumn[] }>()
+  const emit = defineEmits<{ (e: 'change', columns: TableColumn[]): void }>()
 
-  const props = defineProps<Props>()
-  const emit = defineEmits<Emits>()
+  // ================= 响应式状态 =================
 
   const localColumns = ref<TableColumn[]>([...props.columns])
   const searchText = ref('')
@@ -220,32 +202,31 @@
   const dragOverIndex = ref<number | null>(null)
   const enableResizable = ref(false)
 
-  // 初始化：检查是否有列已启用 resizable
   onMounted(() => {
     enableResizable.value = localColumns.value.some(
       col => col.resizable === true
     )
   })
 
-  // 过滤后的列
+  // ================= 计算属性 =================
+
   const filteredColumns = computed(() => {
     if (!searchText.value) return localColumns.value
-
     const search = searchText.value.toLowerCase()
     return localColumns.value.filter(
-      column =>
-        column.title?.toLowerCase().includes(search) ||
-        column.key.toLowerCase().includes(search)
+      col =>
+        col.title?.toLowerCase().includes(search) ||
+        col.key.toLowerCase().includes(search)
     )
   })
 
-  // 统计信息
   const visibleCount = computed(
     () => localColumns.value.filter(col => col.visible !== false).length
   )
   const totalCount = computed(() => localColumns.value.length)
 
-  // 批量设置列可见性
+  // ================= 批量操作 =================
+
   const setAllColumnsVisible = (visible: boolean) => {
     localColumns.value.forEach(col => {
       if (col.key !== '_actions') col.visible = visible
@@ -256,13 +237,13 @@
   const selectAll = () => setAllColumnsVisible(true)
   const selectNone = () => setAllColumnsVisible(false)
 
-  // 通用的索引查找函数
+  // ================= 列属性更新 =================
+
   const findOriginalIndex = (filteredIndex: number): number => {
     const column = filteredColumns.value[filteredIndex]
     return localColumns.value.findIndex(col => col.key === column.key)
   }
 
-  // 更新列属性的通用函数
   const updateColumnProperty = (
     index: number,
     updater: (col: TableColumn) => void
@@ -286,39 +267,18 @@
     })
   }
 
-  const getFixedOptions = (column: TableColumn) => {
-    return [
-      {
-        label: column.fixed ? '✓ 取消固定' : '不固定',
-        key: 'none',
-        disabled: !column.fixed,
-      },
-      {
-        label: column.fixed === 'left' ? '✓ 固定左侧' : '固定左侧',
-        key: 'left',
-        disabled: false,
-      },
-      {
-        label: column.fixed === 'right' ? '✓ 固定右侧' : '固定右侧',
-        key: 'right',
-        disabled: false,
-      },
-    ]
-  }
-
   const applyChanges = () => emit('change', [...localColumns.value])
+
   const resetColumns = () => {
     localColumns.value = [...props.columns]
     applyChanges()
   }
 
-  // 处理列宽调整开关变化
+  // ================= 列宽调整 =================
+
   const handleResizableChange = (value: boolean) => {
     localColumns.value.forEach(col => {
-      const isSpecialColumn =
-        ['_actions'].includes(col.key as string) ||
-        ['selection', 'expand'].includes(col.type!)
-      if (!isSpecialColumn) {
+      if (!isSpecialColumn(col)) {
         col.resizable = value
         if (value) {
           col.minWidth = col.minWidth || 80
@@ -329,10 +289,11 @@
     applyChanges()
   }
 
+  // ================= 拖拽排序 =================
+
   const moveColumn = (fromIndex: number, toIndex: number) => {
     const originalFromIndex = findOriginalIndex(fromIndex)
     const originalToIndex = findOriginalIndex(toIndex)
-
     if (originalFromIndex !== -1 && originalToIndex !== -1) {
       const [movedColumn] = localColumns.value.splice(originalFromIndex, 1)
       localColumns.value.splice(originalToIndex, 0, movedColumn)
@@ -340,7 +301,6 @@
     }
   }
 
-  // 拖拽功能
   const handleDragStart = (index: number, event: DragEvent) => {
     const column = filteredColumns.value[index]
     if (column.key === '_actions') {
@@ -380,151 +340,5 @@
 </script>
 
 <style scoped lang="scss">
-  .column-management-tab {
-    .search-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-
-      .search-input {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .resizable-control {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        padding: 0 10px;
-        height: 34px;
-        background: var(--n-color-target);
-        border-radius: 6px;
-        white-space: nowrap;
-      }
-    }
-
-    .top-actions-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding: 10px 12px;
-      background: var(--n-color-target);
-      border-radius: 6px;
-
-      .stats-info {
-        flex: 1;
-      }
-
-      .quick-actions {
-        flex-shrink: 0;
-      }
-    }
-
-    .column-list {
-      .column-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 4px;
-        margin-bottom: 4px;
-        border-radius: 4px;
-        background: transparent;
-        cursor: move;
-        transition: all 0.2s ease;
-
-        &:hover {
-          background: var(--n-color-target);
-        }
-
-        &.disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        &.fixed-left {
-          background: rgba(24, 160, 88, 0.08);
-        }
-
-        &.fixed-right {
-          background: rgba(240, 138, 0, 0.08);
-        }
-
-        .column-info {
-          display: flex;
-          align-items: center;
-          flex: 1;
-          gap: 10px;
-          min-width: 0;
-
-          .column-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-
-            .drag-handle {
-              color: var(--n-text-color-3);
-              cursor: grab;
-
-              &:active {
-                cursor: grabbing;
-              }
-
-              &.disabled {
-                cursor: not-allowed;
-                opacity: 0.3;
-              }
-            }
-          }
-
-          .column-details {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-          }
-        }
-
-        .column-actions {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          flex-shrink: 0;
-
-          .drag-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-
-            .c-icon {
-              opacity: 0.6;
-              transition: all 0.2s ease;
-
-              &:not(.disabled):hover {
-                opacity: 1;
-                transform: scale(1.15);
-              }
-
-              &.disabled {
-                opacity: 0.3;
-                cursor: not-allowed;
-              }
-            }
-          }
-
-          .c-icon {
-            transition: all 0.2s ease;
-
-            &:hover {
-              transform: scale(1.15);
-            }
-          }
-        }
-      }
-    }
-  }
+  @use './index.scss';
 </style>

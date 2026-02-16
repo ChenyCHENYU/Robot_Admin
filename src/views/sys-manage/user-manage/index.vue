@@ -130,21 +130,21 @@
               :data="userList"
               :loading="loading"
               :row-key="row => row.id"
-              :scroll-x="1500"
               :row-class-name="getRowClassName"
-              :actions="tableActions as any"
-              :enable-selection="true"
-              :default-checked-keys="selectedUsers"
-              :pagination="{
-                enabled: true,
-                page: pagination.page,
-                pageSize: pagination.pageSize,
-                total: pagination.itemCount,
-                remote: true,
+              :config="{
+                actions: tableActions as any,
+                selection: {
+                  enabled: true,
+                  defaultCheckedKeys: selectedUsers,
+                },
+                pagination: {
+                  page: pagination.page,
+                  pageSize: pagination.pageSize,
+                  total: pagination.itemCount,
+                  remote: true,
+                },
+                display: { scrollX: 1500 },
               }"
-              size="small"
-              striped
-              edit-mode="none"
               @pagination-change="handlePaginationChange"
             />
           </NCard>

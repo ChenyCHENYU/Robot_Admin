@@ -1,11 +1,13 @@
 <!--
- * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2025-06-13 18:38:58
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-12-10 09:27:22
- * @FilePath: \Robot_Admin\src\components\global\C_Table\index.vue
- * @Description: 超级表格组件
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ * @Description: 超级表格组件（薄 UI 壳）
+ *
+ *   使用侧 API：
+ *   <C_Table :columns="cols" :data="data" :loading="loading" :config="tableConfig" />
+ *
+ *   config 收拢了所有功能配置：edit / selection / expand / pagination / dynamicRows / toolbar / display
+ *   列处理 → composables/Table/useTableColumns.ts
+ *   配置解析 → composables/Table/useTableConfig.ts
+ *   编辑/展开/动态行 → composables/Table/useTableManager.ts
  -->
 
 <template>
@@ -18,7 +20,7 @@
 
     <!-- 表格工具栏 -->
     <div
-      v-if="showToolbar"
+      v-if="resolved.showToolbar"
       class="table-toolbar"
     >
       <div class="toolbar-left">
@@ -26,9 +28,8 @@
       </div>
       <div class="toolbar-right">
         <slot name="toolbar-right" />
-        <!-- 设置面板按钮 -->
         <C_Icon
-          v-if="enableColumnSettings"
+          v-if="resolved.enableColumnSettings"
           name="mdi:cog"
           size="18"
           title="表格设置"
@@ -42,141 +43,136 @@
     <!-- 表格主体 -->
     <NDataTable
       ref="tableRef"
-      v-bind="tableProps"
+      v-bind="{ ...computedTableProps, ...$attrs }"
       :columns="computedColumns"
       :data="normalizedData"
       :loading="normalizedLoading"
       :row-key="rowKey"
       :expanded-row-keys="tableManager.expandedKeys.value"
       :checked-row-keys="tableManager.checkedKeys.value"
-      :render-expand="renderExpandFunction"
       @update:expanded-row-keys="tableManager.expandState?.handleExpandChange"
       @update:checked-row-keys="tableManager.expandState?.handleSelectionChange"
       :scroll-x="computedScrollX"
       style="width: 100%"
     />
 
-    <!-- 分页组件 -->
+    <!-- 分页 -->
     <NPagination
       v-if="pagination.paginationConfig.value"
       v-bind="pagination.paginationConfig.value"
       class="pagination-wrapper"
     />
 
-    <!-- 编辑模态框 -->
-    <TableEditModal
-      v-if="config.editMode === 'modal'"
-      v-model:visible="tableManager.editStates.modalEdit.isModalVisible.value"
-      :editing-data="tableManager.editStates.modalEdit.editingData.value"
-      :title="config.modalTitle"
-      :width="config.modalWidth"
-      :form-options="formOptions"
-      :form-key="formKey"
-      @save="handleModalSave"
-      @cancel="tableManager.editStates.modalEdit.cancelEdit"
-    />
+    <!-- 编辑弹窗 -->
+    <NModal
+      v-if="resolved.editMode === 'modal' || resolved.editMode === 'both'"
+      v-model:show="modalVisible"
+      :title="resolved.modalTitle"
+      :width="resolved.modalWidth"
+      preset="card"
+      :mask-closable="false"
+      :close-on-esc="false"
+      class="w60%"
+      :closable="false"
+    >
+      <C_Form
+        v-if="modalVisible && formOptions.length"
+        ref="editFormRef"
+        :key="formKey"
+        v-model="localEditingData"
+        :options="formOptions"
+        layout-type="grid"
+        :layout-config="{ grid: { cols: 2, xGap: 16, yGap: 16 } }"
+        :show-default-actions="false"
+      />
+      <template #action>
+        <NSpace justify="end">
+          <NButton @click="handleModalCancel">取消</NButton>
+          <NButton
+            type="primary"
+            :loading="modalSubmitLoading"
+            @click="handleModalSave"
+          >
+            保存
+          </NButton>
+        </NSpace>
+      </template>
+    </NModal>
 
-    <!-- 动态行确认删除模态框 -->
+    <!-- 动态行确认删除弹窗 -->
     <component
       v-if="tableManager.dynamicRowsState"
       :is="tableManager.dynamicRowsState.renderConfirmModal()"
     />
 
-    <!-- 🆕 表格设置面板 -->
-    <TableSettings
-      v-model:visible="showSettingsPanel"
-      :columns="reactiveColumns"
-      @column-change="handleColumnChange"
-    />
+    <!-- 列设置抽屉 -->
+    <NDrawer
+      v-model:show="showSettingsPanel"
+      :width="420"
+      placement="right"
+      :mask-closable="true"
+    >
+      <NDrawerContent
+        title="列设置"
+        closable
+      >
+        <ColumnSettings
+          :columns="reactiveColumns"
+          @change="onColumnSettingsChange"
+        />
+      </NDrawerContent>
+    </NDrawer>
   </div>
 </template>
 
 <script setup lang="ts">
-  import type { VNodeChild, ComponentPublicInstance } from 'vue'
-  import { type DataTableRowKey, type DataTableColumn } from 'naive-ui/es'
+  defineOptions({ inheritAttrs: false })
+
+  import type { ComponentPublicInstance } from 'vue'
+  import type { DataTableRowKey } from 'naive-ui/es'
   import type {
     TableColumn,
-    TableProps,
     TableEmits,
     DataRecord,
-    ParentChildLinkMode,
-    SimpleTableActions,
+    MaybeRefLike,
   } from '@/types/modules/table'
-  import type { DynamicRowsOptions } from '@/composables/Table/useDynamicRow'
+  import {
+    resolveConfig,
+    createEditModeChecker,
+    type TableConfig,
+    type CrudBinding,
+  } from '@/composables/Table/useTableConfig'
   import { useTableManager } from '@/composables/Table/useTableManager'
   import { usePagination } from '@/composables/Table/usePagination'
   import { useTableActions } from '@/composables/Table/useTableActions'
-  import TableEditModal from './components/TableEditModal.vue'
-  import TableSettings from './components/TableSettings/index.vue'
+  import { useTableColumns } from '@/composables/Table/useTableColumns'
+  import { generateFormOptions } from './data'
+  import ColumnSettings from './components/ColumnSettings/index.vue'
   import C_Icon from '@/components/global/C_Icon/index.vue'
-  import {
-    generateFormOptions,
-    getTableProps,
-    createUnifiedConfig,
-    createEditModeChecker,
-    renderEditComponent,
-    renderDisplayCell,
-    renderEditingCell,
-    renderEditableCell,
-    type TablePresetConfig,
-  } from './data'
 
-  // ================= 类型定义 =================
-  interface EnhancedTableProps<T extends DataRecord = DataRecord>
-    extends TableProps<T> {
-    preset?: TablePresetConfig<T>
-    actions?: SimpleTableActions<T>
-    expandable?: boolean
-    onLoadExpandData?: (row: T) => Promise<any[]> | any[]
-    renderExpandContent?: (
-      row: T,
-      expandData: any[],
-      loading: boolean,
-      childSelection?: any
-    ) => VNodeChild
-    rowExpandable?: (row: T) => boolean
-    defaultExpandedKeys?: DataTableRowKey[]
-    enableSelection?: boolean
-    defaultCheckedKeys?: DataTableRowKey[]
-    rowCheckable?: (row: T) => boolean
-    maxSelection?: number
-    enableChildSelection?: boolean
-    childRowCheckable?: (childRow: any, parentRow: T) => boolean
-    enableParentChildLink?: boolean
-    parentChildLinkMode?: ParentChildLinkMode
-    dynamicRowsOptions?: DynamicRowsOptions<T>
-    // 🆕 设置面板相关属性
-    showToolbar?: boolean
-    enableColumnSettings?: boolean
-  }
+  // ================= Props（极简 API） =================
 
-  // ================= Props & Emit =================
-  const props = withDefaults(defineProps<EnhancedTableProps>(), {
-    rowKey: (row: DataRecord) => row.id,
-    loading: false,
-    striped: true,
-    bordered: true,
-    singleLine: true,
-    size: 'medium',
-    editable: true,
-    editMode: 'both',
-    showRowActions: true,
-    modalTitle: '编辑数据',
-    modalWidth: 600,
-    columnWidth: 180,
-    expandable: false,
-    enableSelection: false,
-    enableChildSelection: false,
-    enableParentChildLink: false,
-    parentChildLinkMode: 'loose',
-    dynamicRowsOptions: undefined,
-    preset: undefined,
-    actions: () => ({}),
-    pagination: () => true,
-    // 🆕 设置面板相关默认值
-    showToolbar: true,
-    enableColumnSettings: true,
-  })
+  const props = withDefaults(
+    defineProps<{
+      /** 列配置（crud 模式下可省略） */
+      columns?: TableColumn[]
+      /** 数据源（crud 模式下可省略） */
+      data?: MaybeRefLike<DataRecord[]>
+      /** 加载状态 */
+      loading?: MaybeRefLike<boolean>
+      /** 行唯一键 */
+      rowKey?: (row: DataRecord) => DataTableRowKey
+      /** 统一功能配置（edit / selection / expand / pagination / dynamicRows / toolbar / display） */
+      config?: TableConfig
+      /** CRUD 绑定 — 传入 useTableCrud() 的返回值，自动接管 data/columns/loading/actions/pagination/events */
+      crud?: CrudBinding
+    }>(),
+    {
+      loading: false,
+      rowKey: (row: DataRecord) => row.id as DataTableRowKey,
+      config: () => ({}),
+    }
+  )
 
   const emit = defineEmits<
     TableEmits & {
@@ -190,87 +186,133 @@
       ]
       'pagination-change': [page: number, pageSize: number]
       'view-detail': [data: DataRecord]
-      // 🆕 设置面板相关事件
       'column-change': [columns: TableColumn[]]
     }
   >()
 
-  // ================= 响应式状态 =================
-  const tableRef = ref<ComponentPublicInstance>()
+  // ================= CRUD 桥接 =================
 
-  // � 统一处理 props.data 和 props.loading（兼容跨 Vue 实例的 Ref）
-  const normalizedData = computed(() => {
-    const { data } = props
-    // 处理 Ref 类型（包括跨 Vue 实例）
-    return data && typeof data === 'object' && 'value' in data
-      ? data.value
-      : data
-  })
+  /** 包装 emit：在触发事件的同时自动调用 crud 对应的方法 */
+  const bridgedEmit: typeof emit = (event: any, ...args: any[]) => {
+    ;(emit as any)(event, ...args)
 
-  const normalizedLoading = computed(() => {
-    const { loading } = props
-    // 处理 Ref 类型（包括跨 Vue 实例）
-    return loading && typeof loading === 'object' && 'value' in loading
-      ? loading.value
-      : loading
-  })
-
-  // �🆕 设置面板相关状态
-  const showSettingsPanel = ref(false)
-
-  // 🆕 响应式列状态（用于实时更新）
-  const reactiveColumns = ref<TableColumn[]>([
-    ...props.columns,
-    // 添加操作列，默认固定在右侧
-    {
-      key: '_actions',
-      title: '操作',
-      width: 180,
-      editable: false,
-      visible: true,
-      fixed: 'right', // 默认固定在右侧
-    } as TableColumn,
-  ])
-
-  // 🆕 计算 scroll-x：当有固定列时，必须设置 scroll-x 才能让固定列生效
-  const computedScrollX = computed(() => {
-    // 如果用户手动设置了 scrollX，优先使用用户设置
-    if (props.scrollX !== undefined) {
-      return props.scrollX
+    if (!props.crud) return
+    const handlers: Record<string, ((...a: any[]) => void) | undefined> = {
+      save: props.crud.save,
+      cancel: props.crud.handleCancel,
+      'pagination-change': props.crud.handlePaginationChange,
+      'row-delete': props.crud.handleRowDelete,
+      'view-detail': props.crud.detail?.show,
     }
+    handlers[event]?.(...args)
+  }
 
-    // 检查是否有固定列
-    const hasFixedColumn = reactiveColumns.value.some(
-      col => col.fixed && col.visible !== false
-    )
+  // ================= 有效值（crud 优先 → props 覆盖） =================
 
-    // 如果有固定列，必须设置 scroll-x
-    if (hasFixedColumn) {
-      const totalWidth = reactiveColumns.value
-        .filter(col => col.visible !== false)
-        .reduce((sum, col) => {
-          const colWidth = col.width || props.columnWidth || 180
-          return sum + (typeof colWidth === 'number' ? colWidth : 180)
-        }, 0)
-
-      // 返回总宽度 + 缓冲区，确保能触发横向滚动
-      return totalWidth + 200
-    }
-
-    return undefined
+  /** 合并 crud 返回的 actions/pagination 到用户 config */
+  const effectiveConfig = computed<TableConfig>(() => {
+    if (!props.crud) return props.config || {}
+    const fromCrud: Partial<TableConfig> = {}
+    if (props.crud.actions) fromCrud.actions = props.crud.actions.value
+    if (props.crud.pagination) fromCrud.pagination = props.crud.pagination.value
+    // 用户 config 覆盖 crud 提取值
+    return { ...fromCrud, ...props.config }
   })
 
-  // ================= 计算属性 =================
-  const config = computed(() => ({
-    ...createUnifiedConfig(props),
-    parentChildLinkMode: props.parentChildLinkMode as ParentChildLinkMode,
-  }))
-
-  const editableColumns = computed(() =>
-    props.columns.filter((col): col is TableColumn => col.editable !== false)
+  const effectiveColumns = computed<TableColumn[]>(
+    () => props.columns ?? props.crud?.columns.value ?? []
   )
 
-  const tableProps = computed(() => getTableProps(props))
+  // ================= 配置解析 =================
+
+  const resolved = computed(() => resolveConfig(effectiveConfig.value))
+  const editModeChecker = computed(() => createEditModeChecker(resolved.value))
+
+  // ================= 数据规范化（兼容跨实例 Ref） =================
+
+  const unwrapRef = <T,>(val: MaybeRefLike<T> | undefined): T | undefined =>
+    val && typeof val === 'object' && 'value' in val ? val.value : (val as T)
+
+  const normalizedData = computed<DataRecord[]>(
+    () => unwrapRef(props.data) ?? props.crud?.data.value ?? []
+  )
+
+  const normalizedLoading = computed<boolean>(
+    () => unwrapRef(props.loading) ?? props.crud?.loading.value ?? false
+  )
+
+  // ================= Hooks =================
+
+  const pagination = usePagination({
+    data: normalizedData,
+    config: computed(() => resolved.value.pagination),
+    emit: bridgedEmit,
+  })
+
+  const tableManager = useTableManager({
+    config: resolved.value,
+    data: () => normalizedData.value,
+    rowKey: props.rowKey,
+    emit: bridgedEmit,
+  })
+
+  const tableActions = useTableActions({
+    actions: computed(() => effectiveConfig.value.actions || {}),
+    config: resolved,
+    tableManager,
+    rowKey: props.rowKey,
+    emit: bridgedEmit,
+    onViewDetail: (data: DataRecord) => bridgedEmit('view-detail', data),
+  })
+
+  const columnState = useTableColumns({
+    rawColumns: effectiveColumns,
+    config: resolved,
+    columnWidth: resolved.value.columnWidth,
+    scrollX: resolved.value.scrollX,
+    rowKey: props.rowKey,
+    tableManager,
+    actionsRenderer: tableActions.renderActions,
+    editModeChecker,
+  })
+
+  const {
+    showSettingsPanel,
+    reactiveColumns,
+    computedColumns,
+    computedScrollX,
+  } = columnState
+
+  // ================= 表格属性 =================
+
+  const tableRef = ref<ComponentPublicInstance>()
+
+  const computedTableProps = computed(() => ({
+    striped: resolved.value.striped,
+    bordered: resolved.value.bordered,
+    singleLine: resolved.value.singleLine,
+    size: resolved.value.size,
+    maxHeight: resolved.value.maxHeight,
+  }))
+
+  // ================= 编辑弹窗 =================
+
+  const editFormRef = ref<any>()
+  const modalSubmitLoading = ref(false)
+  const localEditingData = ref<DataRecord>({})
+
+  const modalVisible = computed({
+    get: () => tableManager.editStates.modalEdit.isModalVisible.value,
+    set: (val: boolean) => {
+      tableManager.editStates.modalEdit.isModalVisible.value = val
+    },
+  })
+
+  const editableColumns = computed(() =>
+    effectiveColumns.value.filter(
+      (col): col is TableColumn => col.editable !== false
+    )
+  )
 
   const formKey = computed(
     () =>
@@ -279,320 +321,54 @@
 
   const formOptions = computed(() => generateFormOptions(editableColumns.value))
 
-  const renderExpandFunction = computed(() => undefined)
-
-  const editModeChecker = computed(() => createEditModeChecker(config.value))
-
-  // ================= Hooks 初始化 =================
-
-  // 分页 Hook
-  const pagination = usePagination({
-    data: normalizedData,
-    config: computed(() => config.value.pagination),
-    emit,
-  })
-
-  // 表格管理器
-  const tableManager = useTableManager({
-    config: config.value,
-    data: () => normalizedData.value,
-    rowKey: props.rowKey,
-    emit,
-  })
-
-  // 操作按钮 Hook - 简化处理
-  const tableActions = useTableActions({
-    actions: computed(() => props.actions || {}),
-    config,
-    tableManager,
-    rowKey: props.rowKey,
-    emit,
-    onViewDetail: (data: DataRecord) => emit('view-detail', data),
-  })
-
-  // ================= 事件处理 =================
-
-  /**
-   * 处理模态框保存
-   */
-  const handleModalSave = async (formData: DataRecord) => {
-    try {
-      await tableManager.editStates.modalEdit.saveEdit(formData)
-    } catch (error) {
-      console.error('模态框保存失败:', error)
-    }
-  }
-
-  // 🆕 设置面板事件处理函数
-  const handleColumnChange = (columns: TableColumn[]) => {
-    const fixedColumns = columns.filter(col => col.fixed)
-    if (fixedColumns.length > 0) {
-      console.log(
-        '🔧 固定列设置:',
-        fixedColumns.map(col => ({
-          key: col.key,
-          fixed: col.fixed,
-        }))
-      )
-    }
-
-    // 更新响应式列状态
-    reactiveColumns.value = columns.map(col => ({
-      ...col,
-      visible: col.visible !== false,
-      fixed: col.fixed,
-      width: col.width || props.columnWidth,
-      align: col.align || 'center',
-      titleAlign: col.titleAlign || 'center',
-    }))
-
-    emit('column-change', reactiveColumns.value)
-  }
-
-  // 监听外部列变化，同步到响应式状态
   watch(
-    () => props.columns,
-    newColumns => {
-      if (newColumns && newColumns.length > 0) {
-        // 保留操作列的固定状态
-        const actionsCol = reactiveColumns.value.find(
-          col => col.key === '_actions'
-        )
-        reactiveColumns.value = [
-          ...newColumns,
-          actionsCol ||
-            ({
-              key: '_actions',
-              title: '操作',
-              width: 180,
-              editable: false,
-              visible: true,
-              fixed: 'right',
-            } as TableColumn),
-        ]
+    () => tableManager.editStates.modalEdit.editingData.value,
+    newData => {
+      if (newData && Object.keys(newData).length > 0) {
+        localEditingData.value = JSON.parse(JSON.stringify(newData))
       }
     },
-    { deep: true, immediate: true }
+    { immediate: true, deep: true }
   )
 
-  // ================= 单元格渲染辅助函数 =================
-  const renderCellEdit = (
-    column: TableColumn,
-    rowData: DataRecord,
-    rowIndex: number,
-    rowKey: DataTableRowKey
-  ): VNodeChild => {
-    const value = rowData[column.key]
-    const isEditingCell = tableManager.editStates.cellEdit.isEditingCell(
-      rowKey,
-      column.key
-    )
-
-    if (isEditingCell) {
-      return renderEditingCell(
-        column,
-        tableManager.editStates.cellEdit.getEditingCellValue(
-          rowKey,
-          column.key
-        ) ?? value,
-        val =>
-          tableManager.editStates.cellEdit.updateEditingCellValue(
-            rowKey,
-            column.key,
-            val
-          ),
-        () => tableManager.editStates.cellEdit.saveEditCell(),
-        () => tableManager.editStates.cellEdit.cancelEditCell()
-      )
+  watch(modalVisible, visible => {
+    if (!visible) {
+      setTimeout(() => {
+        localEditingData.value = {}
+      }, 300)
     }
-
-    return renderEditableCell(column, rowData, rowIndex, value, () =>
-      tableManager.editStates.cellEdit.startEditCell(rowKey, column.key)
-    )
-  }
-
-  // ================= 单元格渲染函数 =================
-  const renderCell = (
-    column: TableColumn,
-    rowData: DataRecord,
-    rowIndex: number
-  ): VNodeChild => {
-    const value = rowData[column.key]
-    const rowKey = props.rowKey(rowData)
-
-    if (editModeChecker.value.isNonEditable(column)) {
-      return renderDisplayCell(column, rowData, rowIndex, value)
-    }
-
-    if (
-      editModeChecker.value.isRowEditMode() &&
-      tableManager.editStates.rowEdit.isEditingRow(rowKey)
-    ) {
-      return renderEditComponent(
-        column,
-        tableManager.editStates.rowEdit.getEditingRowData(rowKey)?.[
-          column.key
-        ] ?? value,
-        val =>
-          tableManager.editStates.rowEdit.updateEditingRowData(
-            rowKey,
-            column.key,
-            val
-          )
-      )
-    }
-
-    if (editModeChecker.value.isCellEditMode()) {
-      return renderCellEdit(column, rowData, rowIndex, rowKey)
-    }
-
-    return renderDisplayCell(column, rowData, rowIndex, value)
-  }
-
-  // 列映射辅助函数
-  const mapIndexColumn = (column: TableColumn): DataTableColumn => {
-    const indexWidth = column.width || 50
-    return {
-      key: '_index',
-      title: column.title || '序号',
-      width: typeof indexWidth === 'number' ? indexWidth : 50,
-      titleAlign: 'center' as const,
-      align: 'center' as const,
-      render: (_: DataRecord, index: number) => index + 1,
-      fixed: column.fixed,
-    }
-  }
-
-  /**
-   * 计算列宽度
-   */
-  const getColumnWidth = (column: TableColumn): number => {
-    const columnWidth = column.width || props.columnWidth || 180
-    return typeof columnWidth === 'number' ? columnWidth : 180
-  }
-
-  /**
-   * 应用可调整大小配置
-   */
-  const applyResizable = (baseColumn: any, column: TableColumn): void => {
-    if (column.resizable && typeof baseColumn.width === 'number') {
-      baseColumn.resizable = true
-      baseColumn.minWidth = column.minWidth || 80
-      baseColumn.maxWidth = column.maxWidth || 500
-    }
-  }
-
-  const mapRegularColumn = (column: TableColumn): DataTableColumn => {
-    const baseColumn: any = {
-      ...column,
-      width: getColumnWidth(column),
-      titleAlign: column.titleAlign || ('center' as const),
-      align: column.align || ('center' as const),
-      render:
-        column.render ||
-        ((rowData: DataRecord, rowIndex: number) =>
-          renderCell(column, rowData, rowIndex)),
-    }
-
-    if (column.fixed) {
-      baseColumn.fixed = column.fixed
-    }
-
-    applyResizable(baseColumn, column)
-
-    return baseColumn
-  }
-
-  // 日志辅助函数
-  const logFixedColumns = (columns: DataTableColumn[]) => {
-    const fixedCols = columns.filter(c => 'fixed' in c && c.fixed)
-    if (fixedCols.length > 0) {
-      console.log(
-        '📌 固定列:',
-        fixedCols.map(c => ({
-          key: 'key' in c ? c.key : '',
-          fixed: 'fixed' in c ? c.fixed : undefined,
-          width: 'width' in c ? c.width : undefined,
-        }))
-      )
-    }
-  }
-
-  // ================= 计算列配置 =================
-  /**
-   * 过滤并映射基础列（不包括操作列）
-   */
-  const getBaseColumns = (): DataTableColumn[] => {
-    return reactiveColumns.value
-      .filter(column => column.visible !== false && column.key !== '_actions')
-      .map(column => {
-        if (column.type === 'index') {
-          return mapIndexColumn(column)
-        }
-        return mapRegularColumn(column)
-      }) as DataTableColumn[]
-  }
-
-  /**
-   * 应用动态行增强
-   */
-  const applyDynamicEnhancement = (
-    columns: DataTableColumn[]
-  ): DataTableColumn[] => {
-    if (!tableManager.dynamicRowsState) return columns
-    return tableManager.dynamicRowsState.enhanceColumns(
-      columns as any
-    ) as DataTableColumn[]
-  }
-
-  /**
-   * 应用展开和选择功能
-   */
-  const applyExpandAndSelection = (
-    columns: DataTableColumn[]
-  ): DataTableColumn[] => {
-    const shouldApply =
-      tableManager.expandState &&
-      (config.value.expandable || config.value.enableSelection)
-    if (!shouldApply) return columns
-    return tableManager.expandState!.getTableColumns(
-      columns as any
-    ) as DataTableColumn[]
-  }
-
-  /**
-   * 添加操作列
-   */
-  const addActionsColumn = (columns: DataTableColumn[]): DataTableColumn[] => {
-    const actionsColumn = reactiveColumns.value.find(
-      col => col.key === '_actions'
-    )
-    columns.push({
-      key: '_actions',
-      title: '操作',
-      align: 'center' as const,
-      titleAlign: 'center' as const,
-      render: tableActions.renderActions,
-      fixed: actionsColumn?.fixed,
-    })
-    return columns
-  }
-
-  // 🆕 修改 computedColumns 支持固定列，使用响应式列状态
-  const computedColumns = computed((): DataTableColumn[] => {
-    let columns = getBaseColumns()
-    columns = applyDynamicEnhancement(columns)
-    columns = applyExpandAndSelection(columns)
-    columns = addActionsColumn(columns)
-    logFixedColumns(columns)
-    return columns
   })
 
-  // 解构出需要的管理器
+  const handleModalSave = async () => {
+    if (!editFormRef.value) return
+    modalSubmitLoading.value = true
+    try {
+      await editFormRef.value.validate()
+      await tableManager.editStates.modalEdit.saveEdit(localEditingData.value)
+    } catch {
+      // 表单验证错误由组件内联显示
+    } finally {
+      modalSubmitLoading.value = false
+    }
+  }
+
+  const handleModalCancel = () => {
+    localEditingData.value = {}
+    tableManager.editStates.modalEdit.cancelEdit()
+  }
+
+  // ================= 列设置 =================
+
+  const onColumnSettingsChange = (columns: TableColumn[]) => {
+    columnState.handleColumnChange(columns)
+    emit('column-change', columnState.reactiveColumns.value)
+  }
+
+  // ================= Expose =================
+
   const { edit, expand, selection, dynamicRows } = tableManager.stateManager
 
-  defineExpose({
-    // 核心方法
+  const exposedApi = {
     startEdit: edit.start,
     expandAll: expand.all,
     collapseAll: expand.collapseAll,
@@ -601,15 +377,19 @@
     clearAllSelections: tableManager.stateManager.clearAllSelections,
     clearRowSelection: dynamicRows?.clearSelection,
     resetToFirstPage: pagination.resetToFirstPage,
-
-    // 获取状态方法
     getSelectedRows: selection.getSelected,
     getEditingData: edit.getEditingData,
     isEditing: edit.isEditing,
     isExpanded: expand.isExpanded,
-
-    // 逃生通道
     getManager: () => tableManager.stateManager,
+  }
+
+  defineExpose(exposedApi)
+
+  // 自动连接 crud.tableRef（省去手动写 ref="table.tableRef"）
+  onMounted(() => {
+    const crudRef = props.crud?.tableRef
+    if (crudRef) crudRef.value = exposedApi
   })
 </script>
 

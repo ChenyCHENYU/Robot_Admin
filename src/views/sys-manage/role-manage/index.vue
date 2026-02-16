@@ -76,21 +76,16 @@
           :data="roleList"
           :loading="loading"
           :row-key="rowKey"
-          :actions="tableActions"
-          :pagination="{
-            enabled: true,
-            page: pagination.page,
-            pageSize: pagination.pageSize,
-            total: pagination.itemCount,
-            remote: true,
+          :config="{
+            actions: tableActions,
+            edit: { modalTitle: '编辑角色', modalWidth: 800 },
+            pagination: {
+              page: pagination.page,
+              pageSize: pagination.pageSize,
+              total: pagination.itemCount,
+              remote: true,
+            },
           }"
-          edit-mode="modal"
-          modal-title="编辑角色"
-          :modal-width="800"
-          size="small"
-          striped
-          bordered
-          single-line
           @save="handleTableSave"
           @pagination-change="handlePaginationChange"
         />

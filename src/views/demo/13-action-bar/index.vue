@@ -54,10 +54,14 @@
         </C_ActionBar>
 
         <C_Table
-          v-model:data="tableData"
+          :data="tableData"
           :columns="columns"
           :loading="loading"
           :row-key="(row: any) => row.id"
+          :config="{
+            selection: { enabled: true },
+            pagination: false,
+          }"
           @update:checked-row-keys="handleSelectionChange"
         />
       </NCard>
@@ -195,9 +199,10 @@
         />
 
         <C_Table
-          v-model:data="tableData"
+          :data="tableData"
           :columns="columns"
           :loading="loading"
+          :config="{ pagination: false }"
         />
       </NCard>
 
@@ -217,9 +222,10 @@
         />
 
         <C_Table
-          v-model:data="tableData"
+          :data="tableData"
           :columns="columns"
           :loading="loading"
+          :config="{ pagination: false }"
         />
       </NCard>
 
@@ -275,9 +281,10 @@
         />
 
         <C_Table
-          v-model:data="tableData"
+          :data="tableData"
           :columns="columns"
           :loading="loading"
+          :config="{ pagination: false }"
         />
       </NCard>
 

@@ -166,16 +166,13 @@
 
       <C_Table
         ref="tableRef"
-        v-model:data="filteredData"
+        :data="filteredData"
         :columns="tableColumns as any"
         :loading="loading"
-        :actions="tableActions as any"
-        edit-mode="modal"
-        modal-title="编辑权限"
-        :modal-width="800"
-        size="small"
-        striped
-        bordered
+        :config="{
+          actions: tableActions as any,
+          edit: { modalTitle: '编辑权限', modalWidth: 800 },
+        }"
         @save="handleSave"
         @row-delete="handleRowDelete"
         @view-detail="handleViewDetail as any"

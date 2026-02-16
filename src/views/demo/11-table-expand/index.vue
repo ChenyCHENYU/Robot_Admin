@@ -51,23 +51,28 @@
           ref="tableRef"
           :columns="dataColumns"
           :data="table.data"
-          :rowKey="getRowKey"
+          :row-key="getRowKey"
           :loading="table.loading"
-          size="small"
-          striped
-          expandable
-          :enableSelection="config.enableSelection"
-          :enableChildSelection="config.enableChildSelection"
-          :enableParentChildLink="
-            config.enableSelection && config.enableChildSelection
-          "
-          :parentChildLinkMode="config.parentChildLinkMode"
-          :onLoadExpandData="loadChildData"
-          :renderExpandContent="renderExpandContent"
-          :rowExpandable="isRowExpandable"
-          :rowCheckable="isRowCheckable"
-          :showRowActions="false"
-          :scrollX="600"
+          :config="{
+            expand: {
+              enabled: true,
+              onLoadData: loadChildData,
+              renderContent: renderExpandContent,
+              rowExpandable: isRowExpandable,
+            },
+            selection: {
+              enabled: config.enableSelection,
+              rowCheckable: isRowCheckable,
+              childSelection: {
+                enabled: config.enableChildSelection,
+              },
+              parentChildLink: {
+                enabled: config.enableSelection && config.enableChildSelection,
+                mode: config.parentChildLinkMode,
+              },
+            },
+            display: { scrollX: 600 },
+          }"
         />
       </NCard>
     </NSpace>
@@ -197,13 +202,12 @@
       h(C_Table, {
         data: expandData,
         columns: childColumns as TableColumn<DataRecord>[],
-        size: 'small',
-        striped: true,
         rowKey: (child: DataRecord) => (child as unknown as ChildDataType).id,
-        enableSelection: config.enableChildSelection,
-        showRowActions: false,
-        pagination: false,
-        scrollX: 400,
+        config: {
+          selection: { enabled: config.enableChildSelection },
+          pagination: false,
+          display: { scrollX: 400 },
+        },
       }),
     ])
   }

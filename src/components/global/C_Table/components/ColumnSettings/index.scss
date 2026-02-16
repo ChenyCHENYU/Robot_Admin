@@ -1,0 +1,147 @@
+.column-management-tab {
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .search-input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .resizable-control {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      padding: 0 10px;
+      height: 34px;
+      background: var(--n-color-target);
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+  }
+
+  .top-actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    background: var(--n-color-target);
+    border-radius: 6px;
+
+    .stats-info {
+      flex: 1;
+    }
+
+    .quick-actions {
+      flex-shrink: 0;
+    }
+  }
+
+  .column-list {
+    .column-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 4px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      background: transparent;
+      cursor: move;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: var(--n-color-target);
+      }
+
+      &.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      &.fixed-left {
+        background: rgba(24, 160, 88, 0.08);
+      }
+
+      &.fixed-right {
+        background: rgba(240, 138, 0, 0.08);
+      }
+
+      .column-info {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        gap: 10px;
+        min-width: 0;
+
+        .column-controls {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+
+          .drag-handle {
+            color: var(--n-text-color-3);
+            cursor: grab;
+
+            &:active {
+              cursor: grabbing;
+            }
+
+            &.disabled {
+              cursor: not-allowed;
+              opacity: 0.3;
+            }
+          }
+        }
+
+        .column-details {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          flex: 1;
+          min-width: 0;
+          overflow: hidden;
+        }
+      }
+
+      .column-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+
+        .drag-controls {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+
+          .c-icon {
+            opacity: 0.6;
+            transition: all 0.2s ease;
+
+            &:not(.disabled):hover {
+              opacity: 1;
+              transform: scale(1.15);
+            }
+
+            &.disabled {
+              opacity: 0.3;
+              cursor: not-allowed;
+            }
+          }
+        }
+
+        .c-icon {
+          transition: all 0.2s ease;
+
+          &:hover {
+            transform: scale(1.15);
+          }
+        }
+      }
+    }
+  }
+}

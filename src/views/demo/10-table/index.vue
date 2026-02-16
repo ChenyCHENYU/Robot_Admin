@@ -92,21 +92,14 @@
 
         <!-- 表格组件 -->
         <C_Table
-          ref="table.tableRef"
-          v-model:data="table.data.value"
-          :columns="table.columns.value as any"
-          :loading="table.loading.value"
-          :edit-mode="editMode"
-          :editable="editMode !== 'none'"
-          modal-title="编辑员工信息"
-          :modal-width="700"
-          :actions="table.actions.value"
-          :pagination="table.pagination.value"
-          @save="table.save as any"
-          @cancel="table.handleCancel"
-          @pagination-change="table.handlePaginationChange as any"
-          @row-delete="table.handleRowDelete as any"
-          @view-detail="table.detail.show as any"
+          :crud="table"
+          :config="{
+            edit: {
+              mode: editMode,
+              modalTitle: '编辑员工信息',
+              modalWidth: 700,
+            },
+          }"
         />
       </NSpace>
     </NCard>
@@ -271,7 +264,9 @@
     {
       key: 'cancel',
       label: '取消',
-      onClick: () => (showAddModal.value = false),
+      onClick: () => {
+        showAddModal.value = false
+      },
     },
     {
       key: 'save',
