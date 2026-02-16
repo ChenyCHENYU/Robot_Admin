@@ -351,10 +351,7 @@
             <NButton @click="closePreview">关闭</NButton>
             <NButton
               type="primary"
-              @click="
-                closePreview()
-                saveWorkflow()
-              "
+              @click="confirmAndSave"
             >
               <template #icon
                 ><div class="i-mdi:content-save w-4 h-4"></div
@@ -447,6 +444,11 @@
 
   const previewWorkflow = (): void => {
     openPreview()
+  }
+
+  const confirmAndSave = (): void => {
+    closePreview()
+    saveWorkflow()
   }
 
   const clearWorkflow = (): void => {
