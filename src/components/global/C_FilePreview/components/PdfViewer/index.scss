@@ -1,0 +1,19 @@
+.file-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .file-toolbar {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+    flex-shrink: 0;
+    z-index: 8;
+    position: relative;
+  }
+
+  .file-viewer {
+    flex: 1;
+    min-height: 300px;
+  }
+}

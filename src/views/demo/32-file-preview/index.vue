@@ -217,31 +217,6 @@
         >
           <h3 class="text-lg font-semibold mb-4">配置选项演示</h3>
 
-          <div class="config-options mb-4">
-            <NCard
-              title="预览配置"
-              size="small"
-            >
-              <div class="config-grid">
-                <div class="config-item">
-                  <NCheckbox v-model:checked="showHeader"
-                    >显示头部信息</NCheckbox
-                  >
-                </div>
-                <div class="config-item">
-                  <NCheckbox v-model:checked="showToolbar"
-                    >显示工具栏</NCheckbox
-                  >
-                </div>
-                <div class="config-item">
-                  <NCheckbox v-model:checked="allowDownload"
-                    >允许下载</NCheckbox
-                  >
-                </div>
-              </div>
-            </NCard>
-          </div>
-
           <div class="config-preview">
             <div class="config-file-selector mb-4">
               <NSelect
@@ -359,23 +334,16 @@
   const activeFileIndex = ref(0)
 
   // 场景4: 配置选项
-  const showHeader = ref(true)
-  const showToolbar = ref(true)
-  const allowDownload = ref(true)
   const selectedConfigFile = ref<{ url: string; name: string } | null>(null)
 
   const configFileOptions = [
     {
       label: 'PDF文档',
       value: { url: '/demo-files/sample.pdf', name: 'sample.pdf' },
-      url: '/demo-files/sample.pdf',
-      name: 'sample.pdf',
     },
     {
       label: 'Excel表格',
       value: { url: '/demo-files/sample.xlsx', name: 'sample.xlsx' },
-      url: '/demo-files/sample.xlsx',
-      name: 'sample.xlsx',
     },
   ]
 
@@ -507,14 +475,6 @@
           .flex {
             margin-bottom: 16px;
           }
-        }
-      }
-
-      .config-demo {
-        .config-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 16px;
         }
       }
 

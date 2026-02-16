@@ -1,0 +1,145 @@
+.file-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .file-toolbar {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+    flex-shrink: 0;
+    z-index: 8;
+    position: relative;
+  }
+}
+
+.word-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .word-main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+
+    .word-outline {
+      width: 280px;
+      border-right: 1px solid #e0e0e0;
+      background-color: #f9f9f9;
+
+      .outline-header {
+        padding: 16px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .outline-content {
+        padding: 8px;
+        overflow-y: auto;
+
+        .outline-item {
+          padding: 8px 12px;
+          cursor: pointer;
+          border-radius: 4px;
+          font-size: 14px;
+          color: #333;
+
+          &:hover {
+            background-color: #e6f3ff;
+          }
+
+          &.level-1 {
+            padding-left: 12px;
+            font-weight: 600;
+          }
+
+          &.level-2 {
+            padding-left: 24px;
+          }
+
+          &.level-3,
+          &.level-4 {
+            padding-left: 36px;
+            font-size: 13px;
+          }
+
+          &.level-4 {
+            padding-left: 48px;
+          }
+        }
+      }
+    }
+
+    .word-content {
+      flex: 1;
+      padding: 24px;
+      overflow: auto;
+
+      .word-document {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+
+        :deep(h1, h2, h3) {
+          margin: 24px 0 16px 0;
+          font-weight: bold;
+        }
+
+        :deep(h1) {
+          font-size: 1.8rem;
+          color: #333;
+          border-bottom: 2px solid #e0e0e0;
+          padding-bottom: 8px;
+        }
+
+        :deep(h2) {
+          font-size: 1.5rem;
+          color: #444;
+          margin: 20px 0 12px 0;
+        }
+
+        :deep(h3) {
+          font-size: 1.25rem;
+          color: #555;
+          margin: 16px 0 8px 0;
+        }
+
+        :deep(p) {
+          margin-bottom: 12px;
+          line-height: 1.8;
+          color: #333;
+        }
+
+        :deep(ul, ol) {
+          margin: 12px 0;
+          padding-left: 24px;
+        }
+
+        :deep(li) {
+          margin-bottom: 6px;
+          line-height: 1.6;
+        }
+
+        :deep(table) {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 16px 0;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        :deep(th, td) {
+          border: 1px solid #d0d0d0;
+          padding: 12px;
+          text-align: left;
+        }
+
+        :deep(th) {
+          background-color: #f5f5f5;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
