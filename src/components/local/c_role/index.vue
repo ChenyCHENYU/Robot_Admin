@@ -155,7 +155,7 @@
             </div>
             <NDivider vertical />
             <template
-              v-for="[type, label] in typeStatOptions"
+              v-for="[type, label] in TYPE_STAT_OPTIONS"
               :key="type"
             >
               <div class="stat-item">
@@ -492,10 +492,14 @@
 </template>
 
 <script setup lang="ts">
+  import { useThemeVars } from 'naive-ui/es'
   import {
     type PermissionData,
     type RoleData,
     PERMISSION_CONFIG,
+    TYPE_STAT_OPTIONS,
+    buildPermissionMap,
+    buildTopLevelMap,
     usePermissionUtils,
   } from './data'
 
@@ -507,13 +511,6 @@
     selectedIds: string[]
   }
 
-  interface Emits {
-    (e: 'update:show', value: boolean): void
-    (e: 'update:selectedIds', value: string[]): void
-    (e: 'save', selectedIds: string[]): void
-    (e: 'showTemplate'): void
-  }
-
   interface PermissionGroup {
     module: string
     icon: string
@@ -521,21 +518,26 @@
   }
 
   const props = defineProps<Props>()
-  const emit = defineEmits<Emits>()
+  const emit = defineEmits<{
+    'update:show': [value: boolean]
+    'update:selectedIds': [value: string[]]
+    save: [selectedIds: string[]]
+    showTemplate: []
+  }>()
 
   // 工具函数解构
   const {
-    findPermissionById,
-    findTopLevelPermission,
     getAllPermissionIds,
     hasMatchingPermissionInTree,
     hasPermissionTypeInTree,
     getModulePermissions,
-    getModuleDisplayPermissions,
+    getModuleDisplayPermissions: getModuleDisplayPerms,
     getPermissionIcon,
     getPermissionTypeColor,
     getPermissionTypeName,
   } = usePermissionUtils()
+
+  const themeVars = useThemeVars()
 
   // 响应式状态
   const searchKeyword = ref<string>('')
@@ -544,12 +546,13 @@
   const moduleExpandState = reactive<Record<string, boolean>>({})
   const permissionExpandState = reactive<Record<string, boolean>>({})
 
-  // 常量定义
-  const typeStatOptions = [
-    ['menu', '菜单'],
-    ['button', '按钮'],
-    ['api', '接口'],
-  ] as const
+  // ================= 核心索引（O(1) 查找） =================
+  /** id → PermissionData 索引 */
+  const permissionMap = computed(() => buildPermissionMap(props.permissions))
+  /** id → 所属顶级模块索引 */
+  const topLevelMap = computed(() => buildTopLevelMap(props.permissions))
+  /** selectedIds 的 Set 版本，查找 O(1) */
+  const selectedIdSet = computed(() => new Set(props.selectedIds))
 
   // 核心计算属性
   const showDrawer = computed<boolean>({
@@ -590,52 +593,75 @@
     })
   })
 
-  // 统计数据
+  // ================= 统计数据（合并计算，避免重复遍历） =================
+
   const totalCount = computed<number>(
     () => getAllPermissionIds(props.permissions).length
   )
 
+  /** 模块统计缓存：每个模块只遍历一次，产出 total / selected / percentage */
+  const moduleStatsMap = computed(() => {
+    const map = new Map<
+      string,
+      { total: number; selected: number; percentage: number }
+    >()
+    const idSet = selectedIdSet.value
+    for (const module of props.permissions) {
+      const perms = getModulePermissions(module)
+      const total = perms.length
+      const selected = perms.filter(p => idSet.has(p.id)).length
+      const percentage = total > 0 ? Math.round((selected / total) * 100) : 0
+      map.set(module.id, { total, selected, percentage })
+    }
+    return map
+  })
+
   const selectedModulesCount = computed<number>(() => {
     const moduleIds = new Set<string>()
-    selectedIds.value.forEach(id => {
-      const topLevel = findTopLevelPermission(props.permissions, id)
+    const tlMap = topLevelMap.value
+    for (const id of selectedIds.value) {
+      const topLevel = tlMap.get(id)
       if (topLevel) moduleIds.add(topLevel.id)
-    })
+    }
     return moduleIds.size
   })
 
   const typeStatistics = computed(() => {
     const stats = { menu: 0, button: 0, api: 0 }
-    selectedIds.value.forEach(id => {
-      const permission = findPermissionById(props.permissions, id)
+    const pMap = permissionMap.value
+    for (const id of selectedIds.value) {
+      const permission = pMap.get(id)
       if (permission?.type && permission.type in stats) {
         stats[permission.type as keyof typeof stats]++
       }
-    })
+    }
     return stats
   })
 
   // 权限组数据
   const selectedPermissionGroups = computed<PermissionGroup[]>(() => {
     const groups: Record<string, PermissionGroup> = {}
+    const pMap = permissionMap.value
+    const tlMap = topLevelMap.value
 
-    selectedIds.value.forEach(id => {
-      const permission = findPermissionById(props.permissions, id)
-      const topLevel = findTopLevelPermission(props.permissions, id)
+    for (const id of selectedIds.value) {
+      const permission = pMap.get(id)
+      const topLevel = tlMap.get(id)
 
       if (permission && topLevel) {
         const { name, icon = 'mdi:folder' } = topLevel
         groups[name] ??= { module: name, icon, permissions: [] }
         groups[name].permissions.push(permission)
       }
-    })
+    }
 
     return Object.values(groups)
   })
 
-  // 工具方法 - 简化版本
+  // ================= 工具方法 =================
+
   const isPermissionSelected = (permissionId: string): boolean =>
-    selectedIds.value.includes(permissionId)
+    selectedIdSet.value.has(permissionId)
 
   const isSearchMatch = (permission: PermissionData): boolean => {
     if (!searchKeyword.value) return false
@@ -672,55 +698,45 @@
     permission: PermissionData
   ): boolean => {
     const { children = [] } = permission
+    const idSet = selectedIdSet.value
     const childIds = children.map(child => child.id)
-    const selectedChildIds = childIds.filter(id =>
-      selectedIds.value.includes(id)
-    )
-    return (
-      selectedChildIds.length > 0 && selectedChildIds.length < childIds.length
-    )
+    const selectedCount = childIds.filter(id => idSet.has(id)).length
+    return selectedCount > 0 && selectedCount < childIds.length
   }
 
-  // 模块相关方法
+  // 模块相关方法（从缓存读取，不再重复遍历树）
   const getModulePermissionCount = (module: PermissionData): number =>
-    getModulePermissions(module).length
+    moduleStatsMap.value.get(module.id)?.total ?? 0
 
   const getModuleSelectedCount = (module: PermissionData): number =>
-    getModulePermissions(module).filter(p => selectedIds.value.includes(p.id))
-      .length
+    moduleStatsMap.value.get(module.id)?.selected ?? 0
 
-  const getModuleSelectionPercentage = (module: PermissionData): number => {
-    const total = getModulePermissionCount(module)
-    const selected = getModuleSelectedCount(module)
-    return total > 0 ? Math.round((selected / total) * 100) : 0
-  }
+  const getModuleSelectionPercentage = (module: PermissionData): number =>
+    moduleStatsMap.value.get(module.id)?.percentage ?? 0
 
   const getModuleProgressColor = (module: PermissionData): string => {
     const percentage = getModuleSelectionPercentage(module)
-    return percentage === 0
-      ? '#d9d9d9'
-      : percentage === 100
-        ? '#52c41a'
-        : '#1890ff'
+    if (percentage === 0) return themeVars.value.borderColor
+    return percentage === 100
+      ? themeVars.value.successColor
+      : themeVars.value.primaryColor
   }
 
   const isModuleFullySelected = (module: PermissionData): boolean => {
-    const modulePermissions = getModulePermissions(module)
-    return (
-      modulePermissions.length > 0 &&
-      modulePermissions.every(p => selectedIds.value.includes(p.id))
-    )
+    const stats = moduleStatsMap.value.get(module.id)
+    return !!stats && stats.total > 0 && stats.selected === stats.total
   }
 
   const isModulePartiallySelected = (module: PermissionData): boolean => {
-    const modulePermissions = getModulePermissions(module)
-    const selectedCount = modulePermissions.filter(p =>
-      selectedIds.value.includes(p.id)
-    ).length
-    return selectedCount > 0 && selectedCount < modulePermissions.length
+    const stats = moduleStatsMap.value.get(module.id)
+    return !!stats && stats.selected > 0 && stats.selected < stats.total
   }
 
-  // 事件处理 - 简化版本
+  // 透传给模板的 getModuleDisplayPermissions
+  const getModuleDisplayPermissions = getModuleDisplayPerms
+
+  // ================= 事件处理 =================
+
   const toggleExpand = (id: string, state: Record<string, boolean>): void => {
     state[id] = !state[id]
   }

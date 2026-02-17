@@ -7,58 +7,60 @@
     class="c-detail-modal"
     :style="{ width: modalWidth }"
   >
-    <div class="c-detail-content">
-      <div
-        v-for="(section, sectionIndex) in config.sections"
-        :key="sectionIndex"
-        class="detail-section"
-        :class="{ 'not-last': sectionIndex < config.sections.length - 1 }"
-      >
-        <!-- 区域标题 -->
-        <h4 class="section-title">{{ section.title }}</h4>
-
-        <!-- 区域内容 -->
+    <NSpin :show="loading">
+      <div class="c-detail-content">
         <div
-          class="detail-grid"
-          :class="{
-            'single-column': section.columns === 1,
-            'double-column': section.columns === 2 || !section.columns,
-          }"
+          v-for="(section, sectionIndex) in config.sections"
+          :key="sectionIndex"
+          class="detail-section"
+          :class="{ 'not-last': sectionIndex < config.sections.length - 1 }"
         >
+          <!-- 区域标题 -->
+          <h4 class="section-title">{{ section.title }}</h4>
+
+          <!-- 区域内容 -->
           <div
-            v-for="(item, itemIndex) in section.items"
-            :key="itemIndex"
-            class="detail-item"
+            class="detail-grid"
             :class="{
-              'full-width': item.span === 2 || section.columns === 1,
+              'single-column': section.columns === 1,
+              'double-column': section.columns === 2 || !section.columns,
             }"
           >
-            <span class="item-label">{{ item.label }}:</span>
-            <div class="item-value">
-              <!-- 标签类型 -->
-              <NTag
-                v-if="item.type === 'tag'"
-                :type="item.tagType || 'default'"
-                size="small"
-              >
-                {{ getDisplayValue(item) }}
-              </NTag>
+            <div
+              v-for="(item, itemIndex) in section.items"
+              :key="itemIndex"
+              class="detail-item"
+              :class="{
+                'full-width': item.span === 2 || section.columns === 1,
+              }"
+            >
+              <span class="item-label">{{ item.label }}:</span>
+              <div class="item-value">
+                <!-- 标签类型 -->
+                <NTag
+                  v-if="item.type === 'tag'"
+                  :type="item.tagType || 'default'"
+                  size="small"
+                >
+                  {{ getDisplayValue(item) }}
+                </NTag>
 
-              <!-- 邮箱类型 -->
-              <span
-                v-else-if="item.type === 'email'"
-                class="email-value"
-              >
-                {{ getDisplayValue(item) }}
-              </span>
+                <!-- 邮箱类型 -->
+                <span
+                  v-else-if="item.type === 'email'"
+                  class="email-value"
+                >
+                  {{ getDisplayValue(item) }}
+                </span>
 
-              <!-- 普通文本类型 -->
-              <span v-else>{{ getDisplayValue(item) }}</span>
+                <!-- 普通文本类型 -->
+                <span v-else>{{ getDisplayValue(item) }}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </NSpin>
 
     <template #action>
       <NButton
@@ -127,6 +129,7 @@
   const formatDate = (date: string | number | Date) => {
     if (!date) return '暂无'
     const dateObj = new Date(date)
+    if (isNaN(dateObj.getTime())) return '暂无'
     return dateObj.toLocaleDateString('zh-CN')
   }
 

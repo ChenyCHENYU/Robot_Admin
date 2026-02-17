@@ -1,9 +1,6 @@
-// src/components/C_Detail/types.ts
-
 export interface DetailItem {
   label: string
   key: string
-  value?: any
   type?: 'text' | 'tag' | 'date' | 'email' | 'number'
   tagType?: 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error'
   formatter?: (value: any) => string

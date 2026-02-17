@@ -42,49 +42,50 @@ export const PERMISSION_CONFIG = {
   ],
 } as const
 
+/** 统计面板类型选项 */
+export const TYPE_STAT_OPTIONS = [
+  ['menu', '菜单'],
+  ['button', '按钮'],
+  ['api', '接口'],
+] as const
+
+// ==================== 索引构建（O(1) 查找） ====================
+
+/** 构建 id → PermissionData 的扁平索引（一次遍历，后续 O(1) 查找） */
+export const buildPermissionMap = (
+  permissions: PermissionData[]
+): Map<string, PermissionData> => {
+  const map = new Map<string, PermissionData>()
+  const collect = (perms: PermissionData[]) => {
+    for (const perm of perms) {
+      map.set(perm.id, perm)
+      if (perm.children) collect(perm.children)
+    }
+  }
+  collect(permissions)
+  return map
+}
+
+/** 构建 id → 顶级模块 的索引（每个节点都映射到所属顶级模块） */
+export const buildTopLevelMap = (
+  permissions: PermissionData[]
+): Map<string, PermissionData> => {
+  const map = new Map<string, PermissionData>()
+  for (const topLevel of permissions) {
+    map.set(topLevel.id, topLevel)
+    const collectChildren = (perms: PermissionData[]) => {
+      for (const perm of perms) {
+        map.set(perm.id, topLevel)
+        if (perm.children) collectChildren(perm.children)
+      }
+    }
+    if (topLevel.children) collectChildren(topLevel.children)
+  }
+  return map
+}
+
 // ==================== 工具函数 ====================
 export const usePermissionUtils = () => {
-  // 查找权限 - 优化递归查找
-  const findPermissionById = (
-    permissions: PermissionData[],
-    id: string
-  ): PermissionData | null => {
-    for (const permission of permissions) {
-      if (permission.id === id) return permission
-      if (permission.children) {
-        const found = findPermissionById(permission.children, id)
-        if (found) return found
-      }
-    }
-    return null
-  }
-
-  // 查找顶级权限模块 - 简化逻辑
-  const findTopLevelPermission = (
-    permissions: PermissionData[],
-    targetId: string
-  ): PermissionData | null => {
-    for (const perm of permissions) {
-      if (perm.id === targetId) return perm
-      if (perm.children && findPermissionById(perm.children, targetId))
-        return perm
-    }
-    return null
-  }
-
-  // 获取所有权限ID - 优化收集方式
-  const getAllPermissionIds = (permissions: PermissionData[]): string[] => {
-    const ids: string[] = []
-    const collect = (perms: PermissionData[]) => {
-      for (const perm of perms) {
-        ids.push(perm.id)
-        if (perm.children) collect(perm.children)
-      }
-    }
-    collect(permissions)
-    return ids
-  }
-
   // 检查是否有匹配的权限 - 简化匹配逻辑
   const hasMatchingPermissionInTree = (
     permissions: PermissionData[],
@@ -114,7 +115,7 @@ export const usePermissionUtils = () => {
     )
   }
 
-  // 获取模块的所有权限 - 优化收集方式
+  // 获取模块的所有权限（扁平化）
   const getModulePermissions = (module: PermissionData): PermissionData[] => {
     const result: PermissionData[] = []
     const collect = (perms: PermissionData[]) => {
@@ -125,6 +126,19 @@ export const usePermissionUtils = () => {
     }
     if (module.children) collect(module.children)
     return result
+  }
+
+  // 获取所有权限ID
+  const getAllPermissionIds = (permissions: PermissionData[]): string[] => {
+    const ids: string[] = []
+    const collect = (perms: PermissionData[]) => {
+      for (const perm of perms) {
+        ids.push(perm.id)
+        if (perm.children) collect(perm.children)
+      }
+    }
+    collect(permissions)
+    return ids
   }
 
   // 获取模块显示权限 - 简化显示逻辑
@@ -161,8 +175,6 @@ export const usePermissionUtils = () => {
   const getPermissionTypeName = (type: PermissionType) => nameMap[type] || type
 
   return {
-    findPermissionById,
-    findTopLevelPermission,
     getAllPermissionIds,
     hasMatchingPermissionInTree,
     hasPermissionTypeInTree,
