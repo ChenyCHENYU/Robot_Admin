@@ -106,23 +106,14 @@
     return flatten(props.data)
   })
 
-  /**
-   * * @description: 处理菜单项点击事件 - 优化版本
-   * ? @param {*} key 菜单项key
-   * ! @return {*} void
-   */
+  /** 处理菜单项点击 */
   const handleMenuClick = (key: string) => {
-    // 直接使用 key（已经是完整路径）进行跳转，无需查找
-    // 菜单数据中的 key 已经被 normalizeMenuOptions 处理为完整路径
     if (key && key !== route.path) {
       router.push(key)
     }
   }
 
-  /**
-   * * @description: 获取父级菜单项的key
-   * ! @return {*} string[] 父级菜单项的key数组
-   */
+  /** 获取父级菜单项的 key */
   const findParentKeys = (
     items: MenuOptions[],
     targetPath: string,
@@ -131,13 +122,11 @@
     for (const item of items) {
       if (item.children?.length) {
         const currentKeys = [...parentKeys]
-        // 添加当前父级菜单的key
         if (item.path) {
           const key = item.path.startsWith('/') ? item.path : `/${item.path}`
           currentKeys.push(key)
         }
 
-        // 检查子菜单中是否包含目标路径
         const found = item.children.some(child => {
           const childPath = child.path || ''
           return (
@@ -148,51 +137,36 @@
           )
         })
 
-        if (found) {
-          return currentKeys
-        }
+        if (found) return currentKeys
 
-        // 递归查找
         const result = findParentKeys(item.children, targetPath, currentKeys)
-        if (result.length > 0) {
-          return result
-        }
+        if (result.length > 0) return result
       }
     }
     return []
   }
 
-  /**
-   * * @description: 初始化展开的菜单项
-   * ! @return {*}  void 初始化展开的菜单项
-   */
-  const initExpandedKeys = () => {
-    const paths = route.path.split('/').filter(Boolean)
+  /** 根据路径计算应展开的 key 集合 */
+  const computeExpandedKeys = (path: string): Set<string> => {
+    const segments = path.split('/').filter(Boolean)
     const keys = new Set<string>()
     let currentPath = ''
 
-    // 添加路径本身
-    paths.forEach(path => {
-      currentPath += `/${path}`
-      const menuItem = flatMenuCache.value.find(item => {
-        // 适配路径格式变化，同时处理path可能未定义的情况
-        const itemPath = item.path || ''
-        return itemPath === currentPath
-      })
+    segments.forEach(segment => {
+      currentPath += `/${segment}`
+      keys.add(currentPath)
 
+      const menuItem = flatMenuCache.value.find(
+        item => (item.path || '') === currentPath
+      )
       if (menuItem) {
-        // 使用与normalizeOptions相同的key计算逻辑
         const itemPath = menuItem.path || ''
-        const key = itemPath.startsWith('/') ? itemPath : `/${itemPath}`
-        keys.add(key)
+        keys.add(itemPath.startsWith('/') ? itemPath : `/${itemPath}`)
       }
     })
 
-    // 添加所有父级菜单的key
-    const parentKeys = findParentKeys(props.data, route.path)
-    parentKeys.forEach(key => keys.add(key))
-
-    expandedKeys.value = Array.from(keys)
+    findParentKeys(props.data, path).forEach(key => keys.add(key))
+    return keys
   }
 
   /**
@@ -211,62 +185,23 @@
     if (menuRef.value) menuRef.value.showOption(activeKey.value)
   }
 
-  // 监听路由变化，更新展开的菜单项，但不折叠现有展开的菜单
+  // 监听路由变化，合并展开菜单（不折叠已展开的）
   watch(
     () => route.path,
     newPath => {
-      // 获取当前路径需要展开的菜单项
-      const paths = newPath.split('/').filter(Boolean)
-      const currentPathKeys = new Set<string>()
-      let currentPath = ''
+      const newKeys = computeExpandedKeys(newPath)
+      expandedKeys.value = Array.from(
+        new Set([...expandedKeys.value, ...newKeys])
+      )
 
-      // 添加路径本身
-      paths.forEach(path => {
-        currentPath += `/${path}`
-        const menuItem = flatMenuCache.value.find((item: MenuOptions) => {
-          const itemPath = item.path || ''
-          return itemPath === currentPath
-        })
-
-        if (menuItem) {
-          const itemPath = menuItem.path || ''
-          const key = itemPath.startsWith('/') ? itemPath : `/${itemPath}`
-          currentPathKeys.add(key)
-        }
-      })
-
-      // 添加所有父级菜单的key
-      const parentKeys = findParentKeys(props.data, newPath)
-      parentKeys.forEach(key => currentPathKeys.add(key))
-
-      // 如果上面的菜单匹配没找到足够的展开项，用路径层级作为兜底
-      const pathSegments = newPath.split('/').filter(Boolean)
-      let fallbackPath = ''
-      pathSegments.forEach(segment => {
-        fallbackPath += `/${segment}`
-        currentPathKeys.add(fallbackPath) // 直接按路径层级添加
-      })
-
-      // 合并现有展开的菜单和新路径需要的菜单
-      const newKeys = new Set([
-        ...expandedKeys.value,
-        ...Array.from(currentPathKeys),
-      ])
-      expandedKeys.value = Array.from(newKeys)
-
-      nextTick(() => {
-        if (menuRef.value) {
-          menuRef.value.showOption(newPath)
-        }
-      })
+      nextTick(() => menuRef.value?.showOption(newPath))
     },
     { immediate: true }
   )
 
-  // 页面初始化时执行一次
   onMounted(() => {
     nextTick(() => {
-      initExpandedKeys()
+      expandedKeys.value = Array.from(computeExpandedKeys(route.path))
       showCurrentOption()
     })
   })

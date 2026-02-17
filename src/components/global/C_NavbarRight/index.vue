@@ -66,7 +66,6 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, h } from 'vue'
   import { s_userStore } from '@/stores/user'
   import C_GlobalSearch from '@/components/global/C_GlobalSearch/index.vue'
 
@@ -84,6 +83,7 @@
   }>()
 
   const userStore = s_userStore()
+  const router = useRouter()
 
   // 用户名
   const userName = computed(() => userStore.userInfo?.username || 'CHENY')
@@ -152,7 +152,8 @@
    */
   const handleUserSelect = (key: string) => {
     if (key === 'profile') {
-      console.info('个人中心')
+      // TODO: 跳转个人中心页面
+      router.push('/profile')
     } else if (key === 'logout') {
       userStore.logout()
     }

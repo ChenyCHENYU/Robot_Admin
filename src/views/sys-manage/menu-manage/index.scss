@@ -1,13 +1,18 @@
   .menu-management {
-    padding: 16px;
-    height: calc(100vh - 120px);
     display: flex;
     flex-direction: column;
     gap: 16px;
+    height: 100%;
+    overflow: hidden;
 
     .main-content {
       flex: 1;
       min-height: 0;
+      overflow: hidden;
+
+      :deep(.n-grid) {
+        height: 100%;
+      }
     }
 
     .content-card {
@@ -19,13 +24,14 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
+        overflow: auto;
       }
     }
 
     .menu-tree {
       flex: 1;
-      max-height: calc(100vh - 320px);
+      min-height: 0;
+      overflow: hidden;
 
       :deep(.c-tree-container) {
         border: none;

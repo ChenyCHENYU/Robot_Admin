@@ -333,10 +333,13 @@
     { immediate: true, deep: true }
   )
 
+  let modalCloseTimer: ReturnType<typeof setTimeout> | null = null
+
   watch(modalVisible, visible => {
     if (!visible) {
-      setTimeout(() => {
+      modalCloseTimer = setTimeout(() => {
         localEditingData.value = {}
+        modalCloseTimer = null
       }, 300)
     }
   })
@@ -392,6 +395,10 @@
   onMounted(() => {
     const crudRef = props.crud?.tableRef
     if (crudRef) crudRef.value = exposedApi
+  })
+
+  onBeforeUnmount(() => {
+    if (modalCloseTimer) clearTimeout(modalCloseTimer)
   })
 </script>
 

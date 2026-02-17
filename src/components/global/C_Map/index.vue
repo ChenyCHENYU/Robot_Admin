@@ -25,7 +25,6 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
   import L from 'leaflet'
   import 'leaflet/dist/leaflet.css'
 
@@ -79,8 +78,6 @@
     if (!mapContainer.value) return
 
     try {
-      console.log('开始初始化OpenStreetMap，容器:', mapContainer.value)
-
       // 清空容器
       mapContainer.value.innerHTML = ''
 
@@ -92,27 +89,21 @@
         preferCanvas: true,
       })
 
-      console.log('地图实例创建成功:', map)
-
       // 添加瓦片图层
       const tileLayer = L.tileLayer(OSM_TILE_CONFIG.url, OSM_TILE_CONFIG)
       tileLayer.addTo(map)
-      console.log('瓦片图层添加成功')
 
       // 添加标记
       addMarkers()
 
       // 强制刷新地图尺寸
       await nextTick()
-      setTimeout(() => {
-        if (map) {
-          map.invalidateSize({ reset: true, pan: false })
-        }
-      }, 200)
+      requestAnimationFrame(() => {
+        map?.invalidateSize({ reset: true, pan: false })
+      })
 
       loading.value = false
       emit('ready', map)
-      console.log('OpenStreetMap初始化完成')
     } catch (error) {
       console.error('OpenStreetMap初始化失败:', error)
       loading.value = false
@@ -124,8 +115,6 @@
     if (!mapContainer.value || !props.amapKey) return
 
     try {
-      console.log('开始初始化高德地图')
-
       // 清空容器
       mapContainer.value.innerHTML = ''
 
@@ -146,18 +135,15 @@
 
           loading.value = false
           emit('ready', amap)
-          console.log('高德地图初始化完成')
         }
       }
 
       script.onerror = () => {
-        console.error('高德地图SDK加载失败')
         loading.value = false
       }
 
       document.head.appendChild(script)
-    } catch (error) {
-      console.error('高德地图初始化失败:', error)
+    } catch {
       loading.value = false
     }
   }
@@ -236,17 +222,13 @@
         map = null
         loading.value = true
 
-        // 延迟初始化新地图
-        setTimeout(async () => {
-          if (newType === 'osm') {
-            await initOSMMap()
-          } else if (newType === 'amap' && props.amapKey) {
-            await initAMap()
-          } else {
-            // 默认使用OpenStreetMap
-            await initOSMMap()
-          }
-        }, 100)
+        // 等待 DOM 更新后重新初始化
+        await nextTick()
+        if (newType === 'amap' && props.amapKey) {
+          await initAMap()
+        } else {
+          await initOSMMap()
+        }
       }
     }
   )
@@ -264,19 +246,12 @@
 
   // 组件挂载
   onMounted(async () => {
-    // 延迟初始化确保DOM完全渲染
-    setTimeout(async () => {
-      console.log('C_Map组件挂载，开始初始化地图')
-
-      if (props.mapType === 'osm') {
-        await initOSMMap()
-      } else if (props.mapType === 'amap' && props.amapKey) {
-        await initAMap()
-      } else {
-        // 默认使用OpenStreetMap
-        await initOSMMap()
-      }
-    }, 300)
+    await nextTick()
+    if (props.mapType === 'amap' && props.amapKey) {
+      await initAMap()
+    } else {
+      await initOSMMap()
+    }
   })
 
   // 组件卸载

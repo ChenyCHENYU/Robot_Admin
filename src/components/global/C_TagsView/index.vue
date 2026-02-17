@@ -57,8 +57,6 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
   import { s_appStore } from '@/stores/app'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
 
@@ -101,18 +99,15 @@
   const tagsTrack = ref()
   const tagsContainer = ref()
 
-  // 添加滚轮处理
+  /** 滚轮水平平滑滚动 */
   const handleWheel = (e: WheelEvent) => {
     const container = tagsContainer.value
-    if (container) {
-      // 直接进行水平滚动，不阻止默认行为
-      container.scrollLeft += e.deltaY * 0.3
-      // 如果想要更平滑的滚动效果
-      container.scrollTo({
-        left: container.scrollLeft + e.deltaY * 0.3,
-        behavior: 'smooth',
-      })
-    }
+    if (!container) return
+    e.preventDefault()
+    container.scrollTo({
+      left: container.scrollLeft + e.deltaY,
+      behavior: 'smooth',
+    })
   }
 
   /**
@@ -272,27 +267,19 @@
     }
     closeContextMenu()
   }
-  // 初始化标签
+  // 初始化标签（store 已通过 persist 自动恢复，仅需重新翻译标题）
   onMounted(() => {
-    // 从持久化存储初始化标签
-    const savedTags = localStorage.getItem('tagsViewList')
-    if (savedTags) {
-      const tags = JSON.parse(savedTags)
-
-      // ✅ 重新翻译所有标签的 title（解决语言切换后标签未翻译的问题）
-      const translatedTags = tags.map((tag: any) => {
+    if (appStore.tagsViewList.length > 0) {
+      const translatedTags = appStore.tagsViewList.map((tag: any) => {
         const originalTitle = tag.originalTitle || tag.title
         return {
           ...tag,
-          originalTitle, // 保留原始中文
-          title: translateRouteTitle(originalTitle), // 重新翻译
+          originalTitle,
+          title: translateRouteTitle(originalTitle),
         }
       })
-
       appStore.initTags(translatedTags)
     }
-
-    // ⚡ 不需要在这里添加当前路由标签，watch 的 immediate: true 会处理
   })
 
   // 监听路由变化更新标签
@@ -323,22 +310,7 @@
     { immediate: true } // ⚡ 首次挂载时自动添加当前路由标签
   )
 
-  // 监听标签列表变化并保存到localStorage
-  watch(
-    () => appStore.tagsViewList,
-    (tags: any) => {
-      localStorage.setItem('tagsViewList', JSON.stringify(tags))
-    },
-    { deep: true }
-  )
-
-  // 监听选中标签变化并保存
-  watch(
-    () => appStore.activeTag,
-    (activeTag: string) => {
-      localStorage.setItem('activeTag', activeTag)
-    }
-  )
+  // ⚡ store 已配置 persist: true，无需手动 localStorage 同步
 </script>
 
 <style lang="scss" scoped>

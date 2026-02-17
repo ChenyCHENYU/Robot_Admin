@@ -23,10 +23,7 @@
         :visible="visible"
       >
         <!-- 默认触发器 -->
-        <div
-          class="city-selector-trigger"
-          ref="triggerRef"
-        >
+        <div class="city-selector-trigger">
           <span class="city-selector-trigger__text">{{
             modelValue || placeholder
           }}</span>
@@ -180,7 +177,6 @@
   const visible = ref(false)
   const radioValue = ref<'city' | 'province'>('city')
   const searchValue = ref('')
-  const triggerRef = ref<HTMLElement>()
 
   /**
    * * @description: 获取所有省份数据
@@ -324,43 +320,6 @@
       element.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
-
-  /**
-   * * @description: 监听点击外部关闭弹窗
-   */
-  watch(visible, newVal => {
-    if (newVal) {
-      setTimeout(() => {
-        document.addEventListener('click', handleClickOutside)
-      }, 0)
-    } else {
-      document.removeEventListener('click', handleClickOutside)
-    }
-  })
-
-  /**
-   * * @description: 处理点击外部事件
-   * ? @param {MouseEvent} event 鼠标事件
-   * ! @return {void}
-   */
-  const handleClickOutside = (event: MouseEvent): void => {
-    const target = event.target as HTMLElement
-    const popover = document.querySelector('.n-popover')
-
-    if (
-      triggerRef.value &&
-      !triggerRef.value.contains(target) &&
-      popover &&
-      !popover.contains(target)
-    ) {
-      visible.value = false
-    }
-  }
-
-  // 组件卸载时移除事件监听
-  onUnmounted(() => {
-    document.removeEventListener('click', handleClickOutside)
-  })
 </script>
 
 <style lang="scss" scoped>

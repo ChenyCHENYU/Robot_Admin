@@ -222,18 +222,19 @@
         : props.percentage
 
       if (targetValue > 0) {
-        const stepTime = props.time / targetValue
-        let currentStep = 0
+        const startTime = performance.now()
 
-        const timer = setInterval(() => {
-          currentStep += 1
-          if (currentStep >= targetValue) {
-            p.value = targetValue
-            clearInterval(timer)
-          } else {
-            p.value = currentStep
+        const animate = (now: number) => {
+          const elapsed = now - startTime
+          const progress = Math.min(elapsed / props.time, 1)
+          p.value = Math.round(progress * targetValue)
+
+          if (progress < 1) {
+            requestAnimationFrame(animate)
           }
-        }, stepTime)
+        }
+
+        requestAnimationFrame(animate)
       }
     }
   })

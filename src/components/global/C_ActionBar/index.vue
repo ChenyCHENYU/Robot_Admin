@@ -91,14 +91,7 @@
 </template>
 
 <script setup lang="ts">
-  import {
-    computed,
-    unref,
-    h,
-    defineComponent,
-    withDirectives,
-    type PropType,
-  } from 'vue'
+  import { withDirectives, type PropType } from 'vue'
   import type {
     ActionItem,
     ActionDropdownItem,
@@ -263,8 +256,8 @@
         }
       }
 
-      // 渲染普通按钮
-      const renderButton = () => {
+      /** 创建按钮 VNode（含图标和指令） */
+      const createButtonVNode = (extraProps?: Record<string, any>) => {
         const button = h(
           NButton,
           {
@@ -272,7 +265,7 @@
             size: action.value.size || finalConfig.value.size,
             loading: isActionLoading(action.value),
             disabled: isActionDisabled(action.value),
-            onClick: () => emit('click'),
+            ...extraProps,
             ...action.value.buttonProps,
           },
           {
@@ -283,13 +276,15 @@
           }
         )
 
-        // 应用自定义指令
-        const vnode =
-          action.value.directives && action.value.directives.length > 0
-            ? withDirectives(button, action.value.directives as any)
-            : button
+        return action.value.directives && action.value.directives.length > 0
+          ? withDirectives(button, action.value.directives as any)
+          : button
+      }
 
-        // 如果有 tooltip，包装 NTooltip
+      // 渲染普通按钮
+      const renderButton = () => {
+        const vnode = createButtonVNode({ onClick: () => emit('click') })
+
         if (action.value.tooltip) {
           return h(
             NTooltip,
@@ -306,28 +301,7 @@
 
       // 渲染带下拉菜单的按钮
       const renderDropdownButton = () => {
-        const button = h(
-          NButton,
-          {
-            type: action.value.type || 'default',
-            size: action.value.size || finalConfig.value.size,
-            loading: isActionLoading(action.value),
-            disabled: isActionDisabled(action.value),
-            ...action.value.buttonProps,
-          },
-          {
-            default: () => action.value.label,
-            icon: action.value.icon
-              ? () => h(C_Icon, { name: action.value.icon, size: 16 })
-              : undefined,
-          }
-        )
-
-        // 应用自定义指令
-        const vnode =
-          action.value.directives && action.value.directives.length > 0
-            ? withDirectives(button, action.value.directives as any)
-            : button
+        const vnode = createButtonVNode()
 
         return h(
           NDropdown,

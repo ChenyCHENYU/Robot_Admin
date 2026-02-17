@@ -175,6 +175,10 @@
 
 <script setup lang="ts">
   import { useHighlight } from '@/plugins'
+  import {
+    getLanguageIcon,
+    getLanguageTitle,
+  } from '@/components/global/C_Code/data'
 
   interface Props {
     code: string
@@ -214,38 +218,10 @@
 
   const hljs = computed(() => highlight.getHljs())
 
-  // 语言图标映射
-  const languageIcon = computed(() => {
-    const iconMap: Record<string, string> = {
-      javascript: 'i-mdi:language-javascript',
-      typescript: 'i-mdi:language-typescript',
-      python: 'i-mdi:language-python',
-      html: 'i-mdi:language-html5',
-      css: 'i-mdi:language-css3',
-      vue: 'i-mdi:vuejs',
-      react: 'i-mdi:react',
-      json: 'i-mdi:code-json',
-      java: 'i-mdi:language-java',
-      cpp: 'i-mdi:language-cpp',
-      go: 'i-mdi:language-go',
-      rust: 'i-mdi:language-rust',
-      php: 'i-mdi:language-php',
-      csharp: 'i-mdi:language-csharp',
-      sql: 'i-mdi:database',
-      yaml: 'i-mdi:file-code',
-      xml: 'i-mdi:xml',
-      markdown: 'i-mdi:language-markdown',
-      bash: 'i-mdi:bash',
-      shell: 'i-mdi:console',
-      powershell: 'i-mdi:powershell',
-      swift: 'i-mdi:language-swift',
-      kotlin: 'i-mdi:language-kotlin',
-      ruby: 'i-mdi:language-ruby',
-    }
-    return iconMap[props.language.toLowerCase()] || 'i-mdi:code-braces'
-  })
+  /** 当前语言图标 class */
+  const languageIcon = computed(() => getLanguageIcon(props.language))
 
-  // 代码样式
+  /** 代码区域最大高度样式 */
   const codeStyle = computed(() => {
     if (!props.maxHeight) return {}
     return {
@@ -277,10 +253,7 @@
     { immediate: true }
   )
 
-  /**
-   * * @description 复制代码到剪贴板
-   * ! @return Promise<void>
-   */
+  /** 复制代码到剪贴板 */
   async function copyCode() {
     if (copying.value) return
     copying.value = true
@@ -295,68 +268,11 @@
     }
   }
 
-  /**
-   * * @description 切换全屏显示状态
-   * ! @return void
-   */
+  /** 切换全屏显示状态 */
   function toggleFullscreen() {
     isFullscreen.value = !isFullscreen.value
     emit('fullscreen', isFullscreen.value)
   }
-
-  /**
-   * * @description 获取编程语言的显示标题
-   * ? @param lang - 语言标识符
-   * ! @return string 语言显示名称
-   */
-  function getLanguageTitle(lang: string): string {
-    const titleMap: Record<string, string> = {
-      javascript: 'JavaScript',
-      typescript: 'TypeScript',
-      python: 'Python',
-      java: 'Java',
-      cpp: 'C++',
-      csharp: 'C#',
-      php: 'PHP',
-      go: 'Go',
-      rust: 'Rust',
-      html: 'HTML',
-      css: 'CSS',
-      json: 'JSON',
-      bash: 'Bash',
-      shell: 'Shell',
-      yaml: 'YAML',
-      xml: 'XML',
-      markdown: 'Markdown',
-      sql: 'SQL',
-      powershell: 'PowerShell',
-      swift: 'Swift',
-      kotlin: 'Kotlin',
-      ruby: 'Ruby',
-      vue: 'Vue',
-      react: 'React',
-    }
-    return titleMap[lang.toLowerCase()] || lang.toUpperCase()
-  }
-
-  /**
-   * * @description 处理ESC键退出全屏
-   * ? @param event - 键盘事件对象
-   * ! @return void
-   */
-  function handleEscapeKey(event: KeyboardEvent) {
-    if (event.key === 'Escape' && isFullscreen.value) {
-      toggleFullscreen()
-    }
-  }
-
-  onMounted(() => {
-    document.addEventListener('keydown', handleEscapeKey)
-  })
-
-  onUnmounted(() => {
-    document.removeEventListener('keydown', handleEscapeKey)
-  })
 
   defineExpose({
     copyCode,

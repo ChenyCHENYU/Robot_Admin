@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
   import VueBarcode from '@chenfengyuan/vue-barcode'
 
   interface Props {

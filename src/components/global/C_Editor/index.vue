@@ -16,6 +16,8 @@
     v-show="isInitialized"
     class="w-full"
     :class="{ 'editor-dark': isDark }"
+    @focusin="handleEditorFocus"
+    @focusout="handleEditorBlur"
   ></div>
 </template>
 
@@ -121,8 +123,6 @@
 
         // 触发挂载事件
         emit('editor-mounted', editor)
-
-        console.log(`[EditorComponent] 编辑器初始化成功: ${props.editorId}`)
       })
     } catch (error) {
       console.error(
@@ -141,7 +141,6 @@
         editorInstance.value.destroy()
         editorInstance.value = null
         isInitialized.value = false
-        console.log(`[EditorComponent] 编辑器销毁成功: ${props.editorId}`)
       } catch (error) {
         console.error(
           `[EditorComponent] 编辑器销毁失败: ${props.editorId}`,
@@ -284,27 +283,13 @@
   // ================= 生命周期 =================
 
   onMounted(() => {
-    // 🎯 延迟初始化，确保页面布局稳定
+    // 确保 DOM 渲染完成后初始化编辑器
     nextTick(() => {
-      setTimeout(() => {
-        initializeEditor()
-
-        // 添加防溢出事件监听
-        if (editorContainer.value) {
-          editorContainer.value.addEventListener('focusin', handleEditorFocus)
-          editorContainer.value.addEventListener('focusout', handleEditorBlur)
-        }
-      }, 200)
+      initializeEditor()
     })
   })
 
   onBeforeUnmount(() => {
-    // 清理事件监听器
-    if (editorContainer.value) {
-      editorContainer.value.removeEventListener('focusin', handleEditorFocus)
-      editorContainer.value.removeEventListener('focusout', handleEditorBlur)
-    }
-
     destroyEditor()
   })
 

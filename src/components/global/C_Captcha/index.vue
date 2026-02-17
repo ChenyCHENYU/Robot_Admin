@@ -102,6 +102,7 @@
   const isVerified = ref(false)
   const hasError = ref(false)
   const verificationToken = ref('')
+  let errorTimer: ReturnType<typeof setTimeout> | null = null
 
   // 计算属性
   const captchaImages = computed(() =>
@@ -137,8 +138,10 @@
     hasError.value = true
     showModal.value = false
 
-    setTimeout(() => {
+    if (errorTimer) clearTimeout(errorTimer)
+    errorTimer = setTimeout(() => {
       hasError.value = false
+      errorTimer = null
     }, 3000)
 
     emit('fail', '拼图验证失败')
@@ -156,6 +159,10 @@
     hasError.value = false
     showModal.value = false
     verificationToken.value = ''
+    if (errorTimer) {
+      clearTimeout(errorTimer)
+      errorTimer = null
+    }
 
     emit('reset')
     emit('change', false)
@@ -175,6 +182,10 @@
     },
     reset: resetCaptcha,
     show: showCaptcha,
+  })
+
+  onBeforeUnmount(() => {
+    if (errorTimer) clearTimeout(errorTimer)
   })
 </script>
 

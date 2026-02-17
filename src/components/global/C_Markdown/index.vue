@@ -14,6 +14,7 @@
     :class="{ 'is-dark': isDark }"
   >
     <v-md-editor
+      ref="editorRef"
       :model-value="modelValue"
       :height="height"
       :placeholder="placeholder"
@@ -119,6 +120,12 @@
 
   const emit = defineEmits<Emits>()
 
+  // 编辑器实例引用
+  const editorRef = ref<any>(null)
+
+  // 缓存最新 HTML 输出
+  const cachedHtml = ref('')
+
   // 获取 Naive UI 主题变量
   const themeVars = useThemeVars()
 
@@ -195,6 +202,7 @@
   }
 
   const handleChange = (text: string, html: string) => {
+    cachedHtml.value = html
     emit('change', text, html)
 
     // 自动保存
@@ -241,21 +249,22 @@
   /**
    * 暴露的方法
    */
+  /** 聚焦编辑器 */
   const focus = () => {
-    // 获取编辑器实例并聚焦
-    // 这里需要根据实际的 v-md-editor 实例来实现
+    editorRef.value?.focus()
   }
 
-  const getHtml = () => {
-    // 获取 HTML 内容
-    // 需要根据实际的 v-md-editor 实例来实现
-    return ''
+  /** 获取渲染后的 HTML */
+  const getHtml = (): string => {
+    return cachedHtml.value
   }
 
-  const insertText = (_text: string) => {
-    console.log('🚀 ~ insertText ~ _text:', _text)
-    // 插入文本
-    // 这里需要根据实际的 v-md-editor 实例来实现
+  /** 在光标位置插入文本 */
+  const insertText = (text: string) => {
+    editorRef.value?.insert((selected: string) => ({
+      text: `${selected}${text}`,
+      selected: text,
+    }))
   }
 
   // 暴露方法给父组件

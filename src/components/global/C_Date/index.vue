@@ -36,7 +36,7 @@
       :start-placeholder="startPlaceholder || '开始日期'"
       :end-placeholder="endPlaceholder || '结束日期'"
       :disabled="disabled"
-      :is-date-disabled="rangeDisabledDate"
+      :is-date-disabled="singleDisabledDate"
       :value-format="valueFormat"
       clearable
       v-bind="$attrs"
@@ -51,7 +51,7 @@
       :start-placeholder="startPlaceholder || '开始日期时间'"
       :end-placeholder="endPlaceholder || '结束日期时间'"
       :disabled="disabled"
-      :is-date-disabled="rangeDisabledDate"
+      :is-date-disabled="singleDisabledDate"
       :value-format="valueFormat"
       clearable
       v-bind="$attrs"
@@ -69,11 +69,10 @@
           v-model:value="startDate"
           type="date"
           :placeholder="startPlaceholder || '请选择开始日期'"
-          :is-date-disabled="startDisabledDate"
+          :is-date-disabled="singleDisabledDate"
           :value-format="valueFormat"
           clearable
           v-bind="startDateProps"
-          @update:value="handleStartDateChange"
         />
         <NDatePicker
           class="flex-1"
@@ -85,7 +84,6 @@
           :value-format="valueFormat"
           clearable
           v-bind="endDateProps"
-          @update:value="handleEndDateChange"
         />
       </div>
     </div>
@@ -212,24 +210,6 @@
   }
 
   /**
-   * * @description: 范围选择禁用判断函数
-   * ? @param {number} timestamp 待判断的时间戳
-   * ! @return {boolean} 是否禁用该日期
-   */
-  const rangeDisabledDate = (timestamp: number): boolean => {
-    return singleDisabledDate(timestamp)
-  }
-
-  /**
-   * * @description: 智能范围开始日期禁用判断函数
-   * ? @param {number} timestamp 待判断的时间戳
-   * ! @return {boolean} 是否禁用该日期
-   */
-  const startDisabledDate = (timestamp: number): boolean => {
-    return singleDisabledDate(timestamp)
-  }
-
-  /**
    * * @description: 智能范围结束日期禁用判断函数
    * ? @param {number} timestamp 待判断的时间戳
    * ! @return {boolean} 是否禁用该日期
@@ -283,34 +263,7 @@
     emits('change', value)
   }
 
-  /**
-   * * @description: 处理智能范围开始日期变化
-   * ? @param {DateValue} value 新的开始日期值
-   */
-  const handleStartDateChange = (value: DateValue): void => {
-    if (!value) {
-      endDate.value = null
-      endDateDisabled.value = true
-    } else {
-      endDateDisabled.value = false
-    }
-  }
-
-  /**
-   * * @description: 处理智能范围结束日期变化
-   * ? @param {DateValue} value 新的结束日期值
-   */
-  const handleEndDateChange = (value: DateValue): void => {
-    if (startDate.value && value) {
-      const rangeValue: DateRangeValue = [startDate.value, value]
-      emits('update:smartRange', rangeValue)
-      emits('change', rangeValue)
-    }
-  }
-
-  /**
-   * * @description: 监听智能范围模式下的日期变化
-   */
+  /** 监听智能范围模式下的日期联动 */
   watch(
     () => [startDate.value, endDate.value],
     ([startVal, endVal]) => {
