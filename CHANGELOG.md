@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.13.3](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.2...v1.13.3) (2026-02-17)
+
+
+### Bug Fixes
+
+* **C_WorkFlow:** 提取confirmAndSave方法避免Prettier格式化破坏模板 ([37b2dcb](https://github.com/ChenyCHENYU/Robot_Admin/commit/37b2dcbe89f474f757dbc953782fbd412207d227))
+
+
+### Performance Improvements
+
+* **C_Antv:** 优化编辑器架构和相关演示页面 ([1ebabcf](https://github.com/ChenyCHENYU/Robot_Admin/commit/1ebabcf5b9e71fad09090f4c2f0a087080907c17))
+* **C_Draggable:** 薄UI壳+useDraggableLayout引擎重构 ([53c47f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/53c47f99fe9932a02b16547a71271b8d253a2389))
+* **C_FilePreview:** 文件预览组件架构优化 ([351030a](https://github.com/ChenyCHENYU/Robot_Admin/commit/351030a15a7e52039699c110043372bcb4341604))
+* **C_FormSearch:** 搜索表单组件架构优化 ([e1a32d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/e1a32d2743d07fb56c4c5985a5b58d679ab6b4b8))
+* **C_Form:** 表单根据最佳实践和使用侧精简原则优化重构 ([6390353](https://github.com/ChenyCHENYU/Robot_Admin/commit/639035378f94693b25ef4d6dd0f1a9e415298de5))
+* **C_Table:** 组件架构调整，精简使用侧 ([883d930](https://github.com/ChenyCHENYU/Robot_Admin/commit/883d930261c6354f39037a5e8da78f501dc3a644))
+* **C_WorkFlow:** 优化工作流组件架构，增加预览能力，拆解组合函数 ([f238ec6](https://github.com/ChenyCHENYU/Robot_Admin/commit/f238ec66824ac6e3554cbd10ce6a7cc96a381ced))
+* **compoents:** c_* 组件整体梳理优化完成，细节调优，性能提升 ([54ce4bd](https://github.com/ChenyCHENYU/Robot_Admin/commit/54ce4bde4c2ab3c8087a8015fbd7a747dfa711a6))
+* **components:** c_* 相关本地组件优化 ([f072713](https://github.com/ChenyCHENYU/Robot_Admin/commit/f0727138938145c0e8f07a764f122b06b500fc7a))
+* **components:** 重构 C_Tree/C_GlobalSearch/C_FullCalendar/C_Time 为薄 UI 壳 + Composable 引擎架构 ([6a886f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a886f978ed42bd7e5586107f394968558406077))
+
 ## [1.13.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.1...v1.13.2) (2026-02-15)
 
 
