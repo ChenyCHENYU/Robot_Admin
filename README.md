@@ -63,13 +63,13 @@
     <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-7.0.6-646CFF?style=flat&logo=vite" alt="Vite Version">
+    <img src="https://img.shields.io/badge/vite-7.0.0-646CFF?style=flat&logo=vite" alt="Vite Version">
     <a href="https://vercel.com"><img src="https://img.shields.io/github/deployments/ChenyCHENYU/robot_admin/production?label=vercel&logo=vercel" alt="Vercel"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-30+-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-30+-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/components-37+-success?style=flat" alt="Components">
+    <img src="https://img.shields.io/badge/demos-36+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
     <img src="https://img.shields.io/badge/test_coverage-85%25-brightgreen?style=flat" alt="Test Coverage">
@@ -249,13 +249,13 @@ bun clean              # 清理缓存
 
 - **Vue 3.5.13** - 🔥 最新稳定版，Composition API 丝滑体验
 - **TypeScript 5.8** - 🛡️ 类型安全，智能提示
-- **Naive UI 2.41** - 🎨 颜值与性能并存的组件库
-- **UnoCSS 66.0** - ⚡ 原子化CSS，按需生成，体积极小
+- **Naive UI 2.41.0** - 🎨 颜值与性能并存的组件库
+- **UnoCSS 66.3.3** - ⚡ 原子化CSS，按需生成，体积极小
 
 **⚙️ 构建工具**
 
 - **Bun 1.x** - 🚀 性能怪兽，安装速度提升10倍
-- **Vite 7.0.6** - ⚡ 下一代构建工具，热更新极速
+- **Vite 7.0.0** - ⚡ 下一代构建工具，热更新极速
 - **Sass 1.87** - 🎨 成熟的CSS预处理器
 
 **🔧 开发工具**
@@ -282,7 +282,7 @@ bun clean              # 清理缓存
 - **按钮级权限** - 精确到每一个操作按钮
 - **接口级权限** - API调用权限控制
 
-#### 🧩 组件库（30+ 开箱即用）
+#### 🧩 组件库（37+ 开箱即用）
 
 <details>
 <summary><b>查看所有组件</b></summary>
@@ -325,7 +325,7 @@ bun clean              # 清理缓存
 
 `v-copy` 复制 | `v-debounce` 防抖 | `v-throttle` 节流 | `v-permission` 权限 | `v-watermark` 水印 | `v-draggable` 拖拽 | `v-longpress` 长按
 
-### 🎪 演示页面（30+ 完整示例）
+### 🎪 演示页面（36+ 完整示例）
 
 <details>
 <summary><b>查看所有演示页面</b></summary>
@@ -874,16 +874,16 @@ bun run type-build
 | 🎨 UI 组件库  | **Naive UI 轻量** |   Ant Design   |   Element Plus    |   选择多样   |
 | 💪 TypeScript | **完整类型支持**  |    基础支持    |     基础支持      | 支持程度不一 |
 | 🔧 自定义指令 |  **7个实用指令**  |    少量指令    |     基础指令      |   功能有限   |
-|  📊 演示页面  | **30+ 完整示例**  |    有限示例    |     有限示例      |   基础示例   |
+|  📊 演示页面  | **36+ 完整示例**  |    有限示例    |     有限示例      |   基础示例   |
 |  🎯 学习成本  |   **中等友好**    |    较高门槛    |     中等门槛      |   差异较大   |
 |  📈 维护状态  |  **🔥 积极维护**  |    持续维护    |     持续维护      |   状态不一   |
 
 **选择 Robot Admin 的理由**:
 
 - 🚀 **性能优先**: Bun + Vite7 双引擎，开发体验极致
-- 🧩 **组件丰富**: 30+ 业务组件，开箱即用
+- 🧩 **组件丰富**: 37+ 业务组件，开箱即用
 - 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
-- 📚 **学习友好**: 30+ 演示页面，每个都是最佳实践
+- 📚 **学习友好**: 36+ 演示页面，每个都是最佳实践
 </details>
 
 ---
@@ -989,7 +989,7 @@ bun run type-build
 
 ## 📄 更新日志
 
-### 🎉 v1.13.0 (2026-02-12)
+### 🎉 v1.13.3 (2026-02-17)
 
 - ✨ 升级到 @robot-admin/layout v2.2.0
 - 🎨 优化主题切换，使用 View Transition API
