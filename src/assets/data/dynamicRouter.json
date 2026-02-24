@@ -371,6 +371,19 @@
           }
         },
         {
+          "path": "qrcode",
+          "name": "demo-qrcode",
+          "component": "/demo/39-qrcode/index",
+          "meta": {
+            "icon": "mdi:qrcode",
+            "title": "二维码",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
           "path": "map",
           "name": "demo-map",
           "component": "/demo/36-map/index",

@@ -64,7 +64,7 @@
       font-size: 18px;
       font-weight: 600;
       margin-bottom: 16px;
-      color: #333;
+      color: var(--app-text-primary);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -76,7 +76,7 @@
     }
 
     .section-desc {
-      color: #666;
+      color: var(--app-text-secondary);
       margin-bottom: 16px;
       line-height: 1.6;
       font-size: 14px;
@@ -95,14 +95,14 @@
     align-items: center;
     gap: 10px;
     padding: 12px 14px;
-    background: #fff;
-    border: 1px solid #eee;
+    background: var(--app-bg-content);
+      border: 1px solid var(--app-border-default);
     border-radius: 8px;
-    transition: all 0.25s ease;
+    transition: all var(--app-transition-base);
 
     &:hover {
       border-color: var(--primary-color, #409eff);
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      box-shadow: var(--app-shadow-sm);
       transform: translateY(-1px);
     }
 
@@ -122,12 +122,12 @@
     &__title {
       font-size: 13px;
       font-weight: 600;
-      color: #333;
+      color: var(--app-text-primary);
     }
 
     &__desc {
       font-size: 11px;
-      color: #999;
+      color: var(--app-text-placeholder);
       margin-top: 2px;
     }
 
@@ -150,17 +150,17 @@
     align-items: center;
     gap: 8px;
     padding: 20px 16px;
-    background: #fff;
-    border: 2px solid #e8e8e8;
+    background: var(--app-bg-content);
+      border: 2px solid var(--app-border-default);
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all var(--app-transition-base);
     text-align: center;
 
     &:hover {
       border-color: var(--primary-color, #409eff);
       transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      box-shadow: var(--app-shadow-md);
     }
 
     &.is-active {
@@ -177,12 +177,12 @@
     &__title {
       font-size: 15px;
       font-weight: 600;
-      color: #333;
+      color: var(--app-text-primary);
     }
 
     &__desc {
       font-size: 12px;
-      color: #999;
+      color: var(--app-text-placeholder);
       line-height: 1.4;
     }
   }
@@ -192,7 +192,7 @@
     max-width: 960px;
     margin: 0 auto;
     border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--app-shadow-lg);
     background: #000;
   }
 
@@ -208,18 +208,18 @@
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    background: #fff;
-    border: 1px solid #eee;
+    background: var(--app-bg-content);
+      border: 1px solid var(--app-border-default);
     border-radius: 8px;
     font-size: 13px;
 
     &__label {
-      color: #999;
+      color: var(--app-text-placeholder);
       white-space: nowrap;
     }
 
     &__value {
-      color: #333;
+      color: var(--app-text-primary);
       font-weight: 500;
 
       &.mono {
@@ -289,8 +289,8 @@
     align-items: center;
     gap: 10px;
     padding: 8px 12px;
-    background: #fff;
-    border: 1px solid #eee;
+    background: var(--app-bg-content);
+      border: 1px solid var(--app-border-default);
     border-radius: 6px;
     font-size: 13px;
   }
@@ -305,15 +305,15 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     font-weight: 600;
-    color: #333;
-    background: #f4f4f5;
-    border: 1px solid #d9d9d9;
+    color: var(--app-text-primary);
+      background: var(--app-bg-surface);
+      border: 1px solid var(--app-border-deep);
     border-bottom-width: 2px;
     border-radius: 4px;
   }
 
   .shortcut-desc {
-    color: #666;
+    color: var(--app-text-secondary);
   }
 
   /* ========== 响应式 ========== */
