@@ -1,0 +1,106 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-25 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-25 10:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\42-signature\index.scss
+ * @Description: 电子签名演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.signature-demo-page {
+  padding: 20px;
+
+  .demo-section {
+    margin-bottom: 32px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 6px;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 12px;
+      color: var(--app-text-primary);
+
+      .title-icon {
+        flex-shrink: 0;
+        font-size: 20px;
+        color: var(--primary-color, #409eff);
+      }
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--app-text-secondary);
+      margin: 0 0 16px;
+      line-height: 1.6;
+    }
+
+    .section-content {
+      .signature-container {
+        margin-bottom: 16px;
+      }
+
+      .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .config-form {
+        max-width: 800px;
+        margin-bottom: 16px;
+      }
+
+      .result-preview {
+        margin-top: 16px;
+        padding: 16px;
+        background: var(--app-bg-surface);
+        border: 1px solid var(--app-border-default);
+        border-radius: 6px;
+
+        .preview-title {
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--app-text-primary);
+          margin-bottom: 12px;
+        }
+
+        .preview-image {
+          max-width: 100%;
+          max-height: 300px;
+          border: 1px dashed var(--app-border-default);
+          border-radius: 4px;
+          background: repeating-conic-gradient(
+              var(--app-bg-surface) 0% 25%,
+              var(--app-bg-body) 0% 50%
+            )
+            50%/20px 20px;
+        }
+
+        .preview-text {
+          font-family: monospace;
+          font-size: 12px;
+          color: var(--app-text-secondary);
+          word-break: break-all;
+          max-height: 200px;
+          overflow-y: auto;
+          padding: 8px;
+          background: var(--app-bg-body);
+          border-radius: 4px;
+          border: 1px solid var(--app-border-default);
+        }
+      }
+
+      .tips-card {
+        margin-top: 16px;
+      }
+    }
+  }
+}

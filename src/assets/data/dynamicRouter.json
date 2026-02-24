@@ -408,6 +408,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "signature",
+          "name": "demo-signature",
+          "component": "/demo/42-signature/index",
+          "meta": {
+            "icon": "mdi:draw-pen",
+            "title": "电子签名",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },

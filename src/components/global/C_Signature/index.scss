@@ -1,0 +1,99 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-25 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-25 10:00:00
+ * @FilePath: \Robot_Admin\src\components\global\C_Signature\index.scss
+ * @Description: 电子签名组件样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.c-signature {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+
+  .signature-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--app-bg-surface);
+    border: 1px solid var(--app-border-default);
+    border-radius: 6px;
+    flex-wrap: wrap;
+
+    .toolbar-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &.divider {
+        width: 1px;
+        height: 24px;
+        background: var(--app-border-default);
+        margin: 0 4px;
+      }
+
+      .section-label {
+        font-size: 13px;
+        color: var(--app-text-secondary);
+        font-weight: 500;
+      }
+    }
+  }
+
+  .signature-canvas-wrapper {
+    position: relative;
+    border: 1px solid var(--app-border-default);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--app-bg-content);
+    transition: border-color var(--app-transition-base);
+
+    &:hover {
+      border-color: var(--primary-color, #409eff);
+    }
+
+    &.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      border-color: var(--app-border-default);
+    }
+
+    &.readonly {
+      cursor: default;
+    }
+
+    .signature-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      touch-action: none;
+
+      &.disabled,
+      &.readonly {
+        cursor: not-allowed;
+      }
+    }
+
+    .canvas-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--app-text-placeholder);
+      font-size: 14px;
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+
+  .signature-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
