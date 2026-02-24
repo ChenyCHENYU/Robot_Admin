@@ -380,6 +380,21 @@
     overflow: hidden;
     outline: none;
 
+    // 覆盖 xgplayer v3 默认红色主题（倍速/清晰度选中项改蓝）
+    :deep(.xgplayer .xg-options-list li:hover),
+    :deep(.xgplayer .xg-options-list li.selected),
+    :deep(.xgplayer-mobile .xg-options-list li.selected) {
+      color: #409eff !important;
+    }
+
+    :deep(.xgplayer xg-trigger .time-preview .xg-cur) {
+      color: #409eff !important;
+    }
+
+    :deep(.xgplayer .xgplayer-progress-btn.active::before) {
+      box-shadow: 0 0 3px rgba(64, 152, 255, 0.7) !important;
+    }
+
     &__container {
       width: 100%;
       height: 100%;

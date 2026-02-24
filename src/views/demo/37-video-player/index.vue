@@ -20,16 +20,11 @@
           />
           C_VideoPlayer 视频播放器
         </h1>
-        <p class="demo-header__desc">
-          基于
-          <NTag
-            size="small"
-            type="success"
-          >
-            xgplayer 西瓜播放器
-          </NTag>
-          封装的教育场景视频播放器——支持多格式、清晰度切换、章节标记、防作弊、视频内测验等在线教育核心能力。
-        </p>
+        <p class="demo-header__desc"
+          >基于
+          <span class="demo-header__highlight">xgplayer 西瓜播放器</span>
+          封装的教育场景视频播放器——支持多格式、清晰度切换、章节标记、防作弊、视频内测验等在线教育核心能力。</p
+        >
       </div>
     </div>
 
@@ -115,7 +110,7 @@
           pip
           keyboard
           screenshot
-          @ready="onPlayerReady"
+          @ready="onReady"
           @state-change="onStateChange"
           @time-update="onTimeUpdate"
           @ended="onEnded"
@@ -134,7 +129,7 @@
           pip
           keyboard
           screenshot
-          @ready="onPlayerReady"
+          @ready="onReady"
           @state-change="onStateChange"
           @time-update="onTimeUpdate"
           @error="onError"
@@ -160,7 +155,7 @@
           pip
           keyboard
           screenshot
-          @ready="onPlayerReady"
+          @ready="onReady"
           @state-change="onStateChange"
           @time-update="onTimeUpdate"
           @ended="onEnded"
@@ -331,8 +326,8 @@
           name="props"
         >
           <NDataTable
-            :columns="propsColumns"
-            :data="propsData"
+            :columns="PROPS_COLUMNS"
+            :data="PROPS_DATA"
             :bordered="false"
             size="small"
             :pagination="false"
@@ -343,8 +338,8 @@
           name="events"
         >
           <NDataTable
-            :columns="eventsColumns"
-            :data="eventsData"
+            :columns="EVENTS_COLUMNS"
+            :data="EVENTS_DATA"
             :bordered="false"
             size="small"
             :pagination="false"
@@ -355,8 +350,8 @@
           name="expose"
         >
           <NDataTable
-            :columns="exposeColumns"
-            :data="exposeData"
+            :columns="EXPOSE_COLUMNS"
+            :data="EXPOSE_DATA"
             :bordered="false"
             size="small"
             :pagination="false"
@@ -387,6 +382,13 @@
     DEMO_SCENES,
     FEATURE_LIST,
     SHORTCUT_LIST,
+    PROPS_COLUMNS,
+    PROPS_DATA,
+    EVENTS_COLUMNS,
+    EVENTS_DATA,
+    EXPOSE_COLUMNS,
+    EXPOSE_DATA,
+    TAG_TYPE_MAP,
   } from './data'
 
   const message = useMessage()
@@ -458,21 +460,7 @@
   }
 
   /** 功能标签配色 */
-  function tagType(
-    tag: string
-  ): 'default' | 'success' | 'info' | 'warning' | 'error' {
-    const map: Record<
-      string,
-      'default' | 'success' | 'info' | 'warning' | 'error'
-    > = {
-      核心: 'success',
-      教育: 'info',
-      安全: 'error',
-      体验: 'warning',
-      运营: 'default',
-    }
-    return map[tag] ?? 'default'
-  }
+  const tagType = (tag: string) => TAG_TYPE_MAP[tag] ?? 'default'
 
   /* ======================== 场景切换 ======================== */
 
@@ -490,588 +478,54 @@
 
   /* ======================== 播放器事件 ======================== */
 
-  /** 播放器就绪 */
-  function onPlayerReady() {
+  const onReady = () => {
     addLog('ready', 'success', '播放器初始化完成')
     message.success('播放器就绪')
   }
-
-  /** 状态变化 */
-  function onStateChange(state: PlayerState) {
-    playerState.value = state
-    addLog('stateChange', 'info', state)
+  const onStateChange = (s: PlayerState) => {
+    playerState.value = s
+    addLog('stateChange', 'info', s)
   }
-
-  /** 时间更新 */
-  function onTimeUpdate(time: number, dur: number) {
-    currentTime.value = time
-    videoDuration.value = dur
+  const onTimeUpdate = (t: number, d: number) => {
+    currentTime.value = t
+    videoDuration.value = d
   }
-
-  /** 播放结束 */
-  function onEnded() {
+  const onEnded = () => {
     addLog('ended', 'warning', '视频播放完毕')
     message.info('视频播放完毕')
   }
-
-  /** 播放错误 */
-  function onError(err: Error) {
-    addLog('error', 'error', err.message)
-    message.error(`播放错误: ${err.message}`)
+  const onError = (e: Error) => {
+    addLog('error', 'error', e.message)
+    message.error(`播放错误: ${e.message}`)
   }
-
-  /** 清晰度切换 */
-  function onQualityChange(quality: QualityLevel) {
-    addLog('qualityChange', 'info', quality)
-    message.info(`已切换至 ${quality}`)
+  const onQualityChange = (q: QualityLevel) => {
+    addLog('qualityChange', 'info', q)
+    message.info(`已切换至 ${q}`)
   }
-
-  /** 章节变化 */
-  function onChapterChange(chapter: Chapter) {
-    currentChapterTitle.value = chapter.title
-    addLog('chapterChange', 'info', chapter.title)
+  const onChapterChange = (c: Chapter) => {
+    currentChapterTitle.value = c.title
+    addLog('chapterChange', 'info', c.title)
   }
-
-  /** 测验作答 */
-  function onQuizAnswer(
-    quizId: string,
-    answer: string | string[],
-    isCorrect: boolean
-  ) {
-    const result = isCorrect ? '✓ 正确' : '✗ 错误'
+  const onQuizAnswer = (id: string, ans: string | string[], ok: boolean) => {
     addLog(
       'quizAnswer',
-      isCorrect ? 'success' : 'error',
-      `题目 ${quizId} — ${result} (${JSON.stringify(answer)})`
+      ok ? 'success' : 'error',
+      `题目 ${id} — ${ok ? '✓ 正确' : '✗ 错误'} (${JSON.stringify(ans)})`
     )
   }
-
-  /** 书签变化 */
-  function onBookmarkChange(bookmarks: Bookmark[]) {
-    addLog('bookmarkChange', 'info', `共 ${bookmarks.length} 个书签`)
+  const onBookmarkChange = (b: Bookmark[]) =>
+    addLog('bookmarkChange', 'info', `共 ${b.length} 个书签`)
+  const handleProgress = (d: ProgressData) => {
+    completionPercent.value = d.completionPercent
+    console.log('[进度上报]', d)
   }
-
-  /** 进度上报回调 */
-  function handleProgress(data: ProgressData) {
-    completionPercent.value = data.completionPercent
-    // 演示环境仅打印
-    console.log('[进度上报]', data)
+  const onProgressUpdate = (d: ProgressData) => {
+    completionPercent.value = d.completionPercent
   }
-
-  /** 进度更新事件 */
-  function onProgressUpdate(data: ProgressData) {
-    completionPercent.value = data.completionPercent
-  }
-
-  /** 数据分析回调 */
-  function handleAnalytics(event: AnalyticsEvent) {
-    console.log('[数据分析]', event.type, event)
-  }
-
-  /* ======================== API 参考表格 ======================== */
-
-  const propsColumns = [
-    { title: '属性', key: 'name', width: 180 },
-    { title: '类型', key: 'type', width: 200 },
-    { title: '默认值', key: 'default', width: 120 },
-    { title: '说明', key: 'desc' },
-  ]
-
-  const propsData = [
-    { name: 'url', type: 'string', default: '—', desc: '视频源地址（必填）' },
-    {
-      name: 'sourceType',
-      type: "'mp4'|'hls'|'dash'|'flv'",
-      default: '自动检测',
-      desc: '视频格式类型',
-    },
-    {
-      name: 'poster',
-      type: 'string',
-      default: '—',
-      desc: '封面图地址',
-    },
-    {
-      name: 'autoplay',
-      type: 'boolean',
-      default: 'false',
-      desc: '自动播放',
-    },
-    {
-      name: 'qualityList',
-      type: 'QualityDefinition[]',
-      default: '—',
-      desc: '清晰度列表',
-    },
-    {
-      name: 'chapters',
-      type: 'Chapter[]',
-      default: '—',
-      desc: '章节列表',
-    },
-    {
-      name: 'quizzes',
-      type: 'VideoQuiz[]',
-      default: '—',
-      desc: '视频内测验',
-    },
-    {
-      name: 'antiCheat',
-      type: 'AntiCheatConfig',
-      default: '—',
-      desc: '防作弊配置',
-    },
-    {
-      name: 'playbackRates',
-      type: 'PlaybackRate[]',
-      default: '[0.5~3.0]',
-      desc: '倍速列表',
-    },
-    {
-      name: 'pip',
-      type: 'boolean',
-      default: 'true',
-      desc: '画中画',
-    },
-    {
-      name: 'keyboard',
-      type: 'boolean',
-      default: 'true',
-      desc: '快捷键',
-    },
-    {
-      name: 'onProgress',
-      type: 'ProgressReporter',
-      default: '—',
-      desc: '进度上报回调',
-    },
-    {
-      name: 'onAnalytics',
-      type: 'AnalyticsReporter',
-      default: '—',
-      desc: '数据分析上报',
-    },
-    {
-      name: 'playerOptions',
-      type: 'Partial<IPlayerOptions>',
-      default: '—',
-      desc: 'xgplayer 原生配置透传',
-    },
-  ]
-
-  const eventsColumns = [
-    { title: '事件', key: 'name', width: 180 },
-    { title: '参数', key: 'params', width: 260 },
-    { title: '说明', key: 'desc' },
-  ]
-
-  const eventsData = [
-    { name: 'ready', params: '—', desc: '播放器就绪' },
-    {
-      name: 'stateChange',
-      params: 'state: PlayerState',
-      desc: '播放状态变化',
-    },
-    {
-      name: 'timeUpdate',
-      params: 'currentTime, duration',
-      desc: '播放时间更新',
-    },
-    { name: 'ended', params: '—', desc: '播放结束' },
-    { name: 'error', params: 'error: Error', desc: '播放错误' },
-    {
-      name: 'qualityChange',
-      params: 'quality: QualityLevel',
-      desc: '清晰度切换',
-    },
-    { name: 'rateChange', params: 'rate: number', desc: '倍速切换' },
-    {
-      name: 'bookmarkChange',
-      params: 'bookmarks: Bookmark[]',
-      desc: '书签变化',
-    },
-    {
-      name: 'quizAnswer',
-      params: 'quizId, answer, isCorrect',
-      desc: '测验作答',
-    },
-    {
-      name: 'chapterChange',
-      params: 'chapter: Chapter',
-      desc: '章节切换',
-    },
-    {
-      name: 'progressUpdate',
-      params: 'data: ProgressData',
-      desc: '进度更新',
-    },
-  ]
-
-  const exposeColumns = [
-    { title: '方法', key: 'name', width: 220 },
-    { title: '参数', key: 'params', width: 200 },
-    { title: '说明', key: 'desc' },
-  ]
-
-  const exposeData = [
-    { name: 'play()', params: '—', desc: '播放' },
-    { name: 'pause()', params: '—', desc: '暂停' },
-    { name: 'seek(time)', params: 'time: number', desc: '跳转到指定时间' },
-    {
-      name: 'setPlaybackRate(rate)',
-      params: 'rate: number',
-      desc: '设置倍速',
-    },
-    {
-      name: 'setVolume(vol)',
-      params: 'volume: number 0-1',
-      desc: '设置音量',
-    },
-    {
-      name: 'switchQuality(q)',
-      params: 'quality: QualityLevel',
-      desc: '切换清晰度',
-    },
-    {
-      name: 'getProgressData()',
-      params: '—',
-      desc: '获取当前进度数据',
-    },
-    { name: 'destroy()', params: '—', desc: '销毁播放器' },
-    {
-      name: 'getPlayerInstance()',
-      params: '—',
-      desc: '获取 xgplayer 原始实例',
-    },
-  ]
+  const handleAnalytics = (e: AnalyticsEvent) =>
+    console.log('[数据分析]', e.type, e)
 </script>
 
-<style scoped lang="scss">
-  .video-player-demo {
-    padding: 20px;
-  }
-
-  /* ========== 头部 ========== */
-  .demo-header {
-    margin-bottom: 32px;
-    padding: 28px 32px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
-    color: #fff;
-
-    &__content {
-      max-width: 800px;
-    }
-
-    &__title {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0 0 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    &__icon {
-      font-size: 28px;
-    }
-
-    &__desc {
-      font-size: 14px;
-      line-height: 1.7;
-      margin: 0;
-      opacity: 0.92;
-    }
-  }
-
-  /* ========== 通用段落 ========== */
-  .demo-section {
-    margin-bottom: 32px;
-
-    &--player {
-      margin-bottom: 24px;
-    }
-  }
-
-  .section-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    .title-icon {
-      color: var(--primary-color, #18a058);
-      font-size: 20px;
-    }
-  }
-
-  .section-desc {
-    color: #666;
-    margin-bottom: 16px;
-    line-height: 1.6;
-    font-size: 14px;
-  }
-
-  /* ========== 功能特性 ========== */
-  .feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 12px;
-  }
-
-  .feature-card {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    transition: all 0.25s ease;
-
-    &:hover {
-      border-color: var(--primary-color, #18a058);
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-      transform: translateY(-1px);
-    }
-
-    &__icon {
-      font-size: 22px;
-      color: var(--primary-color, #18a058);
-      flex-shrink: 0;
-    }
-
-    &__body {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 0;
-    }
-
-    &__title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #333;
-    }
-
-    &__desc {
-      font-size: 11px;
-      color: #999;
-      margin-top: 2px;
-    }
-
-    &__tag {
-      flex-shrink: 0;
-    }
-  }
-
-  /* ========== 场景切换 ========== */
-  .scene-switcher {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-
-  .scene-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 20px 16px;
-    background: #fff;
-    border: 2px solid #e8e8e8;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    text-align: center;
-
-    &:hover {
-      border-color: var(--primary-color, #18a058);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    }
-
-    &.is-active {
-      border-color: var(--primary-color, #18a058);
-      background: rgba(24, 160, 88, 0.04);
-      box-shadow: 0 0 0 3px rgba(24, 160, 88, 0.12);
-    }
-
-    &__icon {
-      font-size: 32px;
-      color: var(--primary-color, #18a058);
-    }
-
-    &__title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #333;
-    }
-
-    &__desc {
-      font-size: 12px;
-      color: #999;
-      line-height: 1.4;
-    }
-  }
-
-  /* ========== 播放器容器 ========== */
-  .player-wrapper {
-    max-width: 960px;
-    margin: 0 auto;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    background: #000;
-  }
-
-  /* ========== 状态面板 ========== */
-  .status-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .status-card {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    font-size: 13px;
-
-    &__label {
-      color: #999;
-      white-space: nowrap;
-    }
-
-    &__value {
-      color: #333;
-      font-weight: 500;
-
-      &.mono {
-        font-family: 'JetBrains Mono', 'Fira Code', monospace;
-        font-variant-numeric: tabular-nums;
-      }
-    }
-
-    &__pct {
-      font-size: 12px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--primary-color, #18a058);
-    }
-  }
-
-  /* ========== 事件日志 ========== */
-  .event-log-panel {
-    background: #1e1e2e;
-    border-radius: 8px;
-    padding: 12px 16px;
-    max-height: 260px;
-    overflow-y: auto;
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    font-size: 12px;
-  }
-
-  .event-log-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 3px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-
-  .event-log-time {
-    color: #6c7086;
-    white-space: nowrap;
-  }
-
-  .event-log-detail {
-    color: #a6adc8;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .event-log-empty {
-    color: #6c7086;
-    text-align: center;
-    padding: 20px 0;
-    font-style: italic;
-  }
-
-  /* ========== 快捷键 ========== */
-  .shortcut-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 10px;
-  }
-
-  .shortcut-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 6px;
-    font-size: 13px;
-  }
-
-  .shortcut-key {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 32px;
-    height: 28px;
-    padding: 0 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    font-weight: 600;
-    color: #333;
-    background: #f4f4f5;
-    border: 1px solid #d9d9d9;
-    border-bottom-width: 2px;
-    border-radius: 4px;
-  }
-
-  .shortcut-desc {
-    color: #666;
-  }
-
-  /* ========== 响应式 ========== */
-  @media (max-width: 768px) {
-    .video-player-demo {
-      padding: 12px;
-    }
-
-    .demo-header {
-      padding: 20px;
-
-      &__title {
-        font-size: 18px;
-      }
-    }
-
-    .feature-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .scene-switcher {
-      grid-template-columns: 1fr;
-    }
-
-    .shortcut-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
+<style lang="scss" scoped>
+  @use './index.scss';
 </style>
