@@ -79,6 +79,8 @@
     "vue-router": "^4.5.0",
     "vue3-puzzle-vcode": "^1.1.7",
     "wangeditor": "^4.7.15",
+    "xgplayer": "^3.0.23",
+    "xgplayer-hls": "^3.0.23",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

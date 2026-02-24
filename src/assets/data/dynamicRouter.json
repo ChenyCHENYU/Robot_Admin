@@ -382,6 +382,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "video-player",
+          "name": "demo-video-player",
+          "component": "/demo/37-video-player/index",
+          "meta": {
+            "icon": "mdi:play-circle-outline",
+            "title": "视频播放器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },
