@@ -1,27 +1,44 @@
-# C_VideoPlayer 视频播放器组件
+# C_VideoPlayer 组件
 
 > 基于 [xgplayer（西瓜播放器）](https://h5player.bytedance.com/) 封装的教育场景视频播放器组件，面向在线教育、培训、课程学习等场景设计。
 
-**🖥 在线演示**: 运行项目后访问 `示范组件 → 视频播放器` 菜单查看完整演示。
+## 📦 组件位置
 
-## 特性
+- **组件**: `src/components/global/C_VideoPlayer/index.vue`
+- **类型**: `src/components/global/C_VideoPlayer/types.ts`
+- **常量**: `src/components/global/C_VideoPlayer/constants.ts`
+- **样式**: `src/components/global/C_VideoPlayer/index.scss`（暂无独立样式文件，样式内置于子组件）
+- **演示**: `src/views/demo/37-video-player/index.vue`
 
-- 🎬 **多格式支持** — MP4 / HLS (.m3u8) / DASH（预留），自动检测源类型
-- 📊 **清晰度切换** — 支持 360p ~ 4K 全清晰度手动切换 + 自适应码率
-- ⏩ **倍速播放** — 0.5x ~ 3.0x 倍速，教育场景高频需求
-- 📖 **章节标记** — 进度条章节分段，快速导航到知识点
-- 🔖 **书签笔记** — 学生可在任意时间点打标签、记笔记
-- 📈 **学习进度追踪** — 精确记录观看时长、完成百分比，支持心跳上报
-- 🔄 **断点续播** — 自动从上次离开的位置恢复播放
-- 🛡 **防作弊** — 防跳播（首次观看限制）、焦点检测、动态水印
-- 📝 **视频内测验** — 在指定时间弹出测验题，支持必须答对才能继续
-- 🖼 **画中画 & 小窗** — 画中画模式、滚动自动浮动小窗
-- ♿ **快捷键** — 完整的键盘操作支持
-- 📡 **数据分析** — 播放行为事件上报，支持自定义上报回调
-- 🌐 **字幕** — 多语言字幕轨道切换
-- 🎨 **缩略图预览** — 进度条 hover 时显示帧缩略图
+## ✨ 特性
 
-## 目录结构
+- ✅ **多格式支持**: MP4 / HLS (.m3u8) / DASH（预留），自动检测源类型
+- ✅ **清晰度切换**: 支持 360p ~ 4K 全清晰度手动切换 + 自适应码率
+- ✅ **倍速播放**: 0.5x ~ 3.0x 倍速，教育场景高频需求
+- ✅ **章节标记**: 进度条章节分段，快速导航到知识点
+- ✅ **书签笔记**: 学生可在任意时间点打标签、记笔记
+- ✅ **学习进度追踪**: 精确记录观看时长、完成百分比，支持心跳上报
+- ✅ **断点续播**: 自动从上次离开的位置恢复播放
+- ✅ **防作弊**: 防跳播（首次观看限制）、焦点检测、动态水印
+- ✅ **视频内测验**: 在指定时间弹出测验题，支持必须答对才能继续
+- ✅ **画中画 & 小窗**: 画中画模式、滚动自动浮动小窗
+- ✅ **快捷键**: 完整的键盘操作支持
+- ✅ **数据分析**: 播放行为事件上报，支持自定义上报回调
+- ✅ **字幕**: 多语言字幕轨道切换
+- ✅ **缩略图预览**: 进度条 hover 时显示帧缩略图
+- ✅ **暗黑模式**: 自动适配主题，无需额外配置
+
+## 🎯 适用场景
+
+| 场景            | 示例                         | 使用方式     |
+| --------------- | ---------------------------- | ------------ |
+| 🎓 **在线课程** | 视频课件 + 章节 + 测验       | 完整教育模式 |
+| 🏢 **企业培训** | 培训视频 + 防作弊 + 进度追踪 | 带监控播放   |
+| 📺 **视频预览** | 简单视频播放 + 基本控制      | 最简用法     |
+| 📡 **直播回放** | HLS 流 + 清晰度切换          | 流媒体播放   |
+| 📖 **知识库**   | 带书签笔记 + 章节导航        | 学习辅助模式 |
+
+## 📁 目录结构
 
 ```
 C_VideoPlayer/
@@ -58,15 +75,17 @@ C_VideoPlayer/
     └── analytics-reporter.ts    # 数据上报插件
 ```
 
-## 依赖
+> **说明**：本组件由于功能复杂（11 个 composable + 8 个子组件 + 3 个插件），composables 和 types 保留在组件目录内，未抽离到全局 `src/composables/` 和 `src/types/modules/`。
+
+## 📦 依赖
 
 ```bash
 bun add xgplayer xgplayer-hls
 ```
 
-## 基础用法
+## 📖 基础用法
 
-### 最简用法
+### 最简示例
 
 ```vue
 <template>
@@ -240,7 +259,9 @@ bun add xgplayer xgplayer-hls
 </script>
 ```
 
-## Props
+## 🔧 完整 API
+
+### Props
 
 | 属性                  | 类型                                | 默认值                                  | 说明                  |
 | --------------------- | ----------------------------------- | --------------------------------------- | --------------------- |
@@ -276,38 +297,51 @@ bun add xgplayer xgplayer-hls
 | `onAnalytics`         | `AnalyticsReporter`                 | —                                       | 数据分析上报回调      |
 | `playerOptions`       | `Partial<IPlayerOptions>`           | —                                       | xgplayer 原生配置透传 |
 
-## 事件
+### AntiCheatConfig 配置项
 
-| 事件               | 参数                        | 说明         |
-| ------------------ | --------------------------- | ------------ |
-| `ready`            | —                           | 播放器就绪   |
-| `stateChange`      | `state: PlayerState`        | 播放状态变化 |
-| `timeUpdate`       | `currentTime, duration`     | 播放时间更新 |
-| `ended`            | —                           | 播放结束     |
-| `error`            | `error: Error`              | 播放错误     |
-| `qualityChange`    | `quality: QualityLevel`     | 清晰度切换   |
-| `rateChange`       | `rate: number`              | 倍速切换     |
-| `fullscreenChange` | `isFullscreen: boolean`     | 全屏状态变化 |
-| `bookmarkChange`   | `bookmarks: Bookmark[]`     | 书签变化     |
-| `quizAnswer`       | `quizId, answer, isCorrect` | 测验作答     |
-| `chapterChange`    | `chapter: Chapter`          | 章节切换     |
-| `progressUpdate`   | `data: ProgressData`        | 进度更新     |
+```typescript
+interface AntiCheatConfig {
+  preventSeekOnFirstWatch?: boolean // 首次观看防跳播
+  focusDetection?: boolean // 焦点检测（离开页面暂停）
+  watermark?: boolean // 是否显示动态水印
+  watermarkText?: string // 水印文字（如用户名/ID）
+  heartbeatInterval?: number // 心跳上报间隔（ms），默认 30000
+  onHeartbeat?: (data: ProgressData) => void // 心跳回调
+}
+```
 
-## 暴露方法（ref 调用）
+### Events
 
-| 方法                     | 参数                    | 说明                   |
-| ------------------------ | ----------------------- | ---------------------- |
-| `play()`                 | —                       | 播放                   |
-| `pause()`                | —                       | 暂停                   |
-| `seek(time)`             | `time: number` 秒       | 跳转到指定时间         |
-| `setPlaybackRate(rate)`  | `rate: number`          | 设置倍速               |
-| `setVolume(volume)`      | `volume: number` 0-1    | 设置音量               |
-| `switchQuality(quality)` | `quality: QualityLevel` | 切换清晰度             |
-| `getProgressData()`      | —                       | 获取当前进度数据       |
-| `destroy()`              | —                       | 销毁播放器             |
-| `getPlayerInstance()`    | —                       | 获取 xgplayer 原始实例 |
+| 事件名             | 参数                                                               | 说明         |
+| ------------------ | ------------------------------------------------------------------ | ------------ |
+| `ready`            | —                                                                  | 播放器就绪   |
+| `stateChange`      | `(state: PlayerState)`                                             | 播放状态变化 |
+| `timeUpdate`       | `(currentTime: number, duration: number)`                          | 播放时间更新 |
+| `ended`            | —                                                                  | 播放结束     |
+| `error`            | `(error: Error)`                                                   | 播放错误     |
+| `qualityChange`    | `(quality: QualityLevel)`                                          | 清晰度切换   |
+| `rateChange`       | `(rate: number)`                                                   | 倍速切换     |
+| `fullscreenChange` | `(isFullscreen: boolean)`                                          | 全屏状态变化 |
+| `bookmarkChange`   | `(bookmarks: Bookmark[])`                                          | 书签变化     |
+| `quizAnswer`       | `(quizId: string, answer: string \| string[], isCorrect: boolean)` | 测验作答     |
+| `chapterChange`    | `(chapter: Chapter)`                                               | 章节切换     |
+| `progressUpdate`   | `(data: ProgressData)`                                             | 进度更新     |
 
-## 快捷键
+### Expose（ref 调用）
+
+| 方法                     | 参数                    | 返回值         | 说明                   |
+| ------------------------ | ----------------------- | -------------- | ---------------------- |
+| `play()`                 | —                       | `void`         | 播放                   |
+| `pause()`                | —                       | `void`         | 暂停                   |
+| `seek(time)`             | `time: number`          | `void`         | 跳转到指定时间（秒）   |
+| `setPlaybackRate(rate)`  | `rate: number`          | `void`         | 设置倍速               |
+| `setVolume(volume)`      | `volume: number` (0-1)  | `void`         | 设置音量               |
+| `switchQuality(quality)` | `quality: QualityLevel` | `void`         | 切换清晰度             |
+| `getProgressData()`      | —                       | `ProgressData` | 获取当前进度数据       |
+| `destroy()`              | —                       | `void`         | 销毁播放器             |
+| `getPlayerInstance()`    | —                       | `Player`       | 获取 xgplayer 原始实例 |
+
+## ⌨️ 快捷键
 
 | 快捷键  | 功能          |
 | ------- | ------------- |
@@ -320,7 +354,16 @@ bun add xgplayer xgplayer-hls
 | `M`     | 静音/取消静音 |
 | `Esc`   | 退出全屏      |
 
-## 性能优化
+## 🛡 防作弊说明
+
+| 功能     | 配置字段                            | 说明                                        |
+| -------- | ----------------------------------- | ------------------------------------------- |
+| 防跳播   | `preventSeekOnFirstWatch`           | 首次观看时，进度条只能拖到已看过的最远位置  |
+| 焦点检测 | `focusDetection`                    | 切换到其他标签/最小化窗口时自动暂停         |
+| 动态水印 | `watermark` + `watermarkText`       | 播放器上叠加半透明水印（用户名/ID），防盗录 |
+| 心跳上报 | `heartbeatInterval` + `onHeartbeat` | 定期上报播放状态，服务端可校验真实观看      |
+
+## ⚡ 性能优化
 
 1. **播放器懒加载** — xgplayer 和 xgplayer-hls 均使用动态 `import()` 按需加载，不阻塞首屏
 2. **shallowRef** — 播放器实例使用 `shallowRef` 避免深度响应性能损耗
@@ -330,16 +373,32 @@ bun add xgplayer xgplayer-hls
 6. **localStorage 缓存** — 音量、倍速、播放进度、书签均本地持久化
 7. **生命周期严格管理** — 所有定时器、监听器在 `onBeforeUnmount` 中清理
 
-## 防作弊说明
+## ❓ 常见问题
 
-| 功能     | 配置字段                            | 说明                                        |
-| -------- | ----------------------------------- | ------------------------------------------- |
-| 防跳播   | `preventSeekOnFirstWatch`           | 首次观看时，进度条只能拖到已看过的最远位置  |
-| 焦点检测 | `focusDetection`                    | 切换到其他标签/最小化窗口时自动暂停         |
-| 动态水印 | `watermark` + `watermarkText`       | 播放器上叠加半透明水印（用户名/ID），防盗录 |
-| 心跳上报 | `heartbeatInterval` + `onHeartbeat` | 定期上报播放状态，服务端可校验真实观看      |
+### 1. HLS 流不播放？
 
-## 未来规划
+确认已安装 `xgplayer-hls` 依赖，并设置 `source-type="hls"`。组件内部通过 `hls-adapter.ts` 懒加载 HLS 插件。
+
+### 2. 进度数据如何持久化？
+
+通过 `onProgress` 回调将进度数据上报到后端，组件会以 5 秒为间隔自动触发。页面关闭时使用 `sendBeacon` 保证最后一次数据不丢失。
+
+### 3. 防作弊水印被截图工具忽略？
+
+动态水印是 DOM 叠加方式，普通截图工具可以截取。如需更高安全等级，建议结合服务端帧级水印。
+
+### 4. 如何获取 xgplayer 原始实例进行扩展？
+
+```typescript
+const playerRef = ref()
+
+// 播放器就绪后
+const instance = playerRef.value?.getPlayerInstance()
+// 调用 xgplayer 原始 API
+instance?.on('customEvent', handler)
+```
+
+## 🔄 未来规划
 
 - [ ] DASH 协议完整支持
 - [ ] FLV 直播流支持
@@ -348,3 +407,11 @@ bun add xgplayer xgplayer-hls
 - [ ] DRM 加密播放
 - [ ] 移动端手势操作（左右滑快进、上下滑音量/亮度）
 - [ ] 独立 NPM 包发布 `@robot-admin/video-player`
+
+## 📚 相关文档
+
+- [类型定义](./types.ts)
+- [演示页面源码](../../views/demo/37-video-player/index.vue)
+- [xgplayer 官方文档](https://h5player.bytedance.com/)
+
+---
