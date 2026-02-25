@@ -1,6 +1,6 @@
 # Robot Admin 组件扩展路线图
 
-> 更新日期：2026-02-24
+> 更新日期：2026-02-25
 > 状态标记：⬜ 待开发 · 🔵 进行中 · ✅ 已完成
 
 ---
@@ -14,7 +14,7 @@
 | **一** | C_SplitPane          |   ⭐⭐   | 1.5d | 无            |  ✅  |
 | **一** | C_CollapsePanel      |   ⭐⭐   |  1d  | 无            |  ✅  |
 | **二** | C_ImageCropper       |   ⭐⭐   | 1.5d | `vue-cropper` |  ✅  |
-| **二** | C_Cron               |  ⭐⭐⭐  | 2.5d | 无            |  ⬜  |
+| **二** | C_Cron               |  ⭐⭐⭐  | 2.5d | 无            |  ✅  |
 | **二** | C_WaterFall          |   ⭐⭐   |  2d  | 无            |  ⬜  |
 | **三** | C_Upload             | ⭐⭐⭐⭐ | 3.5d | `spark-md5`   |  ⬜  |
 | **三** | C_NotificationCenter |  ⭐⭐⭐  | 2.5d | 无            |  ⬜  |
@@ -163,18 +163,19 @@ types/modules/image-cropper.d.ts   # 类型定义
 
 ```
 C_Cron/
-├── types.ts
-├── constants.ts
-├── index.vue
-├── composables/
-│   ├── useCronParser.ts           # 解析 & 生成引擎
-│   ├── useCronPreview.ts          # 执行时间预测
-│   └── useCronDescription.ts      # 中文描述生成
+├── index.vue                      # 主组件
+├── constants.ts                   # 常量（字段元数据、模板）
 ├── components/
 │   ├── CronFieldEditor.vue        # 单字段编辑器
 │   ├── CronPreview.vue            # 执行时间预览
 │   └── CronTemplates.vue          # 常用模板选择
 └── README.md
+
+composables/Cron/
+├── useCronParser.ts               # 解析 & 生成引擎
+├── useCronPreview.ts              # 执行时间预测
+└── useCronDescription.ts          # 中文描述生成
+types/modules/cron.d.ts            # 类型定义
 ```
 
 **核心能力**
@@ -187,7 +188,7 @@ C_Cron/
 - 自动生成中文描述（如 "每天 08:30 执行"）
 
 **依赖** 无  
-**Demo** `40-cron`
+**Demo** `46-cron`
 
 ---
 

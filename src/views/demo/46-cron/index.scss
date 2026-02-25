@@ -1,0 +1,73 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-25 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-25 10:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\46-cron\index.scss
+ * @Description: Cron 表达式编辑器演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.cron-demo-page {
+  padding: 24px;
+
+  :deep(.n-h1) {
+    margin-bottom: 8px;
+  }
+
+  .demo-intro {
+    margin-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-color-2);
+  }
+
+  .demo-section {
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--app-text-primary);
+
+    .title-icon {
+      flex-shrink: 0;
+      font-size: 22px;
+      color: var(--primary-color);
+    }
+  }
+
+  .section-desc {
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--text-color-3);
+
+    code {
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: var(--code-color);
+      font-size: 13px;
+    }
+  }
+
+  .section-content {
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-color);
+  }
+
+  .demo-output {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+}
