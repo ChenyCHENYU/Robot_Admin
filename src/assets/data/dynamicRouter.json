@@ -288,6 +288,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "split-pane",
+          "name": "demo-split-pane",
+          "component": "/demo/43-split-pane/index",
+          "meta": {
+            "icon": "mdi:arrow-split-vertical",
+            "title": "分割面板",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },
