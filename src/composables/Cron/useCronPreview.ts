@@ -95,6 +95,14 @@ export function useCronPreview(
     const hasSecond = parts[0] !== '0'
     const stepMs = hasSecond ? 1000 : 60_000 // 秒级/分钟级步进
 
+    // 分钟级步进时，对齐到整分（秒归零），否则秒位永远无法匹配 '0'
+    if (!hasSecond) {
+      cursor.setSeconds(0)
+      if (cursor.getTime() <= now.getTime()) {
+        cursor.setTime(cursor.getTime() + 60_000)
+      }
+    }
+
     const maxIterations = 525_600 // 最多遍历 1 年的分钟数
     const target = count.value
 

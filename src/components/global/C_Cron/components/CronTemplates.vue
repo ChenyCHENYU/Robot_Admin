@@ -2,9 +2,9 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-02-25 10:00:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-25 10:00:00
+ * @LastEditTime: 2026-02-26 10:00:00
  * @FilePath: \Robot_Admin\src\components\global\C_Cron\components\CronTemplates.vue
- * @Description: Cron 常用模板选择
+ * @Description: Cron 常用模板（底部卡片网格）
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
 
@@ -13,43 +13,25 @@
     <div class="cron-templates__header">
       <C_Icon
         name="mdi:lightning-bolt"
-        style="font-size: 16px"
+        style="font-size: 15px"
       />
       <span>常用模板</span>
     </div>
 
-    <NScrollbar style="max-height: 320px">
-      <div class="cron-templates__grid">
-        <div
-          v-for="template in templates"
-          :key="template.value"
-          class="cron-templates__item"
-          :class="{
-            'cron-templates__item--active': template.value === currentValue,
-          }"
-          @click="$emit('select', template.value)"
-        >
-          <div class="cron-templates__item-icon">
-            <C_Icon
-              :name="template.icon || 'mdi:clock-outline'"
-              style="font-size: 18px"
-            />
-          </div>
-          <div class="cron-templates__item-content">
-            <div class="cron-templates__item-label">{{ template.label }}</div>
-            <div class="cron-templates__item-desc">{{
-              template.description
-            }}</div>
-          </div>
-          <NTag
-            size="tiny"
-            class="cron-templates__item-expr"
-          >
-            {{ template.value }}
-          </NTag>
-        </div>
+    <div class="cron-templates__cards">
+      <div
+        v-for="template in templates"
+        :key="template.value"
+        class="cron-templates__card"
+        :class="{
+          'cron-templates__card--active': template.value === currentValue,
+        }"
+        @click="$emit('select', template.value)"
+      >
+        <div class="cron-templates__card-name">{{ template.label }}</div>
+        <div class="cron-templates__card-expr">{{ template.value }}</div>
       </div>
-    </NScrollbar>
+    </div>
   </div>
 </template>
 
@@ -75,69 +57,45 @@
       gap: 6px;
       font-weight: 600;
       font-size: 13px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       color: var(--text-color-1);
     }
 
-    &__grid {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    &__cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
     }
 
-    &__item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 6px;
+    &__card {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
       cursor: pointer;
       transition: all 0.2s;
-      border: 1px solid transparent;
 
       &:hover {
-        background: var(--hover-color);
-        border-color: var(--border-color);
+        border-color: var(--primary-color);
+        background: color-mix(in srgb, var(--primary-color) 4%, transparent);
       }
 
       &--active {
-        background: color-mix(in srgb, var(--primary-color) 10%, transparent);
         border-color: var(--primary-color);
+        background: color-mix(in srgb, var(--primary-color) 8%, transparent);
       }
     }
 
-    &__item-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      background: var(--hover-color);
-      flex-shrink: 0;
-    }
-
-    &__item-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    &__item-label {
-      font-weight: 500;
+    &__card-name {
       font-size: 13px;
+      font-weight: 500;
       line-height: 1.4;
     }
 
-    &__item-desc {
-      font-size: 12px;
-      color: var(--text-color-3);
-      line-height: 1.3;
-    }
-
-    &__item-expr {
-      flex-shrink: 0;
+    &__card-expr {
       font-family: 'Courier New', Courier, monospace;
       font-size: 11px;
+      color: var(--text-color-3);
+      margin-top: 2px;
     }
   }
 </style>
