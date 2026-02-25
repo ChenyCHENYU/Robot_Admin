@@ -301,6 +301,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "collapse-panel",
+          "name": "demo-collapse-panel",
+          "component": "/demo/44-collapse-panel/index",
+          "meta": {
+            "icon": "mdi:chevron-down-box-outline",
+            "title": "折叠面板",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },

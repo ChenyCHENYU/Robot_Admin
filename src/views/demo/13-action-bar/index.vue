@@ -10,7 +10,7 @@
 
 <template>
   <div class="action-bar-demo-page">
-    <NH1>C_ActionBar 组件演示</NH1>
+    <NH1>操作按钮组场景示例</NH1>
 
     <NSpace
       vertical
@@ -705,6 +705,7 @@
 
 <style scoped lang="scss">
   .action-bar-demo-page {
+    padding: 20px;
     max-width: 1400px;
     margin: 0 auto;
 

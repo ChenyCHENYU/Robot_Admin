@@ -10,6 +10,8 @@
 
 <template>
   <div class="signature-demo-page">
+    <NH1>电子签名场景示例</NH1>
+
     <!-- 基础签名 -->
     <div class="demo-section">
       <h2 class="section-title">

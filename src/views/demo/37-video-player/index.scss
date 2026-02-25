@@ -11,47 +11,6 @@
 .video-player-demo {
   padding: 20px;
 
-  /* ========== 头部 ========== */
-  .demo-header {
-    margin-bottom: 32px;
-    padding: 28px 32px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
-    color: #fff;
-
-    &__content {
-      max-width: 800px;
-    }
-
-    &__title {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0 0 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    &__icon {
-      font-size: 28px;
-    }
-
-    &__desc {
-      font-size: 14px;
-      line-height: 1.7;
-      margin: 0;
-      opacity: 0.92;
-      width: 1200px;
-    }
-
-    &__highlight {
-      font-weight: 600;
-      padding: 1px 8px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-    }
-  }
-
   /* ========== 通用段落 ========== */
   .demo-section {
     margin-bottom: 32px;
@@ -319,14 +278,6 @@
   /* ========== 响应式 ========== */
   @media (max-width: 768px) {
     padding: 12px;
-
-    .demo-header {
-      padding: 20px;
-
-      &__title {
-        font-size: 18px;
-      }
-    }
 
     .feature-grid {
       grid-template-columns: 1fr 1fr;

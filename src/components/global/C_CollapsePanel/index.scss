@@ -1,0 +1,221 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-25 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-25 10:00:00
+ * @FilePath: \Robot_Admin\src\components\global\C_CollapsePanel\index.scss
+ * @Description: 折叠面板组件样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+// ─── 变量 ─────────────────────────────────────────
+$collapse-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+$collapse-radius: 8px;
+
+// ─── 容器 ─────────────────────────────────────────
+.c-collapse-panel {
+  width: 100%;
+
+  // ── default 变体 ──────────────────────────────
+  &--default {
+    .collapse-item {
+      border-bottom: 1px solid var(--app-border-default);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  // ── card 变体 ─────────────────────────────────
+  &--card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .collapse-item {
+      border: 1px solid var(--app-border-default);
+      border-radius: $collapse-radius;
+      background: var(--app-bg-surface);
+      transition: box-shadow $collapse-transition;
+
+      &--active {
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+      }
+
+      &:hover:not(.collapse-item--disabled) {
+        border-color: var(--primary-color, #409eff);
+      }
+    }
+  }
+
+  // ── ghost 变体（无边框极简） ────────────────────
+  &--ghost {
+    .collapse-item__header {
+      background: transparent;
+
+      &:hover {
+        background: var(--app-bg-surface);
+      }
+    }
+
+    .collapse-item__content {
+      padding-left: 28px;
+    }
+  }
+
+  // ── bordered 修饰符 ───────────────────────────
+  &--bordered {
+    &.c-collapse-panel--default {
+      border: 1px solid var(--app-border-default);
+      border-radius: $collapse-radius;
+
+      .collapse-item:first-child .collapse-item__header {
+        border-radius: $collapse-radius $collapse-radius 0 0;
+      }
+
+      .collapse-item:last-child {
+        border-bottom: none;
+
+        .collapse-item__header {
+          border-radius: 0 0 $collapse-radius $collapse-radius;
+        }
+
+        &.collapse-item--active .collapse-item__header {
+          border-radius: 0;
+        }
+      }
+
+      .collapse-item:only-child .collapse-item__header {
+        border-radius: $collapse-radius;
+      }
+
+      .collapse-item:only-child.collapse-item--active .collapse-item__header {
+        border-radius: $collapse-radius $collapse-radius 0 0;
+      }
+    }
+  }
+
+  // ── 图标右侧模式 ──────────────────────────────
+  &--icon-right {
+    .collapse-item__header {
+      flex-direction: row-reverse;
+    }
+
+    .collapse-item__arrow {
+      margin-left: auto;
+      margin-right: 0;
+    }
+
+    .collapse-item__title-area {
+      margin-left: 0;
+    }
+  }
+}
+
+// ─── 面板项 ───────────────────────────────────────
+.collapse-item {
+  &--disabled {
+    .collapse-item__header {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
+
+// ─── 面板头部 ─────────────────────────────────────
+.collapse-item__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  transition: background-color 0.15s ease;
+  outline: none;
+
+  &:hover:not([aria-disabled='true']) {
+    background: var(--app-bg-hover, rgba(0, 0, 0, 0.04));
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color, #409eff);
+    outline-offset: -2px;
+    border-radius: 4px;
+  }
+}
+
+// ─── 展开箭头 ─────────────────────────────────────
+.collapse-item__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
+  color: var(--app-text-tertiary);
+  transition: transform $collapse-transition;
+
+  &--expanded {
+    transform: rotate(90deg);
+  }
+}
+
+// ─── 标题区域 ─────────────────────────────────────
+.collapse-item__title-area {
+  flex: 1;
+  min-width: 0;
+}
+
+.collapse-item__title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.collapse-item__icon {
+  flex-shrink: 0;
+  font-size: 18px;
+  color: var(--primary-color, #409eff);
+}
+
+.collapse-item__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--app-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.collapse-item__subtitle {
+  font-size: 12px;
+  color: var(--app-text-quaternary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── 头部右侧操作区 ──────────────────────────────
+.collapse-item__extra {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+// ─── 内容区域 ─────────────────────────────────────
+.collapse-item__content-wrapper {
+  transition: height $collapse-transition;
+  will-change: height;
+}
+
+.collapse-item__content {
+  padding: 0 16px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--app-text-secondary);
+}

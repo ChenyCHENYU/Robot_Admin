@@ -10,23 +10,7 @@
 
 <template>
   <div class="video-player-demo">
-    <!-- ==================== 头部介绍 ==================== -->
-    <div class="demo-header">
-      <div class="demo-header__content">
-        <h1 class="demo-header__title">
-          <C_Icon
-            name="mdi:play-circle-outline"
-            class="demo-header__icon"
-          />
-          C_VideoPlayer 视频播放器
-        </h1>
-        <p class="demo-header__desc"
-          >基于
-          <span class="demo-header__highlight">xgplayer 西瓜播放器</span>
-          封装的教育场景视频播放器——支持多格式、清晰度切换、章节标记、防作弊、视频内测验等在线教育核心能力。</p
-        >
-      </div>
-    </div>
+    <NH1>视频播放器场景示例</NH1>
 
     <!-- ==================== 功能特性网格 ==================== -->
     <div class="demo-section">

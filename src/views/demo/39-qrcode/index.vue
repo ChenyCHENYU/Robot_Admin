@@ -10,6 +10,8 @@
 
 <template>
   <div class="qrcode-demo">
+    <NH1>二维码组件场景示例</NH1>
+
     <!-- 示例展示 -->
     <div class="demo-section">
       <h2 class="section-title">

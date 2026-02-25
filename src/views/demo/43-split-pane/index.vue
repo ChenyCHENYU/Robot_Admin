@@ -10,6 +10,8 @@
 
 <template>
   <div class="split-pane-demo-page">
+    <NH1>分割面板场景示例</NH1>
+
     <!-- 基础水平分割 -->
     <div class="demo-section">
       <h2 class="section-title">

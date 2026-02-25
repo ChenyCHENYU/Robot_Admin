@@ -1,0 +1,98 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-25 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-25 10:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\44-collapse-panel\index.scss
+ * @Description: 折叠面板演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.collapse-panel-demo-page {
+  padding: 20px;
+
+  .demo-section {
+    margin-bottom: 32px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 6px;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 12px;
+      color: var(--app-text-primary);
+
+      .title-icon {
+        flex-shrink: 0;
+        font-size: 20px;
+        color: var(--primary-color, #409eff);
+      }
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--app-text-secondary);
+      margin: 0 0 16px;
+      line-height: 1.6;
+
+      code {
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: var(--app-bg-surface);
+        color: var(--primary-color, #409eff);
+        font-size: 13px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+      }
+    }
+
+    .section-content {
+      p {
+        margin: 0;
+        line-height: 1.8;
+      }
+    }
+  }
+
+  // ─── 卡片变体占位图表 ─────────────────────────
+  .chart-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 120px;
+    border-radius: 6px;
+    background: var(--app-bg-body);
+    border: 1px dashed var(--app-border-default);
+
+    .placeholder-icon {
+      font-size: 32px;
+      color: var(--app-text-quaternary);
+    }
+  }
+
+  // ─── 懒渲染指示 ───────────────────────────────
+  .lazy-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: var(--app-bg-body);
+
+    .iconify {
+      font-size: 18px;
+    }
+  }
+
+  .demo-tip {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+}
