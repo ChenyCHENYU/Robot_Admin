@@ -314,6 +314,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "image-cropper",
+          "name": "demo-image-cropper",
+          "component": "/demo/45-image-cropper/index",
+          "meta": {
+            "icon": "mdi:crop",
+            "title": "图片裁剪",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },

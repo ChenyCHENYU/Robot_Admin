@@ -1,0 +1,110 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-25 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-25 10:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\45-image-cropper\index.scss
+ * @Description: 图片裁剪演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.image-cropper-demo-page {
+  padding: 20px;
+
+  .demo-section {
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--app-text-primary);
+
+    .title-icon {
+      flex-shrink: 0;
+      font-size: 22px;
+      color: var(--primary-color);
+    }
+  }
+
+  .section-desc {
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--text-color-3);
+
+    code {
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: var(--code-color);
+      font-size: 13px;
+    }
+  }
+
+  .section-content {
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--card-color);
+  }
+
+  .demo-result {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px dashed var(--border-color);
+    border-radius: 6px;
+    text-align: center;
+
+    img {
+      max-width: 300px;
+      max-height: 200px;
+      border-radius: 4px;
+    }
+
+    &__circular img {
+      border-radius: 50%;
+    }
+  }
+
+  .demo-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 13px;
+
+    .n-tag {
+      flex-shrink: 0;
+    }
+  }
+
+  .demo-upload-area {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+    padding: 24px;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: var(--primary-color);
+    }
+  }
+
+  .output-config {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    margin-bottom: 16px;
+  }
+}

@@ -7,17 +7,17 @@
 
 ## 进度总览
 
-|  阶段  | 组件                 |   难度   | 工时 | 外部依赖    | 状态 |
-| :----: | -------------------- | :------: | :--: | ----------- | :--: |
-| **一** | C_QRCode             |    ⭐    |  1d  | `qrcode`    |  ⬜  |
-| **一** | C_Signature          |   ⭐⭐   | 1.5d | 无          |  ⬜  |
-| **一** | C_SplitPane          |   ⭐⭐   | 1.5d | 无          |  ✅  |
-| **一** | C_CollapsePanel      |   ⭐⭐   |  1d  | 无          |  ✅  |
-| **二** | C_ImageCropper       |   ⭐⭐   | 1.5d | `cropperjs` |  ⬜  |
-| **二** | C_Cron               |  ⭐⭐⭐  | 2.5d | 无          |  ⬜  |
-| **二** | C_WaterFall          |   ⭐⭐   |  2d  | 无          |  ⬜  |
-| **三** | C_Upload             | ⭐⭐⭐⭐ | 3.5d | `spark-md5` |  ⬜  |
-| **三** | C_NotificationCenter |  ⭐⭐⭐  | 2.5d | 无          |  ⬜  |
+|  阶段  | 组件                 |   难度   | 工时 | 外部依赖      | 状态 |
+| :----: | -------------------- | :------: | :--: | ------------- | :--: |
+| **一** | C_QRCode             |    ⭐    |  1d  | `qrcode`      |  ⬜  |
+| **一** | C_Signature          |   ⭐⭐   | 1.5d | 无            |  ⬜  |
+| **一** | C_SplitPane          |   ⭐⭐   | 1.5d | 无            |  ✅  |
+| **一** | C_CollapsePanel      |   ⭐⭐   |  1d  | 无            |  ✅  |
+| **二** | C_ImageCropper       |   ⭐⭐   | 1.5d | `vue-cropper` |  ✅  |
+| **二** | C_Cron               |  ⭐⭐⭐  | 2.5d | 无            |  ⬜  |
+| **二** | C_WaterFall          |   ⭐⭐   |  2d  | 无            |  ⬜  |
+| **三** | C_Upload             | ⭐⭐⭐⭐ | 3.5d | `spark-md5`   |  ⬜  |
+| **三** | C_NotificationCenter |  ⭐⭐⭐  | 2.5d | 无            |  ⬜  |
 
 > **排序逻辑**：阶段一选的是依赖少/复杂度低/可快速产出的组件，先把简单的收掉跑起来；阶段二是有一定逻辑深度的业务组件；阶段三是涉及分片、WebSocket 等重型场景，放到最后啃。
 
@@ -130,16 +130,16 @@ C_SplitPane/
 
 ```
 C_ImageCropper/
-├── types.ts
-├── constants.ts
-├── index.vue
-├── composables/
-│   ├── useCropperCore.ts          # cropperjs 实例管理
-│   └── useCropperOutput.ts        # 输出格式处理
+├── index.vue                      # 主组件（内联 + 弹窗）
+├── index.scss                     # 组件样式
 ├── components/
 │   ├── CropperToolbar.vue         # 操作工具栏
-│   └── CropperPreview.vue         # 预览面板
+│   └── CropperPreview.vue         # 预览面板（@realTime 驱动）
 └── README.md
+
+composables/ImageCropper/
+└── useCropperCore.ts              # vue-cropper 实例管理 + 输出
+types/modules/image-cropper.d.ts   # 类型定义
 ```
 
 **核心能力**
@@ -149,10 +149,11 @@ C_ImageCropper/
 - 实时预览（裁剪框 + 结果双面板）
 - 输出 PNG / JPEG / WebP + 质量控制
 - Modal 弹窗模式（适配上传场景）
-- 触摸手势缩放拖拽
+- centerBox 边界约束，裁剪框不超出图片
+- 禁止滚轮缩放背景图
 
-**依赖** `cropperjs ^2.0.x`（~30KB gzip）  
-**Demo** `41-image-cropper`
+**依赖** `vue-cropper ^1.1.4`（Vue 3 裁剪组件库）  
+**Demo** `45-image-cropper`
 
 ---
 
@@ -305,10 +306,10 @@ C_NotificationCenter/
 
 ## 新增依赖汇总
 
-| 包          | 版本   | 用于           | 体积       |
-| ----------- | ------ | -------------- | ---------- |
-| `qrcode`    | ^1.5.x | C_QRCode       | ~33KB gzip |
-| `cropperjs` | ^2.0.x | C_ImageCropper | ~30KB gzip |
-| `spark-md5` | ^3.0.x | C_Upload       | ~6KB gzip  |
+| 包            | 版本   | 用于           | 体积             |
+| ------------- | ------ | -------------- | ---------------- |
+| `qrcode`      | ^1.5.x | C_QRCode       | ~33KB gzip       |
+| `vue-cropper` | ^1.1.4 | C_ImageCropper | Vue 3 裁剪组件库 |
+| `spark-md5`   | ^3.0.x | C_Upload       | ~6KB gzip        |
 
 > 其余 5 个组件均无外部依赖，纯逻辑实现。

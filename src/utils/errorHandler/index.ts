@@ -82,6 +82,14 @@ const setupResourceErrorHandler = (): void => {
       if (tagName && RESOURCE_TAGS.includes(tagName as any)) {
         const url = (element as any).src || (element as any).href || 'unknown'
 
+        // ✅ 修复5: 过滤空 src 引源的 img 错误（第三方库内部初始化带来的无害错误）
+        // 典型场景：vue-cropper 等组件初始化时 data 中 imgs="" 导致 <img src=""> 加载当前页面 URL
+        if (tagName === 'img') {
+          const imgSrc = (element as HTMLImageElement).getAttribute('src')
+          if (!imgSrc || imgSrc === '' || url === window.location.origin + '/')
+            return
+        }
+
         // ✅ 修复4: 所有资源加载错误统一归类为 'resource'
         // 'script' 类型专门用于脚本运行时错误,避免混淆
         const context = createErrorContext(
@@ -122,6 +130,11 @@ const setupScriptErrorHandler = (): void => {
     error?: Error
   ) => {
     if (isHandledError(error)) return true
+
+    // ✅ 过滤已知无害的浏览器内部警告
+    // ResizeObserver loop 是浏览器在 observer 回调引起布局变更时抛出的警告，不影响功能
+    const msg = typeof message === 'string' ? message : ''
+    if (msg.includes('ResizeObserver loop')) return true
 
     // ✅ 构建清晰的错误消息
     const errorMessage =
