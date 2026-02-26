@@ -460,6 +460,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "waterfall",
+          "name": "demo-waterfall",
+          "component": "/demo/48-waterfall/index",
+          "meta": {
+            "icon": "mdi:view-dashboard-outline",
+            "title": "瀑布流",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },

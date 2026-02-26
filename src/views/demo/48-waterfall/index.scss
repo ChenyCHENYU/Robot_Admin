@@ -1,0 +1,164 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-26 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-26 10:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\48-waterfall\index.scss
+ * @Description: 瀑布流演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.waterfall-demo-page {
+  padding: 24px;
+
+  :deep(.n-h1) {
+    margin-bottom: 4px;
+    font-size: 26px;
+  }
+
+  .demo-intro {
+    margin-bottom: 32px;
+    padding: 16px 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-color-2);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--primary-color) 4%, var(--card-color));
+    border-left: 4px solid var(--primary-color);
+  }
+
+  .demo-section {
+    margin-bottom: 36px;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--card-color);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .section-title {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--app-text-primary);
+
+    .title-icon {
+      flex-shrink: 0;
+      font-size: 20px;
+      color: var(--primary-color);
+    }
+  }
+
+  .section-desc {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-color-3);
+    border-bottom: 1px dashed
+      color-mix(in srgb, var(--border-color) 60%, transparent);
+
+    code {
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: var(--code-color);
+      font-size: 12px;
+    }
+  }
+
+  .section-content {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  // ─── 工具栏 ──────────────────────────────────
+
+  .demo-toolbar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--body-color);
+    border: 1px solid var(--border-color);
+  }
+
+  .toolbar-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text-color-2);
+  }
+
+  // ─── 自定义卡片 ──────────────────────────────
+
+  .custom-card {
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--card-color);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    &__image {
+      display: block;
+      width: 100%;
+      object-fit: cover;
+      background: var(--body-color);
+    }
+
+    &__body {
+      padding: 10px 12px;
+    }
+
+    &__title {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text-color-1);
+    }
+
+    &__desc {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--text-color-3);
+    }
+
+    &__footer {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-top: 1px solid var(--border-color);
+    }
+  }
+
+  // ─── 统计 ────────────────────────────────────
+
+  .demo-stats {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+}

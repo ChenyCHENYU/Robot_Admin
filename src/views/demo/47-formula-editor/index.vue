@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-02-26 10:00:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-26 10:00:00
+ * @LastEditTime: 2026-02-26 23:52:52
  * @FilePath: \Robot_Admin\src\views\demo\47-formula-editor\index.vue
  * @Description: 公式编辑器演示
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
@@ -205,14 +205,25 @@
   import type {
     FormulaEditorExpose,
     FormulaValidation,
-    FormulaVariable,
   } from '@/types/modules/formula-editor'
+  import {
+    salesVariables,
+    salesSampleData,
+    perfVariables,
+    perfSampleData,
+    gradeVariables,
+    gradeSampleData,
+    DEFAULT_BASIC_FORMULA,
+    DEFAULT_PERF_FORMULA,
+    DEFAULT_COMPACT_FORMULA,
+    DEFAULT_FUNC_FORMULA,
+  } from './data'
 
   const message = useMessage()
 
   // ─── 1. 基础用法 ──────────────────────────────
 
-  const basicFormula = ref('[销售额] / [目标额] * 100')
+  const basicFormula = ref(DEFAULT_BASIC_FORMULA)
   const basicValid = ref(true)
 
   /** 公式变更 */
@@ -227,53 +238,11 @@
 
   // ─── 2. 绩效核算 ──────────────────────────────
 
-  const perfFormula = ref(
-    '[完成值] >= [卓越档目标值] ? ([完成值] - [卓越档目标值]) * [卓越系数] + 150000 : [完成值] >= [优秀档目标值] ? ([完成值] - [优秀档目标值]) * [优秀系数] + 87500 : [完成值] * [基础系数]'
-  )
-
-  const perfVariables: FormulaVariable[] = [
-    { name: '完成值', field: 'actual', type: 'number', group: '业绩数据' },
-    {
-      name: '卓越档目标值',
-      field: 'target_excellent',
-      type: 'number',
-      group: '目标值',
-    },
-    {
-      name: '优秀档目标值',
-      field: 'target_good',
-      type: 'number',
-      group: '目标值',
-    },
-    {
-      name: '达标档目标值',
-      field: 'target_standard',
-      type: 'number',
-      group: '目标值',
-    },
-    {
-      name: '卓越系数',
-      field: 'coeff_excellent',
-      type: 'number',
-      group: '系数',
-    },
-    { name: '优秀系数', field: 'coeff_good', type: 'number', group: '系数' },
-    { name: '基础系数', field: 'coeff_base', type: 'number', group: '系数' },
-  ]
-
-  const perfSampleData = {
-    actual: 120000,
-    target_excellent: 100000,
-    target_good: 80000,
-    target_standard: 60000,
-    coeff_excellent: 1.5,
-    coeff_good: 1.2,
-    coeff_base: 0.8,
-  }
+  const perfFormula = ref(DEFAULT_PERF_FORMULA)
 
   // ─── 3. 精简模式 ──────────────────────────────
 
-  const compactFormula = ref('[销售额] * [提成比例] / 100')
+  const compactFormula = ref(DEFAULT_COMPACT_FORMULA)
 
   // ─── 4. 编程控制 ──────────────────────────────
 
@@ -298,57 +267,7 @@
 
   // ─── 5. 函数演示 ──────────────────────────────
 
-  const funcFormula = ref(
-    'IF([总分] >= 270, "优秀", IF([总分] >= 180, "良好", "待提升"))'
-  )
-
-  const gradeVariables: FormulaVariable[] = [
-    { name: '语文', field: 'chinese', type: 'number', group: '成绩' },
-    { name: '数学', field: 'math', type: 'number', group: '成绩' },
-    { name: '英语', field: 'english', type: 'number', group: '成绩' },
-    { name: '总分', field: 'total', type: 'number', group: '汇总' },
-    { name: '平均分', field: 'avg_score', type: 'number', group: '汇总' },
-  ]
-
-  const gradeSampleData = {
-    chinese: 92,
-    math: 88,
-    english: 95,
-    total: 275,
-    avg_score: 91.67,
-  }
-
-  // ─── 公共变量数据 ─────────────────────────────
-
-  const salesVariables: FormulaVariable[] = [
-    { name: '销售额', field: 'sales', type: 'number', group: '业绩数据' },
-    { name: '目标额', field: 'target', type: 'number', group: '业绩数据' },
-    { name: '退货额', field: 'returns', type: 'number', group: '业绩数据' },
-    { name: '成本', field: 'cost', type: 'number', group: '财务数据' },
-    { name: '税率', field: 'tax_rate', type: 'number', group: '财务数据' },
-    {
-      name: '提成比例',
-      field: 'commission_rate',
-      type: 'number',
-      group: '规则参数',
-    },
-    {
-      name: '基础工资',
-      field: 'base_salary',
-      type: 'number',
-      group: '规则参数',
-    },
-  ]
-
-  const salesSampleData = {
-    sales: 150000,
-    target: 100000,
-    returns: 5000,
-    cost: 80000,
-    tax_rate: 0.13,
-    commission_rate: 8,
-    base_salary: 6000,
-  }
+  const funcFormula = ref(DEFAULT_FUNC_FORMULA)
 </script>
 
 <style scoped lang="scss">
