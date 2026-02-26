@@ -554,6 +554,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "formula-editor",
+          "name": "editor-formula",
+          "component": "/demo/47-formula-editor/index",
+          "meta": {
+            "icon": "mdi:function-variant",
+            "title": "公式编辑器",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },
