@@ -92,7 +92,7 @@
   const headerActions = [
     {
       type: 'component',
-      componentName: 'C_Notice',
+      componentName: 'C_NotificationCenter',
     },
     {
       icon: 'i-mdi:fullscreen',
