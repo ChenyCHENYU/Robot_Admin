@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-05 11:05:43
  * @FilePath: \Robot_Admin\src\components\global\C_Editor\index.vue
  * @Description: 富文本编辑器组件（简化主题版）
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -23,7 +23,6 @@
 
 <script setup lang="ts">
   import E from 'wangeditor'
-  import { useThemeStore } from '@/stores/theme' // 引入主题 store
 
   /**
    * * @description 编辑器组件属性接口
@@ -42,6 +41,8 @@
     readonly?: boolean
     /** 编辑器高度 */
     height?: number
+    /** 主题模式 */
+    theme?: 'light' | 'dark'
   }
 
   /**
@@ -62,6 +63,7 @@
     disabled: false,
     readonly: false,
     height: 240,
+    theme: 'light',
   })
 
   const emit = defineEmits<Emits>()
@@ -72,11 +74,8 @@
   const editorInstance = ref<any>(null)
   const isInitialized = ref<boolean>(false)
 
-  // 引入主题 store
-  const themeStore = useThemeStore()
-
   // 获取当前是否为暗色主题
-  const isDark = computed(() => themeStore.isDark)
+  const isDark = computed(() => props.theme === 'dark')
 
   // ================= 编辑器初始化 =================
 

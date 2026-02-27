@@ -68,6 +68,7 @@
               :title="tab.ganttTitle"
               :options="tab.options"
               :height="tab.height || '600px'"
+              :theme="isDark ? 'dark' : 'light'"
               @gantt-created="onGanttCreated"
               @task-click="onTaskClick"
               @error="onGanttError"
@@ -117,8 +118,12 @@
 
   // ==================== 响应式数据 ====================
 
+  import { useThemeStore } from '@/stores/theme'
+
   const message = useMessage()
   const activeTab = ref('basic')
+  const themeStore = useThemeStore()
+  const isDark = computed(() => themeStore.isDark)
   const ganttRefs = ref<Record<string, any>>({})
   const expandStates = reactive<Record<string, boolean>>({
     basic: true,

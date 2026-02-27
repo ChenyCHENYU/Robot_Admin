@@ -146,6 +146,7 @@
             :disabled="editorConfig.disabled"
             :readonly="editorConfig.readonly"
             :height="editorConfig.height"
+            :theme="isDark ? 'dark' : 'light'"
             @editor-mounted="handleEditorMounted"
             @editor-change="handleEditorChange"
             class="demo-editor"
@@ -157,8 +158,12 @@
 </template>
 
 <script setup lang="ts">
+  import { useThemeStore } from '@/stores/theme'
+
   const message = useMessage()
   const dialog = useDialog()
+  const themeStore = useThemeStore()
+  const isDark = computed(() => themeStore.isDark)
 
   const editorRef = ref()
   const editorId = ref('demo-editor-' + Date.now())

@@ -40,7 +40,6 @@
     type GanttOptions,
     type GanttPreset,
   } from './data'
-  import { useThemeStore } from '@/stores/theme'
 
   interface Props {
     data?: GanttTask[]
@@ -50,6 +49,8 @@
     title?: string
     showToolbar?: boolean
     showFullscreenButton?: boolean
+    /** 主题模式 */
+    theme?: 'light' | 'dark'
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -60,6 +61,7 @@
     title: '',
     showToolbar: true,
     showFullscreenButton: true,
+    theme: 'light',
   })
 
   const emit = defineEmits<{
@@ -225,8 +227,7 @@
     try {
       const { Gantt } = await import('@visactor/vtable-gantt')
       const { themes } = await import('@visactor/vtable')
-      const themeStore = useThemeStore()
-      const { isDark } = themeStore
+      const isDark = props.theme === 'dark'
 
       // 准备配置
       const presetConfig = presetConfigs[props.preset] || presetConfigs.basic
@@ -360,9 +361,8 @@
   })
 
   // 监听主题变化
-  const themeStore = useThemeStore()
   watch(
-    () => themeStore.isDark,
+    () => props.theme,
     () => {
       nextTick(() => initGantt())
     }
