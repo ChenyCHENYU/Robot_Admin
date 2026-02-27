@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.14.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.3...v1.14.0) (2026-02-27)
+
+
+### Features
+
+* **C_CollapsePanel:** 增加折叠面板组件和演示页面 ([f49ca44](https://github.com/ChenyCHENYU/Robot_Admin/commit/f49ca44c4d9f672642d6d6499ecd183d792fefbe))
+* **C_Cron:** 增加表达式编辑器和演示页面 ([09437c3](https://github.com/ChenyCHENYU/Robot_Admin/commit/09437c398e61782cf80ddb5b0c033ec7c014fda4))
+* **C_FormulaEditor:** 增加公式编辑器组件和演示页面 ([10f2cc9](https://github.com/ChenyCHENYU/Robot_Admin/commit/10f2cc99bcb05ad544d3e3d32bfbba7b37cf0e76))
+* **C_ImageCropper:** 增加图片裁剪组件及演示页面 ([ef291c1](https://github.com/ChenyCHENYU/Robot_Admin/commit/ef291c19583f89ae5e31f400519eef3017593457))
+* **C_Signature:** 增加电子签名组件及演示页面 ([8d1ac1c](https://github.com/ChenyCHENYU/Robot_Admin/commit/8d1ac1ca4e590dca09b4c3d2a7d5f54b5a8fcc12))
+* **C_SplitPane:** 增加分割面板组件和演示页面 ([b2efa57](https://github.com/ChenyCHENYU/Robot_Admin/commit/b2efa570d9314b1c075b3aeca99bb80f99147eb2))
+* **C_Upload:** 增强型上传组件及演示页面完成 ([ccdd8d0](https://github.com/ChenyCHENYU/Robot_Admin/commit/ccdd8d07690fbe0cd9eab6aa14ad3998ae6eb265))
+* **C_Upload:** 增强型服务端上传组及演示页面完成 ([5175552](https://github.com/ChenyCHENYU/Robot_Admin/commit/5175552b96d90720282f2e032212587920b12e49))
+* **C_VideoPlayer:** 增加视频组件及演示页面 ([327d1ce](https://github.com/ChenyCHENYU/Robot_Admin/commit/327d1ce84e1879d6457d8546645e53ee3ce15040))
+* **C_WaterFall:** 增加瀑布流组件和演示页面 ([c7b30ad](https://github.com/ChenyCHENYU/Robot_Admin/commit/c7b30ad4de5530c6767788b91b87de7216beb82e))
+
+
+### Performance Improvements
+
+* **C_Cron:** 表达式编辑器组件逻辑及交互优化 ([ba91d31](https://github.com/ChenyCHENYU/Robot_Admin/commit/ba91d31b736489bd4d8aef6cf06221af675df2fc))
+* **C_NotificationCenter:** 将C_Notice组件升级为C_NotificationCenter全局通知插件 ([f74678a](https://github.com/ChenyCHENYU/Robot_Admin/commit/f74678ac8af86a22fea3a6a3296bf1eff171ecce))
+* **components:** 主题和通知组件拆离组件库解耦 ([00c951b](https://github.com/ChenyCHENYU/Robot_Admin/commit/00c951ba6e48c8bdf5cbfcaa84acca568805896e))
+* **components:** 优化组件解耦，分析组件库提取 ([8767e3a](https://github.com/ChenyCHENYU/Robot_Admin/commit/8767e3a829a9863f3f1e5f72d28fd4bbca5dd186))
+
 ## [1.13.3](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.2...v1.13.3) (2026-02-17)
 
 
