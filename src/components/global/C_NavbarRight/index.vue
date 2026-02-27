@@ -22,6 +22,7 @@
         <DynamicComponent
           v-if="item.type === 'component'"
           :name="item.componentName"
+          v-bind="item.componentProps || {}"
         />
 
         <!-- 渲染普通图标按钮 -->
@@ -67,6 +68,7 @@
 
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
+  import { useThemeStore, type ThemeMode } from '@/stores/theme'
   import C_GlobalSearch from '@/components/global/C_GlobalSearch/index.vue'
 
   defineOptions({ name: 'C_NavbarRight' })
@@ -83,16 +85,20 @@
   }>()
 
   const userStore = s_userStore()
+  const themeStore = useThemeStore()
   const router = useRouter()
 
   // 用户名
   const userName = computed(() => userStore.userInfo?.username || 'CHENY')
 
   // 头部操作按钮配置
-  const headerActions = [
+  const headerActions = computed(() => [
     {
       type: 'component',
       componentName: 'C_NotificationCenter',
+      componentProps: {
+        onNavigate: (url: string) => router.push(url),
+      },
     },
     {
       icon: 'i-mdi:fullscreen',
@@ -108,6 +114,10 @@
     {
       type: 'component',
       componentName: 'C_Theme',
+      componentProps: {
+        modelValue: themeStore.mode,
+        'onUpdate:modelValue': (mode: ThemeMode) => themeStore.setMode(mode),
+      },
     },
     {
       type: 'component',
@@ -120,7 +130,7 @@
         emit('update:showSettings', true)
       },
     },
-  ]
+  ])
 
   /**
    * 全屏切换

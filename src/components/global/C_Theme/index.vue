@@ -25,13 +25,23 @@
 </template>
 
 <script setup lang="ts">
-  import { useThemeStore, type ThemeMode } from '@/stores/theme'
+  import type { ThemeMode } from '@/stores/theme'
 
-  const themeStore = useThemeStore()
+  const props = withDefaults(
+    defineProps<{
+      /** 当前主题模式 */
+      modelValue?: ThemeMode
+    }>(),
+    { modelValue: 'system' }
+  )
+
+  const emit = defineEmits<{
+    'update:modelValue': [mode: ThemeMode]
+  }>()
 
   // 当前图标
   const currentIcon = computed(() => {
-    switch (themeStore.mode) {
+    switch (props.modelValue) {
       case 'light':
         return 'i-mdi:white-balance-sunny'
       case 'dark':
@@ -43,7 +53,7 @@
 
   // 提示文本
   const themeTooltip = computed(() => {
-    switch (themeStore.mode) {
+    switch (props.modelValue) {
       case 'light':
         return '当前: 浅色模式 (点击切换)'
       case 'dark':
@@ -57,10 +67,9 @@
   const cycleThemeMode = async () => {
     // 按照 system -> light -> dark -> system 顺序循环
     const modes: ThemeMode[] = ['system', 'light', 'dark']
-    const currentIndex = modes.indexOf(themeStore.mode)
+    const currentIndex = modes.indexOf(props.modelValue)
     const nextIndex = (currentIndex + 1) % modes.length
 
-    // 调用优化后的 setMode，内部已处理过渡效果
-    await themeStore.setMode(modes[nextIndex])
+    emit('update:modelValue', modes[nextIndex])
   }
 </script>

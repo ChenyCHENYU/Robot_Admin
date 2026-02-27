@@ -342,12 +342,14 @@ grep -rn "ref(" src/components/global/C_Upload/ | grep -v "import.*ref"
 
 以下组件已完成 store 解耦：
 
-| 组件          | 原 Store 依赖            | 改造方案                          | 状态          |
-| ------------- | ------------------------ | --------------------------------- | ------------- |
-| C_AntV        | `useThemeStore`          | `theme` prop（'light' \| 'dark'） | ✅ 已完成     |
-| C_Editor      | `useThemeStore`          | `theme` prop                      | ✅ 已完成     |
-| C_VtableGantt | `useThemeStore`          | `theme` prop                      | ✅ 已完成     |
-| C_FormSearch  | `useStorage`（非 store） | 迁移 storage util 即可            | ⬜ 迁移时处理 |
+| 组件                 | 原 Store/Router 依赖       | 改造方案                                                  | 状态          |
+| -------------------- | -------------------------- | --------------------------------------------------------- | ------------- |
+| C_AntV               | `useThemeStore`            | `theme` prop（'light' \| 'dark'）                         | ✅ 已完成     |
+| C_Editor             | `useThemeStore`            | `theme` prop                                              | ✅ 已完成     |
+| C_VtableGantt        | `useThemeStore`            | `theme` prop                                              | ✅ 已完成     |
+| C_Theme              | `useThemeStore`            | `v-model`（ThemeMode）；调用方（C_NavbarRight）绑定 store | ✅ 已完成     |
+| C_NotificationCenter | `useRouter`（Detail 内部） | emit `navigate`，C_NavbarRight 接收后 `router.push`       | ✅ 已完成     |
+| C_FormSearch         | `useStorage`（非 store）   | 迁移 storage util 即可                                    | ⬜ 迁移时处理 |
 
 ### 3.2 组件库基础设施扩展（在 naive-ui-components 中完成）
 
@@ -475,7 +477,7 @@ export default defineConfig({
 | ---------- | ---------------------------------------- | ----------------------------------------------- |
 | C_Code     | highlight plugin                         | ✅ 已在组件库                                   |
 | C_Icon     | useImagePath（含 import.meta.glob）      | 需调整路径策略                                  |
-| C_Theme    | useThemeStore（mode + cycleTheme）       | 改为 `v-model:mode`，emit 驱动                  |
+| C_Theme    | useThemeStore（mode + cycleTheme）       | ✅ 已完成：`v-model`，emit 驱动                 |
 | C_Language | window.localStorage + window.$changeLang | 改为 `emit('change', lang)`，调用方决定切换行为 |
 
 #### 🔴 C 类：不迁移（11 个）
@@ -980,16 +982,16 @@ import C_Icon from '../C_Icon/index.vue'
 
 ## 十二、总结
 
-| 维度           | 结论                                                                |
-| -------------- | ------------------------------------------------------------------- |
-| 现有组件库架构 | ✅ 基本满足，需扩展 utils/、variables.scss、types/                  |
-| Naive UI       | ✅ 继续作为 peerDependency                                          |
-| UnoCSS         | ❌ 不做 peerDep，用 C_Icon 替代图标，样式改原生 SCSS                |
-| Auto-import    | ❌ 组件库不可使用，迁移时补显式 import                              |
-| CSS 变量       | ✅ 三层方案：`--n-*`（Naive UI）→ `--c-*`（组件库默认）→ 消费者覆盖 |
-| Composables    | ✅ 与组件打包在一起，放进组件目录的 composables/ 子目录             |
-| 通用 Utils     | ✅ 单独放 src/utils/（storage、format 等）                          |
-| 基准组件       | C_Upload → 阶段 0 验证全流程                                        |
-| 总迁移组件     | A 类 34 + B 类 4 = **38 个**，C 类 11 个不迁移                      |
-| 预计阶段       | 5 个阶段，建议从阶段 0 + 1 开始（约 6 个组件）                      |
-| 已完成解耦     | C_AntV、C_Editor、C_VtableGantt store 依赖已解除（2026-02-27）      |
+| 维度           | 结论                                                                                                     |
+| -------------- | -------------------------------------------------------------------------------------------------------- |
+| 现有组件库架构 | ✅ 基本满足，需扩展 utils/、variables.scss、types/                                                       |
+| Naive UI       | ✅ 继续作为 peerDependency                                                                               |
+| UnoCSS         | ❌ 不做 peerDep，用 C_Icon 替代图标，样式改原生 SCSS                                                     |
+| Auto-import    | ❌ 组件库不可使用，迁移时补显式 import                                                                   |
+| CSS 变量       | ✅ 三层方案：`--n-*`（Naive UI）→ `--c-*`（组件库默认）→ 消费者覆盖                                      |
+| Composables    | ✅ 与组件打包在一起，放进组件目录的 composables/ 子目录                                                  |
+| 通用 Utils     | ✅ 单独放 src/utils/（storage、format 等）                                                               |
+| 基准组件       | C_Upload → 阶段 0 验证全流程                                                                             |
+| 总迁移组件     | A 类 34 + B 类 4 = **38 个**，C 类 11 个不迁移                                                           |
+| 预计阶段       | 5 个阶段，建议从阶段 0 + 1 开始（约 6 个组件）                                                           |
+| 已完成解耦     | C_AntV、C_Editor、C_VtableGantt、C_Theme、C_NotificationCenter store/router 依赖已全部解除（2026-02-27） |

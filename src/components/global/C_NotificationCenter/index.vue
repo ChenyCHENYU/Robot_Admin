@@ -64,6 +64,7 @@
             :message="core.selectedMessage.value"
             @back="core.clearSelection"
             @action="handleAction"
+            @navigate="url => emit('navigate', url)"
           />
 
           <!-- 消息列表 -->
@@ -119,6 +120,7 @@
     unreadChange: [count: number]
     wsStatusChange: [status: string]
     newMessage: [message: NotificationMessage]
+    navigate: [url: string]
   }>()
 
   const core = useNotificationCore(props)

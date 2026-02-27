@@ -120,9 +120,8 @@
   const emit = defineEmits<{
     back: []
     action: [url: string]
+    navigate: [url: string]
   }>()
-
-  const router = useRouter()
   const { formatRelativeTime } = useNotificationFormat()
 
   /** 分类标签 */
@@ -150,7 +149,7 @@
     if (url.startsWith('http')) {
       window.open(url, '_blank')
     } else {
-      router.push(url)
+      emit('navigate', url)
     }
   }
 </script>
