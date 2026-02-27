@@ -44,12 +44,17 @@ export default function createI18nPlugin(): Plugin | null {
     const appId = process.env.VITE_YOUDAO_APP_ID
     const appKey = process.env.VITE_YOUDAO_APP_KEY
 
-    if (!appId || !appKey) {
-      console.warn('⚠️ i18n 翻译 API 未配置，将跳过自动翻译')
-      return null
+    // 判断是否有真实的翻译 API 凭证（排除 dummy 占位符）
+    const hasRealCredentials =
+      appId && appKey && appId !== 'dummy' && appKey !== 'dummy'
+
+    if (!hasRealCredentials) {
+      console.warn(
+        '⚠️ i18n 翻译 API 未配置或为占位凭证，将使用已有翻译，跳过自动翻译'
+      )
     }
 
-    return autoI18n({
+    const pluginOptions: Record<string, any> = {
       // ========== 基础配置 ==========
       enabled: true, // 是否启用插件
       translateType: 'full-auto', // 全自动翻译中文（full-auto | semi-auto）
@@ -95,10 +100,15 @@ export default function createI18nPlugin(): Plugin | null {
       ],
 
       // ========== 翻译器配置 ==========
-      translator: new YoudaoTranslator({
-        appId: appId,
-        appKey: appKey,
-      }),
+      // 仅在有真实凭证时配置翻译器，否则跳过翻译 API 调用
+      ...(hasRealCredentials
+        ? {
+            translator: new YoudaoTranslator({
+              appId: appId,
+              appKey: appKey,
+            }),
+          }
+        : {}),
 
       // ========== 语言配置 ==========
       originLang: 'zh-cn', // 源语言
@@ -125,7 +135,57 @@ export default function createI18nPlugin(): Plugin | null {
       // ========== 文件扩展名配置 ==========
       // ✅ 扫描 .ts 和 .tsx 文件（对象属性、数组元素中的中文字符串）
       insertFileExtensions: ['ts', 'tsx'],
-    })
+    }
+
+    const plugin = autoI18n(pluginOptions)
+
+    // 🛡️ 包装 buildEnd 和 closeBundle，防止翻译失败阻塞构建
+    if (plugin) {
+      const originalBuildEnd = plugin.buildEnd
+      const originalCloseBundle = plugin.closeBundle
+
+      if (originalBuildEnd) {
+        /**
+         *
+         */
+        plugin.buildEnd = async function (...args: any[]) {
+          try {
+            // 设置 30 秒超时，防止翻译 API 调用无限挂起
+            await Promise.race([
+              originalBuildEnd.apply(this, args),
+              new Promise((_, reject) =>
+                setTimeout(
+                  () =>
+                    reject(new Error('i18n buildEnd timeout (30s) — skipping')),
+                  30_000
+                )
+              ),
+            ])
+          } catch (err) {
+            console.warn(
+              `⚠️ i18n 翻译阶段跳过（不影响构建）: ${(err as Error).message}`
+            )
+          }
+        }
+      }
+
+      if (originalCloseBundle) {
+        /**
+         *
+         */
+        plugin.closeBundle = async function (...args: any[]) {
+          try {
+            await originalCloseBundle.apply(this, args)
+          } catch (err) {
+            console.warn(
+              `⚠️ i18n closeBundle 阶段跳过: ${(err as Error).message}`
+            )
+          }
+        }
+      }
+    }
+
+    return plugin
   } catch (error) {
     console.warn(
       '⚠️ i18n 插件未安装，请运行: pnpm add -D vite-auto-i18n-plugin'

@@ -33,6 +33,7 @@
           :height="'100%'"
           :readonly="false"
           :show-toolbar="true"
+          :theme="isDark ? 'dark' : 'light'"
           @ready="handleReady"
           @data-change="handleDataChange"
           ref="diagramRef"
@@ -61,6 +62,10 @@
 
 <script setup lang="ts">
   import type { DiagramType, DiagramData } from '@/types/antv'
+  import { useThemeStore } from '@/stores/theme'
+
+  const themeStore = useThemeStore()
+  const isDark = computed(() => themeStore.isDark)
 
   const currentType = ref<DiagramType>('bpmn') // 直接显示BPMN
   const diagramRef = ref()

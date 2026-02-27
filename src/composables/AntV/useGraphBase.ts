@@ -1,6 +1,5 @@
 import { Graph } from '@antv/x6'
-import type { Ref } from 'vue'
-import { useThemeStore } from '@/stores/theme'
+import type { ComputedRef, Ref } from 'vue'
 
 /**
  * 获取主题相关的颜色配置
@@ -64,14 +63,16 @@ function getContainerSize(container: HTMLElement | undefined) {
 /**
  * 创建和管理 AntV X6 图表实例的组合式 API
  */
-export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
+export function useGraphBase(
+  containerRef: Ref<HTMLElement | undefined>,
+  isDarkRef?: Ref<boolean> | ComputedRef<boolean>
+) {
   const MAX_RETRY = 10
   let retryCount = 0
 
   // 直接使用 any 类型，在使用时再进行类型断言
   const graph: Ref<any> = ref(null)
   const loading = ref(false)
-  const themeStore = useThemeStore()
 
   /**
    * 初始化图表实例
@@ -101,7 +102,7 @@ export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
       }
       retryCount = 0
 
-      const { isDark } = themeStore
+      const isDark = isDarkRef?.value ?? false
       const defaultOptions = getDefaultOptions(isDark)
 
       const finalOptions = {
@@ -142,12 +143,11 @@ export function useGraphBase(containerRef: Ref<HTMLElement | undefined>) {
   }
 
   // 监听主题变化
-  watch(
-    () => themeStore.isDark,
-    isDark => {
+  if (isDarkRef) {
+    watch(isDarkRef, isDark => {
       updateTheme(isDark)
-    }
-  )
+    })
+  }
 
   /**
    * 销毁当前图表实例

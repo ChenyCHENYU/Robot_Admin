@@ -98,6 +98,7 @@
     data?: ERDiagramData
     showToolbar?: boolean
     readonly?: boolean
+    theme?: 'light' | 'dark'
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -112,8 +113,11 @@
 
   // ==================== Composables ====================
   const containerRef = ref<HTMLDivElement>()
-  const { graph, initGraph, centerContent, zoomToFit } =
-    useGraphBase(containerRef)
+  const isDark = computed(() => props.theme === 'dark')
+  const { graph, initGraph, centerContent, zoomToFit } = useGraphBase(
+    containerRef,
+    isDark
+  )
   const { exportOptions, handleExport } = useGraphExport(graph, 'er-diagram')
 
   // ==================== 编辑器状态 ====================

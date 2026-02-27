@@ -88,6 +88,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@iconify-json/carbon": "^1.2.18",
     "@iconify-json/ic": "^1.2.2",
     "@iconify-json/la": "^1.2.1",
     "@iconify-json/mdi": "^1.2.3",

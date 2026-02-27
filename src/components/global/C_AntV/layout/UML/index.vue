@@ -82,6 +82,7 @@
     readonly?: boolean
     width?: number | string
     height?: number | string
+    theme?: 'light' | 'dark'
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -98,8 +99,11 @@
 
   // ==================== Composables ====================
   const containerRef = ref<HTMLDivElement>()
-  const { graph, initGraph, centerContent, zoomToFit } =
-    useGraphBase(containerRef)
+  const isDark = computed(() => props.theme === 'dark')
+  const { graph, initGraph, centerContent, zoomToFit } = useGraphBase(
+    containerRef,
+    isDark
+  )
   const { exportOptions, handleExport } = useGraphExport(graph, 'uml-diagram')
   const { bindInteractions } = useEdgeInteraction(graph, {
     defaultColor: '#722ed1',

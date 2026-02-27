@@ -60,6 +60,7 @@
         "xlsx": "^0.18.5",
       },
       "devDependencies": {
+        "@iconify-json/carbon": "^1.2.18",
         "@iconify-json/ic": "^1.2.2",
         "@iconify-json/la": "^1.2.1",
         "@iconify-json/mdi": "^1.2.3",
@@ -462,6 +463,8 @@
     "@humanwhocodes/module-importer": ["@humanwhocodes/module-importer@1.0.1", "https://registry.npmmirror.com/@humanwhocodes/module-importer/-/module-importer-1.0.1.tgz", {}, "sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA=="],
 
     "@humanwhocodes/retry": ["@humanwhocodes/retry@0.4.2", "https://registry.npmmirror.com/@humanwhocodes/retry/-/retry-0.4.2.tgz", {}, "sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ=="],
+
+    "@iconify-json/carbon": ["@iconify-json/carbon@1.2.18", "", { "dependencies": { "@iconify/types": "*" } }, "sha512-Grb13E6r/RqTEV4Sqd/BQR2FUt57U2WLuticJ5H8JbTdHLop1LmdePu3EJJA3Xi8DcWRbD6OnC133hKfOwlgtg=="],
 
     "@iconify-json/ic": ["@iconify-json/ic@1.2.2", "https://registry.npmmirror.com/@iconify-json/ic/-/ic-1.2.2.tgz", { "dependencies": { "@iconify/types": "*" } }, "sha512-QmjwS3lYiOmVWgTCEOTFyGODaR/+689+ajep/VsrCcsUN0Gdle5PmIcibDsdmRyrOsW/E77G41UUijdbjQUofw=="],
 
