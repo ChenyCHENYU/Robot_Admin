@@ -473,6 +473,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "upload",
+          "name": "demo-upload",
+          "component": "/demo/38-upload/index",
+          "meta": {
+            "icon": "mdi:cloud-upload-outline",
+            "title": "文件上传",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },
