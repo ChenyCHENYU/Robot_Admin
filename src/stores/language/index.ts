@@ -18,6 +18,11 @@ import {
   type NDateLocale,
 } from 'naive-ui/es'
 
+// lang/index.js 挂载的全局函数类型声明
+declare global {
+  var $changeLang: ((lang: string) => void) | undefined
+}
+
 // 本地存储键名（与 i18n-route.ts 保持一致）
 const LANG_STORAGE_KEY = 'robot_admin'
 
@@ -45,10 +50,16 @@ export const useLanguageStore = defineStore('language', () => {
   )
 
   /** 切换语言 */
+  /** 切换语言 */
   function setLanguage(lang: string) {
     if (lang === currentLang.value) return
     currentLang.value = lang
     localStorage.setItem(LANG_STORAGE_KEY, lang)
+
+    // 同步运行时 $t() 翻译函数（影响生产构建中自动翻译的中文）
+    if (typeof globalThis.$changeLang === 'function') {
+      globalThis.$changeLang(lang)
+    }
 
     // 设置 html lang 属性
     document.documentElement.lang = lang === 'zh-cn' ? 'zh-CN' : lang

@@ -74,6 +74,24 @@
   const route = useRoute()
   const router = useRouter()
 
+  // ✅ 在 setup 阶段（首次渲染前）重新翻译所有持久化标签
+  // 必须在 watch 之前执行，确保语言切换后首帧就显示正确语言
+  if (appStore.tagsViewList.length > 0) {
+    const allRoutes = router.getRoutes()
+    const translatedTags = appStore.tagsViewList.map((tag: any) => {
+      // 优先级: tag.originalTitle > route.meta.title > tag.title
+      const matchedRoute = allRoutes.find(r => r.path === tag.path)
+      const originalTitle =
+        tag.originalTitle || (matchedRoute?.meta?.title as string) || tag.title
+      return {
+        ...tag,
+        originalTitle,
+        title: translateRouteTitle(originalTitle),
+      }
+    })
+    appStore.initTags(translatedTags)
+  }
+
   // 上下文菜单相关的响应式变量
   const contextMenuVisible = ref(false)
   const contextMenuX = ref(0)
@@ -267,21 +285,6 @@
     }
     closeContextMenu()
   }
-  // 初始化标签（store 已通过 persist 自动恢复，仅需重新翻译标题）
-  onMounted(() => {
-    if (appStore.tagsViewList.length > 0) {
-      const translatedTags = appStore.tagsViewList.map((tag: any) => {
-        const originalTitle = tag.originalTitle || tag.title
-        return {
-          ...tag,
-          originalTitle,
-          title: translateRouteTitle(originalTitle),
-        }
-      })
-      appStore.initTags(translatedTags)
-    }
-  })
-
   // 监听路由变化更新标签
   watch(
     () => route.path,

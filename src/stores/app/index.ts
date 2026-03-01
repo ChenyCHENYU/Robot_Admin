@@ -9,6 +9,7 @@
  */
 
 import type { MenuTag } from '@/types/modules/menu'
+import { translateRouteTitle } from '@/utils/plugins/i18n-route'
 
 export const s_appStore = defineStore('app', {
   state: () => ({
@@ -36,9 +37,11 @@ export const s_appStore = defineStore('app', {
         route.path &&
         !this.tagsViewList.some((t: MenuTag) => t.path === route.path)
       ) {
+        const originalTitle = (route.meta.title as string) || 'Unnamed Page'
         this.addTag({
           path: route.path,
-          title: (route.meta.title as string) || 'Unnamed Page',
+          originalTitle,
+          title: translateRouteTitle(originalTitle),
           icon: route.meta.icon as string,
           meta: { affix: route.meta.affix as boolean },
         })
