@@ -44,7 +44,7 @@
     "@robot-admin/form-validate": "latest",
     "@robot-admin/git-standards": "latest",
     "@robot-admin/layout": "latest",
-    "@robot-admin/naive-ui-components": "0.6.2",
+    "@robot-admin/naive-ui-components": "0.6.3",
     "@robot-admin/request-core": "latest",
     "@robot-admin/theme": "latest",
     "@splinetool/runtime": "^1.9.92",
