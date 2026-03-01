@@ -73,7 +73,6 @@ export default defineConfig(({ mode }: { mode: string }) => {
         'echarts/components',
         'echarts/renderers',
         '@antv/x6',
-        'driver.js',
         'axios',
       ],
       // 🔧 排除 Vue 全家桶：esbuild 预构建时会将 Vue 内部模块拆成多个共享 chunk，
