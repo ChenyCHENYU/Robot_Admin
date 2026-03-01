@@ -68,7 +68,7 @@
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-37+-success?style=flat" alt="Components">
+    <img src="https://img.shields.io/badge/components-39+-success?style=flat" alt="Components">
     <img src="https://img.shields.io/badge/demos-36+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
@@ -250,6 +250,7 @@ bun clean              # 清理缓存
 - **Vue 3.5.13** - 🔥 最新稳定版，Composition API 丝滑体验
 - **TypeScript 5.8** - 🛡️ 类型安全，智能提示
 - **Naive UI 2.41.0** - 🎨 颜值与性能并存的组件库
+- **@robot-admin/naive-ui-components** - 🧩 39+ 业务组件库，按需自动导入
 - **UnoCSS 66.3.3** - ⚡ 原子化CSS，按需生成，体积极小
 
 **⚙️ 构建工具**
@@ -265,12 +266,14 @@ bun clean              # 清理缓存
 - **Oxlint 0.15** - 🦀 Rust编写的超快Linter
 - **Vitest 3.0** - 🧪 现代化测试框架
 
-**📊 功能组件**
+**📊 功能组件（via @robot-admin/naive-ui-components）**
 
 - **ECharts 5.6** - 企业级图表库
-- **AntV X6** - 专业流程图引擎
+- **AntV X6** - 专业流程图引擎（BPMN/ER/UML）
 - **FullCalendar** - 完整的日程管理
 - **WangEditor** - 富文本编辑器
+- **XGPlayer** - 视频播放器（HLS/防作弊）
+- **Vue Flow** - 工作流编辑器
 </details>
 
 ### 🎯 功能矩阵
@@ -282,7 +285,9 @@ bun clean              # 清理缓存
 - **按钮级权限** - 精确到每一个操作按钮
 - **接口级权限** - API调用权限控制
 
-#### 🧩 组件库（37+ 开箱即用）
+#### 🧩 组件库（39+ 开箱即用）
+
+> 所有业务组件已独立发布为 [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components)，支持按需自动导入。
 
 <details>
 <summary><b>查看所有组件</b></summary>
@@ -290,35 +295,55 @@ bun clean              # 清理缓存
 **核心组件**
 
 - `C_Form` - 动态表单引擎，支持8种布局
-- `C_Table` - 超级表格，支持虚拟滚动
+- `C_Table` - 超级表格，支持虚拟滚动、打印水印、列设置
+- `C_FormSearch` - 高级搜索表单组件
 - `C_ActionBar` - 操作按钮组组件，统一按钮布局
-- `C_Header` - 响应式头部组件
-- `C_Menu` - 智能导航菜单
-- `C_Icon` - 图标管理系统
+- `C_Icon` - Iconify 运行时图标管理系统
 - `C_Theme` - 主题切换组件
+- `C_Language` - 国际化语言切换
 
 **业务组件**
 
 - `C_Code` - 代码编辑器组件
 - `C_Markdown` - Markdown编辑器
+- `C_Editor` - WangEditor 富文本编辑器
+- `C_FormulaEditor` - 公式编辑器
 - `C_Time` - 时间处理组件
+- `C_Date` - 日期选择组件
 - `C_Progress` - 进度展示组件
-- `C_Chart` - 图表组件封装
 - `C_Upload` - 文件上传组件
+- `C_Cron` - Cron 表达式编辑器
+- `C_Steps` - 步骤条组件
 
-**编辑器生态**
+**可视化 & 图表**
 
-- **WangEditor** - 富文本编辑器
-- **Markdown编辑器** - 实时预览，语法高亮
-- **代码编辑器** - 支持多语言语法高亮
-- **JSON编辑器** - 结构化数据编辑
+- `C_AntV` - AntV X6 流程图引擎（BPMN/ER/UML）
+- `C_WorkFlow` - Vue Flow 工作流编辑器
+- `C_VtableGantt` - 甘特图组件
+- `C_FullCalendar` - 完整日程管理
 
-**文件处理**
+**媒体 & 文件**
 
-- **Excel导入导出** - 支持复杂表格结构
-- **ZIP批量下载** - 文件打包压缩
-- **图片截图** - Html2canvas 网页截图
-- **文件上传** - 多格式文件支持
+- `C_VideoPlayer` - XGPlayer 视频播放器（HLS/防作弊）
+- `C_FilePreview` - 文件预览（PDF/Excel/Word/图片）
+- `C_ImageCropper` - 图片裁剪
+- `C_Signature` - 电子签名
+- `C_QRCode` - 二维码生成
+- `C_Barcode` - 条形码生成
+
+**交互 & 布局**
+
+- `C_Draggable` - 拖拽排序
+- `C_SplitPane` - 分割面板
+- `C_CollapsePanel` - 折叠面板
+- `C_WaterFall` - 瀑布流布局
+- `C_Cascade` - 地区级联选择
+- `C_City` - 城市选择器
+- `C_Map` - Leaflet 地图
+- `C_Captcha` - 验证码
+- `C_Guide` - 新手引导
+- `C_GlobalSearch` - 全局搜索
+- `C_NotificationCenter` - 通知中心
 </details>
 
 #### 🎮 自定义指令
@@ -376,8 +401,8 @@ bun clean              # 清理缓存
 Robot_Admin/
 ├── 📁 src/                          # 源代码目录
 │   ├── 📁 api/                      # 接口管理层
-│   ├── 📁 components/               # 组件库
-│   │   ├── 📁 global/               # 全局组件（10+ 核心组件）
+│   ├── 📁 components/               # 组件（桥接层 + 局部组件）
+│   │   ├── 📁 global/               # 全局桥接组件（按需引用组件库）
 │   │   └── 📁 local/                # 局部组件
 │   ├── 📁 views/                    # 页面视图
 │   │   ├── 📁 dashboard/            # 数据看板
@@ -694,7 +719,7 @@ location / {
 - [ ] 🏢 多租户系统支持
 - [x] 🔮 模块联邦架构支持
 - [x] 🔗 微前端架构支持
-- [ ] 📚 组件库独立发布
+- [x] 📚 组件库独立发布 → [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components)
 - [ ] 🎨 可视化页面模板
 
 ### 🌟 长期愿景 (Q4 2025+)
@@ -711,9 +736,12 @@ location / {
 <details>
 <summary><b>查看生态项目</b></summary>
 
+**已发布组件库**
+
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** - 基于 Naive UI 的 Vue 3 业务组件库（39+ 组件，按需导入）
+
 **规划中项目**
 
-- **[Robot UI](https://github.com/ChenyCHENYU/robot-ui)** - 独立的组件库
 - **[Robot CLI](https://github.com/ChenyCHENYU/robot-cli)** - 脚手架工具
 - **[Robot Mobile](https://github.com/ChenyCHENYU/robot-mobile)** - 移动端解决方案
 - **[Robot Backend](https://github.com/ChenyCHENYU/robot-backend)** - NestJS 后端服务
@@ -881,7 +909,7 @@ bun run type-build
 **选择 Robot Admin 的理由**:
 
 - 🚀 **性能优先**: Bun + Vite7 双引擎，开发体验极致
-- 🧩 **组件丰富**: 37+ 业务组件，开箱即用
+- 🧩 **组件丰富**: 39+ 业务组件，独立组件库按需导入
 - 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
 - 📚 **学习友好**: 36+ 演示页面，每个都是最佳实践
 </details>
@@ -989,7 +1017,15 @@ bun run type-build
 
 ## 📄 更新日志
 
-### 🎉 v1.13.3 (2026-02-17)
+### 🚀 v2.0.0 (2025-07)
+
+- 🏗️ **架构重构**: 39 个业务组件迁移至独立组件库 `@robot-admin/naive-ui-components`
+- 📦 组件库支持按需自动导入（`RobotNaiveUiResolver`）
+- 🎨 全面替换 UnoCSS 图标类为 `C_Icon`（Iconify 运行时）
+- 🛡️ 全量 `vue-tsc` 类型检查通过
+- 🔧 清理冗余依赖，`spark-md5` 等由组件库传递安装
+
+### 🎉 v1.13.3 (2025-02-17)
 
 - ✨ 升级到 @robot-admin/layout v2.2.0
 - 🎨 优化主题切换，使用 View Transition API

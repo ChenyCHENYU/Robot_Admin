@@ -71,6 +71,15 @@ export const coreProjects: ProjectItem[] = [
     url: 'https://www.naiveui.com/',
   },
   {
+    name: 'Robot UI Components',
+    bagName: '@robot-admin/naive-ui-components',
+    desc: '基于 Naive UI 的 39+ 业务组件库，按需自动导入',
+    shortDesc: '业务组件库',
+    version: '0.4.5',
+    icon: 'https://robotadmin.cn/favicon.ico',
+    url: 'https://www.npmjs.com/package/@robot-admin/naive-ui-components',
+  },
+  {
     name: 'UnoCSS',
     bagName: 'unocss',
     desc: '即时原子化 CSS 引擎',
@@ -322,6 +331,14 @@ export const productionDependencies: ProjectItem[] = [
     version: '^1.3.6',
     icon: 'https://driverjs.com/driver.svg',
     url: 'https://driverjs.com/',
+  },
+  {
+    name: 'Robot UI Components',
+    bagName: '@robot-admin/naive-ui-components',
+    desc: '基于 Naive UI 的 39+ 业务组件库，按需自动导入',
+    version: '0.4.5',
+    icon: 'https://robotadmin.cn/favicon.ico',
+    url: 'https://www.npmjs.com/package/@robot-admin/naive-ui-components',
   },
   {
     name: 'Robot File Utils',
