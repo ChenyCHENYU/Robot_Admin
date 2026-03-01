@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.0.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.14.0...v2.0.0) (2026-03-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **architecture:** 删除 src/components/global/ 下全部组件实现及 src/composables/ 下全部组合式函数，统一由 npm 包提供。
+
+### Features
+
+* **components:** 迁移 C_Menu/C_Breadcrumb/C_TagsView 至组件库 + 清理废弃代码 ([70dc6de](https://github.com/ChenyCHENYU/Robot_Admin/commit/70dc6de8a0bcec49b9588d9dca1fa928043279fc))
+
+
+### Bug Fixes
+
+* **pre-migration:** C_AntV解耦 + i18n构建修复 + carbon图标 ([cae5de5](https://github.com/ChenyCHENYU/Robot_Admin/commit/cae5de501dc00ce09aaec4ddf9bc71c03e010f32))
+* **国际化:** 修复标签页语言切换后已有标签不翻译 ([80353c6](https://github.com/ChenyCHENYU/Robot_Admin/commit/80353c61a3da50e752b70a70b583412479b507a7))
+* **语言:** 修复语言切换图标点击无响应 ([f81c714](https://github.com/ChenyCHENYU/Robot_Admin/commit/f81c7140653a7e7b60a2d684c4f4c3a06dec970a))
+
+
+### Code Refactoring
+
+* **architecture:** 整体迁移 39 个组件至 @robot-admin/naive-ui-components ([5c63ca6](https://github.com/ChenyCHENYU/Robot_Admin/commit/5c63ca6ac04306df3a9bfd7ebf0e5b3b96433a50))
+
 ## [1.14.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.3...v1.14.0) (2026-02-27)
 
 
