@@ -563,7 +563,6 @@
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
   import type { ActionItem } from '@/types/modules/action-bar'
-  import C_Tree from '@/components/global/C_Tree/index.vue'
   import {
     type DictData,
     type DictFormData,

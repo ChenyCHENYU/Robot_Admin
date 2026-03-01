@@ -105,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-  import { type StepItem } from '@/components/global/C_Steps/index.vue'
+  import { type StepItem } from '@robot-admin/naive-ui-components'
 
   // 定义步骤类型
   type StepStatus = 'wait' | 'process' | 'finish' | 'error'

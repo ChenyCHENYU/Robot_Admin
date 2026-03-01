@@ -85,7 +85,7 @@
   import {
     useDynamicFormState,
     DYNAMIC_FORM_STATE_KEY,
-  } from '@/composables/Form/useDynamicFormState'
+  } from '@robot-admin/naive-ui-components'
   import {
     DYNAMIC_FORM_CONFIG,
     BASE_FORM_OPTIONS,

@@ -69,7 +69,6 @@
   import { loginApi, type LoginResponse } from '@/api/auth'
   import './index.scss'
   import Spline from './components/Spline.vue'
-  import C_Captcha from '@/components/global/C_Captcha/index.vue'
   import Typewriter from './components/Typewriter.vue'
 
   // 类型定义

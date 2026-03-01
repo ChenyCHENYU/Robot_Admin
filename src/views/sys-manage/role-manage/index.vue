@@ -313,8 +313,7 @@
 
 <script setup lang="ts">
   import type { FormInst, DataTableColumns } from 'naive-ui/es'
-  import C_Icon from '@/components/global/C_Icon/index.vue'
-  import C_Table from '@/components/global/C_Table/index.vue'
+
   import {
     type RoleData,
     type RoleFormData,

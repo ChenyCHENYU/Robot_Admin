@@ -416,9 +416,7 @@
     NTreeSelect,
   } from 'naive-ui/es'
   import type { ActionItem } from '@/types/modules/action-bar'
-  import C_Tree from '@/components/global/C_Tree/index.vue'
-  import C_Icon from '@/components/global/C_Icon/index.vue'
-  import C_Table from '@/components/global/C_Table/index.vue'
+
   import type { TableColumn } from '@/types/modules/table'
   import {
     type UserData,

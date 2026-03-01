@@ -2,7 +2,7 @@ import type {
   GanttTask,
   GanttOptions,
   GanttPreset,
-} from '@/components/global/C_VtableGantt/data'
+} from '@robot-admin/naive-ui-components'
 
 // ==================== 基础类型定义 ====================
 

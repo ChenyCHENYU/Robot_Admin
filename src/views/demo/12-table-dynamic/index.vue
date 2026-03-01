@@ -87,7 +87,6 @@
 
 <script setup lang="ts">
   import type { DataRecord, SimpleTableActions } from '@/types/modules/table'
-  import C_Table from '@/components/global/C_Table/index.vue'
   import {
     type DynamicEmployee,
     type Log,

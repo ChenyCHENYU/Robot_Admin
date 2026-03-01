@@ -46,10 +46,41 @@
             @update:value="handleSearch"
           />
         </NSpace>
-        <C_ActionBar
-          :actions="toolbarActions"
-          :config="{ compact: true }"
-        />
+        <NSpace>
+          <NButton
+            type="primary"
+            @click="openPermissionModal()"
+          >
+            <template #icon>
+              <C_Icon
+                name="material-symbols:add"
+                :size="16"
+              />
+            </template>
+            新增权限
+          </NButton>
+          <NButton
+            @click="handleExport"
+            :loading="exportLoading"
+          >
+            <template #icon>
+              <C_Icon
+                name="material-symbols:download"
+                :size="16"
+              />
+            </template>
+            导出
+          </NButton>
+          <NButton @click="refresh">
+            <template #icon>
+              <C_Icon
+                name="material-symbols:refresh"
+                :size="16"
+              />
+            </template>
+            刷新
+          </NButton>
+        </NSpace>
       </NSpace>
     </NCard>
 
@@ -131,21 +162,14 @@
         >
           状态: {{ searchForm.status === 1 ? '启用' : '禁用' }}
         </NTag>
-        <C_ActionBar
-          :actions="[
-            {
-              key: 'clear',
-              label: '清空筛选',
-              type: 'error',
-              onClick: clearAllFilters,
-            },
-          ]"
-          :config="{
-            compact: true,
-            size: 'small',
-            buttonProps: { text: true },
-          }"
-        />
+        <NButton
+          text
+          size="small"
+          @click="clearAllFilters"
+          type="error"
+        >
+          清空筛选
+        </NButton>
       </NSpace>
     </div>
 
@@ -166,13 +190,16 @@
 
       <C_Table
         ref="tableRef"
-        :data="filteredData"
+        v-model:data="filteredData"
         :columns="tableColumns as any"
         :loading="loading"
-        :config="{
-          actions: tableActions as any,
-          edit: { modalTitle: '编辑权限', modalWidth: 800 },
-        }"
+        :actions="tableActions as any"
+        edit-mode="modal"
+        modal-title="编辑权限"
+        :modal-width="800"
+        size="small"
+        striped
+        bordered
         @save="handleSave"
         @row-delete="handleRowDelete"
         @view-detail="handleViewDetail as any"
@@ -343,7 +370,6 @@
 
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
-  import type { ActionItem } from '@/types/modules/action-bar'
   import type { DetailConfig } from '@/components/local/c_detail/data'
   import {
     type PermissionData,
@@ -539,30 +565,6 @@
       },
     ],
   }
-
-  // ============ 工具栏按钮配置 ============
-  const toolbarActions = computed<ActionItem[]>(() => [
-    {
-      key: 'add',
-      label: '新增权限',
-      icon: 'material-symbols:add',
-      type: 'primary',
-      onClick: () => openPermissionModal(),
-    },
-    {
-      key: 'export',
-      label: '导出',
-      icon: 'material-symbols:download',
-      loading: exportLoading.value,
-      onClick: handleExport,
-    },
-    {
-      key: 'refresh',
-      label: '刷新',
-      icon: 'material-symbols:refresh',
-      onClick: refresh,
-    },
-  ])
 
   // ============ 事件处理函数（提前声明） ============
   const handleExport = async () => {

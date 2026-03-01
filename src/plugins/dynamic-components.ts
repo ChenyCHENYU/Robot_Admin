@@ -14,6 +14,13 @@ import {
   defineAsyncComponent,
   h,
 } from 'vue'
+import { componentNames } from '@robot-admin/naive-ui-components/resolver'
+
+/**
+ * 已迁移到 @robot-admin/naive-ui-components 的组件集合
+ * 这些组件通过 app.use() 全局注册，不再需要动态加载
+ */
+const LIBRARY_COMPONENTS = new Set<string>(componentNames)
 
 /**
  * * @description 组件路径映射表，键为组件名称，值为异步导入组件的函数
@@ -118,8 +125,13 @@ Object.entries(modules).forEach(([path, importFn]) => {
   handleComponentMapping(componentPaths, fileName, parentDir, importFn)
 
   if (dirName === 'global' || path.includes('/global/')) {
-    // 处理全局组件
-    handleGlobalComponent(componentPaths, fileName, importFn)
+    // 跳过已迁移到组件库的组件（避免重复注册）
+    if (
+      !LIBRARY_COMPONENTS.has(parentDir) &&
+      !LIBRARY_COMPONENTS.has(fileName)
+    ) {
+      handleGlobalComponent(componentPaths, fileName, importFn)
+    }
   } else if (dirName === 'local' || path.includes('/local/')) {
     // 处理局部组件
     handleLocalComponent(componentPaths, fileName, importFn)

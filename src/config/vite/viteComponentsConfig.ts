@@ -10,27 +10,29 @@
 
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+import { RobotNaiveUiResolver } from '@robot-admin/naive-ui-components/resolver'
 import IconsResolver from 'unplugin-icons/resolver'
 
 export default Components({
   dts: 'src/types/components.d.ts', // 生成类型声明文件
-  dirs: ['src/components/global', 'src/components/local'], // 自动导入组件
+  dirs: ['src/components/local'], // 仅扫描本地组件（C_ 全局组件通过 resolver 解析）
   extensions: ['vue'], // 扩展名
   version: 3, // 明确指定 Vue 3.x 版本
   resolvers: [
     NaiveUiResolver(),
+    RobotNaiveUiResolver(),
     componentName => {
+      // 未迁移的 C_ 组件（布局/业务组件）→ 继续从本地解析
       if (componentName.startsWith('C_')) {
         return {
-          name: componentName.slice(2),
-          // 使用别名@绝对路径
-          from: `./src/components/global/${componentName}/index.vue`,
+          name: 'default',
+          from: `@/components/global/${componentName}/index.vue`,
         }
       }
       if (componentName.startsWith('c_')) {
         return {
-          name: componentName.slice(2),
-          from: `./src/components/local/${componentName}/index.vue`,
+          name: 'default',
+          from: `@/components/local/${componentName}/index.vue`,
         }
       }
       return null
@@ -46,11 +48,6 @@ export default Components({
         }
       }
     },
-  ],
-  // 新增 globs 配置进行文件过滤
-  globs: [
-    'src/components/global/C_*/index.vue', // 匹配目录结构
-    'src/components/local/c_*/index.vue',
   ],
   directives: true, // 自动导入指令，默认目录为 src/directives
 })

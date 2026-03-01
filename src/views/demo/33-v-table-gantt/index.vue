@@ -104,10 +104,7 @@
 </template>
 
 <script setup lang="ts">
-  import type {
-    GanttTask,
-    GanttPreset,
-  } from '@/components/global/C_VtableGantt/data'
+  import type { GanttTask, GanttPreset } from '@robot-admin/naive-ui-components'
   import {
     type TabConfig,
     PRESET_DESCRIPTIONS as presetDescriptions,

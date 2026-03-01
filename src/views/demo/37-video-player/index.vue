@@ -355,7 +355,7 @@
     Bookmark,
     ProgressData,
     AnalyticsEvent,
-  } from '@/components/global/C_VideoPlayer/types'
+  } from '@robot-admin/naive-ui-components'
   import {
     DEMO_SOURCES,
     DEMO_QUALITY_LIST,

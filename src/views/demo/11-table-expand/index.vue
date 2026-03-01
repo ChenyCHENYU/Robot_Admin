@@ -82,7 +82,6 @@
 <script setup lang="ts">
   import { type DataTableRowKey, NSpin } from 'naive-ui/es'
   import type { VNodeChild } from 'vue'
-  import C_Table from '@/components/global/C_Table/index.vue'
   import type { ActionItem } from '@/types/modules/action-bar'
   import type {
     DataRecord,

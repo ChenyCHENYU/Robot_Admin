@@ -239,7 +239,7 @@
     AMAP_CONFIG,
     type MapType,
   } from './data'
-  import type { MapMarker } from '@/components/global/C_Map/data'
+  import type { MapMarker } from '@robot-admin/naive-ui-components'
 
   const message = useMessage()
 

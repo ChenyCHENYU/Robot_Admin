@@ -14,7 +14,7 @@ import type {
   QualityDefinition,
   SubtitleTrack,
   AntiCheatConfig,
-} from '@/components/global/C_VideoPlayer/types'
+} from '@robot-admin/naive-ui-components'
 
 /* ======================== 公开测试视频源 ======================== */
 

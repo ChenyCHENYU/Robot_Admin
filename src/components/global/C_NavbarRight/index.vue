@@ -2,47 +2,66 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-11-12
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-12 13:51:41
- * @FilePath: \Robot_Admin\src\components\global\C_NavbarRight\index.vue
+ * @LastEditTime: 2026-03-01 19:52:41
+ * @FilePath: \robot\Robot_Admin\src\components\global\C_NavbarRight\index.vue
  * @Description: 统一的导航栏右侧操作区组件 - 所有布局共用
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 <template>
   <div class="navbar-right">
     <!-- 全局搜索 -->
-    <C_GlobalSearch />
+    <C_GlobalSearch :options="searchOptions" />
 
-    <!-- 操作按钮组 -->
+    <!-- 操作按钮组：显式导入，不依赖 DynamicComponent -->
     <div class="action-buttons">
-      <template
-        v-for="(item, index) in headerActions"
-        :key="index"
-      >
-        <!-- 渲染自定义组件 -->
-        <DynamicComponent
-          v-if="item.type === 'component'"
-          :name="item.componentName"
-          v-bind="item.componentProps || {}"
-        />
+      <!-- 通知中心 -->
+      <C_NotificationCenter :on-navigate="handleNavigate" />
 
-        <!-- 渲染普通图标按钮 -->
-        <NTooltip
-          v-else
-          placement="bottom"
-          trigger="hover"
-        >
-          <template #trigger>
-            <NButton
-              text
-              @click="item.action"
-              class="action-btn"
-            >
-              <span :class="item.icon"></span>
-            </NButton>
-          </template>
-          <span>{{ item.tooltip }}</span>
-        </NTooltip>
-      </template>
+      <!-- 全屏 -->
+      <NTooltip
+        placement="bottom"
+        trigger="hover"
+      >
+        <template #trigger>
+          <NButton
+            text
+            @click="toggleFullscreen"
+            class="action-btn"
+          >
+            <span class="i-mdi:fullscreen"></span>
+          </NButton>
+        </template>
+        <span>全屏</span>
+      </NTooltip>
+
+      <!-- 语言切换 -->
+      <C_Language />
+
+      <!-- 主题切换 -->
+      <C_Theme
+        :model-value="themeStore.mode"
+        @update:model-value="themeStore.setMode"
+      />
+
+      <!-- 功能引导 -->
+      <C_Guide :steps="guideSteps" />
+
+      <!-- 布局配置 -->
+      <NTooltip
+        placement="bottom"
+        trigger="hover"
+      >
+        <template #trigger>
+          <NButton
+            text
+            @click="emit('update:showSettings', true)"
+            class="action-btn"
+          >
+            <span class="i-mdi:settings-transfer-outline"></span>
+          </NButton>
+        </template>
+        <span>布局配置</span>
+      </NTooltip>
     </div>
 
     <!-- 用户信息 -->
@@ -68,8 +87,20 @@
 
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
-  import { useThemeStore, type ThemeMode } from '@/stores/theme'
-  import C_GlobalSearch from '@/components/global/C_GlobalSearch/index.vue'
+  import { useThemeStore } from '@/stores/theme'
+  import { s_permissionStore } from '@/stores/permission'
+  import { normalizeMenuOptions } from '@/utils/d_menu'
+  import {
+    C_GlobalSearch,
+    C_NotificationCenter,
+    C_Language,
+    C_Theme,
+    C_Guide,
+    type GlobalSearchOptions,
+    type SearchMenuItem,
+    type GuideStep,
+  } from '@robot-admin/naive-ui-components'
+  import type { MenuOption } from 'naive-ui/es'
 
   defineOptions({ name: 'C_NavbarRight' })
 
@@ -86,55 +117,115 @@
 
   const userStore = s_userStore()
   const themeStore = useThemeStore()
+  const permissionStore = s_permissionStore()
   const router = useRouter()
 
   // 用户名
   const userName = computed(() => userStore.userInfo?.username || 'CHENY')
 
-  // 头部操作按钮配置
-  const headerActions = computed(() => [
-    {
-      type: 'component',
-      componentName: 'C_NotificationCenter',
-      componentProps: {
-        onNavigate: (url: string) => router.push(url),
-      },
-    },
-    {
-      icon: 'i-mdi:fullscreen',
-      tooltip: '全屏',
-      action: () => {
-        toggleFullscreen()
-      },
-    },
-    {
-      type: 'component',
-      componentName: 'C_Language',
-    },
-    {
-      type: 'component',
-      componentName: 'C_Theme',
-      componentProps: {
-        modelValue: themeStore.mode,
-        'onUpdate:modelValue': (mode: ThemeMode) => themeStore.setMode(mode),
-      },
-    },
-    {
-      type: 'component',
-      componentName: 'C_Guide',
-    },
-    {
-      icon: 'i-mdi:settings-transfer-outline',
-      tooltip: '布局配置',
-      action: () => {
-        emit('update:showSettings', true)
-      },
-    },
-  ])
+  // ==================== 全局搜索配置 ====================
+  /** 将权限菜单树扁平化为 SearchMenuItem[] */
+  function flattenMenuItems(items: MenuOption[]): SearchMenuItem[] {
+    const result: SearchMenuItem[] = []
+    for (const item of items) {
+      if (item.key && item.label) {
+        result.push({
+          key: item.key as string,
+          label: item.label as string,
+          icon: item.icon,
+          children: item.children,
+        })
+      }
+      if (item.children?.length) {
+        result.push(...flattenMenuItems(item.children))
+      }
+    }
+    return result
+  }
 
-  /**
-   * 全屏切换
-   */
+  /** 在菜单树中找到父级的第一个子路由 key */
+  function findFirstChildKey(parentKey: string): string | null {
+    const normalized = normalizeMenuOptions(permissionStore.showMenuListGet)
+    const find = (nodes: MenuOption[]): string | null => {
+      for (const n of nodes) {
+        if (n.key === parentKey && n.children?.length)
+          return (n.children[0]?.key as string) || null
+        if (n.children?.length) {
+          const r = find(n.children)
+          if (r) return r
+        }
+      }
+      return null
+    }
+    return find(normalized)
+  }
+
+  const searchOptions: GlobalSearchOptions = {
+    menuItems: () =>
+      flattenMenuItems(normalizeMenuOptions(permissionStore.showMenuListGet)),
+    isDark: () => themeStore.isDark,
+    /** 选中菜单项后跳转路由 */
+    onSelect(key: string, hasChildren: boolean) {
+      if (hasChildren) {
+        const childKey = findFirstChildKey(key)
+        if (childKey) {
+          router.push(childKey)
+          return
+        }
+      }
+      router.push(key)
+    },
+  }
+
+  // ==================== 功能引导步骤 ====================
+  const guideSteps: GuideStep[] = [
+    {
+      element: '#guide-menu-top',
+      popover: {
+        title: '品牌 Logo',
+        description: '这里展示系统品牌标识，点击可返回首页。',
+        side: 'right',
+      },
+    },
+    {
+      element: '#guide-menu',
+      popover: {
+        title: '导航菜单',
+        description: '系统功能模块入口，点击展开子菜单并跳转到对应页面。',
+        side: 'right',
+      },
+    },
+    {
+      element: '#guide-menu-collapse',
+      popover: {
+        title: '折叠菜单',
+        description: '点击此按钮可展开或收起侧边导航栏，获得更大的内容区域。',
+        side: 'bottom',
+      },
+    },
+    {
+      element: '#guide-breadcrumb',
+      popover: {
+        title: '面包屑导航',
+        description: '显示当前页面在系统中的层级位置，可点击快速返回上级。',
+        side: 'bottom',
+      },
+    },
+    {
+      element: '#guide-tags-view',
+      popover: {
+        title: '标签页',
+        description: '已打开的页面标签，支持快速切换、右键关闭操作。',
+        side: 'bottom',
+      },
+    },
+  ]
+
+  // ==================== 操作事件 ====================
+  /** 通知中心 — 跳转到指定 URL */
+  const handleNavigate = (url: string) => router.push(url)
+
+  /** 全屏切换 */
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen()
@@ -157,12 +248,9 @@
     },
   ]
 
-  /**
-   * 处理用户菜单选择
-   */
+  /** 处理用户菜单选择 */
   const handleUserSelect = (key: string) => {
     if (key === 'profile') {
-      // TODO: 跳转个人中心页面
       router.push('/profile')
     } else if (key === 'logout') {
       userStore.logout()

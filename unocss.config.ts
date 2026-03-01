@@ -36,16 +36,17 @@ export default defineConfig({
   shortcuts: shortcutsArr,
   safelist: iconSafelist,
 
-  // 扫描 @robot-admin/layout 包源码中的 UnoCSS 类名（图标、工具类等）
   content: {
+    // 扫描 Vite 管道内的模块（项目自身源码自动覆盖）
     pipeline: {
-      include: [
-        /\.(vue|ts|tsx|html)($|\?)/,
-        // 本地 link 开发时
-        '../robot-admin-packages/packages/layout/src/**/*.{vue,ts}',
-        // 发布安装后（node_modules 中）
-        'node_modules/@robot-admin/layout/src/**/*.{vue,ts}',
-      ],
+      include: [/\.(vue|ts|tsx|html)($|\?)/],
     },
+    // 扫描文件系统中不经过 Vite 管道的外部包源码
+    filesystem: [
+      // @robot-admin/layout（本地 link 开发 + node_modules）
+      '../robot-admin-packages/packages/layout/src/**/*.{vue,ts}',
+      'node_modules/@robot-admin/layout/src/**/*.{vue,ts}',
+      // naive-ui-components 已改用 C_Icon (Iconify runtime)，无需扫描
+    ],
   },
 })

@@ -17,7 +17,7 @@ import type { LayoutContext } from '@robot-admin/layout'
 import { s_permissionStore } from '@/stores/permission'
 import { useThemeStore } from '@/stores/theme'
 import { useSettingsStore } from '@/stores/settings'
-import C_Icon from '@/components/global/C_Icon/index.vue'
+import { C_Icon } from '@robot-admin/naive-ui-components'
 
 /**
  * 创建布局桥接数据

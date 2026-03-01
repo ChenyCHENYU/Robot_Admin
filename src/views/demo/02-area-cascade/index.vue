@@ -112,7 +112,7 @@
 
 <script setup lang="ts">
   import pcaCode from '@/assets/data/pca-code.json'
-  import { type CascadeItem } from '@/components/global/C_Cascade/index.vue'
+  import { type CascadeItem } from '@robot-admin/naive-ui-components'
 
   // 定义级联选择器选中值的接口
   interface CascadeOption {
