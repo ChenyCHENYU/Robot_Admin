@@ -12,8 +12,8 @@
   <NConfigProvider
     :theme="themeStore.currentTheme"
     :theme-overrides="themeStore.themeOverrides"
-    :locale="zhCN"
-    :date-locale="dateZhCN"
+    :locale="languageStore.naiveLocale"
+    :date-locale="languageStore.naiveDateLocale"
     :hljs="hljs"
     class="global-config-provider"
   >
@@ -40,8 +40,8 @@
 
 <script setup lang="ts">
   import { onMounted, nextTick } from 'vue'
-  import { zhCN, dateZhCN } from 'naive-ui/es' // 中文语言包
   import { useThemeStore } from '@/stores/theme'
+  import { useLanguageStore } from '@/stores/language'
   import { s_reLoginStore } from '@/stores/reLogin'
   import { removeLoading } from '@/plugins/loading'
   import '@/lib/version'
@@ -50,6 +50,7 @@
   const { hljs } = window
 
   const themeStore = useThemeStore()
+  const languageStore = useLanguageStore()
   const reLoginStore = s_reLoginStore()
 
   // 重新登录成功处理

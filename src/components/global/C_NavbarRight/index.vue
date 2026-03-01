@@ -35,7 +35,10 @@
       </NTooltip>
 
       <!-- 语言切换 -->
-      <C_Language />
+      <C_Language
+        :model-value="languageStore.currentLang"
+        @change="languageStore.setLanguage"
+      />
 
       <!-- 主题切换 -->
       <C_Theme
@@ -88,6 +91,7 @@
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
   import { useThemeStore } from '@/stores/theme'
+  import { useLanguageStore } from '@/stores/language'
   import { s_permissionStore } from '@/stores/permission'
   import { normalizeMenuOptions } from '@/utils/d_menu'
   import {
@@ -117,6 +121,7 @@
 
   const userStore = s_userStore()
   const themeStore = useThemeStore()
+  const languageStore = useLanguageStore()
   const permissionStore = s_permissionStore()
   const router = useRouter()
 
