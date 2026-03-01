@@ -93,13 +93,14 @@
   import { useThemeStore } from '@/stores/theme'
   import { useLanguageStore } from '@/stores/language'
   import { s_permissionStore } from '@/stores/permission'
-  import { normalizeMenuOptions } from '@/utils/d_menu'
+  import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import {
     C_GlobalSearch,
     C_NotificationCenter,
     C_Language,
     C_Theme,
     C_Guide,
+    createMenuOptions,
     type GlobalSearchOptions,
     type SearchMenuItem,
     type GuideStep,
@@ -150,7 +151,9 @@
 
   /** 在菜单树中找到父级的第一个子路由 key */
   function findFirstChildKey(parentKey: string): string | null {
-    const normalized = normalizeMenuOptions(permissionStore.showMenuListGet)
+    const normalized = createMenuOptions(permissionStore.showMenuListGet, {
+      labelFormatter: translateRouteTitle,
+    })
     const find = (nodes: MenuOption[]): string | null => {
       for (const n of nodes) {
         if (n.key === parentKey && n.children?.length)
@@ -167,7 +170,11 @@
 
   const searchOptions: GlobalSearchOptions = {
     menuItems: () =>
-      flattenMenuItems(normalizeMenuOptions(permissionStore.showMenuListGet)),
+      flattenMenuItems(
+        createMenuOptions(permissionStore.showMenuListGet, {
+          labelFormatter: translateRouteTitle,
+        })
+      ),
     isDark: () => themeStore.isDark,
     /** 选中菜单项后跳转路由 */
     onSelect(key: string, hasChildren: boolean) {

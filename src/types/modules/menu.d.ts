@@ -13,14 +13,6 @@
 import type { VNode } from 'vue'
 
 /**
- * 菜单项类型
- * - `group` 分组
- * - `divider` 分割线
- * - `item` 普通菜单项
- */
-export type MenuItemType = 'group' | 'divider' | 'item'
-
-/**
  * 菜单选项的详细类型定义
  */
 export interface MenuOptions {
@@ -101,35 +93,4 @@ export interface MenuOptions {
    * 子菜单
    */
   children?: MenuOptions[]
-}
-
-/**
- * 标签栏项类型定义
- */
-export interface MenuTag {
-  /**
-   * 标签项对应的路由路径
-   */
-  path: string
-  /**
-   * 标签显示的标题（已翻译）
-   */
-  title: string
-  /**
-   * 原始标题（中文，用于重新翻译）
-   */
-  originalTitle?: string
-  /**
-   * 显示的图标
-   */
-  icon?: string
-  /**
-   * 标签相关元数据
-   */
-  meta?: {
-    /**
-     * 是否固定在标签栏（affix）
-     */
-    affix?: boolean
-  }
 }

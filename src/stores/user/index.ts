@@ -13,7 +13,6 @@ import { setItem, getItem, removeItem } from '@/hooks/useStorage'
 import router from '@/router'
 import { d_setTimeStamp } from '@/utils/d_auth'
 import { createDiscreteApi } from 'naive-ui/es'
-import { s_appStore } from '@/stores/app/index'
 const { notification } = createDiscreteApi(['notification'])
 
 interface UserInfo {
@@ -56,7 +55,7 @@ export const s_userStore = defineStore('user', {
         removeItem(TOKEN)
         removeItem(TIME_STAMP)
         removeItem('userInfo')
-        s_appStore().$reset()
+        localStorage.removeItem('__tags_view_list__')
 
         // 4. 清理动态路由
         const { clearExistingRoutes } = await import('@/router/dynamicRouter')

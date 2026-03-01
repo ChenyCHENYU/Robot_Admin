@@ -10,8 +10,14 @@
 
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
-import { RobotNaiveUiResolver } from '@robot-admin/naive-ui-components/resolver'
+import {
+  RobotNaiveUiResolver,
+  componentNames,
+} from '@robot-admin/naive-ui-components/resolver'
 import IconsResolver from 'unplugin-icons/resolver'
+
+/** 已迁移到组件库的组件集合 — fallback resolver 必须跳过 */
+const libraryComponents = new Set<string>(componentNames)
 
 export default Components({
   dts: 'src/types/components.d.ts', // 生成类型声明文件
@@ -22,6 +28,8 @@ export default Components({
     NaiveUiResolver(),
     RobotNaiveUiResolver(),
     componentName => {
+      // 已迁移到组件库的 → 由 RobotNaiveUiResolver 处理，此处跳过
+      if (libraryComponents.has(componentName)) return null
       // 未迁移的 C_ 组件（布局/业务组件）→ 继续从本地解析
       if (componentName.startsWith('C_')) {
         return {

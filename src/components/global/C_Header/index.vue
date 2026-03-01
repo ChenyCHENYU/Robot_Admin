@@ -51,7 +51,11 @@
             visibility: settingsStore.showBreadcrumb ? 'visible' : 'hidden',
           }"
         >
-          <C_Breadcrumb />
+          <C_Breadcrumb
+            :label-formatter="translateRouteTitle"
+            :show-icon="settingsStore.showBreadcrumbIcon"
+            @select="router.push"
+          />
         </div>
 
         <!-- 右侧：统一操作区 -->
@@ -65,7 +69,7 @@
       class="header-bottom w-full flex items-end"
       :style="{ height: `${settingsStore.tagsViewHeight}px` }"
     >
-      <C_TagsView />
+      <C_TagsView :label-formatter="translateRouteTitle" />
     </div>
   </NLayoutHeader>
 </template>
@@ -73,12 +77,14 @@
 <script setup lang="ts">
   import { useThemeStore } from '@/stores/theme'
   import { useSettingsStore } from '@/stores/settings'
+  import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
   defineOptions({ name: 'C_Header' })
 
   const themeStore = useThemeStore()
   const settingsStore = useSettingsStore()
+  const router = useRouter()
 
   // 从父组件注入设置抽屉状态
   interface SettingsDrawer {

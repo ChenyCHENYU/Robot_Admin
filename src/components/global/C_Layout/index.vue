@@ -18,10 +18,13 @@
           class="menu-scroll-container"
         >
           <C_Menu
-            :data="menuData"
+            :routes="menuData"
+            :value="route.path"
             mode="vertical"
             :collapsed="collapsed"
             :inverted="isDarkMode"
+            :label-formatter="translateRouteTitle"
+            @select="router.push"
           />
         </div>
       </template>
@@ -38,7 +41,7 @@
 
       <!-- 标签页 -->
       <template #tags-view>
-        <C_TagsView />
+        <C_TagsView :label-formatter="translateRouteTitle" />
       </template>
 
       <!-- 页脚 -->
@@ -57,6 +60,7 @@
   import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import { useThemeStore } from '@/stores/theme'
   import { s_permissionStore } from '@/stores/permission'
+  import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_Settings from '@/components/global/C_Settings/index.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
@@ -66,6 +70,8 @@
 
   const permissionStore = s_permissionStore()
   const themeStore = useThemeStore()
+  const route = useRoute()
+  const router = useRouter()
 
   const isReady = ref(true)
   const isDarkMode = computed(() => themeStore.isDark)
@@ -94,4 +100,3 @@
     showSettings,
   })
 </script>
-
