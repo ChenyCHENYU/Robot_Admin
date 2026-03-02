@@ -474,6 +474,10 @@
 </template>
 
 <script setup lang="ts">
+  // vue-flow 样式按需加载（从 main.ts 移到使用页面）
+  import '@vue-flow/core/dist/style.css'
+  import '@vue-flow/core/dist/theme-default.css'
+
   import {
     type User,
     type ValidationError,

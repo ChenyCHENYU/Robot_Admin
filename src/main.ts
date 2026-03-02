@@ -9,7 +9,7 @@
  */
 
 import '../lang/index.js'
-import './utils/plugins/i18n-route.js' // 🌐 扩展路由翻译
+import './utils/plugins/i18n-route.ts' // 🌐 扩展路由翻译
 
 // 键：首屏加载动画必须最先执行，确保极速显示
 import { setupLoading } from '@/plugins/loading'
@@ -19,8 +19,7 @@ import '@/styles/index.scss'
 import '@robot-admin/layout/style' // 布局包完整样式（组件 + 布局）
 import '@robot-admin/naive-ui-components/style.css' // 📦 组件库样式
 import 'virtual:uno.css'
-import '@vue-flow/core/dist/style.css'
-import '@vue-flow/core/dist/theme-default.css'
+// vue-flow 样式已移至使用页面按需加载（28-work-flow-editor）
 import '@/router/permission'
 import App from './App.vue'
 import router from './router'
@@ -37,7 +36,7 @@ import {
   setupLayoutSystem, // 🆕 布局系统插件
   setupFileUtils, // 🆕 文件处理工具包
 } from '@/plugins'
-import NaiveUIComponents from '@robot-admin/naive-ui-components' // 📦 组件库
+// ✅ 移除 app.use(NaiveUIComponents)，由 RobotNaiveUiResolver 按需解析
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
 /**
@@ -57,8 +56,7 @@ async function bootstrap() {
   // 使用去除滚动警告的插件
   app.use(PassiveScrollPlugin)
 
-  // 📦 注册组件库（全局注册 38 个 C_ 组件）
-  app.use(NaiveUIComponents)
+  // ✅ C_ 组件由 RobotNaiveUiResolver 按需自动解析，无需全局注册
 
   // 使用路由
   app.use(router)
@@ -70,7 +68,7 @@ async function bootstrap() {
   setupNaiveUI(app)
   setupDynamicComponents(app)
   setupHighlight(app)
-  setupMarkdown(app)
+  setupMarkdown(app) // 🔄 已改为异步懒加载，不阻塞启动
   setupDirectives(app)
   setupFileUtils() // 初始化 file-utils（注入 naive-ui 消息系统）
   setupAnalytics(app)

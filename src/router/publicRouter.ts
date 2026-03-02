@@ -52,18 +52,6 @@ export const publicRoutes: RouteRecordRaw[] = [
       keepAlive: false,
     },
   },
-  {
-    path: '/:catchAll(.*)',
-    component: () => import('_views/error-page/blank.vue'),
-    meta: {
-      title: '空白',
-      icon: '',
-      hidden: true,
-      full: false,
-      affix: false,
-      keepAlive: false,
-    },
-  },
 ]
 
 const routes = [...publicRoutes]
