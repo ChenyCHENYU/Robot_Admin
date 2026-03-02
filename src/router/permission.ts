@@ -90,7 +90,8 @@ const handleUnauthenticated = (
   to: RouteLocationNormalized,
   meta: ExtendedRouteMeta
 ): string | boolean => {
-  if (WHITE_LIST.includes(to.path)) {
+  // 白名单放行：精确匹配 + /preview 前缀（文档站 iframe 嵌入）
+  if (WHITE_LIST.includes(to.path) || to.path.startsWith('/preview')) {
     setPageTitle(meta.title)
     return true
   }

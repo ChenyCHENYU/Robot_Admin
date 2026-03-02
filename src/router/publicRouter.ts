@@ -8,8 +8,11 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 import type { RouteRecordRaw } from 'vue-router'
+import { previewRoutes } from './previewRouter'
 
 export const publicRoutes: RouteRecordRaw[] = [
+  // 组件预览路由（免登录，文档站 iframe 嵌入用）
+  previewRoutes,
   {
     path: '/login',
     name: 'login',
