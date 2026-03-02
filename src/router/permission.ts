@@ -117,6 +117,13 @@ router.beforeEach(
       const { authMenuList } = s_permissionStore()
       const meta = to.meta as ExtendedRouteMeta
 
+      // 0. 预览路由直接放行（无论登录与否，跳过所有认证和动态路由逻辑）
+      //    解决：已登录用户在新窗口打开 /preview/* 时被动态路由初始化阻塞导致空白
+      if (to.path.startsWith('/preview')) {
+        setPageTitle(meta.title)
+        return true
+      }
+
       // 1. 未登录处理
       if (!token) {
         return handleUnauthenticated(to, meta)
