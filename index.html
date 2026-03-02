@@ -11,6 +11,19 @@
 
     <!-- ========== 首屏加载动画样式（内联，确保 HTML 渲染后立即生效） ========== -->
     <style id="loading-style">
+      /* 根元素背景 —— 消除浏览器默认白底 */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+
+      html[data-theme='dark'],
+      html[data-theme='dark'] body {
+        background: #101014;
+      }
+
       .app-loading {
         position: fixed;
         top: 0;
@@ -123,13 +136,13 @@
         const theme = isDark ? 'dark' : 'light';
         
         document.documentElement.setAttribute('data-theme', theme);
+        // 立即设置根背景色，彻底消除白/黑闪烁
+        document.documentElement.style.background = isDark ? '#101014' : '#fff';
       })();
     </script>
   </head>
   <body>
-    <div id="app"></div>
-
-    <!-- 首屏加载动画（纯 HTML，JS 模块加载前立即可见，消除白屏/黑屏） -->
+    <!-- 首屏加载动画：放在 #app 之前，确保浏览器第一帧就渲染 -->
     <div class="app-loading">
       <div class="app-loading-wrap">
         <div class="app-loading-logo-container">
@@ -150,6 +163,7 @@
       </div>
     </div>
 
+    <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

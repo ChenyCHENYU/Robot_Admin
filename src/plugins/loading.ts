@@ -176,11 +176,14 @@ export function removeLoading(delay = 200): void {
     setTimeout(() => {
       loading.remove()
 
-      // 移除样式
-      const style = document.querySelector('style')
-      if (style && style.innerHTML.includes('.app-loading')) {
-        style.remove()
+      // 精确移除 index.html 内联的加载样式
+      const loadingStyle = document.getElementById('loading-style')
+      if (loadingStyle) {
+        loadingStyle.remove()
       }
+
+      // 清理根元素上的内联背景色（交给应用 CSS 接管）
+      document.documentElement.style.removeProperty('background')
 
       console.log('✅ 首屏加载动画已移除')
     }, 400) // 等待 CSS transition 完成
