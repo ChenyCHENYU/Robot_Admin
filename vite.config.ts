@@ -29,7 +29,7 @@ import {
 } from './src/config/vite'
 import { HEAVY_PAGE_ROUTES } from './src/config/vite/heavyPages'
 
-export default defineConfig(({ mode }: { mode: string }) => {
+export default defineConfig(({ mode, command }: { mode: string; command: string }) => {
   const env = loadEnv(mode, process.cwd(), '')
   process.env = { ...process.env, ...env }
 
@@ -43,9 +43,14 @@ export default defineConfig(({ mode }: { mode: string }) => {
       Icons({ autoInstall: true }),
       viteAutoImportPlugin,
       viteComponentsPlugin,
-      preloader({
-        routes: HEAVY_PAGE_ROUTES,
-      }),
+      // ⚡ preloader 仅在开发环境启用（生产环境 import() 无法加载原始 .vue 源文件）
+      ...(command === 'serve'
+        ? [
+            preloader({
+              routes: HEAVY_PAGE_ROUTES,
+            }),
+          ]
+        : []),
       createI18nPlugin(),
       ...(process.env.ANALYZE
         ? [

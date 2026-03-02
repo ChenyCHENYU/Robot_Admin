@@ -14,6 +14,11 @@
  * @return {void}
  */
 export function setupLoading(): void {
+  // ⭐ 如果 index.html 已内联了加载动画，直接复用，不再重复创建
+  if (document.querySelector('.app-loading')) {
+    return
+  }
+
   const app = document.getElementById('app')
 
   if (!app) {
