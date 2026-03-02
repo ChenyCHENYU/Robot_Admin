@@ -69,7 +69,7 @@
   </p>
   <p>
     <img src="https://img.shields.io/badge/components-39+-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-36+-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/demos-48+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
     <img src="https://img.shields.io/badge/test_coverage-85%25-brightgreen?style=flat" alt="Test Coverage">
@@ -175,9 +175,10 @@ _在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `Type
 
 ### 🎨 不只是一个管理系统，更是一个作品
 
-- **30+ 精心打磨的演示页面** - 每一个都是可直接用于生产的业务组件
+- **48+ 精心打磨的演示页面** - 每一个都是可直接用于生产的业务组件，32 个组件支持文档站 iframe 在线预览
 - **7 种自定义指令** - 防抖、节流、长按、拖拽、权限...让开发更优雅
 - **主题系统** - 深色/浅色模式/跟随系统 + 支持自定义扩展
+- **Preview 路由系统** - 32 个无鉴权独立预览路由，供 [文档站](https://www.tzagileteam.com) 通过 iframe 嵌入实时组件演示
 
 ### 🛠️ 企业级架构，个人项目也能享受
 
@@ -350,7 +351,7 @@ bun clean              # 清理缓存
 
 `v-copy` 复制 | `v-debounce` 防抖 | `v-throttle` 节流 | `v-permission` 权限 | `v-watermark` 水印 | `v-draggable` 拖拽 | `v-longpress` 长按
 
-### 🎪 演示页面（36+ 完整示例）
+### 🎪 演示页面（48+ 完整示例）
 
 <details>
 <summary><b>查看所有演示页面</b></summary>
@@ -407,6 +408,7 @@ Robot_Admin/
 │   ├── 📁 views/                    # 页面视图
 │   │   ├── 📁 dashboard/            # 数据看板
 │   │   ├── 📁 demo/                 # 演示页面（30+ 功能展示）
+│   │   ├── 📁 preview/              # 组件预览页面（32 个 iframe 嵌入路由）
 │   │   ├── 📁 sys-manage/           # 系统管理
 │   │   ├── 📁 login/                # 登录注册
 │   │   └── 📁 home/                 # 项目主页
@@ -902,7 +904,7 @@ bun run type-build
 | 🎨 UI 组件库  | **Naive UI 轻量** |   Ant Design   |   Element Plus    |   选择多样   |
 | 💪 TypeScript | **完整类型支持**  |    基础支持    |     基础支持      | 支持程度不一 |
 | 🔧 自定义指令 |  **7个实用指令**  |    少量指令    |     基础指令      |   功能有限   |
-|  📊 演示页面  | **36+ 完整示例**  |    有限示例    |     有限示例      |   基础示例   |
+|  📊 演示页面  | **48+ 完整示例**  |    有限示例    |     有限示例      |   基础示例   |
 |  🎯 学习成本  |   **中等友好**    |    较高门槛    |     中等门槛      |   差异较大   |
 |  📈 维护状态  |  **🔥 积极维护**  |    持续维护    |     持续维护      |   状态不一   |
 
@@ -911,7 +913,7 @@ bun run type-build
 - 🚀 **性能优先**: Bun + Vite7 双引擎，开发体验极致
 - 🧩 **组件丰富**: 39+ 业务组件，独立组件库按需导入
 - 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
-- 📚 **学习友好**: 36+ 演示页面，每个都是最佳实践
+- 📚 **学习友好**: 48+ 演示页面，每个都是最佳实践
 </details>
 
 ---
