@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 env-manager dev && vite",
     "dev:local": "USE_LOCAL_PACKAGES=true bun run dev",
+    "dev:components": "USE_LOCAL_COMPONENTS=true bun run dev",
     "dev:devtools": "VITE_DEVTOOLS=true bun run dev",
     "build": "env-manager prod && vite build",
     "build:test": "env-manager test && vite build --mode test --emptyOutDir",

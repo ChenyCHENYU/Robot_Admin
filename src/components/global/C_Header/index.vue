@@ -48,7 +48,7 @@
           <!-- 面包屑导航 -->
           <div
             v-show="settingsStore.showBreadcrumb"
-            class="flex-1 min-w-0 h-full flex items-center translate-y-1px"
+            class="flex-1 min-w-0 h-full flex items-center"
           >
             <C_Breadcrumb
               :label-formatter="translateRouteTitle"

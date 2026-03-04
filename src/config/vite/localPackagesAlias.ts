@@ -21,6 +21,29 @@ interface LocalPackageConfig {
 }
 
 /**
+ * 独立本地包映射
+ *
+ * @description
+ * 不在 monorepo packages 目录下、但需要本地调试的独立包。
+ * key = npm 包名中的短名（如 `naive-ui-components`）
+ * value = 相对于项目根目录的本地仓库路径
+ *
+ * **为什么不用 bun link？**
+ * `bun link` 让 Vite 加载预构建 dist JS，Vite 7 的 dev transform
+ * 会注入 `import { h } from 'vue'`，与压缩后的同名变量冲突崩溃。
+ * alias → src/ 让 Vite 直接编译 .vue 源文件，HMR 即时生效，零风险。
+ *
+ * **启用方式：**
+ * ```bash
+ * bun run dev:components   # 仅启用独立组件包调试
+ * bun run dev:local        # 启用所有本地包（monorepo + 独立包）
+ * ```
+ */
+const STANDALONE_LOCAL_PACKAGES: Record<string, string> = {
+  'naive-ui-components': '../naive-ui-components',
+}
+
+/**
  * 本地包配置
  */
 const LOCAL_PACKAGE_CONFIG: LocalPackageConfig = {
@@ -29,68 +52,95 @@ const LOCAL_PACKAGE_CONFIG: LocalPackageConfig = {
   enabled: process.env.USE_LOCAL_PACKAGES === 'true',
 }
 
+/** 独立包模式：仅 alias 独立本地包，不动 monorepo 包 */
+const STANDALONE_MODE =
+  process.env.USE_LOCAL_COMPONENTS === 'true' &&
+  process.env.USE_LOCAL_PACKAGES !== 'true'
+
 /**
  * 获取本地包别名配置
  *
  * @description
- * 用于 `bun run dev:local` 模式，将 @robot-admin/* 包解析到本地源码目录。
+ * 支持两种本地调试模式：
+ *
+ * | 命令 | monorepo 包 | 独立包 | 适用场景 |
+ * |------|-------------|--------|---------|
+ * | `bun run dev` | npm | npm | 日常开发 |
+ * | `bun run dev:components` | npm | 本地源码 | 调试组件库 |
+ * | `bun run dev:local` | 本地源码 | 本地源码 | 全量调试 |
  *
  * **工作原理：**
  * - 使用正则精确匹配主入口（如 `@robot-admin/layout$`）
  * - 子路径导出（如 `/style`）仍从 node_modules 解析
  *
- * **使用场景：**
- * ```bash
- * bun run dev:local  # 启用本地包调试
- * bun run dev        # 使用 npm 包
- * ```
- *
  * @returns Vite alias 配置数组
- *
- * @example
- * // 解析行为
- * import { setupLayout } from '@robot-admin/layout'  // → ../packages/layout/src/
- * import '@robot-admin/layout/style'                 // → node_modules/.../dist/index.css
  */
 export function getLocalPackagesAlias(): Alias[] {
-  if (!LOCAL_PACKAGE_CONFIG.enabled) {
-    return []
-  }
+  const isFullMode = LOCAL_PACKAGE_CONFIG.enabled
+  const isComponentsOnly = STANDALONE_MODE
 
-  const localPath = resolve(process.cwd(), LOCAL_PACKAGE_CONFIG.packagesDir)
-
-  if (!existsSync(localPath)) {
-    console.warn('⚠️  未找到本地包目录，将使用 npm 包')
-    console.warn(`    路径: ${localPath}`)
+  if (!isFullMode && !isComponentsOnly) {
     return []
   }
 
   const aliases: Alias[] = []
   const packageNames: string[] = []
 
-  readdirSync(localPath).forEach(pkgName => {
-    const srcPath = resolve(localPath, pkgName, 'src')
+  // ── 1. Monorepo packages（仅在全量模式下启用）──
+  if (isFullMode) {
+    const localPath = resolve(process.cwd(), LOCAL_PACKAGE_CONFIG.packagesDir)
 
-    if (!existsSync(srcPath)) {
-      return
+    if (existsSync(localPath)) {
+      readdirSync(localPath).forEach(pkgName => {
+        const srcPath = resolve(localPath, pkgName, 'src')
+
+        if (!existsSync(srcPath)) {
+          return
+        }
+
+        const fullPackageName = `${LOCAL_PACKAGE_CONFIG.namespace}/${pkgName}`
+
+        aliases.push({
+          find: new RegExp(`^${fullPackageName.replace(/\//g, '\\/')}$`),
+          replacement: srcPath,
+        })
+
+        packageNames.push(pkgName)
+      })
+    } else {
+      console.warn('⚠️  未找到 monorepo 包目录，跳过扫描')
+      console.warn(`    路径: ${localPath}`)
+    }
+  }
+
+  // ── 2. 独立本地包（全量模式 或 组件模式 均启用）──
+  for (const [pkgName, relativePath] of Object.entries(
+    STANDALONE_LOCAL_PACKAGES
+  )) {
+    const srcIndex = resolve(process.cwd(), relativePath, 'src', 'index.ts')
+    const srcDir = resolve(process.cwd(), relativePath, 'src')
+    const replacement = existsSync(srcIndex) ? srcIndex : srcDir
+
+    if (!existsSync(replacement)) {
+      console.warn(`⚠️  独立本地包 ${pkgName} 源码未找到，跳过`)
+      console.warn(`    路径: ${replacement}`)
+      continue
     }
 
-    // 使用正则精确匹配包名（不匹配子路径）
-    // ^@robot-admin/layout$  ✅ 匹配
-    // ^@robot-admin/layout/style  ❌ 不匹配（继续走正常解析）
     const fullPackageName = `${LOCAL_PACKAGE_CONFIG.namespace}/${pkgName}`
 
     aliases.push({
       find: new RegExp(`^${fullPackageName.replace(/\//g, '\\/')}$`),
-      replacement: srcPath,
+      replacement,
     })
 
-    packageNames.push(pkgName)
-  })
+    packageNames.push(`${pkgName}(独立)`)
+  }
 
   if (aliases.length > 0) {
+    const modeLabel = isFullMode ? 'dev:local' : 'dev:components'
     console.log(
-      `\n🔗 [dev:local] 已启用本地包调试: ${packageNames.join(', ')}\n`
+      `\n🔗 [${modeLabel}] 已启用本地包调试: ${packageNames.join(', ')}\n`
     )
   }
 
@@ -101,7 +151,7 @@ export function getLocalPackagesAlias(): Alias[] {
  * 检查本地包调试模式是否启用
  */
 export function isLocalPackageMode(): boolean {
-  return LOCAL_PACKAGE_CONFIG.enabled
+  return LOCAL_PACKAGE_CONFIG.enabled || STANDALONE_MODE
 }
 
 /**
@@ -110,8 +160,10 @@ export function isLocalPackageMode(): boolean {
 export function getLocalPackageInfo() {
   return {
     enabled: LOCAL_PACKAGE_CONFIG.enabled,
+    standaloneMode: STANDALONE_MODE,
     packagesDir: LOCAL_PACKAGE_CONFIG.packagesDir,
     namespace: LOCAL_PACKAGE_CONFIG.namespace,
+    standalonePackages: STANDALONE_LOCAL_PACKAGES,
     resolvedPath: resolve(process.cwd(), LOCAL_PACKAGE_CONFIG.packagesDir),
   }
 }
