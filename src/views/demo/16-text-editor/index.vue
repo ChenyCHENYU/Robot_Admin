@@ -158,11 +158,11 @@
 </template>
 
 <script setup lang="ts">
-  import { useThemeStore } from '@/stores/theme'
+  import { s_themeStore } from '@/stores/theme'
 
   const message = useMessage()
   const dialog = useDialog()
-  const themeStore = useThemeStore()
+  const themeStore = s_themeStore()
   const isDark = computed(() => themeStore.isDark)
 
   const editorRef = ref()

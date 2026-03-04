@@ -9,6 +9,12 @@
     display: flex;
     align-items: center;
     gap: 16px;
+// 所有操作按钮及其内部可交互元素统一 pointer 光标
+  button,
+  [role='button'],
+  .n-button {
+    cursor: pointer;
+  }
   }
 
   .action-btn {

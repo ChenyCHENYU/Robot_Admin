@@ -35,7 +35,7 @@ const localeMap: Record<string, { locale: NLocale; dateLocale: NDateLocale }> =
     ko: { locale: koKR, dateLocale: dateKoKR },
   }
 
-export const useLanguageStore = defineStore('language', () => {
+export const s_languageStore = defineStore('language', () => {
   // 初始值从 localStorage 读取
   const currentLang = ref(localStorage.getItem(LANG_STORAGE_KEY) || 'zh-cn')
 

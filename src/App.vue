@@ -40,8 +40,8 @@
 
 <script setup lang="ts">
   import { onMounted, nextTick } from 'vue'
-  import { useThemeStore } from '@/stores/theme'
-  import { useLanguageStore } from '@/stores/language'
+  import { s_themeStore } from '@/stores/theme'
+  import { s_languageStore } from '@/stores/language'
   import { s_reLoginStore } from '@/stores/reLogin'
   import { removeLoading } from '@/plugins/loading'
   import '@/lib/version'
@@ -49,8 +49,8 @@
   // 获取 hljs 实例用于 NCode 组件
   const { hljs } = window
 
-  const themeStore = useThemeStore()
-  const languageStore = useLanguageStore()
+  const themeStore = s_themeStore()
+  const languageStore = s_languageStore()
   const reLoginStore = s_reLoginStore()
 
   // 重新登录成功处理

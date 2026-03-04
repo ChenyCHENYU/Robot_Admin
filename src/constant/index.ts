@@ -33,13 +33,3 @@ export const TABS_WHITE_LIST: string[] = ['/403', '/404', '/500', LOGIN_URL]
 
 // * 高德地图key
 export const MAP_KEY: string = ''
-
-// --- FIXME: 下面变量和 store theme 后面可能弃用 ---
-// tags
-export const TAGS_VIEW: string = 'tagsView'
-
-// 主题色保存的 key
-export const MAIN_COLOR: string = 'mainColor'
-
-// 默认色值
-export const DEFAULT_COLOR = '#409eff'

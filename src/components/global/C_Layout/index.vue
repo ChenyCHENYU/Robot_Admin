@@ -58,7 +58,7 @@
 <script setup lang="ts">
   import { C_LayoutContainer, LAYOUT_CONTEXT_KEY } from '@robot-admin/layout'
   import { useLayoutBridge } from '@/composables/useLayoutBridge'
-  import { useThemeStore } from '@/stores/theme'
+  import { s_themeStore } from '@/stores/theme'
   import { s_permissionStore } from '@/stores/permission'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_Settings from '@/components/global/C_Settings/index.vue'
@@ -69,7 +69,7 @@
   provide(LAYOUT_CONTEXT_KEY, layoutContext)
 
   const permissionStore = s_permissionStore()
-  const themeStore = useThemeStore()
+  const themeStore = s_themeStore()
   const route = useRoute()
   const router = useRouter()
 

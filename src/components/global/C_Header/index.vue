@@ -19,43 +19,43 @@
       <div
         class="header-content w-full h-full flex items-center justify-between"
       >
-        <!-- 左侧：折叠菜单 -->
-        <div
-          id="guide-menu-collapse"
-          class="flex items-center"
-        >
-          <NTooltip>
+        <!-- 左侧：侧边栏折叠 + 面包屑 -->
+        <div class="flex items-center h-full gap-12px">
+          <NTooltip
+            id="guide-menu-collapse"
+            placement="bottom"
+          >
             <template #trigger>
-              <NButton
-                text
+              <button
+                class="collapse-trigger"
+                :class="{ 'is-collapsed': isCollapsed }"
                 @click="handleCollapsedChange(!isCollapsed)"
               >
                 <i
                   :class="[
-                    'transition-all duration-300 ease-in-out',
-                    isCollapsed
-                      ? 'i-ri:menu-fold-4-fill rotate-0'
-                      : 'i-ri:menu-fold-3-fill rotate-360',
+                    'text-18px transition-transform duration-300 ease-in-out',
+                    isCollapsed ? 'i-ri:side-bar-fill' : 'i-ri:side-bar-line',
                   ]"
                 ></i>
-              </NButton>
+              </button>
             </template>
-            折叠菜单
+            {{ isCollapsed ? '展开菜单' : '收起菜单' }}
           </NTooltip>
-        </div>
 
-        <!-- 中间：面包屑导航 -->
-        <div
-          class="flex-1 min-w-0"
-          :style="{
-            visibility: settingsStore.showBreadcrumb ? 'visible' : 'hidden',
-          }"
-        >
-          <C_Breadcrumb
-            :label-formatter="translateRouteTitle"
-            :show-icon="settingsStore.showBreadcrumbIcon"
-            @select="router.push"
-          />
+          <!-- 分隔线 -->
+          <div class="h-16px w-1px bg-gray-200 dark:bg-gray-700 op-60"></div>
+
+          <!-- 面包屑导航 -->
+          <div
+            v-show="settingsStore.showBreadcrumb"
+            class="flex-1 min-w-0 h-full flex items-center translate-y-1px"
+          >
+            <C_Breadcrumb
+              :label-formatter="translateRouteTitle"
+              :show-icon="settingsStore.showBreadcrumbIcon"
+              @select="router.push"
+            />
+          </div>
         </div>
 
         <!-- 右侧：统一操作区 -->
@@ -75,15 +75,15 @@
 </template>
 
 <script setup lang="ts">
-  import { useThemeStore } from '@/stores/theme'
-  import { useSettingsStore } from '@/stores/settings'
+  import { s_themeStore } from '@/stores/theme'
+  import { s_settingsStore } from '@/stores/settings'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
   defineOptions({ name: 'C_Header' })
 
-  const themeStore = useThemeStore()
-  const settingsStore = useSettingsStore()
+  const themeStore = s_themeStore()
+  const settingsStore = s_settingsStore()
   const router = useRouter()
 
   // 从父组件注入设置抽屉状态
@@ -102,3 +102,33 @@
   const { isCollapsed, handleCollapsedChange } =
     inject<MenuCollapse>('menuCollapse')!
 </script>
+
+<style lang="scss" scoped>
+  .collapse-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--app-text-secondary, #666);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+
+    &:hover {
+      background: var(--app-hover-bg, rgba(99, 102, 241, 0.08));
+      color: #6366f1;
+    }
+
+    &:active {
+      transform: scale(0.92);
+    }
+
+    &.is-collapsed i {
+      transform: scaleX(-1);
+    }
+  }
+</style>

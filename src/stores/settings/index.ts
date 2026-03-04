@@ -9,7 +9,7 @@ import {
   useSettingsStore as useLayoutSettingsStore,
   adjustColor,
 } from '@robot-admin/layout'
-import { useThemeStore } from '@/stores/theme'
+import { s_themeStore } from '@/stores/theme'
 
 /**
  * 初始化 settings store 与 Naive UI 的同步
@@ -17,7 +17,7 @@ import { useThemeStore } from '@/stores/theme'
  */
 export function initSettingsStoreSync() {
   const settingsStore = useLayoutSettingsStore()
-  const themeStore = useThemeStore()
+  const themeStore = s_themeStore()
 
   // 监听主题色变化，同步到 Naive UI
   watch(
@@ -86,7 +86,7 @@ export function initSettingsStoreSync() {
  * 导出布局包的 settings store
  * 保持与原有 API 兼容
  */
-export const useSettingsStore = useLayoutSettingsStore
+export const s_settingsStore = useLayoutSettingsStore
 
 // 重新导出类型（从布局包导出，避免类型重复定义）
 export type {

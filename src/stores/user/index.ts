@@ -9,7 +9,6 @@
  */
 import { defineStore } from 'pinia'
 import { TOKEN, TIME_STAMP } from '@/constant'
-import { setItem, getItem, removeItem } from '@/hooks/useStorage'
 import router from '@/router'
 import { d_setTimeStamp } from '@/utils/d_auth'
 import { createDiscreteApi } from 'naive-ui/es'
@@ -21,10 +20,21 @@ interface UserInfo {
   [key: string]: unknown
 }
 
+/** 安全读取 localStorage 并反序列化 */
+function readStorage<T>(key: string, fallback: T): T {
+  const raw = localStorage.getItem(key)
+  if (raw === null) return fallback
+  try {
+    return JSON.parse(raw) as T
+  } catch {
+    return raw as unknown as T
+  }
+}
+
 export const s_userStore = defineStore('user', {
   state: () => ({
-    token: getItem<string>(TOKEN) ?? '',
-    userInfo: getItem<UserInfo>('userInfo') ?? ({} as UserInfo),
+    token: readStorage<string>(TOKEN, ''),
+    userInfo: readStorage<UserInfo>('userInfo', {} as UserInfo),
   }),
 
   getters: {
@@ -34,12 +44,12 @@ export const s_userStore = defineStore('user', {
   actions: {
     setToken(token: string) {
       this.token = token
-      setItem(TOKEN, token)
+      localStorage.setItem(TOKEN, JSON.stringify(token))
     },
 
     setUserInfo(userInfo: UserInfo) {
       this.userInfo = userInfo
-      setItem('userInfo', userInfo)
+      localStorage.setItem('userInfo', JSON.stringify(userInfo))
     },
 
     async logout(isExpired = false) {
@@ -52,9 +62,9 @@ export const s_userStore = defineStore('user', {
         document.title = import.meta.env.VITE_APP_TITLE
 
         // 3. 只清除认证相关数据（保留用户配置如主题、语言等）
-        removeItem(TOKEN)
-        removeItem(TIME_STAMP)
-        removeItem('userInfo')
+        localStorage.removeItem(TOKEN)
+        localStorage.removeItem(TIME_STAMP)
+        localStorage.removeItem('userInfo')
         localStorage.removeItem('__tags_view_list__')
 
         // 4. 清理动态路由

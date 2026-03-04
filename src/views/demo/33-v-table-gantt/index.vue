@@ -115,11 +115,11 @@
 
   // ==================== 响应式数据 ====================
 
-  import { useThemeStore } from '@/stores/theme'
+  import { s_themeStore } from '@/stores/theme'
 
   const message = useMessage()
   const activeTab = ref('basic')
-  const themeStore = useThemeStore()
+  const themeStore = s_themeStore()
   const isDark = computed(() => themeStore.isDark)
   const ganttRefs = ref<Record<string, any>>({})
   const expandStates = reactive<Record<string, boolean>>({

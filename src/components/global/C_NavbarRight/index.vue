@@ -90,8 +90,8 @@
 
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
-  import { useThemeStore } from '@/stores/theme'
-  import { useLanguageStore } from '@/stores/language'
+  import { s_themeStore } from '@/stores/theme'
+  import { s_languageStore } from '@/stores/language'
   import { s_permissionStore } from '@/stores/permission'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import {
@@ -121,8 +121,8 @@
   }>()
 
   const userStore = s_userStore()
-  const themeStore = useThemeStore()
-  const languageStore = useLanguageStore()
+  const themeStore = s_themeStore()
+  const languageStore = s_languageStore()
   const permissionStore = s_permissionStore()
   const router = useRouter()
 

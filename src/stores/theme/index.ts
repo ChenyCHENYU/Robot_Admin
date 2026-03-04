@@ -23,7 +23,7 @@ const THEME_OVERRIDES_KEY = 'robot-admin-theme-overrides'
  * 主题 Store（扩展版）
  * 包含基础主题功能 + Naive UI 集成
  */
-export const useThemeStore = defineStore('theme-extended', () => {
+export const s_themeStore = defineStore('theme-extended', () => {
   // ============ 基础主题 Store ============
   const baseThemeStore = useBaseThemeStore()
   const { mode, systemIsDark, isDark } = storeToRefs(baseThemeStore)

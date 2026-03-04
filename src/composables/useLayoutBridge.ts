@@ -15,8 +15,8 @@
 
 import type { LayoutContext } from '@robot-admin/layout'
 import { s_permissionStore } from '@/stores/permission'
-import { useThemeStore } from '@/stores/theme'
-import { useSettingsStore } from '@/stores/settings'
+import { s_themeStore } from '@/stores/theme'
+import { s_settingsStore } from '@/stores/settings'
 import { C_Icon } from '@robot-admin/naive-ui-components'
 
 /**
@@ -29,8 +29,8 @@ import { C_Icon } from '@robot-admin/naive-ui-components'
 export function useLayoutBridge(): LayoutContext {
   // ============ 获取业务 Stores ============
   const permissionStore = s_permissionStore()
-  const themeStore = useThemeStore()
-  const settingsStore = useSettingsStore()
+  const themeStore = s_themeStore()
+  const settingsStore = s_settingsStore()
 
   // ============ 数据适配转换 ============
   return {

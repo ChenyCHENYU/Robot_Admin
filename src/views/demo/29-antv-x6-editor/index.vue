@@ -62,9 +62,9 @@
 
 <script setup lang="ts">
   import type { DiagramType, DiagramData } from '@/types/antv'
-  import { useThemeStore } from '@/stores/theme'
+  import { s_themeStore } from '@/stores/theme'
 
-  const themeStore = useThemeStore()
+  const themeStore = s_themeStore()
   const isDark = computed(() => themeStore.isDark)
 
   const currentType = ref<DiagramType>('bpmn') // 直接显示BPMN

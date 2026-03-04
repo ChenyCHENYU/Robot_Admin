@@ -8,9 +8,69 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { Ref } from 'vue'
-import IconCommunity from '@/components/icons/IconCommunity.vue'
-import IconDocumentation from '@/components/icons/IconDocumentation.vue'
+import { defineComponent, h, type Ref } from 'vue'
+
+/**
+ * 内联 SVG 图标组件（用于演示 component 类型图标）
+ */
+const DemoIconHeart = defineComponent({
+  name: 'DemoIconHeart',
+  props: {
+    width: { type: Number, default: 20 },
+    height: { type: Number, default: 20 },
+  },
+  /**
+   *
+   */
+  setup(props) {
+    return () =>
+      h(
+        'svg',
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          viewBox: '0 0 24 24',
+          width: props.width,
+          height: props.height,
+          fill: 'currentColor',
+        },
+        [
+          h('path', {
+            d: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
+          }),
+        ]
+      )
+  },
+})
+
+const DemoIconStar = defineComponent({
+  name: 'DemoIconStar',
+  props: {
+    width: { type: Number, default: 20 },
+    height: { type: Number, default: 20 },
+    color: { type: String, default: 'currentColor' },
+  },
+  /**
+   *
+   */
+  setup(props) {
+    return () =>
+      h(
+        'svg',
+        {
+          xmlns: 'http://www.w3.org/2000/svg',
+          viewBox: '0 0 24 24',
+          width: props.width,
+          height: props.height,
+          fill: props.color,
+        },
+        [
+          h('path', {
+            d: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+          }),
+        ]
+      )
+  },
+})
 
 // 类型定义
 export interface IconConfig {
@@ -73,12 +133,12 @@ const checkPath = "M9 16.17L4.83 12l-1.42 1.41L9 19..."
 
   component: `<!-- 组件方式图标 -->
 <script setup>
-import IconCommunity from '@/components/icons/IconCommunity.vue'
+import { DemoIconHeart } from './data'
 </script>
 
 <C_Icon
   type="component"
-  :name="IconCommunity"
+  :name="DemoIconHeart"
   :component-props="{ width: 32, height: 32 }"
 />`,
 
@@ -294,22 +354,22 @@ export const createDemoSections = (
     badgeText: '组件',
     icons: [
       {
-        key: 'community',
+        key: 'heart',
         props: {
           type: 'component',
-          name: IconCommunity,
+          name: DemoIconHeart,
           componentProps: { width: 32, height: 32 },
         },
-        label: 'IconCommunity',
+        label: 'DemoIconHeart',
       },
       {
-        key: 'docs',
+        key: 'star',
         props: {
           type: 'component',
-          name: IconDocumentation,
-          componentProps: { color: 'gold', size: 32 },
+          name: DemoIconStar,
+          componentProps: { color: 'gold', width: 32, height: 32 },
         },
-        label: 'IconDocumentation',
+        label: 'DemoIconStar',
       },
     ],
     code: codeExamples.component,
