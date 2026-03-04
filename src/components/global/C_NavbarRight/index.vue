@@ -68,23 +68,127 @@
     </div>
 
     <!-- 用户信息 -->
-    <div class="user-info">
-      <NAvatar
-        round
-        size="small"
-        src="/robot-avatar.png"
-      />
-      <NDropdown
-        size="small"
-        :options="userOptions"
-        @select="handleUserSelect"
-      >
-        <div class="user-dropdown">
-          <span>{{ userName }}</span>
-          <span class="i-mdi:chevron-down"></span>
+    <NPopover
+      trigger="click"
+      placement="bottom-end"
+      :show-arrow="false"
+      raw
+      :style="{ padding: 0 }"
+      class="user-popover-container"
+    >
+      <template #trigger>
+        <div class="user-info">
+          <div class="avatar-wrapper">
+            <NAvatar
+              round
+              size="small"
+              src="/robot-avatar.png"
+            />
+            <span class="status-dot status-online" />
+          </div>
+          <div class="user-dropdown">
+            <span>{{ userName }}</span>
+            <span class="i-mdi:chevron-down dropdown-arrow"></span>
+          </div>
         </div>
-      </NDropdown>
-    </div>
+      </template>
+
+      <!-- 用户面板 -->
+      <div
+        class="user-panel"
+        :class="{ 'user-panel--dark': themeStore.isDark }"
+      >
+        <!-- 用户卡片区 -->
+        <div class="user-panel__header">
+          <NAvatar
+            round
+            :size="40"
+            src="/robot-avatar.png"
+          />
+          <div class="user-panel__info">
+            <div class="user-panel__name">{{ userName }}</div>
+            <div class="user-panel__role">
+              <span class="i-mdi:shield-account text-xs"></span>
+              {{ userRole }}
+            </div>
+            <div class="user-panel__email">
+              <span class="i-mdi:email-outline text-xs"></span>
+              {{ userEmail }}
+            </div>
+          </div>
+          <div class="user-panel__status">
+            <NTag
+              :type="'success'"
+              size="tiny"
+              round
+            >
+              <template #icon>
+                <span class="status-dot-inline status-online" />
+              </template>
+              在线
+            </NTag>
+          </div>
+        </div>
+
+        <NDivider style="margin: 5px 0" />
+
+        <!-- 功能区 -->
+        <div class="user-panel__section">
+          <div
+            v-for="item in primaryMenuItems"
+            :key="item.key"
+            class="user-panel__item"
+            @click="handleUserAction(item.key)"
+          >
+            <span
+              :class="item.icon"
+              class="user-panel__item-icon"
+            ></span>
+            <span class="user-panel__item-label">{{ item.label }}</span>
+            <span class="i-mdi:chevron-right user-panel__item-arrow"></span>
+          </div>
+        </div>
+
+        <NDivider style="margin: 5px 0" />
+
+        <!-- 辅助区 -->
+        <div class="user-panel__section">
+          <div
+            v-for="item in secondaryMenuItems"
+            :key="item.key"
+            class="user-panel__item"
+            @click="handleUserAction(item.key)"
+          >
+            <span
+              :class="item.icon"
+              class="user-panel__item-icon"
+            ></span>
+            <span class="user-panel__item-label">{{ item.label }}</span>
+            <span
+              v-if="item.shortcut"
+              class="user-panel__item-shortcut"
+              >{{ item.shortcut }}</span
+            >
+          </div>
+        </div>
+
+        <NDivider style="margin: 5px 0" />
+
+        <!-- 退出区 -->
+        <div class="user-panel__section">
+          <div
+            class="user-panel__item user-panel__item--danger"
+            @click="handleLogout"
+          >
+            <span class="i-mdi:logout user-panel__item-icon"></span>
+            <span class="user-panel__item-label">退出登录</span>
+          </div>
+        </div>
+
+        <!-- 底部版本信息 -->
+        <div class="user-panel__footer"> Robot Admin v{{ appVersion }} </div>
+      </div>
+    </NPopover>
   </div>
 </template>
 
@@ -94,6 +198,7 @@
   import { s_languageStore } from '@/stores/language'
   import { s_permissionStore } from '@/stores/permission'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
+  import { useDialog } from 'naive-ui'
   import {
     C_GlobalSearch,
     C_NotificationCenter,
@@ -106,6 +211,7 @@
     type GuideStep,
   } from '@robot-admin/naive-ui-components'
   import type { MenuOption } from 'naive-ui/es'
+  import packageJson from '../../../../package.json'
 
   defineOptions({ name: 'C_NavbarRight' })
 
@@ -125,11 +231,84 @@
   const languageStore = s_languageStore()
   const permissionStore = s_permissionStore()
   const router = useRouter()
+  const dialog = useDialog()
 
-  // 用户名
+  // 用户名 / 角色 / 邮箱
   const userName = computed(() => userStore.userInfo?.username || 'CHENY')
+  const userRole = computed(
+    () => (userStore.userInfo as any)?.role || '系统管理员'
+  )
+  const userEmail = computed(
+    () => (userStore.userInfo as any)?.email || 'ycyplus@gmail.com'
+  )
+  const appVersion = packageJson.version
 
-  // ==================== 全局搜索配置 ====================
+  // ==================== 用户面板菜单 ====================
+  interface UserMenuItem {
+    key: string
+    label: string
+    icon: string
+    shortcut?: string
+  }
+
+  const primaryMenuItems: UserMenuItem[] = [
+    { key: 'profile', label: '个人中心', icon: 'i-mdi:account-circle-outline' },
+    { key: 'security', label: '安全设置', icon: 'i-mdi:shield-lock-outline' },
+    { key: 'activity', label: '操作日志', icon: 'i-mdi:history' },
+  ]
+
+  const secondaryMenuItems: UserMenuItem[] = [
+    {
+      key: 'docs',
+      label: '使用文档',
+      icon: 'i-mdi:book-open-page-variant-outline',
+    },
+    {
+      key: 'feedback',
+      label: '反馈建议',
+      icon: 'i-mdi:message-reply-text-outline',
+    },
+  ]
+
+  /** 处理用户面板菜单点击 */
+  const handleUserAction = (key: string) => {
+    switch (key) {
+      case 'profile':
+        router.push({ name: 'account-profile' })
+        break
+      case 'security':
+        router.push({ name: 'account-security' })
+        break
+      case 'activity':
+        router.push({ name: 'account-activity-log' })
+        break
+      case 'docs':
+        window.open(
+          'https://www.tzagileteam.com/robot/guide/overview',
+          '_blank'
+        )
+        break
+      case 'feedback':
+        window.open(
+          'https://github.com/ChenyCHENYU/Robot_Admin/issues',
+          '_blank'
+        )
+        break
+    }
+  }
+
+  /** 退出登录（带确认） */
+  const handleLogout = () => {
+    dialog.warning({
+      title: '确认退出',
+      content: '确定要退出登录吗？退出后需要重新登录。',
+      positiveText: '确认退出',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        userStore.logout()
+      },
+    })
+  }
   /** 将权限菜单树扁平化为 SearchMenuItem[] */
   function flattenMenuItems(items: MenuOption[]): SearchMenuItem[] {
     const result: SearchMenuItem[] = []
@@ -245,31 +424,247 @@
       document.exitFullscreen()
     }
   }
-
-  // 用户下拉菜单选项
-  const userOptions = [
-    {
-      key: 'profile',
-      label: '个人中心',
-      icon: () => h('span', { class: 'i-mdi:account' }),
-    },
-    {
-      key: 'logout',
-      label: '退出登录',
-      icon: () => h('span', { class: 'i-mdi:logout' }),
-    },
-  ]
-
-  /** 处理用户菜单选择 */
-  const handleUserSelect = (key: string) => {
-    if (key === 'profile') {
-      router.push('/profile')
-    } else if (key === 'logout') {
-      userStore.logout()
-    }
-  }
 </script>
 
 <style scoped lang="scss">
   @use './index.scss';
+</style>
+
+<!-- NPopover raw 内容被 teleport 到 body，scoped 样式无法覆盖，需要独立 style 块 -->
+<style lang="scss">
+  .user-panel {
+    width: 240px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow:
+      0 6px 24px rgba(0, 0, 0, 0.08),
+      0 1px 4px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    font-size: 13px;
+    color: #1f2937;
+    animation: user-panel-enter 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+
+    // ---------- 暗色模式 ----------
+    &--dark {
+      background: #1e1e2e;
+      color: #e5e7eb;
+      box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.2);
+
+      .user-panel__header {
+        background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+      }
+
+      .user-panel__name {
+        color: #f3f4f6;
+      }
+      .user-panel__role,
+      .user-panel__email {
+        color: #c4b5fd;
+      }
+
+      .user-panel__item {
+        color: #d1d5db;
+
+        &:hover {
+          background: rgba(99, 102, 241, 0.12);
+          color: #a5b4fc;
+        }
+
+        &--danger {
+          color: #fca5a5 !important;
+
+          &:hover {
+            background: rgba(239, 68, 68, 0.12) !important;
+            color: #fca5a5 !important;
+          }
+        }
+      }
+
+      .user-panel__item-arrow,
+      .user-panel__item-icon {
+        color: #6b7280;
+      }
+      .user-panel__item:hover .user-panel__item-icon {
+        color: #a5b4fc;
+      }
+
+      .user-panel__item-shortcut {
+        background: #374151;
+        color: #9ca3af;
+        border-color: #4b5563;
+      }
+
+      .user-panel__footer {
+        background: #16162a;
+        color: #6b7280;
+      }
+
+      .n-divider {
+        --n-color: rgba(255, 255, 255, 0.06) !important;
+      }
+    }
+
+    // ---------- 用户卡片头部 ----------
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+      position: relative;
+    }
+
+    &__info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    &__name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #111827;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &__role,
+    &__email {
+      font-size: 11px;
+      color: #6366f1;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &__email {
+      color: #6b7280;
+    }
+
+    &__status {
+      flex-shrink: 0;
+      align-self: flex-start;
+      margin-top: 1px;
+    }
+
+    // ---------- 菜单区块 ----------
+    &__section {
+      padding: 3px 6px;
+    }
+
+    &__item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #374151;
+      transition: all 0.18s ease;
+      user-select: none;
+
+      &:hover {
+        background: rgba(99, 102, 241, 0.08);
+        color: #6366f1;
+
+        .user-panel__item-icon {
+          color: #6366f1;
+        }
+
+        .user-panel__item-arrow {
+          opacity: 1;
+          transform: translateX(2px);
+        }
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      // 危险操作（退出登录）
+      &--danger {
+        color: #ef4444 !important;
+
+        .user-panel__item-icon {
+          color: #ef4444 !important;
+        }
+
+        &:hover {
+          background: rgba(239, 68, 68, 0.08) !important;
+          color: #dc2626 !important;
+
+          .user-panel__item-icon {
+            color: #dc2626 !important;
+          }
+        }
+      }
+    }
+
+    &__item-icon {
+      font-size: 15px;
+      color: #6b7280;
+      flex-shrink: 0;
+      transition: color 0.18s ease;
+    }
+
+    &__item-label {
+      flex: 1;
+      font-size: 12.5px;
+      line-height: 1;
+    }
+
+    &__item-arrow {
+      font-size: 14px;
+      color: #d1d5db;
+      flex-shrink: 0;
+      opacity: 0;
+      transition: all 0.18s ease;
+    }
+
+    &__item-shortcut {
+      font-size: 10px;
+      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: #f3f4f6;
+      color: #6b7280;
+      border: 1px solid #e5e7eb;
+      line-height: 1;
+    }
+
+    // ---------- 底部版本信息 ----------
+    &__footer {
+      padding: 6px 14px;
+      text-align: center;
+      font-size: 10px;
+      color: #9ca3af;
+      background: #fafafa;
+      border-top: 1px solid #f3f4f6;
+      letter-spacing: 0.3px;
+    }
+
+    // ---------- NDivider 微调 ----------
+    .n-divider {
+      --n-color: #f0f0f0 !important;
+    }
+  }
+
+  @keyframes user-panel-enter {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 </style>

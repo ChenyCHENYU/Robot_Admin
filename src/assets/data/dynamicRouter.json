@@ -813,6 +813,61 @@
       ]
     },
     {
+      "path": "/account",
+      "name": "account",
+      "component": "layout",
+      "redirect": "/account/profile",
+      "meta": {
+        "icon": "mdi:account-cog-outline",
+        "title": "账户中心",
+        "hidden": true,
+        "full": false,
+        "affix": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "profile",
+          "name": "account-profile",
+          "component": "/account/profile/index",
+          "meta": {
+            "icon": "mdi:account-circle-outline",
+            "title": "个人中心",
+            "hidden": true,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "security",
+          "name": "account-security",
+          "component": "/account/security/index",
+          "meta": {
+            "icon": "mdi:shield-lock-outline",
+            "title": "安全设置",
+            "hidden": true,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "activity-log",
+          "name": "account-activity-log",
+          "component": "/account/activity-log/index",
+          "meta": {
+            "icon": "mdi:history",
+            "title": "操作日志",
+            "hidden": true,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        }
+      ]
+    },
+    {
       "path": "/sys-manage",
       "name": "sys-manage",
       "component": "layout",

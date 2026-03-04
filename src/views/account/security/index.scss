@@ -1,0 +1,89 @@
+// ==================== 通用占位符 ====================
+%flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// ==================== 安全设置页面 ====================
+.security-page {
+  @extend %flex-column;
+  padding: 16px;
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+
+  // -------- 安全配置列表 --------
+  .security-list {
+    @extend %flex-column;
+    gap: 0;
+  }
+
+  .security-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: var(--app-bg-surface, #f9fafb);
+    }
+
+    & + .security-item {
+      border-top: 1px solid var(--app-border-light, #f0f0f0);
+    }
+  }
+
+  .security-item-icon {
+    font-size: 24px;
+    color: #6366f1;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.08);
+    border-radius: 10px;
+  }
+
+  .security-item-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .security-item-label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .security-item-desc {
+    font-size: 13px;
+    color: var(--app-text-secondary, #6b7280);
+  }
+
+  .security-item-action {
+    flex-shrink: 0;
+  }
+
+  // -------- 修改密码表单 --------
+  .password-form {
+    max-width: 400px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  // -------- 登录记录表格 --------
+  .login-records-card {
+    :deep(.n-card__content) {
+      padding-top: 0;
+    }
+  }
+}
