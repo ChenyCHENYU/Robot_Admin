@@ -84,19 +84,19 @@ $t: 0.3s;
     .c-login-panel {
       /* 面板整体 */
       --cl-panel-width: #{$form-width};
-      --cl-panel-padding: 28px 26px 22px;
+            --cl-panel-padding: 32px 26px 26px;
       --cl-panel-radius: 16px;
 
       /* 按钮 */
-      --cl-btn-height: 36px;
+            --cl-btn-height: 38px;
       --cl-btn-radius: 10px;
 
       /* 社交图标：更小 */
-      --cl-social-size: 22px;
+            --cl-social-size: 24px;
 
       /* ── 间距 ── */
-      --cl-gap: 8px;
-      --cl-gap-sm: 5px;
+            --cl-gap: 10px;
+            --cl-gap-sm: 6px;
 
       /* ── Header ── */
       .c-login__header {
@@ -121,8 +121,8 @@ $t: 0.3s;
 
       /* ── 登录方式切换（底部） ── */
       .c-login__mode-switch {
-        margin-top: 16px;
-        gap: 8px;
+        margin-top: 18px;
+          gap: 10px;
       }
 
       .c-login__mode-btn {
@@ -137,20 +137,20 @@ $t: 0.3s;
         box-shadow: none !important;
       }
 
-      /* ── 表单项：大幅压缩输入框高度 ── */
+            /* ── 表单项 ── */
       .c-login__form-item {
-        margin-bottom: 5px !important;
+        margin-bottom: 8px !important;
 
         :deep(.n-input) {
-          --n-height: 36px !important;
-          padding: 4px 2px !important;
+          --n-height: 38px !important;
+            padding: 5px 2px !important;
         }
       }
 
       /* ── 记住我行 ── */
       .c-login__aux-row {
-        margin-top: 10px;
-        margin-bottom: 10px;
+        margin-top: 12px;
+          margin-bottom: 12px;
       }
 
       .c-login__remember {
@@ -167,16 +167,16 @@ $t: 0.3s;
       .c-login__submit-btn {
         font-size: 14px;
         letter-spacing: 1.5px;
-        margin-top: 14px;
+        margin-top: 16px;
       }
 
       /* ── 验证图标：与按钮同行 + 垂直居中 ── */
       .c-login__captcha-wrap {
-        margin-top: -36px;
+        margin-top: -38px;
         margin-left: auto;
         margin-right: 0;
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
         display: flex;
         align-items: center;
         justify-content: flex-end;
@@ -191,7 +191,7 @@ $t: 0.3s;
 
       /* ── 分割线：增加间距让按钮区不拥挤 ── */
       .c-login__divider {
-        margin: 12px 12px 10px !important;
+        margin: 14px 12px 12px !important;
 
         :deep(.n-divider__title) {
           font-size: 11px;
@@ -201,8 +201,8 @@ $t: 0.3s;
 
       /* ── 社交登录行 ── */
       .c-login__social-row {
-        gap: 8px;
-        margin-bottom: 2px;
+        gap: 10px;
+          margin-bottom: 4px;
       }
 
       .c-login__social-btn {
@@ -211,7 +211,7 @@ $t: 0.3s;
 
       /* ── 注册行 ── */
       .c-login__register-row {
-        margin-top: 12px;
+        margin-top: 14px;
         font-size: 12px;
       }
     }
@@ -236,5 +236,14 @@ $t: 0.3s;
       width: 200px;
       height: 50px;
     }
+  }
+}
+
+/* ─── C_Captcha 全局覆盖（穿透 scoped）───────────────── */
+.login-container .c-login__captcha-wrap {
+  /* 验证通过后隐藏文字提示，只保留对勾变色即可 */
+  .success-text,
+  .success-icon {
+    display: none !important;
   }
 }

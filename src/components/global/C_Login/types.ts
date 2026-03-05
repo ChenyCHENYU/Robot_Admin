@@ -66,6 +66,10 @@ export interface LoginProps {
   storageKey?: string
   /** 外部传入的 loading 状态 */
   loading?: boolean
+  /** 表单默认用户名（Demo / 预填场景） */
+  defaultUsername?: string
+  /** 表单默认密码（Demo / 预填场景） */
+  defaultPassword?: string
 }
 
 // ================= 默认社交登录配置 =================

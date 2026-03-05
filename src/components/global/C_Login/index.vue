@@ -175,7 +175,7 @@
       block
       :loading="props.loading"
       :disabled="
-        activeTab === 'password' ? false : feat.captchaVerify && !captchaValid
+        activeTab === 'password' && feat.captchaVerify && !captchaValid
       "
       class="c-login__submit-btn"
       @click="
@@ -185,15 +185,15 @@
       "
     >
       {{
-        activeTab === 'captcha' && feat.captchaVerify && !captchaValid
+        activeTab === 'password' && feat.captchaVerify && !captchaValid
           ? t('cl_verify_first', '请先完成人机验证')
           : t('cl_login_btn', '登 录')
       }}
     </NButton>
 
-    <!-- ===== 人机验证拼图（仅在验证码模式显示） ===== -->
+    <!-- ===== 人机验证拼图（仅密码登录模式） ===== -->
     <div
-      v-if="feat.captchaVerify && activeTab === 'captcha'"
+      v-if="feat.captchaVerify && activeTab === 'password'"
       class="c-login__captcha-wrap"
     >
       <C_Captcha
@@ -494,6 +494,8 @@
     title: '欢迎回来',
     loading: false,
     storageKey: 'c_login_remember',
+    defaultUsername: '',
+    defaultPassword: '',
   })
 
   const emit = defineEmits<{
@@ -533,8 +535,8 @@
   // ===== 密码表单 =====
   const passwordFormRef = ref<FormInst | null>(null)
   const passwordForm = reactive<PasswordFormData>({
-    username: '',
-    password: '',
+    username: props.defaultUsername ?? '',
+    password: props.defaultPassword ?? '',
   })
 
   const passwordRules: FormRules = {

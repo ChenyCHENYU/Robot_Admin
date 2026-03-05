@@ -5,6 +5,10 @@
  * @LastEditTime: 2026-03-05
  * @FilePath: \Robot_Admin\src\views\login\index.vue
  * @Description: 登录页
+ *
+ * 业务逻辑全部委托给 useLoginController composable，
+ * 本页面仅负责：拼装 UI + 传入配置。
+ *
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 <template>
@@ -16,7 +20,7 @@
       :duration="2000"
       :delay="300"
       :pause-after="1000"
-      @hidden="handleTypewriterHidden"
+      @hidden="showTypewriter = false"
     />
 
     <!-- Spline 3D 背景 -->
@@ -28,53 +32,39 @@
 
     <!-- 右上角工具栏：语言 + 主题 -->
     <div class="login-toolbar">
-      <NTooltip
-        placement="bottom"
-        trigger="hover"
+      <NButton
+        circle
+        class="login-toolbar__btn"
+        @click="toggleTheme"
       >
-        <template #trigger>
-          <NButton
-            circle
-            class="login-toolbar__btn"
-            @click="toggleTheme"
-          >
-            <template #icon>
-              <C_Icon
-                :name="
-                  themeStore.isDark ? 'mdi:weather-sunny' : 'mdi:weather-night'
-                "
-                :size="16"
-              />
-            </template>
-          </NButton>
+        <template #icon>
+          <C_Icon
+            :name="
+              themeStore.isDark ? 'mdi:weather-sunny' : 'mdi:weather-night'
+            "
+            :size="16"
+            :title="
+              themeStore.isDark
+                ? t('lp_light_mode', '切换亮色')
+                : t('lp_dark_mode', '切换暗色')
+            "
+          />
         </template>
-        {{
-          themeStore.isDark
-            ? t('lp_light_mode', '切换亮色')
-            : t('lp_dark_mode', '切换暗色')
-        }}
-      </NTooltip>
+      </NButton>
 
-      <NTooltip
-        placement="bottom"
-        trigger="hover"
+      <NButton
+        circle
+        class="login-toolbar__btn"
+        @click="toggleLang"
       >
-        <template #trigger>
-          <NButton
-            circle
-            class="login-toolbar__btn"
-            @click="toggleLang"
-          >
-            <template #icon>
-              <C_Icon
-                name="mdi:translate"
-                :size="16"
-              />
-            </template>
-          </NButton>
+        <template #icon>
+          <C_Icon
+            name="mdi:translate"
+            :size="16"
+            :title="langStore.currentLang === 'zh-cn' ? 'English' : '中文'"
+          />
         </template>
-        {{ langStore.currentLang === 'zh-cn' ? 'English' : '中文' }}
-      </NTooltip>
+      </NButton>
     </div>
 
     <!-- 登录面板 -->
@@ -86,6 +76,8 @@
         :features="LOGIN_FEATURES"
         :social-providers="SOCIAL_PROVIDERS"
         :loading="loading"
+        default-username="CHENY"
+        default-password="123456"
         @submit="handleLogin"
         @captcha-submit="handleCaptchaLogin"
         @send-code="handleSendCode"
@@ -104,14 +96,10 @@
   import { s_themeStore } from '@/stores/theme'
   import { s_languageStore } from '@/stores/language'
   import { loginApi, type LoginResponse } from '@/api/auth'
-  import { useFormSubmit } from '@/hooks/useFormSubmit'
-  import { LOGIN_FEATURES, SOCIAL_PROVIDERS } from './data'
+  import { useLoginController } from '@/composables/useLoginController'
+  import { LOGIN_FEATURES, SOCIAL_PROVIDERS, createWelcomeConfig } from './data'
   import Spline from './components/Spline.vue'
   import Typewriter from './components/Typewriter.vue'
-  import type {
-    PasswordFormData,
-    RegisterFormData,
-  } from '@/components/global/C_Login/types'
   import './index.scss'
 
   const router = useRouter()
@@ -119,7 +107,6 @@
   const userStore = s_userStore()
   const themeStore = s_themeStore()
   const langStore = s_languageStore()
-  const { loading, createSubmit } = useFormSubmit<LoginResponse>()
 
   // ===== i18n helper =====
   const t = (key: string, fallback: string) =>
@@ -129,161 +116,58 @@
 
   // ===== 打字机 =====
   const showTypewriter = ref(true)
-  const handleTypewriterHidden = () => {
-    showTypewriter.value = false
-  }
 
-  // ===== C_Login ref =====
-  const loginRef = ref<{ resetCaptcha: () => void } | null>(null)
-
-  // ===== 工具栏：主题 & 语言 =====
-  const toggleTheme = () => {
+  // ===== 工具栏 =====
+  const toggleTheme = () =>
     themeStore.setMode(themeStore.isDark ? 'light' : 'dark')
-  }
+  const toggleLang = () =>
+    langStore.setLanguage(langStore.currentLang === 'zh-cn' ? 'en' : 'zh-cn')
 
-  const toggleLang = () => {
-    const next = langStore.currentLang === 'zh-cn' ? 'en' : 'zh-cn'
-    langStore.setLanguage(next)
-  }
+  // ===== 登录控制器（业务逻辑全部由 composable 托管） =====
+  const {
+    loginRef,
+    loading,
+    handleLogin,
+    handleCaptchaLogin,
+    handleSendCode,
+    handleSocialLogin,
+    handleForgotPassword,
+    handleRegisterSubmit,
+    handleRegisterSendCode,
+  } = useLoginController<LoginResponse>({
+    loginApi,
+    successMessage: t('lp_login_ok', '登录成功'),
+    errorMessage: t('lp_login_err', '账号或密码错误'),
+    welcomeConfig: createWelcomeConfig(t),
 
-  // ===== 欢迎语生成 =====
-  const WELCOME_CONFIG = {
-    timeSlots: [
-      {
-        range: [6, 12] as const,
-        greeting: t('lp_morning', '早上好'),
-        emoji: '🌅',
-      },
-      {
-        range: [12, 14] as const,
-        greeting: t('lp_noon', '中午好'),
-        emoji: '☀️',
-      },
-      {
-        range: [14, 18] as const,
-        greeting: t('lp_afternoon', '下午好'),
-        emoji: '🌤️',
-      },
-      {
-        range: [18, 22] as const,
-        greeting: t('lp_evening', '晚上好'),
-        emoji: '🌆',
-      },
-      {
-        range: [22, 6] as const,
-        greeting: t('lp_late_night', '夜深了'),
-        emoji: '🌙',
-      },
-    ],
-    templates: [
-      '{greeting}，{username}！' + t('lp_wb1', '欢迎回来～') + ' {emoji}',
-      '{emoji} {greeting}，{username}！' + t('lp_wb2', '开始今天的工作吧'),
-      t('lp_wb3', '欢迎回来') + '，{username}！{greeting} {emoji}',
-      '{greeting}，{username}！' + t('lp_wb4', '准备好了吗？') + ' {emoji}',
-    ],
-  }
-
-  const generateWelcomeMessage = (data: LoginResponse) => {
-    const username = data.data?.username || 'CHENY'
-    const hour = new Date().getHours()
-    const slot =
-      WELCOME_CONFIG.timeSlots.find(
-        ({ range: [start, end] }) =>
-          start < end
-            ? hour >= start && hour < end
-            : hour >= start || hour < end // 跨午夜：22-6 => (>=22 || <6)
-      ) || WELCOME_CONFIG.timeSlots[0]
-    const { greeting, emoji } = slot
-    const template =
-      WELCOME_CONFIG.templates[
-        Math.floor(Math.random() * WELCOME_CONFIG.templates.length)
-      ]
-    return template
-      .replace('{greeting}', greeting)
-      .replace('{username}', username)
-      .replace('{emoji}', emoji)
-  }
-
-  // ===== 密码登录 =====
-  let tempLoginInfo = { username: '', password: '' }
-
-  const login = createSubmit(loginApi, {
-    successMsg: t('lp_login_ok', '登录成功'),
-    meta: generateWelcomeMessage,
-    errorMsg: t('lp_login_err', '账号或密码错误'),
-    onSuccess: async (response: LoginResponse) => {
-      try {
-        const {
-          data: { token },
-        } = response
-        userStore.handleLoginSuccess(token)
-        userStore.setUserInfo(tempLoginInfo)
-        const routeSuccess = await initDynamicRouter()
-        if (!routeSuccess) throw new Error('动态路由初始化失败')
-        router.replace('/home')
-      } catch (error) {
-        console.error('登录成功后操作失败:', error)
-        loginRef.value?.resetCaptcha()
-      }
+    onLoginSuccess: async (response, formData) => {
+      userStore.handleLoginSuccess(response.data.token)
+      userStore.setUserInfo(formData)
+      const ok = await initDynamicRouter()
+      if (!ok) throw new Error('动态路由初始化失败')
+      router.replace('/home')
     },
-    globalErrorHandler: (error: Error) => {
-      console.error('登录错误:', error)
-      loginRef.value?.resetCaptcha()
+
+    onError: error => console.error('登录错误:', error),
+
+    onCaptchaLogin: () =>
+      message.info(t('lp_captcha_wip', '验证码登录功能开发中，敬请期待')),
+
+    onSendCode: account =>
+      message.info(`${t('lp_code_sent', '验证码已发送至')} ${account}`),
+
+    onSocialLogin: provider =>
+      message.info(`${provider} ${t('lp_login_wip', '登录开发中，敬请期待')}`),
+
+    onForgotPassword: () =>
+      message.info(t('lp_forgot_wip', '忘记密码功能开发中，请联系管理员')),
+
+    onRegisterSubmit: data => {
+      message.info(t('lp_reg_wip', '注册功能开发中，敬请期待'))
+      console.log('注册信息:', data)
     },
+
+    onRegisterSendCode: phone =>
+      message.info(`${t('lp_code_sent', '验证码已发送至')} ${phone}`),
   })
-
-  const handleLogin = (
-    formData: PasswordFormData & {
-      captchaToken?: string
-      captchaTimestamp?: number
-    }
-  ) => {
-    tempLoginInfo = {
-      username: formData.username,
-      password: formData.password,
-    }
-    const payload: any = {
-      username: formData.username,
-      password: formData.password,
-    }
-    if (formData.captchaToken) {
-      payload.captcha = {
-        token: formData.captchaToken,
-        timestamp: formData.captchaTimestamp,
-        type: 'puzzle-captcha',
-      }
-    }
-    login({ model: payload } as any)
-  }
-
-  // ===== 验证码登录（预留） =====
-  const handleCaptchaLogin = () => {
-    message.info(t('lp_captcha_wip', '验证码登录功能开发中，敬请期待'))
-  }
-
-  // ===== 发送验证码（预留） =====
-  const handleSendCode = (account: string) => {
-    message.info(`${t('lp_code_sent', '验证码已发送至')} ${account}`)
-  }
-
-  // ===== 社交登录 =====
-  const handleSocialLogin = (provider: string) => {
-    message.info(`${provider} ${t('lp_login_wip', '登录开发中，敬请期待')}`)
-  }
-
-  // ===== 忘记密码 =====
-  const handleForgotPassword = () => {
-    message.info(t('lp_forgot_wip', '忘记密码功能开发中，请联系管理员'))
-  }
-
-  // ===== 注册提交 =====
-  const handleRegisterSubmit = (data: RegisterFormData) => {
-    message.info(t('lp_reg_wip', '注册功能开发中，敬请期待'))
-    console.log('注册信息:', data)
-  }
-
-  // ===== 注册发送验证码 =====
-  const handleRegisterSendCode = (phone: string) => {
-    message.info(`${t('lp_code_sent', '验证码已发送至')} ${phone}`)
-  }
 </script>
