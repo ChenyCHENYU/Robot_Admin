@@ -202,17 +202,6 @@
   }
 </script>
 
-<style scoped>
-  .diagram-demo {
-    padding: 24px;
-  }
-
-  /* 关键：容器样式 */
-  .chart-container {
-    width: 100%;
-    height: 600px;
-    position: relative;
-    border: 1px solid #d9d9d9;
-    border-radius: 6px;
-  }
+<style scoped lang="scss">
+  @use './index.scss';
 </style>

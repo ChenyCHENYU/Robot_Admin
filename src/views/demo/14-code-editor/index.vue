@@ -174,8 +174,6 @@
   }
 </script>
 
-<style lang="scss" scoped>
-  .code-editor-demo {
-    padding: 20px;
-  }
+<style scoped lang="scss">
+  @use './index.scss';
 </style>

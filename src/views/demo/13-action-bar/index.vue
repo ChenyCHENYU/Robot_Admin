@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-02-14
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-14 10:04:02
+ * @LastEditTime: 2026-03-04 17:58:40
  * @FilePath: \Robot_Admin\src\views\demo\13-action-bar\index.vue
  * @Description: 通用操作按钮组件演示页面
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
@@ -26,8 +26,8 @@
         </template>
 
         <C_ActionBar
-          :left-actions="tableLeftActions"
-          :right-actions="tableRightActions"
+          :actions="tableActions"
+          :config="{ size: 'small', gap: 16 }"
           @action-click="handleActionClick"
         >
           <template #center>
@@ -97,7 +97,7 @@
 
         <C_ActionBar
           :actions="formActions"
-          :config="{ align: 'center', gap: 16 }"
+          :config="{ align: 'center', gap: 16, size: 'small' }"
           @action-click="handleActionClick"
         />
       </NCard>
@@ -112,9 +112,8 @@
         </template>
 
         <C_ActionBar
-          :left-actions="detailLeftActions"
-          :right-actions="detailRightActions"
-          :config="{ showDivider: true }"
+          :actions="detailActions"
+          :config="{ showDivider: true, size: 'small', gap: 16 }"
           @action-click="handleActionClick"
         />
 
@@ -155,7 +154,7 @@
 
         <C_ActionBar
           :actions="stepActions"
-          :config="{ align: 'space-between' }"
+          :config="{ size: 'small', gap: 16 }"
           @action-click="handleActionClick"
         />
       </NCard>
@@ -194,7 +193,8 @@
         </NSpace>
 
         <C_ActionBar
-          :actions="reactiveActions"
+          :actions="reactiveActionsSimple"
+          :config="{ size: 'small', gap: 16 }"
           @action-click="handleActionClick"
         />
 
@@ -216,7 +216,8 @@
         </template>
 
         <C_ActionBar
-          :actions="dropdownActions"
+          :actions="dropdownActionsSimple"
+          :config="{ size: 'small', gap: 16 }"
           @action-click="handleActionClick"
           @dropdown-click="handleDropdownClick"
         />
@@ -337,8 +338,13 @@
     ActionItem,
     ActionDropdownItem,
   } from '@/types/modules/action-bar'
-  import type { TableColumn } from '@/types/modules/table'
   import { useMessage } from 'naive-ui/es'
+  import {
+    columns,
+    MOCK_TABLE_DATA,
+    DEFAULT_CUSTOM_CONFIG,
+    type LogItem,
+  } from './data'
 
   const message = useMessage()
 
@@ -346,7 +352,7 @@
   const loading = ref(false)
   const selectedCount = ref(0)
   const currentStep = ref(0)
-  const logs = ref<Array<{ time: string; message: string; type: string }>>([])
+  const logs = ref<LogItem[]>([])
 
   const states = reactive({
     hasSelection: false,
@@ -359,49 +365,13 @@
     email: '',
   })
 
-  const customConfig = reactive({
-    align: 'space-between' as any,
-    size: 'medium' as any,
-    showDivider: false,
-    compact: false,
-    wrap: false,
-  })
+  const customConfig = reactive({ ...DEFAULT_CUSTOM_CONFIG })
 
   // ================= 表格数据 =================
-  const columns: TableColumn[] = [
-    { title: 'ID', key: 'id', width: 80 },
-    { title: '姓名', key: 'name' },
-    { title: '部门', key: 'department' },
-    { title: '职位', key: 'role' },
-    { title: '状态', key: 'status' },
-  ]
-
-  const tableData = ref([
-    {
-      id: 1,
-      name: '张三',
-      department: '技术部',
-      role: '前端工程师',
-      status: '在职',
-    },
-    {
-      id: 2,
-      name: '李四',
-      department: '产品部',
-      role: '产品经理',
-      status: '在职',
-    },
-    {
-      id: 3,
-      name: '王五',
-      department: '设计部',
-      role: 'UI设计师',
-      status: '在职',
-    },
-  ])
+  const tableData = ref([...MOCK_TABLE_DATA])
 
   // ================= 场景一：表格工具栏 =================
-  const tableLeftActions = computed<ActionItem[]>(() => [
+  const tableActions = computed<ActionItem[]>(() => [
     {
       key: 'add',
       label: '新增',
@@ -417,9 +387,6 @@
       disabled: selectedCount.value === 0,
       onClick: () => addLog(`删除 ${selectedCount.value} 条数据`, 'warning'),
     },
-  ])
-
-  const tableRightActions = computed<ActionItem[]>(() => [
     {
       key: 'refresh',
       label: '刷新',
@@ -462,7 +429,7 @@
   ])
 
   // ================= 场景三：详情页头部 =================
-  const detailLeftActions = computed<ActionItem[]>(() => [
+  const detailActions = computed<ActionItem[]>(() => [
     {
       key: 'back',
       label: '返回',
@@ -476,9 +443,6 @@
       type: 'primary',
       onClick: () => addLog('进入编辑模式', 'info'),
     },
-  ])
-
-  const detailRightActions = computed<ActionItem[]>(() => [
     {
       key: 'print',
       label: '打印',
@@ -540,13 +504,12 @@
   ])
 
   // ================= 场景五：响应式按钮 =================
-  const reactiveActions = computed<ActionItem[]>(() => [
+  const reactiveActionsSimple = computed<ActionItem[]>(() => [
     {
       key: 'add',
       label: '新增',
       icon: 'mdi:plus-circle',
       type: 'primary',
-      group: 'left',
       disabled: states.isEditing,
       tooltip: states.isEditing ? '编辑模式下不可新增' : '新增数据',
       onClick: () => addLog('新增', 'success'),
@@ -556,7 +519,6 @@
       label: '删除',
       icon: 'mdi:delete',
       type: 'error',
-      group: 'left',
       disabled: computed(() => !states.hasSelection),
       show: computed(() => states.hasSelection),
       tooltip: '删除选中数据',
@@ -567,7 +529,6 @@
       label: states.isEditing ? '保存' : '编辑',
       icon: states.isEditing ? 'mdi:check' : 'mdi:pencil',
       type: states.isEditing ? 'success' : 'warning',
-      group: 'left',
       onClick: () => {
         states.isEditing = !states.isEditing
         addLog(states.isEditing ? '进入编辑模式' : '保存成功', 'warning')
@@ -578,7 +539,6 @@
       label: '刷新',
       icon: 'mdi:refresh',
       type: 'info',
-      group: 'right',
       loading: computed(() => states.isRefreshing),
       onClick: async () => {
         states.isRefreshing = true
@@ -591,20 +551,18 @@
   ])
 
   // ================= 场景六：下拉菜单 =================
-  const dropdownActions = computed<ActionItem[]>(() => [
+  const dropdownActionsSimple = computed<ActionItem[]>(() => [
     {
       key: 'add',
       label: '新增',
       icon: 'mdi:plus-circle',
       type: 'primary',
-      group: 'left',
       onClick: () => addLog('新增', 'success'),
     },
     {
       key: 'more',
       label: '更多操作',
       icon: 'mdi:dots-horizontal',
-      group: 'right',
       dropdown: [
         {
           key: 'export-excel',
@@ -630,7 +588,6 @@
       key: 'settings',
       label: '设置',
       icon: 'mdi:cog',
-      group: 'right',
       dropdown: [
         {
           key: 'column',
@@ -655,7 +612,6 @@
       label: '新增',
       icon: 'mdi:plus-circle',
       type: 'primary',
-      group: 'left',
       onClick: () => addLog('新增', 'success'),
     },
     {
@@ -663,7 +619,6 @@
       label: '刷新',
       icon: 'mdi:refresh',
       type: 'info',
-      group: 'right',
       onClick: handleRefresh,
     },
   ])
@@ -704,31 +659,5 @@
 </script>
 
 <style scoped lang="scss">
-  .action-bar-demo-page {
-    padding: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
-
-    :deep(.n-card) {
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-      transition: all 0.3s ease;
-
-      &:hover {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-      }
-    }
-
-    .log-item {
-      display: flex;
-      align-items: center;
-      padding: 8px 12px;
-      background: var(--n-color-popover);
-      border-radius: 4px;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: var(--n-color-hover);
-      }
-    }
-  }
+  @use './index.scss';
 </style>

@@ -264,6 +264,12 @@
 
 <script setup lang="ts">
   import type { UploadFileInfo } from 'naive-ui/es'
+  import {
+    SCENARIOS,
+    PRESET_URLS,
+    CONFIG_FILE_OPTIONS,
+    type FileOption,
+  } from './data'
 
   const message = useMessage()
 
@@ -271,32 +277,7 @@
   const activeScenario = ref('upload')
 
   // 场景配置
-  const scenarios = [
-    {
-      id: 'upload',
-      title: '文件上传预览',
-      description: '上传本地文件进行预览',
-      icon: 'ic:outline-cloud-upload',
-    },
-    {
-      id: 'url',
-      title: 'URL文件预览',
-      description: '通过URL加载远程文件',
-      icon: 'ic:outline-link',
-    },
-    {
-      id: 'batch',
-      title: '批量文件预览',
-      description: '同时预览多个文件',
-      icon: 'ic:outline-folder-open',
-    },
-    {
-      id: 'config',
-      title: '配置选项',
-      description: '自定义预览组件配置',
-      icon: 'ic:outline-settings',
-    },
-  ]
+  const scenarios = SCENARIOS
 
   // 场景1: 文件上传
   const uploadRef = ref()
@@ -308,44 +289,16 @@
   const urlLoading = ref(false)
   const currentUrlFile = ref<{ url: string; name: string } | null>(null)
 
-  const presetUrls = [
-    {
-      name: '本地PDF示例',
-      url: '/demo-files/sample.pdf',
-      type: 'error' as const,
-      icon: 'ic:outline-picture-as-pdf',
-    },
-    {
-      name: '本地Excel示例',
-      url: '/demo-files/sample.xlsx',
-      type: 'success' as const,
-      icon: 'ic:outline-grid-on',
-    },
-    {
-      name: '本地Word示例',
-      url: '/demo-files/sample.docx',
-      type: 'info' as const,
-      icon: 'ic:outline-description',
-    },
-  ]
+  const presetUrls = PRESET_URLS
 
   // 场景3: 批量预览
   const batchFileList = ref<UploadFileInfo[]>([])
   const activeFileIndex = ref(0)
 
   // 场景4: 配置选项
-  const selectedConfigFile = ref<{ url: string; name: string } | null>(null)
+  const selectedConfigFile = ref<FileOption | null>(null)
 
-  const configFileOptions = [
-    {
-      label: 'PDF文档',
-      value: { url: '/demo-files/sample.pdf', name: 'sample.pdf' },
-    },
-    {
-      label: 'Excel表格',
-      value: { url: '/demo-files/sample.xlsx', name: 'sample.xlsx' },
-    },
-  ]
+  const configFileOptions = CONFIG_FILE_OPTIONS
 
   // 计算属性
   const currentBatchFile = computed(() => {
@@ -419,80 +372,6 @@
   }
 </script>
 
-<style lang="scss" scoped>
-  .file-preview-demo {
-    padding: 24px;
-    margin: 0 auto;
-
-    .demo-header {
-      margin-bottom: 32px;
-    }
-
-    .scenario-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-
-      .scenario-card {
-        cursor: pointer;
-        transition: all 0.3s ease;
-
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        &.active-card {
-          border: 2px solid #18a058;
-          box-shadow: 0 4px 12px rgba(24, 160, 88, 0.2);
-        }
-      }
-    }
-
-    .demo-section {
-      min-height: 600px;
-
-      .upload-demo {
-        .upload-area {
-          margin-bottom: 24px;
-
-          .upload-content {
-            text-align: center;
-            padding: 40px;
-          }
-        }
-      }
-
-      .url-demo {
-        .preset-urls {
-          margin-top: 16px;
-        }
-      }
-
-      .batch-demo {
-        .batch-list {
-          .flex {
-            margin-bottom: 16px;
-          }
-        }
-      }
-
-      .preview-section {
-        margin-top: 24px;
-      }
-
-      .preview-container {
-        height: 600px;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        overflow: hidden;
-      }
-    }
-
-    .usage-info {
-      margin-top: 32px;
-      text-align: center;
-    }
-  }
+<style scoped lang="scss">
+  @use './index.scss';
 </style>

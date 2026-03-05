@@ -65,6 +65,7 @@
 
 <script setup lang="ts">
   import type { CalendarViewType } from '@/types/modules/calendar'
+  import { INITIAL_EVENTS } from './data'
 
   const message = useMessage()
   const dialog = useDialog()
@@ -75,29 +76,7 @@
   const editable = ref(true)
 
   // 事件数据 - 使用 v-model 双向绑定
-  const events = ref([
-    {
-      id: '1',
-      title: '团队会议',
-      start: new Date(),
-      end: new Date(Date.now() + 2 * 3600000),
-      color: '#3f86ff',
-    },
-    {
-      id: '2',
-      title: '项目评审',
-      start: new Date(Date.now() + 3 * 864e5),
-      end: new Date(Date.now() + 3 * 864e5 + 3 * 3600000),
-      color: '#ff6b6b',
-    },
-    {
-      id: '3',
-      title: '客户拜访',
-      start: new Date(Date.now() + 1 * 864e5 + 9 * 3600000),
-      end: new Date(Date.now() + 1 * 864e5 + 11 * 3600000),
-      color: '#67c23a',
-    },
-  ])
+  const events = ref([...INITIAL_EVENTS])
 
   // 事件回调处理
   const handleEventAdded = (event: any) => {

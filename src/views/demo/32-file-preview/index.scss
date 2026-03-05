@@ -1,0 +1,75 @@
+.file-preview-demo {
+  padding: 24px;
+  margin: 0 auto;
+
+  .demo-header {
+    margin-bottom: 32px;
+  }
+
+  .scenario-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+
+    .scenario-card {
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      &.active-card {
+        border: 2px solid #18a058;
+        box-shadow: 0 4px 12px rgba(24, 160, 88, 0.2);
+      }
+    }
+  }
+
+  .demo-section {
+    min-height: 600px;
+
+    .upload-demo {
+      .upload-area {
+        margin-bottom: 24px;
+
+        .upload-content {
+          text-align: center;
+          padding: 40px;
+        }
+      }
+    }
+
+    .url-demo {
+      .preset-urls {
+        margin-top: 16px;
+      }
+    }
+
+    .batch-demo {
+      .batch-list {
+        .flex {
+          margin-bottom: 16px;
+        }
+      }
+    }
+
+    .preview-section {
+      margin-top: 24px;
+    }
+
+    .preview-container {
+      height: 600px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  }
+
+  .usage-info {
+    margin-top: 32px;
+    text-align: center;
+  }
+}
