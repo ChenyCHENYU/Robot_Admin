@@ -486,6 +486,45 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "chat",
+          "name": "demo-chat",
+          "component": "/demo/49-chat/index",
+          "meta": {
+            "icon": "mdi:chat-processing-outline",
+            "title": "聊天组件",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "timeline",
+          "name": "demo-timeline",
+          "component": "/demo/50-timeline/index",
+          "meta": {
+            "icon": "mdi:timeline-text",
+            "title": "时间线",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "context-menu",
+          "name": "demo-context-menu",
+          "component": "/demo/51-context-menu/index",
+          "meta": {
+            "icon": "mdi:menu",
+            "title": "右键菜单",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },
