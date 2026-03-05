@@ -47,6 +47,24 @@
   --c-border: var(--border-color, #e5e7eb);
 }
 
+/**
+ * 暗色模式下提供明确的深色 fallback
+ * 防止 Naive UI 变量未注入时仍然使用亮色 fallback
+ */
+[data-theme='dark'] .global-config-provider {
+  --c-bg-body: var(--body-color, #1c1c1c);
+  --c-bg-card: var(--card-color, #262626);
+  --c-bg-surface: var(--popover-color, #333333);
+  --c-text-1: var(--text-color-1, rgba(255, 255, 255, 0.82));
+  --c-text-2: var(--text-color-2, rgba(255, 255, 255, 0.52));
+  --c-text-3: var(--text-color-3, rgba(255, 255, 255, 0.38));
+  --c-text-4: var(--text-color-4, rgba(255, 255, 255, 0.28));
+  --c-border: var(--border-color, rgba(255, 255, 255, 0.12));
+  --c-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24);
+  --c-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --c-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+
 [data-theme='dark'] {
   /* 卡片头部暗色适配 */
   .n-card-header {

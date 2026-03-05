@@ -47,7 +47,7 @@
     border-bottom: 1px solid var(--tf-border);
     font-weight: 600;
     font-size: 13px;
-    color: var(--app-text-primary);
+    color: var(--text-color-1);
   }
 
   &__count {
@@ -84,7 +84,7 @@
     cursor: pointer;
     transition: background 0.15s;
     font-size: 13px;
-    color: var(--app-text-primary);
+    color: var(--text-color-1);
 
     &:hover {
       background: var(--tf-item-hover);

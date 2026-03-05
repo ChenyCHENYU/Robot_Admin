@@ -389,8 +389,6 @@
 
   // 自动播放
   if (props.autoplay && props.tracks.length > 0) {
-    initAudio()
-    audio?.play()
-    isPlaying.value = true
+    playTrack(activeIndex.value)
   }
 </script>
