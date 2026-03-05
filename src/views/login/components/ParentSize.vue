@@ -46,8 +46,6 @@
     ...(attrs.style as object),
   }))
 
-  const mergedClass = computed(() => ['w-full h-full', props.class])
-
   const attrsWithoutClassAndStyle = computed(() => {
     const { class: _, style: __, ...rest } = attrs
     return rest

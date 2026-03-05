@@ -54,6 +54,8 @@
   const displayText = ref('')
 
   let typeInterval: NodeJS.Timeout | null = null
+  let delayTimer: ReturnType<typeof setTimeout> | null = null
+  let hideTimer: ReturnType<typeof setTimeout> | null = null
 
   // 打字机效果
   const startTyping = () => {
@@ -69,12 +71,10 @@
         clearInterval(typeInterval!)
         typeInterval = null
         emit('complete')
-        // console.log('打字完成，准备隐藏组件')
 
         // 自动隐藏
         if (props.autoHide) {
-          setTimeout(() => {
-            // console.log('开始隐藏打字机组件')
+          hideTimer = setTimeout(() => {
             visible.value = false
           }, props.pauseAfter)
         }
@@ -93,11 +93,19 @@
       clearInterval(typeInterval)
       typeInterval = null
     }
+    if (delayTimer) {
+      clearTimeout(delayTimer)
+      delayTimer = null
+    }
+    if (hideTimer) {
+      clearTimeout(hideTimer)
+      hideTimer = null
+    }
   }
 
   // 组件挂载时启动效果
   onMounted(() => {
-    setTimeout(() => {
+    delayTimer = setTimeout(() => {
       startTyping()
     }, props.delay)
   })

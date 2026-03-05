@@ -1,14 +1,11 @@
 @use 'sass:color';
 
-/* 基础变量定义 */
-$bg: #fff;
-$text-color: #fdf6f6;
-$primary-color: #1859e9;
-$border-radius: 10px;
-$form-width: 380px;
-$transition-time: 0.3s;
+/* 变量 */
+$primary: #1859e9;
+$form-width: 370px;
+$t: 0.3s;
 
-/* 登录页容器 */
+/* ─── 登录页容器 ──────────────────────────────────────── */
 .login-container {
   position: relative;
   min-height: 100vh;
@@ -17,49 +14,227 @@ $transition-time: 0.3s;
   align-items: center;
   overflow: hidden;
 
-  /* 3D背景容器 */
+  /* Spline 3D 背景 */
   .spline-background {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     z-index: 0;
   }
 
   /* 右上角工具栏 */
   .login-toolbar {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 16px;
+      right: 16px;
     z-index: 10;
     display: flex;
-    gap: 8px;
+    gap: 6px;
 
     &__btn {
+      width: 28px !important;
+        height: 28px !important;
+        font-size: 13px !important;
+        background: rgba(255, 255, 255, 0.06) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        color: rgba(255, 255, 255, 0.55) !important;
       backdrop-filter: blur(10px);
-      transition: all $transition-time;
+      transition: all $t;
 
       &:hover {
+        background: rgba(255, 255, 255, 0.14) !important;
+          color: rgba(255, 255, 255, 0.9) !important;
       }
     }
   }
 
-  /* 登录面板定位包装 */
+    /* 登录面板定位容器（纯定位，无视觉样式） */
   .login-wrapper {
     position: relative;
-    margin-top: 6%;
+    margin-top: 5%;
     z-index: 2;
   }
 
-  /* 响应式调整 */
+    /* 品牌 Logo */
+    .login-logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 999;
+      width: 320px;
+      height: 80px;
+      cursor: pointer;
+      transition: opacity $t ease;
+
+      &:hover {
+        opacity: 0.85;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url('@/assets/images/login-logo.png?v=20260305') center / 100% auto no-repeat;
+      }
+    }
+
+    /*
+     * C_Login 组件覆盖
+     * 通过 CSS 变量压缩面板高度 + 精细化各区域间距
+     */
+    .c-login-panel {
+      /* 面板整体 */
+      --cl-panel-width: #{$form-width};
+      --cl-panel-padding: 28px 26px 22px;
+      --cl-panel-radius: 16px;
+
+      /* 按钮 */
+      --cl-btn-height: 36px;
+      --cl-btn-radius: 10px;
+
+      /* 社交图标：更小 */
+      --cl-social-size: 22px;
+
+      /* ── 间距 ── */
+      --cl-gap: 8px;
+      --cl-gap-sm: 5px;
+
+      /* ── Header ── */
+      .c-login__header {
+        margin-bottom: 8px;
+      }
+
+      .c-login__title {
+        font-size: 18px;
+      }
+
+      .c-login__subtitle {
+        font-size: 12px;
+      }
+
+      .c-login__logo {
+        margin-bottom: 2px;
+
+        .c-login__logo-icon {
+          font-size: 28px;
+        }
+      }
+
+      /* ── 登录方式切换（底部） ── */
+      .c-login__mode-switch {
+        margin-top: 16px;
+        gap: 8px;
+      }
+
+      .c-login__mode-btn {
+        --n-border: none !important;
+        --n-border-hover: none !important;
+        --n-border-pressed: none !important;
+        --n-border-focus: none !important;
+        --n-box-shadow-focus: none !important;
+        font-size: 12px;
+        height: 30px;
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      /* ── 表单项：大幅压缩输入框高度 ── */
+      .c-login__form-item {
+        margin-bottom: 5px !important;
+
+        :deep(.n-input) {
+          --n-height: 36px !important;
+          padding: 4px 2px !important;
+        }
+      }
+
+      /* ── 记住我行 ── */
+      .c-login__aux-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .c-login__remember {
+        :deep(.n-checkbox__label) {
+          font-size: 12px;
+        }
+      }
+
+      .c-login__forgot {
+        font-size: 12px;
+      }
+
+      /* ── 按钮 ── */
+      .c-login__submit-btn {
+        font-size: 14px;
+        letter-spacing: 1.5px;
+        margin-top: 14px;
+      }
+
+      /* ── 验证图标：与按钮同行 + 垂直居中 ── */
+      .c-login__captcha-wrap {
+        margin-top: -36px;
+        margin-left: auto;
+        margin-right: 0;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        /* 验证图标本身也居中 */
+        :deep(> *) {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      /* ── 分割线：增加间距让按钮区不拥挤 ── */
+      .c-login__divider {
+        margin: 12px 12px 10px !important;
+
+        :deep(.n-divider__title) {
+          font-size: 11px;
+          padding: 0 12px;
+        }
+      }
+
+      /* ── 社交登录行 ── */
+      .c-login__social-row {
+        gap: 8px;
+        margin-bottom: 2px;
+      }
+
+      .c-login__social-btn {
+        font-size: 12px !important;
+      }
+
+      /* ── 注册行 ── */
+      .c-login__register-row {
+        margin-top: 12px;
+        font-size: 12px;
+      }
+    }
+
+  /* 响应式 */
   @media (max-width: 768px) {
     padding-left: 0;
     justify-content: center;
 
     .login-wrapper {
+      padding: 16px;
       margin-top: 0;
-      padding: 20px;
+    }
+
+    .c-login-panel {
+      --cl-panel-width: min(90vw, #{$form-width});
+    }
+
+    .login-logo {
+      top: 10px;
+      left: 10px;
+      width: 200px;
+      height: 50px;
     }
   }
 }

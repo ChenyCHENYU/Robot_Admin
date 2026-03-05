@@ -125,13 +125,17 @@
     {
       label: '上一步',
       disabled: demo1.current <= 0,
-      onClick: () => demo1.current--,
+      onClick: () => {
+        demo1.current--
+      },
     },
     {
       label: '下一步',
       type: 'primary' as const,
       disabled: demo1.current >= 4,
-      onClick: () => demo1.current++,
+      onClick: () => {
+        demo1.current++
+      },
     },
   ])
 
@@ -140,7 +144,9 @@
     {
       label: '上一步',
       disabled: demo2.current <= 0,
-      onClick: () => demo2.current--,
+      onClick: () => {
+        demo2.current--
+      },
     },
     {
       label: demo2.current === registerSteps.length - 1 ? '完成' : '下一步',

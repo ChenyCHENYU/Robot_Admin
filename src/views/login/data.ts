@@ -8,47 +8,26 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 import type {
-  QuickAccount,
   SocialProvider,
   LoginFeatures,
 } from '@/components/global/C_Login/types'
 
 // ================= 登录功能开关 =================
 export const LOGIN_FEATURES: LoginFeatures = {
+  passwordLogin: true,
   captchaLogin: true,
-  rememberMe: true,
-  forgotPassword: true,
+  qrcodeLogin: true,
   socialLogin: true,
-  quickLogin: true,
   register: true,
   captchaVerify: true,
+  rememberMe: true,
+  forgotPassword: true,
 }
 
 // ================= 社交登录配置 =================
 export const SOCIAL_PROVIDERS: SocialProvider[] = [
   { key: 'github', label: 'GitHub', icon: 'mdi:github' },
+  { key: 'google', label: 'Google', icon: 'mdi:google' },
   { key: 'wechat', label: '微信登录', icon: 'mdi:wechat' },
   { key: 'qq', label: 'QQ 登录', icon: 'mdi:qqchat' },
-]
-
-// ================= 快捷账号（Demo） =================
-export const QUICK_ACCOUNTS: QuickAccount[] = [
-  {
-    label: '超级管理员',
-    type: 'error',
-    username: 'Super',
-    password: '123456',
-  },
-  {
-    label: '管理员',
-    type: 'primary',
-    username: 'Admin',
-    password: '123456',
-  },
-  {
-    label: '普通用户',
-    type: 'default',
-    username: 'User',
-    password: '123456',
-  },
 ]

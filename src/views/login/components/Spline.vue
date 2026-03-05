@@ -126,9 +126,6 @@
 
       isLoading.value = false
       props.onLoad?.(splineApp.value)
-
-      // 加载后立即冻结为静态画面，避免持续 60fps 消耗 GPU
-      splineApp.value.stop()
     } catch (err) {
       console.error('Spline initialization error:', err)
       emit('error', err)
@@ -140,13 +137,25 @@
     }
   }
 
+  // ===== 页面可见性——Tab 切走时暂停 Spline，切回时恢复 =====
+  function handleVisibilityChange() {
+    if (!splineApp.value) return
+    if (document.hidden) {
+      splineApp.value.stop()
+    } else {
+      splineApp.value.play()
+    }
+  }
+
   onMounted(() => {
     installErrorGuard()
+    document.addEventListener('visibilitychange', handleVisibilityChange)
     initSpline()
   })
 
   onUnmounted(() => {
     removeErrorGuard()
+    document.removeEventListener('visibilitychange', handleVisibilityChange)
     // 销毁 Spline 实例
     if (splineApp.value) {
       splineApp.value.dispose()
