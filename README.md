@@ -68,8 +68,8 @@
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-39+-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-48+-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/components-45+-success?style=flat" alt="Components">
+    <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
     <img src="https://img.shields.io/badge/test_coverage-85%25-brightgreen?style=flat" alt="Test Coverage">
@@ -170,12 +170,12 @@ _在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `Type
 ### 🔥 性能怪兽级别的开发体验
 
 - **毫秒级热更新** - Bun + Vite7 化学反应，告别等待
-- **智能类型提示** - TypeScript5.8 + 30+ 自定义组件，IDE 智能感知体验拉满
+- **智能类型提示** - TypeScript5.8 + 45+ 自定义组件，IDE 智能感知体验拉满
 - **零配置开箱即用** - 一条命令启动，30 秒内搭建完整后台系统
 
 ### 🎨 不只是一个管理系统，更是一个作品
 
-- **48+ 精心打磨的演示页面** - 每一个都是可直接用于生产的业务组件，32 个组件支持文档站 iframe 在线预览
+- **54+ 精心打磨的演示页面** - 每一个都是可直接用于生产的业务组件，38 个组件支持文档站 iframe 在线预览
 - **7 种自定义指令** - 防抖、节流、长按、拖拽、权限...让开发更优雅
 - **主题系统** - 深色/浅色模式/跟随系统 + 支持自定义扩展
 - **Preview 路由系统** - 32 个无鉴权独立预览路由，供 [文档站](https://www.tzagileteam.com) 通过 iframe 嵌入实时组件演示
@@ -251,7 +251,7 @@ bun clean              # 清理缓存
 - **Vue 3.5.13** - 🔥 最新稳定版，Composition API 丝滑体验
 - **TypeScript 5.8** - 🛡️ 类型安全，智能提示
 - **Naive UI 2.41.0** - 🎨 颜值与性能并存的组件库
-- **@robot-admin/naive-ui-components** - 🧩 39+ 业务组件库，按需自动导入
+- **@robot-admin/naive-ui-components** - 🧩 45+ 业务组件库，按需自动导入
 - **UnoCSS 66.3.3** - ⚡ 原子化CSS，按需生成，体积极小
 
 **⚙️ 构建工具**
@@ -286,7 +286,7 @@ bun clean              # 清理缓存
 - **按钮级权限** - 精确到每一个操作按钮
 - **接口级权限** - API调用权限控制
 
-#### 🧩 组件库（39+ 开箱即用）
+#### 🧩 组件库（45+ 开箱即用）
 
 > 所有业务组件已独立发布为 [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components)，支持按需自动导入。
 
@@ -331,6 +331,7 @@ bun clean              # 清理缓存
 - `C_Signature` - 电子签名
 - `C_QRCode` - 二维码生成
 - `C_Barcode` - 条形码生成
+- `C_AudioPlayer` - 音频播放器，播放列表、多循环模式
 
 **交互 & 布局**
 
@@ -345,13 +346,18 @@ bun clean              # 清理缓存
 - `C_Guide` - 新手引导
 - `C_GlobalSearch` - 全局搜索
 - `C_NotificationCenter` - 通知中心
+- `C_Chat` - 聊天组件，消息泡泡、会话列表
+- `C_Timeline` - 时间线，垂直/水平多布局
+- `C_ContextMenu` - 右键上下文菜单
+- `C_Transfer` - 穿梭框，跨列表数据迁移
+- `C_AvatarGroup` - 叠加头像组，状态徽标
 </details>
 
 #### 🎮 自定义指令
 
 `v-copy` 复制 | `v-debounce` 防抖 | `v-throttle` 节流 | `v-permission` 权限 | `v-watermark` 水印 | `v-draggable` 拖拽 | `v-longpress` 长按
 
-### 🎪 演示页面（48+ 完整示例）
+### 🎪 演示页面（54+ 完整示例）
 
 <details>
 <summary><b>查看所有演示页面</b></summary>
@@ -387,6 +393,15 @@ bun clean              # 清理缓存
 - 3D展示 - Spline 3D场景
 - 动画系统 - 流畅的页面转场
 - 用户引导 - 新手引导系统
+
+**💬 示范组件**
+
+- 聊天 - 即时聊天 UI，消息泡泡与会话列表
+- 时间线 - 时间轴事件展示，垂直/水平布局
+- 右键菜单 - 自定义上下文菜单
+- 穿梭框 - 跨列表数据迁移
+- 头像组 - 叠加头像展示，状态徽标
+- 音频播放器 - 播放列表、进度控制、多循环模式
 </details>
 
 ---
@@ -407,7 +422,7 @@ Robot_Admin/
 │   │   └── 📁 local/                # 局部组件
 │   ├── 📁 views/                    # 页面视图
 │   │   ├── 📁 dashboard/            # 数据看板
-│   │   ├── 📁 demo/                 # 演示页面（30+ 功能展示）
+│   │   ├── 📁 demo/                 # 演示页面（54+ 功能展示）
 │   │   ├── 📁 preview/              # 组件预览页面（32 个 iframe 嵌入路由）
 │   │   ├── 📁 sys-manage/           # 系统管理
 │   │   ├── 📁 login/                # 登录注册
@@ -740,7 +755,7 @@ location / {
 
 **已发布组件库**
 
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** - 基于 Naive UI 的 Vue 3 业务组件库（39+ 组件，按需导入）
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** - 基于 Naive UI 的 Vue 3 业务组件库（45+ 组件，按需导入）
 
 **规划中项目**
 
@@ -911,9 +926,9 @@ bun run type-build
 **选择 Robot Admin 的理由**:
 
 - 🚀 **性能优先**: Bun + Vite7 双引擎，开发体验极致
-- 🧩 **组件丰富**: 39+ 业务组件，独立组件库按需导入
+- 🧩 **组件丰富**: 45+ 业务组件，独立组件库按需导入
 - 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
-- 📚 **学习友好**: 48+ 演示页面，每个都是最佳实践
+- 📚 **学习友好**: 54+ 演示页面，每个都是最佳实践
 </details>
 
 ---

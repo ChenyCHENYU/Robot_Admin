@@ -68,8 +68,8 @@
     <img src="https://img.shields.io/badge/vite-7.0.0-646CFF?style=flat&logo=vite" alt="Vite Version">
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-37+-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-36+-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/components-45+-success?style=flat" alt="Components">
+    <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
     <img src="https://img.shields.io/badge/test_coverage-85%25-brightgreen?style=flat" alt="Test Coverage">
@@ -282,7 +282,7 @@ bun clean              # Clean cache
 - **Button-Level Permissions** - Precise control down to every action button
 - **API-Level Permissions** - API call permission control
 
-#### 🧩 Component Library (37+ Ready-to-Use)
+#### 🧩 Component Library (45+ Ready-to-Use)
 
 <details>
 <summary><b>View All Components</b></summary>
@@ -318,13 +318,22 @@ bun clean              # Clean cache
 - **ZIP Batch Download** - File packaging compression
 - **Image Screenshot** - Html2canvas web screenshot
 - **File Upload** - Multi-format file support
+
+**Interactive & New Components**
+
+- `C_Chat` - Chat UI with message bubbles & contact list
+- `C_Timeline` - Timeline events, vertical/horizontal layout
+- `C_ContextMenu` - Custom right-click context menu
+- `C_Transfer` - Shuttle box for cross-list data migration
+- `C_AvatarGroup` - Stacked avatar group with status badges
+- `C_AudioPlayer` - Audio player with playlist & multi-loop mode
 </details>
 
 #### 🎮 Custom Directives
 
 `v-copy` Copy | `v-debounce` Debounce | `v-throttle` Throttle | `v-permission` Permission | `v-watermark` Watermark | `v-draggable` Draggable | `v-longpress` Long Press
 
-### 🎪 Demo Pages (30+ Complete Examples)
+### 🎪 Demo Pages (54+ Complete Examples)
 
 <details>
 <summary><b>View All Demo Pages</b></summary>
@@ -360,6 +369,15 @@ bun clean              # Clean cache
 - 3D Display - Spline 3D scenes
 - Animation System - Smooth page transitions
 - User Guide - Onboarding guide system
+
+**💬 Interactive Components**
+
+- Chat - Instant chat UI with message bubbles & session list
+- Timeline - Timeline event display, vertical/horizontal layout
+- Context Menu - Custom right-click context menu
+- Transfer - Cross-list data migration shuttle box
+- Avatar Group - Stacked avatar display with status badges
+- Audio Player - Playlist, progress control & multi-loop modes
 </details>
 
 ---
@@ -380,7 +398,7 @@ Robot_Admin/
 │   │   └── 📁 local/                # Local components
 │   ├── 📁 views/                    # Page views
 │   │   ├── 📁 dashboard/            # Data dashboard
-│   │   ├── 📁 demo/                 # Demo pages (36+ feature showcases)
+│   │   ├── 📁 demo/                 # Demo pages (54+ feature showcases)
 │   │   ├── 📁 sys-manage/           # System management
 │   │   ├── 📁 login/                # Login/Register
 │   │   └── 📁 home/                 # Project homepage
