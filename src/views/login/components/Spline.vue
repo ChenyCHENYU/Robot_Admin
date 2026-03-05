@@ -16,22 +16,9 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
-  import { Application, type SplineEventName } from '@splinetool/runtime'
-  import { useDebounceFn, useIntersectionObserver } from '@vueuse/core'
+  import { ref, onMounted, onUnmounted, computed } from 'vue'
+  import { Application } from '@splinetool/runtime'
   import ParentSize from './ParentSize.vue'
-
-  // 添加日志过滤
-  const originalConsole = console.log
-  console.log = (...args) => {
-    if (
-      !args.some(
-        arg => typeof arg === 'string' && arg.includes('updating from')
-      )
-    ) {
-      originalConsole.apply(console, args)
-    }
-  }
 
   const props = defineProps({
     scene: {
@@ -46,25 +33,11 @@
     style: Object,
   })
 
-  const emit = defineEmits([
-    'error',
-    'spline-mouse-down',
-    'spline-mouse-up',
-    'spline-mouse-hover',
-    'spline-key-down',
-    'spline-key-up',
-    'spline-start',
-    'spline-look-at',
-    'spline-follow',
-    'spline-scroll',
-  ])
+  const emit = defineEmits(['error'])
 
   const canvasRef = ref<HTMLCanvasElement | null>(null)
   const isLoading = ref(false)
   const splineApp = ref<Application | null>(null)
-  const isVisible = ref(true)
-
-  let cleanup: () => void = () => {}
 
   const parentSizeStyles = computed(() => ({
     overflow: 'hidden',
@@ -77,36 +50,59 @@
     height: '100%',
   }))
 
-  const { stop: stopIntersectionObserver } = useIntersectionObserver(
-    canvasRef,
-    ([{ isIntersecting }]) => {
-      isVisible.value = isIntersecting
-      if (isIntersecting && splineApp.value) {
-        nextTick(() => {
-          if (canvasRef.value && splineApp.value) {
-            splineApp.value.requestRender()
-            splineApp.value.setSize(
-              canvasRef.value.clientWidth,
-              canvasRef.value.clientHeight
-            )
-          }
-        })
-      }
-    },
-    { threshold: 0.1 }
-  )
+  // ===== 拦截 Spline / 浏览器扩展 的连接错误 =====
+  const CONNECTION_RE =
+    /Could not establish connection|Receiving end does not exist|ERR_CACHE_READ_FAILURE/
+  let _rejHandler: ((e: PromiseRejectionEvent) => void) | null = null
+  let _errHandler: ((e: ErrorEvent) => void) | null = null
 
-  function eventHandler(name: SplineEventName, handler?: (e: any) => void) {
-    if (!handler || !splineApp.value) return
-    const debouncedHandler = useDebounceFn(handler, 50, { maxWait: 100 })
-    splineApp.value.addEventListener(name, debouncedHandler)
-    return () => splineApp.value?.removeEventListener(name, debouncedHandler)
+  function installErrorGuard() {
+    _rejHandler = (e: PromiseRejectionEvent) => {
+      const msg = String(e.reason?.message || e.reason || '')
+      if (CONNECTION_RE.test(msg)) e.preventDefault()
+    }
+    _errHandler = (e: ErrorEvent) => {
+      const msg = String(e.message || e.error?.message || '')
+      if (CONNECTION_RE.test(msg)) e.preventDefault()
+    }
+    window.addEventListener('unhandledrejection', _rejHandler)
+    window.addEventListener('error', _errHandler)
+  }
+
+  function removeErrorGuard() {
+    if (_rejHandler) {
+      window.removeEventListener('unhandledrejection', _rejHandler)
+      _rejHandler = null
+    }
+    if (_errHandler) {
+      window.removeEventListener('error', _errHandler)
+      _errHandler = null
+    }
   }
 
   async function initSpline() {
     if (!canvasRef.value) return
 
     isLoading.value = true
+
+    // 过滤 Spline 的版本兼容性警告（仅在初始化期间）
+    const originalWarn = console.warn
+    const originalLog = console.log
+    const filterFn = (...args: any[]) => {
+      if (
+        args.some(
+          arg => typeof arg === 'string' && arg.includes('updating from')
+        )
+      )
+        return
+      return true
+    }
+    console.warn = (...args) => {
+      if (filterFn(...args)) originalWarn.apply(console, args)
+    }
+    console.log = (...args) => {
+      if (filterFn(...args)) originalLog.apply(console, args)
+    }
 
     try {
       if (splineApp.value) {
@@ -118,66 +114,40 @@
         renderOnDemand: props.renderOnDemand,
       })
 
-      const originalWarn = console.warn
-      console.warn = (...args) => {
-        if (
-          args.some(
-            arg => typeof arg === 'string' && arg.includes('updating from')
-          )
-        ) {
-          console.log('Spline version compatibility notice:', ...args)
-          return
-        }
-        originalWarn.apply(console, args)
+      try {
+        await splineApp.value.load(props.scene)
+      } catch {
+        // 重试：带 cache-buster
+        const retryUrl = props.scene.includes('?')
+          ? `${props.scene}&t=${Date.now()}`
+          : `${props.scene}?t=${Date.now()}`
+        await splineApp.value.load(retryUrl)
       }
-
-      await splineApp.value.load(props.scene)
-
-      console.warn = originalWarn
-
-      const cleanUpFns = [
-        eventHandler('mouseDown', (e: any) => emit('spline-mouse-down', e)),
-        eventHandler('mouseUp', (e: any) => emit('spline-mouse-up', e)),
-        eventHandler('mouseHover', (e: any) => emit('spline-mouse-hover', e)),
-        eventHandler('keyDown', (e: any) => emit('spline-key-down', e)),
-        eventHandler('keyUp', (e: any) => emit('spline-key-up', e)),
-        eventHandler('start', (e: any) => emit('spline-start', e)),
-        eventHandler('lookAt', (e: any) => emit('spline-look-at', e)),
-        eventHandler('follow', (e: any) => emit('spline-follow', e)),
-        eventHandler('scroll', (e: any) => emit('spline-scroll', e)),
-      ].filter(Boolean)
 
       isLoading.value = false
       props.onLoad?.(splineApp.value)
 
-      return () => {
-        cleanUpFns.forEach(fn => fn?.())
-      }
+      // 加载后立即冻结为静态画面，避免持续 60fps 消耗 GPU
+      splineApp.value.stop()
     } catch (err) {
       console.error('Spline initialization error:', err)
       emit('error', err)
       isLoading.value = false
-      return () => {}
+    } finally {
+      // 一定要恢复 console，避免全局污染
+      console.warn = originalWarn
+      console.log = originalLog
     }
   }
 
-  async function initialize() {
-    cleanup()
-    cleanup = (await initSpline()) ?? (() => {})
-  }
-
-  onMounted(async () => {
-    await initialize()
-
-    watch(isVisible, visible => {
-      if (visible) {
-        initialize()
-      }
-    })
+  onMounted(() => {
+    installErrorGuard()
+    initSpline()
   })
 
   onUnmounted(() => {
-    stopIntersectionObserver()
+    removeErrorGuard()
+    // 销毁 Spline 实例
     if (splineApp.value) {
       splineApp.value.dispose()
       splineApp.value = null

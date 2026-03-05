@@ -12,11 +12,10 @@
     <!-- 打字机动画 -->
     <Typewriter
       v-if="showTypewriter"
-      text="Hey！伙计，欢迎来到我的世界。"
+      :text="t('lp_typewriter', 'Hey！伙计，欢迎来到我的世界。')"
       :duration="2000"
       :delay="300"
       :pause-after="1000"
-      @complete="handleTypewriterComplete"
       @hidden="handleTypewriterHidden"
     />
 
@@ -49,7 +48,11 @@
             </template>
           </NButton>
         </template>
-        {{ themeStore.isDark ? '切换亮色' : '切换暗色' }}
+        {{
+          themeStore.isDark
+            ? t('lp_light_mode', '切换亮色')
+            : t('lp_dark_mode', '切换暗色')
+        }}
       </NTooltip>
 
       <NTooltip
@@ -79,18 +82,17 @@
       <C_Login
         ref="loginRef"
         title="Robot Admin"
-        subtitle="管理系统 · 请登录您的账号"
-        logo-icon="mdi:robot-outline"
+        :subtitle="t('lp_subtitle', '管理系统·请登录您的账号')"
         :features="LOGIN_FEATURES"
         :social-providers="SOCIAL_PROVIDERS"
-        :quick-accounts="QUICK_ACCOUNTS"
         :loading="loading"
         @submit="handleLogin"
         @captcha-submit="handleCaptchaLogin"
         @send-code="handleSendCode"
         @social-login="handleSocialLogin"
         @forgot-password="handleForgotPassword"
-        @register="handleRegister"
+        @register-submit="handleRegisterSubmit"
+        @register-send-code="handleRegisterSendCode"
       />
     </div>
   </div>
@@ -103,10 +105,13 @@
   import { s_languageStore } from '@/stores/language'
   import { loginApi, type LoginResponse } from '@/api/auth'
   import { useFormSubmit } from '@/hooks/useFormSubmit'
-  import { LOGIN_FEATURES, SOCIAL_PROVIDERS, QUICK_ACCOUNTS } from './data'
+  import { LOGIN_FEATURES, SOCIAL_PROVIDERS } from './data'
   import Spline from './components/Spline.vue'
   import Typewriter from './components/Typewriter.vue'
-  import type { PasswordFormData } from '@/components/global/C_Login/types'
+  import type {
+    PasswordFormData,
+    RegisterFormData,
+  } from '@/components/global/C_Login/types'
   import './index.scss'
 
   const router = useRouter()
@@ -116,9 +121,14 @@
   const langStore = s_languageStore()
   const { loading, createSubmit } = useFormSubmit<LoginResponse>()
 
+  // ===== i18n helper =====
+  const t = (key: string, fallback: string) =>
+    typeof (globalThis as any).$t === 'function'
+      ? (globalThis as any).$t(key, fallback, 'robot_admin')
+      : fallback
+
   // ===== 打字机 =====
   const showTypewriter = ref(true)
-  const handleTypewriterComplete = () => {}
   const handleTypewriterHidden = () => {
     showTypewriter.value = false
   }
@@ -139,17 +149,37 @@
   // ===== 欢迎语生成 =====
   const WELCOME_CONFIG = {
     timeSlots: [
-      { hours: [6, 12], greeting: '早上好', emoji: '🌅' },
-      { hours: [12, 14], greeting: '中午好', emoji: '☀️' },
-      { hours: [14, 18], greeting: '下午好', emoji: '🌤️' },
-      { hours: [18, 22], greeting: '晚上好', emoji: '🌆' },
-      { hours: [22, 24, 0, 6], greeting: '夜深了', emoji: '🌙' },
+      {
+        range: [6, 12] as const,
+        greeting: t('lp_morning', '早上好'),
+        emoji: '🌅',
+      },
+      {
+        range: [12, 14] as const,
+        greeting: t('lp_noon', '中午好'),
+        emoji: '☀️',
+      },
+      {
+        range: [14, 18] as const,
+        greeting: t('lp_afternoon', '下午好'),
+        emoji: '🌤️',
+      },
+      {
+        range: [18, 22] as const,
+        greeting: t('lp_evening', '晚上好'),
+        emoji: '🌆',
+      },
+      {
+        range: [22, 6] as const,
+        greeting: t('lp_late_night', '夜深了'),
+        emoji: '🌙',
+      },
     ],
     templates: [
-      '{greeting}，{username}！欢迎回来～ {emoji}',
-      '{emoji} {greeting}，{username}！开始今天的工作吧',
-      '欢迎回来，{username}！{greeting} {emoji}',
-      '{greeting}，{username}！准备好了吗？ {emoji}',
+      '{greeting}，{username}！' + t('lp_wb1', '欢迎回来～') + ' {emoji}',
+      '{emoji} {greeting}，{username}！' + t('lp_wb2', '开始今天的工作吧'),
+      t('lp_wb3', '欢迎回来') + '，{username}！{greeting} {emoji}',
+      '{greeting}，{username}！' + t('lp_wb4', '准备好了吗？') + ' {emoji}',
     ],
   }
 
@@ -157,10 +187,11 @@
     const username = data.data?.username || 'CHENY'
     const hour = new Date().getHours()
     const slot =
-      WELCOME_CONFIG.timeSlots.find(({ hours }) =>
-        hours.length === 2
-          ? hour >= hours[0] && hour < hours[1]
-          : hours.includes(hour)
+      WELCOME_CONFIG.timeSlots.find(
+        ({ range: [start, end] }) =>
+          start < end
+            ? hour >= start && hour < end
+            : hour >= start || hour < end // 跨午夜：22-6 => (>=22 || <6)
       ) || WELCOME_CONFIG.timeSlots[0]
     const { greeting, emoji } = slot
     const template =
@@ -177,9 +208,9 @@
   let tempLoginInfo = { username: '', password: '' }
 
   const login = createSubmit(loginApi, {
-    successMsg: '登录成功',
+    successMsg: t('lp_login_ok', '登录成功'),
     meta: generateWelcomeMessage,
-    errorMsg: '账号或密码错误',
+    errorMsg: t('lp_login_err', '账号或密码错误'),
     onSuccess: async (response: LoginResponse) => {
       try {
         const {
@@ -211,7 +242,6 @@
       username: formData.username,
       password: formData.password,
     }
-    // 构造 API 参数，captcha 部分可按需传入
     const payload: any = {
       username: formData.username,
       password: formData.password,
@@ -228,26 +258,32 @@
 
   // ===== 验证码登录（预留） =====
   const handleCaptchaLogin = () => {
-    message.info('验证码登录功能开发中，敬请期待')
+    message.info(t('lp_captcha_wip', '验证码登录功能开发中，敬请期待'))
   }
 
   // ===== 发送验证码（预留） =====
   const handleSendCode = (account: string) => {
-    message.info(`验证码已发送至 ${account}（演示模式）`)
+    message.info(`${t('lp_code_sent', '验证码已发送至')} ${account}`)
   }
 
   // ===== 社交登录 =====
   const handleSocialLogin = (provider: string) => {
-    message.info(`${provider} 登录开发中，敬请期待`)
+    message.info(`${provider} ${t('lp_login_wip', '登录开发中，敬请期待')}`)
   }
 
   // ===== 忘记密码 =====
   const handleForgotPassword = () => {
-    message.info('忘记密码功能开发中，请联系管理员')
+    message.info(t('lp_forgot_wip', '忘记密码功能开发中，请联系管理员'))
   }
 
-  // ===== 注册 =====
-  const handleRegister = () => {
-    message.info('注册功能开发中，敬请期待')
+  // ===== 注册提交 =====
+  const handleRegisterSubmit = (data: RegisterFormData) => {
+    message.info(t('lp_reg_wip', '注册功能开发中，敬请期待'))
+    console.log('注册信息:', data)
+  }
+
+  // ===== 注册发送验证码 =====
+  const handleRegisterSendCode = (phone: string) => {
+    message.info(`${t('lp_code_sent', '验证码已发送至')} ${phone}`)
   }
 </script>
