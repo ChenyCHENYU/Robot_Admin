@@ -1,0 +1,130 @@
+/**
+ * C_AvatarGroup — 头像组组件样式
+ */
+
+.c-avatar-group {
+  display: inline-flex;
+  align-items: center;
+
+  &.is-rtl {
+    flex-direction: row-reverse;
+  }
+
+  /* ======================== 单个头像 ======================== */
+  &__item {
+    position: relative;
+    flex-shrink: 0;
+    border: 2px solid var(--card-color);
+    background: var(--card-color);
+    transition:
+      transform 0.2s,
+      z-index 0.2s,
+      box-shadow 0.2s;
+    cursor: default;
+    z-index: 1;
+
+    &.is-circle {
+      border-radius: 50%;
+    }
+
+    &.is-square {
+      border-radius: 6px;
+    }
+
+    &.is-clickable {
+      cursor: pointer;
+
+      &:hover {
+        transform: translateY(-3px) scale(1.08);
+        z-index: 10;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    &:hover {
+      z-index: 10;
+    }
+  }
+
+  /* ---- 头像图片 ---- */
+  &__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    .is-circle & {
+      border-radius: 50%;
+    }
+
+    .is-square & {
+      border-radius: 4px;
+    }
+  }
+
+  /* ---- 首字母 fallback ---- */
+  &__initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    font-weight: 600;
+    user-select: none;
+
+    .is-circle & {
+      border-radius: 50%;
+    }
+
+    .is-square & {
+      border-radius: 4px;
+    }
+  }
+
+  /* ---- 状态指示点 ---- */
+  &__status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 50%;
+    border: 2px solid var(--card-color);
+    z-index: 2;
+  }
+
+  /* ======================== 溢出 +N ======================== */
+  &__overflow {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--card-color);
+    background: color-mix(in srgb, var(--primary-color) 12%, var(--card-color));
+    color: var(--primary-color);
+    font-weight: 700;
+    z-index: 0;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+
+    &.is-circle {
+      border-radius: 50%;
+    }
+
+    &.is-square {
+      border-radius: 6px;
+    }
+
+    &.is-clickable {
+      cursor: pointer;
+
+      &:hover {
+        transform: translateY(-3px) scale(1.08);
+        z-index: 10;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        background: color-mix(in srgb, var(--primary-color) 20%, var(--card-color));
+      }
+    }
+  }
+}

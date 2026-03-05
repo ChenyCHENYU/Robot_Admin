@@ -327,6 +327,32 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "transfer",
+          "name": "demo-transfer",
+          "component": "/demo/52-transfer/index",
+          "meta": {
+            "icon": "mdi:swap-horizontal-bold",
+            "title": "穿梭框",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "avatar-group",
+          "name": "demo-avatar-group",
+          "component": "/demo/53-avatar-group/index",
+          "meta": {
+            "icon": "mdi:account-group",
+            "title": "头像组",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },
@@ -520,6 +546,19 @@
           "meta": {
             "icon": "mdi:menu",
             "title": "右键菜单",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "audio-player",
+          "name": "demo-audio-player",
+          "component": "/demo/54-audio-player/index",
+          "meta": {
+            "icon": "mdi:music-circle",
+            "title": "音频播放器",
             "hidden": false,
             "full": false,
             "affix": false,

@@ -19,6 +19,13 @@ export function initSettingsStoreSync() {
   const settingsStore = useLayoutSettingsStore()
   const themeStore = s_themeStore()
 
+  // ✅ 恢复持久化的主题模式：base theme store → settings store
+  // 防止 settings store 默认值 'light' 覆盖 localStorage 中保存的主题
+  const savedMode = themeStore.mode
+  if (savedMode && savedMode !== settingsStore.themeMode) {
+    settingsStore.themeMode = savedMode === 'system' ? 'auto' : savedMode
+  }
+
   // 监听主题色变化，同步到 Naive UI
   watch(
     () => settingsStore.primaryColor,

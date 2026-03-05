@@ -95,4 +95,26 @@
     margin-top: 8px;
     font-size: 13px;
   }
+
+  // ─── 暗色主题适配 ─────────────────────────────
+  [data-theme='dark'] & {
+    .demo-section {
+      .section-desc code {
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+
+    .chart-placeholder {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    // C_CollapsePanel 组件内部暗色适配（box-shadow 硬编码值修正）
+    :deep(.c-collapse-panel--card .collapse-item--active) {
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.28);
+    }
+
+    :deep(.c-collapse-panel--card .collapse-item:hover:not(.collapse-item--disabled)) {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
+    }
+  }
 }
