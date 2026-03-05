@@ -230,5 +230,43 @@ export const previewRoutes: RouteRecordRaw = {
       component: () => import('_views/demo/48-waterfall/index.vue'),
       meta: { title: '瀑布流' },
     },
+
+    // ==================== 通讯 / 交互 ====================
+    {
+      path: 'chat',
+      name: 'preview-chat',
+      component: () => import('_views/demo/49-chat/index.vue'),
+      meta: { title: '聊天' },
+    },
+    {
+      path: 'timeline',
+      name: 'preview-timeline',
+      component: () => import('_views/demo/50-timeline/index.vue'),
+      meta: { title: '时间线' },
+    },
+    {
+      path: 'context-menu',
+      name: 'preview-context-menu',
+      component: () => import('_views/demo/51-context-menu/index.vue'),
+      meta: { title: '右键菜单' },
+    },
+    {
+      path: 'transfer',
+      name: 'preview-transfer',
+      component: () => import('_views/demo/52-transfer/index.vue'),
+      meta: { title: '穿梭框' },
+    },
+    {
+      path: 'avatar-group',
+      name: 'preview-avatar-group',
+      component: () => import('_views/demo/53-avatar-group/index.vue'),
+      meta: { title: '头像组' },
+    },
+    {
+      path: 'audio-player',
+      name: 'preview-audio-player',
+      component: () => import('_views/demo/54-audio-player/index.vue'),
+      meta: { title: '音频播放器' },
+    },
   ],
 }
