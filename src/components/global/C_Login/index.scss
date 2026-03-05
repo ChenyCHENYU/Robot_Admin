@@ -1,0 +1,438 @@
+/**
+ * C_Login 组件样式
+ * 通过 CSS 变量覆盖主题，示例：
+ *   .my-login-wrapper .c-login-panel {
+ *     --cl-panel-bg: rgba(255,255,255,0.95);
+ *     --cl-text-color: #1a1a1a;
+ *   }
+ */
+
+/* ===== CSS 变量默认值（暗色玻璃风格） ===== */
+.c-login-panel {
+  /* 面板 */
+  --cl-panel-bg: rgba(255, 255, 255, 0.1);
+  --cl-panel-border: rgba(255, 255, 255, 0.18);
+  --cl-panel-radius: 16px;
+  --cl-panel-padding: 36px 32px 28px;
+  --cl-panel-width: 420px;
+  --cl-panel-backdrop: blur(20px);
+  --cl-panel-shadow: 0 8px 32px rgba(0, 10, 60, 0.12), 0 2px 8px rgba(0, 10, 40, 0.06);
+
+  /* 文字 */
+  --cl-text-primary: rgba(255, 255, 255, 0.95);
+  --cl-text-secondary: rgba(255, 255, 255, 0.55);
+  --cl-text-hint: rgba(255, 255, 255, 0.4);
+
+  /* 输入框 */
+  --cl-input-bg: transparent;
+  --cl-input-border: none;
+  --cl-input-underline: rgba(255, 255, 255, 0.25);
+  --cl-input-underline-hover: rgba(255, 255, 255, 0.5);
+  --cl-input-underline-focus: rgba(24, 89, 233, 0.85);
+  --cl-input-text: rgba(255, 255, 255, 0.95);
+  --cl-input-placeholder: rgba(255, 255, 255, 0.45);
+  --cl-input-icon: rgba(255, 255, 255, 0.6);
+
+  /* Tab */
+  --cl-tab-text: rgba(255, 255, 255, 0.55);
+  --cl-tab-active: rgba(255, 255, 255, 0.95);
+  --cl-tab-bar: #1859e9;
+
+  /* 按钮 */
+  --cl-btn-bg: linear-gradient(135deg, #1859e9, #1040a0);
+  --cl-btn-bg-hover: linear-gradient(135deg, #2464f0, #1545ad);
+  --cl-btn-shadow: 0 4px 15px rgba(24, 89, 233, 0.3);
+  --cl-btn-shadow-hover: 0 6px 20px rgba(24, 89, 233, 0.4);
+  --cl-btn-height: 42px;
+  --cl-btn-radius: 10px;
+
+  /* 社交按钮 */
+  --cl-social-btn-bg: rgba(255, 255, 255, 0.08);
+  --cl-social-btn-border: rgba(255, 255, 255, 0.18);
+  --cl-social-btn-hover-bg: rgba(255, 255, 255, 0.16);
+  --cl-social-size: 40px;
+
+  /* 分割线 */
+  --cl-divider-color: rgba(255, 255, 255, 0.15);
+
+  /* 链接 */
+  --cl-link-color: rgba(255, 255, 255, 0.6);
+  --cl-link-hover: rgba(255, 255, 255, 0.95);
+
+  /* 间距 */
+  --cl-gap: 16px;
+  --cl-gap-sm: 10px;
+}
+
+/* ===== 面板容器 ===== */
+.c-login-panel {
+  width: var(--cl-panel-width);
+  background: var(--cl-panel-bg);
+  border: 1px solid var(--cl-panel-border);
+  border-radius: var(--cl-panel-radius);
+  padding: var(--cl-panel-padding);
+  backdrop-filter: var(--cl-panel-backdrop);
+  box-shadow: var(--cl-panel-shadow);
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 0.3s ease;
+
+  /* 顶部光泽线 */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 200%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.45) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* 玻璃内衬 */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(24, 89, 233, 0.04) 100%
+    );
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 0;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* ===== Header ===== */
+.c-login__header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.c-login__logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+
+  .c-login__logo-icon {
+    color: var(--cl-text-primary);
+    filter: drop-shadow(0 2px 8px rgba(24, 89, 233, 0.4));
+  }
+}
+
+.c-login__title {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cl-text-primary);
+  letter-spacing: 0.5px;
+}
+
+.c-login__subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--cl-text-secondary);
+}
+
+/* ===== Tabs ===== */
+.c-login__tabs {
+  margin-bottom: 4px;
+
+  :deep(.n-tabs-tab) {
+    color: var(--cl-tab-text) !important;
+    font-size: 14px;
+
+    &.n-tabs-tab--active {
+      color: var(--cl-tab-active) !important;
+      font-weight: 500;
+    }
+  }
+
+  :deep(.n-tabs-bar) {
+    background: var(--cl-tab-bar) !important;
+  }
+
+  :deep(.n-tabs-nav-scroll-wrapper) {
+    border-bottom: 1px solid var(--cl-divider-color);
+  }
+}
+
+/* ===== 表单 ===== */
+.c-login__form {
+  margin-top: 8px;
+}
+
+.c-login__form-item {
+  margin-bottom: var(--cl-gap) !important;
+
+  :deep(.n-form-item-label) {
+    display: none;
+  }
+
+  :deep(.n-form-item-feedback-wrapper) {
+    min-height: 18px;
+  }
+
+  /* 底线风格输入框 */
+  :deep(.n-input) {
+    --n-border: none !important;
+    --n-border-hover: none !important;
+    --n-border-focus: none !important;
+    --n-border-disabled: none !important;
+    --n-box-shadow: none !important;
+    --n-color: var(--cl-input-bg) !important;
+    --n-text-color: var(--cl-input-text) !important;
+    --n-placeholder-color: var(--cl-input-placeholder) !important;
+    --n-caret-color: var(--cl-tab-bar) !important;
+    background: var(--cl-input-bg) !important;
+    border-bottom: 1px solid var(--cl-input-underline) !important;
+    border-radius: 0 !important;
+    padding: 8px 2px !important;
+    transition: border-color 0.25s ease;
+
+    &:hover {
+      border-bottom-color: var(--cl-input-underline-hover) !important;
+    }
+
+    &:focus-within {
+      border-bottom-color: var(--cl-input-underline-focus) !important;
+    }
+
+    .n-input__input-el {
+      color: var(--cl-input-text) !important;
+
+      &::placeholder {
+        color: var(--cl-input-placeholder) !important;
+      }
+    }
+
+    .n-input__prefix,
+    .n-input__suffix {
+      color: var(--cl-input-icon) !important;
+    }
+  }
+}
+
+/* ===== 辅助行：记住我 + 忘记密码 ===== */
+.c-login__aux-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -4px;
+  margin-bottom: var(--cl-gap);
+}
+
+.c-login__remember {
+  :deep(.n-checkbox__label) {
+    color: var(--cl-text-secondary) !important;
+    font-size: 13px;
+  }
+
+  :deep(.n-checkbox-box) {
+    --n-border: 1px solid var(--cl-input-underline) !important;
+  }
+}
+
+.c-login__forgot {
+  font-size: 13px;
+  color: var(--cl-link-color);
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--cl-link-hover);
+  }
+}
+
+/* ===== 验证码行 ===== */
+.c-login__code-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.c-login__code-input {
+  flex: 1;
+}
+
+.c-login__send-code-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--cl-input-underline) !important;
+  color: var(--cl-text-secondary) !important;
+  border-radius: 6px !important;
+  font-size: 13px;
+  transition: all 0.25s ease;
+
+  &:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.16) !important;
+    color: var(--cl-text-primary) !important;
+  }
+}
+
+/* ===== 登录按钮 ===== */
+.c-login__submit-btn {
+  height: var(--cl-btn-height) !important;
+  background: var(--cl-btn-bg) !important;
+  border: none !important;
+  border-radius: var(--cl-btn-radius) !important;
+  font-weight: 500;
+  letter-spacing: 2px;
+  font-size: 15px;
+  box-shadow: var(--cl-btn-shadow) !important;
+  transition: all 0.3s ease !important;
+  overflow: hidden;
+  position: relative;
+
+  /* 光泽扫过动画 */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.25) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg);
+    transition: left 0.6s ease;
+  }
+
+  &:not(:disabled):hover {
+    background: var(--cl-btn-bg-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--cl-btn-shadow-hover) !important;
+
+    &::before {
+      left: 150%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+/* ===== 人机验证 ===== */
+.c-login__captcha-wrap {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ===== 分割线 ===== */
+.c-login__divider {
+  margin: 16px 0 14px !important;
+
+  :deep(.n-divider__line) {
+    background: var(--cl-divider-color) !important;
+  }
+
+  :deep(.n-divider__title) {
+    color: var(--cl-text-hint) !important;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}
+
+/* ===== 社交登录 ===== */
+.c-login__social-row {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.c-login__social-btn {
+  width: var(--cl-social-size) !important;
+  height: var(--cl-social-size) !important;
+  background: var(--cl-social-btn-bg) !important;
+  border: 1px solid var(--cl-social-btn-border) !important;
+  color: var(--cl-text-secondary) !important;
+  transition: all 0.25s ease !important;
+
+  &:hover {
+    background: var(--cl-social-btn-hover-bg) !important;
+    color: var(--cl-text-primary) !important;
+    transform: translateY(-2px);
+  }
+}
+
+/* ===== 快捷账号 ===== */
+.c-login__quick-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.c-login__quick-btn {
+  font-size: 13px;
+}
+
+/* ===== 注册 ===== */
+.c-login__register-row {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.c-login__register-hint {
+  color: var(--cl-text-hint);
+}
+
+.c-login__register-link {
+  color: var(--cl-tab-bar);
+  cursor: pointer;
+  margin-left: 4px;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+/* ===== 输入图标 ===== */
+.c-login__input-icon {
+  color: var(--cl-input-icon);
+}
+
+/* ===== 亮色主题预设（父级加 .c-login--light 类可切换） ===== */
+.c-login--light .c-login-panel {
+  --cl-panel-bg: rgba(255, 255, 255, 0.96);
+  --cl-panel-border: rgba(0, 0, 0, 0.08);
+  --cl-panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --cl-text-primary: #1a1a1a;
+  --cl-text-secondary: #666;
+  --cl-text-hint: #999;
+  --cl-input-underline: rgba(0, 0, 0, 0.2);
+  --cl-input-underline-hover: rgba(0, 0, 0, 0.4);
+  --cl-input-text: #1a1a1a;
+  --cl-input-placeholder: #aaa;
+  --cl-input-icon: #aaa;
+  --cl-tab-text: #888;
+  --cl-tab-active: #1a1a1a;
+  --cl-social-btn-bg: rgba(0, 0, 0, 0.04);
+  --cl-social-btn-border: rgba(0, 0, 0, 0.12);
+  --cl-social-btn-hover-bg: rgba(0, 0, 0, 0.08);
+  --cl-divider-color: rgba(0, 0, 0, 0.1);
+  --cl-link-color: #888;
+  --cl-link-hover: #1a1a1a;
+}
