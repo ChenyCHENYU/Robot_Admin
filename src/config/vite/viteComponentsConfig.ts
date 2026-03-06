@@ -25,15 +25,18 @@ const isLocalMode =
   process.env.USE_LOCAL_PACKAGES === 'true'
 
 /**
- * dev:local 模式下，node_modules 可能滞后于本地源码（新增组件尚未发布），
- * 直接扫描本地组件目录获取全量组件名，确保 resolver 和 fallback 守卫同步。
- * 正式模式下使用已发布 resolver 的 componentNames，零开销。
+ * 优先扫描本地组件目录（源码最新，npm 版本可能滞后于本地构建）。
+ * 本地目录不存在时（CI/纯 npm 环境）回退到已安装包的 componentNames。
+ * 无论哪种模式均保持 libraryComponents 与实际组件集同步。
  */
 const libraryComponentNames: readonly string[] = (() => {
-  if (!isLocalMode) return componentNames
   const dir = resolve(process.cwd(), '../naive-ui-components/src/components')
-  if (!existsSync(dir)) return componentNames
-  return readdirSync(dir).filter(n => n.startsWith('C_') && !n.startsWith('_'))
+  if (existsSync(dir)) {
+    return readdirSync(dir).filter(
+      n => n.startsWith('C_') && !n.startsWith('_')
+    )
+  }
+  return componentNames
 })()
 
 /** 已迁移到组件库的组件集合 — fallback resolver 必须跳过 */

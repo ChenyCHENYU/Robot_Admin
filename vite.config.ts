@@ -70,6 +70,7 @@ export default defineConfig(({ mode, command }: { mode: string; command: string 
       // ✅ 预构建大型依赖以提升启动速度
       include: [
         'naive-ui',
+        '@robot-admin/naive-ui-components',
         'vue-router',
         'pinia',
         '@vueuse/core',
