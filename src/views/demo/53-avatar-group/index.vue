@@ -150,7 +150,7 @@
 
 <script setup lang="ts">
   import { computed, ref } from 'vue'
-  import type { AvatarItem } from '@/components/global/C_AvatarGroup/types'
+  import type { AvatarItem } from '@robot-admin/naive-ui-components'
   import {
     CONTRIBUTORS,
     DEMO_SCENES,

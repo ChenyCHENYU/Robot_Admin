@@ -4,7 +4,7 @@
  * @Description: 本地包调试配置 - 管理 dev:local 模式下的包别名
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import { existsSync, readdirSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import type { Alias } from 'vite'
 
@@ -57,6 +57,58 @@ const STANDALONE_MODE =
   process.env.USE_LOCAL_COMPONENTS === 'true' &&
   process.env.USE_LOCAL_PACKAGES !== 'true'
 
+/** 已注册的传递依赖别名（避免重复） */
+const registeredTransitiveDeps = new Set<string>()
+
+/**
+ * 为被别名的本地包自动解析传递依赖
+ *
+ * @description
+ * 当 dev:local 将包入口别名到源码后，其 dependencies（如 xlsx、jszip）
+ * 无法从主项目的 node_modules 解析。此函数读取包的 package.json，
+ * 将主项目中不存在的传递依赖，从该包自身的 node_modules 中解析并添加别名。
+ * 行为与 npm 安装模式一致——依赖随包自动可用，无需手动安装。
+ */
+function collectTransitiveDeps(
+  packagesDir: string,
+  pkgName: string,
+  aliases: Alias[]
+) {
+  const pkgJsonPath = resolve(packagesDir, pkgName, 'package.json')
+  if (!existsSync(pkgJsonPath)) return
+
+  try {
+    const pkgJson = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'))
+    const deps = Object.keys(pkgJson.dependencies || {})
+    const transitiveNames: string[] = []
+
+    for (const dep of deps) {
+      if (registeredTransitiveDeps.has(dep)) continue
+
+      // 主项目已安装的依赖跳过，避免版本冲突
+      const mainResolved = resolve(process.cwd(), 'node_modules', dep)
+      if (existsSync(mainResolved)) continue
+
+      // 从包自身的 node_modules 解析（bun workspace 会在此处创建符号链接）
+      const depInPkg = resolve(packagesDir, pkgName, 'node_modules', dep)
+      if (existsSync(depInPkg)) {
+        aliases.push({
+          find: new RegExp(`^${dep.replace(/[/.]/g, '\\$&')}$`),
+          replacement: depInPkg,
+        })
+        registeredTransitiveDeps.add(dep)
+        transitiveNames.push(dep)
+      }
+    }
+
+    if (transitiveNames.length > 0) {
+      console.log(`  📦 ${pkgName} → 传递依赖: ${transitiveNames.join(', ')}`)
+    }
+  } catch {
+    // package.json 读取失败，静默跳过
+  }
+}
+
 /**
  * 获取本地包别名配置
  *
@@ -106,6 +158,10 @@ export function getLocalPackagesAlias(): Alias[] {
         })
 
         packageNames.push(pkgName)
+
+        // 自动解析传递依赖：读取被别名包的 dependencies，
+        // 对主项目 node_modules 中不存在的依赖，从该包自身的 node_modules 解析
+        collectTransitiveDeps(localPath, pkgName, aliases)
       })
     } else {
       console.warn('⚠️  未找到 monorepo 包目录，跳过扫描')

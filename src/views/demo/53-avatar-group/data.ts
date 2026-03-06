@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { AvatarItem } from '@/components/global/C_AvatarGroup/types'
+import type { AvatarItem } from '@robot-admin/naive-ui-components'
 
 /** 功能特性 */
 export const FEATURE_LIST = [

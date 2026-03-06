@@ -68,7 +68,7 @@
     <img src="https://img.shields.io/badge/vite-7.0.0-646CFF?style=flat&logo=vite" alt="Vite Version">
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-45+-success?style=flat" alt="Components">
+    <img src="https://img.shields.io/badge/components-49+-success?style=flat" alt="Components">
     <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
@@ -170,12 +170,12 @@ _Here, when `Bun's` ultimate performance meets `Vue3's` Composition API, when `T
 ### 🔥 Monster-Level Performance Development Experience
 
 - **Millisecond Hot Updates** - Bun + Vite7 chemical reaction, say goodbye to waiting
-- **Intelligent Type Hints** - TypeScript5.8 + 30+ custom components, IDE intelligence maxed out
+- **Intelligent Type Hints** - TypeScript5.8 + 49+ custom components, IDE intelligence maxed out
 - **Zero Config Out-of-Box** - One command to start, complete admin system in 30 seconds
 
 ### 🎨 Not Just a Management System, But a Masterpiece
 
-- **30+ Carefully Crafted Demo Pages** - Each one is production-ready business component
+- **54+ Carefully Crafted Demo Pages** - Each one is production-ready business component, 49 components support docs site iframe live preview
 - **7 Custom Directives** - Debounce, throttle, long press, drag, permission... Make development elegant
 - **Theme System** - Dark/Light mode/Follow system + Custom extension support
 
@@ -250,6 +250,7 @@ bun clean              # Clean cache
 - **Vue 3.5.13** - 🔥 Latest stable version, silky Composition API experience
 - **TypeScript 5.8** - 🛡️ Type safety, intelligent hints
 - **Naive UI 2.41.0** - 🎨 Component library with both beauty and performance
+- **@robot-admin/naive-ui-components** - 🧩 49+ business components, auto-import on demand
 - **UnoCSS 66.3.3** - ⚡ Atomic CSS, on-demand generation, minimal size
 
 **⚙️ Build Tools**
@@ -282,7 +283,7 @@ bun clean              # Clean cache
 - **Button-Level Permissions** - Precise control down to every action button
 - **API-Level Permissions** - API call permission control
 
-#### 🧩 Component Library (45+ Ready-to-Use)
+#### 🧩 Component Library (49+ Ready-to-Use)
 
 <details>
 <summary><b>View All Components</b></summary>
@@ -291,42 +292,64 @@ bun clean              # Clean cache
 
 - `C_Form` - Dynamic form engine, supports 8 layouts
 - `C_Table` - Super table with virtual scrolling support
-- `C_Header` - Responsive header component
-- `C_Menu` - Smart navigation menu
-- `C_Icon` - Icon management system
+- `C_FormSearch` - Advanced search form component
+- `C_ActionBar` - Action button group, unified layout
+- `C_Icon` - Iconify runtime icon management system
 - `C_Theme` - Theme switching component
+- `C_Language` - i18n language switcher
+- `C_Menu` - Smart navigation menu
+- `C_Breadcrumb` - Breadcrumb navigation
+- `C_TagsView` - Tags view navigation
+- `C_GlobalSearch` - Global search panel
+- `C_Login` - Login component (5 modes / captcha / remember me)
 
 **Business Components**
 
 - `C_Code` - Code editor component
 - `C_Markdown` - Markdown editor
+- `C_Editor` - WangEditor rich text editor
+- `C_FormulaEditor` - Formula editor
 - `C_Time` - Time processing component
+- `C_Date` - Date selection component
 - `C_Progress` - Progress display component
-- `C_Chart` - Chart component wrapper
 - `C_Upload` - File upload component
+- `C_Cron` - Cron expression editor
+- `C_Steps` - Steps component
 
-**Editor Ecosystem**
+**Visualization & Charts**
 
-- **WangEditor** - Rich text editor
-- **Markdown Editor** - Real-time preview, syntax highlighting
-- **Code Editor** - Multi-language syntax highlighting support
-- **JSON Editor** - Structured data editing
+- `C_AntV` - AntV X6 flowchart engine (BPMN/ER/UML)
+- `C_WorkFlow` - Vue Flow workflow editor
+- `C_VtableGantt` - Gantt chart component
+- `C_FullCalendar` - Full calendar event management
 
-**File Processing**
+**Media & Files**
 
-- **Excel Import/Export** - Support for complex table structures
-- **ZIP Batch Download** - File packaging compression
-- **Image Screenshot** - Html2canvas web screenshot
-- **File Upload** - Multi-format file support
+- `C_VideoPlayer` - XGPlayer video player (HLS/anti-cheat)
+- `C_FilePreview` - File preview (PDF/Excel/Word/Image)
+- `C_ImageCropper` - Image cropper
+- `C_Signature` - Electronic signature
+- `C_QRCode` - QR code generator
+- `C_Barcode` - Barcode generator
+- `C_AudioPlayer` - Audio player with playlist & multi-loop mode
 
-**Interactive & New Components**
+**Interactive & Layout**
 
+- `C_Draggable` - Drag and drop sorting
+- `C_SplitPane` - Split panel
+- `C_CollapsePanel` - Collapse panel
+- `C_WaterFall` - Waterfall layout
+- `C_Cascade` - Region cascade selection
+- `C_City` - City selector
+- `C_Map` - Leaflet map
+- `C_Captcha` - Verification code
+- `C_Guide` - User guide
+- `C_NotificationCenter` - Notification center
 - `C_Chat` - Chat UI with message bubbles & contact list
 - `C_Timeline` - Timeline events, vertical/horizontal layout
 - `C_ContextMenu` - Custom right-click context menu
 - `C_Transfer` - Shuttle box for cross-list data migration
 - `C_AvatarGroup` - Stacked avatar group with status badges
-- `C_AudioPlayer` - Audio player with playlist & multi-loop mode
 </details>
 
 #### 🎮 Custom Directives

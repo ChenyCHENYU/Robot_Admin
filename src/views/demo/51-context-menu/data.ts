@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { ContextMenuItem } from '@/components/global/C_ContextMenu/types'
+import type { ContextMenuItem } from '@robot-admin/naive-ui-components'
 
 // ==================== 编辑器菜单 ====================
 

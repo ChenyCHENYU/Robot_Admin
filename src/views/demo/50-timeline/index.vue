@@ -237,7 +237,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { TimelineItem } from '@/components/global/C_Timeline/types'
+  import type { TimelineItem } from '@robot-admin/naive-ui-components'
   import {
     PROJECT_TIMELINE,
     CI_PIPELINE_TIMELINE,

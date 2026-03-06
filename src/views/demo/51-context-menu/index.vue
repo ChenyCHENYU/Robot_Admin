@@ -201,7 +201,7 @@ console.log(greeting)
 </template>
 
 <script setup lang="ts">
-  import type { ContextMenuItem } from '@/components/global/C_ContextMenu/types'
+  import type { ContextMenuItem } from '@robot-admin/naive-ui-components'
   import {
     EDITOR_MENU,
     FILE_MANAGER_MENU,

@@ -10,7 +10,7 @@
 import type {
   SocialProvider,
   LoginFeatures,
-} from '@/components/global/C_Login/types'
+} from '@robot-admin/naive-ui-components'
 import type { WelcomeConfig } from '@/composables/useLoginController'
 
 // ================= 登录功能开关 =================

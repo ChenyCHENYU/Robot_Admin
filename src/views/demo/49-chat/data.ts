@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { ChatContact, ChatMessage } from '@/components/global/C_Chat/types'
+import type { ChatContact, ChatMessage } from '@robot-admin/naive-ui-components'
 
 // ================= 联系人列表 =================
 export const DEMO_CONTACTS: ChatContact[] = [

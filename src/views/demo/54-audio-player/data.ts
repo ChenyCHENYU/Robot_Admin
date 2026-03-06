@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { AudioTrack } from '@/components/global/C_AudioPlayer/types'
+import type { AudioTrack } from '@robot-admin/naive-ui-components'
 
 /** 功能特性 */
 export const FEATURE_LIST = [

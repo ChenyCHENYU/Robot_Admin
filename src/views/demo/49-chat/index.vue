@@ -166,7 +166,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { ChatMessage } from '@/components/global/C_Chat/types'
+  import type { ChatMessage } from '@robot-admin/naive-ui-components'
   import {
     DEMO_CONTACTS,
     DEMO_MESSAGES,

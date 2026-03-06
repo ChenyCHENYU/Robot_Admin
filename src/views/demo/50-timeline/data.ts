@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { TimelineItem } from '@/components/global/C_Timeline/types'
+import type { TimelineItem } from '@robot-admin/naive-ui-components'
 
 // ==================== 演示数据 ====================
 
