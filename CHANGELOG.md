@@ -1,5 +1,38 @@
 # Changelog
 
+## [2.1.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.0.0...v2.1.0) (2026-03-06)
+
+
+### Features
+
+* **C_Login:** 增加登录组件扩展能力及演示页面 ([52f060a](https://github.com/ChenyCHENYU/Robot_Admin/commit/52f060a1d317aa67ef0abc066397490531a19ab1))
+* **component:** 新增穿梭框/头像组/音频播放器组件及暗色主题修复 ([1617d4f](https://github.com/ChenyCHENYU/Robot_Admin/commit/1617d4f6e25c86e33d5a2ef12f232d768f66650e))
+* **login:** 封装通用插拔式 C_Login 组件，重构登录页 ([752ca85](https://github.com/ChenyCHENYU/Robot_Admin/commit/752ca85a9467479497315023bab37351abcfef8e))
+* **router:** 新增6个组件预览路由 ([06fca7b](https://github.com/ChenyCHENYU/Robot_Admin/commit/06fca7b16a951b716a4e594ab590ea9583cd57e5))
+* **router:** 新增组件预览路由，支持文档站 iframe 嵌入 ([1755b44](https://github.com/ChenyCHENYU/Robot_Admin/commit/1755b44238ef6fe86bc7499276e1097bae6af023))
+
+
+### Bug Fixes
+
+* **component:** Timeline虚线/尺寸+Chat视觉层次优化 ([78f783a](https://github.com/ChenyCHENYU/Robot_Admin/commit/78f783a94227c997750ba91bb39731ff1369138f))
+* **component:** 修复AudioPlayer类型错误+折叠面板暗色主题+CSS变量解耦 ([22c7cc0](https://github.com/ChenyCHENYU/Robot_Admin/commit/22c7cc035080030db7c73b485fecfa87cac8a062))
+* **deploy:** 修复 iframe 跨域嵌入，X-Frame-Options 设置 ALLOWALL ([4bba9d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/4bba9d2b4847b36f9412ad110a142b6e1d679434))
+* **deps:** 升级naive-ui-components到0.6.11，resolver防护改为始终扫描本地目录，optimizeDeps预构建组件库 ([db2ffcd](https://github.com/ChenyCHENYU/Robot_Admin/commit/db2ffcda591abf2fee2e2f475e899059bf43cfed))
+* **header,vite:** 修复面包屑分隔符对齐、移除临时cursor补丁、新增dev:components调试模式 ([75e61f2](https://github.com/ChenyCHENYU/Robot_Admin/commit/75e61f2fd47e837c9e9c392fea8aadfc346039fe))
+* **home:** 修复新窗口404及启动白屏，更新首页内容 ([43a22eb](https://github.com/ChenyCHENYU/Robot_Admin/commit/43a22eb0ad3fee521702556e6cb72fa369d49ef0))
+* **loading:** 彻底消除首屏白/黑闪烁，增强预览布局 ([6ec0b02](https://github.com/ChenyCHENYU/Robot_Admin/commit/6ec0b02a49c4cbe178b56391cca45c77fcfcbb68))
+* **login:** 表单校验、性能、错误拦截、中英文国际化 ([29b087a](https://github.com/ChenyCHENYU/Robot_Admin/commit/29b087ac5c851335170ef800df864879cd2c4c0b))
+* **router:** 修复已登录用户新窗口打开预览页空白 ([c465860](https://github.com/ChenyCHENYU/Robot_Admin/commit/c465860b5b005ed14d0f812ac05c4d3fd40400a5))
+* **vite:** dev:local模式扫描本地组件目录解决resolver版本滞后 ([7674d1b](https://github.com/ChenyCHENYU/Robot_Admin/commit/7674d1b52b915bb38c05c727686f502af8516d0f))
+
+
+### Performance Improvements
+
+* **build:** 优化构建体积与安全配置 ([4d44ad0](https://github.com/ChenyCHENYU/Robot_Admin/commit/4d44ad065fc5754af1d2e870e363f6f1bd3ecd5f))
+* **login:** 重构登录页为可插拔架构 + 修复人机验证交互 ([bdd8563](https://github.com/ChenyCHENYU/Robot_Admin/commit/bdd8563d758a573aada4b442dfe6af364078d68a))
+* **navbar:** 优化用户面板精致化与路由跳转修复 ([060cad2](https://github.com/ChenyCHENYU/Robot_Admin/commit/060cad21cf47a4567fa1df3c2ea1278e16c149dc))
+* **全局:** 项目全面优化 — 清理冗余代码、统一命名、修复暗色主题、升级组件库 ([f4557c3](https://github.com/ChenyCHENYU/Robot_Admin/commit/f4557c30fc964474658af558df67bfd82c2a4201))
+
 ## [2.0.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.14.0...v2.0.0) (2026-03-01)
 
 
