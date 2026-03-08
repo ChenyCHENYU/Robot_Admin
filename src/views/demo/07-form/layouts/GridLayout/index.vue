@@ -16,43 +16,49 @@
         class="config-card"
         :bordered="false"
       >
-        <div class="config-title">网格布局配置</div>
+        <template #header>
+          <div class="config-header">
+            <Icon
+              icon="mdi:grid"
+              class="header-icon"
+            />
+            <span>网格布局配置</span>
+          </div>
+        </template>
         <div class="config-controls">
           <div class="config-item">
-            <span>栅格列数</span>
-            <select
-              v-model="gridCols"
-              class="number-input"
-            >
-              <option
-                v-for="option in colsOptions"
-                :key="option.value"
-                :value="option.value"
-              >
-                {{ option.label }}
-              </option>
-            </select>
+            <label class="config-label">
+              <Icon icon="mdi:view-column-outline" />
+              栅格列数
+            </label>
+            <NSelect
+              v-model:value="gridCols"
+              :options="colsOptions"
+              size="small"
+              style="width: 100px"
+            />
           </div>
           <div class="config-item">
-            <span>网格间距</span>
-            <div class="input-with-badge">
-              <input
-                v-model="gridGutter"
-                type="number"
-                min="8"
-                max="32"
-                class="number-input"
-              />
-              <span class="badge">{{ gridGutter }}px</span>
-            </div>
+            <label class="config-label">
+              <Icon icon="mdi:arrow-expand-horizontal" />
+              网格间距
+              <span class="config-value">{{ gridGutter }}px</span>
+            </label>
+            <NSlider
+              v-model:value="gridGutter"
+              :min="8"
+              :max="32"
+              :step="4"
+              :tooltip="false"
+              style="width: 120px"
+            />
           </div>
           <div class="config-item">
-            <span>响应式</span>
-            <div
-              class="switch"
-              :class="{ active: responsive }"
-              @click="responsive = !responsive"
-            ></div>
+            <label class="config-label">
+              <Icon icon="mdi:responsive" />
+              响应式布局
+            </label>
+            <NSwitch v-model:value="responsive" />
           </div>
         </div>
       </NCard>
@@ -222,7 +228,9 @@
       label: '预览布局',
       icon: 'mdi:eye-outline',
       type: 'success',
-      onClick: () => (showLayoutPreview.value = true),
+      onClick: () => {
+        showLayoutPreview.value = true
+      },
     },
     {
       key: 'submit',

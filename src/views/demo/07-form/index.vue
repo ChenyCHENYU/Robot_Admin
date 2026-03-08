@@ -14,10 +14,6 @@
 
     <!-- 控制面板 -->
     <div class="control-panel">
-      <div class="panel-title">
-        布局控制中心 <span class="subtitle">/ 实时配置表单布局和行为</span>
-      </div>
-
       <div class="control-grid">
         <!-- 布局选择器 -->
         <NCard
@@ -25,7 +21,22 @@
           class="control-card"
           :bordered="false"
         >
-          <div class="card-title">布局类型</div>
+          <template #header>
+            <div class="card-header">
+              <Icon
+                icon="mdi:view-dashboard-outline"
+                class="header-icon"
+              />
+              <span>布局类型</span>
+              <NTag
+                size="small"
+                type="info"
+                round
+              >
+                {{ currentLayoutInfo.title }}
+              </NTag>
+            </div>
+          </template>
           <div class="layout-buttons">
             <button
               v-for="layout in layoutOptions"
@@ -39,6 +50,10 @@
               {{ layout.label }}
             </button>
           </div>
+          <div class="layout-description">
+            <Icon icon="mdi:information-outline" />
+            <span>{{ currentLayoutInfo.content }}</span>
+          </div>
         </NCard>
 
         <!-- 配置面板 -->
@@ -47,69 +62,66 @@
           class="control-card"
           :bordered="false"
         >
-          <div class="card-title">表单配置</div>
+          <template #header>
+            <div class="card-header">
+              <Icon
+                icon="mdi:cog-outline"
+                class="header-icon"
+              />
+              <span>表单配置</span>
+            </div>
+          </template>
           <div class="config-section">
             <div class="config-item">
-              <span>标签位置</span>
-              <div class="button-group">
-                <button
+              <label class="config-label">
+                <Icon icon="mdi:format-align-left" />
+                标签位置
+              </label>
+              <NRadioGroup
+                v-model:value="labelPlacement"
+                name="placementGroup"
+              >
+                <NRadioButton
                   v-for="item in LABEL_PLACEMENTS"
                   :key="item.value"
-                  :class="{ active: labelPlacement === item.value }"
-                  @click="labelPlacement = item.value"
-                >
-                  {{ item.label }}
-                </button>
-              </div>
+                  :value="item.value"
+                  :label="item.label"
+                />
+              </NRadioGroup>
             </div>
             <div class="config-item">
-              <span>实时验证</span>
-              <div
-                :class="['switch', { active: validateOnChange }]"
-                @click="validateOnChange = !validateOnChange"
-              />
+              <label class="config-label">
+                <Icon icon="mdi:check-circle-outline" />
+                实时验证
+              </label>
+              <NSwitch v-model:value="validateOnChange" />
+              <NTag
+                size="small"
+                :type="validateOnChange ? 'success' : 'default'"
+              >
+                {{ validateOnChange ? '已启用' : '已禁用' }}
+              </NTag>
             </div>
           </div>
+          <NDivider style="margin: 12px 0" />
           <div class="action-buttons">
-            <button
+            <NButton
               v-for="action in FORM_ACTIONS"
               :key="action.key"
-              :class="['action-btn', action.type]"
+              :type="
+                action.type === 'fill'
+                  ? 'success'
+                  : action.type === 'preview'
+                    ? 'info'
+                    : action.type === 'clear'
+                      ? 'warning'
+                      : 'primary'
+              "
+              size="small"
               @click="handleAction(action.key)"
             >
               {{ action.label }}
-            </button>
-          </div>
-        </NCard>
-
-        <!-- 统计和监控合并 -->
-        <NCard
-          hoverable
-          class="control-card"
-          :bordered="false"
-        >
-          <div class="card-title">实时统计</div>
-          <div class="stat-display">
-            <div class="stat-number">{{ formStats.totalFields }}</div>
-            <div class="stat-label">当前布局包含的字段总数</div>
-          </div>
-        </NCard>
-
-        <NCard
-          hoverable
-          class="control-card"
-          :bordered="false"
-        >
-          <div class="card-title">性能监控</div>
-          <div class="config-item">
-            <span>渲染时间</span>
-            <span class="perf-value success"
-              >{{ performance.renderTime }}ms</span
-            >
-          </div>
-          <div class="config-item">
-            <span>内存使用</span>
-            <span class="perf-value">{{ performance.memoryUsage }}MB</span>
+            </NButton>
           </div>
         </NCard>
       </div>
@@ -141,22 +153,6 @@
         @fields-change="currentFields = $event || []"
       />
     </NCard>
-
-    <!-- 状态卡片 -->
-    <div class="status-section">
-      <div class="panel-title">状态监控面板</div>
-      <div class="status-cards">
-        <NCard
-          v-for="(card, index) in statusCards"
-          :key="index"
-          :class="['status-card', card.type]"
-          :bordered="false"
-        >
-          <div class="number">{{ card.value }}</div>
-          <div class="label">{{ card.label }}</div>
-        </NCard>
-      </div>
-    </div>
 
     <!-- 预览模态框 -->
     <Teleport to="body">
@@ -202,22 +198,6 @@
                 >
                   {{ mode.icon }} {{ mode.label }}
                 </button>
-              </div>
-
-              <!-- 统计概览 -->
-              <div class="data-overview">
-                <div class="overview-stats">
-                  <div
-                    v-for="stat in overviewStats"
-                    :key="stat.label"
-                    class="stat-item"
-                  >
-                    <span class="stat-label">{{ stat.label }}</span>
-                    <span :class="['stat-value', stat.type]">{{
-                      stat.value
-                    }}</span>
-                  </div>
-                </div>
               </div>
 
               <!-- 预览内容 -->
@@ -418,12 +398,6 @@
   const previewMode = ref('json')
   const copying = ref(false)
 
-  // 性能监控数据
-  const performance = reactive({
-    renderTime: 38,
-    memoryUsage: '2.0',
-  })
-
   // ========================================
   // 工具函数
   // ========================================
@@ -463,55 +437,10 @@
     () => layoutDescriptions[currentLayout.value] || { title: '', content: '' }
   )
 
-  // 统一的表单统计
-  const formStats = computed(() => {
-    const totalFields = currentFields.value.length
-    const filledCount = currentFields.value.filter(field =>
-      isValueFilled(formData.value[field.prop])
-    ).length
-    const pendingCount = Math.max(0, totalFields - filledCount)
-    const completionPercentage =
-      totalFields === 0 ? 0 : Math.round((filledCount / totalFields) * 100)
-
-    return {
-      totalFields,
-      filledCount,
-      pendingCount,
-      completionPercentage,
-    }
-  })
-
-  // 状态卡片数据
-  const statusCards = computed(() => [
-    {
-      value: formStats.value.filledCount,
-      label: '已填写字段',
-      type: 'completed',
-    },
-    {
-      value: formStats.value.pendingCount,
-      label: '待填写字段',
-      type: 'pending',
-    },
-    {
-      value: `${formStats.value.completionPercentage}%`,
-      label: '完成率',
-      type: 'completion',
-    },
-    { value: errorCount.value, label: '验证错误', type: 'errors' },
-  ])
-
-  // 模态框统计数据
-  const overviewStats = computed(() => [
-    { label: '总字段数', value: Object.keys(formData.value).length, type: '' },
-    { label: '已填写', value: formStats.value.filledCount, type: 'filled' },
-    { label: '空字段', value: formStats.value.pendingCount, type: 'empty' },
-    {
-      label: '完成率',
-      value: `${formStats.value.completionPercentage}%`,
-      type: 'progress',
-    },
-  ])
+  // 表单统计
+  const formStats = computed(() => ({
+    totalFields: currentFields.value.length,
+  }))
 
   // 预览相关计算属性
   const jsonData = computed(() => JSON.stringify(formData.value, null, 2))
@@ -527,12 +456,6 @@
     return `// 表单数据对象 - ${currentLayoutInfo.value.title}
 const formData = ${jsonData.value};
 
-// 数据统计
-console.log('总字段数:', Object.keys(formData).length);
-console.log('已填写字段:', ${formStats.value.filledCount});
-console.log('完成率:', '${formStats.value.completionPercentage}%');
-
-// 导出数据
 export default formData;`
   })
 
@@ -646,27 +569,6 @@ export default formData;`
     errorCount.value = Array.isArray(errors) ? errors.length : 1
     console.error('表单验证失败:', errors)
   }
-
-  // ========================================
-  // 生命周期和监听器
-  // ========================================
-  let performanceTimer: number | null = null
-
-  const updatePerformanceData = () => {
-    performance.renderTime = Math.floor(Math.random() * 20) + 35
-    performance.memoryUsage = (Math.random() * 1.5 + 1.8).toFixed(1)
-  }
-
-  onMounted(() => {
-    performanceTimer = window.setInterval(updatePerformanceData, 3000)
-  })
-
-  onUnmounted(() => {
-    if (performanceTimer) {
-      clearInterval(performanceTimer)
-      performanceTimer = null
-    }
-  })
 </script>
 
 <style lang="scss" scoped>
