@@ -1,11 +1,16 @@
-  .city-demo-page {
-    padding: 24px;
-    min-height: 100vh;
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-05-30 08:36:17
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-08 23:30:00
+ * @FilePath: \Robot_Admin\src\views\demo\06-city\index.scss
+ * @Description: 城市选择器组件演示页面样式
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+*/
 
-    :deep(.n-h1) {
-      margin-bottom: 24px;
-    }
-  }
+.city-demo-page {
+  padding: 24px;
+  min-height: 100vh;
 
   .demo-card {
     height: 100%;
@@ -38,11 +43,10 @@
 
   // 响应式布局
   @media (max-width: 768px) {
-    .city-demo-page {
-      padding: 16px;
+    padding: 16px;
 
-      :deep(.n-grid) {
-        --n-item-col: 1 !important;
-      }
+    :deep(.n-grid) {
+      --n-item-col: 1 !important;
     }
   }
+}

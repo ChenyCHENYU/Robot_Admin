@@ -10,7 +10,11 @@
 
 <template>
   <div class="city-demo-page">
-    <NH1>城市选择器组件场景示例</NH1>
+    <c_vTitle
+      title="城市选择器组件场景示例"
+      icon="mdi:city"
+      description="支持多种触发器样式、自定义模板等特性，适用于表单、表格、操作栏等多种场景"
+    />
 
     <NGrid
       :cols="2"
@@ -556,8 +560,7 @@
 </template>
 
 <script setup lang="ts">
-  import { type SelectOption } from 'naive-ui/es/select'
-  import provinceData from '@/assets/data/province.json'
+  import { cityOptions } from './data'
 
   // 各种样式的数据
   const city1 = ref('')
@@ -568,25 +571,6 @@
   const city6 = ref('')
   const city7 = ref('')
   const city8 = ref('')
-
-  // 为纯下拉选择准备选项
-  const cityOptions = computed(() => {
-    const options: SelectOption[] = []
-    Object.values(provinceData).forEach(provinces => {
-      provinces.forEach(province => {
-        options.push({
-          type: 'group',
-          label: province.name,
-          key: province.id || province.name,
-          children: province.data.map(city => ({
-            label: city,
-            value: city,
-          })),
-        })
-      })
-    })
-    return options
-  })
 </script>
 
 <style scoped lang="scss">
