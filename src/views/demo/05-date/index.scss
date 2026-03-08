@@ -1,64 +1,132 @@
-  .examples-container {
-    padding: 20px;
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-05-29 21:43:34
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-08 23:15:00
+ * @FilePath: \Robot_Admin\src\views\demo\05-date\index.scss
+ * @Description: 日期选择器组件演示页面样式
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+*/
+
+.date-demo {
+  padding: 20px;
+
+  // 网格布局
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
   }
 
-  .example-section {
-    margin-bottom: 30px;
-    padding: 20px;
-    border-left: 4px solid #18a058;
-    border-radius: 6px;
+  // 卡片样式
+  .demo-card {
+    border-radius: 12px !important;
+    transition: all 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    :deep(.n-card-header) {
+      padding-bottom: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    :deep(.n-card__content) {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 24px;
+    }
+
+    // 全宽卡片
+    &.full-width {
+      grid-column: 1 / -1;
+    }
   }
 
-  .example-section h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-weight: 600;
-  }
-
-  .result {
-    margin: 10px 0;
+  // 结果显示框
+  .result-box {
+    margin-top: 8px;
     padding: 8px 12px;
     border: 1px solid #bae6fd;
-    border-radius: 4px;
+    border-radius: 8px;
+    background: #f0f9ff;
     color: #0369a1;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
   }
 
-  .tip {
-    margin: 10px 0;
-    padding: 8px 12px;
-    background-color: #fffbeb;
-    border: 1px solid #fed7aa;
-    border-radius: 4px;
-    color: #92400e;
-    font-size: 14px;
-  }
-
-  .custom-format-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-  }
-
-  .custom-format-group > div {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .custom-format-group label {
-    font-weight: 500;
-    color: #374151;
-  }
-
-  .data-display {
-    background-color: #1e293b;
-    color: #e2e8f0;
-    padding: 16px;
-    border-radius: 8px;
+  // 提示框
+  .tip-alert {
+    margin-top: 4px;
     font-size: 12px;
-    line-height: 1.5;
-    overflow-x: auto;
-    max-height: 400px;
-    overflow-y: auto;
   }
+
+  // 自定义格式网格
+  .custom-format-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+
+    .format-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      label {
+        font-weight: 500;
+        color: #374151;
+        font-size: 14px;
+      }
+    }
+  }
+
+  // 数据展示区域
+  .data-display {
+    margin-top: 16px;
+    background: #1e293b;
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    max-height: 300px;
+    overflow-y: auto;
+
+    pre {
+      margin: 0;
+      color: #e2e8f0;
+      font-size: 12px;
+      line-height: 1.5;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    }
+  }
+}
