@@ -10,7 +10,10 @@
 
 <template>
   <div class="form-demo">
-    <NH1>表单选择器组件场景示例 - 展示所有8种布局类型的完整功能和配置选项</NH1>
+    <div class="demo-header">
+      <NH1>表单选择器组件场景示例</NH1>
+      <p>展示所有8种布局类型的完整功能和配置选项</p>
+    </div>
 
     <!-- 控制面板 -->
     <div class="control-panel">

@@ -51,7 +51,7 @@
           :language="demo.language"
           :code="demo.code"
           :show-header="false"
-          :max-height="200"
+          :max-height="500"
         />
 
         <div
