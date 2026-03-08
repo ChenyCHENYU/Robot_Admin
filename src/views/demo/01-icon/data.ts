@@ -118,7 +118,7 @@ export const codeExamples = {
 <!-- 支持交互 -->
 <C_Icon type="unocss" name="i-mdi-heart" clickable @click="handleClick" />`,
 
-  svg: `<!-- SVG 路径图标 -->
+  svg: `<!-- SVG 路径图标 - 成功 -->
 <C_Icon
   type="svg"
   name="custom-check"
@@ -127,19 +127,37 @@ export const codeExamples = {
   size="24"
 />
 
+<!-- SVG 路径图标 - 错误 -->
+<C_Icon
+  type="svg"
+  name="custom-cross"
+  :svg-path="crossPath"
+  color="red"
+  size="24"
+/>
+
 <script setup>
 const checkPath = "M9 16.17L4.83 12l-1.42 1.41L9 19..."
+const crossPath = "M19 6.41L17.59 5 12 10.59..."
 </script>`,
 
   component: `<!-- 组件方式图标 -->
 <script setup>
-import { DemoIconHeart } from './data'
+import { DemoIconHeart, DemoIconStar } from './data'
 </script>
 
+<!-- 心形图标 -->
 <C_Icon
   type="component"
   :name="DemoIconHeart"
   :component-props="{ width: 32, height: 32 }"
+/>
+
+<!-- 星形图标 -->
+<C_Icon
+  type="component"
+  :name="DemoIconStar"
+  :component-props="{ color: 'gold', width: 32, height: 32 }"
 />`,
 
   image: `<!-- 本地图片 - 自动使用 useImage -->
@@ -172,16 +190,26 @@ import { DemoIconHeart } from './data'
 <C_Icon name="mdi:arrow-right" :flip="flipped ? 'horizontal' : undefined" />`,
 
   error: `<!-- 错误时显示 fallback 图标 -->
+<!-- 不存在的 Iconify 图标 -->
 <C_Icon
   name="nonexistent:icon"
   fallback-icon="mdi:help-circle"
   @error="handleError"
 />
 
+<!-- 错误的远程图片 -->
 <C_Icon
   type="image"
   name="https://nonexistent.com/image.png"
   fallback-icon="mdi:image-broken"
+  @error="handleError"
+/>
+
+<!-- 错误的本地图片 -->
+<C_Icon
+  type="image"
+  name="nonexistent-local"
+  fallback-icon="mdi:image-off"
   @error="handleError"
 />`,
 

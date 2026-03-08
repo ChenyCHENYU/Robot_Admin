@@ -1,0 +1,107 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-03-08 21:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-08 21:00:00
+ * @FilePath: \Robot_Admin\src\components\local\c_vTitle\index.scss
+ * @Description: 页面标题组件样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+*/
+
+.v-title {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(32, 128, 240, 0.04) 0%,
+    rgba(14, 165, 233, 0.02) 100%
+  );
+  border-radius: 12px;
+  border: 1px solid rgba(32, 128, 240, 0.08);
+  overflow: hidden;
+
+  // 背景装饰光晕
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(
+      circle,
+      rgba(32, 128, 240, 0.08) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  &__content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #2080f0 0%, #0ea5e9 100%);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(32, 128, 240, 0.25);
+    color: white;
+    font-size: 22px;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+
+    :deep(.n-h1) {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a2e;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  &__desc {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  &__decoration {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+
+    .decoration-dot {
+      width: 6px;
+      height: 6px;
+      background: linear-gradient(135deg, #2080f0, #0ea5e9);
+      border-radius: 50%;
+    }
+
+    .decoration-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        rgba(32, 128, 240, 0.2) 0%,
+        transparent 100%
+      );
+    }
+  }
+}
