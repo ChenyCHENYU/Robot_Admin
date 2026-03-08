@@ -10,10 +10,11 @@
 
 <template>
   <div class="form-demo">
-    <div class="demo-header">
-      <NH1>表单选择器组件场景示例</NH1>
-      <p>展示所有8种布局类型的完整功能和配置选项</p>
-    </div>
+    <c_vTitle
+      title="表单选择器组件场景示例"
+      icon="mdi:form-select"
+      description="展示所有8种布局类型的完整功能和配置选项"
+    />
 
     <!-- 控制面板 -->
     <div class="control-panel">
