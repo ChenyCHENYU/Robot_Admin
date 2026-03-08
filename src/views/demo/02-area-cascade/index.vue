@@ -10,11 +10,15 @@
 
 <template>
   <div class="cascade-demo">
-    <NH1>级联选择器组件场景示例</NH1>
+    <c_vTitle
+      title="级联选择器组件场景示例"
+      icon="mdi:map-marker-multiple"
+      description="支持城市地区、技术分类、组织架构等多级联动选择场景"
+    />
 
     <NSpace
       vertical
-      :size="24"
+      :size="20"
     >
       <!-- 使用v-for循环渲染多个级联选择器 -->
       <NCard
