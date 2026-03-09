@@ -1,10 +1,6 @@
-/**
- * @Description: 操作按钮组演示页 - 静态数据
- */
-
 import type { TableColumn } from '@robot-admin/naive-ui-components'
 
-// ================= 表格列定义 =================
+// 表格列定义
 export const columns: TableColumn[] = [
   { title: 'ID', key: 'id', width: 80 },
   { title: '姓名', key: 'name' },
@@ -13,7 +9,7 @@ export const columns: TableColumn[] = [
   { title: '状态', key: 'status' },
 ]
 
-// ================= 表格模拟数据 =================
+// 表格模拟数据
 export interface EmployeeRow {
   id: number
   name: string
@@ -46,14 +42,14 @@ export const MOCK_TABLE_DATA: EmployeeRow[] = [
   },
 ]
 
-// ================= 日志条目类型 =================
+// 日志条目类型
 export interface LogItem {
   time: string
   message: string
   type: string
 }
 
-// ================= 自定义配置初始值 =================
+// 自定义配置初始值
 export const DEFAULT_CUSTOM_CONFIG = {
   align: 'left' as 'left' | 'center' | 'right' | 'space-between',
   size: 'small' as 'tiny' | 'small' | 'medium' | 'large',

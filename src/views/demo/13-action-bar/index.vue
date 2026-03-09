@@ -1,383 +1,285 @@
-<!--
- * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-02-14
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-04 17:58:40
- * @FilePath: \Robot_Admin\src\views\demo\13-action-bar\index.vue
- * @Description: 通用操作按钮组件演示页面
- * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
--->
-
 <template>
   <div class="action-bar-demo-page">
-    <NH1>操作按钮组场景示例</NH1>
+    <c_vTitle
+      title="操作按钮组场景示例"
+      icon="mdi:gesture-tap-button"
+      description="支持多种场景：表格工具栏、表单操作、详情页头部、步骤导航、响应式状态、下拉菜单等"
+    />
 
-    <NSpace
-      vertical
-      :size="24"
+    <!-- 场景一：表格工具栏 -->
+    <NCard
+      title="表格工具栏"
+      class="mb-6"
     >
-      <!-- ========== 场景一：表格工具栏 ========== -->
-      <NCard
-        title="场景一：表格工具栏"
-        segmented
+      <template #header-extra>
+        <NText depth="3">新增/删除/刷新 + 中间显示选中数</NText>
+      </template>
+
+      <C_ActionBar
+        :actions="tableActions"
+        @action-click="handleActionClick"
       >
-        <template #header-extra>
-          <NText depth="3">新增/删除/刷新 + 中间显示选中数</NText>
-        </template>
-
-        <C_ActionBar
-          :actions="tableActions"
-          :config="{ size: 'small', gap: 16 }"
-          @action-click="handleActionClick"
-        >
-          <template #center>
-            <NSpace
-              align="center"
-              v-if="selectedCount > 0"
-            >
-              <NText depth="3">已选择:</NText>
-              <NTag
-                type="primary"
-                :bordered="false"
-              >
-                {{ selectedCount }} 条
-              </NTag>
-              <NButton
-                text
-                size="small"
-                @click="selectedCount = 0"
-              >
-                清空
-              </NButton>
-            </NSpace>
-          </template>
-        </C_ActionBar>
-
-        <C_Table
-          :data="tableData"
-          :columns="columns"
-          :loading="loading"
-          :row-key="(row: any) => row.id"
-          :config="{
-            selection: { enabled: true },
-            pagination: false,
-          }"
-          @update:checked-row-keys="handleSelectionChange"
-        />
-      </NCard>
-
-      <!-- ========== 场景二：表单操作栏 ========== -->
-      <NCard
-        title="场景二：表单操作栏"
-        segmented
-      >
-        <template #header-extra>
-          <NText depth="3">提交/重置/保存草稿 + 居中对齐</NText>
-        </template>
-
-        <!-- 模拟表单 -->
-        <NForm
-          label-placement="left"
-          label-width="100"
-          class="mb-4"
-        >
-          <NFormItem label="用户名">
-            <NInput
-              v-model:value="formData.username"
-              placeholder="请输入用户名"
-            />
-          </NFormItem>
-          <NFormItem label="邮箱">
-            <NInput
-              v-model:value="formData.email"
-              placeholder="请输入邮箱"
-            />
-          </NFormItem>
-        </NForm>
-
-        <C_ActionBar
-          :actions="formActions"
-          :config="{ align: 'center', gap: 16, size: 'small' }"
-          @action-click="handleActionClick"
-        />
-      </NCard>
-
-      <!-- ========== 场景三：详情页头部 ========== -->
-      <NCard
-        title="场景三：详情页头部"
-        segmented
-      >
-        <template #header-extra>
-          <NText depth="3">返回/编辑 + 打印/分享/删除</NText>
-        </template>
-
-        <C_ActionBar
-          :actions="detailActions"
-          :config="{ showDivider: true, size: 'small', gap: 16 }"
-          @action-click="handleActionClick"
-        />
-
-        <!-- 模拟详情内容 -->
-        <NCard
-          size="small"
-          class="mt-4"
-        >
-          <NDescriptions
-            label-placement="left"
-            :column="2"
+        <template #center>
+          <NSpace
+            v-if="selectedCount > 0"
+            align="center"
           >
-            <NDescriptionsItem label="姓名">张三</NDescriptionsItem>
-            <NDescriptionsItem label="部门">技术部</NDescriptionsItem>
-            <NDescriptionsItem label="职位">前端工程师</NDescriptionsItem>
-            <NDescriptionsItem label="状态">在职</NDescriptionsItem>
-          </NDescriptions>
-        </NCard>
-      </NCard>
-
-      <!-- ========== 场景四：步骤条导航 ========== -->
-      <NCard
-        title="场景四：步骤条导航"
-        segmented
-      >
-        <template #header-extra>
-          <NText depth="3">上一步/下一步/跳过/完成</NText>
-        </template>
-
-        <NSteps
-          :current="currentStep"
-          class="mb-4"
-        >
-          <NStep title="基础信息" />
-          <NStep title="详细设置" />
-          <NStep title="完成" />
-        </NSteps>
-
-        <C_ActionBar
-          :actions="stepActions"
-          :config="{ size: 'small', gap: 16 }"
-          @action-click="handleActionClick"
-        />
-      </NCard>
-
-      <!-- ========== 场景五：响应式状态 ========== -->
-      <NCard
-        title="场景五：响应式按钮状态"
-        segmented
-      >
-        <template #header-extra>
-          <NText depth="3">loading / disabled / show 自动响应</NText>
-        </template>
-
-        <NSpace
-          vertical
-          :size="12"
-          class="mb-4"
-        >
-          <NAlert
-            type="info"
-            :bordered="false"
-          >
-            <template #icon>
-              <C_Icon name="mdi:information" />
-            </template>
-            尝试点击按钮，观察状态变化：刷新按钮会进入 loading，删除按钮会被禁用
-          </NAlert>
-          <NSpace>
-            <NCheckbox v-model:checked="states.hasSelection">
-              模拟已选择数据
-            </NCheckbox>
-            <NCheckbox v-model:checked="states.isEditing">
-              模拟编辑模式
-            </NCheckbox>
-          </NSpace>
-        </NSpace>
-
-        <C_ActionBar
-          :actions="reactiveActionsSimple"
-          :config="{ size: 'small', gap: 16 }"
-          @action-click="handleActionClick"
-        />
-
-        <C_Table
-          :data="tableData"
-          :columns="columns"
-          :loading="loading"
-          :config="{ pagination: false }"
-        />
-      </NCard>
-
-      <!-- ========== 场景六：下拉菜单 ========== -->
-      <NCard
-        title="场景六：下拉菜单按钮"
-        segmented
-      >
-        <template #header-extra>
-          <NText depth="3">dropdown 属性配置下拉选项</NText>
-        </template>
-
-        <C_ActionBar
-          :actions="dropdownActionsSimple"
-          :config="{ size: 'small', gap: 16 }"
-          @action-click="handleActionClick"
-          @dropdown-click="handleDropdownClick"
-        />
-
-        <C_Table
-          :data="tableData"
-          :columns="columns"
-          :loading="loading"
-          :config="{ pagination: false }"
-        />
-      </NCard>
-
-      <!-- ========== 场景七：配置选项 ========== -->
-      <NCard
-        title="场景七：配置选项展示"
-        segmented
-      >
-        <template #header-extra>
-          <NText depth="3">动态调整配置</NText>
-        </template>
-
-        <NSpace
-          vertical
-          :size="12"
-          class="mb-4"
-        >
-          <NSpace>
-            <span>对齐方式:</span>
-            <NRadioGroup v-model:value="customConfig.align">
-              <NRadio value="left">左对齐</NRadio>
-              <NRadio value="center">居中</NRadio>
-              <NRadio value="right">右对齐</NRadio>
-              <NRadio value="space-between">两端对齐</NRadio>
-            </NRadioGroup>
-          </NSpace>
-          <NSpace>
-            <span>按钮尺寸:</span>
-            <NRadioGroup v-model:value="customConfig.size">
-              <NRadio value="tiny">tiny</NRadio>
-              <NRadio value="small">small</NRadio>
-              <NRadio value="medium">medium</NRadio>
-              <NRadio value="large">large</NRadio>
-            </NRadioGroup>
-          </NSpace>
-          <NSpace>
-            <NCheckbox v-model:checked="customConfig.showDivider">
-              显示分隔线
-            </NCheckbox>
-            <NCheckbox v-model:checked="customConfig.compact">
-              紧凑模式
-            </NCheckbox>
-            <NCheckbox v-model:checked="customConfig.wrap">
-              允许换行
-            </NCheckbox>
-          </NSpace>
-        </NSpace>
-
-        <C_ActionBar
-          :actions="basicActions"
-          :config="customConfig"
-          @action-click="handleActionClick"
-        />
-
-        <C_Table
-          :data="tableData"
-          :columns="columns"
-          :loading="loading"
-          :config="{ pagination: false }"
-        />
-      </NCard>
-
-      <!-- ========== 操作日志 ========== -->
-      <NCard
-        title="操作日志"
-        segmented
-      >
-        <template #header-extra>
-          <NButton
-            size="small"
-            @click="logs = []"
-          >
-            清空日志
-          </NButton>
-        </template>
-
-        <NEmpty
-          v-if="logs.length === 0"
-          description="暂无操作记录"
-        />
-        <NSpace
-          v-else
-          vertical
-          :size="8"
-        >
-          <div
-            v-for="(log, index) in logs"
-            :key="index"
-            class="log-item"
-          >
+            <NText depth="3">已选择:</NText>
             <NTag
-              :type="log.type"
-              size="small"
+              type="primary"
               :bordered="false"
             >
-              {{ log.time }}
+              {{ selectedCount }} 条
             </NTag>
-            <span class="ml-2">{{ log.message }}</span>
+            <NButton
+              text
+              size="small"
+              @click="selectedCount = 0"
+            >
+              清空
+            </NButton>
+          </NSpace>
+        </template>
+      </C_ActionBar>
+
+      <C_Table
+        :data="tableData"
+        :columns="columns"
+        :loading="loading"
+        :row-key="(row: any) => row.id"
+        :config="{ selection: { enabled: true }, pagination: false }"
+        @update:checked-row-keys="handleSelectionChange"
+      />
+    </NCard>
+
+    <!-- 两列布局 -->
+    <NGrid
+      :cols="2"
+      :x-gap="24"
+      :y-gap="24"
+    >
+      <!-- 场景二：表单操作栏 -->
+      <NGridItem>
+        <NCard
+          title="表单操作栏"
+          class="h-full"
+        >
+          <template #header-extra>
+            <NText depth="3">居中对齐</NText>
+          </template>
+          <div class="card-content">
+            <NForm
+              label-placement="left"
+              label-width="80"
+            >
+              <NFormItem label="用户名">
+                <NInput
+                  v-model:value="formData.username"
+                  placeholder="请输入"
+                />
+              </NFormItem>
+              <NFormItem label="邮箱">
+                <NInput
+                  v-model:value="formData.email"
+                  placeholder="请输入"
+                />
+              </NFormItem>
+            </NForm>
+            <C_ActionBar
+              :actions="formActions"
+              :config="{ align: 'center' }"
+              @action-click="handleActionClick"
+            />
           </div>
-        </NSpace>
-      </NCard>
-    </NSpace>
+        </NCard>
+      </NGridItem>
+
+      <!-- 场景三：详情页头部 -->
+      <NGridItem>
+        <NCard
+          title="详情页头部"
+          class="h-full"
+        >
+          <template #header-extra>
+            <NText depth="3">分隔线样式</NText>
+          </template>
+          <div class="card-content">
+            <NDescriptions
+              label-placement="left"
+              :column="2"
+            >
+              <NDescriptionsItem label="姓名">张三</NDescriptionsItem>
+              <NDescriptionsItem label="部门">技术部</NDescriptionsItem>
+              <NDescriptionsItem label="职位">前端工程师</NDescriptionsItem>
+              <NDescriptionsItem label="状态">在职</NDescriptionsItem>
+            </NDescriptions>
+            <C_ActionBar
+              :actions="detailActions"
+              :config="{ showDivider: true }"
+              class="mt-14"
+              @action-click="handleActionClick"
+            />
+          </div>
+        </NCard>
+      </NGridItem>
+
+      <!-- 场景四：步骤条导航 -->
+      <NGridItem>
+        <NCard
+          title="步骤条导航"
+          class="h-full"
+        >
+          <template #header-extra>
+            <NText depth="3">上一步/下一步</NText>
+          </template>
+          <div class="card-content">
+            <NSteps
+              :current="currentStep"
+              size="small"
+            >
+              <NStep title="基础信息" />
+              <NStep title="详细设置" />
+              <NStep title="完成" />
+            </NSteps>
+            <C_ActionBar
+              :actions="stepActions"
+              class="mt-4"
+              @action-click="handleActionClick"
+            />
+          </div>
+        </NCard>
+      </NGridItem>
+
+      <!-- 场景五：响应式状态 -->
+      <NGridItem>
+        <NCard
+          title="响应式按钮状态"
+          class="h-full"
+        >
+          <template #header-extra>
+            <NText depth="3">loading/disabled/show</NText>
+          </template>
+          <div class="card-content">
+            <NSpace class="mb-4">
+              <NCheckbox v-model:checked="states.hasSelection"
+                >已选择数据</NCheckbox
+              >
+              <NCheckbox v-model:checked="states.isEditing">编辑模式</NCheckbox>
+            </NSpace>
+            <C_ActionBar
+              :actions="reactiveActionsSimple"
+              @action-click="handleActionClick"
+            />
+          </div>
+        </NCard>
+      </NGridItem>
+
+      <!-- 场景六：下拉菜单 -->
+      <NGridItem>
+        <NCard
+          title="下拉菜单按钮"
+          class="h-full"
+        >
+          <template #header-extra>
+            <NText depth="3">dropdown 配置</NText>
+          </template>
+          <div class="card-content">
+            <p class="hint-text">
+              点击下方按钮的「更多」或「设置」查看下拉菜单
+            </p>
+            <C_ActionBar
+              :actions="dropdownActionsSimple"
+              class="mt-4"
+              @action-click="handleActionClick"
+              @dropdown-click="handleDropdownClick"
+            />
+          </div>
+        </NCard>
+      </NGridItem>
+
+      <!-- 场景七：配置选项 -->
+      <NGridItem>
+        <NCard
+          title="配置选项"
+          class="h-full"
+        >
+          <template #header-extra>
+            <NText depth="3">动态调整</NText>
+          </template>
+          <div class="card-content">
+            <NSpace
+              align="center"
+              :size="16"
+            >
+              <NSpace align="center">
+                <span class="config-label">对齐:</span>
+                <NRadioGroup
+                  v-model:value="customConfig.align"
+                  size="small"
+                >
+                  <NRadio value="left">左</NRadio>
+                  <NRadio value="center">中</NRadio>
+                  <NRadio value="right">右</NRadio>
+                  <NRadio value="space-between">两端</NRadio>
+                </NRadioGroup>
+              </NSpace>
+              <NDivider vertical />
+              <NSpace :size="12">
+                <NCheckbox v-model:checked="customConfig.showDivider"
+                  >分隔线</NCheckbox
+                >
+                <NCheckbox v-model:checked="customConfig.compact"
+                  >紧凑</NCheckbox
+                >
+                <NCheckbox v-model:checked="customConfig.wrap">换行</NCheckbox>
+              </NSpace>
+            </NSpace>
+            <C_ActionBar
+              :actions="basicActions"
+              :config="customConfig"
+              class="mt-4"
+              @action-click="handleActionClick"
+            />
+          </div>
+        </NCard>
+      </NGridItem>
+    </NGrid>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, reactive } from 'vue'
   import type {
     ActionItem,
     ActionDropdownItem,
   } from '@robot-admin/naive-ui-components'
   import { useMessage } from 'naive-ui/es'
-  import {
-    columns,
-    MOCK_TABLE_DATA,
-    DEFAULT_CUSTOM_CONFIG,
-    type LogItem,
-  } from './data'
+  import { columns, MOCK_TABLE_DATA, DEFAULT_CUSTOM_CONFIG } from './data'
 
   const message = useMessage()
 
-  // ================= 状态管理 =================
+  // 状态管理
   const loading = ref(false)
   const selectedCount = ref(0)
   const currentStep = ref(0)
-  const logs = ref<LogItem[]>([])
-
   const states = reactive({
     hasSelection: false,
     isEditing: false,
     isRefreshing: false,
   })
-
-  const formData = reactive({
-    username: '',
-    email: '',
-  })
-
+  const formData = reactive({ username: '', email: '' })
   const customConfig = reactive({ ...DEFAULT_CUSTOM_CONFIG })
-
-  // ================= 表格数据 =================
   const tableData = ref([...MOCK_TABLE_DATA])
 
-  // ================= 场景一：表格工具栏 =================
+  // 场景一：表格工具栏
   const tableActions = computed<ActionItem[]>(() => [
     {
       key: 'add',
       label: '新增',
       icon: 'mdi:plus-circle',
       type: 'primary',
-      onClick: () => addLog('新增用户', 'success'),
+      onClick: () => {
+        message.success('新增用户')
+      },
     },
     {
       key: 'delete',
@@ -385,7 +287,9 @@
       icon: 'mdi:delete',
       type: 'error',
       disabled: selectedCount.value === 0,
-      onClick: () => addLog(`删除 ${selectedCount.value} 条数据`, 'warning'),
+      onClick: () => {
+        message.warning(`删除 ${selectedCount.value} 条数据`)
+      },
     },
     {
       key: 'refresh',
@@ -396,13 +300,15 @@
     },
   ])
 
-  // ================= 场景二：表单操作栏 =================
+  // 场景二：表单操作栏
   const formActions = computed<ActionItem[]>(() => [
     {
       key: 'save-draft',
-      label: '保存草稿',
+      label: '草稿',
       icon: 'mdi:content-save-outline',
-      onClick: () => addLog('保存草稿成功', 'info'),
+      onClick: () => {
+        message.info('保存草稿')
+      },
     },
     {
       key: 'reset',
@@ -411,7 +317,7 @@
       onClick: () => {
         formData.username = ''
         formData.email = ''
-        addLog('表单已重置', 'warning')
+        message.warning('表单已重置')
       },
     },
     {
@@ -421,50 +327,60 @@
       type: 'primary',
       onClick: async () => {
         loading.value = true
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise(r => setTimeout(r, 1000))
         loading.value = false
-        addLog('表单提交成功', 'success')
+        message.success('提交成功')
       },
     },
   ])
 
-  // ================= 场景三：详情页头部 =================
+  // 场景三：详情页头部
   const detailActions = computed<ActionItem[]>(() => [
     {
       key: 'back',
       label: '返回',
       icon: 'mdi:arrow-left',
-      onClick: () => addLog('返回列表', 'default'),
+      onClick: () => {
+        message.info('返回列表')
+      },
     },
     {
       key: 'edit',
       label: '编辑',
       icon: 'mdi:pencil',
       type: 'primary',
-      onClick: () => addLog('进入编辑模式', 'info'),
+      onClick: () => {
+        message.info('进入编辑')
+      },
     },
     {
       key: 'print',
       label: '打印',
       icon: 'mdi:printer',
-      onClick: () => addLog('打印详情', 'info'),
+      onClick: () => {
+        message.info('打印')
+      },
     },
     {
       key: 'share',
       label: '分享',
       icon: 'mdi:share-variant',
-      onClick: () => addLog('分享链接', 'info'),
+      onClick: () => {
+        message.info('分享')
+      },
     },
     {
       key: 'delete',
       label: '删除',
       icon: 'mdi:delete',
       type: 'error',
-      onClick: () => addLog('删除记录', 'error'),
+      onClick: () => {
+        message.error('删除')
+      },
     },
   ])
 
-  // ================= 场景四：步骤条导航 =================
+  // 场景四：步骤条导航
   const stepActions = computed<ActionItem[]>(() => [
     {
       key: 'prev',
@@ -473,7 +389,7 @@
       disabled: currentStep.value === 0,
       onClick: () => {
         currentStep.value--
-        addLog(`返回步骤 ${currentStep.value + 1}`, 'info')
+        message.info(`步骤 ${currentStep.value + 1}`)
       },
     },
     {
@@ -483,7 +399,7 @@
       show: currentStep.value < 2,
       onClick: () => {
         currentStep.value = 2
-        addLog('跳过当前步骤', 'warning')
+        message.warning('跳过')
       },
     },
     {
@@ -494,16 +410,16 @@
       onClick: () => {
         if (currentStep.value === 2) {
           currentStep.value = 0
-          addLog('步骤完成，重新开始', 'success')
+          message.success('完成')
         } else {
           currentStep.value++
-          addLog(`进入步骤 ${currentStep.value + 1}`, 'info')
+          message.info(`步骤 ${currentStep.value + 1}`)
         }
       },
     },
   ])
 
-  // ================= 场景五：响应式按钮 =================
+  // 场景五：响应式按钮
   const reactiveActionsSimple = computed<ActionItem[]>(() => [
     {
       key: 'add',
@@ -511,8 +427,9 @@
       icon: 'mdi:plus-circle',
       type: 'primary',
       disabled: states.isEditing,
-      tooltip: states.isEditing ? '编辑模式下不可新增' : '新增数据',
-      onClick: () => addLog('新增', 'success'),
+      onClick: () => {
+        message.success('新增')
+      },
     },
     {
       key: 'delete',
@@ -521,8 +438,9 @@
       type: 'error',
       disabled: computed(() => !states.hasSelection),
       show: computed(() => states.hasSelection),
-      tooltip: '删除选中数据',
-      onClick: () => addLog('删除', 'error'),
+      onClick: () => {
+        message.error('删除')
+      },
     },
     {
       key: 'edit',
@@ -531,7 +449,7 @@
       type: states.isEditing ? 'success' : 'warning',
       onClick: () => {
         states.isEditing = !states.isEditing
-        addLog(states.isEditing ? '进入编辑模式' : '保存成功', 'warning')
+        message.warning(states.isEditing ? '编辑模式' : '保存')
       },
     },
     {
@@ -542,45 +460,52 @@
       loading: computed(() => states.isRefreshing),
       onClick: async () => {
         states.isRefreshing = true
-        addLog('开始刷新', 'info')
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        await new Promise(r => setTimeout(r, 2000))
         states.isRefreshing = false
-        addLog('刷新完成', 'success')
+        message.success('刷新完成')
       },
     },
   ])
 
-  // ================= 场景六：下拉菜单 =================
+  // 场景六：下拉菜单
   const dropdownActionsSimple = computed<ActionItem[]>(() => [
     {
       key: 'add',
       label: '新增',
       icon: 'mdi:plus-circle',
       type: 'primary',
-      onClick: () => addLog('新增', 'success'),
+      onClick: () => {
+        message.success('新增')
+      },
     },
     {
       key: 'more',
-      label: '更多操作',
+      label: '更多',
       icon: 'mdi:dots-horizontal',
       dropdown: [
         {
           key: 'export-excel',
           label: '导出Excel',
           icon: 'mdi:file-excel',
-          onClick: () => addLog('导出Excel', 'success'),
+          onClick: () => {
+            message.success('导出Excel')
+          },
         },
         {
           key: 'export-pdf',
           label: '导出PDF',
           icon: 'mdi:file-pdf',
-          onClick: () => addLog('导出PDF', 'success'),
+          onClick: () => {
+            message.success('导出PDF')
+          },
         },
         {
           key: 'print',
           label: '打印',
           icon: 'mdi:printer',
-          onClick: () => addLog('打印', 'info'),
+          onClick: () => {
+            message.info('打印')
+          },
         },
       ],
     },
@@ -593,26 +518,32 @@
           key: 'column',
           label: '列设置',
           icon: 'mdi:table-column',
-          onClick: () => addLog('列设置', 'default'),
+          onClick: () => {
+            message.info('列设置')
+          },
         },
         {
           key: 'filter',
-          label: '筛选设置',
+          label: '筛选',
           icon: 'mdi:filter',
-          onClick: () => addLog('筛选设置', 'default'),
+          onClick: () => {
+            message.info('筛选')
+          },
         },
       ],
     },
   ])
 
-  // ================= 场景七：配置选项用基础 actions =================
+  // 场景七：配置选项
   const basicActions = computed<ActionItem[]>(() => [
     {
       key: 'add',
       label: '新增',
       icon: 'mdi:plus-circle',
       type: 'primary',
-      onClick: () => addLog('新增', 'success'),
+      onClick: () => {
+        message.success('新增')
+      },
     },
     {
       key: 'refresh',
@@ -623,41 +554,50 @@
     },
   ])
 
-  // ================= 事件处理 =================
-  const handleActionClick = (action: ActionItem) => {
-    console.log('Action clicked:', action)
-  }
-
-  const handleDropdownClick = (
-    item: ActionDropdownItem,
-    action: ActionItem
-  ) => {
-    console.log('Dropdown item clicked:', item, action)
-  }
+  // 事件处理
+  const handleActionClick = (action: ActionItem) =>
+    console.log('Action:', action)
+  const handleDropdownClick = (item: ActionDropdownItem, action: ActionItem) =>
+    console.log('Dropdown:', item, action)
 
   const handleRefresh = async () => {
     loading.value = true
-    addLog('刷新数据', 'info')
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    await new Promise(r => setTimeout(r, 1500))
     loading.value = false
-    addLog('刷新完成', 'success')
     message.success('刷新成功')
   }
 
   const handleSelectionChange = (keys: Array<string | number>) => {
     selectedCount.value = keys.length
   }
-
-  const addLog = (msg: string, type: string) => {
-    const now = new Date()
-    const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
-    logs.value.unshift({ time, message: msg, type })
-    if (logs.value.length > 20) {
-      logs.value.pop()
-    }
-  }
 </script>
 
 <style scoped lang="scss">
-  @use './index.scss';
+  .action-bar-demo-page {
+    padding: 20px;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  // 提示文字样式
+  .hint-text {
+    font-size: 13px;
+    color: var(--n-text-color-3);
+    line-height: 1.6;
+  }
+
+  // 配置项标签
+  .config-label {
+    font-size: 14px;
+    color: var(--n-text-color-2);
+    margin-right: 8px;
+  }
+
+  // 卡片标题右侧说明文字
+  :deep(.n-card-header__extra) {
+    font-size: 13px;
+  }
 </style>
