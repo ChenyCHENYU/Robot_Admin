@@ -1,6 +1,11 @@
 <template>
-  <div class="p-6 min-h-screen">
-    <NH1>嵌套表格场景示例</NH1>
+  <div class="table-expand-demo">
+    <c_vTitle
+      title="嵌套表格场景示例"
+      icon="mdi:table-arrow-down"
+      description="支持父子表格联动选择、展开折叠、动态加载子数据等功能"
+    />
+
     <NSpace
       vertical
       size="large"
@@ -9,7 +14,6 @@
       <NCard
         title="功能配置"
         size="small"
-        class="shadow-md"
       >
         <NSpace>
           <NCheckbox v-model:checked="config.enableSelection">
@@ -34,19 +38,12 @@
       <NCard
         title="批量操作"
         size="small"
-        class="shadow-md"
       >
-        <C_ActionBar
-          :actions="toolbarActions"
-          :config="{ size: 'small' }"
-        />
+        <C_ActionBar :actions="toolbarActions" />
       </NCard>
 
       <!-- 主表格 -->
-      <NCard
-        title="主数据表格"
-        class="shadow-md"
-      >
+      <NCard title="主数据表格">
         <C_Table
           ref="tableRef"
           :columns="dataColumns"
@@ -63,9 +60,7 @@
             selection: {
               enabled: config.enableSelection,
               rowCheckable: isRowCheckable,
-              childSelection: {
-                enabled: config.enableChildSelection,
-              },
+              childSelection: { enabled: config.enableChildSelection },
               parentChildLink: {
                 enabled: config.enableSelection && config.enableChildSelection,
                 mode: config.parentChildLinkMode,
@@ -88,6 +83,7 @@
     type DataRecord,
     type TableColumn,
   } from '@robot-admin/naive-ui-components'
+  import { useTableCrud } from '@robot-admin/request-core'
   import {
     defaultConfig,
     dataColumns,
@@ -98,20 +94,16 @@
     type DemoConfig,
   } from './data'
 
-  import { useTableCrud } from '@robot-admin/request-core'
-
   const config = reactive<DemoConfig>({ ...defaultConfig })
   const tableRef = ref()
 
-  // 使用 useTableCrud 管理数据
+  // 表格数据管理
   const table = useTableCrud<TestRecord>({
-    api: {
-      list: 'employees/expandList',
-    },
+    api: { list: 'employees/expandList' },
     columns: dataColumns,
   })
 
-  // 工具栏操作按钮
+  // 工具栏按钮
   const toolbarActions = computed<ActionItem[]>(() => [
     {
       key: 'expand-all',
@@ -138,7 +130,7 @@
       onClick: () => tableRef.value?.clearSelection(),
     },
     {
-      key: 'clear-all-selections',
+      key: 'clear-all',
       label: '清空所有选择',
       type: 'error',
       show: config.enableSelection || config.enableChildSelection,
@@ -160,17 +152,17 @@
   const isRowCheckable = (row: DataRecord): boolean =>
     (row as TestRecord).status === '在职'
 
+  // 加载子数据
   const loadChildData = async (row: DataRecord): Promise<ChildDataType[]> => {
     try {
       await new Promise(resolve => setTimeout(resolve, 300))
       return (row as EnhancedTestRecord).childData || []
-    } catch (error) {
-      console.error('加载子数据失败:', error)
+    } catch {
       return []
     }
   }
 
-  // 展开渲染逻辑
+  // 展开内容渲染
   const renderExpandContent = (
     row: DataRecord,
     expandData: unknown[],
@@ -186,7 +178,7 @@
     }
 
     if (!expandData?.length) {
-      return h('div', { class: 'text-center py-4 ' }, '暂无数据')
+      return h('div', { class: 'text-center py-4' }, '暂无数据')
     }
 
     const childColumns = getChildColumns(
@@ -196,7 +188,7 @@
     return h('div', { class: 'p-4' }, [
       h(
         'div',
-        { class: 'mb-2 text-sm text-gray-6' },
+        { class: 'mb-2 text-sm text-gray-500' },
         `${testRow.name} 的详细信息 (${expandData.length} 条)`
       ),
       h(C_Table, {
@@ -212,3 +204,9 @@
     ])
   }
 </script>
+
+<style lang="scss" scoped>
+  .table-expand-demo {
+    padding: 20px;
+  }
+</style>
