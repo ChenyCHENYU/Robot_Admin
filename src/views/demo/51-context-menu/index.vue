@@ -9,40 +9,11 @@
 -->
 <template>
   <div class="ctx-menu-demo">
-    <NH1>右键菜单组件场景示例</NH1>
-
-    <!-- ==================== 功能特性 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:puzzle-outline"
-          class="title-icon"
-        />
-        功能特性
-      </h2>
-      <div class="feature-grid">
-        <div
-          v-for="feat in FEATURE_LIST"
-          :key="feat.title"
-          class="feature-card"
-        >
-          <div class="feature-card__icon">
-            <C_Icon :name="feat.icon" />
-          </div>
-          <div class="feature-card__body">
-            <span class="feature-card__title">{{ feat.title }}</span>
-            <span class="feature-card__desc">{{ feat.desc }}</span>
-          </div>
-          <NTag
-            :bordered="false"
-            size="small"
-            :type="TAG_TYPE_MAP[feat.tag] ?? 'default'"
-          >
-            {{ feat.tag }}
-          </NTag>
-        </div>
-      </div>
-    </div>
+    <c_vTitle
+      title="右键菜单组件场景示例"
+      icon="mdi:menu"
+      description="支持多级菜单、图标、分割线、危险操作样式等，适用于编辑器、文件管理、表格操作等场景"
+    />
 
     <!-- ==================== 场景切换 ==================== -->
     <div class="demo-section">
@@ -147,56 +118,7 @@ console.log(greeting)
       ref="menuRef"
       :items="currentMenuItems"
       @select="handleSelect"
-      @open="handleOpen"
-      @close="handleClose"
     />
-
-    <!-- ==================== 事件日志 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:console"
-          class="title-icon"
-        />
-        事件日志
-        <NButton
-          quaternary
-          size="small"
-          style="margin-left: auto"
-          @click="eventLogs = []"
-        >
-          清空
-        </NButton>
-      </h2>
-      <div class="event-log-panel">
-        <div
-          v-for="(log, idx) in eventLogs.slice(-15)"
-          :key="idx"
-          class="event-log-item"
-        >
-          <span class="event-log-time">{{ log.time }}</span>
-          <NTag
-            :type="log.type"
-            size="small"
-            :bordered="false"
-          >
-            {{ log.event }}
-          </NTag>
-          <span
-            v-if="log.detail"
-            class="event-log-detail"
-          >
-            {{ log.detail }}
-          </span>
-        </div>
-        <div
-          v-if="!eventLogs.length"
-          class="event-log-empty"
-        >
-          右键操作后事件将在此处实时显示...
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -207,8 +129,6 @@ console.log(greeting)
     FILE_MANAGER_MENU,
     TABLE_ROW_MENU,
     DEMO_SCENES,
-    FEATURE_LIST,
-    TAG_TYPE_MAP,
   } from './data'
   import './index.scss'
 
@@ -256,49 +176,16 @@ console.log(greeting)
     { id: 3, name: 'Theme Engine', status: '已暂停', time: '2026-03-03' },
   ]
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const rowProps = (row: Record<string, unknown>) => ({
     onContextmenu: (e: MouseEvent) => {
       e.preventDefault()
-      addLog('row-context', 'info', `行 #${row.id} — ${row.name}`)
       menuRef.value?.open(e.clientX, e.clientY)
     },
   })
 
-  // ===== 事件日志 =====
-  interface EventLog {
-    time: string
-    event: string
-    type: 'default' | 'success' | 'info' | 'warning' | 'error'
-    detail?: string
-  }
-  const eventLogs = ref<EventLog[]>([])
-
-  /** 添加事件日志 */
-  function addLog(
-    event: string,
-    type: EventLog['type'] = 'default',
-    detail?: string
-  ) {
-    const now = new Date()
-    const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
-    eventLogs.value.push({ time, event, type, detail })
-  }
-
   const handleSelect = (item: ContextMenuItem) => {
-    addLog(
-      'select',
-      item.danger ? 'error' : 'success',
-      `${item.label} (${item.key})`
-    )
     message.info(`选中: ${item.label}`)
-  }
-
-  const handleOpen = (pos: { x: number; y: number }) => {
-    addLog('open', 'info', `(${pos.x}, ${pos.y})`)
-  }
-
-  const handleClose = () => {
-    addLog('close', 'default')
   }
 </script>
 

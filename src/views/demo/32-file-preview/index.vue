@@ -1,9 +1,11 @@
 <!-- 文件预览组件使用示例 - 精简版 -->
 <template>
   <div class="file-preview-demo">
-    <div class="demo-header">
-      <NH1>文件预览组件场景示例</NH1>
-    </div>
+    <c_vTitle
+      title="文件预览组件场景示例"
+      icon="mdi:file-eye-outline"
+      description="支持图片、PDF、视频、Office 文档等多种格式预览，适用于文件管理、内容审核等场景"
+    />
 
     <div class="demo-content">
       <!-- 场景选择卡片 -->

@@ -209,12 +209,6 @@ export const FEATURE_LIST = [
     desc: '尾部加载指示，适合增量数据',
     tag: '交互',
   },
-  {
-    icon: 'mdi:brush-variant',
-    title: 'CSS 变量主题',
-    desc: '20+ 变量覆写，深度定制外观',
-    tag: '主题',
-  },
 ]
 
 export const TAG_TYPE_MAP: Record<string, string> = {

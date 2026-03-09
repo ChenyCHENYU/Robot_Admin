@@ -42,12 +42,6 @@ export const FEATURE_LIST = [
     desc: '可展开的曲目列表面板',
     tag: '扩展',
   },
-  {
-    icon: 'mdi:palette',
-    title: '主题外观',
-    desc: '默认 / 迷你两种主题',
-    tag: '样式',
-  },
 ]
 
 export const TAG_TYPE_MAP: Record<string, string> = {

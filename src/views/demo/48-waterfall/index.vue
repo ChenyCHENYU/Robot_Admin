@@ -10,12 +10,11 @@
 
 <template>
   <div class="waterfall-demo-page">
-    <NH1>瀑布流场景示例</NH1>
-    <div class="demo-intro">
-      瀑布流布局广泛应用于图片库、素材管理、商品展示等场景。
-      组件使用贪心算法进行布局计算，支持响应式列数、图片懒加载、无限滚动、骨架屏占位、
-      自定义卡片渲染（slot）及窗口 resize 自动重排。零外部依赖。
-    </div>
+    <c_vTitle
+      title="瀑布流场景示例"
+      icon="mdi:view-grid-outline"
+      description="瀑布流布局广泛应用于图片库、素材管理、商品展示等场景，支持响应式列数、懒加载、无限滚动、骨架屏等特性"
+    />
 
     <!-- 1. 基础瀑布流 —— 响应式 + 无限滚动 -->
     <div class="demo-section">

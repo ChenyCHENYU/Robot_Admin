@@ -10,7 +10,11 @@
 
 <template>
   <div class="barcode-demo">
-    <NH1>条形码组件场景示例</NH1>
+    <c_vTitle
+      title="条形码组件场景示例"
+      icon="mdi:barcode"
+      description="支持 CODE128、EAN13 等多种格式，自定义尺寸颜色，适用于商品编码、物流追踪等场景"
+    />
 
     <!-- 示例展示 -->
     <div class="demo-section">
@@ -202,7 +206,6 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue'
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     BARCODE_FORMATS,
@@ -214,12 +217,7 @@
     type TextPosition,
   } from './data'
 
-  // message 是自动导入的
-  declare const message: {
-    error: (msg: string) => void
-    info: (msg: string) => void
-    success: (msg: string) => void
-  }
+  const message = useMessage()
 
   // 自定义配置
   const customValue = ref('DEMO-BARCODE-2025')

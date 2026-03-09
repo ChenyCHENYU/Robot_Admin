@@ -10,7 +10,11 @@
 
 <template>
   <div class="qrcode-demo">
-    <NH1>二维码组件场景示例</NH1>
+    <c_vTitle
+      title="二维码组件场景示例"
+      icon="mdi:qrcode"
+      description="支持自定义颜色尺寸、Logo 嵌入、多种纠错等级，适用于网址分享、电子名片等场景"
+    />
 
     <!-- 示例展示 -->
     <div class="demo-section">

@@ -10,7 +10,11 @@
 
 <template>
   <div class="video-player-demo">
-    <NH1>视频播放器场景示例</NH1>
+    <c_vTitle
+      title="视频播放器场景示例"
+      icon="mdi:video-outline"
+      description="支持 MP4/HLS、字幕、画中画、倍速播放、教育防作弊等特性，适用于在线教育、视频平台等场景"
+    />
 
     <!-- ==================== 功能特性网格 ==================== -->
     <div class="demo-section">
@@ -347,7 +351,6 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
   import type {
     PlayerState,
     QualityLevel,

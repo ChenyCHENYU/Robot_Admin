@@ -25,12 +25,14 @@
       margin-bottom: 16px;
       color: var(--app-text-primary);
       display: flex;
+      justify-content: flex-start;
       align-items: center;
       gap: 8px;
 
       .title-icon {
         color: var(--primary-color, #409eff);
         font-size: 20px;
+        flex-shrink: 0;
       }
     }
 

@@ -9,7 +9,11 @@
 -->
 <template>
   <div class="transfer-demo">
-    <NH1>穿梭框组件场景示例</NH1>
+    <c_vTitle
+      title="穿梭框组件场景示例"
+      icon="mdi:swap-horizontal"
+      description="支持双栏穿梭、搜索过滤、批量操作、禁用项等特性，适用于权限分配、数据迁移、成员管理等场景"
+    />
 
     <!-- ==================== 功能特性 ==================== -->
     <div class="demo-section">

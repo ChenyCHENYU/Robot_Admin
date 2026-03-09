@@ -175,12 +175,6 @@ export const FEATURE_LIST = [
     desc: '智能避免菜单溢出视窗',
     tag: '交互',
   },
-  {
-    icon: 'mdi:brush-variant',
-    title: 'CSS 变量主题',
-    desc: '毛玻璃背景、全变量化定制',
-    tag: '主题',
-  },
 ]
 
 export const TAG_TYPE_MAP: Record<string, string> = {

@@ -10,113 +10,108 @@
 
 <template>
   <div class="signature-demo-page">
-    <NH1>电子签名场景示例</NH1>
+    <c_vTitle
+      title="电子签名场景示例"
+      icon="mdi:signature-freehand"
+      description="支持画笔配置、水印、只读模式、数据保存恢复等特性，适用于合同签署、审批确认等场景"
+    />
 
-    <!-- 基础签名 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          :name="SCENARIOS.basic.icon"
-          class="title-icon"
+    <div class="demo-grid">
+      <!-- 基础签名 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>{{ SCENARIOS.basic.title }}</h3>
+            <NTag
+              type="info"
+              size="small"
+              round
+              >默认</NTag
+            >
+          </div>
+          <p class="card-desc">{{ SCENARIOS.basic.description }}</p>
+        </template>
+        <C_Signature
+          ref="basicSignatureRef"
+          :height="200"
         />
-        {{ SCENARIOS.basic.title }}
-      </h2>
-      <div class="section-desc">{{ SCENARIOS.basic.description }}</div>
-      <div class="section-content">
-        <div class="signature-container">
-          <C_Signature
-            ref="basicSignatureRef"
-            :height="250"
-          />
-        </div>
-        <div class="action-buttons">
+        <div class="action-bar">
           <NButton
             type="primary"
+            size="small"
             @click="handleExport(basicSignatureRef, 'basic')"
           >
-            <template #icon>
-              <Icon icon="mdi:export" />
-            </template>
-            导出 PNG
+            <template #icon><C_Icon name="mdi:export" /></template>
+            导出
           </NButton>
-          <NButton @click="handleDownload(basicSignatureRef, 'signature')">
-            <template #icon>
-              <Icon icon="mdi:download" />
-            </template>
-            下载签名
+          <NButton
+            size="small"
+            @click="handleDownload(basicSignatureRef, 'signature')"
+          >
+            <template #icon><C_Icon name="mdi:download" /></template>
+            下载
           </NButton>
-          <NButton @click="handleGetData(basicSignatureRef)">
-            <template #icon>
-              <Icon icon="mdi:code-json" />
-            </template>
-            获取数据
+          <NButton
+            size="small"
+            @click="handleGetData(basicSignatureRef)"
+          >
+            <template #icon><C_Icon name="mdi:code-json" /></template>
+            数据
           </NButton>
         </div>
         <div
           v-if="exportResults.basic"
           class="result-preview"
         >
-          <div class="preview-title">导出结果预览：</div>
           <img
             :src="exportResults.basic"
             alt="签名预览"
-            class="preview-image"
           />
         </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 自定义配置 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          :name="SCENARIOS.custom.icon"
-          class="title-icon"
-        />
-        {{ SCENARIOS.custom.title }}
-      </h2>
-      <div class="section-desc">{{ SCENARIOS.custom.description }}</div>
-      <div class="section-content">
-        <NForm
-          label-placement="left"
-          label-width="100"
-          class="config-form"
-        >
-          <NFormItem label="画笔颜色">
-            <NColorPicker
-              v-model:value="customConfig.penColor"
-              :show-alpha="false"
-            />
-          </NFormItem>
-          <NFormItem label="画笔粗细">
-            <NSlider
-              v-model:value="customConfig.penWidth"
-              :min="1"
-              :max="20"
-              :step="1"
-            />
-          </NFormItem>
-          <NFormItem label="背景颜色">
-            <NColorPicker
-              v-model:value="customConfig.bgColor"
-              :show-alpha="false"
-            />
-          </NFormItem>
-        </NForm>
-        <div class="signature-container">
-          <C_Signature
-            ref="customSignatureRef"
-            :height="250"
-            :pen-config="{
-              color: customConfig.penColor,
-              width: customConfig.penWidth,
-            }"
-            :background-color="customConfig.bgColor"
+      <!-- 自定义配置 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>{{ SCENARIOS.custom.title }}</h3>
+            <NTag
+              type="warning"
+              size="small"
+              round
+              >配置</NTag
+            >
+          </div>
+          <p class="card-desc">{{ SCENARIOS.custom.description }}</p>
+        </template>
+        <div class="config-row">
+          <span class="config-label">背景颜色</span>
+          <NColorPicker
+            v-model:value="customConfig.bgColor"
+            :show-alpha="true"
+            size="small"
+            style="width: 100px"
           />
+          <NCheckbox v-model:checked="customConfig.showToolbar">
+            显示工具栏
+          </NCheckbox>
         </div>
-        <div class="action-buttons">
+        <C_Signature
+          ref="customSignatureRef"
+          :height="200"
+          :background-color="customConfig.bgColor"
+          :show-toolbar="customConfig.showToolbar"
+        />
+        <div class="action-bar">
           <NButton
             type="primary"
+            size="small"
             @click="handleExport(customSignatureRef, 'custom')"
           >
             导出预览
@@ -126,201 +121,193 @@
           v-if="exportResults.custom"
           class="result-preview"
         >
-          <div class="preview-title">导出结果：</div>
           <img
             :src="exportResults.custom"
             alt="自定义签名"
-            class="preview-image"
           />
         </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 带水印签名 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          :name="SCENARIOS.watermark.icon"
-          class="title-icon"
+      <!-- 带水印签名 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>{{ SCENARIOS.watermark.title }}</h3>
+            <NTag
+              type="success"
+              size="small"
+              round
+              >水印</NTag
+            >
+          </div>
+          <p class="card-desc">{{ SCENARIOS.watermark.description }}</p>
+        </template>
+        <C_Signature
+          ref="watermarkSignatureRef"
+          :height="200"
+          :watermark="{
+            show: true,
+            text: watermarkText,
+            fontSize: 12,
+            color: '#999999',
+            position: 'bottom-right',
+          }"
         />
-        {{ SCENARIOS.watermark.title }}
-      </h2>
-      <div class="section-desc">{{ SCENARIOS.watermark.description }}</div>
-      <div class="section-content">
-        <div class="signature-container">
-          <C_Signature
-            ref="watermarkSignatureRef"
-            :height="250"
-            :watermark="{
-              show: true,
-              text: watermarkText,
-              fontSize: 12,
-              color: '#999999',
-              position: 'bottom-right',
-            }"
-          />
-        </div>
-        <div class="action-buttons">
+        <div class="action-bar">
           <NButton
             type="primary"
-            @click="
-              handleExport(watermarkSignatureRef, 'watermark', {
-                includeWatermark: true,
-              })
-            "
+            size="small"
+            @click="handleWatermarkExport(true)"
           >
-            <template #icon>
-              <Icon icon="mdi:export" />
-            </template>
-            导出（含水印）
+            <template #icon><C_Icon name="mdi:export" /></template>
+            含水印
           </NButton>
           <NButton
-            @click="
-              handleExport(watermarkSignatureRef, 'watermark-no', {
-                includeWatermark: false,
-              })
-            "
+            size="small"
+            @click="handleWatermarkExport(false)"
           >
-            导出（不含水印）
+            不含水印
+          </NButton>
+          <NButton
+            size="small"
+            @click="handleClearWatermark"
+          >
+            <template #icon><C_Icon name="mdi:delete" /></template>
+            清空
           </NButton>
         </div>
         <div
           v-if="exportResults.watermark"
           class="result-preview"
         >
-          <div class="preview-title">含水印导出：</div>
           <img
             :src="exportResults.watermark"
             alt="带水印签名"
-            class="preview-image"
           />
         </div>
-        <div
-          v-if="exportResults['watermark-no']"
-          class="result-preview"
-        >
-          <div class="preview-title">不含水印导出：</div>
-          <img
-            :src="exportResults['watermark-no']"
-            alt="不带水印签名"
-            class="preview-image"
-          />
-        </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 只读模式 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          :name="SCENARIOS.readonly.icon"
-          class="title-icon"
+      <!-- 只读模式 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>{{ SCENARIOS.readonly.title }}</h3>
+            <NTag
+              size="small"
+              round
+              >只读</NTag
+            >
+          </div>
+          <p class="card-desc">{{ SCENARIOS.readonly.description }}</p>
+        </template>
+        <C_Signature
+          ref="readonlySignatureRef"
+          :height="200"
+          :readonly="true"
+          :show-toolbar="false"
+          :disabled="true"
         />
-        {{ SCENARIOS.readonly.title }}
-      </h2>
-      <div class="section-desc">{{ SCENARIOS.readonly.description }}</div>
-      <div class="section-content">
-        <div class="action-buttons">
+        <div class="action-bar">
           <NButton
             type="primary"
+            size="small"
             @click="handleLoadSample"
           >
-            <template #icon>
-              <Icon icon="mdi:upload" />
-            </template>
-            加载示例签名
+            <template #icon><C_Icon name="mdi:upload" /></template>
+            加载示例
           </NButton>
-          <NButton @click="handleClearReadonly">
-            <template #icon>
-              <Icon icon="mdi:delete" />
-            </template>
+          <NButton
+            size="small"
+            @click="handleClearReadonly"
+          >
+            <template #icon><C_Icon name="mdi:delete" /></template>
             清空
           </NButton>
-        </div>
-        <div class="signature-container">
-          <C_Signature
-            ref="readonlySignatureRef"
-            :height="250"
-            :readonly="true"
-            :show-toolbar="false"
-          />
         </div>
         <NAlert
           type="info"
+          size="small"
           class="tips-card"
         >
-          <template #icon>
-            <Icon icon="mdi:information" />
-          </template>
-          只读模式下签名不可编辑，适合用于展示历史签名记录
+          只读模式下签名不可编辑，适合展示历史签名
         </NAlert>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- API 演示 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          :name="SCENARIOS.api.icon"
-          class="title-icon"
-        />
-        {{ SCENARIOS.api.title }}
-      </h2>
-      <div class="section-desc">{{ SCENARIOS.api.description }}</div>
-      <div class="section-content">
-        <div class="signature-container">
-          <C_Signature
-            ref="apiSignatureRef"
-            :height="250"
-            @change="handleSignatureChange"
-          />
-        </div>
-        <div class="action-buttons">
-          <NButton
-            type="primary"
-            :disabled="!savedData"
-            @click="handleSaveSignature"
+      <!-- API 演示 - 全宽 -->
+      <NCard
+        class="demo-card full-width"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>{{ SCENARIOS.api.title }}</h3>
+            <NTag
+              type="error"
+              size="small"
+              round
+              >API</NTag
+            >
+          </div>
+          <p class="card-desc">{{ SCENARIOS.api.description }}</p>
+        </template>
+        <div class="api-demo">
+          <div class="api-left">
+            <C_Signature
+              ref="apiSignatureRef"
+              :height="180"
+              @change="handleSignatureChange"
+            />
+            <div class="action-bar">
+              <NButton
+                type="primary"
+                size="small"
+                :disabled="!savedData"
+                @click="handleSaveSignature"
+              >
+                <template #icon><C_Icon name="mdi:content-save" /></template>
+                保存
+              </NButton>
+              <NButton
+                size="small"
+                :disabled="!savedData"
+                @click="handleRestoreSignature"
+              >
+                <template #icon><C_Icon name="mdi:restore" /></template>
+                恢复
+              </NButton>
+              <NButton
+                size="small"
+                @click="handleClearApi"
+              >
+                <template #icon><C_Icon name="mdi:delete" /></template>
+                清空
+              </NButton>
+            </div>
+          </div>
+          <div
+            v-if="savedData"
+            class="api-right"
           >
-            <template #icon>
-              <Icon icon="mdi:content-save" />
-            </template>
-            保存签名数据
-          </NButton>
-          <NButton
-            :disabled="!savedData"
-            @click="handleRestoreSignature"
-          >
-            <template #icon>
-              <Icon icon="mdi:restore" />
-            </template>
-            恢复签名
-          </NButton>
-          <NButton @click="handleClearApi">
-            <template #icon>
-              <Icon icon="mdi:delete" />
-            </template>
-            清空
-          </NButton>
-        </div>
-        <div
-          v-if="savedData"
-          class="result-preview"
-        >
-          <div class="preview-title">已保存的签名数据（JSON）：</div>
-          <div class="preview-text">
-            {{ JSON.stringify(savedData, null, 2) }}
+            <div class="data-title">签名数据（JSON）</div>
+            <pre class="data-preview">{{
+              JSON.stringify(savedData, null, 2)
+            }}</pre>
           </div>
         </div>
         <NAlert
           type="success"
+          size="small"
           class="tips-card"
         >
-          <template #icon>
-            <Icon icon="mdi:check-circle" />
-          </template>
-          签名数据可以保存到数据库，支持完整恢复笔画路径
+          签名数据可保存到数据库，支持完整恢复笔画路径
         </NAlert>
-      </div>
+      </NCard>
     </div>
   </div>
 </template>
@@ -452,6 +439,45 @@
   const handleClearReadonly = () => {
     readonlySignatureRef.value?.clear()
     message.info('已清空')
+  }
+
+  /**
+   * 清空水印签名并清除导出结果
+   */
+  const handleClearWatermark = () => {
+    watermarkSignatureRef.value?.clear()
+    // 清除所有水印相关的导出结果
+    delete exportResults.watermark
+    delete exportResults['watermark-no']
+    message.info('已清空')
+  }
+
+  /**
+   * 处理水印导出
+   */
+  const handleWatermarkExport = async (includeWatermark: boolean) => {
+    if (!watermarkSignatureRef.value) return
+
+    if (watermarkSignatureRef.value.isEmpty()) {
+      message.warning('请先签名')
+      return
+    }
+
+    try {
+      const key = includeWatermark ? 'watermark' : 'watermark-no'
+      const result = await watermarkSignatureRef.value.export({
+        includeWatermark,
+      })
+      if (typeof result === 'string') {
+        exportResults[key] = result
+        message.success(
+          includeWatermark ? '含水印导出成功' : '不含水印导出成功'
+        )
+      }
+    } catch (error) {
+      message.error('导出失败')
+      console.error(error)
+    }
   }
 
   /**

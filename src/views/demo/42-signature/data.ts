@@ -29,7 +29,7 @@ export const SCENARIOS: Record<string, ScenarioMeta> = {
     id: 'custom',
     icon: 'mdi:palette',
     title: '自定义配置',
-    description: '自定义画笔颜色、粗细、背景色',
+    description: '自定义背景颜色、工具栏显示',
   },
   watermark: {
     id: 'watermark',
@@ -62,9 +62,8 @@ export const EXPORT_OPTIONS: Array<{
 
 /** 自定义配置默认值 */
 export const CUSTOM_CONFIG_DEFAULTS = {
-  penColor: '#409eff',
-  penWidth: 3,
   bgColor: 'transparent',
+  showToolbar: true,
 }
 
 /** 预设签名示例图片（Base64） */
