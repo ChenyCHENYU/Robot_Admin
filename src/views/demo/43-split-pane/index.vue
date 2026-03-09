@@ -10,7 +10,11 @@
 
 <template>
   <div class="split-pane-demo-page">
-    <NH1>分割面板场景示例</NH1>
+    <c_vTitle
+      title="分割面板场景示例"
+      icon="mdi:view-split-vertical"
+      description="支持水平/垂直分割、折叠展开、尺寸限制、嵌套布局等特性，适用于编辑器布局、管理后台等场景"
+    />
 
     <!-- 基础水平分割 -->
     <div class="demo-section">
@@ -37,13 +41,13 @@
           >
             <template #first>
               <div class="demo-panel demo-panel--primary">
-                <Icon icon="mdi:dock-left" />
+                <C_Icon name="mdi:dock-left" />
                 <span>左面板</span>
               </div>
             </template>
             <template #second>
               <div class="demo-panel demo-panel--info">
-                <Icon icon="mdi:dock-right" />
+                <C_Icon name="mdi:dock-right" />
                 <span>右面板</span>
               </div>
             </template>
@@ -75,13 +79,13 @@
           >
             <template #first>
               <div class="demo-panel demo-panel--success">
-                <Icon icon="mdi:dock-top" />
+                <C_Icon name="mdi:dock-top" />
                 <span>上面板</span>
               </div>
             </template>
             <template #second>
               <div class="demo-panel demo-panel--warning">
-                <Icon icon="mdi:dock-bottom" />
+                <C_Icon name="mdi:dock-bottom" />
                 <span>下面板</span>
               </div>
             </template>
@@ -113,7 +117,7 @@
             <template #first>
               <div class="demo-panel demo-panel--primary">
                 <div class="panel-inner">
-                  <Icon icon="mdi:arrow-collapse-left" />
+                  <C_Icon name="mdi:arrow-collapse-left" />
                   <span>最小 20%</span>
                 </div>
               </div>
@@ -121,7 +125,7 @@
             <template #second>
               <div class="demo-panel demo-panel--info">
                 <div class="panel-inner">
-                  <Icon icon="mdi:arrow-collapse-right" />
+                  <C_Icon name="mdi:arrow-collapse-right" />
                   <span>最大 80%</span>
                 </div>
               </div>
@@ -191,13 +195,13 @@
           >
             <template #first>
               <div class="demo-panel demo-panel--success">
-                <Icon icon="mdi:page-layout-sidebar-left" />
+                <C_Icon name="mdi:page-layout-sidebar-left" />
                 <span>侧边栏</span>
               </div>
             </template>
             <template #second>
               <div class="demo-panel demo-panel--warning">
-                <Icon icon="mdi:page-layout-body" />
+                <C_Icon name="mdi:page-layout-body" />
                 <span>主内容区</span>
               </div>
             </template>
@@ -227,7 +231,7 @@
           >
             <template #first>
               <div class="demo-panel demo-panel--primary">
-                <Icon icon="mdi:folder-outline" />
+                <C_Icon name="mdi:folder-outline" />
                 <span>文件树</span>
               </div>
             </template>
@@ -238,13 +242,13 @@
               >
                 <template #first>
                   <div class="demo-panel demo-panel--info">
-                    <Icon icon="mdi:code-braces" />
+                    <C_Icon name="mdi:code-braces" />
                     <span>代码编辑区</span>
                   </div>
                 </template>
                 <template #second>
                   <div class="demo-panel demo-panel--warning">
-                    <Icon icon="mdi:console" />
+                    <C_Icon name="mdi:console" />
                     <span>终端 / 输出</span>
                   </div>
                 </template>
@@ -278,13 +282,13 @@
           >
             <template #first>
               <div class="demo-panel demo-panel--primary">
-                <Icon icon="mdi:keyboard-outline" />
+                <C_Icon name="mdi:keyboard-outline" />
                 <span>点击分割线后按方向键</span>
               </div>
             </template>
             <template #second>
               <div class="demo-panel demo-panel--info">
-                <Icon icon="mdi:arrow-left-right" />
+                <C_Icon name="mdi:arrow-left-right" />
                 <span>步长 5%</span>
               </div>
             </template>
@@ -313,13 +317,13 @@
           >
             <template #first>
               <div class="demo-panel demo-panel--disabled">
-                <Icon icon="mdi:lock" />
+                <C_Icon name="mdi:lock" />
                 <span>锁定面板</span>
               </div>
             </template>
             <template #second>
               <div class="demo-panel demo-panel--disabled">
-                <Icon icon="mdi:lock" />
+                <C_Icon name="mdi:lock" />
                 <span>锁定面板</span>
               </div>
             </template>
@@ -331,8 +335,6 @@
 </template>
 
 <script setup lang="ts">
-  import { Icon } from '@iconify/vue'
-
   const message = useMessage()
   const basicRef = ref()
   const collapseRef = ref()
