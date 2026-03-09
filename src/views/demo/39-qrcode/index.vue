@@ -242,12 +242,12 @@
 </template>
 
 <script setup lang="ts">
-  import type { ActionItem } from '@/types/modules/action-bar'
   import type {
+    ActionItem,
     ErrorCorrectionLevel,
     LogoOptions,
     RenderMode,
-  } from '@/types/modules/qrcode'
+  } from '@robot-admin/naive-ui-components'
   import {
     QRCODE_EXAMPLES,
     ERROR_LEVELS,

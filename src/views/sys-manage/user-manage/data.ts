@@ -1,5 +1,5 @@
 import type { FormRules } from 'naive-ui/es'
-import type { DataRecord } from '@/types/modules/table'
+import type { DataRecord } from '@robot-admin/naive-ui-components'
 
 // ==================== 类型定义 ====================
 export type UserType = 'internal' | 'external' | 'partner' | 'guest'

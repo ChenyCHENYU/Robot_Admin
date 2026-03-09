@@ -562,7 +562,7 @@
 
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     type DictData,
     type DictFormData,

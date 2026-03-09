@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { ActionItem } from '@/types/modules/action-bar'
+import type { ActionItem } from '@robot-admin/naive-ui-components'
 
 /**
  * * @description: 创建操作按钮配置

@@ -1,6 +1,6 @@
 import { h } from 'vue'
 import { NTag, type FormRules } from 'naive-ui/es'
-import type { TableColumn } from '@/types/modules/table'
+import type { TableColumn } from '@robot-admin/naive-ui-components'
 
 // ==================== 类型定义 ====================
 export type PermissionType = 'module' | 'function' | 'button' | 'api'

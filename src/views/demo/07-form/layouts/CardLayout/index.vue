@@ -67,8 +67,8 @@
     FormModel,
     FormInstance,
     LabelPlacement,
-  } from '@/types/modules/form'
-  import type { ActionItem } from '@/types/modules/action-bar'
+    ActionItem,
+  } from '@robot-admin/naive-ui-components'
   import {
     FORM_OPTIONS,
     CARD_LAYOUT_CONFIG,

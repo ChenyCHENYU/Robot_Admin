@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { CalendarViewType } from '@/types/modules/calendar'
+  import type { CalendarViewType } from '@robot-admin/naive-ui-components'
   import { INITIAL_EVENTS } from './data'
 
   const message = useMessage()

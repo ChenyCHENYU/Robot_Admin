@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { CollapsePanelItem } from '@/types/modules/collapse-panel'
+import type { CollapsePanelItem } from '@robot-admin/naive-ui-components'
 
 /** 基础用法 */
 export const basicItems: CollapsePanelItem[] = [

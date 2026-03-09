@@ -2,7 +2,7 @@
  * @Description: 操作按钮组演示页 - 静态数据
  */
 
-import type { TableColumn } from '@/types/modules/table'
+import type { TableColumn } from '@robot-admin/naive-ui-components'
 
 // ================= 表格列定义 =================
 export const columns: TableColumn[] = [

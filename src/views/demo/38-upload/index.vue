@@ -355,7 +355,10 @@
 </template>
 
 <script setup lang="ts">
-  import type { UploadFileItem, UploadExpose } from '@/types/modules/upload'
+  import type {
+    UploadFileItem,
+    UploadExpose,
+  } from '@robot-admin/naive-ui-components'
   import {
     FILE_TYPE_OPTIONS,
     CHUNK_SIZE_OPTIONS,

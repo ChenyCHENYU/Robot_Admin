@@ -61,7 +61,10 @@
 </template>
 
 <script setup lang="ts">
-  import type { DiagramType, DiagramData } from '@/types/antv'
+  import type {
+    DiagramType,
+    DiagramData,
+  } from '@robot-admin/naive-ui-components'
   import { s_themeStore } from '@/stores/theme'
 
   const themeStore = s_themeStore()

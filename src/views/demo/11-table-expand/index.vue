@@ -82,19 +82,20 @@
 <script setup lang="ts">
   import { type DataTableRowKey, NSpin } from 'naive-ui/es'
   import type { VNodeChild } from 'vue'
-  import type { ActionItem } from '@/types/modules/action-bar'
-  import type {
-    DataRecord,
-    TableColumn,
-    TestRecord,
-    DemoConfig,
-  } from '@/types/modules/table'
+  import {
+    C_Table,
+    type ActionItem,
+    type DataRecord,
+    type TableColumn,
+  } from '@robot-admin/naive-ui-components'
   import {
     defaultConfig,
     dataColumns,
     getChildColumns,
     type ChildDataType,
     type EnhancedTestRecord,
+    type TestRecord,
+    type DemoConfig,
   } from './data'
 
   import { useTableCrud } from '@robot-admin/request-core'
@@ -172,7 +173,7 @@
   // 展开渲染逻辑
   const renderExpandContent = (
     row: DataRecord,
-    expandData: DataRecord[],
+    expandData: unknown[],
     isLoading: boolean
   ): VNodeChild => {
     const testRow = row as EnhancedTestRecord
@@ -199,7 +200,7 @@
         `${testRow.name} 的详细信息 (${expandData.length} 条)`
       ),
       h(C_Table, {
-        data: expandData,
+        data: expandData as DataRecord[],
         columns: childColumns as TableColumn<DataRecord>[],
         rowKey: (child: DataRecord) => (child as unknown as ChildDataType).id,
         config: {

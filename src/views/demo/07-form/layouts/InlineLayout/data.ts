@@ -7,7 +7,7 @@
  * @Description: 表单组件 - 内联组件 - 演示页面 - 数据层
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
-import type { FormOption } from '@/types/modules/form'
+import type { FormOption } from '@robot-admin/naive-ui-components'
 
 // 内联布局表单配置（适合搜索表单）
 export const formOptions: FormOption[] = [

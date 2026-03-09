@@ -193,7 +193,10 @@
 </template>
 
 <script setup lang="ts">
-  import type { CronValidation, CronExpose } from '@/types/modules/cron'
+  import type {
+    CronValidation,
+    CronExpose,
+  } from '@robot-admin/naive-ui-components'
 
   const message = useMessage()
 

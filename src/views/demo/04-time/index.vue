@@ -220,7 +220,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import type { ActionItem } from '@robot-admin/naive-ui-components'
   import { commonAttrs } from './data'
 
   // 响应式数据

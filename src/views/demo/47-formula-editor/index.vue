@@ -205,7 +205,7 @@
   import type {
     FormulaEditorExpose,
     FormulaValidation,
-  } from '@/types/modules/formula-editor'
+  } from '@robot-admin/naive-ui-components'
   import {
     salesVariables,
     salesSampleData,

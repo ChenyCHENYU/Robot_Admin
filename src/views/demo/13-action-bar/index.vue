@@ -337,7 +337,7 @@
   import type {
     ActionItem,
     ActionDropdownItem,
-  } from '@/types/modules/action-bar'
+  } from '@robot-admin/naive-ui-components'
   import { useMessage } from 'naive-ui/es'
   import {
     columns,

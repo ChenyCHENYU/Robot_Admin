@@ -419,7 +419,7 @@
   import type {
     CropOutputFormat,
     CropResult,
-  } from '@/types/modules/image-cropper'
+  } from '@robot-admin/naive-ui-components'
   import {
     DEMO_AVATAR,
     DEMO_IMAGE,

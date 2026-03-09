@@ -415,9 +415,10 @@
     NDropdown,
     NTreeSelect,
   } from 'naive-ui/es'
-  import type { ActionItem } from '@/types/modules/action-bar'
-
-  import type { TableColumn } from '@/types/modules/table'
+  import type {
+    ActionItem,
+    TableColumn,
+  } from '@robot-admin/naive-ui-components'
   import {
     type UserData,
     type UserFormData,

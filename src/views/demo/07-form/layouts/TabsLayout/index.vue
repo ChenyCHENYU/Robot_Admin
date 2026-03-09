@@ -121,8 +121,8 @@
     FormModel,
     FormInstance,
     LabelPlacement,
-  } from '@/types/modules/form'
-  import type { ActionItem } from '@/types/modules/action-bar'
+    ActionItem,
+  } from '@robot-admin/naive-ui-components'
   import {
     layoutConfig,
     placementOptions,

@@ -11,9 +11,8 @@
 import type {
   FormModel,
   FormOption,
-  LayoutConfig,
   DynamicFormConfig,
-} from '@/types/modules/form'
+} from '@robot-admin/naive-ui-components'
 import { PRESET_RULES } from '@robot-admin/form-validate'
 
 const { required } = PRESET_RULES
@@ -91,9 +90,7 @@ export const BASE_FORM_OPTIONS: FormOption[] = [
 ]
 
 // ================= 布局配置生成器 =================
-export const createLayoutConfig = (
-  config: DynamicFormConfig
-): LayoutConfig => ({
+export const createLayoutConfig = (config: DynamicFormConfig) => ({
   type: 'dynamic',
   dynamic: {
     dynamic: {

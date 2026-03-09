@@ -244,8 +244,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { EditMode } from '@/types/modules/table'
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import type { ActionItem, EditMode } from '@robot-admin/naive-ui-components'
   import { useTableCrud } from '@robot-admin/request-core'
   import { EDIT_MODES, MODE_CONFIG, employeeTableConfig } from './data'
   import { PRESET_RULES } from '@robot-admin/form-validate'

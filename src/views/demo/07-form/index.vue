@@ -5,7 +5,7 @@
  * @LastEditTime: 2025-06-14 16:57:14
  * @FilePath: \Robot_Admin\src\views\demo\07-form\index.vue
  * @Description: 表单组件 - 演示页面 - 入口文件
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
@@ -340,7 +340,7 @@
     LayoutType,
     LabelPlacement,
     FormModel,
-  } from '@/types/modules/form'
+  } from '@robot-admin/naive-ui-components'
   import { layoutOptions, layoutDescriptions, testDataConfig } from './data'
 
   // 导入布局组件

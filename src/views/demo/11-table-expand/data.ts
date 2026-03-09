@@ -3,10 +3,24 @@ import { NTag } from 'naive-ui/es'
 import type {
   DataRecord,
   TableColumn,
-  TestRecord,
-  DemoConfig,
-} from '@/types/modules/table'
+  ParentChildLinkMode,
+} from '@robot-admin/naive-ui-components'
 import type { GetEmployeesExpandListResponse } from '@/api/generated'
+
+// ================= Demo 专用类型 =================
+export interface TestRecord extends DataRecord {
+  id: number
+  name: string
+  department: string
+  role: string
+  status: string
+}
+
+export interface DemoConfig {
+  enableSelection: boolean
+  enableChildSelection: boolean
+  parentChildLinkMode: ParentChildLinkMode
+}
 
 // ================= 配置相关 =================
 export const defaultConfig: DemoConfig = {

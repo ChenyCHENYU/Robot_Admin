@@ -419,7 +419,7 @@
 
 <script setup lang="ts">
   // 导入数据和类型
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     type ArticleData,
     type InsertImageFunction,

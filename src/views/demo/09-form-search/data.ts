@@ -1,4 +1,7 @@
-import type { SearchFormItem, SearchOptionItem } from '@/types/modules/form'
+import type {
+  SearchFormItem,
+  SearchOptionItem,
+} from '@robot-admin/naive-ui-components'
 
 // 基础类型定义 - 使用兼容性类型
 export interface OptionItem extends SearchOptionItem {

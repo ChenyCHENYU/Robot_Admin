@@ -86,7 +86,10 @@
 </template>
 
 <script setup lang="ts">
-  import type { DataRecord, SimpleTableActions } from '@/types/modules/table'
+  import type {
+    DataRecord,
+    SimpleTableActions,
+  } from '@robot-admin/naive-ui-components'
   import {
     type DynamicEmployee,
     type Log,

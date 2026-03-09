@@ -80,9 +80,7 @@
     LabelPlacement,
     DynamicFieldConfig,
     DynamicFormConfig,
-  } from '@/types/modules/form'
-  import type { ActionItem } from '@/types/modules/action-bar'
-  import {
+    ActionItem,
     useDynamicFormState,
     DYNAMIC_FORM_STATE_KEY,
   } from '@robot-admin/naive-ui-components'

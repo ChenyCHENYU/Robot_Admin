@@ -329,7 +329,7 @@
   import type {
     SignatureExpose,
     SignatureStroke,
-  } from '@/types/modules/signature'
+  } from '@robot-admin/naive-ui-components'
 
   defineOptions({
     name: 'SignatureDemo',

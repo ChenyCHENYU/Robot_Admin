@@ -160,8 +160,8 @@
     LabelPlacement,
     FormInstance,
     FormModel,
-  } from '@/types/modules/form'
-  import type { ActionItem } from '@/types/modules/action-bar'
+    ActionItem,
+  } from '@robot-admin/naive-ui-components'
   import { colsOptions, formOptions } from './data'
 
   // ==================== Props & Emits ====================

@@ -1,4 +1,4 @@
-import type { SelectOption, DataRecord } from '@/types/modules/table'
+import type { SelectOption, DataRecord } from '@robot-admin/naive-ui-components'
 import type { TableColumn, UseTableCrudConfig } from '@robot-admin/request-core'
 import { PRESET_RULES } from '@robot-admin/form-validate'
 

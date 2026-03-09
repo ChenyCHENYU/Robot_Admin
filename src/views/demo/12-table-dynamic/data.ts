@@ -1,4 +1,4 @@
-import type { TableColumn, DataRecord } from '@/types/modules/table'
+import type { TableColumn, DataRecord } from '@robot-admin/naive-ui-components'
 
 // ================= 类型定义 =================
 export interface ChildWorkData {

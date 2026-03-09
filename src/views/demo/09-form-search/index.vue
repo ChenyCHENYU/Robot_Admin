@@ -72,7 +72,7 @@
     type MegaFormParams,
     type SearchResult,
   } from './data'
-  import type { SearchFormParams } from '@/types/modules/search'
+  import type { SearchFormParams } from '@robot-admin/naive-ui-components'
 
   const message = useMessage()
   const searchResults = ref<SearchResult[]>([])

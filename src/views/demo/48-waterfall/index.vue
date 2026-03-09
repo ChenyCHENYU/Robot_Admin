@@ -248,7 +248,7 @@
   import type {
     WaterFallItem,
     WaterFallExpose,
-  } from '@/types/modules/waterfall'
+  } from '@robot-admin/naive-ui-components'
   import {
     INITIAL_ITEMS,
     PAGE_SIZE,

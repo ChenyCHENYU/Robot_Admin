@@ -200,7 +200,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     basicSteps,
     orderSteps,

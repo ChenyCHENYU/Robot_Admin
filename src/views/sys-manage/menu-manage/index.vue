@@ -530,7 +530,7 @@
 
 <script setup lang="ts">
   import type { FormInst, TreeSelectOption } from 'naive-ui/es'
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import type { ActionItem, DropInfo } from '@robot-admin/naive-ui-components'
 
   // 从 data.ts 导入类型和数据配置
   import {
@@ -549,8 +549,6 @@
     updateButtonPermissionApi,
     deleteButtonPermissionApi,
   } from './data'
-
-  import type { DropInfo } from '@/types/modules/tree'
 
   const message = useMessage()
 

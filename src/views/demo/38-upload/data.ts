@@ -11,7 +11,7 @@
 import type {
   UploadFileItem,
   UploadRequestOptions,
-} from '@/types/modules/upload'
+} from '@robot-admin/naive-ui-components'
 
 /** 模拟已有文件列表（回显） */
 export const MOCK_EXISTING_FILES: UploadFileItem[] = [

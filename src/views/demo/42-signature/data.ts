@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { ExportOptions } from '@/types/modules/signature'
+import type { ExportOptions } from '@robot-admin/naive-ui-components'
 
 /** 演示场景配置 */
 export const DEMO_SCENARIOS = [

@@ -203,7 +203,7 @@
 
 <script setup lang="ts">
   import { ref } from 'vue'
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     BARCODE_FORMATS,
     BARCODE_EXAMPLES,
