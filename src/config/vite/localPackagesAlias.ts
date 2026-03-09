@@ -190,6 +190,24 @@ export function getLocalPackagesAlias(): Alias[] {
       replacement,
     })
 
+    // 同时将 style.css 子路径映射到本地源码的 global.scss
+    // 否则 `import '...naive-ui-components/style.css'` 仍加载安装包的旧 CSS
+    const localStyleScss = resolve(
+      process.cwd(),
+      relativePath,
+      'src',
+      'styles',
+      'global.scss'
+    )
+    if (existsSync(localStyleScss)) {
+      aliases.push({
+        find: new RegExp(
+          `^${fullPackageName.replace(/\//g, '\\/')}/style\\.css$`
+        ),
+        replacement: localStyleScss,
+      })
+    }
+
     packageNames.push(`${pkgName}(独立)`)
   }
 
