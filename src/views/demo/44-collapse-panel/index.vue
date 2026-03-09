@@ -37,17 +37,7 @@
         <C_CollapsePanel
           :items="basicItems"
           :default-active-keys="['info']"
-        >
-          <template #panel-info>
-            <p>这是基本信息面板的内容。折叠面板用于组织和隐藏复杂的内容块。</p>
-          </template>
-          <template #panel-detail>
-            <p>这是详细设置面板的内容。你可以在这里放置表单、配置项等。</p>
-          </template>
-          <template #panel-advanced>
-            <p>这是高级选项面板的内容。通常放置不常用的高级配置项。</p>
-          </template>
-        </C_CollapsePanel>
+        />
       </NCard>
 
       <!-- 手风琴模式 -->
@@ -71,17 +61,7 @@
           :items="faqItems"
           :accordion="true"
           :default-active-keys="['q1']"
-        >
-          <template #panel-q1>
-            <p>Vue 3 的 Composition API 提供了更灵活的代码组织方式。</p>
-          </template>
-          <template #panel-q2>
-            <p>Pinia 是 Vue 官方推荐的状态管理库，TypeScript 支持更好。</p>
-          </template>
-          <template #panel-q3>
-            <p>Vite 利用浏览器原生 ES Module 支持实现极速冷启动。</p>
-          </template>
-        </C_CollapsePanel>
+        />
       </NCard>
 
       <!-- 卡片变体 - 全宽 -->
@@ -385,20 +365,7 @@
           :default-active-keys="['step-1']"
           @expand="(k: string | number) => handleEvent(`展开: ${k}`)"
           @collapse="(k: string | number) => handleEvent(`折叠: ${k}`)"
-        >
-          <template #panel-step-1>
-            <p>第一步：创建项目基础架构，配置 ESLint / Prettier / Husky。</p>
-          </template>
-          <template #panel-step-2>
-            <p>第二步：实现核心业务模块，包括用户认证、权限管理。</p>
-          </template>
-          <template #panel-step-3>
-            <p>第三步：性能优化与测试，懒加载、代码分割、单元测试。</p>
-          </template>
-          <template #panel-step-4>
-            <p>第四步：部署上线，CI/CD 流水线配置。</p>
-          </template>
-        </C_CollapsePanel>
+        />
       </NCard>
 
       <!-- 懒渲染 + 持久化 -->
@@ -422,9 +389,6 @@
           :items="lazyItems"
           persist-key="demo-collapse-lazy"
         >
-          <template #panel-lazy-normal>
-            <p>这个面板内容立即渲染（默认行为）。</p>
-          </template>
           <template #panel-lazy-deferred>
             <div class="lazy-indicator">
               <C_Icon name="mdi:check-circle" />
@@ -466,17 +430,7 @@
         <C_CollapsePanel
           :items="disabledItems"
           :default-active-keys="['enabled']"
-        >
-          <template #panel-enabled>
-            <p>这个面板可以正常操作。</p>
-          </template>
-          <template #panel-disabled-item>
-            <p>这个内容不会被看到。</p>
-          </template>
-          <template #panel-also-enabled>
-            <p>这个面板也可以正常操作。</p>
-          </template>
-        </C_CollapsePanel>
+        />
       </NCard>
     </div>
   </div>
