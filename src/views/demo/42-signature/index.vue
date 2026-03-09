@@ -16,12 +16,12 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:draw-pen"
+          :name="SCENARIOS.basic.icon"
           class="title-icon"
         />
-        基础签名
+        {{ SCENARIOS.basic.title }}
       </h2>
-      <div class="section-desc">最简单的签名板，开箱即用</div>
+      <div class="section-desc">{{ SCENARIOS.basic.description }}</div>
       <div class="section-content">
         <div class="signature-container">
           <C_Signature
@@ -70,12 +70,12 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:palette"
+          :name="SCENARIOS.custom.icon"
           class="title-icon"
         />
-        自定义配置
+        {{ SCENARIOS.custom.title }}
       </h2>
-      <div class="section-desc">自定义画笔颜色、粗细、背景色</div>
+      <div class="section-desc">{{ SCENARIOS.custom.description }}</div>
       <div class="section-content">
         <NForm
           label-placement="left"
@@ -140,12 +140,12 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:watermark"
+          :name="SCENARIOS.watermark.icon"
           class="title-icon"
         />
-        带水印签名
+        {{ SCENARIOS.watermark.title }}
       </h2>
-      <div class="section-desc">适用于合同、协议等需要标记时间的场景</div>
+      <div class="section-desc">{{ SCENARIOS.watermark.description }}</div>
       <div class="section-content">
         <div class="signature-container">
           <C_Signature
@@ -213,12 +213,12 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:eye"
+          :name="SCENARIOS.readonly.icon"
           class="title-icon"
         />
-        只读模式
+        {{ SCENARIOS.readonly.title }}
       </h2>
-      <div class="section-desc">展示已有签名，不可编辑</div>
+      <div class="section-desc">{{ SCENARIOS.readonly.description }}</div>
       <div class="section-content">
         <div class="action-buttons">
           <NButton
@@ -261,12 +261,12 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:api"
+          :name="SCENARIOS.api.icon"
           class="title-icon"
         />
-        API 演示
+        {{ SCENARIOS.api.title }}
       </h2>
-      <div class="section-desc">签名数据的保存与恢复</div>
+      <div class="section-desc">{{ SCENARIOS.api.description }}</div>
       <div class="section-content">
         <div class="signature-container">
           <C_Signature
@@ -330,6 +330,7 @@
     SignatureExpose,
     SignatureStroke,
   } from '@robot-admin/naive-ui-components'
+  import { SCENARIOS, CUSTOM_CONFIG_DEFAULTS } from './data'
 
   defineOptions({
     name: 'SignatureDemo',
@@ -345,11 +346,7 @@
   const apiSignatureRef = ref<SignatureExpose>()
 
   // 自定义配置
-  const customConfig = reactive({
-    penColor: '#409eff',
-    penWidth: 3,
-    bgColor: 'transparent',
-  })
+  const customConfig = reactive({ ...CUSTOM_CONFIG_DEFAULTS })
 
   // 水印文本
   const watermarkText = computed(() => {
