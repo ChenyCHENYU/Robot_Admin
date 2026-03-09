@@ -9,8 +9,13 @@
 -->
 
 <template>
-  <div class="search-demo">
-    <NH1 class="main-title">表单搜索组件场景示例</NH1>
+  <div class="form-search-demo">
+    <c_vTitle
+      title="表单搜索组件场景示例"
+      icon="mdi:magnify"
+      description="支持基础搜索、高级搜索、超多字段搜索，自动折叠展开、历史记录等功能"
+    />
+
     <!-- 基础用法 -->
     <div class="demo-section">
       <h3>基础用法（3个字段）</h3>
@@ -18,8 +23,8 @@
         :form-item-list="basicFormConfig.items"
         :form-params="basicFormParams"
         :form-search-input-history-string="basicFormConfig.historyKey"
-        @search="handleBasicSearch"
-        @reset="handleBasicReset"
+        @search="handleSearch('basic', $event)"
+        @reset="handleReset('basic')"
         @change-params="handleParamsChange"
       />
     </div>
@@ -31,8 +36,8 @@
         :form-item-list="advancedFormConfig.items"
         :form-params="advancedFormParams"
         :form-search-input-history-string="advancedFormConfig.historyKey"
-        @search="handleAdvancedSearch"
-        @reset="handleAdvancedReset"
+        @search="handleSearch('advanced', $event)"
+        @reset="handleReset('advanced')"
       />
     </div>
 
@@ -43,15 +48,15 @@
         :form-item-list="megaFormConfig.items"
         :form-params="megaFormParams"
         :form-search-input-history-string="megaFormConfig.historyKey"
-        @search="handleMegaSearch"
-        @reset="handleMegaReset"
+        @search="handleSearch('mega', $event)"
+        @reset="handleReset('mega')"
       />
     </div>
 
-    <!-- 搜索结果展示 -->
+    <!-- 搜索结果 -->
     <div
-      class="demo-section"
       v-if="searchResults.length > 0"
+      class="demo-section"
     >
       <h3>搜索结果</h3>
       <NCard>
@@ -62,136 +67,63 @@
 </template>
 
 <script setup lang="ts">
+  import type { SearchFormParams } from '@robot-admin/naive-ui-components'
   import {
     basicFormConfig,
     advancedFormConfig,
     megaFormConfig,
     generateMockResults,
-    type BasicFormParams,
-    type AdvancedFormParams,
-    type MegaFormParams,
-    type SearchResult,
+    resetFormParams,
   } from './data'
-  import type { SearchFormParams } from '@robot-admin/naive-ui-components'
 
   const message = useMessage()
-  const searchResults = ref<SearchResult[]>([])
+  const searchResults = ref<any[]>([])
 
-  // 创建响应式表单参数 - 使用精确类型
-  const basicFormParams = reactive<BasicFormParams>({
-    ...basicFormConfig.params,
-  })
-  const advancedFormParams = reactive<AdvancedFormParams>({
-    ...advancedFormConfig.params,
-  })
-  const megaFormParams = reactive<MegaFormParams>({ ...megaFormConfig.params })
+  // 表单参数
+  const basicFormParams = reactive({ ...basicFormConfig.params })
+  const advancedFormParams = reactive({ ...advancedFormConfig.params })
+  const megaFormParams = reactive({ ...megaFormConfig.params })
 
-  /**
-   * * @description: 重置表单参数到初始状态的辅助函数
-   * ? @param {T} target 目标表单参数对象
-   * ? @param {T} source 源初始参数对象
-   * ! @return {void} 无返回值，直接修改目标对象
-   */
-  function resetFormParams<T extends Record<string, unknown>>(
-    target: { [K in keyof T]: T[K] }, // 修改为可写类型
-    source: T
-  ): void {
-    Object.keys(target).forEach(key => {
-      target[key as keyof T] = source[key as keyof T]
-    })
+  // 表单配置映射
+  const formConfigs = {
+    basic: { params: basicFormParams, defaults: basicFormConfig.params },
+    advanced: {
+      params: advancedFormParams,
+      defaults: advancedFormConfig.params,
+    },
+    mega: { params: megaFormParams, defaults: megaFormConfig.params },
   }
 
-  /**
-   * * @description: 处理基础表单搜索事件
-   * ? @param {BasicFormParams} params 基础表单搜索参数
-   * ! @return {void} 无返回值，执行搜索并更新结果
-   */
-  function handleBasicSearch(params: SearchFormParams) {
-    console.log('基础搜索参数:', params)
+  // 统一搜索处理
+  const handleSearch = (
+    type: keyof typeof formConfigs,
+    params: SearchFormParams
+  ) => {
+    console.log(`${type}搜索参数:`, params)
     message.success('搜索成功！')
-    searchResults.value = generateMockResults(
-      'basic',
-      params as BasicFormParams
-    )
+    searchResults.value = generateMockResults(type, params as any)
   }
 
-  /**
-   * * @description: 处理基础表单重置事件
-   * ! @return {void} 无返回值，重置表单并清空搜索结果
-   */
-  function handleBasicReset() {
-    resetFormParams(basicFormParams, basicFormConfig.params)
+  // 统一重置处理
+  const handleReset = (type: keyof typeof formConfigs) => {
+    const { params, defaults } = formConfigs[type]
+    resetFormParams(params, defaults)
     searchResults.value = []
     message.info('表单已重置')
   }
 
-  /**
-   * * @description: 处理高级表单搜索事件
-   * ? @param {AdvancedFormParams} params 高级表单搜索参数
-   * ! @return {void} 无返回值，执行搜索并更新结果
-   */
-  function handleAdvancedSearch(params: SearchFormParams) {
-    console.log('高级搜索参数:', params)
-    message.success('高级搜索成功！')
-    searchResults.value = generateMockResults(
-      'advanced',
-      params as AdvancedFormParams
-    )
-  }
-
-  /**
-   * * @description: 处理高级表单重置事件
-   * ! @return {void} 无返回值，重置表单并清空搜索结果
-   */
-  function handleAdvancedReset() {
-    resetFormParams(advancedFormParams, advancedFormConfig.params)
-    searchResults.value = []
-    message.info('高级表单已重置')
-  }
-
-  /**
-   * * @description: 处理超多字段表单搜索事件
-   * ? @param {MegaFormParams} params 超多字段表单搜索参数
-   * ! @return {void} 无返回值，执行搜索并更新结果
-   */
-  function handleMegaSearch(params: SearchFormParams) {
-    console.log('超多字段搜索参数:', params)
-    message.success('超多字段搜索成功！')
-    searchResults.value = generateMockResults('mega', params as MegaFormParams)
-  }
-
-  /**
-   * * @description: 处理超多字段表单重置事件
-   * ! @return {void} 无返回值，重置表单并清空搜索结果
-   */
-  function handleMegaReset() {
-    resetFormParams(megaFormParams, megaFormConfig.params)
-    searchResults.value = []
-    message.info('超多字段表单已重置')
-  }
-
-  /**
-   * * @description: 处理表单参数变化事件
-   * ? @param {BasicFormParams | AdvancedFormParams | MegaFormParams} params 变化的表单参数
-   * ! @return {void} 无返回值，仅用于日志记录和调试
-   */
-  function handleParamsChange(params: SearchFormParams) {
+  // 参数变化
+  const handleParamsChange = (params: SearchFormParams) => {
     console.log('参数变化:', params)
   }
 </script>
 
 <style lang="scss" scoped>
-  .search-demo {
+  .form-search-demo {
     padding: 20px;
 
-    h2 {
-      color: var(--n-text-color);
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
     .demo-section {
-      margin-bottom: 40px;
+      margin-bottom: 32px;
 
       h3 {
         color: var(--n-text-color);
