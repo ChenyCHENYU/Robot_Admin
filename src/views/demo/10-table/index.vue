@@ -1,6 +1,10 @@
 <template>
   <div class="table-demo-page">
-    <NH1>表格组件场景示例</NH1>
+    <c_vTitle
+      title="表格组件场景示例"
+      icon="mdi:table"
+      description="支持多种编辑模式（模态框、抽屉、行内编辑）、分页、新增、编辑、删除、详情查看等完整 CRUD 功能"
+    />
     <NCard>
       <NSpace
         vertical
@@ -162,8 +166,13 @@
           path="gender"
         >
           <NRadioGroup v-model:value="addFormData.gender">
-            <NRadio value="male">男</NRadio>
-            <NRadio value="female">女</NRadio>
+            <NRadio
+              v-for="item in GENDER_OPTIONS"
+              :key="item.value"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </NRadio>
           </NRadioGroup>
         </NFormItem>
 
@@ -183,12 +192,7 @@
         >
           <NSelect
             v-model:value="addFormData.department"
-            :options="[
-              { label: '技术部', value: 'tech' },
-              { label: '人事部', value: 'hr' },
-              { label: '市场部', value: 'market' },
-              { label: '财务部', value: 'finance' },
-            ]"
+            :options="DEPARTMENT_OPTIONS"
             placeholder="请选择部门"
           />
         </NFormItem>
@@ -211,11 +215,7 @@
         >
           <NSelect
             v-model:value="addFormData.status"
-            :options="[
-              { label: '在职', value: 'active' },
-              { label: '离职', value: 'inactive' },
-              { label: '试用期', value: 'probation' },
-            ]"
+            :options="STATUS_OPTIONS"
             placeholder="请选择状态"
           />
         </NFormItem>
@@ -246,19 +246,30 @@
 <script setup lang="ts">
   import type { ActionItem, EditMode } from '@robot-admin/naive-ui-components'
   import { useTableCrud } from '@robot-admin/request-core'
-  import { EDIT_MODES, MODE_CONFIG, employeeTableConfig } from './data'
   import { PRESET_RULES } from '@robot-admin/form-validate'
+  import {
+    EDIT_MODES,
+    MODE_CONFIG,
+    employeeTableConfig,
+    DEPARTMENT_OPTIONS,
+    STATUS_OPTIONS,
+    GENDER_OPTIONS,
+    ADD_FORM_DEFAULTS,
+  } from './data'
 
-  // ================= 初始化表格 CRUD =================
+  // 初始化表格 CRUD
   const table = useTableCrud(employeeTableConfig)
 
-  // ================= UI 状态管理 =================
+  // UI 状态
   const editMode = ref<EditMode>('modal')
   const showAddModal = ref(false)
   const addFormRef = ref()
   const addFormData = ref<any>({})
 
-  // ================= 模态框操作按钮 =================
+  // 当前模式配置
+  const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])
+
+  // 模态框按钮
   const modalActions = computed<ActionItem[]>(() => [
     {
       key: 'cancel',
@@ -276,15 +287,12 @@
     },
   ])
 
-  // ================= 计算属性 =================
-  const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])
-
-  // 表单验证规则（使用封装的 PRESET_RULES）
+  // 表单验证规则
   const addFormRules = {
     name: [PRESET_RULES.required('姓名'), PRESET_RULES.length('姓名', 2, 20)],
     age: [
       PRESET_RULES.required('年龄', ['blur', 'change']),
-      { ...PRESET_RULES.range('年龄', 18, 65), trigger: ['blur', 'change'] }, // 修改 trigger
+      PRESET_RULES.range('年龄', 18, 65),
     ],
     gender: [PRESET_RULES.required('性别', 'change')],
     email: [PRESET_RULES.required('邮箱'), PRESET_RULES.email('邮箱')],
@@ -293,31 +301,18 @@
     status: [PRESET_RULES.required('状态', 'change')],
   }
 
-  // ================= 新增员工处理 =================
+  // 新增员工
   const handleAddEmployee = () => {
-    // 初始化表单数据（使用默认值）
-    addFormData.value = {
-      name: '',
-      age: 25,
-      gender: 'male',
-      email: '',
-      department: 'tech',
-      joinDate: Date.now(),
-      status: 'probation',
-      description: '',
-    }
+    addFormData.value = { ...ADD_FORM_DEFAULTS, joinDate: Date.now() }
     showAddModal.value = true
   }
 
-  // 提交新增表单
+  // 提交新增
   const handleAddSubmit = () => {
     addFormRef.value?.validate(async (errors: any) => {
       if (!errors) {
         try {
-          await table.create({
-            ...addFormData.value,
-            id: Date.now(), // 临时ID
-          })
+          await table.create({ ...addFormData.value, id: Date.now() })
           showAddModal.value = false
         } catch (error) {
           console.error('新增失败:', error)
