@@ -10,96 +10,99 @@
 
 <template>
   <div class="collapse-panel-demo-page">
-    <NH1>折叠面板场景示例</NH1>
+    <c_vTitle
+      title="折叠面板场景示例"
+      icon="mdi:folder-open-outline"
+      description="支持手风琴模式、多种变体、编程控制、懒渲染等特性，适用于FAQ、设置面板、仪表盘等场景"
+    />
 
-    <!-- 基础用法 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:chevron-down-box-outline"
-          class="title-icon"
-        />
-        基础用法
-      </h2>
-      <div class="section-desc">最简单的折叠面板，点击头部展开/折叠</div>
-      <div class="section-content">
+    <div class="demo-grid">
+      <!-- 基础用法 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>基础用法</h3>
+            <NTag
+              type="info"
+              size="small"
+              round
+              >默认</NTag
+            >
+          </div>
+          <p class="card-desc">最简单的折叠面板，点击头部展开/折叠</p>
+        </template>
         <C_CollapsePanel
           :items="basicItems"
           :default-active-keys="['info']"
         >
           <template #panel-info>
-            <p
-              >这是基本信息面板的内容。折叠面板用于组织和隐藏复杂的内容块，帮助用户专注于当前关心的信息。</p
-            >
+            <p>这是基本信息面板的内容。折叠面板用于组织和隐藏复杂的内容块。</p>
           </template>
           <template #panel-detail>
-            <p
-              >这是详细设置面板的内容。你可以在这里放置表单、配置项等更多信息，用户需要时展开查看。</p
-            >
+            <p>这是详细设置面板的内容。你可以在这里放置表单、配置项等。</p>
           </template>
           <template #panel-advanced>
-            <p
-              >这是高级选项面板的内容。通常放置不常用的高级配置项，减少界面复杂度。</p
-            >
+            <p>这是高级选项面板的内容。通常放置不常用的高级配置项。</p>
           </template>
         </C_CollapsePanel>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 手风琴模式 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:view-sequential"
-          class="title-icon"
-        />
-        手风琴模式
-      </h2>
-      <div class="section-desc">
-        设置 <code>accordion</code> 后同时只能展开一个面板
-      </div>
-      <div class="section-content">
+      <!-- 手风琴模式 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>手风琴模式</h3>
+            <NTag
+              type="success"
+              size="small"
+              round
+              >互斥</NTag
+            >
+          </div>
+          <p class="card-desc">设置 accordion 后同时只能展开一个面板</p>
+        </template>
         <C_CollapsePanel
           :items="faqItems"
           :accordion="true"
           :default-active-keys="['q1']"
         >
           <template #panel-q1>
-            <p
-              >Vue 3 的 Composition API
-              提供了更灵活的代码组织方式，让逻辑关注点聚合在一起，而不是分散在
-              data、methods、computed 等选项中。</p
-            >
+            <p>Vue 3 的 Composition API 提供了更灵活的代码组织方式。</p>
           </template>
           <template #panel-q2>
-            <p
-              >Pinia 是 Vue 官方推荐的状态管理库，相比 Vuex 更轻量、TypeScript
-              支持更好，移除了 mutations 概念，API 更简洁。</p
-            >
+            <p>Pinia 是 Vue 官方推荐的状态管理库，TypeScript 支持更好。</p>
           </template>
           <template #panel-q3>
-            <p
-              >Vite 利用浏览器原生 ES Module
-              支持实现极速冷启动，开发环境无需打包，热更新速度远超 Webpack。</p
-            >
+            <p>Vite 利用浏览器原生 ES Module 支持实现极速冷启动。</p>
           </template>
         </C_CollapsePanel>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 卡片变体 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:card-outline"
-          class="title-icon"
-        />
-        卡片变体
-      </h2>
-      <div class="section-desc">
-        设置 <code>variant="card"</code> 每个面板是独立卡片，适合仪表盘场景
-      </div>
-      <div class="section-content">
+      <!-- 卡片变体 - 全宽 -->
+      <NCard
+        class="demo-card full-width"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>卡片变体</h3>
+            <NTag
+              type="warning"
+              size="small"
+              round
+              >仪表盘</NTag
+            >
+          </div>
+          <p class="card-desc"
+            >设置 variant="card" 每个面板是独立卡片，适合仪表盘场景</p
+          >
+        </template>
         <C_CollapsePanel
           :items="cardItems"
           variant="card"
@@ -115,26 +118,38 @@
             </NTag>
           </template>
           <template #panel-overview>
-            <NSpace :size="16">
-              <NStatistic label="今日访问">
-                <template #prefix>
-                  <Icon icon="mdi:eye-outline" />
-                </template>
-                12,846
-              </NStatistic>
-              <NStatistic label="新增用户">
-                <template #prefix>
-                  <Icon icon="mdi:account-plus-outline" />
-                </template>
-                256
-              </NStatistic>
-              <NStatistic label="转化率">
-                <template #prefix>
-                  <Icon icon="mdi:trending-up" />
-                </template>
-                3.2%
-              </NStatistic>
-            </NSpace>
+            <div class="stat-grid">
+              <div class="stat-item">
+                <C_Icon
+                  name="mdi:eye-outline"
+                  class="stat-icon"
+                />
+                <div class="stat-content">
+                  <span class="stat-value primary">12,846</span>
+                  <span class="stat-label">今日访问</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <C_Icon
+                  name="mdi:account-plus-outline"
+                  class="stat-icon"
+                />
+                <div class="stat-content">
+                  <span class="stat-value success">256</span>
+                  <span class="stat-label">新增用户</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <C_Icon
+                  name="mdi:trending-up"
+                  class="stat-icon"
+                />
+                <div class="stat-content">
+                  <span class="stat-value warning">3.2%</span>
+                  <span class="stat-label">转化率</span>
+                </div>
+              </div>
+            </div>
           </template>
           <template #extra-chart>
             <NButton
@@ -147,8 +162,8 @@
           </template>
           <template #panel-chart>
             <div class="chart-placeholder">
-              <Icon
-                icon="mdi:chart-line"
+              <C_Icon
+                name="mdi:chart-line"
                 class="placeholder-icon"
               />
               <NText depth="3"
@@ -179,79 +194,81 @@
             </NList>
           </template>
         </C_CollapsePanel>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 幽灵变体 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:ghost-outline"
-          class="title-icon"
-        />
-        幽灵变体
-      </h2>
-      <div class="section-desc">
-        设置 <code>variant="ghost"</code> 无边框极简风格，适合嵌入其他容器
-      </div>
-      <div class="section-content">
-        <NCard>
-          <C_CollapsePanel
-            :items="ghostItems"
-            variant="ghost"
-            :bordered="false"
-            :default-active-keys="['filter-status']"
-          >
-            <template #panel-filter-status>
+      <!-- 幽灵变体 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>幽灵变体</h3>
+            <NTag
+              size="small"
+              round
+              >极简</NTag
+            >
+          </div>
+          <p class="card-desc">设置 variant="ghost" 无边框极简风格</p>
+        </template>
+        <C_CollapsePanel
+          :items="ghostItems"
+          variant="ghost"
+          :bordered="false"
+          :default-active-keys="['filter-status']"
+        >
+          <template #panel-filter-status>
+            <NSpace :size="8">
+              <NTag
+                v-for="s in ['全部', '进行中', '已完成', '已取消']"
+                :key="s"
+                checkable
+                size="small"
+              >
+                {{ s }}
+              </NTag>
+            </NSpace>
+          </template>
+          <template #panel-filter-date>
+            <NDatePicker
+              type="daterange"
+              clearable
+              style="width: 100%"
+            />
+          </template>
+          <template #panel-filter-category>
+            <NCheckboxGroup>
               <NSpace :size="8">
-                <NTag
-                  v-for="s in ['全部', '进行中', '已完成', '已取消']"
-                  :key="s"
-                  checkable
-                  size="small"
-                >
-                  {{ s }}
-                </NTag>
+                <NCheckbox
+                  v-for="c in ['前端', '后端', '设计', '测试']"
+                  :key="c"
+                  :value="c"
+                  :label="c"
+                />
               </NSpace>
-            </template>
-            <template #panel-filter-date>
-              <NDatePicker
-                type="daterange"
-                clearable
-                style="width: 100%"
-              />
-            </template>
-            <template #panel-filter-category>
-              <NCheckboxGroup>
-                <NSpace :size="8">
-                  <NCheckbox
-                    v-for="c in ['前端', '后端', '设计', '测试', '运维']"
-                    :key="c"
-                    :value="c"
-                    :label="c"
-                  />
-                </NSpace>
-              </NCheckboxGroup>
-            </template>
-          </C_CollapsePanel>
-        </NCard>
-      </div>
-    </div>
+            </NCheckboxGroup>
+          </template>
+        </C_CollapsePanel>
+      </NCard>
 
-    <!-- 图标右侧 + 自定义头部 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:format-horizontal-align-right"
-          class="title-icon"
-        />
-        图标右侧 + Extra 操作
-      </h2>
-      <div class="section-desc">
-        <code>expand-icon-position="right"</code> 让箭头在右侧，头部右侧可通过
-        <code>#extra-{key}</code> 插槽添加操作按钮
-      </div>
-      <div class="section-content">
+      <!-- 图标右侧 + Extra 操作 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>图标右侧 + Extra</h3>
+            <NTag
+              type="info"
+              size="small"
+              round
+              >自定义</NTag
+            >
+          </div>
+          <p class="card-desc">箭头在右侧，头部右侧可添加操作按钮</p>
+        </template>
         <C_CollapsePanel
           :items="iconRightItems"
           expand-icon-position="right"
@@ -298,13 +315,7 @@
           <template #panel-permission>
             <NSpace :size="8">
               <NTag
-                v-for="p in [
-                  '用户管理',
-                  '角色管理',
-                  '菜单管理',
-                  '字典管理',
-                  '系统监控',
-                ]"
+                v-for="p in ['用户管理', '角色管理', '菜单管理']"
                 :key="p"
                 type="primary"
                 size="small"
@@ -314,27 +325,28 @@
             </NSpace>
           </template>
         </C_CollapsePanel>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 编程控制 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:code-braces"
-          class="title-icon"
-        />
-        编程控制
-      </h2>
-      <div class="section-desc">
-        通过 ref 调用 <code>expandAll</code> / <code>collapseAll</code> /
-        <code>toggle</code> 等方法编程控制面板
-      </div>
-      <div class="section-content">
-        <NSpace
-          :size="8"
-          style="margin-bottom: 12px"
-        >
+      <!-- 编程控制 - 全宽 -->
+      <NCard
+        class="demo-card full-width"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>编程控制</h3>
+            <NTag
+              type="success"
+              size="small"
+              round
+              >API</NTag
+            >
+          </div>
+          <p class="card-desc"
+            >通过 ref 调用 expandAll / collapseAll / toggle 等方法</p
+          >
+        </template>
+        <div class="action-bar">
           <NButton
             size="small"
             type="primary"
@@ -366,7 +378,7 @@
           >
             获取激活 Keys
           </NButton>
-        </NSpace>
+        </div>
         <C_CollapsePanel
           ref="programRef"
           :items="stepItems"
@@ -375,41 +387,37 @@
           @collapse="(k: string | number) => handleEvent(`折叠: ${k}`)"
         >
           <template #panel-step-1>
-            <p
-              >第一步：创建项目基础架构，初始化 Git 仓库，配置 ESLint / Prettier
-              / Husky。</p
-            >
+            <p>第一步：创建项目基础架构，配置 ESLint / Prettier / Husky。</p>
           </template>
           <template #panel-step-2>
-            <p>第二步：实现核心业务模块，包括用户认证、权限管理、数据 CRUD。</p>
+            <p>第二步：实现核心业务模块，包括用户认证、权限管理。</p>
           </template>
           <template #panel-step-3>
-            <p
-              >第三步：性能优化与测试，包括懒加载、代码分割、单元测试和 E2E
-              测试。</p
-            >
+            <p>第三步：性能优化与测试，懒加载、代码分割、单元测试。</p>
           </template>
           <template #panel-step-4>
-            <p>第四步：部署上线，CI/CD 流水线配置，灰度发布策略制定。</p>
+            <p>第四步：部署上线，CI/CD 流水线配置。</p>
           </template>
         </C_CollapsePanel>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 懒渲染 + 持久化 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:flash-outline"
-          class="title-icon"
-        />
-        懒渲染 + 状态持久化
-      </h2>
-      <div class="section-desc">
-        面板设置 <code>lazy: true</code> 首次展开才渲染内容；设置组件
-        <code>persist-key</code> 后展开状态自动持久化到 localStorage，刷新不丢失
-      </div>
-      <div class="section-content">
+      <!-- 懒渲染 + 持久化 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>懒渲染 + 持久化</h3>
+            <NTag
+              type="warning"
+              size="small"
+              round
+              >性能</NTag
+            >
+          </div>
+          <p class="card-desc">首次展开才渲染，状态自动持久化</p>
+        </template>
         <C_CollapsePanel
           :items="lazyItems"
           persist-key="demo-collapse-lazy"
@@ -419,43 +427,42 @@
           </template>
           <template #panel-lazy-deferred>
             <div class="lazy-indicator">
-              <Icon icon="mdi:check-circle" />
-              <NText type="success"
-                >此内容通过懒渲染加载 — 只有首次展开才渲染 DOM</NText
-              >
+              <C_Icon name="mdi:check-circle" />
+              <NText type="success">懒渲染 — 首次展开才渲染 DOM</NText>
             </div>
           </template>
           <template #panel-lazy-destroy>
             <div class="lazy-indicator">
-              <Icon icon="mdi:recycle" />
-              <NText type="warning"
-                >此面板折叠后 DOM 被销毁，重新展开会重新渲染</NText
-              >
+              <C_Icon name="mdi:recycle" />
+              <NText type="warning">折叠后销毁，重新展开重新渲染</NText>
             </div>
           </template>
         </C_CollapsePanel>
-        <div class="demo-tip">
-          <NText depth="3"
-            >💡
-            刷新页面后展开状态会保留（persist-key="demo-collapse-lazy"）</NText
-          >
-        </div>
-      </div>
-    </div>
+        <NText
+          depth="3"
+          class="demo-tip"
+        >
+          💡 刷新页面后展开状态会保留
+        </NText>
+      </NCard>
 
-    <!-- 禁用面板 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:lock-outline"
-          class="title-icon"
-        />
-        禁用面板
-      </h2>
-      <div class="section-desc">
-        面板项设置 <code>disabled: true</code> 后不可展开/折叠
-      </div>
-      <div class="section-content">
+      <!-- 禁用面板 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>禁用面板</h3>
+            <NTag
+              type="error"
+              size="small"
+              round
+              >限制</NTag
+            >
+          </div>
+          <p class="card-desc">面板项设置 disabled 后不可展开/折叠</p>
+        </template>
         <C_CollapsePanel
           :items="disabledItems"
           :default-active-keys="['enabled']"
@@ -470,13 +477,12 @@
             <p>这个面板也可以正常操作。</p>
           </template>
         </C_CollapsePanel>
-      </div>
+      </NCard>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { Icon } from '@iconify/vue'
   import {
     basicItems,
     cardItems,
