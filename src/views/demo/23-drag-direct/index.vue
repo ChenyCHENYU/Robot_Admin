@@ -213,7 +213,7 @@
                     :key="card.id"
                     v-drag="{
                       boundary: '.cards-container',
-                      onEnd: (el, position) =>
+                      onEnd: (el: HTMLElement, position: any) =>
                         updateCardPosition(card.id, position),
                     }"
                     class="drag-card"
@@ -288,7 +288,7 @@
                     :key="shape.id"
                     v-drag="{
                       boundary: '.canvas-container',
-                      onDrag: (el, position) =>
+                      onDrag: (el: HTMLElement, position: any) =>
                         updateShapePosition(shape.id, position),
                     }"
                     class="canvas-shape"
@@ -385,7 +385,10 @@
     canvasShapes,
     axisOptions,
   } from './data'
-  import type { Position } from './drag'
+  interface Position {
+    x: number
+    y: number
+  }
 
   /** 画布操作按钮 */
   const canvasActions = computed(() => [

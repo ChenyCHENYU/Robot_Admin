@@ -104,7 +104,7 @@
   let timer: number | null = null
 
   const startCountdown = () => {
-    timer = setInterval(() => {
+    timer = window.setInterval(() => {
       countdown.value--
       if (countdown.value <= 0) {
         goHome()

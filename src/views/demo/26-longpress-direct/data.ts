@@ -76,6 +76,15 @@ export function createDemoHandlers(state: ReturnType<typeof createDemoState>) {
     },
 
     /**
+     * * @description 进度条完成回调
+     * ! @return void
+     */
+    handleProgressComplete: () => {
+      state.progressValue.value = 100
+      setTimeout(() => (state.progressValue.value = 0), 1000)
+    },
+
+    /**
      * * @description 开始连续增加操作
      * ! @return void
      */

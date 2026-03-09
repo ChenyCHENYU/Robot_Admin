@@ -40,11 +40,18 @@
         <C_Time
           mode="range"
           :attrs="commonAttrs.medium"
-          @change-range="(start, end) => handleRangeChange('basic', start, end)"
-          @change-start="
-            time => console.log('开始时间变化:', formatTimeHM(time))
+          @change-range="
+            (start: number | null, end: number | null) =>
+              handleRangeChange('basic', start, end)
           "
-          @change-end="time => console.log('结束时间变化:', formatTimeHM(time))"
+          @change-start="
+            (time: number | null) =>
+              console.log('开始时间变化:', formatTimeHM(time))
+          "
+          @change-end="
+            (time: number | null) =>
+              console.log('结束时间变化:', formatTimeHM(time))
+          "
         />
         <NAlert
           v-if="results.basic"
@@ -84,7 +91,8 @@
           :default-end-time="currentTime + 3600000"
           :attrs="commonAttrs.medium"
           @change-range="
-            (start, end) => handleRangeChange('precise', start, end, true)
+            (start: number | null, end: number | null) =>
+              handleRangeChange('precise', start, end, true)
           "
         />
         <NAlert
@@ -157,7 +165,7 @@
           :enable-time-restriction="true"
           :attrs="commonAttrs.large"
           @change-range="
-            (start, end) =>
+            (start: number | null, end: number | null) =>
               handleRangeChange('workShift', start, end, false, true)
           "
         />
@@ -200,7 +208,8 @@
             mode="range"
             :attrs="commonAttrs.small"
             @change-range="
-              (start, end) => handleRangeChange('custom', start, end)
+              (start: number | null, end: number | null) =>
+                handleRangeChange('custom', start, end)
             "
           />
           <div class="action-bar">

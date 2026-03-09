@@ -8,24 +8,29 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { SelectOption } from 'naive-ui'
+import type {
+  SelectGroupOption,
+  SelectOption as NSelectOption,
+} from 'naive-ui/es'
 import provinceData from '@/assets/data/province.json'
 
 // 生成城市选项（用于原生下拉选择）
-export const cityOptions = computed((): SelectOption[] => {
-  const options: SelectOption[] = []
-  Object.values(provinceData).forEach(provinces => {
-    provinces.forEach(province => {
-      options.push({
-        type: 'group',
-        label: province.name,
-        key: province.id || province.name,
-        children: province.data.map(city => ({
-          label: city,
-          value: city,
-        })),
+export const cityOptions = computed(
+  (): (NSelectOption | SelectGroupOption)[] => {
+    const options: (NSelectOption | SelectGroupOption)[] = []
+    Object.values(provinceData).forEach(provinces => {
+      provinces.forEach(province => {
+        options.push({
+          type: 'group',
+          label: province.name,
+          key: province.id || province.name,
+          children: province.data.map(city => ({
+            label: city,
+            value: city,
+          })),
+        })
       })
     })
-  })
-  return options
-})
+    return options
+  }
+)

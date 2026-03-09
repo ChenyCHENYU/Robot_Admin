@@ -198,7 +198,6 @@
   import { s_languageStore } from '@/stores/language'
   import { s_permissionStore } from '@/stores/permission'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
-  import { useDialog } from 'naive-ui'
   import {
     C_GlobalSearch,
     C_NotificationCenter,
@@ -330,9 +329,12 @@
 
   /** 在菜单树中找到父级的第一个子路由 key */
   function findFirstChildKey(parentKey: string): string | null {
-    const normalized = createMenuOptions(permissionStore.showMenuListGet, {
-      labelFormatter: translateRouteTitle,
-    })
+    const normalized = createMenuOptions(
+      permissionStore.showMenuListGet as any[],
+      {
+        labelFormatter: translateRouteTitle,
+      }
+    )
     const find = (nodes: MenuOption[]): string | null => {
       for (const n of nodes) {
         if (n.key === parentKey && n.children?.length)
@@ -350,7 +352,7 @@
   const searchOptions: GlobalSearchOptions = {
     menuItems: () =>
       flattenMenuItems(
-        createMenuOptions(permissionStore.showMenuListGet, {
+        createMenuOptions(permissionStore.showMenuListGet as any[], {
           labelFormatter: translateRouteTitle,
         })
       ),

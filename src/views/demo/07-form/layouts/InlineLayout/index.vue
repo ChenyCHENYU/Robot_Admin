@@ -202,7 +202,9 @@
       label: showAdvanced.value ? '收起' : '高级',
       icon: showAdvanced.value ? 'mdi:chevron-up' : 'mdi:chevron-down',
       type: 'info',
-      onClick: () => (showAdvanced.value = !showAdvanced.value),
+      onClick: () => {
+        showAdvanced.value = !showAdvanced.value
+      },
     },
   ]
 

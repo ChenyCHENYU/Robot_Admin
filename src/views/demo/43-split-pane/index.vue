@@ -31,7 +31,7 @@
             :default-size="50"
             :gutter-size="6"
             @resize="
-              (a, b) =>
+              (a: number, b: number) =>
                 (basicInfo = `左: ${a.toFixed(1)}% / 右: ${b.toFixed(1)}%`)
             "
           >
@@ -181,10 +181,12 @@
             :collapsible="true"
             :show-collapse-button="true"
             @collapse="
-              t => handleMessage(`已折叠 ${t === 'first' ? '左' : '右'} 面板`)
+              (t: string) =>
+                handleMessage(`已折叠 ${t === 'first' ? '左' : '右'} 面板`)
             "
             @expand="
-              t => handleMessage(`已展开 ${t === 'first' ? '左' : '右'} 面板`)
+              (t: string) =>
+                handleMessage(`已展开 ${t === 'first' ? '左' : '右'} 面板`)
             "
           >
             <template #first>

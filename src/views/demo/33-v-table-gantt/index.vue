@@ -62,7 +62,7 @@
             </div>
 
             <C_VtableGantt
-              :ref="el => setGanttRef(tab.name, el)"
+              :ref="(el: any) => setGanttRef(tab.name, el)"
               :data="ganttData[tab.name]"
               :preset="tab.preset"
               :title="tab.ganttTitle"

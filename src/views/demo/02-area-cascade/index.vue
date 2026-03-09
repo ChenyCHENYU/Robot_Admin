@@ -51,7 +51,7 @@
             v-model="config.selected"
             :placeholders="config.placeholders"
             :type="config.type"
-            @change="val => handleChange(config, val)"
+            @change="(val: any) => handleChange(config, val)"
           />
 
           <!-- 操作按钮和结果展示 -->

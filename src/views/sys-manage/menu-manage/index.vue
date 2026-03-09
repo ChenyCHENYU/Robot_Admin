@@ -530,7 +530,11 @@
 
 <script setup lang="ts">
   import type { FormInst, TreeSelectOption } from 'naive-ui/es'
-  import type { ActionItem, DropInfo } from '@robot-admin/naive-ui-components'
+  import {
+    C_Tree,
+    type ActionItem,
+    type DropInfo,
+  } from '@robot-admin/naive-ui-components'
 
   // 从 data.ts 导入类型和数据配置
   import {
@@ -678,16 +682,17 @@
   const getPermissionActions = (permission: ButtonPermission): ActionItem[] => [
     {
       key: 'edit',
+      label: '编辑',
       icon: 'mdi:pencil',
       tooltip: '编辑',
       onClick: () => handleEditPermission(permission),
     },
     {
       key: 'delete',
+      label: '删除',
       icon: 'mdi:delete',
       type: 'error',
       tooltip: '删除',
-      popconfirm: '确认删除该权限吗？',
       onClick: () => handleDeletePermission(permission.id),
     },
   ]

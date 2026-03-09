@@ -10,7 +10,7 @@ export type LoginResponse = PostAuthLoginResponse
  * ? @param {object} data 登录表单数据，包含用户名和密码
  * ! @return {Promise<PostAuthLoginResponse>} 登录响应数据，包含用户信息和token
  */
-export const loginApi = (data: { username: string; password: string }) =>
+export const loginApi = (data: Record<string, any>) =>
   postData<PostAuthLoginResponse>('/auth/login', data)
 
 /**

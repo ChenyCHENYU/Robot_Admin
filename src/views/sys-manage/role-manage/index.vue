@@ -313,6 +313,7 @@
 
 <script setup lang="ts">
   import type { FormInst, DataTableColumns } from 'naive-ui/es'
+  import { C_Icon, type ActionItem } from '@robot-admin/naive-ui-components'
 
   import {
     type RoleData,

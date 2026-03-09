@@ -371,8 +371,8 @@
           ref="programRef"
           :items="stepItems"
           :default-active-keys="['step-1']"
-          @expand="k => handleEvent(`展开: ${k}`)"
-          @collapse="k => handleEvent(`折叠: ${k}`)"
+          @expand="(k: string | number) => handleEvent(`展开: ${k}`)"
+          @collapse="(k: string | number) => handleEvent(`折叠: ${k}`)"
         >
           <template #panel-step-1>
             <p

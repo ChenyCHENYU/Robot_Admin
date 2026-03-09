@@ -94,10 +94,7 @@
                   v-longpress="{
                     duration: DEMO_CONFIG.PROGRESS_DURATION,
                     onProgress: handlers.handleProgress,
-                    onTrigger: () => {
-                      state.progressValue.value = 100
-                      setTimeout(() => (state.progressValue.value = 0), 1000)
-                    },
+                    onTrigger: handlers.handleProgressComplete,
                   }"
                   type="error"
                   class="progress-button"

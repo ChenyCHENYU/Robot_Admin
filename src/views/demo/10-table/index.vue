@@ -55,7 +55,7 @@
             <div class="pagination-status">
               <span class="status-label">分页状态：</span>
               <NSwitch
-                v-model:value="table.paginationEnabled.value"
+                v-model:value="tableCrud.paginationEnabled.value"
                 size="medium"
               >
                 <template #checked> 开启 </template>
@@ -67,10 +67,10 @@
 
             <!-- 刷新按钮 -->
             <NButton
-              @click="table.refresh()"
+              @click="tableCrud.refresh()"
               type="info"
               size="medium"
-              :loading="table.loading.value"
+              :loading="tableCrud.loading.value"
             >
               <template #icon>
                 <C_Icon name="mdi:refresh" />
@@ -86,17 +86,18 @@
           :title="currentModeConfig.title"
         >
           {{ currentModeConfig.description }}
-          <template v-if="table.paginationEnabled.value">
+          <template v-if="tableCrud.paginationEnabled.value">
             <br />
             <strong>分页功能已启用</strong> - 当前显示第
-            {{ table.page.current }} 页，每页 {{ table.page.size }} 条，总共
-            {{ table.total.value }} 条记录
+            {{ tableCrud.page.current }} 页，每页
+            {{ tableCrud.page.size }} 条，总共
+            {{ tableCrud.total.value }} 条记录
           </template>
         </NAlert>
 
         <!-- 表格组件 -->
         <C_Table
-          :crud="table"
+          :crud="tableCrud"
           :config="{
             edit: {
               mode: editMode,
@@ -110,12 +111,12 @@
 
     <!-- 详情模态框 -->
     <c_detail
-      v-model:visible="table.detail.visible.value"
-      :data="table.detail.data.value || {}"
-      :config="table.detailConfig as any"
-      :title="table.detail.title.value"
-      :loading="table.loading.value"
-      @close="table.detail.close"
+      v-model:visible="tableCrud.detail.visible.value"
+      :data="tableCrud.detail.data.value || {}"
+      :config="tableCrud.detailConfig as any"
+      :title="tableCrud.detail.title.value"
+      :loading="tableCrud.loading.value"
+      @close="tableCrud.detail.close"
     />
 
     <!-- 新增员工模态框 -->
@@ -258,7 +259,7 @@
   } from './data'
 
   // 初始化表格 CRUD
-  const table = useTableCrud(employeeTableConfig)
+  const tableCrud = useTableCrud(employeeTableConfig)
 
   // UI 状态
   const editMode = ref<EditMode>('modal')
@@ -282,7 +283,7 @@
       key: 'save',
       label: '保存',
       type: 'primary',
-      loading: table.loading.value,
+      loading: tableCrud.loading.value,
       onClick: handleAddSubmit,
     },
   ])
@@ -312,7 +313,7 @@
     addFormRef.value?.validate(async (errors: any) => {
       if (!errors) {
         try {
-          await table.create({ ...addFormData.value, id: Date.now() })
+          await tableCrud.create({ ...addFormData.value, id: Date.now() })
           showAddModal.value = false
         } catch (error) {
           console.error('新增失败:', error)
