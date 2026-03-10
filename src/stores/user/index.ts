@@ -11,8 +11,7 @@ import { defineStore } from 'pinia'
 import { TOKEN, TIME_STAMP } from '@/constant'
 import router from '@/router'
 import { d_setTimeStamp } from '@/utils/d_auth'
-import { createDiscreteApi } from 'naive-ui/es'
-const { notification } = createDiscreteApi(['notification'])
+import { notification } from '@/plugins/discrete'
 
 interface UserInfo {
   username?: string

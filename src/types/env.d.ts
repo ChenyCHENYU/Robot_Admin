@@ -16,9 +16,13 @@ import type { DefineComponent, App } from 'vue'
 interface ImportMetaEnv {
   readonly BASE_URL: string
   readonly VITE_ROUTER_MODE: 'hash' | 'history'
-  readonly VITE_API_BASE_URL?: string
+  readonly VITE_API_BASE?: string
   readonly VITE_APP_TITLE?: string
   readonly VITE_APP_VERSION?: string
+  readonly VITE_APP_ENV?: 'development' | 'test' | 'staging' | 'production'
+  readonly VITE_PORT?: string
+  readonly VITE_I18N_ENABLED?: string
+  readonly VITE_MAP_KEY?: string
   // 可以根据需要添加更多环境变量
 }
 

@@ -32,4 +32,4 @@ export const DEFAULT_PRIMARY: string = '#409eff'
 export const TABS_WHITE_LIST: string[] = ['/403', '/404', '/500', LOGIN_URL]
 
 // * 高德地图key
-export const MAP_KEY: string = ''
+export const MAP_KEY: string = import.meta.env.VITE_MAP_KEY || ''

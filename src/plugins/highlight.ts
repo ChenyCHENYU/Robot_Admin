@@ -197,8 +197,6 @@ export function setupHighlight(app: App, options: HighlightPluginOptions = {}) {
   const highlightAPI = useHighlight()
   app.provide('highlightManager', highlightAPI)
   app.config.globalProperties.$highlight = highlightAPI
-
-  console.log('[HighlightPlugin] 🎨 highlight.js plugin installed successfully')
 }
 
 // 导出默认配置

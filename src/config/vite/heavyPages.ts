@@ -21,7 +21,10 @@
  * - 保持 5-10 个即可，不要贪多
  */
 export const HEAVY_PAGE_ROUTES = [
-  '/demo/13-calendar', // 日历组件（FullCalendar，体积大）
-  '/demo/16-text-editor', // 富文本编辑器（WangEditor，体积大）
-  '/demo/29-antv-x6-editor', // 流程图编辑器（AntV X6，体积大）
+  '/demo/13-calendar', // 日历组件（FullCalendar）
+  '/demo/16-text-editor', // 富文本编辑器（WangEditor）
+  '/demo/29-antv-x6-editor', // 流程图编辑器（AntV X6）
+  '/demo/30-excel-all', // Excel 导入导出（xlsx）
+  '/demo/33-v-table-gantt', // 甘特图（VTable Gantt）
+  '/demo/28-work-flow-editor', // 工作流编辑器（Vue Flow）
 ]

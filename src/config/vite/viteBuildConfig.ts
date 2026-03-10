@@ -18,8 +18,16 @@ const buildConfig: BuildOptions = {
         // UI 组件库
         'ui-vendor': ['naive-ui'],
 
-        // 编辑器相关（不包含 echarts，避免冲突）
+        // 编辑器相关
         'editor-vendor': ['@kangc/v-md-editor', 'wangeditor', 'highlight.js'],
+
+        // ECharts 可视化
+        'echarts-vendor': [
+          'echarts/core',
+          'echarts/charts',
+          'echarts/components',
+          'echarts/renderers',
+        ],
 
         // Office 文档处理
         'office-vendor': ['xlsx', 'mammoth'],

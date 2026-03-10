@@ -1,9 +1,7 @@
 import router from './index'
-import { createDiscreteApi } from 'naive-ui/es'
 import type { RouteRecordRaw } from 'vue-router'
 import { s_permissionStore } from '@/stores/permission'
-
-const { message: messageApi } = createDiscreteApi(['message'])
+import { message as messageApi } from '@/plugins/discrete'
 
 export interface RouteMeta extends Record<string, any> {
   title?: string

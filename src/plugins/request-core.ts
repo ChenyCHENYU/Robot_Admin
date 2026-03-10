@@ -12,9 +12,7 @@ import type { App } from 'vue'
 import { createRequestCore, onReLoginSuccess } from '@robot-admin/request-core'
 import { s_userStore } from '@/stores/user'
 import { s_reLoginStore } from '@/stores/reLogin'
-import { createDiscreteApi } from 'naive-ui/es'
-
-const { message } = createDiscreteApi(['message'])
+import { message } from '@/plugins/discrete'
 const { VITE_API_BASE } = import.meta.env
 
 /**
@@ -128,6 +126,4 @@ export function setupRequestCore(app: App) {
 
   // 注册 Vue 插件（使用类型断言绕过 Vue 版本差异）
   ;(requestCore as any).install(app)
-
-  console.log('✅ Request Core 插件已加载')
 }

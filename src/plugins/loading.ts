@@ -22,7 +22,9 @@ export function setupLoading(): void {
   const app = document.getElementById('app')
 
   if (!app) {
-    console.warn('未找到 #app 元素，加载动画无法显示')
+    if (import.meta.env.DEV) {
+      console.warn('未找到 #app 元素，加载动画无法显示')
+    }
     return
   }
 

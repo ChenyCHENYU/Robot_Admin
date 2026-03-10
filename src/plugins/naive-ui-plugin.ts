@@ -7,17 +7,10 @@
  * @Description: naive-ui插件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
-import { createDiscreteApi } from 'naive-ui/es'
 import type { App } from 'vue'
+import { notification } from '@/plugins/discrete'
 
-// 新增导出项
-export const { notification } = createDiscreteApi(['notification'], {
-  notificationProviderProps: {
-    max: 1,
-    placement: 'top-right',
-    keepAliveOnHover: true,
-  },
-})
+export { notification }
 
 /**
  * * @description: naive-ui插件

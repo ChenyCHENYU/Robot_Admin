@@ -15,21 +15,20 @@ import type { DynamicRoute } from '@/router/dynamicRouter'
 export const s_permissionStore = defineStore('permission', {
   state: () => {
     return {
-      authButtonList: {},
+      authButtonList: {} as Record<string, string[]>,
       // menuList 作为动态路由，不会做持久化存储
       authMenuList: [] as DynamicRoute[],
     }
   },
   getters: {
     // 按钮权限列表
-    authButtonListGet: (state: any) => state.authButtonList,
+    authButtonListGet: state => state.authButtonList,
     // 后端返回的菜单列表
-    authMenuListGet: (state: any) => state.authMenuList,
+    authMenuListGet: state => state.authMenuList,
     // 后端返回的菜单列表 ==> 左侧菜单栏渲染，需要去除 isHide == true
-    showMenuListGet: (state: any) => getShowMenuList(state.authMenuList),
+    showMenuListGet: state => getShowMenuList(state.authMenuList),
     // 需要缓存的菜单 name，用作页面 keepAlive
-    keepAliveRouterGet: (state: any) =>
-      getKeepAliveRouterName(state.authMenuList),
+    keepAliveRouterGet: state => getKeepAliveRouterName(state.authMenuList),
   },
 
   actions: {

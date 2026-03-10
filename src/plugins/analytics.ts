@@ -22,9 +22,6 @@ export function setupAnalytics(app: App<Element>) {
     // 只在生产环境启用
     if (import.meta.env.PROD) {
       inject()
-      console.log('✅ Vercel Analytics 访问统计已启用')
-    } else {
-      console.log('🔧 Vercel Analytics 开发环境已跳过')
     }
   } catch (error) {
     console.error('❌ Vercel Analytics 初始化失败:', error)

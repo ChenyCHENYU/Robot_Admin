@@ -279,7 +279,7 @@
         {
           "path": "action-bar",
           "name": "demo-action-bar",
-          "component": "/demo/13-action-bar/index",
+          "component": "/demo/40-action-bar/index",
           "meta": {
             "icon": "mdi:gesture-tap-button",
             "title": "超级按钮组",

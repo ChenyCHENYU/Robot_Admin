@@ -105,7 +105,7 @@ export default defineConfig(({ mode, command }: { mode: string; command: string 
     build: buildConfig,
 
     esbuild:
-      process.env.NODE_ENV === 'production'
+      command === 'build'
         ? {
             drop: ['console' as const, 'debugger' as const],
           }

@@ -9,13 +9,11 @@
  */
 import router from '@/router'
 import { s_userStore } from '@/stores/user'
-import { initDynamicRouter } from '@/router/dynamicRouter'
+import { initDynamicRouter, type DynamicRoute } from '@/router/dynamicRouter'
 import { s_permissionStore } from '@/stores/permission'
-import { createDiscreteApi } from 'naive-ui/es'
+import { message } from '@/plugins/discrete'
 import { setupNProgress } from '@/plugins/nprogress'
 import type { RouteLocationNormalized } from 'vue-router'
-
-const { message } = createDiscreteApi(['message'])
 const nprogress = setupNProgress()
 const WHITE_LIST = ['/login', '/404', '/401']
 const LOGIN_PATH = '/login'
@@ -48,14 +46,12 @@ const setPageTitle = (title?: string): void => {
 const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
   // 防止重复初始化
   if (isInitializing) {
-    console.log('⏳ 动态路由正在初始化，跳过重复请求')
     return fullPath
   }
 
   isInitializing = true
 
   try {
-    // console.log('🚀 开始初始化动态路由...')
     const success = await initDynamicRouter()
 
     if (!success) {
@@ -68,7 +64,9 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
       throw new Error('菜单数据为空')
     }
 
-    console.log('✅ 动态路由初始化成功')
+    if (import.meta.env.DEV) {
+      console.log('✅ 动态路由初始化成功')
+    }
     return fullPath
   } catch (error) {
     return handleRouteError(error, '动态路由加载失败')
@@ -79,7 +77,7 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
 
 // 检查是否需要初始化动态路由
 const shouldInitDynamicRouter = (
-  authMenuList: any[],
+  authMenuList: DynamicRoute[],
   isInitializing: boolean
 ): boolean => {
   return !authMenuList.length && !isInitializing
@@ -165,11 +163,13 @@ router.beforeEach(
 // 简化的错误处理
 router.onError((error: Error) => {
   nprogress.done()
-  console.error('🔥 路由错误:', error)
+
+  if (import.meta.env.DEV) {
+    console.error('🔥 路由错误:', error)
+  }
 
   // 只处理关键的 chunk 加载错误
   if (error.message.includes('Loading chunk')) {
-    console.log('🔄 检测到 chunk 加载失败，刷新页面')
     window.location.reload()
     return
   }
@@ -179,9 +179,7 @@ router.onError((error: Error) => {
 
 // 后置钩子 - 只记录日志
 router.afterEach((to, from, failure) => {
-  if (failure) {
+  if (import.meta.env.DEV && failure) {
     console.error('❌ 路由跳转失败:', failure.message)
-  } else {
-    // console.log(`✅ 路由跳转成功: ${from.path} -> ${to.path}`)
   }
 })

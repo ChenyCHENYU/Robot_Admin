@@ -85,7 +85,7 @@ export const previewRoutes: RouteRecordRaw = {
     {
       path: 'action-bar',
       name: 'preview-action-bar',
-      component: () => import('_views/demo/13-action-bar/index.vue'),
+      component: () => import('_views/demo/40-action-bar/index.vue'),
       meta: { title: '操作按钮组' },
     },
     {

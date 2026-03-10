@@ -6,9 +6,7 @@
  */
 
 import { configureFileUtils } from '@robot-admin/file-utils'
-import { createDiscreteApi } from 'naive-ui/es/discrete'
-
-const { message, notification } = createDiscreteApi(['message', 'notification'])
+import { message, notification } from '@/plugins/discrete'
 
 /**
  * @description 初始化 file-utils 包配置
