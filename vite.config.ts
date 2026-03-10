@@ -68,9 +68,12 @@ export default defineConfig(({ mode, command }: { mode: string; command: string 
 
     optimizeDeps: {
       // ✅ 预构建大型依赖以提升启动速度
+      // dev:components 模式下组件库走本地源码，不能预构建
       include: [
         'naive-ui',
-        '@robot-admin/naive-ui-components',
+        ...(process.env.USE_LOCAL_COMPONENTS === 'true'
+          ? []
+          : ['@robot-admin/naive-ui-components']),
         'vue-router',
         'pinia',
         '@vueuse/core',
