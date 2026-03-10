@@ -1,85 +1,12 @@
-// 音频播放器演示 – 页面样式
 .audio-player-demo {
-  padding: 24px;
+  padding: 20px;
 
-  :deep(.n-h1) {
-    margin-bottom: 4px;
-    font-size: 26px;
-  }
-
-  // ========== 功能特性网格 ==========
-  .feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    margin-top: 16px;
-  }
-
-  .feature-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border-radius: 10px;
-    background: var(--body-color);
-    border: 1px solid var(--border-color);
-    transition: box-shadow 0.25s;
-
-    &:hover {
-      box-shadow: 0 2px 12px rgb(0 0 0 / 0.06);
-    }
-
-    &__icon {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: color-mix(in srgb, var(--primary-color) 10%, var(--card-color));
-      color: var(--primary-color);
-      font-size: 20px;
-    }
-
-    &__body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    &__title {
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.4;
-      color: var(--app-text-primary);
-    }
-
-    &__desc {
-      font-size: 12px;
-      color: var(--text-color-3);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
-  // ========== 通用区块 ==========
+  // 功能特性区域
   .demo-section {
-    margin-bottom: 36px;
-    padding: 24px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    background: var(--card-color);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    }
+    margin-bottom: 24px;
   }
 
+  // 区块标题
   .section-title {
     display: flex;
     gap: 8px;
@@ -97,144 +24,173 @@
     }
   }
 
-  .section-desc {
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--text-color-3);
-    border-bottom: 1px dashed color-mix(in srgb, var(--border-color) 60%, transparent);
-  }
-
-  // ========== 场景切换卡片 ==========
-  .scene-switcher {
+  // 功能特性网格
+  .feature-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
   }
 
-  .scene-card {
+  .feature-card {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 20px 16px;
-    border-radius: 12px;
-    border: 2px solid var(--border-color);
-    cursor: pointer;
-    text-align: center;
-    transition:
-      border-color 0.25s,
-      box-shadow 0.25s;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--n-color-modal);
+    transition: all 0.2s;
 
     &:hover {
-      border-color: var(--primary-color);
-    }
-
-    &.is-active {
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 12%, transparent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     &__icon {
-      font-size: 32px;
-      color: var(--primary-color);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: var(--n-color-hover);
+      font-size: 20px;
+      color: var(--n-text-color-1);
+    }
+
+    &__body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
     &__title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--app-text-primary);
+      font-size: 14px;
+      font-weight: 500;
     }
 
     &__desc {
       font-size: 12px;
-      color: var(--text-color-3);
+      color: var(--n-text-color-3);
     }
   }
 
-  // ========== 控制面板 ==========
-  .control-bar {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 20px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .control-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    .label {
-      font-size: 13px;
-      color: var(--text-color-2);
-      white-space: nowrap;
-    }
-  }
-
-  /* ---- Player Wrapper ---- */
-  .player-wrapper {
-    max-width: 480px;
-    margin: 0 auto;
-  }
-
-  .player-wrapper--minimal {
-    max-width: 400px;
-  }
-
-  /* ---- Comparison ---- */
-  .theme-comparison {
+  // 主布局
+  .main-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 320px 1fr;
     gap: 24px;
-    margin-top: 16px;
+    margin-top: 24px;
+  }
 
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
+  .left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  // 场景选择
+  .scene-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .scene-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    background: var(--n-color-modal);
+
+    &:hover {
+      background: var(--n-color-hover);
+      border-color: var(--n-border-color);
+    }
+
+    &.is-active {
+      background: rgba(24, 144, 255, 0.08);
+      border-color: #1890ff;
+      box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
+
+      .scene-icon {
+        color: #1890ff;
+      }
+
+      .scene-title {
+        color: #1890ff;
+      }
     }
   }
 
-  .theme-label {
+  .scene-icon {
+    font-size: 24px;
+    color: var(--n-text-color-2);
+    transition: color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .scene-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .scene-title {
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .scene-desc {
     font-size: 12px;
-    font-weight: 600;
-    color: var(--text-color-2);
-    margin-bottom: 12px;
-    text-align: center;
+    color: var(--n-text-color-3);
+    text-align: left;
+    line-height: 1.4;
   }
 
-  // ========== 暗色主题适配 ==========
-  [data-theme='dark'] & {
-    .demo-section {
-      border-color: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  // 控制选项
+  .control-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-      &:hover {
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-      }
+  .control-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+
+    span {
+      font-size: 14px;
     }
+  }
 
-    .feature-card {
-      border-color: rgba(255, 255, 255, 0.1);
-    }
+  // 提示文字
+  .hint-text {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--n-text-color-3);
+    line-height: 1.5;
+  }
 
-    .scene-card {
-      border-color: rgba(255, 255, 255, 0.12);
-      background: color-mix(in srgb, var(--card-color) 80%, transparent);
-
-      &:hover {
-        border-color: var(--primary-color);
-      }
-
-      &.is-active {
-        border-color: var(--primary-color);
-      }
-    }
-
-    .section-desc {
-      border-bottom-color: rgba(255, 255, 255, 0.08);
+  // 响应式
+  @media (max-width: 900px) {
+    .main-layout {
+      grid-template-columns: 1fr;
     }
   }
 }
