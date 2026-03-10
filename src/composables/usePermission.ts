@@ -56,6 +56,7 @@ export const usePermission = () => {
   }
 
   return {
+    // ─── Actions ───
     hasButton,
     hasAllButtons,
     hasAnyButton,

@@ -93,8 +93,11 @@ export function useLayoutCache() {
   )
 
   return {
+    // ─── State ───
     cachedViews,
     maxCacheCount,
+
+    // ─── Actions ───
     removeCache,
     clearAllCache,
   }

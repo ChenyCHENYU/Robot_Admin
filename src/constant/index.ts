@@ -10,11 +10,18 @@
 
 export const TOKEN: string = 'token'
 
+// * refresh token
+export const REFRESH_TOKEN: string = 'refresh_token'
+
 // token 时间戳
 export const TIME_STAMP: string = 'timeStamp'
 
 // * 超时时长：8小时（活跃续期机制）
 export const TOKEN_TIMEOUT_VALUE: number = 8 * 3600 * 1000
+
+// * Token 刷新相关
+export const TOKEN_REFRESH_THRESHOLD: number = 5 * 60 * 1000 // 过期前5分钟触发刷新
+export const TOKEN_EXPIRES_IN: string = 'token_expires_in'
 
 // * 国际化
 export const LANG: string = 'language'

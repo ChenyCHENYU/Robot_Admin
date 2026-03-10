@@ -1,0 +1,18 @@
+.orgchart-demo {
+  padding: 16px;
+
+  .mb-4 {
+    margin-bottom: 16px;
+  }
+
+  .mt-4 {
+    margin-top: 16px;
+  }
+
+  .orgchart-container {
+    height: 600px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+}

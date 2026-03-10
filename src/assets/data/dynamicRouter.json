@@ -564,6 +564,45 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "skeleton",
+          "name": "demo-skeleton",
+          "component": "/demo/55-skeleton/index",
+          "meta": {
+            "icon": "mdi:view-dashboard-outline",
+            "title": "骨架屏",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "orgchart",
+          "name": "demo-orgchart",
+          "component": "/demo/56-orgchart/index",
+          "meta": {
+            "icon": "mdi:sitemap-outline",
+            "title": "组织架构图",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
+          "path": "guide",
+          "name": "demo-guide",
+          "component": "/demo/57-guide/index",
+          "meta": {
+            "icon": "mdi:sign-routes",
+            "title": "用户引导",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },

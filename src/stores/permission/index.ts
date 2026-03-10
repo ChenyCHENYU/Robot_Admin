@@ -113,15 +113,29 @@ export const s_permissionStore = defineStore('permission', {
      * ? @param {string} parentPath 父路径前缀
      * ! @return {string[]} 路由路径列表
      */
-    _buildFlatPaths(routes: DynamicRoute[], parentPath = ''): string[] {
+    _buildFlatPaths(
+      routes: DynamicRoute[],
+      parentPath = '',
+      isChild = false
+    ): string[] {
       const paths: string[] = []
       for (const route of routes) {
-        const fullPath = route.path.startsWith('/')
-          ? route.path
-          : `${parentPath}/${route.path}`.replace(/\/+/g, '/')
+        // 镜像 dynamicRouter.ts 的 normalizePath：子路由相对路径 → 绝对路径
+        let fullPath: string
+        if (isChild && !route.path.startsWith('/')) {
+          fullPath = `/${route.path}`
+        } else if (route.path.startsWith('/')) {
+          fullPath = route.path
+        } else {
+          fullPath = `${parentPath}/${route.path}`.replace(/\/+/g, '/')
+        }
         if (!paths.includes(fullPath)) paths.push(fullPath)
         if (route.children?.length) {
-          for (const p of this._buildFlatPaths(route.children, fullPath)) {
+          for (const p of this._buildFlatPaths(
+            route.children,
+            fullPath,
+            true
+          )) {
             if (!paths.includes(p)) paths.push(p)
           }
         }

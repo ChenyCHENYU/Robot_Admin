@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { defineStore } from 'pinia'
-import { TOKEN, TIME_STAMP } from '@/constant'
+import { TOKEN, TIME_STAMP, REFRESH_TOKEN, TOKEN_EXPIRES_IN } from '@/constant'
 import router from '@/router'
 import { d_setTimeStamp } from '@/utils/d_auth'
 import { notification } from '@/plugins/discrete'
@@ -32,6 +32,8 @@ function readStorage<T>(key: string, fallback: T): T {
 export const s_userStore = defineStore('user', {
   state: () => ({
     token: readStorage<string>(TOKEN, ''),
+    refreshToken: readStorage<string>(REFRESH_TOKEN, ''),
+    tokenExpiresAt: readStorage<number>(TOKEN_EXPIRES_IN, 0),
     userInfo: readStorage<UserInfo>('userInfo', {} as UserInfo),
   }),
 
@@ -43,6 +45,23 @@ export const s_userStore = defineStore('user', {
     setToken(token: string) {
       this.token = token
       localStorage.setItem(TOKEN, JSON.stringify(token))
+    },
+
+    setRefreshToken(refreshToken: string) {
+      this.refreshToken = refreshToken
+      localStorage.setItem(REFRESH_TOKEN, JSON.stringify(refreshToken))
+    },
+
+    setTokenExpiresAt(expiresIn: number) {
+      const expiresAt = Date.now() + expiresIn * 1000
+      this.tokenExpiresAt = expiresAt
+      localStorage.setItem(TOKEN_EXPIRES_IN, JSON.stringify(expiresAt))
+    },
+
+    /** 判断 token 是否即将过期（提前 5 分钟） */
+    isTokenExpiringSoon(): boolean {
+      if (!this.tokenExpiresAt) return false
+      return Date.now() > this.tokenExpiresAt - 5 * 60 * 1000
     },
 
     setUserInfo(userInfo: UserInfo) {
@@ -61,6 +80,8 @@ export const s_userStore = defineStore('user', {
 
         // 3. 只清除认证相关数据（保留用户配置如主题、语言等）
         localStorage.removeItem(TOKEN)
+        localStorage.removeItem(REFRESH_TOKEN)
+        localStorage.removeItem(TOKEN_EXPIRES_IN)
         localStorage.removeItem(TIME_STAMP)
         localStorage.removeItem('userInfo')
         localStorage.removeItem('__tags_view_list__')
@@ -90,8 +111,14 @@ export const s_userStore = defineStore('user', {
       }
     },
 
-    handleLoginSuccess(token: string) {
+    handleLoginSuccess(
+      token: string,
+      refreshToken?: string,
+      expiresIn?: number
+    ) {
       this.setToken(token)
+      if (refreshToken) this.setRefreshToken(refreshToken)
+      if (expiresIn) this.setTokenExpiresAt(expiresIn)
       d_setTimeStamp()
     },
 

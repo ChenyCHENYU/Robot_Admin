@@ -235,10 +235,13 @@ export function useLoginController<
   }
 
   return {
+    // ─── State ───
     /** C_Login 组件 ref（用于重置验证码等） */
     loginRef,
     /** 登录请求加载状态 */
     loading: readonly(loading),
+
+    // ─── Actions ───
     /** 密码登录处理器 → 绑定 @submit */
     handleLogin,
     /** 验证码登录处理器 → 绑定 @captcha-submit */
