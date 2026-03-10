@@ -590,19 +590,6 @@
             "affix": false,
             "keepAlive": false
           }
-        },
-        {
-          "path": "guide",
-          "name": "demo-guide",
-          "component": "/demo/57-guide/index",
-          "meta": {
-            "icon": "mdi:sign-routes",
-            "title": "用户引导",
-            "hidden": false,
-            "full": false,
-            "affix": false,
-            "keepAlive": false
-          }
         }
       ]
     },

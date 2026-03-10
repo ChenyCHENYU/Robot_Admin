@@ -1,18 +1,166 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-03-06
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-11
+ * @FilePath: \Robot_Admin\src\views\demo\56-orgchart\index.scss
+ * @Description: 组织架构图演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
 .orgchart-demo {
-  padding: 16px;
+  padding: 20px;
 
-  .mb-4 {
+  // ─── 两栏布局 ───
+  .demo-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ─── 卡片 ───
+  .demo-card {
+    background: var(--card-color);
+    border-radius: 12px;
+    transition: box-shadow 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-color-1);
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-color-3);
+      line-height: 1.5;
+    }
+  }
+
+  // ─── 配置栏 ───
+  .config-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 16px;
+    padding: 12px 16px;
+    background: var(--body-color);
+    border-radius: 8px;
+    flex-wrap: wrap;
+
+    .config-label {
+      font-size: 13px;
+      color: var(--text-color-3);
+      white-space: nowrap;
+    }
   }
 
-  .mt-4 {
-    margin-top: 16px;
-  }
-
-  .orgchart-container {
-    height: 600px;
-    border: 1px solid var(--border-color, #e5e7eb);
+  // ─── 架构图容器 ───
+  .chart-container {
+    height: 520px;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     overflow: hidden;
+    background: var(--body-color);
+  }
+
+  // ─── 右侧面板 ───
+  .side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  // ─── 节点详情 ───
+  .node-detail {
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    &__info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      strong {
+        font-size: 16px;
+        color: var(--text-color-1);
+      }
+    }
+
+    &__subtitle {
+      font-size: 13px;
+      color: var(--text-color-3);
+    }
+
+    .mt-3 {
+      margin-top: 12px;
+    }
+  }
+
+  // ─── 功能特性列表 ───
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .feature-icon {
+      color: var(--primary-color);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .feature-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-color-1);
+    }
+
+    .feature-desc {
+      font-size: 12px;
+      color: var(--text-color-3);
+      margin-top: 1px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .chart-container {
+      height: 400px;
+    }
   }
 }
