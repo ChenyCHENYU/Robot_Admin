@@ -2,10 +2,10 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-23 15:09:59
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-07-30 16:29:36
+ * @LastEditTime: 2026-03-10
  * @FilePath: \Robot_Admin\src\stores\user\index.ts
- * @Description: 用户状态管理 - 统一管理用户登录状态、信息和相关操作
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ * @Description: 用户状态管理 — 登录状态、用户信息、安全退出
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { defineStore } from 'pinia'
 import { TOKEN, TIME_STAMP } from '@/constant'
@@ -15,7 +15,6 @@ import { notification } from '@/plugins/discrete'
 
 interface UserInfo {
   username?: string
-  password?: string // 临时存储，仅用于重新登录
   [key: string]: unknown
 }
 

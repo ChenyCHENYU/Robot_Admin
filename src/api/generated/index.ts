@@ -36,6 +36,47 @@ export interface DeleteSysPermissionsByIdResponse {
   msg: string
 }
 
+/** 权限列表响应 */
+export interface GetSysPermissionsListResponse {
+  code: string
+  data: {
+    list: Array<Record<string, unknown>>
+    total: number
+  }
+  msg: string
+}
+
+/** 权限新增响应 */
+export interface PostSysPermissionsResponse {
+  code: string
+  data: Record<string, unknown>
+  msg: string
+}
+
+/** 按钮权限列表响应 */
+export interface GetAuthButtonListResponse {
+  code: string
+  data: Record<string, string[]>
+  msg: string
+}
+
+/** 数据权限配置响应 */
+export interface GetDataPermissionResponse {
+  code: string
+  data: Array<{
+    module: string
+    scope: string
+    departmentIds?: string[]
+    fieldPermissions?: Array<{
+      field: string
+      visible: boolean
+      editable: boolean
+      masked: boolean
+    }>
+  }>
+  msg: string
+}
+
 /** 员工展开列表响应 */
 export interface GetEmployeesExpandListResponse {
   code: string

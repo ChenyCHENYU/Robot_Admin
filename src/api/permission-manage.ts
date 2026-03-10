@@ -1,10 +1,35 @@
 // src/api/permissions.ts
-import { getData, deleteData, putData } from '@robot-admin/request-core'
+import {
+  getData,
+  postData,
+  deleteData,
+  putData,
+} from '@robot-admin/request-core'
 import type {
   GetSysPermissionsByIdResponse,
+  GetSysPermissionsListResponse,
+  PostSysPermissionsResponse,
   PutSysPermissionsByIdResponse,
   DeleteSysPermissionsByIdResponse,
+  GetAuthButtonListResponse,
+  GetDataPermissionResponse,
 } from './generated'
+
+/**
+ * * @description: 查询权限列表接口
+ * ? @param {Record<string, any>} params 查询参数（keyword/type/module/status 等）
+ * ! @return {Promise<GetSysPermissionsListResponse>} 权限列表响应数据
+ */
+export const getPermissionListApi = (params?: Record<string, any>) =>
+  getData<GetSysPermissionsListResponse>('/sys/permissions', params)
+
+/**
+ * * @description: 新增权限接口
+ * ? @param {Record<string, any>} data 权限数据对象
+ * ! @return {Promise<PostSysPermissionsResponse>} 新增后的权限响应数据
+ */
+export const createPermissionApi = (data: Record<string, any>) =>
+  postData<PostSysPermissionsResponse>('/sys/permissions', data)
 
 /**
  * * @description: 根据ID查询权限详情接口
@@ -32,3 +57,17 @@ export const updatePermissionApi = (
  */
 export const deletePermissionApi = (id: number | string) =>
   deleteData<DeleteSysPermissionsByIdResponse>(`/sys/permissions/${id}`)
+
+/**
+ * * @description: 获取按钮权限列表接口
+ * ! @return {Promise<GetAuthButtonListResponse>} 按钮权限映射数据
+ */
+export const getAuthButtonListApi = () =>
+  getData<GetAuthButtonListResponse>('/auth/button-list')
+
+/**
+ * * @description: 获取当前用户数据权限接口
+ * ! @return {Promise<GetDataPermissionResponse>} 数据权限配置
+ */
+export const getDataPermissionApi = () =>
+  getData<GetDataPermissionResponse>('/auth/data-permission')

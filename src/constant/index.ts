@@ -2,7 +2,7 @@
  * @Author: ChenYu
  * @Date: 2022-04-06 01:23:50
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-12-02 08:28:36
+ * @LastEditTime: 2026-03-10
  * @FilePath: \Robot_Admin\src\constant\index.ts
  * @Description: 常量文件夹
  * Copyright (c) ${2022} by ChenYu/天智AgileTeam, All Rights Reserved.
@@ -27,6 +27,18 @@ export const LOGIN_URL: string = '/login'
 
 // * 默认主题颜色
 export const DEFAULT_PRIMARY: string = '#409eff'
+
+// * 权限缓存 key
+export const PERMISSION_CACHE_KEY: string = 'permission_cache'
+
+// * 数据权限范围常量
+export const DATA_SCOPE = {
+  ALL: 'all',
+  DEPARTMENT: 'department',
+  DEPARTMENT_BELOW: 'department_below',
+  SELF: 'self',
+  CUSTOM: 'custom',
+} as const
 
 // * Tabs（白名单地址，不需要添加到 tabs 的路由地址）
 export const TABS_WHITE_LIST: string[] = ['/403', '/404', '/500', LOGIN_URL]

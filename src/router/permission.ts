@@ -2,10 +2,10 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-11 01:02:12
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-07-30 16:40:45
+ * @LastEditTime: 2026-03-10
  * @FilePath: \Robot_Admin\src\router\permission.ts
- * @Description: 路由权限控制
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ * @Description: 路由权限控制 — 认证 + 动态路由 + 路由鉴权
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import router from '@/router'
 import { s_userStore } from '@/stores/user'
@@ -28,7 +28,9 @@ interface ExtendedRouteMeta {
   [key: string]: any
 }
 
-// 统一错误处理
+/**
+ * * @description: 统一错误处理
+ */
 const handleRouteError = (error: unknown, customMsg?: string): string => {
   nprogress.done()
   console.error('路由异常:', error)
@@ -37,14 +39,17 @@ const handleRouteError = (error: unknown, customMsg?: string): string => {
   return LOGIN_PATH
 }
 
-// 设置页面标题
+/**
+ * * @description: 设置页面标题
+ */
 const setPageTitle = (title?: string): void => {
   document.title = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE
 }
 
-// 初始化动态路由
+/**
+ * * @description: 初始化动态路由
+ */
 const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
-  // 防止重复初始化
   if (isInitializing) {
     return fullPath
   }
@@ -58,7 +63,6 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
       throw new Error('动态路由初始化失败')
     }
 
-    // 再次检查菜单列表
     const { authMenuList } = s_permissionStore()
     if (!authMenuList.length) {
       throw new Error('菜单数据为空')
@@ -75,7 +79,9 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
   }
 }
 
-// 检查是否需要初始化动态路由
+/**
+ * * @description: 检查是否需要初始化动态路由
+ */
 const shouldInitDynamicRouter = (
   authMenuList: DynamicRoute[],
   isInitializing: boolean
@@ -83,12 +89,13 @@ const shouldInitDynamicRouter = (
   return !authMenuList.length && !isInitializing
 }
 
-// 处理未登录场景
+/**
+ * * @description: 处理未登录场景
+ */
 const handleUnauthenticated = (
   to: RouteLocationNormalized,
   meta: ExtendedRouteMeta
 ): string | boolean => {
-  // 白名单放行：精确匹配 + /preview 前缀（文档站 iframe 嵌入）
   if (WHITE_LIST.includes(to.path) || to.path.startsWith('/preview')) {
     setPageTitle(meta.title)
     return true
@@ -96,12 +103,32 @@ const handleUnauthenticated = (
   return LOGIN_PATH
 }
 
-// 处理已登录访问登录页
+/**
+ * * @description: 处理已登录访问登录页
+ */
 const handleLoginPageRedirect = (): string => {
   return '/home'
 }
 
-// 核心路由守卫 - 降低复杂度版本
+/**
+ * * @description: 校验路由访问权限
+ * ? @param {RouteLocationNormalized} to 目标路由
+ * ! @return {boolean} 是否允许访问
+ */
+const checkRoutePermission = (to: RouteLocationNormalized): boolean => {
+  // 白名单和预览路由不校验
+  if (WHITE_LIST.includes(to.path) || to.path.startsWith('/preview')) {
+    return true
+  }
+  // 首页/错误页始终放行
+  if (['/home', '/404', '/401'].includes(to.path)) {
+    return true
+  }
+  const permissionStore = s_permissionStore()
+  return permissionStore.hasRoutePermission(to.path)
+}
+
+// 核心路由守卫
 router.beforeEach(
   async (
     to: RouteLocationNormalized,
@@ -115,8 +142,7 @@ router.beforeEach(
       const { authMenuList } = s_permissionStore()
       const meta = to.meta as ExtendedRouteMeta
 
-      // 0. 预览路由直接放行（无论登录与否，跳过所有认证和动态路由逻辑）
-      //    解决：已登录用户在新窗口打开 /preview/* 时被动态路由初始化阻塞导致空白
+      // 0. 预览路由直接放行
       if (to.path.startsWith('/preview')) {
         setPageTitle(meta.title)
         return true
@@ -140,11 +166,16 @@ router.beforeEach(
           return result
         }
 
-        // 首页已通过 eager glob 打包到主 bundle，无需运行时预加载
         return to.fullPath
       }
 
-      // 4. 跳过相同路由的重复检查
+      // 4. 路由权限校验（动态路由已初始化后生效）
+      if (!checkRoutePermission(to)) {
+        message.error('您无权访问该页面')
+        return '/401'
+      }
+
+      // 5. 跳过相同路由的重复检查
       if (to.path === from.path && to.fullPath === from.fullPath) {
         nprogress.done()
         return false
@@ -168,7 +199,6 @@ router.onError((error: Error) => {
     console.error('🔥 路由错误:', error)
   }
 
-  // 只处理关键的 chunk 加载错误
   if (error.message.includes('Loading chunk')) {
     window.location.reload()
     return
@@ -177,7 +207,7 @@ router.onError((error: Error) => {
   message.error('页面加载失败，请刷新重试')
 })
 
-// 后置钩子 - 只记录日志
+// 后置钩子
 router.afterEach((to, from, failure) => {
   if (import.meta.env.DEV && failure) {
     console.error('❌ 路由跳转失败:', failure.message)
