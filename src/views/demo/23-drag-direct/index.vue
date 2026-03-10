@@ -10,7 +10,11 @@
 
 <template>
   <div class="drag-demo-page">
-    <NH1>v-drag 拖拽指令场景示例</NH1>
+    <c_vTitle
+      title="v-drag 拖拽指令场景示例"
+      icon="mdi:drag-variant"
+      description="通过 v-drag 指令让任意元素支持自由拖拽，支持约束轴向与边界限制"
+    />
     <NGrid
       :cols="2"
       :x-gap="24"
@@ -213,7 +217,7 @@
                     :key="card.id"
                     v-drag="{
                       boundary: '.cards-container',
-                      onEnd: (el, position) =>
+                      onEnd: (el: HTMLElement, position: any) =>
                         updateCardPosition(card.id, position),
                     }"
                     class="drag-card"
@@ -288,7 +292,7 @@
                     :key="shape.id"
                     v-drag="{
                       boundary: '.canvas-container',
-                      onDrag: (el, position) =>
+                      onDrag: (el: HTMLElement, position: any) =>
                         updateShapePosition(shape.id, position),
                     }"
                     class="canvas-shape"
@@ -385,7 +389,10 @@
     canvasShapes,
     axisOptions,
   } from './data'
-  import type { Position } from './drag'
+  interface Position {
+    x: number
+    y: number
+  }
 
   /** 画布操作按钮 */
   const canvasActions = computed(() => [

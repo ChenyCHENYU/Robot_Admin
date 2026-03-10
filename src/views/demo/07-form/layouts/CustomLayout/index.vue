@@ -135,8 +135,8 @@
     FormInstance,
     FormModel,
     LabelPlacement,
-  } from '@/types/modules/form'
-  import type { ActionItem } from '@/types/modules/action-bar'
+    ActionItem,
+  } from '@robot-admin/naive-ui-components'
   import { useFormSubmit } from '@/hooks/useFormSubmit'
   import { useDebounceFn } from '@vueuse/core'
   import {

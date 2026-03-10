@@ -74,17 +74,15 @@
 </template>
 
 <script setup lang="ts">
-  import type {
-    FormModel,
-    FormInstance,
-    LabelPlacement,
-    DynamicFieldConfig,
-    DynamicFormConfig,
-  } from '@/types/modules/form'
-  import type { ActionItem } from '@/types/modules/action-bar'
   import {
     useDynamicFormState,
     DYNAMIC_FORM_STATE_KEY,
+    type FormModel,
+    type FormInstance,
+    type LabelPlacement,
+    type DynamicFormConfig,
+    type DynamicFieldConfig,
+    type ActionItem,
   } from '@robot-admin/naive-ui-components'
   import {
     DYNAMIC_FORM_CONFIG,

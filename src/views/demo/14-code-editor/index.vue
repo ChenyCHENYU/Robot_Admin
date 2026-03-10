@@ -10,11 +10,11 @@
 
 <template>
   <div class="code-editor-demo">
-    <NH1>Code编辑器组件场景示例</NH1>
-    <p class="mb-10px">
-      基于 NCode 封装的 C_Code
-      组件，集成多种API，预设常用的功能、代码高亮、复制、全屏等功能。
-    </p>
+    <c_vTitle
+      title="Code编辑器组件场景示例"
+      icon="mdi:code-braces-box"
+      description="基于 NCode 封装，支持多语言语法高亮、代码复制、全屏查看、动态语言加载等功能"
+    />
     <NSpace
       vertical
       size="large"
@@ -117,7 +117,6 @@
   const loading = ref(false)
   const dynamicCode = ref('')
 
-  // 标签映射
   const tabLabels: Record<string, string> = {
     javascript: 'JavaScript',
     typescript: 'TypeScript',
@@ -126,41 +125,20 @@
     go: 'Go',
     json: 'JSON',
   }
-  /**
-   * * @description 获取标签页显示名称
-   * ? @param lang - 语言标识符
-   * ! @return string 显示名称
-   */
-  function getTabLabel(lang: string): string {
+
+  const getTabLabel = (lang: string): string => {
     if (['simple', 'fullscreen', 'long'].includes(lang)) return ''
     return tabLabels[lang]
   }
 
-  /**
-   * * @description 处理代码复制事件
-   * ? @param code - 复制的代码内容
-   * ! @return void
-   */
-  function handleCopy(code: string): void {
+  const handleCopy = (code: string) =>
     message.success(`已复制 ${code.length} 个字符`)
-  }
 
-  /**
-   * * @description 处理全屏切换事件
-   * ? @param isFullscreen - 是否为全屏状态
-   * ! @return void
-   */
-  function handleFullscreen(isFullscreen: boolean): void {
+  const handleFullscreen = (isFullscreen: boolean) =>
     message.info(isFullscreen ? '已进入全屏' : '已退出全屏')
-  }
 
-  /**
-   * * @description 加载选中的语言包并显示示例代码
-   * ! @return Promise<void>
-   */
-  async function loadLanguage(): Promise<void> {
+  const loadLanguage = async () => {
     if (!selectedLanguage.value) return
-
     loading.value = true
     try {
       await highlight.loadLanguage(selectedLanguage.value)

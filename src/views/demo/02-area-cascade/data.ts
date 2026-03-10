@@ -1,7 +1,8 @@
 /**
- * @Description: 区域级联选择器演示页 - 静态数据与类型定义
+ * @Description: 区域级联选择器演示页 - 数据配置与类型定义
  */
 import { type CascadeItem } from '@robot-admin/naive-ui-components'
+import pcaCode from '@/assets/data/pca-code.json'
 
 // ================= 类型定义 =================
 export interface CascadeOption {
@@ -30,6 +31,20 @@ export interface CascadeConfig {
     tertiary: string
   }
 }
+
+// ================= 城市数据转换 =================
+export const cityData: CascadeItem[] = pcaCode.map(province => ({
+  label: province.name,
+  value: province.code,
+  children: province.children?.map(city => ({
+    label: city.name,
+    value: city.code,
+    children: city.children?.map(area => ({
+      label: area.name,
+      value: area.code,
+    })),
+  })),
+}))
 
 // ================= 技术分类数据 =================
 export const techData: CascadeItem[] = [
@@ -183,5 +198,52 @@ export const orgData: CascadeItem[] = [
         ],
       },
     ],
+  },
+]
+
+// ================= 级联配置 =================
+export const createCascadeConfigs = (): CascadeConfig[] => [
+  {
+    id: 'city',
+    title: '城市级联选择',
+    data: cityData,
+    selected: {},
+    placeholders: ['请选择省份', '请选择城市', '请选择区县'],
+    tagType: 'info',
+    description: '支持全国省市区三级联动选择，数据覆盖全国所有行政区域',
+    labels: {
+      primary: '省份',
+      secondary: '城市',
+      tertiary: '区县',
+    },
+  },
+  {
+    id: 'tech',
+    title: '技术分类选择',
+    data: techData,
+    selected: {},
+    placeholders: ['请选择技术方向', '请选择技术框架', '请选择具体版本'],
+    type: 'primary',
+    tagType: 'warning',
+    description: '用于选择技术栈，包含前端、后端和数据库等技术分类',
+    labels: {
+      primary: '方向',
+      secondary: '框架',
+      tertiary: '版本',
+    },
+  },
+  {
+    id: 'org',
+    title: '部门组织选择',
+    data: orgData,
+    selected: {},
+    placeholders: ['请选择中心', '请选择部门', '请选择小组'],
+    tagType: 'success',
+    description: '企业组织架构选择器，支持多级部门层级选择',
+    labels: {
+      primary: '中心',
+      secondary: '部门',
+      tertiary: '小组',
+    },
   },
 ]

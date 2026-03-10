@@ -8,7 +8,10 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { ErrorCorrectionLevel, RenderMode } from '@/types/modules/qrcode'
+import type {
+  ErrorCorrectionLevel,
+  RenderMode,
+} from '@robot-admin/naive-ui-components'
 
 // 纠错等级选项
 export const ERROR_LEVELS = [

@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { FormulaVariable } from '@/types/modules/formula-editor'
+import type { FormulaVariable } from '@robot-admin/naive-ui-components'
 
 // ─── 公共变量 / 样例数据（基础用法、精简模式、编程控制共用） ───
 

@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-28 11:26:23
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-07-31 14:13:24
+ * @LastEditTime: 2026-03-08 21:52:08
  * @FilePath: \Robot_Admin\src\views\demo\02-area-cascade\index.vue
  * @Description: 级联选择器示例
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -10,11 +10,15 @@
 
 <template>
   <div class="cascade-demo">
-    <NH1>级联选择器组件场景示例</NH1>
+    <c_vTitle
+      title="级联选择器组件场景示例"
+      icon="mdi:map-marker-multiple"
+      description="支持城市地区、技术分类、组织架构等多级联动选择场景"
+    />
 
     <NSpace
       vertical
-      :size="24"
+      :size="20"
     >
       <!-- 使用v-for循环渲染多个级联选择器 -->
       <NCard
@@ -47,7 +51,7 @@
             v-model="config.selected"
             :placeholders="config.placeholders"
             :type="config.type"
-            @change="val => handleChange(config, val)"
+            @change="(val: any) => handleChange(config, val)"
           />
 
           <!-- 操作按钮和结果展示 -->
@@ -111,79 +115,21 @@
 </template>
 
 <script setup lang="ts">
-  import pcaCode from '@/assets/data/pca-code.json'
   import {
-    techData,
-    orgData,
+    createCascadeConfigs,
     type CascadeSelected,
     type CascadeConfig,
   } from './data'
-  const cityData = pcaCode.map(province => ({
-    label: province.name,
-    value: province.code,
-    children: province.children?.map(city => ({
-      label: city.name,
-      value: city.code,
-      children: city.children?.map(area => ({
-        label: area.name,
-        value: area.code,
-      })),
-    })),
-  }))
 
-  // 创建级联选择器配置
-  const cascadeConfigs = reactive<CascadeConfig[]>([
-    {
-      id: 'city',
-      title: '城市级联选择',
-      data: cityData,
-      selected: {},
-      placeholders: ['请选择省份', '请选择城市', '请选择区县'],
-      tagType: 'info',
-      description: '支持全国省市区三级联动选择，数据覆盖全国所有行政区域',
-      labels: {
-        primary: '省份',
-        secondary: '城市',
-        tertiary: '区县',
-      },
-    },
-    {
-      id: 'tech',
-      title: '技术分类选择',
-      data: techData,
-      selected: {},
-      placeholders: ['请选择技术方向', '请选择技术框架', '请选择具体版本'],
-      type: 'primary',
-      tagType: 'warning',
-      description: '用于选择技术栈，包含前端、后端和数据库等技术分类',
-      labels: {
-        primary: '方向',
-        secondary: '框架',
-        tertiary: '版本',
-      },
-    },
-    {
-      id: 'org',
-      title: '部门组织选择',
-      data: orgData,
-      selected: {},
-      placeholders: ['请选择中心', '请选择部门', '请选择小组'],
-      tagType: 'success',
-      description: '企业组织架构选择器，支持多级部门层级选择',
-      labels: {
-        primary: '中心',
-        secondary: '部门',
-        tertiary: '小组',
-      },
-    },
-  ])
+  // 级联选择器配置
+  const cascadeConfigs = reactive(createCascadeConfigs())
 
-  // 通用重置方法
+  // 重置选择
   const resetSelected = (config: CascadeConfig) => {
     config.selected = {}
   }
 
-  // 通用变更处理方法
+  // 变更处理
   const handleChange = (config: CascadeConfig, val: CascadeSelected) => {
     console.info(`${config.title}:`, {
       [config.labels.primary]: val.primary?.label,

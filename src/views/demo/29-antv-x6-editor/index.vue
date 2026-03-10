@@ -1,6 +1,20 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-07-03 09:23:53
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-07-04 18:52:07
+ * @FilePath: \Robot_Admin\src\views\demo\29-antv-x6-editor\index.vue
+ * @Description: 图编辑引擎演示页面
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="diagram-demo">
-    <NH1 class="p4px">图编辑引擎示例</NH1>
+    <c_vTitle
+      title="图编辑引擎示例"
+      icon="mdi:graph"
+      description="基于 AntV X6 封装的可视化图编辑引擎，支持 ER 图、BPMN 流程图、UML 类图等多种场景"
+    />
     <NCard>
       <template #header>
         <NTabs
@@ -61,7 +75,10 @@
 </template>
 
 <script setup lang="ts">
-  import type { DiagramType, DiagramData } from '@/types/antv'
+  import type {
+    DiagramType,
+    DiagramData,
+  } from '@robot-admin/naive-ui-components'
   import { s_themeStore } from '@/stores/theme'
 
   const themeStore = s_themeStore()

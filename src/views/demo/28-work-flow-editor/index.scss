@@ -4,44 +4,10 @@
 
 .container {
   padding: 0 24px;
-  max-width: none !important; // 覆盖全局的最大宽度限制
+  max-width: none !important;
   width: 100% !important;
 }
 
-// 页面头部
-.page-header {
-  padding: 24px 0;
-    border-bottom: 1px solid var(--n-border-color);
-
-  .header-content {
-    padding: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .title-section {
-      h1 {
-        margin: 0 0 8px 0;
-        font-size: 28px;
-        font-weight: 600;
-        color: var(--n-text-color-1);
-      }
-
-      p {
-        margin: 0;
-        color: var(--n-text-color-2);
-        font-size: 16px;
-      }
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 12px;
-    }
-  }
-}
-
-// 场景选择
 .scenario-section {
   border-bottom: 1px solid var(--n-border-color);
 

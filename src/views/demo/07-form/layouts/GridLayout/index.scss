@@ -1,221 +1,186 @@
-  .grid-layout {
-    .grid-config {
-      margin-bottom: 24px;
+.grid-layout {
+  .grid-config {
+    margin-bottom: 24px;
 
-      .config-card {
-        .config-title {
-          font-size: 16px;
-          font-weight: 600;
-          margin-bottom: 16px;
+    .config-card {
+      .config-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: 600;
+
+        .header-icon {
+          font-size: 18px;
+          color: #2080f0;
         }
+      }
 
-        .config-controls {
+      .config-controls {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .config-item {
           display: flex;
-          gap: 24px;
           align-items: center;
-          flex-wrap: wrap;
+          gap: 12px;
 
-          .config-item {
+          .config-label {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 14px;
+            gap: 6px;
+            font-size: 13px;
+            color: #333;
 
-            .input-with-badge {
-              display: flex;
-              align-items: center;
-              gap: 8px;
-
-              .badge {
-                padding: 2px 8px;
-                border-radius: 12px;
-                font-size: 12px;
-                background: #667eea;
-                color: white;
-              }
-            }
-
-            .number-input {
-              padding: 4px 8px;
-              border: 1px solid #ddd;
-              border-radius: 4px;
-              font-size: 14px;
-              min-width: 80px;
-            }
-
-            .switch {
-              width: 40px;
-              height: 20px;
-              border-radius: 10px;
-              background: #ddd;
-              position: relative;
-              cursor: pointer;
-              transition: all 0.3s ease;
-
-              &::after {
-                content: '';
-                position: absolute;
-                top: 2px;
-                left: 2px;
-                width: 16px;
-                height: 16px;
-                border-radius: 50%;
-                background: white;
-                transition: all 0.3s ease;
-              }
-
-              &.active {
-                background: #52c41a;
-
-                &::after {
-                  transform: translateX(20px);
-                }
-              }
+            .config-value {
+              font-weight: 500;
+              color: #2080f0;
+              margin-left: 4px;
             }
           }
         }
       }
     }
+  }
 
-    .grid-preview {
-      margin-bottom: 24px;
+  .grid-preview {
+    margin-bottom: 24px;
 
-      .preview-title {
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 12px;
-        color: #666;
-      }
-
-      .grid-demo {
-        display: flex;
-        flex-wrap: wrap;
-        padding: 16px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        border: 1px solid #e9ecef;
-
-        .grid-col {
-          height: 32px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          font-weight: 500;
-          border-radius: 4px;
-          margin-bottom: 8px;
-        }
-      }
+    .preview-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: #666;
     }
 
-
-
-    .layout-preview-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
+    .grid-demo {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+      flex-wrap: wrap;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
 
-      .preview-content {
-        background: white;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 800px;
-        max-height: 80vh;
-        overflow-y: auto;
+      .grid-col {
+        height: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        transition: transform 0.2s ease;
 
-        .preview-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 20px 24px;
-          border-bottom: 1px solid #f0f0f0;
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
 
-          h3 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 600;
+  .layout-preview-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    .preview-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+
+      .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid #f0f0f0;
+
+        h3 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        .close-btn {
+          background: none;
+          border: none;
+          font-size: 24px;
+          cursor: pointer;
+          color: #999;
+
+          &:hover {
+            color: #666;
           }
+        }
+      }
 
-          .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
+      .preview-body {
+        padding: 24px;
 
-            &:hover {
+        .layout-info {
+          display: flex;
+          gap: 24px;
+          margin-bottom: 24px;
+          padding: 16px;
+          background: #f8f9fa;
+          border-radius: 8px;
+
+          .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            .label {
+              font-size: 12px;
               color: #666;
             }
+
+            .value {
+              font-size: 14px;
+              font-weight: 600;
+            }
           }
         }
 
-        .preview-body {
-          padding: 24px;
+        .field-layout-preview {
+          display: grid;
+          gap: 12px;
 
-          .layout-info {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 24px;
-            padding: 16px;
-            background: #f8f9fa;
+          .field-preview {
+            padding: 12px;
+            border: 1px solid #e9ecef;
             border-radius: 8px;
+            background: #fff;
 
-            .info-item {
-              display: flex;
-              flex-direction: column;
-              gap: 4px;
-
-              .label {
-                font-size: 12px;
-                color: #666;
-              }
-
-              .value {
-                font-size: 14px;
-                font-weight: 600;
-              }
+            .field-name {
+              font-weight: 600;
+              margin-bottom: 8px;
             }
-          }
 
-          .field-layout-preview {
-            display: grid;
-            gap: 12px;
-
-            .field-preview {
-              padding: 12px;
-              border: 1px solid #e9ecef;
-              border-radius: 8px;
-              background: #fff;
-
-              .field-name {
-                font-weight: 600;
-                margin-bottom: 8px;
-              }
-
-              .field-span,
-              .field-width {
-                font-size: 12px;
-                color: #666;
-                margin-bottom: 4px;
-              }
+            .field-span,
+            .field-width {
+              font-size: 12px;
+              color: #666;
+              margin-bottom: 4px;
             }
           }
         }
       }
     }
   }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
+}

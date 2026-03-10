@@ -9,7 +9,11 @@
 -->
 <template>
   <div class="avatar-group-demo">
-    <NH1>头像组组件场景示例</NH1>
+    <c_vTitle
+      title="头像组组件场景示例"
+      icon="mdi:account-group"
+      description="支持折叠显示、状态指示、多种形状尺寸等特性，适用于团队协作、任务分配等场景"
+    />
 
     <!-- ==================== 功能特性 ==================== -->
     <div class="demo-section">

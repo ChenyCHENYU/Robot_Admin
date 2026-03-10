@@ -10,7 +10,11 @@
 
 <template>
   <div class="throttle-demo-page">
-    <NH1>v-throttle 节流指令场景示例</NH1>
+    <c_vTitle
+      title="v-throttle 节流指令场景示例"
+      icon="mdi:speedometer"
+      description="通过 v-throttle 指令对事件进行节流控制，保证在固定时间内只执行一次"
+    />
 
     <NGrid
       :cols="2"

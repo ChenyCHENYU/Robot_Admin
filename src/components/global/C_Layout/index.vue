@@ -76,8 +76,8 @@
   const isReady = ref(true)
   const isDarkMode = computed(() => themeStore.isDark)
 
-  // 获取菜单数据
-  const menuData = permissionStore.showMenuListGet
+  // 获取菜单数据（MenuOptions.path 为可选，RouteItem.path 为必填，此处数据上保证 path 存在）
+  const menuData = permissionStore.showMenuListGet as any[]
 
   // 设置抽屉状态 - 提升到全局
   const showSettings = ref(false)

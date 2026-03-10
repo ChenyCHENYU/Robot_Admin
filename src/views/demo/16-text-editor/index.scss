@@ -1,15 +1,6 @@
  .editor-demo-page {
     padding: 20px;
 
-    .demo-header {
-      margin-bottom: 30px;
-      .demo-description {
-        font-size: 1.1rem;
-        opacity: 0.9;
-        line-height: 1.6;
-      }
-    }
-
     .demo-content {
       display: grid;
       grid-template-columns: 320px 1fr;

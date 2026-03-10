@@ -1,6 +1,9 @@
-import type { SearchFormItem, SearchOptionItem } from '@/types/modules/form'
+import type {
+  SearchFormItem,
+  SearchOptionItem,
+} from '@robot-admin/naive-ui-components'
 
-// 基础类型定义 - 使用兼容性类型
+// 类型定义
 export interface OptionItem extends SearchOptionItem {
   labelDefault: string
   value?: string | number
@@ -17,11 +20,10 @@ export interface FormItem extends SearchFormItem {
   show?: boolean
 }
 
-// 更精确的表单参数类型定义
 export interface BaseFormParams {
   pageNum: number
   pageSize: number
-  [key: string]: any // 添加索引签名解决泛型约束问题
+  [key: string]: any
 }
 
 export interface BasicFormParams extends BaseFormParams {
@@ -45,7 +47,6 @@ export interface AdvancedFormParams extends BaseFormParams {
   version: string
 }
 
-// 修复 MegaFormParams 类型错误
 export interface MegaFormParams extends BaseFormParams {
   [key: string]: string | number
   field1: string
@@ -66,14 +67,17 @@ export interface MegaFormParams extends BaseFormParams {
   field16: string
 }
 
-// 联合类型
 export type FormParams = BasicFormParams | AdvancedFormParams | MegaFormParams
 
-// 配置类型 - 使用兼容性类型
 export interface FormConfig<T extends BaseFormParams> {
   params: T
-  items: SearchFormItem[] // 使用 SearchFormItem 而不是 FormItem
+  items: SearchFormItem[]
   historyKey: string
+}
+
+export interface SearchResult {
+  id: number
+  [key: string]: unknown
 }
 
 // 基础示例配置
@@ -86,12 +90,7 @@ export const basicFormConfig: FormConfig<BasicFormParams> = {
     pageSize: 10,
   },
   items: [
-    {
-      type: 'input',
-      prop: 'name',
-      placeholder: '请输入用户名称',
-      hisList: [],
-    },
+    { type: 'input', prop: 'name', placeholder: '请输入用户名称', hisList: [] },
     {
       type: 'select',
       prop: 'status',
@@ -102,11 +101,7 @@ export const basicFormConfig: FormConfig<BasicFormParams> = {
         { labelDefault: '待审核', value: 2 },
       ],
     },
-    {
-      type: 'date-range',
-      prop: 'dateRange',
-      placeholder: '请选择时间范围',
-    },
+    { type: 'date-range', prop: 'dateRange', placeholder: '请选择时间范围' },
   ],
   historyKey: 'basic_search_history',
 }
@@ -156,29 +151,10 @@ export const advancedFormConfig: FormConfig<AdvancedFormParams> = {
         { labelDefault: '高级' },
       ],
     },
-    {
-      type: 'input',
-      prop: 'region',
-      placeholder: '请输入地区',
-      hisList: [],
-    },
-    {
-      type: 'date-range',
-      prop: 'timeRange',
-      placeholder: '请选择时间范围',
-    },
-    {
-      type: 'input',
-      prop: 'price',
-      placeholder: '请输入价格',
-      hisList: [],
-    },
-    {
-      type: 'input',
-      prop: 'tags',
-      placeholder: '请输入标签',
-      hisList: [],
-    },
+    { type: 'input', prop: 'region', placeholder: '请输入地区', hisList: [] },
+    { type: 'date-range', prop: 'timeRange', placeholder: '请选择时间范围' },
+    { type: 'input', prop: 'price', placeholder: '请输入价格', hisList: [] },
+    { type: 'input', prop: 'tags', placeholder: '请输入标签', hisList: [] },
     {
       type: 'select',
       prop: 'department',
@@ -221,148 +197,92 @@ export const advancedFormConfig: FormConfig<AdvancedFormParams> = {
   historyKey: 'advanced_search_history',
 }
 
+// 创建超多字段表单配置
 /**
- * * @description: 创建超多字段表单配置
- * ? @param {number} fieldCount 字段数量
- * ! @return {FormConfig<MegaFormParams>} 超多字段表单配置对象
+ *
  */
 function createMegaFormConfig(fieldCount = 16): FormConfig<MegaFormParams> {
-  // 创建初始参数对象
   const params: MegaFormParams = {
     pageNum: 1,
     pageSize: 50,
-    field1: '',
-    field2: '',
-    field3: '',
-    field4: '',
-    field5: '',
-    field6: '',
-    field7: '',
-    field8: '',
-    field9: '',
-    field10: '',
-    field11: '',
-    field12: '',
-    field13: '',
-    field14: '',
-    field15: '',
-    field16: '',
-  }
+    ...Object.fromEntries(
+      Array.from({ length: fieldCount }, (_, i) => [`field${i + 1}`, ''])
+    ),
+  } as MegaFormParams
 
-  /**
-   * * @description: 创建表单项配置数组
-   * ? @param {number} count 字段数量
-   * ! @return {SearchFormItem[]} 表单项配置数组
-   */
-  const createFormItems = (count: number): SearchFormItem[] => {
-    return Array.from({ length: count }, (_, index) => ({
+  const items: SearchFormItem[] = Array.from(
+    { length: fieldCount },
+    (_, i) => ({
       type: 'input' as const,
-      prop: `field${index + 1}`,
-      placeholder: `请输入字段${index + 1}`,
+      prop: `field${i + 1}`,
+      placeholder: `请输入字段${i + 1}`,
       hisList: [],
-    }))
-  }
+    })
+  )
 
-  return {
-    params,
-    items: createFormItems(fieldCount),
-    historyKey: 'mega_search_history',
-  }
+  return { params, items, historyKey: 'mega_search_history' }
 }
 
 export const megaFormConfig = createMegaFormConfig()
 
-// 搜索结果类型定义
-export interface SearchResult {
-  id: number
-  [key: string]: unknown
-}
-
+// 重置表单参数
 /**
- * * @description: 生成基础表单模拟搜索结果
- * ? @param {FormParams} params 表单参数
- * ! @return {SearchResult[]} 搜索结果数组
+ *
  */
-const generateBasicResults = (params: FormParams): SearchResult[] => {
-  const basicParams = params as BasicFormParams
-  return [
-    {
-      id: 1,
-      name: basicParams.name || '用户1',
-      status: basicParams.status || '启用',
-    },
-    {
-      id: 2,
-      name: basicParams.name || '用户2',
-      status: basicParams.status || '禁用',
-    },
-  ]
+export function resetFormParams<T extends Record<string, any>>(
+  target: { [K in keyof T]: T[K] },
+  source: T
+): void {
+  Object.keys(target).forEach(key => {
+    target[key as keyof T] = source[key as keyof T]
+  })
 }
 
-/**
- * * @description: 生成高级表单模拟搜索结果
- * ? @param {FormParams} params 表单参数
- * ! @return {SearchResult[]} 搜索结果数组
- */
-const generateAdvancedResults = (params: FormParams): SearchResult[] => {
-  const advancedParams = params as AdvancedFormParams
-  return [
-    {
-      id: 1,
-      keyword: advancedParams.keyword || '关键词1',
-      category: advancedParams.category || '科技',
-      level: advancedParams.level || '高级',
-    },
-    {
-      id: 2,
-      keyword: advancedParams.keyword || '关键词2',
-      category: advancedParams.category || '教育',
-      level: advancedParams.level || '中级',
-    },
-  ]
-}
-
-/**
- * * @description: 生成超多字段表单模拟搜索结果
- * ? @param {FormParams} params 表单参数
- * ! @return {SearchResult[]} 搜索结果数组
- */
-const generateMegaResults = (params: FormParams): SearchResult[] => {
-  return [
-    {
-      id: 1,
-      type: '超多字段测试',
-      fields: Object.keys(params).length,
-    },
-  ]
-}
-
-// 模拟数据生成器映射
+// 模拟数据生成器
 const mockDataGenerators = {
-  basic: generateBasicResults,
-  advanced: generateAdvancedResults,
-  mega: generateMegaResults,
+  basic: (params: FormParams) => [
+    {
+      id: 1,
+      name: (params as BasicFormParams).name || '用户1',
+      status: (params as BasicFormParams).status || '启用',
+    },
+    {
+      id: 2,
+      name: (params as BasicFormParams).name || '用户2',
+      status: (params as BasicFormParams).status || '禁用',
+    },
+  ],
+  advanced: (params: FormParams) => [
+    {
+      id: 1,
+      keyword: (params as AdvancedFormParams).keyword || '关键词1',
+      category: (params as AdvancedFormParams).category || '科技',
+    },
+    {
+      id: 2,
+      keyword: (params as AdvancedFormParams).keyword || '关键词2',
+      category: (params as AdvancedFormParams).category || '教育',
+    },
+  ],
+  mega: (params: FormParams) => [
+    { id: 1, type: '超多字段测试', fields: Object.keys(params).length },
+  ],
 } as const
 
+// 生成模拟搜索结果
 /**
- * * @description: 根据表单类型生成模拟搜索结果
- * ? @param {keyof typeof mockDataGenerators} type 表单类型
- * ? @param {FormParams} params 表单参数
- * ! @return {SearchResult[]} 模拟搜索结果数组
+ *
  */
 export function generateMockResults(
   type: keyof typeof mockDataGenerators,
   params: FormParams
 ): SearchResult[] {
-  const generator = mockDataGenerators[type]
-  return generator ? generator(params) : []
+  return mockDataGenerators[type]?.(params) || []
 }
 
+// 格式化参数用于日志
 /**
- * * @description: 格式化表单参数用于日志输出
- * ? @param {FormParams} params 表单参数
- * ? @param {string} type 表单类型
- * ! @return {string} 格式化后的参数字符串
+ *
  */
 export function formatParamsForLog(params: FormParams, type: string): string {
   const filteredParams = Object.entries(params)
@@ -370,21 +290,5 @@ export function formatParamsForLog(params: FormParams, type: string): string {
       ([, value]) => value !== '' && value !== null && value !== undefined
     )
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
-
   return `[${type}] 有效参数: ${JSON.stringify(filteredParams, null, 2)}`
-}
-
-/**
- * * @description: 重置表单参数到初始状态
- * ? @param {T} target 目标表单参数对象
- * ? @param {T} source 源初始参数对象
- * ! @return {void} 无返回值，直接修改目标对象
- */
-export function resetFormParams<T extends Record<string, any>>(
-  target: { [K in keyof T]: T[K] }, // 修改为可写类型
-  source: T
-): void {
-  Object.keys(target).forEach(key => {
-    target[key as keyof T] = source[key as keyof T]
-  })
 }

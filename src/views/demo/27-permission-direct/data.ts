@@ -57,7 +57,7 @@ export function createPermissionDemoState() {
     )
   })
 
-  const currentPermissions = computed(() => {
+  const currentPermissions = computed((): Record<string, boolean> => {
     return (
       MOCK_PERMISSIONS[currentUserId.value as keyof typeof MOCK_PERMISSIONS] ||
       {}

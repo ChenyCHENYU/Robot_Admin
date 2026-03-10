@@ -1,373 +1,291 @@
-import type {
-  FormOption,
-  LayoutType,
-  ComponentType,
-  OptionItem,
-  ItemLayoutConfig,
-} from '@/types/modules/form'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-06-04
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-09
+ * @FilePath: \Robot_Admin\src\views\demo\08-form-modal\data.ts
+ * @Description: 多模态表单演示页 - 配置数据
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ */
+
+import type { FormConfig, FormOption } from '@robot-admin/naive-ui-components'
 import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
 
-// 类型定义
-export type ContainerType =
-  | 'modal'
-  | 'drawer'
-  | 'sidebar'
-  | 'popover'
-  | 'wizard'
+// =================== 卡片展示数据 ===================
 
-export type StatusType = 'default' | 'error' | 'info' | 'success' | 'warning'
-
-export interface ContainerCard {
-  key: ContainerType
+export interface CardInfo {
+  key: string
   title: string
   description: string
   icon: string
-  iconColor: string
-  tagType: StatusType
+  tag: string
+  tagType: 'info' | 'success' | 'warning' | 'error'
   features: string[]
-  actionText: string
-  actionIcon: string
-  fields: number
-  layout: string
-  complexity: number
+  buttonText: string
+  buttonIcon: string
 }
 
-interface ContainerConfigItem {
-  layout: LayoutType
-  title: string
-  description: string
-  icon: string
-  iconColor: string
-  tagType: StatusType
-  features: string[]
-  actionText: string
-  actionIcon: string
-  complexity: number
-  statusType: StatusType
-  getStatusText: (state: boolean) => string
-}
-
-// 预定义选项
-const OPTIONS = {
-  ROLE: [
-    { value: 'admin', label: '管理员' },
-    { value: 'user', label: '普通用户' },
-    { value: 'guest', label: '访客' },
-  ] as OptionItem[],
-
-  CATEGORY: [
-    { value: 'electronics', label: '电子产品' },
-    { value: 'clothing', label: '服装' },
-    { value: 'books', label: '图书' },
-  ] as OptionItem[],
-
-  STATUS: [
-    { value: 'active', label: '活跃' },
-    { value: 'inactive', label: '非活跃' },
-    { value: 'pending', label: '待处理' },
-  ] as OptionItem[],
-
-  PRIORITY: [
-    { value: 'high', label: '高' },
-    { value: 'medium', label: '中' },
-    { value: 'low', label: '低' },
-  ] as OptionItem[],
-
-  TEMPLATE: [
-    { value: 'vue', label: 'Vue 3 项目' },
-    { value: 'react', label: 'React 项目' },
-    { value: 'node', label: 'Node.js 项目' },
-  ] as OptionItem[],
-
-  FEATURE: [
-    { value: 'typescript', label: 'TypeScript' },
-    { value: 'eslint', label: 'ESLint' },
-    { value: 'prettier', label: 'Prettier' },
-    { value: 'tests', label: '单元测试' },
-  ] as OptionItem[],
-
-  TYPE: [
-    { value: 'type1', label: '类型一' },
-    { value: 'type2', label: '类型二' },
-  ] as OptionItem[],
-} as const
-
-// 字段工厂函数
-const createField = (
-  type: ComponentType,
-  prop: string,
-  label: string,
-  options: Partial<FormOption> = {}
-): FormOption => ({
-  type,
-  prop,
-  label,
-  placeholder:
-    options.placeholder || `请${type === 'select' ? '选择' : '输入'}${label}`,
-  rules: options.rules || [PRESET_RULES.required(label)],
-  ...options,
-})
-
-// 简化的字段创建函数
-const field = {
-  input: (prop: string, label: string, options?: Partial<FormOption>) =>
-    createField('input', prop, label, options),
-
-  select: (
-    prop: string,
-    label: string,
-    children: OptionItem[],
-    options?: Partial<FormOption>
-  ) => createField('select', prop, label, { children, ...options }),
-
-  textarea: (
-    prop: string,
-    label: string,
-    rows = 4,
-    options?: Partial<FormOption>
-  ) => createField('textarea', prop, label, { attrs: { rows }, ...options }),
-
-  number: (prop: string, label: string, options?: Partial<FormOption>) =>
-    createField('inputNumber', prop, label, options),
-
-  switch: (
-    prop: string,
-    label: string,
-    defaultValue = false,
-    options?: Partial<FormOption>
-  ): FormOption => ({
-    type: 'switch',
-    prop,
-    label,
-    value: defaultValue,
-    ...options,
-  }),
-
-  checkbox: (
-    prop: string,
-    label: string,
-    children: OptionItem[],
-    options?: Partial<FormOption>
-  ): FormOption => ({
-    type: 'checkbox',
-    prop,
-    label,
-    children,
-    value: [],
-    rules: [],
-    ...options,
-  }),
-}
-
-// 容器配置
-export const containerConfig: Record<ContainerType, ContainerConfigItem> = {
-  modal: {
-    layout: 'grid',
+export const cards: CardInfo[] = [
+  {
+    key: 'modal',
     title: '模态框表单',
-    description: '适用于新增/编辑单个实体，快速配置操作，空间有限时的最佳选择',
+    description: '适用于新增/编辑单个实体，快速配置操作',
     icon: 'mdi:book-information-variant',
-    iconColor: '#2080f0',
+    tag: 'Grid',
     tagType: 'info',
     features: ['空间有限', '聚焦操作', '网格布局', '快进快出'],
-    actionText: '打开模态框',
-    actionIcon: 'i-carbon-launch',
-    complexity: 3,
-    statusType: 'info',
-    getStatusText: (visible: boolean) => (visible ? '已打开' : '就绪'),
+    buttonText: '打开模态框',
+    buttonIcon: 'i-carbon-launch',
   },
-  drawer: {
-    layout: 'default',
+  {
+    key: 'drawer',
     title: '抽屉表单',
-    description: '适用于详情查看+编辑，多步骤数据录入，信息展示更加丰富',
+    description: '适用于详情查看+编辑，多步骤数据录入',
     icon: 'mdi:this-side-up-outline',
-    iconColor: '#18a058',
+    tag: 'Default',
     tagType: 'success',
     features: ['空间充足', '详情编辑', '默认布局', '信息丰富'],
-    actionText: '打开抽屉',
-    actionIcon: 'i-carbon-arrow-right',
-    complexity: 4,
-    statusType: 'success',
-    getStatusText: (visible: boolean) => (visible ? '已打开' : '就绪'),
+    buttonText: '打开抽屉',
+    buttonIcon: 'i-carbon-arrow-right',
   },
-  sidebar: {
-    layout: 'default',
+  {
+    key: 'sidebar',
     title: '侧边栏表单',
-    description: '适用于实时筛选器，快速操作面板，不干扰主要工作流程',
+    description: '适用于实时筛选器，快速操作面板',
     icon: 'mdi:page-layout-sidebar-right',
-    iconColor: '#f0a020',
+    tag: 'Compact',
     tagType: 'warning',
     features: ['紧凑布局', '实时筛选', '辅助操作', '不干扰主流程'],
-    actionText: '侧边栏',
-    actionIcon: 'i-carbon-panel-expansion',
-    complexity: 2,
-    statusType: 'warning',
-    getStatusText: (collapsed: boolean) => (collapsed ? '已收起' : '已展开'),
+    buttonText: '侧边栏',
+    buttonIcon: 'i-carbon-panel-expansion',
   },
-  popover: {
-    layout: 'inline',
+  {
+    key: 'popover',
     title: '浮动表单',
-    description: '适用于快速编辑单个字段，简单配置项调整，轻量级交互',
-    icon: 'mdi:format-float-center',
-    iconColor: '#d03050',
+    description: '适用于快速编辑单个字段，轻量级交互',
+    icon: 'mdi:float-portrait',
+    tag: 'Inline',
     tagType: 'error',
     features: ['轻量级', '内联布局', '快速编辑', '即时反馈'],
-    actionText: '切换浮动表单',
-    actionIcon: 'i-carbon-cursor-1',
-    complexity: 1,
-    statusType: 'error',
-    getStatusText: (visible: boolean) => (visible ? '已激活' : '待激活'),
+    buttonText: '打开浮动表单',
+    buttonIcon: 'mdi:float-portrait',
   },
-  wizard: {
-    layout: 'steps',
+  {
+    key: 'wizard',
     title: '步骤向导表单',
-    description: '适用于复杂流程分步引导，用户注册，项目创建向导',
+    description: '适用于复杂流程分步引导，项目创建向导',
     icon: 'mdi:debug-step-over',
-    iconColor: '#d03050',
+    tag: 'Steps',
     tagType: 'success',
     features: ['分步引导', '流程清晰', '复杂配置', '进度跟踪'],
-    actionText: '启动向导',
-    actionIcon: 'i-carbon-play',
-    complexity: 5,
-    statusType: 'success',
-    getStatusText: (visible: boolean) => (visible ? '进行中' : '待启动'),
+    buttonText: '启动向导',
+    buttonIcon: 'i-carbon-play',
   },
-}
+]
 
-// 表单配置
-export const formOptions: Record<ContainerType, FormOption[]> = {
-  modal: [
-    field.input('username', '用户名', {
-      rules: RULE_COMBOS.username('用户名'),
-    }),
-    field.input('email', '邮箱', { rules: RULE_COMBOS.email('邮箱') }),
-    field.select('role', '角色', OPTIONS.ROLE),
-    field.input('phone', '手机号', { rules: RULE_COMBOS.mobile('手机号') }),
-  ],
+// =================== 模态框 - 用户信息（Grid） ===================
 
-  drawer: [
-    field.input('productName', '商品名称'),
-    field.textarea('description', '商品描述', 4, { rules: [] }),
-    field.number('price', '价格', {
-      attrs: { min: 0, precision: 2 },
-      rules: [
-        PRESET_RULES.required('价格'),
-        PRESET_RULES.range('价格', 0.01, 999999.99),
-      ],
-    }),
-    field.select('category', '分类', OPTIONS.CATEGORY),
-    field.switch('isPublished', '是否发布'),
-    field.switch('allowReturns', '允许退货', true),
-  ],
-
-  sidebar: [
-    field.input('keyword', '关键词', { rules: [] }),
-    field.select('status', '状态', OPTIONS.STATUS, { rules: [] }),
-    field.select('type', '类型', OPTIONS.TYPE, { rules: [] }),
-  ],
-
-  popover: [
-    field.input('title', '标题'),
-    field.select('priority', '优先级', OPTIONS.PRIORITY),
-  ],
-
-  wizard: [
-    field.input('projectName', '项目名称', {
-      layout: { step: 'step1' } as ItemLayoutConfig,
-    }),
-    field.textarea('projectDesc', '项目描述', 3, {
-      placeholder: '请描述项目用途',
-      layout: { step: 'step1' } as ItemLayoutConfig,
-      rules: [],
-    }),
-    field.select('template', '项目模板', OPTIONS.TEMPLATE, {
-      layout: { step: 'step2' } as ItemLayoutConfig,
-    }),
-    field.checkbox('features', '功能特性', OPTIONS.FEATURE, {
-      layout: { step: 'step2' } as ItemLayoutConfig,
-    }),
-    field.input('gitRepo', 'Git 仓库', {
-      layout: { step: 'step3' } as ItemLayoutConfig,
-      rules: [],
-    }),
-    field.switch('autoCommit', '自动提交', false, {
-      layout: { step: 'step3' } as ItemLayoutConfig,
-    }),
-  ],
-}
-
-// 工具函数
-const getLayoutDisplayName = (
-  layout: LayoutType,
-  containerKey: ContainerType
-): string => {
-  const layoutMap: Record<LayoutType, string> = {
-    grid: 'Grid',
-    steps: 'Steps',
-    inline: 'Inline',
-    default: containerKey === 'sidebar' ? 'Compact' : 'Default',
-    card: 'Card',
-    tabs: 'Tabs',
-    dynamic: 'Dynamic',
-    custom: 'Custom',
-  }
-  return layoutMap[layout] || 'Default'
-}
-
-// 派生配置
-export const layoutTypes: Record<ContainerType, LayoutType> =
-  Object.fromEntries(
-    Object.entries(containerConfig).map(([key, config]) => [key, config.layout])
-  ) as Record<ContainerType, LayoutType>
-
-export const containerCards: ContainerCard[] = (
-  Object.keys(containerConfig) as ContainerType[]
-).map(key => {
-  const config = containerConfig[key]
-  return {
-    key,
-    title: config.title,
-    description: config.description,
-    icon: config.icon,
-    iconColor: config.iconColor,
-    tagType: config.tagType,
-    features: config.features,
-    actionText: config.actionText,
-    actionIcon: config.actionIcon,
-    fields: formOptions[key].length,
-    layout: getLayoutDisplayName(config.layout, key),
-    complexity: config.complexity,
-  }
-})
-
-export const createDefaultFormData = (): Record<
-  ContainerType,
-  Record<string, any>
-> =>
-  Object.fromEntries(
-    (Object.keys(containerConfig) as ContainerType[]).map(key => [key, {}])
-  ) as Record<ContainerType, Record<string, any>>
-
-// 统计信息
-export const headerStats = [
+export const modalOptions: FormOption[] = [
   {
-    label: '容器类型',
-    value: Object.keys(containerConfig).length,
-    type: 'info' as StatusType,
-    icon: 'mdi:open-container-initiative',
+    type: 'input',
+    prop: 'username',
+    label: '用户名',
+    placeholder: '请输入用户名',
+    rules: RULE_COMBOS.username('用户名'),
   },
   {
-    label: '表单字段',
-    value: Object.values(formOptions).reduce(
-      (total, options) => total + options.length,
-      0
-    ),
-    type: 'success' as StatusType,
-    icon: 'mdi:form-dropdown',
+    type: 'input',
+    prop: 'email',
+    label: '邮箱',
+    placeholder: '请输入邮箱',
+    rules: RULE_COMBOS.email('邮箱'),
   },
   {
-    label: '布局模式',
-    value: new Set(Object.values(layoutTypes)).size,
-    type: 'warning' as StatusType,
-    icon: 'mdi:page-layout-sidebar-left',
+    type: 'select',
+    prop: 'role',
+    label: '角色',
+    placeholder: '请选择角色',
+    rules: [PRESET_RULES.required('角色')],
+    children: [
+      { value: 'admin', label: '管理员' },
+      { value: 'user', label: '普通用户' },
+      { value: 'guest', label: '访客' },
+    ],
   },
-] as const
+  {
+    type: 'input',
+    prop: 'phone',
+    label: '手机号',
+    placeholder: '请输入手机号',
+    rules: RULE_COMBOS.mobile('手机号'),
+  },
+]
+export const modalConfig: FormConfig = { layout: 'grid' }
+
+// =================== 抽屉 - 商品配置（Default） ===================
+
+export const drawerOptions: FormOption[] = [
+  {
+    type: 'input',
+    prop: 'productName',
+    label: '商品名称',
+    placeholder: '请输入商品名称',
+    rules: [PRESET_RULES.required('商品名称')],
+  },
+  {
+    type: 'textarea',
+    prop: 'description',
+    label: '商品描述',
+    placeholder: '请输入商品描述',
+    attrs: { rows: 4 },
+  },
+  {
+    type: 'inputNumber',
+    prop: 'price',
+    label: '价格',
+    placeholder: '请输入价格',
+    attrs: { min: 0, precision: 2 },
+    rules: [
+      PRESET_RULES.required('价格'),
+      PRESET_RULES.range('价格', 0.01, 999999.99),
+    ],
+  },
+  {
+    type: 'select',
+    prop: 'category',
+    label: '分类',
+    placeholder: '请选择分类',
+    rules: [PRESET_RULES.required('分类')],
+    children: [
+      { value: 'electronics', label: '电子产品' },
+      { value: 'clothing', label: '服装' },
+      { value: 'books', label: '图书' },
+    ],
+  },
+  { type: 'switch', prop: 'isPublished', label: '是否发布', value: false },
+  { type: 'switch', prop: 'allowReturns', label: '允许退货', value: true },
+]
+export const drawerConfig: FormConfig = {
+  layout: 'default',
+  showActions: false,
+}
+
+// =================== 侧边栏 - 筛选条件（Compact） ===================
+
+export const sidebarOptions: FormOption[] = [
+  {
+    type: 'input',
+    prop: 'keyword',
+    label: '关键词',
+    placeholder: '请输入关键词',
+  },
+  {
+    type: 'select',
+    prop: 'status',
+    label: '状态',
+    placeholder: '请选择状态',
+    children: [
+      { value: 'active', label: '活跃' },
+      { value: 'inactive', label: '非活跃' },
+      { value: 'pending', label: '待处理' },
+    ],
+  },
+  {
+    type: 'select',
+    prop: 'type',
+    label: '类型',
+    placeholder: '请选择类型',
+    children: [
+      { value: 'type1', label: '类型一' },
+      { value: 'type2', label: '类型二' },
+    ],
+  },
+]
+export const sidebarConfig: FormConfig = { layout: 'default' }
+
+// =================== 浮动 - 快速编辑（Inline） ===================
+
+export const popoverOptions: FormOption[] = [
+  {
+    type: 'input',
+    prop: 'title',
+    label: '标题',
+    placeholder: '请输入标题',
+    rules: [PRESET_RULES.required('标题')],
+  },
+  {
+    type: 'select',
+    prop: 'priority',
+    label: '优先级',
+    placeholder: '请选择优先级',
+    rules: [PRESET_RULES.required('优先级')],
+    children: [
+      { value: 'high', label: '高' },
+      { value: 'medium', label: '中' },
+      { value: 'low', label: '低' },
+    ],
+  },
+]
+export const popoverConfig: FormConfig = { layout: 'inline' }
+
+// =================== 步骤向导 - 项目创建（Steps） ===================
+
+export const wizardOptions: FormOption[] = [
+  {
+    type: 'input',
+    prop: 'projectName',
+    label: '项目名称',
+    placeholder: '请输入项目名称',
+    rules: [PRESET_RULES.required('项目名称')],
+    layout: { step: 'step1' },
+  },
+  {
+    type: 'textarea',
+    prop: 'projectDesc',
+    label: '项目描述',
+    placeholder: '请描述项目用途',
+    attrs: { rows: 3 },
+    layout: { step: 'step1' },
+  },
+  {
+    type: 'select',
+    prop: 'template',
+    label: '项目模板',
+    placeholder: '请选择模板',
+    rules: [PRESET_RULES.required('项目模板')],
+    layout: { step: 'step2' },
+    children: [
+      { value: 'vue', label: 'Vue 3 项目' },
+      { value: 'react', label: 'React 项目' },
+      { value: 'node', label: 'Node.js 项目' },
+    ],
+  },
+  {
+    type: 'checkbox',
+    prop: 'features',
+    label: '功能特性',
+    value: [],
+    layout: { step: 'step2' },
+    children: [
+      { value: 'typescript', label: 'TypeScript' },
+      { value: 'eslint', label: 'ESLint' },
+      { value: 'prettier', label: 'Prettier' },
+      { value: 'tests', label: '单元测试' },
+    ],
+  },
+  {
+    type: 'input',
+    prop: 'gitRepo',
+    label: 'Git 仓库',
+    placeholder: '请输入仓库地址',
+    layout: { step: 'step3' },
+  },
+  {
+    type: 'switch',
+    prop: 'autoCommit',
+    label: '自动提交',
+    value: false,
+    layout: { step: 'step3' },
+  },
+]
+export const wizardConfig: FormConfig = { layout: 'steps' }

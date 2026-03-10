@@ -1,16 +1,6 @@
-/**
- * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-03-05
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-05
- * @FilePath: \Robot_Admin\src\views\demo\54-audio-player\data.ts
- * @Description: 音频播放器演示数据
- * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
- */
-
 import type { AudioTrack } from '@robot-admin/naive-ui-components'
 
-/** 功能特性 */
+// 功能特性
 export const FEATURE_LIST = [
   {
     icon: 'mdi:play-circle',
@@ -42,12 +32,6 @@ export const FEATURE_LIST = [
     desc: '可展开的曲目列表面板',
     tag: '扩展',
   },
-  {
-    icon: 'mdi:palette',
-    title: '主题外观',
-    desc: '默认 / 迷你两种主题',
-    tag: '样式',
-  },
 ]
 
 export const TAG_TYPE_MAP: Record<string, string> = {
@@ -57,7 +41,7 @@ export const TAG_TYPE_MAP: Record<string, string> = {
   样式: 'info',
 }
 
-/** ========== 场景 1: 音乐播放器 ========== */
+// 场景 1: 音乐播放器
 export const MUSIC_TRACKS: AudioTrack[] = [
   {
     id: 'm1',
@@ -101,7 +85,7 @@ export const MUSIC_TRACKS: AudioTrack[] = [
   },
 ]
 
-/** ========== 场景 2: 语音消息 ========== */
+// 场景 2: 语音消息
 export const VOICE_TRACKS: AudioTrack[] = [
   {
     id: 'v1',
@@ -126,7 +110,7 @@ export const VOICE_TRACKS: AudioTrack[] = [
   },
 ]
 
-/** ========== 场景 3: 播客节目 ========== */
+// 场景 3: 播客节目
 export const PODCAST_TRACKS: AudioTrack[] = [
   {
     id: 'p1',
@@ -154,7 +138,7 @@ export const PODCAST_TRACKS: AudioTrack[] = [
   },
 ]
 
-/** 演示场景 */
+// 演示场景
 export const DEMO_SCENES = [
   {
     key: 'music',

@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-02-25 10:00:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-25 10:00:00
+ * @LastEditTime: 2026-03-09 12:00:00
  * @FilePath: \Robot_Admin\src\views\demo\44-collapse-panel\index.scss
  * @Description: 折叠面板演示页样式
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
@@ -11,55 +11,127 @@
 .collapse-panel-demo-page {
   padding: 20px;
 
-  .demo-section {
-    margin-bottom: 32px;
+  // 网格布局
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
 
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .section-title {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 6px;
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0 0 12px;
-      color: var(--app-text-primary);
-
-      .title-icon {
-        flex-shrink: 0;
-        font-size: 20px;
-        color: var(--primary-color, #409eff);
-      }
-    }
-
-    .section-desc {
-      font-size: 14px;
-      color: var(--app-text-secondary);
-      margin: 0 0 16px;
-      line-height: 1.6;
-
-      code {
-        padding: 2px 6px;
-        border-radius: 4px;
-        background: var(--app-bg-surface);
-        color: var(--primary-color, #409eff);
-        font-size: 13px;
-        font-family: 'Fira Code', 'Consolas', monospace;
-      }
-    }
-
-    .section-content {
-      p {
-        margin: 0;
-        line-height: 1.8;
-      }
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
     }
   }
 
-  // ─── 卡片变体占位图表 ─────────────────────────
+  // 卡片样式
+  .demo-card {
+    border-radius: 12px !important;
+    transition: all 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    :deep(.n-card-header) {
+      padding-bottom: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    :deep(.n-card__content) {
+      padding: 20px;
+    }
+
+    // 全宽卡片
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+  }
+
+  // 操作栏
+  .action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  // 统计网格
+  .stat-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f1f5f9;
+      transform: translateY(-1px);
+    }
+  }
+
+  .stat-icon {
+    font-size: 24px;
+    color: #94a3b8;
+  }
+
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+
+    &.primary {
+      color: #2080f0;
+    }
+
+    &.success {
+      color: #18a058;
+    }
+
+    &.warning {
+      color: #f0a020;
+    }
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: #94a3b8;
+  }
+
+  // 图表占位
   .chart-placeholder {
     display: flex;
     flex-direction: column;
@@ -67,63 +139,110 @@
     justify-content: center;
     gap: 8px;
     height: 120px;
-    border-radius: 6px;
-    background: var(--app-bg-body);
-    border: 1px dashed var(--app-border-default);
+    border-radius: 8px;
+    background: #f5f7fa;
+    border: 1px dashed #e0e0e0;
 
     .placeholder-icon {
       font-size: 32px;
-      color: var(--app-text-quaternary);
+      color: #999;
     }
   }
 
-  // ─── 懒渲染指示 ───────────────────────────────
+  // 懒渲染指示
   .lazy-indicator {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    background: var(--app-bg-body);
-
-    .iconify {
-      font-size: 18px;
-    }
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #f5f7fa;
   }
 
+  // 提示文字
   .demo-tip {
-    margin-top: 8px;
+    display: block;
+    margin-top: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: #f0f9ff;
     font-size: 13px;
+  }
+
+  // 内容段落
+  p {
+    margin: 0;
+    line-height: 1.8;
+    color: #666;
   }
 
   // ─── 暗色主题适配 ─────────────────────────────
   [data-theme='dark'] & {
-    .demo-section {
-      .section-desc code {
+    .demo-card {
+      .card-header h3 {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .card-desc {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.04);
+
+      &:hover {
         background: rgba(255, 255, 255, 0.08);
       }
     }
 
+    .stat-icon {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .stat-label {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
     .chart-placeholder {
-      border-color: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.12);
+
+      .placeholder-icon {
+        color: rgba(255, 255, 255, 0.4);
+      }
+    }
+
+    .lazy-indicator {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .demo-tip {
+      background: rgba(33, 150, 243, 0.1);
+    }
+
+    p {
+      color: rgba(255, 255, 255, 0.7);
     }
 
     // C_CollapsePanel 组件内部暗色适配
-    // ── 默认 / 带边框 / 卡片变体 ──
     :deep(.c-collapse-panel--card .collapse-item) {
-      background: var(--c-bg-card, var(--card-color, #262626));
-      border-color: var(--c-border, rgba(255, 255, 255, 0.12));
+      background: var(--c-bg-card, #1e1e1e);
+      border-color: rgba(255, 255, 255, 0.12);
     }
 
     :deep(.c-collapse-panel--card .collapse-item--active) {
-      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.36);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
     }
 
     :deep(.c-collapse-panel--card .collapse-item:hover:not(.collapse-item--disabled)) {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
     }
 
-    // ── 默认变体分割线 ──
     :deep(.c-collapse-panel--default .collapse-item) {
       border-color: rgba(255, 255, 255, 0.12);
     }
@@ -132,25 +251,22 @@
       border-color: rgba(255, 255, 255, 0.12);
     }
 
-    // ── header 文字清晰度 ──
     :deep(.collapse-item__header) {
-      color: rgba(255, 255, 255, 0.82);
+      color: rgba(255, 255, 255, 0.85);
     }
 
     :deep(.collapse-item__header-text) {
-      color: rgba(255, 255, 255, 0.82);
+      color: rgba(255, 255, 255, 0.85);
     }
 
     :deep(.collapse-item__header-icon) {
-      color: rgba(255, 255, 255, 0.52);
+      color: rgba(255, 255, 255, 0.5);
     }
 
-    // ── content 文本 ──
     :deep(.collapse-item__content) {
-      color: rgba(255, 255, 255, 0.72);
+      color: rgba(255, 255, 255, 0.7);
     }
 
-    // ── ghost 变体 hover 处理 ──
     :deep(.c-collapse-panel--ghost .collapse-item__header:hover) {
       background: rgba(255, 255, 255, 0.06);
     }

@@ -129,7 +129,7 @@
               :columns="userColumns as any"
               :data="userList"
               :loading="loading"
-              :row-key="row => row.id"
+              :row-key="(row: any) => row.id"
               :row-class-name="getRowClassName"
               :config="{
                 actions: tableActions as any,
@@ -299,7 +299,9 @@
                   key: 'close',
                   label: '关闭',
                   type: 'primary',
-                  onClick: () => (showUserDetail = false),
+                  onClick: () => {
+                    showUserDetail = false
+                  },
                 },
               ]"
               :config="{ align: 'center' }"
@@ -415,9 +417,12 @@
     NDropdown,
     NTreeSelect,
   } from 'naive-ui/es'
-  import type { ActionItem } from '@/types/modules/action-bar'
-
-  import type { TableColumn } from '@/types/modules/table'
+  import {
+    C_Icon,
+    C_Tree,
+    type ActionItem,
+    type TableColumn,
+  } from '@robot-admin/naive-ui-components'
   import {
     type UserData,
     type UserFormData,

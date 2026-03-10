@@ -1,4 +1,4 @@
-import type { SelectOption, DataRecord } from '@/types/modules/table'
+import type { SelectOption, DataRecord } from '@robot-admin/naive-ui-components'
 import type { TableColumn, UseTableCrudConfig } from '@robot-admin/request-core'
 import { PRESET_RULES } from '@robot-admin/form-validate'
 
@@ -56,23 +56,35 @@ export const MODE_CONFIG = {
 }
 
 // ================= 选项配置 =================
-const departmentOptions: SelectOption[] = [
+export const DEPARTMENT_OPTIONS: SelectOption[] = [
   { label: '技术部', value: 'tech' },
   { label: '人事部', value: 'hr' },
   { label: '市场部', value: 'market' },
   { label: '财务部', value: 'finance' },
 ]
 
-const statusOptions: SelectOption[] = [
+export const STATUS_OPTIONS: SelectOption[] = [
   { label: '在职', value: 'active' },
   { label: '离职', value: 'inactive' },
   { label: '试用期', value: 'probation' },
 ]
 
-const genderOptions: SelectOption[] = [
+export const GENDER_OPTIONS: SelectOption[] = [
   { label: '男', value: 'male' },
   { label: '女', value: 'female' },
 ]
+
+// 新增表单默认值
+export const ADD_FORM_DEFAULTS = {
+  name: '',
+  age: 25,
+  gender: 'male',
+  email: '',
+  department: 'tech',
+  joinDate: Date.now(),
+  status: 'probation',
+  description: '',
+}
 
 // ================= 简化的格式化函数 =================
 const formatGender = (gender: string) =>
@@ -140,7 +152,7 @@ export const getTableColumns = (): TableColumn[] => [
     required: true,
     editType: 'select',
     editProps: {
-      options: genderOptions,
+      options: GENDER_OPTIONS,
       placeholder: '请选择性别',
     },
     render: (row: Employee) => formatGender(row.gender),
@@ -165,7 +177,7 @@ export const getTableColumns = (): TableColumn[] => [
     required: true,
     editType: 'select',
     editProps: {
-      options: departmentOptions,
+      options: DEPARTMENT_OPTIONS,
       placeholder: '请选择部门',
     },
     render: (row: Employee) => formatDepartment(row.department),
@@ -193,7 +205,7 @@ export const getTableColumns = (): TableColumn[] => [
     required: false,
     editType: 'select',
     editProps: {
-      options: statusOptions,
+      options: STATUS_OPTIONS,
       placeholder: '请选择状态',
     },
     render: (row: Employee) => formatStatus(row.status),

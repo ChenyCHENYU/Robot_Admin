@@ -1,6 +1,10 @@
 <template>
   <div class="table-demo-page">
-    <NH1>表格组件场景示例</NH1>
+    <c_vTitle
+      title="表格组件场景示例"
+      icon="mdi:table"
+      description="支持多种编辑模式（模态框、抽屉、行内编辑）、分页、新增、编辑、删除、详情查看等完整 CRUD 功能"
+    />
     <NCard>
       <NSpace
         vertical
@@ -51,7 +55,7 @@
             <div class="pagination-status">
               <span class="status-label">分页状态：</span>
               <NSwitch
-                v-model:value="table.paginationEnabled.value"
+                v-model:value="tableCrud.paginationEnabled.value"
                 size="medium"
               >
                 <template #checked> 开启 </template>
@@ -63,10 +67,10 @@
 
             <!-- 刷新按钮 -->
             <NButton
-              @click="table.refresh()"
+              @click="tableCrud.refresh()"
               type="info"
               size="medium"
-              :loading="table.loading.value"
+              :loading="tableCrud.loading.value"
             >
               <template #icon>
                 <C_Icon name="mdi:refresh" />
@@ -82,17 +86,18 @@
           :title="currentModeConfig.title"
         >
           {{ currentModeConfig.description }}
-          <template v-if="table.paginationEnabled.value">
+          <template v-if="tableCrud.paginationEnabled.value">
             <br />
             <strong>分页功能已启用</strong> - 当前显示第
-            {{ table.page.current }} 页，每页 {{ table.page.size }} 条，总共
-            {{ table.total.value }} 条记录
+            {{ tableCrud.page.current }} 页，每页
+            {{ tableCrud.page.size }} 条，总共
+            {{ tableCrud.total.value }} 条记录
           </template>
         </NAlert>
 
         <!-- 表格组件 -->
         <C_Table
-          :crud="table"
+          :crud="tableCrud"
           :config="{
             edit: {
               mode: editMode,
@@ -106,12 +111,12 @@
 
     <!-- 详情模态框 -->
     <c_detail
-      v-model:visible="table.detail.visible.value"
-      :data="table.detail.data.value || {}"
-      :config="table.detailConfig as any"
-      :title="table.detail.title.value"
-      :loading="table.loading.value"
-      @close="table.detail.close"
+      v-model:visible="tableCrud.detail.visible.value"
+      :data="tableCrud.detail.data.value || {}"
+      :config="tableCrud.detailConfig as any"
+      :title="tableCrud.detail.title.value"
+      :loading="tableCrud.loading.value"
+      @close="tableCrud.detail.close"
     />
 
     <!-- 新增员工模态框 -->
@@ -162,8 +167,13 @@
           path="gender"
         >
           <NRadioGroup v-model:value="addFormData.gender">
-            <NRadio value="male">男</NRadio>
-            <NRadio value="female">女</NRadio>
+            <NRadio
+              v-for="item in GENDER_OPTIONS"
+              :key="item.value"
+              :value="item.value"
+            >
+              {{ item.label }}
+            </NRadio>
           </NRadioGroup>
         </NFormItem>
 
@@ -183,12 +193,7 @@
         >
           <NSelect
             v-model:value="addFormData.department"
-            :options="[
-              { label: '技术部', value: 'tech' },
-              { label: '人事部', value: 'hr' },
-              { label: '市场部', value: 'market' },
-              { label: '财务部', value: 'finance' },
-            ]"
+            :options="DEPARTMENT_OPTIONS"
             placeholder="请选择部门"
           />
         </NFormItem>
@@ -211,11 +216,7 @@
         >
           <NSelect
             v-model:value="addFormData.status"
-            :options="[
-              { label: '在职', value: 'active' },
-              { label: '离职', value: 'inactive' },
-              { label: '试用期', value: 'probation' },
-            ]"
+            :options="STATUS_OPTIONS"
             placeholder="请选择状态"
           />
         </NFormItem>
@@ -244,22 +245,32 @@
 </template>
 
 <script setup lang="ts">
-  import type { EditMode } from '@/types/modules/table'
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import type { ActionItem, EditMode } from '@robot-admin/naive-ui-components'
   import { useTableCrud } from '@robot-admin/request-core'
-  import { EDIT_MODES, MODE_CONFIG, employeeTableConfig } from './data'
   import { PRESET_RULES } from '@robot-admin/form-validate'
+  import {
+    EDIT_MODES,
+    MODE_CONFIG,
+    employeeTableConfig,
+    DEPARTMENT_OPTIONS,
+    STATUS_OPTIONS,
+    GENDER_OPTIONS,
+    ADD_FORM_DEFAULTS,
+  } from './data'
 
-  // ================= 初始化表格 CRUD =================
-  const table = useTableCrud(employeeTableConfig)
+  // 初始化表格 CRUD
+  const tableCrud = useTableCrud(employeeTableConfig)
 
-  // ================= UI 状态管理 =================
+  // UI 状态
   const editMode = ref<EditMode>('modal')
   const showAddModal = ref(false)
   const addFormRef = ref()
   const addFormData = ref<any>({})
 
-  // ================= 模态框操作按钮 =================
+  // 当前模式配置
+  const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])
+
+  // 模态框按钮
   const modalActions = computed<ActionItem[]>(() => [
     {
       key: 'cancel',
@@ -272,20 +283,17 @@
       key: 'save',
       label: '保存',
       type: 'primary',
-      loading: table.loading.value,
+      loading: tableCrud.loading.value,
       onClick: handleAddSubmit,
     },
   ])
 
-  // ================= 计算属性 =================
-  const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])
-
-  // 表单验证规则（使用封装的 PRESET_RULES）
+  // 表单验证规则
   const addFormRules = {
     name: [PRESET_RULES.required('姓名'), PRESET_RULES.length('姓名', 2, 20)],
     age: [
       PRESET_RULES.required('年龄', ['blur', 'change']),
-      { ...PRESET_RULES.range('年龄', 18, 65), trigger: ['blur', 'change'] }, // 修改 trigger
+      PRESET_RULES.range('年龄', 18, 65),
     ],
     gender: [PRESET_RULES.required('性别', 'change')],
     email: [PRESET_RULES.required('邮箱'), PRESET_RULES.email('邮箱')],
@@ -294,31 +302,18 @@
     status: [PRESET_RULES.required('状态', 'change')],
   }
 
-  // ================= 新增员工处理 =================
+  // 新增员工
   const handleAddEmployee = () => {
-    // 初始化表单数据（使用默认值）
-    addFormData.value = {
-      name: '',
-      age: 25,
-      gender: 'male',
-      email: '',
-      department: 'tech',
-      joinDate: Date.now(),
-      status: 'probation',
-      description: '',
-    }
+    addFormData.value = { ...ADD_FORM_DEFAULTS, joinDate: Date.now() }
     showAddModal.value = true
   }
 
-  // 提交新增表单
+  // 提交新增
   const handleAddSubmit = () => {
     addFormRef.value?.validate(async (errors: any) => {
       if (!errors) {
         try {
-          await table.create({
-            ...addFormData.value,
-            id: Date.now(), // 临时ID
-          })
+          await tableCrud.create({ ...addFormData.value, id: Date.now() })
           showAddModal.value = false
         } catch (error) {
           console.error('新增失败:', error)

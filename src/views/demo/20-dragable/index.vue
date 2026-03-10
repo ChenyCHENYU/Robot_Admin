@@ -10,7 +10,11 @@
 
 <template>
   <div class="draggable-demo">
-    <NH1 class="page-title">拖拽组件场景示例</NH1>
+    <c_vTitle
+      title="拖拽组件场景示例"
+      icon="mdi:drag"
+      description="支持看板式拖拽、列表排序、分组拖拽等特性，适用于任务管理、内容排序等场景"
+    />
 
     <!-- 看板式拖拽 -->
     <NCard

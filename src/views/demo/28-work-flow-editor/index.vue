@@ -10,28 +10,25 @@
 
 <template>
   <div class="workflow-demo-page">
-    <header class="page-header">
-      <NH1 class="p4px">工作流设计器场景示例</NH1>
-      <p class="pl-4px"
-        >拖拽构建审批流程，支持多种场景模板，实时预览工作流数据</p
-      >
-      <div class="header-content">
-        <div class="title-section"></div>
-        <div class="header-actions">
-          <NButton
-            type="primary"
-            @click="saveAllWorkflows"
-          >
-            <template #icon><div class="i-mdi:content-save"></div></template>
-            保存所有流程
-          </NButton>
-          <NButton @click="exportAllWorkflows">
-            <template #icon><div class="i-mdi:download"></div></template>
-            批量导出
-          </NButton>
-        </div>
-      </div>
-    </header>
+    <c_vTitle
+      title="工作流设计器场景示例"
+      icon="mdi:sitemap"
+      description="拖拽构建审批流程，支持多种场景模板，实时预览工作流数据"
+    >
+      <template #extra>
+        <NButton
+          type="primary"
+          @click="saveAllWorkflows"
+        >
+          <template #icon><div class="i-mdi:content-save"></div></template>
+          保存所有流程
+        </NButton>
+        <NButton @click="exportAllWorkflows">
+          <template #icon><div class="i-mdi:download"></div></template>
+          批量导出
+        </NButton>
+      </template>
+    </c_vTitle>
 
     <section class="scenario-section">
       <div class="container">

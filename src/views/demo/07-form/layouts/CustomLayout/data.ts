@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { FormOption } from '@/types/modules/form'
+import type { FormOption } from '@robot-admin/naive-ui-components'
 import { RULE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
 
 // 类型定义

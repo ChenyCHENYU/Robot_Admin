@@ -9,40 +9,11 @@
 -->
 <template>
   <div class="timeline-demo">
-    <NH1>时间线组件场景示例</NH1>
-
-    <!-- ==================== 功能特性 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:puzzle-outline"
-          class="title-icon"
-        />
-        功能特性
-      </h2>
-      <div class="feature-grid">
-        <div
-          v-for="feat in FEATURE_LIST"
-          :key="feat.title"
-          class="feature-card"
-        >
-          <div class="feature-card__icon">
-            <C_Icon :name="feat.icon" />
-          </div>
-          <div class="feature-card__body">
-            <span class="feature-card__title">{{ feat.title }}</span>
-            <span class="feature-card__desc">{{ feat.desc }}</span>
-          </div>
-          <NTag
-            :bordered="false"
-            size="small"
-            :type="TAG_TYPE_MAP[feat.tag] ?? 'default'"
-          >
-            {{ feat.tag }}
-          </NTag>
-        </div>
-      </div>
-    </div>
+    <c_vTitle
+      title="时间线组件场景示例"
+      icon="mdi:timeline-clock-outline"
+      description="支持垂直/水平布局、节点样式自定义、展开折叠等特性，适用于项目进度、审批流程、物流追踪等场景"
+    />
 
     <!-- ==================== 场景切换 ==================== -->
     <div class="demo-section">
@@ -157,7 +128,6 @@
         :show-time="showTime"
         :line-type="lineType"
         :size="nodeSize"
-        @expand="handleExpand"
       />
 
       <!-- CI 流水线（水平） -->
@@ -183,68 +153,17 @@
         :show-time="showTime"
         :line-type="lineType"
         :size="nodeSize"
-        @expand="handleExpand"
       />
-    </div>
-
-    <!-- ==================== 事件日志 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:console"
-          class="title-icon"
-        />
-        事件日志
-        <NButton
-          quaternary
-          size="small"
-          style="margin-left: auto"
-          @click="eventLogs = []"
-        >
-          清空
-        </NButton>
-      </h2>
-      <div class="event-log-panel">
-        <div
-          v-for="(log, idx) in eventLogs.slice(-15)"
-          :key="idx"
-          class="event-log-item"
-        >
-          <span class="event-log-time">{{ log.time }}</span>
-          <NTag
-            :type="log.type"
-            size="small"
-            :bordered="false"
-          >
-            {{ log.event }}
-          </NTag>
-          <span
-            v-if="log.detail"
-            class="event-log-detail"
-          >
-            {{ log.detail }}
-          </span>
-        </div>
-        <div
-          v-if="!eventLogs.length"
-          class="event-log-empty"
-        >
-          操作后事件将在此处实时显示...
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import type { TimelineItem } from '@robot-admin/naive-ui-components'
   import {
     PROJECT_TIMELINE,
     CI_PIPELINE_TIMELINE,
     ORDER_TIMELINE,
     DEMO_SCENES,
-    FEATURE_LIST,
-    TAG_TYPE_MAP,
   } from './data'
   import './index.scss'
 
@@ -256,34 +175,6 @@
   const showTime = ref(true)
   const lineType = ref<'solid' | 'dashed' | 'dotted'>('solid')
   const nodeSize = ref<'small' | 'medium' | 'large'>('medium')
-
-  // ===== 事件日志 =====
-  interface EventLog {
-    time: string
-    event: string
-    type: 'default' | 'success' | 'info' | 'warning' | 'error'
-    detail?: string
-  }
-  const eventLogs = ref<EventLog[]>([])
-
-  /** 添加事件日志 */
-  function addLog(
-    event: string,
-    type: EventLog['type'] = 'default',
-    detail?: string
-  ) {
-    const now = new Date()
-    const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
-    eventLogs.value.push({ time, event, type, detail })
-  }
-
-  const handleExpand = (item: TimelineItem, expanded: boolean) => {
-    addLog(
-      'expand',
-      expanded ? 'success' : 'info',
-      `${item.title} → ${expanded ? '展开' : '折叠'}`
-    )
-  }
 </script>
 
 <style lang="scss" scoped>

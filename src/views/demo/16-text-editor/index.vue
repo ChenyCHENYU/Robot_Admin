@@ -1,16 +1,12 @@
 <template>
   <div class="editor-demo-page">
-    <!-- 页面标题 -->
-    <div class="demo-header">
-      <NH1> 富文本编辑器组件演示 </NH1>
-      <p class="demo-description">
-        基于 WangEditor 封装的 Vue3 富文本编辑器组件，支持主题切换、多种配置选项
-      </p>
-    </div>
+    <c_vTitle
+      title="富文本编辑器组件演示"
+      icon="mdi:text-box-edit"
+      description="基于 WangEditor 封装的 Vue3 富文本编辑器组件，支持主题切换、禁用/只读模式、内容获取等配置"
+    />
 
-    <!-- 主要内容区域 -->
     <div class="demo-content">
-      <!-- 左侧控制面板 -->
       <div class="control-panel">
         <NCard
           title="编辑器控制"
@@ -20,7 +16,6 @@
             <i class="i-mdi:settings text-lg"></i>
           </template>
 
-          <!-- 基础操作 -->
           <div class="control-section">
             <h3 class="section-title">
               <i class="i-mdi:play mr-1"></i>
@@ -62,7 +57,6 @@
             </div>
           </div>
 
-          <!-- 状态控制 -->
           <div class="control-section">
             <h3 class="section-title">
               <i class="i-mdi:arrow-decision-outline mr-1"></i>
@@ -88,7 +82,6 @@
           </div>
         </NCard>
 
-        <!-- 编辑器状态 -->
         <NCard
           title="编辑器状态"
           class="status-card"
@@ -127,9 +120,7 @@
         </NCard>
       </div>
 
-      <!-- 右侧编辑器区域 -->
       <div class="editor-area">
-        <!-- 编辑器容器 -->
         <NCard
           title="富文本编辑器"
           class="editor-card"
@@ -184,7 +175,7 @@
     return editorContent.value.replace(/<[^>]*>/g, '').length
   })
 
-  // 监听禁用状态变化 - 完全重新实现
+  // 监听禁用状态变化
   watch(
     () => editorConfig.disabled,
     disabled => {
@@ -195,7 +186,6 @@
           ) as HTMLElement
           if (editorContainer) {
             if (disabled) {
-              // 禁用：变灰+阻止所有交互
               editorContainer.style.opacity = '0.4'
               editorContainer.style.pointerEvents = 'none'
               editorContainer.style.userSelect = 'none'
@@ -203,7 +193,6 @@
 
               message.warning('🚫 编辑器已禁用 - 完全不可交互')
             } else {
-              // 启用：恢复正常
               editorContainer.style.opacity = '1'
               editorContainer.style.pointerEvents = 'auto'
               editorContainer.style.userSelect = 'auto'
@@ -217,7 +206,7 @@
     }
   )
 
-  // 监听只读状态变化 - 完全重新实现
+  // 监听只读状态变化
   watch(
     () => editorConfig.readonly,
     readonly => {
@@ -231,7 +220,6 @@
           ) as HTMLElement
 
           if (readonly) {
-            // 只读：隐藏工具栏，禁用编辑但保持选择
             if (toolbar) {
               toolbar.style.display = 'none'
             }
@@ -241,7 +229,6 @@
 
             message.info('👁️ 只读模式 - 工具栏已隐藏，可选择文本但不可编辑')
           } else if (!editorConfig.disabled) {
-            // 取消只读：显示工具栏，恢复编辑
             if (toolbar) {
               toolbar.style.display = 'flex'
             }

@@ -1,87 +1,121 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-05-28 11:26:23
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-08 22:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\03-progress\index.scss
+ * @Description: 进度条组件演示页面样式
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+*/
+
 .progress-demo {
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
 
-  .demo-section {
-    .section-header {
-      h3 {
-        margin: 0 0 8px 0;
-        font-size: 16px;
-        font-weight: 600;
-      }
+  // 网格布局
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
 
-      .description {
-        margin: 0;
-        color: var(--text-color-3);
-        font-size: 14px;
-        line-height: 1.6;
-      }
-    }
-
-    // 卡片内容区域 - 进度条居中展示
-    :deep(.n-card__content) {
-      padding: 24px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 260px;
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
     }
   }
 
-  // 圈圈赛跑指示器样式
+  // 卡片样式
+  .demo-card {
+    border-radius: 12px !important;
+    transition: all 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    :deep(.n-card-header) {
+      padding-bottom: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    :deep(.n-card__content) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+      padding: 24px;
+    }
+  }
+
+  // 圈圈赛跑指示器
   .race-indicator {
     text-align: center;
+    padding: 0 10px;
 
     .race-title {
-      font-size: 16px;
+      font-size: 12px;
       font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--text-color-1);
+      margin-bottom: 4px;
+      color: #333;
     }
 
     .race-speeds {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      font-size: 14px;
-      color: var(--text-color-2);
+      gap: 2px;
+      font-size: 11px;
+      color: #666;
 
       span {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 4px;
+        gap: 2px;
       }
     }
   }
 }
 
-// 进度条尺寸设置
-:deep(.n-progress-graph-circle),
-:deep(.n-progress-graph-circle svg) {
-  width: 160px !important;
-  height: 160px !important;
-}
+// 进度条尺寸
+.progress-demo {
+  :deep(.n-progress-graph-circle),
+  :deep(.n-progress-graph-circle svg),
+  :deep(.n-progress-graph-multiple-circle),
+  :deep(.n-progress-graph-multiple-circle svg) {
+    width: 140px !important;
+    height: 140px !important;
+  }
 
-:deep(.n-progress-graph-multiple-circle),
-:deep(.n-progress-graph-multiple-circle svg) {
-  width: 160px !important;
-  height: 160px !important;
-}
+  :deep(.n-progress-graph-dashboard),
+  :deep(.n-progress-graph-dashboard svg) {
+    width: 180px !important;
+    height: 140px !important;
+  }
 
-:deep(.n-progress-graph-dashboard),
-:deep(.n-progress-graph-dashboard svg) {
-  width: 200px !important;
-  height: 160px !important;
-}
-
-// 确保内容居中
-:deep(.n-progress-content) {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100% !important;
-  height: 100% !important;
+  :deep(.n-progress-content) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
 }

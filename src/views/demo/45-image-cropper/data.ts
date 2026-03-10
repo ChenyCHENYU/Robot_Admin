@@ -11,7 +11,7 @@
 import type {
   AspectRatioPreset,
   CropOutputFormat,
-} from '@/types/modules/image-cropper'
+} from '@robot-admin/naive-ui-components'
 
 /** 示例图片 */
 export const DEMO_IMAGE = 'https://picsum.photos/seed/cropper/800/600'

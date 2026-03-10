@@ -1,17 +1,12 @@
-<!--
- * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-03-05
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-05
- * @FilePath: \Robot_Admin\src\views\demo\54-audio-player\index.vue
- * @Description: 音频播放器演示页面
- * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
--->
 <template>
   <div class="audio-player-demo">
-    <NH1>音频播放器场景示例</NH1>
+    <c_vTitle
+      title="音频播放器场景示例"
+      icon="mdi:music-circle"
+      description="支持音乐播放、语音消息、播客节目等多种场景，提供完整的播放控制和播放列表管理"
+    />
 
-    <!-- ==================== 功能特性 ==================== -->
+    <!-- 功能特性 -->
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
@@ -44,89 +39,68 @@
       </div>
     </div>
 
-    <!-- ==================== 场景演示 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:television-play"
-          class="title-icon"
-        />
-        在线演示
-      </h2>
-      <p class="section-desc"
-        >选择不同场景，体验音频播放器在各类业务中的使用。</p
-      >
+    <!-- 左右布局：场景演示 + 主题对比 -->
+    <div class="main-layout">
+      <!-- 左侧：场景选择 + 控制选项 -->
+      <div class="left-panel">
+        <NCard title="场景选择">
+          <div class="scene-list">
+            <div
+              v-for="scene in DEMO_SCENES"
+              :key="scene.key"
+              class="scene-item"
+              :class="{ 'is-active': activeScene === scene.key }"
+              @click="activeScene = scene.key"
+            >
+              <C_Icon
+                :name="scene.icon"
+                class="scene-icon"
+              />
+              <div class="scene-body">
+                <span class="scene-title">{{ scene.title }}</span>
+                <span class="scene-desc">{{ scene.description }}</span>
+              </div>
+            </div>
+          </div>
+        </NCard>
 
-      <!-- 场景切换 -->
-      <div class="scene-switcher">
-        <div
-          v-for="scene in DEMO_SCENES"
-          :key="scene.key"
-          class="scene-card"
-          :class="{ 'is-active': activeScene === scene.key }"
-          @click="activeScene = scene.key"
-        >
-          <C_Icon
-            :name="scene.icon"
-            class="scene-card__icon"
-          />
-          <span class="scene-card__title">{{ scene.title }}</span>
-          <span class="scene-card__desc">{{ scene.description }}</span>
-        </div>
+        <NCard title="显示选项">
+          <div class="control-options">
+            <div class="control-item">
+              <span>显示封面</span>
+              <NSwitch v-model:value="showCover" />
+            </div>
+            <div class="control-item">
+              <span>显示列表</span>
+              <NSwitch v-model:value="showPlaylist" />
+            </div>
+          </div>
+        </NCard>
       </div>
 
-      <!-- 控制面板 -->
-      <div class="control-bar">
-        <div class="control-group">
-          <span class="label">封面</span>
-          <NSwitch v-model:value="showCover" />
-        </div>
-        <div class="control-group">
-          <span class="label">列表</span>
-          <NSwitch v-model:value="showPlaylist" />
-        </div>
-      </div>
-
-      <!-- 播放器 -->
-      <div class="player-wrapper">
-        <C_AudioPlayer
-          :key="activeScene"
-          :tracks="currentTracks"
-          :show-playlist="showPlaylist"
-          :show-cover="showCover"
-          @play="handlePlay"
-          @pause="handlePause"
-        />
-      </div>
-    </div>
-
-    <!-- ==================== 主题对比 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:palette"
-          class="title-icon"
-        />
-        主题对比
-      </h2>
-      <p class="section-desc">默认主题 vs 迷你主题，适用于不同场景的嵌入。</p>
-
-      <div class="theme-comparison">
-        <div>
-          <div class="theme-label">默认主题</div>
+      <!-- 右侧：播放器演示 -->
+      <div class="right-panel">
+        <NCard title="默认主题">
           <C_AudioPlayer
-            :tracks="currentTracks.slice(0, 3)"
+            :key="activeScene"
+            :tracks="currentTracks"
+            :show-playlist="showPlaylist"
+            :show-cover="showCover"
             theme="default"
-            :show-playlist="false"
+            @play="handlePlay"
+            @pause="handlePause"
           />
-        </div>
-        <div>
-          <div class="theme-label">迷你主题</div>
+        </NCard>
+
+        <NCard title="迷你主题">
           <C_AudioPlayer
             :tracks="currentTracks.slice(0, 3)"
             theme="minimal"
           />
-        </div>
+          <p class="hint-text">
+            迷你主题适用于侧边栏、嵌入式播放器等空间受限场景
+          </p>
+        </NCard>
       </div>
     </div>
   </div>
@@ -144,30 +118,20 @@
   } from './data'
   import './index.scss'
 
-  // ==================== 场景切换 ====================
-
+  // 场景切换
   const activeScene = ref<'music' | 'voice' | 'podcast'>('music')
-
   const sceneDataMap = {
     music: MUSIC_TRACKS,
     voice: VOICE_TRACKS,
     podcast: PODCAST_TRACKS,
   }
-
   const currentTracks = computed(() => sceneDataMap[activeScene.value])
 
-  // ==================== 控制 ====================
-
+  // 控制选项
   const showCover = ref(true)
   const showPlaylist = ref(true)
 
-  /** 播放事件处理 */
-  function handlePlay(idx: number) {
-    console.log('[AudioPlayer] play:', idx)
-  }
-
-  /** 暂停事件处理 */
-  function handlePause() {
-    console.log('[AudioPlayer] pause')
-  }
+  // 事件处理
+  const handlePlay = (idx: number) => console.log('[AudioPlayer] play:', idx)
+  const handlePause = () => console.log('[AudioPlayer] pause')
 </script>

@@ -7,7 +7,7 @@
  * @Description: 表单演示页面入口文件  - 基本数据配置
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
-import type { LayoutType } from '@/types/modules/form'
+import type { LayoutType } from '@robot-admin/naive-ui-components'
 
 /**
  * 布局选项配置

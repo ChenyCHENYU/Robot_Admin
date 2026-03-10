@@ -422,7 +422,7 @@
     api: {
       list: '/sys/permissionsList',
     },
-    columns: getTableColumns(),
+    columns: getTableColumns() as any,
   })
 
   const { data: tableData, loading, refresh } = table

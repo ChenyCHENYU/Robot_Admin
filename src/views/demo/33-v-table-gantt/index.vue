@@ -1,8 +1,10 @@
 <template>
   <div class="gantt-demo-page">
-    <div class="demo-header">
-      <NH1 class="demo-title">甘特图组件场景示例</NH1>
-    </div>
+    <c_vTitle
+      title="甘特图组件场景示例"
+      icon="mdi:chart-gantt"
+      description="支持任务时间线、进度跟踪、资源分配等特性，适用于项目管理、进度排程等场景"
+    />
 
     <div class="demo-content">
       <NTabs
@@ -62,7 +64,7 @@
             </div>
 
             <C_VtableGantt
-              :ref="el => setGanttRef(tab.name, el)"
+              :ref="(el: any) => setGanttRef(tab.name, el)"
               :data="ganttData[tab.name]"
               :preset="tab.preset"
               :title="tab.ganttTitle"

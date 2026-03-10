@@ -122,8 +122,8 @@
     LabelPlacement,
     FormInstance,
     FormModel,
-  } from '@/types/modules/form'
-  import type { ActionItem } from '@/types/modules/action-bar'
+    ActionItem,
+  } from '@robot-admin/naive-ui-components'
   import {
     formOptions,
     alignOptions,
@@ -202,7 +202,9 @@
       label: showAdvanced.value ? '收起' : '高级',
       icon: showAdvanced.value ? 'mdi:chevron-up' : 'mdi:chevron-down',
       type: 'info',
-      onClick: () => (showAdvanced.value = !showAdvanced.value),
+      onClick: () => {
+        showAdvanced.value = !showAdvanced.value
+      },
     },
   ]
 

@@ -1,22 +1,10 @@
-<!--
- * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2025-06-20 16:20:00
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-21 17:10:50
- * @FilePath: \Robot_Admin\src\views\demo\15-markdown-editor\index.vue
- * @Description: Markdown 编辑器演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
--->
-
 <template>
   <div class="markdown-demo-page">
-    <NH1>Markdown编辑器组件场景示例</NH1>
-    <NCard class="demo-header">
-      <p
-        >基于 Vue 的 v-md-editor 插件，封装了Markdown
-        编辑器，支持实时预览、语法高亮、图片上传等功能</p
-      >
-    </NCard>
+    <c_vTitle
+      title="Markdown编辑器组件场景示例"
+      icon="mdi:language-markdown"
+      description="基于 v-md-editor 封装，支持实时预览、语法高亮、图片上传、自动保存、字数统计等功能"
+    />
 
     <NTabs
       v-model:value="activeTab"
@@ -419,7 +407,7 @@
 
 <script setup lang="ts">
   // 导入数据和类型
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     type ArticleData,
     type InsertImageFunction,

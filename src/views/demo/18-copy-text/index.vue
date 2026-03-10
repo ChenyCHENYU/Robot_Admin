@@ -2,114 +2,118 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-23 15:11:06
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-23 15:51:12
+ * @LastEditTime: 2026-03-10 10:38:01
  * @FilePath: \Robot_Admin\src\views\demo\18-copy-text\index.vue
  * @Description:  复制文本 useCopy Hooks 演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 
 <template>
   <div class="copy-demo-container">
-    <NH1 class="demo-title"> 复制 Text - [useCopy] 场景示例 </NH1>
-    <p class="mb-20px"> 基于原生 Clipboard API 封装的 useCopy Hook 演示 </p>
+    <c_vTitle
+      title="复制 Text - [useCopy] 场景示例"
+      icon="mdi:content-copy"
+      description="基于原生 Clipboard API 封装的 useCopy Hook，支持文本、URL、JSON、代码、CSV等多种格式复制"
+    />
 
-    <!-- 基础文本复制 -->
-    <NCard
-      class="demo-section"
-      title="基础文本复制"
-    >
-      <div class="copy-examples">
-        <div class="copy-item">
-          <NInput
-            v-model:value="textInput"
-            placeholder="输入要复制的文本"
-            class="copy-input"
-          />
-          <NButton
-            type="primary"
-            :loading="loadingStates.text"
-            @click="
-              () =>
-                handleCopy(
-                  () => copyText(textInput, '自定义文本复制成功！'),
-                  'text'
-                )
-            "
-          >
-            <template #icon>
-              <i class="i-mdi:content-copy" />
-            </template>
-            复制文本
-          </NButton>
-        </div>
-
-        <div class="copy-item">
-          <div class="copy-content">{{ DEMO_TEXT }}</div>
-          <NButton
-            type="default"
-            :loading="loadingStates.demoText"
-            @click="
-              () =>
-                handleCopy(
-                  () => copyText(DEMO_TEXT, '示例文本复制成功！'),
-                  'demoText'
-                )
-            "
-          >
-            <template #icon>
-              <i class="i-mdi:text" />
-            </template>
-            复制示例文本
-          </NButton>
-        </div>
-      </div>
-    </NCard>
-
-    <!-- URL 复制 -->
-    <NCard
-      class="demo-section"
-      title="URL 链接复制"
-    >
-      <div class="copy-examples">
-        <div class="copy-item">
-          <NInput
-            v-model:value="urlInput"
-            placeholder="输入网址（自动添加协议）"
-            class="copy-input"
-          />
-          <NButton
-            type="info"
-            :loading="loadingStates.url"
-            @click="() => handleCopy(() => copyURL(urlInput), 'url')"
-          >
-            <template #icon>
-              <i class="i-mdi:link" />
-            </template>
-            复制链接
-          </NButton>
-        </div>
-
-        <div class="url-examples">
-          <div
-            v-for="url in DEMO_URLS"
-            :key="url"
-            class="url-item"
-          >
-            <span class="url-text">{{ url }}</span>
+    <!-- 基础文本复制 & URL 链接复制 - 两栏布局 -->
+    <div class="section-grid-2">
+      <NCard
+        class="demo-section"
+        title="基础文本复制"
+      >
+        <div class="copy-examples">
+          <div class="copy-item">
+            <NInput
+              v-model:value="textInput"
+              placeholder="输入要复制的文本"
+              class="copy-input"
+            />
             <NButton
-              size="small"
-              type="info"
-              :loading="loadingStates[`url-${url}`]"
-              @click="() => handleCopy(() => copyURL(url), `url-${url}`)"
+              type="primary"
+              :loading="loadingStates.text"
+              @click="
+                () =>
+                  handleCopy(
+                    () => copyText(textInput, '自定义文本复制成功！'),
+                    'text'
+                  )
+              "
             >
               <template #icon>
-                <i class="i-mdi:link-variant" />
+                <i class="i-mdi:content-copy" />
               </template>
+              复制
+            </NButton>
+          </div>
+
+          <div class="copy-item">
+            <div class="copy-content">{{ DEMO_TEXT }}</div>
+            <NButton
+              type="default"
+              :loading="loadingStates.demoText"
+              @click="
+                () =>
+                  handleCopy(
+                    () => copyText(DEMO_TEXT, '示例文本复制成功！'),
+                    'demoText'
+                  )
+              "
+            >
+              <template #icon>
+                <i class="i-mdi:text" />
+              </template>
+              复制示例
             </NButton>
           </div>
         </div>
-      </div>
-    </NCard>
+      </NCard>
+
+      <NCard
+        class="demo-section"
+        title="URL 链接复制"
+      >
+        <div class="copy-examples">
+          <div class="copy-item">
+            <NInput
+              v-model:value="urlInput"
+              placeholder="输入网址（自动添加协议）"
+              class="copy-input"
+            />
+            <NButton
+              type="info"
+              :loading="loadingStates.url"
+              @click="() => handleCopy(() => copyURL(urlInput), 'url')"
+            >
+              <template #icon>
+                <i class="i-mdi:link" />
+              </template>
+              复制
+            </NButton>
+          </div>
+
+          <div class="url-examples">
+            <div
+              v-for="url in DEMO_URLS"
+              :key="url"
+              class="url-item"
+            >
+              <span class="url-text">{{ url }}</span>
+              <NButton
+                size="small"
+                type="info"
+                :loading="loadingStates[`url-${url}`]"
+                @click="() => handleCopy(() => copyURL(url), `url-${url}`)"
+              >
+                <template #icon>
+                  <i class="i-mdi:link-variant" />
+                </template>
+              </NButton>
+            </div>
+          </div>
+        </div>
+      </NCard>
+    </div>
 
     <!-- JSON 数据复制 -->
     <NCard
@@ -125,32 +129,11 @@
             :rows="6"
             class="json-textarea"
           />
-          <div class="json-actions">
-            <NButton
-              type="success"
-              :loading="loadingStates.jsonFormatted"
-              @click="() => handleCopyJSON(true, 'jsonFormatted')"
-            >
-              <template #icon>
-                <i class="i-mdi:code-json" />
-              </template>
-              复制格式化 JSON
-            </NButton>
-            <NButton
-              type="default"
-              :loading="loadingStates.jsonCompressed"
-              @click="() => handleCopyJSON(false, 'jsonCompressed')"
-            >
-              <template #icon>
-                <i class="i-mdi:code-braces" />
-              </template>
-              复制压缩 JSON
-            </NButton>
-          </div>
+          <C_ActionBar :actions="jsonCopyActions" />
         </div>
 
         <div class="json-examples">
-          <h4>预设示例：</h4>
+          <h4>预设示例</h4>
           <div
             v-for="(example, index) in JSON_EXAMPLES"
             :key="index"
@@ -178,7 +161,7 @@
       </div>
     </NCard>
 
-    <!-- 代码复制 -->
+    <!-- 代码片段复制 - 三栏布局 -->
     <NCard
       class="demo-section"
       title="代码片段复制"
@@ -214,12 +197,12 @@
       </div>
     </NCard>
 
-    <!-- CSV 数据复制 -->
-    <NCard
-      class="demo-section"
-      title="CSV 数据复制"
-    >
-      <div class="csv-section">
+    <!-- CSV 数据复制 & 联系信息复制 - 两栏布局 -->
+    <div class="section-grid-2">
+      <NCard
+        class="demo-section"
+        title="CSV 数据复制"
+      >
         <NDataTable
           :columns="CSV_COLUMNS"
           :data="CSV_DATA"
@@ -227,86 +210,57 @@
           size="small"
           class="csv-table"
         />
-        <div class="csv-actions">
-          <NButton
-            type="warning"
-            :loading="loadingStates.csv"
-            @click="
-              () =>
-                handleCopy(
-                  () =>
-                    copy(CSV_DATA, {
-                      dataType: 'csv',
-                      successTip: 'CSV 数据复制成功！',
-                    }),
-                  'csv'
-                )
-            "
-          >
-            <template #icon>
-              <i class="i-mdi:file-delimited" />
-            </template>
-            复制为 CSV
-          </NButton>
-          <NButton
-            type="info"
-            :loading="loadingStates.csvJson"
-            @click="() => handleCopy(() => copyJSON(CSV_DATA), 'csvJson')"
-          >
-            <template #icon>
-              <i class="i-mdi:code-json" />
-            </template>
-            复制为 JSON
-          </NButton>
-        </div>
-      </div>
-    </NCard>
+        <C_ActionBar
+          class="mt-3"
+          :actions="csvCopyActions"
+        />
+      </NCard>
 
-    <!-- 联系信息复制 -->
-    <NCard
-      class="demo-section"
-      title="联系信息复制"
-    >
-      <div class="contact-examples">
-        <div
-          v-for="(contact, index) in CONTACTS"
-          :key="contact.type"
-          class="contact-item"
-        >
-          <div class="contact-info">
-            <i
-              :class="contact.icon"
-              class="contact-icon"
-            />
-            <div class="contact-details">
-              <div class="contact-label">{{ contact.label }}</div>
-              <div class="contact-value">{{ contact.value }}</div>
-            </div>
-          </div>
-          <NButton
-            :type="contact.type === 'email' ? 'success' : 'info'"
-            size="small"
-            :loading="loadingStates[`contact-${index}`]"
-            @click="
-              () =>
-                handleCopy(
-                  () =>
-                    copy(contact.value, {
-                      dataType: contact.type as any,
-                      successTip: `${contact.label}复制成功！`,
-                    }),
-                  `contact-${index}`
-                )
-            "
+      <NCard
+        class="demo-section"
+        title="联系信息复制"
+      >
+        <div class="contact-examples">
+          <div
+            v-for="(contact, index) in CONTACTS"
+            :key="contact.type"
+            class="contact-item"
           >
-            <template #icon>
-              <i class="i-mdi:content-copy" />
-            </template>
-            复制
-          </NButton>
+            <div class="contact-info">
+              <i
+                :class="contact.icon"
+                class="contact-icon"
+              />
+              <div class="contact-details">
+                <div class="contact-label">{{ contact.label }}</div>
+                <div class="contact-value">{{ contact.value }}</div>
+              </div>
+            </div>
+            <NButton
+              :type="contact.type === 'email' ? 'success' : 'info'"
+              size="small"
+              :loading="loadingStates[`contact-${index}`]"
+              @click="
+                () =>
+                  handleCopy(
+                    () =>
+                      copy(contact.value, {
+                        dataType: contact.type as any,
+                        successTip: `${contact.label}复制成功！`,
+                      }),
+                    `contact-${index}`
+                  )
+              "
+            >
+              <template #icon>
+                <i class="i-mdi:content-copy" />
+              </template>
+              复制
+            </NButton>
+          </div>
         </div>
-      </div>
-    </NCard>
+      </NCard>
+    </div>
 
     <!-- 高级功能 -->
     <NCard
@@ -408,6 +362,50 @@
   const urlInput = ref('www.example.com')
   const jsonInput = ref('{"name": "张三", "age": 25, "city": "北京"}')
   const clipboardContent = ref('')
+
+  // ==================== 按钮组配置（C_ActionBar） ====================
+  const jsonCopyActions = computed(() => [
+    {
+      label: '格式化复制',
+      type: 'success' as const,
+      icon: 'mdi:code-json',
+      loading: loadingStates.jsonFormatted,
+      onClick: () => handleCopyJSON(true, 'jsonFormatted'),
+    },
+    {
+      label: '压缩复制',
+      icon: 'mdi:code-braces',
+      loading: loadingStates.jsonCompressed,
+      onClick: () => handleCopyJSON(false, 'jsonCompressed'),
+    },
+  ])
+
+  const csvCopyActions = computed(() => [
+    {
+      label: '复制 CSV',
+      type: 'warning' as const,
+      icon: 'mdi:file-delimited',
+      loading: loadingStates.csv,
+      buttonProps: { size: 'small' as const },
+      onClick: () =>
+        handleCopy(
+          () =>
+            copy(CSV_DATA, {
+              dataType: 'csv',
+              successTip: 'CSV 数据复制成功！',
+            }),
+          'csv'
+        ),
+    },
+    {
+      label: '复制 JSON',
+      type: 'info' as const,
+      icon: 'mdi:code-json',
+      loading: loadingStates.csvJson,
+      buttonProps: { size: 'small' as const },
+      onClick: () => handleCopy(() => copyJSON(CSV_DATA), 'csvJson'),
+    },
+  ])
 
   // ==================== 通用处理函数 ====================
   const handleCopy = async (copyFn: () => Promise<any>, key: string) => {

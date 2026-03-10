@@ -1,11 +1,21 @@
 /**
- * @Description: 进度步骤条演示页 - 静态数据
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-05-28 11:26:23
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-08 22:30:00
+ * @FilePath: \Robot_Admin\src\views\demo\31-steps\data.ts
+ * @Description: 进度步骤条组件演示数据配置
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
-import { type StepItem } from '@robot-admin/naive-ui-components'
 
-export type StepStatus = 'wait' | 'process' | 'finish' | 'error'
+import type { StepItem } from '@robot-admin/naive-ui-components'
 
-// ================= 基础步骤 =================
+// 扩展步骤项类型
+export interface RegisterStepItem extends StepItem {
+  detail: string
+}
+
+// 基础步骤
 export const basicSteps: StepItem[] = [
   { title: '提交订单' },
   { title: '付款成功' },
@@ -14,7 +24,7 @@ export const basicSteps: StepItem[] = [
   { title: '完成' },
 ]
 
-// ================= 订单跟踪步骤 =================
+// 订单跟踪步骤
 export const orderSteps: StepItem[] = [
   {
     title: '提交订单',
@@ -35,40 +45,40 @@ export const orderSteps: StepItem[] = [
   { title: '完成', icon: 'i-mdi:check-circle-outline' },
 ]
 
-// ================= 项目进度步骤 =================
+// 项目进度步骤
 export const projectSteps: StepItem[] = [
   {
     title: '需求分析',
     description: '收集用户需求',
     time: '2024-01-15',
-    status: 'finish' as StepStatus,
+    status: 'finish',
   },
   {
     title: 'UI设计',
     description: '界面原型设计',
     time: '2024-01-20',
-    status: 'finish' as StepStatus,
+    status: 'finish',
   },
   {
     title: '前端开发',
     description: '正在开发中...',
     time: '2024-01-25',
-    status: 'process' as StepStatus,
+    status: 'process',
   },
   { title: '测试阶段', description: '等待开发完成' },
   { title: '部署上线', description: '发布到生产环境' },
 ]
 
-// ================= 审批流程步骤 =================
+// 审批流程步骤
 export const approvalSteps: StepItem[] = [
   { title: '提交申请', description: '张三提交', time: '09:00' },
   { title: '主管审批', description: '李四已批准', time: '10:30' },
   { title: '经理审批', description: '王五已批准', time: '14:20' },
-  { title: 'HR备案', description: '处理中', status: 'process' as StepStatus },
+  { title: 'HR备案', description: '处理中', status: 'process' },
   { title: '完成', description: '等待备案' },
 ]
 
-// ================= 图标步骤 =================
+// 图标步骤
 export const iconSteps: StepItem[] = [
   { title: '创建项目', icon: 'i-mdi:folder-plus-outline' },
   { title: '开发功能', icon: 'i-mdi:code-braces' },
@@ -77,31 +87,15 @@ export const iconSteps: StepItem[] = [
   { title: '部署发布', icon: 'i-mdi:rocket-launch-outline' },
 ]
 
-// ================= 错误状态步骤 =================
+// 错误状态步骤
 export const errorSteps: StepItem[] = [
-  {
-    title: '创建订单',
-    description: '订单创建成功',
-    status: 'finish' as StepStatus,
-  },
-  {
-    title: '支付订单',
-    description: '支付失败',
-    status: 'error' as StepStatus,
-  },
-  {
-    title: '重新支付',
-    description: '等待支付',
-    status: 'process' as StepStatus,
-  },
+  { title: '创建订单', description: '订单创建成功', status: 'finish' },
+  { title: '支付订单', description: '支付失败', status: 'error' },
+  { title: '重新支付', description: '等待支付', status: 'process' },
   { title: '订单完成', description: '等待处理' },
 ]
 
-// ================= 注册流程步骤 =================
-export interface RegisterStepItem extends StepItem {
-  detail: string
-}
-
+// 注册流程步骤
 export const registerSteps: RegisterStepItem[] = [
   {
     title: '填写信息',

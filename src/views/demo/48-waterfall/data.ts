@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { WaterFallItem } from '@/types/modules/waterfall'
+import type { WaterFallItem } from '@robot-admin/naive-ui-components'
 
 /** 随机高度范围 */
 const HEIGHT_RANGE: [number, number] = [300, 800]

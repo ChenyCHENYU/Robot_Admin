@@ -10,20 +10,25 @@
 
 <template>
   <div class="split-pane-demo-page">
-    <NH1>分割面板场景示例</NH1>
+    <c_vTitle
+      title="分割面板场景示例"
+      icon="mdi:view-split-vertical"
+      description="支持水平/垂直分割、折叠展开、尺寸限制、嵌套布局等特性，适用于编辑器布局、管理后台等场景"
+    />
 
     <!-- 基础水平分割 -->
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:arrow-split-vertical"
+          :name="SECTIONS.basic.titleIcon"
           class="title-icon"
         />
-        基础水平分割
+        {{ SECTIONS.basic.title }}
       </h2>
-      <div class="section-desc"
-        >最简单的左右分割面板，可拖拽分割线调整面板大小</div
-      >
+      <div
+        class="section-desc"
+        v-html="SECTIONS.basic.descHtml"
+      />
       <div class="section-content">
         <div class="demo-container">
           <C_SplitPane
@@ -31,20 +36,26 @@
             :default-size="50"
             :gutter-size="6"
             @resize="
-              (a, b) =>
+              (a: number, b: number) =>
                 (basicInfo = `左: ${a.toFixed(1)}% / 右: ${b.toFixed(1)}%`)
             "
           >
             <template #first>
-              <div class="demo-panel demo-panel--primary">
-                <Icon icon="mdi:dock-left" />
-                <span>左面板</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.basicFirst.colorClass"
+              >
+                <C_Icon :name="PANELS.basicFirst.icon" />
+                <span>{{ PANELS.basicFirst.label }}</span>
               </div>
             </template>
             <template #second>
-              <div class="demo-panel demo-panel--info">
-                <Icon icon="mdi:dock-right" />
-                <span>右面板</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.basicSecond.colorClass"
+              >
+                <C_Icon :name="PANELS.basicSecond.icon" />
+                <span>{{ PANELS.basicSecond.label }}</span>
               </div>
             </template>
           </C_SplitPane>
@@ -59,14 +70,15 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:arrow-split-horizontal"
+          :name="SECTIONS.vertical.titleIcon"
           class="title-icon"
         />
-        垂直分割
+        {{ SECTIONS.vertical.title }}
       </h2>
-      <div class="section-desc"
-        >设置 <code>direction="vertical"</code> 可切换为上下分割</div
-      >
+      <div
+        class="section-desc"
+        v-html="SECTIONS.vertical.descHtml"
+      />
       <div class="section-content">
         <div class="demo-container demo-container--tall">
           <C_SplitPane
@@ -74,15 +86,21 @@
             :default-size="40"
           >
             <template #first>
-              <div class="demo-panel demo-panel--success">
-                <Icon icon="mdi:dock-top" />
-                <span>上面板</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.vertFirst.colorClass"
+              >
+                <C_Icon :name="PANELS.vertFirst.icon" />
+                <span>{{ PANELS.vertFirst.label }}</span>
               </div>
             </template>
             <template #second>
-              <div class="demo-panel demo-panel--warning">
-                <Icon icon="mdi:dock-bottom" />
-                <span>下面板</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.vertSecond.colorClass"
+              >
+                <C_Icon :name="PANELS.vertSecond.icon" />
+                <span>{{ PANELS.vertSecond.label }}</span>
               </div>
             </template>
           </C_SplitPane>
@@ -94,15 +112,15 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:arrow-expand-horizontal"
+          :name="SECTIONS.limits.titleIcon"
           class="title-icon"
         />
-        尺寸限制
+        {{ SECTIONS.limits.title }}
       </h2>
-      <div class="section-desc">
-        通过 <code>min-size</code> 和
-        <code>max-size</code> 限制面板的最小/最大比例
-      </div>
+      <div
+        class="section-desc"
+        v-html="SECTIONS.limits.descHtml"
+      />
       <div class="section-content">
         <div class="demo-container">
           <C_SplitPane
@@ -111,18 +129,24 @@
             :max-size="80"
           >
             <template #first>
-              <div class="demo-panel demo-panel--primary">
+              <div
+                class="demo-panel"
+                :class="PANELS.limitsFirst.colorClass"
+              >
                 <div class="panel-inner">
-                  <Icon icon="mdi:arrow-collapse-left" />
-                  <span>最小 20%</span>
+                  <C_Icon :name="PANELS.limitsFirst.icon" />
+                  <span>{{ PANELS.limitsFirst.label }}</span>
                 </div>
               </div>
             </template>
             <template #second>
-              <div class="demo-panel demo-panel--info">
+              <div
+                class="demo-panel"
+                :class="PANELS.limitsSecond.colorClass"
+              >
                 <div class="panel-inner">
-                  <Icon icon="mdi:arrow-collapse-right" />
-                  <span>最大 80%</span>
+                  <C_Icon :name="PANELS.limitsSecond.icon" />
+                  <span>{{ PANELS.limitsSecond.label }}</span>
                 </div>
               </div>
             </template>
@@ -135,14 +159,15 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:unfold-more-vertical"
+          :name="SECTIONS.collapse.titleIcon"
           class="title-icon"
         />
-        折叠 / 展开
+        {{ SECTIONS.collapse.title }}
       </h2>
-      <div class="section-desc">
-        双击分割线或点击折叠按钮可折叠面板。也可以通过编程方式控制折叠
-      </div>
+      <div
+        class="section-desc"
+        v-html="SECTIONS.collapse.descHtml"
+      />
       <div class="section-content">
         <NSpace
           :size="8"
@@ -181,22 +206,30 @@
             :collapsible="true"
             :show-collapse-button="true"
             @collapse="
-              t => handleMessage(`已折叠 ${t === 'first' ? '左' : '右'} 面板`)
+              (t: string) =>
+                handleMessage(`已折叠 ${t === 'first' ? '左' : '右'} 面板`)
             "
             @expand="
-              t => handleMessage(`已展开 ${t === 'first' ? '左' : '右'} 面板`)
+              (t: string) =>
+                handleMessage(`已展开 ${t === 'first' ? '左' : '右'} 面板`)
             "
           >
             <template #first>
-              <div class="demo-panel demo-panel--success">
-                <Icon icon="mdi:page-layout-sidebar-left" />
-                <span>侧边栏</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.collapseFirst.colorClass"
+              >
+                <C_Icon :name="PANELS.collapseFirst.icon" />
+                <span>{{ PANELS.collapseFirst.label }}</span>
               </div>
             </template>
             <template #second>
-              <div class="demo-panel demo-panel--warning">
-                <Icon icon="mdi:page-layout-body" />
-                <span>主内容区</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.collapseSecond.colorClass"
+              >
+                <C_Icon :name="PANELS.collapseSecond.icon" />
+                <span>{{ PANELS.collapseSecond.label }}</span>
               </div>
             </template>
           </C_SplitPane>
@@ -208,14 +241,15 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:view-column-outline"
+          :name="SECTIONS.nested.titleIcon"
           class="title-icon"
         />
-        嵌套分割
+        {{ SECTIONS.nested.title }}
       </h2>
-      <div class="section-desc">
-        SplitPane 可互相嵌套，实现复杂的编辑器布局
-      </div>
+      <div
+        class="section-desc"
+        v-html="SECTIONS.nested.descHtml"
+      />
       <div class="section-content">
         <div class="demo-container demo-container--tall">
           <C_SplitPane
@@ -224,9 +258,12 @@
             :max-size="40"
           >
             <template #first>
-              <div class="demo-panel demo-panel--primary">
-                <Icon icon="mdi:folder-outline" />
-                <span>文件树</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.nestedFileTree.colorClass"
+              >
+                <C_Icon :name="PANELS.nestedFileTree.icon" />
+                <span>{{ PANELS.nestedFileTree.label }}</span>
               </div>
             </template>
             <template #second>
@@ -235,15 +272,21 @@
                 :default-size="70"
               >
                 <template #first>
-                  <div class="demo-panel demo-panel--info">
-                    <Icon icon="mdi:code-braces" />
-                    <span>代码编辑区</span>
+                  <div
+                    class="demo-panel"
+                    :class="PANELS.nestedEditor.colorClass"
+                  >
+                    <C_Icon :name="PANELS.nestedEditor.icon" />
+                    <span>{{ PANELS.nestedEditor.label }}</span>
                   </div>
                 </template>
                 <template #second>
-                  <div class="demo-panel demo-panel--warning">
-                    <Icon icon="mdi:console" />
-                    <span>终端 / 输出</span>
+                  <div
+                    class="demo-panel"
+                    :class="PANELS.nestedTerminal.colorClass"
+                  >
+                    <C_Icon :name="PANELS.nestedTerminal.icon" />
+                    <span>{{ PANELS.nestedTerminal.label }}</span>
                   </div>
                 </template>
               </C_SplitPane>
@@ -257,15 +300,15 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:keyboard"
+          :name="SECTIONS.keyboard.titleIcon"
           class="title-icon"
         />
-        键盘控制
+        {{ SECTIONS.keyboard.title }}
       </h2>
-      <div class="section-desc">
-        聚焦分割线后，可用 <code>←</code> <code>→</code> 方向键微调面板大小，
-        <code>Home</code> / <code>End</code> 跳到最小/最大值
-      </div>
+      <div
+        class="section-desc"
+        v-html="SECTIONS.keyboard.descHtml"
+      />
       <div class="section-content">
         <div class="demo-container">
           <C_SplitPane
@@ -275,15 +318,21 @@
             :step="5"
           >
             <template #first>
-              <div class="demo-panel demo-panel--primary">
-                <Icon icon="mdi:keyboard-outline" />
-                <span>点击分割线后按方向键</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.keyboardFirst.colorClass"
+              >
+                <C_Icon :name="PANELS.keyboardFirst.icon" />
+                <span>{{ PANELS.keyboardFirst.label }}</span>
               </div>
             </template>
             <template #second>
-              <div class="demo-panel demo-panel--info">
-                <Icon icon="mdi:arrow-left-right" />
-                <span>步长 5%</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.keyboardSecond.colorClass"
+              >
+                <C_Icon :name="PANELS.keyboardSecond.icon" />
+                <span>{{ PANELS.keyboardSecond.label }}</span>
               </div>
             </template>
           </C_SplitPane>
@@ -295,14 +344,15 @@
     <div class="demo-section">
       <h2 class="section-title">
         <C_Icon
-          name="mdi:lock-outline"
+          :name="SECTIONS.disabled.titleIcon"
           class="title-icon"
         />
-        禁用状态
+        {{ SECTIONS.disabled.title }}
       </h2>
-      <div class="section-desc">
-        设置 <code>disabled</code> 后分割线不可拖拽
-      </div>
+      <div
+        class="section-desc"
+        v-html="SECTIONS.disabled.descHtml"
+      />
       <div class="section-content">
         <div class="demo-container">
           <C_SplitPane
@@ -310,15 +360,21 @@
             :disabled="true"
           >
             <template #first>
-              <div class="demo-panel demo-panel--disabled">
-                <Icon icon="mdi:lock" />
-                <span>锁定面板</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.disabledPanel.colorClass"
+              >
+                <C_Icon :name="PANELS.disabledPanel.icon" />
+                <span>{{ PANELS.disabledPanel.label }}</span>
               </div>
             </template>
             <template #second>
-              <div class="demo-panel demo-panel--disabled">
-                <Icon icon="mdi:lock" />
-                <span>锁定面板</span>
+              <div
+                class="demo-panel"
+                :class="PANELS.disabledPanel.colorClass"
+              >
+                <C_Icon :name="PANELS.disabledPanel.icon" />
+                <span>{{ PANELS.disabledPanel.label }}</span>
               </div>
             </template>
           </C_SplitPane>
@@ -329,7 +385,7 @@
 </template>
 
 <script setup lang="ts">
-  import { Icon } from '@iconify/vue'
+  import { SECTIONS, PANELS } from './data'
 
   const message = useMessage()
   const basicRef = ref()

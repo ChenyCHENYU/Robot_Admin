@@ -562,7 +562,7 @@
 
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
-  import type { ActionItem } from '@/types/modules/action-bar'
+  import { C_Tree, type ActionItem } from '@robot-admin/naive-ui-components'
   import {
     type DictData,
     type DictFormData,
@@ -712,12 +712,14 @@
   const getItemActions = (item: DictData): ActionItem[] => [
     {
       key: 'edit',
+      label: '编辑',
       icon: 'mdi:pencil',
       tooltip: '编辑',
       onClick: () => handleEditDict(item),
     },
     {
       key: 'toggle',
+      label: item.status === 1 ? '禁用' : '启用',
       icon: item.status === 1 ? 'mdi:pause' : 'mdi:play',
       type: item.status === 1 ? 'warning' : 'success',
       tooltip: item.status === 1 ? '禁用' : '启用',
@@ -725,10 +727,10 @@
     },
     {
       key: 'delete',
+      label: '删除',
       icon: 'mdi:delete',
       type: 'error',
       tooltip: '删除',
-      popconfirm: '确认删除该字典项吗？',
       onClick: () => handleDeleteDict(item.id),
     },
   ]

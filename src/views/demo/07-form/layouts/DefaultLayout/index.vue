@@ -36,8 +36,8 @@
     FormInstance,
     FormModel,
     FormOption,
-  } from '@/types/modules/form'
-  import type { ActionItem } from '@/types/modules/action-bar'
+    ActionItem,
+  } from '@robot-admin/naive-ui-components'
   import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
 
   // ==================== 表单字段配置 ====================

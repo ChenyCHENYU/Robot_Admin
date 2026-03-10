@@ -10,12 +10,11 @@
 
 <template>
   <div class="formula-demo-page">
-    <NH1>公式编辑器场景示例</NH1>
-    <div class="demo-intro">
-      公式编辑器用于业务人员自主配置计算规则，广泛应用于绩效核算、成本规则、销售提成等场景。
-      支持变量点选插入、虚拟键盘联动、自由键盘输入、实时语法校验与样例数据计算预览，
-      让非技术人员也能直观地配置复杂的计算规则。
-    </div>
+    <c_vTitle
+      title="公式编辑器场景示例"
+      icon="mdi:function-variant"
+      description="可视化公式编辑器，支持变量点选插入、虚拟键盘、实时语法校验与计算预览，广泛应用于绩效核算、销售提成等场景"
+    />
 
     <!-- 1. 基础用法 — 完整编辑器 -->
     <div class="demo-section">
@@ -205,7 +204,7 @@
   import type {
     FormulaEditorExpose,
     FormulaValidation,
-  } from '@/types/modules/formula-editor'
+  } from '@robot-admin/naive-ui-components'
   import {
     salesVariables,
     salesSampleData,

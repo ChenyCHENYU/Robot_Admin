@@ -10,14 +10,11 @@
 
 <template>
   <div class="cron-demo-page">
-    <NH1>Cron 表达式编辑器场景示例</NH1>
-    <div class="demo-intro">
-      Cron
-      表达式是用于配置定时任务的标准时间格式，广泛应用于服务器定时任务、数据备份、报表生成、消息推送等场景。
-      本组件提供可视化编辑界面，支持「秒 分 时 日 月
-      周」六字段格式，让您无需手动编写复杂的 Cron 语法，
-      通过点选和输入即可完成定时规则配置。
-    </div>
+    <c_vTitle
+      title="Cron 表达式编辑器场景示例"
+      icon="mdi:clock-edit-outline"
+      description="可视化 Cron 表达式编辑器，支持秒/分/时/日/月/周六字段，提供常用模板、执行时间预览、实时校验等功能"
+    />
 
     <!-- 1. 基础用法 -->
     <div class="demo-section">
@@ -193,7 +190,10 @@
 </template>
 
 <script setup lang="ts">
-  import type { CronValidation, CronExpose } from '@/types/modules/cron'
+  import type {
+    CronValidation,
+    CronExpose,
+  } from '@robot-admin/naive-ui-components'
 
   const message = useMessage()
 

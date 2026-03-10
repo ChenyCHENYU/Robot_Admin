@@ -11,22 +11,6 @@
 .formula-demo-page {
   padding: 24px;
 
-  :deep(.n-h1) {
-    margin-bottom: 4px;
-    font-size: 26px;
-  }
-
-  .demo-intro {
-    margin-bottom: 32px;
-    padding: 16px 20px;
-    font-size: 14px;
-    line-height: 1.8;
-    color: var(--text-color-2);
-    border-radius: 10px;
-    background: color-mix(in srgb, var(--primary-color) 4%, var(--card-color));
-    border-left: 4px solid var(--primary-color);
-  }
-
   .demo-section {
     margin-bottom: 36px;
     padding: 24px;

@@ -11,95 +11,186 @@
 .signature-demo-page {
   padding: 20px;
 
-  .demo-section {
-    margin-bottom: 32px;
+  // 网格布局
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
 
-    &:last-child {
-      margin-bottom: 0;
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // 卡片样式
+  .demo-card {
+    border-radius: 12px !important;
+    transition: all 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
-    .section-title {
+    :deep(.n-card-header) {
+      padding-bottom: 12px;
+    }
+
+    .card-header {
       display: flex;
-      justify-content: flex-start;
       align-items: center;
-      gap: 6px;
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0 0 12px;
-      color: var(--app-text-primary);
+      justify-content: space-between;
+      margin-bottom: 8px;
 
-      .title-icon {
-        flex-shrink: 0;
-        font-size: 20px;
-        color: var(--primary-color, #409eff);
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--app-text-primary);
       }
     }
 
-    .section-desc {
-      font-size: 14px;
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
       color: var(--app-text-secondary);
-      margin: 0 0 16px;
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
-    .section-content {
-      .signature-container {
-        margin-bottom: 16px;
+    :deep(.n-card__content) {
+      padding: 16px;
+    }
+
+    // 全宽卡片
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+  }
+
+  // 操作栏
+  .action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  // 配置行
+  .config-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    background: var(--app-bg-surface);
+    border-radius: 8px;
+
+    .config-label {
+      font-size: 13px;
+      color: var(--app-text-secondary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+  }
+
+  // 结果预览
+  .result-preview {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--app-bg-surface);
+    border: 1px dashed var(--app-border-default);
+    border-radius: 8px;
+    text-align: center;
+
+    img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 4px;
+    }
+  }
+
+  // API 演示区域
+  .api-demo {
+    display: flex;
+    gap: 20px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+
+    .api-left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .api-right {
+      flex: 1;
+      min-width: 0;
+      padding: 12px;
+      background: var(--app-bg-surface);
+      border-radius: 8px;
+      border: 1px solid var(--app-border-default);
+
+      .data-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--app-text-primary);
+        margin-bottom: 8px;
       }
 
-      .action-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
-      .config-form {
-        max-width: 800px;
-        margin-bottom: 16px;
-      }
-
-      .result-preview {
-        margin-top: 16px;
-        padding: 16px;
-        background: var(--app-bg-surface);
-        border: 1px solid var(--app-border-default);
+      .data-preview {
+        margin: 0;
+        padding: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        line-height: 1.5;
+        color: var(--app-text-secondary);
+        background: var(--app-bg-body);
         border-radius: 6px;
+        overflow-x: auto;
+        max-height: 180px;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+    }
+  }
 
-        .preview-title {
-          font-size: 14px;
-          font-weight: 500;
-          color: var(--app-text-primary);
-          margin-bottom: 12px;
-        }
+  // 提示卡片
+  .tips-card {
+    margin-top: 12px;
+  }
 
-        .preview-image {
-          max-width: 100%;
-          max-height: 300px;
-          border: 1px dashed var(--app-border-default);
-          border-radius: 4px;
-          background: repeating-conic-gradient(
-              var(--app-bg-surface) 0% 25%,
-              var(--app-bg-body) 0% 50%
-            )
-            50%/20px 20px;
-        }
-
-        .preview-text {
-          font-family: monospace;
-          font-size: 12px;
-          color: var(--app-text-secondary);
-          word-break: break-all;
-          max-height: 200px;
-          overflow-y: auto;
-          padding: 8px;
-          background: var(--app-bg-body);
-          border-radius: 4px;
-          border: 1px solid var(--app-border-default);
-        }
+  // 暗色主题
+  [data-theme='dark'] & {
+    .demo-card {
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       }
 
-      .tips-card {
-        margin-top: 16px;
+      .card-header h3 {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .card-desc {
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    .config-row {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .result-preview {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .api-right {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.12);
+
+      .data-preview {
+        background: rgba(255, 255, 255, 0.02);
       }
     }
   }

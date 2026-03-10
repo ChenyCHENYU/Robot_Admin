@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-03-05
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-05
+ * @LastEditTime: 2026-03-09 23:03:09
  * @FilePath: \Robot_Admin\src\views\demo\49-chat\data.ts
  * @Description: 聊天组件演示数据
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
@@ -249,12 +249,6 @@ export const FEATURE_LIST = [
     icon: 'mdi:palette-outline',
     title: 'CSS 变量主题',
     desc: '通过变量自定义全部风格',
-    tag: '扩展',
-  },
-  {
-    icon: 'mdi:cellphone',
-    title: '响应式布局',
-    desc: '移动端自适应侧栏折叠',
     tag: '扩展',
   },
   {

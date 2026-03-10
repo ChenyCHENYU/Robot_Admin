@@ -10,7 +10,11 @@
 
 <template>
   <div class="debounce-demo-page">
-    <NH1>v-debounce 防抖指令场景示例</NH1>
+    <c_vTitle
+      title="v-debounce 防抖指令场景示例"
+      icon="mdi:timer-outline"
+      description="通过 v-debounce 指令对事件进行防抖处理，避免高频操作导致重复执行"
+    />
 
     <NGrid
       :cols="2"

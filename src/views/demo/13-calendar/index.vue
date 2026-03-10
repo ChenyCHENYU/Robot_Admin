@@ -10,7 +10,11 @@
 
 <template>
   <div class="p-20px">
-    <NH1>日历组件场景示例</NH1>
+    <c_vTitle
+      title="日历组件场景示例"
+      icon="mdi:calendar"
+      description="支持多种视图、事件拖拽、可编辑模式等特性，适用于日程管理、日程安排等场景"
+    />
 
     <NSpace
       class="mb-20px"
@@ -64,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { CalendarViewType } from '@/types/modules/calendar'
+  import type { CalendarViewType } from '@robot-admin/naive-ui-components'
   import { INITIAL_EVENTS } from './data'
 
   const message = useMessage()

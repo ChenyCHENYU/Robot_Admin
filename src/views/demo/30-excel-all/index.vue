@@ -1,9 +1,10 @@
 <template>
   <div class="excel-demo">
-    <NH1 class="demo-title"> Excel All - [useExcel] 场景示例 </NH1>
-    <p class="mb-20px text-gray-600">
-      专注于Excel文件的读取、导出和模板管理功能
-    </p>
+    <c_vTitle
+      title="Excel All - [useExcel] 场景示例"
+      icon="mdi:microsoft-excel"
+      description="专注于Excel文件的读取、导出和模板管理功能"
+    />
 
     <div class="demo-content">
       <!-- 文件导入区域 -->
@@ -314,33 +315,7 @@
           </NAlert>
 
           <div class="data-process-controls">
-            <NSpace>
-              <NButton
-                :disabled="!selectedSheet || currentSheetData.length === 0"
-                @click="handleFilterEmptyRows"
-              >
-                <template #icon>
-                  <span class="i-mdi-filter"></span>
-                </template>
-                筛选非空行
-              </NButton>
-              <NButton
-                :disabled="!selectedSheet || currentSheetData.length === 0"
-                @click="handleShowDataSummary"
-              >
-                <template #icon>
-                  <span class="i-mdi-chart-bar"></span>
-                </template>
-                数据统计
-              </NButton>
-              <NButton
-                v-if="processedData.length > 0"
-                type="success"
-                @click="handleExportProcessedData"
-              >
-                导出处理结果
-              </NButton>
-            </NSpace>
+            <C_ActionBar :actions="dataProcessActions" />
           </div>
 
           <!-- 处理结果显示 -->
@@ -498,6 +473,33 @@
     }
     return currentSheetData.value.slice(0, PREVIEW_ROWS)
   })
+
+  /**
+   * * @description 数据处理操作按钮配置
+   */
+  const dataProcessActions = computed(() => [
+    {
+      label: '筛选非空行',
+      icon: 'mdi:filter',
+      disabled: !selectedSheet.value || currentSheetData.value.length === 0,
+      onClick: handleFilterEmptyRows,
+    },
+    {
+      label: '数据统计',
+      icon: 'mdi:chart-bar',
+      disabled: !selectedSheet.value || currentSheetData.value.length === 0,
+      onClick: handleShowDataSummary,
+    },
+    ...(processedData.value.length > 0
+      ? [
+          {
+            label: '导出处理结果',
+            type: 'success' as const,
+            onClick: handleExportProcessedData,
+          },
+        ]
+      : []),
+  ])
 
   /**
    * * @description 表格列配置

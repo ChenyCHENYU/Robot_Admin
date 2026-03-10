@@ -39,7 +39,17 @@ const setupVueErrorHandler = (app: App): void => {
  * 设置 Promise 错误处理
  */
 const setupPromiseErrorHandler = (): void => {
+  // 浏览器扩展（Vue DevTools 等）通信错误，与应用逻辑无关，全局静默过滤
+  const EXTENSION_ERR_RE =
+    /Could not establish connection|Receiving end does not exist/
+
   window.addEventListener('unhandledrejection', (event: any) => {
+    const msg = String(event.reason?.message || event.reason || '')
+    if (EXTENSION_ERR_RE.test(msg)) {
+      event.preventDefault()
+      return
+    }
+
     // 只在生产环境阻止默认行为，开发环境保留原始错误堆栈
     if (!import.meta.env.DEV) {
       event.preventDefault()

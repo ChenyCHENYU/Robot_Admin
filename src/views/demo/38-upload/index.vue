@@ -10,54 +10,43 @@
 
 <template>
   <div class="upload-demo-page">
-    <NH1>增强型上传组件</NH1>
-    <div class="demo-intro">
-      C_Upload
-      是一个功能完善的增强型上传组件，支持单文件/多文件/目录上传、拖拽上传、
-      粘贴上传（Ctrl+V）、分片上传、断点续传、秒传校验、并发控制等特性。 使用
-      spark-md5 进行文件哈希计算，通过 Web Worker 在后台线程运行，不阻塞 UI。
-    </div>
+    <c_vTitle
+      title="增强型上传组件"
+      icon="mdi:cloud-upload-outline"
+      description="支持单文件/多文件/目录上传、拖拽上传、粘贴上传、分片上传、断点续传、秒传校验、并发控制等特性"
+    />
 
-    <!-- 1. 基础上传 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:cloud-upload-outline"
-          class="title-icon"
-        />
-        基础上传
-      </h2>
-      <div class="section-desc">
-        最基本的文件上传，支持多选、拖拽。点击上传区域或直接将文件拖入框内。
-        文件类型默认不限制，可通过 <code>accept</code> 属性设置。
-      </div>
-      <div class="section-content">
-        <div class="demo-toolbar">
-          <div class="toolbar-item">
-            <span>文件类型：</span>
-            <NSelect
-              v-model:value="basicAccept"
-              :options="FILE_TYPE_OPTIONS"
+    <div class="demo-grid">
+      <!-- 1. 基础上传 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>基础上传</h3>
+            <NTag
+              type="info"
               size="small"
-              style="width: 130px"
-            />
+              round
+              >默认</NTag
+            >
           </div>
-          <div class="toolbar-item">
-            <NSwitch
-              v-model:value="basicMultiple"
-              size="small"
-            />
-            <span>多选</span>
-          </div>
-          <div class="toolbar-item">
-            <NSwitch
-              v-model:value="basicPaste"
-              size="small"
-            />
-            <span>粘贴上传</span>
-          </div>
+          <p class="card-desc"
+            >最基本的文件上传，支持多选、拖拽。点击上传区域或直接将文件拖入框内。</p
+          >
+        </template>
+        <div class="config-bar">
+          <span class="config-label">类型</span>
+          <NSelect
+            v-model:value="basicAccept"
+            :options="FILE_TYPE_OPTIONS"
+            size="small"
+            style="width: 120px"
+          />
+          <NCheckbox v-model:checked="basicMultiple">多选</NCheckbox>
+          <NCheckbox v-model:checked="basicPaste">粘贴上传</NCheckbox>
         </div>
-
         <C_Upload
           ref="basicRef"
           :accept="basicAccept"
@@ -74,38 +63,41 @@
           @error="handleError"
           @exceed="handleExceed"
         />
-
-        <div class="demo-actions">
+        <div class="action-bar">
           <NButton
             size="small"
             @click="basicRef?.clearAll()"
           >
-            清空全部
+            清空
           </NButton>
           <NTag
             type="info"
             size="small"
           >
-            文件数：{{ basicCount }}
+            {{ basicCount }} 个文件
           </NTag>
         </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 2. 图片上传（图片预览模式） -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:image-multiple-outline"
-          class="title-icon"
-        />
-        图片上传（预览模式）
-      </h2>
-      <div class="section-desc">
-        设置 <code>list-type="image"</code> 开启图片预览网格模式，
-        自动生成缩略图。适合头像上传、图片库管理等场景。
-      </div>
-      <div class="section-content">
+      <!-- 2. 图片上传 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>图片上传</h3>
+            <NTag
+              type="success"
+              size="small"
+              round
+              >预览</NTag
+            >
+          </div>
+          <p class="card-desc"
+            >设置 list-type="image" 开启图片预览网格模式，自动生成缩略图。</p
+          >
+        </template>
         <C_Upload
           ref="imageRef"
           accept="image/*"
@@ -114,11 +106,10 @@
           :custom-request="mockUploadRequest"
           :max-count="9"
           :max-size="10 * 1024 * 1024"
-          tip="仅支持图片文件，单张最大 10MB，最多 9 张"
+          tip="仅支持图片，单张最大 10MB，最多 9 张"
           @change="handleImageChange"
         />
-
-        <div class="demo-actions">
+        <div class="action-bar">
           <NButton
             size="small"
             @click="imageRef?.clearAll()"
@@ -129,58 +120,48 @@
             type="info"
             size="small"
           >
-            图片数：{{ imageCount }}
+            {{ imageCount }} 张图片
           </NTag>
         </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 3. 分片上传 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:puzzle-outline"
-          class="title-icon"
-        />
-        分片上传（大文件）
-      </h2>
-      <div class="section-desc">
-        开启 <code>chunked</code> 属性后，大文件会自动分片上传。 可配置
-        <code>chunk-size</code>（分片大小）和
-        <code>concurrency</code>（并发数）。 支持
-        <strong>断点续传</strong>（通过
-        <code>uploadedChunksQuery</code> 查询已传分片） 和
-        <strong>秒传</strong>（通过 <code>instantCheck</code> 校验文件 hash）。
-      </div>
-      <div class="section-content">
-        <div class="demo-toolbar">
-          <div class="toolbar-item">
-            <span>分片大小：</span>
-            <NSelect
-              v-model:value="chunkSize"
-              :options="CHUNK_SIZE_OPTIONS"
+      <!-- 3. 分片上传 - 全宽 -->
+      <NCard
+        class="demo-card full-width"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>分片上传（大文件）</h3>
+            <NTag
+              type="warning"
               size="small"
-              style="width: 100px"
-            />
+              round
+              >分片</NTag
+            >
           </div>
-          <div class="toolbar-item">
-            <span>并发数：</span>
-            <NSelect
-              v-model:value="chunkConcurrency"
-              :options="CONCURRENCY_OPTIONS"
-              size="small"
-              style="width: 80px"
-            />
-          </div>
-          <div class="toolbar-item">
-            <NSwitch
-              v-model:value="enableInstantCheck"
-              size="small"
-            />
-            <span>秒传检测</span>
-          </div>
+          <p class="card-desc"
+            >开启 chunked
+            属性后，大文件自动分片上传。支持断点续传和秒传检测。</p
+          >
+        </template>
+        <div class="config-bar">
+          <span class="config-label">分片大小</span>
+          <NSelect
+            v-model:value="chunkSize"
+            :options="CHUNK_SIZE_OPTIONS"
+            size="small"
+            style="width: 100px"
+          />
+          <span class="config-label">并发数</span>
+          <NSelect
+            v-model:value="chunkConcurrency"
+            :options="CONCURRENCY_OPTIONS"
+            size="small"
+            style="width: 70px"
+          />
+          <NCheckbox v-model:checked="enableInstantCheck">秒传检测</NCheckbox>
         </div>
-
         <C_Upload
           ref="chunkRef"
           multiple
@@ -197,8 +178,7 @@
           @success="handleSuccess"
           @error="handleError"
         />
-
-        <div class="demo-actions">
+        <div class="action-bar">
           <NButton
             type="primary"
             size="small"
@@ -207,7 +187,6 @@
             全部暂停
           </NButton>
           <NButton
-            type="info"
             size="small"
             @click="chunkRef?.resumeAll()"
           >
@@ -223,139 +202,132 @@
             type="info"
             size="small"
           >
-            文件数：{{ chunkCount }}
+            {{ chunkCount }} 个文件
           </NTag>
         </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 4. 编程控制 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:code-braces"
-          class="title-icon"
-        />
-        编程控制（Expose API）
-      </h2>
-      <div class="section-desc">
-        通过 <code>ref</code> 获取组件实例，调用
-        <code>selectFiles()</code> 手动打开文件选择、
-        <code>startUpload()</code> 手动开始上传、 <code>clearAll()</code> 清空、
-        <code>getSuccessList()</code> 获取已上传列表。
-      </div>
-      <div class="section-content">
-        <NSpace
-          :size="8"
-          style="margin-bottom: 12px"
-        >
+      <!-- 4. 编程控制 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>编程控制</h3>
+            <NTag
+              size="small"
+              round
+              >API</NTag
+            >
+          </div>
+          <p class="card-desc"
+            >通过 ref 获取组件实例，调用
+            selectFiles()、startUpload()、clearAll() 等方法。</p
+          >
+        </template>
+        <div class="api-buttons">
           <NButton
             type="primary"
             size="small"
+            block
             @click="basicRef?.selectFiles()"
           >
+            <template #icon><C_Icon name="mdi:file-plus-outline" /></template>
             手动选择文件
           </NButton>
           <NButton
             size="small"
+            block
             @click="handleGetSuccessList"
           >
+            <template #icon
+              ><C_Icon name="mdi:check-circle-outline"
+            /></template>
             获取成功列表
           </NButton>
-        </NSpace>
-      </div>
-    </div>
+          <NButton
+            size="small"
+            block
+            @click="basicRef?.clearAll()"
+          >
+            <template #icon><C_Icon name="mdi:delete-outline" /></template>
+            清空全部
+          </NButton>
+        </div>
+      </NCard>
 
-    <!-- 5. 功能特性总览 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:view-grid-outline"
-          class="title-icon"
-        />
-        功能特性总览
-      </h2>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="feature-card__title">
+      <!-- 5. 功能特性 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>功能特性</h3>
+            <NTag
+              type="info"
+              size="small"
+              round
+              >总览</NTag
+            >
+          </div>
+          <p class="card-desc">C_Upload 组件的核心功能特性一览。</p>
+        </template>
+        <div class="feature-list">
+          <div class="feature-item">
             <C_Icon
               name="mdi:file-multiple-outline"
-              class="feature-card__icon"
+              class="feature-icon"
             />
-            多模式上传
+            <span>多模式上传（单/多文件、拖拽、粘贴）</span>
           </div>
-          <div class="feature-card__desc">
-            单文件 / 多文件 / 目录上传，拖拽上传 + Ctrl+V 粘贴上传。
-          </div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-card__title">
+          <div class="feature-item">
             <C_Icon
               name="mdi:puzzle-outline"
-              class="feature-card__icon"
+              class="feature-icon"
             />
-            分片上传
+            <span>分片上传（大文件自动切片）</span>
           </div>
-          <div class="feature-card__desc">
-            大文件自动切片，可配置分片大小，并发控制上传。
-          </div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-card__title">
+          <div class="feature-item">
             <C_Icon
               name="mdi:lightning-bolt"
-              class="feature-card__icon"
+              class="feature-icon"
             />
-            秒传 & 断点续传
+            <span>秒传 & 断点续传（MD5 校验）</span>
           </div>
-          <div class="feature-card__desc">
-            spark-md5 计算文件 hash（Web
-            Worker），相同文件秒传，中断后断点续传。
-          </div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-card__title">
+          <div class="feature-item">
             <C_Icon
               name="mdi:tune-vertical"
-              class="feature-card__icon"
+              class="feature-icon"
             />
-            并发控制
+            <span>并发控制（队列自动调度）</span>
           </div>
-          <div class="feature-card__desc">
-            可配最大并发数，队列管理自动调度，避免服务端过载。
-          </div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-card__title">
+          <div class="feature-item">
             <C_Icon
               name="mdi:progress-check"
-              class="feature-card__icon"
+              class="feature-icon"
             />
-            进度跟踪
+            <span>进度跟踪（实时状态展示）</span>
           </div>
-          <div class="feature-card__desc">
-            单文件进度 + 分片进度 + 总体进度，实时展示上传状态。
-          </div>
-        </div>
-        <div class="feature-card">
-          <div class="feature-card__title">
+          <div class="feature-item">
             <C_Icon
               name="mdi:cloud-cog-outline"
-              class="feature-card__icon"
+              class="feature-icon"
             />
-            自定义上传
-          </div>
-          <div class="feature-card__desc">
-            自定义上传函数，支持 OSS 直传、七牛上传等自定义协议。
+            <span>自定义上传（OSS、七牛等）</span>
           </div>
         </div>
-      </div>
+      </NCard>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import type { UploadFileItem, UploadExpose } from '@/types/modules/upload'
+  import type {
+    UploadFileItem,
+    UploadExpose,
+  } from '@robot-admin/naive-ui-components'
   import {
     FILE_TYPE_OPTIONS,
     CHUNK_SIZE_OPTIONS,

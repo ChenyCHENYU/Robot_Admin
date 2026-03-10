@@ -23,7 +23,7 @@ export function initSettingsStoreSync() {
   // 防止 settings store 默认值 'light' 覆盖 localStorage 中保存的主题
   const savedMode = themeStore.mode
   if (savedMode && savedMode !== settingsStore.themeMode) {
-    settingsStore.themeMode = savedMode === 'system' ? 'auto' : savedMode
+    settingsStore.themeMode = savedMode
   }
 
   // 监听主题色变化，同步到 Naive UI
@@ -65,7 +65,7 @@ export function initSettingsStoreSync() {
   watch(
     () => settingsStore.themeMode,
     mode => {
-      if (mode === 'auto') {
+      if (mode === 'system') {
         themeStore.setMode('system')
       } else {
         themeStore.setMode(mode)

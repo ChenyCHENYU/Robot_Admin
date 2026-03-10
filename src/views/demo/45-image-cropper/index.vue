@@ -10,30 +10,36 @@
 
 <template>
   <div class="image-cropper-demo-page">
-    <NH1>图片裁剪场景示例</NH1>
+    <c_vTitle
+      title="图片裁剪场景示例"
+      icon="mdi:crop"
+      description="支持拖拽缩放旋转、多种比例预设、圆形头像裁剪、弹窗模式等特性，适用于头像上传、图片编辑等场景"
+    />
 
-    <!-- 基础裁剪 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:crop"
-          class="title-icon"
-        />
-        基础裁剪
-      </h2>
-      <div class="section-desc">
-        最简单的图片裁剪，支持拖拽、缩放、旋转。工具栏提供常用比例预设和操作按钮
-      </div>
-      <div class="section-content">
+    <div class="demo-grid">
+      <!-- 基础裁剪 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>基础裁剪</h3>
+            <NTag
+              type="info"
+              size="small"
+              round
+              >默认</NTag
+            >
+          </div>
+          <p class="card-desc">支持拖拽、缩放、旋转，工具栏提供常用比例预设</p>
+        </template>
         <C_ImageCropper
           ref="basicRef"
           :src="DEMO_IMAGE"
           height="400px"
         />
-        <NSpace
-          :size="8"
-          style="margin-top: 12px"
-        >
+        <div class="action-bar">
           <NButton
             type="primary"
             @click="handleBasicCrop"
@@ -43,7 +49,7 @@
             </template>
             裁剪
           </NButton>
-        </NSpace>
+        </div>
         <div
           v-if="basicResult"
           class="demo-result"
@@ -70,23 +76,25 @@
             </NText>
           </div>
         </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 头像裁剪 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:account-circle-outline"
-          class="title-icon"
-        />
-        头像裁剪（圆形）
-      </h2>
-      <div class="section-desc">
-        设置 <code>circular</code> + <code>aspect-ratio="1"</code>
-        实现圆形头像裁剪，预览面板同步显示圆形效果
-      </div>
-      <div class="section-content">
+      <!-- 头像裁剪 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>头像裁剪</h3>
+            <NTag
+              type="success"
+              size="small"
+              round
+              >圆形</NTag
+            >
+          </div>
+          <p class="card-desc">设置 circular + aspect-ratio="1" 实现圆形头像</p>
+        </template>
         <C_ImageCropper
           ref="avatarRef"
           :src="DEMO_AVATAR"
@@ -94,10 +102,7 @@
           :circular="true"
           height="350px"
         />
-        <NSpace
-          :size="8"
-          style="margin-top: 12px"
-        >
+        <div class="action-bar">
           <NButton
             type="primary"
             @click="handleAvatarCrop"
@@ -107,7 +112,7 @@
             </template>
             裁剪头像
           </NButton>
-        </NSpace>
+        </div>
         <div
           v-if="avatarResult"
           class="demo-result demo-result__circular"
@@ -117,22 +122,27 @@
             alt="头像结果"
           />
         </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 输出配置 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:tune-variant"
-          class="title-icon"
-        />
-        输出格式 & 质量
-      </h2>
-      <div class="section-desc">
-        支持 PNG / JPEG / WebP 输出，可调节质量和限制最大尺寸
-      </div>
-      <div class="section-content">
+      <!-- 输出配置 - 全宽 -->
+      <NCard
+        class="demo-card full-width"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>输出格式 & 质量</h3>
+            <NTag
+              type="warning"
+              size="small"
+              round
+              >配置</NTag
+            >
+          </div>
+          <p class="card-desc"
+            >支持 PNG / JPEG / WebP 输出，可调节质量和限制最大尺寸</p
+          >
+        </template>
         <div class="output-config">
           <NFormItem
             label="格式"
@@ -178,17 +188,14 @@
           :max-output-width="maxWidth"
           height="350px"
         />
-        <NSpace
-          :size="8"
-          style="margin-top: 12px"
-        >
+        <div class="action-bar">
           <NButton
             type="primary"
             @click="handleConfigCrop"
           >
             导出
           </NButton>
-        </NSpace>
+        </div>
         <div
           v-if="configResult"
           class="demo-result"
@@ -215,22 +222,24 @@
             </NText>
           </div>
         </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 本地上传裁剪 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:upload"
-          class="title-icon"
-        />
-        本地文件裁剪
-      </h2>
-      <div class="section-desc">
-        点击选取本地图片，裁剪后导出。适合上传场景
-      </div>
-      <div class="section-content">
+      <!-- 本地上传裁剪 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>本地文件裁剪</h3>
+            <NTag
+              size="small"
+              round
+              >上传</NTag
+            >
+          </div>
+          <p class="card-desc">点击选取本地图片，裁剪后导出</p>
+        </template>
         <div
           v-if="!uploadSrc"
           class="demo-upload-area"
@@ -238,7 +247,7 @@
         >
           <C_Icon
             name="mdi:cloud-upload-outline"
-            style="font-size: 36px; opacity: 0.4"
+            class="upload-icon"
           />
           <NText depth="3">点击选择图片</NText>
         </div>
@@ -248,10 +257,7 @@
             :src="uploadSrc"
             height="350px"
           />
-          <NSpace
-            :size="8"
-            style="margin-top: 12px"
-          >
+          <div class="action-bar">
             <NButton @click="triggerUpload">重新选择</NButton>
             <NButton
               type="primary"
@@ -259,7 +265,7 @@
             >
               裁剪
             </NButton>
-          </NSpace>
+          </div>
           <div
             v-if="uploadResult"
             class="demo-result"
@@ -277,23 +283,25 @@
           hidden
           @change="handleFileChange"
         />
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 弹窗模式 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:window-maximize"
-          class="title-icon"
-        />
-        弹窗模式
-      </h2>
-      <div class="section-desc">
-        设置 <code>modal</code>
-        属性以弹窗形式打开裁剪器，适配上传后二次裁剪场景
-      </div>
-      <div class="section-content">
+      <!-- 弹窗模式 -->
+      <NCard
+        class="demo-card"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>弹窗模式</h3>
+            <NTag
+              type="info"
+              size="small"
+              round
+              >Modal</NTag
+            >
+          </div>
+          <p class="card-desc">以弹窗形式打开裁剪器，适配上传后二次裁剪</p>
+        </template>
         <NButton
           type="primary"
           @click="modalRef?.open(DEMO_IMAGE)"
@@ -327,26 +335,26 @@
             </NTag>
           </div>
         </div>
-      </div>
-    </div>
+      </NCard>
 
-    <!-- 编程控制 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:code-braces"
-          class="title-icon"
-        />
-        编程控制
-      </h2>
-      <div class="section-desc">
-        通过 <code>ref</code> 调用旋转、缩放、翻转、设置比例等方法
-      </div>
-      <div class="section-content">
-        <NSpace
-          :size="8"
-          style="margin-bottom: 12px"
-        >
+      <!-- 编程控制 - 全宽 -->
+      <NCard
+        class="demo-card full-width"
+        :bordered="false"
+      >
+        <template #header>
+          <div class="card-header">
+            <h3>编程控制</h3>
+            <NTag
+              type="success"
+              size="small"
+              round
+              >API</NTag
+            >
+          </div>
+          <p class="card-desc">通过 ref 调用旋转、缩放、翻转、设置比例等方法</p>
+        </template>
+        <div class="action-bar">
           <NButton
             size="small"
             @click="apiRef?.rotate(-90)"
@@ -402,7 +410,7 @@
           >
             重置
           </NButton>
-        </NSpace>
+        </div>
         <C_ImageCropper
           ref="apiRef"
           :src="DEMO_IMAGE"
@@ -410,7 +418,7 @@
           :show-preview="false"
           height="350px"
         />
-      </div>
+      </NCard>
     </div>
   </div>
 </template>
@@ -419,7 +427,7 @@
   import type {
     CropOutputFormat,
     CropResult,
-  } from '@/types/modules/image-cropper'
+  } from '@robot-admin/naive-ui-components'
   import {
     DEMO_AVATAR,
     DEMO_IMAGE,
