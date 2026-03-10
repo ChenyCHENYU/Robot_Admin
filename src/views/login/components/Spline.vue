@@ -50,9 +50,8 @@
     height: '100%',
   }))
 
-  // ===== 拦截 Spline / 浏览器扩展 的连接错误 =====
-  const CONNECTION_RE =
-    /Could not establish connection|Receiving end does not exist|ERR_CACHE_READ_FAILURE/
+  // ===== 拦截 Spline 加载时的缓存读取错误（扩展通信错误已由全局 errorHandler 统一过滤）=====
+  const CONNECTION_RE = /ERR_CACHE_READ_FAILURE/
   let _rejHandler: ((e: PromiseRejectionEvent) => void) | null = null
   let _errHandler: ((e: ErrorEvent) => void) | null = null
 

@@ -1,6 +1,10 @@
 <template>
   <div class="diagram-demo">
-    <NH1 class="p4px">图编辑引擎示例</NH1>
+    <c_vTitle
+      title="图编辑引擎示例"
+      icon="mdi:graph"
+      description="基于 AntV X6 封装的可视化图编辑引擎，支持 ER 图、BPMN 流程图、UML 类图等多种场景"
+    />
     <NCard>
       <template #header>
         <NTabs
