@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-03-10
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-10
+ * @LastEditTime: 2026-03-10 21:41:27
  * @FilePath: \Robot_Admin\src\types\modules\permission.d.ts
  * @Description: 权限体系类型定义 — RBAC + 数据权限 + 字段权限 + 审计日志
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.

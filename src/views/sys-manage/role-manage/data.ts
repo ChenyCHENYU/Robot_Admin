@@ -814,3 +814,228 @@ export const getRoleUsersApi = async (
   const users = getUsersByRoleId(roleId)
   return createMockApi(users, 300)
 }
+
+// ==================== 权限预览相关类型 ====================
+export type DataScopeType =
+  | 'all'
+  | 'department'
+  | 'department_below'
+  | 'self'
+  | 'custom'
+
+export interface RoleDataScope {
+  module: string
+  moduleName: string
+  scope: DataScopeType
+  customDepartments?: string[]
+}
+
+export interface RoleTempAuth {
+  id: string
+  roleId: string
+  roleName: string
+  targetRoleId: string
+  targetRoleName: string
+  permissions: string[]
+  permissionNames: string[]
+  reason: string
+  startTime: string
+  expireTime: string
+  status: 'active' | 'expired' | 'revoked'
+  grantedBy: string
+}
+
+export interface PermissionPreviewItem {
+  type: 'menu' | 'button' | 'api'
+  id: string
+  name: string
+  code: string
+  icon?: string
+  path?: string
+  parentName?: string
+}
+
+// ==================== 权限预览常量 ====================
+export const DATA_SCOPE_CONFIG: Record<
+  DataScopeType,
+  {
+    text: string
+    type: 'success' | 'info' | 'warning' | 'error' | 'default'
+    icon: string
+    description: string
+  }
+> = {
+  all: {
+    text: '全部数据',
+    type: 'success',
+    icon: 'mdi:database',
+    description: '可查看系统中所有数据',
+  },
+  department: {
+    text: '本部门',
+    type: 'info',
+    icon: 'mdi:domain',
+    description: '仅可查看本部门数据',
+  },
+  department_below: {
+    text: '本部门及下级',
+    type: 'warning',
+    icon: 'mdi:file-tree',
+    description: '可查看本部门及下级部门数据',
+  },
+  self: {
+    text: '仅本人',
+    type: 'error',
+    icon: 'mdi:account',
+    description: '仅可查看自己创建的数据',
+  },
+  custom: {
+    text: '自定义',
+    type: 'default',
+    icon: 'mdi:tune',
+    description: '自定义可访问的数据范围',
+  },
+}
+
+export const TEMP_AUTH_STATUS = {
+  active: { text: '生效中', type: 'success' as const },
+  expired: { text: '已过期', type: 'warning' as const },
+  revoked: { text: '已撤销', type: 'error' as const },
+}
+
+// ==================== 模拟数据：角色数据权限 ====================
+export const MOCK_ROLE_DATA_SCOPES: Record<string, RoleDataScope[]> = {
+  role_1: [
+    { module: 'user', moduleName: '用户管理', scope: 'all' },
+    { module: 'role', moduleName: '角色管理', scope: 'all' },
+    { module: 'content', moduleName: '内容管理', scope: 'all' },
+    { module: 'analytics', moduleName: '数据统计', scope: 'all' },
+  ],
+  role_2: [
+    { module: 'user', moduleName: '用户管理', scope: 'department_below' },
+    { module: 'role', moduleName: '角色管理', scope: 'department' },
+    { module: 'content', moduleName: '内容管理', scope: 'department_below' },
+    { module: 'analytics', moduleName: '数据统计', scope: 'department' },
+  ],
+  role_3: [
+    { module: 'content', moduleName: '内容管理', scope: 'department' },
+    { module: 'analytics', moduleName: '数据统计', scope: 'self' },
+  ],
+  role_4: [
+    { module: 'analytics', moduleName: '数据统计', scope: 'department_below' },
+  ],
+  role_5: [],
+}
+
+// ==================== 模拟数据：临时授权 ====================
+export const MOCK_TEMP_AUTHS: RoleTempAuth[] = [
+  {
+    id: 'ta_1',
+    roleId: 'role_3',
+    roleName: '内容编辑员',
+    targetRoleId: 'role_4',
+    targetRoleName: '数据分析师',
+    permissions: ['perm_3_1'],
+    permissionNames: ['查看报表'],
+    reason: '季度报告编写需要查看数据报表',
+    startTime: '2024-01-10 09:00:00',
+    expireTime: '2024-02-10 09:00:00',
+    status: 'active',
+    grantedBy: 'admin',
+  },
+  {
+    id: 'ta_2',
+    roleId: 'role_4',
+    roleName: '数据分析师',
+    targetRoleId: 'role_3',
+    targetRoleName: '内容编辑员',
+    permissions: ['perm_2_1_1'],
+    permissionNames: ['发布文章'],
+    reason: '数据分析结果需要发布为内部文章',
+    startTime: '2024-01-05 09:00:00',
+    expireTime: '2024-01-20 09:00:00',
+    status: 'expired',
+    grantedBy: 'admin',
+  },
+  {
+    id: 'ta_3',
+    roleId: 'role_2',
+    roleName: '系统管理员',
+    targetRoleId: 'role_1',
+    targetRoleName: '超级管理员',
+    permissions: ['perm_1_1_3', 'perm_1_2_3'],
+    permissionNames: ['删除用户', '删除角色'],
+    reason: '系统数据清理任务临时授权',
+    startTime: '2024-01-08 09:00:00',
+    expireTime: '2024-01-09 18:00:00',
+    status: 'revoked',
+    grantedBy: 'super_admin',
+  },
+]
+
+// ==================== 工具函数：权限预览 ====================
+
+/**
+ * * @description: 从权限树中提取扁平化的权限预览列表
+ * ? @param {PermissionData[]} permissions 权限树
+ * ? @param {string[]} selectedIds 已选权限ID列表
+ * ! @return {PermissionPreviewItem[]} 扁平化的权限预览项
+ */
+export const extractPermissionPreview = (
+  permissions: PermissionData[],
+  selectedIds: string[],
+  parentName?: string
+): PermissionPreviewItem[] => {
+  const result: PermissionPreviewItem[] = []
+  for (const perm of permissions) {
+    if (selectedIds.includes(perm.id)) {
+      result.push({
+        type: perm.type,
+        id: perm.id,
+        name: perm.name,
+        code: perm.code,
+        icon: perm.icon,
+        path: perm.path,
+        parentName,
+      })
+    }
+    if (perm.children) {
+      result.push(
+        ...extractPermissionPreview(perm.children, selectedIds, perm.name)
+      )
+    }
+  }
+  return result
+}
+
+/**
+ * * @description: 获取角色的临时授权列表
+ * ? @param {string} roleId 角色ID
+ * ! @return {RoleTempAuth[]} 相关的临时授权列表
+ */
+export const getRoleTempAuths = (roleId: string): RoleTempAuth[] =>
+  MOCK_TEMP_AUTHS.filter(
+    auth => auth.roleId === roleId || auth.targetRoleId === roleId
+  )
+
+/**
+ * * @description: 比较两个角色的权限差异
+ * ? @param {RoleData} roleA 角色A
+ * ? @param {RoleData} roleB 角色B
+ * ! @return {{ shared, onlyA, onlyB }} 权限差异
+ */
+export const compareRolePermissions = (
+  roleA: RoleData,
+  roleB: RoleData
+): {
+  shared: string[]
+  onlyA: string[]
+  onlyB: string[]
+} => {
+  const idsA = new Set(roleA.permissionIds || [])
+  const idsB = new Set(roleB.permissionIds || [])
+  const shared = [...idsA].filter(id => idsB.has(id))
+  const onlyA = [...idsA].filter(id => !idsB.has(id))
+  const onlyB = [...idsB].filter(id => !idsA.has(id))
+  return { shared, onlyA, onlyB }
+}

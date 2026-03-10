@@ -54,6 +54,13 @@
     background: rgba(0, 0, 0, 0.15);
     margin: 0 8px;
   }
+// 展开行内容
+.expand-content {
+  padding: 16px 24px;
+  background: var(--n-color-modal, #fafafa);
+  border-radius: 8px;
+  margin: 8px 0;
+}
 }
 
 // ================= 单选按钮样式 =================

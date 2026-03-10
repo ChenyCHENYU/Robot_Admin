@@ -13,6 +13,9 @@ export interface Employee extends DataRecord {
   joinDate: number
   status: 'active' | 'inactive' | 'probation'
   description?: string
+  salary?: number
+  level?: 'junior' | 'mid' | 'senior' | 'lead'
+  children?: Employee[]
 }
 
 // ================= 编辑模式配置 =================
@@ -74,6 +77,32 @@ export const GENDER_OPTIONS: SelectOption[] = [
   { label: '女', value: 'female' },
 ]
 
+export const LEVEL_OPTIONS: SelectOption[] = [
+  { label: '初级', value: 'junior' },
+  { label: '中级', value: 'mid' },
+  { label: '高级', value: 'senior' },
+  { label: '主管', value: 'lead' },
+]
+
+export const LEVEL_CONFIG: Record<
+  string,
+  { text: string; type: 'default' | 'info' | 'success' | 'warning' }
+> = {
+  junior: { text: '初级', type: 'default' },
+  mid: { text: '中级', type: 'info' },
+  senior: { text: '高级', type: 'success' },
+  lead: { text: '主管', type: 'warning' },
+}
+
+export const STATUS_TAG_CONFIG: Record<
+  string,
+  { text: string; type: 'default' | 'success' | 'error' | 'warning' }
+> = {
+  active: { text: '在职', type: 'success' },
+  inactive: { text: '离职', type: 'error' },
+  probation: { text: '试用期', type: 'warning' },
+}
+
 // 新增表单默认值
 export const ADD_FORM_DEFAULTS = {
   name: '',
@@ -83,6 +112,8 @@ export const ADD_FORM_DEFAULTS = {
   department: 'tech',
   joinDate: Date.now(),
   status: 'probation',
+  level: 'junior',
+  salary: 8000,
   description: '',
 }
 
@@ -211,6 +242,39 @@ export const getTableColumns = (): TableColumn[] => [
     render: (row: Employee) => formatStatus(row.status),
   },
   {
+    key: 'level',
+    title: '职级',
+    width: 100,
+    editable: true,
+    required: false,
+    editType: 'select',
+    editProps: {
+      options: LEVEL_OPTIONS,
+      placeholder: '请选择职级',
+    },
+    render: (row: Employee) => {
+      const cfg = LEVEL_CONFIG[row.level || 'junior']
+      return cfg?.text || row.level || '-'
+    },
+  },
+  {
+    key: 'salary',
+    title: '薪资',
+    width: 120,
+    editable: true,
+    required: false,
+    editType: 'number',
+    editProps: {
+      min: 3000,
+      max: 100000,
+      step: 500,
+      showButton: false,
+      placeholder: '请输入薪资',
+    },
+    render: (row: Employee) =>
+      row.salary ? `¥${row.salary.toLocaleString()}` : '-',
+  },
+  {
     key: 'description',
     title: '描述',
     width: 200,
@@ -237,6 +301,8 @@ export const createNewEmployee = (): Employee => ({
   department: 'tech',
   joinDate: Date.now(),
   status: 'probation',
+  level: 'junior',
+  salary: 8000,
   description: '新入职员工，待完善信息',
 })
 
@@ -365,3 +431,114 @@ export const employeeTableConfig: UseTableCrudConfig<Employee> = {
   idKey: 'id',
   createNewRow: createNewEmployee,
 }
+
+// ================= 批量操作部门映射 =================
+export const BATCH_DEPARTMENT_OPTIONS = DEPARTMENT_OPTIONS
+
+// ================= 高级功能演示配置 =================
+
+/**
+ * * @description: 生成大量模拟数据（用于虚拟滚动/性能测试）
+ * ? @param {number} count 数据条数
+ * ! @return {Employee[]} 员工列表
+ */
+export const generateMockEmployees = (count: number): Employee[] => {
+  const names = ['张三', '李四', '王五', '赵六', '钱七', '孙八', '周九', '吴十']
+  const departments: Employee['department'][] = [
+    'tech',
+    'hr',
+    'market',
+    'finance',
+  ]
+  const statuses: Employee['status'][] = ['active', 'inactive', 'probation']
+  const levels: NonNullable<Employee['level']>[] = [
+    'junior',
+    'mid',
+    'senior',
+    'lead',
+  ]
+
+  return Array.from({ length: count }, (_, i) => ({
+    id: i + 1,
+    name: `${names[i % names.length]}${Math.floor(i / names.length) + 1}`,
+    age: 22 + (i % 30),
+    gender: (i % 3 === 0 ? 'female' : 'male') as Employee['gender'],
+    email: `employee${i + 1}@example.com`,
+    department: departments[i % departments.length],
+    joinDate: Date.now() - i * 86400000 * 7,
+    status: statuses[i % statuses.length],
+    level: levels[i % levels.length],
+    salary: 5000 + (i % 20) * 1000,
+    description: `员工 ${i + 1} 的描述信息`,
+  }))
+}
+
+/** 带子节点的树形数据演示 */
+export const TREE_TABLE_DATA: Employee[] = [
+  {
+    id: 9001,
+    name: '技术部',
+    age: 0,
+    gender: 'male',
+    email: 'tech@example.com',
+    department: 'tech',
+    joinDate: Date.now() - 365 * 86400000,
+    status: 'active',
+    level: 'lead',
+    salary: 0,
+    description: '技术部门',
+    children: [
+      {
+        id: 9011,
+        name: '前端组长',
+        age: 32,
+        gender: 'male',
+        email: 'frontend-lead@example.com',
+        department: 'tech',
+        joinDate: Date.now() - 300 * 86400000,
+        status: 'active',
+        level: 'senior',
+        salary: 25000,
+      },
+      {
+        id: 9012,
+        name: '后端组长',
+        age: 34,
+        gender: 'male',
+        email: 'backend-lead@example.com',
+        department: 'tech',
+        joinDate: Date.now() - 350 * 86400000,
+        status: 'active',
+        level: 'senior',
+        salary: 28000,
+      },
+    ],
+  },
+  {
+    id: 9002,
+    name: '市场部',
+    age: 0,
+    gender: 'female',
+    email: 'market@example.com',
+    department: 'market',
+    joinDate: Date.now() - 200 * 86400000,
+    status: 'active',
+    level: 'lead',
+    salary: 0,
+    description: '市场部门',
+    children: [
+      {
+        id: 9021,
+        name: '品牌经理',
+        age: 29,
+        gender: 'female',
+        email: 'brand@example.com',
+        department: 'market',
+        joinDate: Date.now() - 150 * 86400000,
+        status: 'active',
+        level: 'mid',
+        salary: 18000,
+      },
+    ],
+  },
+]

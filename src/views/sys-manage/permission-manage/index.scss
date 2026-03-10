@@ -58,7 +58,23 @@
     }
   }
 
+    // ========== 主标签页 ==========
+    .main-tabs {
+      flex: 1;
+      overflow: hidden;
+  
+      :deep(.n-tabs-pane-wrapper) {
+        overflow-y: auto;
+      }
+  
+      :deep(.n-tab-pane) {
+        padding: 16px 0;
+      }
+    }
   // ========== 统计卡片区域 ==========
+    .stat-grid {
+      margin-bottom: 16px;
+    }
 
   .stat-card-clickable {
     cursor: pointer;
@@ -74,8 +90,7 @@
     &.stat-card-active {
       border: 2px solid var(--n-primary-color);
       box-shadow: 0 4px 12px var(--n-primary-color-suppl);
-    }
-
+    
   }
 
   .stat-icon-wrapper {
@@ -114,38 +129,40 @@
     background: var(--n-color-base);
     border: 1px solid var(--n-border-color);
     border-radius: 6px;
+    padding: 8px 12px;
+      margin-bottom: 16px;
 
     :deep(.n-space) {
-        align-items: center;
+      align-items: center;
         gap: 8px !important;
       }
 
-      :deep(.n-text) {
-        font-size: 13px;
-        color: var(--n-text-color-disabled);
-        margin-right: 4px;
-      }
+        :deep(.n-text) {
+          font-size: 13px;
+          color: var(--n-text-color-disabled);
+          margin-right: 4px;
+        }
+
     :deep(.n-tag) {
       border-radius: 4px;
       font-weight: 500;
       font-size: 12px;
-        height: 24px;
+      height: 24px;
         padding: 0 8px;
         line-height: 22px;
       }
 
-      :deep(.n-button) {
-        font-size: 12px;
-        height: 24px;
-        padding: 0 8px;
-        border-radius: 4px;
-        min-width: auto;
+        :deep(.n-button) {
+          font-size: 12px;
+          height: 24px;
+          padding: 0 8px;
+          border-radius: 4px;
+          min-width: auto;
     }
   }
 
   // ========== 主内容区域 ==========
-  .content-card {
-    flex: 1;
+    .content-card {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
@@ -156,14 +173,22 @@
     }
   }
 
-  // ========== 完全不影响表格，保持原有功能 ==========
-  // 表格区域不添加任何样式
+    // ========== 字段权限卡片 ==========
+    .field-permission-card {
+      border-radius: 8px;
+      margin-bottom: 12px;
+      transition: all 0.2s ease;
+  
+      &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+    }
 
   // ========== 响应式设计 ==========
   @media (max-width: 1200px) {
     .stat-grid {
       :deep(.n-grid-item) {
-        &:nth-child(n+3) {
+        &:nth-child(n + 3) {
           margin-top: 16px;
         }
       }
@@ -197,6 +222,8 @@
           }
         }
       }
+    }
+    }
     }
 
     .stat-grid {

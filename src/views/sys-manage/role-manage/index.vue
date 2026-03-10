@@ -92,10 +92,10 @@
       </NCard>
     </div>
 
-    <!-- 角色详情抽屉 -->
+    <!-- 角色详情抽屉（增强版 4 标签） -->
     <NDrawer
       v-model:show="showRoleDetail"
-      :width="600"
+      :width="720"
       placement="right"
     >
       <NDrawerContent
@@ -106,56 +106,291 @@
           class="role-detail"
           v-if="currentRole"
         >
-          <NSpace
-            vertical
-            :size="24"
+          <NTabs
+            v-model:value="detailTab"
+            type="line"
+            animated
           >
-            <NCard
-              title="基本信息"
-              size="small"
+            <!-- 标签1: 基本信息 -->
+            <NTabPane
+              name="basic"
+              tab="基本信息"
             >
-              <NDescriptions
-                :column="2"
-                bordered
+              <NSpace
+                vertical
+                :size="24"
               >
-                <NDescriptionsItem
-                  v-for="field in roleDetailFields"
-                  :key="field.key"
-                  :label="field.label"
+                <NCard
+                  title="基本信息"
+                  size="small"
                 >
-                  <component
-                    :is="field.component"
-                    v-bind="field.props"
+                  <NDescriptions
+                    :column="2"
+                    bordered
                   >
-                    {{ field.value }}
-                  </component>
-                </NDescriptionsItem>
-              </NDescriptions>
-            </NCard>
+                    <NDescriptionsItem
+                      v-for="field in roleDetailFields"
+                      :key="field.key"
+                      :label="field.label"
+                    >
+                      <component
+                        :is="field.component"
+                        v-bind="field.props"
+                      >
+                        {{ field.value }}
+                      </component>
+                    </NDescriptionsItem>
+                  </NDescriptions>
+                </NCard>
 
-            <NCard
-              title="权限信息"
-              size="small"
-              v-if="currentRole.permissionNames?.length"
-            >
-              <NSpace>
-                <NTag
-                  v-for="permission in currentRole.permissionNames"
-                  :key="permission"
-                  type="primary"
-                  size="medium"
+                <NCard
+                  title="权限信息"
+                  size="small"
+                  v-if="currentRole.permissionNames?.length"
                 >
-                  <template #icon>
-                    <C_Icon
-                      :name="ICONS.permission"
-                      :size="12"
-                    />
-                  </template>
-                  {{ permission }}
-                </NTag>
+                  <NSpace>
+                    <NTag
+                      v-for="permission in currentRole.permissionNames"
+                      :key="permission"
+                      type="primary"
+                      size="medium"
+                    >
+                      <template #icon>
+                        <C_Icon
+                          :name="ICONS.permission"
+                          :size="12"
+                        />
+                      </template>
+                      {{ permission }}
+                    </NTag>
+                  </NSpace>
+                </NCard>
               </NSpace>
-            </NCard>
-          </NSpace>
+            </NTabPane>
+
+            <!-- 标签2: 权限预览 -->
+            <NTabPane
+              name="preview"
+              tab="权限预览"
+            >
+              <NSpace
+                vertical
+                :size="16"
+              >
+                <!-- 菜单权限 -->
+                <NCard
+                  title="菜单权限"
+                  size="small"
+                >
+                  <template #header-extra>
+                    <NTag
+                      size="small"
+                      type="info"
+                    >
+                      {{ groupedPreview.menus.length }} 项
+                    </NTag>
+                  </template>
+                  <NEmpty
+                    v-if="!groupedPreview.menus.length"
+                    description="暂无菜单权限"
+                  />
+                  <div
+                    v-else
+                    class="preview-grid"
+                  >
+                    <div
+                      v-for="item in groupedPreview.menus"
+                      :key="item.id"
+                      class="preview-item"
+                    >
+                      <C_Icon
+                        :name="item.icon || 'mdi:menu'"
+                        :size="16"
+                      />
+                      <div class="preview-item-info">
+                        <NText strong>{{ item.name }}</NText>
+                        <NText
+                          depth="3"
+                          style="font-size: 12px"
+                        >
+                          {{ item.path || item.code }}
+                        </NText>
+                      </div>
+                    </div>
+                  </div>
+                </NCard>
+
+                <!-- 按钮权限 -->
+                <NCard
+                  title="按钮权限"
+                  size="small"
+                >
+                  <template #header-extra>
+                    <NTag
+                      size="small"
+                      type="success"
+                    >
+                      {{ groupedPreview.buttons.length }} 项
+                    </NTag>
+                  </template>
+                  <NEmpty
+                    v-if="!groupedPreview.buttons.length"
+                    description="暂无按钮权限"
+                  />
+                  <NSpace
+                    v-else
+                    :size="8"
+                    wrap
+                  >
+                    <NTag
+                      v-for="item in groupedPreview.buttons"
+                      :key="item.id"
+                      type="success"
+                      size="medium"
+                    >
+                      <template #icon>
+                        <C_Icon
+                          :name="item.icon || 'mdi:gesture-tap-button'"
+                          :size="12"
+                        />
+                      </template>
+                      {{ item.parentName ? `${item.parentName} / ` : ''
+                      }}{{ item.name }}
+                    </NTag>
+                  </NSpace>
+                </NCard>
+
+                <!-- API 权限 -->
+                <NCard
+                  v-if="groupedPreview.apis.length"
+                  title="API 权限"
+                  size="small"
+                >
+                  <template #header-extra>
+                    <NTag
+                      size="small"
+                      type="warning"
+                    >
+                      {{ groupedPreview.apis.length }} 项
+                    </NTag>
+                  </template>
+                  <NSpace
+                    :size="8"
+                    wrap
+                  >
+                    <NTag
+                      v-for="item in groupedPreview.apis"
+                      :key="item.id"
+                      type="warning"
+                      size="medium"
+                    >
+                      {{ item.name }}
+                    </NTag>
+                  </NSpace>
+                </NCard>
+              </NSpace>
+            </NTabPane>
+
+            <!-- 标签3: 数据权限 -->
+            <NTabPane
+              name="dataScope"
+              tab="数据权限"
+            >
+              <NEmpty
+                v-if="!currentDataScopes.length"
+                description="暂无数据权限配置"
+              />
+              <NSpace
+                v-else
+                vertical
+                :size="12"
+              >
+                <NCard
+                  v-for="scope in currentDataScopes"
+                  :key="scope.module"
+                  size="small"
+                  class="data-scope-card"
+                >
+                  <NSpace
+                    align="center"
+                    justify="space-between"
+                  >
+                    <NSpace align="center">
+                      <C_Icon
+                        :name="DATA_SCOPE_CONFIG[scope.scope].icon"
+                        :size="20"
+                      />
+                      <div>
+                        <NText strong>{{ scope.moduleName }}</NText>
+                        <br />
+                        <NText
+                          depth="3"
+                          style="font-size: 12px"
+                        >
+                          {{ DATA_SCOPE_CONFIG[scope.scope].description }}
+                        </NText>
+                      </div>
+                    </NSpace>
+                    <NTag
+                      :type="DATA_SCOPE_CONFIG[scope.scope].type"
+                      size="medium"
+                    >
+                      {{ DATA_SCOPE_CONFIG[scope.scope].text }}
+                    </NTag>
+                  </NSpace>
+                </NCard>
+              </NSpace>
+            </NTabPane>
+
+            <!-- 标签4: 临时授权 -->
+            <NTabPane
+              name="tempAuth"
+              tab="临时授权"
+            >
+              <NEmpty
+                v-if="!currentTempAuths.length"
+                description="暂无临时授权记录"
+              />
+              <NTimeline v-else>
+                <NTimelineItem
+                  v-for="auth in currentTempAuths"
+                  :key="auth.id"
+                  :type="
+                    auth.status === 'active'
+                      ? 'success'
+                      : auth.status === 'expired'
+                        ? 'warning'
+                        : 'error'
+                  "
+                  :title="`${auth.roleName} → ${auth.targetRoleName}`"
+                  :time="`${auth.startTime} ~ ${auth.expireTime}`"
+                >
+                  <NSpace
+                    vertical
+                    :size="4"
+                  >
+                    <NText>{{ auth.reason }}</NText>
+                    <NSpace :size="4">
+                      <NTag
+                        v-for="pName in auth.permissionNames"
+                        :key="pName"
+                        size="small"
+                        type="primary"
+                      >
+                        {{ pName }}
+                      </NTag>
+                    </NSpace>
+                    <NTag
+                      :type="TEMP_AUTH_STATUS[auth.status].type"
+                      size="small"
+                    >
+                      {{ TEMP_AUTH_STATUS[auth.status].text }}
+                    </NTag>
+                  </NSpace>
+                </NTimelineItem>
+              </NTimeline>
+            </NTabPane>
+          </NTabs>
         </div>
       </NDrawerContent>
     </NDrawer>
@@ -308,6 +543,166 @@
         striped
       />
     </NModal>
+
+    <!-- 角色权限对比弹窗 -->
+    <NModal
+      v-model:show="showCompareModal"
+      preset="dialog"
+      title="角色权限对比"
+      style="width: 900px"
+    >
+      <NSpace
+        vertical
+        :size="16"
+      >
+        <!-- 选择器 -->
+        <NGrid
+          :cols="5"
+          :x-gap="12"
+        >
+          <NGi :span="2">
+            <NSelect
+              v-model:value="compareRoleA"
+              placeholder="选择角色 A"
+              :options="roleOptions"
+              filterable
+            />
+          </NGi>
+          <NGi>
+            <div style="text-align: center; line-height: 34px">
+              <C_Icon
+                name="mdi:compare-horizontal"
+                :size="24"
+              />
+            </div>
+          </NGi>
+          <NGi :span="2">
+            <NSelect
+              v-model:value="compareRoleB"
+              placeholder="选择角色 B"
+              :options="roleOptions"
+              filterable
+            />
+          </NGi>
+        </NGrid>
+
+        <NButton
+          type="primary"
+          block
+          @click="handleCompareRoles"
+        >
+          开始对比
+        </NButton>
+
+        <!-- 对比结果 -->
+        <template v-if="compareResult">
+          <NGrid
+            :cols="3"
+            :x-gap="12"
+          >
+            <NGi>
+              <NCard
+                title="共有权限"
+                size="small"
+              >
+                <template #header-extra>
+                  <NTag
+                    type="success"
+                    size="small"
+                  >
+                    {{ compareResult.shared.length }}
+                  </NTag>
+                </template>
+                <NSpace
+                  :size="4"
+                  wrap
+                >
+                  <NTag
+                    v-for="id in compareResult.shared"
+                    :key="id"
+                    size="small"
+                    type="success"
+                  >
+                    {{ getPermissionNameById(id) || id }}
+                  </NTag>
+                </NSpace>
+                <NEmpty
+                  v-if="!compareResult.shared.length"
+                  description="无"
+                  :show-icon="false"
+                />
+              </NCard>
+            </NGi>
+            <NGi>
+              <NCard
+                :title="`仅角色 A`"
+                size="small"
+              >
+                <template #header-extra>
+                  <NTag
+                    type="warning"
+                    size="small"
+                  >
+                    {{ compareResult.onlyA.length }}
+                  </NTag>
+                </template>
+                <NSpace
+                  :size="4"
+                  wrap
+                >
+                  <NTag
+                    v-for="id in compareResult.onlyA"
+                    :key="id"
+                    size="small"
+                    type="warning"
+                  >
+                    {{ getPermissionNameById(id) || id }}
+                  </NTag>
+                </NSpace>
+                <NEmpty
+                  v-if="!compareResult.onlyA.length"
+                  description="无"
+                  :show-icon="false"
+                />
+              </NCard>
+            </NGi>
+            <NGi>
+              <NCard
+                :title="`仅角色 B`"
+                size="small"
+              >
+                <template #header-extra>
+                  <NTag
+                    type="info"
+                    size="small"
+                  >
+                    {{ compareResult.onlyB.length }}
+                  </NTag>
+                </template>
+                <NSpace
+                  :size="4"
+                  wrap
+                >
+                  <NTag
+                    v-for="id in compareResult.onlyB"
+                    :key="id"
+                    size="small"
+                    type="info"
+                  >
+                    {{ getPermissionNameById(id) || id }}
+                  </NTag>
+                </NSpace>
+                <NEmpty
+                  v-if="!compareResult.onlyB.length"
+                  description="无"
+                  :show-icon="false"
+                />
+              </NCard>
+            </NGi>
+          </NGrid>
+        </template>
+      </NSpace>
+    </NModal>
   </div>
 </template>
 
@@ -322,6 +717,9 @@
     type SearchForm,
     type PermissionTemplate,
     type RoleUserData,
+    type RoleDataScope,
+    type RoleTempAuth,
+    type PermissionPreviewItem,
     ROLE_FORM_RULES,
     DEFAULT_ROLE_FORM_DATA,
     UI_CONFIG,
@@ -329,13 +727,19 @@
     ICONS,
     STATUS_CONFIG,
     ROLE_TYPE_CONFIG,
+    DATA_SCOPE_CONFIG,
+    TEMP_AUTH_STATUS,
     getRoleListApi,
     getPermissionListApi,
     getRoleUsersApi,
     MOCK_ROLE_DATA,
     MOCK_PERMISSION_DATA,
+    MOCK_ROLE_DATA_SCOPES,
     findPermissionById,
     updateRoleInList,
+    extractPermissionPreview,
+    getRoleTempAuths,
+    compareRolePermissions,
   } from './data'
 
   const message = useMessage()
@@ -370,6 +774,53 @@
     status: null,
     type: null,
   })
+
+  // ==================== 权限预览 & 对比状态 ====================
+  const detailTab = ref('basic')
+  const showCompareModal = ref(false)
+  const compareRoleA = ref<string | null>(null)
+  const compareRoleB = ref<string | null>(null)
+  const compareResult = ref<{
+    shared: string[]
+    onlyA: string[]
+    onlyB: string[]
+  } | null>(null)
+
+  /** 当前角色的权限预览数据 */
+  const currentPermissionPreview = computed<PermissionPreviewItem[]>(() => {
+    if (!currentRole.value?.permissionIds?.length) return []
+    return extractPermissionPreview(
+      MOCK_PERMISSION_DATA,
+      currentRole.value.permissionIds
+    )
+  })
+
+  /** 按类型分组的权限预览 */
+  const groupedPreview = computed(() => {
+    const menus = currentPermissionPreview.value.filter(p => p.type === 'menu')
+    const buttons = currentPermissionPreview.value.filter(
+      p => p.type === 'button'
+    )
+    const apis = currentPermissionPreview.value.filter(p => p.type === 'api')
+    return { menus, buttons, apis }
+  })
+
+  /** 当前角色的数据权限 */
+  const currentDataScopes = computed<RoleDataScope[]>(() => {
+    if (!currentRole.value) return []
+    return MOCK_ROLE_DATA_SCOPES[currentRole.value.id] || []
+  })
+
+  /** 当前角色的临时授权 */
+  const currentTempAuths = computed<RoleTempAuth[]>(() => {
+    if (!currentRole.value) return []
+    return getRoleTempAuths(currentRole.value.id)
+  })
+
+  /** 角色选项列表（用于对比选择器） */
+  const roleOptions = computed(() =>
+    roleList.map(r => ({ label: `${r.name} (${r.code})`, value: r.id }))
+  )
 
   const pagination = reactive({
     page: 1,
@@ -736,6 +1187,18 @@
       onClick: () => openRoleModal(),
     },
     {
+      key: 'compare',
+      label: '对比权限',
+      icon: 'mdi:compare-horizontal',
+      type: 'info',
+      onClick: () => {
+        compareRoleA.value = null
+        compareRoleB.value = null
+        compareResult.value = null
+        showCompareModal.value = true
+      },
+    },
+    {
       key: 'refresh',
       label: '刷新',
       icon: ICONS.refresh,
@@ -812,7 +1275,24 @@
 
   const viewRole = (role: RoleData) => {
     currentRole.value = role
+    detailTab.value = 'basic'
     showRoleDetail.value = true
+  }
+
+  /** 执行角色权限对比 */
+  const handleCompareRoles = () => {
+    if (!compareRoleA.value || !compareRoleB.value) {
+      message.warning('请选择两个角色进行对比')
+      return
+    }
+    if (compareRoleA.value === compareRoleB.value) {
+      message.warning('请选择两个不同的角色')
+      return
+    }
+    const roleA = roleList.find(r => r.id === compareRoleA.value)
+    const roleB = roleList.find(r => r.id === compareRoleB.value)
+    if (!roleA || !roleB) return
+    compareResult.value = compareRolePermissions(roleA, roleB)
   }
 
   const toggleRoleStatus = async (role: RoleData) => {
