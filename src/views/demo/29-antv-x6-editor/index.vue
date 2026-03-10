@@ -1,3 +1,13 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-07-03 09:23:53
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-07-04 18:52:07
+ * @FilePath: \Robot_Admin\src\views\demo\29-antv-x6-editor\index.vue
+ * @Description: 图编辑引擎演示页面
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="diagram-demo">
     <c_vTitle

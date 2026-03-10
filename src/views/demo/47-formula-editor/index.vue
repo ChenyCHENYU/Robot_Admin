@@ -1,3 +1,13 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-26 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-26 23:52:52
+ * @FilePath: \Robot_Admin\src\views\demo\47-formula-editor\index.vue
+ * @Description: 公式编辑器演示
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="formula-demo-page">
     <c_vTitle

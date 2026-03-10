@@ -10,9 +10,11 @@
 
 <template>
   <div class="jszip-demo">
-    <!-- 头部 -->
-    <NH1>导出 Zip - [useJsZip] 场景示例</NH1>
-    <p class="mb-20px">JSZip Hooks 配置驱动的文件压缩导出工具</p>
+    <c_vTitle
+      title="导出 Zip - [useJsZip] 场景示例"
+      icon="mdi:folder-zip"
+      description="JSZip Hooks 配置驱动的文件压缩导出工具，支持代码项目、数据报表、媒体资源、模板库等多种导出场景"
+    />
 
     <!-- 全局进度 -->
     <NCard
@@ -272,10 +274,8 @@
     isValidUploadFile,
   } from './data'
 
-  // ==================== 使用 Hook ====================
   const jszip = useJSZip()
 
-  // ==================== 配置数据 ====================
   const codeConfig = ref<CodeProjectConfig>({
     projectName: 'my-awesome-app',
     framework: 'vue' as FrameworkType,
@@ -305,7 +305,6 @@
     templates: [],
   })
 
-  // ==================== 响应式数据 ====================
   const codeContent = ref(defaultCodeContent)
   const mockData = ref(mockDataList)
   const mediaFiles = ref<UploadFileInfo[]>([])
@@ -314,14 +313,7 @@
     'typescript-utils',
   ])
 
-  // ==================== 工具函数 ====================
-
-  /**
-   * * @description 切换模板选择状态
-   * ? @param templateId - 模板ID
-   * ! @return void
-   */
-  const toggleTemplate = (templateId: TemplateId): void => {
+  const toggleTemplate = (templateId: TemplateId) => {
     const index = selectedTemplates.value.indexOf(templateId)
     if (index > -1) {
       selectedTemplates.value.splice(index, 1)
@@ -330,13 +322,7 @@
     }
   }
 
-  // ==================== 事件处理 ====================
-
-  /**
-   * * @description 处理代码项目导出
-   * ! @return Promise<void>
-   */
-  const handleCodeExport = async (): Promise<void> => {
+  const handleCodeExport = async () => {
     const files = [
       { path: 'App.vue', content: codeContent.value },
       {
@@ -354,11 +340,7 @@
     await jszip.exportCodeProject(config)
   }
 
-  /**
-   * * @description 处理报表导出
-   * ! @return Promise<void>
-   */
-  const handleReportExport = async (): Promise<void> => {
+  const handleReportExport = async () => {
     const config: ReportConfig = {
       title: reportConfig.value.title,
       format: reportConfig.value.format,
@@ -369,11 +351,7 @@
     await jszip.exportReport(config)
   }
 
-  /**
-   * * @description 处理媒体文件导出
-   * ! @return Promise<void>
-   */
-  const handleMediaExport = async (): Promise<void> => {
+  const handleMediaExport = async () => {
     const validFiles = mediaFiles.value.filter(isValidUploadFile)
 
     const files = validFiles.map(fileItem => ({
@@ -392,11 +370,7 @@
     await jszip.exportMedia(config)
   }
 
-  /**
-   * * @description 处理模板库导出
-   * ! @return Promise<void>
-   */
-  const handleTemplateExport = async (): Promise<void> => {
+  const handleTemplateExport = async () => {
     const templates = availableTemplates
       .filter(t => selectedTemplates.value.includes(t.id))
       .map(t => ({

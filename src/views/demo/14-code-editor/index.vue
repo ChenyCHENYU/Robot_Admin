@@ -1,3 +1,13 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-06-19 13:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-06-23 09:43:05
+ * @FilePath: \Robot_Admin\src\views\demo\14-code-editor\index.vue
+ * @Description: C_Code 组件演示页面
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="code-editor-demo">
     <c_vTitle

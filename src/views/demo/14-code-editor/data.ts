@@ -1,3 +1,13 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-06-19 13:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-06-19 17:44:18
+ * @FilePath: \Robot_Admin\src\views\demo\14-code-editor\data.ts
+ * @Description: C_Code 组件演示页面数据配置
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ */
+
 // 动态语言加载选项
 export const languageOptions = [
   { label: 'C++', value: 'cpp' },
