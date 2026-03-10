@@ -10,7 +10,11 @@
 
 <template>
   <div class="drag-demo-page">
-    <NH1>v-drag 拖拽指令场景示例</NH1>
+    <c_vTitle
+      title="v-drag 拖拽指令场景示例"
+      icon="mdi:drag-variant"
+      description="通过 v-drag 指令让任意元素支持自由拖拽，支持约束轴向与边界限制"
+    />
     <NGrid
       :cols="2"
       :x-gap="24"

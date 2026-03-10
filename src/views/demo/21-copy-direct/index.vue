@@ -10,7 +10,11 @@
 
 <template>
   <div class="copy-demo-page">
-    <NH1>v-copy 复制指令场景示例</NH1>
+    <c_vTitle
+      title="v-copy 复制指令场景示例"
+      icon="mdi:content-copy"
+      description="通过 v-copy 指令一键绑定复制行为，支持文本、自定义回调和成功通知"
+    />
 
     <NGrid
       :cols="2"

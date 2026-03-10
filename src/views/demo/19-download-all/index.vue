@@ -1,7 +1,10 @@
 <template>
   <div class="download-demo">
-    <NH1 class="demo-title"> 下载 All - [useDownload] 场景示例 </NH1>
-    <p class="mb-20px"> 展示支持多种文件类型的通用下载钩子函数使用方法 </p>
+    <c_vTitle
+      title="下载 All - [useDownload] 场景示例"
+      icon="mdi:cloud-download"
+      description="展示支持多种文件类型的通用下载钉子函数使用方法"
+    />
     <div class="demo-content">
       <!-- 快捷下载区域 -->
       <NCard
@@ -12,20 +15,7 @@
           <span class="i-mdi:flash-outline text-yellow-500"></span>
         </template>
 
-        <div class="button-grid">
-          <NButton
-            v-for="(item, key) in quickDownloadButtons"
-            :key="key"
-            :type="item.type"
-            :loading="loading[key]"
-            @click="item.handler"
-          >
-            <template #icon>
-              <span :class="item.icon"></span>
-            </template>
-            {{ item.label }}
-          </NButton>
-        </div>
+        <C_ActionBar :actions="quickDownloadActions" />
       </NCard>
 
       <!-- 自定义下载区域 -->
@@ -153,10 +143,7 @@
     type HistoryItem,
   } from './data'
   import './index.scss'
-  import { createDiscreteApi } from 'naive-ui/es/discrete'
-
-  // 创建 naive-ui 的离散 API
-  const { message } = createDiscreteApi(['message'])
+  const message = useMessage()
 
   // 加载状态
   const loading = reactive({
@@ -195,34 +182,38 @@
 
   /**
    * * @description 快捷下载按钮配置
-   * ! @return 按钮配置对象
+   * ! @return 按钮操作配置数组
    */
-  const quickDownloadButtons = computed(() => ({
-    excel: {
-      type: 'primary' as const,
-      icon: 'i-mdi:microsoft-excel',
+  const quickDownloadActions = computed(() => [
+    {
       label: '下载 Excel',
-      handler: handleDownloadExcel,
+      type: 'primary' as const,
+      icon: 'mdi:microsoft-excel',
+      loading: loading.excel,
+      onClick: handleDownloadExcel,
     },
-    csv: {
-      type: 'success' as const,
-      icon: 'i-mdi:file-csv-outline',
+    {
       label: '下载 CSV',
-      handler: handleDownloadCSV,
+      type: 'success' as const,
+      icon: 'mdi:file-csv-outline',
+      loading: loading.csv,
+      onClick: handleDownloadCSV,
     },
-    pdf: {
-      type: 'error' as const,
-      icon: 'i-mdi:file-pdf-box',
+    {
       label: '下载 PDF',
-      handler: handleDownloadPDF,
+      type: 'error' as const,
+      icon: 'mdi:file-pdf-box',
+      loading: loading.pdf,
+      onClick: handleDownloadPDF,
     },
-    json: {
-      type: 'info' as const,
-      icon: 'i-mdi:code-json',
+    {
       label: '下载 JSON',
-      handler: handleDownloadJSON,
+      type: 'info' as const,
+      icon: 'mdi:code-json',
+      loading: loading.json,
+      onClick: handleDownloadJSON,
     },
-  }))
+  ])
 
   /** 批量下载操作按钮 */
   const batchActions = computed(() => [

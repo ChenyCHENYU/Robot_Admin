@@ -10,7 +10,11 @@
 
 <template>
   <div class="permission-demo-page">
-    <NH1>v-permission 权限指令场景示例</NH1>
+    <c_vTitle
+      title="v-permission 权限指令场景示例"
+      icon="mdi:shield-check-outline"
+      description="通过 v-permission 指令按权限控制元素显隐，支持 AND / OR 两种权限模式"
+    />
 
     <NGrid
       :cols="2"

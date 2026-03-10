@@ -10,7 +10,11 @@
 
 <template>
   <div class="longpress-demo-page">
-    <NH1>v-longpress 长按指令场景示例</NH1>
+    <c_vTitle
+      title="v-longpress 长按指令场景示例"
+      icon="mdi:gesture-tap-hold"
+      description="通过 v-longpress 指令识别长按手势，支持自定义触发时长和回调"
+    />
 
     <NGrid
       :cols="2"

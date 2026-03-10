@@ -10,7 +10,11 @@
 
 <template>
   <div class="watermark-demo-page">
-    <NH1>v-watermark 水印指令场景示例</NH1>
+    <c_vTitle
+      title="v-watermark 水印指令场景示例"
+      icon="mdi:watermark"
+      description="通过 v-watermark 指令为任意容器添加防篹改水印，支持动态更新和多种样式"
+    />
 
     <NGrid
       :cols="2"
