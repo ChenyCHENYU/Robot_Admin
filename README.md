@@ -68,7 +68,7 @@
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-49+-success?style=flat" alt="Components">
+    <img src="https://img.shields.io/badge/components-51+-success?style=flat" alt="Components">
     <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
@@ -170,12 +170,12 @@ _在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `Type
 ### 🔥 性能怪兽级别的开发体验
 
 - **毫秒级热更新** - Bun + Vite7 化学反应，告别等待
-- **智能类型提示** - TypeScript5.8 + 49+ 自定义组件，IDE 智能感知体验拉满
+- **智能类型提示** - TypeScript5.8 + 51+ 自定义组件，IDE 智能感知体验拉满
 - **零配置开箱即用** - 一条命令启动，30 秒内搭建完整后台系统
 
 ### 🎨 不只是一个管理系统，更是一个作品
 
-- **54+ 精心打磨的演示页面** - 每一个都是可直接用于生产的业务组件，49 个组件支持文档站 iframe 在线预览
+- **54+ 精心打磨的演示页面** - 每一个都是可直接用于生产的业务组件，51 个组件支持文档站 iframe 在线预览
 - **7 种自定义指令** - 防抖、节流、长按、拖拽、权限...让开发更优雅
 - **主题系统** - 深色/浅色模式/跟随系统 + 支持自定义扩展
 - **Preview 路由系统** - 32 个无鉴权独立预览路由，供 [文档站](https://www.tzagileteam.com) 通过 iframe 嵌入实时组件演示
@@ -251,7 +251,7 @@ bun clean              # 清理缓存
 - **Vue 3.5.13** - 🔥 最新稳定版，Composition API 丝滑体验
 - **TypeScript 5.8** - 🛡️ 类型安全，智能提示
 - **Naive UI 2.41.0** - 🎨 颜值与性能并存的组件库
-- **@robot-admin/naive-ui-components** - 🧩 49+ 业务组件库，按需自动导入
+- **@robot-admin/naive-ui-components** - 🧩 51+ 业务组件库，按需自动导入
 - **UnoCSS 66.3.3** - ⚡ 原子化CSS，按需生成，体积极小
 
 **⚙️ 构建工具**
