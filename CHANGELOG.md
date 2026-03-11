@@ -1,5 +1,43 @@
 # Changelog
 
+## [2.2.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.1.0...v2.2.0) (2026-03-11)
+
+
+### Features
+
+* **C_Menu/C_Settings:** 增加菜单主题，提供个性/标准两种多态模式 ([850f529](https://github.com/ChenyCHENYU/Robot_Admin/commit/850f5299399feabe2f57e1d8bb9248b4ffec8f52))
+* **demo:** CollapsePanel 演示改用 content prop，移除冗余插槽 ([8afaef5](https://github.com/ChenyCHENYU/Robot_Admin/commit/8afaef5c4b811805205defba4e11c9de3ad00631))
+* **demo:** signature 和 split-pane 演示页提取数据到 data.ts ([223dec6](https://github.com/ChenyCHENYU/Robot_Admin/commit/223dec6c39ff349d0f7d3bcede1a42e33e405e82))
+* **stores:** 权限体系升级 — 启用按钮权限、路由鉴权、数据权限类型、安全修复 ([d353865](https://github.com/ChenyCHENYU/Robot_Admin/commit/d353865fa89700bf95f57dce0d10343c8047221a))
+* Token 无感刷新 + 路由权限修复 + composable 规范化 + 新组件演示页面 ([9cacb37](https://github.com/ChenyCHENYU/Robot_Admin/commit/9cacb376ceaa9abcd35a40fb110e4a9e69d91441))
+* **views:** 权限管理页面升级 + 角色管理增强 + 表格演示优化 ([30daa27](https://github.com/ChenyCHENYU/Robot_Admin/commit/30daa273fc1f1caf4e1e24871c631b5c7897dfa0))
+
+
+### Bug Fixes
+
+* **build:** 升级组件库至 v0.6.31 + 关闭生产 i18n 插件防止构建阻断 ([f053866](https://github.com/ChenyCHENYU/Robot_Admin/commit/f0538664228bbb3f6e401113d4949b64aa2afd2b))
+* **config:** 修复 dev:components 模式下 ERR_CACHE_READ_FAILURE 错误 ([0cd21be](https://github.com/ChenyCHENYU/Robot_Admin/commit/0cd21be6f18a122de3a372f7ed862787e51919dd))
+* **deps:** 修复组件库图标不显示问题，升级 naive-ui-components 至 latest ([6816b77](https://github.com/ChenyCHENYU/Robot_Admin/commit/6816b77538eea88f0ebb99a563a0e7e07b9d52fb))
+* **styles:** 修复 permission-manage SCSS 多余闭括号导致构建失败 ([17c817e](https://github.com/ChenyCHENYU/Robot_Admin/commit/17c817e8697b0eff8bedac9e091b91f6ed016de7))
+* **types:** 全面修复 vue-tsc 类型检查错误（73→0），升级组件库至 0.6.20 ([e244bd2](https://github.com/ChenyCHENYU/Robot_Admin/commit/e244bd2c38acc33f18cd21621ebe7a21a46c45cf))
+* **views:** 修复 05-date 演示页面绑定及冗余代码 ([697e5b1](https://github.com/ChenyCHENYU/Robot_Admin/commit/697e5b1670fac4b0c214d056c4b53af5d3fe9f86))
+
+
+### Performance Improvements
+
+* **01-icon:** 优化演示页面 ([5015f6f](https://github.com/ChenyCHENYU/Robot_Admin/commit/5015f6fb8018cd6028147f6e0cb103901beaca0f))
+* **02-area-cascade:** 演示页面优化 ([53b1727](https://github.com/ChenyCHENYU/Robot_Admin/commit/53b172768ae32ea3c3f774550ab762eda37ae938))
+* **03-progress:** 演示页面优化 ([43acc1f](https://github.com/ChenyCHENYU/Robot_Admin/commit/43acc1f1a9ee9f3969c90b39e351ee599896cba6))
+* **04-time:** 演示页面优化 ([ec75a80](https://github.com/ChenyCHENYU/Robot_Admin/commit/ec75a804bcfe697b3a111e53fd0bc90f6f1ee5fe))
+* **06-city:** 演示页面优化 ([35cb2d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/35cb2d20995d88811600eecef8839fcb5a14c338))
+* **09-form-search:** 演示页面优化 ([987f9f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/987f9f979cf0a5f3b0d6758ddc596bf976705710))
+* **10-table:** 演示页面优化 ([2c61ba3](https://github.com/ChenyCHENYU/Robot_Admin/commit/2c61ba3743d08e39876ca1f363369489cdcf7d8d))
+* **11-table-expand:** 演示页面优化 ([4a74481](https://github.com/ChenyCHENYU/Robot_Admin/commit/4a74481b24adf9ab84b464eaf71edf0637028ea4))
+* **31-steps:** 演示页面及组件细节优化 ([290cf1c](https://github.com/ChenyCHENYU/Robot_Admin/commit/290cf1c9aaeff1945a74f7d60b3b63fe291c03b9))
+* **all:** 统一 DiscreteAPI、修复类型、优化分包、清理冗余 ([ceebf19](https://github.com/ChenyCHENYU/Robot_Admin/commit/ceebf19220d68c92192cdd6530517d065923f071))
+* **views:** 优化演示页面布局和标题样式 ([0f91c26](https://github.com/ChenyCHENYU/Robot_Admin/commit/0f91c264529055a879a456516ed32fb063ea2739))
+* **views:** 优化表单演示页面性能和交互体验 ([e5129ef](https://github.com/ChenyCHENYU/Robot_Admin/commit/e5129ef94f7b7ceec6fe821e1d8c902dde762f35))
+
 ## [2.1.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.0.0...v2.1.0) (2026-03-06)
 
 
