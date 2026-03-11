@@ -46,14 +46,14 @@
         margin: 0;
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: var(--app-text-primary);
       }
     }
 
     .card-desc {
       margin: 0;
       font-size: 13px;
-      color: #666;
+      color: var(--app-text-secondary);
       line-height: 1.5;
     }
 
@@ -88,18 +88,18 @@
     gap: 12px;
     padding: 12px 16px;
     border-radius: 8px;
-    background: #f8fafc;
+    background: var(--app-bg-surface);
     transition: all 0.2s ease;
 
     &:hover {
-      background: #f1f5f9;
+      background: var(--app-bg-surface);
       transform: translateY(-1px);
     }
   }
 
   .stat-icon {
     font-size: 24px;
-    color: #94a3b8;
+    color: var(--app-text-placeholder);
   }
 
   .stat-content {
@@ -128,7 +128,7 @@
 
   .stat-label {
     font-size: 12px;
-    color: #94a3b8;
+    color: var(--app-text-placeholder);
   }
 
   // 图表占位
@@ -140,12 +140,12 @@
     gap: 8px;
     height: 120px;
     border-radius: 8px;
-    background: #f5f7fa;
-    border: 1px dashed #e0e0e0;
+    background: var(--app-bg-surface);
+      border: 1px dashed var(--app-border-default);
 
     .placeholder-icon {
       font-size: 32px;
-      color: #999;
+      color: var(--app-text-placeholder);
     }
   }
 
@@ -156,7 +156,7 @@
     gap: 8px;
     padding: 12px 16px;
     border-radius: 8px;
-    background: #f5f7fa;
+    background: var(--app-bg-surface);
   }
 
   // 提示文字
@@ -165,7 +165,7 @@
     margin-top: 12px;
     padding: 8px 12px;
     border-radius: 6px;
-    background: #f0f9ff;
+    background: rgba(32, 128, 240, 0.08);
     font-size: 13px;
   }
 
@@ -173,60 +173,15 @@
   p {
     margin: 0;
     line-height: 1.8;
-    color: #666;
+    color: var(--app-text-secondary);
   }
 
-  // ─── 暗色主题适配 ─────────────────────────────
+    // ─── 暗色主题适配（组件内部深层样式） ─────────────────────────────
   [data-theme='dark'] & {
     .demo-card {
-      .card-header h3 {
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      .card-desc {
-        color: rgba(255, 255, 255, 0.6);
-      }
-
       &:hover {
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       }
-    }
-
-    .stat-item {
-      background: rgba(255, 255, 255, 0.04);
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.08);
-      }
-    }
-
-    .stat-icon {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .stat-label {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .chart-placeholder {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.12);
-
-      .placeholder-icon {
-        color: rgba(255, 255, 255, 0.4);
-      }
-    }
-
-    .lazy-indicator {
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .demo-tip {
-      background: rgba(33, 150, 243, 0.1);
-    }
-
-    p {
-      color: rgba(255, 255, 255, 0.7);
     }
 
     // C_CollapsePanel 组件内部暗色适配

@@ -101,3 +101,35 @@
     -webkit-text-fill-color: unset;
   }
 }
+
+/* 🎯 标准模式 — 去除所有玻璃质感，使用简洁纯色 */
+.menu-top--standard {
+  .text-title {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: var(--app-menu-text, #333333);
+    animation: none;
+    text-shadow: none;
+  }
+
+  .text-subtitle {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: var(--app-menu-text-sub, #999999);
+    animation: none;
+  }
+
+  /* Logo：去除紫色光晕投影，使用柔和阴影 */
+  video {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    filter: none;
+  }
+
+  /* 分隔线：覆盖 UnoCSS 渐变为实色 */
+  .menu-top__separator {
+    background-image: none;
+    background-color: var(--app-menu-border, #e5e7eb);
+  }
+}

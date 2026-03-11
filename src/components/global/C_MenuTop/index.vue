@@ -11,21 +11,33 @@
   <div
     ref="menuContainer"
     class="menu-top h-56px shrink-0 flex items-center relative overflow-hidden transition-all duration-300"
-    :class="[isCollapsed ? 'justify-center px-2' : 'justify-start pl-14px']"
+    :class="[
+      isCollapsed ? 'justify-center px-2' : 'justify-start pl-14px',
+      { 'menu-top--standard': !isSignature },
+    ]"
   >
-    <!-- 背景装饰 -->
+    <!-- 背景装饰（仅个性模式） -->
+    <template v-if="isSignature">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-transparent via-[#646cff]/5 to-transparent"
+        :class="{ 'animate-shimmer': !isCollapsed }"
+      ></div>
+      <div
+        class="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#646cff]/30 to-transparent"
+      ></div>
+    </template>
+    <!-- 标准模式底部分隔线 -->
     <div
-      class="absolute inset-0 bg-gradient-to-r from-transparent via-[#646cff]/5 to-transparent"
-      :class="{ 'animate-shimmer': !isCollapsed }"
-    ></div>
-    <div
-      class="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#646cff]/30 to-transparent"
+      v-else
+      class="absolute bottom-0 left-0 right-0 h-[1px]"
+      style="background-color: var(--app-menu-border, #e5e7eb)"
     ></div>
 
     <!-- Logo容器 -->
     <div class="relative flex-shrink-0">
-      <!-- Logo光晕背景 -->
+      <!-- Logo光晕背景（仅个性模式） -->
       <div
+        v-if="isSignature"
         class="absolute inset-0 bg-[#646cff]/20 rounded-lg blur-md scale-110"
         :class="{ 'animate-pulse-slow': !isCollapsed }"
       ></div>
@@ -50,7 +62,7 @@
     <!-- 分隔线 - 折叠时隐藏 -->
     <div
       v-show="!isCollapsed"
-      class="w-[1px] h-6 mx-4 bg-gradient-to-b from-transparent via-[#646cff]/40 to-transparent transition-all duration-300"
+      class="menu-top__separator w-[1px] h-6 mx-4 bg-gradient-to-b from-transparent via-[#646cff]/40 to-transparent transition-all duration-300"
     ></div>
 
     <!-- 文字内容 - 折叠时隐藏 -->
@@ -65,7 +77,14 @@
 </template>
 
 <script setup lang="ts">
+  import { s_themeStore } from '@/stores/theme'
+
   defineOptions({ name: 'C_MenuTop' })
+
+  const themeStore = s_themeStore()
+
+  /** 是否为个性（星空玻璃）风格 */
+  const isSignature = computed(() => themeStore.menuTheme === 'signature')
 
   // 获取容器引用
   const menuContainer = ref<HTMLElement>()

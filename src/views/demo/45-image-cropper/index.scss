@@ -42,14 +42,14 @@
         margin: 0;
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: var(--app-text-primary);
       }
     }
 
     .card-desc {
       margin: 0;
       font-size: 13px;
-      color: #666;
+      color: var(--app-text-secondary);
       line-height: 1.5;
     }
 
@@ -70,10 +70,10 @@
   .demo-result {
     margin-top: 12px;
     padding: 16px;
-    border: 1px dashed #e0e0e0;
+    border: 1px dashed var(--app-border-default);
     border-radius: 8px;
     text-align: center;
-    background: #fafafa;
+    background: var(--app-bg-surface);
 
     img {
       max-width: 100%;
@@ -106,19 +106,19 @@
     justify-content: center;
     min-height: 200px;
     padding: 32px;
-    border: 2px dashed #e0e0e0;
+    border: 2px dashed var(--app-border-default);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
       border-color: #2080f0;
-      background: #f0f9ff;
+      background: rgba(32, 128, 240, 0.08);
     }
 
     .upload-icon {
       font-size: 48px;
-      color: #999;
+      color: var(--app-text-placeholder);
     }
   }
 
@@ -130,45 +130,16 @@
     align-items: flex-end;
     margin-bottom: 16px;
     padding: 16px;
-    background: #f5f7fa;
+    background: var(--app-bg-surface);
     border-radius: 8px;
   }
 
   // ─── 暗色主题适配 ─────────────────────────────
   [data-theme='dark'] & {
     .demo-card {
-      .card-header h3 {
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      .card-desc {
-        color: rgba(255, 255, 255, 0.6);
-      }
-
       &:hover {
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       }
-    }
-
-    .demo-result {
-      border-color: rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .demo-upload-area {
-      border-color: rgba(255, 255, 255, 0.12);
-
-      &:hover {
-        background: rgba(33, 150, 243, 0.1);
-      }
-
-      .upload-icon {
-        color: rgba(255, 255, 255, 0.4);
-      }
-    }
-
-    .output-config {
-      background: rgba(255, 255, 255, 0.04);
-    }
+        }
   }
 }

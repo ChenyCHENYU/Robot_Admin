@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-11 14:22:31
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-11 09:41:14
+ * @LastEditTime: 2026-03-12
  * @FilePath: \Robot_Admin\src\components\global\C_Layout\index.vue
  * @Description: 布局组件 - 使用 @robot-admin/layout 包
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -16,6 +16,7 @@
         <div
           id="guide-menu"
           class="menu-scroll-container"
+          :class="{ 'menu-light': isMenuLight }"
         >
           <C_Menu
             :routes="menuData"
@@ -76,6 +77,11 @@
   const isReady = ref(true)
   const isDarkMode = computed(() => themeStore.isDark)
 
+  /**
+   * 菜单是否为亮色背景（决定 inverted 和文本配色方案）
+   */
+  const isMenuLight = computed(() => themeStore.isMenuLight)
+
   // 获取菜单数据（MenuOptions.path 为可选，RouteItem.path 为必填，此处数据上保证 path 存在）
   const menuData = permissionStore.showMenuListGet as any[]
 
@@ -93,7 +99,10 @@
     }
   }
 
-  onMounted(() => _disposeThemeEffect())
+  onMounted(() => {
+    _disposeThemeEffect()
+    themeStore.init()
+  })
 
   // 提供设置抽屉状态给子组件
   provide('settingsDrawer', {

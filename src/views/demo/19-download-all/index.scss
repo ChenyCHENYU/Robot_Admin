@@ -11,7 +11,7 @@
       border-radius: 12px;
 
       :deep(.n-card-header) {
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--app-border-default);
         padding: 20px 24px;
 
         .n-card-header__main {

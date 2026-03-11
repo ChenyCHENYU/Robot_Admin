@@ -46,14 +46,14 @@
         margin: 0;
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: var(--app-text-primary);
       }
     }
 
     .card-desc {
       margin: 0;
       font-size: 13px;
-      color: #666;
+      color: var(--app-text-secondary);
       line-height: 1.5;
     }
 
@@ -85,20 +85,20 @@
   .step-detail {
     margin-top: 24px;
     padding: 16px;
-    background: #f5f7fa;
+    background: var(--app-bg-surface);
     border-radius: 8px;
 
     h4 {
       margin: 0 0 8px 0;
       font-size: 15px;
       font-weight: 600;
-      color: #333;
+      color: var(--app-text-primary);
     }
 
     p {
       margin: 0 0 16px 0;
       font-size: 14px;
-      color: #666;
+      color: var(--app-text-secondary);
       line-height: 1.6;
     }
 

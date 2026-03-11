@@ -18,7 +18,7 @@
   .current-permissions {
     padding: 12px;
     border-radius: 6px;
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--app-border-default);
 
     .permission-list {
       display: flex;
@@ -40,7 +40,7 @@
     align-items: center;
     gap: 16px;
     padding: 12px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--app-border-default);
     border-radius: 8px;
 
     .button-container {
@@ -77,7 +77,7 @@
     align-items: center;
     gap: 12px;
     padding: 12px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--app-border-default);
     border-radius: 6px;
 
     .n-text {
@@ -86,7 +86,7 @@
       &[depth='3'] {
         min-width: auto;
         flex: 1;
-        color: #666;
+        color: var(--app-text-secondary);
       }
     }
 

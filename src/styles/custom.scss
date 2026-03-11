@@ -201,3 +201,173 @@ html.color-weak-mode {
   -ms-filter: invert(80%);
   -o-filter: invert(80%);
 }
+/* ================================
+ * 菜单标准模式 — 白色侧边栏右侧分隔线
+ * ================================
+ */
+.menu-scroll-container.menu-light {
+  border-right: 1px solid var(--n-border-color, #e5e7eb);
+}
+
+/* ================================================================
+ * 菜单标准模式 — 覆盖 @robot-admin/layout 包的玻璃质感装饰层
+ *
+ * 原理：layout 包为菜单添加了精美的紫色玻璃质感效果（渐变/模糊/阴影等），
+ * 这些效果适合「个性」模式（深邃星空风格），但在「标准」模式下需要完全移除，
+ * 让 NMenu 自身的 themeOverrides 控制所有颜色。
+ *
+ * 策略：
+ * 1. CSS 变量层 — 由 theme store 在 <html> 上设置 --menu-* 变量覆盖 fallback
+ * 2. CSS 规则层 — 用 html[data-menu-theme="standard"] 高特异性覆盖硬编码值
+ * ================================================================
+ */
+html[data-menu-theme='standard'] {
+
+  /* --- 菜单项 ::before 伪元素（底层玻璃渐变） --- */
+  .layout-container .n-menu-item:before {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* --- 菜单项内容 ::after 伪元素（边框叠加层） --- */
+  .layout-container .n-menu-item-content:after {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* --- Hover 效果：移除位移/模糊/紫色边框 --- */
+  .layout-container .n-menu-item:hover {
+    transform: none !important;
+  }
+
+  .layout-container .n-menu-item:hover:before {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu-item:hover .n-menu-item-content {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .layout-container .n-menu-item:hover .n-menu-item-content:after {
+    border-left-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu-item:hover .n-menu-item-content__icon {
+    transform: none !important;
+  }
+
+  /* --- 选中项：移除紫色渐变/阴影/模糊/边框 --- */
+  .layout-container .n-menu-item--selected:before,
+  .layout-container .n-menu-item-content--selected:before {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu-item--selected .n-menu-item-content,
+  .layout-container .n-menu-item-content--selected {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .layout-container .n-menu-item--selected .n-menu-item-content:after,
+  .layout-container .n-menu-item-content--selected:after {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu-item--selected .n-menu-item-content__icon {
+    filter: none !important;
+    transform: none !important;
+  }
+
+  /* --- Active（按下）状态：移除缩放 --- */
+  .layout-container .n-menu-item:active {
+    transform: none !important;
+  }
+
+  /* --- 子级激活（展开的父菜单）：移除模糊/紫色边框 --- */
+  .layout-container .n-menu-item-content--child-active {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .layout-container .n-menu-item-content--child-active:after {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* --- 子菜单容器：移除紫色 border-left 和模糊 --- */
+  .layout-container .n-submenu-children {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-left: none !important;
+  }
+
+  .layout-container .n-submenu-children .n-menu-item:hover {
+    transform: none !important;
+  }
+
+  /* --- 菜单分组标题装饰线 --- */
+  .layout-container .n-menu-item-group-title:after {
+    background: linear-gradient(to right,
+        transparent,
+        var(--n-border-color, #e5e7eb),
+        transparent) !important;
+  }
+
+  /* --- 菜单分割线 --- */
+  .layout-container .n-menu-divider {
+    background: var(--n-border-color, #e5e7eb) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* --- 加载态 Shimmer 动画颜色 --- */
+  .layout-container .n-menu-item.n-menu-item--loading:before {
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(32, 128, 240, 0.1),
+        transparent) !important;
+  }
+
+  /* --- 折叠菜单：移除 hover 缩放和紫色效果 --- */
+  .layout-container .n-menu.n-menu--collapsed .n-menu-item:hover {
+    transform: none !important;
+  }
+
+  .layout-container .n-menu.n-menu--collapsed .n-menu-item-content--child-active:before {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu.n-menu--collapsed .n-menu-item-content--child-active:after {
+    box-shadow: none !important;
+  }
+
+  /* --- 折叠菜单图标颜色：让 NMenu 主题变量控制 --- */
+  .n-menu--collapsed .n-menu-item-content__icon {
+    color: var(--n-item-icon-color, currentColor) !important;
+  }
+}
+
+/* ================================================================
+ * 菜单标准模式 + 暗色主题 — 增强选中菜单项的视觉反馈
+ * ================================================================
+ */
+html[data-menu-theme='standard'][data-theme='dark'] {
+
+  .layout-container .n-menu-item-content--selected,
+  .layout-container .n-menu-item--selected .n-menu-item-content {
+    background: rgba(32, 128, 240, 0.15) !important;
+    border-radius: 6px;
+  }
+
+  .layout-container .n-menu-item:hover .n-menu-item-content {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 6px;
+  }
+}

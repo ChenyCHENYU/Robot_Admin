@@ -432,9 +432,6 @@ export const employeeTableConfig: UseTableCrudConfig<Employee> = {
   createNewRow: createNewEmployee,
 }
 
-// ================= 批量操作部门映射 =================
-export const BATCH_DEPARTMENT_OPTIONS = DEPARTMENT_OPTIONS
-
 // ================= 高级功能演示配置 =================
 
 /**

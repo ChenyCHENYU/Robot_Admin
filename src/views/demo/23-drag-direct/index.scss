@@ -6,7 +6,7 @@
     position: relative;
     min-height: 200px;
     padding: 20px;
-    border: 1px solid rgb(238, 235, 235);
+    border: 1px solid var(--app-border-default);
     border-radius: 6px;
     overflow: hidden;
     background: repeating-linear-gradient(
@@ -41,7 +41,7 @@
     width: calc(100% - 40px);
     height: 60px;
     padding: 0 16px;
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--app-border-default);
     border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: move;
@@ -129,7 +129,7 @@
     bottom: 10px;
     right: 10px;
     padding: 8px;
-    background: white;
+    background: var(--app-bg-content);
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }

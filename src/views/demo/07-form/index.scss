@@ -5,7 +5,8 @@
  * @LastEditTime: 2025-06-10 21:22:22
  * @FilePath: \Robot_Admin\src\views\demo\07-form\index.scss
  * @Description: 表单组件 - 演示页面 - 入口页面样式文件
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎. 
+ * Copyright (c) 2025 by CHENY,
+ All Rights Reserved 😎.
  */
 
 // 基础样式变量
@@ -76,8 +77,8 @@ $info: #0ea5e9;
       border-radius: 6px;
       font-size: 12px;
       cursor: pointer;
-      background: white;
-      color: #333;
+      background: var(--app-bg-content);
+        color: var(--app-text-primary);
       transition: all 0.2s ease;
 
       &:hover {
@@ -104,7 +105,7 @@ $info: #0ea5e9;
     background: rgba(14, 165, 233, 0.08);
     border-radius: 6px;
     font-size: 12px;
-    color: #666;
+    color: var(--app-text-secondary);
     line-height: 1.5;
 
     :first-child {
@@ -131,7 +132,7 @@ $info: #0ea5e9;
         align-items: center;
         gap: 6px;
         font-size: 13px;
-        color: #333;
+        color: var(--app-text-primary);
       }
     }
   }
@@ -181,7 +182,7 @@ $info: #0ea5e9;
     padding: 12px 16px;
     margin-bottom: 16px;
     font-size: 13px;
-    color: #333;
+    color: var(--app-text-primary);
 
     strong {
       color: $primary;
@@ -237,7 +238,7 @@ $info: #0ea5e9;
           border-radius: 6px;
           font-size: 12px;
           cursor: pointer;
-          background: white;
+          background: var(--app-bg-content);
           transition: all 0.2s ease;
 
           &:hover {
@@ -258,7 +259,7 @@ $info: #0ea5e9;
           }
 
           &.close {
-            background: #f5f5f5;
+            background: var(--app-bg-surface);
           }
         }
       }

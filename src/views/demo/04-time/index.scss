@@ -46,14 +46,14 @@
         margin: 0;
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: var(--app-text-primary);
       }
     }
 
     .card-desc {
       margin: 0;
       font-size: 13px;
-      color: #666;
+      color: var(--app-text-secondary);
       line-height: 1.5;
     }
 

@@ -58,7 +58,7 @@
       padding: 12px;
       border-radius: 6px;
       font-family: 'Monaco', 'Consolas', monospace;
-      border-left: 4px solid #007bff;
+      border-left: 4px solid var(--app-primary);
     }
   }
 
@@ -75,7 +75,7 @@
 
       .url-text {
         font-family: 'Monaco', 'Consolas', monospace;
-        color: #007bff;
+        color: var(--app-primary);
       }
     }
   }
@@ -108,14 +108,14 @@
 
     .json-example {
       margin-bottom: 16px;
-      border: 1px solid #dee2e6;
+      border: 1px solid var(--app-border-default);
       border-radius: 8px;
       overflow: hidden;
 
       .json-label {
         padding: 8px 12px;
         font-weight: 500;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid var(--app-border-default);
       }
 
       .json-preview {
@@ -125,7 +125,7 @@
         overflow-x: auto;
         max-height: 150px;
         overflow-y: auto;
-        border-bottom: 1px solid #dee2e6;
+        border-bottom: 1px solid var(--app-border-default);
       }
 
       :deep(.n-button) {

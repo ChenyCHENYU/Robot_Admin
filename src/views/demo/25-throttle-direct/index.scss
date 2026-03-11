@@ -6,7 +6,7 @@
 
 .demo-container {
   padding: 20px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--app-border-default);
   border-radius: 8px;
   margin-bottom: 16px;
 
@@ -39,7 +39,7 @@
 // 搜索场景样式
 .search-stats {
   padding: 12px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--app-border-default);
   border-radius: 6px;
   margin-bottom: 16px;
 }
@@ -47,7 +47,7 @@
 .search-results {
   max-height: 300px;
   overflow-y: auto;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--app-border-default);
   border-radius: 6px;
 
   .n-list {
@@ -56,7 +56,7 @@
 
   .n-list-item {
     padding: 12px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--app-border-light);
 
     &:last-child {
       border-bottom: none;
@@ -81,7 +81,7 @@
 .scroll-container {
   max-height: 400px;
   overflow-y: auto;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--app-border-default);
   border-radius: 6px;
   padding: 16px;
 
@@ -136,13 +136,13 @@
 .load-more-container {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--app-border-light);
 }
 
 .load-stats {
   margin-top: 16px;
   padding: 12px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--app-border-default);
   border-radius: 6px;
 }
 
@@ -150,7 +150,7 @@
 .action-demo {
   .demo-row {
     padding: 16px;
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--app-border-light);
     border-radius: 6px;
     margin-bottom: 12px;
 

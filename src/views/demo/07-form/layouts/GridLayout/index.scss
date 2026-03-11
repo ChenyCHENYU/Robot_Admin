@@ -32,7 +32,7 @@
             align-items: center;
             gap: 6px;
             font-size: 13px;
-            color: #333;
+            color: var(--app-text-primary);
 
             .config-value {
               font-weight: 500;
@@ -52,16 +52,16 @@
       font-size: 14px;
       font-weight: 500;
       margin-bottom: 12px;
-      color: #666;
+      color: var(--app-text-secondary);
     }
 
     .grid-demo {
       display: flex;
       flex-wrap: wrap;
       padding: 16px;
-      background: #f8f9fa;
+      background: var(--app-bg-surface);
       border-radius: 8px;
-      border: 1px solid #e9ecef;
+      border: 1px solid var(--app-border-default);
 
       .grid-col {
         height: 32px;
@@ -96,7 +96,7 @@
     z-index: 1000;
 
     .preview-content {
-      background: white;
+      background: var(--app-bg-content);
       border-radius: 12px;
       width: 90%;
       max-width: 800px;
@@ -108,7 +108,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 20px 24px;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid var(--app-border-light);
 
         h3 {
           margin: 0;
@@ -121,10 +121,10 @@
           border: none;
           font-size: 24px;
           cursor: pointer;
-          color: #999;
+          color: var(--app-text-placeholder);
 
           &:hover {
-            color: #666;
+            color: var(--app-text-secondary);
           }
         }
       }
@@ -137,7 +137,7 @@
           gap: 24px;
           margin-bottom: 24px;
           padding: 16px;
-          background: #f8f9fa;
+          background: var(--app-bg-surface);
           border-radius: 8px;
 
           .info-item {
@@ -147,7 +147,7 @@
 
             .label {
               font-size: 12px;
-              color: #666;
+              color: var(--app-text-secondary);
             }
 
             .value {
@@ -163,9 +163,9 @@
 
           .field-preview {
             padding: 12px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--app-border-default);
             border-radius: 8px;
-            background: #fff;
+            background: var(--app-bg-content);
 
             .field-name {
               font-weight: 600;
@@ -175,7 +175,7 @@
             .field-span,
             .field-width {
               font-size: 12px;
-              color: #666;
+              color: var(--app-text-secondary);
               margin-bottom: 4px;
             }
           }

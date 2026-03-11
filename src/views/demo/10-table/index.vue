@@ -3,7 +3,7 @@
     <c_vTitle
       title="表格组件场景示例"
       icon="mdi:table"
-      description="支持多种编辑模式、行选择、批量操作、展开行、树形数据、动态行管理等完整企业级功能"
+      description="支持多种编辑模式、树形数据等完整企业级功能"
     />
 
     <NTabs
@@ -117,155 +117,7 @@
         </NCard>
       </NTabPane>
 
-      <!-- Tab 2: 行选择 & 批量操作 -->
-      <NTabPane
-        name="selection"
-        tab="行选择与批量操作"
-      >
-        <NCard>
-          <NSpace
-            vertical
-            :size="16"
-          >
-            <NAlert
-              type="info"
-              title="行选择功能"
-            >
-              勾选行后可执行批量删除、批量修改部门等操作。支持 Shift/Ctrl 多选。
-            </NAlert>
-
-            <!-- 批量操作栏 -->
-            <NSpace v-if="selectedRows.length">
-              <NTag type="info"> 已选 {{ selectedRows.length }} 项 </NTag>
-              <NButton
-                type="error"
-                size="small"
-                @click="handleBatchDelete"
-              >
-                <template #icon>
-                  <C_Icon name="mdi:delete" />
-                </template>
-                批量删除
-              </NButton>
-              <NButton
-                type="warning"
-                size="small"
-                @click="showBatchDeptModal = true"
-              >
-                <template #icon>
-                  <C_Icon name="mdi:domain" />
-                </template>
-                批量调部门
-              </NButton>
-              <NButton
-                size="small"
-                @click="selectedRows = []"
-              >
-                清空选择
-              </NButton>
-            </NSpace>
-
-            <C_Table
-              :crud="tableCrud"
-              :config="{
-                edit: { mode: 'modal', modalTitle: '编辑员工信息' },
-                selection: { parentChildLink: false },
-              }"
-              @selection-change="handleSelectionChange"
-            />
-          </NSpace>
-        </NCard>
-
-        <!-- 批量调部门弹窗 -->
-        <NModal
-          v-model:show="showBatchDeptModal"
-          preset="dialog"
-          title="批量调整部门"
-          positive-text="确认"
-          negative-text="取消"
-          @positive-click="handleBatchDepartment"
-        >
-          <NSpace
-            vertical
-            :size="12"
-          >
-            <NText> 将已选的 {{ selectedRows.length }} 名员工调整到： </NText>
-            <NSelect
-              v-model:value="batchDepartment"
-              :options="BATCH_DEPARTMENT_OPTIONS"
-              placeholder="请选择目标部门"
-            />
-          </NSpace>
-        </NModal>
-      </NTabPane>
-
-      <!-- Tab 3: 展开行 -->
-      <NTabPane
-        name="expand"
-        tab="展开行详情"
-      >
-        <NCard>
-          <NSpace
-            vertical
-            :size="16"
-          >
-            <NAlert
-              type="success"
-              title="展开行功能"
-            >
-              点击行首的展开箭头，查看该员工的详细信息面板。
-            </NAlert>
-
-            <C_Table
-              :crud="tableCrud"
-              :config="{
-                edit: { mode: 'modal' },
-                expand: {},
-              }"
-            >
-              <template #expand="{ row }">
-                <div class="expand-content">
-                  <NGrid
-                    :cols="3"
-                    :x-gap="16"
-                    :y-gap="12"
-                  >
-                    <NGi>
-                      <NStatistic
-                        label="邮箱"
-                        :value="row.email"
-                      />
-                    </NGi>
-                    <NGi>
-                      <NStatistic
-                        label="职级"
-                        :value="
-                          LEVEL_CONFIG[row.level || 'junior']?.text || '-'
-                        "
-                      />
-                    </NGi>
-                    <NGi>
-                      <NStatistic
-                        label="薪资"
-                        :value="
-                          row.salary ? `¥${row.salary.toLocaleString()}` : '-'
-                        "
-                      />
-                    </NGi>
-                    <NGi :span="3">
-                      <NText depth="3">
-                        {{ row.description || '暂无描述信息' }}
-                      </NText>
-                    </NGi>
-                  </NGrid>
-                </div>
-              </template>
-            </C_Table>
-          </NSpace>
-        </NCard>
-      </NTabPane>
-
-      <!-- Tab 4: 树形数据 -->
+      <!-- Tab 2: 树形数据 -->
       <NTabPane
         name="tree"
         tab="树形表格"
@@ -290,46 +142,6 @@
               default-expand-all
               size="small"
               striped
-            />
-          </NSpace>
-        </NCard>
-      </NTabPane>
-
-      <!-- Tab 5: 动态行管理 -->
-      <NTabPane
-        name="dynamic"
-        tab="动态行管理"
-      >
-        <NCard>
-          <NSpace
-            vertical
-            :size="16"
-          >
-            <NAlert
-              type="info"
-              title="动态行管理"
-            >
-              支持动态添加行、复制行、删除行、上移下移行操作。
-            </NAlert>
-
-            <NSpace>
-              <NButton
-                type="primary"
-                @click="handleDynamicAdd"
-              >
-                <template #icon>
-                  <C_Icon name="mdi:plus" />
-                </template>
-                添加一行
-              </NButton>
-              <NTag type="info"> 共 {{ dynamicData.length }} 条 </NTag>
-            </NSpace>
-
-            <NDataTable
-              :columns="dynamicColumns"
-              :data="dynamicData"
-              :row-key="(row: any) => row.id"
-              size="small"
             />
           </NSpace>
         </NCard>
@@ -485,14 +297,9 @@
     GENDER_OPTIONS,
     LEVEL_CONFIG,
     STATUS_TAG_CONFIG,
-    BATCH_DEPARTMENT_OPTIONS,
     ADD_FORM_DEFAULTS,
     TREE_TABLE_DATA,
-    createNewEmployee,
   } from './data'
-
-  const message = useMessage()
-  const dialog = useDialog()
 
   // 初始化表格 CRUD
   const tableCrud = useTableCrud(employeeTableConfig)
@@ -503,18 +310,6 @@
   const showAddModal = ref(false)
   const addFormRef = ref()
   const addFormData = ref<any>({})
-
-  // 行选择状态
-  const selectedRows = ref<Employee[]>([])
-  const showBatchDeptModal = ref(false)
-  const batchDepartment = ref<string | null>(null)
-
-  // 动态行管理数据
-  const dynamicData = reactive<Employee[]>([
-    createNewEmployee(),
-    createNewEmployee(),
-    createNewEmployee(),
-  ])
 
   // 当前模式配置
   const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])
@@ -592,71 +387,6 @@
     { key: 'email', title: '邮箱', width: 200 },
   ])
 
-  // ============ 动态行管理列 ============
-  const dynamicColumns = computed(() => [
-    { key: 'name', title: '姓名', width: 120 },
-    { key: 'age', title: '年龄', width: 80 },
-    {
-      key: 'department',
-      title: '部门',
-      width: 100,
-      render: (row: Employee) => {
-        const map: Record<string, string> = {
-          tech: '技术部',
-          hr: '人事部',
-          market: '市场部',
-          finance: '财务部',
-        }
-        return map[row.department] || row.department
-      },
-    },
-    { key: 'email', title: '邮箱', width: 200 },
-    {
-      key: 'actions',
-      title: '操作',
-      width: 200,
-      render: (row: Employee, rowIndex: number) =>
-        h(NSpace, { size: 4 }, () => [
-          h(
-            NButton,
-            {
-              size: 'tiny',
-              type: 'primary',
-              onClick: () => handleDynamicCopy(rowIndex),
-            },
-            () => '复制'
-          ),
-          h(
-            NButton,
-            {
-              size: 'tiny',
-              disabled: rowIndex === 0,
-              onClick: () => handleDynamicMove(rowIndex, -1),
-            },
-            () => '上移'
-          ),
-          h(
-            NButton,
-            {
-              size: 'tiny',
-              disabled: rowIndex === dynamicData.length - 1,
-              onClick: () => handleDynamicMove(rowIndex, 1),
-            },
-            () => '下移'
-          ),
-          h(
-            NButton,
-            {
-              size: 'tiny',
-              type: 'error',
-              onClick: () => handleDynamicDelete(rowIndex),
-            },
-            () => '删除'
-          ),
-        ]),
-    },
-  ])
-
   // ============ CRUD 操作 ============
   const handleAddEmployee = () => {
     addFormData.value = { ...ADD_FORM_DEFAULTS, joinDate: Date.now() }
@@ -674,61 +404,6 @@
         }
       }
     })
-  }
-
-  // ============ 行选择操作 ============
-  const handleSelectionChange = (rows: any[]) => {
-    selectedRows.value = rows
-  }
-
-  const handleBatchDelete = () => {
-    dialog.warning({
-      title: '确认删除',
-      content: `确定要删除选中的 ${selectedRows.value.length} 条记录吗？`,
-      positiveText: '确定',
-      negativeText: '取消',
-      onPositiveClick: () => {
-        message.success(`已删除 ${selectedRows.value.length} 条记录`)
-        selectedRows.value = []
-      },
-    })
-  }
-
-  const handleBatchDepartment = () => {
-    if (!batchDepartment.value) {
-      message.warning('请选择目标部门')
-      return false
-    }
-    message.success(`已将 ${selectedRows.value.length} 名员工调至新部门`)
-    showBatchDeptModal.value = false
-    batchDepartment.value = null
-    selectedRows.value = []
-  }
-
-  // ============ 动态行管理 ============
-  const handleDynamicAdd = () => {
-    dynamicData.push(createNewEmployee())
-    message.success('已添加一行')
-  }
-
-  const handleDynamicCopy = (index: number) => {
-    const copy = { ...dynamicData[index], id: Date.now() }
-    copy.name = `${copy.name}_副本`
-    dynamicData.splice(index + 1, 0, copy)
-    message.success('复制成功')
-  }
-
-  const handleDynamicMove = (index: number, direction: number) => {
-    const targetIndex = index + direction
-    if (targetIndex < 0 || targetIndex >= dynamicData.length) return
-    const temp = dynamicData[index]
-    dynamicData[index] = dynamicData[targetIndex]
-    dynamicData[targetIndex] = temp
-  }
-
-  const handleDynamicDelete = (index: number) => {
-    dynamicData.splice(index, 1)
-    message.success('已删除')
   }
 </script>
 

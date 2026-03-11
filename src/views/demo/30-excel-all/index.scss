@@ -108,14 +108,14 @@
 .processed-data {
   margin-top: 1rem;
   padding: 1rem;
-  background-color: #f9fafb;
+  background-color: var(--app-bg-surface);
   border-radius: 0.375rem;
 }
 
 .data-summary {
   margin-top: 1rem;
   padding: 1rem;
-  background-color: #eff6ff;
+  background-color: var(--app-bg-surface);
   border-radius: 0.375rem;
 }
 

@@ -46,14 +46,14 @@
         margin: 0;
         font-size: 16px;
         font-weight: 600;
-        color: #333;
+        color: var(--app-text-primary);
       }
     }
 
     .card-desc {
       margin: 0;
       font-size: 13px;
-      color: #666;
+      color: var(--app-text-secondary);
       line-height: 1.5;
     }
 
@@ -74,10 +74,10 @@
   .result-box {
     margin-top: 8px;
     padding: 8px 12px;
-    border: 1px solid #bae6fd;
+    border: 1px solid rgba(32, 128, 240, 0.3);
     border-radius: 8px;
-    background: #f0f9ff;
-    color: #0369a1;
+    background: rgba(32, 128, 240, 0.06);
+      color: var(--app-primary);
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 13px;
   }
@@ -105,7 +105,7 @@
 
       label {
         font-weight: 500;
-        color: #374151;
+        color: var(--app-text-primary);
         font-size: 14px;
       }
     }
