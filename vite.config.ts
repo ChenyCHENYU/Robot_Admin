@@ -83,6 +83,7 @@ export default defineConfig(({ mode, command }: { mode: string; command: string 
         'echarts/renderers',
         '@antv/x6',
         'axios',
+        'three',
       ],
       // 🔧 排除 Vue 全家桶：esbuild 预构建时会将 Vue 内部模块拆成多个共享 chunk，
       // 导致 RefImpl / isFunction 等内部符号跨 chunk 引用断裂。

@@ -738,6 +738,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "3d-factory",
+          "name": "3d-factory",
+          "component": "/demo/36-3d-factory/index",
+          "meta": {
+            "icon": "mdi:cube-scan",
+            "title": "3D 工厂全景",
+            "hidden": false,
+            "full": true,
+            "affix": false,
+            "keepAlive": false
+          }
         }
       ]
     },
