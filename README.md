@@ -63,7 +63,7 @@
     <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-7.0.0-646CFF?style=flat&logo=vite" alt="Vite Version">
+    <img src="https://img.shields.io/badge/vite-8.0.1-646CFF?style=flat&logo=vite" alt="Vite Version">
     <a href="https://vercel.com"><img src="https://img.shields.io/github/deployments/ChenyCHENYU/robot_admin/production?label=vercel&logo=vercel" alt="Vercel"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
   </p>
@@ -169,7 +169,7 @@ _在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `Type
 
 ### 🔥 性能怪兽级别的开发体验
 
-- **毫秒级热更新** - Bun + Vite7 化学反应，告别等待
+- **毫秒级热更新** - Bun + Vite8 化学反应，告别等待
 - **智能类型提示** - TypeScript5.8 + 51+ 自定义组件，IDE 智能感知体验拉满
 - **零配置开箱即用** - 一条命令启动，30 秒内搭建完整后台系统
 
@@ -257,7 +257,7 @@ bun clean              # 清理缓存
 **⚙️ 构建工具**
 
 - **Bun 1.x** - 🚀 性能怪兽，安装速度提升10倍
-- **Vite 7.0.0** - ⚡ 下一代构建工具，热更新极速
+- **Vite 8.0.1** - ⚡ Rolldown 统一构建引擎，构建速度提升 10-30x
 - **Sass 1.87** - 🎨 成熟的CSS预处理器
 
 **🔧 开发工具**
@@ -911,21 +911,21 @@ bun run type-build
 <details>
 <summary><b>为什么选择 Robot Admin？</b></summary>
 
-|   特性对比    |    Robot Admin    | Ant Design Pro | Vue Element Admin |   其他框架   |
-| :-----------: | :---------------: | :------------: | :---------------: | :----------: |
-|  🚀 启动速度  |  **Bun < 100ms**  |    npm ~2s     |    yarn ~1.5s     |   普遍较慢   |
-| ⚡ 热更新速度 | **< 100ms 极速**  |   ~1.5s 等待   |     ~1s 等待      |   普遍较慢   |
-|  📦 构建工具  | **Vite 7.x 最新** |  Webpack/Vite  |    Webpack 4/5    |   工具多样   |
-| 🎨 UI 组件库  | **Naive UI 轻量** |   Ant Design   |   Element Plus    |   选择多样   |
-| 💪 TypeScript | **完整类型支持**  |    基础支持    |     基础支持      | 支持程度不一 |
-| 🔧 自定义指令 |  **7个实用指令**  |    少量指令    |     基础指令      |   功能有限   |
-|  📊 演示页面  | **48+ 完整示例**  |    有限示例    |     有限示例      |   基础示例   |
-|  🎯 学习成本  |   **中等友好**    |    较高门槛    |     中等门槛      |   差异较大   |
-|  📈 维护状态  |  **🔥 积极维护**  |    持续维护    |     持续维护      |   状态不一   |
+|   特性对比    |       Robot Admin       | Ant Design Pro | Vue Element Admin |   其他框架   |
+| :-----------: | :---------------------: | :------------: | :---------------: | :----------: |
+|  🚀 启动速度  |     **Bun < 100ms**     |    npm ~2s     |    yarn ~1.5s     |   普遍较慢   |
+| ⚡ 热更新速度 |    **< 100ms 极速**     |   ~1.5s 等待   |     ~1s 等待      |   普遍较慢   |
+|  📦 构建工具  | **Vite 8.x (Rolldown)** |  Webpack/Vite  |    Webpack 4/5    |   工具多样   |
+| 🎨 UI 组件库  |    **Naive UI 轻量**    |   Ant Design   |   Element Plus    |   选择多样   |
+| 💪 TypeScript |    **完整类型支持**     |    基础支持    |     基础支持      | 支持程度不一 |
+| 🔧 自定义指令 |     **7个实用指令**     |    少量指令    |     基础指令      |   功能有限   |
+|  📊 演示页面  |    **48+ 完整示例**     |    有限示例    |     有限示例      |   基础示例   |
+|  🎯 学习成本  |      **中等友好**       |    较高门槛    |     中等门槛      |   差异较大   |
+|  📈 维护状态  |     **🔥 积极维护**     |    持续维护    |     持续维护      |   状态不一   |
 
 **选择 Robot Admin 的理由**:
 
-- 🚀 **性能优先**: Bun + Vite7 双引擎，开发体验极致
+- 🚀 **性能优先**: Bun + Vite8 (Rolldown) 双引擎，开发体验极致
 - 🧩 **组件丰富**: 45+ 业务组件，独立组件库按需导入
 - 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
 - 📚 **学习友好**: 54+ 演示页面，每个都是最佳实践
