@@ -1,0 +1,144 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-27 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-27 10:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\38-upload\index.scss
+ * @Description: 上传组件演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.upload-demo-page {
+  padding: 20px;
+
+  // 两栏网格布局
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // 卡片样式
+  .demo-card {
+    background: var(--app-bg-content);
+    border-radius: 12px;
+    transition: box-shadow var(--app-transition-base);
+
+    &:hover {
+      box-shadow: var(--app-shadow-md);
+    }
+
+    // 全宽卡片
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--app-text-primary);
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--app-text-secondary);
+      line-height: 1.5;
+    }
+  }
+
+  // 配置栏
+  .config-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: var(--app-bg-surface);
+    border-radius: 8px;
+    flex-wrap: wrap;
+
+    .config-label {
+      font-size: 13px;
+      color: var(--app-text-secondary);
+      white-space: nowrap;
+    }
+  }
+
+  // 操作栏
+  .action-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  // API 按钮组
+  .api-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  // 功能列表
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--app-bg-surface);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--app-text-primary);
+    transition: background var(--app-transition-base);
+
+    &:hover {
+      background: var(--app-bg-deep);
+    }
+
+    .feature-icon {
+      font-size: 18px;
+      color: var(--primary-color);
+      flex-shrink: 0;
+    }
+  }
+
+  // 响应式
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .demo-grid {
+      gap: 16px;
+    }
+
+    .demo-card {
+      .card-header h3 {
+        font-size: 15px;
+      }
+    }
+
+    .config-bar {
+      padding: 10px 12px;
+      gap: 10px;
+    }
+  }
+}

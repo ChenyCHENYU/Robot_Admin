@@ -1,0 +1,37 @@
+  .card-demo-page {
+    padding: 1.5rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+    }
+  }
+
+  .debug-panel {
+    border: 1px solid #fed7aa;
+  }
+
+  .debug-code {
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+      'Courier New', monospace;
+    overflow: auto;
+    max-height: 24rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }

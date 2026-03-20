@@ -1,0 +1,92 @@
+  .dictionary-management {
+    padding: 16px;
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .main-content {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .content-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      :deep(.n-card__content) {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+    }
+
+    .dict-tree {
+      flex: 1;
+      overflow: auto;
+
+      :deep(.c-tree-container) {
+        border: none;
+        padding: 0;
+        height: 100%;
+      }
+
+      :deep(.tree-instance .n-tree .n-tree-node) {
+        margin-bottom: 4px;
+
+        .n-tree-node-content {
+          padding: 12px 8px;
+          border-radius: 6px;
+          transition: all 0.2s ease;
+          min-height: 44px;
+          display: flex;
+          align-items: center;
+
+          &:hover .tree-actions {
+            opacity: 1 !important;
+          }
+        }
+      }
+
+      // 为禁用状态的树节点添加样式
+      :deep(.tree-instance .n-tree .n-tree-node[data-status='0']) {
+        .n-tree-node-content {
+          opacity: 0.6;
+          background-color: var(--n-color-disabled) !important;
+
+          .n-tree-node-content__text {
+            text-decoration: line-through;
+            color: var(--n-text-color-disabled) !important;
+          }
+        }
+      }
+    }
+
+    // 禁用状态样式优化
+    .disabled-item {
+      opacity: 0.6;
+      background-color: var(--n-color-disabled) !important;
+      border: 1px dashed var(--n-border-color) !important;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    .disabled-text {
+      opacity: 0.6;
+      color: var(--n-text-color-disabled) !important;
+      text-decoration: line-through;
+    }
+
+    .disabled-tag {
+      opacity: 0.6;
+      filter: grayscale(50%);
+
+      :deep(.n-tag__content) {
+        text-decoration: line-through;
+      }
+    }
+  }

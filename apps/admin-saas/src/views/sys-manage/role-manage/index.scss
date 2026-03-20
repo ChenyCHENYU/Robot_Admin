@@ -1,0 +1,97 @@
+  .role-management {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    height: calc(100vh - 120px);
+    gap: 16px;
+
+    .main-content {
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .content-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      :deep(.n-card__content) {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+      }
+    }
+
+    .role-detail {
+      padding: 16px;
+    }
+
+        // 权限预览网格
+        .preview-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+    
+        .preview-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          border-radius: 6px;
+          background: var(--n-color-modal);
+          border: 1px solid var(--n-border-color);
+          transition: all 0.2s;
+    
+          &:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+          }
+        }
+    
+        .preview-item-info {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+    
+        // 数据权限卡片
+        .data-scope-card {
+          transition: all 0.2s;
+    
+          &:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+          }
+        }
+    .permission-templates {
+      .template-selected {
+        border-color: var(--n-color-primary) !important;
+        background-color: var(--n-color-primary-suppl) !important;
+        box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15) !important;
+      }
+
+      :deep(.n-card:hover) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+    }
+
+    // 禁用状态样式
+    .disabled-text {
+      opacity: 0.6;
+      color: #999 !important;
+      text-decoration: line-through;
+    }
+
+    .disabled-tag {
+      opacity: 0.6;
+      color: #999 !important;
+      filter: grayscale(50%);
+
+      :deep(.n-tag__content) {
+        text-decoration: line-through;
+      }
+    }
+  }

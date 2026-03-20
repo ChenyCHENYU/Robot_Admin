@@ -1,0 +1,83 @@
+/**
+ * Naive UI 全局样式覆盖
+ * 用于统一暗色主题下的组件样式
+ */
+
+/* ===========================================
+ * NCard 卡片组件暗色主题适配
+ * =========================================== */
+
+/**
+ * 核心思路：
+ * 1. 使用全局深度选择器确保优先级
+ * 2. 直接覆盖 Naive UI 的默认样式
+ * 3. 不依赖 themeOverrides 配置（避免合并冲突）
+ * 4. 只在暗色主题下生效
+ */
+
+/* ===========================================
+ * @robot-admin/naive-ui-components 暗色变量桥接
+ * =========================================== */
+
+/**
+ * 核心问题：
+ * 包在 :root 声明 --c-* 变量 (如 --c-bg-card: var(--card-color, #fff))，
+ * 但 Naive UI 通过 NGlobalStyle 在 body 层注入 --card-color 等变量。
+ * :root 层访问不到 → 始终使用亮色 fallback。
+ *
+ * 解决方案：
+ * 在 .global-config-provider 内重新声明，此处 Naive UI 变量已可用，
+ * dark / light 均能正确解析。
+ */
+.global-config-provider {
+  --c-primary: var(--primary-color, #2080f0);
+  --c-primary-hover: var(--primary-color-hover, #4098fc);
+  --c-primary-pressed: var(--primary-color-pressed, #1060c9);
+  --c-success: var(--success-color, #18a058);
+  --c-warning: var(--warning-color, #f0a020);
+  --c-error: var(--error-color, #d03050);
+  --c-info: var(--info-color, #2080f0);
+  --c-bg-body: var(--body-color, #ffffff);
+  --c-bg-card: var(--card-color, #ffffff);
+  --c-bg-surface: var(--popover-color, #ffffff);
+  --c-text-1: var(--text-color-1, #262626);
+  --c-text-2: var(--text-color-2, #525252);
+  --c-text-3: var(--text-color-3, #a3a3a3);
+  --c-text-4: var(--text-color-4, #c0c0c0);
+  --c-border: var(--border-color, #e5e7eb);
+}
+
+/**
+ * 暗色模式下提供明确的深色 fallback
+ * 防止 Naive UI 变量未注入时仍然使用亮色 fallback
+ */
+[data-theme='dark'] .global-config-provider {
+  --c-bg-body: var(--body-color, #1c1c1c);
+  --c-bg-card: var(--card-color, #262626);
+  --c-bg-surface: var(--popover-color, #333333);
+  --c-text-1: var(--text-color-1, rgba(255, 255, 255, 0.82));
+  --c-text-2: var(--text-color-2, rgba(255, 255, 255, 0.52));
+  --c-text-3: var(--text-color-3, rgba(255, 255, 255, 0.38));
+  --c-text-4: var(--text-color-4, rgba(255, 255, 255, 0.28));
+  --c-border: var(--border-color, rgba(255, 255, 255, 0.12));
+  --c-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24);
+  --c-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --c-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] {
+  /* 卡片头部暗色适配 */
+  .n-card-header {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+
+    .n-card-header__main {
+      color: rgba(255, 255, 255, 0.82) !important;
+    }
+  }
+
+  /* 嵌入式卡片（更深的背景） */
+  .n-card--embedded .n-card-header {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+  }
+}
+

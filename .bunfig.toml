@@ -1,0 +1,3 @@
+[install]
+# Monorepo: 关闭全局缓存的硬链接以避免 Vite/Rolldown 解析符号链接问题
+globalBinDir = "node_modules/.bin"

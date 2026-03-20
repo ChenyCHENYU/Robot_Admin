@@ -1,0 +1,96 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-05-29 08:55:05
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-08 23:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\04-time\index.scss
+ * @Description: 时间选择器组件演示页面样式
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+*/
+
+.time-demo {
+  padding: 20px;
+
+  // 网格布局
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // 卡片样式
+  .demo-card {
+    border-radius: 12px !important;
+    transition: all 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    :deep(.n-card-header) {
+      padding-bottom: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--app-text-primary);
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--app-text-secondary);
+      line-height: 1.5;
+    }
+
+    :deep(.n-card__content) {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 24px;
+    }
+
+    // 全宽卡片
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+  }
+
+  // 结果提示框
+  .result-alert {
+    margin-top: 8px;
+    border-radius: 8px;
+  }
+
+  // 自定义内容区域
+  .custom-content {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+    }
+  }
+
+  // 操作栏
+  .action-bar {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+}

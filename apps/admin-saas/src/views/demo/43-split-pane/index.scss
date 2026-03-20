@@ -1,0 +1,122 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-06-16 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2025-06-16 10:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\43-split-pane\index.scss
+ * @Description: 分割面板演示页样式
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ */
+
+.split-pane-demo-page {
+  padding: 20px;
+
+  .demo-section {
+    margin-bottom: 32px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 6px;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 12px;
+      color: var(--app-text-primary);
+
+      .title-icon {
+        flex-shrink: 0;
+        font-size: 20px;
+        color: var(--primary-color, #409eff);
+      }
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--app-text-secondary);
+      margin: 0 0 16px;
+      line-height: 1.6;
+
+      code {
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: var(--app-bg-surface);
+        color: var(--primary-color, #409eff);
+        font-size: 13px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+      }
+    }
+
+    .section-content {
+      .demo-container {
+        height: 280px;
+        border: 1px solid var(--app-border-default);
+        border-radius: 8px;
+        overflow: hidden;
+
+        &--tall {
+          height: 400px;
+        }
+      }
+
+      .demo-info {
+        margin-top: 8px;
+        font-size: 13px;
+      }
+    }
+  }
+
+  // ─── 演示面板通用样式 ─────────────────────────────
+  .demo-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    font-weight: 500;
+
+    .iconify {
+      font-size: 28px;
+      opacity: 0.6;
+    }
+
+    .panel-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    &--primary {
+      background: rgba(64, 158, 255, 0.08);
+      color: #409eff;
+    }
+
+    &--info {
+      background: rgba(144, 147, 153, 0.08);
+      color: var(--app-text-secondary);
+    }
+
+    &--success {
+      background: rgba(103, 194, 58, 0.08);
+      color: #67c23a;
+    }
+
+    &--warning {
+      background: rgba(230, 162, 60, 0.08);
+      color: #e6a23c;
+    }
+
+    &--disabled {
+      background: rgba(144, 147, 153, 0.05);
+      color: var(--app-text-quaternary);
+    }
+  }
+}

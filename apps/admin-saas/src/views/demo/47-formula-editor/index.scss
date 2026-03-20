@@ -1,0 +1,76 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-26 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-26 10:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\47-formula-editor\index.scss
+ * @Description: 公式编辑器演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.formula-demo-page {
+  padding: 24px;
+
+  .demo-section {
+    margin-bottom: 36px;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--card-color);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .section-title {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--app-text-primary);
+
+    .title-icon {
+      flex-shrink: 0;
+      font-size: 20px;
+      color: var(--primary-color);
+    }
+  }
+
+  .section-desc {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-color-3);
+    border-bottom: 1px dashed
+      color-mix(in srgb, var(--border-color) 60%, transparent);
+
+    code {
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: var(--code-color);
+      font-size: 12px;
+    }
+  }
+
+  .section-content {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .demo-output {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+}

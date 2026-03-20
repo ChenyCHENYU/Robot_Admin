@@ -1,0 +1,306 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-04-27 10:43:21
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-08 21:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\01-icon\index.scss
+ * @Description: 图标组件演示页面样式
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+*/
+
+.demo-container {
+  padding: 20px;
+}
+
+// 演示卡片网格
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.demo-card {
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 2px solid transparent !important;
+  border-radius: 12px !important;
+  min-height: 130px;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  &.active {
+    border-color: #2080f0 !important;
+    background: linear-gradient(
+      135deg,
+      rgba(32, 128, 240, 0.06) 0%,
+      rgba(14, 165, 233, 0.03) 100%
+    );
+    box-shadow: 0 4px 16px rgba(32, 128, 240, 0.15);
+  }
+
+  :deep(.n-card__content) {
+    padding: 20px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .card-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    background: linear-gradient(135deg, #2080f0, #0ea5e9);
+    color: white;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--app-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  .card-icons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-height: 48px;
+  }
+
+  .icon-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: var(--app-bg-surface);
+      border: 1px solid var(--app-border-light);
+    transition: all 0.2s ease;
+    overflow: hidden;
+
+    &:hover {
+      background: rgba(32, 128, 240, 0.1);
+      border-color: rgba(32, 128, 240, 0.2);
+      transform: scale(1.08);
+    }
+
+    // 限制图片大小
+    :deep(img) {
+      max-width: 32px;
+      max-height: 32px;
+      object-fit: contain;
+    }
+  }
+
+  .more-count {
+    font-size: 13px;
+    color: var(--app-text-placeholder);
+    padding-left: 4px;
+  }
+}
+
+// 代码面板
+.code-panel {
+  border-radius: 16px !important;
+  background: var(--app-bg-surface) !important;
+    box-shadow: var(--app-shadow-sm) !important;
+
+  :deep(.n-card__content) {
+    padding: 20px;
+  }
+}
+
+.code-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--app-border-light);
+
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--app-text-primary);
+
+    .n-icon {
+      color: #2080f0;
+    }
+  }
+}
+
+.code-content {
+  display: flex;
+  gap: 24px;
+  height: 380px;
+
+  :deep(.n-divider) {
+    margin: 0;
+    height: auto;
+  }
+}
+
+// 图标展示区
+.icon-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 240px;
+  max-width: 300px;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 8px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+  }
+}
+
+.showcase-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--app-bg-content);
+    border: 1px solid var(--app-border-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba(32, 128, 240, 0.25);
+    background: rgba(32, 128, 240, 0.04);
+    transform: translateX(4px);
+  }
+
+  // 图标容器 - 固定尺寸
+  > :first-child {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    :deep(img) {
+      max-width: 24px;
+      max-height: 24px;
+      object-fit: contain;
+    }
+  }
+
+  code {
+    font-size: 12px;
+    color: var(--app-text-secondary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    word-break: break-all;
+    line-height: 1.5;
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// 代码块
+.code-block {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+
+  :deep(.n-code) {
+    height: 100%;
+  }
+
+  :deep(pre) {
+    margin: 0;
+    max-height: 100%;
+    overflow-y: auto;
+  }
+}
+
+// 备注说明
+.code-note {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: rgba(14, 165, 233, 0.06);
+  border-radius: 10px;
+  border-left: 3px solid #0ea5e9;
+  font-size: 13px;
+  color: var(--app-text-secondary);
+  line-height: 1.7;
+
+  :deep(strong) {
+    color: var(--app-text-primary);
+  }
+}
+
+// 自定义动画效果
+.sparkle-icon {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.pulse-icon {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}

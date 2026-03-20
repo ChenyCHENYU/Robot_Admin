@@ -1,0 +1,145 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-25 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-09 12:30:00
+ * @FilePath: \Robot_Admin\src\views\demo\45-image-cropper\index.scss
+ * @Description: 图片裁剪演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.image-cropper-demo-page {
+  padding: 20px;
+
+  // 卡片网格 - 单列垂直布局（图片裁剪需要足够空间）
+  .demo-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  // 卡片样式
+  .demo-card {
+    border-radius: 12px !important;
+    transition: all 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    :deep(.n-card-header) {
+      padding-bottom: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--app-text-primary);
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--app-text-secondary);
+      line-height: 1.5;
+    }
+
+    :deep(.n-card__content) {
+      padding: 20px;
+    }
+  }
+
+  // 操作栏
+  .action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  // 结果展示
+  .demo-result {
+    margin-top: 12px;
+    padding: 16px;
+    border: 1px dashed var(--app-border-default);
+    border-radius: 8px;
+    text-align: center;
+    background: var(--app-bg-surface);
+
+    img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &__circular img {
+      border-radius: 50%;
+    }
+  }
+
+  // 结果信息
+  .demo-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  // 上传区域
+  .demo-upload-area {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    padding: 32px;
+    border: 2px dashed var(--app-border-default);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #2080f0;
+      background: rgba(32, 128, 240, 0.08);
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      color: var(--app-text-placeholder);
+    }
+  }
+
+  // 输出配置
+  .output-config {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: var(--app-bg-surface);
+    border-radius: 8px;
+  }
+
+  // ─── 暗色主题适配 ─────────────────────────────
+  [data-theme='dark'] & {
+    .demo-card {
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+        }
+  }
+}

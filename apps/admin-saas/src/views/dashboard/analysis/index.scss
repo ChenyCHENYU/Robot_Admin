@@ -1,0 +1,301 @@
+$primary: #2080f0;
+  $success: #0acf97;
+  $danger: #fa5c7c;
+  $muted: #98a6ad;
+
+  .dashboard {
+    color: #333;
+    padding: 20px;
+
+    .header {
+      margin-bottom: 20px;
+    }
+
+    .title-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #6c757d;
+      .title {
+        font-size: 18px;
+        margin: 0;
+        line-height: 60px;
+        font-weight: 700;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    // 卡片通用、继承/合并
+    .info-card,
+    .chart-card,
+    .data-card,
+    .primary-card {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-shrink: 0;
+        h4,
+        h5 {
+          color: $muted;
+          margin: 0;
+        }
+        &.with-action {
+          margin-bottom: 24px;
+        }
+      }
+    }
+
+    // 卡片辅助，避免重复
+    %iconbox {
+      color: $primary;
+      font-size: 18px;
+      background: rgba($primary, 0.12);
+      height: 40px;
+      width: 40px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .info-card {
+      height: 170px;
+      .widget-icon {
+        @extend %iconbox;
+      }
+      .card-middle {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        h3 {
+          margin: 0;
+          color: #6c757d;
+          font-size: 24px;
+        }
+      }
+      .card-footer {
+        display: flex;
+        align-items: center;
+        color: $muted;
+        margin-top: auto;
+        padding-top: 8px;
+        .text-success {
+          color: $success;
+          margin: 0 8px;
+        }
+        .text-danger {
+          color: $danger;
+          margin: 0 8px;
+        }
+      }
+    }
+
+    .product-chart {
+      height: 356px;
+      .chart-container {
+        flex: 1;
+        height: 270px;
+        &.no-padding {
+          padding-top: 0;
+        }
+      }
+    }
+
+    // 高度/图例等复用
+    .revenue-chart,
+    .location-chart,
+    .bottom-card {
+      height: 400px;
+    }
+    .bottom-card {
+      overflow: hidden;
+    }
+    .revenue-chart .chart-container {
+      flex: 1;
+      min-height: 260px;
+    }
+    .location-chart .chart-container {
+      flex: 1;
+      min-height: 230px;
+      padding-top: 10px;
+    }
+    .location-chart .chart-footer {
+      margin-top: auto;
+      padding-top: 10px;
+    }
+
+    .chart-card {
+      .chart-container {
+        flex: 1;
+        width: 100%;
+        min-height: 200px;
+        &.small {
+          min-height: 150px;
+          padding-top: 10px;
+        }
+      }
+      .chart-legend {
+        padding: 16px;
+        border-radius: 4px;
+        margin-bottom: 16px;
+        .legend-label {
+          color: $muted;
+          text-align: center;
+          margin-bottom: 8px;
+        }
+        .legend-value {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: 400;
+          margin: 0;
+          .dot {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 8px;
+            &.primary {
+              background: $primary;
+            }
+            &.green {
+              background: green;
+            }
+          }
+        }
+      }
+      .chart-footer {
+        padding: 16px 0;
+        .location {
+          font-weight: 400;
+          margin-bottom: 8px;
+        }
+      }
+      .chart-legend-list {
+        margin-top: 10px;
+        padding: 0 10px;
+        max-height: 150px;
+        overflow-y: auto;
+        .legend-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 8px;
+          margin-bottom: 8px;
+          border-bottom: 1px solid #f1f3fa;
+          .color-box {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            margin-right: 8px;
+            &.yellow {
+              background: #f9c761;
+            }
+            &.green {
+              background: #93cb79;
+            }
+            &.deep-blue {
+              background: #5572c3;
+            }
+            &.red {
+              background: #ec6769;
+            }
+          }
+        }
+      }
+    }
+
+    .sales-chart .chart-container.small {
+      height: 160px;
+    }
+    .primary-card {
+      background: #46a0fc;
+      &.sale-size-card {
+        height: 170px;
+      }
+      .card-header h4 {
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .avg-content {
+        text-align: center;
+        padding: 8px 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .badge-container {
+          margin: 8px 0;
+        }
+        .badge {
+          display: inline-block;
+          padding: 0.25em 0.4em;
+          font-size: 75%;
+          font-weight: 700;
+          line-height: 1;
+          text-align: center;
+          white-space: nowrap;
+          border-radius: 0.25rem;
+          &.badge-danger {
+            color: #fff;
+            background: $danger;
+          }
+        }
+        .value {
+          color: white;
+          font-weight: 400;
+          margin: 8px 0;
+        }
+        .subtitle {
+          color: #e3eaef;
+          font-size: 13px;
+          margin-bottom: 8px;
+        }
+      }
+    }
+
+    .activity-card {
+      height: 210px;
+      .timeline-container {
+        height: 130px;
+        overflow: auto;
+        padding: 0;
+      }
+    }
+    .data-card .btn-link {
+      display: flex;
+      align-items: center;
+      color: $primary;
+      cursor: pointer;
+    }
+
+    // 辅助-工具类
+    .text-nowrap {
+      white-space: nowrap;
+    }
+    .text-muted {
+      color: $muted;
+    }
+    .text-light {
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .mt-4 {
+      margin-top: 16px;
+    }
+    .ml-1 {
+      margin-left: 4px;
+    }
+    .ml-2 {
+      margin-left: 8px;
+    }
+    .ml-3 {
+      margin-left: 12px;
+    }
+  }

@@ -1,0 +1,91 @@
+// AntV X6 图形编辑器公共样式
+// 用于 ER、UML、BPMN 等布局的共享样式
+
+// 通用布局容器
+@mixin antv-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+// 工具栏样式
+@mixin antv-toolbar {
+  padding: 12px;
+  background: var(--n-color-embedded);
+  border-bottom: 1px solid var(--n-border-color);
+  flex-shrink: 0;
+}
+
+// 图形容器样式
+@mixin antv-graph-container {
+  flex: 1;
+  position: relative;
+  min-height: 300px;
+  width: 100%;
+  border: 1px solid var(--n-border-color);
+  overflow: hidden;
+
+  :deep(.x6-graph),
+  :deep(.x6-graph-svg) {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  :deep(.x6-graph-svg-stage) {
+    outline: none;
+  }
+}
+
+// 表单项样式
+@mixin antv-form-item {
+  .n-form-item {
+    margin-bottom: 8px;
+
+    .n-form-item-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+      white-space: nowrap;
+    }
+  }
+}
+
+// 卡片样式
+@mixin antv-card-item {
+  .n-card {
+    border: 1px solid var(--n-border-color);
+
+    .n-card-header {
+      padding: 8px 12px;
+      background: var(--n-color-embedded);
+      border-bottom: 1px solid var(--n-border-color);
+    }
+
+    .n-card__content {
+      padding: 12px;
+    }
+  }
+}
+
+// 滚动条样式
+@mixin antv-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--n-scrollbar-color);
+    border-radius: 3px;
+  }
+}
+
+// 编辑器容器样式
+@mixin antv-editor-container {
+  height: 100%;
+  overflow-y: auto;
+  padding: 0 4px;
+  @include antv-scrollbar;
+}

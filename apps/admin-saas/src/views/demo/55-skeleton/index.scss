@@ -1,0 +1,262 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-03-06
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-11
+ * @FilePath: \Robot_Admin\src\views\demo\55-skeleton\index.scss
+ * @Description: 骨架屏组件演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.skeleton-demo {
+  padding: 20px;
+
+  // ─── 章节标题 ───
+  .demo-section {
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: var(--text-color-1);
+
+    .title-icon {
+      color: var(--primary-color);
+    }
+  }
+
+  .section-desc {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: var(--text-color-3);
+  }
+
+  // ─── 场景选择器 ───
+  .scene-switcher {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .scene-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    background: var(--card-color);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    &.is-active {
+      border-color: var(--primary-color);
+      background: color-mix(in srgb, var(--primary-color) 6%, var(--card-color));
+    }
+
+    &__icon {
+      font-size: 22px;
+      color: var(--primary-color);
+    }
+
+    &__title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-color-1);
+    }
+
+    &__desc {
+      font-size: 12px;
+      color: var(--text-color-3);
+      line-height: 1.4;
+    }
+
+    &__badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+  }
+
+  // ─── 两栏布局 ───
+  .demo-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 20px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ─── 卡片样式 ───
+  .demo-card {
+    background: var(--card-color);
+    border-radius: 12px;
+    transition: box-shadow 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-color-1);
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-color-3);
+      line-height: 1.5;
+    }
+  }
+
+  // ─── 配置栏 ───
+  .config-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: var(--body-color);
+    border-radius: 8px;
+    flex-wrap: wrap;
+
+    .config-label {
+      font-size: 13px;
+      color: var(--text-color-3);
+      white-space: nowrap;
+    }
+  }
+
+  // ─── 预览区 ───
+  .preview-area {
+    min-height: 200px;
+    padding: 20px;
+    background: var(--body-color);
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+  }
+
+  // ─── 全部预设网格 ───
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .preset-item {
+    padding: 12px;
+    background: var(--body-color);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--border-color);
+    }
+
+    &.is-active {
+      border-color: var(--primary-color);
+    }
+
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-color-1);
+    }
+
+    &__preview {
+      max-height: 100px;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+  }
+
+  // ─── 已加载内容样式 ───
+  .loaded-text {
+    h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: var(--text-color-1);
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-color-2);
+      line-height: 1.6;
+    }
+  }
+
+  .loaded-avatar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    &__icon {
+      color: var(--primary-color);
+    }
+  }
+
+  .loaded-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .loaded-list__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--primary-color);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .scene-switcher {
+      grid-template-columns: 1fr;
+    }
+
+    .preset-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,0 +1,229 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-25 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-09 12:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\44-collapse-panel\index.scss
+ * @Description: 折叠面板演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.collapse-panel-demo-page {
+  padding: 20px;
+
+  // 网格布局
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // 卡片样式
+  .demo-card {
+    border-radius: 12px !important;
+    transition: all 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    :deep(.n-card-header) {
+      padding-bottom: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--app-text-primary);
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--app-text-secondary);
+      line-height: 1.5;
+    }
+
+    :deep(.n-card__content) {
+      padding: 20px;
+    }
+
+    // 全宽卡片
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+  }
+
+  // 操作栏
+  .action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  // 统计网格
+  .stat-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--app-bg-surface);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--app-bg-surface);
+      transform: translateY(-1px);
+    }
+  }
+
+  .stat-icon {
+    font-size: 24px;
+    color: var(--app-text-placeholder);
+  }
+
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+
+    &.primary {
+      color: #2080f0;
+    }
+
+    &.success {
+      color: #18a058;
+    }
+
+    &.warning {
+      color: #f0a020;
+    }
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--app-text-placeholder);
+  }
+
+  // 图表占位
+  .chart-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 120px;
+    border-radius: 8px;
+    background: var(--app-bg-surface);
+      border: 1px dashed var(--app-border-default);
+
+    .placeholder-icon {
+      font-size: 32px;
+      color: var(--app-text-placeholder);
+    }
+  }
+
+  // 懒渲染指示
+  .lazy-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--app-bg-surface);
+  }
+
+  // 提示文字
+  .demo-tip {
+    display: block;
+    margin-top: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: rgba(32, 128, 240, 0.08);
+    font-size: 13px;
+  }
+
+  // 内容段落
+  p {
+    margin: 0;
+    line-height: 1.8;
+    color: var(--app-text-secondary);
+  }
+
+    // ─── 暗色主题适配（组件内部深层样式） ─────────────────────────────
+  [data-theme='dark'] & {
+    .demo-card {
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    // C_CollapsePanel 组件内部暗色适配
+    :deep(.c-collapse-panel--card .collapse-item) {
+      background: var(--c-bg-card, #1e1e1e);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    :deep(.c-collapse-panel--card .collapse-item--active) {
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    :deep(.c-collapse-panel--card .collapse-item:hover:not(.collapse-item--disabled)) {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    :deep(.c-collapse-panel--default .collapse-item) {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    :deep(.c-collapse-panel--bordered) {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    :deep(.collapse-item__header) {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    :deep(.collapse-item__header-text) {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    :deep(.collapse-item__header-icon) {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    :deep(.collapse-item__content) {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    :deep(.c-collapse-panel--ghost .collapse-item__header:hover) {
+      background: rgba(255, 255, 255, 0.06);
+    }
+  }
+}

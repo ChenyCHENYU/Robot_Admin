@@ -1,0 +1,197 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-02-25 10:00:00
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-25 10:00:00
+ * @FilePath: \Robot_Admin\src\views\demo\42-signature\index.scss
+ * @Description: 电子签名演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.signature-demo-page {
+  padding: 20px;
+
+  // 网格布局
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // 卡片样式
+  .demo-card {
+    border-radius: 12px !important;
+    transition: all 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    :deep(.n-card-header) {
+      padding-bottom: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--app-text-primary);
+      }
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--app-text-secondary);
+      line-height: 1.5;
+    }
+
+    :deep(.n-card__content) {
+      padding: 16px;
+    }
+
+    // 全宽卡片
+    &.full-width {
+      grid-column: 1 / -1;
+    }
+  }
+
+  // 操作栏
+  .action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  // 配置行
+  .config-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    background: var(--app-bg-surface);
+    border-radius: 8px;
+
+    .config-label {
+      font-size: 13px;
+      color: var(--app-text-secondary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+  }
+
+  // 结果预览
+  .result-preview {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--app-bg-surface);
+    border: 1px dashed var(--app-border-default);
+    border-radius: 8px;
+    text-align: center;
+
+    img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 4px;
+    }
+  }
+
+  // API 演示区域
+  .api-demo {
+    display: flex;
+    gap: 20px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+
+    .api-left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .api-right {
+      flex: 1;
+      min-width: 0;
+      padding: 12px;
+      background: var(--app-bg-surface);
+      border-radius: 8px;
+      border: 1px solid var(--app-border-default);
+
+      .data-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--app-text-primary);
+        margin-bottom: 8px;
+      }
+
+      .data-preview {
+        margin: 0;
+        padding: 12px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        line-height: 1.5;
+        color: var(--app-text-secondary);
+        background: var(--app-bg-body);
+        border-radius: 6px;
+        overflow-x: auto;
+        max-height: 180px;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+    }
+  }
+
+  // 提示卡片
+  .tips-card {
+    margin-top: 12px;
+  }
+
+  // 暗色主题
+  [data-theme='dark'] & {
+    .demo-card {
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+
+      .card-header h3 {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .card-desc {
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    .config-row {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .result-preview {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .api-right {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.12);
+
+      .data-preview {
+        background: rgba(255, 255, 255, 0.02);
+      }
+    }
+  }
+}

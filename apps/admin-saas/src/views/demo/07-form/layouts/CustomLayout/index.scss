@@ -1,0 +1,48 @@
+  .custom-layout-demo {
+padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .demo-header {
+      p {
+        margin: 0 0 16px 0;
+        color: var(--n-text-color);
+        line-height: 1.6;
+      }
+    }
+
+    .demo-actions,
+    .demo-preview {
+      margin-top: 16px;
+    }
+
+    .json-display {
+      background: var(--n-code-background-color, #f6f8fa);
+      border: 1px solid var(--n-border-color, #e1e4e8);
+      border-radius: 6px;
+      padding: 16px;
+      max-height: 300px;
+      overflow: auto;
+      font-family:
+        'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--n-text-color);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    @media (max-width: 768px) {
+      padding: 16px;
+      gap: 16px;
+
+      .json-display {
+        font-size: 11px;
+        padding: 12px;
+      }
+    }
+  }
+
+
+  

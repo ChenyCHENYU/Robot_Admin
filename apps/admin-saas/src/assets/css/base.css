@@ -1,0 +1,190 @@
+/* ===========================================
+ * 设计系统 - 基础样式定义
+ * =========================================== */
+
+/* --------- 颜色变量 --------- */
+:root {
+  /* 基础色板 */
+  --color-white: #ffffff;
+  --color-black: #181818;
+
+  /* 中性色阶 */
+  --color-gray-1: #f8f8f8;
+  --color-gray-2: #f2f2f2;
+  --color-gray-3: #ebebeb;
+  --color-gray-8: #282828;
+
+  /* 主题色 - 与JS中的themeConstants保持一致 */
+  --color-primary: #2080f0;
+  --primary-color-pressed: #9fc1e7;
+  --color-primary-hover: #4098fc;
+  --color-primary-pressed: #f5f7fa;
+  --color-primary-suppl: #4098fc;
+
+  /* 语义化变量 (默认浅色模式) */
+  --color-bg: var(--color-white);
+  --color-bg-soft: var(--color-gray-1);
+  --color-bg-mute: var(--color-gray-2);
+  --app-bg-color: var(--color-white);
+  --color-border: rgba(0, 0, 0, 0.12);
+  --color-border-hover: rgba(0, 0, 0, 0.29);
+  --color-text: var(--color-black);
+  --color-text-light: rgba(60, 60, 60, 0.66);
+  --color-text-secondary: rgba(60, 60, 60, 0.66);
+  
+  /* 标签页相关变量 */
+  --tag-active-bg: rgba(32, 128, 240, 0.08);
+  --tag-active-hover-bg: rgba(32, 128, 240, 0.12);
+
+  /* 间距 */
+  --section-gap: 1.25rem;
+}
+
+/* --------- 重置与基础样式 --------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}
+
+html {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family:
+    'Inter var',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  overscroll-behavior-y: contain;
+}
+
+/* --------- 应用容器 --------- */
+#app {
+  min-width: 320px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.global-config-provider {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* --------- 表单元素重置 --------- */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+/* --------- 媒体元素重置 --------- */
+img,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  -webkit-user-drag: none;
+}
+
+/* --------- 组件样式覆盖 --------- */
+/* Tooltip组件尺寸调整 */
+.n-tooltip {
+  --n-padding: 4px 8px !important;
+  --n-font-size: 12px !important;
+  --n-max-width: 200px !important;
+}
+
+/* 弹出框 */
+.n-dialog__icon svg {
+  width: 22px !important;
+  margin-top: -5px !important;
+}
+
+/* --------- 响应式调整 --------- */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* --------- 自定义滚动条样式 --------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* 深色模式下的滚动条 */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* 暗色主题变量 */
+[data-theme='dark'] {
+  /* 语义化变量 (暗色模式) */
+  --color-bg: #1c1c1c;
+  --color-bg-soft: #252525;
+  --color-bg-mute: #2a2a2a;
+  --app-bg-color: rgba(28, 28, 33, 0.95);
+  --color-border: rgba(255, 255, 255, 0.15);
+  --color-border-hover: rgba(255, 255, 255, 0.25);
+  --color-text: #ffffff;
+  --color-text-light: rgba(255, 255, 255, 0.7);
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  
+  /* 标签页相关变量 */
+  --tag-active-bg: rgba(64, 152, 252, 0.15);
+  --tag-active-hover-bg: rgba(64, 152, 252, 0.2);
+}
+
+/* 这里全局设置一下图标统一的样式 */
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1.2em;
+  height: 1.2em;
+}

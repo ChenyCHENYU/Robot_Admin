@@ -14,6 +14,10 @@ dist-ssr
 coverage
 *.local
 
+# Monorepo
+apps/*/dist
+apps/*/node_modules/.tmp
+
 /cypress/videos/
 /cypress/screenshots/
 

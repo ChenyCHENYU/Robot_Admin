@@ -1,0 +1,24 @@
+.cascade-demo {
+  padding: 20px;
+
+  :deep(.n-card) {
+    border-radius: 12px;
+    transition: all 0.25s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  :deep(.n-card-header) {
+    padding-bottom: 12px;
+  }
+
+  :deep(.n-alert) {
+    border-radius: 8px;
+  }
+
+  :deep(.n-tag) {
+    font-weight: 500;
+  }
+}

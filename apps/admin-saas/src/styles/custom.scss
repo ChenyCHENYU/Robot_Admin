@@ -1,0 +1,373 @@
+/**
+ * ================================
+ * Custom Card 卡片渐变效果
+ * ================================
+ * 使用方式：class="custom-card"
+ * 一键获得完整的卡片渐变和动画效果
+ */
+
+.custom-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  /* 顶部渐变装饰条 */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #18a058, #2080f0, #f0a020);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  /* 悬停效果：浮起 + 阴影 + 显示渐变条 */
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    &::before {
+      opacity: 1;
+    }
+
+    /* 悬停时图标缩放 */
+    .card-icon {
+      transform: scale(1.1);
+    }
+
+    /* 悬停时图标光晕效果 */
+    .icon-wrapper::after {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* 悬停时统计区域背景变化 */
+    .card-stats {
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  /* 图标包装器 */
+  .icon-wrapper {
+    position: relative;
+
+    /* 图标光晕效果 */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(
+        circle,
+        rgba(32, 128, 240, 0.1) 0%,
+        transparent 70%
+      );
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.3s ease;
+    }
+  }
+
+  /* 卡片图标基础样式 */
+  .card-icon {
+    transition: transform 0.3s ease;
+  }
+
+  /* 统计区域样式 */
+  .card-stats {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: background 0.3s ease;
+  }
+
+  /* 浮动按钮增强效果 */
+  .float-btn {
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05) rotate(15deg);
+    }
+  }
+}
+
+/**
+ * ================================
+ * 扩展样式（可选组合使用）
+ * ================================
+ */
+
+/* 卡片背景效果 */
+.custom-card-bg {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* 统计卡片专用样式 */
+.custom-statistic {
+  @extend .custom-card;
+  padding: 16px 24px;
+
+  /* 统计图标前缀 */
+  .n-statistic__prefix {
+    position: relative;
+    margin-right: 8px;
+
+    i {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+
+    /* 统计图标光晕 */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(
+        circle,
+        rgba(24, 160, 88, 0.2) 0%,
+        transparent 70%
+      );
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &:hover .n-statistic__prefix {
+    i {
+      transform: scale(1.1);
+    }
+
+    &::after {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+}
+
+
+
+// TAG: 例子
+// <!-- 基础使用 -->
+// <div class="custom-card custom-card-bg p-6">
+//   <div class="icon-wrapper">
+//     <i class="card-icon">📊</i>
+//   </div>
+//   <!-- 内容 -->
+// </div>
+
+// <!-- 与 Naive UI 组合 -->
+// <NCard class="custom-card">
+//   <!-- 内容 -->
+// </NCard>
+
+// <!-- 统计卡片 -->
+// <NStatistic class="custom-statistic custom-card-bg" />
+
+/**
+ * ================================
+ * 系统模式
+ * ================================
+ */
+
+/* 灰色模式（哀悼日） */
+html.gray-mode {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+}
+
+/* 色弱模式（无障碍） */
+html.color-weak-mode {
+  filter: invert(80%);
+  -webkit-filter: invert(80%);
+  -moz-filter: invert(80%);
+  -ms-filter: invert(80%);
+  -o-filter: invert(80%);
+}
+/* ================================
+ * 菜单标准模式 — 白色侧边栏右侧分隔线
+ * ================================
+ */
+.menu-scroll-container.menu-light {
+  border-right: 1px solid var(--n-border-color, #e5e7eb);
+}
+
+/* ================================================================
+ * 菜单标准模式 — 覆盖 @robot-admin/layout 包的玻璃质感装饰层
+ *
+ * 原理：layout 包为菜单添加了精美的紫色玻璃质感效果（渐变/模糊/阴影等），
+ * 这些效果适合「个性」模式（深邃星空风格），但在「标准」模式下需要完全移除，
+ * 让 NMenu 自身的 themeOverrides 控制所有颜色。
+ *
+ * 策略：
+ * 1. CSS 变量层 — 由 theme store 在 <html> 上设置 --menu-* 变量覆盖 fallback
+ * 2. CSS 规则层 — 用 html[data-menu-theme="standard"] 高特异性覆盖硬编码值
+ * ================================================================
+ */
+html[data-menu-theme='standard'] {
+
+  /* --- 菜单项 ::before 伪元素（底层玻璃渐变） --- */
+  .layout-container .n-menu-item:before {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* --- 菜单项内容 ::after 伪元素（边框叠加层） --- */
+  .layout-container .n-menu-item-content:after {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* --- Hover 效果：移除位移/模糊/紫色边框 --- */
+  .layout-container .n-menu-item:hover {
+    transform: none !important;
+  }
+
+  .layout-container .n-menu-item:hover:before {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu-item:hover .n-menu-item-content {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .layout-container .n-menu-item:hover .n-menu-item-content:after {
+    border-left-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu-item:hover .n-menu-item-content__icon {
+    transform: none !important;
+  }
+
+  /* --- 选中项：移除紫色渐变/阴影/模糊/边框 --- */
+  .layout-container .n-menu-item--selected:before,
+  .layout-container .n-menu-item-content--selected:before {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu-item--selected .n-menu-item-content,
+  .layout-container .n-menu-item-content--selected {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .layout-container .n-menu-item--selected .n-menu-item-content:after,
+  .layout-container .n-menu-item-content--selected:after {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu-item--selected .n-menu-item-content__icon {
+    filter: none !important;
+    transform: none !important;
+  }
+
+  /* --- Active（按下）状态：移除缩放 --- */
+  .layout-container .n-menu-item:active {
+    transform: none !important;
+  }
+
+  /* --- 子级激活（展开的父菜单）：移除模糊/紫色边框 --- */
+  .layout-container .n-menu-item-content--child-active {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .layout-container .n-menu-item-content--child-active:after {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* --- 子菜单容器：移除紫色 border-left 和模糊 --- */
+  .layout-container .n-submenu-children {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-left: none !important;
+  }
+
+  .layout-container .n-submenu-children .n-menu-item:hover {
+    transform: none !important;
+  }
+
+  /* --- 菜单分组标题装饰线 --- */
+  .layout-container .n-menu-item-group-title:after {
+    background: linear-gradient(to right,
+        transparent,
+        var(--n-border-color, #e5e7eb),
+        transparent) !important;
+  }
+
+  /* --- 菜单分割线 --- */
+  .layout-container .n-menu-divider {
+    background: var(--n-border-color, #e5e7eb) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* --- 加载态 Shimmer 动画颜色 --- */
+  .layout-container .n-menu-item.n-menu-item--loading:before {
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(32, 128, 240, 0.1),
+        transparent) !important;
+  }
+
+  /* --- 折叠菜单：移除 hover 缩放和紫色效果 --- */
+  .layout-container .n-menu.n-menu--collapsed .n-menu-item:hover {
+    transform: none !important;
+  }
+
+  .layout-container .n-menu.n-menu--collapsed .n-menu-item-content--child-active:before {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  .layout-container .n-menu.n-menu--collapsed .n-menu-item-content--child-active:after {
+    box-shadow: none !important;
+  }
+
+  /* --- 折叠菜单图标颜色：让 NMenu 主题变量控制 --- */
+  .n-menu--collapsed .n-menu-item-content__icon {
+    color: var(--n-item-icon-color, currentColor) !important;
+  }
+}
+
+/* ================================================================
+ * 菜单标准模式 + 暗色主题 — 增强选中菜单项的视觉反馈
+ * ================================================================
+ */
+html[data-menu-theme='standard'][data-theme='dark'] {
+
+  .layout-container .n-menu-item-content--selected,
+  .layout-container .n-menu-item--selected .n-menu-item-content {
+    background: rgba(32, 128, 240, 0.15) !important;
+    border-radius: 6px;
+  }
+
+  .layout-container .n-menu-item:hover .n-menu-item-content {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 6px;
+  }
+}

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>%VITE_APP_TITLE%</title>
+    <!-- 预加载加载动画图片，消除网络慢时的闪烁 -->
+    <link rel="preload" href="/robot.gif" as="image" />
+
+    <!-- ========== 首屏加载动画样式（内联，确保 HTML 渲染后立即生效） ========== -->
+    <style id="loading-style">
+      /* 根元素背景 —— 消除浏览器默认白底 */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+
+      html[data-theme='dark'],
+      html[data-theme='dark'] body {
+        background: #101014;
+      }
+
+      .app-loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #fff;
+        z-index: 9999;
+        transition: opacity 0.4s ease-out;
+      }
+
+      /* 深色主题适配 */
+      [data-theme='dark'] .app-loading {
+        background: #101014;
+      }
+
+      .app-loading-wrap {
+        text-align: center;
+        transform: translateY(-10%);
+        width: 100%;
+      }
+
+      .app-loading-logo-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 40px;
+      }
+
+      .app-loading-logo {
+        width: 280px;
+        height: 280px;
+        opacity: 0;
+        transition: opacity 0.15s ease-out;
+      }
+
+      .app-loading-logo.loaded {
+        opacity: 1;
+      }
+
+      .loading-dots {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin: 0 auto 30px;
+      }
+
+      .loading-dots span {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #1677ff;
+        animation: loading-pulse 1.4s infinite ease-in-out;
+      }
+
+      .loading-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .loading-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      .loading-dots span:nth-child(4) {
+        animation-delay: 0.6s;
+      }
+
+      .app-loading-title {
+        color: #1677ff;
+        font-size: 1.6rem;
+        font-weight: bold;
+        letter-spacing: 1.5px;
+        opacity: 0;
+        animation: loading-fadeIn 0.3s ease-out 0.1s forwards;
+      }
+
+      @keyframes loading-pulse {
+        0%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.8;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      @keyframes loading-fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+
+    <!-- 防止主题闪烁：在页面渲染前立即设置主题 -->
+    <script>
+      (function() {
+        const key = 'theme-mode';
+        const mode = localStorage.getItem(key) || 'system';
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = mode === 'dark' || (mode === 'system' && prefersDark);
+        const theme = isDark ? 'dark' : 'light';
+        
+        document.documentElement.setAttribute('data-theme', theme);
+        // 立即设置根背景色，彻底消除白/黑闪烁
+        document.documentElement.style.background = isDark ? '#101014' : '#fff';
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- 首屏加载动画：放在 #app 之前，确保浏览器第一帧就渲染 -->
+    <div class="app-loading">
+      <div class="app-loading-wrap">
+        <div class="app-loading-logo-container">
+          <img
+            src="/robot.gif"
+            class="app-loading-logo"
+            alt="Loading"
+            onload="this.classList.add('loaded')"
+          />
+        </div>
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <h1 class="app-loading-title">Robot Admin</h1>
+      </div>
+    </div>
+
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
+
+
