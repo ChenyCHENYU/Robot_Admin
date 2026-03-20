@@ -1,3 +1,4 @@
 {
-  ".": "2.0.0"
+  "apps/admin-internal": "2.2.0",
+  "apps/admin-saas": "1.0.0"
 }

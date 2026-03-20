@@ -7,39 +7,38 @@
   </a>
 
   <h1>🤖 Robot Admin — Monorepo</h1>
-
   <p><strong>基于 Bun Workspaces 的企业级多应用管理平台</strong></p>
+  <p>Vue 3.5 · Vite 8 (Rolldown) · TypeScript 5.8 · Naive UI · Pinia · UnoCSS · Bun</p>
 
-  <!-- 架构选择器 -->
+  <!-- 架构分支导航 -->
   <table>
     <tr>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/🏗️-单体架构-4A90E2?style=for-the-badge" alt="Monolithic"><br>
-        <sub>传统 SPA 架构</sub><br>
+        <strong>🏗️ 单体架构</strong><br>
+        <sub>传统单应用 SPA</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/main">
-          <img src="https://img.shields.io/badge/查看代码-main-blue?style=flat-square" alt="Main Branch">
+          <img src="https://img.shields.io/badge/分支-main-4A90E2?style=flat-square" alt="Main">
         </a>
       </td>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/📦-Monorepo-00D8FF?style=for-the-badge" alt="Monorepo"><br>
-        <sub><strong>📍 当前分支</strong></sub><br>
-        <sub>Bun Workspaces 多应用</sub><br>
+        <strong>📦 Monorepo</strong><br>
+        <sub><b>📍 当前分支</b> — Bun Workspaces</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
-          <img src="https://img.shields.io/badge/查看代码-monorepo-00d8ff?style=flat-square" alt="Monorepo Branch">
+          <img src="https://img.shields.io/badge/分支-monorepo-00d8ff?style=flat-square" alt="Monorepo">
         </a>
       </td>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/🔷-微前端-FF6B6B?style=for-the-badge" alt="Micro App"><br>
-        <sub>micro-app 架构</sub><br>
+        <strong>🔷 微前端</strong><br>
+        <sub>micro-app 子应用</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
-          <img src="https://img.shields.io/badge/查看代码-micro--app-red?style=flat-square" alt="Micro App Branch">
+          <img src="https://img.shields.io/badge/分支-micro--app-FF6B6B?style=flat-square" alt="Micro App">
         </a>
       </td>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/🌐-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
-        <sub>Module Federation</sub><br>
+        <strong>🌐 模块联邦</strong><br>
+        <sub>Module Federation 2.0</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
-          <img src="https://img.shields.io/badge/查看代码-federation-purple?style=flat-square" alt="Federation Branch">
+          <img src="https://img.shields.io/badge/分支-federation-9B59B6?style=flat-square" alt="Federation">
         </a>
       </td>
     </tr>
@@ -51,11 +50,12 @@
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
   </a>
   <img src="https://img.shields.io/badge/Node.js-≥22-339933?logo=node.js" alt="Node.js">
-  <img src="https://img.shields.io/badge/Bun-≥1.x-f9f1e1?logo=bun" alt="Bun">
+  <img src="https://img.shields.io/badge/Bun-≥1.2-f9f1e1?logo=bun" alt="Bun">
   <img src="https://img.shields.io/badge/Vue-3.5.30-4FC08D?logo=vue.js" alt="Vue 3">
-  <img src="https://img.shields.io/badge/Vite-8.0-646CFF?logo=vite" alt="Vite 8">
-  <img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Vite-8.0.1-646CFF?logo=vite" alt="Vite 8">
+  <img src="https://img.shields.io/badge/TypeScript-5.8.3-3178C6?logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/Naive_UI-2.44-18a058" alt="Naive UI">
+  <img src="https://img.shields.io/badge/UnoCSS-66.x-858585" alt="UnoCSS">
 
 </div>
 

@@ -17,6 +17,7 @@ coverage
 # Monorepo
 apps/*/dist
 apps/*/node_modules/.tmp
+packages/*/dist
 
 /cypress/videos/
 /cypress/screenshots/
@@ -44,16 +45,12 @@ project_path.txt
 
 type-reports
 
-# 自动生成的类型声明文件
-src/types/auto-imports.d.ts
-src/types/components.d.ts
+# 自动生成的类型声明文件（各 app 下）
+apps/*/src/types/auto-imports.d.ts
+apps/*/src/types/components.d.ts
 
-# openapi.json 
-# src/api/generated/  
-
+# openapi.json
+# apps/*/src/api/generated/
 
 .mgit-push.json
-# Monorepo 目录（仅在 monorepo 分支使用）
-packages/
-apps/robot-admin-*/
 nul

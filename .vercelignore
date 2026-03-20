@@ -2,6 +2,7 @@ node_modules
 .git
 *.log
 .DS_Store
-dist
+apps/*/dist
 .vscode
+packages/
 .idea

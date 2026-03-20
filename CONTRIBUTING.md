@@ -3,48 +3,67 @@
 > **来啊，快活啊！一起搞事情啊！** 🎉  
 > 欢迎各路英雄好汉加入 Robot Admin 的开发大军！
 
+## � 项目架构
+
+Robot Admin 采用 **Bun Workspaces Monorepo** 架构：
+
+```
+Robot_Admin/
+├── apps/
+│   ├── admin-internal/    # 内部版 - 企业级完整功能版
+│   └── admin-saas/        # SaaS 版 - 轻量多租户版（开发中）
+├── packages/
+│   └── shared-config/     # 共享配置（TypeScript 基础配置）
+├── package.json           # Monorepo 根配置（Bun Workspaces）
+└── .bunfig.toml           # Bun 运行时配置
+```
+
 ## 🚀 新手必看：完整贡献流程
 
 ### 第一步：在GitHub上Fork项目 🍴
 
-1. **访问项目主页**：[https://github.com/ChenyCHENYU/robot_admin](https://github.com/ChenyCHENYU/robot_admin)
+1. **访问项目主页**：[https://github.com/ChenyCHENYU/Robot_Admin](https://github.com/ChenyCHENYU/Robot_Admin)
 2. **点击右上角的 "Fork" 按钮**
    - 这会在你的GitHub账号下创建一个项目副本
    - 等待几秒钟，GitHub会自动跳转到你的Fork页面
-3. **现在你有了自己的项目副本**：`https://github.com/你的用户名/robot_admin`
+3. **现在你有了自己的项目副本**：`https://github.com/你的用户名/Robot_Admin`
 
 ### 第二步：克隆到本地 💻
 
 ```bash
 # 克隆你Fork的项目（不是原项目！）
-git clone https://github.com/你的用户名/robot_admin.git
+git clone https://github.com/你的用户名/Robot_Admin.git
 
 # 进入项目目录
-cd robot_admin
+cd Robot_Admin
 
 # 添加原项目为上游仓库（重要！用来同步最新代码）
-git remote add upstream https://github.com/ChenyCHENYU/robot_admin.git
+git remote add upstream https://github.com/ChenyCHENYU/Robot_Admin.git
 
 # 验证远程仓库设置
 git remote -v
 # 应该看到：
-# origin    https://github.com/你的用户名/robot_admin.git (fetch)
-# origin    https://github.com/你的用户名/robot_admin.git (push)
-# upstream  https://github.com/ChenyCHENYU/robot_admin.git (fetch)
-# upstream  https://github.com/ChenyCHENYU/robot_admin.git (push)
+# origin    https://github.com/你的用户名/Robot_Admin.git (fetch)
+# origin    https://github.com/你的用户名/Robot_Admin.git (push)
+# upstream  https://github.com/ChenyCHENYU/Robot_Admin.git (fetch)
+# upstream  https://github.com/ChenyCHENYU/Robot_Admin.git (push)
 ```
 
 ### 第三步：设置开发环境 ⚙️
 
 ```bash
-# 安装依赖（推荐 Bun，真的很快）
+# ⚠️ 强制使用 Bun 作为包管理器（不支持 npm/yarn/pnpm）
 bun install
-# 如果你还在用 npm/yarn：npm install
 
-# 启动项目（毫秒级启动，不骗人）
-bun dev
+# 启动 internal 版（默认，毫秒级启动）
+bun run dev
+# 或者明确指定
+bun run dev:internal
 
-# 打开浏览器访问 http://localhost:3000
+# 启动 saas 版
+bun run dev:saas
+
+# 打开浏览器访问 http://localhost:1988
 # 看到机器人就算成功了 🤖
 ```
 
@@ -74,7 +93,7 @@ git push origin feat/你的功能名称
 
 ### 第五步：创建Pull Request 📤
 
-1. **回到你的GitHub Fork页面**：`https://github.com/你的用户名/robot_admin`
+1. **回到你的GitHub Fork页面**：`https://github.com/你的用户名/Robot_Admin`
 2. **你会看到一个黄色提示条**："Compare & pull request"
 3. **点击 "Compare & pull request" 按钮**
 4. **填写PR信息**：
@@ -113,7 +132,7 @@ git push origin feat/你的功能名称
 ### 🐛 发现Bug了？
 
 **完整流程**：
-1. **先确认**：在 [Issues](https://github.com/ChenyCHENYU/robot_admin/issues) 搜索看是否已存在
+1. **先确认**：在 [Issues](https://github.com/ChenyCHENYU/Robot_Admin/issues) 搜索看是否已存在
 2. **创建Issue**：如果没有，就新建一个Bug报告
 3. **修复Bug**：按上面的流程Fork → 修复 → PR
 4. **在PR中关联Issue**：写上 `Fixes #issue号码`
@@ -142,7 +161,7 @@ git push origin feat/你的功能名称
 
 ### 💡 有好点子？
 
-1. **先讨论**：在 [Discussions](https://github.com/ChenyCHENYU/robot_admin/discussions) 发起讨论
+1. **先讨论**：在 [Discussions](https://github.com/ChenyCHENYU/Robot_Admin/discussions) 发起讨论
 2. **创建Issue**：讨论通过后创建Feature Request
 3. **开发实现**：按完整流程开发
 4. **关联Issue**：PR中写上 `Closes #issue号码`
@@ -155,10 +174,10 @@ git push origin feat/你的功能名称
 ### 🎨 新功能开发
 
 **推荐方向**：
-- **新演示页面**：在 `src/views/demo/` 下添加
-- **实用组件**：在 `src/components/global/` 下添加
-- **工具函数**：在 `src/utils/` 下添加
-- **自定义指令**：在 `src/directives/` 下添加
+- **新演示页面**：在 `apps/admin-internal/src/views/demo/` 下添加
+- **实用组件**：在 `apps/admin-internal/src/components/global/` 下添加
+- **工具函数**：在 `apps/admin-internal/src/utils/` 下添加
+- **共享配置**：在 `packages/shared-config/` 下添加
 
 ## 🛠️ 开发规范
 
@@ -167,12 +186,9 @@ git push origin feat/你的功能名称
 我们使用 **git cz** 进行规范化提交：
 
 ```bash
-# 安装commitizen（如果没装的话）
-npm install -g commitizen
-
 # 提交代码（不要用 git commit）
 git add .
-git cz  # 启动交互式提交
+bun run cz  # 启动交互式提交
 
 # 选择提交类型：
 # feat:     新功能
@@ -188,11 +204,8 @@ git cz  # 启动交互式提交
 ### 代码风格
 
 ```bash
-# 检查代码风格
+# 检查代码风格（Oxlint + ESLint 双重检查）
 bun run lint
-
-# 自动修复（大部分问题都能自动搞定）
-bun run lint:fix
 
 # 格式化代码
 bun run format
@@ -221,14 +234,23 @@ git checkout -b refactor/optimize-utils
 ### 目录结构
 
 ```
-src/
-├── components/global/     # 全局组件（C_前缀）
-├── views/demo/           # 演示页面（新功能展示）
-├── utils/                # 工具函数
-├── directives/           # 自定义指令
-├── stores/               # 状态管理
-├── api/                  # API接口
-└── types/                # TypeScript类型定义
+Robot_Admin/                    # Monorepo 根
+├── apps/
+│   ├── admin-internal/         # 内部版应用
+│   │   ├── src/
+│   │   │   ├── components/global/  # 全局组件（C_ 前缀）
+│   │   │   ├── views/demo/         # 演示页面
+│   │   │   ├── stores/             # 状态管理
+│   │   │   ├── api/                # API 接口
+│   │   │   ├── utils/              # 工具函数
+│   │   │   └── types/              # TypeScript 类型
+│   │   ├── vite.config.ts
+│   │   └── package.json
+│   └── admin-saas/             # SaaS 版应用
+│       └── ...（同 internal 结构）
+├── packages/
+│   └── shared-config/          # 共享 TypeScript 配置
+└── package.json                # Monorepo 工作区
 ```
 
 ## 🚨 重要注意事项
@@ -243,7 +265,8 @@ src/
 ### 开发要求
 
 - **浏览器兼容**：Chrome/Firefox/Safari/Edge 最新两个版本
-- **Node.js版本**：>= 20.19.0
+- **Node.js版本**：>= 22.0.0
+- **包管理器**：Bun >= 1.2.0（**强制使用**，不支持 npm/yarn/pnpm）
 - **不支持IE**：拜拜了您嘞 👋
 
 ### 性能要求
@@ -290,7 +313,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 ```bash
 # 启动开发服务器
-bun dev
+bun run dev         # 启动 internal 版
+bun run dev:saas    # 启动 saas 版
 
 # 测试功能
 # ✅ 不同浏览器测试
@@ -301,14 +325,18 @@ bun dev
 ### 提交前检查
 
 ```bash
-# 代码检查
+# 代码检查（所有应用）
 bun run lint
 
-# 类型检查
+# 类型检查（所有应用）
 bun run type-check
 
-# 构建测试
+# 构建测试（所有应用）
 bun run build
+
+# 仅构建特定应用
+bun run build:internal
+bun run build:saas
 
 # 确保没有报错再提交
 ```
@@ -372,7 +400,7 @@ bun run build
 **项目地址**：
 
 - **在线预览**：[https://www.robotadmin.cn](https://www.robotadmin.cn)
-- **GitHub**：[https://github.com/ChenyCHENYU/robot_admin](https://github.com/ChenyCHENYU/robot_admin)
+- **GitHub**：[https://github.com/ChenyCHENYU/Robot_Admin](https://github.com/ChenyCHENYU/Robot_Admin)
 
 ---
 

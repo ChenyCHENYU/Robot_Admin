@@ -1,0 +1,13 @@
+{
+  "name": "@robot-admin/shared-config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Robot Admin Monorepo 共享配置 - TypeScript 基础配置",
+  "exports": {
+    "./tsconfig/app": "./tsconfig/tsconfig.app.base.json",
+    "./tsconfig/node": "./tsconfig/tsconfig.node.base.json"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3"
+  }
+}
