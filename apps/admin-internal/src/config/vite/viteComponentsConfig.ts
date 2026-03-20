@@ -46,7 +46,6 @@ export default Components({
   dts: 'src/types/components.d.ts', // 生成类型声明文件
   dirs: ['src/components/local'], // 仅扫描本地组件（C_ 全局组件通过 resolver 解析）
   extensions: ['vue'], // 扩展名
-  version: 3, // 明确指定 Vue 3.x 版本
   resolvers: [
     NaiveUiResolver(),
     // dev:local: 用目录扫描的全量组件名构建 resolver（不受 npm 版本滞后影响）

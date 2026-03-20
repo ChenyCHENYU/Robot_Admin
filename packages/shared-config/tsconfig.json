@@ -1,0 +1,9 @@
+{
+  // packages/shared-config — 用于对本包源码进行类型检查
+  // eslint/index.ts 需要能找到 ESLint 插件的类型声明
+  "extends": "./tsconfig/node.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["eslint/**/*.ts"]
+}
