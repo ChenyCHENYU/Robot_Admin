@@ -58,6 +58,7 @@
         "@iconify-json/la": "^1.2.1",
         "@iconify-json/mdi": "^1.2.3",
         "@inspira-ui/plugins": "^0.0.1",
+        "@robot-admin/shared-config": "workspace:*",
         "@tsconfig/node22": "^22.0.5",
         "@types/node": "^22.19.15",
         "@types/nprogress": "^0.2.3",
@@ -98,7 +99,7 @@
     },
     "apps/admin-saas": {
       "name": "@robot-admin/saas",
-      "version": "2.2.0",
+      "version": "1.0.0",
       "dependencies": {
         "@antv/x6": "^2.19.2",
         "@iconify-json/ri": "^1.2.10",
@@ -138,6 +139,7 @@
         "@iconify-json/la": "^1.2.1",
         "@iconify-json/mdi": "^1.2.3",
         "@inspira-ui/plugins": "^0.0.1",
+        "@robot-admin/shared-config": "workspace:*",
         "@tsconfig/node22": "^22.0.5",
         "@types/node": "^22.19.15",
         "@types/nprogress": "^0.2.3",
@@ -180,8 +182,22 @@
       "name": "@robot-admin/shared-config",
       "version": "1.0.0",
       "devDependencies": {
+        "@tsconfig/node22": "^22.0.5",
+        "@vue/tsconfig": "^0.7.0",
         "typescript": "~5.8.3",
       },
+      "peerDependencies": {
+        "@vue/eslint-config-prettier": ">=10.0.0",
+        "@vue/eslint-config-typescript": ">=14.0.0",
+        "eslint": ">=10.0.0",
+        "eslint-plugin-jsdoc": ">=62.0.0",
+        "eslint-plugin-oxlint": ">=1.0.0",
+        "eslint-plugin-vue": ">=10.0.0",
+        "vite": ">=8.0.0",
+      },
+      "optionalPeers": [
+        "vite",
+      ],
     },
   },
   "packages": {

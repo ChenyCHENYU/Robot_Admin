@@ -134,7 +134,7 @@
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const isDark = mode === 'dark' || (mode === 'system' && prefersDark);
         const theme = isDark ? 'dark' : 'light';
-        
+
         document.documentElement.setAttribute('data-theme', theme);
         // 立即设置根背景色，彻底消除白/黑闪烁
         document.documentElement.style.background = isDark ? '#101014' : '#fff';
@@ -159,7 +159,7 @@
           <span></span>
           <span></span>
         </div>
-        <h1 class="app-loading-title">Robot Admin</h1>
+        <h1 class="app-loading-title">Robot Admin SaaS</h1>
       </div>
     </div>
 

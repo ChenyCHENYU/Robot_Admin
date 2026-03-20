@@ -1,4 +1,6 @@
 {
+  // Robot Admin Monorepo — Node 工具链 TypeScript 基础配置
+  // 用于 vite.config.ts / eslint.config.ts 等构建脚本
   "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
     "noEmit": true,

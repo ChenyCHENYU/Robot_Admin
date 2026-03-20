@@ -1,6 +1,6 @@
 {
   "name": "@robot-admin/saas",
-  "version": "2.2.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Robot Admin SaaS 版本 - 多租户中后台管理系统（轻量版）",
   "author": {
@@ -67,6 +67,7 @@
     "@iconify-json/la": "^1.2.1",
     "@iconify-json/mdi": "^1.2.3",
     "@inspira-ui/plugins": "^0.0.1",
+    "@robot-admin/shared-config": "workspace:*",
     "@tsconfig/node22": "^22.0.5",
     "@types/node": "^22.19.15",
     "@types/nprogress": "^0.2.3",

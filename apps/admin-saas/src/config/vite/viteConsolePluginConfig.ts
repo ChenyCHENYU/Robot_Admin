@@ -10,8 +10,8 @@
 import viteConsolePlugin from 'vite-console-plugin'
 
 export default viteConsolePlugin({
-  systemName: 'Robot Admin',
-  description: '企业级后台管理系统',
+  systemName: 'Robot Admin SaaS',
+  description: '多租户 SaaS 中后台管理系统',
   team: '共享技术中心',
   owner: 'CHENY | 编号: 409322',
   warning: '团队协作项目，修改前请先沟通',

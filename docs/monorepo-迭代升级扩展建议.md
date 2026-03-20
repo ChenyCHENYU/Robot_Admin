@@ -22,78 +22,30 @@ Robot_Admin/                          # Monorepo 根
 **已完成**：
 
 - Bun Workspaces Monorepo 基础架构搭建
-- admin-internal（原单应用）完整迁移
-- admin-saas 骨架初始化
-- shared-config 包（TypeScript 基础配置）
-- Release-Please 多包配置
-- README / CONTRIBUTING / .gitignore 适配
+- admin-internal（原单应用）完整迁移（55+ 页面 / 12 插件 / 6 Store）
+- admin-saas 骨架初始化 + 差异化（独立版本号 1.0.0 / 标题 / 控制台信息 / 端口 1989）
+- shared-config 包 — TypeScript 基础配置（app 级 + node 级）
+- shared-config 包 — ESLint 工厂函数 `createEslintConfig()`（180+ 行规则提取）
+- shared-config 包 — Vite 工厂函数 `createViteConfig()`（optimizeDeps / env / analyzer 统一）
+- 各 app 的 tsconfig / eslint / vite 均已改为继承或调用 shared-config，消除重复
+- 各 app 环境变量差异化（VITE_APP_TITLE 区分 INTERNAL / SAAS）
+- Release-Please 多包独立版本配置
+- README 增强 — 集成指南（新增 app / 新建共享包 / 独立部署 / 共享配置说明）
+- 根目录残余 src/ 已清理，workspace 干净
 
 ---
 
 ## 二、近期迭代建议（P0 — 高优先级）
 
-### 2.1 共享配置包完善 (`packages/shared-config`)
+### 2.1 共享配置包完善 (`packages/shared-config`) ✅ 已完成
 
-**目标**：将各 app 中重复的配置抽离为可复用的共享预设。
+**已实现**：
 
-#### ESLint 共享预设
+- `createEslintConfig()` — ESLint Flat Config 工厂函数，支持 `jsdocIgnoreFiles` / `extraIgnores` 自定义
+- `createViteConfig()` — Vite 配置工厂函数，统一 `optimizeDeps` 排除 Vue 全家桶 + `loadEnv` + analyzer 注入
+- 各 app 配置已简化为 3~8 行（从 180+ 行 / 100+ 行缩减）
 
-```typescript
-// packages/shared-config/eslint/index.ts
-import oxlint from 'eslint-plugin-oxlint'
-import pluginVue from 'eslint-plugin-vue'
-import vueTsEslintConfig from '@vue/eslint-config-typescript'
-
-export function createEslintConfig(options?: {
-  extraRules?: Record<string, any>
-}) {
-  return [
-    oxlint.configs['flat/recommended'],
-    ...pluginVue.configs['flat/recommended'],
-    ...vueTsEslintConfig(),
-    // 项目统一规则
-    {
-      rules: {
-        'max-depth': ['error', 4],
-        complexity: ['warn', 10],
-        quotes: ['error', 'single'],
-        ...options?.extraRules,
-      },
-    },
-  ]
-}
-```
-
-各 app 使用：
-
-```typescript
-// apps/admin-internal/eslint.config.ts
-import { createEslintConfig } from '@robot-admin/shared-config/eslint'
-export default createEslintConfig()
-```
-
-#### Vite 共享预设
-
-```typescript
-// packages/shared-config/vite/index.ts
-export function createViteConfig(options: {
-  app: 'internal' | 'saas'
-  port?: number
-}) {
-  return defineConfig({
-    // 公共 Vite 配置
-    resolve: { alias: { '@': resolve('src') } },
-    server: { port: options.port ?? 1988 },
-    build: {
-      /* 统一分包策略 */
-    },
-    // 公共插件
-    plugins: [vue(), UnoCSS(), AutoImport(/*...*/)],
-  })
-}
-```
-
-#### UnoCSS 共享预设
+#### UnoCSS 共享预设（待评估）
 
 ```typescript
 // packages/shared-config/unocss/presets.ts
