@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "./apps/admin-internal/tsconfig" },
-    { "path": "./apps/admin-saas/tsconfig" }
+    { "path": "./apps/admin-saas/tsconfig" },
+    { "path": "./packages/shared-config" }
   ]
 }

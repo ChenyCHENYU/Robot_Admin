@@ -1,0 +1,8 @@
+dist
+node_modules
+bun.lock
+*.min.js
+*.min.css
+apps/*/src/types/auto-imports.d.ts
+apps/*/src/types/components.d.ts
+apps/*/lang/

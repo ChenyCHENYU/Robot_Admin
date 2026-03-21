@@ -69,32 +69,19 @@
     "@inspira-ui/plugins": "^0.0.1",
     "@robot-admin/shared-config": "workspace:*",
     "@tsconfig/node22": "^22.0.5",
-    "@types/node": "^22.19.15",
     "@types/nprogress": "^0.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.57.0",
-    "@typescript-eslint/parser": "^8.57.0",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vitejs/plugin-vue-jsx": "^5.1.5",
-    "@vue/eslint-config-prettier": "^10.2.0",
-    "@vue/eslint-config-typescript": "^14.7.0",
     "@vue/runtime-core": "^3.5.30",
     "@vue/tsconfig": "^0.7.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "eslint": "^10.0.3",
-    "eslint-plugin-jsdoc": "^62.7.1",
-    "eslint-plugin-oxlint": "^1.51.0",
-    "eslint-plugin-vue": "^10.8.0",
     "git-branch-check-diff-commits": "^1.2.2",
     "jiti": "^2.6.1",
     "naive-ui": "^2.44.1",
-    "npm-run-all2": "^7.0.2",
-    "oxlint": "^1.52.0",
-    "prettier": "^3.8.1",
     "rollup-plugin-visualizer": "^7.0.1",
     "sass": "^1.97.3",
     "ts-type-cleaner": "^5.0.8",
-    "typescript": "~5.8.3",
     "unocss": "^66.6.6",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-icons": "^23.0.1",
@@ -104,15 +91,5 @@
     "vite-console-plugin": "^2.0.15",
     "vite-plugin-vue-devtools": "^7.7.9",
     "vue-tsc": "^3.2.6"
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,vue}": [
-      "oxlint --max-warnings 0 --deny-warnings",
-      "eslint --fix --no-cache",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
   }
 }

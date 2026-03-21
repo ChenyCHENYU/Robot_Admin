@@ -23,8 +23,10 @@
     "build:saas": "bun --filter @robot-admin/saas build",
     "preview:internal": "bun --filter @robot-admin/internal preview",
     "preview:saas": "bun --filter @robot-admin/saas preview",
-    "lint": "bun --filter './apps/*' lint",
-    "format": "bun --filter './apps/*' format",
+    "lint": "eslint packages/ && bun --filter './apps/*' lint",
+    "lint:apps": "bun --filter './apps/*' lint",
+    "lint:packages": "eslint packages/",
+    "format": "prettier --write .",
     "type-check": "bun --filter './apps/*' type-build",
     "clean": "rm -rf apps/*/dist apps/*/node_modules/.tmp",
     "clean:modules": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
@@ -33,15 +35,36 @@
     "commit": "bunx cz",
     "cz": "git-cz"
   },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx,mts,vue}": [
+      "oxlint --max-warnings 0 --deny-warnings",
+      "eslint --fix --no-cache",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
   "devDependencies": {
     "@commitlint/cli": "^20.4.3",
     "@commitlint/config-conventional": "^20.4.3",
     "@robot-admin/git-standards": "latest",
+    "@robot-admin/shared-config": "workspace:*",
     "@types/node": "^22.19.15",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.7.0",
     "commitizen": "^4.3.1",
     "cz-customizable": "^7.5.1",
+    "eslint": "^10.0.3",
+    "eslint-plugin-jsdoc": "^62.7.1",
+    "eslint-plugin-oxlint": "^1.51.0",
+    "eslint-plugin-vue": "^10.8.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.3.2",
+    "oxlint": "^1.52.0",
+    "prettier": "^3.8.1",
     "typescript": "~5.8.3"
   },
   "config": {

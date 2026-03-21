@@ -5,18 +5,20 @@
 
 ## � 项目架构
 
-Robot Admin 采用 **Bun Workspaces Monorepo** 架构：
+Robot Admin 采用 **Bun Workspaces Monorepo** 架构，三层职责分离：
 
 ```
-Robot_Admin/
+Robot_Admin/                   ← 治理层（ESLint / Prettier / Husky / Commitlint）
 ├── apps/
-│   ├── admin-internal/    # 内部版 - 企业级完整功能版
-│   └── admin-saas/        # SaaS 版 - 轻量多租户版（开发中）
+│   ├── admin-internal/        # 内部版 - 企业级完整功能版（端口 1988）
+│   └── admin-saas/            # SaaS 版 - 多租户轻量版（端口 1989）
 ├── packages/
-│   └── shared-config/     # 共享配置（TypeScript 基础配置）
-├── package.json           # Monorepo 根配置（Bun Workspaces）
-└── .bunfig.toml           # Bun 运行时配置
+│   └── shared-config/         # 共享配置工厂 — ESLint + Vite + TSConfig 预设
+├── package.json               # Workspace 定义 + 治理依赖 + lint-staged
+└── .husky/                    # Git Hooks（提交前：oxlint → eslint → prettier → 仅扫描暂存文件）
 ```
+
+**三层职责**：根目录管治理（全局规则），`packages/` 管预设（可复用工厂），`apps/` 管业务（独立差异）。
 
 ## 🚀 新手必看：完整贡献流程
 
@@ -55,17 +57,17 @@ git remote -v
 # ⚠️ 强制使用 Bun 作为包管理器（不支持 npm/yarn/pnpm）
 bun install
 
-# 启动 internal 版（默认，毫秒级启动）
+# 启动 admin-internal（端口 1988）— 默认开发目标
 bun run dev
-# 或者明确指定
-bun run dev:internal
 
-# 启动 saas 版
+# 启动 admin-saas（端口 1989）— 需另开终端
 bun run dev:saas
-
-# 打开浏览器访问 http://localhost:1988
-# 看到机器人就算成功了 🤖
 ```
+
+> **两个应用相互独立**，在不同端口运行。开哪个取决于你要开发哪个应用：
+> - 开发 ERP 内部功能 → `bun run dev`（http://localhost:1988）
+> - 开发 SaaS 多租户功能 → `bun run dev:saas`（http://localhost:1989）
+> - 两个同时开发 → 分别在两个终端窗口执行以上命令即可
 
 ### 第四步：开始开发 🛠️
 
@@ -174,10 +176,12 @@ git push origin feat/你的功能名称
 ### 🎨 新功能开发
 
 **推荐方向**：
-- **新演示页面**：在 `apps/admin-internal/src/views/demo/` 下添加
-- **实用组件**：在 `apps/admin-internal/src/components/global/` 下添加
-- **工具函数**：在 `apps/admin-internal/src/utils/` 下添加
-- **共享配置**：在 `packages/shared-config/` 下添加
+- **新演示页面**：`apps/admin-internal/src/views/demo/XX-feature/`
+- **全局组件（C_）**：`apps/admin-internal/src/components/global/C_YourComp/`
+- **局部组件（c_）**：`apps/admin-internal/src/components/local/c_feature/`
+- **工具函数**：`apps/admin-internal/src/utils/`（`d_` 前缀）
+- **跨 app 共享配置/预设**：`packages/shared-config/` 新增导出
+- **跨 app 共享类型/工具**：新建 `packages/shared-types/` 或 `packages/shared-utils/`
 
 ## 🛠️ 开发规范
 
@@ -186,20 +190,27 @@ git push origin feat/你的功能名称
 我们使用 **git cz** 进行规范化提交：
 
 ```bash
-# 提交代码（不要用 git commit）
+# 规范化提交（不要直接用 git commit）
 git add .
-bun run cz  # 启动交互式提交
-
-# 选择提交类型：
-# feat:     新功能
-# fix:      修复bug
-# docs:     文档更新
-# style:    代码格式（不影响代码运行）
-# refactor: 重构（既不是新增功能，也不是修复bug）
-# perf:     性能优化
-# test:     增加测试
-# chore:    构建过程或辅助工具的变动
+bun run cz
 ```
+
+提交格式：`<type>(<scope>): <subject>`
+
+| type | 用途 |
+|------|------|
+| `feat` | 新功能 |
+| `fix` | Bug 修复 |
+| `docs` | 文档更新 |
+| `refactor` | 重构（非 feat / fix） |
+| `perf` | 性能优化 |
+| `style` | 代码格式（不影响逻辑） |
+| `chore` | 构建 / 工具链变动 |
+| `deps` | 依赖更新 |
+| `wip` | 开发中（未完成） |
+| `revert` | 回滚 |
+
+scope 示例：`components` · `views` · `stores` · `router` · `api` · `config` · `monorepo`
 
 ### 代码风格
 
@@ -234,23 +245,26 @@ git checkout -b refactor/optimize-utils
 ### 目录结构
 
 ```
-Robot_Admin/                    # Monorepo 根
+Robot_Admin/                    # 根（治理层）— eslint / prettier / commitlint / husky
 ├── apps/
-│   ├── admin-internal/         # 内部版应用
-│   │   ├── src/
-│   │   │   ├── components/global/  # 全局组件（C_ 前缀）
-│   │   │   ├── views/demo/         # 演示页面
-│   │   │   ├── stores/             # 状态管理
-│   │   │   ├── api/                # API 接口
-│   │   │   ├── utils/              # 工具函数
-│   │   │   └── types/              # TypeScript 类型
-│   │   ├── vite.config.ts
-│   │   └── package.json
-│   └── admin-saas/             # SaaS 版应用
-│       └── ...（同 internal 结构）
+│   ├── admin-internal/         # 内部版应用（端口 1988）
+│   │   ├── eslint.config.ts    #  └─ 2 行，调用 createEslintConfig()
+│   │   ├── vite.config.ts      #  └─ 调用 createViteConfig() + 应用插件
+│   │   ├── tsconfig/           #  └─ extends @robot-admin/shared-config/tsconfig/*
+│   │   └── src/
+│   │       ├── components/     #     全局组件（C_ 前缀）+ 局部组件（c_ 前缀）
+│   │       ├── views/          #     业务页面（demo/ 55+ 演示）
+│   │       ├── stores/         #     Pinia 状态（s_ 前缀）
+│   │       ├── api/            #     API 接口 + 自动生成类型
+│   │       ├── utils/          #     工具函数（d_ 前缀）
+│   │       └── types/          #     TypeScript 类型声明
+│   └── admin-saas/             # SaaS 版应用（端口 1989，同构按需裁剪）
 ├── packages/
-│   └── shared-config/          # 共享 TypeScript 配置
-└── package.json                # Monorepo 工作区
+│   └── shared-config/          # 共享配置工厂
+│       ├── eslint/             #  └─ createEslintConfig()  ← 全仓 180+ 行规则
+│       ├── vite/               #  └─ createViteConfig()    ← 构建工厂 + 类型声明
+│       └── tsconfig/           #  └─ app.json / node.json  ← TS 基础预设
+└── package.json                # Workspace 定义 + 全局 devDeps + lint-staged
 ```
 
 ## 🚨 重要注意事项

@@ -33,25 +33,6 @@
     "vite": ">=8.0.0"
   },
   "peerDependenciesMeta": {
-    "eslint": { "optional": false },
-    "eslint-plugin-vue": { "optional": false },
-    "eslint-plugin-oxlint": { "optional": false },
-    "eslint-plugin-jsdoc": { "optional": false },
-    "@vue/eslint-config-typescript": { "optional": false },
-    "@vue/eslint-config-prettier": { "optional": false },
-    "vite": { "optional": true }
-  }
-}
-  "peerDependencies": {
-    "eslint": ">=10.0.0",
-    "eslint-plugin-vue": ">=10.0.0",
-    "eslint-plugin-oxlint": ">=1.0.0",
-    "eslint-plugin-jsdoc": ">=62.0.0",
-    "@vue/eslint-config-typescript": ">=14.0.0",
-    "@vue/eslint-config-prettier": ">=10.0.0",
-    "vite": ">=8.0.0"
-  },
-  "peerDependenciesMeta": {
     "eslint": {
       "optional": false
     },
