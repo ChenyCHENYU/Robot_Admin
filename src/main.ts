@@ -35,6 +35,7 @@ import {
   setupRequestCore, //  Request Core 插件
   setupLayoutSystem, // 🆕 布局系统插件
   setupFileUtils, // 🆕 文件处理工具包
+  setupMicroApp, // 🔥 微前端插件
 } from '@/plugins'
 // ✅ 移除 app.use(NaiveUIComponents)，由 RobotNaiveUiResolver 按需解析
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
@@ -46,6 +47,9 @@ import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 async function bootstrap() {
   // 第零阶段：立即显示加载动画（innerHTML 方式，极速）
   setupLoading()
+
+  // 🔥 启动 micro-app 微前端框架（早于 Vue 实例创建）
+  setupMicroApp()
 
   // 第一阶段：创建Vue实例
   const app = createApp(App)

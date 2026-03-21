@@ -32,7 +32,7 @@
 
       <!-- Side / Mix 布局的完整头部 -->
       <template #header>
-        <C_Header />
+        <C_Header :show-portal-button="true" />
       </template>
 
       <!-- Top / MixTop / Reverse / Card 布局头部右侧操作区 -->

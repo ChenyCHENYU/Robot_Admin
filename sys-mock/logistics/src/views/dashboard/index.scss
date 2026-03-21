@@ -1,0 +1,73 @@
+.dashboard-page {
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--app-bg-color);
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--app-text-primary);
+    margin-bottom: 8px;
+  }
+
+  .page-desc {
+    font-size: 14px;
+    color: var(--app-text-secondary);
+  }
+}
+
+.test-card {
+  margin-bottom: 24px;
+
+  .data-section,
+  .action-section {
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--app-text-primary);
+      margin-bottom: 16px;
+    }
+  }
+
+  .data-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    .label {
+      font-weight: 500;
+      color: var(--app-text-secondary);
+      min-width: 80px;
+    }
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+
+  .stat-card {
+    .stat-content {
+      text-align: center;
+      padding: 20px 0;
+
+      .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #5b8ff9;
+        margin-bottom: 8px;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: var(--app-text-secondary);
+      }
+    }
+  }
+}

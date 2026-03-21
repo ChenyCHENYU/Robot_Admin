@@ -145,7 +145,8 @@
       userStore.setUserInfo(formData)
       const ok = await initDynamicRouter()
       if (!ok) throw new Error('动态路由初始化失败')
-      router.replace('/home')
+      // 跳转到门户页面
+      router.replace('/portal')
     },
 
     onError: error => console.error('登录错误:', error),

@@ -15,7 +15,7 @@ import { message } from '@/plugins/discrete'
 import { setupNProgress } from '@/plugins/nprogress'
 import type { RouteLocationNormalized } from 'vue-router'
 const nprogress = setupNProgress()
-const WHITE_LIST = ['/login', '/404', '/401']
+const WHITE_LIST = ['/login', '/404', '/401', '/portal']
 const LOGIN_PATH = '/login'
 const DEFAULT_TITLE = 'Robot Admin'
 
@@ -50,9 +50,7 @@ const setPageTitle = (title?: string): void => {
  * * @description: 初始化动态路由
  */
 const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
-  if (isInitializing) {
-    return fullPath
-  }
+  if (isInitializing) return fullPath
 
   isInitializing = true
 
@@ -63,14 +61,13 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
       throw new Error('动态路由初始化失败')
     }
 
+    // 再次检查菜单列表
     const { authMenuList } = s_permissionStore()
+
     if (!authMenuList.length) {
       throw new Error('菜单数据为空')
     }
 
-    if (import.meta.env.DEV) {
-      console.log('✅ 动态路由初始化成功')
-    }
     return fullPath
   } catch (error) {
     return handleRouteError(error, '动态路由加载失败')
@@ -86,7 +83,9 @@ const shouldInitDynamicRouter = (
   authMenuList: DynamicRoute[],
   isInitializing: boolean
 ): boolean => {
-  return !authMenuList.length && !isInitializing
+  // 如果正在初始化，跳过
+  if (isInitializing) return false
+  return !authMenuList.length
 }
 
 /**

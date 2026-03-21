@@ -65,4 +65,20 @@ export const iconSafelist = [
   'i-mdi:github',
   'i-mdi:gitlab',
   'i-mdi:text-box-search-outline',
+
+  // C_Header 系统菜单抽屉图标 (Remix Icon)
+  'i-ri:star-line',
+  'i-ri:apps-line',
+  'i-ri:dashboard-line',
+  'i-ri:robot-line',
+  'i-ri:truck-line',
+  'i-ri:shopping-cart-line',
+  'i-ri:line-chart-line',
+  'i-ri:money-dollar-circle-line',
+  'i-ri:archive-line',
+  'i-ri:bar-chart-box-line',
+  'i-ri:leaf-line',
+  'i-ri:settings-4-line',
+  'i-ri:user-line',
+  'i-ri:admin-line',
 ]

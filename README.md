@@ -48,12 +48,12 @@
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🚀-微前端-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
         <sub><strong>MicroApp</strong></sub><br>
-        <sub>初版完成</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal">
-          <img src="https://img.shields.io/badge/查看代码-feature/microapp--portal-E74C3C?style=flat-square" alt="MicroApp Branch">
+        <sub>基于 dev 重构</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/micro-app">
+          <img src="https://img.shields.io/badge/查看代码-feature/micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md">
-          <img src="https://img.shields.io/badge/查看文档-README-orange?style=flat-square" alt="MicroApp Docs">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/micro-app/docs/MICRO_APP_GUIDE.md">
+          <img src="https://img.shields.io/badge/架构指南-GUIDE-orange?style=flat-square" alt="MicroApp Docs">
         </a>
       </td>
     </tr>

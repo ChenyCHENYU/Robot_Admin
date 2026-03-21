@@ -38,6 +38,7 @@
     "@iconify-json/ri": "^1.2.10",
     "@iconify/vue": "^5.0.0",
     "@kangc/v-md-editor": "^2.3.18",
+    "@micro-zoe/micro-app": "^1.0.0-rc.29",
     "@robot-admin/directives": "latest",
     "@robot-admin/file-utils": "latest",
     "@robot-admin/form-validate": "latest",

@@ -26,6 +26,34 @@ export const publicRoutes: RouteRecordRaw[] = [
       keepAlive: false,
     },
   },
+  // 🔥 微前端门户工作台
+  {
+    path: '/portal',
+    name: 'portal',
+    component: () => import('_views/portal/index.vue'),
+    meta: {
+      title: '系统门户',
+      icon: 'i-ri:dashboard-line',
+      hidden: true,
+      full: true,
+      affix: false,
+      keepAlive: true,
+    },
+  },
+  // 🔥 微前端子应用容器
+  {
+    path: '/micro-app/:id',
+    name: 'micro-app',
+    component: () => import('_views/micro-app/index.vue'),
+    meta: {
+      title: '微应用',
+      icon: 'i-ri:window-line',
+      hidden: true,
+      full: true,
+      affix: false,
+      keepAlive: false,
+    },
+  },
   {
     path: '/401',
     name: '401',
