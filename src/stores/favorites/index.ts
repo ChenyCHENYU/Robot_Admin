@@ -54,7 +54,11 @@ export const s_favoritesStore = defineStore('favorites', {
      * ? @param {string} path 菜单路径
      */
     toggle(path: string) {
-      this.isFavorite(path) ? this.remove(path) : this.add(path)
+      if (this.isFavorite(path)) {
+        this.remove(path)
+      } else {
+        this.add(path)
+      }
     },
   },
 

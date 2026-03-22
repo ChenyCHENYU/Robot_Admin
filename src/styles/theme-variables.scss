@@ -186,11 +186,11 @@ body {
 ::view-transition-old(root) {
   animation-name: theme-fade-out;
   }
-  
+
   ::view-transition-new(root) {
   animation-name: theme-fade-in;
   }
-  
+
   @keyframes theme-fade-out {
     to {
       opacity: 0;

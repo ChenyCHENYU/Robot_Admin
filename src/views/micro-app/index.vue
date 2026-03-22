@@ -73,6 +73,7 @@
   import { s_userStore } from '@/stores/user'
   import { getMicroAppUrl, getMicroAppConfig } from '@/config/microApps'
   import { s_themeStore } from '@/stores/theme'
+  import { formatTime } from '@/utils/d_route'
   import C_Header from '@/components/global/C_Header/index.vue'
 
   const route = useRoute()
@@ -156,6 +157,7 @@
 
     // 🔧 工具函数
     utils: {
+      formatTime,
       // 可以继续添加更多工具
     },
 

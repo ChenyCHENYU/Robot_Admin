@@ -143,7 +143,7 @@ $shadows: (
       background-size: 50px 50px;
       background-position: center center;
     }
-    
+
     // 光晕效果
     &::after {
       content: '';
@@ -246,11 +246,11 @@ $shadows: (
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 0.75rem;
-    
+
       @media (max-width: 768px) {
         grid-template-columns: repeat(2, 1fr);
       }
-    
+
       @media (max-width: 480px) {
         grid-template-columns: 1fr;
         gap: 1.25rem;
@@ -297,7 +297,7 @@ $shadows: (
           filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
           transition: map.get($transitions, hover);
         }
-        
+
         &:hover :deep(.n-icon) {
           transform: scale(1.1) translateY(-2px);
       }
@@ -384,7 +384,7 @@ $shadows: (
   .dark-theme & {
     background: var(--n-card-color) !important;
     box-shadow: map.get($shadows, dark, base) !important;
-    
+
       &:hover {
         box-shadow: map.get($shadows, dark, strong) !important;
         border-color: rgba(255, 255, 255, 0.2);
@@ -396,7 +396,7 @@ $shadows: (
     box-shadow:
         map.get($shadows, light, base),
         0 0 0 1px rgba(0, 0, 0, 0.02) !important;
-    
+
       &:hover {
         box-shadow:
           map.get($shadows, light, strong),
@@ -505,7 +505,7 @@ $shadows: (
           transform: translateY(-4px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
             border-color: rgba(0, 0, 0, 0.08);
-          
+
             .dark-theme & {
               box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
               border-color: rgba(255, 255, 255, 0.12);
@@ -635,7 +635,7 @@ $shadows: (
       transform: translateY(-6px);
         box-shadow: map.get($shadows, light, hover);
         border-color: rgba(0, 0, 0, 0.08);
-      
+
         .dark-theme & {
           box-shadow: map.get($shadows, dark, hover);
           border-color: rgba(255, 255, 255, 0.15);
@@ -711,7 +711,7 @@ $shadows: (
         transform: translateY(-3px);
           box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
           border-color: rgba(0, 0, 0, 0.08);
-        
+
           .dark-theme & {
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
             border-color: rgba(255, 255, 255, 0.12);
@@ -861,7 +861,7 @@ $shadows: (
       transition: map.get($transitions, smooth);
       background: var(--n-modal-color);
       border: 1px solid var(--n-border-color);
-      
+
         &::before {
           content: '';
           position: absolute;
@@ -877,12 +877,12 @@ $shadows: (
         transform: translateY(-6px) scale(1.02);
           box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
           border-color: rgba(0, 0, 0, 0.08);
-        
+
           .dark-theme & {
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
             border-color: rgba(255, 255, 255, 0.12);
           }
-        
+
           &::before {
             opacity: 1;
           }

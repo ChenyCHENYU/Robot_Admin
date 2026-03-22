@@ -1,800 +1,626 @@
-# 🚀 Robot Admin 微前端架构指南
+# Robot Admin — 微前端（MicroApp）架构文档
 
-> **MicroApp + Portal 统一门户 — 企业级微前端解决方案**
->
-> 最后更新：2026-03-22
+> 本文档基于 `feature/micro-app` 分支实际代码编写，覆盖架构设计、核心模块、本地调试、扩展指南。
+> 最后更新：2026-03-22 | micro-app v1.0.0-rc.29 | Vue 3.5 | Vite 7
 
 ---
 
 ## 目录
 
-- [一、架构总览](#一架构总览)
-- [二、技术选型与社区对比](#二技术选型与社区对比)
-- [三、核心设计哲学](#三核心设计哲学)
-- [四、项目结构](#四项目结构)
-- [五、快速开始](#五快速开始)
-- [六、核心模块详解](#六核心模块详解)
-  - [6.1 micro-app 初始化](#61-micro-app-初始化)
-  - [6.2 子应用配置注册表](#62-子应用配置注册表)
-  - [6.3 统一门户工作台](#63-统一门户工作台)
-  - [6.4 微应用容器](#64-微应用容器)
-  - [6.5 收藏系统](#65-收藏系统)
-  - [6.6 路由设计](#66-路由设计)
-  - [6.7 主子应用通信协议](#67-主子应用通信协议)
-- [七、子应用开发指南](#七子应用开发指南)
-- [八、主题同步机制](#八主题同步机制)
-- [九、部署策略](#九部署策略)
-- [十、微前端方案对比矩阵](#十微前端方案对比矩阵)
-- [十一、演进路线图](#十一演进路线图)
-- [十二、常见问题](#十二常见问题)
+1. [架构总览](#一架构总览)
+2. [目录结构](#二目录结构)
+3. [核心模块详解](#三核心模块详解)
+4. [主子应用通信](#四主子应用通信)
+5. [本地开发与调试](#五本地开发与调试)
+6. [新增子应用指南](#六新增子应用指南)
+7. [团队协作模式](#七团队协作模式)
+8. [部署方案](#八部署方案)
+9. [常见问题](#九常见问题)
+10. [扩展路线图](#十扩展路线图)
 
 ---
 
 ## 一、架构总览
 
+### 1.1 系统拓扑
+
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                          统一门户 Portal                             │
-│  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ │
-│  │ 基础平台│ │Robot   │ │智慧物流│ │大宗采购│ │ 销售   │ │ 仓储   │ │
-│  │ 管理系统│ │Admin   │ │管理系统│ │管理系统│ │ 管理   │ │ 管理   │ │
-│  └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘ │
-│      │     ✅已集成    ✅已集成     ⏳待集成    ⏳待集成   ⏳待集成  │
-└──────┼──────────┼──────────┼──────────┼──────────┼──────────┼───────┘
-       │          │          │          │          │          │
-┌──────┴──────────┴──────────┴──────────┴──────────┴──────────┴───────┐
-│                      主应用 Robot Admin (dev)                       │
-│  ┌─────────────────────────────────────────────────────────────┐    │
-│  │  @robot-admin/layout · request-core · directives · theme    │    │
-│  │  naive-ui-components · form-validate · file-utils           │    │
-│  └─────────────────────────────────────────────────────────────┘    │
-│  ┌──────────┐  ┌─────────────────┐  ┌──────────────────────┐       │
-│  │ micro-app│  │  Portal Page    │  │ MicroApp Container   │       │
-│  │ 框架核心  │  │  门户工作台     │  │  子应用 iframe 容器  │       │
-│  └──────────┘  └─────────────────┘  └──────────────────────┘       │
-│  ┌──────────┐  ┌─────────────────┐  ┌──────────────────────┐       │
-│  │ Pinia    │  │  Vue Router     │  │ Theme Sync           │       │
-│  │ favorites│  │  /portal        │  │ 主题实时同步          │       │
-│  │ Store    │  │  /micro-app/:id │  │ postMessage          │       │
-│  └──────────┘  └─────────────────┘  └──────────────────────┘       │
-└────────────────────────────────────────────────────────────────────┘
-       │                    │                    │
-       ▼                    ▼                    ▼
-┌─────────────┐  ┌─────────────────┐  ┌─────────────────────┐
-│  内部路由页面 │  │  iframe 子应用 A │  │  iframe 子应用 B    │
-│  /home       │  │  :3003 物流      │  │  :3004 采购（规划） │
-│  /demo/*     │  │  独立 Vue 项目   │  │  独立技术栈         │
-│  /sys-manage │  │  独立构建部署    │  │  独立构建部署       │
-└─────────────┘  └─────────────────┘  └─────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                    Robot Admin（主应用）                   │
+│                                                         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────────────┐  │
+│  │  Portal   │  │ C_Header │  │   Micro-App Container │  │
+│  │ (门户页)  │  │(系统抽屉)│  │   (微应用容器)        │  │
+│  └─────┬────┘  └────┬─────┘  └──────────┬───────────┘  │
+│        │            │                    │               │
+│        └────────────┼────────────────────┘               │
+│                     │ PostMessage / data 绑定             │
+├─────────────────────┼───────────────────────────────────┤
+│                     ▼                                    │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
+│  │ 智慧物流  │  │ 智能仓储  │  │ 数据分析  │  ...更多     │
+│  │ :3003    │  │ :3004    │  │ :3005    │              │
+│  └──────────┘  └──────────┘  └──────────┘              │
+│        子应用（独立部署、技术栈无关）                       │
+└─────────────────────────────────────────────────────────┘
 ```
 
-### 关键架构决策
+### 1.2 技术选型
 
-| 决策项         | 选择                     | 原因                                              |
-| -------------- | ------------------------ | ------------------------------------------------- |
-| 微前端框架     | micro-app (iframe 模式)  | 零侵入、完全沙箱隔离、支持任意技术栈              |
-| 基座应用       | Robot Admin dev 分支     | 复用 8 个 @robot-admin/* 包，避免重复建设           |
-| 子应用隔离     | iframe                   | CSS/JS 完全隔离，不存在样式污染和全局变量冲突      |
-| 子应用保活     | keep-alive               | 切换子应用时保留状态，无需重新加载                 |
-| 通信机制       | micro-app datachange     | 结构化事件协议 + postMessage 双通道                |
-| 门户入口       | 独立 Portal 页面         | 提供统一工作台，聚合待办、收藏、子系统导航         |
-| 子应用配置     | 集中式注册表 + 环境映射  | 一处配置，多环境自动适配                           |
+| 层面 | 技术 | 版本 |
+|------|------|------|
+| 微前端框架 | @micro-zoe/micro-app | ^1.0.0-rc.29 |
+| 主应用框架 | Vue 3 + Vite 7 | 3.5 / 7.x |
+| UI 组件库 | Naive UI | 2.41+ |
+| 状态管理 | Pinia + 持久化 | 3.0 |
+| 沙箱模式 | iframe 沙箱 | — |
+
+### 1.3 核心设计原则
+
+1. **零改造接入**：子应用不需要暴露 `bootstrap/mount/unmount`，micro-app 自动渲染
+2. **类组件开发**：`<micro-app name="app" url="..." />` 像普通 Vue 组件一样使用
+3. **门户工作台**：统一的系统入口，三栏布局聚合所有业务系统
+4. **主题统一**：主应用 Dark/Light 模式实时同步到所有子应用
 
 ---
 
-## 二、技术选型与社区对比
-
-### 为什么选 micro-app + iframe？
-
-在微前端领域，主流方案各有优劣。我们经过对以下方案的深入调研后选择了 **micro-app iframe 模式**：
-
-| 维度               | micro-app (iframe) | qiankun         | Module Federation | single-spa      | wujie            |
-| ------------------ | ------------------ | --------------- | ----------------- | --------------- | ---------------- |
-| **上手难度**       | ⭐ 极低            | ⭐⭐ 低         | ⭐⭐⭐ 中         | ⭐⭐⭐⭐ 高     | ⭐ 极低          |
-| **JS 沙箱**        | ✅ iframe 天然隔离  | ⚠️ Proxy 近似   | ❌ 无隔离          | ❌ 无隔离        | ✅ iframe 隔离   |
-| **CSS 隔离**       | ✅ 完全隔离         | ⚠️ Shadow DOM   | ❌ 需手动处理      | ❌ 需手动处理    | ✅ 完全隔离      |
-| **技术栈无关**     | ✅ 完全支持         | ⚠️ 改造成本高   | ❌ 仅 Webpack/Vite | ⚠️ 需适配器      | ✅ 完全支持      |
-| **子应用改造量**   | 极少               | 中等            | 较大              | 较大            | 极少             |
-| **性能**           | 良好               | 良好            | 优秀（共享模块）  | 良好            | 良好             |
-| **keep-alive**     | ✅ 原生支持         | ❌ 不支持        | ❌ 不支持          | ❌ 不支持        | ✅ 原生支持      |
-| **预加载**         | ✅ 支持             | ✅ 支持          | ✅ 构建时          | ❌ 不支持        | ✅ 支持          |
-| **Vite 原生支持**  | ✅ 完美支持         | ⚠️ 需 plugin    | ⚠️ 需适配         | ⚠️ 需适配       | ✅ 完美支持      |
-| **维护状态**       | 京东活跃维护       | 蚂蚁体验技术部  | Webpack 官方      | 社区维护        | 腾讯活跃维护     |
-| **GitHub Stars**   | 5.5k+              | 15k+            | 内置 Webpack      | 13k+            | 4k+              |
-
-### 选择 micro-app iframe 模式的核心理由
-
-1. **零侵入子应用** — 子应用无需引入任何 SDK，只需配置跨域即可接入
-2. **iframe 天然沙箱** — JS/CSS 完全隔离，企业多团队协作零冲突风险
-3. **keep-alive 原生支持** — 子应用切换保留状态，用户体验接近原生
-4. **技术栈完全无关** — 子应用可以是 Vue/React/Angular/jQuery 任意技术栈
-5. **与 Vite 8 完美兼容** — 无需额外 plugin 或 adapter
-6. **京东技术团队维护** — 持续迭代，企业级稳定性保障
-
-### 与本项目其他架构分支的关系
+## 二、目录结构
 
 ```
-Robot Admin 多架构矩阵
-├── main (单体 SPA)          ← 适合中小项目，一切内聚
-├── monorepo (Bun Workspaces) ← 适合多应用共享代码
-├── feature/module-federation ← 适合同技术栈的运行时共享
-└── feature/micro-app ★       ← 适合异构子系统聚合平台
-```
-
-| 场景                         | 推荐分支               |
-| ---------------------------- | ---------------------- |
-| 单团队、单产品               | main                   |
-| 多应用共享 UI 库/工具包       | monorepo               |
-| 同技术栈多团队、需运行时共享  | feature/module-federation |
-| 异构子系统、多团队独立交付    | **feature/micro-app** ★ |
-| 企业集团统一门户              | **feature/micro-app** ★ |
-
----
-
-## 三、核心设计哲学
-
-### 3.1 "基座复用，增量扩展"
-
-本方案**不是**重新搭建一个微前端项目，而是在 dev 分支（已有完整 @robot-admin/* 包生态）的基础上，**增量添加微前端能力**：
-
-```
-dev 分支 (v2.2.0)
-├── 8 个 @robot-admin/* 包 ← 完全保留
-├── 54 个 Demo 页面 ← 完全保留
-├── 路由/权限/主题/布局 ← 完全保留
+src/
+├── config/
+│   ├── microApps.ts            # 子应用注册配置表（地址/环境映射）
+│   └── systemTitles.ts         # 系统标题映射（标题/副标题）
 │
-└── + 微前端增量层
-    ├── @micro-zoe/micro-app 框架
-    ├── Portal 门户工作台
-    ├── MicroApp 容器组件
-    ├── 子应用配置注册表
-    └── 收藏系统 + 主题同步
+├── components/global/
+│   ├── C_Header/               # 顶部导航（含系统菜单抽屉）
+│   │   ├── index.vue           # 501 行，NDrawer + 系统菜单 + 门户按钮
+│   │   ├── data.ts             # 12 个系统配置 + 9 套 Mock 菜单数据
+│   │   └── index.scss          # 抽屉暗色主题 + 星标动画
+│   │
+│   └── C_Favorites/            # 路由收藏组件
+│       ├── index.vue           # 从权限菜单递归查找收藏项
+│       ├── data.ts             # FavoriteItem 接口
+│       └── index.scss          # 暗色主题 + 金色星标
+│
+├── views/
+│   ├── portal/                 # 系统门户页（登录后首页）
+│   │   ├── index.vue           # 696 行，三栏布局
+│   │   ├── data.ts             # 10 个系统 + 待办/外联/消息 Mock
+│   │   └── index.scss          # 1125 行，CSS 变量驱动
+│   │
+│   └── micro-app/              # 微应用容器页
+│       └── index.vue           # 370 行，PostMessage 通信
+│
+├── stores/favorites/           # 收藏 Store（持久化）
+├── plugins/micro-app.ts        # micro-app 启动插件
+├── types/micro-app.d.ts        # 类型声明
+├── styles/theme-variables.scss # Portal CSS 变量（Light/Dark）
+└── router/
+    ├── publicRouter.ts         # /portal + /micro-app/:appId 路由
+    └── permission.ts           # /portal 白名单
+
+sys-mock/                       # 子应用 Mock 工程
+└── logistics/                  # 智慧物流（示例子应用）
+    ├── src/
+    │   ├── main.ts             # micro-app 生命周期集成
+    │   ├── microApp.ts         # 主应用数据监听
+    │   ├── router/index.ts     # 嵌套路由 + 403 页面
+    │   ├── stores/app.ts       # 主应用数据 Store
+    │   └── views/              # 4 个业务页面
+    ├── package.json            # 独立依赖（Vue/Naive UI/Pinia）
+    └── vite.config.ts          # 端口 3003 + CORS 配置
 ```
 
-### 3.2 "配置驱动，一处注册"
+---
 
-所有子应用通过 `src/config/microApps.ts` 集中管理，新增子应用只需添加一条配置：
+## 三、核心模块详解
+
+### 3.1 子应用配置表 — `microApps.ts`
 
 ```typescript
+// src/config/microApps.ts
 export const MICRO_APPS: Record<string, MicroAppConfig> = {
   logistics: {
     id: 'logistics',
     name: '智慧物流管理系统',
     dev: 'http://localhost:3003',
+    test: 'https://logistics-test.example.com',
     prod: 'https://logistics.example.com',
+    icon: '🚚',
+    description: '物流运输、仓储管理、车辆调度',
   },
-  // 💡 新增子应用只需在这里添加一条记录
-  procurement: {
-    id: 'procurement',
-    name: '大宗采购管理系统',
-    dev: 'http://localhost:3004',
-    prod: 'https://procurement.example.com',
-  },
-}
-```
-
-### 3.3 "门户优先，不直接跳转"
-
-用户首先进入 Portal 门户页面，看到企业全景（所有子系统列表、待办、收藏、消息），再选择进入具体子系统。这种模式适合：
-
-- 企业集团多系统统一入口
-- 跨系统的待办/消息聚合
-- 用户常用功能快速收藏
-
----
-
-## 四、项目结构
-
-### 微前端相关文件（增量于 dev 分支）
-
-```
-Robot_Admin/
-├── src/
-│   ├── main.ts                        # 🔧 修改：添加 setupMicroApp() 调用
-│   │
-│   ├── config/
-│   │   └── microApps.ts               # 🆕 子应用配置注册表
-│   │
-│   ├── plugins/
-│   │   ├── index.ts                   # 🔧 修改：导出 micro-app 插件
-│   │   └── micro-app.ts              # 🆕 micro-app 框架初始化
-│   │
-│   ├── stores/
-│   │   └── favorites/
-│   │       └── index.ts              # 🆕 菜单收藏 Store（持久化）
-│   │
-│   ├── components/global/
-│   │   └── C_Favorites/
-│   │       ├── index.vue             # 🆕 收藏网格组件
-│   │       └── index.scss            # 🆕 收藏组件样式
-│   │
-│   ├── views/
-│   │   ├── portal/
-│   │   │   ├── index.vue             # 🆕 门户工作台页面
-│   │   │   ├── data.ts               # 🆕 门户数据配置
-│   │   │   └── index.scss            # 🆕 门户样式
-│   │   │
-│   │   └── micro-app/
-│   │       └── index.vue             # 🆕 微应用容器
-│   │
-│   ├── router/
-│   │   └── publicRouter.ts           # 🔧 修改：添加 /portal + /micro-app/:id
-│   │
-│   └── types/
-│       └── micro-app.d.ts            # 🆕 微前端类型声明
-│
-└── sys-mock/                         # 🆕 模拟子应用（开发调试用）
-    └── logistics/
-        ├── package.json
-        ├── index.html
-        ├── vite.config.ts
-        ├── tsconfig.json
-        └── src/
-            ├── main.ts
-            ├── App.vue
-            ├── microApp.ts           # 子应用通信模块
-            ├── router/index.ts
-            ├── stores/app.ts
-            ├── styles/index.scss
-            └── views/
-                ├── dashboard/index.vue
-                ├── orders/index.vue
-                ├── vehicles/index.vue
-                └── warehouse/index.vue
-```
-
-### 文件修改清单
-
-| 文件 | 变更类型 | 说明 |
-| --- | --- | --- |
-| `package.json` | 修改 | 添加 `@micro-zoe/micro-app` 依赖 |
-| `src/main.ts` | 修改 | 在 Vue 实例创建前调用 `setupMicroApp()` |
-| `src/plugins/index.ts` | 修改 | 导出 `micro-app` 插件 |
-| `src/router/publicRouter.ts` | 修改 | 添加 `/portal` 和 `/micro-app/:id` 路由 |
-| `src/config/microApps.ts` | 新增 | 子应用配置注册表 |
-| `src/plugins/micro-app.ts` | 新增 | micro-app 框架初始化插件 |
-| `src/stores/favorites/index.ts` | 新增 | 收藏菜单 Pinia Store |
-| `src/types/micro-app.d.ts` | 新增 | TypeScript 类型声明 |
-| `src/components/global/C_Favorites/` | 新增 | 收藏网格组件 |
-| `src/views/portal/` | 新增 | 门户工作台页面 |
-| `src/views/micro-app/` | 新增 | 微应用容器页面 |
-| `sys-mock/logistics/` | 新增 | 模拟子应用（完整 Vue 3 项目）|
-
----
-
-## 五、快速开始
-
-### 环境要求
-
-- Node.js >= 22.x
-- Bun >= 1.x
-
-### 启动主应用
-
-```bash
-# 1. 克隆并切换到微前端分支
-git clone https://github.com/ChenyCHENYU/Robot_Admin.git
-cd Robot_Admin
-git checkout feature/micro-app
-
-# 2. 安装依赖
-bun install
-
-# 3. 启动开发服务器（默认端口 1988）
-bun run dev
-```
-
-### 启动模拟子应用
-
-```bash
-# 在另一个终端中
-cd sys-mock/logistics
-
-# 安装子应用依赖
-bun install
-
-# 启动子应用（端口 3003）
-bun run dev
-```
-
-### 访问路径
-
-| 页面 | 地址 | 说明 |
-| --- | --- | --- |
-| 门户工作台 | `http://localhost:1988/portal` | 统一入口，子系统导航 |
-| Robot Admin | `http://localhost:1988/home` | 主系统首页 |
-| 物流子应用 | `http://localhost:1988/micro-app/logistics` | 通过 iframe 加载 :3003 |
-| 子应用独立 | `http://localhost:3003` | 物流系统独立运行 |
-
----
-
-## 六、核心模块详解
-
-### 6.1 micro-app 初始化
-
-**文件**: `src/plugins/micro-app.ts`
-
-```typescript
-import microApp from '@micro-zoe/micro-app'
-
-export function setupMicroApp() {
-  microApp.start({
-    'disable-memory-router': false,   // 保留子应用路由管理
-    'disable-patch-request': false,   // 保留请求自动补全
-  })
-}
-```
-
-**初始化时机**：在 `main.ts` 中，`setupLoading()` 之后、`createApp()` 之前调用。这确保 micro-app 框架在 Vue 实例创建前就已就绪。
-
-```
-setupLoading()      # 0. 首屏动画
-setupMicroApp()     # 1. 🔥 micro-app 框架启动
-const app = createApp(App)  # 2. Vue 实例
-...
-```
-
-### 6.2 子应用配置注册表
-
-**文件**: `src/config/microApps.ts`
-
-所有子应用的地址、名称、图标集中在此文件管理，支持 4 个环境自动适配：
-
-```typescript
-export interface MicroAppConfig {
-  id: string        // 唯一标识（路由参数）
-  name: string      // 显示名称
-  dev: string       // 开发环境地址
-  test?: string     // 测试环境
-  staging?: string  // 预发布环境
-  prod?: string     // 生产环境
-  icon?: string     // Iconify 图标名
-  description?: string
-}
-```
-
-**环境自动识别**：`getMicroAppUrl(appId)` 根据 `import.meta.env.MODE` 自动选择对应环境的 URL，开发时无需手动切换。
-
-**添加新子应用**只需 3 步：
-
-```typescript
-// 1. 在 MICRO_APPS 中添加配置
-export const MICRO_APPS = {
-  // ...已有配置
-  procurement: {
-    id: 'procurement',
-    name: '大宗采购管理系统',
-    dev: 'http://localhost:3004',
-    prod: 'https://procurement.example.com',
-  },
+  // 添加更多子应用...
 }
 
-// 2. 在门户 data.ts 的 systems 数组中添加条目
-// 3. 访问 /micro-app/procurement 即可
+// 根据环境自动获取地址
+getMicroAppUrl('logistics') // 开发环境返回 http://localhost:3003
+getMicroAppUrl('logistics', 'production') // 返回 https://logistics.example.com
 ```
 
-### 6.3 统一门户工作台
+### 3.2 微应用容器 — `micro-app/index.vue`
 
-**文件**: `src/views/portal/index.vue`
-
-门户页面是微前端的核心入口，采用**四区域布局**：
-
-```
-┌──────────────────────────────────────────┐
-│           快捷栏（子系统导航卡片）          │
-│  [基础平台] [Robot Admin✅] [物流✅] ...   │
-├───────────────────┬──────────────────────┤
-│   左侧栏          │   右侧内容            │
-│ ┌───────────────┐ │ ┌──────────────────┐ │
-│ │ 用户卡片      │ │ │ 我的收藏         │ │
-│ │ (头像/统计)   │ │ │ (C_Favorites)    │ │
-│ ├───────────────┤ │ ├──────────────────┤ │
-│ │ 待办事项      │ │ │ 应用中心         │ │
-│ │ (任务列表)    │ │ │ (6 个功能模块)   │ │
-│ ├───────────────┤ │ ├──────────────────┤ │
-│ │ 外部协办      │ │ │ 最新消息         │ │
-│ │ (跨部门协作)  │ │ │ (系统通知)       │ │
-│ └───────────────┘ │ └──────────────────┘ │
-└───────────────────┴──────────────────────┘
-```
-
-**路由配置**：`/portal` 路由使用 `full: true`，脱离主布局（不显示侧边栏和顶部导航），提供沉浸式门户体验。
-
-### 6.4 微应用容器
-
-**文件**: `src/views/micro-app/index.vue`
-
-容器组件负责加载和管理子应用的生命周期：
+核心功能：
+- 从路由参数 `:appId` 获取子应用 ID
+- 通过 `getMicroAppUrl()` 获取子应用地址
+- 通过 `appData` computed 向子应用注入数据
+- 使用 PostMessage 监听子应用事件
+- 主题变化时实时推送到子应用
 
 ```vue
 <micro-app
-  :name="appId"         <!-- 路由参数 id -->
-  :url="appUrl"          <!-- 从配置自动获取 -->
-  :data="appData"        <!-- 传递 token/userInfo/theme -->
-  iframe                 <!-- iframe 隔离模式 -->
-  keep-alive             <!-- 切换时保留状态 -->
-  @mounted="..."         <!-- 加载完成 -->
-  @error="..."           <!-- 加载失败 -->
-  @datachange="..."      <!-- 子应用通信 -->
+  v-if="appUrl"
+  :name="appId"
+  :url="appUrl"
+  :data="appData"
+  iframe
+  keep-alive
+  @mounted="handleMounted"
+  @unmount="handleUnmount"
+  @error="handleError"
+  @datachange="handleDataChange"
 />
 ```
 
-**三种状态展示**：
+### 3.3 门户页 — `portal/index.vue`
 
-| 状态 | UI 展示 | 触发条件 |
-| --- | --- | --- |
-| 加载中 | `<NSpin>` 全屏旋转 | URL 存在，子应用未 mounted |
-| 加载失败 | `<NResult status="error">` + 重试按钮 | URL 不存在或 error 事件 |
-| 正常运行 | `<micro-app>` 全屏 iframe | mounted 事件触发 |
+三栏布局：
 
-### 6.5 收藏系统
+| 左栏 | 中栏 | 右栏 |
+|------|------|------|
+| 用户信息卡片 | 微应用数据推送区 | 天气卡片（wttr.in API） |
+| 待办事项列表 | 功能快捷入口（10 系统） | 日历组件 |
+| 外部链接入口 | 系统消息中心 | — |
 
-**Store**: `src/stores/favorites/index.ts`
-**组件**: `src/components/global/C_Favorites/index.vue`
+### 3.4 系统菜单抽屉 — `C_Header`
 
-收藏系统允许用户将常用菜单添加到门户页面快速访问：
+从左侧滑出的 `NDrawer`（宽度 1200px），暗色主题：
+- 搜索框实时过滤系统
+- 12 个系统卡片，点击展开三级菜单
+- 右上角收藏夹按钮（C_Favorites）
+- 收藏夹数据持久化到 localStorage
 
-```typescript
-const favoritesStore = s_favoritesStore()
+### 3.5 启动流程
 
-// 添加/移除收藏
-favoritesStore.toggle('/demo/10-table')
-
-// 检查是否已收藏
-favoritesStore.isFavorite('/demo/10-table') // true/false
+```
+main.ts bootstrap()
+  │
+  ├─ setupLoading()              # 首屏动画
+  ├─ setupMicroApp()             # micro-app.start() ← 在 createApp 前
+  ├─ createApp(App)
+  ├─ setupStore(app)             # Pinia + persist
+  ├─ setupRequestCore(app)       # Axios
+  ├─ setupLayoutSystem(app)      # 布局系统
+  ├─ setupNaiveUI(app)
+  ├─ setupDirectives(app)
+  ├─ router.isReady()
+  └─ app.mount('#app')
 ```
 
-- 使用 `pinia-plugin-persistedstate` 自动持久化到 localStorage
-- 与权限系统联动：只展示用户有权限的菜单收藏
+---
 
-### 6.6 路由设计
+## 四、主子应用通信
 
-微前端路由设计遵循**零侵入原则**，只在 `publicRouter.ts` 中添加两条静态路由：
+### 4.1 通信架构
 
-```typescript
-// /portal — 门户工作台（全屏，无布局壳）
-{
-  path: '/portal',
-  name: 'portal',
-  meta: { full: true, keepAlive: false },
-}
-
-// /micro-app/:id — 微应用容器（全屏，keep-alive）
-{
-  path: '/micro-app/:id',
-  name: 'micro-app',
-  meta: { full: true, keepAlive: true },
-}
+```
+主应用 ──── data 属性绑定 ──────→ 子应用
+  │                                 │
+  │    PostMessage (6 种消息类型)     │
+  ←─────────────────────────────────┘
+  │
+  └──── watch(isDark) ── setData ──→ 子应用主题同步
 ```
 
-**路由参数 `:id`** 即为 `microApps.ts` 中的 `MicroAppConfig.id`，容器组件通过 `route.params.id` 自动查找配置并加载。
+### 4.2 data 属性绑定（主 → 子）
 
-### 6.7 主子应用通信协议
-
-采用 **micro-app datachange 事件** 实现双向通信：
-
-#### 主应用 → 子应用（通过 data 属性）
+主应用通过 `appData` computed 向子应用注入：
 
 ```typescript
-// 自动传递给子应用的数据
 const appData = computed(() => ({
-  token: userStore.token,
-  userInfo: userStore.userInfo,
-  theme: { mode: themeStore.isDark ? 'dark' : 'light' },
-  basePath: route.path,
-  timestamp: Date.now(),
+  // 用户信息
+  user: { token, username, roles },
+
+  // 路由信息
+  router: { basePath: `/micro-app/${appId}`, currentPath: route.path },
+
+  // 环境信息
+  env: { mode: import.meta.env.MODE, baseUrl, apiUrl },
+
+  // 主题
+  theme: { isDark: themeStore.isDark },
+
+  // 工具函数
+  utils: { formatTime },
+
+  // 全局方法
+  methods: { showMessage, showDialog, navigateTo },
 }))
 ```
 
-#### 子应用 → 主应用（通过 datachange 事件）
+### 4.3 PostMessage 消息类型
+
+| 消息类型 | 方向 | 用途 |
+|---------|------|------|
+| `MICRO_APP_NAVIGATE` | 子→主 | 子应用请求主应用路由跳转 |
+| `CUSTOM_MESSAGE` | 子→主 | 自定义业务消息 |
+| `DATA_UPDATE` | 子→主 | 子应用推送数据到门户页 |
+| `MOUNTED` | 子→主 | 子应用挂载完成通知 |
+| `ROUTE_CHANGE` | 子→主 | 子应用路由变化通知 |
+| 主题同步 | 主→子 | `microApp.setData()` 推送暗色模式 |
+
+### 4.4 子应用接收数据（logistics 示例）
 
 ```typescript
-// 子应用发送
-window.microApp?.dispatch({
-  type: 'NAVIGATE',
-  payload: { path: '/portal' },
-})
-
-// 主应用接收
-const handleDataChange = (e: CustomEvent) => {
-  const { type, payload } = e.detail.data
-  switch (type) {
-    case 'NAVIGATE':     // 路由跳转
-    case 'MOUNTED':      // 子应用初始化完成
-    case 'ROUTE_CHANGE': // 子应用路由变更
-  }
-}
-```
-
-#### 主题同步（主 → 子）
-
-当用户在主应用切换暗黑模式时，自动通过 `microApp.setData()` 同步给子应用：
-
-```typescript
-watch(() => themeStore.isDark, (isDark) => {
-  window.microApp?.setData?.(appId, {
-    type: 'THEME_CHANGE',
-    payload: { mode: isDark ? 'dark' : 'light' },
+// sys-mock/logistics/src/microApp.ts
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window.microApp?.addDataListener((data) => {
+    appStore.setMainAppData(data)
+    // 主题同步
+    if (data.theme?.isDark !== undefined) {
+      document.documentElement.classList.toggle('dark', data.theme.isDark)
+    }
   })
-})
+}
 ```
 
 ---
 
-## 七、子应用开发指南
+## 五、本地开发与调试
 
-### 7.1 创建新子应用
-
-以 `sys-mock/logistics` 为参考模板，新建子应用的最小要求：
+### 5.1 快速启动
 
 ```bash
-mkdir sys-mock/your-app
-cd sys-mock/your-app
-bun init
-bun add vue vue-router pinia
-bun add -d vite @vitejs/plugin-vue
+# 1. 启动主应用
+cd Robot_Admin
+bun install
+bun run dev          # http://localhost:1988
+
+# 2. 启动子应用（新终端）
+cd sys-mock/logistics
+bun install
+bun run dev          # http://localhost:3003
 ```
 
-### 7.2 关键配置：跨域 + 端口
+### 5.2 多应用同时调试
+
+当有多个子应用时，使用 **并行启动脚本**：
+
+```bash
+# 方式一：多终端手动启动
+# 终端 1
+bun run dev                              # 主应用 :1988
+
+# 终端 2
+cd sys-mock/logistics && bun run dev     # 物流 :3003
+
+# 终端 3
+cd sys-mock/warehouse && bun run dev     # 仓储 :3004
+
+# 终端 4
+cd sys-mock/analytics && bun run dev     # 分析 :3005
+```
+
+```bash
+# 方式二：使用 concurrently 并行启动（推荐）
+# 在根 package.json 中添加：
+# "dev:micro": "concurrently \"bun run dev\" \"cd sys-mock/logistics && bun run dev\" \"cd sys-mock/warehouse && bun run dev\""
+bun run dev:micro
+```
+
+### 5.3 跨端口 CORS 配置
+
+子应用 `vite.config.ts` 必须配置：
 
 ```typescript
-// vite.config.ts
-export default defineConfig({
-  server: {
-    port: 3004,           // 每个子应用分配独立端口
-    cors: true,           // ⚠️ 必须开启跨域
-    origin: 'http://localhost:3004',
+server: {
+  port: 3003,
+  headers: {
+    'Access-Control-Allow-Origin': '*',  // 允许主应用跨域加载
   },
-})
-```
-
-### 7.3 子应用通信模块
-
-子应用需要监听主应用传入的数据（token、用户信息、主题模式）：
-
-```typescript
-// src/microApp.ts
-export function setupMicroApp() {
-  if (!window.__MICRO_APP_ENVIRONMENT__) return
-
-  // 监听主应用数据
-  window.microApp?.addDataListener((data: any) => {
-    if (data.token) appStore.setToken(data.token)
-    if (data.userInfo) appStore.setUserInfo(data.userInfo)
-    if (data.theme) appStore.setThemeMode(data.theme.mode)
-  })
-
-  // 主动发送挂载完成事件
-  window.microApp?.dispatch({
-    type: 'MOUNTED',
-    payload: { name: 'your-app' },
-  })
+  cors: true,
 }
 ```
 
-### 7.4 子应用独立运行
+主应用 `viteServerConfig.ts` 已配置 `host: 'localhost'`，确保主子应用同域名。
 
-子应用必须能独立运行（不依赖主应用），以便独立开发和调试：
+### 5.4 调试技巧
+
+| 场景 | 方法 |
+|------|------|
+| 查看子应用数据 | 浏览器控制台：`document.querySelector('micro-app[name=logistics]').getData()` |
+| 主应用推送数据 | 控制台：`microApp.setData('logistics', { test: 1 })` |
+| 检查 PostMessage | DevTools → Sources → Event Listener Breakpoints → message |
+| 子应用独立调试 | 直接访问 `http://localhost:3003`（无沙箱环境） |
+| 子应用嵌入调试 | 访问 `http://localhost:1988/micro-app/logistics` |
+| 主题同步测试 | 主应用切换 Dark Mode，观察子应用是否跟随 |
+
+### 5.5 自有应用调试（所有应用都是自己写的）
+
+当所有子应用都是自己的项目时：
+
+1. **使用 Bun Workspace**：将子应用放入 `sys-mock/` 并配置 workspace
+2. **共享类型定义**：在主应用 `src/types/micro-app.d.ts` 中定义通信接口，子应用引用
+3. **统一 TSConfig**：子应用继承主应用的 `tsconfig.json` 基础配置
+4. **Source Map 联调**：子应用开启 `sourcemap: true`，主应用 DevTools 可直接跳转
+
+```bash
+# 推荐目录结构
+Robot_Admin/
+├── src/                    # 主应用
+├── sys-mock/
+│   ├── logistics/          # 自有子应用 A
+│   ├── warehouse/          # 自有子应用 B
+│   └── shared/             # 共享代码（类型/工具/API）
+│       ├── types.ts        # 通信数据接口
+│       └── utils.ts        # 共享工具函数
+```
+
+### 5.6 与他人协作调试（子应用是别人写的）
+
+当子应用由其他团队开发时：
+
+1. **约定通信协议**：明确 `appData` 结构和 PostMessage 消息格式
+2. **Mock 子应用**：在 `sys-mock/` 下创建对方应用的 Mock 版本
+3. **联调环境**：使用 `.env.local` 覆盖子应用地址
+
+```bash
+# .env.local（不提交 Git）
+VITE_MICRO_APP_PARTNER_DEV=http://192.168.1.100:3006
+```
 
 ```typescript
-// src/main.ts
-const app = createApp(App)
-app.use(router).use(pinia)
+// microApps.ts 中从环境变量读取
+partner: {
+  id: 'partner',
+  name: '合作方系统',
+  dev: import.meta.env.VITE_MICRO_APP_PARTNER_DEV || 'http://localhost:3006',
+}
+```
 
-// 微前端环境下初始化通信
+4. **接口对接清单**（提供给协作方）：
+   - 主应用注入的 `appData` 完整结构和类型定义
+   - PostMessage 消息类型和 payload 格式
+   - 主题同步：监听 `data.theme.isDark` 变化
+   - 路由约束：子应用内部路由需以 `basePath` 为前缀
+
+---
+
+## 六、新增子应用指南
+
+### 6.1 三步接入
+
+**Step 1：注册子应用**
+
+```typescript
+// src/config/microApps.ts
+export const MICRO_APPS = {
+  // ...已有应用
+  warehouse: {
+    id: 'warehouse',
+    name: '智能仓储系统',
+    dev: 'http://localhost:3004',
+    test: 'https://warehouse-test.example.com',
+    prod: 'https://warehouse.example.com',
+    icon: '📦',
+    description: '仓库管理、库存盘点、出入库',
+  },
+}
+```
+
+**Step 2：更新系统配置**
+
+```typescript
+// src/components/global/C_Header/data.ts — systemList 数组添加
+{ id: 'warehouse', name: '智能仓储系统', icon: 'ri:archive-line', ... }
+
+// src/config/systemTitles.ts — 标题映射添加
+'/micro-app/warehouse': { main: '智能仓储', subtitle: '库存管理 · 出入库' }
+
+// src/views/portal/data.ts — 门户系统列表添加
+{ id: 'warehouse', name: '智能仓储', icon: 'ri:archive-line', ... }
+```
+
+**Step 3：创建子应用工程**
+
+```bash
+# 复制 logistics 模板
+cp -r sys-mock/logistics sys-mock/warehouse
+
+# 修改配置
+# package.json: name, port 改为 3004
+# vite.config.ts: port 改为 3004
+# router: 修改路由配置
+# views: 替换业务页面
+
+# 启动开发
+cd sys-mock/warehouse && bun install && bun run dev
+```
+
+### 6.2 子应用最低要求
+
+子应用只需满足：
+
+1. **Web 服务器**：能通过 HTTP 访问（任何技术栈）
+2. **CORS 配置**：响应头 `Access-Control-Allow-Origin: *`
+3. **入口 HTML**：标准的 `index.html`
+
+不需要：
+- ❌ 不需要暴露 `bootstrap/mount/unmount` 生命周期
+- ❌ 不需要使用特定的打包工具
+- ❌ 不需要安装任何微前端 SDK
+
+### 6.3 可选增强（推荐）
+
+如果需要与主应用深度通信：
+
+```typescript
+// 子应用监听主应用数据
 if (window.__MICRO_APP_ENVIRONMENT__) {
-  setupMicroApp()
+  window.microApp?.addDataListener((data) => {
+    console.log('收到主应用数据:', data)
+  })
 }
 
-app.mount('#app')
-```
-
-### 7.5 在主应用中注册
-
-```typescript
-// src/config/microApps.ts — 添加配置
-'your-app': {
-  id: 'your-app',
-  name: '你的应用名称',
-  dev: 'http://localhost:3004',
-  prod: 'https://your-app.example.com',
-}
-
-// src/views/portal/data.ts — 在 systems 数组中添加
-{
-  id: 'your-app',
-  name: '你的应用名称',
-  icon: 'ri:some-icon',
-  color: '#00BCD4',
-  url: '/micro-app/your-app',
-  integrated: true,
-}
+// 子应用向主应用发送消息
+window.parent?.postMessage({
+  type: 'CUSTOM_MESSAGE',
+  payload: { action: 'refreshDashboard' },
+}, '*')
 ```
 
 ---
 
-## 八、主题同步机制
+## 七、团队协作模式
 
-主题同步是微前端中的常见痛点。本方案实现了**实时双向主题同步**：
+### 7.1 独立开发模式
 
 ```
-┌─────────────┐  watch isDark  ┌──────────────┐  addDataListener  ┌───────────┐
-│ s_themeStore │ ────────────► │ MicroApp     │ ────────────────► │ 子应用    │
-│ (主应用)     │               │ Container    │  THEME_CHANGE     │ appStore  │
-│              │               │ setData()    │                   │           │
-└─────────────┘               └──────────────┘                   └───────────┘
+             ┌── 主应用团队 ── Robot Admin（门户 + 容器）
+             │
+项目组 ──────┼── 团队 A ────── 物流子应用（独立仓库/独立部署）
+             │
+             └── 团队 B ────── 仓储子应用（独立仓库/独立部署）
 ```
 
-**实现要点**：
+**协作约定**：
+1. 主应用团队提供《子应用接入规范》文档（本文 Section 6）
+2. 主应用团队提供 `shared/types.ts` 通信接口类型定义
+3. 子应用团队独立开发、独立测试、独立部署
+4. 联调时使用 `.env.local` 配置对方的开发地址
 
-1. 主应用通过 `watch(themeStore.isDark)` 监听主题切换
-2. 变化时通过 `microApp.setData(appId, { type: 'THEME_CHANGE', ... })` 发送
-3. 子应用通过 `addDataListener` 接收，更新本地主题状态
-4. 子应用 CSS 使用 CSS 变量，根据主题模式自动切换
+### 7.2 Monorepo 统一管理模式
+
+```
+Robot_Admin/
+├── apps/
+│   └── admin-internal/    # 主应用
+├── sys-mock/
+│   ├── logistics/         # 子应用 A
+│   └── warehouse/         # 子应用 B
+└── packages/
+    └── micro-shared/      # 共享包（类型/工具/API）
+```
+
+统一命令：
+
+```bash
+# 全部启动
+bun run dev:micro
+
+# 单独构建子应用
+cd sys-mock/logistics && bun run build
+
+# 全部构建
+bun run build:all
+```
 
 ---
 
-## 九、部署策略
+## 八、部署方案
 
-### 独立部署（推荐）
-
-每个子应用独立部署到不同域名/路径，主应用通过 MICRO_APPS 配置的 prod 地址加载：
+### 8.1 独立部署（推荐）
 
 ```
 主应用: https://admin.example.com
 物流:   https://logistics.example.com
-采购:   https://procurement.example.com
+仓储:   https://warehouse.example.com
 ```
 
-**Nginx 配置（子应用）**：
-
-```nginx
-server {
-    listen 80;
-    server_name logistics.example.com;
-
-    # ⚠️ 必须允许跨域
-    add_header Access-Control-Allow-Origin *;
-    add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
-    add_header Access-Control-Allow-Headers '*';
-
-    location / {
-        root /usr/share/nginx/html;
-        try_files $uri $uri/ /index.html;
-    }
-}
-```
-
-### 同域部署
-
-如果所有应用部署在同一域名下：
-
-```
-https://admin.example.com/           ← 主应用
-https://admin.example.com/logistics/ ← 物流子应用
-https://admin.example.com/procurement/ ← 采购子应用
-```
-
-需要子应用配置 `base` 路径：
+子应用 `vite.config.ts` 配置：
 
 ```typescript
-// 子应用 vite.config.ts
 export default defineConfig({
-  base: '/logistics/',
+  base: 'https://logistics.example.com/', // 绝对路径，避免资源 404
+  server: {
+    headers: { 'Access-Control-Allow-Origin': '*' },
+  },
 })
 ```
 
----
+`.env.example` 中按环境配置子应用地址：
 
-## 十、微前端方案对比矩阵
-
-### Robot Admin 四种架构分支能力矩阵
-
-| 能力维度             | main (单体) | monorepo | Module Federation | **micro-app** ★ |
-| -------------------- | ----------- | -------- | ----------------- | --------------- |
-| 独立部署             | ❌          | ✅       | ✅                | ✅              |
-| 技术栈无关           | N/A         | ❌       | ❌（需同构）       | ✅              |
-| 运行时共享           | N/A         | ❌       | ✅                | ❌              |
-| 沙箱隔离             | N/A         | N/A      | ❌                | ✅（iframe）    |
-| 子应用 keep-alive    | N/A         | N/A      | ❌                | ✅              |
-| 统一门户             | ❌          | ❌       | ❌                | ✅              |
-| 子应用零改造         | N/A         | N/A      | ❌                | ✅              |
-| 复杂度               | ⭐          | ⭐⭐     | ⭐⭐⭐            | ⭐⭐            |
-
-### 适用场景推荐
-
-- **main** — 10 人以下团队，单产品快速迭代
-- **monorepo** — 多应用共享 UI/工具，统一版本管理
-- **Module Federation** — 同技术栈，需要运行时共享 Vue/Pinia 实例
-- **micro-app** ★ — 企业集团多系统整合，不同团队独立交付，需要统一门户
-
----
-
-## 十一、演进路线图
-
-```
-Phase 1 — 当前 ✅
-├── micro-app iframe 基础架构
-├── Portal 门户工作台
-├── 子应用容器 + keep-alive
-├── 主题同步机制
-├── 收藏系统
-└── sys-mock 物流子应用
-
-Phase 2 — 规划中
-├── 子应用预加载（idle 时段）
-├── 跨应用通信总线（EventBus 扩展）
-├── 统一鉴权网关（主应用 Token 统一下发）
-├── 子应用健康检查（心跳检测）
-└── 门户自定义布局（拖拽式卡片排列）
-
-Phase 3 — 远期
-├── 子应用灰度发布（按用户/比例）
-├── 子应用性能监控（加载时间/错误率）
-├── 微前端 DevTools（调试面板）
-└── 多语言子应用适配
+```env
+VITE_MICRO_APP_LOGISTICS_PROD=https://logistics.example.com
+VITE_MICRO_APP_WAREHOUSE_PROD=https://warehouse.example.com
 ```
 
----
+### 8.2 同域部署
 
-## 十二、常见问题
-
-### Q1: 子应用加载白屏？
-
-**检查清单**：
-
-1. 子应用是否启动并运行在正确端口？
-2. 子应用 Vite 配置是否开启了 `cors: true`？
-3. 浏览器控制台是否有跨域报错？
-4. `microApps.ts` 中的 URL 是否正确？
-
-### Q2: 子应用路由跳转不生效？
-
-micro-app iframe 模式下，子应用有独立的路由实例。确保：
-
-1. 子应用使用 `createWebHashHistory()` 或正确的 `base`
-2. 未设置 `'disable-memory-router': true`
-
-### Q3: 子应用如何获取主应用的登录 Token？
-
-主应用通过 `<micro-app :data="appData">` 自动传递 Token。子应用通过 `addDataListener` 接收：
-
-```typescript
-window.microApp?.addDataListener((data) => {
-  if (data.token) localStorage.setItem('token', data.token)
-})
+```
+https://admin.example.com/           # 主应用
+https://admin.example.com/logistics/ # 物流子应用
+https://admin.example.com/warehouse/ # 仓储子应用
 ```
 
-### Q4: 如何接入非 Vue 的子应用？
-
-micro-app iframe 模式不限制技术栈。React/Angular/jQuery 子应用只需：
-
-1. 在 `microApps.ts` 中注册 URL
-2. 子应用开启跨域即可
-
-### Q5: 性能影响如何？
-
-- iframe 首次加载有独立的 HTTP 请求开销
-- `keep-alive` 模式下切换接近零延迟
-- 主应用构建不受子应用影响（子应用独立构建）
-- 构建产物分析：portal chunk ~15KB, micro-app container ~8KB
-
-### Q6: 如何调试子应用？
-
-1. **独立调试**：直接访问 `http://localhost:3003`
-2. **集成调试**：在主应用中通过 `/micro-app/logistics` 访问，F12 可在 iframe 标签中切换到子应用上下文
-3. **通信调试**：在子应用中添加 `console.log` 到 `addDataListener` 回调
+子应用 base 配置为子路径：`base: '/logistics/'`
 
 ---
 
-## 许可证
+## 九、常见问题
 
-[MIT License](../LICENSE)
+### Q1：子应用静态资源 404
+
+**原因**：子应用的 CSS/图片使用了相对路径，被主应用的 URL 解析拦截。
+**解决**：子应用 `vite.config.ts` 设置 `base` 为子应用完整 URL。
+
+### Q2：子应用 HMR 热更新不生效
+
+**原因**：micro-app 沙箱拦截了 WebSocket 连接。
+**解决**：`micro-app.start({ 'disable-patch-request': false })`，已默认配置。
+
+### Q3：ESLint 报 `<micro-app>` 组件名错误
+
+**原因**：ESLint vue/component-name-in-template-casing 要求 PascalCase。
+**解决**：在 `<micro-app>` 标签上方添加 `<!-- eslint-disable-next-line vue/component-name-in-template-casing -->`。
+
+### Q4：子应用全局变量污染主应用
+
+**原因**：with 沙箱对 `var` 声明的全局变量无法拦截。
+**解决**：使用 `iframe` 沙箱模式（已配置为默认）。
+
+### Q5：子应用路由跳转不生效
+
+**原因**：iframe 沙箱中 `history` 是隔离的。
+**解决**：通过 PostMessage 通知主应用跳转：`{ type: 'MICRO_APP_NAVIGATE', payload: { path } }`。
 
 ---
 
-> **Robot Admin** — 企业级微前端统一门户解决方案
->
-> 作者：ChenYu ([ycyplus@gmail.com](mailto:ycyplus@gmail.com))
->
-> 在线演示：[https://robotadmin.cn](https://robotadmin.cn)
+## 十、扩展路线图
+
+### 当前已实现 ✅
+
+- [x] micro-app 主应用启动与配置
+- [x] 门户工作台（三栏布局 + 天气/日历/消息）
+- [x] 系统菜单抽屉（12 个系统 + 搜索 + 三级菜单）
+- [x] 微应用容器（PostMessage + 主题同步 + keep-alive）
+- [x] 路由收藏夹（持久化 + 暗色主题）
+- [x] 子应用 Mock 工程（logistics 示例）
+- [x] 登录后跳转门户页
+- [x] 路由守卫适配（白名单 + 动态路由排除）
+- [x] CSS 变量主题（Light/Dark 双色）
+
+### Phase 2：通信增强（短期）
+
+- [ ] `microApp.preFetch()` 子应用预加载
+- [ ] `microApp.setGlobalData()` 全局数据广播
+- [ ] 子应用错误边界捕获 + 降级 UI
+- [ ] 共享依赖 externals（Vue / Naive UI / Pinia 去重）
+
+### Phase 3：治理能力（中期）
+
+- [ ] 子应用动态注册/卸载（后端配置驱动）
+- [ ] 子应用健康检查（心跳探测 + 超时重试）
+- [ ] 子应用版本管理（灰度发布、AB Testing）
+- [ ] 统一日志收集（主应用聚合子应用 console）
+
+### Phase 4：规模化（长期）
+
+- [ ] 子应用 CI/CD 独立流水线模板
+- [ ] 微前端性能监控 Dashboard
+- [ ] 子应用权限 RBAC（按角色分配可见子应用）
+- [ ] 多语言同步（主应用 i18n → 子应用）
+
+---
+
+> 方案对比分析详见 [MICRO_APP_BEST_PRACTICES.md](./MICRO_APP_BEST_PRACTICES.md)
