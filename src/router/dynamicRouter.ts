@@ -145,6 +145,14 @@ export const initDynamicRouter = async (): Promise<boolean> => {
       router.addRoute(route)
     })
 
+    // 重新添加 NotFound 兜底路由（确保它在最后）
+    router.addRoute({
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('@/views/error-page/404.vue'),
+      meta: { title: '404', hidden: true },
+    })
+
     return true
   } catch (error) {
     console.error('动态路由初始化失败:', error)

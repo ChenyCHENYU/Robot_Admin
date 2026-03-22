@@ -85,7 +85,17 @@ const shouldInitDynamicRouter = (
 ): boolean => {
   // 如果正在初始化，跳过
   if (isInitializing) return false
-  return !authMenuList.length
+
+  // 如果菜单列表为空，需要初始化
+  if (!authMenuList.length) return true
+
+  // 检查动态路由是否真的已经注册到 router 中
+  const hasHomeRoute = router
+    .getRoutes()
+    .some(r => r.path === '/home' || r.name === 'home')
+
+  // 如果有菜单数据但路由未注册，也需要初始化
+  return !hasHomeRoute
 }
 
 /**
@@ -106,7 +116,7 @@ const handleUnauthenticated = (
  * * @description: 处理已登录访问登录页
  */
 const handleLoginPageRedirect = (): string => {
-  return '/home'
+  return '/portal'
 }
 
 /**
@@ -121,6 +131,10 @@ const checkRoutePermission = (to: RouteLocationNormalized): boolean => {
   }
   // 首页/错误页始终放行
   if (['/home', '/404', '/401'].includes(to.path)) {
+    return true
+  }
+  // 微前端容器路由放行
+  if (to.path.startsWith('/micro-app/')) {
     return true
   }
   const permissionStore = s_permissionStore()
@@ -206,9 +220,16 @@ router.onError((error: Error) => {
   message.error('页面加载失败，请刷新重试')
 })
 
-// 后置钩子
+// 后置钩子 - 过滤 micro-app 导航冲突的无害错误
 router.afterEach((to, from, failure) => {
-  if (import.meta.env.DEV && failure) {
-    console.error('❌ 路由跳转失败:', failure.message)
+  if (failure) {
+    const ignoredErrors = [
+      'Navigation cancelled',
+      'Navigation aborted',
+      'redundant navigation',
+    ]
+    if (!ignoredErrors.some(msg => failure.message.includes(msg))) {
+      console.error('❌ 路由跳转失败:', failure.message)
+    }
   }
 })

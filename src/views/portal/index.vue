@@ -686,7 +686,7 @@
         'microAppDataUpdate',
         handleDataUpdate as EventListener
       )
-      timer && clearInterval(timer)
+      if (timer) clearInterval(timer)
     })
   })
 </script>
