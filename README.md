@@ -257,75 +257,60 @@ main.ts → setupMicroApp()       ← micro-app 框架初始化（早于 Vue 实
 
 ---
 
-## ��� 目录结构
+## 📂 目录结构
+
+> 遵循 micro-app 官方社区最佳实践：`主应用 + 共享契约层 + 子应用 + 文档`
 
 ```
-Robot_Admin/                          ← 主应用根目录
-├── src/
-│   ├── api/                          ← API 接口层
-│   │   ├── auth.ts                   ← 认证接口
-│   │   └── permission-manage.ts      ← 权限管理接口
-│   │
-│   ├── components/
-│   │   ├── global/                   ← 全局组件（C_ 前缀）
-│   │   │   ├── C_Header/             ← 系统顶部导航（支持门户/子应用模式）
-│   │   │   └── ...
-│   │   └── local/                    ← 局部业务组件
-│   │
+Robot_Admin/
+│
+│   ─── 主应用（官方: main-app/）───
+│
+├── src/                              # 主应用源码
 │   ├── config/
-│   │   ├── microApps.ts              ← ★ 子应用配置中心（ID/URL/环境地址）
-│   │   └── theme/                    ← 主题 Token 配置
-│   │
-│   ├── plugins/
-│   │   ├── micro-app.ts              ← ★ micro-app 框架初始化插件
-│   │   ├── request-core.ts           ← Axios 请求插件（含 401 重登录）
-│   │   └── ...
-│   │
+│   │   ├── microApps.ts              # ★ 子应用配置中心（ID/URL/多环境地址）
+│   │   └── systemTitles.ts           # 路由标题映射
+│   ├── plugins/micro-app.ts          # ★ micro-app 框架初始化插件
+│   ├── types/micro-app.d.ts          # Window 扩展 + micro-app 模块声明
 │   ├── router/
-│   │   ├── publicRouter.ts           ← 静态路由（含 /portal、/micro-app/:id）
-│   │   ├── dynamicRouter.ts          ← 后端动态路由解析
-│   │   └── permission.ts             ← 路由守卫
-│   │
-│   ├── stores/
-│   │   ├── user/                     ← 用户认证（token / userInfo）
-│   │   ├── theme/                    ← 主题状态（dark/light/colors）
-│   │   └── permission/               ← 菜单权限
-│   │
+│   │   ├── publicRouter.ts           # 静态路由（/portal、/micro-app/:id）
+│   │   ├── dynamicRouter.ts          # 后端动态路由解析
+│   │   └── permission.ts             # 路由守卫（门户重定向 + 微前端放行）
+│   ├── components/global/
+│   │   ├── C_Header/                 # 系统顶部导航（门户按钮 + 系统菜单抽屉）
+│   │   └── C_Favorites/              # 路由收藏卡片
 │   ├── views/
-│   │   ├── portal/                   ← ★ 门户工作台（系统选择入口）
-│   │   ├── micro-app/                ← ★ 微应用容器页
-│   │   │   └── index.vue             ←   <micro-app> 标签 + 通信逻辑
-│   │   ├── home/                     ← 主应用首页
-│   │   ├── dashboard/                ← 数据看板
-│   │   ├── demo/                     ← 54+ 功能演示页
-│   │   ├── sys-manage/               ← 系统管理（用户/角色/菜单）
-│   │   └── login/                    ← 登录页
-│   │
-│   └── types/
-│       └── micro-app.d.ts            ← micro-app 全局类型声明
+│   │   ├── portal/                   # ★ 门户工作台（三栏布局，系统聚合入口）
+│   │   ├── micro-app/                # ★ 微应用容器（<micro-app> + 通信管理）
+│   │   ├── home/                     # 主应用首页
+│   │   ├── dashboard/                # 数据看板
+│   │   ├── demo/                     # 54+ 功能演示页
+│   │   └── sys-manage/               # 系统管理
+│   └── stores/favorites/             # 收藏 Store（持久化）
 │
-├── sys-mock/                         ← ★ 子应用源码目录
-│   └── logistics/                    ←   智慧物流管理系统（Vue3 + Vite，端口 3003）
-│       ├── src/
-│       │   ├── views/                ←   业务页面（运单/仓库/车辆/路线）
-│       │   ├── router/               ←   子应用路由（baseroute 前缀隔离）
-│       │   ├── stores/               ←   子应用 Pinia 状态
-│       │   └── micro-app-bridge.ts   ←   主子通信桥接层
-│       ├── vite.config.ts            ←   CORS 配置
-│       └── package.json
+│   ─── 共享契约层（官方: shared/）───
 │
-├── docs/
-│   └── 微前端架构最佳实践.md          ← ★ 详细架构文档（14 章完整指南）
+├── shared/                           # ★ 主子应用共享层（通信协议契约）
+│   ├── types/index.ts                # 通信数据接口（MicroAppData/Payload）
+│   ├── constants/index.ts            # PostMessage 消息类型 + 事件名 + 存储键
+│   └── utils/index.ts                # 共享工具（createMessage/parseMessage）
 │
-├── vercel.json                        ← 主应用部署配置
-├── .vercelignore                      ← 排除 sys-mock（防止 Vercel 误判 Monorepo）
-├── vite.config.ts                     ← 主应用 Vite 配置
-└── package.json                       ← 主应用依赖（含 @micro-zoe/micro-app）
+│   ─── 子应用（官方: sub-apps/）───
+│
+├── sys-mock/                         # 开发联调用子应用（本地 Mock）
+│   └── logistics/                    # 智慧物流（Vue3 + Vite，端口 3003）
+│       ├── src/microApp.ts           # 微前端通信桥接（使用 @shared 常量）
+│       └── vite.config.ts            # CORS + @shared 别名配置
+│
+├── docs/                             # 架构文档
+│   └── 微前端架构最佳实践.md          # ★ 14 章完整指南
+│
+└── [配置文件]                         # vite.config.ts / tsconfig.json / vercel.json
 ```
 
 ---
 
-## ��� 集成方式
+## 🔗 集成方式
 
 ### 1. micro-app 初始化（`src/plugins/micro-app.ts`）
 

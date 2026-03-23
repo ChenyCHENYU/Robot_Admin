@@ -253,50 +253,55 @@ Navigate to "Smart Logistics" menu   → micro-app container loads sub-app
 
 ---
 
-## ��� Directory Structure
+## 📂 Directory Structure
+
+> Follows micro-app official community best practices: `main-app + shared contract layer + sub-apps + docs`
 
 ```
-Robot_Admin/                    # Project root
-├── src/                        # Main app source
+Robot_Admin/
+│
+│   ─── Main App (official: main-app/) ───
+│
+├── src/                              # Main app source
 │   ├── config/
-│   │   └── microApps.ts        # ★ Sub-app config center (ID + multi-env URL)
-│   ├── plugins/
-│   │   └── micro-app.ts        # ★ micro-app framework initialization
+│   │   ├── microApps.ts              # ★ Sub-app config center (ID/URL/multi-env)
+│   │   └── systemTitles.ts           # Route title mappings
+│   ├── plugins/micro-app.ts          # ★ micro-app framework init plugin
+│   ├── types/micro-app.d.ts          # Window extensions + micro-app module declarations
+│   ├── router/
+│   │   ├── publicRouter.ts           # Static routes (/portal, /micro-app/:id)
+│   │   ├── dynamicRouter.ts          # Backend dynamic route parser
+│   │   └── permission.ts             # Route guard (portal redirect + micro-app bypass)
+│   ├── components/global/
+│   │   ├── C_Header/                 # Top navigation (portal btn + system menu drawer)
+│   │   └── C_Favorites/              # Route favorites cards
 │   ├── views/
-│   │   ├── portal/             # ★ Portal workspace (unified entry)
-│   │   │   └── index.vue       #   Three-column layout, aggregated sub-app shortcuts
-│   │   ├── micro-app/          # ★ Universal micro-app container
-│   │   │   └── index.vue       #   <micro-app> tag, keep-alive, communication events
-│   │   ├── home/               # Main app home page (eager loaded)
-│   │   ├── dashboard/          # Data dashboard (eager loaded)
-│   │   ├── login/              # Login page
-│   │   ├── demo/               # Feature demos (54 pages)
-│   │   └── sys-manage/         # System management pages
-│   ├── stores/                 # Pinia state management
-│   ├── router/                 # Routing system
-│   │   ├── permission.ts       # Guard: login check + dynamic routes
-│   │   └── dynamicRouter.ts    # Backend JSON → RouteRecordRaw
-│   ├── api/                    # API definitions
-│   ├── components/             # Global/local components
-│   ├── composables/            # Business logic composables
-│   ├── hooks/                  # Generic hooks
-│   ├── utils/                  # Utilities (auth, route, error handler)
-│   └── styles/                 # Global styles
+│   │   ├── portal/                   # ★ Portal workspace (3-col layout, aggregated entries)
+│   │   ├── micro-app/                # ★ Micro-app container (<micro-app> + communication)
+│   │   ├── home/                     # Main app home page
+│   │   ├── dashboard/                # Data dashboard
+│   │   ├── demo/                     # 54+ feature demo pages
+│   │   └── sys-manage/               # System management
+│   └── stores/favorites/             # Favorites Store (persisted)
 │
-├── sys-mock/                   # ★ Sub-app demo collection
-│   └── logistics/              # Smart Logistics sub-app
-│       ├── src/                #   Vue 3 + Vite 8 + Naive UI
-│       ├── vite.config.ts      #   Dev server port 3003
-│       ├── package.json        #   @robot-admin/logistics-mock
-│       └── DEPLOYMENT.md       #   Sub-app deployment guide
+│   ─── Shared Contract Layer (official: shared/) ───
 │
-├── docs/                       # Architecture documentation
-│   ├── 微前端架构最佳实践.md     # ★ Best practices (14 chapters)
-│   ├── MICRO_APP_GUIDE.md      # Integration quickstart
-│   └── MICRO_APP_BEST_PRACTICES.md  # English best practices
+├── shared/                           # ★ Main-sub shared layer (communication contract)
+│   ├── types/index.ts                # Communication interfaces (MicroAppData/Payload)
+│   ├── constants/index.ts            # PostMessage types + event names + storage keys
+│   └── utils/index.ts                # Shared utils (createMessage/parseMessage)
 │
-├── envs/                       # Environment variable files
-└── scripts/                    # Build scripts
+│   ─── Sub Apps (official: sub-apps/) ───
+│
+├── sys-mock/                         # Dev sub-apps (local mock)
+│   └── logistics/                    # Smart Logistics (Vue3 + Vite, port 3003)
+│       ├── src/microApp.ts           # Micro-frontend comm bridge (uses @shared constants)
+│       └── vite.config.ts            # CORS + @shared alias config
+│
+├── docs/                             # Architecture documentation
+│   └── 微前端架构最佳实践.md          # ★ 14-chapter complete guide
+│
+└── [config files]                    # vite.config.ts / tsconfig.json / vercel.json
 ```
 
 ## ��� Integration

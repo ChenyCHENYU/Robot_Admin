@@ -438,6 +438,7 @@
   import { s_userStore } from '@/stores/user'
   import { useRouter } from 'vue-router'
   import C_Header from '@/components/global/C_Header/index.vue'
+  import { CUSTOM_EVENTS, STORAGE_KEYS } from '@shared/constants'
   import {
     systems,
     todoList,
@@ -561,7 +562,7 @@
   const microAppData = ref<any[]>([])
 
   const loadMicroAppData = () => {
-    const data = sessionStorage.getItem('microAppData')
+    const data = sessionStorage.getItem(STORAGE_KEYS.MICRO_APP_DATA)
     if (data) {
       try {
         microAppData.value = JSON.parse(data)
@@ -572,7 +573,7 @@
   }
 
   const clearMicroAppData = () => {
-    sessionStorage.removeItem('microAppData')
+    sessionStorage.removeItem(STORAGE_KEYS.MICRO_APP_DATA)
     microAppData.value = []
   }
 
@@ -672,7 +673,7 @@
       microAppData.value = event.detail
     }
     window.addEventListener(
-      'microAppDataUpdate',
+      CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE,
       handleDataUpdate as EventListener
     )
 
@@ -683,7 +684,7 @@
 
     onUnmounted(() => {
       window.removeEventListener(
-        'microAppDataUpdate',
+        CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE,
         handleDataUpdate as EventListener
       )
       if (timer) clearInterval(timer)

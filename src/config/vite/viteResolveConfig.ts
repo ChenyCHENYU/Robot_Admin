@@ -24,6 +24,11 @@ export default {
   alias: [
     // 本地包调试别名（仅 dev:local 模式）
     ...getLocalPackagesAlias(),
+    // 共享契约层别名
+    {
+      find: '@shared',
+      replacement: fileURLToPath(new URL('../../../shared', import.meta.url)),
+    },
     // 项目路径别名
     {
       find: '@',

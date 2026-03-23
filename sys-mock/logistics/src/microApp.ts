@@ -5,6 +5,7 @@
 import type { App } from 'vue'
 import type { Router } from 'vue-router'
 import { useAppStore } from './stores/app'
+import { MESSAGE_TYPES, CUSTOM_EVENTS } from '@shared/constants'
 
 // 声明全局类型
 declare global {
@@ -55,7 +56,7 @@ export function setupMicroApp(app: App, router: Router) {
     // 4. 向主应用发送初始化完成消息
     setTimeout(() => {
       sendMessageToMainApp({
-        type: 'MOUNTED',
+        type: MESSAGE_TYPES.MOUNTED,
         payload: {
           name: '智慧物流管理系统',
           version: '1.0.0',
@@ -67,7 +68,7 @@ export function setupMicroApp(app: App, router: Router) {
     // 4. 路由同步（可选）
     router.afterEach(to => {
       sendMessageToMainApp({
-        type: 'ROUTE_CHANGE',
+        type: MESSAGE_TYPES.ROUTE_CHANGE,
         payload: {
           path: to.path,
           name: to.name,
@@ -92,19 +93,19 @@ function handleMainAppAck(event: MessageEvent) {
 
   // 触发自定义事件，让 Vue 组件处理
   switch (type) {
-    case 'CUSTOM_MESSAGE_ACK':
+    case MESSAGE_TYPES.CUSTOM_MESSAGE_ACK:
       console.log('✅ [子应用] 主应用已确认收到消息:', payload)
       window.dispatchEvent(
-        new CustomEvent('mainAppAck', {
+        new CustomEvent(CUSTOM_EVENTS.MAIN_APP_ACK, {
           detail: { type: 'message', payload },
         })
       )
       break
 
-    case 'DATA_UPDATE_ACK':
+    case MESSAGE_TYPES.DATA_UPDATE_ACK:
       console.log('✅ [子应用] 主应用已确认收到数据:', payload)
       window.dispatchEvent(
-        new CustomEvent('mainAppAck', {
+        new CustomEvent(CUSTOM_EVENTS.MAIN_APP_ACK, {
           detail: { type: 'data', payload },
         })
       )
@@ -136,13 +137,13 @@ function handleMainAppData(data: any, appStore: any) {
   // 处理其他自定义消息
   if (data.type) {
     switch (data.type) {
-      case 'THEME_CHANGE':
+      case MESSAGE_TYPES.THEME_CHANGE:
         appStore.setTheme(data.payload)
         break
-      case 'LOGOUT':
+      case MESSAGE_TYPES.LOGOUT:
         appStore.clearAuth()
         break
-      case 'CUSTOM_MESSAGE':
+      case MESSAGE_TYPES.CUSTOM_MESSAGE:
         console.log('📨 自定义消息:', data.payload)
         break
     }
@@ -178,7 +179,7 @@ export function navigateToMainApp(path: string) {
   if (window !== window.parent) {
     window.parent.postMessage(
       {
-        type: 'MICRO_APP_NAVIGATE',
+        type: MESSAGE_TYPES.MICRO_APP_NAVIGATE,
         payload: { path: normalizedPath },
       },
       '*'
@@ -188,7 +189,7 @@ export function navigateToMainApp(path: string) {
   // 非 iframe 模式
   else {
     sendMessageToMainApp({
-      type: 'NAVIGATE',
+      type: MESSAGE_TYPES.NAVIGATE,
       payload: { path: normalizedPath },
     })
   }

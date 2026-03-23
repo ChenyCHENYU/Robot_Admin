@@ -94,6 +94,7 @@
 
   import { useAppStore } from '@/stores/app'
   import { sendMessageToMainApp, navigateToMainApp } from '@/microApp'
+  import { MESSAGE_TYPES, CUSTOM_EVENTS } from '@shared/constants'
   import { statsData } from './data'
 
   const appStore = useAppStore()
@@ -109,17 +110,17 @@
         message.success('✅ 数据推送成功', { duration: 2000 })
       }
     }
-    window.addEventListener('mainAppAck', handleAck as EventListener)
+    window.addEventListener(CUSTOM_EVENTS.MAIN_APP_ACK, handleAck as EventListener)
 
     onUnmounted(() => {
-      window.removeEventListener('mainAppAck', handleAck as EventListener)
+      window.removeEventListener(CUSTOM_EVENTS.MAIN_APP_ACK, handleAck as EventListener)
     })
   })
 
   // 发送测试消息
   const sendTestMessage = () => {
     sendMessageToMainApp({
-      type: 'CUSTOM_MESSAGE',
+      type: MESSAGE_TYPES.CUSTOM_MESSAGE,
       payload: {
         message: '这是来自物流子应用的测试消息',
         timestamp: Date.now(),
@@ -130,7 +131,7 @@
   // 发送数据更新
   const sendDataUpdate = () => {
     sendMessageToMainApp({
-      type: 'DATA_UPDATE',
+      type: MESSAGE_TYPES.DATA_UPDATE,
       payload: {
         module: 'logistics',
         data: {

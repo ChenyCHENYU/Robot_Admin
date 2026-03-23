@@ -5,6 +5,7 @@
   // 指定需要编译的文件和目录（相对于 tsconfig 目录）
   "include": [
     "../src/**/*", // src 目录下所有文件（包含 .ts, .vue, .d.ts, .json 等）
+    "../shared/**/*", // shared 共享契约层
     "../package.json", // 项目包配置文件
     "../src/**/*.json" // 匹配所有 JSON 文件
   ],
@@ -41,6 +42,7 @@
     "paths": {
       "@/*": ["src/*"], // @ 符号映射到 src 目录
       "_views/*": ["src/views/*"], // _views 映射到 src/views 目录
+      "@shared/*": ["shared/*"], // @shared 映射到 shared 共享契约层
       "@vue-flow/*": ["node_modules/@vue-flow/*"]
     },
 

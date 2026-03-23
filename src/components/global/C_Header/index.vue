@@ -328,6 +328,7 @@
   import { s_settingsStore } from '@/stores/settings'
   import { s_permissionStore } from '@/stores/permission'
   import { s_favoritesStore } from '@/stores/favorites'
+  import { MESSAGE_TYPES } from '@shared/constants'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import { getSystemTitle } from '@/config/systemTitles'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
@@ -493,7 +494,7 @@
     if (isInMicroApp) {
       window.parent.postMessage(
         {
-          type: 'MICRO_APP_NAVIGATE',
+          type: MESSAGE_TYPES.MICRO_APP_NAVIGATE,
           payload: { path },
         },
         '*'

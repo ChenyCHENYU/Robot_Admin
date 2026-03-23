@@ -75,6 +75,7 @@
   import { s_themeStore } from '@/stores/theme'
   import { formatTime } from '@/utils/d_route'
   import C_Header from '@/components/global/C_Header/index.vue'
+  import { MESSAGE_TYPES, CUSTOM_EVENTS, STORAGE_KEYS } from '@shared/constants'
 
   const route = useRoute()
   const router = useRouter()
@@ -243,7 +244,7 @@
       `收到来自 ${currentApp.value?.name || '子应用'} 的消息：${payload.message}`,
       { duration: 5000 }
     )
-    sendAckToChild(source, 'CUSTOM_MESSAGE_ACK', {
+    sendAckToChild(source, MESSAGE_TYPES.CUSTOM_MESSAGE_ACK, {
       received: true,
       timestamp: Date.now(),
     })
@@ -256,7 +257,7 @@
     })
     try {
       const existingData = JSON.parse(
-        sessionStorage.getItem('microAppData') || '[]'
+        sessionStorage.getItem(STORAGE_KEYS.MICRO_APP_DATA) || '[]'
       )
       const newData = {
         module: payload.module,
@@ -265,14 +266,19 @@
       }
       existingData.unshift(newData)
       const dataToSave = existingData.slice(0, 10)
-      sessionStorage.setItem('microAppData', JSON.stringify(dataToSave))
+      sessionStorage.setItem(
+        STORAGE_KEYS.MICRO_APP_DATA,
+        JSON.stringify(dataToSave)
+      )
       window.dispatchEvent(
-        new CustomEvent('microAppDataUpdate', { detail: dataToSave })
+        new CustomEvent(CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE, {
+          detail: dataToSave,
+        })
       )
     } catch (error) {
       console.error('[主应用] 存储数据失败:', error)
     }
-    sendAckToChild(source, 'DATA_UPDATE_ACK', {
+    sendAckToChild(source, MESSAGE_TYPES.DATA_UPDATE_ACK, {
       received: true,
       timestamp: Date.now(),
     })
@@ -284,19 +290,19 @@
     const source = event.source as Window
 
     switch (type) {
-      case 'MICRO_APP_NAVIGATE':
+      case MESSAGE_TYPES.MICRO_APP_NAVIGATE:
         handleNavigate(payload.path)
         break
-      case 'CUSTOM_MESSAGE':
+      case MESSAGE_TYPES.CUSTOM_MESSAGE:
         handleCustomMessage(payload, source)
         break
-      case 'DATA_UPDATE':
+      case MESSAGE_TYPES.DATA_UPDATE:
         handleDataUpdate(payload, source)
         break
-      case 'MOUNTED':
+      case MESSAGE_TYPES.MOUNTED:
         console.log('✅ [主应用] 子应用已挂载:', payload)
         break
-      case 'ROUTE_CHANGE':
+      case MESSAGE_TYPES.ROUTE_CHANGE:
         console.log('🔀 [主应用] 子应用路由变化:', payload)
         break
     }
