@@ -24,15 +24,18 @@
 .app-shortcuts {
   flex-shrink: 0;
   background: var(--portal-bg-card);
-  padding: 24px 24px 28px;
-  border-bottom: 1px solid var(--portal-border);
+  padding: 24px 40px 28px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
   position: relative;
   transition: padding 0.3s ease;
 
   &:not(.expanded) {
     .shortcuts-container {
-      max-height: 56px;
+      max-height: 70px;
+      padding-top: 10px;
+      margin-top: -10px;
       overflow: hidden;
+      padding-bottom: 4px;
     }
   }
 
@@ -43,93 +46,115 @@
   .shortcuts-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    max-width: 1680px;
+    gap: 16px;
+    width: 100%;
     margin: 0 auto;
     transition: max-height 0.3s ease;
   }
 
   .shortcut-item {
-    width: calc(20% - 9.6px);
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 16px;
-    background: var(--portal-bg-card);
-    border-radius: 20px;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--portal-bg-page);
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid transparent;
 
     &:hover {
-      border-color: var(--portal-border);
-      transform: translateY(-2px);
+      border-color: rgba(91, 143, 249, 0.3);
       background: var(--portal-bg-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 
       .shortcut-icon {
-        transform: scale(1.08);
+        transform: scale(1.1) rotate(-5deg);
+        box-shadow:
+          0 8px 16px rgba(91, 143, 249, 0.4),
+          inset 0 2px 4px rgba(255, 255, 255, 0.4);
       }
     }
 
     &.active {
-      background: var(--portal-status-info-bg);
-        border-color: var(--portal-status-info);
+      background: rgba(91, 143, 249, 0.06);
+      border-color: var(--portal-status-info);
 
       .shortcut-icon {
         transform: scale(1.1);
+        background: linear-gradient(135deg, var(--portal-status-info), #3a7afe);
       }
 
       .shortcut-label {
         color: var(--portal-status-info);
+        font-weight: 600;
       }
     }
 
+    // Liquid Glass Icon Style
     .shortcut-icon {
-      width: 24px !important;
-      height: 24px !important;
-      border-radius: 8px;
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       flex-shrink: 0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      background: linear-gradient(135deg, var(--portal-status-info), #6ba3ff);
+      box-shadow:
+        0 4px 10px rgba(91, 143, 249, 0.25),
+        inset 0 2px 4px rgba(255, 255, 255, 0.35),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
 
       :deep(.iconify),
       :deep(svg),
       :deep(i) {
-        width: 12px !important;
-        height: 12px !important;
-        font-size: 12px !important;
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 18px !important;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
       }
     }
 
     .shortcut-label {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--portal-text-primary);
       font-weight: 500;
-      flex: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       letter-spacing: 0.2px;
     }
 
+    // Glassy Badge
     .integrated-badge {
       display: inline-flex;
       align-items: center;
       gap: 3px;
-      padding: 2px 8px;
-      background: var(--portal-status-success-bg);
-        border: 1px solid var(--portal-status-success);
-      border-radius: 10px;
+      padding: 2px 10px;
+
+      // Glassy Green
+      background: rgba(82, 196, 26, 0.1);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(82, 196, 26, 0.2);
+
+      border-radius: 12px;
       font-size: 11px;
-      color: var(--portal-status-success);
-      font-weight: 500;
+      color: #52C41A;
+      font-weight: 600;
       white-space: nowrap;
       flex-shrink: 0;
       margin-left: 6px;
+      box-shadow: 0 2px 6px rgba(82, 196, 26, 0.1);
 
       i {
         font-size: 12px;
@@ -137,9 +162,10 @@
       }
 
       &.pending {
-        background: var(--portal-bg-hover);
-          border-color: var(--portal-border);
-          color: var(--portal-text-tertiary);
+        background: rgba(0, 0, 0, 0.04);
+        border-color: rgba(0, 0, 0, 0.08);
+        color: var(--portal-text-tertiary);
+        box-shadow: none;
 
         i {
           color: var(--portal-text-tertiary);
@@ -181,10 +207,9 @@
   }
 }
 
-// 主内容区
 .main-content {
   flex: 1;
-  padding: 16px 60px;
+  padding: 24px 40px;
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -208,100 +233,120 @@
 
 .content-grid {
   display: flex;
-  gap: 12px;
-  max-width: 1800px;
+  gap: 24px;
+  width: 100%;
   margin: 0 auto;
+  align-items: flex-start;
 }
 
 .left-column {
-  flex: 1.25;
-  min-width: 300px;
-  max-width: 650px;
+  flex: 3.5;
+  min-width: 320px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 24px;
 }
 
 .center-column {
-  flex: 1.25;
-  min-width: 300px;
-  max-width: 650px;
+  flex: 4;
+  min-width: 360px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 24px;
 }
 
 .right-column {
-  flex: 1;
-  min-width: 280px;
-  max-width: 500px;
+  flex: 3;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 24px;
 }
 
-// 通用卡片
+// 通用卡片 - High End Style
 .card {
   background: var(--portal-bg-card);
-  border-radius: 8px;
-  padding: 18px;
-  box-shadow: 0 1px 3px var(--portal-shadow);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  }
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .card-title {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--portal-text-primary);
+  letter-spacing: -0.2px;
 }
 
 .card-more {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--portal-status-info);
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: rgba(91, 143, 249, 0.08);
+  border: 1px solid rgba(91, 143, 249, 0.15);
+  border-radius: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
 
   &:hover {
-    color: var(--portal-status-info);
-    text-decoration: underline;
+    background: var(--portal-status-info);
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(91, 143, 249, 0.3);
+    transform: translateY(-1px);
+    border-color: transparent;
   }
 }
 
-// 左侧栏
-.left-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
+// 左侧栏 - 用户卡片
 .user-card {
   background: var(--portal-bg-card);
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 0;
-  box-shadow: 0 1px 3px var(--portal-shadow);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  overflow: visible;
+  overflow: hidden;
   border-bottom: 3px solid var(--portal-status-info);
   position: relative;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  }
 
   .user-info {
     display: flex;
     align-items: center;
     gap: 14px;
     background: var(--portal-status-info-bg);
-    padding: 20px 28px;
+    padding: 24px 28px;
     flex-shrink: 0;
     min-width: 220px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(91, 143, 249, 0.12);
-    margin: 8px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(91, 143, 249, 0.12);
+    margin: 12px;
     z-index: 1;
 
     .user-avatar {
@@ -372,20 +417,37 @@
   margin-top: 24px !important;
 }
 
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .task-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  padding: 12px;
+  align-items: center;
+  padding: 16px 20px;
   background: var(--portal-bg-hover);
-  border-radius: 6px;
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+
+  // Glassmorphism feel
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 
   &:hover {
-    background: var(--portal-bg-hover);
-      border-color: var(--portal-border);
+    background: var(--portal-bg-card);
+    transform: translateX(4px) translateY(-2px); // Lift and push right
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); // Deep shadow
+    border-color: rgba(91, 143, 249, 0.3);
+
+    .task-title {
+      color: var(--portal-status-info);
+    }
   }
 
   .task-content {
@@ -393,16 +455,15 @@
     min-width: 0;
 
     .task-title {
-      font-size: 13px;
+      font-size: 14px;
+      font-weight: 500;
       color: var(--portal-text-primary);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       line-height: 1.5;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
+      transition: color 0.3s;
     }
 
     .task-time {
@@ -412,76 +473,101 @@
   }
 
   .task-badge {
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
     white-space: nowrap;
-    margin-left: 10px;
+    margin-left: 12px;
     flex-shrink: 0;
 
+    // Glass Badge Style
     &.rejected {
-      background: var(--portal-status-error-bg);
-        color: var(--portal-status-error);
+      background: rgba(208, 48, 80, 0.1);
+      color: #d03050;
+      border: 1px solid rgba(208, 48, 80, 0.2);
     }
 
     &.progress {
-      background: var(--portal-status-success-bg);
-        color: var(--portal-status-success);
+      background: rgba(82, 196, 26, 0.1);
+      color: #52c41a;
+      border: 1px solid rgba(82, 196, 26, 0.2);
     }
 
     &.done {
-      background: var(--portal-status-info-bg);
-        color: var(--portal-status-info);
+      background: rgba(32, 128, 240, 0.1);
+      color: #2080f0;
+      border: 1px solid rgba(32, 128, 240, 0.2);
     }
 
     &.revoked {
-      background: var(--portal-bg-hover);
-        color: var(--portal-text-muted);
+      background: rgba(0, 0, 0, 0.06);
+      color: #999;
+      border: 1px solid rgba(0, 0, 0, 0.1);
     }
   }
+}
+
+.external-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 24px !important;
 }
 
 .external-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--portal-border);
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 16px;
+
+  background: var(--portal-bg-hover);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 
-  &:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  &:first-child {
-    padding-top: 0;
-  }
+  border-bottom: 1px solid rgba(0,0,0,0.03) !important;
 
   &:hover {
+    background: var(--portal-bg-card);
+    transform: translateX(4px) translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: rgba(91, 143, 249, 0.3);
+
     .external-text {
-      color: var(--portal-text-primary);
+      color: var(--portal-status-info) !important;
+    }
+
+    .indicator-bar {
+      transform: scaleY(1.5);
     }
   }
 
   .external-indicator {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     flex-shrink: 0;
 
     .indicator-bar {
-      width: 3px;
-      height: 16px;
-      border-radius: 2px;
+      width: 4px;
+      height: 24px;
+      border-radius: 4px;
+      background: linear-gradient(to bottom, #36ad6a, #18a058); // Green gradient
+      transition: all 0.3s ease;
     }
 
     .indicator-label {
       font-size: 11px;
-      font-weight: 400;
-      padding: 2px 6px;
-      border-radius: 8px;
-      background: var(--portal-bg-hover);
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+
+      // Glass Label
+      background: rgba(24, 160, 88, 0.1);
+      color: #18a058;
+      border: 1px solid rgba(24, 160, 88, 0.2);
     }
   }
 
@@ -494,28 +580,24 @@
     gap: 12px;
 
     .external-text {
-      font-size: 13px;
+      font-size: 14px;
+      font-weight: 500;
       color: var(--portal-text-primary);
-      line-height: 1.6;
-      transition: color 0.2s;
+      line-height: 1.5;
+      transition: color 0.3s;
       flex: 1;
-      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .external-time {
       font-size: 12px;
-      color: var(--portal-text-secondary);
+      color: var(--portal-text-tertiary);
       white-space: nowrap;
       flex-shrink: 0;
     }
   }
-}
-
-// 中间内容区
-.center-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
 .message-card {
@@ -550,82 +632,49 @@
       }
     }
   }
-}
 
-.app-function-card {
-  .app-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    padding: 4px 0;
-
-    .app-cell {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 18px 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      border-radius: 8px;
-      border: 1px solid transparent;
-
-      &:hover {
-        border-color: var(--portal-border);
-          background: var(--portal-bg-hover);
-
-        .app-icon-box {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-      }
-
-      .app-icon-box {
-        width: 52px;
-        height: 52px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.25s;
-        border: 1px solid rgba(0, 0, 0, 0.04);
-      }
-
-      .app-name {
-        font-size: 13px;
-        color: var(--portal-text-primary);
-        font-weight: 400;
-        text-align: center;
-      }
-    }
-  }
-}
-
-.message-card {
   .message-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 8px;
   }
 
   .message-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 8px;
-    border-bottom: 1px solid var(--portal-border);
+    gap: 12px;
+    padding: 12px 16px;
+
+    background: var(--portal-bg-card);
+    background: rgba(var(--portal-bg-card-rgb), 0.6);
+    background: var(--portal-bg-hover);
+    border: 1px solid transparent;
+    border-radius: 999px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 
     &:last-child {
-      border-bottom: none;
+      border-bottom: 1px solid transparent;
     }
 
     &:hover {
-      background: var(--portal-bg-hover);
+      background: var(--portal-bg-card);
+      border-color: rgba(91, 143, 249, 0.3);
+      transform: translateX(4px) scale(1.01);
+      box-shadow:
+        0 4px 12px rgba(60, 64, 67, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.6);
 
       .message-text {
         color: var(--portal-text-primary);
+        font-weight: 500;
+      }
+
+      .message-icon {
+         transform: scale(1.1) rotate(5deg);
+         background: var(--portal-status-info-bg);
       }
     }
 
@@ -633,18 +682,20 @@
       flex-shrink: 0;
 
       .message-icon {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: none;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        background: var(--portal-bg-page);
+        transition: all 0.3s;
 
         svg {
-          width: 14px !important;
-          height: 14px !important;
-          font-size: 14px !important;
+          width: 16px !important;
+          height: 16px !important;
+          color: var(--portal-status-info);
         }
       }
     }
@@ -670,28 +721,157 @@
   }
 }
 
+.center-column {
+  :deep(.card.app-function-card) {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+
+    .card-header {
+      padding: 0 0 16px 8px;
+      margin-bottom: 0;
+
+      .card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--portal-text-primary);
+        letter-spacing: 0.5px;
+        opacity: 0.95;
+        text-transform: uppercase;
+        background: none;
+        -webkit-text-fill-color: initial;
+      }
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 0;
+
+      .app-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 20px 12px;
+
+
+        background: var(--portal-bg-card);
+        border-radius: 20px;
+        border: 1px solid transparent;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+          border-color: var(--portal-status-info);
+
+          .app-icon-box {
+            transform: scale(1.1);
+            background: var(--portal-status-info-bg);
+
+            :deep(.iconify),
+            :deep(svg) {
+              color: var(--portal-status-info);
+            }
+          }
+
+          .app-name {
+            color: var(--portal-status-info);
+            font-weight: 600;
+          }
+        }
+
+        .app-icon-box {
+          width: 56px;
+          height: 56px;
+          border-radius: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+          // Use portal-bg-page for contrast inside the card
+          background: var(--portal-bg-page);
+          border: 1px solid transparent;
+
+          :deep(.iconify),
+          :deep(svg) {
+            width: 28px !important;
+            height: 28px !important;
+            color: var(--portal-text-secondary);
+            transition: all 0.3s ease;
+          }
+        }
+
+        .app-name {
+          font-size: 13px;
+          color: var(--portal-text-primary);
+          font-weight: 500;
+          text-align: center;
+          letter-spacing: 0.2px;
+          transition: color 0.3s;
+        }
+      }
+    }
+  }
+}
+
 // 右侧栏
 .right-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
   .weather-card {
   background: linear-gradient(135deg, #F5E6B3 0%, #FFD966 40%, #FFCC4D 70%, #FFB930 100%);
-  border-radius: 14px;
-  padding: 24px 20px 20px;
+  border-radius: 16px; // Match standard
+  padding: 24px 20px 24px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 3px 12px rgba(255, 185, 48, 0.18);
+  box-shadow: 0 8px 24px rgba(255, 185, 48, 0.2); // Richer shadow
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(255, 185, 48, 0.3);
+  }
 
   .weather-circle {
     position: absolute;
-    top: -55px;
-    right: -55px;
-    width: 160px;
-    height: 160px;
-    background: rgba(255, 255, 255, 0.12);
+    top: -60px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+
+    // Liquid Sun/Orb Effect
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.05) 70%);
+    backdrop-filter: blur(12px);
     border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 0 40px rgba(255, 185, 48, 0.4),
+      inset 0 0 20px rgba(255, 255, 255, 0.2);
+
+    transform: rotate(-15deg);
+  }
+
+  // Add a secondary decorative element
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: -20px;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    filter: blur(20px);
+    pointer-events: none;
   }
 
   .weather-header {
@@ -748,10 +928,17 @@
     display: flex;
     justify-content: space-between;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.45);
-    border-radius: 12px;
+
+    // Liquid Glass Detail Box
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
     padding: 16px 14px;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 8px 16px rgba(255, 185, 48, 0.15),
+      inset 0 1px 2px rgba(255, 255, 255, 0.8),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 
     .detail-item {
       flex: 1;
@@ -881,10 +1068,21 @@
   }
 }
 
-// 响应式
+// 响应式布局优化
 @media (max-width: 1600px) {
+  .left-column {
+    flex: 0 0 300px;
+    width: 300px;
+  }
+  .right-column {
+    flex: 0 0 300px;
+    width: 300px;
+  }
   .main-content {
-    padding: 16px 40px;
+    padding: 24px 32px; // Slightly reduced padding
+  }
+  .content-grid {
+    gap: 24px;
   }
 }
 
@@ -892,76 +1090,78 @@
   .app-function-card .app-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-}
-
-@media (max-width: 1200px) {
-  .main-content {
-    padding: 16px 24px;
-  }
 
   .content-grid {
     flex-wrap: wrap;
   }
-
+  .right-column {
+    order: 3;
+    flex: 1 1 100%;
+    width: 100%;
+    flex-direction: row;
+    display: none;
+  }
   .left-column {
-    min-width: 260px;
-    max-width: none;
+    flex: 0 0 280px;
+    width: 280px;
   }
-
   .center-column {
-    flex: 1 1 calc(100% - 280px);
+    flex: 1;
     min-width: 0;
-    max-width: none;
   }
+}
 
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 20px 24px;
+  }
+  .content-grid {
+    flex-direction: column;
+  }
+  .left-column, .center-column, .right-column {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+  .left-column {
+    order: 2;
+  }
+  .center-column {
+    order: 1;
+  }
   .right-column {
     display: none;
   }
 
-  .app-function-card .app-grid {
-    grid-template-columns: repeat(4, 1fr);
+  .app-shortcuts {
+    padding: 20px 24px;
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .main-content {
-    padding: 16px 16px;
+    padding: 16px;
   }
+  .app-shortcuts {
+    padding: 16px;
 
-  .content-grid {
-    flex-direction: column;
-  }
-
-  .left-column,
-  .center-column {
-    flex: 1 1 100%;
-    max-width: none;
-  }
-
-  .left-column {
-    order: 2;
-  }
-
-  .center-column {
-    order: 1;
-  }
-
-  .app-function-card .app-grid {
-    grid-template-columns: repeat(4, 1fr);
+    .shortcut-item {
+      min-width: calc(50% - 8px); // 2 per row
+    }
   }
 }
 
 // 子应用推送数据卡片 - 优雅设计
 .micro-app-data-card {
-  margin-bottom: 20px;
+  margin-bottom: 24px; // Increased margin
   overflow: hidden;
   border: 1px solid var(--portal-border);
-  border-radius: 12px;
+  border-radius: 16px; // Match standard
   background: linear-gradient(135deg, rgba(24, 160, 88, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    box-shadow: 0 4px 16px rgba(24, 160, 88, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(24, 160, 88, 0.15);
     border-color: rgba(24, 160, 88, 0.3);
   }
 
@@ -1001,12 +1201,20 @@
         min-width: 22px;
         height: 22px;
         padding: 0 6px;
-        background: linear-gradient(135deg, #18a058 0%, #36ad6a 100%);
+
+        // Liquid Green
+        background: linear-gradient(135deg, rgba(24, 160, 88, 0.9) 0%, rgba(54, 173, 106, 0.9) 100%);
+        backdrop-filter: blur(4px);
+        box-shadow:
+          0 4px 8px rgba(24, 160, 88, 0.25),
+          inset 0 2px 3px rgba(255, 255, 255, 0.35),
+          inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+
         color: white;
         font-size: 12px;
         font-weight: 600;
         border-radius: 11px;
-        box-shadow: 0 2px 6px rgba(24, 160, 88, 0.3);
       }
     }
 

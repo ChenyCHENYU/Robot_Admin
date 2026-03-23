@@ -21,30 +21,47 @@
         class="header-content w-full h-full flex items-center justify-between"
       >
         <!-- 左侧：折叠菜单或 Logo -->
-        <div class="flex items-center">
+        <div class="flex items-center h-full gap-12px">
           <!-- 折叠按钮 -->
-          <div
+          <NTooltip
             v-if="props.showCollapse"
             id="guide-menu-collapse"
+            placement="bottom"
           >
-            <NTooltip>
-              <template #trigger>
-                <NButton
-                  text
-                  @click="handleCollapsedChange(!isCollapsed)"
-                >
-                  <i
-                    :class="[
-                      'transition-all duration-300 ease-in-out',
-                      isCollapsed
-                        ? 'i-ri:menu-fold-4-fill rotate-0'
-                        : 'i-ri:menu-fold-3-fill rotate-360',
-                    ]"
-                  ></i>
-                </NButton>
-              </template>
-              折叠菜单
-            </NTooltip>
+            <template #trigger>
+              <button
+                class="collapse-trigger"
+                :class="{ 'is-collapsed': isCollapsed }"
+                @click="handleCollapsedChange(!isCollapsed)"
+              >
+                <i
+                  :class="[
+                    'text-18px transition-transform duration-300 ease-in-out',
+                    isCollapsed ? 'i-ri:side-bar-fill' : 'i-ri:side-bar-line',
+                  ]"
+                ></i>
+              </button>
+            </template>
+            {{ isCollapsed ? '展开菜单' : '收起菜单' }}
+          </NTooltip>
+
+          <!-- 分隔线（折叠按钮和面包屑之间） -->
+          <div
+            v-if="props.showCollapse && props.showBreadcrumb"
+            class="h-16px w-1px bg-gray-200 dark:bg-gray-700 op-60"
+          ></div>
+
+          <!-- 面包屑导航（左侧模式，主应用布局用） -->
+          <div
+            v-if="props.showCollapse && props.showBreadcrumb"
+            v-show="settingsStore.showBreadcrumb"
+            class="flex-1 min-w-0 h-full flex items-center"
+          >
+            <C_Breadcrumb
+              :label-formatter="translateRouteTitle"
+              :show-icon="settingsStore.showBreadcrumbIcon"
+              @select="router.push"
+            />
           </div>
 
           <!-- Logo 标识 -->
@@ -70,9 +87,9 @@
           </div>
         </div>
 
-        <!-- 中间：面包屑导航 -->
+        <!-- 中间：面包屑导航（居中模式，门户/微应用容器用） -->
         <div
-          v-if="props.showBreadcrumb"
+          v-if="!props.showCollapse && props.showBreadcrumb"
           class="flex-1 min-w-0"
           :style="{
             visibility: settingsStore.showBreadcrumb ? 'visible' : 'hidden',
@@ -230,7 +247,9 @@
                             v-if="subItem.isSubGroup"
                             class="third-level-group"
                           >
-                            <div class="third-level-title">{{ subItem.name }}</div>
+                            <div class="third-level-title">{{
+                              subItem.name
+                            }}</div>
                             <div
                               v-for="thirdItem in subItem.children"
                               :key="thirdItem.name"
@@ -238,7 +257,9 @@
                               @click="handleMenuClick(thirdItem)"
                             >
                               <span class="item-dot"></span>
-                              <span class="item-name">{{ thirdItem.name }}</span>
+                              <span class="item-name">{{
+                                thirdItem.name
+                              }}</span>
                               <i
                                 :class="[
                                   isFavorite(thirdItem.path)

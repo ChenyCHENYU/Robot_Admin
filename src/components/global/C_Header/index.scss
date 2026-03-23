@@ -1,20 +1,30 @@
 // C_Header 组件样式
 
-// 折叠按钮对齐调整
-#guide-menu-collapse {
-  display: flex;
+// 折叠按钮样式
+.collapse-trigger {
+  display: inline-flex;
   align-items: center;
-  transform: translateY(1px);
-
-  :deep(.n-button) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    i {
-      display: flex;
-      align-items: center;
+  justify-content: center;
+  width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--app-text-secondary, #666);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+  
+    &:hover {
+      background: var(--app-hover-bg, rgba(99, 102, 241, 0.08));
+      color: #6366f1;
     }
+
+    &:active {
+      transform: scale(0.92);
+    }
+&.is-collapsed i {
+  transform: scaleX(-1);
   }
 }
 

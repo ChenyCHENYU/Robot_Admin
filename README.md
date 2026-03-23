@@ -52,8 +52,8 @@
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/micro-app">
           <img src="https://img.shields.io/badge/查看代码-feature/micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/micro-app/docs/MICRO_APP_GUIDE.md">
-          <img src="https://img.shields.io/badge/架构指南-GUIDE-orange?style=flat-square" alt="MicroApp Docs">
+        <a href="./docs/微前端架构最佳实践.md">
+          <img src="https://img.shields.io/badge/最佳实践-GUIDE-orange?style=flat-square" alt="MicroApp Best Practices">
         </a>
       </td>
     </tr>
@@ -117,7 +117,7 @@ Robot Admin 提供多种架构选择，满足不同规模和场景的需求：
 | **🏗️ 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用               | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | 本文档                                                                                                                |
 | **📦 Monorepo** | 多应用统一管理       | 代码复用、统一工具链、独立部署   | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                    |
 | **🔮 模块联邦** | 微应用动态加载       | 运行时共享、独立部署、版本隔离   | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
-| **🚀 微前端**   | 大型应用、团队协作   | 技术栈无关、独立部署、渐进式迁移 | [`feature/microapp-portal`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal)     | [查看文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md)                         |
+| **🚀 微前端**   | 大型应用、团队协作   | 技术栈无关、独立部署、渐进式迁移 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | [最佳实践](./docs/微前端架构最佳实践.md)                                                                              |
 
 ### 📦 Monorepo 架构亮点
 

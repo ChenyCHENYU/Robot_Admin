@@ -36,10 +36,12 @@ const EAGER_DASH = import.meta.glob('@/views/dashboard/**/*.vue', {
 })
 
 // 其他页面使用懒加载 - 按需加载，减小初始包体积
-const LAZY_MODULES = import.meta.glob('@/views/**/!(home|dashboard)*.vue')
+// ⚠️ Vite 8 (Rolldown/Oxc) 不支持 extglob 否定模式 !(pattern)*
+// 改用通用 glob 匹配所有 vue 文件，eager 模块会覆盖同名 lazy 模块
+const LAZY_MODULES = import.meta.glob('@/views/**/*.vue')
 
-// 合并所有模块映射
-const VIEW_MODULES = { ...EAGER_MODULES, ...EAGER_DASH, ...LAZY_MODULES }
+// 合并所有模块映射（eager 优先，覆盖 lazy 中的同路径模块）
+const VIEW_MODULES = { ...LAZY_MODULES, ...EAGER_MODULES, ...EAGER_DASH }
 
 /**
  * 路径规范化处理
