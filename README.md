@@ -112,7 +112,7 @@
 | **定位**       | 企业级微前端系统架构模板，可直接用于生产                                                |
 | **核心框架**   | [@micro-zoe/micro-app](https://micro-zoe.github.io/micro-app/) v1.0.0-rc.29（京东开源） |
 | **沙箱模式**   | iframe 沙箱（Vite 8 原生兼容，零配置）                                                  |
-| **集成演示**   | 内置智慧物流子应用（`sys-mock/logistics`，端口 3003）                                   |
+| **集成演示**   | 内置智慧物流子应用（`micro-apps/logistics`，端口 3003）                                 |
 | **门户工作台** | 统一系统入口，多子应用切换管理                                                          |
 | **通信机制**   | `data` 绑定 + `PostMessage` + `setData` 全局广播                                        |
 | **主题同步**   | 主应用 Dark/Light 模式实时同步所有子应用                                                |
@@ -168,7 +168,7 @@ bun install
 ### 第三步：安装子应用依赖
 
 ```bash
-cd sys-mock/logistics
+cd micro-apps/logistics
 bun install
 cd ../..
 ```
@@ -180,7 +180,7 @@ cd ../..
 bun run dev
 
 # 终端 2 — 启动子应用：智慧物流（端口 3003）
-cd sys-mock/logistics && bun run dev
+cd micro-apps/logistics && bun run dev
 ```
 
 访问 **http://localhost:1988** → 点击「门户工作台」→ 选择「智慧物流管理系统」即可体验微前端集成效果。
@@ -197,7 +197,7 @@ bun run lint          # 代码检查
 bun run format        # 代码格式化
 bun run cz            # 规范化提交
 
-# 子应用（sys-mock/logistics 目录）
+# 子应用（micro-apps/logistics 目录）
 bun run dev           # 开发（端口 3003）
 bun run build         # 生产构建
 bun run preview       # 本地预览
@@ -259,54 +259,64 @@ main.ts → setupMicroApp()       ← micro-app 框架初始化（早于 Vue 实
 
 ## 📂 目录结构
 
-> 遵循 micro-app 官方社区最佳实践：`主应用 + 共享契约层 + 子应用 + 文档`
+> 遵循 [micro-app 官方社区最佳实践](./docs/微前端架构最佳实践.md)：**主应用 / shared 契约层 / micro-apps 子应用 / docs 文档** 四层分离。
 
 ```
 Robot_Admin/
 │
-│   ─── 主应用（官方: main-app/）───
+├── src/                    # 主应用（Robot Admin 系统本身）
+├── shared/                 # ★ 微前端共享契约层（主子通信协议）
+├── micro-apps/             # ★ 微前端子应用（独立项目，可随时抽仓）
+├── docs/                   # 架构文档（最佳实践、选型分析）
 │
-├── src/                              # 主应用源码
-│   ├── config/
-│   │   ├── microApps.ts              # ★ 子应用配置中心（ID/URL/多环境地址）
-│   │   └── systemTitles.ts           # 路由标题映射
-│   ├── plugins/micro-app.ts          # ★ micro-app 框架初始化插件
-│   ├── types/micro-app.d.ts          # Window 扩展 + micro-app 模块声明
-│   ├── router/
-│   │   ├── publicRouter.ts           # 静态路由（/portal、/micro-app/:id）
-│   │   ├── dynamicRouter.ts          # 后端动态路由解析
-│   │   └── permission.ts             # 路由守卫（门户重定向 + 微前端放行）
-│   ├── components/global/
-│   │   ├── C_Header/                 # 系统顶部导航（门户按钮 + 系统菜单抽屉）
-│   │   └── C_Favorites/              # 路由收藏卡片
-│   ├── views/
-│   │   ├── portal/                   # ★ 门户工作台（三栏布局，系统聚合入口）
-│   │   ├── micro-app/                # ★ 微应用容器（<micro-app> + 通信管理）
-│   │   ├── home/                     # 主应用首页
-│   │   ├── dashboard/                # 数据看板
-│   │   ├── demo/                     # 54+ 功能演示页
-│   │   └── sys-manage/               # 系统管理
-│   └── stores/favorites/             # 收藏 Store（持久化）
-│
-│   ─── 共享契约层（官方: shared/）───
-│
-├── shared/                           # ★ 主子应用共享层（通信协议契约）
-│   ├── types/index.ts                # 通信数据接口（MicroAppData/Payload）
-│   ├── constants/index.ts            # PostMessage 消息类型 + 事件名 + 存储键
-│   └── utils/index.ts                # 共享工具（createMessage/parseMessage）
-│
-│   ─── 子应用（官方: sub-apps/）───
-│
-├── sys-mock/                         # 开发联调用子应用（本地 Mock）
-│   └── logistics/                    # 智慧物流（Vue3 + Vite，端口 3003）
-│       ├── src/microApp.ts           # 微前端通信桥接（使用 @shared 常量）
-│       └── vite.config.ts            # CORS + @shared 别名配置
-│
-├── docs/                             # 架构文档
-│   └── 微前端架构最佳实践.md          # ★ 14 章完整指南
-│
-└── [配置文件]                         # vite.config.ts / tsconfig.json / vercel.json
+├── vite.config.ts          # 主应用构建配置
+├── tsconfig.json           # TypeScript 配置
+├── vercel.json             # 主应用 Vercel 部署（SPA 重写 + 安全头 + 缓存策略）
+├── .vercelignore           # 排除 micro-apps/ 防止 Vercel 误判为 Monorepo
+└── package.json            # 主应用依赖（含 @micro-zoe/micro-app）
 ```
+
+### 四层详解
+
+#### `src/` — 主应用（对应官方 `main-app/`）
+
+Robot Admin 项目根目录即主应用，`src/` 包含全量业务代码。微前端相关模块：
+
+| 文件 / 目录                       | 职责                                   |
+| --------------------------------- | -------------------------------------- |
+| `src/config/microApps.ts`         | ★ 子应用注册表（ID / 多环境地址）      |
+| `src/plugins/micro-app.ts`        | ★ `microApp.start()` 框架初始化        |
+| `src/views/portal/`               | ★ 门户工作台（三栏布局，系统聚合入口） |
+| `src/views/micro-app/`            | ★ 微应用容器（`<micro-app>` 渲染）     |
+| `src/types/micro-app.d.ts`        | Window 扩展 + 模块声明                 |
+| `src/router/publicRouter.ts`      | `/portal` + `/micro-app/:id` 路由      |
+| `src/components/global/C_Header/` | 系统顶部导航（门户按钮 + 菜单抽屉）    |
+
+#### `shared/` — 微前端共享契约层（对应官方 `shared/`）
+
+主应用团队维护，所有子应用消费。通过 `@shared/*` 路径别名导入：
+
+| 文件                        | 内容                                         |
+| --------------------------- | -------------------------------------------- |
+| `shared/constants/index.ts` | 12 种 PostMessage 消息类型 + 事件名 + 存储键 |
+| `shared/types/index.ts`     | 通信数据接口（MicroAppData / Payload 等）    |
+| `shared/utils/index.ts`     | `createMessage()` / `parseMessage()` 工具    |
+
+#### `micro-apps/` — 微前端子应用（对应官方 `sub-apps/`）
+
+每个子目录是一个**独立完整的项目**（独立 `package.json` / `vite.config.ts` / `tsconfig.json`），可随时拆分为独立仓库：
+
+| 子应用                  | 技术栈               | 端口 | 说明                            |
+| ----------------------- | -------------------- | ---- | ------------------------------- |
+| `micro-apps/logistics/` | Vue 3 + Vite + Naive | 3003 | 智慧物流（运单/仓储/车辆/路线） |
+
+> 生产环境中子应用**独立部署到各自服务器**，`micro-apps/` 仅用于开发联调和模板参考。
+
+#### `docs/` — 架构文档
+
+| 文件                    | 内容                                       |
+| ----------------------- | ------------------------------------------ |
+| `微前端架构最佳实践.md` | 架构分析、选型决策、演进路线、维护迭代计划 |
 
 ---
 
@@ -552,36 +562,32 @@ bun run build:staging   # 使用 staging 地址
 - [ ] 子应用生产服务器已配置 `Access-Control-Allow-Origin`
 - [ ] `microApps.ts` 各子应用 `prod` 字段已填写生产 URL
 - [ ] 主应用 SPA 重写规则已配置（`vercel.json` 已包含）
-- [ ] `.vercelignore` 已排除 `sys-mock/`
+- [ ] `.vercelignore` 已排除 `micro-apps/`（已配置）
 
 ---
 
-## ��� 深入阅读
+## ❓ 常见问题（FAQ）
+
+| 问题                         | 原因                                         | 解决方案                                                          |
+| ---------------------------- | -------------------------------------------- | ----------------------------------------------------------------- |
+| 子应用静态资源 404           | 相对路径被主应用 URL 解析拦截                | 子应用 `vite.config.ts` 设置 `base` 为完整 URL                    |
+| 子应用 HMR 不生效            | 沙箱拦截 WebSocket                           | 确保 `disable-patch-request: false`（已默认配置）                 |
+| ESLint 报 `<micro-app>` 错误 | `vue/component-name-in-template-casing` 规则 | 添加 `<!-- eslint-disable-next-line -->` 注释                     |
+| 子应用全局变量污染           | with 沙箱对 `var` 声明无法拦截               | 使用 `iframe` 沙箱（已配置为默认）                                |
+| 子应用路由跳转不生效         | iframe 沙箱隔离了 `history`                  | 通过 PostMessage `MICRO_APP_NAVIGATE` 通知主应用跳转              |
+| 子应用 Vue Devtools 无法调试 | iframe 沙箱隔离了 devtools 注入              | 直接访问 `http://localhost:3003` 独立调试                         |
+| 微应用间样式冲突             | 多子应用同时渲染时全局样式互影响             | iframe 沙箱天然隔离（无此问题）                                   |
+| 子应用加载白屏               | CORS / URL / 网络问题                        | 检查：独立访问 → CORS 头 → 控制台错误 → `getMicroAppUrl()` 返回值 |
+
+---
+
+## 📚 深入阅读
 
 | 文档                                                         | 内容                                              |
 | ------------------------------------------------------------ | ------------------------------------------------- |
-| [微前端架构最佳实践](./docs/微前端架构最佳实践.md)           | 14 章完整指南：选型、通信、性能、部署、扩展路线图 |
+| [微前端架构最佳实践](./docs/微前端架构最佳实践.md)           | 架构分析、策略规划、改进建议、迭代路线图（11 章） |
 | [micro-app 官方文档](https://micro-zoe.github.io/micro-app/) | API、沙箱配置、生命周期参考                       |
-| [子应用部署指南](./sys-mock/logistics/DEPLOYMENT.md)         | 智慧物流子应用完整部署说明                        |
-
-**最佳实践文档章节：**
-
-```
-一、方案选型对比     → micro-app vs qiankun vs wujie vs Module Federation
-二、系统架构总览     → 拓扑图 + 设计原则 + 启动流程
-三、目录结构规范     → 官方最佳实践 / 当前实现 / 建议演进
-四、核心模块详解     → Plugin + Config + Container + Portal
-五、主子应用通信     → data绑定 + PostMessage + setGlobalData
-六、沙箱与样式隔离   → iframe vs Proxy + CSS 隔离策略
-七、性能优化策略     → preFetch + keep-alive + globalAssets
-八、本地开发调试     → 多窗口 + DevTools + 跨域技巧
-九、新增子应用指南   → 4步完整流程
-十、团队协作模式     → Git 规范 + 接口契约 + CI/CD
-十一、部署方案       → 独立部署 + Nginx + CDN + Docker
-十二、缺失功能建议   → preFetch + 错误边界 + 全局状态封装
-十三、常见问题排错   → 跨域 / 路由冲突 / 样式泄漏 / 白屏
-十四、扩展路线图     → Phase 2 功能 + shared 契约包
-```
+| [子应用部署指南](./micro-apps/logistics/DEPLOYMENT.md)       | 智慧物流子应用完整部署说明                        |
 
 ---
 

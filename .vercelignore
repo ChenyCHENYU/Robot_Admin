@@ -5,7 +5,7 @@ node_modules
 dist
 .vscode
 .idea
-sys-mock
+micro-apps
 scripts
 docs
 lang

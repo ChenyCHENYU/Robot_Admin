@@ -165,7 +165,7 @@ bun install
 **Step 3 — Install sub-app dependencies**
 
 ```bash
-cd sys-mock/logistics
+cd micro-apps/logistics
 bun install
 cd ../..
 ```
@@ -177,7 +177,7 @@ cd ../..
 bun run dev
 
 # Terminal 2 — Logistics sub-app (port 3003)
-cd sys-mock/logistics && bun run dev
+cd micro-apps/logistics && bun run dev
 ```
 
 **Access**:
@@ -226,7 +226,7 @@ cd sys-mock/logistics && bun run dev
 │  │  ┌──────────────────────────┐   ┌────────────────────────────────┐ │ │
 │  │  │  logistics (port 3003)   │   │  future-app (port xxxx)        │ │ │
 │  │  │  Smart Logistics System  │   │  Any Vue/React/Angular app     │ │ │
-│  │  │  sys-mock/logistics/     │   │  team B independent dev        │ │ │
+│  │  │  micro-apps/logistics/     │   │  team B independent dev        │ │ │
 │  │  └──────────────────────────┘   └────────────────────────────────┘ │ │
 │  └─────────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────┘
@@ -255,54 +255,60 @@ Navigate to "Smart Logistics" menu   → micro-app container loads sub-app
 
 ## 📂 Directory Structure
 
-> Follows micro-app official community best practices: `main-app + shared contract layer + sub-apps + docs`
+> Follows [micro-app official best practices](./docs/微前端架构最佳实践.md): **main-app / shared contract / micro-apps / docs** — four-layer separation.
 
 ```
 Robot_Admin/
 │
-│   ─── Main App (official: main-app/) ───
+├── src/                    # Main app (Robot Admin system itself)
+├── shared/                 # ★ Micro-frontend shared contract layer
+├── micro-apps/             # ★ Micro-frontend sub-apps (independent projects)
+├── docs/                   # Architecture documentation
 │
-├── src/                              # Main app source
-│   ├── config/
-│   │   ├── microApps.ts              # ★ Sub-app config center (ID/URL/multi-env)
-│   │   └── systemTitles.ts           # Route title mappings
-│   ├── plugins/micro-app.ts          # ★ micro-app framework init plugin
-│   ├── types/micro-app.d.ts          # Window extensions + micro-app module declarations
-│   ├── router/
-│   │   ├── publicRouter.ts           # Static routes (/portal, /micro-app/:id)
-│   │   ├── dynamicRouter.ts          # Backend dynamic route parser
-│   │   └── permission.ts             # Route guard (portal redirect + micro-app bypass)
-│   ├── components/global/
-│   │   ├── C_Header/                 # Top navigation (portal btn + system menu drawer)
-│   │   └── C_Favorites/              # Route favorites cards
-│   ├── views/
-│   │   ├── portal/                   # ★ Portal workspace (3-col layout, aggregated entries)
-│   │   ├── micro-app/                # ★ Micro-app container (<micro-app> + communication)
-│   │   ├── home/                     # Main app home page
-│   │   ├── dashboard/                # Data dashboard
-│   │   ├── demo/                     # 54+ feature demo pages
-│   │   └── sys-manage/               # System management
-│   └── stores/favorites/             # Favorites Store (persisted)
-│
-│   ─── Shared Contract Layer (official: shared/) ───
-│
-├── shared/                           # ★ Main-sub shared layer (communication contract)
-│   ├── types/index.ts                # Communication interfaces (MicroAppData/Payload)
-│   ├── constants/index.ts            # PostMessage types + event names + storage keys
-│   └── utils/index.ts                # Shared utils (createMessage/parseMessage)
-│
-│   ─── Sub Apps (official: sub-apps/) ───
-│
-├── sys-mock/                         # Dev sub-apps (local mock)
-│   └── logistics/                    # Smart Logistics (Vue3 + Vite, port 3003)
-│       ├── src/microApp.ts           # Micro-frontend comm bridge (uses @shared constants)
-│       └── vite.config.ts            # CORS + @shared alias config
-│
-├── docs/                             # Architecture documentation
-│   └── 微前端架构最佳实践.md          # ★ 14-chapter complete guide
-│
-└── [config files]                    # vite.config.ts / tsconfig.json / vercel.json
+├── vite.config.ts          # Main app build config
+├── tsconfig.json           # TypeScript config
+├── vercel.json             # Main app Vercel deployment (SPA rewrite + security headers + caching)
+├── .vercelignore           # Excludes micro-apps/ to prevent Vercel monorepo misdetection
+└── package.json            # Main app dependencies (includes @micro-zoe/micro-app)
 ```
+
+### Four-Layer Details
+
+#### `src/` — Main App (maps to official `main-app/`)
+
+| File / Directory                  | Purpose                                   |
+| --------------------------------- | ----------------------------------------- |
+| `src/config/microApps.ts`         | ★ Sub-app registry (ID / multi-env URLs)  |
+| `src/plugins/micro-app.ts`        | ★ `microApp.start()` framework init       |
+| `src/views/portal/`               | ★ Portal workspace (3-col, system hub)    |
+| `src/views/micro-app/`            | ★ Micro-app container (`<micro-app>`)     |
+| `src/types/micro-app.d.ts`        | Window extensions + module declarations   |
+| `src/router/publicRouter.ts`      | `/portal` + `/micro-app/:id` routes       |
+| `src/components/global/C_Header/` | Top navigation (portal btn + menu drawer) |
+
+#### `shared/` — Micro-frontend Contract Layer (maps to official `shared/`)
+
+| File                        | Content                                           |
+| --------------------------- | ------------------------------------------------- |
+| `shared/constants/index.ts` | 12 PostMessage types + event names + storage keys |
+| `shared/types/index.ts`     | Communication interfaces (MicroAppData/Payload)   |
+| `shared/utils/index.ts`     | `createMessage()` / `parseMessage()` utilities    |
+
+#### `micro-apps/` — Sub Applications (maps to official `sub-apps/`)
+
+Each subdirectory is an **independent project** (own `package.json` / `vite.config.ts`), extractable to standalone repo:
+
+| Sub-app                 | Stack                | Port | Description                              |
+| ----------------------- | -------------------- | ---- | ---------------------------------------- |
+| `micro-apps/logistics/` | Vue 3 + Vite + Naive | 3003 | Smart Logistics (orders/warehouse/fleet) |
+
+> In production, sub-apps are **deployed independently**. `micro-apps/` is for dev integration and template reference only.
+
+#### `docs/` — Architecture Documentation
+
+| File                    | Content                                           |
+| ----------------------- | ------------------------------------------------- |
+| `微前端架构最佳实践.md` | Architecture analysis, decisions, evolution plans |
 
 ## ��� Integration
 
@@ -505,8 +511,8 @@ Adding a new sub-app takes only 4 steps:
 
 ```bash
 # Example: Vue 3 sub-app
-mkdir sys-mock/new-app
-cd sys-mock/new-app
+mkdir micro-apps/new-app
+cd micro-apps/new-app
 bun create vite . --template vue-ts
 bun install
 ```
@@ -514,7 +520,7 @@ bun install
 Configure Vite dev server and CORS (required for micro-app iframe):
 
 ```typescript
-// sys-mock/new-app/vite.config.ts
+// micro-apps/new-app/vite.config.ts
 export default {
   server: {
     port: 3004, // New unique port
@@ -613,7 +619,7 @@ git push origin micro-app
 }
 ```
 
-> ⚠️ **Note:** `.vercelignore` excludes `sys-mock/` to prevent Vercel from misdetecting as Monorepo.
+> ⚠️ **Note:** `.vercelignore` excludes `micro-apps/` to prevent Vercel from misdetecting as Monorepo.
 
 ### Sub-App Nginx Config
 
@@ -658,15 +664,28 @@ VITE_APP_ENV=production
 
 ---
 
-## ��� Deep Reading
+## ❓ FAQ
 
-| Document                                                 | Description                                     |
-| -------------------------------------------------------- | ----------------------------------------------- |
-| [Best Practices (CN)](./docs/微前端架构最佳实践.md)      | 14 chapters covering architecture to deployment |
-| [Integration Guide](./docs/MICRO_APP_GUIDE.md)           | Quick integration walkthrough                   |
-| [CHANGELOG](./CHANGELOG.md)                              | Version history                                 |
-| [CONTRIBUTING](./CONTRIBUTING.md)                        | Contribution guide                              |
-| [micro-app Docs](https://micro-zoe.github.io/micro-app/) | Official framework documentation                |
+| Issue                        | Cause                                        | Solution                                                         |
+| ---------------------------- | -------------------------------------------- | ---------------------------------------------------------------- |
+| Sub-app static assets 404    | Relative paths intercepted by main app URL   | Set `base` to full URL in sub-app `vite.config.ts`               |
+| Sub-app HMR not working      | Sandbox intercepts WebSocket                 | Ensure `disable-patch-request: false` (already default)          |
+| ESLint `<micro-app>` error   | `vue/component-name-in-template-casing` rule | Add `<!-- eslint-disable-next-line -->` comment                  |
+| Global variable pollution    | with sandbox can't intercept `var`           | Use `iframe` sandbox (already default)                           |
+| Sub-app router not working   | iframe sandbox isolates `history`            | Use PostMessage `MICRO_APP_NAVIGATE` to notify main app          |
+| Vue Devtools unavailable     | iframe sandbox isolates devtools injection   | Visit `http://localhost:3003` directly for standalone debugging  |
+| Style conflicts between apps | Global styles interfere when multi-rendering | iframe sandbox provides natural isolation (no issue)             |
+| Sub-app blank screen         | CORS / URL / network issues                  | Check: direct access → CORS headers → console errors → URL value |
+
+---
+
+## 📚 Deep Reading
+
+| Document                                                   | Description                                                       |
+| ---------------------------------------------------------- | ----------------------------------------------------------------- |
+| [Best Practices (CN)](./docs/微前端架构最佳实践.md)        | Architecture analysis, strategy & iteration roadmap (11 chapters) |
+| [micro-app Docs](https://micro-zoe.github.io/micro-app/)   | Official framework documentation                                  |
+| [Sub-app Deployment](./micro-apps/logistics/DEPLOYMENT.md) | Logistics sub-app deployment guide                                |
 
 ---
 

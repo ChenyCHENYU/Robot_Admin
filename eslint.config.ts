@@ -28,7 +28,7 @@ export default defineConfigWithVueTs(
       '**/dist-ssr/**',
       '**/coverage/**',
       '**/lang/**', // 忽略 i18n 插件生成的文件
-      '**/sys-mock/**', // 忽略子应用 Mock 目录
+      '**/micro-apps/**', // 忽略微前端子应用目录
     ],
   },
 
@@ -63,7 +63,6 @@ export default defineConfigWithVueTs(
       '@typescript-eslint/no-unused-vars': 'error',
     },
   },
-
 
   //MARK: 自定义规则组（优先级最高）
   {
@@ -173,10 +172,7 @@ export default defineConfigWithVueTs(
       'no-eval': 'error',
       'prefer-const': 'warn',
       'no-var': 'warn',
-      'prefer-destructuring': [
-        1,
-        { object: true, array: false },
-      ],
+      'prefer-destructuring': [1, { object: true, array: false }],
       'no-duplicate-imports': 'error',
     },
   },

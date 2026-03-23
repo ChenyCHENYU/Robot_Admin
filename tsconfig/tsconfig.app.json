@@ -6,6 +6,8 @@
   "include": [
     "../src/**/*", // src 目录下所有文件（包含 .ts, .vue, .d.ts, .json 等）
     "../shared/**/*", // shared 共享契约层
+    "../lang/*.json", // 国际化语言文件
+    "../lang/**/*", // 国际化语言目录
     "../package.json", // 项目包配置文件
     "../src/**/*.json" // 匹配所有 JSON 文件
   ],
@@ -19,7 +21,7 @@
   ],
 
   "compilerOptions": {
-    "rootDir": "../src", // 指定 TypeScript 编译器编译的根目录
+    "rootDir": "..", // 指定 TypeScript 编译器编译的根目录（包含 src/ 和 shared/）
     // ==================== 编译输出配置 ====================
     "declaration": true, // 生成 .d.ts 类型声明文件
     "emitDeclarationOnly": true, // 只生成类型声明，不生成 JS 文件
