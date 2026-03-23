@@ -5,3 +5,7 @@ node_modules
 dist
 .vscode
 .idea
+sys-mock
+scripts
+docs
+lang
