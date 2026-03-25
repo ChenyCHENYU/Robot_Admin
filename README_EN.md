@@ -7,7 +7,7 @@
   </a>
   
   <h1>
-    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=E74C3C&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=700&height=100&lines=���+Robot+Admin;Micro-Frontend+Architecture+Template" alt="Robot Admin MicroApp" />
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=E74C3C&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=700&height=100&lines=%F0%9F%A4%96+Robot+Admin;Micro-Frontend+Architecture+Template" alt="Robot Admin MicroApp" />
   </h1>
   
   <p><strong>Robot Admin — Enterprise Micro-Frontend (MicroApp) Architecture Template</strong></p>
@@ -16,41 +16,41 @@
   <table>
     <tr>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/���️-Monolithic-4A90E2?style=for-the-badge" alt="Monolithic"><br>
+        <img src="https://img.shields.io/badge/🏠-Monolithic-4A90E2?style=for-the-badge" alt="Monolithic"><br>
         <sub><strong>Traditional SPA</strong></sub><br>
         <sub>Best for small-medium projects</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/main">
-          <img src="https://img.shields.io/badge/View Code-main-blue?style=flat-square" alt="Main Branch">
+          <img src="https://img.shields.io/badge/View+Code-main-blue?style=flat-square" alt="Main Branch">
         </a>
       </td>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/���-Monorepo-00D8FF?style=for-the-badge" alt="Monorepo"><br>
+        <img src="https://img.shields.io/badge/📦-Monorepo-00D8FF?style=for-the-badge" alt="Monorepo"><br>
         <sub><strong>Bun Workspaces</strong></sub><br>
         <sub>Multi-app management</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
-          <img src="https://img.shields.io/badge/View Code-monorepo-00D8FF?style=flat-square" alt="Monorepo Branch">
+          <img src="https://img.shields.io/badge/View+Code-monorepo-00D8FF?style=flat-square" alt="Monorepo Branch">
         </a>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo/docs/GUIDE.md">
           <img src="https://img.shields.io/badge/Full Docs-GUIDE-orange?style=flat-square" alt="Monorepo Docs">
         </a>
       </td>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/���-Module Federation-9B59B6?style=for-the-badge" alt="Module Federation"><br>
+        <img src="https://img.shields.io/badge/🔗-Module+Federation-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Webpack/Vite Federation</strong></sub><br>
         <sub>Runtime module sharing</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
-          <img src="https://img.shields.io/badge/View Code-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
+          <img src="https://img.shields.io/badge/View+Code-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
         </a>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md">
           <img src="https://img.shields.io/badge/Usage Guide-DOCS-orange?style=flat-square" alt="MF Docs">
         </a>
       </td>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/���-Micro Frontend-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
+        <img src="https://img.shields.io/badge/🚀-Micro+Frontend-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
         <sub><strong>⬅ Current Branch</strong></sub><br>
         <sub>Large apps, team collaboration</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
-          <img src="https://img.shields.io/badge/View Code-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
+          <img src="https://img.shields.io/badge/View+Code-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
 
       </td>
@@ -76,19 +76,19 @@
   <!-- Quick Navigation -->
   <p>
     <a href="https://robotadmin.cn">
-      <img src="https://img.shields.io/badge/���-Live Demo-00D8FF?style=for-the-badge&logo=vercel" alt="Live Demo">
+      <img src="https://img.shields.io/badge/🌐-Live+Demo-00D8FF?style=for-the-badge&logo=vercel" alt="Live Demo">
     </a>
     <a href="#-quick-start">
-      <img src="https://img.shields.io/badge/⚡-Quick Start-4ECDC4?style=for-the-badge&logo=rocket" alt="Quick Start">
+      <img src="https://img.shields.io/badge/⚡-Quick+Start-4ECDC4?style=for-the-badge&logo=rocket" alt="Quick Start">
     </a>
     <a href="#-add-sub-application">
-      <img src="https://img.shields.io/badge/➕-Add Sub App-FFA726?style=for-the-badge" alt="Add Sub App">
+      <img src="https://img.shields.io/badge/➕-Add+Sub+App-FFA726?style=for-the-badge" alt="Add Sub App">
     </a>
     <a href="#-sub-app-integration-guide">
-      <img src="https://img.shields.io/badge/🔌-Integration Guide-E74C3C?style=for-the-badge" alt="Integration Guide">
+      <img src="https://img.shields.io/badge/🔌-Integration+Guide-E74C3C?style=for-the-badge" alt="Integration Guide">
     </a>
     <a href="./README.md">
-      <img src="https://img.shields.io/badge/���-中文版-95E1D3?style=for-the-badge&logo=googletranslate" alt="Chinese Version">
+      <img src="https://img.shields.io/badge/🌍-中文版-95E1D3?style=for-the-badge&logo=googletranslate" alt="Chinese Version">
     </a>
   </p>
 </div>
@@ -101,7 +101,7 @@
   </p>
 </div>
 
-## ��� Branch Positioning
+## 🎯 Branch Positioning
 
 > **`micro-app` branch** is a **micro-frontend architecture template** based on [micro-app (JD Open Source)](https://micro-zoe.github.io/micro-app/), designed to provide teams with an **out-of-the-box enterprise micro-frontend solution**.
 
@@ -117,13 +117,13 @@
 
 ### Key Features
 
-- ��� **Iframe Sandbox** — Full style & JS isolation, Vite 8 compatible, zero config needed
-- ���️ **Unified Portal** — Workspace UI that aggregates all sub-apps in one view
-- ��� **Multi-channel Communication** — Data binding, event callbacks, global broadcast cover all scenarios
+- 🛡️ **Iframe Sandbox** — Full style & JS isolation, Vite 8 compatible, zero config needed
+- 🖥️ **Unified Portal** — Workspace UI that aggregates all sub-apps in one view
+- 📡 **Multi-channel Communication** — Data binding, event callbacks, global broadcast cover all scenarios
 - ⚙️ **Environment Config** — Sub-app URLs for dev/test/staging/prod auto-resolved
 - ♻️ **Keep-Alive** — `keep-alive` mode reduces repeated loading of sub-app resources
-- ��� **Independent Deployment** — Main app and sub-apps deploy independently, no coupling
-- ��� **Extensible** — Add a new sub-app in 4 steps following standard conventions
+- 🚀 **Independent Deployment** — Main app and sub-apps deploy independently, no coupling
+- 🔌 **Extensible** — Add a new sub-app in 4 steps following standard conventions
 
 ### Multi-Architecture Comparison
 
@@ -201,7 +201,7 @@ bun run dev
 | `bun run type-watch` | Real-time TypeScript check |
 | `bun run analyze`    | Bundle analysis            |
 
-## ���️ System Architecture
+## 🏗️ System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -315,7 +315,7 @@ VITE_MICRO_LOGISTICS_URL = http://localhost:3003
 VITE_MICRO_LOGISTICS_URL = https://logistics.example.com
 ```
 
-## ��� Integration
+## 🔌 Integration
 
 ### 1. Initialize micro-app (auto-called before Vue mount)
 
@@ -399,7 +399,7 @@ export function getMicroAppUrl(appId: string): string | null {
 
 ---
 
-## ���️ Portal Workspace
+## 🖥️ Portal Workspace
 
 The Portal (`src/views/portal/`) is the **unified entry** that aggregates all sub-app shortcuts.
 
@@ -420,14 +420,14 @@ The Portal (`src/views/portal/`) is the **unified entry** that aggregates all su
 
 **Portal Features:**
 
-- ��� **Shortcut bar** — Pin frequently used sub-app modules, customizable
-- ��� **User card** — Profile, role, permissions at a glance
-- ��� **Task center** — Cross-sub-app tasks and notifications aggregated
-- ��� **Fast entry** — Click sub-app icon → route to micro-app container instantly
+- ⚡ **Shortcut bar** — Pin frequently used sub-app modules, customizable
+- 👤 **User card** — Profile, role, permissions at a glance
+- 📋 **Task center** — Cross-sub-app tasks and notifications aggregated
+- ➡️ **Fast entry** — Click sub-app icon → route to micro-app container instantly
 
 ---
 
-## ��� Data Communication
+## 📡 Data Communication
 
 ### Method 1: Main → Sub (data binding)
 
@@ -473,7 +473,7 @@ microApp.setGlobalData({ theme: 'dark', locale: 'zh-CN' })
 | Theme/locale sync to all             | `setGlobalData` | dark mode toggle     |
 | Sub-app notify main-app of logout    | `@datachange`   | 401 re-login trigger |
 
-## ��� Business Scenarios
+## 💼 Business Scenarios
 
 ### Current Sub-Apps
 
@@ -652,7 +652,7 @@ window.parent.postMessage(data, MAIN_APP_ORIGIN)
 
 ---
 
-## ��� Deployment
+## 🚀 Deployment
 
 ### Core Principle: Main App and Sub-Apps Deploy Independently
 
@@ -833,7 +833,7 @@ VITE_MICRO_LOGISTICS_URL = https://logistics-test.example.com
 
 ---
 
-## ��� Contributing
+## 🤝 Contributing
 
 ```bash
 # 1. Fork & clone
@@ -852,15 +852,15 @@ git push origin feat/your-feature
 
 **Contribution Directions:**
 
-- ��� Bug fixes — sub-app loading, communication, routing issues
-- ��� New sub-app demos — React, Angular, Vue 2 sub-app examples
-- ��� Performance optimizations — bundle analysis, lazy loading strategies
-- ��� Documentation — architecture explanations, deployment guides
-- ��� DevEx — CLI tools for generating sub-app scaffolding
+- 🐛 Bug fixes — sub-app loading, communication, routing issues
+- ✨ New sub-app demos — React, Angular, Vue 2 sub-app examples
+- ⚡ Performance optimizations — bundle analysis, lazy loading strategies
+- 📚 Documentation — architecture explanations, deployment guides
+- 🛠️ DevEx — CLI tools for generating sub-app scaffolding
 
 ---
 
-## ��� License
+## 📄 License
 
 [MIT](./LICENSE) © 2026 [ChenYu (ycyplus@gmail.com)](https://github.com/ChenyCHENYU)
 

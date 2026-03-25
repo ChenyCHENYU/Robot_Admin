@@ -7,7 +7,7 @@
   </a>
   
   <h1>
-    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=E74C3C&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=700&height=100&lines=���+Robot+Admin;微前端架构模板——开箱即用" alt="Robot Admin MicroApp" />
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=E74C3C&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=700&height=100&lines=%F0%9F%A4%96+Robot+Admin;微前端架构模板——开箱即用" alt="Robot Admin MicroApp" />
   </h1>
   
   <p><strong>Robot Admin — 企业级微前端（MicroApp）架构模板</strong></p>
@@ -16,7 +16,7 @@
   <table>
     <tr>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/���️-单体架构-4A90E2?style=for-the-badge" alt="Monolithic"><br>
+        <img src="https://img.shields.io/badge/🏠-单体架构-4A90E2?style=for-the-badge" alt="Monolithic"><br>
         <sub><strong>传统 SPA</strong></sub><br>
         <sub>中小型项目首选</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/main">
@@ -24,7 +24,7 @@
         </a>
       </td>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/���-Monorepo-00D8FF?style=for-the-badge" alt="Monorepo"><br>
+        <img src="https://img.shields.io/badge/📦-Monorepo-00D8FF?style=for-the-badge" alt="Monorepo"><br>
         <sub><strong>Bun Workspaces</strong></sub><br>
         <sub>多应用统一管理</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
@@ -35,7 +35,7 @@
         </a>
       </td>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/���-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
+        <img src="https://img.shields.io/badge/🔗-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Module Federation</strong></sub><br>
         <sub>运行时模块共享</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
@@ -46,7 +46,7 @@
         </a>
       </td>
       <td align="center" width="200">
-        <img src="https://img.shields.io/badge/���-微前端-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
+        <img src="https://img.shields.io/badge/🚀-微前端-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
         <sub><strong>⬅ 当前分支</strong></sub><br>
         <sub>大型系统、团队协作</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
@@ -76,7 +76,7 @@
   <!-- 快速导航 -->
   <p>
     <a href="https://robotadmin.cn">
-      <img src="https://img.shields.io/badge/���-在线体验-00D8FF?style=for-the-badge&logo=vercel" alt="Live Demo">
+      <img src="https://img.shields.io/badge/🌐-在线体验-00D8FF?style=for-the-badge&logo=vercel" alt="Live Demo">
     </a>
     <a href="#-快速开始">
       <img src="https://img.shields.io/badge/⚡-快速开始-4ECDC4?style=for-the-badge&logo=rocket" alt="Quick Start">
@@ -88,7 +88,7 @@
       <img src="https://img.shields.io/badge/🔌-接入指南-E74C3C?style=for-the-badge" alt="Integration Guide">
     </a>
     <a href="./README_EN.md">
-      <img src="https://img.shields.io/badge/���-English-95E1D3?style=for-the-badge&logo=googletranslate" alt="English Version">
+      <img src="https://img.shields.io/badge/🌍-English-95E1D3?style=for-the-badge&logo=googletranslate" alt="English Version">
     </a>
   </p>
 </div>
@@ -100,7 +100,7 @@
     <strong>中文</strong> | <a href="./README_EN.md">English</a>
   </p>
 </div>
-## ��� 分支定位
+## 🎯 分支定位
 
 > **`micro-app` 分支是一个完整的企业级微前端架构模板，基于 `@micro-zoe/micro-app` 实现，开箱即用。**
 
@@ -129,16 +129,16 @@ micro-app ← 你在这里
 
 ---
 
-## ��� 多架构对照
+## 📊 多架构对照
 
 Robot Admin 提供多种架构，按业务规模自由选择：
 
-| 架构类型         | 适用场景             | 特点                 | 分支                                                                                                     | 文档                                                                                                                  |
-| ---------------- | -------------------- | -------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **���️ 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用   | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | 本项目主文档                                                                                                          |
-| **��� Monorepo** | 多应用统一管理       | 代码复用、统一工具链 | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                    |
-| **��� 模块联邦** | 微应用动态加载       | 运行时共享、版本隔离 | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
-| **🧩 微前端** ←  | 大型应用、团队协作   | 技术栈无关、独立部署 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | 本文档                                                                                                                |
+| 架构类型        | 适用场景             | 特点                 | 分支                                                                                                     | 文档                                                                                                                  |
+| --------------- | -------------------- | -------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **🏠 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用   | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | 本项目主文档                                                                                                          |
+| **📦 Monorepo** | 多应用统一管理       | 代码复用、统一工具链 | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                    |
+| **🔗 模块联邦** | 微应用动态加载       | 运行时共享、版本隔离 | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
+| **🧩 微前端** ← | 大型应用、团队协作   | 技术栈无关、独立部署 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | 本文档                                                                                                                |
 
 ---
 
@@ -209,7 +209,7 @@ bun run preview       # 本地预览
 
 ---
 
-## ���️ 系统架构
+## 🏗️ 系统架构
 
 ### 总体拓扑
 
@@ -354,7 +354,7 @@ export const MICRO_APPS: Record<string, MicroAppConfig> = {
     id: 'logistics',
     name: '智慧物流管理系统',
     url: import.meta.env.VITE_MICRO_LOGISTICS_URL || 'http://localhost:3003',
-    icon: '���',
+    icon: '🚚',
     description: '物流运输、仓储管理、车辆调度',
   },
 }
@@ -384,7 +384,7 @@ export const MICRO_APPS: Record<string, MicroAppConfig> = {
 
 ---
 
-## ���️ 门户工作台
+## 🖥️ 门户工作台
 
 Portal（`src/views/portal/`）是整个微前端系统的**统一入口**，三栏式工作台布局：
 
@@ -406,7 +406,7 @@ Portal（`src/views/portal/`）是整个微前端系统的**统一入口**，三
 
 ---
 
-## ��� 数据通信
+## 📡 数据通信
 
 ### 方式一：`data` 绑定（主 → 子，推荐）
 
@@ -455,15 +455,15 @@ window.microApp?.addGlobalDataListener((data: any) => applyTheme(data.theme))
 
 ---
 
-## ��� 业务场景
+## 💼 业务场景
 
 ### 当前集成的子应用
 
-| 子应用           | 技术栈                    | 端口 | 功能模块                           | 状态       |
-| ---------------- | ------------------------- | ---- | ---------------------------------- | ---------- |
-| 智慧物流管理系统 | Vue 3 + Vite 8 + Naive UI | 3003 | 运单管理、车辆调度、仓储、路线规划 | ✅ 已集成  |
-| 智能仓储系统     | —                         | 3004 | 库存管理、出入库、盘点             | ��� 待集成 |
-| 数据分析平台     | —                         | 3005 | BI 报表、实时看板                  | ��� 待集成 |
+| 子应用           | 技术栈                    | 端口 | 功能模块                           | 状态      |
+| ---------------- | ------------------------- | ---- | ---------------------------------- | --------- |
+| 智慧物流管理系统 | Vue 3 + Vite 8 + Naive UI | 3003 | 运单管理、车辆调度、仓储、路线规划 | ✅ 已集成 |
+| 智能仓储系统     | —                         | 3004 | 库存管理、出入库、盘点             | ⏳ 待集成 |
+| 数据分析平台     | —                         | 3005 | BI 报表、实时看板                  | ⏳ 待集成 |
 
 ### 典型业务场景
 
@@ -488,7 +488,7 @@ warehouse: {
   name: '智能仓储系统',
   dev: 'http://localhost:3004',
   prod: 'https://warehouse.example.com',
-  icon: '���',
+  icon: '🚚',
   description: '仓库管理、库存盘点、出入库',
 },
 ```
@@ -528,7 +528,7 @@ history: createWebHistory(window.__MICRO_APP_BASE_ROUTE__ || '/')
 
 ---
 
-## ��� 部署方案
+## 🚀 部署方案
 
 ### 独立部署原则
 
@@ -672,7 +672,7 @@ bun run build:staging   # 使用 staging 地址
 
 ---
 
-## ��� 参与贡献
+## 🤝 参与贡献
 
 ```bash
 git clone -b micro-app https://github.com/yourusername/Robot_Admin.git
@@ -688,7 +688,7 @@ bun run cz
 
 ---
 
-## ��� 许可证
+## 📄 许可证
 
 [MIT](./LICENSE) © 2026 [ChenYu](mailto:ycyplus@gmail.com)
 
@@ -696,13 +696,13 @@ bun run cz
 
 <div align="center">
   <p>
-    <strong>��� Robot Admin micro-app — 让微前端架构从复杂回归简单</strong>
+    <strong>🤖 Robot Admin micro-app — 让微前端架构从复杂回归简单</strong>
   </p>
   <p>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">⭐ 给个 Star</a> ·
 
-    <a href="https://robotadmin.cn">��� 在线体验</a> ·
-    <a href="https://github.com/ChenyCHENYU/Robot_Admin/issues">��� 提交 Issue</a>
+    <a href="https://robotadmin.cn">🌐 在线体验</a> ·
+    <a href="https://github.com/ChenyCHENYU/Robot_Admin/issues">🐛 提交 Issue</a>
 
   </p>
 </div>
