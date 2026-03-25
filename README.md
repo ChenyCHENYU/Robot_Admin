@@ -52,7 +52,6 @@
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
           <img src="https://img.shields.io/badge/查看代码-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
-
       </td>
     </tr>
 
@@ -100,6 +99,7 @@
     <strong>中文</strong> | <a href="./README_EN.md">English</a>
   </p>
 </div>
+
 ## 🎯 分支定位
 
 > **`micro-app` 分支是一个完整的企业级微前端架构模板，基于 `@micro-zoe/micro-app` 实现，开箱即用。**
@@ -700,9 +700,7 @@ bun run cz
   </p>
   <p>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">⭐ 给个 Star</a> ·
-
     <a href="https://robotadmin.cn">🌐 在线体验</a> ·
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/issues">🐛 提交 Issue</a>
-
   </p>
 </div>

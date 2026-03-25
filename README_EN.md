@@ -52,7 +52,6 @@
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
           <img src="https://img.shields.io/badge/View+Code-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
-
       </td>
     </tr>
 
