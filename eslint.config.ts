@@ -28,7 +28,6 @@ export default defineConfigWithVueTs(
       '**/dist-ssr/**',
       '**/coverage/**',
       '**/lang/**', // 忽略 i18n 插件生成的文件
-      '**/micro-apps/**', // 忽略微前端子应用目录
     ],
   },
 
