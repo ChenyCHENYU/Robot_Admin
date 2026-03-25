@@ -24,7 +24,7 @@ export const MICRO_APPS: Record<string, MicroAppConfig> = {
   logistics: {
     id: 'logistics',
     name: '智慧物流管理系统',
-    url: import.meta.env.VITE_MICRO_LOGISTICS_URL || 'http://localhost:3003',
+    url: import.meta.env.VITE_MICRO_LOGISTICS_URL || '',
     icon: '🚚',
     description: '物流运输、仓储管理、车辆调度',
   },
@@ -33,7 +33,7 @@ export const MICRO_APPS: Record<string, MicroAppConfig> = {
   // warehouse: {
   //   id: 'warehouse',
   //   name: '智能仓储系统',
-  //   url: import.meta.env.VITE_MICRO_WAREHOUSE_URL || 'http://localhost:3004',
+  //   url: import.meta.env.VITE_MICRO_WAREHOUSE_URL || '',
   //   icon: '📦',
   //   description: '仓库管理、库存盘点、出入库',
   // },

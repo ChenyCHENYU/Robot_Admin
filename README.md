@@ -52,11 +52,10 @@
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
           <img src="https://img.shields.io/badge/查看代码-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
-        <a href="./docs/微前端架构最佳实践.md">
-          <img src="https://img.shields.io/badge/最佳实践-GUIDE-orange?style=flat-square" alt="MicroApp Best Practices">
-        </a>
+
       </td>
     </tr>
+
   </table>
 
   <p>
@@ -79,14 +78,14 @@
     <a href="https://robotadmin.cn">
       <img src="https://img.shields.io/badge/���-在线体验-00D8FF?style=for-the-badge&logo=vercel" alt="Live Demo">
     </a>
-    <a href="./docs/微前端架构最佳实践.md">
-      <img src="https://img.shields.io/badge/���-最佳实践文档-E74C3C?style=for-the-badge&logo=gitbook" alt="Best Practices">
-    </a>
     <a href="#-快速开始">
       <img src="https://img.shields.io/badge/⚡-快速开始-4ECDC4?style=for-the-badge&logo=rocket" alt="Quick Start">
     </a>
     <a href="#-新增子应用">
       <img src="https://img.shields.io/badge/➕-新增子应用-FFA726?style=for-the-badge" alt="Add Sub App">
+    </a>
+    <a href="#-子应用接入指南">
+      <img src="https://img.shields.io/badge/🔌-接入指南-E74C3C?style=for-the-badge" alt="Integration Guide">
     </a>
     <a href="./README_EN.md">
       <img src="https://img.shields.io/badge/���-English-95E1D3?style=for-the-badge&logo=googletranslate" alt="English Version">
@@ -139,7 +138,7 @@ Robot Admin 提供多种架构，按业务规模自由选择：
 | **���️ 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用   | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | 本项目主文档                                                                                                          |
 | **��� Monorepo** | 多应用统一管理       | 代码复用、统一工具链 | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                    |
 | **��� 模块联邦** | 微应用动态加载       | 运行时共享、版本隔离 | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
-| **��� 微前端** ← | 大型应用、团队协作   | 技术栈无关、独立部署 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | [最佳实践](./docs/微前端架构最佳实践.md)                                                                              |
+| **🧩 微前端** ←  | 大型应用、团队协作   | 技术栈无关、独立部署 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | 本文档                                                                                                                |
 
 ---
 
@@ -264,7 +263,7 @@ main.ts → setupMicroApp()       ← micro-app 框架初始化（早于 Vue 实
 
 ## 📂 目录结构
 
-> 遵循 [micro-app 官方社区最佳实践](./docs/微前端架构最佳实践.md)：**主应用 / shared 契约层 / docs 文档** + 子应用独立项目。
+> 遵循 micro-app 官方社区最佳实践：**主应用 / shared 契约层** + 子应用独立项目。
 
 ```
 Robot_Admin/                 # 主应用项目
@@ -272,7 +271,7 @@ Robot_Admin/                 # 主应用项目
 ├── src/                    # 主应用（Robot Admin 系统本身）
 ├── shared/                 # ★ 微前端共享契约层（主子通信协议）
 ├── envs/                   # 环境变量（含 VITE_MICRO_*_URL 子应用地址）
-├── docs/                   # 架构文档（最佳实践、选型分析）
+├── docs/                   # 架构文档
 │
 ├── vite.config.ts          # 主应用构建配置
 ├── tsconfig.json           # TypeScript 配置
@@ -327,9 +326,7 @@ VITE_MICRO_LOGISTICS_URL = https://logistics.example.com
 
 #### `docs/` — 架构文档
 
-| 文件                    | 内容                                       |
-| ----------------------- | ------------------------------------------ |
-| `微前端架构最佳实践.md` | 架构分析、选型决策、演进路线、维护迭代计划 |
+项目架构分析、选型决策等补充文档。核心内容已整合到本 README 中。
 
 ---
 
@@ -593,10 +590,68 @@ bun run build:staging   # 使用 staging 地址
 
 ## 📚 深入阅读
 
-| 文档                                                         | 内容                                              |
-| ------------------------------------------------------------ | ------------------------------------------------- |
-| [微前端架构最佳实践](./docs/微前端架构最佳实践.md)           | 架构分析、策略规划、改进建议、迭代路线图（11 章） |
-| [micro-app 官方文档](https://micro-zoe.github.io/micro-app/) | API、沙箱配置、生命周期参考                       |
+| 文档                                                                     | 内容                        |
+| ------------------------------------------------------------------------ | --------------------------- |
+| [micro-app 官方文档](https://micro-zoe.github.io/micro-app/)             | API、沙箱配置、生命周期参考 |
+| [robot-logistics 子应用](https://github.com/ChenyCHENYU/robot-logistics) | 智慧物流子应用独立项目      |
+
+### micro-app 官方 API 速查
+
+| 方法                              | 说明             |
+| --------------------------------- | ---------------- |
+| `microApp.start(options)`         | 启动微前端框架   |
+| `microApp.preFetch(apps)`         | 预加载子应用资源 |
+| `microApp.setData(appName, data)` | 向子应用推送数据 |
+| `microApp.getData(appName)`       | 获取子应用数据   |
+| `microApp.setGlobalData(data)`    | 设置全局数据     |
+| `microApp.getGlobalData()`        | 获取全局数据     |
+
+| 子应用环境变量                     | 说明                    |
+| ---------------------------------- | ----------------------- |
+| `window.__MICRO_APP_ENVIRONMENT__` | 是否在 micro-app 沙箱中 |
+| `window.__MICRO_APP_NAME__`        | 当前子应用 name         |
+| `window.__MICRO_APP_BASE_ROUTE__`  | 子应用 baseroute        |
+
+---
+
+## 🗺️ 演进路线
+
+### 已实现（Phase 1 — 基础架构）
+
+- [x] micro-app 启动 + iframe 沙箱
+- [x] 门户工作台（三栏布局）
+- [x] 微应用容器（PostMessage + 主题同步 + keep-alive）
+- [x] 子应用示例工程（logistics）
+- [x] `shared/` 契约层（类型 / 常量 / 工具）
+- [x] 环境变量驱动子应用地址
+- [x] PostMessage origin 安全加固
+
+### Phase 2 — 通信增强 + 性能优化
+
+| 任务                        | 预期收益               |
+| --------------------------- | ---------------------- |
+| `preFetch` 子应用预加载     | 首次切换提速 60%       |
+| 增强错误边界（重试 + 降级） | 子应用故障不影响主应用 |
+| `globalData` 全局数据广播   | 多子应用数据共享       |
+| `fiber` 异步渲染            | 大型子应用不阻塞       |
+| `globalAssets` 共享依赖 CDN | 减少 30% 总包体积      |
+
+### Phase 3 — 治理能力
+
+| 任务                  | 预期收益             |
+| --------------------- | -------------------- |
+| 子应用动态注册 / 卸载 | 后端驱动，免部署     |
+| 子应用健康检查        | 故障自动发现         |
+| 多语言同步            | 主子应用语言统一     |
+| 子应用权限 RBAC       | 按角色分配可见子应用 |
+
+### Phase 4 — 规模化
+
+| 任务                       | 预期收益         |
+| -------------------------- | ---------------- |
+| `shared/` 发布为 npm 包    | 跨仓库契约共享   |
+| 子应用 CI/CD 模板          | 标准化发布流程   |
+| 子应用动态注册（后端 API） | 运营自主配置门户 |
 
 ---
 
@@ -645,8 +700,9 @@ bun run cz
   </p>
   <p>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">⭐ 给个 Star</a> ·
-    <a href="./docs/微前端架构最佳实践.md">��� 最佳实践</a> ·
+
     <a href="https://robotadmin.cn">��� 在线体验</a> ·
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/issues">��� 提交 Issue</a>
+
   </p>
 </div>

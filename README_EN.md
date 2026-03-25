@@ -52,11 +52,10 @@
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
           <img src="https://img.shields.io/badge/View Code-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
-        <a href="./docs/微前端架构最佳实践.md">
-          <img src="https://img.shields.io/badge/Best Practices-GUIDE-orange?style=flat-square" alt="MicroApp Best Practices">
-        </a>
+
       </td>
     </tr>
+
   </table>
 
   <p>
@@ -79,14 +78,14 @@
     <a href="https://robotadmin.cn">
       <img src="https://img.shields.io/badge/���-Live Demo-00D8FF?style=for-the-badge&logo=vercel" alt="Live Demo">
     </a>
-    <a href="./docs/微前端架构最佳实践.md">
-      <img src="https://img.shields.io/badge/���-Best Practices-E74C3C?style=for-the-badge&logo=gitbook" alt="Best Practices">
-    </a>
     <a href="#-quick-start">
       <img src="https://img.shields.io/badge/⚡-Quick Start-4ECDC4?style=for-the-badge&logo=rocket" alt="Quick Start">
     </a>
     <a href="#-add-sub-application">
       <img src="https://img.shields.io/badge/➕-Add Sub App-FFA726?style=for-the-badge" alt="Add Sub App">
+    </a>
+    <a href="#-sub-app-integration-guide">
+      <img src="https://img.shields.io/badge/🔌-Integration Guide-E74C3C?style=for-the-badge" alt="Integration Guide">
     </a>
     <a href="./README.md">
       <img src="https://img.shields.io/badge/���-中文版-95E1D3?style=for-the-badge&logo=googletranslate" alt="Chinese Version">
@@ -162,29 +161,33 @@ cd Robot_Admin
 bun install
 ```
 
-**Step 3 — Install sub-app dependencies**
+**Step 3 — Clone sub-app (independent project)**
 
 ```bash
-cd micro-apps/logistics
+# Go to parent directory, clone logistics sub-app
+cd ..
+git clone https://github.com/ChenyCHENYU/robot-logistics.git
+cd robot-logistics
 bun install
-cd ../..
 ```
 
 **Step 4 — Start both apps in separate terminals**
 
 ```bash
 # Terminal 1 — Main app (port 1988)
+cd Robot_Admin
 bun run dev
 
 # Terminal 2 — Logistics sub-app (port 3003)
-cd micro-apps/logistics && bun run dev
+cd robot-logistics
+bun run dev
 ```
 
 **Access**:
 
 - Main App: http://localhost:1988
 - Sub-App Direct: http://localhost:3003
-- Micro-Frontend View: http://localhost:1988 → Smart Logistics menu
+- Micro-Frontend View: http://localhost:1988 → Portal → Smart Logistics
 
 ### Common Commands
 
@@ -226,7 +229,7 @@ cd micro-apps/logistics && bun run dev
 │  │  ┌──────────────────────────┐   ┌────────────────────────────────┐ │ │
 │  │  │  logistics (port 3003)   │   │  future-app (port xxxx)        │ │ │
 │  │  │  Smart Logistics System  │   │  Any Vue/React/Angular app     │ │ │
-│  │  │  micro-apps/logistics/     │   │  team B independent dev        │ │ │
+│  │  │  robot-logistics/         │   │  team B independent dev        │ │ │
 │  │  └──────────────────────────┘   └────────────────────────────────┘ │ │
 │  └─────────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────┘
@@ -255,30 +258,32 @@ Navigate to "Smart Logistics" menu   → micro-app container loads sub-app
 
 ## 📂 Directory Structure
 
-> Follows [micro-app official best practices](./docs/微前端架构最佳实践.md): **main-app / shared contract / micro-apps / docs** — four-layer separation.
+> Follows micro-app official best practices: **main-app / shared contract** + sub-apps as independent projects.
 
 ```
-Robot_Admin/
+Robot_Admin/                 # Main app project
 │
 ├── src/                    # Main app (Robot Admin system itself)
 ├── shared/                 # ★ Micro-frontend shared contract layer
-├── micro-apps/             # ★ Micro-frontend sub-apps (independent projects)
+├── envs/                   # Environment variables (VITE_MICRO_*_URL)
 ├── docs/                   # Architecture documentation
 │
 ├── vite.config.ts          # Main app build config
 ├── tsconfig.json           # TypeScript config
-├── vercel.json             # Main app Vercel deployment (SPA rewrite + security headers + caching)
-├── .vercelignore           # Excludes micro-apps/ to prevent Vercel monorepo misdetection
+├── vercel.json             # Main app Vercel deployment
 └── package.json            # Main app dependencies (includes @micro-zoe/micro-app)
+
+robot-logistics/             # ★ Sub-app (independent project, independent repo)
+└── → see robot-logistics/README.md
 ```
 
-### Four-Layer Details
+### Layer Details
 
-#### `src/` — Main App (maps to official `main-app/`)
+#### `src/` — Main App
 
 | File / Directory                  | Purpose                                   |
 | --------------------------------- | ----------------------------------------- |
-| `src/config/microApps.ts`         | ★ Sub-app registry (ID / multi-env URLs)  |
+| `src/config/microApps.ts`         | ★ Sub-app registry (URLs from env vars)   |
 | `src/plugins/micro-app.ts`        | ★ `microApp.start()` framework init       |
 | `src/views/portal/`               | ★ Portal workspace (3-col, system hub)    |
 | `src/views/micro-app/`            | ★ Micro-app container (`<micro-app>`)     |
@@ -286,7 +291,7 @@ Robot_Admin/
 | `src/router/publicRouter.ts`      | `/portal` + `/micro-app/:id` routes       |
 | `src/components/global/C_Header/` | Top navigation (portal btn + menu drawer) |
 
-#### `shared/` — Micro-frontend Contract Layer (maps to official `shared/`)
+#### `shared/` — Micro-frontend Contract Layer
 
 | File                        | Content                                           |
 | --------------------------- | ------------------------------------------------- |
@@ -294,21 +299,21 @@ Robot_Admin/
 | `shared/types/index.ts`     | Communication interfaces (MicroAppData/Payload)   |
 | `shared/utils/index.ts`     | `createMessage()` / `parseMessage()` utilities    |
 
-#### `micro-apps/` — Sub Applications (maps to official `sub-apps/`)
+#### Sub-apps — Independent Projects
 
-Each subdirectory is an **independent project** (own `package.json` / `vite.config.ts`), extractable to standalone repo:
+Sub-apps are **independent Git repositories**, deployed independently. The main app reads sub-app URLs from `envs/.env.*` via `VITE_MICRO_<APP>_URL`:
 
-| Sub-app                 | Stack                | Port | Description                              |
-| ----------------------- | -------------------- | ---- | ---------------------------------------- |
-| `micro-apps/logistics/` | Vue 3 + Vite + Naive | 3003 | Smart Logistics (orders/warehouse/fleet) |
+| Sub-app           | Stack                | Port | Description                              |
+| ----------------- | -------------------- | ---- | ---------------------------------------- |
+| `robot-logistics` | Vue 3 + Vite + Naive | 3003 | Smart Logistics (orders/warehouse/fleet) |
 
-> In production, sub-apps are **deployed independently**. `micro-apps/` is for dev integration and template reference only.
+```bash
+# envs/.env.development
+VITE_MICRO_LOGISTICS_URL = http://localhost:3003
 
-#### `docs/` — Architecture Documentation
-
-| File                    | Content                                           |
-| ----------------------- | ------------------------------------------------- |
-| `微前端架构最佳实践.md` | Architecture analysis, decisions, evolution plans |
+# envs/.env.production
+VITE_MICRO_LOGISTICS_URL = https://logistics.example.com
+```
 
 ## ��� Integration
 
@@ -326,29 +331,24 @@ export function setupMicroApp() {
 }
 ```
 
-### 2. Sub-app URL configuration (auto-resolves by environment)
+### 2. Sub-app URL configuration (env-driven)
 
 ```typescript
 // src/config/microApps.ts
+// URLs are read from envs/.env.* via VITE_MICRO_<APP>_URL
 export const MICRO_APPS: Record<string, MicroAppConfig> = {
   logistics: {
     id: 'logistics',
     name: 'Smart Logistics System',
-    description: 'Logistics order, transport, warehouse management',
-    envUrls: {
-      development: 'http://localhost:3003',
-      test: 'https://logistics-test.example.com',
-      staging: 'https://logistics-staging.example.com',
-      production: 'https://logistics.example.com',
-    },
+    url: import.meta.env.VITE_MICRO_LOGISTICS_URL || '',
+    icon: '🚚',
+    description: 'Logistics, warehouse, fleet management',
   },
-  // Add more sub-apps here...
 }
 
-// Auto-resolve based on VITE_APP_ENV
-export function getMicroAppUrl(appId: string): string {
-  const env = import.meta.env.VITE_APP_ENV || 'development'
-  return MICRO_APPS[appId]?.envUrls[env] ?? ''
+// Returns the URL for the current build mode
+export function getMicroAppUrl(appId: string): string | null {
+  return MICRO_APPS[appId]?.url || null
 }
 ```
 
@@ -505,74 +505,48 @@ microApp.setGlobalData({ theme: 'dark', locale: 'zh-CN' })
 
 ## ➕ Add Sub-Application
 
-Adding a new sub-app takes only 4 steps:
+Adding a new sub-app follows these steps:
 
-### Step 1: Create sub-app (any tech stack)
+### Step 1: Add environment variables (`envs/.env.*`)
 
 ```bash
-# Example: Vue 3 sub-app
-mkdir micro-apps/new-app
-cd micro-apps/new-app
-bun create vite . --template vue-ts
-bun install
+# envs/.env.development
+VITE_MICRO_WAREHOUSE_URL = http://localhost:3004
+
+# envs/.env.production
+VITE_MICRO_WAREHOUSE_URL = https://warehouse.example.com
+
+# envs/.env.test / .env.staging — same pattern
 ```
 
-Configure Vite dev server and CORS (required for micro-app iframe):
+### Step 2: Declare env type (`src/types/env.d.ts`)
 
 ```typescript
-// micro-apps/new-app/vite.config.ts
-export default {
-  server: {
-    port: 3004, // New unique port
-    headers: {
-      'Access-Control-Allow-Origin': '*', // Allow main app to load
-    },
-  },
+interface ImportMetaEnv {
+  readonly VITE_MICRO_WAREHOUSE_URL?: string
 }
 ```
 
-### Step 2: Register in main app config
+### Step 3: Register in main app config (`src/config/microApps.ts`)
 
 ```typescript
-// src/config/microApps.ts — add to MICRO_APPS
-'new-app': {
-  id: 'new-app',
-  name: 'New Application Name',
-  description: 'Business description',
-  envUrls: {
-    development: 'http://localhost:3004',
-    test:        'https://new-app-test.example.com',
-    staging:     'https://new-app-staging.example.com',
-    production:  'https://new-app.example.com',
-  },
+warehouse: {
+  id: 'warehouse',
+  name: 'Smart Warehouse',
+  url: import.meta.env.VITE_MICRO_WAREHOUSE_URL || '',
+  icon: '📦',
+  description: 'Inventory, inbound/outbound, stocktake',
 },
-```
-
-### Step 3: Add router entry
-
-```json
-// src/assets/data/dynamicRouter.json — add one entry
-{
-  "path": "/micro-app/new-app",
-  "name": "micro-app-new-app",
-  "component": "/micro-app/index",
-  "meta": {
-    "title": "New Application",
-    "icon": "mdi:application",
-    "keepAlive": true,
-    "query": { "appId": "new-app" }
-  }
-}
 ```
 
 ### Step 4: Add portal shortcut (optional)
 
 ```typescript
-// src/views/portal/index.vue — add to shortcuts list
-{ id: 'new-app', name: 'New App', icon: 'mdi:application', appId: 'new-app' }
+// src/views/portal/index.vue
+{ id: 'warehouse', name: 'Smart Warehouse', icon: 'ri:database-2-line', appId: 'warehouse' }
 ```
 
-Done! The universal container at `src/views/micro-app/index.vue` handles everything automatically.
+> **No sub-app code changes required!** The iframe sandbox only needs CORS access.
 
 ### Framework Compatibility
 
@@ -584,6 +558,97 @@ Done! The universal container at `src/views/micro-app/index.vue` handles everyth
 | Angular            | ✅        | Iframe mode compatible  |
 | Plain HTML         | ✅        | Any static page         |
 | Next.js / Nuxt     | ✅        | SSR apps can be wrapped |
+
+---
+
+## 🔌 Sub-App Integration Guide
+
+> For external business systems wanting to integrate with this platform as a sub-app.
+
+### 1. Enable CORS (Required)
+
+The main app loads sub-apps via iframe sandbox. Sub-apps must allow cross-origin access:
+
+```typescript
+// Sub-app vite.config.ts
+export default defineConfig({
+  server: {
+    port: 3004,
+    headers: {
+      'Access-Control-Allow-Origin': '*', // Allow all origins in dev
+    },
+  },
+})
+```
+
+Production Nginx:
+
+```nginx
+add_header Access-Control-Allow-Origin "https://admin.example.com";  # Restrict origin
+add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
+```
+
+### 2. Configure baseroute (Optional)
+
+If using `history` router mode:
+
+```typescript
+const router = createRouter({
+  history: createWebHistory(window.__MICRO_APP_BASE_ROUTE__ || '/'),
+})
+```
+
+### 3. Receive Main App Data (Optional)
+
+The main app injects token, theme, and user info via `data` binding:
+
+```typescript
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  window.microApp?.addDataListener((data: any) => {
+    if (data.token) localStorage.setItem('token', data.token)
+    if (data.theme)
+      document.documentElement.classList.toggle('dark', data.theme === 'dark')
+  })
+}
+```
+
+### 4. Send Messages to Main App (Optional)
+
+```typescript
+// Request main app navigation
+window.microApp?.dispatch({ type: 'NAVIGATE', payload: { path: '/dashboard' } })
+
+// Notify main app of logout
+window.microApp?.dispatch({ type: 'LOGOUT' })
+```
+
+### 5. PostMessage Security (Recommended)
+
+Configure main app URL for PostMessage origin restriction:
+
+```bash
+# .env.development
+VITE_MAIN_APP_URL = http://localhost:1988
+
+# .env.production
+VITE_MAIN_APP_URL = https://admin.example.com
+```
+
+```typescript
+const MAIN_APP_ORIGIN = import.meta.env.VITE_MAIN_APP_URL || '*'
+window.parent.postMessage(data, MAIN_APP_ORIGIN)
+```
+
+### Sub-App Configuration Checklist
+
+| Config Item                | Required    | Description                                 |
+| -------------------------- | ----------- | ------------------------------------------- |
+| CORS headers               | ✅          | Allow main app domain to load               |
+| `base` URL                 | ✅          | Set to full URL in production               |
+| baseroute                  | Optional    | For history mode `__MICRO_APP_BASE_ROUTE__` |
+| Listen to main app data    | Optional    | Receive token, theme, user info             |
+| PostMessage origin control | Recommended | Production security hardening               |
+| `VITE_MAIN_APP_URL` env    | Recommended | For restricting postMessage origin          |
 
 ---
 
@@ -619,7 +684,7 @@ git push origin micro-app
 }
 ```
 
-> ⚠️ **Note:** `.vercelignore` excludes `micro-apps/` to prevent Vercel from misdetecting as Monorepo.
+> ⚠️ **Note:** Sub-app CORS should restrict origin to main app domain in production.
 
 ### Sub-App Nginx Config
 
@@ -634,8 +699,8 @@ server {
     try_files $uri $uri/ /index.html;  # SPA routing
   }
 
-  # CORS headers — required for micro-app to load
-  add_header Access-Control-Allow-Origin *;
+  # CORS headers — restrict to main app domain in production
+  add_header Access-Control-Allow-Origin "https://admin.example.com";
   add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
   add_header Access-Control-Allow-Headers "*";
 }
@@ -643,22 +708,24 @@ server {
 
 ### Multi-Environment Configuration
 
-```env
+```bash
 # envs/.env.development
-VITE_APP_ENV=development
+VITE_MICRO_LOGISTICS_URL = http://localhost:3003
 
 # envs/.env.production
-VITE_APP_ENV=production
+VITE_MICRO_LOGISTICS_URL = https://logistics.example.com
 
-# Sub-app URLs auto-resolve from MICRO_APPS[id].envUrls[VITE_APP_ENV]
+# envs/.env.test
+VITE_MICRO_LOGISTICS_URL = https://logistics-test.example.com
 ```
+
+> URLs are injected at build time via Vite's `--mode` flag. No runtime resolution needed.
 
 ### Deployment Checklist
 
 - [ ] Sub-app builds and deploys successfully
 - [ ] Sub-app URL is accessible and CORS headers correct
-- [ ] `src/config/microApps.ts` production URL configured
-- [ ] Main app environment variables set
+- [ ] `envs/.env.production` has correct `VITE_MICRO_*_URL` values
 - [ ] Main app `bun run build` passes without errors
 - [ ] SPA 404 fallback configured (Vercel rewrite / Nginx try_files)
 
@@ -681,11 +748,68 @@ VITE_APP_ENV=production
 
 ## 📚 Deep Reading
 
-| Document                                                   | Description                                                       |
-| ---------------------------------------------------------- | ----------------------------------------------------------------- |
-| [Best Practices (CN)](./docs/微前端架构最佳实践.md)        | Architecture analysis, strategy & iteration roadmap (11 chapters) |
-| [micro-app Docs](https://micro-zoe.github.io/micro-app/)   | Official framework documentation                                  |
-| [Sub-app Deployment](./micro-apps/logistics/DEPLOYMENT.md) | Logistics sub-app deployment guide                                |
+| Document                                                          | Description                           |
+| ----------------------------------------------------------------- | ------------------------------------- |
+| [micro-app Docs](https://micro-zoe.github.io/micro-app/)          | Official framework documentation      |
+| [robot-logistics](https://github.com/ChenyCHENYU/robot-logistics) | Logistics sub-app independent project |
+
+### micro-app API Cheatsheet
+
+| Method                            | Description                |
+| --------------------------------- | -------------------------- |
+| `microApp.start(options)`         | Initialize framework       |
+| `microApp.preFetch(apps)`         | Prefetch sub-app resources |
+| `microApp.setData(appName, data)` | Push data to sub-app       |
+| `microApp.getData(appName)`       | Get sub-app data           |
+| `microApp.setGlobalData(data)`    | Set global data            |
+| `microApp.getGlobalData()`        | Get global data            |
+
+| Sub-app Environment Variable       | Description                  |
+| ---------------------------------- | ---------------------------- |
+| `window.__MICRO_APP_ENVIRONMENT__` | Whether in micro-app sandbox |
+| `window.__MICRO_APP_NAME__`        | Current sub-app name         |
+| `window.__MICRO_APP_BASE_ROUTE__`  | Sub-app baseroute            |
+
+---
+
+## 🗺️ Roadmap
+
+### Done (Phase 1 — Foundation)
+
+- [x] micro-app + iframe sandbox
+- [x] Portal workspace (3-col layout)
+- [x] Micro-app container (PostMessage + theme sync + keep-alive)
+- [x] Sub-app demo (logistics)
+- [x] `shared/` contract layer (types / constants / utils)
+- [x] Env-driven sub-app URLs
+- [x] PostMessage origin security
+
+### Phase 2 — Communication + Performance
+
+| Task                              | Expected Benefit           |
+| --------------------------------- | -------------------------- |
+| `preFetch` preloading             | 60% faster first switch    |
+| Error boundary (retry + fallback) | Sub-app failure isolation  |
+| `globalData` broadcast            | Multi sub-app data sharing |
+| `fiber` async rendering           | No main thread blocking    |
+| `globalAssets` shared CDN         | 30% less total bundle size |
+
+### Phase 3 — Governance
+
+| Task                         | Expected Benefit          |
+| ---------------------------- | ------------------------- |
+| Dynamic sub-app registration | Backend-driven, no deploy |
+| Sub-app health check         | Auto fault detection      |
+| i18n sync                    | Unified language          |
+| Sub-app RBAC                 | Role-based visibility     |
+
+### Phase 4 — Scale
+
+| Task                        | Expected Benefit            |
+| --------------------------- | --------------------------- |
+| `shared/` as npm package    | Cross-repo contract sharing |
+| Sub-app CI/CD templates     | Standardized release        |
+| Backend-driven registration | Self-service portal config  |
 
 ---
 
@@ -752,7 +876,6 @@ git push origin feat/your-feature
 
 <p>
   <a href="https://robotadmin.cn">Live Demo</a> ·
-  <a href="./docs/微前端架构最佳实践.md">Best Practices</a> ·
   <a href="#-quick-start">Quick Start</a> ·
   <a href="./README.md">中文版</a>
 </p>
