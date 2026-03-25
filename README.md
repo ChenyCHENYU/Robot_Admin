@@ -49,10 +49,10 @@
         <img src="https://img.shields.io/badge/🚀-微前端-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
         <sub><strong>MicroApp</strong></sub><br>
         <sub>初版完成</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal">
-          <img src="https://img.shields.io/badge/查看代码-feature/microapp--portal-E74C3C?style=flat-square" alt="MicroApp Branch">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
+          <img src="https://img.shields.io/badge/查看代码-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md">
           <img src="https://img.shields.io/badge/查看文档-README-orange?style=flat-square" alt="MicroApp Docs">
         </a>
       </td>
@@ -108,52 +108,21 @@
   </p>
 </div>
 
-## 🎯 多架构支持说明
+## 🎯 多架构支持
 
-Robot Admin 提供多种架构选择，满足不同规模和场景的需求：
+> 💡 Robot Admin 提供多种架构分支，支持从单体到微前端的渐进演进。当前所在为**单体 SPA 开发主线**（`dev`/`main`）。
 
-| 架构类型        | 适用场景             | 特点                             | 分支                                                                                                     | 文档                                                                                                                  |
-| --------------- | -------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **🏗️ 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用               | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | 本文档                                                                                                                |
-| **📦 Monorepo** | 多应用统一管理       | 代码复用、统一工具链、独立部署   | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                    |
-| **🔮 模块联邦** | 微应用动态加载       | 运行时共享、独立部署、版本隔离   | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
-| **🚀 微前端**   | 大型应用、团队协作   | 技术栈无关、独立部署、渐进式迁移 | [`feature/microapp-portal`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal)     | [查看文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md)                         |
+<details>
+<summary><b>👉 查看各架构对比一览</b></summary>
 
-### 📦 Monorepo 架构亮点
+| 架构类型          | 适用场景             | 特点                             | 分支                                                                                                     | 文档                                                                                                                  |
+| ----------------- | -------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **🏗️ 单体架构** ← | 中小型项目、快速原型 | 简单直接、开箱即用               | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | 本文档                                                                                                                |
+| **📦 Monorepo**   | 多应用统一管理       | 代码复用、统一工具链、独立部署   | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                    |
+| **🔮 模块联邦**   | 微应用动态加载       | 运行时共享、独立部署、版本隔离   | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
+| **🚀 微前端**     | 大型应用、团队协作   | 技术栈无关、独立部署、渐进式迁移 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | [查看文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md)                                       |
 
-基于 **Bun Workspaces** 的 Monorepo 架构已就绪！[查看分支](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)
-
-```
-Robot_Admin (Monorepo)
-├── apps/                          # 应用层
-│   ├── robot-admin-internal/      # 内部版 (端口 1988)
-│   └── robot-admin-saas/          # SaaS 版 (端口 1989)
-└── packages/                      # 共享包层
-    ├── shared/                    # 工具函数
-    ├── core/                      # 核心逻辑
-    ├── ui/                        # UI 组件库 (30+)
-    ├── business/                  # 业务组件
-    └── integrations/              # 第三方集成
-```
-
-**核心特性：**
-
-- ✅ 多应用统一管理（Internal / SaaS）
-- ✅ 5 个共享包代码复用
-- ✅ HMR 热更新（修改共享包，应用自动刷新）
-- ✅ 独立构建部署
-- ✅ 统一工具链（ESLint/Prettier/TypeScript/Commitizen）
-
-**快速开始：**
-
-```bash
-git clone -b monorepo https://github.com/ChenyCHENYU/Robot_Admin.git
-cd Robot_Admin
-bun install
-bun run dev:internal  # 启动 Internal 版本
-```
-
-📖 **[查看完整 Monorepo 文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)**
+</details>
 
 ---
 
@@ -286,7 +255,7 @@ bun clean              # 清理缓存
 - **按钮级权限** - 精确到每一个操作按钮
 - **接口级权限** - API调用权限控制
 
-#### 🧩 组件库（49+ 开箱即用）
+#### 🧩 组件库（51+ 开箱即用）
 
 > 所有业务组件已独立发布为 [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components)，支持按需自动导入。
 
@@ -724,25 +693,37 @@ location / {
 
 ## 📈 路线图
 
-### 🎯 短期目标 (Q1 2025)
+### ✅ 已完成里程碑
 
-- [x] 🎨 主题系统完善
-- [x] 📱 移动端适配优化
-- [x] 🔧 UnoCSS配置优化
-- [ ] 📊 性能监控集成
+<details>
+<summary><b>查看完整版本历程 (v1.0 → v2.2)</b></summary>
 
-### 🚀 中期规划 (Q2-Q3 2025)
+| 版本  | 时间    | 主要更新                                             |
+| ----- | ------- | ---------------------------------------------------- |
+| v1.0  | 2024-Q3 | 🎉 项目初版：Vue3 + Vite + Naive UI + Pinia 基础架构 |
+| v1.6  | 2024-Q4 | 🎨 主题系统 + UnoCSS + 演示页面体系                  |
+| v1.11 | 2025-12 | 🧩 组件库雏形 + i18n 国际化 + 性能优化               |
+| v1.13 | 2026-02 | 📦 组件库独立发布 `@robot-admin/naive-ui-components` |
+| v1.14 | 2026-02 | ✨ 新增 10 个组件（签名/裁剪/Cron/瀑布流等）         |
+| v2.0  | 2026-03 | 🏗️ **架构重构**：39 个组件迁移至独立 npm 包，零冗余  |
+| v2.1  | 2026-03 | 🔐 Token 无感刷新 + 权限体系升级 + 可插拔登录组件    |
+| v2.2  | 2026-03 | 🎭 菜单双主题 + Vite 8 升级 + 全量 TypeScript 通过   |
 
+</details>
+
+### 🚀 近期计划 (2026 Q2)
+
+- [ ] 📊 性能监控与错误追踪集成
+- [ ] 🎨 可视化低代码页面模板
 - [ ] 🏢 多租户系统支持
-- [x] 🔮 模块联邦架构支持
-- [x] 🔗 微前端架构支持
-- [x] 📚 组件库独立发布 → [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components)
-- [ ] 🎨 可视化页面模板
+- [x] 🔌 Robot CLI 脚手架工具
+- [x] 📱 Robot uniApp 移动端方案
 
-### 🌟 长期愿景 (Q4 2025+)
+### 🌟 长期规划 (2026 Q3+)
 
-- [ ] 🏗️ NestJS后端服务
-- [ ] 🔌 完整插件生态
+- [ ] 🏗️ Robot Backend — NestJS 全栈服务
+- [ ] 🔄 完整的 CI/CD 流水线集成示例
+- [ ] 🌐 完整 i18n 国际化方案（更多语言）
 
 ---
 
@@ -755,21 +736,28 @@ location / {
 
 **已发布组件库**
 
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** - 基于 Naive UI 的 Vue 3 业务组件库（45+ 组件，按需导入）
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.8.2` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
+- **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v2.2.0` - 6 种布局模式 + 设置管理系统
+- **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.1.3` - Axios 请求核心 + 7 插件 + useTableCrud
+- **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v2.0.0` - 48+ 企业级表单验证规则库
+- **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v1.1.0` - 11 个实用 Vue 指令
+- **[@robot-admin/file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)** `v1.0.0` - Excel/ZIP/分片上传文件工具集
+- **[@robot-admin/theme](https://www.npmjs.com/package/@robot-admin/theme)** `v0.1.1` - 主题切换（Light/Dark/System）
+- **[@robot-admin/git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)** `v1.0.3` - Git 工程化标准
 
-**规划中项目**
+**已发布周边工具**
 
-- **[Robot CLI](https://github.com/ChenyCHENYU/robot-cli)** - 脚手架工具
-- **[Robot Mobile](https://github.com/ChenyCHENYU/robot-mobile)** - 移动端解决方案
-- **[Robot Backend](https://github.com/ChenyCHENYU/robot-backend)** - NestJS 后端服务
+- **[Robot CLI](https://github.com/ChenyCHENYU/robot-cli)** ✅ - 脚手架工具，快速初始化项目模板
+- **[Robot uniApp](https://github.com/ChenyCHENYU/robot-uniapp)** ✅ - 移动端跨平台解决方案（已完成）
+- **[Robot Backend](https://github.com/ChenyCHENYU/robot-backend)** 🚧 - NestJS 全栈后端服务（规划中）
 
-**已发布插件**
+**已发布 npm 插件**
 
-- **vite-console-plugin** - Vite 启动台控制台美化与提示插件
-- **ts-type-cleaner** - TypeScript 类型分析和清理工具
-- **robot-admin-env-manager** - Robot Admin 环境配置管理工具
-- **git-branch-check-diff-commits** - 快速比对合并分支同步检查
-- **vite-plugin-preloader** - 智能路由预加载插件
+- **[vite-console-plugin](https://www.npmjs.com/package/vite-console-plugin)** `v2.0.15` - Vite 启动台控制台美化与提示插件
+- **[ts-type-cleaner](https://www.npmjs.com/package/ts-type-cleaner)** `v5.0.8` - 智能 TypeScript 类型分析和清理工具
+- **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - 智能路由预加载插件
+- **[robot-admin-env-manager](https://www.npmjs.com/package/robot-admin-env-manager)** `v1.0.5` - Robot Admin 环境配置管理工具
+- **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Git 分支快速比对合并检查
 </details>
 
 ---
@@ -919,14 +907,14 @@ bun run type-build
 | 🎨 UI 组件库  |    **Naive UI 轻量**    |   Ant Design   |   Element Plus    |   选择多样   |
 | 💪 TypeScript |    **完整类型支持**     |    基础支持    |     基础支持      | 支持程度不一 |
 | 🔧 自定义指令 |     **7个实用指令**     |    少量指令    |     基础指令      |   功能有限   |
-|  📊 演示页面  |    **48+ 完整示例**     |    有限示例    |     有限示例      |   基础示例   |
+|  📊 演示页面  |    **54+ 完整示例**     |    有限示例    |     有限示例      |   基础示例   |
 |  🎯 学习成本  |      **中等友好**       |    较高门槛    |     中等门槛      |   差异较大   |
 |  📈 维护状态  |     **🔥 积极维护**     |    持续维护    |     持续维护      |   状态不一   |
 
 **选择 Robot Admin 的理由**:
 
 - 🚀 **性能优先**: Bun + Vite8 (Rolldown) 双引擎，开发体验极致
-- 🧩 **组件丰富**: 45+ 业务组件，独立组件库按需导入
+- 🧩 **组件丰富**: 51+ 业务组件，独立组件库按需导入
 - 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
 - 📚 **学习友好**: 54+ 演示页面，每个都是最佳实践
 </details>
@@ -975,10 +963,12 @@ bun run type-build
 
 **🧑‍💻 作者信息**
 
-- **姓名：** CHENY（前端咔啦咪 & 敏捷追光者）
-- **简介：** 一只小趴菜 | 🐔🐤🐓 菜鸡互啄
+- **姓名：** CHENY
+- **身份：** 个人开发者 · 前端工程师（副业开源爱好者）
+- **公众号：** 前端咔啦咪（小红书同名）
 - **邮箱：** [ycyplus@gmail.com](mailto:ycyplus@gmail.com)
 - **GitHub：** [@ChenyCHENYU](https://github.com/ChenyCHENYU)
+- **npm：** [@cheny_yang](https://www.npmjs.com/~cheny_yang)
 
 ---
 
@@ -1034,23 +1024,53 @@ bun run type-build
 
 ## 📄 更新日志
 
-### 🚀 v2.0.0 (2025-07)
+### 🚀 v2.2.0 (2026-03-11) — 最新版本
 
-- 🏗️ **架构重构**: 39 个业务组件迁移至独立组件库 `@robot-admin/naive-ui-components`
-- 📦 组件库支持按需自动导入（`RobotNaiveUiResolver`）
-- 🎨 全面替换 UnoCSS 图标类为 `C_Icon`（Iconify 运行时）
-- 🛡️ 全量 `vue-tsc` 类型检查通过
-- 🔧 清理冗余依赖，`spark-md5` 等由组件库传递安装
+- ✨ **菜单双主题**：增加菜单主题切换，提供个性/标准两种多态模式
+- 🔐 **权限体系升级**：按钮权限、路由鉴权、数据权限全面启用
+- ⚡ **Token 无感刷新**：登录态不中断自动刷新 Token
+- 🔧 **Vite 8 + Rolldown**：构建速度提升 10-30 倍
+- 🧩 演示页面批量优化，全量 TypeScript 类型检查通过
 
-### 🎉 v1.13.3 (2025-02-17)
+<details>
+<summary><b>📆 查看历史版本记录 (v1.0 — v2.1)</b></summary>
 
-- ✨ 升级到 @robot-admin/layout v2.2.0
-- 🎨 优化主题切换，使用 View Transition API
-- 🔧 修复布局切换时设置抽屉自动关闭的问题
-- 📊 增强请求接口适配器组合函数
-- 🛡️ 优化表格增删改查组合函数使用
+### 🎨 v2.1.0 (2026-03-06)
 
-查看 [CHANGELOG.md](./CHANGELOG.md) 了解详细的版本历史。
+- ✨ 可插拔式 `C_Login` 登录组件，支持自定义扩展
+- 🔄 新增穿梭框 / 头像组 / 音频播放器组件
+- 🚀 32 个无鉴权预览路由，供文档站 iframe 嵌入
+- 🐛 登录页性能、错误拦截、中英文验证全面优化
+
+### 🏗️ v2.0.0 (2026-03-01) — 破坏性升级
+
+- 📦 **39 个组件全面迁移** 至 `@robot-admin/naive-ui-components`
+- ✅ 全量 `vue-tsc` 类型检查通过
+- 🔧 清理冗余依赖，简化主项目依赖树
+
+### ✨ v1.14.0 (2026-02-27)
+
+- 新增电子签名 / 图片裁剪 / Cron 表达式编辑器 / 分割面板 / 公式编辑器 / 瀑布流 等 10 个组件
+- 将 `C_Notice` 升级为 `C_NotificationCenter` 全局通知插件
+
+### 📦 v1.13.x (2025-12 — 2026-02)
+
+- `@robot-admin/layout` 升级 v2.2.0，支持 View Transition API 主题切换
+- `@robot-admin/*` 各包逐步独立发布到 npm
+- i18n 自动翻译路由 + 分包优化
+
+### v1.11.x (2025-11 — 2025-12)
+
+- 组件库雏形建立、Vitest 测试框架集成
+- 全局搜索组件、内置权限指令系统
+
+### v1.0 — v1.10 (2024-Q3 — 2025-Q4)
+
+- 项目核心框架建立、主题系统、动态表单/表格引擎、Demo 页面体系建设
+
+</details>
+
+> 📚 查看完整 [CHANGELOG.md](./CHANGELOG.md)
 
 ---
 
@@ -1061,7 +1081,7 @@ bun run type-build
 ```
 MIT License
 
-Copyright (c) 2025 ChenY (Robot Admin)
+Copyright (c) 2026 ChenY (Robot Admin)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

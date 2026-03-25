@@ -49,10 +49,10 @@
         <img src="https://img.shields.io/badge/🚀-Micro Frontend-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
         <sub><strong>MicroApp</strong></sub><br>
         <sub>Initial Release</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal">
-          <img src="https://img.shields.io/badge/View Code-feature/microapp--portal-E74C3C?style=flat-square" alt="MicroApp Branch">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
+          <img src="https://img.shields.io/badge/View Code-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md">
           <img src="https://img.shields.io/badge/View Docs-README-orange?style=flat-square" alt="MicroApp Docs">
         </a>
       </td>
@@ -65,10 +65,10 @@
     <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-7.0.0-646CFF?style=flat&logo=vite" alt="Vite Version">
+    <img src="https://img.shields.io/badge/vite-8.0.1-646CFF?style=flat&logo=vite" alt="Vite Version">
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-49+-success?style=flat" alt="Components">
+    <img src="https://img.shields.io/badge/components-51+-success?style=flat" alt="Components">
     <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
@@ -110,50 +110,19 @@
 
 ## 🎯 Multi-Architecture Support
 
-Robot Admin provides multiple architecture options to meet different scales and scenarios:
+> 💡 Robot Admin supports multiple architecture branches for progressive evolution from monolith to micro-frontend. You are currently on the **Single SPA development main line** (`dev`/`main`).
+
+<details>
+<summary><b>👉 View Architecture Comparison</b></summary>
 
 | Architecture             | Use Cases                                | Features                                                           | Branch                                                                                                   | Documentation                                                                                                            |
 | ------------------------ | ---------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **🏗️ Monolithic**        | Small-Medium Projects, Rapid Prototyping | Simple & Direct, Out-of-Box                                        | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | This Document                                                                                                            |
+| **🏗️ Monolithic** ←      | Small-Medium Projects, Rapid Prototyping | Simple & Direct, Out-of-Box                                        | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | This Document                                                                                                            |
 | **📦 Monorepo**          | Multi-App Management                     | Code Reuse, Unified Toolchain, Independent Deployment              | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [Complete Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                 |
 | **🔮 Module Federation** | Dynamic Micro-App Loading                | Runtime Sharing, Independent Deployment, Version Isolation         | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [Usage Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
-| **🚀 Micro Frontend**    | Large Apps, Team Collaboration           | Tech Stack Agnostic, Independent Deployment, Progressive Migration | [`feature/microapp-portal`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/microapp-portal)     | [View Docs](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/microapp-portal/README.md)                           |
+| **🚀 Micro Frontend**    | Large Apps, Team Collaboration           | Tech Stack Agnostic, Independent Deployment, Progressive Migration | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | [View Docs](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md)                                         |
 
-### 📦 Monorepo Architecture Highlights
-
-**Bun Workspaces** based Monorepo architecture is ready! [View Branch](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)
-
-```
-Robot_Admin (Monorepo)
-├── apps/                          # Application Layer
-│   ├── robot-admin-internal/      # Internal Edition (Port 1988)
-│   └── robot-admin-saas/          # SaaS Edition (Port 1989)
-└── packages/                      # Shared Packages Layer
-    ├── shared/                    # Utility Functions
-    ├── core/                      # Core Logic
-    ├── ui/                        # UI Component Library (30+)
-    ├── business/                  # Business Components
-    └── integrations/              # Third-party Integrations
-```
-
-**Core Features:**
-
-- ✅ Multi-app unified management (Internal / SaaS)
-- ✅ 5 shared packages for code reuse
-- ✅ HMR hot reload (modify shared packages, apps auto refresh)
-- ✅ Independent build and deployment
-- ✅ Unified toolchain (ESLint/Prettier/TypeScript/Commitizen)
-
-**Quick Start:**
-
-```bash
-git clone -b monorepo https://github.com/ChenyCHENYU/Robot_Admin.git
-cd Robot_Admin
-bun install
-bun run dev:internal  # Start Internal Edition
-```
-
-📖 **[View Complete Monorepo Documentation](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)**
+</details>
 
 ---
 
@@ -170,12 +139,12 @@ _Here, when `Bun's` ultimate performance meets `Vue3's` Composition API, when `T
 ### 🔥 Monster-Level Performance Development Experience
 
 - **Millisecond Hot Updates** - Bun + Vite7 chemical reaction, say goodbye to waiting
-- **Intelligent Type Hints** - TypeScript5.8 + 49+ custom components, IDE intelligence maxed out
+- **Intelligent Type Hints** - TypeScript5.8 + 51+ custom components, IDE intelligence maxed out
 - **Zero Config Out-of-Box** - One command to start, complete admin system in 30 seconds
 
 ### 🎨 Not Just a Management System, But a Masterpiece
 
-- **54+ Carefully Crafted Demo Pages** - Each one is production-ready business component, 49 components support docs site iframe live preview
+- **54+ Carefully Crafted Demo Pages** - Each one is production-ready business component, 51 components support docs site iframe live preview
 - **7 Custom Directives** - Debounce, throttle, long press, drag, permission... Make development elegant
 - **Theme System** - Dark/Light mode/Follow system + Custom extension support
 
@@ -250,7 +219,7 @@ bun clean              # Clean cache
 - **Vue 3.5.13** - 🔥 Latest stable version, silky Composition API experience
 - **TypeScript 5.8** - 🛡️ Type safety, intelligent hints
 - **Naive UI 2.41.0** - 🎨 Component library with both beauty and performance
-- **@robot-admin/naive-ui-components** - 🧩 49+ business components, auto-import on demand
+- **@robot-admin/naive-ui-components** - 🧩 51+ business components, auto-import on demand
 - **UnoCSS 66.3.3** - ⚡ Atomic CSS, on-demand generation, minimal size
 
 **⚙️ Build Tools**
@@ -283,7 +252,7 @@ bun clean              # Clean cache
 - **Button-Level Permissions** - Precise control down to every action button
 - **API-Level Permissions** - API call permission control
 
-#### 🧩 Component Library (49+ Ready-to-Use)
+#### 🧩 Component Library (51+ Ready-to-Use)
 
 <details>
 <summary><b>View All Components</b></summary>
@@ -718,49 +687,71 @@ location / {
 
 ## 📈 Roadmap
 
-### 🎯 Short-term Goals (Q1 2025)
+<details>
+<summary><b>✅ Completed Milestones</b></summary>
 
-- [x] 🎨 Theme system improvement
-- [x] 📱 Mobile adaptation optimization
-- [x] 🔧 UnoCSS configuration optimization
-- [ ] 📊 Performance monitoring integration
+| Version | Date       | Highlights                                                    |
+| ------- | ---------- | ------------------------------------------------------------- |
+| v1.0.0  | 2025-11    | First release, Vue 3 + Naive UI core architecture             |
+| v1.13.0 | 2026-01    | 45+ components, 11 directives, 7 packages                     |
+| v1.14.0 | 2026-02    | Monorepo + Micro-frontend dual architecture, Bun migration    |
+| v2.0.0  | 2026-03-01 | **Breaking** - Single-app restructure, Vite 8, 51+ components |
+| v2.1.0  | 2026-03-06 | SaaS extension, multi-app scaffold                            |
+| v2.2.0  | 2026-03-11 | Layout v2.2.0, env-manager v1.0.5, Robot CLI ✅               |
 
-### 🚀 Medium-term Planning (Q2-Q3 2025)
+</details>
 
-- [ ] 🏢 Multi-tenant system support
-- [x] 🔮 Module Federation architecture support
-- [x] 🔗 Micro-frontend architecture support
-- [ ] 📚 Independent component library release
-- [ ] 🎨 Visual page templates
+### 🚀 Near-term Goals (2026 Q2)
 
-### 🌟 Long-term Vision (Q4 2025+)
+- [x] ✅ [Robot CLI](https://github.com/ChenyCHENYU/robot-cli) — Scaffolding tool released
+- [x] ✅ [Robot uniApp](https://github.com/ChenyCHENYU/robot-uniapp) — UniApp plugin released
+- [ ] 📚 Component library docs site (VitePress)
+- [ ] 🎨 Visual theme builder
 
-- [ ] 🏗️ NestJS backend service
+### 🌟 Long-term Vision (2026 Q3+)
+
+- [ ] 🏗️ Robot Backend — NestJS full-stack service
 - [ ] 🔌 Complete plugin ecosystem
+- [ ] 🤖 AI-assisted code generation integration
 
 ---
 
 ## 🌟 Ecosystem
 
-### 🔗 Related Projects
+### 🔗 Core Packages (@robot-admin)
+
+| Package                                                                               | Version                                                               | Description                |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------- |
+| [naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | ![npm](https://img.shields.io/npm/v/@robot-admin/naive-ui-components) | 51+ business components    |
+| [layout](https://www.npmjs.com/package/@robot-admin/layout)                           | ![npm](https://img.shields.io/npm/v/@robot-admin/layout)              | 6 layout modes             |
+| [request-core](https://www.npmjs.com/package/@robot-admin/request-core)               | ![npm](https://img.shields.io/npm/v/@robot-admin/request-core)        | Axios + useTableCrud       |
+| [form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)             | ![npm](https://img.shields.io/npm/v/@robot-admin/form-validate)       | 48+ validation rules       |
+| [directives](https://www.npmjs.com/package/@robot-admin/directives)                   | ![npm](https://img.shields.io/npm/v/@robot-admin/directives)          | 11 Vue directives          |
+| [file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)                   | ![npm](https://img.shields.io/npm/v/@robot-admin/file-utils)          | Excel / ZIP / chunk upload |
+| [theme](https://www.npmjs.com/package/@robot-admin/theme)                             | ![npm](https://img.shields.io/npm/v/@robot-admin/theme)               | Light / Dark / System      |
+| [git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)             | ![npm](https://img.shields.io/npm/v/@robot-admin/git-standards)       | Git engineering standards  |
+
+### 🛠️ Related Projects
 
 <details>
-<summary><b>View Ecosystem Projects</b></summary>
+<summary><b>View All Ecosystem Projects</b></summary>
 
-**Planned Projects**
+**Released Projects ✅**
 
-- **[Robot UI](https://github.com/ChenyCHENYU/robot-ui)** - Independent component library
-- **[Robot CLI](https://github.com/ChenyCHENYU/robot-cli)** - Scaffolding tool
-- **[Robot Mobile](https://github.com/ChenyCHENYU/robot-mobile)** - Mobile solution
+- **[Robot CLI](https://github.com/ChenyCHENYU/robot-cli)** - Project scaffolding tool
+- **[Robot uniApp](https://github.com/ChenyCHENYU/robot-uniapp)** - UniApp mobile solution (replaces Robot Mobile)
+
+**In Progress 🚧**
+
 - **[Robot Backend](https://github.com/ChenyCHENYU/robot-backend)** - NestJS backend service
 
-**Released Plugins**
+**Published Plugins**
 
-- **vite-console-plugin** - Vite console beautification and prompt plugin
-- **ts-type-cleaner** - TypeScript type analysis and cleaning tool
-- **robot-admin-env-manager** - Robot Admin environment configuration management tool
-- **git-branch-check-diff-commits** - Quick branch merge sync checker
-- **vite-plugin-preloader** - Smart route preloader plugin
+- **[vite-console-plugin](https://www.npmjs.com/package/vite-console-plugin)** `v2.0.15` - Vite console beautification plugin
+- **[ts-type-cleaner](https://www.npmjs.com/package/ts-type-cleaner)** `v5.0.8` - TypeScript type analysis & cleanup tool
+- **[robot-admin-env-manager](https://www.npmjs.com/package/robot-admin-env-manager)** `v1.0.5` - Multi-env configuration manager
+- **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - Smart route preloader
+- **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Branch diff checker
 </details>
 
 ---
@@ -966,10 +957,11 @@ bun run type-build
 
 **🧑‍💻 Author Information**
 
-- **Name:** CHENY (Frontend Developer & Agile Pursuer)
-- **Bio:** A little novice | 🐔🐤🐓 Chickens pecking at each other
+- **Name:** CHENY (Frontend Developer & Agile Practitioner)
 - **Email:** [ycyplus@gmail.com](mailto:ycyplus@gmail.com)
 - **GitHub:** [@ChenyCHENYU](https://github.com/ChenyCHENYU)
+- **npm:** [@cheny_yang](https://www.npmjs.com/~cheny_yang)
+- **Public Account:** 前端咔啦咪 (WeChat Official Account)
 
 ---
 
@@ -1025,17 +1017,52 @@ Thanks to all developers who contributed to this project:
 
 ## 📄 Changelog
 
-### 🎉 v1.0.0 (2025-01-10)
+### 🎉 v2.2.0 (2026-03-11) — Latest
 
-- ✨ First official version released
-- 🎨 30+ core components fully implemented
-- 📊 30+ demo pages all completed
-- 🔧 7 custom directives implemented
-- 🛡️ Complete permission management system
-- 📱 Responsive design fully adapted
-- 🧪 Test coverage reached 85%+
+- ✨ Layout system upgraded to v2.2.0
+- 🔧 env-manager upgraded to v1.0.5
+- 🛠️ Robot CLI scaffolding tool officially released
+- 📦 @robot-admin/naive-ui-components upgraded to v0.8.2 (51+ components)
+- 🐛 Multiple stability improvements
 
-View [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
+<details>
+<summary><b>Historical Versions</b></summary>
+
+### v2.1.0 (2026-03-06)
+
+- 🏗️ SaaS application extension (admin-saas)
+- 🔄 Monorepo workspace support
+- ⚡ Build performance optimization
+
+### v2.0.0 (2026-03-01) — Breaking Change
+
+- 🔄 Single-app architecture restructured (main/dev branches)
+- ⚡ Upgraded Vite 8.0.1, Bun 1.x
+- 🧩 Components upgraded to 51+
+- 📐 UnoCSS presetWind3 migration
+- 🗑️ Removed legacy code, modular refactor
+
+### v1.14.0 (2026-02)
+
+- 🔀 Micro-frontend (micro-app branch) + Monorepo (monorepo branch)
+- 📦 core-packages refactor
+- ⚡ Bun migration
+
+### v1.13.x (2026-01)
+
+- 🧩 45+ components, 11 directives
+- 📝 54+ demo pages
+- 🎨 Theme system stability improvements
+
+### v1.0.0 (2025-11)
+
+- ✨ First official release
+- 🎨 30+ core components
+- 🛡️ Complete permission management
+
+</details>
+
+See [CHANGELOG.md](./CHANGELOG.md) for the complete version history.
 
 ---
 
@@ -1046,7 +1073,7 @@ This project is based on [MIT License](./LICENSE) open source agreement.
 ```
 MIT License
 
-Copyright (c) 2025 ChenY (Robot Admin)
+Copyright (c) 2026 ChenY (Robot Admin)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
