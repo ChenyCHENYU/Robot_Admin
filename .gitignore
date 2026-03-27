@@ -53,3 +53,7 @@ src/types/components.d.ts
 packages/
 apps/robot-admin-*/
 nul
+
+# Module Federation 临时文件
+.__mf__temp/
+.mf/

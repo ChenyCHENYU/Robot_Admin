@@ -15,6 +15,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import Unocss from 'unocss/vite'
 import Icons from 'unplugin-icons/vite'
 import preloader from 'vite-plugin-preloader'
+import { federation } from '@module-federation/vite'
 
 import {
   viteConsolePlugin,
@@ -51,6 +52,32 @@ export default defineConfig(async ({ mode, command }: { mode: string; command: s
           ]
         : []),
       createI18nPlugin(),
+      // 🔗 Module Federation — 暴露组件供子应用消费
+      federation({
+        name: 'robotAdmin',
+        filename: 'remoteEntry.js',
+        exposes: {
+          './Table': './federation/exposes/Table.ts',
+          './Form': './federation/exposes/Form.ts',
+          './Tree': './federation/exposes/Tree.ts',
+          './Icon': './federation/exposes/Icon.ts',
+          './Editor': './federation/exposes/Editor.ts',
+        },
+        remotes: {},
+        shared: {
+          vue: { singleton: true, requiredVersion: '^3.5.0' },
+          'vue-router': { singleton: true },
+          pinia: { singleton: true },
+          'naive-ui': { singleton: true },
+          '@vueuse/core': { singleton: true },
+          '@iconify/vue': { singleton: true },
+          '@robot-admin/naive-ui-components': { singleton: true },
+          '@robot-admin/request-core': { singleton: true },
+          '@robot-admin/directives': { singleton: true },
+        },
+        manifest: true,
+        runtimePlugins: ['./federation/runtime/index.ts'],
+      }),
       ...(process.env.ANALYZE
         ? [
             (await import('rollup-plugin-visualizer')).visualizer({

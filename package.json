@@ -38,6 +38,7 @@
     "@iconify-json/ri": "^1.2.10",
     "@iconify/vue": "^5.0.0",
     "@kangc/v-md-editor": "^2.3.18",
+    "@module-federation/bridge-vue3": "^2.2.3",
     "@robot-admin/directives": "latest",
     "@robot-admin/file-utils": "latest",
     "@robot-admin/form-validate": "latest",
@@ -72,6 +73,7 @@
     "@iconify-json/mdi": "^1.2.3",
     "@commitlint/cli": "^20.4.3",
     "@commitlint/config-conventional": "^20.4.3",
+    "@module-federation/vite": "^1.13.5",
     "@inspira-ui/plugins": "^0.0.1",
     "@tsconfig/node22": "^22.0.5",
     "@types/node": "^22.19.15",
@@ -128,5 +130,8 @@
     "*.{json,md,yml,yaml}": [
       "prettier --write"
     ]
+  },
+  "overrides": {
+    "estree-walker": "^2.0.2"
   }
 }
