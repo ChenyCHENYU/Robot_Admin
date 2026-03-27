@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.2.0...v2.2.1) (2026-03-27)
+
+
+### Bug Fixes
+
+* **deps:** 升级 Vite 8.0.3 + Rolldown rc.12 修复 CJK 字符构建 panic ([492adb9](https://github.com/ChenyCHENYU/Robot_Admin/commit/492adb97c5a5e15e70f5d8357e9e24dcf2410a43))
+* **router,styles:** 修复Vite8动态路由404+标题组件主题适配+loading白屏 ([a9721c3](https://github.com/ChenyCHENYU/Robot_Admin/commit/a9721c3f94fc2f2bead939992910c9e82a9208a8))
+
 ## [2.2.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.1.0...v2.2.0) (2026-03-11)
 
 
