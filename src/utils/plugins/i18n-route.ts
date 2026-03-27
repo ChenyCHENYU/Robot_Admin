@@ -27,7 +27,7 @@
  * - 完全自动化（插件翻译 -> 自动读取 -> 自动构建映射）
  */
 
-import langJSON from '../../../lang/index.json'
+import langJSON from '@lang/index.json'
 
 type LangData = Record<
   string,
