@@ -24,6 +24,7 @@
         background: #101014;
       }
 
+      /* 首屏加载动画：始终白底，不跟随主题变化 */
       .app-loading {
         position: fixed;
         top: 0;
@@ -36,11 +37,6 @@
         background: #fff;
         z-index: 9999;
         transition: opacity 0.4s ease-out;
-      }
-
-      /* 深色主题适配 */
-      [data-theme='dark'] .app-loading {
-        background: #101014;
       }
 
       .app-loading-wrap {
