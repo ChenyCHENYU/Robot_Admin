@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import '../lang/index.js'
+import '@lang/index.js'
 import './utils/plugins/i18n-route.ts' // 🌐 扩展路由翻译
 
 // 键：首屏加载动画必须最先执行，确保极速显示

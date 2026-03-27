@@ -29,6 +29,11 @@ export default {
       find: '@shared',
       replacement: fileURLToPath(new URL('../../../shared', import.meta.url)),
     },
+    // 国际化语言包别名
+    {
+      find: '@lang',
+      replacement: fileURLToPath(new URL('../../../lang', import.meta.url)),
+    },
     // 项目路径别名
     {
       find: '@',
