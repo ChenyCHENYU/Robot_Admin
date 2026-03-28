@@ -21,6 +21,7 @@
       <NCard
         class="demo-card"
         :bordered="false"
+        :content-style="linearCardContentStyle"
       >
         <template #header>
           <div class="card-header">
@@ -45,6 +46,7 @@
       <NCard
         class="demo-card"
         :bordered="false"
+        :content-style="cardContentStyle"
       >
         <template #header>
           <div class="card-header">
@@ -71,6 +73,7 @@
       <NCard
         class="demo-card"
         :bordered="false"
+        :content-style="cardContentStyle"
       >
         <template #header>
           <div class="card-header">
@@ -106,6 +109,7 @@
       <NCard
         class="demo-card"
         :bordered="false"
+        :content-style="cardContentStyle"
       >
         <template #header>
           <div class="card-header">
@@ -135,6 +139,7 @@
       <NCard
         class="demo-card"
         :bordered="false"
+        :content-style="cardContentStyle"
       >
         <template #header>
           <div class="card-header">
@@ -165,6 +170,23 @@
   import { changeColor } from 'seemly'
 
   const themeVars = useThemeVars()
+
+  // 卡片内容区居中样式（直接内联，绕过 Naive UI CSS 变量覆盖问题）
+  const cardContentStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '260px',
+    padding: '32px 24px',
+  }
+
+  const linearCardContentStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    minHeight: '120px',
+    padding: '32px 24px',
+  }
 
   // 动态进度数据
   const circlePercentages = ref([0, 0, 0])

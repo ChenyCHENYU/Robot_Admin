@@ -65,6 +65,11 @@
   --c-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* NCard 头部全局底部间距（亮色/暗色通用） */
+.n-card-header {
+  margin-bottom: 20px !important;
+}
+
 [data-theme='dark'] {
   /* 卡片头部暗色适配 */
   .n-card-header {

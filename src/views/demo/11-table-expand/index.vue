@@ -15,7 +15,7 @@
         title="功能配置"
         size="small"
       >
-        <NSpace>
+        <NSpace class="mt-4">
           <NCheckbox v-model:checked="config.enableSelection">
             启用父表格选择
           </NCheckbox>
@@ -39,7 +39,10 @@
         title="批量操作"
         size="small"
       >
-        <C_ActionBar :actions="toolbarActions" />
+        <C_ActionBar
+          :actions="toolbarActions"
+          class="mt-4"
+        />
       </NCard>
 
       <!-- 主表格 -->

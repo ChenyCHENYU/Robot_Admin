@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-29 21:43:34
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-08 23:15:00
+ * @LastEditTime: 2026-03-28 11:58:50
  * @FilePath: \Robot_Admin\src\views\demo\05-date\index.scss
  * @Description: 日期选择器组件演示页面样式
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -30,10 +30,6 @@
 
     &:hover {
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    }
-
-    :deep(.n-card-header) {
-      padding-bottom: 12px;
     }
 
     .card-header {

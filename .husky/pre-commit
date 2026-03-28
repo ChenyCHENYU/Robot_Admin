@@ -1,2 +1,1 @@
-bunx oxlint --max-warnings 0
 bunx lint-staged

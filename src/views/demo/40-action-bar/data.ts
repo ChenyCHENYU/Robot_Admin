@@ -1,4 +1,7 @@
-import type { TableColumn } from '@robot-admin/naive-ui-components'
+import type {
+  TableColumn,
+  ActionDropdownItem,
+} from '@robot-admin/naive-ui-components'
 
 // 表格列定义
 export const columns: TableColumn[] = [
@@ -57,3 +60,16 @@ export const DEFAULT_CUSTOM_CONFIG = {
   compact: false,
   wrap: false,
 }
+
+// 场景六：「更多」下拉子选项配置（无回调，通过 @dropdown-click 统一分发）
+export const MORE_DROPDOWN_ITEMS: ActionDropdownItem[] = [
+  { key: 'export-excel', label: '导出Excel', icon: 'mdi:file-excel' },
+  { key: 'export-pdf', label: '导出PDF', icon: 'mdi:file-pdf' },
+  { key: 'print', label: '打印', icon: 'mdi:printer' },
+]
+
+// 场景六：「设置」下拉子选项配置
+export const SETTINGS_DROPDOWN_ITEMS: ActionDropdownItem[] = [
+  { key: 'column', label: '列设置', icon: 'mdi:table-column' },
+  { key: 'filter', label: '筛选', icon: 'mdi:filter' },
+]

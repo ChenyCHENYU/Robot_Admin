@@ -253,7 +253,13 @@
     ActionDropdownItem,
   } from '@robot-admin/naive-ui-components'
   import { useMessage } from 'naive-ui/es'
-  import { columns, MOCK_TABLE_DATA, DEFAULT_CUSTOM_CONFIG } from './data'
+  import {
+    columns,
+    MOCK_TABLE_DATA,
+    DEFAULT_CUSTOM_CONFIG,
+    MORE_DROPDOWN_ITEMS,
+    SETTINGS_DROPDOWN_ITEMS,
+  } from './data'
 
   const message = useMessage()
 
@@ -467,7 +473,7 @@
     },
   ])
 
-  // 场景六：下拉菜单
+  // 场景六：下拉菜单（子选项配置来自 data.ts，回调由 handleDropdownClick 统一分发）
   const dropdownActionsSimple = computed<ActionItem[]>(() => [
     {
       key: 'add',
@@ -482,55 +488,13 @@
       key: 'more',
       label: '更多',
       icon: 'mdi:dots-horizontal',
-      dropdown: [
-        {
-          key: 'export-excel',
-          label: '导出Excel',
-          icon: 'mdi:file-excel',
-          onClick: () => {
-            message.success('导出Excel')
-          },
-        },
-        {
-          key: 'export-pdf',
-          label: '导出PDF',
-          icon: 'mdi:file-pdf',
-          onClick: () => {
-            message.success('导出PDF')
-          },
-        },
-        {
-          key: 'print',
-          label: '打印',
-          icon: 'mdi:printer',
-          onClick: () => {
-            message.info('打印')
-          },
-        },
-      ],
+      dropdown: MORE_DROPDOWN_ITEMS,
     },
     {
       key: 'settings',
       label: '设置',
       icon: 'mdi:cog',
-      dropdown: [
-        {
-          key: 'column',
-          label: '列设置',
-          icon: 'mdi:table-column',
-          onClick: () => {
-            message.info('列设置')
-          },
-        },
-        {
-          key: 'filter',
-          label: '筛选',
-          icon: 'mdi:filter',
-          onClick: () => {
-            message.info('筛选')
-          },
-        },
-      ],
+      dropdown: SETTINGS_DROPDOWN_ITEMS,
     },
   ])
 
@@ -557,8 +521,16 @@
   // 事件处理
   const handleActionClick = (action: ActionItem) =>
     console.log('Action:', action)
-  const handleDropdownClick = (item: ActionDropdownItem, action: ActionItem) =>
-    console.log('Dropdown:', item, action)
+  const handleDropdownClick = (item: ActionDropdownItem) => {
+    const msgMap: Record<string, () => void> = {
+      'export-excel': () => message.success('导出Excel'),
+      'export-pdf': () => message.success('导出PDF'),
+      print: () => message.info('打印'),
+      column: () => message.info('列设置'),
+      filter: () => message.info('筛选'),
+    }
+    msgMap[item.key]?.()
+  }
 
   const handleRefresh = async () => {
     loading.value = true
@@ -572,32 +544,6 @@
   }
 </script>
 
-<style scoped lang="scss">
-  .action-bar-demo-page {
-    padding: 20px;
-  }
-
-  .card-content {
-    display: flex;
-    flex-direction: column;
-  }
-
-  // 提示文字样式
-  .hint-text {
-    font-size: 13px;
-    color: var(--n-text-color-3);
-    line-height: 1.6;
-  }
-
-  // 配置项标签
-  .config-label {
-    font-size: 14px;
-    color: var(--n-text-color-2);
-    margin-right: 8px;
-  }
-
-  // 卡片标题右侧说明文字
-  :deep(.n-card-header__extra) {
-    font-size: 13px;
-  }
+<style lang="scss" scoped>
+  @use './index.scss';
 </style>
