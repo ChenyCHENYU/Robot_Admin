@@ -606,18 +606,12 @@ graph LR
 
 We genuinely want to know — please reach out directly:
 
-| Feedback Type                | What you can share                                                | Where                                                                                                     |
-| ---------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| 🏢 **Use Cases**             | What project are you building? What problem does it solve?        | [Share your project →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=show-and-tell) |
-| 🧩 **Component Experience**  | Which components work great? Which need polish?                   | [Component feedback →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=ideas)         |
-| 🚀 **Onboarding Experience** | What was confusing in the docs? What tripped you up during setup? | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new)                                  |
-| 💡 **Feature Requests**      | What component or capability do you wish existed?                 | [Request a feature →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=ideas)          |
-
-### 🗣️ Active Discussions — Jump In
-
-- 💬 [What are you building with Robot Admin?](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — Share your use case
-- 🗳️ [What feature do you want next?](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — Vote on priorities
-- 🏗️ [How are you using the multi-arch branches?](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — Monorepo / Module Federation / Micro-frontend real-world experience
+| Feedback Type                | What you can share                                                | Where                                                                    |
+| ---------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 🏢 **Use Cases**             | What project are you building? What problem does it solve?        | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
+| 🧩 **Component Experience**  | Which components work great? Which need polish?                   | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
+| 🚀 **Onboarding Experience** | What was confusing in the docs? What tripped you up during setup? | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
+| 💡 **Feature Requests**      | What component or capability do you wish existed?                 | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
 
 ---
 

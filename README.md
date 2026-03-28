@@ -612,18 +612,12 @@ graph LR
 
 我明确想知道这些，请直接告诉我：
 
-| 反馈类型        | 你可以告诉我                         | 入口                                                                                                |
-| --------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| 🏢 **使用场景** | 你在做什么项目？解决了什么业务问题？ | [分享你的项目 →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=show-and-tell) |
-| 🧩 **组件体验** | 哪些组件用着顺手？哪些还需要打磨？   | [组件体验反馈 →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=ideas)         |
-| 🚀 **上手体验** | 文档哪里说不清楚？部署遇到了什么坑？ | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new)                                 |
-| 💡 **业务需求** | 你需要但还没有的组件或功能是什么？   | [功能建议 →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=ideas)             |
-
-### 🗣️ 正在讨论中，欢迎加入
-
-- 💬 [大家用 Robot Admin 在做什么项目？](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — 分享你的使用场景
-- 🗳️ [下一个功能，你们最想要什么？](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — 投票决定优先级
-- 🏗️ [多架构方案你们实际怎么用？](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — Monorepo / 模块联邦 / 微前端实践交流
+| 反馈类型        | 你可以告诉我                         | 入口                                                                |
+| --------------- | ------------------------------------ | ------------------------------------------------------------------- |
+| 🏢 **使用场景** | 你在做什么项目？解决了什么业务问题？ | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
+| 🧩 **组件体验** | 哪些组件用着顺手？哪些还需要打磨？   | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
+| 🚀 **上手体验** | 文档哪里说不清楚？部署遇到了什么坑？ | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
+| 💡 **业务需求** | 你需要但还没有的组件或功能是什么？   | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
 
 ---
 
@@ -1006,7 +1000,7 @@ bun run type-build
 ### 💬 加入交流群
 
 <p align="center">
-  <img src="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/robot_admin/wechat-group.png" width="200" alt="微信交流群">
+  <img src="/交流群.jpg" width="200" alt="微信交流群">
   <br>
   <em>扫码加入微信交流群，与开发者一起交流讨论</em>
 </p>
