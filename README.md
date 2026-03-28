@@ -30,19 +30,19 @@
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
           <img src="https://img.shields.io/badge/查看代码-monorepo-00D8FF?style=flat-square" alt="Monorepo Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo/docs/GUIDE.md">
-          <img src="https://img.shields.io/badge/完整文档-GUIDE-orange?style=flat-square" alt="Monorepo Docs">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/README.md">
+          <img src="https://img.shields.io/badge/完整文档-README-orange?style=flat-square" alt="Monorepo Docs">
         </a>
       </td>
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🔮-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Module Federation</strong></sub><br>
         <sub>初版完成</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
-          <img src="https://img.shields.io/badge/查看代码-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
+          <img src="https://img.shields.io/badge/查看代码-module--federation-9B59B6?style=flat-square" alt="MF Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md">
-          <img src="https://img.shields.io/badge/使用指南-DOCS-orange?style=flat-square" alt="MF Docs">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/README.md">
+          <img src="https://img.shields.io/badge/使用指南-README-orange?style=flat-square" alt="MF Docs">
         </a>
       </td>
       <td align="center" width="200">
@@ -60,10 +60,10 @@
   </table>
 
   <p>
-    <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
+    <img src="https://img.shields.io/badge/bun-%E2%89%A51.3.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-8.0.1-646CFF?style=flat&logo=vite" alt="Vite Version">
+    <img src="https://img.shields.io/badge/vite-8.0.3-646CFF?style=flat&logo=vite" alt="Vite Version">
     <a href="https://vercel.com"><img src="https://img.shields.io/github/deployments/ChenyCHENYU/robot_admin/production?label=vercel&logo=vercel" alt="Vercel"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
   </p>
@@ -72,7 +72,7 @@
     <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
-    <img src="https://img.shields.io/badge/test_coverage-85%25-brightgreen?style=flat" alt="Test Coverage">
+    <img src="https://img.shields.io/badge/node-%E2%89%A522.18-339933?style=flat&logo=nodedotjs" alt="Node Version">
   </p>
   <p>
     <img src="https://img.shields.io/github/stars/ChenyCHENYU/robot_admin?style=social" alt="GitHub stars">
@@ -115,12 +115,12 @@
 <details>
 <summary><b>👉 查看各架构对比一览</b></summary>
 
-| 架构类型          | 适用场景             | 特点                             | 分支                                                                                                     | 文档                                                                                                                  |
-| ----------------- | -------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **🏗️ 单体架构** ← | 中小型项目、快速原型 | 简单直接、开箱即用               | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | 本文档                                                                                                                |
-| **📦 Monorepo**   | 多应用统一管理       | 代码复用、统一工具链、独立部署   | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                    |
-| **🔮 模块联邦**   | 微应用动态加载       | 运行时共享、独立部署、版本隔离   | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
-| **🚀 微前端**     | 大型应用、团队协作   | 技术栈无关、独立部署、渐进式迁移 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | [查看文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md)                                       |
+| 架构类型          | 适用场景             | 特点                             | 分支                                                                                     | 文档                                                                                    |
+| ----------------- | -------------------- | -------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **🏗️ 单体架构** ← | 中小型项目、快速原型 | 简单直接、开箱即用               | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                           | 本文档                                                                                  |
+| **📦 Monorepo**   | 多应用统一管理       | 代码复用、统一工具链、独立部署   | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/README.md)          |
+| **🔮 模块联邦**   | 微应用动态加载       | 运行时共享、独立部署、版本隔离   | [`module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/README.md) |
+| **🚀 微前端**     | 大型应用、团队协作   | 技术栈无关、独立部署、渐进式迁移 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                 | [查看文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md)         |
 
 </details>
 
@@ -147,7 +147,7 @@ _在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `Type
 - **54+ 精心打磨的演示页面** - 每一个都是可直接用于生产的业务组件，51 个组件支持文档站 iframe 在线预览
 - **7 种自定义指令** - 防抖、节流、长按、拖拽、权限...让开发更优雅
 - **主题系统** - 深色/浅色模式/跟随系统 + 支持自定义扩展
-- **Preview 路由系统** - 32 个无鉴权独立预览路由，供 [文档站](https://www.tzagileteam.com) 通过 iframe 嵌入实时组件演示
+- **Preview 路由系统** - 38 个无鉴权独立预览路由，供 [文档站](https://www.tzagileteam.com) 通过 iframe 嵌入实时组件演示
 
 ### 🛠️ 企业级架构，个人项目也能享受
 
@@ -225,8 +225,8 @@ bun clean              # 清理缓存
 
 **⚙️ 构建工具**
 
-- **Bun 1.x** - 🚀 性能怪兽，安装速度提升10倍
-- **Vite 8.0.1** - ⚡ Rolldown 统一构建引擎，构建速度提升 10-30x
+- **Bun 1.3.x** - 🚀 性能怪兽，安装速度提升10倍
+- **Vite 8.0.3** - ⚡ Rolldown 统一构建引擎，构建速度提升 10-30x
 - **Sass 1.87** - 🎨 成熟的CSS预处理器
 
 **🔧 开发工具**
@@ -392,7 +392,7 @@ Robot_Admin/
 │   ├── 📁 views/                    # 页面视图
 │   │   ├── 📁 dashboard/            # 数据看板
 │   │   ├── 📁 demo/                 # 演示页面（54+ 功能展示）
-│   │   ├── 📁 preview/              # 组件预览页面（32 个 iframe 嵌入路由）
+│   │   ├── 📁 preview/              # 组件预览页面（38 个 iframe 嵌入路由）
 │   │   ├── 📁 sys-manage/           # 系统管理
 │   │   ├── 📁 login/                # 登录注册
 │   │   └── 📁 home/                 # 项目主页
@@ -604,6 +604,29 @@ graph LR
 
 ---
 
+## 💬 社区互动
+
+> 🚧 **本项目仍在快速迭代，欢迎任何使用反馈、功能建议、甚至吐槽！没有蠢问题，只有没被发现的优化点。**
+
+### 🎯 你的反馈，让项目变得更好
+
+我明确想知道这些，请直接告诉我：
+
+| 反馈类型        | 你可以告诉我                         | 入口                                                                                                |
+| --------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| 🏢 **使用场景** | 你在做什么项目？解决了什么业务问题？ | [分享你的项目 →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=show-and-tell) |
+| 🧩 **组件体验** | 哪些组件用着顺手？哪些还需要打磨？   | [组件体验反馈 →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=ideas)         |
+| 🚀 **上手体验** | 文档哪里说不清楚？部署遇到了什么坑？ | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new)                                 |
+| 💡 **业务需求** | 你需要但还没有的组件或功能是什么？   | [功能建议 →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=ideas)             |
+
+### 🗣️ 正在讨论中，欢迎加入
+
+- 💬 [大家用 Robot Admin 在做什么项目？](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — 分享你的使用场景
+- 🗳️ [下一个功能，你们最想要什么？](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — 投票决定优先级
+- 🏗️ [多架构方案你们实际怎么用？](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — Monorepo / 模块联邦 / 微前端实践交流
+
+---
+
 ## 🤝 参与贡献
 
 > **来啊，快活啊！一起搞事情啊！** 🎉
@@ -698,16 +721,18 @@ location / {
 <details>
 <summary><b>查看完整版本历程 (v1.0 → v2.2)</b></summary>
 
-| 版本  | 时间    | 主要更新                                             |
-| ----- | ------- | ---------------------------------------------------- |
-| v1.0  | 2024-Q3 | 🎉 项目初版：Vue3 + Vite + Naive UI + Pinia 基础架构 |
-| v1.6  | 2024-Q4 | 🎨 主题系统 + UnoCSS + 演示页面体系                  |
-| v1.11 | 2025-12 | 🧩 组件库雏形 + i18n 国际化 + 性能优化               |
-| v1.13 | 2026-02 | 📦 组件库独立发布 `@robot-admin/naive-ui-components` |
-| v1.14 | 2026-02 | ✨ 新增 10 个组件（签名/裁剪/Cron/瀑布流等）         |
-| v2.0  | 2026-03 | 🏗️ **架构重构**：39 个组件迁移至独立 npm 包，零冗余  |
-| v2.1  | 2026-03 | 🔐 Token 无感刷新 + 权限体系升级 + 可插拔登录组件    |
-| v2.2  | 2026-03 | 🎭 菜单双主题 + Vite 8 升级 + 全量 TypeScript 通过   |
+| 版本   | 时间    | 主要更新                                             |
+| ------ | ------- | ---------------------------------------------------- |
+| v1.0   | 2025-07 | 🎉 项目初版：Vue3 + Vite + Naive UI + Pinia 基础架构 |
+| v1.6   | 2025-10 | 🎨 主题系统 + UnoCSS + 演示页面体系                  |
+| v1.11  | 2025-12 | 🧩 组件库雏形 + i18n 国际化 + 性能优化               |
+| v1.12  | 2026-02 | 📦 `@robot-admin/request-core` 独立发布              |
+| v1.13  | 2026-02 | 🔧 Composable 架构重构，各 npm 包逐步独立发布        |
+| v1.14  | 2026-02 | ✨ 新增 10 个组件（签名/裁剪/Cron/瀑布流等）         |
+| v2.0   | 2026-03 | 🏗️ **架构重构**：39 个组件迁移至独立 npm 包，零冗余  |
+| v2.1   | 2026-03 | 🔐 Token 无感刷新 + 权限体系升级 + 可插拔登录组件    |
+| v2.2   | 2026-03 | 🎭 菜单双主题 + Vite 8 升级 + 全量 TypeScript 通过   |
+| v2.2.1 | 2026-03 | 🔧 Vite 8.0.3 正式升级 + 样式细节优化                |
 
 </details>
 
@@ -721,7 +746,7 @@ location / {
 
 ### 🌟 长期规划 (2026 Q3+)
 
-- [ ] 🏗️ Robot Backend — NestJS 全栈服务
+- [ ] 🏗️ Robot Nest — NestJS 全栈服务
 - [ ] 🔄 完整的 CI/CD 流水线集成示例
 - [ ] 🌐 完整 i18n 国际化方案（更多语言）
 
@@ -749,7 +774,7 @@ location / {
 
 - **[Robot CLI](https://github.com/ChenyCHENYU/robot-cli)** ✅ - 脚手架工具，快速初始化项目模板
 - **[Robot uniApp](https://github.com/ChenyCHENYU/robot-uniapp)** ✅ - 移动端跨平台解决方案（已完成）
-- **[Robot Backend](https://github.com/ChenyCHENYU/robot-backend)** 🚧 - NestJS 全栈后端服务（规划中）
+- **[Robot Nest](https://github.com/ChenyCHENYU/robot-nest)** 🚧 - NestJS 全栈后端服务（规划中）
 
 **已发布 npm 插件**
 
@@ -758,6 +783,12 @@ location / {
 - **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - 智能路由预加载插件
 - **[robot-admin-env-manager](https://www.npmjs.com/package/robot-admin-env-manager)** `v1.0.5` - Robot Admin 环境配置管理工具
 - **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Git 分支快速比对合并检查
+- **[git-log-formatter](https://www.npmjs.com/package/git-log-formatter)** `v1.0.2` - Git log 格式化美化工具
+- **[standards-cli](https://www.npmjs.com/package/standards-cli)** `v1.0.13` - 前端工程化提交规范初始化工具
+- **[mgit-push](https://www.npmjs.com/package/mgit-push)** `v1.0.5` - 同时推送到多个 Git 平台
+- **[@agile-team/robot-cli](https://www.npmjs.com/package/@agile-team/robot-cli)** `v1.1.12` - 现代化项目脚手架工具
+- **[@agile-team/naive-ui-components](https://www.npmjs.com/package/@agile-team/naive-ui-components)** `v0.1.4` - Naive UI 组件库（旧版，已迁移至 @robot-admin）
+- **[@agile-team/vscode-config](https://www.npmjs.com/package/@agile-team/vscode-config)** `v2.0.8` - 团随 VSCode 配置一键安装工具
 </details>
 
 ---
@@ -804,8 +835,8 @@ location / {
 
 ### 🔧 开发环境
 
-- **Node.js**: >= 20.19.0 (推荐 22.12+)
-- **Bun**: >= 1.2.19 (推荐最新版)
+- **Node.js**: >= 22.18 (推荐最新 LTS)
+- **Bun**: >= 1.3.x (推荐最新版)
 - **内存**: >= 8GB RAM
 - **存储**: >= 1GB 可用空间
 - **系统**: Windows 10+, macOS 12+, Ubuntu 20.04+
@@ -964,11 +995,21 @@ bun run type-build
 **🧑‍💻 作者信息**
 
 - **姓名：** CHENY
-- **身份：** 个人开发者 · 前端工程师（副业开源爱好者）
+- **身份：** 个人开发者 · 前端架构师（开源爱好者）
 - **公众号：** 前端咔啦咪（小红书同名）
 - **邮箱：** [ycyplus@gmail.com](mailto:ycyplus@gmail.com)
 - **GitHub：** [@ChenyCHENYU](https://github.com/ChenyCHENYU)
 - **npm：** [@cheny_yang](https://www.npmjs.com/~cheny_yang)
+
+---
+
+### 💬 加入交流群
+
+<p align="center">
+  <img src="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/robot_admin/wechat-group.png" width="200" alt="微信交流群">
+  <br>
+  <em>扫码加入微信交流群，与开发者一起交流讨论</em>
+</p>
 
 ---
 
@@ -1024,7 +1065,17 @@ bun run type-build
 
 ## 📄 更新日志
 
-### 🚀 v2.2.0 (2026-03-11) — 最新版本
+### 🚀 v2.2.1 (2026-03-27) — 最新版本
+
+- 🔧 **Vite 8.0.3 + Rolldown**：升级至 Vite 最新版，构建引擎持续优化
+- 🎨 **样式细节优化**：NCard 全局间距优化，暗色主题细节全面提升
+- 🔒 **工程化修复**：oxlint 版本锁定，修复 pre-commit 钩子兼容性问题
+- 📐 **代码质量**：全量 TypeScript 类型检查通过，演示页面样式统一规范
+
+<details>
+<summary><b>📆 查看历史版本记录 (v1.0 — v2.2)</b></summary>
+
+### 🎭 v2.2.0 (2026-03-11)
 
 - ✨ **菜单双主题**：增加菜单主题切换，提供个性/标准两种多态模式
 - 🔐 **权限体系升级**：按钮权限、路由鉴权、数据权限全面启用
@@ -1032,17 +1083,14 @@ bun run type-build
 - 🔧 **Vite 8 + Rolldown**：构建速度提升 10-30 倍
 - 🧩 演示页面批量优化，全量 TypeScript 类型检查通过
 
-<details>
-<summary><b>📆 查看历史版本记录 (v1.0 — v2.1)</b></summary>
-
 ### 🎨 v2.1.0 (2026-03-06)
 
 - ✨ 可插拔式 `C_Login` 登录组件，支持自定义扩展
 - 🔄 新增穿梭框 / 头像组 / 音频播放器组件
-- 🚀 32 个无鉴权预览路由，供文档站 iframe 嵌入
+- 🚀 38 个无鉴权预览路由，供文档站 iframe 嵌入
 - 🐛 登录页性能、错误拦截、中英文验证全面优化
 
-### 🏗️ v2.0.0 (2026-03-01) — 破坏性升级
+### 🏗️ v2.0.0 (2026-03-02) — 破坏性升级
 
 - 📦 **39 个组件全面迁移** 至 `@robot-admin/naive-ui-components`
 - ✅ 全量 `vue-tsc` 类型检查通过
@@ -1053,7 +1101,7 @@ bun run type-build
 - 新增电子签名 / 图片裁剪 / Cron 表达式编辑器 / 分割面板 / 公式编辑器 / 瀑布流 等 10 个组件
 - 将 `C_Notice` 升级为 `C_NotificationCenter` 全局通知插件
 
-### 📦 v1.13.x (2025-12 — 2026-02)
+### 📦 v1.13.x (2026-02-08 — 2026-02-17)
 
 - `@robot-admin/layout` 升级 v2.2.0，支持 View Transition API 主题切换
 - `@robot-admin/*` 各包逐步独立发布到 npm
@@ -1064,7 +1112,7 @@ bun run type-build
 - 组件库雏形建立、Vitest 测试框架集成
 - 全局搜索组件、内置权限指令系统
 
-### v1.0 — v1.10 (2024-Q3 — 2025-Q4)
+### v1.0 — v1.11 (2025-07 — 2025-12)
 
 - 项目核心框架建立、主题系统、动态表单/表格引擎、Demo 页面体系建设
 

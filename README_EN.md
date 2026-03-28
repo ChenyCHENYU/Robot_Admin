@@ -30,19 +30,19 @@
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
           <img src="https://img.shields.io/badge/View Code-monorepo-00D8FF?style=flat-square" alt="Monorepo Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo/docs/GUIDE.md">
-          <img src="https://img.shields.io/badge/Full Docs-GUIDE-orange?style=flat-square" alt="Monorepo Docs">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/README.md">
+          <img src="https://img.shields.io/badge/Full Docs-README-orange?style=flat-square" alt="Monorepo Docs">
         </a>
       </td>
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🔮-Module Federation-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Webpack/Vite Federation</strong></sub><br>
         <sub>Initial Release</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
-          <img src="https://img.shields.io/badge/View Code-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
+          <img src="https://img.shields.io/badge/View Code-module--federation-9B59B6?style=flat-square" alt="MF Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md">
-          <img src="https://img.shields.io/badge/Usage Guide-DOCS-orange?style=flat-square" alt="MF Docs">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/README.md">
+          <img src="https://img.shields.io/badge/Usage Guide-README-orange?style=flat-square" alt="MF Docs">
         </a>
       </td>
       <td align="center" width="200">
@@ -62,17 +62,17 @@
   <p>
     <a href="https://github.com/ChenyCHENYU/robot_admin/actions"><img src="https://img.shields.io/github/actions/workflow/status/ChenyCHENYU/robot_admin/main.yml" alt="Build Status"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
-    <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
+    <img src="https://img.shields.io/badge/bun-%E2%89%A51.3.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-8.0.1-646CFF?style=flat&logo=vite" alt="Vite Version">
+    <img src="https://img.shields.io/badge/vite-8.0.3-646CFF?style=flat&logo=vite" alt="Vite Version">
   </p>
   <p>
     <img src="https://img.shields.io/badge/components-51+-success?style=flat" alt="Components">
     <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
-    <img src="https://img.shields.io/badge/test_coverage-85%25-brightgreen?style=flat" alt="Test Coverage">
+    <img src="https://img.shields.io/badge/node-%E2%89%A522.18-339933?style=flat&logo=nodedotjs" alt="Node Version">
   </p>
   <p>
     <img src="https://img.shields.io/github/stars/ChenyCHENYU/robot_admin?style=social" alt="GitHub stars">
@@ -595,6 +595,29 @@ graph LR
 - **Image Lazy Loading** - Viewport-based image loading
 - **Debounce & Throttle** - High-frequency operation performance optimization
 </details>
+
+---
+
+## 💬 Community & Feedback
+
+> 🚧 **This project is actively evolving. We welcome any usage feedback, feature requests, or even complaints! There are no silly questions — only undiscovered improvements.**
+
+### 🎯 Tell Us What You Think
+
+We genuinely want to know — please reach out directly:
+
+| Feedback Type                | What you can share                                                | Where                                                                                                     |
+| ---------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| 🏢 **Use Cases**             | What project are you building? What problem does it solve?        | [Share your project →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=show-and-tell) |
+| 🧩 **Component Experience**  | Which components work great? Which need polish?                   | [Component feedback →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=ideas)         |
+| 🚀 **Onboarding Experience** | What was confusing in the docs? What tripped you up during setup? | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new)                                  |
+| 💡 **Feature Requests**      | What component or capability do you wish existed?                 | [Request a feature →](https://github.com/ChenyCHENYU/Robot_Admin/discussions/new?category=ideas)          |
+
+### 🗣️ Active Discussions — Jump In
+
+- 💬 [What are you building with Robot Admin?](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — Share your use case
+- 🗳️ [What feature do you want next?](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — Vote on priorities
+- 🏗️ [How are you using the multi-arch branches?](https://github.com/ChenyCHENYU/Robot_Admin/discussions) — Monorepo / Module Federation / Micro-frontend real-world experience
 
 ---
 
