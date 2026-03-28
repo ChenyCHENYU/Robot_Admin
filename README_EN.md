@@ -982,6 +982,16 @@ bun run type-build
 
 ---
 
+### 💬 Join WeChat Group
+
+<p align="center">
+  <img src="public/交流群.jpg" width="200" alt="WeChat Group">
+  <br>
+  <em>Scan to join the WeChat group and chat with the developer</em>
+</p>
+
+---
+
 ### 🤝 Contributors
 
 Thanks to all developers who contributed to this project:

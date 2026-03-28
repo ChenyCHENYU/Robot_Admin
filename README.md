@@ -1000,7 +1000,7 @@ bun run type-build
 ### 💬 加入交流群
 
 <p align="center">
-  <img src="/交流群.jpg" width="200" alt="微信交流群">
+  <img src="public/交流群.jpg" width="200" alt="微信交流群">
   <br>
   <em>扫码加入微信交流群，与开发者一起交流讨论</em>
 </p>
