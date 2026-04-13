@@ -1537,3 +1537,40 @@ app.mount('#app')        # 9. 挂载
 > 4. 所有文件必须包含文件头注释和 JSDoc
 > 5. Git 提交严格遵守 Commitlint 规范
 > 6. 不要破坏自动导入机制（unplugin-auto-import + unplugin-vue-components）
+
+---
+
+## 二十、AI 技能调度表（Skills）
+
+本项目配备了 5 个结构化 AI 技能包，位于 `.github/skills/` 目录。
+当识别到用户意图匹配下表关键词时，**自动加载对应 SKILL.md 并按其流程执行**。
+
+| 技能         | 目录                       | 触发关键词                                 | 说明                                            |
+| ------------ | -------------------------- | ------------------------------------------ | ----------------------------------------------- |
+| **原型解析** | `skills/prototype-scan/`   | 原型解析、axure扫描、页面清单、详设文档    | 将 Axure HTML / 详设文档 → page-spec JSON       |
+| **接口约定** | `skills/api-contract/`     | 接口约定、生成api、swagger转ts、接口文件   | 从 page-spec / Swagger → TS 类型 + API 函数     |
+| **页面生成** | `skills/page-codegen/`     | 生成页面、代码生成、页面骨架、scaffold     | 从 page-spec → index.vue + data.ts + index.scss |
+| **路由注册** | `skills/route-sync/`       | 注册路由、添加菜单、路由配置、新增页面路由 | 将新页面注册到 dynamicRouter.json               |
+| **规范审计** | `skills/convention-audit/` | 规范检查、代码审查、命名规范、code review  | 10 维度规范合规性审查                           |
+
+### 典型工作流
+
+```
+原型/详设文档
+  │
+  ▼
+prototype-scan → page-spec JSON
+  │
+  ├──▶ api-contract → src/api/ 类型 + 请求函数
+  │
+  ├──▶ page-codegen → src/views/ 页面三件套
+  │
+  └──▶ route-sync  → dynamicRouter.json 路由注册
+
+代码完成后
+  │
+  ▼
+convention-audit → 规范审计报告
+```
+
+> **使用方式**：直接用自然语言描述需求即可，AI 会自动匹配并执行对应技能。
