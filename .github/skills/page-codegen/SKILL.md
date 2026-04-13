@@ -1,6 +1,6 @@
 ---
 name: page-codegen
-description: 'Use when: generating Vue 3 page code from page-spec JSON (produced by prototype-scan). Outputs index.vue + data.ts + index.scss following Robot Admin conventions. Triggers on: page generation, code generation, 生成页面, 代码生成, vue页面, codegen, 页面骨架, scaffold.'
+description: 'Use when: generating Vue 3 page code from either a page-spec JSON or a natural language description. Outputs index.vue + data.ts + index.scss following Robot Admin conventions. Triggers on: page generation, code generation, 生成页面, 代码生成, vue页面, codegen, 页面骨架, scaffold, 建个页面, 写个页面, 帮我做个页面, 口述需求, natural language page request.'
 ---
 
 # Skill: 页面代码生成（page-codegen）
@@ -12,8 +12,70 @@ description: 'Use when: generating Vue 3 page code from page-spec JSON (produced
 
 ## 触发
 
-- 接收 page-spec JSON → 生成 `index.vue` + `data.ts` + `index.scss`（三件套）
+| 模式                    | 输入                                  | 何时使用             |
+| ----------------------- | ------------------------------------- | -------------------- |
+| **模式 0（自然语言）**  | 用户口述页面需求，无 JSON 文件        | 日常对话直接提需求时 |
+| **模式 1（JSON 输入）** | 来自 prototype-scan 的 page-spec JSON | 有原型/详设文档时    |
+
+- 输出统一：`index.vue` + `data.ts` + `index.scss`（三件套）
 - 可选追加：`layouts/` 目录（多布局变体）、composables（复杂业务逻辑）
+
+---
+
+## 模式 0 — 自然语言转 page-spec（内部步骤）
+
+用户口述需求时，AI **先在内部完成以下推导**，不必向用户索要 JSON，直接进入生成流程。
+
+### 推导步骤
+
+**① 提取页面基础信息**
+
+从用户描述中识别：
+
+- 页面中文名 / 所属模块（domain）
+- 核心资源名称（resource），驼峰命名
+- 交互模式（参照下方模式映射表）
+
+**② 关键词 → 交互模式映射**
+
+| 用户描述中出现的关键词              | 映射模式                  |
+| ----------------------------------- | ------------------------- |
+| 列表、查询、搜索 + 表格             | `LIST`                    |
+| 左侧树 + 右侧表格                   | `TREE_LIST`               |
+| 主表 + 明细 / 上下两个表格          | `MASTER_DETAIL`           |
+| 独立表单页 / 多 Tab 表单 / 步骤表单 | `FORM_PAGE`               |
+| 弹窗表单 / 新增编辑弹窗             | `LIST`（含 `FORM_MODAL`） |
+| 详情页 + 子表 Tab                   | `DETAIL_TABS`             |
+| 统计 / 大屏 / 图表                  | `DASHBOARD`               |
+
+**③ 字段推导**
+
+- 用户提到的字段名 → camelCase 字段名 + 推断组件类型（input/select/date...）
+- 用户提到"状态"类字段 → 自动生成 `STATUS_TAG_CONFIG`，固定右侧列
+- 未提及但常规必有的字段 → 自动补充 `id`、`createTime`、`status`
+
+**④ 内部生成 page-spec 骨架（仅用于后续步骤，不输出给用户）**
+
+```json
+{
+  "pageName": "推断的页面名",
+  "domain": "推断的模块路径",
+  "resource": "推断的资源名",
+  "mode": "推断的交互模式",
+  "columns": [],
+  "form": [],
+  "query": [],
+  "toolbar": [],
+  "operations": []
+}
+```
+
+**⑤ 不确定时的处理原则**
+
+- 模式不明确 → 优先推断为 `LIST`（最常见）
+- 字段描述模糊 → 用 `input` 类型占位，代码注释标注 `// TODO: 请确认字段类型`
+- 接口路径未提及 → 按 `/<domain>/<resource>` 惯例自动生成，注释提醒替换
+- **不向用户索要 JSON，直接用推断结果生成代码**
 
 ---
 
