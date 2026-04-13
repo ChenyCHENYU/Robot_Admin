@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "robot-admin": {
+      "command": "bun",
+      "args": ["run", "${workspaceFolder}/mcp/server.ts"]
+    }
+  }
+}

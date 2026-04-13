@@ -31,7 +31,8 @@
     "deploy": "bash ./scripts/merge-and-deploy.sh",
     "sync-deploy-branch": "bash ./scripts/sync-dev.sh",
     "analyze": "vite build --mode analyze",
-    "cz": "git-cz"
+    "cz": "git-cz",
+    "mcp": "bun run mcp/server.ts"
   },
   "dependencies": {
     "@antv/x6": "^2.19.2",
@@ -67,13 +68,14 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
     "@iconify-json/carbon": "^1.2.19",
     "@iconify-json/ic": "^1.2.4",
     "@iconify-json/la": "^1.2.1",
     "@iconify-json/mdi": "^1.2.3",
-    "@commitlint/cli": "^20.4.3",
-    "@commitlint/config-conventional": "^20.4.3",
     "@inspira-ui/plugins": "^0.0.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@tsconfig/node22": "^22.0.5",
     "@types/node": "^22.19.15",
     "@types/nprogress": "^0.2.3",

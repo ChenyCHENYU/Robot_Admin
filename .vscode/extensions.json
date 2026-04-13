@@ -4,6 +4,8 @@
     "vitest.explorer",
     "dbaeumer.vscode-eslint",
     "EditorConfig.EditorConfig",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "github.copilot",
+    "github.copilot-chat"
   ]
 }
