@@ -36,13 +36,13 @@
       </td>
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🔮-Module Federation-9B59B6?style=for-the-badge" alt="Module Federation"><br>
-        <sub><strong>Webpack/Vite Federation</strong></sub><br>
-        <sub>Initial Release</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
-          <img src="https://img.shields.io/badge/View Code-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
+        <sub><strong>Vite Module Federation</strong></sub><br>
+        <sub>Pluggable Architecture · Rebuilt on dev</sub><br>
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
+          <img src="https://img.shields.io/badge/View Code-module--federation-9B59B6?style=flat-square" alt="MF Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md">
-          <img src="https://img.shields.io/badge/Usage Guide-DOCS-orange?style=flat-square" alt="MF Docs">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/docs/MODULE_FEDERATION_BEST_PRACTICES.md">
+          <img src="https://img.shields.io/badge/Best Practices-DOCS-orange?style=flat-square" alt="MF Docs">
         </a>
       </td>
       <td align="center" width="200">
@@ -115,12 +115,12 @@
 <details>
 <summary><b>👉 View Architecture Comparison</b></summary>
 
-| Architecture             | Use Cases                                | Features                                                           | Branch                                                                                                   | Documentation                                                                                                            |
-| ------------------------ | ---------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **🏗️ Monolithic** ←      | Small-Medium Projects, Rapid Prototyping | Simple & Direct, Out-of-Box                                        | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | This Document                                                                                                            |
-| **📦 Monorepo**          | Multi-App Management                     | Code Reuse, Unified Toolchain, Independent Deployment              | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [Complete Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                 |
-| **🔮 Module Federation** | Dynamic Micro-App Loading                | Runtime Sharing, Independent Deployment, Version Isolation         | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [Usage Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
-| **🚀 Micro Frontend**    | Large Apps, Team Collaboration           | Tech Stack Agnostic, Independent Deployment, Progressive Migration | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | [View Docs](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md)                                         |
+| Architecture             | Use Cases                                | Features                                                           | Branch                                                                                   | Documentation                                                                                                                |
+| ------------------------ | ---------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **🏗️ Monolithic** ←      | Small-Medium Projects, Rapid Prototyping | Simple & Direct, Out-of-Box                                        | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                           | This Document                                                                                                                |
+| **📦 Monorepo**          | Multi-App Management                     | Code Reuse, Unified Toolchain, Independent Deployment              | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                   | [Complete Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                     |
+| **🔮 Module Federation** | Dynamic Micro-App Loading                | Runtime Sharing, Independent Deployment, CSS Isolation             | [`module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation) | [Best Practices](https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/docs/MODULE_FEDERATION_BEST_PRACTICES.md) |
+| **🚀 Micro Frontend**    | Large Apps, Team Collaboration           | Tech Stack Agnostic, Independent Deployment, Progressive Migration | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                 | [View Docs](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md)                                             |
 
 </details>
 
