@@ -29,10 +29,6 @@ coverage
 
 *.tsbuildinfo
 
-# Module Federation 缓存
-.__mf__temp
-.mf
-
 system_path.txt
 project_path.txt
 
