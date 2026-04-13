@@ -1542,7 +1542,7 @@ app.mount('#app')        # 9. 挂载
 
 ## 二十、AI 技能调度表（Skills）
 
-本项目配备了 5 个结构化 AI 技能包，位于 `.github/skills/` 目录。
+本项目配备了 6 个结构化 AI 技能包，位于 `.github/skills/` 目录。
 当识别到用户意图匹配下表关键词时，**自动加载对应 SKILL.md 并按其流程执行**。
 
 | 技能         | 目录                       | 触发关键词                                 | 说明                                            |
@@ -1552,6 +1552,7 @@ app.mount('#app')        # 9. 挂载
 | **页面生成** | `skills/page-codegen/`     | 生成页面、代码生成、页面骨架、scaffold     | 从 page-spec → index.vue + data.ts + index.scss |
 | **路由注册** | `skills/route-sync/`       | 注册路由、添加菜单、路由配置、新增页面路由 | 将新页面注册到 dynamicRouter.json               |
 | **规范审计** | `skills/convention-audit/` | 规范检查、代码审查、命名规范、code review  | 10 维度规范合规性审查                           |
+| **Mock生成** | `skills/mock-codegen/`     | 生成mock、mock数据、模拟数据、联调前mock   | 可选：生成内联 Mock 数据注入 data.ts            |
 
 ### 典型工作流
 
@@ -1565,7 +1566,9 @@ prototype-scan → page-spec JSON
   │
   ├──▶ page-codegen → src/views/ 页面三件套
   │
-  └──▶ route-sync  → dynamicRouter.json 路由注册
+  ├──▶ route-sync  → dynamicRouter.json 路由注册
+  │
+  └──▶ mock-codegen（可选，完整流程结束后确认）→ data.ts 内联 Mock
 
 代码完成后
   │
@@ -1574,3 +1577,4 @@ convention-audit → 规范审计报告
 ```
 
 > **使用方式**：直接用自然语言描述需求即可，AI 会自动匹配并执行对应技能。
+> mock-codegen 为**可选技能**，在完整流程结束时由 AI 询问是否需要，也可单独触发。
