@@ -17,10 +17,11 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-/** 项目根目录（mcp/ 的上一级） */
-const ROOT = join(import.meta.dir, '..')
+/** 项目根目录（mcp/ 的上一级），兼容 Node.js/Bun 双运行时 */
+const ROOT = dirname(dirname(fileURLToPath(import.meta.url)))
 
 // ─────────────────────────────────────────
 // 工具实现
@@ -38,8 +39,8 @@ function listComponents(): string {
     return '未找到 @robot-admin/naive-ui-components，请先执行 bun install'
   }
   const names = readdirSync(distDir)
-    .filter(f => /^C_[A-Z].+\.d\.ts$/.test(f))
-    .map(f => f.replace('.d.ts', ''))
+    .filter((f: string) => /^C_[A-Z].+\.d\.ts$/.test(f))
+    .map((f: string) => f.replace('.d.ts', ''))
     .sort()
   return `共 ${names.length} 个 C_ 组件：\n\n${names.join('\n')}`
 }
@@ -80,12 +81,26 @@ function listRoutes(): string {
     keepAlive: boolean
   }[] = []
 
+  /**
+   * * @description: 拼接完整路由路径
+   * ? @param {string} parentPath 父路径
+   * ? @param {string} childPath 子路径
+   * ! @return {string} 规范化后的完整路径
+   */
+  function buildFullPath(parentPath: string, childPath?: string): string {
+    if (!childPath) return parentPath
+    if (childPath.startsWith('/')) return childPath
+    return `${parentPath}/${childPath}`.replace(/\/+/g, '/')
+  }
+
+  /**
+   * * @description: 递归遍历路由树，收集叶子节点
+   * ? @param {any[]} items 当前层路由列表
+   * ? @param {string} parentPath 父路径（默认空字符串）
+   */
   function traverse(items: any[], parentPath = '') {
     for (const item of items) {
-      const fullPath = item.path?.startsWith('/')
-        ? item.path
-        : `${parentPath}/${item.path ?? ''}`.replace(/\/+/g, '/')
-
+      const fullPath = buildFullPath(parentPath, item.path)
       if (item.children?.length) {
         traverse(item.children, fullPath)
       } else if (item.name) {
