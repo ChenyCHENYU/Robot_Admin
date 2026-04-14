@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.3.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.2.1...v2.3.0) (2026-04-14)
+
+
+### Features
+
+* **config:** 新增 AI 技能调度包(.github/skills) ([91f08ca](https://github.com/ChenyCHENYU/Robot_Admin/commit/91f08ca8aa6dbce1f6c6276e8d1fca32704cc357))
+* **mcp:** 新增 MCP Server + AGENTS.md 全工具覆盖 ([eb178af](https://github.com/ChenyCHENYU/Robot_Admin/commit/eb178af4ce1fc8c5c9d30532b35b1b2b1e65e149))
+* **skills:** page-codegen 新增自然语言输入模式 ([3ee6210](https://github.com/ChenyCHENYU/Robot_Admin/commit/3ee6210ad0cc090eeff100d77c1ad3135d55e29d))
+* **skills:** 新增 mock-codegen 可选技能包 ([0a37fa0](https://github.com/ChenyCHENYU/Robot_Admin/commit/0a37fa0f147c236db1b27d60d8413eaf78cfcb37))
+
+
+### Bug Fixes
+
+* **config:** 对齐版本号至 package.json 实际版本 ([f694b8e](https://github.com/ChenyCHENYU/Robot_Admin/commit/f694b8e6c12f1d8cc73a670a985b085b93343e27))
+* **config:** 恢复gitignore + 修复tsconfig.app.json弃用警告 ([d373df4](https://github.com/ChenyCHENYU/Robot_Admin/commit/d373df4afbaad51a0ad966d45d4b2726b2037ca3))
+* **mcp:** 修复 TS 报错 + 新增使用说明文档 ([e6bbbc6](https://github.com/ChenyCHENYU/Robot_Admin/commit/e6bbbc6267d6b9835bf667fd69a3f5ff072aa306))
+
 ## [2.2.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.2.0...v2.2.1) (2026-03-27)
 
 
