@@ -1540,7 +1540,23 @@ app.mount('#app')        # 9. 挂载
 
 ---
 
-## 二十、AI 技能调度表（Skills）
+## 二十、MCP 工具（实时查询）
+
+本项目配备了 MCP Server（`mcp/server.ts`），让 AI 工具可以**实时查询项目数据**，而非依赖训练记忆猜测 API。
+
+配置文件：`.vscode/mcp.json`（VS Code Copilot Chat 自动识别）；详细说明见 `mcp/use-mcp.md`。
+
+| 工具                      | 调用时机                                                       |
+| ------------------------- | -------------------------------------------------------------- |
+| `list_components`         | 不确定某个 C\_ 组件是否存在时                                  |
+| `get_component_api(name)` | **使用任何 C\_ 组件前必查**，获取真实 Props/Emits 定义         |
+| `list_routes`             | 注册新路由或 `router.push` 跳转前，防止 name 冲突              |
+| `list_api_endpoints`      | 新建 API 函数前，确认同名函数是否已存在                        |
+| `get_preset_rules`        | 编写 `FORM_RULES` 前，查 `@robot-admin/form-validate` 可用规则 |
+
+---
+
+## 二十一、AI 技能调度表（Skills）
 
 本项目配备了 6 个结构化 AI 技能包，位于 `.github/skills/` 目录。
 当识别到用户意图匹配下表关键词时，**自动加载对应 SKILL.md 并按其流程执行**。
