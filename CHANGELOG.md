@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.3.0...v2.3.1) (2026-04-18)
+
+
+### Bug Fixes
+
+* **router:** 修复url回车菜单记录回退的问题 ([77e777d](https://github.com/ChenyCHENYU/Robot_Admin/commit/77e777df4c4bcd6cbea76939c51b9a53dfd25bf1))
+
 ## [2.3.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.2.1...v2.3.0) (2026-04-14)
 
 
