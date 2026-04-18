@@ -130,10 +130,7 @@ const checkRoutePermission = (to: RouteLocationNormalized): boolean => {
 
 // 核心路由守卫
 router.beforeEach(
-  async (
-    to: RouteLocationNormalized,
-    from: RouteLocationNormalized
-  ): Promise<string | boolean> => {
+  async (to: RouteLocationNormalized): Promise<string | boolean> => {
     nprogress.start()
 
     try {
@@ -173,12 +170,6 @@ router.beforeEach(
       if (!checkRoutePermission(to)) {
         message.error('您无权访问该页面')
         return '/401'
-      }
-
-      // 5. 跳过相同路由的重复检查
-      if (to.path === from.path && to.fullPath === from.fullPath) {
-        nprogress.done()
-        return false
       }
 
       setPageTitle(meta.title)
