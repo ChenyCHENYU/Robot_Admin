@@ -37,7 +37,7 @@
     "resolveJsonModule": true, // 允许导入 JSON 文件
 
     // ==================== 兼容性配置 ====================
-    "ignoreDeprecations": "6.0", // 消除 baseUrl 弃用警告（TS 7.0 前过渡方案）
+    "ignoreDeprecations": "5.0", // 消除 baseUrl 弃用警告（TS 5.x 唯一有效值）
 
     // ==================== 路径映射配置 ====================
     "baseUrl": "../", // 基础路径为项目根目录

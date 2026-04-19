@@ -189,7 +189,7 @@
                           <div :class="getNodeIcon(node.type)"></div>
                         </div>
                         <div
-                          v-if="index < workflowData.nodes.length - 1"
+                          v-if="Number(index) < workflowData.nodes.length - 1"
                           class="step-arrow"
                         >
                           <div class="i-mdi:chevron-right"></div>
@@ -282,7 +282,7 @@
                     >
                       <div
                         class="step-connector"
-                        v-if="index > 0"
+                        v-if="Number(index) > 0"
                       ></div>
                       <div
                         class="step-node"
