@@ -18,6 +18,10 @@ import './assets/css/main.css'
 import '@/styles/index.scss'
 import '@robot-admin/layout/style' // 布局包完整样式（组件 + 布局）
 import '@robot-admin/naive-ui-components/style.css' // 📦 组件库样式
+// 🔮 设计风格 CSS（通过 data-design-style 属性自动隔离，互不冲突）
+import '@robot-admin/theme/styles/glass-morphism.css'
+import '@robot-admin/theme/styles/corporate-minimal.css'
+import '@robot-admin/theme/styles/dark-tech.css'
 import 'virtual:uno.css'
 // vue-flow 样式已移至使用页面按需加载（28-work-flow-editor）
 import '@/router/permission'

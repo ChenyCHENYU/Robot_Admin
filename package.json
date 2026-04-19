@@ -46,7 +46,7 @@
     "@robot-admin/layout": "latest",
     "@robot-admin/naive-ui-components": "^0.6.31",
     "@robot-admin/request-core": "latest",
-    "@robot-admin/theme": "latest",
+    "@robot-admin/theme": "0.2.0",
     "@splinetool/runtime": "^1.12.68",
     "@vercel/analytics": "^1.6.1",
     "@visactor/vtable-gantt": "^1.23.3",

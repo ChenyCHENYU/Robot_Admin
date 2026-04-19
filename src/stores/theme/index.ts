@@ -35,7 +35,8 @@ const MENU_THEME_KEY = 'robot-admin-menu-theme'
 export const s_themeStore = defineStore('theme-extended', () => {
   // ============ 基础主题 Store ============
   const baseThemeStore = useBaseThemeStore()
-  const { mode, systemIsDark, isDark } = storeToRefs(baseThemeStore)
+  const { mode, systemIsDark, isDark, designStyle } =
+    storeToRefs(baseThemeStore)
 
   // ============ Naive UI 主题配置 ============
 
@@ -266,6 +267,12 @@ export const s_themeStore = defineStore('theme-extended', () => {
     systemIsDark,
     isDark,
 
+    // 设计风格（从包 re-export）
+    designStyle,
+    currentDesignStyleConfig: baseThemeStore.currentDesignStyleConfig,
+    setDesignStyle: baseThemeStore.setDesignStyle,
+    toggleDesignStyle: baseThemeStore.toggleDesignStyle,
+
     // Naive UI 扩展状态
     customOverrides,
     currentTheme,
@@ -285,4 +292,4 @@ export const s_themeStore = defineStore('theme-extended', () => {
 })
 
 // 重新导出类型（保持兼容性）
-export type { ThemeMode } from '@robot-admin/theme'
+export type { ThemeMode, DesignStyle } from '@robot-admin/theme'
