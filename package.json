@@ -32,6 +32,7 @@
     "sync-deploy-branch": "bash ./scripts/sync-dev.sh",
     "analyze": "vite build --mode analyze",
     "cz": "git-cz",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "mcp": "bun run mcp/server.ts"
   },
   "dependencies": {
@@ -49,6 +50,7 @@
     "@robot-admin/theme": "0.3.0",
     "@splinetool/runtime": "^1.12.68",
     "@vercel/analytics": "^1.6.1",
+    "@vercel/speed-insights": "^2.0.0",
     "@visactor/vtable-gantt": "^1.23.3",
     "@vueuse/core": "^13.9.0",
     "axios": "^1.13.6",
@@ -90,6 +92,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "commitizen": "^4.3.1",
+    "conventional-changelog-cli": "^5.0.0",
     "cz-customizable": "^7.5.1",
     "eslint": "^10.0.3",
     "eslint-plugin-jsdoc": "^62.7.1",

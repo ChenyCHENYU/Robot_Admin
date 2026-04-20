@@ -2,17 +2,18 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-07-09 14:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-07-09 15:01:12
+ * @LastEditTime: 2026-04-20
  * @FilePath: \Robot_Admin\src\plugins\analytics.ts
- * @Description: Vercel Analytics 访问统计插件配置
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ * @Description: Vercel Analytics 访问统计 + Speed Insights 性能监控
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
 import type { App } from 'vue'
 import { inject } from '@vercel/analytics'
+import { injectSpeedInsights } from '@vercel/speed-insights'
 
 /**
- * @description: 设置 Vercel Analytics 访问统计
+ * @description: 设置 Vercel Analytics 访问统计 + Speed Insights 性能监控
  * @param {App} app - Vue 应用实例
  * @return {void}
  */
@@ -22,6 +23,7 @@ export function setupAnalytics(app: App<Element>) {
     // 只在生产环境启用
     if (import.meta.env.PROD) {
       inject()
+      injectSpeedInsights()
     }
   } catch (error) {
     console.error('❌ Vercel Analytics 初始化失败:', error)

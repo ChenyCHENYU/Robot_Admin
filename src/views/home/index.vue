@@ -343,8 +343,10 @@
     isAnimating.value = false
   }
 
-  // GitHub API 数据获取
+  // GitHub API 数据获取（带 localStorage 缓存，1 小时 TTL）
   const githubRepo = ref('ChenyCHENYU/Robot_Admin')
+  const CACHE_KEY = 'github_stats_cache'
+  const CACHE_TTL = 60 * 60 * 1000 // 1 小时
 
   // 创建响应式的作者统计数据
   const reactiveAuthorStats = ref([
@@ -353,8 +355,64 @@
     { number: '397+', label: '📝Commits' },
   ])
 
+  /**
+   * * @description: 读取本地缓存
+   * ! @return {object | null} 缓存数据或 null
+   */
+  const readCache = () => {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY)
+      if (!raw) return null
+      const cached = JSON.parse(raw)
+      if (Date.now() - cached.ts > CACHE_TTL) {
+        localStorage.removeItem(CACHE_KEY)
+        return null
+      }
+      return cached.data
+    } catch {
+      return null
+    }
+  }
+
+  /**
+   * * @description: 写入本地缓存
+   * ? @param {object} data 要缓存的统计数据
+   */
+  const writeCache = (data: {
+    stars: string
+    forks: string
+    commits: string
+  }) => {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }))
+    } catch {
+      // 静默忽略（隐私模式等场景）
+    }
+  }
+
+  /**
+   * * @description: 应用统计数据到响应式引用
+   * ? @param {object} data 格式化后的统计数据
+   */
+  const applyStats = (data: {
+    stars: string
+    forks: string
+    commits: string
+  }) => {
+    reactiveAuthorStats.value[0].number = data.stars
+    reactiveAuthorStats.value[1].number = data.forks
+    reactiveAuthorStats.value[2].number = data.commits
+  }
+
   // 获取 GitHub 仓库数据
   const fetchGitHubData = async () => {
+    // 优先使用缓存
+    const cached = readCache()
+    if (cached) {
+      applyStats(cached)
+      return
+    }
+
     try {
       // 获取仓库基本信息
       const repoResponse = await fetch(
@@ -362,20 +420,18 @@
       )
       const repoData = await repoResponse.json()
 
+      const result = { stars: '', forks: '', commits: '' }
+
       if (repoData && !repoData.message) {
         // 格式化星标数
         const stars = repoData.stargazers_count
-        const starsFormatted =
+        result.stars =
           stars >= 1000 ? `${(stars / 1000).toFixed(1)}K+` : `${stars}+`
 
         // 格式化forks数
         const forks = repoData.forks_count
-        const forksFormatted =
+        result.forks =
           forks >= 100 ? `${Math.round(forks / 100) * 100}+` : `${forks}+`
-
-        // 更新stars和forks
-        reactiveAuthorStats.value[0].number = starsFormatted
-        reactiveAuthorStats.value[1].number = forksFormatted
       }
 
       // 获取提交数
@@ -388,10 +444,15 @@
         const match = linkHeader.match(/page=(\d+)>; rel="last"/)
         if (match && match[1]) {
           const commits = parseInt(match[1])
-          const commitsFormatted =
+          result.commits =
             commits >= 1000 ? `${(commits / 1000).toFixed(1)}K+` : `${commits}+`
-          reactiveAuthorStats.value[2].number = commitsFormatted
         }
+      }
+
+      // 全部成功才缓存 + 应用
+      if (result.stars && result.forks) {
+        writeCache(result)
+        applyStats(result)
       }
     } catch (error) {
       console.error('获取 GitHub 数据失败:', error)

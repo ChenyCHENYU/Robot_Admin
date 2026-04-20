@@ -8,6 +8,9 @@
     <title>%VITE_APP_TITLE%</title>
     <!-- 预加载加载动画图片，消除网络慢时的闪烁 -->
     <link rel="preload" href="/robot.gif" as="image" />
+    <!-- DNS 预解析 + 预连接：减少 API / CDN 首次请求延迟 -->
+    <link rel="dns-prefetch" href="//api.github.com" />
+    <link rel="preconnect" href="https://api.github.com" crossorigin />
 
     <!-- ========== 首屏加载动画样式（内联，确保 HTML 渲染后立即生效） ========== -->
     <style id="loading-style">
