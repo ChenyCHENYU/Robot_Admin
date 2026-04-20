@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.4.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.3.0...v2.4.0) (2026-04-20)
+
+
+### Features
+
+* **theme:** 集成设计风格系统 + iOS 拟态玻璃全局改造 ([b05b143](https://github.com/ChenyCHENYU/Robot_Admin/commit/b05b143ecf3568c62515095bba47b9e9a7240393))
+
+
+### Bug Fixes
+
+* **config:** 修复tsconfig ignoreDeprecations无效值及demo类型错误 ([741e6fb](https://github.com/ChenyCHENYU/Robot_Admin/commit/741e6fbe24025538c159425105d9d68d9ee6cb59))
+* **router:** 修复url回车菜单记录回退的问题 ([77e777d](https://github.com/ChenyCHENYU/Robot_Admin/commit/77e777df4c4bcd6cbea76939c51b9a53dfd25bf1))
+
+
+### Performance Improvements
+
+* **plugins:** GitHub API 缓存 + Speed Insights + CHANGELOG 自动化 + DNS 预连接 ([61468f2](https://github.com/ChenyCHENYU/Robot_Admin/commit/61468f243c98ce1a206132cb21828a9eb4ba1493))
+
 ## [2.3.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.2.1...v2.3.0) (2026-04-14)
 
 
