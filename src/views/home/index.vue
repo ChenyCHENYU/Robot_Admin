@@ -35,36 +35,65 @@
                 {{ char === ' ' ? '&nbsp;' : char }}
               </span>
             </span>
+            <div class="title-accent-bar"></div>
             <span class="title-desc">现代化企业级后台管理系统</span>
           </h1>
 
-          <p class="project-description">
-            顶级企业级架构、单体、Monorepo、MicroApp、模块联邦多种架构模式支持，最新稳定技术栈选型，
-            自建依赖生态、业务组件库、场景模板、权限管理、工作流引擎、数据可视化等等，为业务快速搭建提供统一基座。
-            通过标准化、工程化的方式，帮助团队以业务驱动的模式高效解构与实现复杂场景。
-            欢迎体验，欢迎点个 ⭐ 支持！大大的尊敬~ Respect
-          </p>
+          <div class="project-tagline">
+            <p class="tagline-headline">
+              面向复杂业务场景的
+              <strong>Vue 3 企业级架构基座</strong>，标准化工程方案
+            </p>
+            <p class="tagline-star">
+              🎉 欢迎体验，如果对你有帮助，点个
+              <span class="star-em">⭐ Star</span>
+              是最大的支持！大大的尊敬~ Respect 🙏
+            </p>
+          </div>
 
-          <!-- 项目状态 - 数据驱动 -->
-          <div class="project-stats">
-            <div
-              v-for="stat in projectStats"
+          <!-- 架构演进路径 -->
+          <div class="arch-roadmap">
+            <template
+              v-for="(stat, index) in projectStats"
               :key="stat.label"
-              class="stat-item"
             >
-              <C_Icon
-                :name="stat.icon"
-                size="30"
-              />
-              <div class="stat-number">{{ stat.number }}</div>
-              <div class="stat-label">{{ stat.label }}</div>
-            </div>
+              <div
+                class="arch-stage"
+                :class="{
+                  'is-active': stat.number === '当前',
+                  'is-done': stat.number === '已完成',
+                  'is-planned': stat.number === '规划中',
+                }"
+              >
+                <div class="stage-dot">
+                  <C_Icon
+                    :name="
+                      stat.number === '已完成'
+                        ? 'mdi:check-bold'
+                        : stat.number === '当前'
+                          ? 'mdi:map-marker'
+                          : 'mdi:clock-outline'
+                    "
+                    size="14"
+                  />
+                </div>
+                <div class="stage-info">
+                  <span class="stage-name">{{ stat.label }}</span>
+                  <span class="stage-status-text">{{ stat.number }}</span>
+                </div>
+              </div>
+              <div
+                v-if="index < projectStats.length - 1"
+                class="stage-connector"
+                :class="{ 'connector-done': stat.number !== '规划中' }"
+              ></div>
+            </template>
           </div>
 
           <!-- 操作按钮 - 数据驱动 -->
           <NSpace
             class="project-actions"
-            :size="16"
+            :size="20"
           >
             <NButton
               v-for="action in actionButtons"
@@ -131,259 +160,148 @@
       </div>
     </section>
 
-    <!-- 主要内容区域 -->
+    <!-- 主内容区域 -->
     <div class="main-container">
-      <!-- 左侧内容区 -->
-      <div class="content-left">
-        <!-- 核心功能模块 -->
-        <NCard
-          class="feature-modules"
-          title="核心功能模块"
-          :bordered="false"
+      <!-- 项目数据概览 -->
+      <div class="metrics-strip">
+        <div
+          v-for="metric in projectMetrics"
+          :key="metric.label"
+          class="metric-item"
         >
-          <template #header-extra>
-            <NTag
-              type="info"
-              size="small"
-              >完整的企业级功能生态</NTag
-            >
-          </template>
-          <div class="modules-grid">
-            <NCard
-              v-for="module in coreModules"
-              :key="module.name"
-              size="small"
-              class="module-card"
-              hoverable
-            >
-              <div class="module-content">
-                <div class="module-icon">{{ module.icon }}</div>
-                <h3>{{ module.name }}</h3>
-                <p>{{ module.desc }}</p>
-                <NTag
-                  size="small"
-                  type="default"
-                  class="module-tech"
-                >
-                  {{ module.tech }}
-                </NTag>
-              </div>
-            </NCard>
-          </div>
-        </NCard>
-
-        <!-- 技术架构 -->
-        <NCard
-          class="tech-architecture"
-          title="技术架构"
-          :bordered="false"
-        >
-          <template #header-extra>
-            <NTag
-              type="info"
-              size="small"
-              >现代化技术栈，性能与开发体验并重</NTag
-            >
-          </template>
-          <div class="architecture-flow">
-            <template
-              v-for="(layer, index) in techLayers"
-              :key="layer.name"
-            >
-              <div class="arch-layer-wrapper">
-                <div :class="['arch-layer', layer.className]">
-                  <div class="layer-header">
-                    <h4 class="layer-title">{{ layer.name }}</h4>
-                    <div class="layer-icon">{{ layer.icon }}</div>
-                  </div>
-                  <div class="layer-techs">
-                    <NTag
-                      v-for="tech in layer.techs"
-                      :key="tech"
-                      size="small"
-                      :type="layer.tagType"
-                      round
-                    >
-                      {{ tech }}
-                    </NTag>
-                  </div>
-                </div>
-              </div>
-              <div
-                v-if="index < techLayers.length - 1"
-                class="arch-arrow"
-                >⬇️</div
-              >
-            </template>
-          </div>
-        </NCard>
-
-        <!-- 演示页面展示 -->
-        <NCard
-          class="demo-showcase"
-          :bordered="false"
-        >
-          <template #header>
-            <div class="demo-header">
-              <span class="demo-title">演示页面</span>
-              <NBadge
-                :value="demoList.length"
-                type="info"
-              />
-            </div>
-          </template>
-          <template #header-extra>
-            <NTag
-              type="info"
-              size="small"
-              >涵盖各种常用组件和功能展示</NTag
-            >
-          </template>
-          <div class="demo-grid">
-            <div
-              v-for="demo in demoList"
-              :key="demo.name"
-              class="demo-item"
-            >
-              <div class="demo-icon">{{ demo.icon }}</div>
-              <div class="demo-name">{{ demo.name }}</div>
-            </div>
-          </div>
-        </NCard>
+          <C_Icon
+            :name="metric.icon"
+            size="18"
+          />
+          <span class="metric-number">{{ metric.number }}</span>
+          <span class="metric-label">{{ metric.label }}</span>
+        </div>
       </div>
 
-      <!-- 右侧内容区 -->
-      <div class="content-right">
-        <!-- 项目结构 -->
-        <NCard
-          class="project-structure"
-          title="项目结构"
-          :bordered="false"
-        >
-          <template #header-extra>
-            <NTag
-              type="info"
-              size="small"
-              >完整的企业级项目架构</NTag
-            >
-          </template>
-          <div class="file-tree-container">
-            <div class="file-tree">
-              <TreeNode :node="projectStructure" />
+      <!-- 核心亮点 -->
+      <NCard
+        class="highlights-card"
+        title="核心亮点"
+        :bordered="false"
+      >
+        <template #header-extra>
+          <NTag
+            type="info"
+            size="small"
+            >完整企业级功能生态</NTag
+          >
+        </template>
+        <div class="highlights-grid">
+          <div
+            v-for="item in highlights"
+            :key="item.name"
+            class="highlight-item"
+          >
+            <div class="highlight-icon">
+              <C_Icon
+                :name="item.icon"
+                size="26"
+              />
+            </div>
+            <div class="highlight-body">
+              <h3>{{ item.name }}</h3>
+              <p>{{ item.desc }}</p>
+              <NTag
+                size="small"
+                type="default"
+                class="highlight-tech"
+                >{{ item.tech }}</NTag
+              >
             </div>
           </div>
-        </NCard>
+        </div>
+      </NCard>
 
-        <!-- 核心特性 -->
+      <!-- 技术栈 + 快速开始 双列 -->
+      <div class="bottom-grid">
+        <!-- 技术栈横向分组 -->
         <NCard
-          class="core-features"
-          title="核心特性"
-          :bordered="false"
-        >
-          <NList class="features-list">
-            <NListItem
-              v-for="feature in coreFeatures"
-              :key="feature.name"
-            >
-              <template #prefix>
-                <div class="feature-icon">{{ feature.icon }}</div>
-              </template>
-              <NThing
-                :title="feature.name"
-                :description="feature.desc"
-              />
-            </NListItem>
-          </NList>
-        </NCard>
-
-        <!-- 开发工具链 -->
-        <NCard
-          class="dev-tools"
-          title="开发工具链"
+          class="tech-stack-card"
+          title="技术栈"
           :bordered="false"
         >
           <template #header-extra>
             <NTag
               type="success"
               size="small"
-              >现代化开发体验</NTag
+              >现代化 · 高性能</NTag
             >
           </template>
-          <div class="tools-grid">
+          <div class="stack-groups">
             <div
-              v-for="category in toolCategories"
-              :key="category.name"
-              class="tool-category"
+              v-for="layer in techLayers"
+              :key="layer.name"
+              class="stack-group"
             >
-              <h4>{{ category.name }}</h4>
-              <div class="tool-tags">
+              <div class="stack-group-label">
+                <span :class="['stack-dot', layer.className]"></span>
+                <span class="label-text">{{ layer.name }}</span>
+              </div>
+              <div class="stack-tags">
                 <NTag
-                  v-for="tool in category.tools"
-                  :key="tool"
+                  v-for="tech in layer.techs"
+                  :key="tech"
                   size="small"
-                  :type="category.type"
+                  :type="layer.tagType"
+                  round
+                  >{{ tech }}</NTag
                 >
-                  {{ tool }}
-                </NTag>
               </div>
             </div>
           </div>
         </NCard>
 
-        <!-- 快速开始 -->
+        <!-- @robot-admin 生态 -->
         <NCard
-          class="quick-start"
-          title="快速开始"
+          class="ecosystem-card"
           :bordered="false"
         >
-          <div class="start-steps">
-            <div
-              v-for="(step, index) in quickSteps"
-              :key="step.title"
-              class="step-item"
+          <template #header>
+            <div class="ecosystem-header">
+              <span class="ecosystem-title">@robot-admin 生态</span>
+            </div>
+          </template>
+          <template #header-extra>
+            <NTag
+              type="warning"
+              size="small"
+              round
+              >8 个独立 NPM 包</NTag
             >
-              <div class="step-number">{{ index + 1 }}</div>
-              <div class="step-content">
-                <h4>{{ step.title }}</h4>
-                <NCode
-                  :code="step.code"
-                  language="bash"
-                  class="step-code"
+          </template>
+          <div class="ecosystem-grid">
+            <a
+              v-for="pkg in ecosystemPackages"
+              :key="pkg.shortName"
+              :href="pkg.url"
+              target="_blank"
+              class="pkg-item"
+            >
+              <div
+                class="pkg-icon-wrap"
+                :style="{ background: pkg.color + '1a', color: pkg.color }"
+              >
+                <C_Icon
+                  :name="pkg.icon"
+                  size="16"
                 />
               </div>
-            </div>
-          </div>
-        </NCard>
-
-        <!-- 开源许可和贡献 -->
-        <NCard
-          class="license-card"
-          title="开源许可"
-          :bordered="false"
-        >
-          <div class="license-content">
-            <div class="license-info">
-              <div class="license-badge">
-                <div class="license-icon">⚖️</div>
-                <div class="license-text">
-                  <h4>MIT License</h4>
-                  <p>自由使用、修改和分发</p>
-                </div>
+              <div class="pkg-body">
+                <div class="pkg-name">{{ pkg.shortName }}</div>
+                <div class="pkg-desc">{{ pkg.desc }}</div>
               </div>
-              <div class="author-info-card">
-                <h4>作者信息</h4>
-                <p><strong>CHENY</strong> - ycyplus@gmail.com</p>
-                <p>
-                  GitHub:
-                  <a
-                    href="https://github.com/ChenyCHENYU"
-                    target="_blank"
-                  >
-                    @ChenyCHENYU
-                  </a>
-                </p>
-              </div>
-            </div>
+              <NTag
+                size="small"
+                type="default"
+                class="pkg-version"
+                >{{ pkg.version }}</NTag
+              >
+            </a>
           </div>
         </NCard>
       </div>
@@ -396,24 +314,12 @@
   import {
     projectStats,
     actionButtons,
-    coreModules,
+    highlights,
     techLayers,
-    demoList,
-    coreFeatures,
-    toolCategories,
-    quickSteps,
-    projectStructure,
-    type TreeNode as TreeNodeType,
+    projectMetrics,
+    ecosystemPackages,
   } from './data'
-  import {
-    ref,
-    computed,
-    onMounted,
-    defineComponent,
-    h,
-    type PropType,
-    type VNode,
-  } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
 
   // 主题检测
   const themeVars = useThemeVars()
@@ -496,41 +402,6 @@
   // 组件挂载时获取数据
   onMounted(() => {
     fetchGitHubData()
-  })
-
-  // 递归文件树组件 - 解决重复代码问题
-  const TreeNode = defineComponent({
-    name: 'TreeNode',
-    props: {
-      node: {
-        type: Object as PropType<TreeNodeType>,
-        required: true,
-      },
-    },
-    /**
-     * * @description: 递归渲染文件树节点
-     */
-    setup(props: { node: TreeNodeType }) {
-      const renderNode = (node: TreeNodeType): VNode => {
-        return h('div', {}, [
-          // 当前节点
-          h('div', { class: ['tree-item', node.type] }, [
-            h('span', { class: 'tree-icon' }, node.icon),
-            h('span', { class: 'tree-name' }, node.name),
-            node.desc && h('span', { class: 'tree-desc' }, node.desc),
-          ]),
-          // 子节点
-          node.children &&
-            h(
-              'div',
-              { class: 'tree-children' },
-              node.children.map(child => renderNode(child))
-            ),
-        ])
-      }
-
-      return () => renderNode(props.node)
-    },
   })
 </script>
 
