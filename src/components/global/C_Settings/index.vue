@@ -40,12 +40,32 @@
       </div>
     </div>
   </Teleport>
+
+  <Teleport
+    v-if="menuExpandInjectReady"
+    :to="menuExpandInjectTarget!"
+  >
+    <div
+      v-if="!hasBuiltInMenuExpand"
+      class="settings-section menu-expand-section"
+    >
+      <div class="section-title">菜单展开方式</div>
+      <NRadioGroup
+        v-model:value="menuExpandMode"
+        class="menu-expand-group"
+      >
+        <NRadioButton value="inline">传统展开</NRadioButton>
+        <NRadioButton value="panel">右侧面板</NRadioButton>
+      </NRadioGroup>
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
   import { SettingsDrawer } from '@robot-admin/layout'
   import '@robot-admin/layout/style.scss'
   import { s_themeStore, type MenuThemeType } from '@/stores/theme'
+  import { s_settingsStore } from '@/stores/settings'
 
   /**
    * 设置抽屉组件包装器
@@ -59,6 +79,14 @@
 
   const visible = defineModel<boolean>('show', { default: false })
   const themeStore = s_themeStore()
+  const settingsStore = s_settingsStore()
+
+  const menuExpandMode = computed<'inline' | 'panel'>({
+    get: () => (settingsStore.$state as any).menuExpandMode ?? 'panel',
+    set: value => {
+      settingsStore.$patch({ menuExpandMode: value } as any)
+    },
+  })
 
   /** 菜单风格选项（仅用于 UI 显示） */
   const MENU_STYLE_OPTIONS: {
@@ -90,6 +118,10 @@
   // Teleport 注入目标
   const injectTarget = shallowRef<Element | null>(null)
   const injectReady = ref(false)
+  const menuExpandInjectTarget = shallowRef<Element | null>(null)
+  const menuExpandInjectReady = ref(false)
+  const hasBuiltInMenuExpand = ref(false)
+  let settingsObserver: MutationObserver | null = null
 
   /**
    * * @description: 查找设置面板的外观 Tab 容器作为注入锚点
@@ -99,9 +131,21 @@
     // settings-tabs 是 @robot-admin/layout 的稳定类名
     const tabs = document.querySelector('.settings-tabs')
     if (!tabs) return null
-    // Naive UI NTabPane 渲染在 .n-tab-pane 中，外观 Tab 是第一个
-    const pane = tabs.querySelector('.n-tab-pane')
-    return pane
+    const panes = Array.from(tabs.querySelectorAll('.n-tab-pane'))
+    const appearancePane = panes.find(pane =>
+      pane.textContent?.includes('主题模式')
+    )
+    return appearancePane ?? null
+  }
+
+  const findLayoutPane = (): Element | null => {
+    const tabs = document.querySelector('.settings-tabs')
+    if (!tabs) return null
+    const panes = Array.from(tabs.querySelectorAll('.n-tab-pane'))
+    const layoutPane = panes.find(pane =>
+      pane.textContent?.includes('布局模式')
+    )
+    return layoutPane ?? null
   }
 
   /**
@@ -120,11 +164,49 @@
     return anchor
   }
 
+  const ensureMenuExpandAnchor = (pane: Element): Element => {
+    const ANCHOR_ID = 'menu-expand-inject-anchor'
+    let anchor = pane.querySelector(`#${ANCHOR_ID}`)
+    if (!anchor) {
+      anchor = document.createElement('div')
+      anchor.id = ANCHOR_ID
+      const layoutSection = Array.from(
+        pane.querySelectorAll('.settings-section')
+      ).find(section => section.textContent?.includes('布局模式'))
+      layoutSection?.insertAdjacentElement('afterend', anchor)
+      if (!anchor.parentElement) {
+        pane.insertBefore(anchor, pane.firstChild)
+      }
+    }
+    return anchor
+  }
+
+  const syncInjectedSections = () => {
+    const appearancePane = findAppearancePane()
+    if (appearancePane) {
+      injectTarget.value = ensureAnchor(appearancePane)
+      injectReady.value = true
+    }
+
+    const layoutPane = findLayoutPane()
+    if (layoutPane) {
+      hasBuiltInMenuExpand.value = Boolean(
+        layoutPane.querySelector('[data-menu-expand-mode="built-in"]')
+      )
+      menuExpandInjectTarget.value = ensureMenuExpandAnchor(layoutPane)
+      menuExpandInjectReady.value = true
+    }
+  }
+
   // 监听抽屉开关，延迟注入（等待 drawer 动画和 DOM 渲染）
   watch(visible, show => {
     if (!show) {
       injectReady.value = false
       injectTarget.value = null
+      menuExpandInjectReady.value = false
+      menuExpandInjectTarget.value = null
+      settingsObserver?.disconnect()
+      settingsObserver = null
       return
     }
 
@@ -132,17 +214,25 @@
     const pollForPane = (retriesLeft: number) => {
       if (retriesLeft <= 0) return
       nextTick(() => {
-        const pane = findAppearancePane()
-        if (pane) {
-          const anchor = ensureAnchor(pane)
-          injectTarget.value = anchor
-          injectReady.value = true
+        syncInjectedSections()
+        const tabs = document.querySelector('.settings-tabs')
+        if (tabs) {
+          settingsObserver?.disconnect()
+          settingsObserver = new MutationObserver(syncInjectedSections)
+          settingsObserver.observe(tabs, {
+            childList: true,
+            subtree: true,
+          })
           return
         }
         requestAnimationFrame(() => pollForPane(retriesLeft - 1))
       })
     }
     pollForPane(15)
+  })
+
+  onBeforeUnmount(() => {
+    settingsObserver?.disconnect()
   })
 </script>
 
@@ -159,6 +249,14 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     margin-top: 12px;
+  }
+
+  .menu-expand-group {
+    width: 100%;
+
+    :deep(.n-radio-button) {
+      flex: 1;
+    }
   }
 
   .menu-style-card {

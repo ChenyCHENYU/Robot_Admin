@@ -16,14 +16,45 @@
         <div
           id="guide-menu"
           class="menu-scroll-container"
-          :class="{ 'menu-light': isMenuLight }"
+          :class="{
+            'menu-light': isMenuLight,
+            'menu-signature': themeStore.menuTheme === 'signature',
+          }"
         >
-          <C_Menu
+          <template v-if="menuExpandMode === 'inline'">
+            <template
+              v-for="(group, gIdx) in groupedMenuData"
+              :key="group.label"
+            >
+              <div
+                v-if="!collapsed"
+                class="menu-group-title"
+                :style="{ '--group-dot-color': getGroupColor(gIdx) }"
+              >
+                {{ group.label }}
+              </div>
+              <div
+                v-else
+                class="menu-group-dot"
+                :style="{ background: getGroupColor(gIdx) }"
+              ></div>
+              <C_Menu
+                :routes="group.items"
+                :value="route.path"
+                mode="vertical"
+                :collapsed="collapsed"
+                :inverted="isDarkMode"
+                :label-formatter="translateRouteTitle"
+                @select="router.push"
+              />
+            </template>
+          </template>
+          <C_MenuGrouped
+            v-else
             :routes="menuData"
-            :value="route.path"
-            mode="vertical"
             :collapsed="collapsed"
-            :inverted="isDarkMode"
+            :inverted="!isMenuLight"
+            :menu-theme="themeStore.menuTheme"
             :label-formatter="translateRouteTitle"
             @select="router.push"
           />
@@ -61,9 +92,12 @@
   import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import { s_themeStore } from '@/stores/theme'
   import { s_permissionStore } from '@/stores/permission'
+  import { s_settingsStore } from '@/stores/settings'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
+  import { buildGroupedMenuData, getMenuGroupColor } from './data'
   import C_Settings from '@/components/global/C_Settings/index.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
+  import C_MenuGrouped from '@/components/global/C_MenuGrouped/index.vue'
 
   // 提供布局上下文（桥接业务 Store → 包标准接口）
   const layoutContext = useLayoutBridge()
@@ -71,19 +105,29 @@
 
   const permissionStore = s_permissionStore()
   const themeStore = s_themeStore()
+  const settingsStore = s_settingsStore()
   const route = useRoute()
   const router = useRouter()
 
   const isReady = ref(true)
   const isDarkMode = computed(() => themeStore.isDark)
+  const menuExpandMode = computed<'inline' | 'panel'>(
+    () => (settingsStore.$state as any).menuExpandMode ?? 'panel'
+  )
 
   /**
    * 菜单是否为亮色背景（决定 inverted 和文本配色方案）
    */
   const isMenuLight = computed(() => themeStore.isMenuLight)
 
-  // 获取菜单数据（MenuOptions.path 为可选，RouteItem.path 为必填，此处数据上保证 path 存在）
-  const menuData = permissionStore.showMenuListGet as any[]
+  /**
+   * 最终菜单数据：响应式 + 分组模式下自动包装 type:'group'
+   */
+  const menuData = computed(() => permissionStore.showMenuListGet as any[])
+
+  const groupedMenuData = computed(() => buildGroupedMenuData(menuData.value))
+
+  const getGroupColor = (i: number) => getMenuGroupColor(i)
 
   // 设置抽屉状态 - 提升到全局
   const showSettings = ref(false)
@@ -109,3 +153,7 @@
     showSettings,
   })
 </script>
+
+<style scoped lang="scss">
+  @use './index.scss';
+</style>

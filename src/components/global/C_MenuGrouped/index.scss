@@ -1,0 +1,277 @@
+﻿/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-05-24
+ * @FilePath: \Robot_Admin\src\components\global\C_MenuGrouped\index.scss
+ * @Description: 分组菜单 + 右侧展开面板样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+// ============ 主容器 ============
+.mg {
+  padding: 6px 8px;
+  user-select: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+
+  &--collapsed {
+    padding: 6px 4px;
+
+    .mg__item {
+      justify-content: center;
+      padding: 10px 0;
+    }
+
+    .mg__group-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      margin: 12px auto 6px;
+      opacity: 0.7;
+    }
+  }
+}
+
+// ============ 分组标题 ============
+.mg__group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 20px 14px 8px;
+  color: rgba(255, 255, 255, 0.45) !important;
+  transition: color 0.2s;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--group-dot-color, rgba(255, 255, 255, 0.3));
+    box-shadow: 0 0 6px var(--group-dot-color, transparent);
+    transition: all 0.3s;
+  }
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    margin-left: 4px;
+    background: linear-gradient(to right, var(--group-dot-color, rgba(255, 255, 255, 0.15)) 0%, transparent 70%);
+    opacity: 0.5;
+  }
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.7);
+
+    &::before {
+      transform: scale(1.3);
+      box-shadow: 0 0 10px var(--group-dot-color, transparent);
+    }
+  }
+}
+
+// 折叠态分组圆点
+.mg__group-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin: 12px auto 6px;
+  opacity: 0.7;
+}
+
+// ============ 菜单项 ============
+.mg__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin: 2px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.88) !important;
+  font-size: 14px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+
+    .mg__icon { opacity: 1; }
+    .mg__arrow { opacity: 0.8; }
+  }
+
+  &--active {
+    background: var(--primary-color, #646cff) !important;
+    background: linear-gradient(135deg, var(--primary-color, #646cff), color-mix(in srgb, var(--primary-color, #646cff), transparent 18%)) !important;
+    box-shadow: 0 2px 10px rgba(100, 108, 255, 0.35);
+    color: #fff !important;
+
+    .mg__icon { opacity: 1; }
+    .mg__label { font-weight: 600; }
+  }
+
+  &--expanded {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff !important;
+
+    .mg__icon { opacity: 1; }
+    .mg__arrow { opacity: 1; }
+  }
+}
+
+.mg__icon {
+  flex-shrink: 0;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.mg__label {
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.mg__arrow {
+  flex-shrink: 0;
+  opacity: 0.45;
+  transition: all 0.25s;
+  color: rgba(255, 255, 255, 0.6) !important;
+
+  &--open {
+    opacity: 1;
+    transform: rotate(90deg);
+  }
+}
+
+// ============ 亮色模式 ============
+.mg--light {
+  .mg__group {
+    color: rgba(0, 0, 0, 0.45) !important;
+
+    &::before {
+      box-shadow: none;
+    }
+
+    &::after {
+      opacity: 0.3;
+    }
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.6);
+
+      &::before {
+        box-shadow: 0 0 4px var(--group-dot-color, transparent);
+      }
+    }
+  }
+
+  .mg__item {
+    color: var(--text-color-1, #333) !important;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-color-1, #111);
+    }
+
+    &--active {
+      color: #fff !important;
+    }
+
+    &--expanded {
+      background: rgba(0, 0, 0, 0.06);
+      color: var(--primary-color, #646cff);
+    }
+  }
+
+  .mg__arrow {
+    color: rgba(0, 0, 0, 0.35) !important;
+  }
+}
+.mg--signature {
+  padding: 10px 8px;
+
+  .mg__group {
+    padding: 18px 16px 9px;
+    color: rgba(214, 222, 244, 0.5) !important;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    text-transform: none;
+
+    &::before {
+      width: 6px;
+      height: 6px;
+      box-shadow: 0 0 10px color-mix(in srgb, var(--group-dot-color, #646cff) 55%, transparent);
+    }
+
+    &::after {
+      opacity: 0.55;
+      background: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--group-dot-color, #646cff) 32%, transparent),
+        transparent 72%
+      );
+    }
+
+    &:hover {
+      color: rgba(232, 238, 255, 0.74) !important;
+    }
+  }
+
+  .mg__item {
+    gap: 12px;
+    min-height: 42px;
+    padding: 10px 16px;
+    margin: 3px 0;
+    border-radius: 9px;
+    color: rgba(215, 222, 242, 0.78) !important;
+    background: transparent;
+
+    &:hover {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(118, 132, 255, 0.08));
+      color: #fff !important;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    &--active {
+      color: #fff !important;
+      background: linear-gradient(135deg, #6f90ff 0%, #7067f5 100%) !important;
+      box-shadow:
+        0 12px 28px rgba(100, 108, 255, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.24);
+    }
+
+    &--expanded {
+      color: #fff !important;
+      background: linear-gradient(135deg, rgba(118, 132, 255, 0.18), rgba(255, 255, 255, 0.06));
+      box-shadow: inset 0 0 0 1px rgba(150, 160, 255, 0.16);
+    }
+  }
+
+  .mg__icon {
+    opacity: 0.82;
+  }
+
+  .mg__label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .mg__arrow {
+    opacity: 0.38;
+    color: rgba(232, 238, 255, 0.46) !important;
+  }
+}

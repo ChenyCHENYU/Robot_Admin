@@ -1,0 +1,400 @@
+﻿/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-05-24
+ * @FilePath: \Robot_Admin\src\components\global\C_MenuGrouped\panel.scss
+ * @Description: 右侧展开面板全局样式（Teleport 至 body）
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+// ============ 面板容器 ============
+.mg-panel {
+  position: fixed;
+  z-index: 2000;
+  width: 620px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(100, 108, 255, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(248, 250, 255, 0.76));
+  border: 1px solid rgba(100, 108, 255, 0.08);
+  border-left: 1px solid rgba(100, 108, 255, 0.18);
+  box-shadow: 14px 0 42px rgba(18, 23, 42, 0.14);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  contain: layout paint style;
+  transform: translateZ(0);
+}
+
+// ============ 面板头部 ============
+.mg-panel__hd {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 26px 18px;
+  border-bottom: 1px solid rgba(100, 108, 255, 0.1);
+  color: var(--primary-color, #646cff);
+  flex-shrink: 0;
+}
+
+.mg-panel__title {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2430;
+  letter-spacing: 0.2px;
+}
+
+.mg-panel__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  color: #fff;
+  background:
+    linear-gradient(135deg, var(--primary-color, #646cff), #8f9bff);
+  box-shadow: 0 10px 22px rgba(100, 108, 255, 0.24);
+}
+
+
+.mg-panel__count {
+  --n-color: rgba(100, 108, 255, 0.1) !important;
+  --n-text-color: var(--primary-color, #646cff) !important;
+  height: 28px;
+  padding: 0 10px;
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px rgba(100, 108, 255, 0.12);
+}
+.mg-panel__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #8b93a7;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: rgba(100, 108, 255, 0.08);
+    color: var(--primary-color, #646cff);
+  }
+}
+
+// ============ 面板内容 ============
+.mg-panel__bd {
+  flex: 1;
+  padding: 18px 26px 28px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: rgba(128, 128, 128, 0.18);
+  }
+}
+
+// ============ 分类区块 ============
+.mg-panel__cat {
+  position: relative;
+  padding: 18px 0 18px 24px;
+  border-bottom: 1px solid rgba(100, 108, 255, 0.08);
+
+  &:first-child {
+    padding-top: 12px;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 28px;
+    bottom: 18px;
+    width: 1px;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(100, 108, 255, 0.24) 0,
+      rgba(100, 108, 255, 0.24) 4px,
+      transparent 4px,
+      transparent 8px
+    );
+  }
+}
+
+.mg-panel__cat-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2b3142;
+  padding: 0 4px 14px;
+  letter-spacing: 0.2px;
+
+  &::before {
+    content: '';
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    margin-left: -20px;
+    border-radius: 50%;
+    background: var(--primary-color, #646cff);
+    box-shadow: 0 0 0 4px rgba(100, 108, 255, 0.12);
+    opacity: 0.85;
+  }
+}
+
+// ============ 网格布局 ============
+.mg-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 14px;
+
+  &--top {
+    position: relative;
+    padding: 4px 0 20px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(100, 108, 255, 0.1);
+  }
+}
+
+// ============ 网格单元 ============
+.mg-panel__cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 12px 13px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+  color: #465066;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(100, 108, 255, 0.08);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 8px 20px rgba(31, 36, 48, 0.03);
+
+  &:hover {
+    background: rgba(100, 108, 255, 0.08);
+    border-color: rgba(100, 108, 255, 0.22);
+    box-shadow: 0 10px 24px rgba(100, 108, 255, 0.12);
+    color: var(--primary-color, #646cff);
+
+    .mg-panel__cell-icon {
+      color: var(--primary-color, #646cff);
+      background: rgba(100, 108, 255, 0.16);
+      opacity: 1;
+    }
+  }
+
+  &--active {
+    background: color-mix(in srgb, var(--primary-color, #646cff) 12%, #fff);
+    border-color: rgba(100, 108, 255, 0.32);
+    color: var(--primary-color, #646cff);
+
+    .mg-panel__cell-icon {
+      color: var(--primary-color, #646cff);
+      background: rgba(100, 108, 255, 0.18);
+      opacity: 1;
+    }
+
+    .mg-panel__cell-text {
+      font-weight: 600;
+    }
+  }
+}
+
+.mg-panel__cell-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  opacity: 0.92;
+  color: var(--primary-color, #646cff);
+  background: rgba(100, 108, 255, 0.1);
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.mg-panel__cell-text {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ============ 过渡动画 ============
+.mg-slide-enter-active {
+  transition:
+    opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mg-slide-leave-active {
+  transition:
+    opacity 0.16s ease-in,
+    transform 0.16s ease-in;
+}
+
+.mg-slide-enter-from {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.mg-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.mg-panel--signature {
+  backdrop-filter: none;
+  background:
+    radial-gradient(circle at 0% 4%, rgba(118, 132, 255, 0.18), transparent 32%),
+    radial-gradient(circle at 92% 18%, rgba(91, 141, 239, 0.12), transparent 32%),
+    linear-gradient(180deg, rgba(13, 20, 37, 0.96), rgba(11, 17, 32, 0.94));
+  border-color: rgba(118, 132, 255, 0.14);
+  border-left-color: rgba(255, 255, 255, 0.05);
+  border-radius: 0 14px 14px 0;
+  box-shadow:
+    14px 20px 44px rgba(0, 0, 0, 0.28),
+    inset 1px 0 0 rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  .mg-panel__hd {
+    padding: 20px 24px 16px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent),
+      linear-gradient(90deg, rgba(118, 132, 255, 0.1), transparent 46%);
+    border-bottom-color: rgba(130, 142, 255, 0.12);
+  }
+
+  .mg-panel__title {
+    color: rgba(245, 248, 255, 0.94);
+  }
+
+  .mg-panel__icon {
+    background: linear-gradient(135deg, rgba(91, 141, 239, 0.9), rgba(132, 116, 255, 0.86));
+    box-shadow:
+      0 14px 26px rgba(100, 108, 255, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  }
+
+  .mg-panel__count {
+    --n-color: rgba(100, 108, 255, 0.18) !important;
+    --n-text-color: rgba(232, 238, 255, 0.94) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(100, 108, 255, 0.14),
+      0 8px 18px rgba(100, 108, 255, 0.08);
+  }
+
+  .mg-panel__close:hover {
+    background: rgba(100, 108, 255, 0.1);
+  }
+
+  .mg-panel__bd {
+    padding: 18px 24px 28px;
+    background:
+      linear-gradient(90deg, rgba(118, 132, 255, 0.05), transparent 42%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.018), transparent 26%);
+  }
+
+  .mg-panel__cat {
+    border-bottom-color: rgba(130, 142, 255, 0.12);
+
+    &::before {
+      top: 28px;
+      bottom: 18px;
+      background: linear-gradient(
+        to bottom,
+        rgba(100, 108, 255, 0.24),
+        rgba(100, 108, 255, 0.06)
+      );
+    }
+  }
+
+  .mg-panel__cat-label {
+    color: rgba(232, 238, 255, 0.86);
+
+    &::before {
+      background: rgba(100, 108, 255, 0.8);
+      box-shadow:
+        0 0 0 5px rgba(100, 108, 255, 0.1),
+        0 6px 16px rgba(100, 108, 255, 0.2);
+    }
+  }
+
+  .mg-panel__grid--top {
+    border-bottom-color: rgba(130, 142, 255, 0.12);
+  }
+
+  .mg-panel__cell {
+    color: rgba(232, 238, 255, 0.82);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035));
+    border-color: rgba(130, 142, 255, 0.12);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.075),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.012);
+
+    &:hover {
+      transform: none;
+      background: linear-gradient(135deg, rgba(118, 132, 255, 0.2), rgba(255, 255, 255, 0.07));
+      border-color: rgba(130, 142, 255, 0.36);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        inset 0 0 0 1px rgba(130, 142, 255, 0.08);
+      color: #fff;
+
+      .mg-panel__cell-icon {
+        color: #fff;
+        background: rgba(130, 142, 255, 0.22);
+        transform: none;
+      }
+    }
+
+    &--active {
+      background: linear-gradient(135deg, rgba(100, 108, 255, 0.3), rgba(255, 255, 255, 0.08));
+      border-color: rgba(100, 108, 255, 0.36);
+      color: #fff;
+
+      .mg-panel__cell-icon {
+        color: #fff;
+        background: rgba(130, 142, 255, 0.24);
+      }
+    }
+  }
+
+  .mg-panel__cell-icon {
+    color: rgba(232, 238, 255, 0.78);
+    background: rgba(130, 142, 255, 0.12);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+}
+
+

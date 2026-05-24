@@ -33,7 +33,7 @@ export function useLayoutBridge(): LayoutContext {
   const settingsStore = s_settingsStore()
 
   // ============ 数据适配转换 ============
-  return {
+  const context = {
     // 菜单数据
     menus: computed(() => permissionStore.showMenuListGet),
 
@@ -42,6 +42,9 @@ export function useLayoutBridge(): LayoutContext {
 
     // 布局配置
     layoutMode: computed(() => settingsStore.layoutMode),
+    menuExpandMode: computed(
+      () => (settingsStore.$state as any).menuExpandMode ?? 'panel'
+    ),
     sidebarWidth: computed(() => settingsStore.sidebarWidth),
     sidebarCollapsedWidth: computed(() => settingsStore.sidebarCollapsedWidth),
     headerHeight: computed(() => settingsStore.headerHeight),
@@ -66,4 +69,6 @@ export function useLayoutBridge(): LayoutContext {
     // 图标组件 - 用于布局内部渲染菜单图标
     iconComponent: C_Icon,
   }
+
+  return context as LayoutContext
 }

@@ -22,6 +22,14 @@
     &:hover span {
       color: #6366f1;
     }
+.action-icon {
+  color: var(--app-text-secondary);
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+&:hover .action-icon {
+  color: #6366f1;
+}
   }
 
   .user-info {

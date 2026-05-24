@@ -60,7 +60,11 @@
             @click="emit('update:showSettings', true)"
             class="action-btn"
           >
-            <span class="i-mdi:settings-transfer-outline"></span>
+            <C_Icon
+              name="mdi:settings-transfer-outline"
+              :size="18"
+              class="action-icon"
+            />
           </NButton>
         </template>
         <span>布局配置</span>
