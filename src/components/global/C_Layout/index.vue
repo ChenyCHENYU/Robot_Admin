@@ -16,14 +16,16 @@
         <div
           id="guide-menu"
           class="menu-scroll-container"
-          :class="{ 'menu-light': isMenuLight }"
+          :class="{
+            'menu-light': isMenuLight,
+            'menu-signature': themeStore.menuTheme === 'signature',
+          }"
         >
-          <C_Menu
+          <C_MenuGrouped
             :routes="menuData"
-            :value="route.path"
-            mode="vertical"
             :collapsed="collapsed"
-            :inverted="isDarkMode"
+            :inverted="!isMenuLight"
+            :menu-theme="themeStore.menuTheme"
             :label-formatter="translateRouteTitle"
             @select="router.push"
           />
@@ -64,6 +66,7 @@
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_Settings from '@/components/global/C_Settings/index.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
+  import C_MenuGrouped from '@/components/global/C_MenuGrouped/index.vue'
 
   // 提供布局上下文（桥接业务 Store → 包标准接口）
   const layoutContext = useLayoutBridge()
@@ -71,7 +74,6 @@
 
   const permissionStore = s_permissionStore()
   const themeStore = s_themeStore()
-  const route = useRoute()
   const router = useRouter()
 
   const isReady = ref(true)
@@ -82,8 +84,10 @@
    */
   const isMenuLight = computed(() => themeStore.isMenuLight)
 
-  // 获取菜单数据（MenuOptions.path 为可选，RouteItem.path 为必填，此处数据上保证 path 存在）
-  const menuData = permissionStore.showMenuListGet as any[]
+  /**
+   * 最终菜单数据：响应式 + 分组模式下自动包装 type:'group'
+   */
+  const menuData = computed(() => permissionStore.showMenuListGet as any[])
 
   // 设置抽屉状态 - 提升到全局
   const showSettings = ref(false)
@@ -109,3 +113,28 @@
     showSettings,
   })
 </script>
+
+<style scoped lang="scss">
+  .menu-scroll-container.menu-signature {
+    --menu-signature-bg: #0d1425;
+    --menu-signature-bg-soft: #111a31;
+    --menu-signature-border: rgba(118, 132, 255, 0.16);
+
+    background:
+      radial-gradient(
+        circle at 16% 12%,
+        rgba(118, 132, 255, 0.12),
+        transparent 30%
+      ),
+      linear-gradient(
+        180deg,
+        var(--menu-signature-bg) 0%,
+        var(--menu-signature-bg-soft) 18%,
+        #0b1120 100%
+      );
+    border-right: 1px solid var(--menu-signature-border);
+    box-shadow:
+      inset -1px 0 0 rgba(255, 255, 255, 0.04),
+      inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+</style>
