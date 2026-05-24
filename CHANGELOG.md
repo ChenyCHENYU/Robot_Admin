@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.5.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.4.0...v2.5.0) (2026-05-24)
+
+
+### Features
+
+* **layout:** 优化菜单配置与分组样式 ([8b9ba3c](https://github.com/ChenyCHENYU/Robot_Admin/commit/8b9ba3c77e74498937848906be68905b74272c52))
+* **menu:** 新增分组菜单右侧展开面板 ([7558e46](https://github.com/ChenyCHENYU/Robot_Admin/commit/7558e46246f1c0bfcb24103d9908b6f93bb212c6))
+
+
+### Bug Fixes
+
+* **login:** 优化登录按钮文字颜色 ([c5508df](https://github.com/ChenyCHENYU/Robot_Admin/commit/c5508df8678dc260ad4a0b30c68a13b3901ac4dc))
+
+
+### Performance Improvements
+
+* **login:** Spline动态导入+vercel缓存头+登录页精简+分支同步skill ([47d4f25](https://github.com/ChenyCHENYU/Robot_Admin/commit/47d4f259aa198ca5187df864346d533cb92fd3ef))
+
 ## [2.4.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.3.0...v2.4.0) (2026-04-20)
 
 
