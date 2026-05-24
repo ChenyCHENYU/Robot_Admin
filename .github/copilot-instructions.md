@@ -1561,14 +1561,15 @@ app.mount('#app')        # 9. 挂载
 本项目配备了 6 个结构化 AI 技能包，位于 `.github/skills/` 目录。
 当识别到用户意图匹配下表关键词时，**自动加载对应 SKILL.md 并按其流程执行**。
 
-| 技能         | 目录                       | 触发关键词                                 | 说明                                            |
-| ------------ | -------------------------- | ------------------------------------------ | ----------------------------------------------- |
-| **原型解析** | `skills/prototype-scan/`   | 原型解析、axure扫描、页面清单、详设文档    | 将 Axure HTML / 详设文档 → page-spec JSON       |
-| **接口约定** | `skills/api-contract/`     | 接口约定、生成api、swagger转ts、接口文件   | 从 page-spec / Swagger → TS 类型 + API 函数     |
-| **页面生成** | `skills/page-codegen/`     | 生成页面、代码生成、页面骨架、scaffold     | 从 page-spec → index.vue + data.ts + index.scss |
-| **路由注册** | `skills/route-sync/`       | 注册路由、添加菜单、路由配置、新增页面路由 | 将新页面注册到 dynamicRouter.json               |
-| **规范审计** | `skills/convention-audit/` | 规范检查、代码审查、命名规范、code review  | 10 维度规范合规性审查                           |
-| **Mock生成** | `skills/mock-codegen/`     | 生成mock、mock数据、模拟数据、联调前mock   | 可选：生成内联 Mock 数据注入 data.ts            |
+| 技能         | 目录                       | 触发关键词                                  | 说明                                                    |
+| ------------ | -------------------------- | ------------------------------------------- | ------------------------------------------------------- |
+| **原型解析** | `skills/prototype-scan/`   | 原型解析、axure扫描、页面清单、详设文档     | 将 Axure HTML / 详设文档 → page-spec JSON               |
+| **接口约定** | `skills/api-contract/`     | 接口约定、生成api、swagger转ts、接口文件    | 从 page-spec / Swagger → TS 类型 + API 函数             |
+| **页面生成** | `skills/page-codegen/`     | 生成页面、代码生成、页面骨架、scaffold      | 从 page-spec → index.vue + data.ts + index.scss         |
+| **路由注册** | `skills/route-sync/`       | 注册路由、添加菜单、路由配置、新增页面路由  | 将新页面注册到 dynamicRouter.json                       |
+| **规范审计** | `skills/convention-audit/` | 规范检查、代码审查、命名规范、code review   | 10 维度规范合规性审查                                   |
+| **Mock生成** | `skills/mock-codegen/`     | 生成mock、mock数据、模拟数据、联调前mock    | 可选：生成内联 Mock 数据注入 data.ts                    |
+| **分支同步** | `skills/branch-sync/`      | 分支同步、版本升级、依赖更新、sync branches | 单体变更后检查并同步到架构分支（micro-app/MF/monorepo） |
 
 ### 典型工作流
 

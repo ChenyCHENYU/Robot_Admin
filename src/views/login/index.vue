@@ -30,43 +30,6 @@
       />
     </div>
 
-    <!-- 右上角工具栏：语言 + 主题 -->
-    <div class="login-toolbar">
-      <NButton
-        circle
-        class="login-toolbar__btn"
-        @click="toggleTheme"
-      >
-        <template #icon>
-          <C_Icon
-            :name="
-              themeStore.isDark ? 'mdi:weather-sunny' : 'mdi:weather-night'
-            "
-            :size="16"
-            :title="
-              themeStore.isDark
-                ? t('lp_light_mode', '切换亮色')
-                : t('lp_dark_mode', '切换暗色')
-            "
-          />
-        </template>
-      </NButton>
-
-      <NButton
-        circle
-        class="login-toolbar__btn"
-        @click="toggleLang"
-      >
-        <template #icon>
-          <C_Icon
-            name="mdi:translate"
-            :size="16"
-            :title="langStore.currentLang === 'zh-cn' ? 'English' : '中文'"
-          />
-        </template>
-      </NButton>
-    </div>
-
     <!-- 登录面板 -->
     <div class="login-wrapper">
       <C_Login
@@ -93,8 +56,6 @@
 <script setup lang="ts">
   import { initDynamicRouter } from '@/router/dynamicRouter'
   import { s_userStore } from '@/stores/user/index'
-  import { s_themeStore } from '@/stores/theme'
-  import { s_languageStore } from '@/stores/language'
   import { loginApi, type LoginResponse } from '@/api/auth'
   import { useLoginController } from '@/composables/useLoginController'
   import { LOGIN_FEATURES, SOCIAL_PROVIDERS, createWelcomeConfig } from './data'
@@ -105,8 +66,6 @@
   const router = useRouter()
   const message = useMessage()
   const userStore = s_userStore()
-  const themeStore = s_themeStore()
-  const langStore = s_languageStore()
 
   // ===== i18n helper =====
   const t = (key: string, fallback: string) =>
@@ -116,12 +75,6 @@
 
   // ===== 打字机 =====
   const showTypewriter = ref(true)
-
-  // ===== 工具栏 =====
-  const toggleTheme = () =>
-    themeStore.setMode(themeStore.isDark ? 'light' : 'dark')
-  const toggleLang = () =>
-    langStore.setLanguage(langStore.currentLang === 'zh-cn' ? 'en' : 'zh-cn')
 
   // ===== 登录控制器（业务逻辑全部由 composable 托管） =====
   const {

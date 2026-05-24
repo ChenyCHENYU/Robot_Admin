@@ -16,8 +16,8 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted, computed } from 'vue'
-  import { Application } from '@splinetool/runtime'
+  import { ref, onMounted, onUnmounted, computed, shallowRef } from 'vue'
+  import type { Application as ApplicationType } from '@splinetool/runtime'
   import ParentSize from './ParentSize.vue'
 
   const props = defineProps({
@@ -37,7 +37,7 @@
 
   const canvasRef = ref<HTMLCanvasElement | null>(null)
   const isLoading = ref(false)
-  const splineApp = ref<Application | null>(null)
+  const splineApp = shallowRef<ApplicationType | null>(null)
 
   const parentSizeStyles = computed(() => ({
     overflow: 'hidden',
@@ -108,6 +108,9 @@
         splineApp.value.dispose()
         splineApp.value = null
       }
+
+      // ⚡ 动态导入 Spline Runtime（4.4MB），避免阻塞首屏 JS 解析
+      const { Application } = await import('@splinetool/runtime')
 
       splineApp.value = new Application(canvasRef.value, {
         renderOnDemand: props.renderOnDemand,

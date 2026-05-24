@@ -21,32 +21,6 @@ $t: 0.3s;
     z-index: 0;
   }
 
-  /* 右上角工具栏 */
-  .login-toolbar {
-    position: fixed;
-    top: 16px;
-      right: 16px;
-    z-index: 10;
-    display: flex;
-    gap: 6px;
-
-    &__btn {
-      width: 28px !important;
-        height: 28px !important;
-        font-size: 13px !important;
-        background: rgba(255, 255, 255, 0.06) !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        color: rgba(255, 255, 255, 0.55) !important;
-      backdrop-filter: blur(10px);
-      transition: all $t;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.14) !important;
-          color: rgba(255, 255, 255, 0.9) !important;
-      }
-    }
-  }
-
     /* 登录面板定位容器（纯定位，无视觉样式） */
   .login-wrapper {
     position: relative;
