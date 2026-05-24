@@ -221,3 +221,12 @@ $t: 0.3s;
     display: none !important;
   }
 }
+
+/* ─── 登录按钮文字保持白色（深色背景下可读）───────────── */
+.login-container .c-login__submit-btn {
+  color: #fff !important;
+
+  .n-button__content {
+    color: #fff !important;
+  }
+}
