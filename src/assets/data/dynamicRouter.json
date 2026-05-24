@@ -729,11 +729,11 @@
         {
           "path": "xxx-xxx",
           "name": "xxx-xxx",
-          "component": "/demo/35-xxx/index",
+          "component": "/demo/34-production-cost/index",
           "meta": {
             "icon": "mdi:performance",
             "title": "绩效看板",
-            "hidden": false,
+            "hidden": true,
             "full": false,
             "affix": false,
             "keepAlive": false

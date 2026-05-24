@@ -438,7 +438,6 @@
   import { s_userStore } from '@/stores/user'
   import { useRouter } from 'vue-router'
   import C_Header from '@/components/global/C_Header/index.vue'
-  import { CUSTOM_EVENTS, STORAGE_KEYS } from '@shared/constants'
   import {
     systems,
     todoList,
@@ -451,6 +450,12 @@
 
   const router = useRouter()
   const userStore = s_userStore()
+  const CUSTOM_EVENTS = {
+    MICRO_APP_DATA_UPDATE: 'micro-app-data-update',
+  } as const
+  const STORAGE_KEYS = {
+    MICRO_APP_DATA: 'micro-app-data',
+  } as const
 
   const userName = computed(() => userStore.userInfo?.username || '李梦')
 
