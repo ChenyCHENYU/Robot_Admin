@@ -605,7 +605,7 @@
     display: inline-flex;
     gap: 0;
     margin-bottom: 16px;
-    background: var(--portal-bg-hover);
+    background: var(--app-bg-surface);
     padding: 2px;
     border-radius: 6px;
 
@@ -615,20 +615,20 @@
       background: transparent;
       border-radius: 4px;
       font-size: 13px;
-      color: var(--portal-text-secondary);
+      color: var(--app-text-secondary);
       cursor: pointer;
       transition: all 0.2s;
       font-weight: 400;
 
       &:hover {
-        color: var(--portal-text-primary);
+        color: var(--app-text-primary);
       }
 
       &.active {
-        background: var(--portal-bg-card);
-          color: var(--portal-status-info);
+        background: var(--app-bg-body);
+        color: var(--app-primary);
         font-weight: 500;
-        box-shadow: 0 1px 2px var(--portal-shadow);
+        box-shadow: 0 1px 2px var(--app-shadow-sm);
       }
     }
   }
@@ -645,36 +645,30 @@
     gap: 12px;
     padding: 12px 16px;
 
-    background: var(--portal-bg-card);
-    background: rgba(var(--portal-bg-card-rgb), 0.6);
-    background: var(--portal-bg-hover);
+    background: var(--app-bg-surface);
     border: 1px solid transparent;
     border-radius: 999px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 
     &:last-child {
       border-bottom: 1px solid transparent;
     }
 
     &:hover {
-      background: var(--portal-bg-card);
-      border-color: rgba(91, 143, 249, 0.3);
+      background: var(--app-bg-body);
+      border-color: color-mix(in srgb, var(--app-primary) 30%, transparent);
       transform: translateX(4px) scale(1.01);
-      box-shadow:
-        0 4px 12px rgba(60, 64, 67, 0.08),
-        inset 0 1px 1px rgba(255, 255, 255, 0.6);
+      box-shadow: var(--app-shadow-md);
 
       .message-text {
-        color: var(--portal-text-primary);
+        color: var(--app-text-primary);
         font-weight: 500;
       }
 
       .message-icon {
          transform: scale(1.1) rotate(5deg);
-         background: var(--portal-status-info-bg);
+         background: color-mix(in srgb, var(--app-primary) 12%, transparent);
       }
     }
 
@@ -688,14 +682,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        background: var(--portal-bg-page);
+        border: 1px solid var(--app-border-light);
+        background: var(--app-bg-surface);
         transition: all 0.3s;
 
         svg {
           width: 16px !important;
           height: 16px !important;
-          color: var(--portal-status-info);
+          color: var(--app-primary);
         }
       }
     }
@@ -706,7 +700,7 @@
 
       .message-text {
         font-size: 13px;
-        color: var(--portal-text-primary);
+        color: var(--app-text-primary);
         line-height: 1.6;
         transition: color 0.2s;
       }
@@ -714,7 +708,7 @@
 
     .message-time {
       font-size: 12px;
-      color: var(--portal-text-secondary);
+      color: var(--app-text-secondary);
       white-space: nowrap;
       flex-shrink: 0;
     }
