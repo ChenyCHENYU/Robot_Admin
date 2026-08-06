@@ -163,7 +163,6 @@
     TASK_ASSIGNEES,
     TEAM_MEMBERS,
   } from './data'
-  import './index.scss'
 
   // ==================== 场景切换 ====================
 
@@ -204,3 +203,7 @@
     if (clickLogs.value.length > 10) clickLogs.value.length = 10
   }
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

@@ -1039,8 +1039,6 @@
   } from '@/api/permission-manage'
   import { useTableCrud } from '@robot-admin/request-core'
 
-  import './index.scss'
-
   defineOptions({ name: 'PermissionManage' })
 
   const message = useMessage()

@@ -142,7 +142,6 @@
     historyColumns,
     type HistoryItem,
   } from './data'
-  import './index.scss'
   const message = useMessage()
 
   // 加载状态
@@ -429,3 +428,7 @@
     selectedFiles.value = []
   }
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

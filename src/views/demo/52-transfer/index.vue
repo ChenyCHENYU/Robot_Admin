@@ -129,7 +129,6 @@
     PERMISSION_DEFAULT,
     TAG_TYPE_MAP,
   } from './data'
-  import './index.scss'
 
   // ==================== 场景切换 ====================
 
@@ -184,3 +183,7 @@
     console.log('[Transfer]', { direction, moveKeys, targetKeys })
   }
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

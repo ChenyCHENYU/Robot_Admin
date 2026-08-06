@@ -165,7 +165,6 @@
     ORDER_TIMELINE,
     DEMO_SCENES,
   } from './data'
-  import './index.scss'
 
   // ===== 状态 =====
   const tlRef = ref()

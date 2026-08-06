@@ -116,7 +116,6 @@
     TAG_TYPE_MAP,
     VOICE_TRACKS,
   } from './data'
-  import './index.scss'
 
   // 场景切换
   const activeScene = ref<'music' | 'voice' | 'podcast'>('music')
@@ -135,3 +134,7 @@
   const handlePlay = (idx: number) => console.log('[AudioPlayer] play:', idx)
   const handlePause = () => console.log('[AudioPlayer] pause')
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

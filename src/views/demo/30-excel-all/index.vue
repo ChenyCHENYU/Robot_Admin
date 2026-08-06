@@ -410,7 +410,6 @@
   } from 'naive-ui/es'
   import { useExcel, type ExcelTemplate } from '@robot-admin/file-utils'
   import { PREVIEW_ROWS, sampleData, historyColumns } from './data'
-  import './index.scss'
 
   // Hooks
   const {
@@ -797,3 +796,7 @@
     }
   })
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>
