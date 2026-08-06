@@ -61,7 +61,6 @@
   import { LOGIN_FEATURES, SOCIAL_PROVIDERS, createWelcomeConfig } from './data'
   import Spline from './components/Spline.vue'
   import Typewriter from './components/Typewriter.vue'
-  import './index.scss'
 
   const router = useRouter()
   const message = useMessage()
@@ -124,3 +123,7 @@
       message.info(`${t('lp_code_sent', '验证码已发送至')} ${phone}`),
   })
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

@@ -97,7 +97,6 @@
     DEMO_SCENES,
     getRandomReply,
   } from './data'
-  import './index.scss'
 
   const message = useMessage()
 

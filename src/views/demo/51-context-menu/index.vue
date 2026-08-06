@@ -130,7 +130,6 @@ console.log(greeting)
     TABLE_ROW_MENU,
     DEMO_SCENES,
   } from './data'
-  import './index.scss'
 
   const message = useMessage()
 

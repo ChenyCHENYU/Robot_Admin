@@ -1,3 +1,13 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-08-06
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-08-06
+ * @FilePath: \Robot_Admin\src\styles\theme-variables.scss
+ * @Description: 应用明暗主题变量
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
 /**
  * 主题 CSS Variables 系统
  *
@@ -31,10 +41,15 @@
   --app-bg-menu: #0d1425;
   --app-bg-content: #ffffff;
   --app-bg-layout: #f4f7f9;
+  --app-bg-deep: #eef1f5;
+  --app-bg-surface-hover: #e9edf2;
+  --app-hover-bg: rgba(32, 128, 240, 0.08);
 
   /* 文本色系 */
   --app-text-primary: #000000;
   --app-text-secondary: #666666;
+  --app-text-tertiary: #8a8a8a;
+  --app-text-quaternary: #a8a8a8;
   --app-text-disabled: #c0c0c0;
   --app-text-placeholder: #999999;
 
@@ -56,7 +71,8 @@
   /* 阴影 */
   --app-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --app-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --app-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --app-shadow-lg:
+    0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
 
   /* 过渡 */
   --app-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -80,10 +96,15 @@
   --app-bg-menu: #1c1c1c;
   --app-bg-content: #1c1c1c;
   --app-bg-layout: #121212;
+  --app-bg-deep: #161616;
+  --app-bg-surface-hover: #252525;
+  --app-hover-bg: rgba(32, 128, 240, 0.16);
 
   /* 文本色系 */
   --app-text-primary: #ffffff;
   --app-text-secondary: #9ca3af;
+  --app-text-tertiary: #7f8897;
+  --app-text-quaternary: #6b7280;
   --app-text-disabled: #4a5568;
   --app-text-placeholder: #6b7280;
 
@@ -141,19 +162,19 @@ body {
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.5s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
 ::view-transition-old(root) {
   animation-name: theme-fade-out;
-  }
-  
-  ::view-transition-new(root) {
+}
+
+::view-transition-new(root) {
   animation-name: theme-fade-in;
-  }
-  
-  @keyframes theme-fade-out {
-    to {
-      opacity: 0;
+}
+
+@keyframes theme-fade-out {
+  to {
+    opacity: 0;
   }
 }
 

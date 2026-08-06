@@ -254,7 +254,7 @@
   .menu-expand-group {
     width: 100%;
 
-    :deep(.n-radio-button) {
+    .n-radio-button {
       flex: 1;
     }
   }
