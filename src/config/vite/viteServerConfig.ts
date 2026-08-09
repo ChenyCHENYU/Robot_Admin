@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { HEAVY_PAGE_ROUTES } from './heavyPages'
+import { HEAVY_PAGE_ROUTES } from '../heavyPages'
 
 export default {
   port: 1988,

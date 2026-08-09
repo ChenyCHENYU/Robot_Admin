@@ -1,19 +1,17 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2025-11-04 13:55:07
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-04 14:02:00
- * @FilePath: \Robot_Admin\src\config\vite\heavyPages.ts
- * @Description: 重量级页面配置（预加载 + 预热双向同步）
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ * @Date: 2026-08-09
+ * @FilePath: \Robot_Admin\src\config\heavyPages.ts
+ * @Description: 重量级页面配置（开发预热 + 生产运行时预取）
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
 /**
  * 重量级页面路由列表（单一数据源）
  *
  * 用途：
- * 1. preloader 插件 - 直接使用（生产环境预加载）
- * 2. server.warmup - 映射为文件路径（开发环境预热）
+ * 1. preloader 插件 / server.warmup - 开发环境预热
+ * 2. routePrefetch - 生产环境登录后按网络与空闲状态渐进预取
  *
  * 原则：
  * - 只添加加载时间 > 2 秒的页面
@@ -27,4 +25,4 @@ export const HEAVY_PAGE_ROUTES = [
   '/demo/30-excel-all', // Excel 导入导出（xlsx）
   '/demo/33-v-table-gantt', // 甘特图（VTable Gantt）
   '/demo/28-work-flow-editor', // 工作流编辑器（Vue Flow）
-]
+] as const

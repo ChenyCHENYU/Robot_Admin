@@ -26,7 +26,7 @@ import {
   createI18nPlugin,
   createVuePluginOptions,
 } from './src/config/vite'
-import { HEAVY_PAGE_ROUTES } from './src/config/vite/heavyPages'
+import { HEAVY_PAGE_ROUTES } from './src/config/heavyPages'
 
 export default defineConfig(async ({ mode, command }: { mode: string; command: string }) => {
   const env = loadEnv(mode, process.cwd(), '')

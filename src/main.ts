@@ -36,6 +36,7 @@ import { setupHighlight } from '@/plugins/highlight'
 import { setupAnalytics } from '@/plugins/analytics'
 import { setupRequestCore } from '@/plugins/request-core'
 import { setupLayoutSystem } from '@/plugins/layout'
+import { setupRoutePrefetch } from '@/router/routePrefetch'
 // ✅ 移除 app.use(NaiveUIComponents)，由 RobotNaiveUiResolver 按需解析
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
@@ -76,6 +77,9 @@ async function bootstrap() {
 
   // 第四阶段：挂载应用
   app.mount('#app')
+
+  // 登录后利用浏览器空闲时间渐进预热大页面，不占用登录页和首屏关键链路
+  setupRoutePrefetch(router)
 
   // 注意：移除加载动画的逻辑已移至 App.vue 的 onMounted 中
   // 确保首屏内容真正渲染完成后才移除
