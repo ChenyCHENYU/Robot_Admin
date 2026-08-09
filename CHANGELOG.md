@@ -1,6 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [2.5.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.4.0...v2.5.0) (2026-08-10)
+
+### Features
+
+- **layout:** 优化菜单配置与分组样式，新增分组菜单右侧展开面板。
 
 ### Performance
 
@@ -19,6 +23,11 @@
 
 - 固定 Robot Admin 内部包版本，避免 `latest` 导致不可复现安装。
 - 增加单元测试、只读 Lint、完整验证脚本、CI 和提交前质量门禁。
+
+### Dependencies
+
+- **packages:** 升级 `@robot-admin/theme@0.4.0`、`directives@1.1.1`、`file-utils@2.0.0`、`request-core@0.2.0`、`git-standards@1.0.4` 与 `layout@2.3.2`，同步 Bun 锁文件和生态版本索引。
+- **compatibility:** 主题模式统一为 `system`，并适配 file-utils v2 的导出错误传播契约，避免事件处理器产生未处理 Promise。
 
 ## [2.4.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.3.0...v2.4.0) (2026-04-20)
 
