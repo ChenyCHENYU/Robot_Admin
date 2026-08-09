@@ -28,20 +28,8 @@ const COMPONENTS = {
   '404': () => import('@/views/error-page/404.vue'),
 } as const
 
-// ⚡ 最佳实践：根据使用频率使用不同的加载策略
-// 高频页面使用 eager 模式（首页、常用功能）- 打包到主chunk，立即可用
-const EAGER_MODULES = import.meta.glob('@/views/home/**/*.vue', { eager: true })
-const EAGER_DASH = import.meta.glob('@/views/dashboard/**/*.vue', {
-  eager: true,
-})
-
-// 其他页面使用懒加载 - 按需加载，减小初始包体积
-// ⚠️ Vite 8 (Rolldown/Oxc) 不支持 extglob 否定模式 !(pattern)*
-// 改用通用 glob 匹配所有 vue 文件，eager 模块会覆盖同名 lazy 模块
+// 所有动态页面统一懒加载；登录页无需预取首页的 3D、图表等重依赖。
 const LAZY_MODULES = import.meta.glob('@/views/**/*.vue')
-
-// 合并所有模块映射（eager 覆盖 lazy，保证高频页面使用预加载版本）
-const VIEW_MODULES = { ...LAZY_MODULES, ...EAGER_MODULES, ...EAGER_DASH }
 
 /**
  * 路径规范化处理
@@ -70,14 +58,9 @@ const resolveComponent = (path?: string) => {
     const normalizedPath = path.startsWith('/') ? path : `/${path}`
     const viewPath = `/src/views${normalizedPath}.vue`
 
-    const module = VIEW_MODULES[viewPath]
+    const module = LAZY_MODULES[viewPath]
 
     if (module) {
-      // eager 模式的模块直接返回
-      if (typeof module === 'object' && 'default' in module) {
-        return () => Promise.resolve(module)
-      }
-      // lazy 模式的模块返回函数
       return module
     }
 

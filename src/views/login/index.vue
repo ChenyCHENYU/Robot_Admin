@@ -93,7 +93,11 @@
     welcomeConfig: createWelcomeConfig(t),
 
     onLoginSuccess: async (response, formData) => {
-      userStore.handleLoginSuccess(response.data.token)
+      userStore.handleLoginSuccess(
+        response.data.token,
+        response.data.refreshToken,
+        response.data.expiresIn
+      )
       userStore.setUserInfo(formData)
       const ok = await initDynamicRouter()
       if (!ok) throw new Error('动态路由初始化失败')

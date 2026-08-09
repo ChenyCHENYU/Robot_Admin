@@ -24,6 +24,12 @@ let pendingRequests: Array<{
   reject: (error: Error) => void
 }> = []
 
+/** 401 重试内部标记，防止刷新或重新登录形成无限循环 */
+interface RetriableRequestConfig extends InternalAxiosRequestConfig {
+  __handling401?: boolean
+  __reLoginRetried?: boolean
+}
+
 /**
  * * @description: 执行 Token 刷新（并发安全）
  * ! @return {Promise<string>} 新的 access token
@@ -143,6 +149,10 @@ export function setupRequestCore(app: App) {
 
       // ==================== 响应错误拦截器 ====================
       responseError: async error => {
+        const originalConfig = error.config as
+          | RetriableRequestConfig
+          | undefined
+
         // 处理 401 未授权
         if (error.response?.status === 401) {
           const userStore = s_userStore()
@@ -150,18 +160,25 @@ export function setupRequestCore(app: App) {
           // 尝试用 refresh_token 静默刷新
           if (
             userStore.refreshToken &&
-            !error.config?.url?.includes('/auth/refresh-token')
+            originalConfig &&
+            !originalConfig.__handling401 &&
+            !originalConfig.url?.includes('/auth/refresh-token')
           ) {
             try {
+              originalConfig.__handling401 = true
               const newToken = await doRefreshToken()
               // 用新 token 重发原始请求
-              error.config!.headers!.Authorization = `Bearer ${newToken}`
-              const { default: axios } = await import('axios')
-              return axios(error.config!)
+              originalConfig.headers.Authorization = `Bearer ${newToken}`
+              return requestCore.axiosInstance.request(originalConfig)
             } catch {
               // refresh token 也过期了，走重新登录流程
             }
           }
+
+          if (!originalConfig || originalConfig.__reLoginRetried) {
+            return Promise.reject(error)
+          }
+          originalConfig.__reLoginRetried = true
 
           // refresh token 不存在或刷新失败，显示重新登录弹窗
           const reLoginStore = s_reLoginStore()
@@ -188,6 +205,8 @@ export function setupRequestCore(app: App) {
                 }
               )
             })
+            originalConfig.headers.Authorization = `Bearer ${userStore.token}`
+            return requestCore.axiosInstance.request(originalConfig)
           } catch (err) {
             message.error('重新登录失败，请重新登录')
             return Promise.reject(err)

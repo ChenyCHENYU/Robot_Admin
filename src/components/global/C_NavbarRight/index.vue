@@ -204,15 +204,17 @@
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import {
     C_GlobalSearch,
-    C_NotificationCenter,
-    C_Language,
-    C_Theme,
-    C_Guide,
-    createMenuOptions,
     type GlobalSearchOptions,
     type SearchMenuItem,
+  } from '@robot-admin/naive-ui-components/C_GlobalSearch'
+  import { C_NotificationCenter } from '@robot-admin/naive-ui-components/C_NotificationCenter'
+  import { C_Language } from '@robot-admin/naive-ui-components/C_Language'
+  import { C_Theme } from '@robot-admin/naive-ui-components/C_Theme'
+  import {
+    C_Guide,
     type GuideStep,
-  } from '@robot-admin/naive-ui-components'
+  } from '@robot-admin/naive-ui-components/C_Guide'
+  import { createMenuOptions } from '@robot-admin/naive-ui-components/C_Menu'
   import type { MenuOption } from 'naive-ui/es'
   import packageJson from '../../../../package.json'
 
@@ -440,76 +442,18 @@
 <style lang="scss">
   .user-panel {
     width: 240px;
-    background: #fff;
+    background: var(--c-bg-surface);
     border-radius: 10px;
-    box-shadow:
-      0 6px 24px rgba(0, 0, 0, 0.08),
-      0 1px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--c-shadow-lg);
     overflow: hidden;
     font-size: 13px;
-    color: #1f2937;
+    color: var(--c-text-1);
     animation: user-panel-enter 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 
-    // ---------- 暗色模式 ----------
+    // 保留兼容类名，颜色统一由根节点的语义主题变量驱动
     &--dark {
-      background: #1e1e2e;
-      color: #e5e7eb;
-      box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.3),
-        0 2px 8px rgba(0, 0, 0, 0.2);
-
-      .user-panel__header {
-        background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
-      }
-
-      .user-panel__name {
-        color: #f3f4f6;
-      }
-      .user-panel__role,
-      .user-panel__email {
-        color: #c4b5fd;
-      }
-
-      .user-panel__item {
-        color: #d1d5db;
-
-        &:hover {
-          background: rgba(99, 102, 241, 0.12);
-          color: #a5b4fc;
-        }
-
-        &--danger {
-          color: #fca5a5 !important;
-
-          &:hover {
-            background: rgba(239, 68, 68, 0.12) !important;
-            color: #fca5a5 !important;
-          }
-        }
-      }
-
-      .user-panel__item-arrow,
-      .user-panel__item-icon {
-        color: #6b7280;
-      }
-      .user-panel__item:hover .user-panel__item-icon {
-        color: #a5b4fc;
-      }
-
-      .user-panel__item-shortcut {
-        background: #374151;
-        color: #9ca3af;
-        border-color: #4b5563;
-      }
-
-      .user-panel__footer {
-        background: #16162a;
-        color: #6b7280;
-      }
-
-      .n-divider {
-        --n-color: rgba(255, 255, 255, 0.06) !important;
-      }
+      background: var(--c-bg-surface);
+      color: var(--c-text-1);
     }
 
     // ---------- 用户卡片头部 ----------
@@ -518,7 +462,7 @@
       align-items: center;
       gap: 10px;
       padding: 12px 14px;
-      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+      background: color-mix(in srgb, var(--c-primary) 12%, var(--c-bg-surface));
       position: relative;
     }
 
@@ -533,7 +477,7 @@
     &__name {
       font-size: 13.5px;
       font-weight: 600;
-      color: #111827;
+      color: var(--c-text-1);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -542,7 +486,7 @@
     &__role,
     &__email {
       font-size: 11px;
-      color: #6366f1;
+      color: var(--c-primary);
       display: flex;
       align-items: center;
       gap: 3px;
@@ -552,7 +496,7 @@
     }
 
     &__email {
-      color: #6b7280;
+      color: var(--c-text-2);
     }
 
     &__status {
@@ -573,16 +517,20 @@
       padding: 7px 8px;
       border-radius: 6px;
       cursor: pointer;
-      color: #374151;
+      color: var(--c-text-2);
       transition: all 0.18s ease;
       user-select: none;
 
       &:hover {
-        background: rgba(99, 102, 241, 0.08);
-        color: #6366f1;
+        background: color-mix(
+          in srgb,
+          var(--c-primary) 10%,
+          var(--c-bg-surface)
+        );
+        color: var(--c-primary);
 
         .user-panel__item-icon {
-          color: #6366f1;
+          color: var(--c-primary);
         }
 
         .user-panel__item-arrow {
@@ -597,18 +545,22 @@
 
       // 危险操作（退出登录）
       &--danger {
-        color: #ef4444 !important;
+        color: var(--error-color, var(--c-error)) !important;
 
         .user-panel__item-icon {
-          color: #ef4444 !important;
+          color: var(--error-color, var(--c-error)) !important;
         }
 
         &:hover {
-          background: rgba(239, 68, 68, 0.08) !important;
-          color: #dc2626 !important;
+          background: color-mix(
+            in srgb,
+            var(--error-color, var(--c-error)) 10%,
+            var(--c-bg-surface)
+          ) !important;
+          color: var(--error-color, var(--c-error)) !important;
 
           .user-panel__item-icon {
-            color: #dc2626 !important;
+            color: var(--error-color, var(--c-error)) !important;
           }
         }
       }
@@ -616,7 +568,7 @@
 
     &__item-icon {
       font-size: 15px;
-      color: #6b7280;
+      color: var(--c-text-3);
       flex-shrink: 0;
       transition: color 0.18s ease;
     }
@@ -629,7 +581,7 @@
 
     &__item-arrow {
       font-size: 14px;
-      color: #d1d5db;
+      color: var(--c-text-4);
       flex-shrink: 0;
       opacity: 0;
       transition: all 0.18s ease;
@@ -640,9 +592,9 @@
       font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
       padding: 1px 5px;
       border-radius: 3px;
-      background: #f3f4f6;
-      color: #6b7280;
-      border: 1px solid #e5e7eb;
+      background: var(--c-bg-body);
+      color: var(--c-text-3);
+      border: 1px solid var(--c-border);
       line-height: 1;
     }
 
@@ -651,15 +603,15 @@
       padding: 6px 14px;
       text-align: center;
       font-size: 10px;
-      color: #9ca3af;
-      background: #fafafa;
-      border-top: 1px solid #f3f4f6;
+      color: var(--c-text-3);
+      background: var(--c-bg-body);
+      border-top: 1px solid var(--c-border);
       letter-spacing: 0.3px;
     }
 
     // ---------- NDivider 微调 ----------
     .n-divider {
-      --n-color: #f0f0f0 !important;
+      --n-color: var(--c-border) !important;
     }
   }
 

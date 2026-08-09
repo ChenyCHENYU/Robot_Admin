@@ -17,7 +17,7 @@ import type { LayoutContext } from '@robot-admin/layout'
 import { s_permissionStore } from '@/stores/permission'
 import { s_themeStore } from '@/stores/theme'
 import { s_settingsStore } from '@/stores/settings'
-import { C_Icon } from '@robot-admin/naive-ui-components'
+import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
 
 /**
  * 创建布局桥接数据

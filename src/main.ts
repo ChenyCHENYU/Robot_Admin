@@ -28,18 +28,14 @@ import '@/router/permission'
 import App from './App.vue'
 import router from './router'
 import { setupDirectives } from '@robot-admin/directives' // 👈 直接从包导入
-import {
-  setupStore,
-  setupNaiveUI,
-  setupDynamicComponents,
-  PassiveScrollPlugin,
-  setupHighlight,
-  setupMarkdown,
-  setupAnalytics,
-  setupRequestCore, //  Request Core 插件
-  setupLayoutSystem, // 🆕 布局系统插件
-  setupFileUtils, // 🆕 文件处理工具包
-} from '@/plugins'
+import { setupStore } from '@/plugins/store'
+import { setupNaiveUI } from '@/plugins/naive-ui-plugin'
+import { setupDynamicComponents } from '@/plugins/dynamic-components'
+import { PassiveScrollPlugin } from '@/plugins/passive-scroll'
+import { setupHighlight } from '@/plugins/highlight'
+import { setupAnalytics } from '@/plugins/analytics'
+import { setupRequestCore } from '@/plugins/request-core'
+import { setupLayoutSystem } from '@/plugins/layout'
 // ✅ 移除 app.use(NaiveUIComponents)，由 RobotNaiveUiResolver 按需解析
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
@@ -72,9 +68,7 @@ async function bootstrap() {
   setupNaiveUI(app)
   setupDynamicComponents(app)
   setupHighlight(app)
-  setupMarkdown(app) // 🔄 已改为异步懒加载，不阻塞启动
   setupDirectives(app)
-  setupFileUtils() // 初始化 file-utils（注入 naive-ui 消息系统）
   setupAnalytics(app)
 
   // 第三阶段：等待路由就绪

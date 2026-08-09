@@ -112,7 +112,10 @@
   // 表单数据
   const formModel = reactive({
     username: computed(() => props.username),
-    password: computed(() => userStore.userInfo?.password || ''),
+    password: computed(() => {
+      const password = userStore.userInfo?.password
+      return typeof password === 'string' ? password : ''
+    }),
   })
 
   // 处理登录
@@ -137,8 +140,8 @@
         })
 
         // 更新 token 并续期
-        const { token } = response.data
-        userStore.handleLoginSuccess(token)
+        const { token, refreshToken, expiresIn } = response.data
+        userStore.handleLoginSuccess(token, refreshToken, expiresIn)
 
         message.success('重新登录成功')
         visible.value = false

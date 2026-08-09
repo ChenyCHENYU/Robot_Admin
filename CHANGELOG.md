@@ -1,699 +1,645 @@
 # Changelog
 
-## [2.3.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.2.1...v2.3.0) (2026-04-14)
+## [Unreleased]
 
+### Performance
 
-### Features
-
-* **config:** 新增 AI 技能调度包(.github/skills) ([91f08ca](https://github.com/ChenyCHENYU/Robot_Admin/commit/91f08ca8aa6dbce1f6c6276e8d1fca32704cc357))
-* **mcp:** 新增 MCP Server + AGENTS.md 全工具覆盖 ([eb178af](https://github.com/ChenyCHENYU/Robot_Admin/commit/eb178af4ce1fc8c5c9d30532b35b1b2b1e65e149))
-* **skills:** page-codegen 新增自然语言输入模式 ([3ee6210](https://github.com/ChenyCHENYU/Robot_Admin/commit/3ee6210ad0cc090eeff100d77c1ad3135d55e29d))
-* **skills:** 新增 mock-codegen 可选技能包 ([0a37fa0](https://github.com/ChenyCHENYU/Robot_Admin/commit/0a37fa0f147c236db1b27d60d8413eaf78cfcb37))
-
+- **startup:** 将 Markdown 编辑器、文件工具、Spline 和全部动态页面改为路由级按需加载，移除启动插件 barrel 导入及冷热模块混合分包，减少首屏预加载体积。
+- **components:** 启用业务组件库子路径导入并升级至 `@robot-admin/naive-ui-components@0.10.3`。
 
 ### Bug Fixes
 
-* **config:** 对齐版本号至 package.json 实际版本 ([f694b8e](https://github.com/ChenyCHENYU/Robot_Admin/commit/f694b8e6c12f1d8cc73a670a985b085b93343e27))
-* **config:** 恢复gitignore + 修复tsconfig.app.json弃用警告 ([d373df4](https://github.com/ChenyCHENYU/Robot_Admin/commit/d373df4afbaad51a0ad966d45d4b2726b2037ca3))
-* **mcp:** 修复 TS 报错 + 新增使用说明文档 ([e6bbbc6](https://github.com/ChenyCHENYU/Robot_Admin/commit/e6bbbc6267d6b9835bf667fd69a3f5ff072aa306))
+- **auth:** 增加可切换的 Mock/Remote 认证契约、随机令牌和刷新闭环，便于未来无侵入接入后端。
+- **request:** 统一通过配置后的请求实例重试，阻止刷新令牌及重新登录的循环重试。
+- **theme:** 通知中心弹层使用语义主题变量，自动适配明暗主题。
+
+### Build System
+
+- 固定 Robot Admin 内部包版本，避免 `latest` 导致不可复现安装。
+- 增加单元测试、只读 Lint、完整验证脚本、CI 和提交前质量门禁。
+
+## [2.3.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.2.1...v2.3.0) (2026-04-14)
+
+### Features
+
+- **config:** 新增 AI 技能调度包(.github/skills) ([91f08ca](https://github.com/ChenyCHENYU/Robot_Admin/commit/91f08ca8aa6dbce1f6c6276e8d1fca32704cc357))
+- **mcp:** 新增 MCP Server + AGENTS.md 全工具覆盖 ([eb178af](https://github.com/ChenyCHENYU/Robot_Admin/commit/eb178af4ce1fc8c5c9d30532b35b1b2b1e65e149))
+- **skills:** page-codegen 新增自然语言输入模式 ([3ee6210](https://github.com/ChenyCHENYU/Robot_Admin/commit/3ee6210ad0cc090eeff100d77c1ad3135d55e29d))
+- **skills:** 新增 mock-codegen 可选技能包 ([0a37fa0](https://github.com/ChenyCHENYU/Robot_Admin/commit/0a37fa0f147c236db1b27d60d8413eaf78cfcb37))
+
+### Bug Fixes
+
+- **config:** 对齐版本号至 package.json 实际版本 ([f694b8e](https://github.com/ChenyCHENYU/Robot_Admin/commit/f694b8e6c12f1d8cc73a670a985b085b93343e27))
+- **config:** 恢复gitignore + 修复tsconfig.app.json弃用警告 ([d373df4](https://github.com/ChenyCHENYU/Robot_Admin/commit/d373df4afbaad51a0ad966d45d4b2726b2037ca3))
+- **mcp:** 修复 TS 报错 + 新增使用说明文档 ([e6bbbc6](https://github.com/ChenyCHENYU/Robot_Admin/commit/e6bbbc6267d6b9835bf667fd69a3f5ff072aa306))
 
 ## [2.2.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.2.0...v2.2.1) (2026-03-27)
 
-
 ### Bug Fixes
 
-* **deps:** 升级 Vite 8.0.3 + Rolldown rc.12 修复 CJK 字符构建 panic ([492adb9](https://github.com/ChenyCHENYU/Robot_Admin/commit/492adb97c5a5e15e70f5d8357e9e24dcf2410a43))
-* **router,styles:** 修复Vite8动态路由404+标题组件主题适配+loading白屏 ([a9721c3](https://github.com/ChenyCHENYU/Robot_Admin/commit/a9721c3f94fc2f2bead939992910c9e82a9208a8))
+- **deps:** 升级 Vite 8.0.3 + Rolldown rc.12 修复 CJK 字符构建 panic ([492adb9](https://github.com/ChenyCHENYU/Robot_Admin/commit/492adb97c5a5e15e70f5d8357e9e24dcf2410a43))
+- **router,styles:** 修复Vite8动态路由404+标题组件主题适配+loading白屏 ([a9721c3](https://github.com/ChenyCHENYU/Robot_Admin/commit/a9721c3f94fc2f2bead939992910c9e82a9208a8))
 
 ## [2.2.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.1.0...v2.2.0) (2026-03-11)
 
-
 ### Features
 
-* **C_Menu/C_Settings:** 增加菜单主题，提供个性/标准两种多态模式 ([850f529](https://github.com/ChenyCHENYU/Robot_Admin/commit/850f5299399feabe2f57e1d8bb9248b4ffec8f52))
-* **demo:** CollapsePanel 演示改用 content prop，移除冗余插槽 ([8afaef5](https://github.com/ChenyCHENYU/Robot_Admin/commit/8afaef5c4b811805205defba4e11c9de3ad00631))
-* **demo:** signature 和 split-pane 演示页提取数据到 data.ts ([223dec6](https://github.com/ChenyCHENYU/Robot_Admin/commit/223dec6c39ff349d0f7d3bcede1a42e33e405e82))
-* **stores:** 权限体系升级 — 启用按钮权限、路由鉴权、数据权限类型、安全修复 ([d353865](https://github.com/ChenyCHENYU/Robot_Admin/commit/d353865fa89700bf95f57dce0d10343c8047221a))
-* Token 无感刷新 + 路由权限修复 + composable 规范化 + 新组件演示页面 ([9cacb37](https://github.com/ChenyCHENYU/Robot_Admin/commit/9cacb376ceaa9abcd35a40fb110e4a9e69d91441))
-* **views:** 权限管理页面升级 + 角色管理增强 + 表格演示优化 ([30daa27](https://github.com/ChenyCHENYU/Robot_Admin/commit/30daa273fc1f1caf4e1e24871c631b5c7897dfa0))
-
+- **C_Menu/C_Settings:** 增加菜单主题，提供个性/标准两种多态模式 ([850f529](https://github.com/ChenyCHENYU/Robot_Admin/commit/850f5299399feabe2f57e1d8bb9248b4ffec8f52))
+- **demo:** CollapsePanel 演示改用 content prop，移除冗余插槽 ([8afaef5](https://github.com/ChenyCHENYU/Robot_Admin/commit/8afaef5c4b811805205defba4e11c9de3ad00631))
+- **demo:** signature 和 split-pane 演示页提取数据到 data.ts ([223dec6](https://github.com/ChenyCHENYU/Robot_Admin/commit/223dec6c39ff349d0f7d3bcede1a42e33e405e82))
+- **stores:** 权限体系升级 — 启用按钮权限、路由鉴权、数据权限类型、安全修复 ([d353865](https://github.com/ChenyCHENYU/Robot_Admin/commit/d353865fa89700bf95f57dce0d10343c8047221a))
+- Token 无感刷新 + 路由权限修复 + composable 规范化 + 新组件演示页面 ([9cacb37](https://github.com/ChenyCHENYU/Robot_Admin/commit/9cacb376ceaa9abcd35a40fb110e4a9e69d91441))
+- **views:** 权限管理页面升级 + 角色管理增强 + 表格演示优化 ([30daa27](https://github.com/ChenyCHENYU/Robot_Admin/commit/30daa273fc1f1caf4e1e24871c631b5c7897dfa0))
 
 ### Bug Fixes
 
-* **build:** 升级组件库至 v0.6.31 + 关闭生产 i18n 插件防止构建阻断 ([f053866](https://github.com/ChenyCHENYU/Robot_Admin/commit/f0538664228bbb3f6e401113d4949b64aa2afd2b))
-* **config:** 修复 dev:components 模式下 ERR_CACHE_READ_FAILURE 错误 ([0cd21be](https://github.com/ChenyCHENYU/Robot_Admin/commit/0cd21be6f18a122de3a372f7ed862787e51919dd))
-* **deps:** 修复组件库图标不显示问题，升级 naive-ui-components 至 latest ([6816b77](https://github.com/ChenyCHENYU/Robot_Admin/commit/6816b77538eea88f0ebb99a563a0e7e07b9d52fb))
-* **styles:** 修复 permission-manage SCSS 多余闭括号导致构建失败 ([17c817e](https://github.com/ChenyCHENYU/Robot_Admin/commit/17c817e8697b0eff8bedac9e091b91f6ed016de7))
-* **types:** 全面修复 vue-tsc 类型检查错误（73→0），升级组件库至 0.6.20 ([e244bd2](https://github.com/ChenyCHENYU/Robot_Admin/commit/e244bd2c38acc33f18cd21621ebe7a21a46c45cf))
-* **views:** 修复 05-date 演示页面绑定及冗余代码 ([697e5b1](https://github.com/ChenyCHENYU/Robot_Admin/commit/697e5b1670fac4b0c214d056c4b53af5d3fe9f86))
-
+- **build:** 升级组件库至 v0.6.31 + 关闭生产 i18n 插件防止构建阻断 ([f053866](https://github.com/ChenyCHENYU/Robot_Admin/commit/f0538664228bbb3f6e401113d4949b64aa2afd2b))
+- **config:** 修复 dev:components 模式下 ERR_CACHE_READ_FAILURE 错误 ([0cd21be](https://github.com/ChenyCHENYU/Robot_Admin/commit/0cd21be6f18a122de3a372f7ed862787e51919dd))
+- **deps:** 修复组件库图标不显示问题，升级 naive-ui-components 至 latest ([6816b77](https://github.com/ChenyCHENYU/Robot_Admin/commit/6816b77538eea88f0ebb99a563a0e7e07b9d52fb))
+- **styles:** 修复 permission-manage SCSS 多余闭括号导致构建失败 ([17c817e](https://github.com/ChenyCHENYU/Robot_Admin/commit/17c817e8697b0eff8bedac9e091b91f6ed016de7))
+- **types:** 全面修复 vue-tsc 类型检查错误（73→0），升级组件库至 0.6.20 ([e244bd2](https://github.com/ChenyCHENYU/Robot_Admin/commit/e244bd2c38acc33f18cd21621ebe7a21a46c45cf))
+- **views:** 修复 05-date 演示页面绑定及冗余代码 ([697e5b1](https://github.com/ChenyCHENYU/Robot_Admin/commit/697e5b1670fac4b0c214d056c4b53af5d3fe9f86))
 
 ### Performance Improvements
 
-* **01-icon:** 优化演示页面 ([5015f6f](https://github.com/ChenyCHENYU/Robot_Admin/commit/5015f6fb8018cd6028147f6e0cb103901beaca0f))
-* **02-area-cascade:** 演示页面优化 ([53b1727](https://github.com/ChenyCHENYU/Robot_Admin/commit/53b172768ae32ea3c3f774550ab762eda37ae938))
-* **03-progress:** 演示页面优化 ([43acc1f](https://github.com/ChenyCHENYU/Robot_Admin/commit/43acc1f1a9ee9f3969c90b39e351ee599896cba6))
-* **04-time:** 演示页面优化 ([ec75a80](https://github.com/ChenyCHENYU/Robot_Admin/commit/ec75a804bcfe697b3a111e53fd0bc90f6f1ee5fe))
-* **06-city:** 演示页面优化 ([35cb2d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/35cb2d20995d88811600eecef8839fcb5a14c338))
-* **09-form-search:** 演示页面优化 ([987f9f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/987f9f979cf0a5f3b0d6758ddc596bf976705710))
-* **10-table:** 演示页面优化 ([2c61ba3](https://github.com/ChenyCHENYU/Robot_Admin/commit/2c61ba3743d08e39876ca1f363369489cdcf7d8d))
-* **11-table-expand:** 演示页面优化 ([4a74481](https://github.com/ChenyCHENYU/Robot_Admin/commit/4a74481b24adf9ab84b464eaf71edf0637028ea4))
-* **31-steps:** 演示页面及组件细节优化 ([290cf1c](https://github.com/ChenyCHENYU/Robot_Admin/commit/290cf1c9aaeff1945a74f7d60b3b63fe291c03b9))
-* **all:** 统一 DiscreteAPI、修复类型、优化分包、清理冗余 ([ceebf19](https://github.com/ChenyCHENYU/Robot_Admin/commit/ceebf19220d68c92192cdd6530517d065923f071))
-* **views:** 优化演示页面布局和标题样式 ([0f91c26](https://github.com/ChenyCHENYU/Robot_Admin/commit/0f91c264529055a879a456516ed32fb063ea2739))
-* **views:** 优化表单演示页面性能和交互体验 ([e5129ef](https://github.com/ChenyCHENYU/Robot_Admin/commit/e5129ef94f7b7ceec6fe821e1d8c902dde762f35))
+- **01-icon:** 优化演示页面 ([5015f6f](https://github.com/ChenyCHENYU/Robot_Admin/commit/5015f6fb8018cd6028147f6e0cb103901beaca0f))
+- **02-area-cascade:** 演示页面优化 ([53b1727](https://github.com/ChenyCHENYU/Robot_Admin/commit/53b172768ae32ea3c3f774550ab762eda37ae938))
+- **03-progress:** 演示页面优化 ([43acc1f](https://github.com/ChenyCHENYU/Robot_Admin/commit/43acc1f1a9ee9f3969c90b39e351ee599896cba6))
+- **04-time:** 演示页面优化 ([ec75a80](https://github.com/ChenyCHENYU/Robot_Admin/commit/ec75a804bcfe697b3a111e53fd0bc90f6f1ee5fe))
+- **06-city:** 演示页面优化 ([35cb2d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/35cb2d20995d88811600eecef8839fcb5a14c338))
+- **09-form-search:** 演示页面优化 ([987f9f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/987f9f979cf0a5f3b0d6758ddc596bf976705710))
+- **10-table:** 演示页面优化 ([2c61ba3](https://github.com/ChenyCHENYU/Robot_Admin/commit/2c61ba3743d08e39876ca1f363369489cdcf7d8d))
+- **11-table-expand:** 演示页面优化 ([4a74481](https://github.com/ChenyCHENYU/Robot_Admin/commit/4a74481b24adf9ab84b464eaf71edf0637028ea4))
+- **31-steps:** 演示页面及组件细节优化 ([290cf1c](https://github.com/ChenyCHENYU/Robot_Admin/commit/290cf1c9aaeff1945a74f7d60b3b63fe291c03b9))
+- **all:** 统一 DiscreteAPI、修复类型、优化分包、清理冗余 ([ceebf19](https://github.com/ChenyCHENYU/Robot_Admin/commit/ceebf19220d68c92192cdd6530517d065923f071))
+- **views:** 优化演示页面布局和标题样式 ([0f91c26](https://github.com/ChenyCHENYU/Robot_Admin/commit/0f91c264529055a879a456516ed32fb063ea2739))
+- **views:** 优化表单演示页面性能和交互体验 ([e5129ef](https://github.com/ChenyCHENYU/Robot_Admin/commit/e5129ef94f7b7ceec6fe821e1d8c902dde762f35))
 
 ## [2.1.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.0.0...v2.1.0) (2026-03-06)
 
-
 ### Features
 
-* **C_Login:** 增加登录组件扩展能力及演示页面 ([52f060a](https://github.com/ChenyCHENYU/Robot_Admin/commit/52f060a1d317aa67ef0abc066397490531a19ab1))
-* **component:** 新增穿梭框/头像组/音频播放器组件及暗色主题修复 ([1617d4f](https://github.com/ChenyCHENYU/Robot_Admin/commit/1617d4f6e25c86e33d5a2ef12f232d768f66650e))
-* **login:** 封装通用插拔式 C_Login 组件，重构登录页 ([752ca85](https://github.com/ChenyCHENYU/Robot_Admin/commit/752ca85a9467479497315023bab37351abcfef8e))
-* **router:** 新增6个组件预览路由 ([06fca7b](https://github.com/ChenyCHENYU/Robot_Admin/commit/06fca7b16a951b716a4e594ab590ea9583cd57e5))
-* **router:** 新增组件预览路由，支持文档站 iframe 嵌入 ([1755b44](https://github.com/ChenyCHENYU/Robot_Admin/commit/1755b44238ef6fe86bc7499276e1097bae6af023))
-
+- **C_Login:** 增加登录组件扩展能力及演示页面 ([52f060a](https://github.com/ChenyCHENYU/Robot_Admin/commit/52f060a1d317aa67ef0abc066397490531a19ab1))
+- **component:** 新增穿梭框/头像组/音频播放器组件及暗色主题修复 ([1617d4f](https://github.com/ChenyCHENYU/Robot_Admin/commit/1617d4f6e25c86e33d5a2ef12f232d768f66650e))
+- **login:** 封装通用插拔式 C_Login 组件，重构登录页 ([752ca85](https://github.com/ChenyCHENYU/Robot_Admin/commit/752ca85a9467479497315023bab37351abcfef8e))
+- **router:** 新增6个组件预览路由 ([06fca7b](https://github.com/ChenyCHENYU/Robot_Admin/commit/06fca7b16a951b716a4e594ab590ea9583cd57e5))
+- **router:** 新增组件预览路由，支持文档站 iframe 嵌入 ([1755b44](https://github.com/ChenyCHENYU/Robot_Admin/commit/1755b44238ef6fe86bc7499276e1097bae6af023))
 
 ### Bug Fixes
 
-* **component:** Timeline虚线/尺寸+Chat视觉层次优化 ([78f783a](https://github.com/ChenyCHENYU/Robot_Admin/commit/78f783a94227c997750ba91bb39731ff1369138f))
-* **component:** 修复AudioPlayer类型错误+折叠面板暗色主题+CSS变量解耦 ([22c7cc0](https://github.com/ChenyCHENYU/Robot_Admin/commit/22c7cc035080030db7c73b485fecfa87cac8a062))
-* **deploy:** 修复 iframe 跨域嵌入，X-Frame-Options 设置 ALLOWALL ([4bba9d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/4bba9d2b4847b36f9412ad110a142b6e1d679434))
-* **deps:** 升级naive-ui-components到0.6.11，resolver防护改为始终扫描本地目录，optimizeDeps预构建组件库 ([db2ffcd](https://github.com/ChenyCHENYU/Robot_Admin/commit/db2ffcda591abf2fee2e2f475e899059bf43cfed))
-* **header,vite:** 修复面包屑分隔符对齐、移除临时cursor补丁、新增dev:components调试模式 ([75e61f2](https://github.com/ChenyCHENYU/Robot_Admin/commit/75e61f2fd47e837c9e9c392fea8aadfc346039fe))
-* **home:** 修复新窗口404及启动白屏，更新首页内容 ([43a22eb](https://github.com/ChenyCHENYU/Robot_Admin/commit/43a22eb0ad3fee521702556e6cb72fa369d49ef0))
-* **loading:** 彻底消除首屏白/黑闪烁，增强预览布局 ([6ec0b02](https://github.com/ChenyCHENYU/Robot_Admin/commit/6ec0b02a49c4cbe178b56391cca45c77fcfcbb68))
-* **login:** 表单校验、性能、错误拦截、中英文国际化 ([29b087a](https://github.com/ChenyCHENYU/Robot_Admin/commit/29b087ac5c851335170ef800df864879cd2c4c0b))
-* **router:** 修复已登录用户新窗口打开预览页空白 ([c465860](https://github.com/ChenyCHENYU/Robot_Admin/commit/c465860b5b005ed14d0f812ac05c4d3fd40400a5))
-* **vite:** dev:local模式扫描本地组件目录解决resolver版本滞后 ([7674d1b](https://github.com/ChenyCHENYU/Robot_Admin/commit/7674d1b52b915bb38c05c727686f502af8516d0f))
-
+- **component:** Timeline虚线/尺寸+Chat视觉层次优化 ([78f783a](https://github.com/ChenyCHENYU/Robot_Admin/commit/78f783a94227c997750ba91bb39731ff1369138f))
+- **component:** 修复AudioPlayer类型错误+折叠面板暗色主题+CSS变量解耦 ([22c7cc0](https://github.com/ChenyCHENYU/Robot_Admin/commit/22c7cc035080030db7c73b485fecfa87cac8a062))
+- **deploy:** 修复 iframe 跨域嵌入，X-Frame-Options 设置 ALLOWALL ([4bba9d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/4bba9d2b4847b36f9412ad110a142b6e1d679434))
+- **deps:** 升级naive-ui-components到0.6.11，resolver防护改为始终扫描本地目录，optimizeDeps预构建组件库 ([db2ffcd](https://github.com/ChenyCHENYU/Robot_Admin/commit/db2ffcda591abf2fee2e2f475e899059bf43cfed))
+- **header,vite:** 修复面包屑分隔符对齐、移除临时cursor补丁、新增dev:components调试模式 ([75e61f2](https://github.com/ChenyCHENYU/Robot_Admin/commit/75e61f2fd47e837c9e9c392fea8aadfc346039fe))
+- **home:** 修复新窗口404及启动白屏，更新首页内容 ([43a22eb](https://github.com/ChenyCHENYU/Robot_Admin/commit/43a22eb0ad3fee521702556e6cb72fa369d49ef0))
+- **loading:** 彻底消除首屏白/黑闪烁，增强预览布局 ([6ec0b02](https://github.com/ChenyCHENYU/Robot_Admin/commit/6ec0b02a49c4cbe178b56391cca45c77fcfcbb68))
+- **login:** 表单校验、性能、错误拦截、中英文国际化 ([29b087a](https://github.com/ChenyCHENYU/Robot_Admin/commit/29b087ac5c851335170ef800df864879cd2c4c0b))
+- **router:** 修复已登录用户新窗口打开预览页空白 ([c465860](https://github.com/ChenyCHENYU/Robot_Admin/commit/c465860b5b005ed14d0f812ac05c4d3fd40400a5))
+- **vite:** dev:local模式扫描本地组件目录解决resolver版本滞后 ([7674d1b](https://github.com/ChenyCHENYU/Robot_Admin/commit/7674d1b52b915bb38c05c727686f502af8516d0f))
 
 ### Performance Improvements
 
-* **build:** 优化构建体积与安全配置 ([4d44ad0](https://github.com/ChenyCHENYU/Robot_Admin/commit/4d44ad065fc5754af1d2e870e363f6f1bd3ecd5f))
-* **login:** 重构登录页为可插拔架构 + 修复人机验证交互 ([bdd8563](https://github.com/ChenyCHENYU/Robot_Admin/commit/bdd8563d758a573aada4b442dfe6af364078d68a))
-* **navbar:** 优化用户面板精致化与路由跳转修复 ([060cad2](https://github.com/ChenyCHENYU/Robot_Admin/commit/060cad21cf47a4567fa1df3c2ea1278e16c149dc))
-* **全局:** 项目全面优化 — 清理冗余代码、统一命名、修复暗色主题、升级组件库 ([f4557c3](https://github.com/ChenyCHENYU/Robot_Admin/commit/f4557c30fc964474658af558df67bfd82c2a4201))
+- **build:** 优化构建体积与安全配置 ([4d44ad0](https://github.com/ChenyCHENYU/Robot_Admin/commit/4d44ad065fc5754af1d2e870e363f6f1bd3ecd5f))
+- **login:** 重构登录页为可插拔架构 + 修复人机验证交互 ([bdd8563](https://github.com/ChenyCHENYU/Robot_Admin/commit/bdd8563d758a573aada4b442dfe6af364078d68a))
+- **navbar:** 优化用户面板精致化与路由跳转修复 ([060cad2](https://github.com/ChenyCHENYU/Robot_Admin/commit/060cad21cf47a4567fa1df3c2ea1278e16c149dc))
+- **全局:** 项目全面优化 — 清理冗余代码、统一命名、修复暗色主题、升级组件库 ([f4557c3](https://github.com/ChenyCHENYU/Robot_Admin/commit/f4557c30fc964474658af558df67bfd82c2a4201))
 
 ## [2.0.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.14.0...v2.0.0) (2026-03-01)
 
-
 ### ⚠ BREAKING CHANGES
 
-* **architecture:** 删除 src/components/global/ 下全部组件实现及 src/composables/ 下全部组合式函数，统一由 npm 包提供。
+- **architecture:** 删除 src/components/global/ 下全部组件实现及 src/composables/ 下全部组合式函数，统一由 npm 包提供。
 
 ### Features
 
-* **components:** 迁移 C_Menu/C_Breadcrumb/C_TagsView 至组件库 + 清理废弃代码 ([70dc6de](https://github.com/ChenyCHENYU/Robot_Admin/commit/70dc6de8a0bcec49b9588d9dca1fa928043279fc))
-
+- **components:** 迁移 C_Menu/C_Breadcrumb/C_TagsView 至组件库 + 清理废弃代码 ([70dc6de](https://github.com/ChenyCHENYU/Robot_Admin/commit/70dc6de8a0bcec49b9588d9dca1fa928043279fc))
 
 ### Bug Fixes
 
-* **pre-migration:** C_AntV解耦 + i18n构建修复 + carbon图标 ([cae5de5](https://github.com/ChenyCHENYU/Robot_Admin/commit/cae5de501dc00ce09aaec4ddf9bc71c03e010f32))
-* **国际化:** 修复标签页语言切换后已有标签不翻译 ([80353c6](https://github.com/ChenyCHENYU/Robot_Admin/commit/80353c61a3da50e752b70a70b583412479b507a7))
-* **语言:** 修复语言切换图标点击无响应 ([f81c714](https://github.com/ChenyCHENYU/Robot_Admin/commit/f81c7140653a7e7b60a2d684c4f4c3a06dec970a))
-
+- **pre-migration:** C_AntV解耦 + i18n构建修复 + carbon图标 ([cae5de5](https://github.com/ChenyCHENYU/Robot_Admin/commit/cae5de501dc00ce09aaec4ddf9bc71c03e010f32))
+- **国际化:** 修复标签页语言切换后已有标签不翻译 ([80353c6](https://github.com/ChenyCHENYU/Robot_Admin/commit/80353c61a3da50e752b70a70b583412479b507a7))
+- **语言:** 修复语言切换图标点击无响应 ([f81c714](https://github.com/ChenyCHENYU/Robot_Admin/commit/f81c7140653a7e7b60a2d684c4f4c3a06dec970a))
 
 ### Code Refactoring
 
-* **architecture:** 整体迁移 39 个组件至 @robot-admin/naive-ui-components ([5c63ca6](https://github.com/ChenyCHENYU/Robot_Admin/commit/5c63ca6ac04306df3a9bfd7ebf0e5b3b96433a50))
+- **architecture:** 整体迁移 39 个组件至 @robot-admin/naive-ui-components ([5c63ca6](https://github.com/ChenyCHENYU/Robot_Admin/commit/5c63ca6ac04306df3a9bfd7ebf0e5b3b96433a50))
 
 ## [1.14.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.3...v1.14.0) (2026-02-27)
 
-
 ### Features
 
-* **C_CollapsePanel:** 增加折叠面板组件和演示页面 ([f49ca44](https://github.com/ChenyCHENYU/Robot_Admin/commit/f49ca44c4d9f672642d6d6499ecd183d792fefbe))
-* **C_Cron:** 增加表达式编辑器和演示页面 ([09437c3](https://github.com/ChenyCHENYU/Robot_Admin/commit/09437c398e61782cf80ddb5b0c033ec7c014fda4))
-* **C_FormulaEditor:** 增加公式编辑器组件和演示页面 ([10f2cc9](https://github.com/ChenyCHENYU/Robot_Admin/commit/10f2cc99bcb05ad544d3e3d32bfbba7b37cf0e76))
-* **C_ImageCropper:** 增加图片裁剪组件及演示页面 ([ef291c1](https://github.com/ChenyCHENYU/Robot_Admin/commit/ef291c19583f89ae5e31f400519eef3017593457))
-* **C_Signature:** 增加电子签名组件及演示页面 ([8d1ac1c](https://github.com/ChenyCHENYU/Robot_Admin/commit/8d1ac1ca4e590dca09b4c3d2a7d5f54b5a8fcc12))
-* **C_SplitPane:** 增加分割面板组件和演示页面 ([b2efa57](https://github.com/ChenyCHENYU/Robot_Admin/commit/b2efa570d9314b1c075b3aeca99bb80f99147eb2))
-* **C_Upload:** 增强型上传组件及演示页面完成 ([ccdd8d0](https://github.com/ChenyCHENYU/Robot_Admin/commit/ccdd8d07690fbe0cd9eab6aa14ad3998ae6eb265))
-* **C_Upload:** 增强型服务端上传组及演示页面完成 ([5175552](https://github.com/ChenyCHENYU/Robot_Admin/commit/5175552b96d90720282f2e032212587920b12e49))
-* **C_VideoPlayer:** 增加视频组件及演示页面 ([327d1ce](https://github.com/ChenyCHENYU/Robot_Admin/commit/327d1ce84e1879d6457d8546645e53ee3ce15040))
-* **C_WaterFall:** 增加瀑布流组件和演示页面 ([c7b30ad](https://github.com/ChenyCHENYU/Robot_Admin/commit/c7b30ad4de5530c6767788b91b87de7216beb82e))
-
+- **C_CollapsePanel:** 增加折叠面板组件和演示页面 ([f49ca44](https://github.com/ChenyCHENYU/Robot_Admin/commit/f49ca44c4d9f672642d6d6499ecd183d792fefbe))
+- **C_Cron:** 增加表达式编辑器和演示页面 ([09437c3](https://github.com/ChenyCHENYU/Robot_Admin/commit/09437c398e61782cf80ddb5b0c033ec7c014fda4))
+- **C_FormulaEditor:** 增加公式编辑器组件和演示页面 ([10f2cc9](https://github.com/ChenyCHENYU/Robot_Admin/commit/10f2cc99bcb05ad544d3e3d32bfbba7b37cf0e76))
+- **C_ImageCropper:** 增加图片裁剪组件及演示页面 ([ef291c1](https://github.com/ChenyCHENYU/Robot_Admin/commit/ef291c19583f89ae5e31f400519eef3017593457))
+- **C_Signature:** 增加电子签名组件及演示页面 ([8d1ac1c](https://github.com/ChenyCHENYU/Robot_Admin/commit/8d1ac1ca4e590dca09b4c3d2a7d5f54b5a8fcc12))
+- **C_SplitPane:** 增加分割面板组件和演示页面 ([b2efa57](https://github.com/ChenyCHENYU/Robot_Admin/commit/b2efa570d9314b1c075b3aeca99bb80f99147eb2))
+- **C_Upload:** 增强型上传组件及演示页面完成 ([ccdd8d0](https://github.com/ChenyCHENYU/Robot_Admin/commit/ccdd8d07690fbe0cd9eab6aa14ad3998ae6eb265))
+- **C_Upload:** 增强型服务端上传组及演示页面完成 ([5175552](https://github.com/ChenyCHENYU/Robot_Admin/commit/5175552b96d90720282f2e032212587920b12e49))
+- **C_VideoPlayer:** 增加视频组件及演示页面 ([327d1ce](https://github.com/ChenyCHENYU/Robot_Admin/commit/327d1ce84e1879d6457d8546645e53ee3ce15040))
+- **C_WaterFall:** 增加瀑布流组件和演示页面 ([c7b30ad](https://github.com/ChenyCHENYU/Robot_Admin/commit/c7b30ad4de5530c6767788b91b87de7216beb82e))
 
 ### Performance Improvements
 
-* **C_Cron:** 表达式编辑器组件逻辑及交互优化 ([ba91d31](https://github.com/ChenyCHENYU/Robot_Admin/commit/ba91d31b736489bd4d8aef6cf06221af675df2fc))
-* **C_NotificationCenter:** 将C_Notice组件升级为C_NotificationCenter全局通知插件 ([f74678a](https://github.com/ChenyCHENYU/Robot_Admin/commit/f74678ac8af86a22fea3a6a3296bf1eff171ecce))
-* **components:** 主题和通知组件拆离组件库解耦 ([00c951b](https://github.com/ChenyCHENYU/Robot_Admin/commit/00c951ba6e48c8bdf5cbfcaa84acca568805896e))
-* **components:** 优化组件解耦，分析组件库提取 ([8767e3a](https://github.com/ChenyCHENYU/Robot_Admin/commit/8767e3a829a9863f3f1e5f72d28fd4bbca5dd186))
+- **C_Cron:** 表达式编辑器组件逻辑及交互优化 ([ba91d31](https://github.com/ChenyCHENYU/Robot_Admin/commit/ba91d31b736489bd4d8aef6cf06221af675df2fc))
+- **C_NotificationCenter:** 将C_Notice组件升级为C_NotificationCenter全局通知插件 ([f74678a](https://github.com/ChenyCHENYU/Robot_Admin/commit/f74678ac8af86a22fea3a6a3296bf1eff171ecce))
+- **components:** 主题和通知组件拆离组件库解耦 ([00c951b](https://github.com/ChenyCHENYU/Robot_Admin/commit/00c951ba6e48c8bdf5cbfcaa84acca568805896e))
+- **components:** 优化组件解耦，分析组件库提取 ([8767e3a](https://github.com/ChenyCHENYU/Robot_Admin/commit/8767e3a829a9863f3f1e5f72d28fd4bbca5dd186))
 
 ## [1.13.3](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.2...v1.13.3) (2026-02-17)
 
-
 ### Bug Fixes
 
-* **C_WorkFlow:** 提取confirmAndSave方法避免Prettier格式化破坏模板 ([37b2dcb](https://github.com/ChenyCHENYU/Robot_Admin/commit/37b2dcbe89f474f757dbc953782fbd412207d227))
-
+- **C_WorkFlow:** 提取confirmAndSave方法避免Prettier格式化破坏模板 ([37b2dcb](https://github.com/ChenyCHENYU/Robot_Admin/commit/37b2dcbe89f474f757dbc953782fbd412207d227))
 
 ### Performance Improvements
 
-* **C_Antv:** 优化编辑器架构和相关演示页面 ([1ebabcf](https://github.com/ChenyCHENYU/Robot_Admin/commit/1ebabcf5b9e71fad09090f4c2f0a087080907c17))
-* **C_Draggable:** 薄UI壳+useDraggableLayout引擎重构 ([53c47f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/53c47f99fe9932a02b16547a71271b8d253a2389))
-* **C_FilePreview:** 文件预览组件架构优化 ([351030a](https://github.com/ChenyCHENYU/Robot_Admin/commit/351030a15a7e52039699c110043372bcb4341604))
-* **C_FormSearch:** 搜索表单组件架构优化 ([e1a32d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/e1a32d2743d07fb56c4c5985a5b58d679ab6b4b8))
-* **C_Form:** 表单根据最佳实践和使用侧精简原则优化重构 ([6390353](https://github.com/ChenyCHENYU/Robot_Admin/commit/639035378f94693b25ef4d6dd0f1a9e415298de5))
-* **C_Table:** 组件架构调整，精简使用侧 ([883d930](https://github.com/ChenyCHENYU/Robot_Admin/commit/883d930261c6354f39037a5e8da78f501dc3a644))
-* **C_WorkFlow:** 优化工作流组件架构，增加预览能力，拆解组合函数 ([f238ec6](https://github.com/ChenyCHENYU/Robot_Admin/commit/f238ec66824ac6e3554cbd10ce6a7cc96a381ced))
-* **compoents:** c_* 组件整体梳理优化完成，细节调优，性能提升 ([54ce4bd](https://github.com/ChenyCHENYU/Robot_Admin/commit/54ce4bde4c2ab3c8087a8015fbd7a747dfa711a6))
-* **components:** c_* 相关本地组件优化 ([f072713](https://github.com/ChenyCHENYU/Robot_Admin/commit/f0727138938145c0e8f07a764f122b06b500fc7a))
-* **components:** 重构 C_Tree/C_GlobalSearch/C_FullCalendar/C_Time 为薄 UI 壳 + Composable 引擎架构 ([6a886f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a886f978ed42bd7e5586107f394968558406077))
+- **C_Antv:** 优化编辑器架构和相关演示页面 ([1ebabcf](https://github.com/ChenyCHENYU/Robot_Admin/commit/1ebabcf5b9e71fad09090f4c2f0a087080907c17))
+- **C_Draggable:** 薄UI壳+useDraggableLayout引擎重构 ([53c47f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/53c47f99fe9932a02b16547a71271b8d253a2389))
+- **C_FilePreview:** 文件预览组件架构优化 ([351030a](https://github.com/ChenyCHENYU/Robot_Admin/commit/351030a15a7e52039699c110043372bcb4341604))
+- **C_FormSearch:** 搜索表单组件架构优化 ([e1a32d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/e1a32d2743d07fb56c4c5985a5b58d679ab6b4b8))
+- **C_Form:** 表单根据最佳实践和使用侧精简原则优化重构 ([6390353](https://github.com/ChenyCHENYU/Robot_Admin/commit/639035378f94693b25ef4d6dd0f1a9e415298de5))
+- **C_Table:** 组件架构调整，精简使用侧 ([883d930](https://github.com/ChenyCHENYU/Robot_Admin/commit/883d930261c6354f39037a5e8da78f501dc3a644))
+- **C_WorkFlow:** 优化工作流组件架构，增加预览能力，拆解组合函数 ([f238ec6](https://github.com/ChenyCHENYU/Robot_Admin/commit/f238ec66824ac6e3554cbd10ce6a7cc96a381ced))
+- **compoents:** c\_\* 组件整体梳理优化完成，细节调优，性能提升 ([54ce4bd](https://github.com/ChenyCHENYU/Robot_Admin/commit/54ce4bde4c2ab3c8087a8015fbd7a747dfa711a6))
+- **components:** c\_\* 相关本地组件优化 ([f072713](https://github.com/ChenyCHENYU/Robot_Admin/commit/f0727138938145c0e8f07a764f122b06b500fc7a))
+- **components:** 重构 C_Tree/C_GlobalSearch/C_FullCalendar/C_Time 为薄 UI 壳 + Composable 引擎架构 ([6a886f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a886f978ed42bd7e5586107f394968558406077))
 
 ## [1.13.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.1...v1.13.2) (2026-02-15)
 
-
 ### Miscellaneous Chores
 
-* **deps:** integrate @robot-admin/file-utils package ([69010bf](https://github.com/ChenyCHENYU/Robot_Admin/commit/69010bf5675748aea5db20538dc9f18a2cfceb35))
+- **deps:** integrate @robot-admin/file-utils package ([69010bf](https://github.com/ChenyCHENYU/Robot_Admin/commit/69010bf5675748aea5db20538dc9f18a2cfceb35))
 
 ## [1.13.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.13.0...v1.13.1) (2026-02-15)
 
-
 ### Features
 
-* **sys-manage:** 统一使用 C_ActionBar 组件并优化包管理 ([401a5dd](https://github.com/ChenyCHENYU/Robot_Admin/commit/401a5ddec9df1c1ef6440768d1d2981cd3478252))
-
+- **sys-manage:** 统一使用 C_ActionBar 组件并优化包管理 ([401a5dd](https://github.com/ChenyCHENYU/Robot_Admin/commit/401a5ddec9df1c1ef6440768d1d2981cd3478252))
 
 ### Performance Improvements
 
-* **C_ActionBar:** 优化和提取按钮组组件，适应未来90%按钮场景 ([a6d44d3](https://github.com/ChenyCHENYU/Robot_Admin/commit/a6d44d3e17b40973cf907413b1855be05e9de97e))
-* **git-cz:** 将 git cz 提交规范以及代码检查规范相关的提取成 cli 包 ([58e1889](https://github.com/ChenyCHENYU/Robot_Admin/commit/58e1889cad8c3af81fc6dec0949cffdd54d0e888))
-
+- **C_ActionBar:** 优化和提取按钮组组件，适应未来90%按钮场景 ([a6d44d3](https://github.com/ChenyCHENYU/Robot_Admin/commit/a6d44d3e17b40973cf907413b1855be05e9de97e))
+- **git-cz:** 将 git cz 提交规范以及代码检查规范相关的提取成 cli 包 ([58e1889](https://github.com/ChenyCHENYU/Robot_Admin/commit/58e1889cad8c3af81fc6dec0949cffdd54d0e888))
 
 ### Code Refactoring
 
-* **directives:** 剥离指令到独立 npm 包并优化本地调试配置 ([ac555a2](https://github.com/ChenyCHENYU/Robot_Admin/commit/ac555a2082714ab42c9c79b3e5776a926f96158a))
+- **directives:** 剥离指令到独立 npm 包并优化本地调试配置 ([ac555a2](https://github.com/ChenyCHENYU/Robot_Admin/commit/ac555a2082714ab42c9c79b3e5776a926f96158a))
 
 ## [1.13.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.12.0...v1.13.0) (2026-02-12)
 
-
 ### Features
 
-* **layout:** 升级到 @robot-admin/layout v2.2.0 ([9bfd984](https://github.com/ChenyCHENYU/Robot_Admin/commit/9bfd984d255985a69b8407ad7313a7471fc7c987))
-
+- **layout:** 升级到 @robot-admin/layout v2.2.0 ([9bfd984](https://github.com/ChenyCHENYU/Robot_Admin/commit/9bfd984d255985a69b8407ad7313a7471fc7c987))
 
 ### Bug Fixes
 
-* **layout:** 修复布局切换时设置抽屉自动关闭的问题 ([d52717c](https://github.com/ChenyCHENYU/Robot_Admin/commit/d52717c263b8c9b29868da129da32784b9802c1d))
-
+- **layout:** 修复布局切换时设置抽屉自动关闭的问题 ([d52717c](https://github.com/ChenyCHENYU/Robot_Admin/commit/d52717c263b8c9b29868da129da32784b9802c1d))
 
 ### Performance Improvements
 
-* optimize theme switching with View Transition API ([8064b4a](https://github.com/ChenyCHENYU/Robot_Admin/commit/8064b4aa6c83970cf1f70738de9d67614b798e5e))
+- optimize theme switching with View Transition API ([8064b4a](https://github.com/ChenyCHENYU/Robot_Admin/commit/8064b4aa6c83970cf1f70738de9d67614b798e5e))
 
 ## [1.12.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.2...v1.12.0) (2026-02-08)
 
-
 ### Features
 
-* **request/api:** 增加了请求接口适配器组合函数，精简的使用和调用api ([b2acec1](https://github.com/ChenyCHENYU/Robot_Admin/commit/b2acec1a4cfea9a341cff963b5890aedd7350d56))
-
+- **request/api:** 增加了请求接口适配器组合函数，精简的使用和调用api ([b2acec1](https://github.com/ChenyCHENYU/Robot_Admin/commit/b2acec1a4cfea9a341cff963b5890aedd7350d56))
 
 ### Bug Fixes
 
-* **usePageCrud:** 修复分页和条数被后端数据覆盖的问题 ([03076ae](https://github.com/ChenyCHENYU/Robot_Admin/commit/03076aef7115935804c7dea1a224715119f89044))
-* 修复 permission-manage.ts 中的导入路径 ([78110c5](https://github.com/ChenyCHENYU/Robot_Admin/commit/78110c5fb6c1759809a68dc6669d9111bca97d50))
-
+- **usePageCrud:** 修复分页和条数被后端数据覆盖的问题 ([03076ae](https://github.com/ChenyCHENYU/Robot_Admin/commit/03076aef7115935804c7dea1a224715119f89044))
+- 修复 permission-manage.ts 中的导入路径 ([78110c5](https://github.com/ChenyCHENYU/Robot_Admin/commit/78110c5fb6c1759809a68dc6669d9111bca97d50))
 
 ### Performance Improvements
 
-* **10-table:** 优化表格新增的默认配置 ([10b355e](https://github.com/ChenyCHENYU/Robot_Admin/commit/10b355e4d53dbb7e8e9eeae9ac012b5ebd1ba6b8))
-* **request/api:** 优化表格增删改查组合函数使用 ([12acd7f](https://github.com/ChenyCHENYU/Robot_Admin/commit/12acd7f321fccf2f1f0e972f6fb29370d6bd6c4f))
-* **request/api:** 添加 toTableApis 适配器简化表格集成 ([93fed3f](https://github.com/ChenyCHENYU/Robot_Admin/commit/93fed3fd91ab51b60b3884f55e11f8b4b8e92293))
-* **request/api:** 精简优化表格的增删改查组合函数 ([b711e8b](https://github.com/ChenyCHENYU/Robot_Admin/commit/b711e8bc82f425ce966dd547431b9c9c242b850b))
-* **request/core:** 优化基于抽取的request/core包的精简使用 ([e5d7e20](https://github.com/ChenyCHENYU/Robot_Admin/commit/e5d7e20d917c32ff5b8592f2ec7f9fb753b92000))
+- **10-table:** 优化表格新增的默认配置 ([10b355e](https://github.com/ChenyCHENYU/Robot_Admin/commit/10b355e4d53dbb7e8e9eeae9ac012b5ebd1ba6b8))
+- **request/api:** 优化表格增删改查组合函数使用 ([12acd7f](https://github.com/ChenyCHENYU/Robot_Admin/commit/12acd7f321fccf2f1f0e972f6fb29370d6bd6c4f))
+- **request/api:** 添加 toTableApis 适配器简化表格集成 ([93fed3f](https://github.com/ChenyCHENYU/Robot_Admin/commit/93fed3fd91ab51b60b3884f55e11f8b4b8e92293))
+- **request/api:** 精简优化表格的增删改查组合函数 ([b711e8b](https://github.com/ChenyCHENYU/Robot_Admin/commit/b711e8bc82f425ce966dd547431b9c9c242b850b))
+- **request/core:** 优化基于抽取的request/core包的精简使用 ([e5d7e20](https://github.com/ChenyCHENYU/Robot_Admin/commit/e5d7e20d917c32ff5b8592f2ec7f9fb753b92000))
 
 ## [1.11.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.1...v1.11.2) (2025-12-31)
 
-
 ### Bug Fixes
 
-* **git-hooks:** 修复 husky commitlint 配置 ([961120e](https://github.com/ChenyCHENYU/Robot_Admin/commit/961120eb649bd9feef395a9a343c3b1c7a729c74))
-
+- **git-hooks:** 修复 husky commitlint 配置 ([961120e](https://github.com/ChenyCHENYU/Robot_Admin/commit/961120eb649bd9feef395a9a343c3b1c7a729c74))
 
 ### Performance Improvements
 
-* 优化启动速度配置 ([de3134c](https://github.com/ChenyCHENYU/Robot_Admin/commit/de3134c8008a64686ce207d425e715cfc570df73))
+- 优化启动速度配置 ([de3134c](https://github.com/ChenyCHENYU/Robot_Admin/commit/de3134c8008a64686ce207d425e715cfc570df73))
 
 ## [1.11.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.11.0...v1.11.1) (2025-12-12)
 
-
 ### Bug Fixes
 
-* permanently remove auto-imports.d.ts from git ([d59e69b](https://github.com/ChenyCHENYU/Robot_Admin/commit/d59e69b65caba4eee7834c01d0de5df7e95ce9b1))
-* remove auto-imports tracking and fix lint errors ([426f626](https://github.com/ChenyCHENYU/Robot_Admin/commit/426f6266b8c2f72a5e33127a871202337b553403))
-* **table/C_Table:** 降低组件函数复杂圈度 ([eb98519](https://github.com/ChenyCHENYU/Robot_Admin/commit/eb9851908297fa5f806930f7d89055df3f609ee0))
+- permanently remove auto-imports.d.ts from git ([d59e69b](https://github.com/ChenyCHENYU/Robot_Admin/commit/d59e69b65caba4eee7834c01d0de5df7e95ce9b1))
+- remove auto-imports tracking and fix lint errors ([426f626](https://github.com/ChenyCHENYU/Robot_Admin/commit/426f6266b8c2f72a5e33127a871202337b553403))
+- **table/C_Table:** 降低组件函数复杂圈度 ([eb98519](https://github.com/ChenyCHENYU/Robot_Admin/commit/eb9851908297fa5f806930f7d89055df3f609ee0))
 
 ## [1.11.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.10.0...v1.11.0) (2025-12-11)
 
-
 ### Features
 
-* **table-setting:** 增加表格列宽调整配置 ([8c74ee0](https://github.com/ChenyCHENYU/Robot_Admin/commit/8c74ee003baa6372f7b537b8e679881e8a70cc6e))
-* 增加表格高级配置能力 ([7fedaac](https://github.com/ChenyCHENYU/Robot_Admin/commit/7fedaacf0ec1b68e4abce329934a887e5d1cff09))
-
+- **table-setting:** 增加表格列宽调整配置 ([8c74ee0](https://github.com/ChenyCHENYU/Robot_Admin/commit/8c74ee003baa6372f7b537b8e679881e8a70cc6e))
+- 增加表格高级配置能力 ([7fedaac](https://github.com/ChenyCHENYU/Robot_Admin/commit/7fedaacf0ec1b68e4abce329934a887e5d1cff09))
 
 ### Performance Improvements
 
-* **config:** 优化清理vitest配置文件 ([0d31b35](https://github.com/ChenyCHENYU/Robot_Admin/commit/0d31b357d9ed9dfbbe44cf96381fc65684b6248f))
-* **table-setting:** 表格高级设置功能完成 ([da2a803](https://github.com/ChenyCHENYU/Robot_Admin/commit/da2a8031e458201f2dad6044123aba5138ca0575))
-* 优化表格列配置 ([6a9916c](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a9916c42e10f9a1df09675408494a2c7e585e5f))
+- **config:** 优化清理vitest配置文件 ([0d31b35](https://github.com/ChenyCHENYU/Robot_Admin/commit/0d31b357d9ed9dfbbe44cf96381fc65684b6248f))
+- **table-setting:** 表格高级设置功能完成 ([da2a803](https://github.com/ChenyCHENYU/Robot_Admin/commit/da2a8031e458201f2dad6044123aba5138ca0575))
+- 优化表格列配置 ([6a9916c](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a9916c42e10f9a1df09675408494a2c7e585e5f))
 
 ## [1.10.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.9.0...v1.10.0) (2025-12-02)
 
-
 ### Features
 
-* 启用TypeScript文件翻译支持 ([6a875c4](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a875c46740a1c972e4cf282cb319b5671468129))
-
+- 启用TypeScript文件翻译支持 ([6a875c4](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a875c46740a1c972e4cf282cb319b5671468129))
 
 ### Bug Fixes
 
-* **i18n:** 修复js内容翻译的问题，以及增加自动翻译临时开关命令 ([7eb4e28](https://github.com/ChenyCHENYU/Robot_Admin/commit/7eb4e28ae1f9a0212126defbc3a85f04c5507762))
-* 生产环境启用i18n翻译功能 ([b766c39](https://github.com/ChenyCHENYU/Robot_Admin/commit/b766c39e6c5f119b4e05664ef045fdadfce57955))
+- **i18n:** 修复js内容翻译的问题，以及增加自动翻译临时开关命令 ([7eb4e28](https://github.com/ChenyCHENYU/Robot_Admin/commit/7eb4e28ae1f9a0212126defbc3a85f04c5507762))
+- 生产环境启用i18n翻译功能 ([b766c39](https://github.com/ChenyCHENYU/Robot_Admin/commit/b766c39e6c5f119b4e05664ef045fdadfce57955))
 
 ## [1.9.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.8.1...v1.9.0) (2025-12-02)
 
-
 ### Features
 
-* **C_Barcode:** 增加条形码组件，扩展插件组件菜单 ([570cd0a](https://github.com/ChenyCHENYU/Robot_Admin/commit/570cd0a9e659bdb7bb4fba22da41572a5eaad548))
-* **error-page:** 增加异常页面菜单，包含401、403、404、500 ([c233016](https://github.com/ChenyCHENYU/Robot_Admin/commit/c233016b12a42f09fad52d1870e1f3c3c211691d))
-* **i18n:** 增加日韩语翻译功能 ([ebe4c0e](https://github.com/ChenyCHENYU/Robot_Admin/commit/ebe4c0eddf482f4ab766e60760b74164d4381238))
-* **Map:** 增加地图组件及演示页面 ([f82e340](https://github.com/ChenyCHENYU/Robot_Admin/commit/f82e3400a20b664dc319f034faa532677b1ba472))
-* **merge:** 添加智能 JSON 合并驱动，解决翻译文件冲突 ([8250712](https://github.com/ChenyCHENYU/Robot_Admin/commit/8250712555dc1912bade15cde92032825ca6abca))
-* 优化i18n配置，默认关闭开发环境自动翻译 ([820ef35](https://github.com/ChenyCHENYU/Robot_Admin/commit/820ef35859a0be6b100d95a3200914e961df900b))
-* 优化i18n配置，默认关闭开发环境自动翻译 ([30167a3](https://github.com/ChenyCHENYU/Robot_Admin/commit/30167a3a93686099e8ba007193286dda6d78b4a1))
-* 优化部署脚本，临时禁用i18n自动扫描 ([a168e75](https://github.com/ChenyCHENYU/Robot_Admin/commit/a168e75dcbbfaacad2cdb620f5880801cbb6f2d6))
-
+- **C_Barcode:** 增加条形码组件，扩展插件组件菜单 ([570cd0a](https://github.com/ChenyCHENYU/Robot_Admin/commit/570cd0a9e659bdb7bb4fba22da41572a5eaad548))
+- **error-page:** 增加异常页面菜单，包含401、403、404、500 ([c233016](https://github.com/ChenyCHENYU/Robot_Admin/commit/c233016b12a42f09fad52d1870e1f3c3c211691d))
+- **i18n:** 增加日韩语翻译功能 ([ebe4c0e](https://github.com/ChenyCHENYU/Robot_Admin/commit/ebe4c0eddf482f4ab766e60760b74164d4381238))
+- **Map:** 增加地图组件及演示页面 ([f82e340](https://github.com/ChenyCHENYU/Robot_Admin/commit/f82e3400a20b664dc319f034faa532677b1ba472))
+- **merge:** 添加智能 JSON 合并驱动，解决翻译文件冲突 ([8250712](https://github.com/ChenyCHENYU/Robot_Admin/commit/8250712555dc1912bade15cde92032825ca6abca))
+- 优化i18n配置，默认关闭开发环境自动翻译 ([820ef35](https://github.com/ChenyCHENYU/Robot_Admin/commit/820ef35859a0be6b100d95a3200914e961df900b))
+- 优化i18n配置，默认关闭开发环境自动翻译 ([30167a3](https://github.com/ChenyCHENYU/Robot_Admin/commit/30167a3a93686099e8ba007193286dda6d78b4a1))
+- 优化部署脚本，临时禁用i18n自动扫描 ([a168e75](https://github.com/ChenyCHENYU/Robot_Admin/commit/a168e75dcbbfaacad2cdb620f5880801cbb6f2d6))
 
 ### Bug Fixes
 
-* **i18n/vite-auto-i18n-plugin:** 修复配置语法不被识别的问题，同步替换工具代码 ([a9a9cce](https://github.com/ChenyCHENYU/Robot_Admin/commit/a9a9ccec3361d1554ea3501592e07f7b12425872))
-* **menu-manager:** 完善菜单逻辑，考虑非标菜单的有效展示 ([26d0b97](https://github.com/ChenyCHENYU/Robot_Admin/commit/26d0b97f70859a5c69adc091a008da9a923f286d))
-* **merge:** 同步自动冲突解决功能 ([a25ca3f](https://github.com/ChenyCHENYU/Robot_Admin/commit/a25ca3f6c77a0001055d2eaf830ae30dd19182fd))
-* **merge:** 增强自动合并功能，智能解决翻译文件冲突 ([95ded00](https://github.com/ChenyCHENYU/Robot_Admin/commit/95ded00e46439798b21e8fbc6676e57f337d3368))
-* 部署脚本切换分支后清理自动生成文件修改 ([76df231](https://github.com/ChenyCHENYU/Robot_Admin/commit/76df231d50247703e4fd50eedf2e755ce592131e))
-
+- **i18n/vite-auto-i18n-plugin:** 修复配置语法不被识别的问题，同步替换工具代码 ([a9a9cce](https://github.com/ChenyCHENYU/Robot_Admin/commit/a9a9ccec3361d1554ea3501592e07f7b12425872))
+- **menu-manager:** 完善菜单逻辑，考虑非标菜单的有效展示 ([26d0b97](https://github.com/ChenyCHENYU/Robot_Admin/commit/26d0b97f70859a5c69adc091a008da9a923f286d))
+- **merge:** 同步自动冲突解决功能 ([a25ca3f](https://github.com/ChenyCHENYU/Robot_Admin/commit/a25ca3f6c77a0001055d2eaf830ae30dd19182fd))
+- **merge:** 增强自动合并功能，智能解决翻译文件冲突 ([95ded00](https://github.com/ChenyCHENYU/Robot_Admin/commit/95ded00e46439798b21e8fbc6676e57f337d3368))
+- 部署脚本切换分支后清理自动生成文件修改 ([76df231](https://github.com/ChenyCHENYU/Robot_Admin/commit/76df231d50247703e4fd50eedf2e755ce592131e))
 
 ### Performance Improvements
 
-* **permission.ts:** 优化代码逻辑，降低复杂圈数 ([afb80ce](https://github.com/ChenyCHENYU/Robot_Admin/commit/afb80ce874007259df8f4c0ab0331b2a58c84674))
+- **permission.ts:** 优化代码逻辑，降低复杂圈数 ([afb80ce](https://github.com/ChenyCHENYU/Robot_Admin/commit/afb80ce874007259df8f4c0ab0331b2a58c84674))
 
 ## [1.8.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.8.0...v1.8.1) (2025-11-17)
 
-
 ### Performance Improvements
 
-* **axios:** 增加插件系统，重新/缓存/取消/性能单测 ([9f57861](https://github.com/ChenyCHENYU/Robot_Admin/commit/9f57861d25131f790887c3eac8f4792f07969f5e))
-* **Global Error Handle:** 增加全局错误处理，避免异常崩溃，作为异常兜底方案 ([56628f7](https://github.com/ChenyCHENYU/Robot_Admin/commit/56628f7967cc12c9d302f96763e2339ee26ec913))
+- **axios:** 增加插件系统，重新/缓存/取消/性能单测 ([9f57861](https://github.com/ChenyCHENYU/Robot_Admin/commit/9f57861d25131f790887c3eac8f4792f07969f5e))
+- **Global Error Handle:** 增加全局错误处理，避免异常崩溃，作为异常兜底方案 ([56628f7](https://github.com/ChenyCHENYU/Robot_Admin/commit/56628f7967cc12c9d302f96763e2339ee26ec913))
 
 ## [1.8.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.7.0...v1.8.0) (2025-11-13)
 
-
 ### Features
 
-* **C_Layout:** 增加反向菜单布局 ([e9b47c5](https://github.com/ChenyCHENYU/Robot_Admin/commit/e9b47c56dc13ed4b3e37409dd058be59404e649d))
-* **C_Layout:** 增加反转菜单布局 ([a2c6fa6](https://github.com/ChenyCHENYU/Robot_Admin/commit/a2c6fa6f60f6ec7f3530fbe1f79815b968e39bac))
-* **C_Layout:** 增加头部导航布局 ([9ca1525](https://github.com/ChenyCHENYU/Robot_Admin/commit/9ca1525a4f97614090b54f460bee5b1d37a61471))
-* **C_Layout:** 增加左侧菜单混合布局 ([648ee8c](https://github.com/ChenyCHENYU/Robot_Admin/commit/648ee8c41c1ce9b81f658fa9e3086210333219c9))
-* **C_Layout:** 增加新颖的卡片网格布局 ([d0843f6](https://github.com/ChenyCHENYU/Robot_Admin/commit/d0843f6e0c6d1173c0f82be370a999b9f40aa6e9))
-* **C_Layout:** 增加顶部混合布局，剥离公共右侧部分 ([860c297](https://github.com/ChenyCHENYU/Robot_Admin/commit/860c2975d7a6b6e47efc92752e214108c1480623))
-* **scripts:** 自动处理自动生成文件，避免合并冲突 ([d64fc2c](https://github.com/ChenyCHENYU/Robot_Admin/commit/d64fc2ce4a531f9bc87b31e64dfbeb826ba9dd3a))
-* **布局设置:** 增加布局配置功能/外观部分 ([b1bebb6](https://github.com/ChenyCHENYU/Robot_Admin/commit/b1bebb652aa99426ff37e2435ab0130f8360e80f))
-
+- **C_Layout:** 增加反向菜单布局 ([e9b47c5](https://github.com/ChenyCHENYU/Robot_Admin/commit/e9b47c56dc13ed4b3e37409dd058be59404e649d))
+- **C_Layout:** 增加反转菜单布局 ([a2c6fa6](https://github.com/ChenyCHENYU/Robot_Admin/commit/a2c6fa6f60f6ec7f3530fbe1f79815b968e39bac))
+- **C_Layout:** 增加头部导航布局 ([9ca1525](https://github.com/ChenyCHENYU/Robot_Admin/commit/9ca1525a4f97614090b54f460bee5b1d37a61471))
+- **C_Layout:** 增加左侧菜单混合布局 ([648ee8c](https://github.com/ChenyCHENYU/Robot_Admin/commit/648ee8c41c1ce9b81f658fa9e3086210333219c9))
+- **C_Layout:** 增加新颖的卡片网格布局 ([d0843f6](https://github.com/ChenyCHENYU/Robot_Admin/commit/d0843f6e0c6d1173c0f82be370a999b9f40aa6e9))
+- **C_Layout:** 增加顶部混合布局，剥离公共右侧部分 ([860c297](https://github.com/ChenyCHENYU/Robot_Admin/commit/860c2975d7a6b6e47efc92752e214108c1480623))
+- **scripts:** 自动处理自动生成文件，避免合并冲突 ([d64fc2c](https://github.com/ChenyCHENYU/Robot_Admin/commit/d64fc2ce4a531f9bc87b31e64dfbeb826ba9dd3a))
+- **布局设置:** 增加布局配置功能/外观部分 ([b1bebb6](https://github.com/ChenyCHENYU/Robot_Admin/commit/b1bebb652aa99426ff37e2435ab0130f8360e80f))
 
 ### Bug Fixes
 
-* **dynamicRouter:** 修复重启后单页面路由跳转陷阱 ([c11434c](https://github.com/ChenyCHENYU/Robot_Admin/commit/c11434cee03db0024f75dbb11295428131499b57))
-* **i18n:** 修复历史TAGS切换语言未变化的问题 ([5170b62](https://github.com/ChenyCHENYU/Robot_Admin/commit/5170b6296c07361467cdadf3fe7372b7b04af5f0))
+- **dynamicRouter:** 修复重启后单页面路由跳转陷阱 ([c11434c](https://github.com/ChenyCHENYU/Robot_Admin/commit/c11434cee03db0024f75dbb11295428131499b57))
+- **i18n:** 修复历史TAGS切换语言未变化的问题 ([5170b62](https://github.com/ChenyCHENYU/Robot_Admin/commit/5170b6296c07361467cdadf3fe7372b7b04af5f0))
 
 ## [1.7.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.4...v1.7.0) (2025-11-06)
 
-
 ### Features
 
-* **i18n:** 增加 i18n 功能，插件和脚本，以及文档的编写 ([e5ae03f](https://github.com/ChenyCHENYU/Robot_Admin/commit/e5ae03ffb417df560379036bbbc591650686595c))
-
+- **i18n:** 增加 i18n 功能，插件和脚本，以及文档的编写 ([e5ae03f](https://github.com/ChenyCHENYU/Robot_Admin/commit/e5ae03ffb417df560379036bbbc591650686595c))
 
 ### Bug Fixes
 
-* **TAGS:** 修复关闭所有导致出现关于页的固定配置 ([d64bea3](https://github.com/ChenyCHENYU/Robot_Admin/commit/d64bea3cada9d3d00e7abca675899f67b57f70d4))
-
+- **TAGS:** 修复关闭所有导致出现关于页的固定配置 ([d64bea3](https://github.com/ChenyCHENYU/Robot_Admin/commit/d64bea3cada9d3d00e7abca675899f67b57f70d4))
 
 ### Performance Improvements
 
-* **i18n:** 增加配置，解决切换菜单触发HMR导致刷新的问题 ([0afaa23](https://github.com/ChenyCHENYU/Robot_Admin/commit/0afaa235d33f4e850d5f55d19f7b8b4d7db3992c))
+- **i18n:** 增加配置，解决切换菜单触发HMR导致刷新的问题 ([0afaa23](https://github.com/ChenyCHENYU/Robot_Admin/commit/0afaa235d33f4e850d5f55d19f7b8b4d7db3992c))
 
 ## [1.6.4](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.3...v1.6.4) (2025-11-04)
 
-
 ### Bug Fixes
 
-* **generate-api/build:** 构建前自动生成 API 文件以修复 Vercel 部署失败 ([05bb594](https://github.com/ChenyCHENYU/Robot_Admin/commit/05bb59493902a1c206a469400f2fc4749ef39a05))
-* **generated/openapi.json:** 在 ESLint 中忽略 generated/ 自动生成文件,修复 Vercel 构建失败 ([c4f800a](https://github.com/ChenyCHENYU/Robot_Admin/commit/c4f800a187cb186e4aa3e58070a6cb75fb9c1195))
-
+- **generate-api/build:** 构建前自动生成 API 文件以修复 Vercel 部署失败 ([05bb594](https://github.com/ChenyCHENYU/Robot_Admin/commit/05bb59493902a1c206a469400f2fc4749ef39a05))
+- **generated/openapi.json:** 在 ESLint 中忽略 generated/ 自动生成文件,修复 Vercel 构建失败 ([c4f800a](https://github.com/ChenyCHENYU/Robot_Admin/commit/c4f800a187cb186e4aa3e58070a6cb75fb9c1195))
 
 ### Performance Improvements
 
-* **API:** 优化[@api](https://github.com/api)，增加sdk配置，自动生成接口，避免类型体操 ([18a079a](https://github.com/ChenyCHENYU/Robot_Admin/commit/18a079a89a818252ac56a89bc84cfccdb4d26a33))
-* **Pagination:** 剔除冗余配置，保持精简默认 ([464282a](https://github.com/ChenyCHENYU/Robot_Admin/commit/464282a0d6e1aefd3df5af34807df54dbb0c11a0))
-* **Table/Expand/Dynamic:** 示范组件表格相关的接口全部替换成sdk，验证完成 ([db6ca5b](https://github.com/ChenyCHENYU/Robot_Admin/commit/db6ca5ba1128c38ba5ea0ece565b065cef2d5302))
-* **TypeScript moduleResolution:** typeScript moduleResolution 和 resolve.extensions 配置优化 ([7679c80](https://github.com/ChenyCHENYU/Robot_Admin/commit/7679c80dd3f9a3b56790abacc1f2163ccbd52c91))
-* **vite.warmup:** 增加大文件预热配置 ([83b357e](https://github.com/ChenyCHENYU/Robot_Admin/commit/83b357e94e8dcbf7b60c3ab191573ca1cbb7ee45))
-* **加载/启动/分包/构建:** 全面优化一版，后面在考虑收拾scss ([d210e26](https://github.com/ChenyCHENYU/Robot_Admin/commit/d210e26349930eb440eb010b30f9e7afab954032))
+- **API:** 优化[@api](https://github.com/api)，增加sdk配置，自动生成接口，避免类型体操 ([18a079a](https://github.com/ChenyCHENYU/Robot_Admin/commit/18a079a89a818252ac56a89bc84cfccdb4d26a33))
+- **Pagination:** 剔除冗余配置，保持精简默认 ([464282a](https://github.com/ChenyCHENYU/Robot_Admin/commit/464282a0d6e1aefd3df5af34807df54dbb0c11a0))
+- **Table/Expand/Dynamic:** 示范组件表格相关的接口全部替换成sdk，验证完成 ([db6ca5b](https://github.com/ChenyCHENYU/Robot_Admin/commit/db6ca5ba1128c38ba5ea0ece565b065cef2d5302))
+- **TypeScript moduleResolution:** typeScript moduleResolution 和 resolve.extensions 配置优化 ([7679c80](https://github.com/ChenyCHENYU/Robot_Admin/commit/7679c80dd3f9a3b56790abacc1f2163ccbd52c91))
+- **vite.warmup:** 增加大文件预热配置 ([83b357e](https://github.com/ChenyCHENYU/Robot_Admin/commit/83b357e94e8dcbf7b60c3ab191573ca1cbb7ee45))
+- **加载/启动/分包/构建:** 全面优化一版，后面在考虑收拾scss ([d210e26](https://github.com/ChenyCHENYU/Robot_Admin/commit/d210e26349930eb440eb010b30f9e7afab954032))
 
 ## [1.6.3](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.2...v1.6.3) (2025-10-29)
 
-
 ### Bug Fixes
 
-* **viteBuildConfig:** 修复 manualChunks 函数调用构建异常，切为稳定的对象方式 ([feaeb5b](https://github.com/ChenyCHENYU/Robot_Admin/commit/feaeb5b3481fe7d494ddf89607d87a97342e7553))
+- **viteBuildConfig:** 修复 manualChunks 函数调用构建异常，切为稳定的对象方式 ([feaeb5b](https://github.com/ChenyCHENYU/Robot_Admin/commit/feaeb5b3481fe7d494ddf89607d87a97342e7553))
 
 ## [1.6.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.1...v1.6.2) (2025-10-29)
 
-
 ### Bug Fixes
 
-* **TAGS:** 修复关闭所有标签回退错误问题 ([8baee16](https://github.com/ChenyCHENYU/Robot_Admin/commit/8baee16422b42ccaac576aede4290039279d8ade))
-
+- **TAGS:** 修复关闭所有标签回退错误问题 ([8baee16](https://github.com/ChenyCHENYU/Robot_Admin/commit/8baee16422b42ccaac576aede4290039279d8ade))
 
 ### Performance Improvements
 
-* **keepAlive:** 增加缓存配置 ([1443bc7](https://github.com/ChenyCHENYU/Robot_Admin/commit/1443bc74799a7116da3cdb7ccd6bd9aecd83b8e1))
-* **vite:** 构建和预加载性能优化 ([74bc2e9](https://github.com/ChenyCHENYU/Robot_Admin/commit/74bc2e9c0f113c2593ad772538cf4b4ff83cc043))
-* **首屏加载动画:** 性能优化 ([61e6dbe](https://github.com/ChenyCHENYU/Robot_Admin/commit/61e6dbe6a27e407244cee0ef6650529f293e68f3))
+- **keepAlive:** 增加缓存配置 ([1443bc7](https://github.com/ChenyCHENYU/Robot_Admin/commit/1443bc74799a7116da3cdb7ccd6bd9aecd83b8e1))
+- **vite:** 构建和预加载性能优化 ([74bc2e9](https://github.com/ChenyCHENYU/Robot_Admin/commit/74bc2e9c0f113c2593ad772538cf4b4ff83cc043))
+- **首屏加载动画:** 性能优化 ([61e6dbe](https://github.com/ChenyCHENYU/Robot_Admin/commit/61e6dbe6a27e407244cee0ef6650529f293e68f3))
 
 ## [1.6.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.6.0...v1.6.1) (2025-10-28)
 
-
 ### Bug Fixes
 
-* **TAGS:** 修复标签页智能跳转逻辑 ([06ec436](https://github.com/ChenyCHENYU/Robot_Admin/commit/06ec43601d18cf33d0ab39ffcf40d8678d9be213))
-* **权限管理:** 修复操作异常 ([28d5c70](https://github.com/ChenyCHENYU/Robot_Admin/commit/28d5c70ccbb335b3c10887ddbb5c9c5785bf1752))
-* **角色管理:** 详情等相关逻辑修复，显示关联内容 ([491c2ad](https://github.com/ChenyCHENYU/Robot_Admin/commit/491c2ada9e8c57b0e00e172c707fb60bfdea77a8))
-
+- **TAGS:** 修复标签页智能跳转逻辑 ([06ec436](https://github.com/ChenyCHENYU/Robot_Admin/commit/06ec43601d18cf33d0ab39ffcf40d8678d9be213))
+- **权限管理:** 修复操作异常 ([28d5c70](https://github.com/ChenyCHENYU/Robot_Admin/commit/28d5c70ccbb335b3c10887ddbb5c9c5785bf1752))
+- **角色管理:** 详情等相关逻辑修复，显示关联内容 ([491c2ad](https://github.com/ChenyCHENYU/Robot_Admin/commit/491c2ada9e8c57b0e00e172c707fb60bfdea77a8))
 
 ### Performance Improvements
 
-* **加载动画:** 性能优化，调整动画时间和加载时机 ([8fb5f8e](https://github.com/ChenyCHENYU/Robot_Admin/commit/8fb5f8e4e9442ddd91fa291275502e9832ade784))
+- **加载动画:** 性能优化，调整动画时间和加载时机 ([8fb5f8e](https://github.com/ChenyCHENYU/Robot_Admin/commit/8fb5f8e4e9442ddd91fa291275502e9832ade784))
 
 ## [1.6.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.5.0...v1.6.0) (2025-10-27)
 
-
 ### Features
 
-* **工作流组件:** 增加暗色主题并调优演示页面 ([0512ca5](https://github.com/ChenyCHENYU/Robot_Admin/commit/0512ca50009cebeb71f0450c6e49d3a1fe80f56d))
-
+- **工作流组件:** 增加暗色主题并调优演示页面 ([0512ca5](https://github.com/ChenyCHENYU/Robot_Admin/commit/0512ca50009cebeb71f0450c6e49d3a1fe80f56d))
 
 ### Bug Fixes
 
-* **图编辑器:** 组件及演示页面暗色主题适配修复 ([766118f](https://github.com/ChenyCHENYU/Robot_Admin/commit/766118fa9d5dbaaf6c72a5672fe668cf60e16cc4))
-* **富文本编辑器组件:** 增加全局样式控制，修复暗色主题下样式问题 ([7e3fdde](https://github.com/ChenyCHENYU/Robot_Admin/commit/7e3fdde02ec778ad3b0449f92f89943edc1d1cf6))
-* **甘特图组件/页面:** 修复甘特图主题适配问题，自定义渲染报错 ([ae41cf7](https://github.com/ChenyCHENYU/Robot_Admin/commit/ae41cf71ba9ad6c8c393ddf7374fca2d987d7745))
-
+- **图编辑器:** 组件及演示页面暗色主题适配修复 ([766118f](https://github.com/ChenyCHENYU/Robot_Admin/commit/766118fa9d5dbaaf6c72a5672fe668cf60e16cc4))
+- **富文本编辑器组件:** 增加全局样式控制，修复暗色主题下样式问题 ([7e3fdde](https://github.com/ChenyCHENYU/Robot_Admin/commit/7e3fdde02ec778ad3b0449f92f89943edc1d1cf6))
+- **甘特图组件/页面:** 修复甘特图主题适配问题，自定义渲染报错 ([ae41cf7](https://github.com/ChenyCHENYU/Robot_Admin/commit/ae41cf71ba9ad6c8c393ddf7374fca2d987d7745))
 
 ### Performance Improvements
 
-* **TAGS标签组件:** 优化复杂计算，利用浏览器原生方案，提高性能 ([002813f](https://github.com/ChenyCHENYU/Robot_Admin/commit/002813f116e55c7df593af660be5a4d7b30cd02f))
+- **TAGS标签组件:** 优化复杂计算，利用浏览器原生方案，提高性能 ([002813f](https://github.com/ChenyCHENYU/Robot_Admin/commit/002813f116e55c7df593af660be5a4d7b30cd02f))
 
 ## [1.5.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.4.0...v1.5.0) (2025-10-26)
 
-
 ### Features
 
-* **首页:** 增加统计真实数据获取 ([f8c4d8f](https://github.com/ChenyCHENYU/Robot_Admin/commit/f8c4d8fb8b22266147bdc985b422d603bb466a83))
+- **首页:** 增加统计真实数据获取 ([f8c4d8f](https://github.com/ChenyCHENYU/Robot_Admin/commit/f8c4d8fb8b22266147bdc985b422d603bb466a83))
 
 ## [1.4.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.3.0...v1.4.0) (2025-09-22)
 
-
 ### Features
 
-* **C_Table:** 增加操作列固定，并优化相关样式 ([efc5105](https://github.com/ChenyCHENYU/Robot_Admin/commit/efc5105c4bb910e2552cd5ae2c4465ee9746af5e))
-* **大屏模板/日成本看板:** 增加看板模板，同时升级bun、.husky版本和相关钩子命令 ([b7ed22a](https://github.com/ChenyCHENYU/Robot_Admin/commit/b7ed22ad2c58e784a4496b6c4bde4370c82b32ff))
-
+- **C_Table:** 增加操作列固定，并优化相关样式 ([efc5105](https://github.com/ChenyCHENYU/Robot_Admin/commit/efc5105c4bb910e2552cd5ae2c4465ee9746af5e))
+- **大屏模板/日成本看板:** 增加看板模板，同时升级bun、.husky版本和相关钩子命令 ([b7ed22a](https://github.com/ChenyCHENYU/Robot_Admin/commit/b7ed22ad2c58e784a4496b6c4bde4370c82b32ff))
 
 ### Bug Fixes
 
-* **系统管理/菜单管理:** 修复非嵌套路由菜单name及path缺失情况下的逻辑短路问题 ([748f5c7](https://github.com/ChenyCHENYU/Robot_Admin/commit/748f5c7418eb19446643f590cefda73b6d5a37e3))
+- **系统管理/菜单管理:** 修复非嵌套路由菜单name及path缺失情况下的逻辑短路问题 ([748f5c7](https://github.com/ChenyCHENYU/Robot_Admin/commit/748f5c7418eb19446643f590cefda73b6d5a37e3))
 
 ## [1.3.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.2.1...v1.3.0) (2025-09-05)
 
-
 ### Features
 
-* **useTableData:** 增加获取表格列表钩子函数，封装通用的api，简化调用 ([8a4df86](https://github.com/ChenyCHENYU/Robot_Admin/commit/8a4df860db984941fa468fb9dd9debab5292ca8d))
-
+- **useTableData:** 增加获取表格列表钩子函数，封装通用的api，简化调用 ([8a4df86](https://github.com/ChenyCHENYU/Robot_Admin/commit/8a4df860db984941fa468fb9dd9debab5292ca8d))
 
 ### Bug Fixes
 
-* **useTableData:** 解决异步回调提示的警告 ([e0b184f](https://github.com/ChenyCHENYU/Robot_Admin/commit/e0b184f43ecbc670ef4d060c5713e034053c0eb9))
-
+- **useTableData:** 解决异步回调提示的警告 ([e0b184f](https://github.com/ChenyCHENYU/Robot_Admin/commit/e0b184f43ecbc670ef4d060c5713e034053c0eb9))
 
 ### Performance Improvements
 
-* **11-table-expand/展开表格:** 使用apifox接口替换写死的数据，演示页面优化完成 ([2ea064d](https://github.com/ChenyCHENYU/Robot_Admin/commit/2ea064d93ac7d48c48d40b03a6744aebbce1f256))
-* **11-table-expand:** mock data optimiza ([c59267d](https://github.com/ChenyCHENYU/Robot_Admin/commit/c59267def9a44d0ad0d68322dee3b7315423736c))
-* **12-table-dynamic/动态表格:** 使用 apifox 接口，优化相应的页面逻辑 ([3927d76](https://github.com/ChenyCHENYU/Robot_Admin/commit/3927d766d0cc2f14e8434439b3d900e4ffa761c6))
-* **api:** 优化接口api定义 ([5ee0ee6](https://github.com/ChenyCHENYU/Robot_Admin/commit/5ee0ee6ac91357342acd0be0a6d1b52453ae4d5d))
+- **11-table-expand/展开表格:** 使用apifox接口替换写死的数据，演示页面优化完成 ([2ea064d](https://github.com/ChenyCHENYU/Robot_Admin/commit/2ea064d93ac7d48c48d40b03a6744aebbce1f256))
+- **11-table-expand:** mock data optimiza ([c59267d](https://github.com/ChenyCHENYU/Robot_Admin/commit/c59267def9a44d0ad0d68322dee3b7315423736c))
+- **12-table-dynamic/动态表格:** 使用 apifox 接口，优化相应的页面逻辑 ([3927d76](https://github.com/ChenyCHENYU/Robot_Admin/commit/3927d766d0cc2f14e8434439b3d900e4ffa761c6))
+- **api:** 优化接口api定义 ([5ee0ee6](https://github.com/ChenyCHENYU/Robot_Admin/commit/5ee0ee6ac91357342acd0be0a6d1b52453ae4d5d))
 
 ## [1.2.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.2.0...v1.2.1) (2025-09-05)
 
-
 ### Performance Improvements
 
-* **C_Table:** add Edit or View component optimiza ([cbcc06d](https://github.com/ChenyCHENYU/Robot_Admin/commit/cbcc06dae55bacd2a8210cbef3571e75e3b8d71c))
-* **C_Table:** add useTableActions optimiza ([42436dc](https://github.com/ChenyCHENYU/Robot_Admin/commit/42436dc9555fea112ef50ab42f66f693cae8d2c4))
-* **C_Table:** defineExpose code optimiza ([f7f13ed](https://github.com/ChenyCHENYU/Robot_Admin/commit/f7f13ed370744ff5111b83d5e74e45bcc03a2b2c))
-* **table-dynamic:** code optimiza ([ee6813e](https://github.com/ChenyCHENYU/Robot_Admin/commit/ee6813e6f402635ea0a06e2537621ae4bc5345cf))
-* **table:** optimiza auto config column config ([0c0fc45](https://github.com/ChenyCHENYU/Robot_Admin/commit/0c0fc4572401bfc275fdfdb01c4ec2b74653a58d))
+- **C_Table:** add Edit or View component optimiza ([cbcc06d](https://github.com/ChenyCHENYU/Robot_Admin/commit/cbcc06dae55bacd2a8210cbef3571e75e3b8d71c))
+- **C_Table:** add useTableActions optimiza ([42436dc](https://github.com/ChenyCHENYU/Robot_Admin/commit/42436dc9555fea112ef50ab42f66f693cae8d2c4))
+- **C_Table:** defineExpose code optimiza ([f7f13ed](https://github.com/ChenyCHENYU/Robot_Admin/commit/f7f13ed370744ff5111b83d5e74e45bcc03a2b2c))
+- **table-dynamic:** code optimiza ([ee6813e](https://github.com/ChenyCHENYU/Robot_Admin/commit/ee6813e6f402635ea0a06e2537621ae4bc5345cf))
+- **table:** optimiza auto config column config ([0c0fc45](https://github.com/ChenyCHENYU/Robot_Admin/commit/0c0fc4572401bfc275fdfdb01c4ec2b74653a58d))
 
 ## [1.2.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.1.2...v1.2.0) (2025-08-26)
 
-
 ### Features
 
-* **@hey-api/openapi-ts:** add openapi auto type ([373bda9](https://github.com/ChenyCHENYU/Robot_Admin/commit/373bda93fe3cf3f77fc359ed3bc92eb96b34755e))
-* **10-table:** detail modal replace api interface ([37b497c](https://github.com/ChenyCHENYU/Robot_Admin/commit/37b497c700b688e8690114d53fc4127291127092))
-* **c_detail:** add c_detail local component ([3bd0786](https://github.com/ChenyCHENYU/Robot_Admin/commit/3bd078674410eac4332b80d421814eb12bbc7b4e))
-* **login:** use apifox api ([76d66c0](https://github.com/ChenyCHENYU/Robot_Admin/commit/76d66c08fb659f9ec8ec7b20ba0c24f9ddf5bef2))
-* **table:** add delete btn func ([7ea9244](https://github.com/ChenyCHENYU/Robot_Admin/commit/7ea9244b325e7a50176032737c179ee03d5c1644))
-
+- **@hey-api/openapi-ts:** add openapi auto type ([373bda9](https://github.com/ChenyCHENYU/Robot_Admin/commit/373bda93fe3cf3f77fc359ed3bc92eb96b34755e))
+- **10-table:** detail modal replace api interface ([37b497c](https://github.com/ChenyCHENYU/Robot_Admin/commit/37b497c700b688e8690114d53fc4127291127092))
+- **c_detail:** add c_detail local component ([3bd0786](https://github.com/ChenyCHENYU/Robot_Admin/commit/3bd078674410eac4332b80d421814eb12bbc7b4e))
+- **login:** use apifox api ([76d66c0](https://github.com/ChenyCHENYU/Robot_Admin/commit/76d66c08fb659f9ec8ec7b20ba0c24f9ddf5bef2))
+- **table:** add delete btn func ([7ea9244](https://github.com/ChenyCHENYU/Robot_Admin/commit/7ea9244b325e7a50176032737c179ee03d5c1644))
 
 ### Bug Fixes
 
-* **C_VtableGantt:** move col width auto height repair ([a364e3d](https://github.com/ChenyCHENYU/Robot_Admin/commit/a364e3d0a10ebfc4c948a0aaf9ec359355f165f4))
-* **table:** modal edit unfinish add list dispose ([eb4a229](https://github.com/ChenyCHENYU/Robot_Admin/commit/eb4a22961596d56b312fb95ade6341e808a0c3ed))
-
+- **C_VtableGantt:** move col width auto height repair ([a364e3d](https://github.com/ChenyCHENYU/Robot_Admin/commit/a364e3d0a10ebfc4c948a0aaf9ec359355f165f4))
+- **table:** modal edit unfinish add list dispose ([eb4a229](https://github.com/ChenyCHENYU/Robot_Admin/commit/eb4a22961596d56b312fb95ade6341e808a0c3ed))
 
 ### Performance Improvements
 
-* **api:** del abandoned api file ([466bd29](https://github.com/ChenyCHENYU/Robot_Admin/commit/466bd29241833d4504fcabae50662536d41d3018))
-* **C_Time:** add custom optimiza ([ee87726](https://github.com/ChenyCHENYU/Robot_Admin/commit/ee877262f9a4828855130c6f9dc46aecbe704c74))
-* **form:** delete repeat verify tip ([b59b8d9](https://github.com/ChenyCHENYU/Robot_Admin/commit/b59b8d9b01b95f576a4d9fe305c4eb62f25ac560))
+- **api:** del abandoned api file ([466bd29](https://github.com/ChenyCHENYU/Robot_Admin/commit/466bd29241833d4504fcabae50662536d41d3018))
+- **C_Time:** add custom optimiza ([ee87726](https://github.com/ChenyCHENYU/Robot_Admin/commit/ee877262f9a4828855130c6f9dc46aecbe704c74))
+- **form:** delete repeat verify tip ([b59b8d9](https://github.com/ChenyCHENYU/Robot_Admin/commit/b59b8d9b01b95f576a4d9fe305c4eb62f25ac560))
 
 ## [1.1.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.1.1...v1.1.2) (2025-08-10)
 
-
 ### Performance Improvements
 
-* **vite.config:** config optimization ([e25957a](https://github.com/ChenyCHENYU/Robot_Admin/commit/e25957a8c5c31ef21b0d8c9331c579779d0f0fc0))
-* **vite.config:** viteBuildConfig optimization ([a5ff177](https://github.com/ChenyCHENYU/Robot_Admin/commit/a5ff177b6c39f930f96c81f53050dd09e594dd34))
+- **vite.config:** config optimization ([e25957a](https://github.com/ChenyCHENYU/Robot_Admin/commit/e25957a8c5c31ef21b0d8c9331c579779d0f0fc0))
+- **vite.config:** viteBuildConfig optimization ([a5ff177](https://github.com/ChenyCHENYU/Robot_Admin/commit/a5ff177b6c39f930f96c81f53050dd09e594dd34))
 
 ## [1.1.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.1.0...v1.1.1) (2025-08-01)
 
-
 ### Bug Fixes
 
-* **types:** all type error optimiza, dispose ts-type-cleaner plugin ([1d60a40](https://github.com/ChenyCHENYU/Robot_Admin/commit/1d60a4061b43ede0042a66ee8f347709b4adad9d))
+- **types:** all type error optimiza, dispose ts-type-cleaner plugin ([1d60a40](https://github.com/ChenyCHENYU/Robot_Admin/commit/1d60a4061b43ede0042a66ee8f347709b4adad9d))
 
 ## [1.1.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.0.1...v1.1.0) (2025-07-31)
 
-
 ### Features
 
-* **vite:** update version 7 and optimiza vite.config up README ([36dc7b1](https://github.com/ChenyCHENYU/Robot_Admin/commit/36dc7b177f028d327a4a2d007782248953d07ccc))
-
+- **vite:** update version 7 and optimiza vite.config up README ([36dc7b1](https://github.com/ChenyCHENYU/Robot_Admin/commit/36dc7b177f028d327a4a2d007782248953d07ccc))
 
 ### Bug Fixes
 
-* **types:** optimiza finish ([0663507](https://github.com/ChenyCHENYU/Robot_Admin/commit/06635074441da371885f34d2e7e8aca240149d68))
-* **types:** optimiza types all ([e508b82](https://github.com/ChenyCHENYU/Robot_Admin/commit/e508b821cf66b6af4e1dcd35c6048511f5c3becd))
-* **vercel.json:** delete error file ([9712f8c](https://github.com/ChenyCHENYU/Robot_Admin/commit/9712f8cb4a948579b7ccadd85b007d7e0615af30))
-* **vite.config:** build config optimiza ([91dac19](https://github.com/ChenyCHENYU/Robot_Admin/commit/91dac1938e6e36f1f6f904ebd740e9eb96d8826a))
-
+- **types:** optimiza finish ([0663507](https://github.com/ChenyCHENYU/Robot_Admin/commit/06635074441da371885f34d2e7e8aca240149d68))
+- **types:** optimiza types all ([e508b82](https://github.com/ChenyCHENYU/Robot_Admin/commit/e508b821cf66b6af4e1dcd35c6048511f5c3becd))
+- **vercel.json:** delete error file ([9712f8c](https://github.com/ChenyCHENYU/Robot_Admin/commit/9712f8cb4a948579b7ccadd85b007d7e0615af30))
+- **vite.config:** build config optimiza ([91dac19](https://github.com/ChenyCHENYU/Robot_Admin/commit/91dac1938e6e36f1f6f904ebd740e9eb96d8826a))
 
 ### Performance Improvements
 
-* **vercel.json:** add vercel json set regions ([3b9b5c6](https://github.com/ChenyCHENYU/Robot_Admin/commit/3b9b5c6e3b78fb99143b37434839d5904866d2d3))
-* **vite.config:** build config optimiza ([0c470d8](https://github.com/ChenyCHENYU/Robot_Admin/commit/0c470d8165247b334a5388b5d9d532f44f4fa386))
-* **vite.config:** optimiza build config ([d53cc17](https://github.com/ChenyCHENYU/Robot_Admin/commit/d53cc17918b4303be8ab13255b904816197b3cac))
+- **vercel.json:** add vercel json set regions ([3b9b5c6](https://github.com/ChenyCHENYU/Robot_Admin/commit/3b9b5c6e3b78fb99143b37434839d5904866d2d3))
+- **vite.config:** build config optimiza ([0c470d8](https://github.com/ChenyCHENYU/Robot_Admin/commit/0c470d8165247b334a5388b5d9d532f44f4fa386))
+- **vite.config:** optimiza build config ([d53cc17](https://github.com/ChenyCHENYU/Robot_Admin/commit/d53cc17918b4303be8ab13255b904816197b3cac))
 
 ## [1.0.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v1.0.0...v1.0.1) (2025-07-30)
 
-
 ### Bug Fixes
 
-* **login/menu-top:** fix login route.push blank and optimiza func ([4366a07](https://github.com/ChenyCHENYU/Robot_Admin/commit/4366a07e9b7fbea44be039dbd4d88320442fb00b))
-
+- **login/menu-top:** fix login route.push blank and optimiza func ([4366a07](https://github.com/ChenyCHENYU/Robot_Admin/commit/4366a07e9b7fbea44be039dbd4d88320442fb00b))
 
 ### Performance Improvements
 
-* **login:** add Loading transition ([8adac6d](https://github.com/ChenyCHENYU/Robot_Admin/commit/8adac6d03ebbf26b4ecb0e270b834eb6ca76be62))
+- **login:** add Loading transition ([8adac6d](https://github.com/ChenyCHENYU/Robot_Admin/commit/8adac6d03ebbf26b4ecb0e270b834eb6ca76be62))
 
 ## 1.0.0 (2025-07-29)
 
-
 ### Features
 
-* **16-text-editor:** 16-text-editor views page dev finish ([58ee77d](https://github.com/ChenyCHENYU/Robot_Admin/commit/58ee77d6868f353dd38ba11559cf0559c1f25e2a))
-* **27-permission-direct:** permission direct and views page dev finish ([eda97db](https://github.com/ChenyCHENYU/Robot_Admin/commit/eda97db65f3ac3f3fa333b3083ce3aee82a4cb3b))
-* **404/401:** 404 and 401 views dev finish ([de6bffc](https://github.com/ChenyCHENYU/Robot_Admin/commit/de6bffc00edb909f24882337d4c0b03925e3154e))
-* **analysis:** analysis wip finish ([ca85dd9](https://github.com/ChenyCHENYU/Robot_Admin/commit/ca85dd9376b3b9a4ae7393f7de68f3a4a6beeb97))
-* **analytics:** use analytics plugin ([dd50d3d](https://github.com/ChenyCHENYU/Robot_Admin/commit/dd50d3dcc73984f0bb15c822beea7d03acdf7b18))
-* **blank-docs:** outside page and dynamicRouter config and blank-docs views page finish ([0e5d892](https://github.com/ChenyCHENYU/Robot_Admin/commit/0e5d892eb3bfcc5b0516f0dd506421dda05eb5d9))
-* **Breadcrumb:** breadcrumb finish ([d4ef803](https://github.com/ChenyCHENYU/Robot_Admin/commit/d4ef8038fbb555a580e9cd7d39a85526da77da78))
-* **C_Antv/antv-x6-editor:** antv compoents and views page finish ([5d46dd1](https://github.com/ChenyCHENYU/Robot_Admin/commit/5d46dd10d5a8ebb25f87c28e612f415e497ad837))
-* **C_Captcha/login:** captcha component and doc finish, and integrate login page ([b3be326](https://github.com/ChenyCHENYU/Robot_Admin/commit/b3be32622d1eaf2f7140c5d3ace53b8ffc0535bd))
-* **C_Cascade/cascade:** c_Cascade components or cascade views finish ([7835152](https://github.com/ChenyCHENYU/Robot_Admin/commit/7835152e10e7aa38b82ff74be5ec89590eba4fc3))
-* **C_City/city:** c_City component and city view page wip finish ([7d8ab7c](https://github.com/ChenyCHENYU/Robot_Admin/commit/7d8ab7c428ce8757ba793f752465315a6e237efb))
-* **C_Code:** c_Code and view page dev finish ([59f4c99](https://github.com/ChenyCHENYU/Robot_Admin/commit/59f4c990193ca6e93d5af3bacde7b9c98b00ea90))
-* **C_Date/05-date:** c_Date compoent and 05_deta demo view wip fininsh ([e613509](https://github.com/ChenyCHENYU/Robot_Admin/commit/e613509480ecfae78945d3edc079a306a4ceffd2))
-* **C_Draggable:** c_Draggable compoents and views page dev finish ([f5f92c7](https://github.com/ChenyCHENYU/Robot_Admin/commit/f5f92c72ccc2e92bcddb2eaf185cc346ae641e8a))
-* **C_FilePreview/file-preview:** components and views page finish ([1c124e1](https://github.com/ChenyCHENYU/Robot_Admin/commit/1c124e15773c21b393ade2d18025695f33df2745))
-* **C_Form/form:** c_Form compoents optimeza,form view page base version wip finish ([7c7e389](https://github.com/ChenyCHENYU/Robot_Admin/commit/7c7e3894d1e5abcb5429b8ededb30bb12fc4d27f))
-* **C_Form/form:** multiple layouts Finish ([002c9ab](https://github.com/ChenyCHENYU/Robot_Admin/commit/002c9ab7bc85673d11a08e629023a68e9b714c8e))
-* **C_FormSearch:** c_FormSearch and form views and style optimeza finish ([7691bb9](https://github.com/ChenyCHENYU/Robot_Admin/commit/7691bb99507879c5ad9b4f2c19ce279ca00b90a4))
-* **C_FullCalendar:** c_FullCalendar and calendar view page dev finish ([0c9d1f8](https://github.com/ChenyCHENYU/Robot_Admin/commit/0c9d1f80944e29cbc8d96ee4207419326c017939))
-* **C_GlobalSearch:** add global search components finish ([abd41d6](https://github.com/ChenyCHENYU/Robot_Admin/commit/abd41d6f7549da1ddd2959f5f49bfa79afced000))
-* **C_Icon:** c_Icon 3 use method finish ([799d4e9](https://github.com/ChenyCHENYU/Robot_Admin/commit/799d4e947258f6eb2d09307ac574a40c13d1207b))
-* **C_Icon:** 图标组件三种方式测验完成，配置了uno原子类 ([3188783](https://github.com/ChenyCHENYU/Robot_Admin/commit/3188783ea3c661d122aafcb3eb3af7f9f73f5b22))
-* **C_Language:** c_Language wip finish ([6b9e5f2](https://github.com/ChenyCHENYU/Robot_Admin/commit/6b9e5f2a306f1d1b8c805d4b51b579c8a3418d8a))
-* **C_MarkDonw:** markDown Editor dev finish await optimaze ([a960b0f](https://github.com/ChenyCHENYU/Robot_Admin/commit/a960b0f3a2518d018b8b5e1ce055df2ff3dcb428))
-* **C_Notice:** c_Notice wip finish ([b6801a2](https://github.com/ChenyCHENYU/Robot_Admin/commit/b6801a25fde38ae7b32d45488887d393844adf69))
-* **C_Progress/03-progress:** wip finish , style await optimeza ([c66542f](https://github.com/ChenyCHENYU/Robot_Admin/commit/c66542f7e68fea12373d878725c8ef400239ee7f))
-* **C_Steps/steps:** compoents and views page finish ([53cc298](https://github.com/ChenyCHENYU/Robot_Admin/commit/53cc298dc8a8c09643717177abe71e2b20082bf8))
-* **C_Table/DynamicTable:** dynamic Table dev finish ([b57ad3a](https://github.com/ChenyCHENYU/Robot_Admin/commit/b57ad3abe2fb9d08cf48248535fb064a35a308c8))
-* **C_Table/Expand:** c_Table and Expand Hooks and table-expand views dev finish ([b1b31d3](https://github.com/ChenyCHENYU/Robot_Admin/commit/b1b31d339a9109eb15da03d4d3bed5f4f2eddfa9))
-* **C_Table/table:** c_Table components and table view page dev fininsh ([498f21a](https://github.com/ChenyCHENYU/Robot_Admin/commit/498f21a1e37da203da28c31cc669e33a8f073393))
-* **C_TagsView:** tagsView wip finish ([c0c097b](https://github.com/ChenyCHENYU/Robot_Admin/commit/c0c097b24375144ee4a7bc15d5850b8ee0c95bc5))
-* **C_Time/04-time:** time component and time page wip finish ([f60d566](https://github.com/ChenyCHENYU/Robot_Admin/commit/f60d566b10a16f4580e4e728ba711be4cd291bbb))
-* **C_Tree/menu-manage:** c_Tree components and menu-manage views page dev fininsh ([1fbca2c](https://github.com/ChenyCHENYU/Robot_Admin/commit/1fbca2ca44f4383c4d08bbec92e56daadedfa3fc))
-* **C_VtableGantt/v-table-gantt:** component and views page finish ([29eca0f](https://github.com/ChenyCHENYU/Robot_Admin/commit/29eca0fb37c5daf46945915e65876dafd8b0de5d))
-* **copy-direct:** copy direct and views page dev finish ([35c10ea](https://github.com/ChenyCHENYU/Robot_Admin/commit/35c10ead641858ad5de8efa06fdf365f002fe8f8))
-* **debounce-direct:** debounce direct and views page dev finish ([4f243e2](https://github.com/ChenyCHENYU/Robot_Admin/commit/4f243e2fcfcbe3d3b4f81436477825aa50849f17))
-* **dictionary-manage:** dictionary manage views page finish ([ab02300](https://github.com/ChenyCHENYU/Robot_Admin/commit/ab023008a39d0108e1272c429938e6d7a846a60a))
-* **drag-direct:** drag direct and views page dev finish ([ee2ec3a](https://github.com/ChenyCHENYU/Robot_Admin/commit/ee2ec3a39f516efb54c3ffac84b286e28df6da9c))
-* **dynamicRouter.json:** config finish all icon ([93f2740](https://github.com/ChenyCHENYU/Robot_Admin/commit/93f274009152ba89adbee8a242ba751e274dad97))
-* **dynamicRouter.json:** dynamicRouter json data config finish ([2f300c2](https://github.com/ChenyCHENYU/Robot_Admin/commit/2f300c295126a525ea1e9ff1ed597e800bd63ef3))
-* **dynamicRouter.json:** 优化dynamicRouter.json文件，优化源数据 ([392f3be](https://github.com/ChenyCHENYU/Robot_Admin/commit/392f3bedee52c21aaf7d27ad80a4421cdc6d4f9b))
-* **form-modal:** form-modal dev finish ([e44096f](https://github.com/ChenyCHENYU/Robot_Admin/commit/e44096f80e7926c465ec4f7085511d3467fe0d32))
-* **form-modal:** form-modal dev finish ([7bfd7d1](https://github.com/ChenyCHENYU/Robot_Admin/commit/7bfd7d11c14d6f5717e9f7418a2570fd9563c4c6))
-* **form-modal:** form-modal optimeza finish ([b1ea9c7](https://github.com/ChenyCHENYU/Robot_Admin/commit/b1ea9c7a6a8baf2f6c31cad8e9d71c360f21589a))
-* **hooks:** add useFormSubmit hooks function finish ([1c4416b](https://github.com/ChenyCHENYU/Robot_Admin/commit/1c4416b4c8951b923db2db0601de4e4cdd4c9f5e))
-* **html:** add html loading plugin finish, optimize main use plugins finish ([f61b093](https://github.com/ChenyCHENYU/Robot_Admin/commit/f61b093ef10902a6b3dfc74ed14cb6643cfffe46))
-* **login/C_Form:** login wip... C_Form base finish ([2281f54](https://github.com/ChenyCHENYU/Robot_Admin/commit/2281f54997dc8d9caaa87345f5074961091bb2a5))
-* **login/dymicRouter|js|json:** login finish,dymicRouter wip finish, await wip layout or compoents ([44c0690](https://github.com/ChenyCHENYU/Robot_Admin/commit/44c06907fa285357b686bbb5488bafdc939e6712))
-* **login/home?echars:** login or logout finish, home view finish ([61ed598](https://github.com/ChenyCHENYU/Robot_Admin/commit/61ed598cc7c06071d67f989659d56c8b967aed8d))
-* **login:** login page transformation has been completed，Optimization eslint rules ([fccb753](https://github.com/ChenyCHENYU/Robot_Admin/commit/fccb753ab3da064df767e12791ca96eec72c38b8))
-* **login:** login view optimeza ([f3ea401](https://github.com/ChenyCHENYU/Robot_Admin/commit/f3ea401ebc8f67e315d064b9c36791510ea6683d))
-* **longpress-direct:** longpress direct and views page dev finish ([c0e1ddc](https://github.com/ChenyCHENYU/Robot_Admin/commit/c0e1ddcce9722116d7e4aaa60fb3c1291840fe57))
-* **menuTop:** logo use menu-top-logo(robot).webm ([c58e2ee](https://github.com/ChenyCHENYU/Robot_Admin/commit/c58e2eebd9e52f7eb56d9637c882a4971617545a))
-* **nprogress:** nprogress conifg router finish ([8ab9d17](https://github.com/ChenyCHENYU/Robot_Admin/commit/8ab9d17f65006c51ca1f98e80d0e9359f558634f))
-* **Pagination:** c_Table add Pagination finish ([87ebea7](https://github.com/ChenyCHENYU/Robot_Admin/commit/87ebea7395aab1dfc9c62aa953a2934a92b5dee6))
-* **permission-manage:** permission manage views page finish ([2159dee](https://github.com/ChenyCHENYU/Robot_Admin/commit/2159dee0934819987c6f125ec3cdbc8ecee64ea7))
-* **production:** add .env.production ([924de05](https://github.com/ChenyCHENYU/Robot_Admin/commit/924de0537a6273d1b8cc584172e39b1062b51fef))
-* **profile/useImage:** profile view and useImage hooks wip finish ([90dfdef](https://github.com/ChenyCHENYU/Robot_Admin/commit/90dfdef02ca8d4e561b056ff7ff3589bd8d68097))
-* **release-please:** add version manage tools ([a017ed2](https://github.com/ChenyCHENYU/Robot_Admin/commit/a017ed21004ffba009a133997efc907a15042571))
-* **script/type-check:** type-check Code debugging Finish ([4abd162](https://github.com/ChenyCHENYU/Robot_Admin/commit/4abd1621571a8841b5c1df90ebc6ae559042704d))
-* **scripts:** add envs mdir and scripts optimiza check-branch ([476a67c](https://github.com/ChenyCHENYU/Robot_Admin/commit/476a67cc71078787d49059ba011385ee0c7c9776))
-* **sys-manage/role-manage:** role manage views page finish ([b7dac79](https://github.com/ChenyCHENYU/Robot_Admin/commit/b7dac790d4e9151f2c797f240b30725c88ed6deb))
-* **theme/menu:** theme optimeza finish, menu open state finish ([b1d5f5b](https://github.com/ChenyCHENYU/Robot_Admin/commit/b1d5f5b7c474aced1e74473b42f3b200df813f22))
-* **theme/menu:** theme or menu fix or wip finish ([d0b57f5](https://github.com/ChenyCHENYU/Robot_Admin/commit/d0b57f5b7f4d09348dbb02bdec4cb79298c01604))
-* **throttle-direct:** throttle direct and views page dev finish ([c90d0b8](https://github.com/ChenyCHENYU/Robot_Admin/commit/c90d0b894c63ca9ab1e25040b2cfc3b4d67d675a))
-* **use Driver.js finish C_Guide:** style(C_TagsView): style optinmeza finish ([b9f5c56](https://github.com/ChenyCHENYU/Robot_Admin/commit/b9f5c56a5e0c0cfc89359a43b18371c99cbfc7dc))
-* **useCopy/18-copy-text:** useCopy hooks and copy-test views page dev finish ([5ae0cf8](https://github.com/ChenyCHENYU/Robot_Admin/commit/5ae0cf83759ae0af3758fd77a5342e7f44180979))
-* **useDownload/19-download-all:** useDownload hooks and 19-download-all views page dev finish ([51a2af9](https://github.com/ChenyCHENYU/Robot_Admin/commit/51a2af9b156caf05791625ab868e5d2f13dc5e2b))
-* **useExcel/excel-all:** useExcel hooks and excel-all views page finish ([d65ff9e](https://github.com/ChenyCHENYU/Robot_Admin/commit/d65ff9e077bd3c261722ab31b373f80749f80a9b))
-* **useJsZip/export-zip:** useJsZip Hooks and export-zip views page dev finish ([b65a446](https://github.com/ChenyCHENYU/Robot_Admin/commit/b65a446aac386747f6ddeeeec9f5fdce93d88f4c))
-* **user-manage:** user manage views page finish ([9297fdc](https://github.com/ChenyCHENYU/Robot_Admin/commit/9297fdc35a5e0782ee3dec2908732b0108c32804))
-* **version:** add main version updated ([8b63c18](https://github.com/ChenyCHENYU/Robot_Admin/commit/8b63c1844747386ac0a5a4ce809fd2a7c78a0ce5))
-* **watermark-direct:** watermark direct and views page dev finish ([0b2e623](https://github.com/ChenyCHENYU/Robot_Admin/commit/0b2e6237020bf52ab02a673b61457d2aa6257273))
-* **work-flow/C_WorkFlow:** compoents and views page finish ([3cbf78c](https://github.com/ChenyCHENYU/Robot_Admin/commit/3cbf78c60b567a3130f173185acbe3d244517737))
-
+- **16-text-editor:** 16-text-editor views page dev finish ([58ee77d](https://github.com/ChenyCHENYU/Robot_Admin/commit/58ee77d6868f353dd38ba11559cf0559c1f25e2a))
+- **27-permission-direct:** permission direct and views page dev finish ([eda97db](https://github.com/ChenyCHENYU/Robot_Admin/commit/eda97db65f3ac3f3fa333b3083ce3aee82a4cb3b))
+- **404/401:** 404 and 401 views dev finish ([de6bffc](https://github.com/ChenyCHENYU/Robot_Admin/commit/de6bffc00edb909f24882337d4c0b03925e3154e))
+- **analysis:** analysis wip finish ([ca85dd9](https://github.com/ChenyCHENYU/Robot_Admin/commit/ca85dd9376b3b9a4ae7393f7de68f3a4a6beeb97))
+- **analytics:** use analytics plugin ([dd50d3d](https://github.com/ChenyCHENYU/Robot_Admin/commit/dd50d3dcc73984f0bb15c822beea7d03acdf7b18))
+- **blank-docs:** outside page and dynamicRouter config and blank-docs views page finish ([0e5d892](https://github.com/ChenyCHENYU/Robot_Admin/commit/0e5d892eb3bfcc5b0516f0dd506421dda05eb5d9))
+- **Breadcrumb:** breadcrumb finish ([d4ef803](https://github.com/ChenyCHENYU/Robot_Admin/commit/d4ef8038fbb555a580e9cd7d39a85526da77da78))
+- **C_Antv/antv-x6-editor:** antv compoents and views page finish ([5d46dd1](https://github.com/ChenyCHENYU/Robot_Admin/commit/5d46dd10d5a8ebb25f87c28e612f415e497ad837))
+- **C_Captcha/login:** captcha component and doc finish, and integrate login page ([b3be326](https://github.com/ChenyCHENYU/Robot_Admin/commit/b3be32622d1eaf2f7140c5d3ace53b8ffc0535bd))
+- **C_Cascade/cascade:** c_Cascade components or cascade views finish ([7835152](https://github.com/ChenyCHENYU/Robot_Admin/commit/7835152e10e7aa38b82ff74be5ec89590eba4fc3))
+- **C_City/city:** c_City component and city view page wip finish ([7d8ab7c](https://github.com/ChenyCHENYU/Robot_Admin/commit/7d8ab7c428ce8757ba793f752465315a6e237efb))
+- **C_Code:** c_Code and view page dev finish ([59f4c99](https://github.com/ChenyCHENYU/Robot_Admin/commit/59f4c990193ca6e93d5af3bacde7b9c98b00ea90))
+- **C_Date/05-date:** c_Date compoent and 05_deta demo view wip fininsh ([e613509](https://github.com/ChenyCHENYU/Robot_Admin/commit/e613509480ecfae78945d3edc079a306a4ceffd2))
+- **C_Draggable:** c_Draggable compoents and views page dev finish ([f5f92c7](https://github.com/ChenyCHENYU/Robot_Admin/commit/f5f92c72ccc2e92bcddb2eaf185cc346ae641e8a))
+- **C_FilePreview/file-preview:** components and views page finish ([1c124e1](https://github.com/ChenyCHENYU/Robot_Admin/commit/1c124e15773c21b393ade2d18025695f33df2745))
+- **C_Form/form:** c_Form compoents optimeza,form view page base version wip finish ([7c7e389](https://github.com/ChenyCHENYU/Robot_Admin/commit/7c7e3894d1e5abcb5429b8ededb30bb12fc4d27f))
+- **C_Form/form:** multiple layouts Finish ([002c9ab](https://github.com/ChenyCHENYU/Robot_Admin/commit/002c9ab7bc85673d11a08e629023a68e9b714c8e))
+- **C_FormSearch:** c_FormSearch and form views and style optimeza finish ([7691bb9](https://github.com/ChenyCHENYU/Robot_Admin/commit/7691bb99507879c5ad9b4f2c19ce279ca00b90a4))
+- **C_FullCalendar:** c_FullCalendar and calendar view page dev finish ([0c9d1f8](https://github.com/ChenyCHENYU/Robot_Admin/commit/0c9d1f80944e29cbc8d96ee4207419326c017939))
+- **C_GlobalSearch:** add global search components finish ([abd41d6](https://github.com/ChenyCHENYU/Robot_Admin/commit/abd41d6f7549da1ddd2959f5f49bfa79afced000))
+- **C_Icon:** c_Icon 3 use method finish ([799d4e9](https://github.com/ChenyCHENYU/Robot_Admin/commit/799d4e947258f6eb2d09307ac574a40c13d1207b))
+- **C_Icon:** 图标组件三种方式测验完成，配置了uno原子类 ([3188783](https://github.com/ChenyCHENYU/Robot_Admin/commit/3188783ea3c661d122aafcb3eb3af7f9f73f5b22))
+- **C_Language:** c_Language wip finish ([6b9e5f2](https://github.com/ChenyCHENYU/Robot_Admin/commit/6b9e5f2a306f1d1b8c805d4b51b579c8a3418d8a))
+- **C_MarkDonw:** markDown Editor dev finish await optimaze ([a960b0f](https://github.com/ChenyCHENYU/Robot_Admin/commit/a960b0f3a2518d018b8b5e1ce055df2ff3dcb428))
+- **C_Notice:** c_Notice wip finish ([b6801a2](https://github.com/ChenyCHENYU/Robot_Admin/commit/b6801a25fde38ae7b32d45488887d393844adf69))
+- **C_Progress/03-progress:** wip finish , style await optimeza ([c66542f](https://github.com/ChenyCHENYU/Robot_Admin/commit/c66542f7e68fea12373d878725c8ef400239ee7f))
+- **C_Steps/steps:** compoents and views page finish ([53cc298](https://github.com/ChenyCHENYU/Robot_Admin/commit/53cc298dc8a8c09643717177abe71e2b20082bf8))
+- **C_Table/DynamicTable:** dynamic Table dev finish ([b57ad3a](https://github.com/ChenyCHENYU/Robot_Admin/commit/b57ad3abe2fb9d08cf48248535fb064a35a308c8))
+- **C_Table/Expand:** c_Table and Expand Hooks and table-expand views dev finish ([b1b31d3](https://github.com/ChenyCHENYU/Robot_Admin/commit/b1b31d339a9109eb15da03d4d3bed5f4f2eddfa9))
+- **C_Table/table:** c_Table components and table view page dev fininsh ([498f21a](https://github.com/ChenyCHENYU/Robot_Admin/commit/498f21a1e37da203da28c31cc669e33a8f073393))
+- **C_TagsView:** tagsView wip finish ([c0c097b](https://github.com/ChenyCHENYU/Robot_Admin/commit/c0c097b24375144ee4a7bc15d5850b8ee0c95bc5))
+- **C_Time/04-time:** time component and time page wip finish ([f60d566](https://github.com/ChenyCHENYU/Robot_Admin/commit/f60d566b10a16f4580e4e728ba711be4cd291bbb))
+- **C_Tree/menu-manage:** c_Tree components and menu-manage views page dev fininsh ([1fbca2c](https://github.com/ChenyCHENYU/Robot_Admin/commit/1fbca2ca44f4383c4d08bbec92e56daadedfa3fc))
+- **C_VtableGantt/v-table-gantt:** component and views page finish ([29eca0f](https://github.com/ChenyCHENYU/Robot_Admin/commit/29eca0fb37c5daf46945915e65876dafd8b0de5d))
+- **copy-direct:** copy direct and views page dev finish ([35c10ea](https://github.com/ChenyCHENYU/Robot_Admin/commit/35c10ead641858ad5de8efa06fdf365f002fe8f8))
+- **debounce-direct:** debounce direct and views page dev finish ([4f243e2](https://github.com/ChenyCHENYU/Robot_Admin/commit/4f243e2fcfcbe3d3b4f81436477825aa50849f17))
+- **dictionary-manage:** dictionary manage views page finish ([ab02300](https://github.com/ChenyCHENYU/Robot_Admin/commit/ab023008a39d0108e1272c429938e6d7a846a60a))
+- **drag-direct:** drag direct and views page dev finish ([ee2ec3a](https://github.com/ChenyCHENYU/Robot_Admin/commit/ee2ec3a39f516efb54c3ffac84b286e28df6da9c))
+- **dynamicRouter.json:** config finish all icon ([93f2740](https://github.com/ChenyCHENYU/Robot_Admin/commit/93f274009152ba89adbee8a242ba751e274dad97))
+- **dynamicRouter.json:** dynamicRouter json data config finish ([2f300c2](https://github.com/ChenyCHENYU/Robot_Admin/commit/2f300c295126a525ea1e9ff1ed597e800bd63ef3))
+- **dynamicRouter.json:** 优化dynamicRouter.json文件，优化源数据 ([392f3be](https://github.com/ChenyCHENYU/Robot_Admin/commit/392f3bedee52c21aaf7d27ad80a4421cdc6d4f9b))
+- **form-modal:** form-modal dev finish ([e44096f](https://github.com/ChenyCHENYU/Robot_Admin/commit/e44096f80e7926c465ec4f7085511d3467fe0d32))
+- **form-modal:** form-modal dev finish ([7bfd7d1](https://github.com/ChenyCHENYU/Robot_Admin/commit/7bfd7d11c14d6f5717e9f7418a2570fd9563c4c6))
+- **form-modal:** form-modal optimeza finish ([b1ea9c7](https://github.com/ChenyCHENYU/Robot_Admin/commit/b1ea9c7a6a8baf2f6c31cad8e9d71c360f21589a))
+- **hooks:** add useFormSubmit hooks function finish ([1c4416b](https://github.com/ChenyCHENYU/Robot_Admin/commit/1c4416b4c8951b923db2db0601de4e4cdd4c9f5e))
+- **html:** add html loading plugin finish, optimize main use plugins finish ([f61b093](https://github.com/ChenyCHENYU/Robot_Admin/commit/f61b093ef10902a6b3dfc74ed14cb6643cfffe46))
+- **login/C_Form:** login wip... C_Form base finish ([2281f54](https://github.com/ChenyCHENYU/Robot_Admin/commit/2281f54997dc8d9caaa87345f5074961091bb2a5))
+- **login/dymicRouter|js|json:** login finish,dymicRouter wip finish, await wip layout or compoents ([44c0690](https://github.com/ChenyCHENYU/Robot_Admin/commit/44c06907fa285357b686bbb5488bafdc939e6712))
+- **login/home?echars:** login or logout finish, home view finish ([61ed598](https://github.com/ChenyCHENYU/Robot_Admin/commit/61ed598cc7c06071d67f989659d56c8b967aed8d))
+- **login:** login page transformation has been completed，Optimization eslint rules ([fccb753](https://github.com/ChenyCHENYU/Robot_Admin/commit/fccb753ab3da064df767e12791ca96eec72c38b8))
+- **login:** login view optimeza ([f3ea401](https://github.com/ChenyCHENYU/Robot_Admin/commit/f3ea401ebc8f67e315d064b9c36791510ea6683d))
+- **longpress-direct:** longpress direct and views page dev finish ([c0e1ddc](https://github.com/ChenyCHENYU/Robot_Admin/commit/c0e1ddcce9722116d7e4aaa60fb3c1291840fe57))
+- **menuTop:** logo use menu-top-logo(robot).webm ([c58e2ee](https://github.com/ChenyCHENYU/Robot_Admin/commit/c58e2eebd9e52f7eb56d9637c882a4971617545a))
+- **nprogress:** nprogress conifg router finish ([8ab9d17](https://github.com/ChenyCHENYU/Robot_Admin/commit/8ab9d17f65006c51ca1f98e80d0e9359f558634f))
+- **Pagination:** c_Table add Pagination finish ([87ebea7](https://github.com/ChenyCHENYU/Robot_Admin/commit/87ebea7395aab1dfc9c62aa953a2934a92b5dee6))
+- **permission-manage:** permission manage views page finish ([2159dee](https://github.com/ChenyCHENYU/Robot_Admin/commit/2159dee0934819987c6f125ec3cdbc8ecee64ea7))
+- **production:** add .env.production ([924de05](https://github.com/ChenyCHENYU/Robot_Admin/commit/924de0537a6273d1b8cc584172e39b1062b51fef))
+- **profile/useImage:** profile view and useImage hooks wip finish ([90dfdef](https://github.com/ChenyCHENYU/Robot_Admin/commit/90dfdef02ca8d4e561b056ff7ff3589bd8d68097))
+- **release-please:** add version manage tools ([a017ed2](https://github.com/ChenyCHENYU/Robot_Admin/commit/a017ed21004ffba009a133997efc907a15042571))
+- **script/type-check:** type-check Code debugging Finish ([4abd162](https://github.com/ChenyCHENYU/Robot_Admin/commit/4abd1621571a8841b5c1df90ebc6ae559042704d))
+- **scripts:** add envs mdir and scripts optimiza check-branch ([476a67c](https://github.com/ChenyCHENYU/Robot_Admin/commit/476a67cc71078787d49059ba011385ee0c7c9776))
+- **sys-manage/role-manage:** role manage views page finish ([b7dac79](https://github.com/ChenyCHENYU/Robot_Admin/commit/b7dac790d4e9151f2c797f240b30725c88ed6deb))
+- **theme/menu:** theme optimeza finish, menu open state finish ([b1d5f5b](https://github.com/ChenyCHENYU/Robot_Admin/commit/b1d5f5b7c474aced1e74473b42f3b200df813f22))
+- **theme/menu:** theme or menu fix or wip finish ([d0b57f5](https://github.com/ChenyCHENYU/Robot_Admin/commit/d0b57f5b7f4d09348dbb02bdec4cb79298c01604))
+- **throttle-direct:** throttle direct and views page dev finish ([c90d0b8](https://github.com/ChenyCHENYU/Robot_Admin/commit/c90d0b894c63ca9ab1e25040b2cfc3b4d67d675a))
+- **use Driver.js finish C_Guide:** style(C_TagsView): style optinmeza finish ([b9f5c56](https://github.com/ChenyCHENYU/Robot_Admin/commit/b9f5c56a5e0c0cfc89359a43b18371c99cbfc7dc))
+- **useCopy/18-copy-text:** useCopy hooks and copy-test views page dev finish ([5ae0cf8](https://github.com/ChenyCHENYU/Robot_Admin/commit/5ae0cf83759ae0af3758fd77a5342e7f44180979))
+- **useDownload/19-download-all:** useDownload hooks and 19-download-all views page dev finish ([51a2af9](https://github.com/ChenyCHENYU/Robot_Admin/commit/51a2af9b156caf05791625ab868e5d2f13dc5e2b))
+- **useExcel/excel-all:** useExcel hooks and excel-all views page finish ([d65ff9e](https://github.com/ChenyCHENYU/Robot_Admin/commit/d65ff9e077bd3c261722ab31b373f80749f80a9b))
+- **useJsZip/export-zip:** useJsZip Hooks and export-zip views page dev finish ([b65a446](https://github.com/ChenyCHENYU/Robot_Admin/commit/b65a446aac386747f6ddeeeec9f5fdce93d88f4c))
+- **user-manage:** user manage views page finish ([9297fdc](https://github.com/ChenyCHENYU/Robot_Admin/commit/9297fdc35a5e0782ee3dec2908732b0108c32804))
+- **version:** add main version updated ([8b63c18](https://github.com/ChenyCHENYU/Robot_Admin/commit/8b63c1844747386ac0a5a4ce809fd2a7c78a0ce5))
+- **watermark-direct:** watermark direct and views page dev finish ([0b2e623](https://github.com/ChenyCHENYU/Robot_Admin/commit/0b2e6237020bf52ab02a673b61457d2aa6257273))
+- **work-flow/C_WorkFlow:** compoents and views page finish ([3cbf78c](https://github.com/ChenyCHENYU/Robot_Admin/commit/3cbf78c60b567a3130f173185acbe3d244517737))
 
 ### Bug Fixes
 
-* **.env.production:** fix VITE_API_BASE or apifox url ([3404b64](https://github.com/ChenyCHENYU/Robot_Admin/commit/3404b6432bc94fa11a128f334f1598b85d82893d))
-* **15-markdown-editor:** type fix finish ([55d803c](https://github.com/ChenyCHENYU/Robot_Admin/commit/55d803c099fb37328573a64e1496656df9f692e1))
-* **C_Calendar:** fix type error ([86f73a1](https://github.com/ChenyCHENYU/Robot_Admin/commit/86f73a161dd1511c7c6c91a6fa69b8a4a74d1311))
-* **C_Editor:** resolve rendering jitter issue ([fc08b9d](https://github.com/ChenyCHENYU/Robot_Admin/commit/fc08b9d20a34992b32b2e967bb537effb47d9f02))
-* **C_TagsView/stores/app:** fix removeOtherTags finish ([0aed109](https://github.com/ChenyCHENYU/Robot_Admin/commit/0aed109d03c96e9876282a69d3bc77a00f377df9))
-* **C_WorkFlow:** fix func handleConfigSave data updated ([6f06d1e](https://github.com/ChenyCHENYU/Robot_Admin/commit/6f06d1e30b8832011c0299d315feeadd9c5436a7))
-* **C_WorkFlow:** type fix ([bd0a8f3](https://github.com/ChenyCHENYU/Robot_Admin/commit/bd0a8f3161106a736b9eaab2e734465c15dc1c36))
-* **copy-env.js:** optimiza checkout wrap manage and .env config file ([b05f8d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/b05f8d2e46e0e71ea03282e17cf649594ea9d6e2))
-* **d_menu:** icon style fix ([c5664bd](https://github.com/ChenyCHENYU/Robot_Admin/commit/c5664bd030d1b7d08e28fbf51430a72637181011))
-* **d_router.ts:** getShowMenuList func fix, dispose child router 1 view ([2a9e824](https://github.com/ChenyCHENYU/Robot_Admin/commit/2a9e824eb7894f07d4ac871f72a3de54baf6a8ef))
-* **dragable:** dragable views page fix finish ([8ef6546](https://github.com/ChenyCHENYU/Robot_Admin/commit/8ef6546805df0fabdcd2fe3e89a907a2966f626c))
-* **dynamic title:** fix logout doucment.title(dynamic) ([4967cbe](https://github.com/ChenyCHENYU/Robot_Admin/commit/4967cbece794ffe485f229cec8edb60a1604aeee))
-* **env:** fix VITE_API_BASE name ([ac36768](https://github.com/ChenyCHENYU/Robot_Admin/commit/ac36768964dcb5c21892863c47a62fa2abba8dd1))
-* **menu-manage:** menu manage views page fix expandAll finish ([e7afe54](https://github.com/ChenyCHENYU/Robot_Admin/commit/e7afe541c34d0253fffa49c9374e1a6261b4655e))
-* **menu/layout:** folding icon function and style repair ([87427e5](https://github.com/ChenyCHENYU/Robot_Admin/commit/87427e5d8f410e4d2a7347b3e27a7c51bfeb9162))
-* **menu:** menu to next path fix finish ([6ec7c5f](https://github.com/ChenyCHENYU/Robot_Admin/commit/6ec7c5ff2299574a71c1ae13dcec70cf1766db5c))
-* **package.json:** fix type checked shell and optimiza ([8d27bfa](https://github.com/ChenyCHENYU/Robot_Admin/commit/8d27bfa24561950e74fa8e2c8e5bb50bfca65d24))
-* **permission:** fix permission login loop error ([6a6bbd2](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a6bbd2a9d46e4917f07a4fb0cd5541046c5f5f2))
-* **plugin/loading:** loading animition optimeza ([5b38f2f](https://github.com/ChenyCHENYU/Robot_Admin/commit/5b38f2f6bdbd275174995ae429829bef3cdda589))
-* **plugin/loading:** loading animition optimeza ([0d850f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/0d850f91b6afbec3e2037f3a2cd69dda1d26b9ef))
-* **plugin/loading:** lodding optimize ([13cf3b3](https://github.com/ChenyCHENYU/Robot_Admin/commit/13cf3b3d6836a496afc787bc90ec65447603e9ea))
-* **publicRouter.ts:** delete the redundant mete configuration items "link" ([0954678](https://github.com/ChenyCHENYU/Robot_Admin/commit/095467801f0d431431973279fd52b642e5804f91))
-* **release-please.yml:** fix permissions all write ([fd09596](https://github.com/ChenyCHENYU/Robot_Admin/commit/fd09596fcfe241fcb7ac29c2e499ed16d907c554))
-* **release-please:** delte lables prop ([faa441e](https://github.com/ChenyCHENYU/Robot_Admin/commit/faa441ee547540f6165271916252c6f3688d0745))
-* **release-please:** json config and yml fix ([fc9ba78](https://github.com/ChenyCHENYU/Robot_Admin/commit/fc9ba789488e890742be83883d4869ff54e58bb2))
-* **role-manage:** add and edit modal fix finish ([a7cb4e5](https://github.com/ChenyCHENYU/Robot_Admin/commit/a7cb4e55e83e989680528109592e64bf0e5a8c1b))
-* **theme/layout:** layout theme switch config finish ([b75e5dd](https://github.com/ChenyCHENYU/Robot_Admin/commit/b75e5dd4362558d1f953d960956d3fd8037bb54d))
-* **theme:** fix default theme bg color finish ([43ae621](https://github.com/ChenyCHENYU/Robot_Admin/commit/43ae6218541ed7c51b4bbdaa5d5fe159b209b08b))
-* **theme:** fix theme style ([6075c4f](https://github.com/ChenyCHENYU/Robot_Admin/commit/6075c4f1699e0c4b5c8c1cf57ff88028c886f834))
-* **theme:** theme switch or default optimiza finish ([a80f45c](https://github.com/ChenyCHENYU/Robot_Admin/commit/a80f45c998f8451ec72f4a17322ad6fb085e4b10))
-* **thmem:** fix theme switch finish ([06ed267](https://github.com/ChenyCHENYU/Robot_Admin/commit/06ed267e16e99928e559ab2553e089852088a7db))
-* **tsconfig.app.json:** fix type use json file warning ([774edc2](https://github.com/ChenyCHENYU/Robot_Admin/commit/774edc275243545746789e9e0c87b62652fc9bba))
-* **tsconfig.vitest.json:** updated config info ([c338285](https://github.com/ChenyCHENYU/Robot_Admin/commit/c3382856d9e98dff7d32ad982058a04e5f3062fa))
-* **tsconfig:** fix baseURL path ([fd61c55](https://github.com/ChenyCHENYU/Robot_Admin/commit/fd61c55cc672be83804479b8a38dafaf2ffd24d2))
-* **type:** fix all type import error,from  naive-ui switch or naive-ui/es ([137653b](https://github.com/ChenyCHENYU/Robot_Admin/commit/137653b21ef428da9ba4caa2685600263503fb88))
-* **version/release-please.yml:** file code updated, fix package-name ([7f4b980](https://github.com/ChenyCHENYU/Robot_Admin/commit/7f4b9806ded7a4e29ef598ff70a05d3bdc7f09de))
-
+- **.env.production:** fix VITE_API_BASE or apifox url ([3404b64](https://github.com/ChenyCHENYU/Robot_Admin/commit/3404b6432bc94fa11a128f334f1598b85d82893d))
+- **15-markdown-editor:** type fix finish ([55d803c](https://github.com/ChenyCHENYU/Robot_Admin/commit/55d803c099fb37328573a64e1496656df9f692e1))
+- **C_Calendar:** fix type error ([86f73a1](https://github.com/ChenyCHENYU/Robot_Admin/commit/86f73a161dd1511c7c6c91a6fa69b8a4a74d1311))
+- **C_Editor:** resolve rendering jitter issue ([fc08b9d](https://github.com/ChenyCHENYU/Robot_Admin/commit/fc08b9d20a34992b32b2e967bb537effb47d9f02))
+- **C_TagsView/stores/app:** fix removeOtherTags finish ([0aed109](https://github.com/ChenyCHENYU/Robot_Admin/commit/0aed109d03c96e9876282a69d3bc77a00f377df9))
+- **C_WorkFlow:** fix func handleConfigSave data updated ([6f06d1e](https://github.com/ChenyCHENYU/Robot_Admin/commit/6f06d1e30b8832011c0299d315feeadd9c5436a7))
+- **C_WorkFlow:** type fix ([bd0a8f3](https://github.com/ChenyCHENYU/Robot_Admin/commit/bd0a8f3161106a736b9eaab2e734465c15dc1c36))
+- **copy-env.js:** optimiza checkout wrap manage and .env config file ([b05f8d2](https://github.com/ChenyCHENYU/Robot_Admin/commit/b05f8d2e46e0e71ea03282e17cf649594ea9d6e2))
+- **d_menu:** icon style fix ([c5664bd](https://github.com/ChenyCHENYU/Robot_Admin/commit/c5664bd030d1b7d08e28fbf51430a72637181011))
+- **d_router.ts:** getShowMenuList func fix, dispose child router 1 view ([2a9e824](https://github.com/ChenyCHENYU/Robot_Admin/commit/2a9e824eb7894f07d4ac871f72a3de54baf6a8ef))
+- **dragable:** dragable views page fix finish ([8ef6546](https://github.com/ChenyCHENYU/Robot_Admin/commit/8ef6546805df0fabdcd2fe3e89a907a2966f626c))
+- **dynamic title:** fix logout doucment.title(dynamic) ([4967cbe](https://github.com/ChenyCHENYU/Robot_Admin/commit/4967cbece794ffe485f229cec8edb60a1604aeee))
+- **env:** fix VITE_API_BASE name ([ac36768](https://github.com/ChenyCHENYU/Robot_Admin/commit/ac36768964dcb5c21892863c47a62fa2abba8dd1))
+- **menu-manage:** menu manage views page fix expandAll finish ([e7afe54](https://github.com/ChenyCHENYU/Robot_Admin/commit/e7afe541c34d0253fffa49c9374e1a6261b4655e))
+- **menu/layout:** folding icon function and style repair ([87427e5](https://github.com/ChenyCHENYU/Robot_Admin/commit/87427e5d8f410e4d2a7347b3e27a7c51bfeb9162))
+- **menu:** menu to next path fix finish ([6ec7c5f](https://github.com/ChenyCHENYU/Robot_Admin/commit/6ec7c5ff2299574a71c1ae13dcec70cf1766db5c))
+- **package.json:** fix type checked shell and optimiza ([8d27bfa](https://github.com/ChenyCHENYU/Robot_Admin/commit/8d27bfa24561950e74fa8e2c8e5bb50bfca65d24))
+- **permission:** fix permission login loop error ([6a6bbd2](https://github.com/ChenyCHENYU/Robot_Admin/commit/6a6bbd2a9d46e4917f07a4fb0cd5541046c5f5f2))
+- **plugin/loading:** loading animition optimeza ([5b38f2f](https://github.com/ChenyCHENYU/Robot_Admin/commit/5b38f2f6bdbd275174995ae429829bef3cdda589))
+- **plugin/loading:** loading animition optimeza ([0d850f9](https://github.com/ChenyCHENYU/Robot_Admin/commit/0d850f91b6afbec3e2037f3a2cd69dda1d26b9ef))
+- **plugin/loading:** lodding optimize ([13cf3b3](https://github.com/ChenyCHENYU/Robot_Admin/commit/13cf3b3d6836a496afc787bc90ec65447603e9ea))
+- **publicRouter.ts:** delete the redundant mete configuration items "link" ([0954678](https://github.com/ChenyCHENYU/Robot_Admin/commit/095467801f0d431431973279fd52b642e5804f91))
+- **release-please.yml:** fix permissions all write ([fd09596](https://github.com/ChenyCHENYU/Robot_Admin/commit/fd09596fcfe241fcb7ac29c2e499ed16d907c554))
+- **release-please:** delte lables prop ([faa441e](https://github.com/ChenyCHENYU/Robot_Admin/commit/faa441ee547540f6165271916252c6f3688d0745))
+- **release-please:** json config and yml fix ([fc9ba78](https://github.com/ChenyCHENYU/Robot_Admin/commit/fc9ba789488e890742be83883d4869ff54e58bb2))
+- **role-manage:** add and edit modal fix finish ([a7cb4e5](https://github.com/ChenyCHENYU/Robot_Admin/commit/a7cb4e55e83e989680528109592e64bf0e5a8c1b))
+- **theme/layout:** layout theme switch config finish ([b75e5dd](https://github.com/ChenyCHENYU/Robot_Admin/commit/b75e5dd4362558d1f953d960956d3fd8037bb54d))
+- **theme:** fix default theme bg color finish ([43ae621](https://github.com/ChenyCHENYU/Robot_Admin/commit/43ae6218541ed7c51b4bbdaa5d5fe159b209b08b))
+- **theme:** fix theme style ([6075c4f](https://github.com/ChenyCHENYU/Robot_Admin/commit/6075c4f1699e0c4b5c8c1cf57ff88028c886f834))
+- **theme:** theme switch or default optimiza finish ([a80f45c](https://github.com/ChenyCHENYU/Robot_Admin/commit/a80f45c998f8451ec72f4a17322ad6fb085e4b10))
+- **thmem:** fix theme switch finish ([06ed267](https://github.com/ChenyCHENYU/Robot_Admin/commit/06ed267e16e99928e559ab2553e089852088a7db))
+- **tsconfig.app.json:** fix type use json file warning ([774edc2](https://github.com/ChenyCHENYU/Robot_Admin/commit/774edc275243545746789e9e0c87b62652fc9bba))
+- **tsconfig.vitest.json:** updated config info ([c338285](https://github.com/ChenyCHENYU/Robot_Admin/commit/c3382856d9e98dff7d32ad982058a04e5f3062fa))
+- **tsconfig:** fix baseURL path ([fd61c55](https://github.com/ChenyCHENYU/Robot_Admin/commit/fd61c55cc672be83804479b8a38dafaf2ffd24d2))
+- **type:** fix all type import error,from naive-ui switch or naive-ui/es ([137653b](https://github.com/ChenyCHENYU/Robot_Admin/commit/137653b21ef428da9ba4caa2685600263503fb88))
+- **version/release-please.yml:** file code updated, fix package-name ([7f4b980](https://github.com/ChenyCHENYU/Robot_Admin/commit/7f4b9806ded7a4e29ef598ff70a05d3bdc7f09de))
 
 ### Performance Improvements
 
-* **C_AntV/ER/BPMN/UML:** components splice data scss finish ([296d7e8](https://github.com/ChenyCHENYU/Robot_Admin/commit/296d7e865b9f571af8ad922fd5c04510f2716c8b))
-* **C_Breadcrumb/C_Tags:** breadcrumb and Tags compoents icon splice C_IcON finish ([c7112bc](https://github.com/ChenyCHENYU/Robot_Admin/commit/c7112bc8bb055d8ffa1e6135eeb44d4522bcc420))
-* **C_FilePreview:** components optimiza finish ([7a60bb5](https://github.com/ChenyCHENYU/Robot_Admin/commit/7a60bb52441ecd4f92c7e542698879bb5156dcf0))
-* **C_Menu:** optimiza route to expand menu ([42a1bdf](https://github.com/ChenyCHENYU/Robot_Admin/commit/42a1bdf6d5052cd61c4fd74fd947f166e64da28d))
-* **c_role/role-manage:** slice role manage, c_role and role manage views page optimiza ([4766921](https://github.com/ChenyCHENYU/Robot_Admin/commit/476692182d3abb7452f6a12c8ae5d0af06dd8e88))
-* **C_Table/table:** compoent add default action btn, optimiza table views page ([28ba8e6](https://github.com/ChenyCHENYU/Robot_Admin/commit/28ba8e61bab7ee1b50c4c1652107fd12b26cef6f))
-* **C_Tree/menu-manage:** c_Tree compoents and menu-manage views page optimize finish ([3a8f879](https://github.com/ChenyCHENYU/Robot_Admin/commit/3a8f879f0a980f958300aef83156b86475aa26c2))
-* **C_Tree:** c_Tree use C_Icon optimize ([e6d871d](https://github.com/ChenyCHENYU/Robot_Admin/commit/e6d871d98d313b3fd39de95967e0533aa1a3ad6a))
-* **C_WorkFlow:** code optimiza fininsh ([c29f654](https://github.com/ChenyCHENYU/Robot_Admin/commit/c29f65448a2a7fca41529526738723d7bc239e44))
-* **C_WorkFlow:** compoent perf optimiza and style optimiza ([9d0f767](https://github.com/ChenyCHENYU/Robot_Admin/commit/9d0f767e319cad97e6892be9246f6cfb19242046))
-* **C_WorkFlow:** optimiza ([e429671](https://github.com/ChenyCHENYU/Robot_Admin/commit/e429671d537ffe480c90a6157e5394583141d659))
-* **check-branch:** use npm optimiza check-branch scripts file, optimiza pacage command ([c7f0305](https://github.com/ChenyCHENYU/Robot_Admin/commit/c7f0305514531657660f6a5477f1afa6fa309e91))
-* **copy-env.ejs:** perf copy-env.js or mjs, optimiza copy .env file code finish ([ca78ebc](https://github.com/ChenyCHENYU/Robot_Admin/commit/ca78ebcc16cf300c556e420dba93bf1dbd57101e))
-* **copy-env/check-branch:** copy-env use npm manger，checkout-branch optimiza ([5ca3b30](https://github.com/ChenyCHENYU/Robot_Admin/commit/5ca3b30bf5e30e4c0066ef8eec38221c716290a7))
-* **Custom/Form:** c_Draggable replace vuedraggable and optimeza Form layout style finish ([dd07a6a](https://github.com/ChenyCHENYU/Robot_Admin/commit/dd07a6a568a253f66e04deac727a04c1ed92e917))
-* **dynamicRouter.ts:** optimiza code ,try error tip ([65260f1](https://github.com/ChenyCHENYU/Robot_Admin/commit/65260f1fee99e6da7c2a9e1a6e389c34fbac493b))
-* **excel-all:** split data and scss file finish ([26147e9](https://github.com/ChenyCHENYU/Robot_Admin/commit/26147e99a94938023702879f962df7931a2fd490))
-* **home:** home optimiza fininsh ([a595da4](https://github.com/ChenyCHENYU/Robot_Admin/commit/a595da4d467aedbebbb152cf6e0e50c3780aee8b))
-* **home:** optimiza ([3cb4c5f](https://github.com/ChenyCHENYU/Robot_Admin/commit/3cb4c5f95d9d62bb88222b451b6d92749c16ff57))
-* **main.ts:** 优化app实例链式调用 ([4f43af4](https://github.com/ChenyCHENYU/Robot_Admin/commit/4f43af48bef94bb90980ca1d16c5bc265cf6d3ce))
-* **MarkdownEditor:** c_Markdown and page views optimeza finish ([c1603aa](https://github.com/ChenyCHENYU/Robot_Admin/commit/c1603aa558b10741b4d35fb75a38fcfde441e59d))
-* **passive-scroll:** passive-scroll.ts optimeza finish ([50b7e31](https://github.com/ChenyCHENYU/Robot_Admin/commit/50b7e316d42ea5ff089956a1ee01f94a660a3638))
-* **role-manage:** role manage views page optimiza ([db81ac7](https://github.com/ChenyCHENYU/Robot_Admin/commit/db81ac78a9194dbb14f1055fc957dc19117f1993))
-* **sys-manage/user-manage:** user manage views page optimiza finish ([5ff2353](https://github.com/ChenyCHENYU/Robot_Admin/commit/5ff2353f90fed5a3d0daab57494abe4ea7d59c0d))
-* **sys-mange/role-mange:** role manage code optimiza ([8031b53](https://github.com/ChenyCHENYU/Robot_Admin/commit/8031b53f5c8857930b72a61a99df86a4950beb6e))
-* **tscofnig:** add mdir manage tsconfig all file, optimiza path import ([7b721cd](https://github.com/ChenyCHENYU/Robot_Admin/commit/7b721cdc84505f9ef4919254e87d37d4dc874d12))
-* **useInitTreeMap:** optimeza finish ([be4b306](https://github.com/ChenyCHENYU/Robot_Admin/commit/be4b30626f1c7e1cdf557db75681c2833d483634))
-* **work-flow-editor:** optimiza ([6cad2fd](https://github.com/ChenyCHENYU/Robot_Admin/commit/6cad2fdb6f678f57378449360414b65ab9349594))
+- **C_AntV/ER/BPMN/UML:** components splice data scss finish ([296d7e8](https://github.com/ChenyCHENYU/Robot_Admin/commit/296d7e865b9f571af8ad922fd5c04510f2716c8b))
+- **C_Breadcrumb/C_Tags:** breadcrumb and Tags compoents icon splice C_IcON finish ([c7112bc](https://github.com/ChenyCHENYU/Robot_Admin/commit/c7112bc8bb055d8ffa1e6135eeb44d4522bcc420))
+- **C_FilePreview:** components optimiza finish ([7a60bb5](https://github.com/ChenyCHENYU/Robot_Admin/commit/7a60bb52441ecd4f92c7e542698879bb5156dcf0))
+- **C_Menu:** optimiza route to expand menu ([42a1bdf](https://github.com/ChenyCHENYU/Robot_Admin/commit/42a1bdf6d5052cd61c4fd74fd947f166e64da28d))
+- **c_role/role-manage:** slice role manage, c_role and role manage views page optimiza ([4766921](https://github.com/ChenyCHENYU/Robot_Admin/commit/476692182d3abb7452f6a12c8ae5d0af06dd8e88))
+- **C_Table/table:** compoent add default action btn, optimiza table views page ([28ba8e6](https://github.com/ChenyCHENYU/Robot_Admin/commit/28ba8e61bab7ee1b50c4c1652107fd12b26cef6f))
+- **C_Tree/menu-manage:** c_Tree compoents and menu-manage views page optimize finish ([3a8f879](https://github.com/ChenyCHENYU/Robot_Admin/commit/3a8f879f0a980f958300aef83156b86475aa26c2))
+- **C_Tree:** c_Tree use C_Icon optimize ([e6d871d](https://github.com/ChenyCHENYU/Robot_Admin/commit/e6d871d98d313b3fd39de95967e0533aa1a3ad6a))
+- **C_WorkFlow:** code optimiza fininsh ([c29f654](https://github.com/ChenyCHENYU/Robot_Admin/commit/c29f65448a2a7fca41529526738723d7bc239e44))
+- **C_WorkFlow:** compoent perf optimiza and style optimiza ([9d0f767](https://github.com/ChenyCHENYU/Robot_Admin/commit/9d0f767e319cad97e6892be9246f6cfb19242046))
+- **C_WorkFlow:** optimiza ([e429671](https://github.com/ChenyCHENYU/Robot_Admin/commit/e429671d537ffe480c90a6157e5394583141d659))
+- **check-branch:** use npm optimiza check-branch scripts file, optimiza pacage command ([c7f0305](https://github.com/ChenyCHENYU/Robot_Admin/commit/c7f0305514531657660f6a5477f1afa6fa309e91))
+- **copy-env.ejs:** perf copy-env.js or mjs, optimiza copy .env file code finish ([ca78ebc](https://github.com/ChenyCHENYU/Robot_Admin/commit/ca78ebcc16cf300c556e420dba93bf1dbd57101e))
+- **copy-env/check-branch:** copy-env use npm manger，checkout-branch optimiza ([5ca3b30](https://github.com/ChenyCHENYU/Robot_Admin/commit/5ca3b30bf5e30e4c0066ef8eec38221c716290a7))
+- **Custom/Form:** c_Draggable replace vuedraggable and optimeza Form layout style finish ([dd07a6a](https://github.com/ChenyCHENYU/Robot_Admin/commit/dd07a6a568a253f66e04deac727a04c1ed92e917))
+- **dynamicRouter.ts:** optimiza code ,try error tip ([65260f1](https://github.com/ChenyCHENYU/Robot_Admin/commit/65260f1fee99e6da7c2a9e1a6e389c34fbac493b))
+- **excel-all:** split data and scss file finish ([26147e9](https://github.com/ChenyCHENYU/Robot_Admin/commit/26147e99a94938023702879f962df7931a2fd490))
+- **home:** home optimiza fininsh ([a595da4](https://github.com/ChenyCHENYU/Robot_Admin/commit/a595da4d467aedbebbb152cf6e0e50c3780aee8b))
+- **home:** optimiza ([3cb4c5f](https://github.com/ChenyCHENYU/Robot_Admin/commit/3cb4c5f95d9d62bb88222b451b6d92749c16ff57))
+- **main.ts:** 优化app实例链式调用 ([4f43af4](https://github.com/ChenyCHENYU/Robot_Admin/commit/4f43af48bef94bb90980ca1d16c5bc265cf6d3ce))
+- **MarkdownEditor:** c_Markdown and page views optimeza finish ([c1603aa](https://github.com/ChenyCHENYU/Robot_Admin/commit/c1603aa558b10741b4d35fb75a38fcfde441e59d))
+- **passive-scroll:** passive-scroll.ts optimeza finish ([50b7e31](https://github.com/ChenyCHENYU/Robot_Admin/commit/50b7e316d42ea5ff089956a1ee01f94a660a3638))
+- **role-manage:** role manage views page optimiza ([db81ac7](https://github.com/ChenyCHENYU/Robot_Admin/commit/db81ac78a9194dbb14f1055fc957dc19117f1993))
+- **sys-manage/user-manage:** user manage views page optimiza finish ([5ff2353](https://github.com/ChenyCHENYU/Robot_Admin/commit/5ff2353f90fed5a3d0daab57494abe4ea7d59c0d))
+- **sys-mange/role-mange:** role manage code optimiza ([8031b53](https://github.com/ChenyCHENYU/Robot_Admin/commit/8031b53f5c8857930b72a61a99df86a4950beb6e))
+- **tscofnig:** add mdir manage tsconfig all file, optimiza path import ([7b721cd](https://github.com/ChenyCHENYU/Robot_Admin/commit/7b721cdc84505f9ef4919254e87d37d4dc874d12))
+- **useInitTreeMap:** optimeza finish ([be4b306](https://github.com/ChenyCHENYU/Robot_Admin/commit/be4b30626f1c7e1cdf557db75681c2833d483634))
+- **work-flow-editor:** optimiza ([6cad2fd](https://github.com/ChenyCHENYU/Robot_Admin/commit/6cad2fdb6f678f57378449360414b65ab9349594))

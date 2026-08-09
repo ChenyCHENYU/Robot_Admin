@@ -21,7 +21,7 @@ import type {
   PasswordFormData,
   CaptchaFormData,
   RegisterFormData,
-} from '@robot-admin/naive-ui-components'
+} from '@robot-admin/naive-ui-components/C_Login'
 
 // ======================== Types ========================
 
