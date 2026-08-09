@@ -176,8 +176,6 @@ router.beforeEach(
       return true
     } catch (error) {
       return handleRouteError(error)
-    } finally {
-      nprogress.done()
     }
   }
 )
@@ -200,6 +198,9 @@ router.onError((error: Error) => {
 
 // 后置钩子
 router.afterEach((to, from, failure) => {
+  // afterEach 在异步路由组件解析完成后触发，进度条覆盖真实页面加载周期
+  nprogress.done()
+
   if (import.meta.env.DEV && failure) {
     console.error('❌ 路由跳转失败:', failure.message)
   }

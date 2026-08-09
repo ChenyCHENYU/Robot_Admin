@@ -10,6 +10,8 @@ export interface PostAuthLoginResponse {
   code: string
   data: {
     token: string
+    refreshToken?: string
+    expiresIn?: number
     [key: string]: unknown
   }
   msg: string

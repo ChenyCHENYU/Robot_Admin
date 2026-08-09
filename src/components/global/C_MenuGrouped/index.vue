@@ -42,6 +42,8 @@
           'mg__item--active': isActive(menu),
           'mg__item--expanded': expandedKey === fullPath(menu),
         }"
+        @pointerenter="handleRouteIntent(menu)"
+        @focusin="handleRouteIntent(menu)"
         @click="onItemClick(menu)"
       >
         <C_Icon
@@ -118,6 +120,8 @@
                 :class="{
                   'mg-panel__cell--active': route.path === fullPath(item),
                 }"
+                @pointerenter="handleRouteIntent(item)"
+                @focusin="handleRouteIntent(item)"
                 @click="navigateTo(item)"
               >
                 <C_Icon
@@ -151,6 +155,8 @@
                   :class="{
                     'mg-panel__cell--active': route.path === fullPath(leaf),
                   }"
+                  @pointerenter="handleRouteIntent(leaf)"
+                  @focusin="handleRouteIntent(leaf)"
                   @click="navigateTo(leaf)"
                 >
                   <C_Icon
@@ -176,6 +182,8 @@
               :class="{
                 'mg-panel__cell--active': route.path === fullPath(child),
               }"
+              @pointerenter="handleRouteIntent(child)"
+              @focusin="handleRouteIntent(child)"
               @click="navigateTo(child)"
             >
               <C_Icon
@@ -201,6 +209,7 @@
     GROUP_COLORS,
     type MenuGroupConfig,
   } from './data'
+  import { prefetchHeavyRoute } from '@/router/routePrefetch'
 
   defineOptions({ name: 'C_MenuGrouped' })
 
@@ -392,6 +401,10 @@
   const fmtLabel = (item: MenuOptions | MenuGroup | any): string => {
     const title = item.meta?.title || item.label || item.name || ''
     return props.labelFormatter ? props.labelFormatter(title) : title
+  }
+
+  const handleRouteIntent = (menu: MenuOptions): void => {
+    if (!menu.children?.length) void prefetchHeavyRoute(fullPath(menu))
   }
 
   const getGroupColor = (i: number) => GROUP_COLORS[i % GROUP_COLORS.length]

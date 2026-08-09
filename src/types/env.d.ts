@@ -17,6 +17,7 @@ interface ImportMetaEnv {
   readonly BASE_URL: string
   readonly VITE_ROUTER_MODE: 'hash' | 'history'
   readonly VITE_API_BASE?: string
+  readonly VITE_AUTH_MODE?: 'mock' | 'remote'
   readonly VITE_APP_TITLE?: string
   readonly VITE_APP_VERSION?: string
   readonly VITE_APP_ENV?: 'development' | 'test' | 'staging' | 'production'

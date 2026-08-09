@@ -403,13 +403,17 @@
 </template>
 
 <script setup lang="ts">
+  import { setupFileUtils } from '@/plugins/file-utils'
   import {
     type UploadFileInfo,
     type DataTableColumns,
     type SelectOption,
   } from 'naive-ui/es'
   import { useExcel, type ExcelTemplate } from '@robot-admin/file-utils'
+
   import { PREVIEW_ROWS, sampleData, historyColumns } from './data'
+
+  setupFileUtils()
 
   // Hooks
   const {

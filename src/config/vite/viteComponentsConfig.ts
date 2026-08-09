@@ -54,7 +54,7 @@ export default Components({
     isLocalMode
       ? (name: string) =>
           libraryComponents.has(name) ? { name, from: PKG } : undefined
-      : RobotNaiveUiResolver(),
+      : RobotNaiveUiResolver({ importOnDemand: true }),
     componentName => {
       // 已迁移到组件库的 → 由上方 resolver 处理，此处跳过
       if (libraryComponents.has(componentName)) return null

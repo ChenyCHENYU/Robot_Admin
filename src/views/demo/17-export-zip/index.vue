@@ -249,6 +249,7 @@
 </template>
 
 <script setup lang="ts">
+  import { setupFileUtils } from '@/plugins/file-utils'
   import {
     useJSZip,
     type CodeProjectConfig,
@@ -256,6 +257,7 @@
     type MediaConfig,
     type TemplateConfig,
   } from '@robot-admin/file-utils'
+
   import type { UploadFileInfo } from 'naive-ui/es/upload'
   import {
     type FrameworkType,
@@ -273,6 +275,8 @@
     getFileCategory,
     isValidUploadFile,
   } from './data'
+
+  setupFileUtils()
 
   const jszip = useJSZip()
 

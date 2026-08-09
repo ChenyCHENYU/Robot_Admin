@@ -159,7 +159,7 @@ _在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `Type
 
 ## 🚀 快速开始（真的很快！）
 
-> 🎉 **推荐使用 Bun** - 体验前所未有的安装速度
+> 🎉 本项目统一使用 **Bun**，请勿混用 npm、yarn 或 pnpm，以免锁文件和依赖树不一致。
 
 ```bash
 # 1. 克隆项目
@@ -168,12 +168,11 @@ git clone https://github.com/ChenyCHENYU/robot_admin.git
 # 2. 进入目录
 cd robot_admin
 
-# 3. 安装依赖（如闪电般快速）
-bun install    # 推荐！速度提升10倍
-# 或使用 npm install / yarn install / pnpm install
+# 3. 安装依赖
+bun install
 
-# 4. 启动项目（毫秒级启动）
-bun dev
+# 4. 启动项目
+bun run dev
 ```
 
 **🔥 首次启动只需 2 秒不到，后续热更新不到 100ms！**
@@ -183,7 +182,7 @@ bun dev
 
 ```bash
 # 开发相关
-bun dev                # 开发环境启动
+bun run dev            # 开发环境启动
 bun run build          # 生产环境构建
 bun run build:test     # 测试环境构建
 bun run build:staging  # 预发布构建
@@ -191,20 +190,28 @@ bun run preview        # 本地预览构建结果
 
 # 代码质量
 bun run lint           # 代码检查和修复
+bun run lint:check     # 只检查，不修改文件
 bun run format         # 代码格式化
-bun test:unit          # 单元测试
+bun run test           # 单元测试
+bun run verify         # Lint + 类型 + 测试 + 生产构建
 
 # 类型检查
 bun run type-watch     # 监听模式类型检查
-bun run type:check     # 智能类型分析
+bun run type-build     # 完整类型检查
 
 # 其他
 bun run commit         # 规范化提交（git cz）
-bun outdated           # 检查依赖更新
-bun clean              # 清理缓存
 ```
 
 </details>
+
+---
+
+### 🔐 认证 Mock 与后端切换
+
+项目在没有后端工程时默认使用闭环 Mock 认证，登录、令牌刷新和用户信息的响应结构与远端接口保持一致。任意非空用户名和密码均可登录；Mock 令牌为随机不透明字符串，不包含明文凭据。
+
+接入后端时只需在环境配置中设置 `VITE_AUTH_MODE=remote`，并通过 `VITE_API_BASE` 指定接口地址，无需修改页面和状态管理代码。认证契约位于 `src/api/auth.contract.ts`，Mock 实现位于 `src/api/auth.mock.ts`。
 
 ---
 
@@ -858,8 +865,8 @@ curl -fsSL https://bun.sh/install | bash
 # macOS 用户
 brew install oven-sh/bun/bun
 
-# 或使用 npm 安装
-npm install -g bun
+# PowerShell 用户也可使用 Bun 官方安装脚本
+powershell -c "irm bun.sh/install.ps1 | iex"
 ```
 
 ### ⚠️ 端口占用问题
@@ -876,7 +883,7 @@ server: {
 
 ```bash
 # 重新生成类型文件
-bun run type:check
+bun run type-build
 
 # 清除类型缓存
 rm -rf node_modules/.cache

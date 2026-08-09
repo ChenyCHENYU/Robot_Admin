@@ -25,7 +25,9 @@ const buildConfig: BuildOptions = {
           // 编辑器相关
           {
             name: 'editor-vendor',
-            test: /[\\/]node_modules[\\/](@kangc[\\/]v-md-editor|wangeditor|highlight\.js)[\\/]/,
+            // highlight.js 在启动阶段注册，不能与路由级富文本编辑器合并，
+            // 否则会把全部编辑器代码提升为首屏 preload。
+            test: /[\\/]node_modules[\\/](@kangc[\\/]v-md-editor|wangeditor)[\\/]/,
           },
           // ECharts 可视化
           {
@@ -42,11 +44,8 @@ const buildConfig: BuildOptions = {
             name: 'calendar-vendor',
             test: /[\\/]node_modules[\\/]@fullcalendar[\\/]/,
           },
-          // 3D 渲染
-          {
-            name: 'spline-vendor',
-            test: /[\\/]node_modules[\\/]@splinetool[\\/]/,
-          },
+          // Spline 仅在登录背景组件内动态导入，交由 Rolldown 按路由分包，
+          // 避免固定 vendor 组被提升为入口 preload。
           // 流程图/图编辑器
           {
             name: 'graph-vendor',

@@ -126,6 +126,7 @@
 </template>
 
 <script setup lang="ts">
+  import { setupFileUtils } from '@/plugins/file-utils'
   import {
     useDownload,
     useDownloadExcel,
@@ -136,12 +137,15 @@
     getSupportedFileTypes,
     type DownloadConfig,
   } from '@robot-admin/file-utils'
+
   import {
     createMockApi,
     batchFiles,
     historyColumns,
     type HistoryItem,
   } from './data'
+
+  setupFileUtils()
   const message = useMessage()
 
   // 加载状态

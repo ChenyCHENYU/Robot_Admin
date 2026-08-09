@@ -158,7 +158,7 @@ _Here, when `Bun's` ultimate performance meets `Vue3's` Composition API, when `T
 
 ## 🚀 Quick Start (Lightning Fast!)
 
-> 🎉 **Recommended using Bun** - Experience unprecedented installation speed
+> 🎉 This project standardizes on **Bun**. Do not mix npm, yarn, or pnpm, as doing so can produce inconsistent lockfiles and dependency trees.
 
 ```bash
 # 1. Clone project
@@ -167,12 +167,11 @@ git clone https://github.com/ChenyCHENYU/robot_admin.git
 # 2. Enter directory
 cd robot_admin
 
-# 3. Install dependencies (lightning fast)
-bun install    # Recommended! 10x speed boost
-# or use npm install / yarn install / pnpm install
+# 3. Install dependencies
+bun install
 
-# 4. Start project (millisecond startup)
-bun dev
+# 4. Start project
+bun run dev
 ```
 
 **🔥 First startup takes less than 2 seconds, subsequent hot updates under 100ms!**
@@ -182,7 +181,7 @@ bun dev
 
 ```bash
 # Development
-bun dev                # Start development environment
+bun run dev            # Start development environment
 bun run build          # Production build
 bun run build:test     # Test environment build
 bun run build:staging  # Staging build
@@ -190,20 +189,28 @@ bun run preview        # Preview build locally
 
 # Code Quality
 bun run lint           # Code check and fix
+bun run lint:check     # Check without modifying files
 bun run format         # Code formatting
-bun test:unit          # Unit testing
+bun run test           # Unit testing
+bun run verify         # Lint + types + tests + production build
 
 # Type Checking
 bun run type-watch     # Watch mode type checking
-bun run type:check     # Smart type analysis
+bun run type-build     # Full type checking
 
 # Others
 bun run commit         # Standardized commit (git cz)
-bun outdated           # Check dependency updates
-bun clean              # Clean cache
 ```
 
 </details>
+
+---
+
+### 🔐 Authentication Mock and Backend Switching
+
+Until a backend is available, the project uses a closed-loop authentication Mock by default. Login, token refresh, and user data keep the same response contract as the remote API. Any non-empty username and password can sign in; Mock tokens are random opaque values and never embed plaintext credentials.
+
+To connect a backend, set `VITE_AUTH_MODE=remote` and configure the endpoint through `VITE_API_BASE`. No page or store changes are required. The contract lives in `src/api/auth.contract.ts`, and the Mock implementation lives in `src/api/auth.mock.ts`.
 
 ---
 
@@ -844,8 +851,8 @@ curl -fsSL https://bun.sh/install | bash
 # macOS users
 brew install oven-sh/bun/bun
 
-# or use npm
-npm install -g bun
+# PowerShell users can use Bun's official installer
+powershell -c "irm bun.sh/install.ps1 | iex"
 ```
 
 ### ⚠️ Port Occupied Issue
@@ -862,7 +869,7 @@ server: {
 
 ```bash
 # Regenerate type files
-bun run type:check
+bun run type-build
 
 # Clear type cache
 rm -rf node_modules/.cache
