@@ -317,6 +317,17 @@
     'typescript-utils',
   ])
 
+  /**
+   * * @description: 执行 ZIP 导出并消费 file-utils v2 已通知过的异常，避免事件处理器产生未处理拒绝
+   */
+  const safelyExport = async (task: () => Promise<unknown>) => {
+    try {
+      await task()
+    } catch {
+      // file-utils 已更新导出状态并显示错误消息；页面只需消费异常。
+    }
+  }
+
   const toggleTemplate = (templateId: TemplateId) => {
     const index = selectedTemplates.value.indexOf(templateId)
     if (index > -1) {
@@ -341,7 +352,7 @@
       files,
     }
 
-    await jszip.exportCodeProject(config)
+    await safelyExport(() => jszip.exportCodeProject(config))
   }
 
   const handleReportExport = async () => {
@@ -352,7 +363,7 @@
       data: mockData.value,
     }
 
-    await jszip.exportReport(config)
+    await safelyExport(() => jszip.exportReport(config))
   }
 
   const handleMediaExport = async () => {
@@ -371,7 +382,7 @@
       files,
     }
 
-    await jszip.exportMedia(config)
+    await safelyExport(() => jszip.exportMedia(config))
   }
 
   const handleTemplateExport = async () => {
@@ -388,7 +399,7 @@
       templates,
     }
 
-    await jszip.exportTemplates(config)
+    await safelyExport(() => jszip.exportTemplates(config))
   }
 </script>
 

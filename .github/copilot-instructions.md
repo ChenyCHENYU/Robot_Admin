@@ -50,16 +50,16 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 
 ### 自有包生态（@robot-admin/\*）
 
-| 包名                               | 版本  | 功能                           |
-| ---------------------------------- | ----- | ------------------------------ |
-| `@robot-admin/naive-ui-components` | 0.8.2 | 51+ 个业务组件                 |
-| `@robot-admin/layout`              | 2.2.0 | 6 种布局模式 + 设置管理        |
-| `@robot-admin/request-core`        | 0.1.3 | Axios + 7 插件 + useTableCrud  |
-| `@robot-admin/theme`               | 0.1.1 | 主题切换（Light/Dark/System）  |
-| `@robot-admin/directives`          | 1.1.0 | 11 个 Vue 指令                 |
-| `@robot-admin/form-validate`       | 2.0.0 | 48+ 验证规则                   |
-| `@robot-admin/file-utils`          | 1.0.0 | 文件处理（Excel/ZIP/分片上传） |
-| `@robot-admin/git-standards`       | 1.0.3 | Git 工程化标准                 |
+| 包名                               | 版本   | 功能                            |
+| ---------------------------------- | ------ | ------------------------------- |
+| `@robot-admin/naive-ui-components` | 0.10.3 | 51+ 个业务组件                  |
+| `@robot-admin/layout`              | 2.3.2  | 6 种布局 + 安全设置管理         |
+| `@robot-admin/request-core`        | 0.2.0  | Axios + 6 类插件 + useTableCrud |
+| `@robot-admin/theme`               | 0.4.0  | 主题切换 + 安全持久化           |
+| `@robot-admin/directives`          | 1.1.1  | 11 个 Vue 指令                  |
+| `@robot-admin/form-validate`       | 2.0.0  | 48+ 验证规则                    |
+| `@robot-admin/file-utils`          | 2.0.0  | 文件处理（Excel/ZIP/CSV/分片）  |
+| `@robot-admin/git-standards`       | 1.0.4  | Git 工程化标准                  |
 
 ### 开发工具链
 

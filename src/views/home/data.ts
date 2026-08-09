@@ -144,7 +144,7 @@ export const projectMetrics = [
 export const ecosystemPackages = [
   {
     shortName: 'naive-ui-components',
-    version: '0.8.2',
+    version: '0.10.3',
     icon: 'mdi:puzzle-outline',
     color: '#6366f1',
     desc: '51+ 业务组件，按需导入，主题覆盖',
@@ -152,15 +152,15 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'request-core',
-    version: '0.1.3',
+    version: '0.2.0',
     icon: 'mdi:api',
     color: '#10b981',
-    desc: 'Axios + 7 插件，CRUD Composables',
+    desc: 'Axios + 6 类插件，CRUD Composables',
     url: 'https://www.npmjs.com/package/@robot-admin/request-core',
   },
   {
     shortName: 'layout',
-    version: '2.2.0',
+    version: '2.3.2',
     icon: 'mdi:page-layout-sidebar-left',
     color: '#f59e0b',
     desc: '6 种布局模式，设置管理，主题同步',
@@ -168,7 +168,7 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'theme',
-    version: '0.1.1',
+    version: '0.4.0',
     icon: 'mdi:palette-outline',
     color: '#ec4899',
     desc: 'Light / Dark / System 主题切换',
@@ -176,7 +176,7 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'directives',
-    version: '1.1.0',
+    version: '1.1.1',
     icon: 'mdi:code-tags',
     color: '#8b5cf6',
     desc: '11 个 Vue 指令：copy / watermark 等',
@@ -192,7 +192,7 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'file-utils',
-    version: '1.0.0',
+    version: '2.0.0',
     icon: 'mdi:file-multiple-outline',
     color: '#06b6d4',
     desc: 'Excel / ZIP / 分片上传，20+ 格式',
@@ -200,7 +200,7 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'git-standards',
-    version: '1.0.3',
+    version: '1.0.4',
     icon: 'mdi:source-branch',
     color: '#f97316',
     desc: '规范提交 · 中文引导推送',

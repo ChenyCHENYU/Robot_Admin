@@ -762,14 +762,14 @@ location / {
 
 **已发布组件库**
 
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.8.2` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
-- **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v2.2.0` - 6 种布局模式 + 设置管理系统
-- **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.1.3` - Axios 请求核心 + 7 插件 + useTableCrud
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.10.3` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
+- **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v2.3.2` - 6 种布局模式 + 安全设置管理 + 无障碍交互
+- **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.2.0` - Axios 请求编排 + 6 类插件能力 + useTableCrud
 - **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v2.0.0` - 48+ 企业级表单验证规则库
-- **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v1.1.0` - 11 个实用 Vue 指令
-- **[@robot-admin/file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)** `v1.0.0` - Excel/ZIP/分片上传文件工具集
-- **[@robot-admin/theme](https://www.npmjs.com/package/@robot-admin/theme)** `v0.1.1` - 主题切换（Light/Dark/System）
-- **[@robot-admin/git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)** `v1.0.3` - Git 工程化标准
+- **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v1.1.1` - 11 个安全、可回收的 Vue 指令
+- **[@robot-admin/file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)** `v2.0.0` - Excel/ZIP/RFC 4180 CSV/可取消分片工具集
+- **[@robot-admin/theme](https://www.npmjs.com/package/@robot-admin/theme)** `v0.4.0` - 主题切换、安全持久化与设计风格系统
+- **[@robot-admin/git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)** `v1.0.4` - 幂等初始化与配置备份的 Git 工程化标准
 
 **已发布周边工具**
 
