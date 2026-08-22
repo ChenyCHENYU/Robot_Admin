@@ -740,7 +740,10 @@
   }
 
   // 事件处理
-  const handleNodeSelect = async (node: any, keys: (string | number)[]) => {
+  const handleNodeSelect = async (
+    _node: unknown,
+    keys: (string | number)[]
+  ) => {
     selectedKeys.value = keys.map(k => String(k))
 
     if (selectedMenu.value && selectedMenu.value.type === 'menu') {
@@ -756,8 +759,7 @@
     }
   }
 
-  const handleNodeAction = (action: string, node: any) => {
-    const menuNode = node as MenuData
+  const handleNodeAction = (action: string, menuNode: MenuData) => {
     if (action === 'edit') {
       handleEditMenu(menuNode)
     } else if (action === 'delete') {
@@ -775,9 +777,8 @@
     await loadMenus()
   }
 
-  const handleAddFromTree = (parentNode?: any) => {
-    const menuNode = parentNode as MenuData | undefined
-    handleAddMenu(menuNode?.id)
+  const handleAddFromTree = (parentNode?: MenuData) => {
+    handleAddMenu(parentNode?.id)
   }
 
   const expandAll = (): void => {

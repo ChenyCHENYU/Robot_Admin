@@ -25,7 +25,7 @@ let isInitializing = false
 // 扩展 RouteMeta 类型
 interface ExtendedRouteMeta {
   title?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 /**

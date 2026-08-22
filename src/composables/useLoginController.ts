@@ -17,6 +17,7 @@
  */
 
 import { notification } from '@/plugins/naive-ui-plugin'
+import type { LoginRequest } from '@/api/auth.contract'
 import type {
   PasswordFormData,
   CaptchaFormData,
@@ -34,7 +35,7 @@ export interface WelcomeTimeSlot {
 }
 
 /** 欢迎语配置 */
-export interface WelcomeConfig<TResponse = any> {
+export interface WelcomeConfig<TResponse = unknown> {
   timeSlots: WelcomeTimeSlot[]
   /** 可含占位符：{greeting} {username} {emoji} */
   templates: string[]
@@ -43,11 +44,11 @@ export interface WelcomeConfig<TResponse = any> {
 }
 
 /** useLoginController 选项 */
-export interface UseLoginControllerOptions<TResponse = any> {
+export interface UseLoginControllerOptions<TResponse = unknown> {
   // ─── 核心：必填 ───
 
   /** 登录 API 函数 */
-  loginApi: (data: Record<string, any>) => Promise<TResponse>
+  loginApi: (data: LoginRequest) => Promise<TResponse>
 
   /**
    * 登录成功后的业务处理
@@ -107,7 +108,17 @@ export interface UseLoginControllerOptions<TResponse = any> {
  * @param options - 登录控制器配置
  */
 export function useLoginController<
-  TResponse extends { code: string; data?: any; message?: string } = any,
+  TResponse extends {
+    code: string
+    data?: unknown
+    message?: string
+    msg?: string
+  } = {
+    code: string
+    data?: unknown
+    message?: string
+    msg?: string
+  },
 >(options: UseLoginControllerOptions<TResponse>) {
   const loading = ref(false)
   const loginRef = ref<{ resetCaptcha: () => void } | null>(null)
@@ -143,8 +154,8 @@ export function useLoginController<
   }
 
   /** 构建登录请求体 */
-  const buildPayload = (formData: LoginFormData): Record<string, any> => {
-    const payload: Record<string, any> = {
+  const buildPayload = (formData: LoginFormData): LoginRequest => {
+    const payload: LoginRequest = {
       username: formData.username,
       password: formData.password,
     }
@@ -181,7 +192,9 @@ export function useLoginController<
         ? error.message
         : (options.errorMessage ?? '登录失败')
     notification.error({ content: msg, duration: 3000 })
-    options.onError?.(error as Error)
+    options.onError?.(
+      error instanceof Error ? error : new Error(String(error))
+    )
     loginRef.value?.resetCaptcha()
   }
 
@@ -195,7 +208,9 @@ export function useLoginController<
       if (response.code === successCode) {
         await handleLoginSuccess(response, formData)
       } else {
-        throw new Error(response.message ?? options.errorMessage ?? '登录失败')
+        throw new Error(
+          response.message ?? response.msg ?? options.errorMessage ?? '登录失败'
+        )
       }
     } catch (error: unknown) {
       handleLoginError(error)

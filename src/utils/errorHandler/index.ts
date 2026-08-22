@@ -3,7 +3,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { App } from 'vue'
+import type { App, ComponentPublicInstance } from 'vue'
 import { handleError, createErrorContext, stopCleanupTimer } from './handler'
 
 // 资源标签列表
@@ -12,20 +12,30 @@ const RESOURCE_TAGS = ['img', 'script', 'link', 'video', 'audio'] as const
 /**
  * 检查是否为已处理的错误
  */
-const isHandledError = (error: any): boolean => error?.handled === true
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
+const isHandledError = (error: unknown): boolean =>
+  isRecord(error) && error.handled === true
 
 /**
  * 获取组件名称
  */
-const getComponentName = (instance: any): string | undefined => {
-  return instance?.$options?.name || instance?.$options?.__name
+const getComponentName = (
+  instance: ComponentPublicInstance | null
+): string | undefined => {
+  const options = instance?.$options as
+    | { name?: unknown; __name?: unknown }
+    | undefined
+  const name = options?.name ?? options?.__name
+  return typeof name === 'string' ? name : undefined
 }
 
 /**
  * 设置 Vue 错误处理
  */
 const setupVueErrorHandler = (app: App): void => {
-  app.config.errorHandler = (err: any, instance, info: string) => {
+  app.config.errorHandler = (err: unknown, instance, info: string) => {
     if (isHandledError(err)) return
 
     const context = createErrorContext('vue', err, getComponentName(instance), {
@@ -43,8 +53,13 @@ const setupPromiseErrorHandler = (): void => {
   const EXTENSION_ERR_RE =
     /Could not establish connection|Receiving end does not exist/
 
-  window.addEventListener('unhandledrejection', (event: any) => {
-    const msg = String(event.reason?.message || event.reason || '')
+  window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent) => {
+    const reason = event.reason
+    const msg = String(
+      isRecord(reason) && typeof reason.message === 'string'
+        ? reason.message
+        : reason ?? ''
+    )
     if (EXTENSION_ERR_RE.test(msg)) {
       event.preventDefault()
       return
@@ -71,6 +86,23 @@ const setupPromiseErrorHandler = (): void => {
  * 3. 资源错误: event.target 是具体的 HTML 元素
  * 4. 脚本错误: event.target 是 window 或 null,且通常有 error 属性
  */
+type ResourceTagName = (typeof RESOURCE_TAGS)[number]
+type ResourceElement =
+  | HTMLImageElement
+  | HTMLScriptElement
+  | HTMLLinkElement
+  | HTMLVideoElement
+  | HTMLAudioElement
+
+const isResourceTag = (tagName: string): tagName is ResourceTagName =>
+  RESOURCE_TAGS.includes(tagName as ResourceTagName)
+
+const getResourceUrl = (element: ResourceElement): string => {
+  if ('src' in element && typeof element.src === 'string') return element.src
+  if ('href' in element && typeof element.href === 'string') return element.href
+  return 'unknown'
+}
+
 const setupResourceErrorHandler = (): void => {
   window.addEventListener(
     'error',
@@ -85,12 +117,14 @@ const setupResourceErrorHandler = (): void => {
       const errorEvent = event as ErrorEvent
       if ('error' in errorEvent && errorEvent.error instanceof Error) return
 
-      const element = target as HTMLElement
+      if (!(target instanceof Element)) return
+
+      const element = target as ResourceElement
       const tagName = element.tagName?.toLowerCase()
 
       // ✅ 修复3: 确保是我们关心的资源标签
-      if (tagName && RESOURCE_TAGS.includes(tagName as any)) {
-        const url = (element as any).src || (element as any).href || 'unknown'
+      if (tagName && isResourceTag(tagName)) {
+        const url = getResourceUrl(element)
 
         // ✅ 修复5: 过滤空 src 引源的 img 错误（第三方库内部初始化带来的无害错误）
         // 典型场景：vue-cropper 等组件初始化时 data 中 imgs="" 导致 <img src=""> 加载当前页面 URL

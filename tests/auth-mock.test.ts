@@ -40,6 +40,23 @@ describe('认证 Mock 闭环', () => {
     expect(() =>
       createMockLoginResponse({ username: '', password: '' })
     ).toThrow('请输入用户名和密码')
+    expect(() =>
+      createMockLoginResponse({ username: '   ', password: 'robot-admin' })
+    ).toThrow('请输入用户名和密码')
+    expect(() =>
+      createMockLoginResponse({ username: 'admin', password: '   ' })
+    ).toThrow('请输入用户名和密码')
+    expect(() =>
+      createMockLoginResponse({
+        username: 123 as unknown as string,
+        password: 'robot-admin',
+      })
+    ).toThrow('请输入用户名和密码')
+    expect(() =>
+      createMockLoginResponse(
+        null as unknown as Parameters<typeof createMockLoginResponse>[0]
+      )
+    ).toThrow('请输入用户名和密码')
   })
 
   test('刷新令牌可轮换且拒绝非法令牌', async () => {
@@ -57,5 +74,11 @@ describe('认证 Mock 闭环', () => {
     expect(() => createMockRefreshResponse('invalid')).toThrow(
       'Mock refresh token 无效或已过期'
     )
+    expect(() => createMockRefreshResponse('mock-refresh.')).toThrow(
+      'Mock refresh token 无效或已过期'
+    )
+    expect(() =>
+      createMockRefreshResponse(null as unknown as string)
+    ).toThrow('Mock refresh token 无效或已过期')
   })
 })

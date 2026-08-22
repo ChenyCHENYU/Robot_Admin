@@ -49,6 +49,22 @@ export interface ApiResponse<T = unknown> {
   msg: string
 }
 
+interface RouteMetaConfig {
+  title?: string
+  icon?: string
+  hidden?: boolean
+  [key: string]: unknown
+}
+
+interface RouteConfig {
+  name?: string
+  path?: string
+  redirect?: string
+  component?: string
+  meta?: RouteMetaConfig
+  children?: RouteConfig[]
+}
+
 // ==================== 按钮权限配置 ====================
 // 根据实际路由数据配置对应的按钮权限
 export const BUTTON_PERMISSIONS_CONFIG = {
@@ -246,7 +262,7 @@ const generateButtonPermissionsData = (): ButtonPermission[] => {
 export const MOCK_BUTTON_PERMISSIONS = generateButtonPermissionsData()
 
 // ==================== 辅助函数 ====================
-export const generateMenuId = (route: any): string => {
+export const generateMenuId = (route: RouteConfig): string => {
   if (route.name) return route.name
   if (route.path) return route.path.replace(/\//g, '-').replace(/^-/, '')
   return `menu-${Date.now()}`
@@ -257,7 +273,7 @@ export const processIcon = (icon?: string): string => {
   return icon.startsWith('i-') ? icon.replace('i-', '') : icon
 }
 
-export const getRouteMeta = (route: any) => {
+export const getRouteMeta = (route: RouteConfig) => {
   if (!route.meta) {
     return {
       title: route.name || route.path || '未命名菜单',
@@ -272,19 +288,22 @@ export const getRouteMeta = (route: any) => {
   }
 }
 
-export const determineMenuType = (route: any): MenuType => {
+export const determineMenuType = (route: RouteConfig): MenuType => {
   return route.children?.length && route.component === 'layout'
     ? 'directory'
     : 'menu'
 }
 
 // 检查是否应该跳过当前路由
-const shouldSkipRoute = (route: any, meta: any): boolean => {
-  return !meta.title || (route.path === '/' && route.redirect)
+const shouldSkipRoute = (
+  route: RouteConfig,
+  meta: ReturnType<typeof getRouteMeta>
+): boolean => {
+  return Boolean(!meta.title || (route.path === '/' && route.redirect))
 }
 
 // 检查是否是需要扁平化的单子菜单容器
-const shouldFlattenContainer = (route: any): boolean => {
+const shouldFlattenContainer = (route: RouteConfig): boolean => {
   // 情况1: 没有 path 的 layout 容器，只有一个子菜单
   const isAnonymousContainer =
     !route.path &&
@@ -305,8 +324,8 @@ const shouldFlattenContainer = (route: any): boolean => {
 
 // 构建基础菜单数据
 const buildMenuData = (
-  route: any,
-  meta: any,
+  route: RouteConfig,
+  meta: ReturnType<typeof getRouteMeta>,
   menuId: string,
   parentId: string | null,
   sort: number
@@ -328,7 +347,7 @@ const buildMenuData = (
 }
 
 export const createMenuFromRoute = (
-  route: any,
+  route: RouteConfig,
   parentId: string | null = null,
   sort: number = 0
 ): MenuData | null => {
@@ -339,7 +358,8 @@ export const createMenuFromRoute = (
   }
 
   if (shouldFlattenContainer(route)) {
-    return createMenuFromRoute(route.children[0], parentId, sort)
+    const [child] = route.children ?? []
+    return child ? createMenuFromRoute(child, parentId, sort) : null
   }
 
   const menuId = generateMenuId(route)
@@ -347,10 +367,10 @@ export const createMenuFromRoute = (
 
   if (route.children) {
     menu.children = route.children
-      .map((child: any, index: number) =>
+      .map((child, index) =>
         createMenuFromRoute(child, menuId, index + 1)
       )
-      .filter(Boolean)
+      .filter((child): child is MenuData => child !== null)
   }
 
   return menu
@@ -364,7 +384,7 @@ export const getMenuListApi = async (): Promise<ApiResponse<MenuData[]>> => {
 
       menuOriginData.data.forEach(route => {
         if (route.path === '/' && route.children) {
-          route.children.forEach((child: any) => {
+          route.children.forEach(child => {
             const childMenu = createMenuFromRoute(
               child,
               null,

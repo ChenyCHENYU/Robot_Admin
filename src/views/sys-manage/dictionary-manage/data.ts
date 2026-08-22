@@ -9,7 +9,7 @@ export interface TreeNodeData {
   name: string
   type: DictType
   children?: DictData[]
-  [key: string]: any
+  [key: string]: unknown
 }
 
 // 字典数据接口

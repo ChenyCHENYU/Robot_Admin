@@ -27,7 +27,7 @@ export interface CopyOptions {
   showMessage?: boolean
   dataType?: CopyDataType
   formatData?: boolean
-  formatter?: (data: any) => string
+  formatter?: (data: unknown) => string
   onSuccess?: (text: string) => void
   onError?: (error: Error) => void
 }
@@ -76,10 +76,18 @@ const detectClipboardSupport = () => {
 
 // ==================== 数据格式化器 ====================
 
-const dataFormatters: Record<CopyDataType, (data: any) => string> = {
-  text: (data: any) => String(data),
+type DataFormatter = (data: unknown) => string
 
-  url: (data: any) => {
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error)
+
+const dataFormatters: Record<CopyDataType, DataFormatter> = {
+  text: (data: unknown) => String(data),
+
+  url: (data: unknown) => {
     const url = String(data).trim()
     if (!url) return ''
     // 智能添加协议
@@ -89,7 +97,7 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return url
   },
 
-  email: (data: any) => {
+  email: (data: unknown) => {
     const email = String(data).trim()
     // 简单的邮箱格式验证
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -98,7 +106,7 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return email
   },
 
-  phone: (data: any) => {
+  phone: (data: unknown) => {
     const phone = String(data).replace(/[^\d+\-\s()]/g, '')
     // 中国手机号格式化
     if (/^\d{11}$/.test(phone.replace(/\D/g, ''))) {
@@ -108,31 +116,31 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return phone
   },
 
-  json: (data: any) => {
+  json: (data: unknown) => {
     try {
       if (typeof data === 'string') {
         // 验证是否为有效 JSON
         JSON.parse(data)
         return data
       }
-      return JSON.stringify(data, null, 2)
+      return JSON.stringify(data, null, 2) ?? ''
     } catch (error) {
       console.warn('Invalid JSON data:', error)
       return String(data)
     }
   },
 
-  html: (data: any) => {
+  html: (data: unknown) => {
     if (typeof data === 'object') {
-      const jsonStr = JSON.stringify(data, null, 2)
+      const jsonStr = JSON.stringify(data, null, 2) ?? ''
       return `<pre><code>${jsonStr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`
     }
     return String(data)
   },
 
-  markdown: (data: any) => {
+  markdown: (data: unknown) => {
     if (typeof data === 'object') {
-      const jsonStr = JSON.stringify(data, null, 2)
+      const jsonStr = JSON.stringify(data, null, 2) ?? ''
       return `\`\`\`json\n${jsonStr}\n\`\`\``
     }
     const text = String(data)
@@ -143,7 +151,7 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return text
   },
 
-  csv: (data: any) => {
+  csv: (data: unknown) => {
     if (Array.isArray(data) && data.length > 0) {
       // 确保所有对象都有相同的键
       const allKeys = new Set<string>()
@@ -158,7 +166,7 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
       const csvRows = data.map(row =>
         headers
           .map(header => {
-            const value = row && typeof row === 'object' ? row[header] : ''
+            const value = isRecord(row) ? row[header] : ''
             return `"${String(value || '').replace(/"/g, '""')}"`
           })
           .join(',')
@@ -169,9 +177,9 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return String(data)
   },
 
-  code: (data: any) => {
+  code: (data: unknown) => {
     if (typeof data === 'object') {
-      return JSON.stringify(data, null, 2)
+      return JSON.stringify(data, null, 2) ?? ''
     }
     return String(data).trim()
   },
@@ -214,7 +222,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
 
   // ==================== 工具函数 ====================
 
-  const formatCopyData = (data: any, options: CopyOptions): string => {
+  const formatCopyData = (data: unknown, options: CopyOptions): string => {
     if (options.formatter) {
       return options.formatter(data)
     }
@@ -273,7 +281,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
           throw new Error('当前浏览器不支持复制功能')
         }
       }
-      throw new Error(`复制失败: ${(error as Error).message}`)
+      throw new Error(`复制失败: ${getErrorMessage(error)}`)
     }
   }
 
@@ -316,7 +324,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
           reject(new Error('execCommand 复制失败'))
         }
       } catch (error) {
-        reject(new Error(`降级复制失败: ${(error as Error).message}`))
+        reject(new Error(`降级复制失败: ${getErrorMessage(error)}`))
       }
     })
   }
@@ -324,7 +332,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
   // ==================== 主要方法 ====================
 
   const copy = async (
-    data: any,
+    data: unknown,
     options: CopyOptions = {}
   ): Promise<CopyResult> => {
     if (!canCopy.value) {
@@ -360,7 +368,8 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
 
       return result
     } catch (error) {
-      const copyError = error as Error
+      const copyError =
+        error instanceof Error ? error : new Error(getErrorMessage(error))
       showToast('error', copyError.message, options)
       options.onError?.(copyError)
 
@@ -384,7 +393,10 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
     })
   }
 
-  const copyJSON = async (data: any, formatted = true): Promise<CopyResult> => {
+  const copyJSON = async (
+    data: unknown,
+    formatted = true
+  ): Promise<CopyResult> => {
     return copy(data, {
       dataType: 'json',
       formatData: formatted,
@@ -426,7 +438,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
       if (error instanceof DOMException && error.name === 'NotAllowedError') {
         throw new Error('读取剪贴板权限被拒绝')
       }
-      throw new Error(`读取剪贴板失败: ${(error as Error).message}`)
+      throw new Error(`读取剪贴板失败: ${getErrorMessage(error)}`)
     }
   }
 
@@ -459,7 +471,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
         method: 'native-api',
       }
     } catch (error) {
-      throw new Error(`富文本复制失败: ${(error as Error).message}`)
+      throw new Error(`富文本复制失败: ${getErrorMessage(error)}`)
     }
   }
 

@@ -12,6 +12,7 @@ import type {
   LoginFeatures,
 } from '@robot-admin/naive-ui-components'
 import type { WelcomeConfig } from '@/composables/useLoginController'
+import type { LoginResponse } from '@/api/auth'
 
 // ================= 登录功能开关 =================
 export const LOGIN_FEATURES: LoginFeatures = {
@@ -36,7 +37,7 @@ export const SOCIAL_PROVIDERS: SocialProvider[] = [
 // ================= 欢迎语配置（工厂函数，接受 i18n 翻译函数） =================
 export const createWelcomeConfig = (
   t: (key: string, fallback: string) => string
-): WelcomeConfig => ({
+): WelcomeConfig<LoginResponse> => ({
   timeSlots: [
     {
       range: [6, 12] as const,
@@ -70,5 +71,5 @@ export const createWelcomeConfig = (
     t('lp_wb3', '欢迎回来') + '，{username}！{greeting} {emoji}',
     '{greeting}，{username}！' + t('lp_wb4', '准备好了吗？') + ' {emoji}',
   ],
-  getUserName: (response: any) => response.data?.username || 'CHENY',
+  getUserName: response => response.data.user?.username || 'CHENY',
 })

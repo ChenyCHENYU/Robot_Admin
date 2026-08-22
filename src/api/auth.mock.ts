@@ -14,20 +14,33 @@ import type {
 
 const MOCK_EXPIRES_IN = 2 * 60 * 60
 const MOCK_DELAY_MS = 180
+const MOCK_REFRESH_TOKEN_PREFIX = 'mock-refresh.'
 
 /** 创建无敏感信息的 Mock Token */
 const createMockToken = (prefix: string): string => {
   const id =
-    globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
+    globalThis.crypto?.randomUUID?.() ??
+    `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
   return `${prefix}.${id}`
 }
+
+/** 校验 Mock 刷新令牌格式，避免仅凭固定前缀放行空令牌 */
+const isValidMockRefreshToken = (
+  refreshToken: unknown
+): refreshToken is string =>
+  typeof refreshToken === 'string' &&
+  refreshToken.startsWith(MOCK_REFRESH_TOKEN_PREFIX) &&
+  /^[A-Za-z0-9-]+$/.test(refreshToken.slice(MOCK_REFRESH_TOKEN_PREFIX.length))
 
 /** 构造登录 Mock 响应，保持与未来后端契约一致 */
 export const createMockLoginResponse = (
   request: LoginRequest
 ): LoginResponse => {
-  const username = request.username?.trim()
-  if (!username || !request.password) {
+  const username =
+    typeof request?.username === 'string' ? request.username.trim() : ''
+  const password =
+    typeof request?.password === 'string' ? request.password : ''
+  if (!username || !password.trim()) {
     throw new Error('请输入用户名和密码')
   }
 
@@ -51,7 +64,7 @@ export const createMockLoginResponse = (
 export const createMockRefreshResponse = (
   refreshToken: string
 ): RefreshTokenResponse => {
-  if (!refreshToken.startsWith('mock-refresh.')) {
+  if (!isValidMockRefreshToken(refreshToken)) {
     throw new Error('Mock refresh token 无效或已过期')
   }
 

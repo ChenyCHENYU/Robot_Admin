@@ -72,6 +72,11 @@ export interface SearchForm {
   userType: UserType | null
 }
 
+export interface UserListParams extends SearchForm {
+  page: number
+  pageSize: number
+}
+
 export interface ResetPasswordForm {
   newPassword: string
   confirmPassword: string
@@ -237,7 +242,7 @@ export const RESET_PASSWORD_RULES: FormRules = {
       trigger: ['input', 'blur'],
     },
     {
-      validator: (rule: any, value: string) => {
+      validator: (_rule: unknown, value: string) => {
         const form = rule.form as ResetPasswordForm
         return value !== form.newPassword
           ? Promise.reject('两次密码输入不一致')
@@ -440,7 +445,7 @@ const createMockApi = <T>(data: T, delay = 500) =>
     }, delay)
   })
 
-const filterUsers = (users: UserData[], params: any): UserData[] => {
+const filterUsers = (users: UserData[], params: UserListParams): UserData[] => {
   let filtered = [...users]
 
   // 关键词搜索
@@ -489,7 +494,7 @@ const paginateData = <T>(data: T[], page: number, pageSize: number) => {
 
 // ==================== API 方法 ====================
 export const getUserListApi = async (
-  params: any
+  params: UserListParams
 ): Promise<ApiResponse<PageResult<UserData>>> => {
   const filteredUsers = filterUsers(MOCK_USER_DATA, params)
   const paginatedData = paginateData(

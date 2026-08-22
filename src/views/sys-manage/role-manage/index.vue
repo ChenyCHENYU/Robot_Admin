@@ -946,7 +946,7 @@
   ])
 
   // ==================== 行键配置 ====================
-  const rowKey = (row: any) => row.id
+  const rowKey = (row: RoleData) => row.id
 
   // ==================== 表格列配置 ====================
   const tableColumns = computed(() => [
@@ -955,7 +955,7 @@
       title: '角色类型',
       width: 100,
       editable: false,
-      render: (row: any) =>
+      render: (row: RoleData) =>
         h(
           NTag,
           {
@@ -997,7 +997,7 @@
       width: 200,
       align: 'center' as const,
       editable: false,
-      render: (row: any) => {
+      render: (row: RoleData) => {
         if (!row.permissionNames?.length) {
           return h('div', { style: { textAlign: 'center' } }, '-')
         }
@@ -1075,7 +1075,7 @@
       width: 80,
       align: 'center' as const,
       editable: false,
-      render: (row: any) =>
+      render: (row: RoleData) =>
         row.userCount
           ? h(
               NButton,
@@ -1102,7 +1102,7 @@
       width: 80,
       editable: true,
       editType: 'switch' as const,
-      render: (row: any) =>
+      render: (row: RoleData) =>
         h(
           NTag,
           {
@@ -1117,9 +1117,9 @@
 
   // ==================== 表格操作配置 ====================
   const tableActions = computed(() => ({
-    detail: (row: any) => viewRole(row),
-    edit: (row: any) => editRole(row),
-    delete: async (row: any) => {
+    detail: (row: RoleData) => viewRole(row),
+    edit: (row: RoleData) => editRole(row),
+    delete: async (row: RoleData) => {
       if (row.type === 'system') {
         message.warning('系统角色不能删除')
         return Promise.reject('系统角色不能删除') // 阻止后续执行
@@ -1132,15 +1132,15 @@
         label: '权限',
         icon: 'mdi:shield-account',
         type: 'primary' as const,
-        onClick: (row: any) => openPermissionDrawer(row),
+        onClick: (row: RoleData) => openPermissionDrawer(row),
       },
       {
         key: 'enable',
         label: '启用',
         icon: 'mdi:play',
         type: 'success' as const,
-        onClick: (row: any) => toggleRoleStatus(row),
-        show: (row: any) =>
+        onClick: (row: RoleData) => toggleRoleStatus(row),
+        show: (row: RoleData) =>
           row.status === 0 &&
           !(row.type === 'system' && row.code === 'super_admin'),
       },
@@ -1149,8 +1149,8 @@
         label: '禁用',
         icon: 'mdi:pause',
         type: 'warning' as const,
-        onClick: (row: any) => toggleRoleStatus(row),
-        show: (row: any) =>
+        onClick: (row: RoleData) => toggleRoleStatus(row),
+        show: (row: RoleData) =>
           row.status === 1 &&
           !(row.type === 'system' && row.code === 'super_admin'),
       },
@@ -1211,7 +1211,7 @@
     findPermissionById(MOCK_PERMISSION_DATA, permissionId)?.name || ''
 
   // ==================== C_Table 事件处理 ====================
-  const handleTableSave = async (rowData: any) => {
+  const handleTableSave = async (rowData: RoleData) => {
     try {
       updateRoleInList(rowData.id, {
         name: rowData.name,
@@ -1233,8 +1233,7 @@
     loadRoles()
   }
 
-  const handlePaginationChange = async (...args: any[]) => {
-    const [page, pageSize] = args
+  const handlePaginationChange = async (page: number, pageSize: number) => {
     pagination.page = page
     pagination.pageSize = pageSize
     loadRoles()
@@ -1271,7 +1270,7 @@
     Object.assign(formData, DEFAULT_ROLE_FORM_DATA)
   }
 
-  const editRole = (role: any) => openRoleModal(role)
+  const editRole = (role: RoleData) => openRoleModal(role)
 
   const viewRole = (role: RoleData) => {
     currentRole.value = role

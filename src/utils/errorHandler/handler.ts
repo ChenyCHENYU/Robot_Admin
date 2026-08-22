@@ -192,12 +192,14 @@ const extractBasicInfo = (error: StandardError) => {
  */
 const extractLocationInfo = (
   error: StandardError,
-  additionalInfo: Record<string, any>
+  additionalInfo: Record<string, unknown>
 ) => {
+  const additionalUrl =
+    typeof additionalInfo.url === 'string' ? additionalInfo.url : undefined
   return {
-    url: error?.url || additionalInfo?.url,
-    line: safeNumber(error?.line) || safeNumber(additionalInfo?.line),
-    column: safeNumber(error?.column) || safeNumber(additionalInfo?.column),
+    url: error?.url || additionalUrl,
+    line: safeNumber(error?.line) ?? safeNumber(additionalInfo.line),
+    column: safeNumber(error?.column) ?? safeNumber(additionalInfo.column),
   }
 }
 
@@ -206,7 +208,7 @@ const extractLocationInfo = (
  */
 const extractObjectErrorInfo = (
   error: StandardError,
-  additionalInfo: Record<string, any>
+  additionalInfo: Record<string, unknown>
 ) => {
   const basicInfo = extractBasicInfo(error)
   const locationInfo = extractLocationInfo(error, additionalInfo)
@@ -222,14 +224,14 @@ const extractObjectErrorInfo = (
  */
 const extractPrimitiveErrorInfo = (
   error: unknown,
-  additionalInfo: Record<string, any>
+  additionalInfo: Record<string, unknown>
 ) => {
   return {
     message: safeString(error, '未知错误'),
     stack: undefined,
-    url: additionalInfo?.url,
-    line: safeNumber(additionalInfo?.line),
-    column: safeNumber(additionalInfo?.column),
+    url: typeof additionalInfo.url === 'string' ? additionalInfo.url : undefined,
+    line: safeNumber(additionalInfo.line),
+    column: safeNumber(additionalInfo.column),
     handled: false,
   }
 }
@@ -239,7 +241,7 @@ const extractPrimitiveErrorInfo = (
  */
 const extractErrorInfo = (
   error: unknown,
-  additionalInfo: Record<string, any>
+  additionalInfo: Record<string, unknown>
 ) => {
   if (error && typeof error === 'object') {
     return extractObjectErrorInfo(error as StandardError, additionalInfo)
@@ -255,7 +257,7 @@ export function createErrorContext(
   source: ErrorSource,
   error: unknown,
   componentName?: string,
-  additionalInfo?: Record<string, any>
+  additionalInfo?: Record<string, unknown>
 ): ErrorContext {
   // 边界情况处理：确保所有参数都有有效值
   const safeSource = source || 'unknown'

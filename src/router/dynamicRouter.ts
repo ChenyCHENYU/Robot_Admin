@@ -3,7 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { s_permissionStore } from '@/stores/permission'
 import { message as messageApi } from '@/plugins/discrete'
 
-export interface RouteMeta extends Record<string, any> {
+export interface RouteMeta extends Record<string, unknown> {
   title?: string
   icon?: string
   hidden?: boolean

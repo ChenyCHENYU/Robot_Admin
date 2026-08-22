@@ -6,7 +6,7 @@ import type { TableColumn } from '@robot-admin/naive-ui-components'
 export type PermissionType = 'module' | 'function' | 'button' | 'api'
 
 export interface PermissionData {
-  [key: string]: any
+  [key: string]: unknown
   id: number
   name: string
   code: string
@@ -316,6 +316,14 @@ export type DataScopeType =
   | 'self'
   | 'custom'
 
+export type StatusTagType =
+  | 'default'
+  | 'error'
+  | 'primary'
+  | 'info'
+  | 'success'
+  | 'warning'
+
 export interface DataPermissionRule {
   id: string
   module: string
@@ -337,7 +345,7 @@ export interface FieldPermissionItem {
 
 export const DATA_SCOPE_CONFIG: Record<
   DataScopeType,
-  { text: string; type: string; icon: string; description: string }
+  { text: string; type: StatusTagType; icon: string; description: string }
 > = {
   all: {
     text: '全部数据',
@@ -371,13 +379,18 @@ export const DATA_SCOPE_CONFIG: Record<
   },
 }
 
-export const DATA_SCOPE_OPTIONS = Object.entries(DATA_SCOPE_CONFIG).map(
-  ([value, config]) => ({
+export const DATA_SCOPE_OPTIONS: Array<{
+  label: string
+  value: DataScopeType
+  description: string
+}> = (Object.keys(DATA_SCOPE_CONFIG) as DataScopeType[]).map(value => {
+  const config = DATA_SCOPE_CONFIG[value]
+  return {
     label: config.text,
     value,
     description: config.description,
-  })
-)
+  }
+})
 
 // ==================== 临时授权 ====================
 export interface TempAuthorization {

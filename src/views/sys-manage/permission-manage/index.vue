@@ -265,7 +265,7 @@
           <NDataTable
             :columns="dataPermissionColumns"
             :data="dataPermissionList"
-            :row-key="(row: any) => row.id"
+            :row-key="dataPermissionRowKey"
             size="small"
             striped
           />
@@ -397,7 +397,7 @@
           <NDataTable
             :columns="tempAuthColumns"
             :data="tempAuthList"
-            :row-key="(row: any) => row.id"
+            :row-key="tempAuthRowKey"
             size="small"
             striped
           />
@@ -1079,6 +1079,8 @@
   const dataPermissionList = ref<DataPermissionRule[]>([
     ...MOCK_DATA_PERMISSIONS,
   ])
+  const dataPermissionRowKey = (row: DataPermissionRule): string => row.id
+  const tempAuthRowKey = (row: TempAuthorization): string => row.id
   const selectedDataPermission = ref<DataPermissionRule | null>(null)
 
   // ============ 临时授权状态 ============
@@ -1244,7 +1246,7 @@
   )
 
   // ============ 数据权限表格列配置 ============
-  const dataPermissionColumns: DataTableColumns = [
+  const dataPermissionColumns: DataTableColumns<DataPermissionRule> = [
     {
       title: '模块',
       key: 'moduleName',
@@ -1254,12 +1256,12 @@
       title: '数据范围',
       key: 'scope',
       width: 140,
-      render: (row: any) => {
+      render: (row: DataPermissionRule) => {
         const config =
           DATA_SCOPE_CONFIG[row.scope as keyof typeof DATA_SCOPE_CONFIG]
         return h(
           NTag,
-          { type: config?.type as any, size: 'small' },
+          { type: config?.type, size: 'small' },
           { default: () => config?.text || row.scope }
         )
       },
@@ -1268,7 +1270,7 @@
       title: '自定义部门',
       key: 'departmentIds',
       width: 160,
-      render: (row: any) =>
+      render: (row: DataPermissionRule) =>
         row.scope === 'custom'
           ? h('span', null, `${row.departmentIds.length} 个部门`)
           : h('span', { style: { color: '#999' } }, '—'),
@@ -1277,11 +1279,11 @@
       title: '字段权限',
       key: 'fieldPermissions',
       width: 120,
-      render: (row: any) => {
+      render: (row: DataPermissionRule) => {
         const total = row.fieldPermissions.length
-        const masked = row.fieldPermissions.filter((f: any) => f.masked).length
+        const masked = row.fieldPermissions.filter(f => f.masked).length
         const hidden = row.fieldPermissions.filter(
-          (f: any) => !f.visible
+          f => !f.visible
         ).length
         return h(NSpace, { size: 4 }, () => [
           h(
@@ -1315,7 +1317,7 @@
       title: '操作',
       key: 'actions',
       width: 120,
-      render: (row: any) =>
+      render: (row: DataPermissionRule) =>
         h(NSpace, { size: 8 }, () => [
           h(
             NButton,
@@ -1342,13 +1344,13 @@
   ]
 
   // ============ 临时授权表格列配置 ============
-  const tempAuthColumns: DataTableColumns = [
+  const tempAuthColumns: DataTableColumns<TempAuthorization> = [
     { title: '目标角色', key: 'targetRoleName', width: 120 },
     {
       title: '授权权限',
       key: 'permissionNames',
       width: 180,
-      render: (row: any) =>
+      render: (row: TempAuthorization) =>
         h(NSpace, { size: 4 }, () =>
           row.permissionNames.map((name: string) =>
             h(NTag, { type: 'info', size: 'small' }, { default: () => name })
@@ -1363,7 +1365,7 @@
       title: '状态',
       key: 'status',
       width: 100,
-      render: (row: any) => {
+      render: (row: TempAuthorization) => {
         const config =
           TEMP_AUTH_STATUS_CONFIG[
             row.status as keyof typeof TEMP_AUTH_STATUS_CONFIG
@@ -1379,7 +1381,7 @@
       title: '操作',
       key: 'actions',
       width: 80,
-      render: (row: any) =>
+      render: (row: TempAuthorization) =>
         row.status === 'active'
           ? h(
               NButton,
@@ -1450,27 +1452,27 @@
 
   // ============ 表格操作配置 ============
   const tableActions = computed(() => ({
-    edit: (row: any) => updatePermissionApi(row.id, row),
-    delete: (row: any) => deletePermissionApi(row.id),
-    detail: (row: any) => getPermissionByIdApi(row.id),
+    edit: (row: PermissionData) => updatePermissionApi(row.id, row),
+    delete: (row: PermissionData) => deletePermissionApi(row.id),
+    detail: (row: PermissionData) => getPermissionByIdApi(row.id),
     custom: [
       {
         key: 'copy',
         label: '复制',
         icon: 'material-symbols:content-copy',
         type: 'info' as const,
-        onClick: (row: any) => copyPermission(row as PermissionData),
+        onClick: (row: PermissionData) => copyPermission(row),
       },
       {
         key: 'toggle',
-        label: (row: any) => (row?.status === 1 ? '禁用' : '启用'),
-        icon: (row: any) =>
-          row?.status === 1
+        label: (row: PermissionData) => (row.status === 1 ? '禁用' : '启用'),
+        icon: (row: PermissionData) =>
+          row.status === 1
             ? 'material-symbols:pause'
             : 'material-symbols:play-arrow',
-        type: (row: any): 'warning' | 'success' =>
-          row?.status === 1 ? 'warning' : 'success',
-        onClick: (row: any) => togglePermissionStatus(row as PermissionData),
+        type: (row: PermissionData): 'warning' | 'success' =>
+          row.status === 1 ? 'warning' : 'success',
+        onClick: (row: PermissionData) => togglePermissionStatus(row),
       },
     ],
   }))
@@ -1491,8 +1493,10 @@
   }
 
   const clearFilter = (key: keyof SearchForm) => {
-    ;(searchForm as any)[key] =
-      key === 'status' ? null : key === 'type' || key === 'module' ? null : ''
+    if (key === 'keyword') searchForm.keyword = ''
+    else if (key === 'status') searchForm.status = null
+    else if (key === 'type') searchForm.type = null
+    else searchForm.module = null
   }
 
   const clearAllFilters = () => {
@@ -1580,7 +1584,7 @@
     }
   }
 
-  const handleSave = async (rowData: any) => {
+  const handleSave = async (rowData: PermissionData) => {
     try {
       await updatePermissionApi(rowData.id, rowData)
       message.success('修改成功')
@@ -1720,7 +1724,7 @@
                     row.scope === opt.value ? '#f0f7ff' : 'transparent',
                 },
                 onClick: () => {
-                  row.scope = opt.value as any
+                  row.scope = opt.value
                 },
               },
               [

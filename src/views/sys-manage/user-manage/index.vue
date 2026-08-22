@@ -129,7 +129,7 @@
               :columns="userColumns as any"
               :data="userList"
               :loading="loading"
-              :row-key="(row: any) => row.id"
+              :row-key="userRowKey"
               :row-class-name="getRowClassName"
               :config="{
                 actions: tableActions as any,
@@ -410,6 +410,7 @@
 </template>
 
 <script setup lang="ts">
+  import type { Component } from 'vue'
   import {
     type FormInst,
     NButton,
@@ -569,13 +570,10 @@
   // ==================== 辅助函数 ====================
   const updateUserInList = (userId: string, updates: Partial<UserData>) => {
     // 更新所有相关的数据源
-    const updateTargets = [
-      { data: MOCK_USER_DATA, key: 'id' },
-      { data: userList, key: 'id' },
-    ]
+    const updateTargets = [MOCK_USER_DATA, userList]
 
-    updateTargets.forEach(({ data, key }) => {
-      const index = data.findIndex((item: any) => item[key] === userId)
+    updateTargets.forEach(data => {
+      const index = data.findIndex(item => item.id === userId)
       if (index !== -1) {
         data[index] = { ...data[index], ...updates }
       }
@@ -589,26 +587,33 @@
 
   const getRowClassName = (row: UserData) =>
     row.status === 0 ? 'disabled-row' : ''
+  const userRowKey = (row: UserData): string => row.id
 
   // ==================== 渲染函数 ====================
   const createTagRenderer =
-    (getConfig: (value: any) => any, valueKey: string) => (row: UserData) =>
-      h(
+    (valueKey: 'userType' | 'status') => (row: UserData) => {
+      const config =
+        valueKey === 'userType'
+          ? getUserTypeConfig(row.userType)
+          : getUserStatusConfig(row.status)
+
+      return h(
         NTag,
         {
-          type: getConfig(row[valueKey as keyof UserData]).type,
+          type: config.type,
           size: 'small',
           class: { 'disabled-tag': row.status === 0 },
         },
         {
           icon: () =>
             h(C_Icon, {
-              name: getConfig(row[valueKey as keyof UserData]).icon,
+              name: config.icon,
               size: 10,
             }),
-          default: () => getConfig(row[valueKey as keyof UserData]).text,
+          default: () => config.text,
         }
       )
+    }
 
   const createTextRenderer =
     (key: keyof UserData, fallback = '-') =>
@@ -786,7 +791,7 @@
       title: TABLE_COLUMN_CONFIG.userType.title,
       key: 'userType',
       width: TABLE_COLUMN_CONFIG.userType.width,
-      render: createTagRenderer(getUserTypeConfig, 'userType'),
+      render: createTagRenderer('userType'),
     },
     {
       title: TABLE_COLUMN_CONFIG.username.title,
@@ -838,7 +843,7 @@
       title: TABLE_COLUMN_CONFIG.status.title,
       key: 'status',
       width: TABLE_COLUMN_CONFIG.status.width,
-      render: createTagRenderer(getUserStatusConfig, 'status'),
+    render: createTagRenderer('status'),
     },
     {
       title: TABLE_COLUMN_CONFIG.createTime.title,
@@ -942,8 +947,8 @@
     key: keyof UserFormData
     label: string
     path: string
-    component: any
-    props: any
+    component: Component
+    props: Record<string, unknown>
     condition: boolean
   }> => [
     {
@@ -1251,7 +1256,7 @@
   const { handleAddUserData, handleUpdateUserData } = useUserOperations()
 
   // ==================== 事件处理函数 ====================
-  const handleDeptSelect = (node: any, keys: (string | number)[]) => {
+  const handleDeptSelect = (_node: unknown, keys: (string | number)[]) => {
     selectedDeptKeys.value = keys.map(k => String(k))
     searchForm.deptId = keys.length > 0 ? String(keys[0]) : null
     handleSearch()
@@ -1262,8 +1267,7 @@
     loadUsers()
   }
 
-  const handlePaginationChange = async (...args: any[]) => {
-    const [page, pageSize] = args
+  const handlePaginationChange = async (page: number, pageSize: number) => {
     pagination.page = page
     pagination.pageSize = pageSize
     await loadUsers()

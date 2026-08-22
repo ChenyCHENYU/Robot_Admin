@@ -52,6 +52,11 @@ export interface SearchForm {
   type: RoleType | null
 }
 
+export interface RoleListParams extends SearchForm {
+  page: number
+  pageSize: number
+}
+
 export interface ApiResponse<T = unknown> {
   code: string
   data: T
@@ -721,7 +726,7 @@ const createMockApi = <T>(data: T, delay = 500): Promise<ApiResponse<T>> =>
     }, delay)
   })
 
-const filterRoles = (roles: RoleData[], params: any): RoleData[] => {
+const filterRoles = (roles: RoleData[], params: RoleListParams): RoleData[] => {
   let filtered = [...roles]
 
   if (params.keyword) {
@@ -783,7 +788,7 @@ const getUsersByRoleId = (roleId: string): RoleUserData[] => {
 
 // ==================== API 方法 ====================
 export const getRoleListApi = async (
-  params: any
+  params: RoleListParams
 ): Promise<ApiResponse<PageResult<RoleData>>> => {
   const filteredRoles = filterRoles(MOCK_ROLE_DATA, params)
   const paginatedData = paginateData(

@@ -799,12 +799,11 @@
   }
 
   // 事件处理
-  const handleNodeSelect = (node: any, keys: (string | number)[]) => {
+  const handleNodeSelect = (_node: unknown, keys: (string | number)[]) => {
     selectedKeys.value = keys.map(k => String(k))
   }
 
-  const handleNodeAction = (action: string, node: any) => {
-    const dictNode = node as DictData
+  const handleNodeAction = (action: string, dictNode: DictData) => {
 
     switch (action) {
       case 'edit':
@@ -822,8 +821,7 @@
     }
   }
 
-  const handleAddFromTree = (parentNode?: any) => {
-    const dictNode = parentNode as DictData | undefined
+  const handleAddFromTree = (dictNode?: DictData) => {
     if (dictNode?.type === 'type') {
       handleAddDictItem(dictNode.id)
     } else {
