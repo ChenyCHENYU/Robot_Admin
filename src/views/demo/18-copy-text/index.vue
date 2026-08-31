@@ -41,7 +41,7 @@
               "
             >
               <template #icon>
-                <i class="i-mdi:content-copy" />
+                <i class="i-mdi-content-copy" />
               </template>
               复制
             </NButton>
@@ -61,7 +61,7 @@
               "
             >
               <template #icon>
-                <i class="i-mdi:text" />
+                <i class="i-mdi-text" />
               </template>
               复制示例
             </NButton>
@@ -86,7 +86,7 @@
               @click="() => handleCopy(() => copyURL(urlInput), 'url')"
             >
               <template #icon>
-                <i class="i-mdi:link" />
+                <i class="i-mdi-link" />
               </template>
               复制
             </NButton>
@@ -106,7 +106,7 @@
                 @click="() => handleCopy(() => copyURL(url), `url-${url}`)"
               >
                 <template #icon>
-                  <i class="i-mdi:link-variant" />
+                  <i class="i-mdi-link-variant" />
                 </template>
               </NButton>
             </div>
@@ -152,7 +152,7 @@
               "
             >
               <template #icon>
-                <i class="i-mdi:content-copy" />
+                <i class="i-mdi-content-copy" />
               </template>
               复制
             </NButton>
@@ -187,7 +187,7 @@
               "
             >
               <template #icon>
-                <i class="i-mdi:code-tags" />
+                <i class="i-mdi-code-tags" />
               </template>
               复制代码
             </NButton>
@@ -253,7 +253,7 @@
               "
             >
               <template #icon>
-                <i class="i-mdi:content-copy" />
+                <i class="i-mdi-content-copy" />
               </template>
               复制
             </NButton>
@@ -279,7 +279,7 @@
             @click="handleReadClipboard"
           >
             <template #icon>
-              <i class="i-mdi:clipboard-text" />
+              <i class="i-mdi-clipboard-text" />
             </template>
             读取剪贴板
           </NButton>
@@ -303,7 +303,7 @@
             @click="clearHistory"
           >
             <template #icon>
-              <i class="i-mdi:delete" />
+              <i class="i-mdi-delete" />
             </template>
             清除历史
           </NButton>

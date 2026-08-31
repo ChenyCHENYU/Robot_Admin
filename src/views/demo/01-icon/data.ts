@@ -307,14 +307,14 @@ export const createDemoSections = (
     icons: [
       {
         key: 'home',
-        props: { type: 'unocss', name: 'i-mdi:home-assistant' },
+        props: { type: 'unocss', name: 'i-mdi-home-assistant' },
         label: 'i-mdi-home',
       },
       {
         key: 'settings',
         props: {
           type: 'unocss',
-          name: 'i-mdi:account-multiple-check-outline',
+          name: 'i-mdi-account-multiple-check-outline',
           size: '24',
         },
         label: 'size="24"',
@@ -323,7 +323,7 @@ export const createDemoSections = (
         key: 'user',
         props: {
           type: 'unocss',
-          name: 'i-mdi:user-group',
+          name: 'i-mdi-user-group',
           color: '#42b883',
           size: '32',
         },
@@ -333,7 +333,7 @@ export const createDemoSections = (
         key: 'heart',
         props: {
           type: 'unocss',
-          name: 'i-mdi:ev-plug-chademo',
+          name: 'i-mdi-ev-plug-chademo',
           clickable: true,
         },
         label: '可点击',

@@ -62,6 +62,53 @@ const setupPromiseErrorHandler = (): void => {
   })
 }
 
+const getResourceElement = (event: Event): HTMLElement | null => {
+  const { target } = event
+  if (!target || target === window) return null
+
+  const errorEvent = event as ErrorEvent
+  if ('error' in errorEvent && errorEvent.error instanceof Error) return null
+
+  const element = target as HTMLElement
+  const tagName = element.tagName?.toLowerCase()
+  return tagName &&
+    RESOURCE_TAGS.includes(tagName as (typeof RESOURCE_TAGS)[number])
+    ? element
+    : null
+}
+
+const getResourceUrl = (element: HTMLElement): string =>
+  (element as HTMLImageElement).src ||
+  (element as HTMLLinkElement).href ||
+  'unknown'
+
+const isEmptyImageResource = (element: HTMLElement, url: string): boolean => {
+  if (element.tagName.toLowerCase() !== 'img') return false
+  const source = (element as HTMLImageElement).getAttribute('src')
+  return !source || url === `${window.location.origin}/`
+}
+
+const handleResourceError = (event: Event): void => {
+  const element = getResourceElement(event)
+  if (!element) return
+
+  const tagName = element.tagName.toLowerCase()
+  const url = getResourceUrl(element)
+  if (isEmptyImageResource(element, url)) return
+
+  const context = createErrorContext(
+    'resource',
+    `${tagName} 资源加载失败: ${url}`,
+    undefined,
+    { url, tagName, resourceType: tagName }
+  )
+  handleError(context, {
+    showMessage: false,
+    logToConsole: true,
+    reportToServer: true,
+  })
+}
+
 /**
  * 设置资源加载错误处理
  *
@@ -72,56 +119,7 @@ const setupPromiseErrorHandler = (): void => {
  * 4. 脚本错误: event.target 是 window 或 null,且通常有 error 属性
  */
 const setupResourceErrorHandler = (): void => {
-  window.addEventListener(
-    'error',
-    (event: Event) => {
-      const { target } = event
-
-      // ✅ 修复1: 精确判断 - 如果没有 target 或 target 是 window,说明是脚本错误
-      if (!target || target === window) return
-
-      // ✅ 修复2: 双重检查 - ErrorEvent 有 error 属性通常表示脚本错误
-      // 资源加载错误的 ErrorEvent 不会有 error 属性
-      const errorEvent = event as ErrorEvent
-      if ('error' in errorEvent && errorEvent.error instanceof Error) return
-
-      const element = target as HTMLElement
-      const tagName = element.tagName?.toLowerCase()
-
-      // ✅ 修复3: 确保是我们关心的资源标签
-      if (tagName && RESOURCE_TAGS.includes(tagName as any)) {
-        const url = (element as any).src || (element as any).href || 'unknown'
-
-        // ✅ 修复5: 过滤空 src 引源的 img 错误（第三方库内部初始化带来的无害错误）
-        // 典型场景：vue-cropper 等组件初始化时 data 中 imgs="" 导致 <img src=""> 加载当前页面 URL
-        if (tagName === 'img') {
-          const imgSrc = (element as HTMLImageElement).getAttribute('src')
-          if (!imgSrc || imgSrc === '' || url === window.location.origin + '/')
-            return
-        }
-
-        // ✅ 修复4: 所有资源加载错误统一归类为 'resource'
-        // 'script' 类型专门用于脚本运行时错误,避免混淆
-        const context = createErrorContext(
-          'resource',
-          `${tagName} 资源加载失败: ${url}`,
-          undefined,
-          {
-            url,
-            tagName,
-            resourceType: tagName, // 保留具体的资源类型用于分析
-          }
-        )
-
-        handleError(context, {
-          showMessage: false, // 资源错误通常不需要打扰用户
-          logToConsole: true,
-          reportToServer: true, // 但需要上报以便分析
-        })
-      }
-    },
-    true // 使用捕获阶段
-  )
+  window.addEventListener('error', handleResourceError, true)
 }
 
 /**

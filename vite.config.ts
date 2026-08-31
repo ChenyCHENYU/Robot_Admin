@@ -23,84 +23,89 @@ import {
   resolveConfig,
   serverConfig,
   buildConfig,
+  packageCssCompatPlugin,
   createI18nPlugin,
   createVuePluginOptions,
-} from './src/config/vite'
-import { HEAVY_PAGE_ROUTES } from './src/config/heavyPages'
+} from './src/config/vite/index.ts'
+import { HEAVY_PAGE_PRELOAD_ROUTES } from './src/config/heavyPages.ts'
+import { validateViteEnv } from './src/config/vite/viteEnvConfig.ts'
 
-export default defineConfig(async ({ mode, command }: { mode: string; command: string }) => {
-  const env = loadEnv(mode, process.cwd(), '')
-  process.env = { ...process.env, ...env }
+export default defineConfig(
+  async ({ mode, command }: { mode: string; command: string }) => {
+    const env = loadEnv(mode, process.cwd(), '')
+    const validatedEnv = validateViteEnv(env, mode)
+    process.env = { ...process.env, ...env }
 
-  return {
-    plugins: [
-      viteConsolePlugin,
-      Unocss(),
-      vue(createVuePluginOptions()),
-      vueJsx(),
-      ...(process.env.VITE_DEVTOOLS === 'true' ? [vueDevTools()] : []),
-      Icons({ autoInstall: true }),
-      viteAutoImportPlugin,
-      viteComponentsPlugin,
-      // ⚡ preloader 仅在开发环境启用（生产环境 import() 无法加载原始 .vue 源文件）
-      ...(command === 'serve'
-        ? [
-            preloader({
-              routes: HEAVY_PAGE_ROUTES,
-            }),
-          ]
-        : []),
-      createI18nPlugin(),
-      ...(process.env.ANALYZE
-        ? [
-            (await import('rollup-plugin-visualizer')).visualizer({
-              filename: 'dist/report.html',
-              open: true,
-              gzipSize: true,
-              brotliSize: true,
-            }) as PluginOption,
-          ]
-        : []),
-    ].filter(Boolean),
+    return {
+      plugins: [
+        viteConsolePlugin,
+        packageCssCompatPlugin,
+        Unocss(),
+        vue(createVuePluginOptions()),
+        vueJsx(),
+        ...(process.env.VITE_DEVTOOLS === 'true' ? [vueDevTools()] : []),
+        Icons({ autoInstall: false }),
+        viteAutoImportPlugin,
+        viteComponentsPlugin,
+        // ⚡ preloader 仅在开发环境启用（生产环境 import() 无法加载原始 .vue 源文件）
+        ...(command === 'serve'
+          ? [
+              preloader({
+                routes: HEAVY_PAGE_PRELOAD_ROUTES,
+              }),
+            ]
+          : []),
+        createI18nPlugin(),
+        ...(process.env.ANALYZE
+          ? [
+              (await import('rollup-plugin-visualizer')).visualizer({
+                filename: 'dist/report.html',
+                open: true,
+                gzipSize: true,
+                brotliSize: true,
+              }) as PluginOption,
+            ]
+          : []),
+      ].filter(Boolean),
 
-    resolve: resolveConfig,
+      resolve: resolveConfig,
 
-    optimizeDeps: {
-      // ✅ 预构建大型依赖以提升启动速度
-      // dev:components 模式下组件库走本地源码，不能预构建
-      include: [
-        'naive-ui',
-        ...(process.env.USE_LOCAL_COMPONENTS === 'true'
-          ? []
-          : ['@robot-admin/naive-ui-components']),
-        'vue-router',
-        'pinia',
-        '@vueuse/core',
-        'echarts/core',
-        'echarts/charts',
-        'echarts/components',
-        'echarts/renderers',
-        '@antv/x6',
-        'axios',
-      ],
-      // 🔧 排除 Vue 全家桶：预构建时会将 Vue 内部模块拆成多个共享 chunk，
-      // 导致 RefImpl / isFunction 等内部符号跨 chunk 引用断裂。
-      // Vite 8 使用 Rolldown 替代 esbuild 预构建，保留排除以确保稳定性。
-      exclude: [
-        'vue',
-        '@vue/shared',
-        '@vue/reactivity',
-        '@vue/runtime-core',
-        '@vue/runtime-dom',
-        '@vue/compiler-dom',
-        '@vue/compiler-core',
-        '@vue/compiler-sfc',
-        'pinia-plugin-persistedstate',
-      ],
-    },
+      optimizeDeps: {
+        // ✅ 预构建大型依赖以提升启动速度
+        // dev:components 模式下组件库走本地源码，不能预构建
+        include: [
+          'naive-ui',
+          ...(process.env.USE_LOCAL_COMPONENTS === 'true'
+            ? []
+            : ['@robot-admin/naive-ui-components']),
+          'vue-router',
+          'pinia',
+          '@vueuse/core',
+          'echarts/core',
+          'echarts/charts',
+          'echarts/components',
+          'echarts/renderers',
+          '@antv/x6',
+          'axios',
+        ],
+        // 🔧 排除 Vue 全家桶：预构建时会将 Vue 内部模块拆成多个共享 chunk，
+        // 导致 RefImpl / isFunction 等内部符号跨 chunk 引用断裂。
+        // Vite 8 使用 Rolldown 替代 esbuild 预构建，保留排除以确保稳定性。
+        exclude: [
+          'vue',
+          '@vue/shared',
+          '@vue/reactivity',
+          '@vue/runtime-core',
+          '@vue/runtime-dom',
+          '@vue/compiler-dom',
+          '@vue/compiler-core',
+          '@vue/compiler-sfc',
+          'pinia-plugin-persistedstate',
+        ],
+      },
 
-    server: serverConfig,
-    build: buildConfig,
-
+      server: { ...serverConfig, port: validatedEnv.port },
+      build: buildConfig,
+    }
   }
-})
+)

@@ -7,7 +7,7 @@
  */
 
 import type { Router } from 'vue-router'
-import { HEAVY_PAGE_ROUTES } from '@/config/heavyPages'
+import { HEAVY_PAGES, HEAVY_PAGE_ROUTES } from '@/config/heavyPages'
 import {
   shouldPrefetchHeavyRoutes,
   type NetworkInformationLike,
@@ -15,20 +15,21 @@ import {
 
 interface NavigatorWithConnection extends Navigator {
   connection?: NetworkInformationLike
+  deviceMemory?: number
 }
 
-type HeavyRoute = (typeof HEAVY_PAGE_ROUTES)[number]
+type HeavyRoute = (typeof HEAVY_PAGES)[number]['routePath']
 type RouteLoader = () => Promise<unknown>
 
 const HEAVY_ROUTE_LOADERS = {
-  '/demo/13-calendar': () => import('@/views/demo/13-calendar/index.vue'),
-  '/demo/16-text-editor': () => import('@/views/demo/16-text-editor/index.vue'),
-  '/demo/29-antv-x6-editor': () =>
+  '/plugins/calendar': () => import('@/views/demo/13-calendar/index.vue'),
+  '/editor/text-editor': () => import('@/views/demo/16-text-editor/index.vue'),
+  '/editor/antv-x6-editor': () =>
     import('@/views/demo/29-antv-x6-editor/index.vue'),
-  '/demo/30-excel-all': () => import('@/views/demo/30-excel-all/index.vue'),
-  '/demo/33-v-table-gantt': () =>
+  '/hooks/excel-all': () => import('@/views/demo/30-excel-all/index.vue'),
+  '/plugins/v-table-gantt': () =>
     import('@/views/demo/33-v-table-gantt/index.vue'),
-  '/demo/28-work-flow-editor': () =>
+  '/editor/work-flow-editor': () =>
     import('@/views/demo/28-work-flow-editor/index.vue'),
 } satisfies Record<HeavyRoute, RouteLoader>
 
@@ -44,6 +45,10 @@ const normalizeRoutePath = (path: string): string => path.split(/[?#]/, 1)[0]
 export const prefetchHeavyRoute = (
   path: string
 ): Promise<unknown> | undefined => {
+  if (typeof navigator !== 'undefined') {
+    const { connection, deviceMemory } = navigator as NavigatorWithConnection
+    if (!shouldPrefetchHeavyRoutes(connection, deviceMemory)) return undefined
+  }
   const normalizedPath = normalizeRoutePath(path) as HeavyRoute
   const loader = HEAVY_ROUTE_LOADERS[normalizedPath]
   if (!loader) return undefined
@@ -75,8 +80,13 @@ const scheduleIdleTask = (callback: () => void): (() => void) => {
  * 登录后逐个预热高频大页面；预览页和登录页不启动，避免与首屏资源竞争。
  */
 export const setupRoutePrefetch = (router: Router): (() => void) => {
-  const { connection } = navigator as NavigatorWithConnection
-  if (!shouldPrefetchHeavyRoutes(connection)) return () => undefined
+  if (import.meta.env.VITE_ROUTE_IDLE_PREFETCH !== 'true') {
+    return () => undefined
+  }
+  const { connection, deviceMemory } = navigator as NavigatorWithConnection
+  if (!shouldPrefetchHeavyRoutes(connection, deviceMemory)) {
+    return () => undefined
+  }
 
   let stopped = false
   let started = false

@@ -17,7 +17,7 @@
               round
             >
               <template #icon>
-                <i class="i-mdi:map-marker-alert-outline" />
+                <i class="i-mdi-map-marker-alert-outline" />
               </template>
               Creator
             </NTag>

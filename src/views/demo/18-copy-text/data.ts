@@ -82,7 +82,7 @@ export const CODE_EXAMPLES = [
     content: `<template>
   <NButton @click="handleCopy">
     <template #icon>
-      <i class="i-mdi:content-copy" />
+      <i class="i-mdi-content-copy" />
     </template>
     复制内容
   </NButton>
@@ -110,18 +110,18 @@ export const CONTACTS = [
     type: 'email',
     label: '邮箱地址',
     value: 'contact@example.com',
-    icon: 'i-mdi:email',
+    icon: 'i-mdi-email',
   },
   {
     type: 'phone',
     label: '联系电话',
     value: '13800138000',
-    icon: 'i-mdi:phone',
+    icon: 'i-mdi-phone',
   },
   {
     type: 'address',
     label: '公司地址',
     value: '北京市朝阳区某某大厦1008室',
-    icon: 'i-mdi:map-marker',
+    icon: 'i-mdi-map-marker',
   },
 ]

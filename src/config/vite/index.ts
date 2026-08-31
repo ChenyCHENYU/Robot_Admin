@@ -8,13 +8,14 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-export { default as viteConsolePlugin } from './viteConsolePluginConfig'
-export { default as viteAutoImportPlugin } from './viteAutoImportConfig'
-export { default as viteComponentsPlugin } from './viteComponentsConfig'
-export { default as resolveConfig } from './viteResolveConfig'
-export { default as serverConfig } from './viteServerConfig'
-export { default as buildConfig } from './viteBuildConfig'
+export { default as viteConsolePlugin } from './viteConsolePluginConfig.ts'
+export { default as viteAutoImportPlugin } from './viteAutoImportConfig.ts'
+export { default as viteComponentsPlugin } from './viteComponentsConfig.ts'
+export { default as resolveConfig } from './viteResolveConfig.ts'
+export { default as serverConfig } from './viteServerConfig.ts'
+export { default as buildConfig } from './viteBuildConfig.ts'
+export { default as packageCssCompatPlugin } from './vitePackageCssCompat.ts'
 export {
   default as createI18nPlugin,
   createVuePluginOptions,
-} from './viteI18nConfig'
+} from './viteI18nConfig.ts'

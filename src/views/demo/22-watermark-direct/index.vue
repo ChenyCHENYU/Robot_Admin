@@ -74,7 +74,7 @@
                 <p>红色、Arial字体、20px大小的水印效果。</p>
                 <NAlert type="warning">
                   <template #icon>
-                    <div class="i-mdi:alert" />
+                    <div class="i-mdi-alert" />
                   </template>
                   重要提醒内容
                 </NAlert>
@@ -207,7 +207,7 @@
                   <h4>🖼️ 图片预览</h4>
                   <div class="image-container">
                     <div class="placeholder-image">
-                      <div class="i-mdi:image-outline text-6xl text-gray-400" />
+                      <div class="i-mdi-image-outline text-6xl text-gray-400" />
                       <p class="text-gray-500">预览图片区域</p>
                     </div>
                   </div>

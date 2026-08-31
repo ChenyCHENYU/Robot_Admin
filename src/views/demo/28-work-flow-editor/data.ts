@@ -521,10 +521,10 @@ export const NODE_MAPS = {
   } as const,
 
   icon: {
-    start: 'i-mdi:play-circle',
-    approval: 'i-mdi:account-check',
-    copy: 'i-mdi:email-outline',
-    condition: 'i-mdi:source-branch',
+    start: 'i-mdi-play-circle',
+    approval: 'i-mdi-account-check',
+    copy: 'i-mdi-email-outline',
+    condition: 'i-mdi-source-branch',
   } as const,
 }
 

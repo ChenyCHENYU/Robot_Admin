@@ -3,7 +3,9 @@
   display: flex;
   flex-direction: column;
   background: var(--portal-bg-page);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   overflow: hidden;
 }
 
@@ -121,7 +123,7 @@
         width: 18px !important;
         height: 18px !important;
         font-size: 18px !important;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
       }
     }
 
@@ -149,7 +151,7 @@
 
       border-radius: 12px;
       font-size: 11px;
-      color: #52C41A;
+      color: #52c41a;
       font-weight: 600;
       white-space: nowrap;
       flex-shrink: 0;
@@ -158,7 +160,7 @@
 
       i {
         font-size: 12px;
-        color: #52C41A;
+        color: #52c41a;
       }
 
       &.pending {
@@ -182,7 +184,7 @@
     width: 32px;
     height: 32px;
     background: var(--portal-bg-card);
-      border: 1px solid var(--portal-border);
+    border: 1px solid var(--portal-border);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -195,10 +197,10 @@
 
     &:hover {
       background: var(--portal-status-info);
-        color: var(--portal-bg-card);
+      color: var(--portal-bg-card);
       transform: translateX(-50%) translateY(-2px);
       box-shadow: 0 4px 12px rgba(91, 143, 249, 0.3);
-      border-color: #5B8FF9;
+      border-color: #5b8ff9;
     }
 
     &:active {
@@ -270,7 +272,9 @@
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   border: 1px solid rgba(0, 0, 0, 0.02);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
@@ -329,7 +333,9 @@
   overflow: hidden;
   border-bottom: 3px solid var(--portal-status-info);
   position: relative;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
@@ -407,7 +413,9 @@
   }
 }
 
-.task-list, .external-list, .message-list {
+.task-list,
+.external-list,
+.message-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -527,7 +535,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 
-  border-bottom: 1px solid rgba(0,0,0,0.03) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03) !important;
 
   &:hover {
     background: var(--portal-bg-card);
@@ -554,7 +562,11 @@
       width: 4px;
       height: 24px;
       border-radius: 4px;
-      background: linear-gradient(to bottom, #36ad6a, #18a058); // Green gradient
+      background: linear-gradient(
+        to bottom,
+        #36ad6a,
+        #18a058
+      ); // Green gradient
       transition: all 0.3s ease;
     }
 
@@ -667,8 +679,8 @@
       }
 
       .message-icon {
-         transform: scale(1.1) rotate(5deg);
-         background: color-mix(in srgb, var(--app-primary) 12%, transparent);
+        transform: scale(1.1) rotate(5deg);
+        background: color-mix(in srgb, var(--app-primary) 12%, transparent);
       }
     }
 
@@ -752,7 +764,6 @@
         gap: 12px;
         padding: 20px 12px;
 
-
         background: var(--portal-bg-card);
         border-radius: 20px;
         border: 1px solid transparent;
@@ -771,11 +782,7 @@
           .app-icon-box {
             transform: scale(1.1);
             background: var(--portal-status-info-bg);
-
-            :deep(.iconify),
-            :deep(svg) {
-              color: var(--portal-status-info);
-            }
+            color: var(--portal-status-info);
           }
 
           .app-name {
@@ -793,17 +800,9 @@
           justify-content: center;
           transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-          // Use portal-bg-page for contrast inside the card
-          background: var(--portal-bg-page);
+          background: var(--app-icon-bg, var(--portal-bg-page));
           border: 1px solid transparent;
-
-          :deep(.iconify),
-          :deep(svg) {
-            width: 28px !important;
-            height: 28px !important;
-            color: var(--portal-text-secondary);
-            transition: all 0.3s ease;
-          }
+          color: var(--app-icon-color, var(--portal-text-secondary));
         }
 
         .app-name {
@@ -822,125 +821,139 @@
 // 右侧栏
 .right-column {
   .weather-card {
-  background: linear-gradient(135deg, #F5E6B3 0%, #FFD966 40%, #FFCC4D 70%, #FFB930 100%);
-  border-radius: 16px; // Match standard
-  padding: 24px 20px 24px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(255, 185, 48, 0.2); // Richer shadow
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(255, 185, 48, 0.3);
-  }
-
-  .weather-circle {
-    position: absolute;
-    top: -60px;
-    right: -60px;
-    width: 180px;
-    height: 180px;
-
-    // Liquid Sun/Orb Effect
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.05) 70%);
-    backdrop-filter: blur(12px);
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow:
-      0 0 40px rgba(255, 185, 48, 0.4),
-      inset 0 0 20px rgba(255, 255, 255, 0.2);
-
-    transform: rotate(-15deg);
-  }
-
-  // Add a secondary decorative element
-  &::before {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    left: -20px;
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
-    border-radius: 50%;
-    filter: blur(20px);
-    pointer-events: none;
-  }
-
-  .weather-header {
+    background: linear-gradient(
+      135deg,
+      #f5e6b3 0%,
+      #ffd966 40%,
+      #ffcc4d 70%,
+      #ffb930 100%
+    );
+    border-radius: 16px; // Match standard
+    padding: 24px 20px 24px;
     position: relative;
-    z-index: 1;
-    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(255, 185, 48, 0.2); // Richer shadow
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    .weather-main {
-      display: flex;
-      align-items: baseline;
-      gap: 2px;
-      margin-bottom: 6px;
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(255, 185, 48, 0.3);
+    }
 
-      .temp-large {
-        font-size: 60px;
-        font-weight: 600;
-        color: #2A2A2A;
-        line-height: 1;
-        letter-spacing: -1.5px;
-      }
+    .weather-circle {
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 180px;
+      height: 180px;
 
-      .temp-small-wrapper {
+      // Liquid Sun/Orb Effect
+      background: radial-gradient(
+        circle at 30% 30%,
+        rgba(255, 255, 255, 0.35) 0%,
+        rgba(255, 255, 255, 0.05) 70%
+      );
+      backdrop-filter: blur(12px);
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow:
+        0 0 40px rgba(255, 185, 48, 0.4),
+        inset 0 0 20px rgba(255, 255, 255, 0.2);
+
+      transform: rotate(-15deg);
+    }
+
+    // Add a secondary decorative element
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: -20px;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(
+        circle at 70% 70%,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0) 70%
+      );
+      border-radius: 50%;
+      filter: blur(20px);
+      pointer-events: none;
+    }
+
+    .weather-header {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 20px;
+
+      .weather-main {
         display: flex;
         align-items: baseline;
-        padding-bottom: 4px;
+        gap: 2px;
+        margin-bottom: 6px;
 
-        .temp-divider {
-          font-size: 18px;
-          font-weight: 300;
-          color: #4A4A4A;
-          margin: 0 1px;
+        .temp-large {
+          font-size: 60px;
+          font-weight: 600;
+          color: #2a2a2a;
+          line-height: 1;
+          letter-spacing: -1.5px;
         }
 
-        .temp-small {
-          font-size: 18px;
-          font-weight: 500;
-          color: #4A4A4A;
+        .temp-small-wrapper {
+          display: flex;
+          align-items: baseline;
+          padding-bottom: 4px;
+
+          .temp-divider {
+            font-size: 18px;
+            font-weight: 300;
+            color: #4a4a4a;
+            margin: 0 1px;
+          }
+
+          .temp-small {
+            font-size: 18px;
+            font-weight: 500;
+            color: #4a4a4a;
+          }
         }
+      }
+
+      .weather-desc {
+        font-size: 24px;
+        font-weight: 500;
+        color: #2a2a2a;
+        letter-spacing: 1px;
+        margin-left: 2px;
       }
     }
 
-    .weather-desc {
-      font-size: 24px;
-      font-weight: 500;
-      color: #2A2A2A;
-      letter-spacing: 1px;
-      margin-left: 2px;
-    }
-  }
-
-  .weather-details {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-
-    // Liquid Glass Detail Box
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 16px;
-    padding: 16px 14px;
-    backdrop-filter: blur(12px);
-    box-shadow:
-      0 8px 16px rgba(255, 185, 48, 0.15),
-      inset 0 1px 2px rgba(255, 255, 255, 0.8),
-      inset 0 -1px 2px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-
-    .detail-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
+    .weather-details {
       position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+
+      // Liquid Glass Detail Box
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      padding: 16px 14px;
+      backdrop-filter: blur(12px);
+      box-shadow:
+        0 8px 16px rgba(255, 185, 48, 0.15),
+        inset 0 1px 2px rgba(255, 255, 255, 0.8),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+
+      .detail-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        position: relative;
 
         &:not(:last-child)::after {
           content: '';
@@ -953,112 +966,112 @@
           background: rgba(74, 74, 74, 0.2);
         }
 
-      :deep(.iconify),
-      :deep(svg) {
-        width: 20px !important;
-        height: 20px !important;
-        font-size: 20px !important;
-        color: #3A3A3A;
+        :deep(.iconify),
+        :deep(svg) {
+          width: 20px !important;
+          height: 20px !important;
+          font-size: 20px !important;
+          color: #3a3a3a;
           opacity: 1;
-      }
+        }
 
-      .detail-text {
-        display: flex;
-        align-items: center;
-        font-size: 13px;
-        color: #2A2A2A;
+        .detail-text {
+          display: flex;
+          align-items: center;
+          font-size: 13px;
+          color: #2a2a2a;
           font-weight: 500;
-        white-space: nowrap;
+          white-space: nowrap;
 
-        .detail-label {
-          font-weight: 400;
+          .detail-label {
+            font-weight: 400;
+          }
         }
       }
     }
   }
-  }
 
   .calendar-card {
     .calendar-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-
-    .nav-arrow {
-      width: 26px;
-      height: 26px;
-      border: none;
-      background: #F5F7FA;
-      border-radius: 6px;
-      cursor: pointer;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      color: #6B7785;
-      transition: all 0.2s;
+      margin-bottom: 14px;
 
-      &:hover {
-        background: #E8EAED;
-        color: #3D4557;
-      }
-    }
+      .nav-arrow {
+        width: 26px;
+        height: 26px;
+        border: none;
+        background: #f5f7fa;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7785;
+        transition: all 0.2s;
 
-    .calendar-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #2C3E50;
-    }
-  }
-
-  .calendar-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-    margin-bottom: 8px;
-
-    .weekday {
-      text-align: center;
-      font-size: 12px;
-      color: #9BA3AF;
-      padding: 6px 0;
-      font-weight: 400;
-    }
-  }
-
-  .calendar-dates {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-
-    .date-cell {
-      aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      color: #3D4557;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-weight: 400;
-
-      &:hover:not(.today) {
-        background: #F0F2F5;
+        &:hover {
+          background: #e8eaed;
+          color: #3d4557;
+        }
       }
 
-      &.today {
-        background: #5B8FF9;
-        color: #fff;
+      .calendar-title {
+        font-size: 14px;
         font-weight: 600;
-        box-shadow: 0 2px 6px rgba(91, 143, 249, 0.35);
-      }
-
-      &.other-month {
-        color: #D1D5DB;
+        color: #2c3e50;
       }
     }
-  }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 8px;
+
+      .weekday {
+        text-align: center;
+        font-size: 12px;
+        color: #9ba3af;
+        padding: 6px 0;
+        font-weight: 400;
+      }
+    }
+
+    .calendar-dates {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+
+      .date-cell {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        color: #3d4557;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 400;
+
+        &:hover:not(.today) {
+          background: #f0f2f5;
+        }
+
+        &.today {
+          background: #5b8ff9;
+          color: #fff;
+          font-weight: 600;
+          box-shadow: 0 2px 6px rgba(91, 143, 249, 0.35);
+        }
+
+        &.other-month {
+          color: #d1d5db;
+        }
+      }
+    }
   }
 }
 
@@ -1112,7 +1125,9 @@
   .content-grid {
     flex-direction: column;
   }
-  .left-column, .center-column, .right-column {
+  .left-column,
+  .center-column,
+  .right-column {
     width: 100%;
     flex: 1 1 auto;
   }
@@ -1150,7 +1165,11 @@
   overflow: hidden;
   border: 1px solid var(--portal-border);
   border-radius: 16px; // Match standard
-  background: linear-gradient(135deg, rgba(24, 160, 88, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(24, 160, 88, 0.03) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
@@ -1197,7 +1216,11 @@
         padding: 0 6px;
 
         // Liquid Green
-        background: linear-gradient(135deg, rgba(24, 160, 88, 0.9) 0%, rgba(54, 173, 106, 0.9) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(24, 160, 88, 0.9) 0%,
+          rgba(54, 173, 106, 0.9) 100%
+        );
         backdrop-filter: blur(4px);
         box-shadow:
           0 4px 8px rgba(24, 160, 88, 0.25),

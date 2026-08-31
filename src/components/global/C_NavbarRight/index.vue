@@ -28,7 +28,7 @@
             @click="toggleFullscreen"
             class="action-btn"
           >
-            <span class="i-mdi:fullscreen"></span>
+            <span class="i-mdi-fullscreen"></span>
           </NButton>
         </template>
         <span>全屏</span>
@@ -92,7 +92,7 @@
           </div>
           <div class="user-dropdown">
             <span>{{ userName }}</span>
-            <span class="i-mdi:chevron-down dropdown-arrow"></span>
+            <span class="i-mdi-chevron-down dropdown-arrow"></span>
           </div>
         </div>
       </template>
@@ -112,11 +112,11 @@
           <div class="user-panel__info">
             <div class="user-panel__name">{{ userName }}</div>
             <div class="user-panel__role">
-              <span class="i-mdi:shield-account text-xs"></span>
+              <span class="i-mdi-shield-account text-xs"></span>
               {{ userRole }}
             </div>
             <div class="user-panel__email">
-              <span class="i-mdi:email-outline text-xs"></span>
+              <span class="i-mdi-email-outline text-xs"></span>
               {{ userEmail }}
             </div>
           </div>
@@ -149,7 +149,7 @@
               class="user-panel__item-icon"
             ></span>
             <span class="user-panel__item-label">{{ item.label }}</span>
-            <span class="i-mdi:chevron-right user-panel__item-arrow"></span>
+            <span class="i-mdi-chevron-right user-panel__item-arrow"></span>
           </div>
         </div>
 
@@ -184,7 +184,7 @@
             class="user-panel__item user-panel__item--danger"
             @click="handleLogout"
           >
-            <span class="i-mdi:logout user-panel__item-icon"></span>
+            <span class="i-mdi-logout user-panel__item-icon"></span>
             <span class="user-panel__item-label">退出登录</span>
           </div>
         </div>
@@ -257,21 +257,21 @@
   }
 
   const primaryMenuItems: UserMenuItem[] = [
-    { key: 'profile', label: '个人中心', icon: 'i-mdi:account-circle-outline' },
-    { key: 'security', label: '安全设置', icon: 'i-mdi:shield-lock-outline' },
-    { key: 'activity', label: '操作日志', icon: 'i-mdi:history' },
+    { key: 'profile', label: '个人中心', icon: 'i-mdi-account-circle-outline' },
+    { key: 'security', label: '安全设置', icon: 'i-mdi-shield-lock-outline' },
+    { key: 'activity', label: '操作日志', icon: 'i-mdi-history' },
   ]
 
   const secondaryMenuItems: UserMenuItem[] = [
     {
       key: 'docs',
       label: '使用文档',
-      icon: 'i-mdi:book-open-page-variant-outline',
+      icon: 'i-mdi-book-open-page-variant-outline',
     },
     {
       key: 'feedback',
       label: '反馈建议',
-      icon: 'i-mdi:message-reply-text-outline',
+      icon: 'i-mdi-message-reply-text-outline',
     },
   ]
 

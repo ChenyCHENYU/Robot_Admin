@@ -7,7 +7,7 @@ echo "🔧 配置 Git 自定义合并驱动..."
 
 # 配置 i18n-json 合并驱动
 git config --local merge.i18n-json.name "国际化翻译 JSON 智能合并"
-git config --local merge.i18n-json.driver "node scripts/merge-i18n-json.js %O %A %B && cp %A %P"
+git config --local merge.i18n-json.driver "bun scripts/merge-i18n-json.cjs %O %A %B && cp %A %P"
 
 # 配置 ours 合并驱动（保留当前分支）
 git config --local merge.ours.name "保留当前分支版本"

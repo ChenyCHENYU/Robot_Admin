@@ -12,10 +12,7 @@ import { resolve } from 'node:path'
 import { existsSync, readdirSync } from 'node:fs'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
-import {
-  RobotNaiveUiResolver,
-  componentNames,
-} from '@robot-admin/naive-ui-components/resolver'
+import { componentNames } from '@robot-admin/naive-ui-components/resolver'
 import IconsResolver from 'unplugin-icons/resolver'
 
 const PKG = '@robot-admin/naive-ui-components'
@@ -31,7 +28,7 @@ const isLocalMode =
  */
 const libraryComponentNames: readonly string[] = (() => {
   const dir = resolve(process.cwd(), '../naive-ui-components/src/components')
-  if (existsSync(dir)) {
+  if (isLocalMode && existsSync(dir)) {
     return readdirSync(dir).filter(
       n => n.startsWith('C_') && !n.startsWith('_')
     )
@@ -41,6 +38,23 @@ const libraryComponentNames: readonly string[] = (() => {
 
 /** 已迁移到组件库的组件集合 — fallback resolver 必须跳过 */
 const libraryComponents = new Set<string>(libraryComponentNames)
+
+/** 已发布组件并非全部包含样式文件，仅在文件真实存在时注入 sideEffects。 */
+const resolveLibraryComponent = (name: string) => {
+  if (!libraryComponents.has(name)) return undefined
+  const styleFile = resolve(
+    process.cwd(),
+    'node_modules',
+    PKG,
+    'dist',
+    `${name}.css`
+  )
+  return {
+    name,
+    from: `${PKG}/${name}`,
+    sideEffects: existsSync(styleFile) ? `${PKG}/${name}/style.css` : undefined,
+  }
+}
 
 export default Components({
   dts: 'src/types/components.d.ts', // 生成类型声明文件
@@ -53,8 +67,10 @@ export default Components({
     // 正式模式: 使用已发布的 RobotNaiveUiResolver
     isLocalMode
       ? (name: string) =>
-          libraryComponents.has(name) ? { name, from: PKG } : undefined
-      : RobotNaiveUiResolver({ importOnDemand: true }),
+          libraryComponents.has(name)
+            ? { name, from: PKG, sideEffects: `${PKG}/style.css` }
+            : undefined
+      : resolveLibraryComponent,
     componentName => {
       // 已迁移到组件库的 → 由上方 resolver 处理，此处跳过
       if (libraryComponents.has(componentName)) return null

@@ -70,14 +70,14 @@ export const MOCK_PROFILE: ProfileInfo = {
 
 // ==================== 信息展示配置 ====================
 export const ACCOUNT_INFO_ITEMS = [
-  { label: '用户名', key: 'username', icon: 'i-mdi:account-outline' },
-  { label: '角色', key: 'role', icon: 'i-mdi:shield-account-outline' },
-  { label: '部门', key: 'department', icon: 'i-mdi:domain' },
-  { label: '注册时间', key: 'createTime', icon: 'i-mdi:calendar-plus-outline' },
+  { label: '用户名', key: 'username', icon: 'i-mdi-account-outline' },
+  { label: '角色', key: 'role', icon: 'i-mdi-shield-account-outline' },
+  { label: '部门', key: 'department', icon: 'i-mdi-domain' },
+  { label: '注册时间', key: 'createTime', icon: 'i-mdi-calendar-plus-outline' },
   {
     label: '上次登录',
     key: 'lastLoginTime',
-    icon: 'i-mdi:clock-outline',
+    icon: 'i-mdi-clock-outline',
   },
-  { label: '登录 IP', key: 'lastLoginIp', icon: 'i-mdi:ip-network-outline' },
+  { label: '登录 IP', key: 'lastLoginIp', icon: 'i-mdi-ip-network-outline' },
 ] as const

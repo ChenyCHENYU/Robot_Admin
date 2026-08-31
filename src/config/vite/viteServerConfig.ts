@@ -8,7 +8,16 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { HEAVY_PAGE_ROUTES } from '../heavyPages'
+import { resolve } from 'node:path'
+import { HEAVY_PAGES } from '../heavyPages.ts'
+import { isLocalPackageMode } from './localPackagesAlias.ts'
+
+const localPackageRoots = isLocalPackageMode()
+  ? [
+      resolve(process.cwd(), '../robot-admin-packages'),
+      resolve(process.cwd(), '../naive-ui-components'),
+    ]
+  : []
 
 export default {
   port: 1988,
@@ -22,7 +31,8 @@ export default {
 
   // 允许访问外部包目录（@robot-admin/layout）
   fs: {
-    allow: ['..'],
+    strict: true,
+    allow: [resolve(process.cwd()), ...localPackageRoots],
   },
 
   // ⚡ 预热高频文件（开发环境优化 - 首次访问更快）
@@ -34,7 +44,7 @@ export default {
       './src/router/index.ts',
 
       // 重量级页面（自动映射 HEAVY_PAGE_ROUTES，会自动预热它们的依赖组件）
-      ...HEAVY_PAGE_ROUTES.map(route => `./src/views${route}/index.vue`),
+      ...HEAVY_PAGES.map(page => `./src/views${page.viewPath}/index.vue`),
     ],
   },
 

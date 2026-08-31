@@ -15,7 +15,7 @@
         >
           <template #prefix>
             <span
-              class="i-mdi:magnify"
+              class="i-mdi-magnify"
               style="font-size: 16px; color: #9ca3af"
             />
           </template>
@@ -48,13 +48,13 @@
           @click="handleSearch"
         >
           <template #icon>
-            <span class="i-mdi:magnify" />
+            <span class="i-mdi-magnify" />
           </template>
           查询
         </NButton>
         <NButton @click="handleReset">
           <template #icon>
-            <span class="i-mdi:refresh" />
+            <span class="i-mdi-refresh" />
           </template>
           重置
         </NButton>
@@ -69,7 +69,7 @@
       <div class="stats-bar">
         <div class="stat-card">
           <div class="stat-icon stat-total">
-            <span class="i-mdi:format-list-bulleted" />
+            <span class="i-mdi-format-list-bulleted" />
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.total }}</div>
@@ -78,7 +78,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon stat-success">
-            <span class="i-mdi:check-circle-outline" />
+            <span class="i-mdi-check-circle-outline" />
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.success }}</div>
@@ -87,7 +87,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon stat-failed">
-            <span class="i-mdi:close-circle-outline" />
+            <span class="i-mdi-close-circle-outline" />
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.failed }}</div>
@@ -96,7 +96,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon stat-today">
-            <span class="i-mdi:calendar-today" />
+            <span class="i-mdi-calendar-today" />
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.today }}</div>

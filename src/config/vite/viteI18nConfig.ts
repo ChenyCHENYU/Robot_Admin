@@ -10,6 +10,49 @@
 
 import type { Plugin } from 'vite'
 
+const wrapI18nLifecycle = (plugin: any): Plugin | null => {
+  if (!plugin) return null
+
+  const originalBuildEnd = plugin.buildEnd
+  const originalCloseBundle = plugin.closeBundle
+
+  if (originalBuildEnd) {
+    /** Run translation with a bounded timeout so builds cannot hang. */
+    plugin.buildEnd = async function (...args: any[]) {
+      try {
+        await Promise.race([
+          originalBuildEnd.apply(this, args),
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(new Error('i18n buildEnd timeout (30s) — skipping')),
+              30_000
+            )
+          ),
+        ])
+      } catch (error) {
+        console.warn(
+          `⚠️ i18n 翻译阶段跳过（不影响构建）: ${(error as Error).message}`
+        )
+      }
+    }
+  }
+
+  if (originalCloseBundle) {
+    /** Isolate optional translation cleanup failures from the main build. */
+    plugin.closeBundle = async function (...args: any[]) {
+      try {
+        await originalCloseBundle.apply(this, args)
+      } catch (error) {
+        console.warn(
+          `⚠️ i18n closeBundle 阶段跳过: ${(error as Error).message}`
+        )
+      }
+    }
+  }
+
+  return plugin as Plugin
+}
+
 /**
  * @description i18n 插件配置
  * @returns {Plugin | null} 返回插件实例或 null（禁用时）
@@ -19,8 +62,8 @@ import type { Plugin } from 'vite'
  * 2. 申请有道翻译 API: https://ai.youdao.com/
  * 3. 在 envs/.env.development 中配置:
  *    VITE_I18N_ENABLED=true
- *    VITE_YOUDAO_APP_ID=你的AppId
- *    VITE_YOUDAO_APP_KEY=你的AppKey
+ *    YOUDAO_APP_ID=你的AppId
+ *    YOUDAO_APP_KEY=你的AppKey
  * 4. 在入口文件 main.ts 顶部添加: import '../lang/index.js'
  *
  * 💡 工作原理：
@@ -41,8 +84,8 @@ export default function createI18nPlugin(): Plugin | null {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { YoudaoTranslator } = require('vite-auto-i18n-plugin')
 
-    const appId = process.env.VITE_YOUDAO_APP_ID
-    const appKey = process.env.VITE_YOUDAO_APP_KEY
+    const appId = process.env.YOUDAO_APP_ID
+    const appKey = process.env.YOUDAO_APP_KEY
 
     // 判断是否有真实的翻译 API 凭证（排除 dummy 占位符）
     const hasRealCredentials =
@@ -137,59 +180,9 @@ export default function createI18nPlugin(): Plugin | null {
       insertFileExtensions: ['ts', 'tsx'],
     }
 
-    const plugin = autoI18n(pluginOptions)
-
-    // 🛡️ 包装 buildEnd 和 closeBundle，防止翻译失败阻塞构建
-    if (plugin) {
-      const originalBuildEnd = plugin.buildEnd
-      const originalCloseBundle = plugin.closeBundle
-
-      if (originalBuildEnd) {
-        /**
-         *
-         */
-        plugin.buildEnd = async function (...args: any[]) {
-          try {
-            // 设置 30 秒超时，防止翻译 API 调用无限挂起
-            await Promise.race([
-              originalBuildEnd.apply(this, args),
-              new Promise((_, reject) =>
-                setTimeout(
-                  () =>
-                    reject(new Error('i18n buildEnd timeout (30s) — skipping')),
-                  30_000
-                )
-              ),
-            ])
-          } catch (err) {
-            console.warn(
-              `⚠️ i18n 翻译阶段跳过（不影响构建）: ${(err as Error).message}`
-            )
-          }
-        }
-      }
-
-      if (originalCloseBundle) {
-        /**
-         *
-         */
-        plugin.closeBundle = async function (...args: any[]) {
-          try {
-            await originalCloseBundle.apply(this, args)
-          } catch (err) {
-            console.warn(
-              `⚠️ i18n closeBundle 阶段跳过: ${(err as Error).message}`
-            )
-          }
-        }
-      }
-    }
-
-    return plugin
+    return wrapI18nLifecycle(autoI18n(pluginOptions))
   } catch (error) {
-    console.warn(
-      '⚠️ i18n 插件未安装，请运行: pnpm add -D vite-auto-i18n-plugin'
-    )
+    console.warn('⚠️ i18n 插件未安装，请运行: bun add -D vite-auto-i18n-plugin')
     console.warn('错误详情:', error)
     return null
   }

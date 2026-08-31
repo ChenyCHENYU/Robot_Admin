@@ -7,7 +7,7 @@
  */
 
 import DynamicRouter from '@/assets/data/dynamicRouter.json'
-import { postData } from '@robot-admin/request-core'
+import { getData, postData } from '@robot-admin/request-core'
 import type { DynamicRoute } from '@/router/dynamicRouter'
 import {
   resolveAuthMode,
@@ -19,7 +19,18 @@ import { loginMockApi, refreshTokenMockApi } from './auth.mock'
 
 export type { LoginResponse, RefreshTokenResponse } from './auth.contract'
 
-const AUTH_MODE = resolveAuthMode(import.meta.env.VITE_AUTH_MODE)
+const AUTH_MODE = resolveAuthMode(
+  import.meta.env.VITE_AUTH_MODE,
+  import.meta.env.VITE_APP_ENV
+)
+
+/** 菜单接口响应契约 */
+export interface AuthMenuResponse {
+  code: string | number
+  data: DynamicRoute[]
+  msg?: string
+  message?: string
+}
 
 /**
  * * @description: 用户登录接口
@@ -51,8 +62,7 @@ export const getAuthMode = (): typeof AUTH_MODE => AUTH_MODE
  * * @description: 获取用户菜单权限列表
  * ! @return {any} 动态菜单路由配置数据
  */
-export const getAuthMenuListApi = (): {
-  code: string
-  data: DynamicRoute[]
-  msg: string
-} => DynamicRouter as { code: string; data: DynamicRoute[]; msg: string }
+export const getAuthMenuListApi = (): Promise<AuthMenuResponse> =>
+  AUTH_MODE === 'mock'
+    ? Promise.resolve(DynamicRouter as AuthMenuResponse)
+    : getData<AuthMenuResponse>('/auth/menu-list')

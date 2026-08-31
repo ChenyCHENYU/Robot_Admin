@@ -33,7 +33,10 @@
         round
       >
         清空所有事件
-        <span class="i-mdi:clear"></span>
+        <Icon
+          icon="mdi:delete-sweep-outline"
+          :size="16"
+        />
       </NButton>
     </NSpace>
 

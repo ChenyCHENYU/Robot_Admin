@@ -15,8 +15,12 @@ import {
   presetWind3,
   transformerDirectives,
 } from 'unocss'
+import { icons as carbonIcons } from '@iconify-json/carbon'
+import { icons as icIcons } from '@iconify-json/ic'
+import { icons as laIcons } from '@iconify-json/la'
+import { icons as mdiIcons } from '@iconify-json/mdi'
+import { icons as riIcons } from '@iconify-json/ri'
 
-import { iconSafelist } from './src/utils/unocss/icon-safelist'
 import { shortcutsArr } from './src/utils/unocss/shortcuts-arr'
 
 export default defineConfig({
@@ -26,6 +30,13 @@ export default defineConfig({
     presetIcons({
       scale: 1.2,
       warn: true,
+      collections: {
+        carbon: () => carbonIcons,
+        ic: () => icIcons,
+        la: () => laIcons,
+        mdi: () => mdiIcons,
+        ri: () => riIcons,
+      },
       extraProperties: {
         display: 'inline-block',
         'vertical-align': 'middle',
@@ -34,8 +45,6 @@ export default defineConfig({
   ],
   transformers: [transformerDirectives()],
   shortcuts: shortcutsArr,
-  safelist: iconSafelist,
-
   content: {
     // 扫描 Vite 管道内的模块（项目自身源码自动覆盖）
     pipeline: {

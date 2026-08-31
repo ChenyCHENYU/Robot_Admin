@@ -195,7 +195,7 @@
         <template #header>
           <div class="sidebar-header">
             <div class="header-info">
-              <i class="i-mdi:air-filter mr-2" />
+              <i class="i-mdi-air-filter mr-2" />
               <span>筛选条件</span>
               <NTag
                 type="warning"
@@ -211,7 +211,7 @@
               @click="showSidebar = false"
             >
               <template #icon>
-                <i class="i-mdi:close-octagon" />
+                <i class="i-mdi-close-octagon" />
               </template>
             </NButton>
           </div>

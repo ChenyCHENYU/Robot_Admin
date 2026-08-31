@@ -20,11 +20,11 @@
           type="primary"
           @click="saveAllWorkflows"
         >
-          <template #icon><div class="i-mdi:content-save"></div></template>
+          <template #icon><div class="i-mdi-content-save"></div></template>
           保存所有流程
         </NButton>
         <NButton @click="exportAllWorkflows">
-          <template #icon><div class="i-mdi:download"></div></template>
+          <template #icon><div class="i-mdi-download"></div></template>
           批量导出
         </NButton>
       </template>
@@ -80,7 +80,7 @@
                   @click="resetWorkflow"
                   quaternary
                 >
-                  <template #icon><div class="i-mdi:refresh"></div></template>
+                  <template #icon><div class="i-mdi-refresh"></div></template>
                   重置
                 </NButton>
                 <NButton
@@ -89,7 +89,7 @@
                   @click="loadTemplate"
                 >
                   <template #icon
-                    ><div class="i-mdi:magic-staff"></div
+                    ><div class="i-mdi-magic-staff"></div
                   ></template>
                   加载模板
                 </NButton>
@@ -111,7 +111,7 @@
           <aside class="sidebar">
             <div class="sidebar-section stats-section">
               <div class="section-header">
-                <div class="i-mdi:chart-bar"></div>
+                <div class="i-mdi-chart-bar"></div>
                 <h4>流程统计</h4>
               </div>
               <div class="stats-grid">
@@ -141,7 +141,7 @@
             <!-- 修复后的流程预览 -->
             <div class="sidebar-section preview-section">
               <div class="section-header">
-                <div class="i-mdi:eye"></div>
+                <div class="i-mdi-eye"></div>
                 <h4>流程预览</h4>
                 <div class="preview-controls">
                   <NButton
@@ -154,8 +154,8 @@
                       <div
                         :class="
                           previewExpanded
-                            ? 'i-mdi:chevron-up'
-                            : 'i-mdi:chevron-down'
+                            ? 'i-mdi-chevron-up'
+                            : 'i-mdi-chevron-down'
                         "
                       ></div>
                     </template>
@@ -192,7 +192,7 @@
                           v-if="Number(index) < workflowData.nodes.length - 1"
                           class="step-arrow"
                         >
-                          <div class="i-mdi:chevron-right"></div>
+                          <div class="i-mdi-chevron-right"></div>
                         </div>
                       </div>
                     </div>
@@ -438,7 +438,7 @@
                       v-if="validationResults.length === 0"
                       class="validation-success"
                     >
-                      <div class="i-mdi:check-circle"></div>
+                      <div class="i-mdi-check-circle"></div>
                       <span>流程配置正确</span>
                     </div>
                     <div
@@ -450,7 +450,7 @@
                         :key="index"
                         class="error-item"
                       >
-                        <div class="i-mdi:alert-circle"></div>
+                        <div class="i-mdi-alert-circle"></div>
                         <div class="error-content">
                           <div class="error-message">{{ error.message }}</div>
                           <div class="error-node"
@@ -611,7 +611,7 @@
     NODE_MAPS.typeClass[type as keyof typeof NODE_MAPS.typeClass] ||
     'node-default'
   const getNodeIcon = (type: string): string =>
-    NODE_MAPS.icon[type as keyof typeof NODE_MAPS.icon] || 'i-mdi:circle'
+    NODE_MAPS.icon[type as keyof typeof NODE_MAPS.icon] || 'i-mdi-circle'
 
   // 验证相关函数
   const createValidationError = (

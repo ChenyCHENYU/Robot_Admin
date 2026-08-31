@@ -9,24 +9,25 @@
  */
 import router from '@/router'
 import { s_userStore } from '@/stores/user'
-import { initDynamicRouter, type DynamicRoute } from '@/router/dynamicRouter'
+import {
+  clearExistingRoutes,
+  initDynamicRouter,
+  type DynamicRoute,
+} from '@/router/dynamicRouter'
 import { s_permissionStore } from '@/stores/permission'
 import { message } from '@/plugins/discrete'
 import { setupNProgress } from '@/plugins/nprogress'
-import type { RouteLocationNormalized } from 'vue-router'
+import type {
+  NavigationGuardReturn,
+  RouteLocationNormalized,
+  RouteMeta,
+} from 'vue-router'
 const nprogress = setupNProgress()
 const WHITE_LIST = ['/login', '/404', '/401']
 const LOGIN_PATH = '/login'
 const DEFAULT_TITLE = 'Robot Admin'
 
-// 防止重复初始化
-let isInitializing = false
-
-// 扩展 RouteMeta 类型
-interface ExtendedRouteMeta {
-  title?: string
-  [key: string]: any
-}
+let dynamicRouterInitPromise: Promise<boolean> | null = null
 
 /**
  * * @description: 统一错误处理
@@ -35,7 +36,9 @@ const handleRouteError = (error: unknown, customMsg?: string): string => {
   nprogress.done()
   console.error('路由异常:', error)
   message.error(customMsg || '系统异常，请重新登录')
-  s_userStore().$reset()
+  s_userStore().clearSession()
+  s_permissionStore().resetPermissions()
+  clearExistingRoutes()
   return LOGIN_PATH
 }
 
@@ -46,18 +49,22 @@ const setPageTitle = (title?: string): void => {
   document.title = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE
 }
 
+/** 从开放的 RouteMeta 中安全读取标题 */
+const getMetaTitle = (meta: RouteMeta): string | undefined =>
+  typeof meta.title === 'string' ? meta.title : undefined
+
 /**
  * * @description: 初始化动态路由
  */
 const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
-  if (isInitializing) {
-    return fullPath
+  if (!dynamicRouterInitPromise) {
+    dynamicRouterInitPromise = initDynamicRouter().finally(() => {
+      dynamicRouterInitPromise = null
+    })
   }
 
-  isInitializing = true
-
   try {
-    const success = await initDynamicRouter()
+    const success = await dynamicRouterInitPromise
 
     if (!success) {
       throw new Error('动态路由初始化失败')
@@ -74,19 +81,14 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
     return fullPath
   } catch (error) {
     return handleRouteError(error, '动态路由加载失败')
-  } finally {
-    isInitializing = false
   }
 }
 
 /**
  * * @description: 检查是否需要初始化动态路由
  */
-const shouldInitDynamicRouter = (
-  authMenuList: DynamicRoute[],
-  isInitializing: boolean
-): boolean => {
-  return !authMenuList.length && !isInitializing
+const shouldInitDynamicRouter = (authMenuList: DynamicRoute[]): boolean => {
+  return !authMenuList.length
 }
 
 /**
@@ -94,10 +96,10 @@ const shouldInitDynamicRouter = (
  */
 const handleUnauthenticated = (
   to: RouteLocationNormalized,
-  meta: ExtendedRouteMeta
+  meta: RouteMeta
 ): string | boolean => {
   if (WHITE_LIST.includes(to.path) || to.path.startsWith('/preview')) {
-    setPageTitle(meta.title)
+    setPageTitle(getMetaTitle(meta))
     return true
   }
   return LOGIN_PATH
@@ -130,18 +132,18 @@ const checkRoutePermission = (to: RouteLocationNormalized): boolean => {
 
 // 核心路由守卫
 router.beforeEach(
-  async (to: RouteLocationNormalized): Promise<string | boolean> => {
+  async (to: RouteLocationNormalized): Promise<NavigationGuardReturn> => {
     nprogress.start()
 
     try {
       const userStore = s_userStore()
       const { token } = userStore
       const { authMenuList } = s_permissionStore()
-      const meta = to.meta as ExtendedRouteMeta
+      const { meta } = to
 
       // 0. 预览路由直接放行
       if (to.path.startsWith('/preview')) {
-        setPageTitle(meta.title)
+        setPageTitle(getMetaTitle(meta))
         return true
       }
 
@@ -156,7 +158,7 @@ router.beforeEach(
       }
 
       // 3. 动态路由初始化
-      if (shouldInitDynamicRouter(authMenuList, isInitializing)) {
+      if (shouldInitDynamicRouter(authMenuList)) {
         const result = await handleDynamicRouterInit(to.fullPath)
 
         if (result !== to.fullPath) {
@@ -172,7 +174,7 @@ router.beforeEach(
         return '/401'
       }
 
-      setPageTitle(meta.title)
+      setPageTitle(getMetaTitle(meta))
       return true
     } catch (error) {
       return handleRouteError(error)
@@ -197,7 +199,7 @@ router.onError((error: Error) => {
 })
 
 // 后置钩子
-router.afterEach((to, from, failure) => {
+router.afterEach((_to, _from, failure) => {
   // afterEach 在异步路由组件解析完成后触发，进度条覆盖真实页面加载周期
   nprogress.done()
 

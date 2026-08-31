@@ -39,8 +39,6 @@
         :features="LOGIN_FEATURES"
         :social-providers="SOCIAL_PROVIDERS"
         :loading="loading"
-        default-username="CHENY"
-        default-password="123456"
         @submit="handleLogin"
         @captcha-submit="handleCaptchaLogin"
         @send-code="handleSendCode"
@@ -62,14 +60,25 @@
   import Spline from './components/Spline.vue'
   import Typewriter from './components/Typewriter.vue'
 
+  defineOptions({ name: 'LoginPage' })
+
+  type TranslateFunction = (
+    key: string,
+    fallback: string,
+    scope: string
+  ) => string
+  const runtimeGlobal = globalThis as typeof globalThis & {
+    $t?: TranslateFunction
+  }
+
   const router = useRouter()
   const message = useMessage()
   const userStore = s_userStore()
 
   // ===== i18n helper =====
   const t = (key: string, fallback: string) =>
-    typeof (globalThis as any).$t === 'function'
-      ? (globalThis as any).$t(key, fallback, 'robot_admin')
+    typeof runtimeGlobal.$t === 'function'
+      ? runtimeGlobal.$t(key, fallback, 'robot_admin')
       : fallback
 
   // ===== 打字机 =====
@@ -98,9 +107,16 @@
         response.data.refreshToken,
         response.data.expiresIn
       )
-      userStore.setUserInfo(formData)
+      userStore.setUserInfo(
+        response.data.user ?? {
+          username: String(formData.username ?? ''),
+        }
+      )
       const ok = await initDynamicRouter()
-      if (!ok) throw new Error('动态路由初始化失败')
+      if (!ok) {
+        userStore.clearSession()
+        throw new Error('动态路由初始化失败')
+      }
       router.replace('/home')
     },
 
@@ -118,9 +134,8 @@
     onForgotPassword: () =>
       message.info(t('lp_forgot_wip', '忘记密码功能开发中，请联系管理员')),
 
-    onRegisterSubmit: data => {
+    onRegisterSubmit: () => {
       message.info(t('lp_reg_wip', '注册功能开发中，敬请期待'))
-      console.log('注册信息:', data)
     },
 
     onRegisterSendCode: phone =>

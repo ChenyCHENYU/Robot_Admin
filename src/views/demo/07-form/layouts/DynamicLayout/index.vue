@@ -48,7 +48,7 @@
             @click="showPreview = false"
           >
             <template #icon>
-              <div class="i-mdi:close"></div>
+              <div class="i-mdi-close"></div>
             </template>
           </NButton>
         </template>

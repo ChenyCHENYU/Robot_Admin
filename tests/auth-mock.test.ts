@@ -14,10 +14,15 @@ import {
 import { resolveAuthMode } from '../src/api/auth.contract'
 
 describe('认证模式', () => {
-  test('默认及未知配置均安全回退到 mock', () => {
+  test('非生产环境缺省回退到 mock', () => {
     expect(resolveAuthMode()).toBe('mock')
     expect(resolveAuthMode('staging')).toBe('mock')
     expect(resolveAuthMode('remote')).toBe('remote')
+  })
+
+  test('生产环境缺省走远端且拒绝 mock', () => {
+    expect(resolveAuthMode(undefined, 'production')).toBe('remote')
+    expect(() => resolveAuthMode('mock', 'production')).toThrow('禁止')
   })
 })
 

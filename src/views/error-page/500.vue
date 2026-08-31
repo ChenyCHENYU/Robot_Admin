@@ -107,11 +107,11 @@
 
     <!-- 服务器装饰 -->
     <div class="absolute top-32 right-32 opacity-10">
-      <div class="i-mdi:server text-4xl text-emerald-400 animate-pulse"></div>
+      <div class="i-mdi-server text-4xl text-emerald-400 animate-pulse"></div>
     </div>
     <div class="absolute bottom-32 left-32 opacity-10">
       <div
-        class="i-mdi:alert-octagon text-4xl text-teal-400 animate-pulse"
+        class="i-mdi-alert-octagon text-4xl text-teal-400 animate-pulse"
       ></div>
     </div>
   </div>

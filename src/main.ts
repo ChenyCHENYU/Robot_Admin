@@ -17,7 +17,6 @@ import { setupLoading } from '@/plugins/loading'
 import './assets/css/main.css'
 import '@/styles/index.scss'
 import '@robot-admin/layout/style' // 布局包完整样式（组件 + 布局）
-import '@robot-admin/naive-ui-components/style.css' // 📦 组件库样式
 // 🔮 设计风格 CSS（通过 data-design-style 属性自动隔离，互不冲突）
 import '@robot-admin/theme/styles/glass-morphism.css'
 import '@robot-admin/theme/styles/corporate-minimal.css'
@@ -30,7 +29,6 @@ import router from './router'
 import { setupDirectives } from '@robot-admin/directives' // 👈 直接从包导入
 import { setupStore } from '@/plugins/store'
 import { setupNaiveUI } from '@/plugins/naive-ui-plugin'
-import { setupDynamicComponents } from '@/plugins/dynamic-components'
 import { PassiveScrollPlugin } from '@/plugins/passive-scroll'
 import { setupHighlight } from '@/plugins/highlight'
 import { setupAnalytics } from '@/plugins/analytics'
@@ -59,15 +57,13 @@ async function bootstrap() {
 
   // ✅ C_ 组件由 RobotNaiveUiResolver 按需自动解析，无需全局注册
 
-  // 使用路由
-  app.use(router)
-
   // 第二阶段：Vue相关插件（使用统一的插件化配置）
   setupStore(app) // 配置 Pinia（包含持久化插件）
-  setupRequestCore(app) // 配置 Request Core（axios + 7 个插件 + CRUD）
+  // Pinia 与请求核心必须先于 Router，避免初始导航守卫访问未初始化依赖
+  setupRequestCore(app) // 配置 Request Core（axios + 拦截器）
+  app.use(router)
   setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）
   setupNaiveUI(app)
-  setupDynamicComponents(app)
   setupHighlight(app)
   setupDirectives(app)
   setupAnalytics(app)

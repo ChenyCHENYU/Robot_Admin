@@ -12,17 +12,18 @@ import type {
   LoginFeatures,
 } from '@robot-admin/naive-ui-components'
 import type { WelcomeConfig } from '@/composables/useLoginController'
+import type { LoginResponse } from '@/api/auth'
 
 // ================= 登录功能开关 =================
 export const LOGIN_FEATURES: LoginFeatures = {
   passwordLogin: true,
-  captchaLogin: true,
-  qrcodeLogin: true,
-  socialLogin: true,
-  register: true,
-  captchaVerify: true,
-  rememberMe: true,
-  forgotPassword: true,
+  captchaLogin: false,
+  qrcodeLogin: false,
+  socialLogin: false,
+  register: false,
+  captchaVerify: false,
+  rememberMe: false,
+  forgotPassword: false,
 }
 
 // ================= 社交登录配置 =================
@@ -70,5 +71,6 @@ export const createWelcomeConfig = (
     t('lp_wb3', '欢迎回来') + '，{username}！{greeting} {emoji}',
     '{greeting}，{username}！' + t('lp_wb4', '准备好了吗？') + ' {emoji}',
   ],
-  getUserName: (response: any) => response.data?.username || 'CHENY',
+  getUserName: (response: LoginResponse) =>
+    response.data.user?.displayName || response.data.user?.username || 'User',
 })

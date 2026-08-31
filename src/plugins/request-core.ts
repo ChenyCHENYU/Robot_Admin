@@ -2,37 +2,57 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-02-08 10:00:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-08 00:14:05
+ * @LastEditTime: 2026-08-31
  * @FilePath: \Robot_Admin\src\plugins\request-core.ts
- * @Description: Request Core 插件 - 统一请求核心库集成
+ * @Description: Request Core 插件 - 统一请求、Token 刷新与 401 恢复
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
 import type { App } from 'vue'
-import type { InternalAxiosRequestConfig } from 'axios'
-import { createRequestCore, onReLoginSuccess } from '@robot-admin/request-core'
+import type {
+  AxiosError,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios'
+import {
+  createRequestCore,
+  getReLoginPromise,
+  waitForReLogin,
+} from '@robot-admin/request-core'
 import { s_userStore } from '@/stores/user'
 import { s_reLoginStore } from '@/stores/reLogin'
 import { refreshTokenApi } from '@/api/auth'
 import { message } from '@/plugins/discrete'
+import {
+  BUSINESS_SUCCESS_CODES,
+  getBusinessErrorMessage,
+  getRequestErrorMessage,
+} from '@/utils/d_request'
+
 const { VITE_API_BASE } = import.meta.env
 
-/** Token 刷新状态管理（防止并发刷新） */
 let isRefreshing = false
 let pendingRequests: Array<{
   resolve: (token: string) => void
   reject: (error: Error) => void
 }> = []
 
-/** 401 重试内部标记，防止刷新或重新登录形成无限循环 */
 interface RetriableRequestConfig extends InternalAxiosRequestConfig {
   __handling401?: boolean
   __reLoginRetried?: boolean
 }
 
+type RetryRequest = (config: RetriableRequestConfig) => Promise<AxiosResponse>
+
+const toError = (error: unknown, fallback: string): Error =>
+  error instanceof Error ? error : new Error(fallback)
+
+const isAuthenticationRequest = (url?: string): boolean =>
+  Boolean(url?.includes('/auth/login') || url?.includes('/auth/refresh-token'))
+
 /**
- * * @description: 执行 Token 刷新（并发安全）
- * ! @return {Promise<string>} 新的 access token
+ * @description 执行并发安全的 Token 刷新，所有等待请求共享同一次结果。
+ * @returns 新 access token
  */
 async function doRefreshToken(): Promise<string> {
   if (isRefreshing) {
@@ -46,23 +66,14 @@ async function doRefreshToken(): Promise<string> {
 
   try {
     const response = await refreshTokenApi(userStore.refreshToken)
-    // response 可能是 RefreshTokenResponse（mock）或 axios response.data（真实接口）
-    const tokenData = 'data' in response ? response.data : response
-    const { token, refreshToken, expiresIn } = tokenData as {
-      token: string
-      refreshToken: string
-      expiresIn: number
-    }
+    const { token, refreshToken, expiresIn } = response.data
     userStore.handleLoginSuccess(token, refreshToken, expiresIn)
-
-    // 释放所有等待中的请求
-    pendingRequests.forEach(({ resolve }) => resolve(token))
+    for (const pending of pendingRequests) pending.resolve(token)
     return token
   } catch (error) {
-    pendingRequests.forEach(({ reject }) =>
-      reject(error instanceof Error ? error : new Error('刷新 Token 失败'))
-    )
-    throw error
+    const refreshError = toError(error, '刷新 Token 失败')
+    for (const pending of pendingRequests) pending.reject(refreshError)
+    throw refreshError
   } finally {
     isRefreshing = false
     pendingRequests = []
@@ -70,159 +81,127 @@ async function doRefreshToken(): Promise<string> {
 }
 
 /**
- * 设置 Request Core 插件
- *
- * @description
- * 初始化统一请求核心库，配置 axios 拦截器和插件体系
- *
- * @param app Vue 应用实例
+ * @description 等待用户完成重新登录；共享 Promise 防止多个 401 重复弹窗。
+ * @returns 重新登录后的 access token
  */
-export function setupRequestCore(app: App) {
+async function waitForUserReLogin(): Promise<string> {
+  const shouldOpenDialog = !getReLoginPromise()
+  const waiting = waitForReLogin()
+  const userStore = s_userStore()
+
+  if (shouldOpenDialog) {
+    s_reLoginStore().show(userStore.userInfo.username || '')
+  }
+
+  await waiting
+  if (!userStore.token) throw new Error('重新登录未返回有效 Token')
+  return userStore.token
+}
+
+const canRecoverUnauthorized = (
+  error: AxiosError,
+  config?: RetriableRequestConfig
+): config is RetriableRequestConfig =>
+  error.response?.status === 401 &&
+  Boolean(config) &&
+  !isAuthenticationRequest(config?.url)
+
+const rejectRequestError = (
+  error: AxiosError,
+  config?: RetriableRequestConfig
+): Promise<never> => {
+  if (!isAuthenticationRequest(config?.url)) {
+    message.error(getRequestErrorMessage(error))
+  }
+  return Promise.reject(error)
+}
+
+const recoverUnauthorized = async (
+  config: RetriableRequestConfig,
+  retry: RetryRequest
+): Promise<AxiosResponse> => {
+  const userStore = s_userStore()
+
+  if (userStore.refreshToken && !config.__handling401) {
+    try {
+      config.__handling401 = true
+      config.headers.Authorization = `Bearer ${await doRefreshToken()}`
+      return retry(config)
+    } catch {
+      // refresh token 已失效，继续进入显式重新登录。
+    }
+  }
+
+  try {
+    config.__reLoginRetried = true
+    config.headers.Authorization = `Bearer ${await waitForUserReLogin()}`
+    return retry(config)
+  } catch (reLoginError) {
+    message.error('重新登录失败，请重新登录')
+    return Promise.reject(reLoginError)
+  }
+}
+
+/**
+ * @description 安装统一请求核心、业务响应校验与认证恢复拦截器。
+ * @param app Vue 应用实例
+ * @returns void
+ */
+export function setupRequestCore(app: App): void {
   const requestCore = createRequestCore({
-    // Axios 基础配置
     request: {
       baseURL: VITE_API_BASE || '',
-      timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      timeout: 10_000,
+      headers: { 'Content-Type': 'application/json' },
     },
-
-    // 🎯 成功状态码配置（支持多种后端约定）
-    // successCodes: [200, 0, '200', '0'],         // 默认值
-    // successCodes: [1, '1', 'success'],          // 示例：自定义成功码
-    // successCodes: [0],                          // 示例：仅支持数字 0
-
-    // 🎯 字段别名配置（适配不同后端响应格式）
-    // fieldAliases: {
-    //   data: ['data', 'result', 'payload'],      // 数据层字段
-    //   list: ['list', 'items', 'records'],       // 列表字段
-    //   total: ['total', 'totalCount', 'count'],  // 总数字段
-    // },
-
-    // 拦截器配置
+    successCodes: [...BUSINESS_SUCCESS_CODES],
     interceptors: {
-      // ==================== 请求拦截器 ====================
       request: async (config: InternalAxiosRequestConfig) => {
         const userStore = s_userStore()
         const { token } = userStore
 
-        // Token 无感刷新：即将过期时自动换取新 token
         if (
           token &&
           userStore.refreshToken &&
           userStore.isTokenExpiringSoon() &&
-          !config.url?.includes('/auth/refresh-token')
+          !isAuthenticationRequest(config.url)
         ) {
           try {
-            const newToken = await doRefreshToken()
-            config.headers!.Authorization = `Bearer ${newToken}`
+            config.headers.Authorization = `Bearer ${await doRefreshToken()}`
             return config
           } catch {
-            // 刷新失败，继续使用旧 token，后端返回 401 时再走重新登录
+            // 保留旧 Token，让服务端 401 进入统一重新登录流程。
           }
         }
 
-        // 注入 token
-        if (token) {
-          config.headers!.Authorization = `Bearer ${token}`
-        }
-
+        if (token) config.headers.Authorization = `Bearer ${token}`
         return config
       },
 
-      // ==================== 响应拦截器 ====================
-      response: response => {
-        const { code, message: msg } = response.data
+      response: (response: AxiosResponse) => {
+        const businessError = getBusinessErrorMessage(response.data)
+        if (!businessError) return response
 
-        // 业务码判断（支持多种成功码格式）
-        const isSuccess =
-          code === 200 || code === 0 || code === '200' || code === '0'
-
-        if (!isSuccess) {
-          message.error(msg || '请求失败')
-          return Promise.reject(new Error(msg || '请求失败'))
-        }
-
-        return response
+        message.error(businessError)
+        return Promise.reject(new Error(businessError))
       },
 
-      // ==================== 响应错误拦截器 ====================
-      responseError: async error => {
+      responseError: async (error: AxiosError) => {
         const originalConfig = error.config as
           | RetriableRequestConfig
           | undefined
 
-        // 处理 401 未授权
-        if (error.response?.status === 401) {
-          const userStore = s_userStore()
-
-          // 尝试用 refresh_token 静默刷新
-          if (
-            userStore.refreshToken &&
-            originalConfig &&
-            !originalConfig.__handling401 &&
-            !originalConfig.url?.includes('/auth/refresh-token')
-          ) {
-            try {
-              originalConfig.__handling401 = true
-              const newToken = await doRefreshToken()
-              // 用新 token 重发原始请求
-              originalConfig.headers.Authorization = `Bearer ${newToken}`
-              return requestCore.axiosInstance.request(originalConfig)
-            } catch {
-              // refresh token 也过期了，走重新登录流程
-            }
-          }
-
-          if (!originalConfig || originalConfig.__reLoginRetried) {
-            return Promise.reject(error)
-          }
-          originalConfig.__reLoginRetried = true
-
-          // refresh token 不存在或刷新失败，显示重新登录弹窗
-          const reLoginStore = s_reLoginStore()
-          reLoginStore.show(userStore.userInfo?.username || '')
-
-          // 等待用户重新登录
-          try {
-            await new Promise<void>((resolve, reject) => {
-              // 监听重新登录成功
-              const unwatch = watch(
-                () => reLoginStore.visible,
-                visible => {
-                  if (!visible) {
-                    unwatch()
-                    const userStore = s_userStore()
-                    if (userStore.token) {
-                      // 通知 Request Core 重新登录成功
-                      onReLoginSuccess()
-                      resolve()
-                    } else {
-                      reject(new Error('重新登录失败'))
-                    }
-                  }
-                }
-              )
-            })
-            originalConfig.headers.Authorization = `Bearer ${userStore.token}`
-            return requestCore.axiosInstance.request(originalConfig)
-          } catch (err) {
-            message.error('重新登录失败，请重新登录')
-            return Promise.reject(err)
-          }
+        if (!canRecoverUnauthorized(error, originalConfig)) {
+          return rejectRequestError(error, originalConfig)
         }
 
-        // 其他错误处理
-        const errorMessage =
-          error.response?.data?.message || error.message || '请求失败'
-        message.error(errorMessage)
-
-        return Promise.reject(error)
+        if (originalConfig.__reLoginRetried) return Promise.reject(error)
+        return recoverUnauthorized(originalConfig, config =>
+          requestCore.axiosInstance.request(config)
+        )
       },
     },
   })
 
-  // 注册 Vue 插件（使用类型断言绕过 Vue 版本差异）
-  ;(requestCore as any).install(app)
+  app.use(requestCore)
 }

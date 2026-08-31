@@ -46,6 +46,18 @@ export interface RefreshTokenResponse {
   msg?: string
 }
 
-/** 将环境变量收敛为受支持的认证模式，缺省保留 Mock 闭环 */
-export const resolveAuthMode = (mode?: string): AuthMode =>
-  mode === 'remote' ? 'remote' : 'mock'
+/**
+ * @description 将环境变量收敛为受支持的认证模式；生产/预发缺省走远端并禁止 Mock。
+ * @param mode 认证模式环境变量
+ * @param appEnv 当前应用环境
+ * @returns 有效的认证模式
+ */
+export const resolveAuthMode = (mode?: string, appEnv?: string): AuthMode => {
+  const isRemoteEnvironment = appEnv === 'production' || appEnv === 'staging'
+
+  if (isRemoteEnvironment && mode === 'mock') {
+    throw new Error(`${appEnv} 环境禁止使用 Mock 认证`)
+  }
+  if (mode === 'remote' || mode === 'mock') return mode
+  return isRemoteEnvironment ? 'remote' : 'mock'
+}

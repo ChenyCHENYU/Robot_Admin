@@ -107,14 +107,14 @@ resolve_i18n_conflicts() {
         print_step "检测到翻译文件冲突，自动合并..."
         
         # 使用自定义合并脚本
-        if [ -f "scripts/merge-i18n-json.js" ]; then
+        if [ -f "scripts/merge-i18n-json.cjs" ]; then
             # 获取三方文件：基础版本、当前分支、对方分支
             git show :1:lang/index.json > /tmp/lang-base.json 2>/dev/null || echo "{}" > /tmp/lang-base.json
             git show :2:lang/index.json > /tmp/lang-ours.json 2>/dev/null || cp lang/index.json /tmp/lang-ours.json
             git show :3:lang/index.json > /tmp/lang-theirs.json 2>/dev/null || echo "{}" > /tmp/lang-theirs.json
             
             # 调用合并脚本
-            if node scripts/merge-i18n-json.js /tmp/lang-ours.json /tmp/lang-theirs.json lang/index.json; then
+            if bun scripts/merge-i18n-json.cjs /tmp/lang-ours.json /tmp/lang-theirs.json lang/index.json; then
                 git add lang/index.json
                 print_success "翻译文件冲突已自动解决"
                 return 0
@@ -317,6 +317,14 @@ fi
 git update-index --no-assume-unchanged envs/.env.development 2>/dev/null || true
 
 print_success "工作区状态干净"
+
+# 发布前必须通过与 CI 相同的完整验证，任何失败都会在切分支、合并和推送前终止。
+print_step "执行发布前完整验证..."
+if ! bun run verify; then
+    print_error "验证失败，已在任何分支或远程变更前终止发布"
+    exit 1
+fi
+print_success "发布前验证通过"
 
 # 5. 获取功能分支版本信息
 FEATURE_VERSION=$(get_version)

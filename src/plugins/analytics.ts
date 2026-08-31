@@ -20,8 +20,11 @@ import { injectSpeedInsights } from '@vercel/speed-insights'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function setupAnalytics(app: App<Element>) {
   try {
-    // 只在生产环境启用
-    if (import.meta.env.PROD) {
+    // 必须由部署环境显式同意，避免模板默认采集访问数据
+    if (
+      import.meta.env.PROD &&
+      import.meta.env.VITE_ANALYTICS_ENABLED === 'true'
+    ) {
       inject()
       injectSpeedInsights()
     }

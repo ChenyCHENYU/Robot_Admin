@@ -12,7 +12,7 @@
         class="demo-card demo-section"
       >
         <template #header-extra>
-          <span class="i-mdi:flash-outline text-yellow-500"></span>
+          <span class="i-mdi-flash-outline text-yellow-500"></span>
         </template>
 
         <C_ActionBar :actions="quickDownloadActions" />
@@ -24,7 +24,7 @@
         class="demo-card demo-section"
       >
         <template #header-extra>
-          <span class="i-mdi:wrench-settings text-purple-500"></span>
+          <span class="i-mdi-wrench-settings text-purple-500"></span>
         </template>
 
         <NForm
@@ -70,7 +70,7 @@
               @click="handleCustomDownload"
             >
               <template #icon>
-                <span class="i-mdi:cloud-download-outline"></span>
+                <span class="i-mdi-cloud-download-outline"></span>
               </template>
               自定义下载
             </NButton>
@@ -84,7 +84,7 @@
         class="demo-card demo-section"
       >
         <template #header-extra>
-          <span class="i-mdi:folder text-green-500"></span>
+          <span class="i-mdi-folder text-green-500"></span>
         </template>
 
         <div class="batch-controls">
@@ -111,7 +111,7 @@
         class="demo-card demo-section"
       >
         <template #header-extra>
-          <span class="i-mdi:clock-time-four-outline text-indigo-500"></span>
+          <span class="i-mdi-clock-time-four-outline text-indigo-500"></span>
         </template>
 
         <NDataTable

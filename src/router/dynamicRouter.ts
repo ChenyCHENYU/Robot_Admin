@@ -2,8 +2,9 @@ import router from './index'
 import type { RouteRecordRaw } from 'vue-router'
 import { s_permissionStore } from '@/stores/permission'
 import { message as messageApi } from '@/plugins/discrete'
+import { toRouteRecordPath } from './routePath'
 
-export interface RouteMeta extends Record<string, any> {
+export interface RouteMeta extends Record<string, unknown> {
   title?: string
   icon?: string
   hidden?: boolean
@@ -30,6 +31,7 @@ const COMPONENTS = {
 
 // 所有动态页面统一懒加载；登录页无需预取首页的 3D、图表等重依赖。
 const LAZY_MODULES = import.meta.glob('@/views/**/*.vue')
+let dynamicRouteRemovers: Array<() => void> = []
 
 /**
  * 路径规范化处理
@@ -40,7 +42,7 @@ const normalizePath = (path: string, isChild: boolean): string => {
       `[路由警告] 子路由path "${path}" 已包含前导/，请确认数据源是否需要修改`
     )
   }
-  return isChild && !path.startsWith('/') ? `/${path}` : path
+  return toRouteRecordPath(path, isChild)
 }
 
 /**
@@ -91,11 +93,9 @@ const processRoute = (route: DynamicRoute, isChild = false): RouteRecordRaw => {
 /**
  * 清理现有路由
  */
-export const clearExistingRoutes = (protectedNames = ['login']) => {
-  router
-    .getRoutes()
-    .filter(r => r.name && !protectedNames.includes(r.name.toString()))
-    .forEach(r => router.removeRoute(r.name!))
+export const clearExistingRoutes = (): void => {
+  for (const removeRoute of dynamicRouteRemovers.reverse()) removeRoute()
+  dynamicRouteRemovers = []
 }
 
 /**
@@ -114,17 +114,24 @@ const handleRouteError = (error: unknown): string => {
 export const initDynamicRouter = async (): Promise<boolean> => {
   try {
     const permissionStore = s_permissionStore()
-    const { code, data: routes, msg } = await permissionStore.getAuthMenuList()
+    const {
+      code,
+      data: routes,
+      msg,
+      message,
+    } = await permissionStore.getAuthMenuList()
 
-    if (code !== '0' || !Array.isArray(routes)) {
-      throw new Error(msg || '无效的路由数据格式')
+    if (![0, 200, '0', '200'].includes(code) || !Array.isArray(routes)) {
+      throw new Error(msg || message || '无效的路由数据格式')
     }
 
-    clearExistingRoutes(['login', '404', '401'])
+    clearExistingRoutes()
 
-    routes
+    dynamicRouteRemovers = routes
       .map(route => processRoute(route as DynamicRoute))
-      .forEach(route => router.addRoute(route))
+      .map(route => router.addRoute(route))
+
+    await permissionStore.initializeAuxiliaryPermissions()
 
     if (import.meta.env.DEV) {
       console.debug('[动态路由] 初始化完成:', router.getRoutes())
@@ -132,6 +139,8 @@ export const initDynamicRouter = async (): Promise<boolean> => {
 
     return true
   } catch (error) {
+    clearExistingRoutes()
+    s_permissionStore().resetPermissions()
     handleRouteError(error)
     return false
   }

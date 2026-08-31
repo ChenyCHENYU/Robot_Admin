@@ -74,7 +74,7 @@
           @click="handleCodeExport"
         >
           <template #icon>
-            <div class="i-mdi:download"></div>
+            <div class="i-mdi-download"></div>
           </template>
           导出项目
         </NButton>
@@ -129,7 +129,7 @@
           @click="handleReportExport"
         >
           <template #icon>
-            <div class="i-mdi:table-arrow-down"></div>
+            <div class="i-mdi-table-arrow-down"></div>
           </template>
           导出报表
         </NButton>
@@ -169,7 +169,7 @@
       >
         <NButton>
           <template #icon>
-            <div class="i-mdi:upload"></div>
+            <div class="i-mdi-upload"></div>
           </template>
           上传文件
         </NButton>
@@ -183,7 +183,7 @@
           @click="handleMediaExport"
         >
           <template #icon>
-            <div class="i-mdi:image-multiple"></div>
+            <div class="i-mdi-image-multiple"></div>
           </template>
           导出媒体包 ({{ mediaFiles.length }})
         </NButton>
@@ -220,7 +220,7 @@
             :class="{ active: selectedTemplates.includes(template.id) }"
             @click="toggleTemplate(template.id)"
           >
-            <div class="i-mdi:code-braces text-xl text-blue-500"></div>
+            <div class="i-mdi-code-braces text-xl text-blue-500"></div>
             <div>
               <div class="font-semibold">{{ template.name }}</div>
               <div class="text-xs text-gray-500">{{ template.category }}</div>
@@ -237,7 +237,7 @@
           @click="handleTemplateExport"
         >
           <template #icon>
-            <div class="i-mdi:package-down"></div>
+            <div class="i-mdi-package-down"></div>
           </template>
           导出模板库 ({{ selectedTemplates.length }})
         </NButton>

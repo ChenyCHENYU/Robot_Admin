@@ -13,12 +13,12 @@
           class="control-card"
         >
           <template #header-extra>
-            <i class="i-mdi:settings text-lg"></i>
+            <i class="i-mdi-settings text-lg"></i>
           </template>
 
           <div class="control-section">
             <h3 class="section-title">
-              <i class="i-mdi:play mr-1"></i>
+              <i class="i-mdi-play mr-1"></i>
               基础操作
             </h3>
             <div class="button-group">
@@ -28,7 +28,7 @@
                 :disabled="!isEditorReady"
               >
                 <template #icon>
-                  <i class="i-mdi:document"></i>
+                  <i class="i-mdi-document"></i>
                 </template>
                 设置内容
               </NButton>
@@ -39,7 +39,7 @@
                 :disabled="!isEditorReady"
               >
                 <template #icon>
-                  <i class="i-mdi:view-arrow-right-outline"></i>
+                  <i class="i-mdi-view-arrow-right-outline"></i>
                 </template>
                 获取内容
               </NButton>
@@ -50,7 +50,7 @@
                 :disabled="!isEditorReady"
               >
                 <template #icon>
-                  <i class="i-mdi:vacuum-cleaner-outline"></i>
+                  <i class="i-mdi-vacuum-cleaner-outline"></i>
                 </template>
                 清空内容
               </NButton>
@@ -59,7 +59,7 @@
 
           <div class="control-section">
             <h3 class="section-title">
-              <i class="i-mdi:arrow-decision-outline mr-1"></i>
+              <i class="i-mdi-arrow-decision-outline mr-1"></i>
               状态控制
             </h3>
             <div class="switch-group">
@@ -98,7 +98,7 @@
                   :class="
                     isEditorReady
                       ? 'mdi:check'
-                      : 'i-mdi:clock-time-four-outline'
+                      : 'i-mdi-clock-time-four-outline'
                   "
                 ></i>
               </template>
@@ -126,7 +126,7 @@
           class="editor-card"
         >
           <template #header-extra>
-            <i class="i-mdi:edit-outline text-lg"></i>
+            <i class="i-mdi-edit-outline text-lg"></i>
           </template>
 
           <C_Editor

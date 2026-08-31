@@ -42,7 +42,7 @@
                 type="primary"
               >
                 <template #icon>
-                  <div class="i-mdi:content-copy" />
+                  <div class="i-mdi-content-copy" />
                 </template>
                 复制文本
               </NButton>
@@ -77,7 +77,7 @@
               type="info"
             >
               <template #icon>
-                <div class="i-mdi:information" />
+                <div class="i-mdi-information" />
               </template>
               点击这个提示框复制整段内容：这是一段重要信息，可以通过点击复制。
             </NAlert>
@@ -105,7 +105,7 @@
                 :disabled="!inputText"
               >
                 <template #icon>
-                  <div class="i-mdi:content-copy" />
+                  <div class="i-mdi-content-copy" />
                 </template>
                 复制输入内容
               </NButton>
@@ -130,7 +130,7 @@
                 type="success"
               >
                 <template #icon>
-                  <div class="i-mdi:settings" />
+                  <div class="i-mdi-settings" />
                 </template>
                 自定义消息
               </NButton>
@@ -144,7 +144,7 @@
                 quaternary
               >
                 <template #icon>
-                  <div class="i-mdi:volume-off" />
+                  <div class="i-mdi-volume-off" />
                 </template>
                 静默模式
               </NButton>
@@ -207,7 +207,7 @@
           <NSpace>
             <NTag type="info">
               <template #icon>
-                <div class="i-mdi:counter" />
+                <div class="i-mdi-counter" />
               </template>
               复制次数: {{ copyCount }}
             </NTag>
@@ -216,7 +216,7 @@
               v-if="lastCopyText"
             >
               <template #icon>
-                <div class="i-mdi:check" />
+                <div class="i-mdi-check" />
               </template>
               最后复制: {{ lastCopyText.substring(0, 15) }}...
             </NTag>

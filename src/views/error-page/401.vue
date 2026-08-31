@@ -107,10 +107,10 @@
 
     <!-- 锁链装饰 -->
     <div class="absolute top-32 right-32 opacity-10">
-      <div class="i-mdi:key-chain text-4xl text-red-400 animate-pulse"></div>
+      <div class="i-mdi-key-chain text-4xl text-red-400 animate-pulse"></div>
     </div>
     <div class="absolute bottom-32 left-32 opacity-10">
-      <div class="i-mdi:lock text-4xl text-orange-400 animate-pulse"></div>
+      <div class="i-mdi-lock text-4xl text-orange-400 animate-pulse"></div>
     </div>
   </div>
 </template>

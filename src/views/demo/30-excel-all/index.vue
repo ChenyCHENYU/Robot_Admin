@@ -360,7 +360,7 @@
         class="demo-card demo-section"
       >
         <template #header-extra>
-          <span class="i-mdi:clock-time-four-outline text-gray-500"></span>
+          <span class="i-mdi-clock-time-four-outline text-gray-500"></span>
         </template>
 
         <div class="history-controls mb-3">

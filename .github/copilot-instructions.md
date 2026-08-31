@@ -241,7 +241,7 @@ Robot_Admin/
 ├── scripts/                       # 构建脚本
 ├── docs/                          # 项目分析文档
 ├── eslint.config.ts               # ESLint Flat Config
-├── commitlint.config.js           # 提交规范
+├── commitlint.config.cjs          # 提交规范
 ├── unocss.config.ts               # UnoCSS 配置
 ├── vite.config.ts                 # Vite 配置
 ├── tsconfig.json                  # TypeScript 配置
@@ -768,7 +768,7 @@ export const s_userStore = defineStore('user', {
   actions: {
     setToken(token: string) {
       this.token = token
-      localStorage.setItem(TOKEN, JSON.stringify(token))
+      sessionStorage.setItem(TOKEN, JSON.stringify(token))
     },
 
     async logout(isExpired = false) {
@@ -782,7 +782,7 @@ export const s_userStore = defineStore('user', {
 
 1. **命名**：`s_` 前缀 + 描述 + `Store` 后缀（`s_userStore`, `s_themeStore`）
 2. **文件位置**：`src/stores/<domain>/index.ts`
-3. **持久化**：使用 `pinia-plugin-persistedstate`（已全局配置）
+3. **持久化**：主题、语言等偏好可持久化；Token、刷新令牌和用户会话只允许使用 `sessionStorage`，禁止存储密码
 4. **区块注释**：使用 `// ============ 状态 ============` 分隔不同关注点
 5. **类型安全**：State 中的复杂对象必须定义 interface
 

@@ -611,14 +611,6 @@ export const devDependencies: ProjectItem[] = [
     url: 'https://vuejs.org/',
   },
   {
-    name: 'Class Variance Authority',
-    bagName: 'class-variance-authority',
-    desc: 'TypeScript-first 变体 API 构建工具',
-    version: '^0.7.1',
-    icon: 'https://cva.style/favicon.ico',
-    url: 'https://cva.style/',
-  },
-  {
     name: 'CLSX',
     bagName: 'clsx',
     desc: '用于构造 className 字符串的小型实用程序',
@@ -681,14 +673,6 @@ export const devDependencies: ProjectItem[] = [
     version: '^16.3.2',
     icon: 'https://github.com/okonet/lint-staged/raw/master/logo.png',
     url: 'https://github.com/okonet/lint-staged',
-  },
-  {
-    name: 'NPM Run All',
-    bagName: 'npm-run-all2',
-    desc: '并行或顺序运行多个 npm 脚本',
-    version: '^7.0.2',
-    icon: 'https://github.com/bcomnes/npm-run-all2/raw/master/docs/favicon.ico',
-    url: 'https://github.com/bcomnes/npm-run-all2',
   },
   {
     name: 'Unplugin Auto Import',

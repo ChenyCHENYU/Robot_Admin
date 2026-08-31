@@ -212,9 +212,14 @@ export const USER_FORM_RULES: FormRules = {
   password: [
     { required: true, message: '请输入密码', trigger: ['input', 'blur'] },
     {
-      min: 6,
-      max: 20,
-      message: '密码长度在 6 到 20 个字符',
+      min: 8,
+      max: 64,
+      message: '密码长度在 8 到 64 个字符',
+      trigger: ['input', 'blur'],
+    },
+    {
+      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+      message: '密码必须同时包含大写字母、小写字母和数字',
       trigger: ['input', 'blur'],
     },
   ],
@@ -224,9 +229,14 @@ export const RESET_PASSWORD_RULES: FormRules = {
   newPassword: [
     { required: true, message: '请输入新密码', trigger: ['input', 'blur'] },
     {
-      min: 6,
-      max: 20,
-      message: '密码长度在 6 到 20 个字符',
+      min: 8,
+      max: 64,
+      message: '密码长度在 8 到 64 个字符',
+      trigger: ['input', 'blur'],
+    },
+    {
+      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+      message: '密码必须同时包含大写字母、小写字母和数字',
       trigger: ['input', 'blur'],
     },
   ],
@@ -257,7 +267,7 @@ export const DEFAULT_USER_FORM_DATA: UserFormData = {
   userType: 'internal',
   deptId: null,
   roleIds: [],
-  password: '123456',
+  password: '',
   status: 1,
   remark: '',
   companyName: '',

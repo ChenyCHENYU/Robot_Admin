@@ -348,6 +348,18 @@
   const CACHE_KEY = 'github_stats_cache'
   const CACHE_TTL = 60 * 60 * 1000 // 1 小时
 
+  interface GitHubStats {
+    stars: string
+    forks: string
+    commits: string
+  }
+
+  interface GitHubRepoResponse {
+    message?: unknown
+    stargazers_count?: number
+    forks_count?: number
+  }
+
   // 创建响应式的作者统计数据
   const reactiveAuthorStats = ref([
     { number: '520+', label: '⭐Star' },
@@ -378,11 +390,7 @@
    * * @description: 写入本地缓存
    * ? @param {object} data 要缓存的统计数据
    */
-  const writeCache = (data: {
-    stars: string
-    forks: string
-    commits: string
-  }) => {
+  const writeCache = (data: GitHubStats) => {
     try {
       localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }))
     } catch {
@@ -394,14 +402,32 @@
    * * @description: 应用统计数据到响应式引用
    * ? @param {object} data 格式化后的统计数据
    */
-  const applyStats = (data: {
-    stars: string
-    forks: string
-    commits: string
-  }) => {
+  const applyStats = (data: GitHubStats) => {
     reactiveAuthorStats.value[0].number = data.stars
     reactiveAuthorStats.value[1].number = data.forks
     reactiveAuthorStats.value[2].number = data.commits
+  }
+
+  const formatCount = (value: number, threshold: number): string => {
+    if (!Number.isFinite(value) || value < 0) return ''
+    if (value < threshold) return `${value}+`
+    return threshold === 1000
+      ? `${(value / 1000).toFixed(1)}K+`
+      : `${Math.round(value / 100) * 100}+`
+  }
+
+  const getRepositoryStats = (payload: GitHubRepoResponse): GitHubStats => {
+    if (payload.message) return { stars: '', forks: '', commits: '' }
+    return {
+      stars: formatCount(Number(payload.stargazers_count), 1000),
+      forks: formatCount(Number(payload.forks_count), 100),
+      commits: '',
+    }
+  }
+
+  const getCommitCount = (linkHeader: string | null): string => {
+    const lastPage = linkHeader?.match(/page=(\d+)>; rel="last"/)?.[1]
+    return lastPage ? formatCount(Number(lastPage), 1000) : ''
   }
 
   // 获取 GitHub 仓库数据
@@ -418,36 +444,14 @@
       const repoResponse = await fetch(
         `https://api.github.com/repos/${githubRepo.value}`
       )
-      const repoData = await repoResponse.json()
-
-      const result = { stars: '', forks: '', commits: '' }
-
-      if (repoData && !repoData.message) {
-        // 格式化星标数
-        const stars = repoData.stargazers_count
-        result.stars =
-          stars >= 1000 ? `${(stars / 1000).toFixed(1)}K+` : `${stars}+`
-
-        // 格式化forks数
-        const forks = repoData.forks_count
-        result.forks =
-          forks >= 100 ? `${Math.round(forks / 100) * 100}+` : `${forks}+`
-      }
+      const repoData = (await repoResponse.json()) as GitHubRepoResponse
+      const result = getRepositoryStats(repoData)
 
       // 获取提交数
       const commitsResponse = await fetch(
         `https://api.github.com/repos/${githubRepo.value}/commits?per_page=1`
       )
-      const linkHeader = commitsResponse.headers.get('Link')
-
-      if (linkHeader) {
-        const match = linkHeader.match(/page=(\d+)>; rel="last"/)
-        if (match && match[1]) {
-          const commits = parseInt(match[1])
-          result.commits =
-            commits >= 1000 ? `${(commits / 1000).toFixed(1)}K+` : `${commits}+`
-        }
-      }
+      result.commits = getCommitCount(commitsResponse.headers.get('Link'))
 
       // 全部成功才缓存 + 应用
       if (result.stars && result.forks) {

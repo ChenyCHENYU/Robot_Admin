@@ -15,8 +15,10 @@ export interface NetworkInformationLike {
  * 省流量或慢速网络下不主动下载大型页面，避免优化反而抢占关键请求。
  */
 export const shouldPrefetchHeavyRoutes = (
-  connection?: NetworkInformationLike
+  connection?: NetworkInformationLike,
+  deviceMemory?: number
 ): boolean => {
   if (connection?.saveData) return false
-  return !['slow-2g', '2g'].includes(connection?.effectiveType ?? '')
+  if (deviceMemory !== undefined && deviceMemory < 4) return false
+  return !['slow-2g', '2g', '3g'].includes(connection?.effectiveType ?? '')
 }

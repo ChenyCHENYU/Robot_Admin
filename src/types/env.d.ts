@@ -23,6 +23,8 @@ interface ImportMetaEnv {
   readonly VITE_APP_ENV?: 'development' | 'test' | 'staging' | 'production'
   readonly VITE_PORT?: string
   readonly VITE_I18N_ENABLED?: string
+  readonly VITE_ANALYTICS_ENABLED?: 'true' | 'false'
+  readonly VITE_ROUTE_IDLE_PREFETCH?: 'true' | 'false'
   readonly VITE_MAP_KEY?: string
   // 可以根据需要添加更多环境变量
 }

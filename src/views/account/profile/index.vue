@@ -10,7 +10,7 @@
             :src="profileData.avatar"
           />
           <div class="avatar-overlay">
-            <span class="i-mdi:camera-outline"></span>
+            <span class="i-mdi-camera-outline"></span>
           </div>
         </div>
         <div class="info-section">
@@ -22,15 +22,15 @@
           }}</p>
           <div class="info-meta">
             <span class="meta-item">
-              <span class="i-mdi:shield-account-outline meta-icon" />
+              <span class="i-mdi-shield-account-outline meta-icon" />
               {{ profileData.role }}
             </span>
             <span class="meta-item">
-              <span class="i-mdi:domain meta-icon" />
+              <span class="i-mdi-domain meta-icon" />
               {{ profileData.department }}
             </span>
             <span class="meta-item">
-              <span class="i-mdi:clock-outline meta-icon" />
+              <span class="i-mdi-clock-outline meta-icon" />
               上次登录：{{ profileData.lastLoginTime }}
             </span>
           </div>

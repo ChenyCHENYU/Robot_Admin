@@ -29,20 +29,20 @@ export const orderSteps: StepItem[] = [
   {
     title: '提交订单',
     time: '2019-03-17 17:01:25',
-    icon: 'i-mdi:text-box-check-outline',
+    icon: 'i-mdi-text-box-check-outline',
   },
   {
     title: '付款成功',
     time: '2019-03-21 00:00:00',
-    icon: 'i-mdi:credit-card-check-outline',
+    icon: 'i-mdi-credit-card-check-outline',
   },
   {
     title: '商品出库',
     time: '2019-03-21 07:00:00',
-    icon: 'i-mdi:package-variant-closed-check',
+    icon: 'i-mdi-package-variant-closed-check',
   },
-  { title: '等待收货', icon: 'i-mdi:truck-delivery-outline' },
-  { title: '完成', icon: 'i-mdi:check-circle-outline' },
+  { title: '等待收货', icon: 'i-mdi-truck-delivery-outline' },
+  { title: '完成', icon: 'i-mdi-check-circle-outline' },
 ]
 
 // 项目进度步骤
@@ -80,11 +80,11 @@ export const approvalSteps: StepItem[] = [
 
 // 图标步骤
 export const iconSteps: StepItem[] = [
-  { title: '创建项目', icon: 'i-mdi:folder-plus-outline' },
-  { title: '开发功能', icon: 'i-mdi:code-braces' },
-  { title: '代码审查', icon: 'i-mdi:account-search-outline' },
-  { title: '测试验收', icon: 'i-mdi:clipboard-check-outline' },
-  { title: '部署发布', icon: 'i-mdi:rocket-launch-outline' },
+  { title: '创建项目', icon: 'i-mdi-folder-plus-outline' },
+  { title: '开发功能', icon: 'i-mdi-code-braces' },
+  { title: '代码审查', icon: 'i-mdi-account-search-outline' },
+  { title: '测试验收', icon: 'i-mdi-clipboard-check-outline' },
+  { title: '部署发布', icon: 'i-mdi-rocket-launch-outline' },
 ]
 
 // 错误状态步骤
@@ -99,24 +99,24 @@ export const errorSteps: StepItem[] = [
 export const registerSteps: RegisterStepItem[] = [
   {
     title: '填写信息',
-    icon: 'i-mdi:form-textbox',
+    icon: 'i-mdi-form-textbox',
     detail:
       '请填写您的基本信息，包括用户名、邮箱和密码。所有带 * 的字段都是必填项。',
   },
   {
     title: '验证邮箱',
-    icon: 'i-mdi:email-check-outline',
+    icon: 'i-mdi-email-check-outline',
     detail:
       '我们已经发送了一封验证邮件到您的邮箱，请点击邮件中的链接完成验证。',
   },
   {
     title: '完善资料',
-    icon: 'i-mdi:account-details-outline',
+    icon: 'i-mdi-account-details-outline',
     detail: '请完善您的个人资料，这将帮助我们为您提供更好的服务。',
   },
   {
     title: '注册成功',
-    icon: 'i-mdi:check-circle-outline',
+    icon: 'i-mdi-check-circle-outline',
     detail: '恭喜！您已经成功注册，现在可以开始使用我们的服务了。',
   },
 ]

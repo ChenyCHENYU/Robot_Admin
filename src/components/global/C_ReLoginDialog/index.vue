@@ -15,7 +15,7 @@
     :close-on-esc="true"
     preset="card"
     title="提示"
-    :style="{ width: '400px' }"
+    class="re-login-dialog"
     @close="handleClose"
   >
     <NSpace
@@ -36,18 +36,18 @@
         :size="12"
       >
         <NInput
-          v-model:value="formModel.username"
+          :value="formUsername"
           placeholder="账号"
           readonly
           size="large"
         >
           <template #prefix>
-            <span class="i-mdi:account text-base mr-2" />
+            <span class="i-mdi-account text-base mr-2" />
           </template>
         </NInput>
 
         <NInput
-          v-model:value="formModel.password"
+          v-model:value="password"
           type="password"
           placeholder="密码"
           show-password-on="click"
@@ -55,7 +55,7 @@
           @keyup.enter="handleLogin"
         >
           <template #prefix>
-            <span class="i-mdi:lock text-base mr-2" />
+            <span class="i-mdi-lock text-base mr-2" />
           </template>
         </NInput>
       </NSpace>
@@ -66,7 +66,7 @@
         <NButton
           type="primary"
           :loading="loading"
-          :disabled="!formModel.password"
+          :disabled="!password"
           @click="handleLogin"
         >
           登录
@@ -80,6 +80,8 @@
   import { s_userStore } from '@/stores/user'
   import { loginApi, type LoginResponse } from '@/api/auth'
   import { onReLoginSuccess, onReLoginCancel } from '@robot-admin/request-core'
+
+  defineOptions({ name: 'C_ReLoginDialog' })
 
   // Props
   interface Props {
@@ -109,18 +111,28 @@
 
   const loading = ref(false)
 
-  // 表单数据
-  const formModel = reactive({
-    username: computed(() => props.username),
-    password: computed(() => {
-      const password = userStore.userInfo?.password
-      return typeof password === 'string' ? password : ''
-    }),
-  })
+  const formUsername = computed(() => props.username)
+  const password = ref('')
+
+  const getErrorMessage = (error: unknown): string => {
+    if (typeof error !== 'object' || error === null)
+      return '登录失败，请检查密码'
+    const response = Reflect.get(error, 'response')
+    if (typeof response !== 'object' || response === null) {
+      const directMessage = Reflect.get(error, 'message')
+      return typeof directMessage === 'string'
+        ? directMessage
+        : '登录失败，请检查密码'
+    }
+    const data = Reflect.get(response, 'data')
+    if (typeof data !== 'object' || data === null) return '登录失败，请检查密码'
+    const apiMessage = Reflect.get(data, 'message') ?? Reflect.get(data, 'msg')
+    return typeof apiMessage === 'string' ? apiMessage : '登录失败，请检查密码'
+  }
 
   // 处理登录
   const handleLogin = async () => {
-    if (!formModel.password) {
+    if (!password.value) {
       message.error('请输入密码')
       return
     }
@@ -135,27 +147,29 @@
       try {
         // 调用登录 API（不需要验证码）
         const response: LoginResponse = await loginApi({
-          username: formModel.username,
-          password: formModel.password,
+          username: formUsername.value,
+          password: password.value,
         })
 
         // 更新 token 并续期
         const { token, refreshToken, expiresIn } = response.data
         userStore.handleLoginSuccess(token, refreshToken, expiresIn)
+        if (response.data.user) userStore.setUserInfo(response.data.user)
 
         message.success('重新登录成功')
+        password.value = ''
         visible.value = false
         emit('success')
 
         // 通知所有等待的请求：重新登录成功
         onReLoginSuccess()
-      } catch (error: any) {
+      } catch (error: unknown) {
         // 登录失败，恢复旧 token
         userStore.setToken(oldToken)
         throw error
       }
-    } catch (error: any) {
-      message.error(error?.response?.data?.message || '登录失败，请检查密码')
+    } catch (error: unknown) {
+      message.error(getErrorMessage(error))
     } finally {
       loading.value = false
     }
@@ -163,11 +177,16 @@
 
   // 处理关闭
   const handleClose = () => {
+    password.value = ''
     visible.value = false
     emit('cancel')
     // 通知所有等待的请求：重新登录已取消
     onReLoginCancel()
     // 关闭后执行正常退出逻辑
-    userStore.logout(true)
+    void userStore.logout(true)
   }
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

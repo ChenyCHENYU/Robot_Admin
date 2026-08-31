@@ -269,12 +269,14 @@
               >
                 <div
                   class="app-icon-box"
-                  :style="{ backgroundColor: app.bgColor }"
+                  :style="{
+                    '--app-icon-bg': app.bgColor,
+                    '--app-icon-color': app.color,
+                  }"
                 >
                   <Icon
                     :icon="app.icon"
-                    :size="24"
-                    :style="{ color: app.color }"
+                    :size="28"
                   />
                 </div>
                 <div class="app-name">{{ app.name }}</div>

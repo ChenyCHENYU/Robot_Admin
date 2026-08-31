@@ -27,7 +27,7 @@
           type="primary"
           size="small"
         >
-          <template #icon><div class="i-mdi:plus"></div></template>
+          <template #icon><div class="i-mdi-plus"></div></template>
           添加任务
         </NButton>
       </template>
@@ -64,11 +64,11 @@
                 <h5 class="task-title">{{ item.title }}</h5>
                 <div class="task-meta">
                   <div class="meta-item">
-                    <div class="i-mdi:folder-outline"></div>
+                    <div class="i-mdi-folder-outline"></div>
                     <span>{{ item.tag }}</span>
                   </div>
                   <div class="meta-item">
-                    <div class="i-mdi:message-outline"></div>
+                    <div class="i-mdi-message-outline"></div>
                     <span>{{ item.comments }} 评论</span>
                   </div>
                 </div>
@@ -81,7 +81,7 @@
                     <span>{{ item.name }}</span>
                   </div>
                   <div class="handle">
-                    <div class="i-mdi:drag-vertical"></div>
+                    <div class="i-mdi-drag-vertical"></div>
                   </div>
                 </div>
               </div>
@@ -135,7 +135,7 @@
                   <NTooltip>
                     <template #trigger>
                       <div class="tech-handle">
-                        <div class="i-mdi:drag-vertical"></div>
+                        <div class="i-mdi-drag-vertical"></div>
                       </div>
                     </template>
                     拖拽排序
@@ -162,7 +162,7 @@
               size="small"
               quaternary
             >
-              <template #icon><div class="i-mdi:plus"></div></template>
+              <template #icon><div class="i-mdi-plus"></div></template>
             </NButton>
           </template>
           <C_Draggable

@@ -67,7 +67,7 @@
       "path": "/demo",
       "name": "demo",
       "component": "layout",
-      "redirect": "/demo/01-icon",
+      "redirect": "/demo/icon",
       "meta": {
         "icon": "mdi:ev-plug-chademo",
         "title": "示范组件",
@@ -745,7 +745,7 @@
       "path": "/hooks",
       "name": "hooks",
       "component": "layout",
-      "redirect": "/export-zip",
+      "redirect": "/hooks/export-zip",
       "meta": {
         "icon": "mdi:hook",
         "title": "独立 Hooks ",

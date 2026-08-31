@@ -11,11 +11,21 @@ module.exports = {
       2,
       'always',
       [
-        'wip', 'feat', 'fix', 'docs', 'style', 'refactor',
-        'perf', 'test', 'chore', 'revert', 'build', 'deps',
+        'wip',
+        'feat',
+        'fix',
+        'docs',
+        'style',
+        'refactor',
+        'perf',
+        'test',
+        'chore',
+        'revert',
+        'build',
+        'deps',
       ],
     ],
-    'scope-empty': [2, 'never'],  // 强制要求 scope
+    'scope-empty': [2, 'never'], // 强制要求 scope
     'subject-case': [0],
   },
 }

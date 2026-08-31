@@ -67,7 +67,7 @@ export interface GetDataPermissionResponse {
   code: string
   data: Array<{
     module: string
-    scope: string
+    scope: 'all' | 'department' | 'department_below' | 'self' | 'custom'
     departmentIds?: string[]
     fieldPermissions?: Array<{
       field: string

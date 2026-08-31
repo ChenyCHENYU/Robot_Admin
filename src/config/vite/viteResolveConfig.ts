@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { fileURLToPath, URL } from 'node:url'
-import { getLocalPackagesAlias } from './localPackagesAlias'
+import { getLocalPackagesAlias } from './localPackagesAlias.ts'
 
 /**
  * Vite resolve 配置

@@ -22,12 +22,6 @@ import json from 'highlight.js/lib/languages/json'
 import xml from 'highlight.js/lib/languages/xml' // HTML
 import css from 'highlight.js/lib/languages/css'
 import bash from 'highlight.js/lib/languages/bash'
-import yaml from 'highlight.js/lib/languages/yaml'
-import markdown from 'highlight.js/lib/languages/markdown'
-import java from 'highlight.js/lib/languages/java'
-import csharp from 'highlight.js/lib/languages/csharp'
-import go from 'highlight.js/lib/languages/go'
-import python from 'highlight.js/lib/languages/python'
 
 // 可选语言包映射（懒加载）
 const OPTIONAL_LANGUAGES: Record<
@@ -46,6 +40,13 @@ const OPTIONAL_LANGUAGES: Record<
   sql: () => import('highlight.js/lib/languages/sql'),
   dockerfile: () => import('highlight.js/lib/languages/dockerfile'),
   powershell: () => import('highlight.js/lib/languages/powershell'),
+  yaml: () => import('highlight.js/lib/languages/yaml'),
+  yml: () => import('highlight.js/lib/languages/yaml'),
+  markdown: () => import('highlight.js/lib/languages/markdown'),
+  java: () => import('highlight.js/lib/languages/java'),
+  csharp: () => import('highlight.js/lib/languages/csharp'),
+  go: () => import('highlight.js/lib/languages/go'),
+  python: () => import('highlight.js/lib/languages/python'),
 }
 
 // 插件配置选项
@@ -85,13 +86,6 @@ function initializeCore(options: HighlightPluginOptions): void {
     ['css', css],
     ['bash', bash],
     ['shell', bash],
-    ['yaml', yaml],
-    ['yml', yaml],
-    ['markdown', markdown],
-    ['java', java],
-    ['csharp', csharp],
-    ['go', go],
-    ['python', python],
   ] as const
 
   defaultLanguages.forEach(([name, langFn]) => {

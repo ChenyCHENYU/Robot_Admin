@@ -15,12 +15,22 @@ import { notification } from '@/plugins/discrete'
 
 interface UserInfo {
   username?: string
+  id?: string
+  displayName?: string
   [key: string]: unknown
 }
 
-/** 安全读取 localStorage 并反序列化 */
-function readStorage<T>(key: string, fallback: T): T {
-  const raw = localStorage.getItem(key)
+const USER_INFO_KEY = 'userInfo'
+const AUTH_STORAGE_KEYS = [
+  TOKEN,
+  REFRESH_TOKEN,
+  TOKEN_EXPIRES_IN,
+  TIME_STAMP,
+  USER_INFO_KEY,
+] as const
+
+/** 安全反序列化存储值 */
+function parseStorageValue<T>(raw: string | null, fallback: T): T {
   if (raw === null) return fallback
   try {
     return JSON.parse(raw) as T
@@ -29,12 +39,56 @@ function readStorage<T>(key: string, fallback: T): T {
   }
 }
 
+/**
+ * 读取会话凭据，并一次性迁移、删除历史 localStorage 中的认证信息。
+ */
+function readAuthStorage<T>(key: string, fallback: T): T {
+  if (typeof window === 'undefined') return fallback
+  const sessionValue = sessionStorage.getItem(key)
+  const legacyValue = localStorage.getItem(key)
+  if (sessionValue !== null) {
+    if (legacyValue !== null) localStorage.removeItem(key)
+    return parseStorageValue(sessionValue, fallback)
+  }
+  if (legacyValue === null) return fallback
+  sessionStorage.setItem(key, legacyValue)
+  localStorage.removeItem(key)
+  return parseStorageValue(legacyValue, fallback)
+}
+
+/** 清除禁止持久化的密码字段 */
+export function sanitizeUserInfo(userInfo: UserInfo): UserInfo {
+  const sanitized = { ...userInfo }
+  delete sanitized.password
+  delete sanitized.confirmPassword
+  return sanitized
+}
+
+/** 写入仅在当前浏览器标签页有效的认证会话 */
+function writeAuthStorage(key: string, value: unknown): void {
+  if (typeof window === 'undefined') return
+  if (value === '' || value === 0 || value === undefined) {
+    sessionStorage.removeItem(key)
+    return
+  }
+  sessionStorage.setItem(key, JSON.stringify(value))
+}
+
+/** 读取并立即覆盖清洗后的用户信息，确保迁移数据中不残留密码。 */
+function readSanitizedUserInfo(): UserInfo {
+  const sanitized = sanitizeUserInfo(
+    readAuthStorage<UserInfo>(USER_INFO_KEY, {})
+  )
+  writeAuthStorage(USER_INFO_KEY, sanitized)
+  return sanitized
+}
+
 export const s_userStore = defineStore('user', {
   state: () => ({
-    token: readStorage<string>(TOKEN, ''),
-    refreshToken: readStorage<string>(REFRESH_TOKEN, ''),
-    tokenExpiresAt: readStorage<number>(TOKEN_EXPIRES_IN, 0),
-    userInfo: readStorage<UserInfo>('userInfo', {} as UserInfo),
+    token: readAuthStorage<string>(TOKEN, ''),
+    refreshToken: readAuthStorage<string>(REFRESH_TOKEN, ''),
+    tokenExpiresAt: readAuthStorage<number>(TOKEN_EXPIRES_IN, 0),
+    userInfo: readSanitizedUserInfo(),
   }),
 
   getters: {
@@ -44,18 +98,18 @@ export const s_userStore = defineStore('user', {
   actions: {
     setToken(token: string) {
       this.token = token
-      localStorage.setItem(TOKEN, JSON.stringify(token))
+      writeAuthStorage(TOKEN, token)
     },
 
     setRefreshToken(refreshToken: string) {
       this.refreshToken = refreshToken
-      localStorage.setItem(REFRESH_TOKEN, JSON.stringify(refreshToken))
+      writeAuthStorage(REFRESH_TOKEN, refreshToken)
     },
 
     setTokenExpiresAt(expiresIn: number) {
       const expiresAt = Date.now() + expiresIn * 1000
       this.tokenExpiresAt = expiresAt
-      localStorage.setItem(TOKEN_EXPIRES_IN, JSON.stringify(expiresAt))
+      writeAuthStorage(TOKEN_EXPIRES_IN, expiresAt)
     },
 
     /** 判断 token 是否即将过期（提前 5 分钟） */
@@ -65,35 +119,47 @@ export const s_userStore = defineStore('user', {
     },
 
     setUserInfo(userInfo: UserInfo) {
-      this.userInfo = userInfo
-      localStorage.setItem('userInfo', JSON.stringify(userInfo))
+      const sanitized = sanitizeUserInfo(userInfo)
+      this.userInfo = sanitized
+      writeAuthStorage(USER_INFO_KEY, sanitized)
+    },
+
+    /** 同步清除内存、会话存储和历史本地存储中的认证数据 */
+    clearSession() {
+      this.token = ''
+      this.refreshToken = ''
+      this.tokenExpiresAt = 0
+      this.userInfo = {}
+
+      if (typeof window === 'undefined') return
+      for (const key of AUTH_STORAGE_KEYS) {
+        sessionStorage.removeItem(key)
+        localStorage.removeItem(key)
+      }
+      localStorage.removeItem('__tags_view_list__')
     },
 
     async logout(isExpired = false) {
       try {
         // 1. 清除用户状态
-        this.token = ''
-        this.userInfo = {}
+        this.clearSession()
 
         // 2. 重置页面标题
         document.title = import.meta.env.VITE_APP_TITLE
 
-        // 3. 只清除认证相关数据（保留用户配置如主题、语言等）
-        localStorage.removeItem(TOKEN)
-        localStorage.removeItem(REFRESH_TOKEN)
-        localStorage.removeItem(TOKEN_EXPIRES_IN)
-        localStorage.removeItem(TIME_STAMP)
-        localStorage.removeItem('userInfo')
-        localStorage.removeItem('__tags_view_list__')
-
-        // 4. 清理动态路由
-        const { clearExistingRoutes } = await import('@/router/dynamicRouter')
+        // 3. 清理动态路由和权限快照（保留主题、语言等用户偏好）
+        const [{ clearExistingRoutes }, { s_permissionStore }] =
+          await Promise.all([
+            import('@/router/dynamicRouter'),
+            import('@/stores/permission'),
+          ])
         clearExistingRoutes()
+        s_permissionStore().resetPermissions()
 
-        // 5. 跳转登录页
+        // 4. 跳转登录页
         router.replace('/login')
 
-        // 6. 根据退出原因显示不同提示
+        // 5. 根据退出原因显示不同提示
         if (isExpired) {
           notification.warning({
             content: '登录已过期，请重新登录',
@@ -117,8 +183,12 @@ export const s_userStore = defineStore('user', {
       expiresIn?: number
     ) {
       this.setToken(token)
-      if (refreshToken) this.setRefreshToken(refreshToken)
-      if (expiresIn) this.setTokenExpiresAt(expiresIn)
+      this.setRefreshToken(refreshToken || '')
+      if (expiresIn && expiresIn > 0) this.setTokenExpiresAt(expiresIn)
+      else {
+        this.tokenExpiresAt = 0
+        writeAuthStorage(TOKEN_EXPIRES_IN, 0)
+      }
       d_setTimeStamp()
     },
 

@@ -109,6 +109,28 @@ function collectTransitiveDeps(
   }
 }
 
+const addMonorepoAliases = (aliases: Alias[], packageNames: string[]): void => {
+  const localPath = resolve(process.cwd(), LOCAL_PACKAGE_CONFIG.packagesDir)
+  if (!existsSync(localPath)) {
+    console.warn('⚠️  未找到 monorepo 包目录，跳过扫描')
+    console.warn(`    路径: ${localPath}`)
+    return
+  }
+
+  for (const pkgName of readdirSync(localPath)) {
+    const srcPath = resolve(localPath, pkgName, 'src')
+    if (!existsSync(srcPath)) continue
+
+    const fullPackageName = `${LOCAL_PACKAGE_CONFIG.namespace}/${pkgName}`
+    aliases.push({
+      find: new RegExp(`^${fullPackageName.replace(/\//g, '\\/')}$`),
+      replacement: srcPath,
+    })
+    packageNames.push(pkgName)
+    collectTransitiveDeps(localPath, pkgName, aliases)
+  }
+}
+
 /**
  * 获取本地包别名配置
  *
@@ -139,35 +161,7 @@ export function getLocalPackagesAlias(): Alias[] {
   const packageNames: string[] = []
 
   // ── 1. Monorepo packages（仅在全量模式下启用）──
-  if (isFullMode) {
-    const localPath = resolve(process.cwd(), LOCAL_PACKAGE_CONFIG.packagesDir)
-
-    if (existsSync(localPath)) {
-      readdirSync(localPath).forEach(pkgName => {
-        const srcPath = resolve(localPath, pkgName, 'src')
-
-        if (!existsSync(srcPath)) {
-          return
-        }
-
-        const fullPackageName = `${LOCAL_PACKAGE_CONFIG.namespace}/${pkgName}`
-
-        aliases.push({
-          find: new RegExp(`^${fullPackageName.replace(/\//g, '\\/')}$`),
-          replacement: srcPath,
-        })
-
-        packageNames.push(pkgName)
-
-        // 自动解析传递依赖：读取被别名包的 dependencies，
-        // 对主项目 node_modules 中不存在的依赖，从该包自身的 node_modules 解析
-        collectTransitiveDeps(localPath, pkgName, aliases)
-      })
-    } else {
-      console.warn('⚠️  未找到 monorepo 包目录，跳过扫描')
-      console.warn(`    路径: ${localPath}`)
-    }
-  }
+  if (isFullMode) addMonorepoAliases(aliases, packageNames)
 
   // ── 2. 独立本地包（全量模式 或 组件模式 均启用）──
   for (const [pkgName, relativePath] of Object.entries(

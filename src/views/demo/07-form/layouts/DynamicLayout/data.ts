@@ -158,17 +158,17 @@ export const PREVIEW_TABS = [
   {
     name: 'formData',
     tab: '表单数据',
-    icon: 'i-mdi:form-select',
+    icon: 'i-mdi-form-select',
   },
   {
     name: 'config',
     tab: '动态配置',
-    icon: 'i-mdi:cog',
+    icon: 'i-mdi-cog',
   },
   {
     name: 'allFields',
     tab: '所有字段',
-    icon: 'i-mdi:view-list',
+    icon: 'i-mdi-view-list',
   },
 ] as const
 
