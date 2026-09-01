@@ -1409,22 +1409,30 @@
             key: 'type',
             type: 'tag',
             tagType: 'success',
-            formatter: (val: string) =>
-              PERMISSION_TYPE_CONFIG[val as PermissionType]?.text || val,
+            formatter: (val: unknown) => {
+              if (typeof val !== 'string') return String(val ?? '暂无')
+              return PERMISSION_TYPE_CONFIG[val as PermissionType]?.text || val
+            },
           },
           {
             label: '所属模块',
             key: 'module',
             type: 'text',
-            formatter: (val: string) =>
-              SYSTEM_MODULES.find(m => m.value === val)?.label || val,
+            formatter: (val: unknown) => {
+              if (typeof val !== 'string') return String(val ?? '暂无')
+              return SYSTEM_MODULES.find(m => m.value === val)?.label || val
+            },
           },
           {
             label: '状态',
             key: 'status',
             type: 'tag',
             tagType: 'success',
-            formatter: (val: number) => (val === 1 ? '启用' : '禁用'),
+            formatter: (val: unknown) => {
+              if (val === 1) return '启用'
+              if (val === 0) return '禁用'
+              return String(val ?? '暂无')
+            },
           },
           { label: '创建时间', key: 'createTime', type: 'text' },
         ],
@@ -1438,8 +1446,8 @@
             key: 'resources',
             type: 'text',
             span: 2,
-            formatter: (val: string[]) =>
-              Array.isArray(val) ? val.join(', ') : '无',
+            formatter: (val: unknown) =>
+              Array.isArray(val) ? val.map(String).join(', ') : '无',
           },
           { label: '描述', key: 'description', type: 'text', span: 2 },
           { label: '备注', key: 'remark', type: 'text', span: 2 },

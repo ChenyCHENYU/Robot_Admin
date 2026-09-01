@@ -17,6 +17,8 @@ interface UserInfo {
   username?: string
   id?: string
   displayName?: string
+  role?: string
+  email?: string
   [key: string]: unknown
 }
 

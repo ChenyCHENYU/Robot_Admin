@@ -5,11 +5,11 @@
       <img src="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/img/robot-left.png" height="120" />
     </picture>
   </a>
-  
+
   <h1>
     <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=4FC08D&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=600&height=100&lines=🤖+Robot+Admin;重新定义企业级中后台开发体验" alt="Robot Admin" />
   </h1>
-  
+
   <p><strong>Robot Admin - 多架构企业级解决方案</strong></p>
 
   <!-- 架构选择器 -->
@@ -251,6 +251,7 @@ bun run commit         # 规范化提交（git cz）
 - **WangEditor** - 富文本编辑器
 - **XGPlayer** - 视频播放器（HLS/防作弊）
 - **Vue Flow** - 工作流编辑器
+
 </details>
 
 ### 🎯 功能矩阵
@@ -327,6 +328,7 @@ bun run commit         # 规范化提交（git cz）
 - `C_ContextMenu` - 右键上下文菜单
 - `C_Transfer` - 穿梭框，跨列表数据迁移
 - `C_AvatarGroup` - 叠加头像组，状态徽标
+
 </details>
 
 #### 🎮 自定义指令
@@ -378,6 +380,7 @@ bun run commit         # 规范化提交（git cz）
 - 穿梭框 - 跨列表数据迁移
 - 头像组 - 叠加头像展示，状态徽标
 - 音频播放器 - 播放列表、进度控制、多循环模式
+
 </details>
 
 ---
@@ -513,6 +516,7 @@ graph LR
 - `desc：` 用于快速生成 console 打印信息
 - `use：` 通过选中变量，按下快捷键，生成打印句柄
 - `key：` `ctrl+alt+l` 生成 `alt+shift+c` 注释所有 **+u** 启用所有 **+d** 删除所有
+
 </details>
 
 ---
@@ -607,6 +611,7 @@ graph LR
 - **组件懒加载** - 路由级别懒加载
 - **图片懒加载** - 视口内图片按需加载
 - **防抖节流** - 高频操作性能优化
+
 </details>
 
 ---
@@ -762,7 +767,7 @@ location / {
 
 **已发布组件库**
 
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.10.3` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.11.4` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
 - **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v2.3.2` - 6 种布局模式 + 安全设置管理 + 无障碍交互
 - **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.2.0` - Axios 请求编排 + 6 类插件能力 + useTableCrud
 - **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v2.0.0` - 48+ 企业级表单验证规则库
@@ -790,6 +795,7 @@ location / {
 - **[@agile-team/robot-cli](https://www.npmjs.com/package/@agile-team/robot-cli)** `v1.1.12` - 现代化项目脚手架工具
 - **[@agile-team/naive-ui-components](https://www.npmjs.com/package/@agile-team/naive-ui-components)** `v0.1.4` - Naive UI 组件库（旧版，已迁移至 @robot-admin）
 - **[@agile-team/vscode-config](https://www.npmjs.com/package/@agile-team/vscode-config)** `v2.0.8` - 团随 VSCode 配置一键安装工具
+
 </details>
 
 ---
@@ -847,6 +853,7 @@ location / {
 - **VS Code**: 推荐编辑器
 - **Git**: >= 2.20.0
 - **Docker**: >= 20.0 (容器部署)
+
 </details>
 
 ---
@@ -949,6 +956,7 @@ bun run type-build
 - 🧩 **组件丰富**: 51+ 业务组件，独立组件库按需导入
 - 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
 - 📚 **学习友好**: 54+ 演示页面，每个都是最佳实践
+
 </details>
 
 ---
@@ -987,6 +995,7 @@ bun run type-build
 - 提供详细的迁移指南
 - 组件API基本兼容
 - 渐进式迁移支持
+
 </details>
 
 ---

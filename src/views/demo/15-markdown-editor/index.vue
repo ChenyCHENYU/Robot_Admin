@@ -3,7 +3,7 @@
     <c_vTitle
       title="Markdown编辑器组件场景示例"
       icon="mdi:language-markdown"
-      description="基于 v-md-editor 封装，支持实时预览、语法高亮、图片上传、自动保存、字数统计等功能"
+      description="基于组件库 C_Markdown 封装，支持实时预览、语法高亮、图片上传、自动保存、字数统计等功能"
     />
 
     <NTabs
@@ -371,9 +371,8 @@
               type="primary"
             >
               {{
-                categoryOptions.find(
-                  (opt: any) => opt.value === articleForm.category
-                )?.label
+                categoryOptions.find(opt => opt.value === articleForm.category)
+                  ?.label
               }}
             </NTag>
             <NTag

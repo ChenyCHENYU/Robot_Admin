@@ -8,7 +8,6 @@
 
 import { describe, expect, test } from 'bun:test'
 import { validateViteEnv } from '../src/config/vite/viteEnvConfig'
-import { normalizeRobotFormCss } from '../src/config/vite/packageCssCompat'
 
 describe('Vite 环境校验', () => {
   test('开发环境使用安全默认值', () => {
@@ -46,19 +45,5 @@ describe('Vite 环境校验', () => {
         'development'
       )
     ).toThrow('有道 API 凭据')
-  })
-
-  test('只修正组件库中已知的无效 Steps 选择器', () => {
-    const css = [
-      '.steps-container:has(.steps-indicator:deep(.n-steps--vertical)) {}',
-      '.other:deep(.keep-upstream-selector) {}',
-    ].join('\n')
-
-    expect(normalizeRobotFormCss(css)).toBe(
-      [
-        '.steps-container:has(.steps-indicator .n-steps--vertical) {}',
-        '.other:deep(.keep-upstream-selector) {}',
-      ].join('\n')
-    )
   })
 })

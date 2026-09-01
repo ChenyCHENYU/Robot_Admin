@@ -24,24 +24,3 @@ declare module 'naive-ui' {
     action?: () => VNode[]
   }
 }
-
-// =================== v-md-editor 模块声明 ===================
-
-declare module '@kangc/v-md-editor' {
-  const VMdEditor: any
-  export default VMdEditor
-}
-
-declare module '@kangc/v-md-editor/lib/preview' {
-  const VMdPreview: any
-  export default VMdPreview
-}
-
-declare module '@kangc/v-md-editor/lib/theme/github.js' {
-  const githubTheme: any
-  export default githubTheme
-}
-
-declare module '@kangc/v-md-editor/lib/style/base-editor.css'
-declare module '@kangc/v-md-editor/lib/style/preview.css'
-declare module '@kangc/v-md-editor/lib/theme/style/github.css'

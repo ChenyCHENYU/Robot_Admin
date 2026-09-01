@@ -14,6 +14,8 @@ export interface TestRecord extends DataRecord {
   department: string
   role: string
   status: string
+  childData?: ChildDataType[]
+  hasChildren?: boolean
 }
 
 export interface DemoConfig {
@@ -35,11 +37,6 @@ export type EmployeeData = GetEmployeesExpandListResponse['data']['list'][0]
 // 提取子数据类型
 export type ChildDataType = EmployeeData['childData'][0]
 // 增强的记录类型 - 修复类型冲突
-export interface EnhancedTestRecord extends Omit<TestRecord, 'hasChildren'> {
-  childData?: ChildDataType[]
-  hasChildren: boolean // 保持与API数据结构一致，必需字段
-}
-
 // ================= 子表格列配置 =================
 export const childColumnsConfig = {
   // 项目子表列
@@ -48,7 +45,7 @@ export const childColumnsConfig = {
     { key: 'project', title: '项目名称', width: 150 },
     { key: 'progress', title: '进度', width: 100 },
     { key: 'status', title: '状态', width: 100 },
-  ] as TableColumn[],
+  ] as TableColumn<ChildDataType>[],
 
   // 需求子表列
   requirement: [
@@ -56,7 +53,7 @@ export const childColumnsConfig = {
     { key: 'requirement', title: '需求名称', width: 150 },
     { key: 'priority', title: '优先级', width: 100 },
     { key: 'status', title: '状态', width: 100 },
-  ] as TableColumn[],
+  ] as TableColumn<ChildDataType>[],
 
   // 服务子表列
   service: [
@@ -64,7 +61,7 @@ export const childColumnsConfig = {
     { key: 'service', title: '服务名称', width: 150 },
     { key: 'version', title: '版本', width: 100 },
     { key: 'status', title: '状态', width: 100 },
-  ] as TableColumn[],
+  ] as TableColumn<ChildDataType>[],
 }
 
 // ================= 子表格列配置获取函数 =================
@@ -75,25 +72,25 @@ export const childColumnsConfig = {
  */
 export const getChildColumns = (
   childData: ChildDataType
-): TableColumn<DataRecord>[] => {
+): TableColumn<ChildDataType>[] => {
   // 通过检查数据对象的属性来判断类型
   if ('project' in childData) {
-    return childColumnsConfig.project as TableColumn<DataRecord>[]
+    return childColumnsConfig.project
   }
   if ('requirement' in childData) {
-    return childColumnsConfig.requirement as TableColumn<DataRecord>[]
+    return childColumnsConfig.requirement
   }
   if ('service' in childData) {
-    return childColumnsConfig.service as TableColumn<DataRecord>[]
+    return childColumnsConfig.service
   }
 
   // 默认返回项目列配置
   console.warn('无法识别子数据类型，使用默认项目列配置')
-  return childColumnsConfig.project as TableColumn<DataRecord>[]
+  return childColumnsConfig.project
 }
 
 // ================= 主表格列配置 =================
-export const dataColumns: TableColumn[] = [
+export const dataColumns: TableColumn<TestRecord>[] = [
   {
     type: 'selection',
   },
@@ -124,15 +121,14 @@ export const dataColumns: TableColumn[] = [
     key: 'status',
     title: '状态',
     width: 100,
-    render: (row: DataRecord) => {
-      const testRow = row as TestRecord
+    render: (row: TestRecord) => {
       return h(
         NTag,
         {
-          type: testRow.status === '在职' ? 'success' : 'error',
+          type: row.status === '在职' ? 'success' : 'error',
           size: 'small',
         },
-        () => testRow.status
+        () => row.status
       )
     },
   },

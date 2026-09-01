@@ -154,7 +154,7 @@
         @submit="handleSubmit"
         @validate-success="errorCount = 0"
         @validate-error="handleValidateError"
-        @fields-change="currentFields = $event || []"
+        @fields-change="handleFieldsChange"
       />
     </NCard>
 
@@ -340,6 +340,8 @@
     LayoutType,
     LabelPlacement,
     FormModel,
+    FormOption,
+    SubmitEventPayload,
   } from '@robot-admin/naive-ui-components'
   import { layoutOptions, layoutDescriptions, testDataConfig } from './data'
 
@@ -391,21 +393,28 @@
   // ========================================
   // 响应式状态
   // ========================================
-  const layoutRef = ref()
+  interface LayoutExpose {
+    validate?: () => Promise<void>
+    resetFields?: () => void
+  }
+
+  type PreviewMode = (typeof PREVIEW_MODES)[number]['value']
+
+  const layoutRef = ref<LayoutExpose | null>(null)
   const formData = ref<FormModel>({})
   const currentLayout = ref<LayoutType>('default')
   const labelPlacement = ref<LabelPlacement>('left')
   const validateOnChange = ref(false)
-  const currentFields = ref<any[]>([])
+  const currentFields = ref<FormOption[]>([])
   const errorCount = ref(0)
   const showModal = ref(false)
-  const previewMode = ref('json')
+  const previewMode = ref<PreviewMode>('json')
   const copying = ref(false)
 
   // ========================================
   // 工具函数
   // ========================================
-  const isValueFilled = (value: any): boolean => {
+  const isValueFilled = (value: unknown): boolean => {
     if (value === null || value === undefined || value === '') return false
     if (typeof value === 'string') return value.trim() !== ''
     if (Array.isArray(value)) return value.length > 0
@@ -415,14 +424,14 @@
     return false
   }
 
-  const getValueType = (value: any): string => {
+  const getValueType = (value: unknown): string => {
     if (value === null) return 'null'
     if (value === undefined) return 'undefined'
     if (Array.isArray(value)) return 'array'
     return typeof value
   }
 
-  const formatValueDisplay = (value: any): string => {
+  const formatValueDisplay = (value: unknown): string => {
     if (value === null || value === undefined) return '空值'
     if (typeof value === 'string') return value || '空字符串'
     if (Array.isArray(value)) return `[${value.length} 项]`
@@ -564,14 +573,29 @@ export default formData;`
   // ========================================
   // 事件处理
   // ========================================
-  const handleSubmit = (payload: any) => {
+  const handleSubmit = (payload: SubmitEventPayload<FormModel>): void => {
     console.log('表单提交:', payload)
     message.success('表单提交成功')
   }
 
-  const handleValidateError = (errors: any) => {
+  const handleValidateError = (errors: unknown): void => {
     errorCount.value = Array.isArray(errors) ? errors.length : 1
     console.error('表单验证失败:', errors)
+  }
+
+  const handleFieldsChange = (fields: unknown): void => {
+    currentFields.value = Array.isArray(fields)
+      ? fields.filter(isFormOption)
+      : []
+  }
+
+  /** 仅接收包含合法字段名与组件类型的表单配置。 */
+  function isFormOption(value: unknown): value is FormOption {
+    if (typeof value !== 'object' || value === null) return false
+    return (
+      typeof Reflect.get(value, 'prop') === 'string' &&
+      typeof Reflect.get(value, 'type') === 'string'
+    )
   }
 </script>
 

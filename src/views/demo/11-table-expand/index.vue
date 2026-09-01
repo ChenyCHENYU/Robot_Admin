@@ -80,19 +80,13 @@
 <script setup lang="ts">
   import { type DataTableRowKey, NSpin } from 'naive-ui/es'
   import type { VNodeChild } from 'vue'
-  import {
-    C_Table,
-    type ActionItem,
-    type DataRecord,
-    type TableColumn,
-  } from '@robot-admin/naive-ui-components'
+  import { C_Table, type ActionItem } from '@robot-admin/naive-ui-components'
   import { useTableCrud } from '@robot-admin/request-core'
   import {
     defaultConfig,
     dataColumns,
     getChildColumns,
     type ChildDataType,
-    type EnhancedTestRecord,
     type TestRecord,
     type DemoConfig,
   } from './data'
@@ -149,17 +143,15 @@
   ])
 
   // 工具函数
-  const getRowKey = (row: DataRecord): DataTableRowKey => (row as TestRecord).id
-  const isRowExpandable = (row: DataRecord): boolean =>
-    (row as EnhancedTestRecord).hasChildren
-  const isRowCheckable = (row: DataRecord): boolean =>
-    (row as TestRecord).status === '在职'
+  const getRowKey = (row: TestRecord): DataTableRowKey => row.id
+  const isRowExpandable = (row: TestRecord): boolean => row.hasChildren === true
+  const isRowCheckable = (row: TestRecord): boolean => row.status === '在职'
 
   // 加载子数据
-  const loadChildData = async (row: DataRecord): Promise<ChildDataType[]> => {
+  const loadChildData = async (row: TestRecord): Promise<ChildDataType[]> => {
     try {
       await new Promise(resolve => setTimeout(resolve, 300))
-      return (row as EnhancedTestRecord).childData || []
+      return row.childData || []
     } catch {
       return []
     }
@@ -167,12 +159,10 @@
 
   // 展开内容渲染
   const renderExpandContent = (
-    row: DataRecord,
+    row: TestRecord,
     expandData: unknown[],
     isLoading: boolean
   ): VNodeChild => {
-    const testRow = row as EnhancedTestRecord
-
     if (isLoading) {
       return h('div', { class: 'flex justify-center items-center py-4' }, [
         h(NSpin, { size: 'small' }),
@@ -184,20 +174,23 @@
       return h('div', { class: 'text-center py-4' }, '暂无数据')
     }
 
-    const childColumns = getChildColumns(
-      expandData[0] as unknown as ChildDataType
-    )
+    const childRows = expandData.filter(isChildDataType)
+    if (!childRows.length) {
+      return h('div', { class: 'text-center py-4' }, '暂无有效数据')
+    }
+
+    const childColumns = getChildColumns(childRows[0])
 
     return h('div', { class: 'p-4' }, [
       h(
         'div',
         { class: 'mb-2 text-sm text-gray-500' },
-        `${testRow.name} 的详细信息 (${expandData.length} 条)`
+        `${row.name} 的详细信息 (${childRows.length} 条)`
       ),
-      h(C_Table, {
-        data: expandData as DataRecord[],
-        columns: childColumns as TableColumn<DataRecord>[],
-        rowKey: (child: DataRecord) => (child as unknown as ChildDataType).id,
+      h(C_Table<ChildDataType>, {
+        data: childRows,
+        columns: childColumns,
+        rowKey: 'id',
         config: {
           selection: { enabled: config.enableChildSelection },
           pagination: false,
@@ -205,6 +198,12 @@
         },
       }),
     ])
+  }
+
+  /** 过滤异步展开返回值，阻止无主键记录进入子表格。 */
+  function isChildDataType(value: unknown): value is ChildDataType {
+    if (typeof value !== 'object' || value === null) return false
+    return typeof Reflect.get(value, 'id') === 'number'
   }
 </script>
 

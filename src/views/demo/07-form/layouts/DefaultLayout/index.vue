@@ -20,9 +20,9 @@
       @validate-error="handleValidateError"
     >
       <!-- 自定义表单操作区 -->
-      <template #action="{ validate, reset }">
+      <template #action="{ submit, reset }">
         <C_ActionBar
-          :actions="getFormActions(validate, reset)"
+          :actions="getFormActions(submit, reset)"
           :config="{ align: 'right', gap: 16 }"
         />
       </template>
@@ -31,97 +31,16 @@
 </template>
 
 <script setup lang="ts">
+  import '@robot-admin/naive-ui-components/C_Editor/style.css'
   import type {
     LabelPlacement,
     FormInstance,
-    FormModel,
     FormOption,
+    FormConfig,
+    SubmitEventPayload,
     ActionItem,
   } from '@robot-admin/naive-ui-components'
-  import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
-
-  // ==================== 表单字段配置 ====================
-  const getFormOptions = (): FormOption[] => [
-    {
-      type: 'input',
-      prop: 'username',
-      label: '用户名',
-      placeholder: '请输入用户名',
-      rules: RULE_COMBOS.username('用户名'),
-    },
-    {
-      type: 'input',
-      prop: 'realName',
-      label: '真实姓名',
-      placeholder: '请输入真实姓名',
-      rules: [
-        PRESET_RULES.required('真实姓名'),
-        PRESET_RULES.length('真实姓名', 2, 20),
-      ],
-    },
-    {
-      type: 'inputNumber',
-      prop: 'age',
-      label: '年龄',
-      rules: [
-        PRESET_RULES.required('年龄'),
-        PRESET_RULES.range('年龄', 1, 120),
-      ],
-      attrs: { min: 1, max: 120 },
-    },
-    {
-      type: 'select',
-      prop: 'gender',
-      label: '性别',
-      placeholder: '请选择性别',
-      rules: [PRESET_RULES.required('性别')],
-      children: [
-        { value: 'male', label: '男' },
-        { value: 'female', label: '女' },
-      ],
-    },
-    {
-      type: 'input',
-      prop: 'email',
-      label: '邮箱',
-      placeholder: '请输入邮箱地址',
-      rules: RULE_COMBOS.email('邮箱'),
-    },
-    {
-      type: 'input',
-      prop: 'phone',
-      label: '手机号',
-      placeholder: '请输入手机号',
-      rules: RULE_COMBOS.mobile('手机号'),
-    },
-    {
-      type: 'input',
-      prop: 'password',
-      label: '密码',
-      placeholder: '请输入密码',
-      rules: RULE_COMBOS.password('密码'),
-      attrs: { type: 'password', showPasswordOn: 'mousedown' },
-    },
-    {
-      type: 'textarea',
-      prop: 'address',
-      label: '地址',
-      placeholder: '请输入详细地址',
-      rules: [
-        PRESET_RULES.required('地址'),
-        PRESET_RULES.length('地址', 5, 200),
-      ],
-      attrs: { rows: 3 },
-    },
-    {
-      type: 'editor',
-      prop: 'description',
-      label: '个人简介',
-      placeholder: '请输入个人简介...',
-      value: '',
-      attrs: { height: 200 },
-    },
-  ]
+  import { formOptions, FORM_MESSAGES, type DefaultFormData } from './data'
 
   // ==================== Props ====================
   interface Props {
@@ -138,24 +57,22 @@
 
   // ==================== Emits ====================
   const emit = defineEmits<{
-    submit: [payload: any]
-    'validate-success': [model: FormModel]
-    'validate-error': [errors: any]
-    'fields-change': [fields: any[]]
+    submit: [payload: SubmitEventPayload<DefaultFormData>]
+    'validate-success': [model: DefaultFormData]
+    'validate-error': [errors: unknown]
+    'fields-change': [fields: FormOption<DefaultFormData>[]]
   }>()
 
   // ==================== v-model ====================
-  const formData = defineModel<FormModel>({ required: true })
+  const formData = defineModel<DefaultFormData>({ required: true })
 
   // ==================== 响应式状态 ====================
-  const formRef = ref<FormInstance | null>(null)
+  const formRef = ref<FormInstance<DefaultFormData> | null>(null)
   const submitLoading = ref<boolean>(false)
   const message = useMessage()
 
   // ==================== 计算属性 ====================
-  const formOptions = computed(() => getFormOptions())
-
-  const formConfig = computed(() => ({
+  const formConfig = computed<FormConfig<DefaultFormData>>(() => ({
     layout: 'default' as const,
     validateOnChange: validateOnChange.value,
     labelPlacement: labelPlacement.value,
@@ -163,13 +80,13 @@
   }))
 
   // ==================== 事件处理 ====================
-  const handleFieldsChange = (fields: any[]): void => {
+  const handleFieldsChange = (fields: FormOption<DefaultFormData>[]): void => {
     emit('fields-change', fields)
   }
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (
-    validate: () => Promise<void>,
+    submit: () => Promise<boolean>,
     reset: () => void
   ): ActionItem[] => [
     {
@@ -179,22 +96,23 @@
     },
     {
       key: 'submit',
-      label: submitLoading.value ? '提交中...' : '提交表单',
+      label: submitLoading.value
+        ? FORM_MESSAGES.SUBMITTING
+        : FORM_MESSAGES.SUBMIT_TEXT,
       type: 'primary',
       loading: submitLoading.value,
-      onClick: () => submitForm(validate),
+      onClick: () => submitForm(submit),
     },
   ]
 
   // ==================== 表单操作方法 ====================
-  const submitForm = async (validate: () => Promise<void>): Promise<void> => {
+  const submitForm = async (submit: () => Promise<boolean>): Promise<void> => {
     try {
       submitLoading.value = true
-      await validate()
-      emit('submit', formData.value)
-      message.success('默认布局表单提交成功！')
+      const isValid = await submit()
+      if (isValid) message.success(FORM_MESSAGES.SUBMIT_SUCCESS)
     } catch (errors) {
-      message.error('请完善表单必填信息')
+      message.error(FORM_MESSAGES.VALIDATE_ERROR)
       console.log('表单验证失败:', errors)
     } finally {
       submitLoading.value = false
@@ -203,19 +121,19 @@
 
   const resetForm = (reset: () => void): void => {
     reset()
-    message.info('表单已重置')
+    message.info(FORM_MESSAGES.RESET_INFO)
   }
 
   // ==================== 事件处理器 ====================
-  const handleSubmit = (payload: any): void => {
+  const handleSubmit = (payload: SubmitEventPayload<DefaultFormData>): void => {
     emit('submit', payload)
   }
 
-  const handleValidateSuccess = (model: FormModel): void => {
+  const handleValidateSuccess = (model: DefaultFormData): void => {
     emit('validate-success', model)
   }
 
-  const handleValidateError = (errors: any): void => {
+  const handleValidateError = (errors: unknown): void => {
     emit('validate-error', errors)
   }
 

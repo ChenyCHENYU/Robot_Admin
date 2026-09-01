@@ -37,6 +37,10 @@ export default {
     },
   ],
 
+  // 本地源码包从仓库外部加载时，强制复用应用侧的单例运行时与 UI 上下文。
+  // 既避免 Vue/Naive UI 双实例，也减少 dev:components 构建的重复模块。
+  dedupe: ['vue', 'vue-router', 'pinia', 'naive-ui', '@iconify/vue'],
+
   // ⚡ 扩展名解析优化
   // .ts 在 .vue 之前：确保目录导入时 index.ts（barrel 文件）优先于 index.vue（SFC）
   // Vue SFC 应始终使用显式 .vue 扩展名导入（Vue 3 最佳实践）

@@ -1,14 +1,30 @@
-import type { FormOption } from '@robot-admin/naive-ui-components'
+import { defineFormOptions } from '@robot-admin/naive-ui-components'
 import { PRESET_RULES } from '@robot-admin/form-validate'
 
 const { required, length, email, mobile, range } = PRESET_RULES
+
+export interface CardFormData {
+  username?: string
+  realName?: string
+  age?: number
+  gender?: 'male' | 'female'
+  email?: string
+  phone?: string
+  address?: string
+  wechat?: string
+  birthday?: string | number
+  hobbies?: string[]
+  newsletter?: boolean
+  satisfaction?: number
+  volume?: number
+}
 
 // ==================== 表单字段配置 ====================
 
 /**
  * 卡片布局表单字段配置
  */
-export const FORM_OPTIONS: FormOption[] = [
+export const FORM_OPTIONS = defineFormOptions<CardFormData>([
   // 基础信息分组
   {
     type: 'input' as const,
@@ -124,7 +140,7 @@ export const FORM_OPTIONS: FormOption[] = [
     layout: { group: 'preferences' },
     attrs: { min: 0, max: 100 },
   },
-]
+])
 
 // ==================== 布局配置 ====================
 
@@ -182,7 +198,7 @@ export const DEMO_FORM_DATA = {
   newsletter: true,
   satisfaction: 4.5,
   volume: 60,
-}
+} satisfies CardFormData
 
 // ==================== 调试面板配置 ====================
 

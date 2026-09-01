@@ -105,13 +105,7 @@
             <!-- 表格组件 -->
             <C_Table
               :crud="tableCrud"
-              :config="{
-                edit: {
-                  mode: editMode,
-                  modalTitle: '编辑员工信息',
-                  modalWidth: 700,
-                },
-              }"
+              :config="tableConfig"
             />
           </NSpace>
         </NCard>
@@ -138,7 +132,7 @@
             <NDataTable
               :columns="treeColumns"
               :data="TREE_TABLE_DATA"
-              :row-key="(row: any) => row.id"
+              :row-key="(row: Employee) => row.id"
               default-expand-all
               size="small"
               striped
@@ -152,7 +146,7 @@
     <c_detail
       v-model:visible="tableCrud.detail.visible.value"
       :data="tableCrud.detail.data.value || {}"
-      :config="tableCrud.detailConfig as any"
+      :config="tableCrud.detailConfig"
       :title="tableCrud.detail.title.value"
       :loading="tableCrud.loading.value"
       @close="tableCrud.detail.close"
@@ -284,11 +278,17 @@
 </template>
 
 <script setup lang="ts">
-  import type { ActionItem, EditMode } from '@robot-admin/naive-ui-components'
+  import type {
+    ActionItem,
+    EditMode,
+    TableConfig,
+  } from '@robot-admin/naive-ui-components'
+  import type { DataTableColumns, FormInst } from 'naive-ui/es'
   import { useTableCrud } from '@robot-admin/request-core'
   import { PRESET_RULES } from '@robot-admin/form-validate'
   import {
     type Employee,
+    type AddEmployeeForm,
     EDIT_MODES,
     MODE_CONFIG,
     employeeTableConfig,
@@ -308,11 +308,19 @@
   const activeTab = ref('crud')
   const editMode = ref<EditMode>('modal')
   const showAddModal = ref(false)
-  const addFormRef = ref()
-  const addFormData = ref<any>({})
+  const addFormRef = ref<FormInst | null>(null)
+  const addFormData = ref<AddEmployeeForm>({ ...ADD_FORM_DEFAULTS })
 
   // 当前模式配置
   const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])
+
+  const tableConfig = computed<TableConfig<Employee>>(() => ({
+    edit: {
+      mode: editMode.value,
+      modalTitle: '编辑员工信息',
+      modalWidth: 700,
+    },
+  }))
 
   // 模态框按钮
   const modalActions = computed<ActionItem[]>(() => [
@@ -347,7 +355,7 @@
   }
 
   // ============ 树形表格列 ============
-  const treeColumns = computed(() => [
+  const treeColumns = computed<DataTableColumns<Employee>>(() => [
     { key: 'name', title: '名称', width: 200 },
     {
       key: 'department',
@@ -388,22 +396,34 @@
   ])
 
   // ============ CRUD 操作 ============
-  const handleAddEmployee = () => {
+  const handleAddEmployee = (): void => {
     addFormData.value = { ...ADD_FORM_DEFAULTS, joinDate: Date.now() }
     showAddModal.value = true
   }
 
-  const handleAddSubmit = () => {
-    addFormRef.value?.validate(async (errors: any) => {
-      if (!errors) {
-        try {
-          await tableCrud.create({ ...addFormData.value, id: Date.now() })
-          showAddModal.value = false
-        } catch (error) {
-          console.error('新增失败:', error)
-        }
-      }
-    })
+  const handleAddSubmit = async (): Promise<void> => {
+    if (!addFormRef.value) return
+
+    try {
+      await addFormRef.value.validate()
+    } catch {
+      return
+    }
+
+    const { age, joinDate } = addFormData.value
+    if (age === null || joinDate === null) return
+
+    try {
+      await tableCrud.create({
+        ...addFormData.value,
+        id: Date.now(),
+        age,
+        joinDate,
+      })
+      showAddModal.value = false
+    } catch (error) {
+      console.error('新增失败:', error)
+    }
   }
 </script>
 

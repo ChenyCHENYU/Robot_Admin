@@ -39,7 +39,7 @@
                 <!-- 标签类型 -->
                 <NTag
                   v-if="item.type === 'tag'"
-                  :type="item.tagType || 'default'"
+                  :type="getTagType(item.tagType)"
                   size="small"
                 >
                   {{ getDisplayValue(item) }}
@@ -82,6 +82,7 @@
     width: '600px',
     visible: false,
     loading: false,
+    config: () => ({ sections: [] }),
   })
 
   // ================= Emits 定义 =================
@@ -104,7 +105,7 @@
   /**
    * 获取显示值
    */
-  const getDisplayValue = (item: DetailItem) => {
+  const getDisplayValue = (item: DetailItem): unknown => {
     const value = props.data[item.key]
 
     // 如果有自定义格式化函数，优先使用
@@ -119,15 +120,21 @@
       case 'number':
         return formatNumber(value)
       default:
-        return value || '暂无'
+        return value ?? '暂无'
     }
   }
 
   /**
    * 格式化日期
    */
-  const formatDate = (date: string | number | Date) => {
-    if (!date) return '暂无'
+  const formatDate = (date: unknown): string => {
+    if (
+      typeof date !== 'string' &&
+      typeof date !== 'number' &&
+      !(date instanceof Date)
+    ) {
+      return '暂无'
+    }
     const dateObj = new Date(date)
     if (isNaN(dateObj.getTime())) return '暂无'
     return dateObj.toLocaleDateString('zh-CN')
@@ -136,10 +143,27 @@
   /**
    * 格式化数字
    */
-  const formatNumber = (num: number) => {
+  const formatNumber = (num: unknown): unknown => {
     if (typeof num !== 'number') return num
     return num.toLocaleString()
   }
+
+  const detailTagTypes = [
+    'default',
+    'primary',
+    'info',
+    'success',
+    'warning',
+    'error',
+  ] as const
+  type DetailTagType = (typeof detailTagTypes)[number]
+
+  const isDetailTagType = (value: string): value is DetailTagType =>
+    detailTagTypes.some(type => type === value)
+
+  /** 收窄后再传给 Naive UI，避免后端扩展值污染组件属性。 */
+  const getTagType = (type: string | undefined): DetailTagType =>
+    type && isDetailTagType(type) ? type : 'default'
 
   // ================= 事件处理 =================
   const handleClose = () => {

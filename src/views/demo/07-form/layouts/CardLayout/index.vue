@@ -14,19 +14,12 @@
     <C_Form
       ref="formRef"
       v-model="formData"
-      :options="formOptions"
+      :options="getFormOptions()"
       :config="formConfig"
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
-    >
-      <template #action="{ validate, reset }">
-        <C_ActionBar
-          :actions="getFormActions(validate, reset)"
-          :config="{ gap: 12 }"
-        />
-      </template>
-    </C_Form>
+    />
 
     <!-- 调试面板（开发模式） -->
     <NCard
@@ -44,18 +37,15 @@
           <pre
             v-if="tab.name === 'formData'"
             class="debug-code"
-            >{{ JSON.stringify(formData, null, 2) }}</pre
-          >
+            >{{ JSON.stringify(formData, null, 2) }}</pre>
           <pre
             v-else-if="tab.name === 'options'"
             class="debug-code"
-            >{{ JSON.stringify(formOptions, null, 2) }}</pre
-          >
+            >{{ JSON.stringify(getFormOptions(), null, 2) }}</pre>
           <pre
             v-else-if="tab.name === 'layoutConfig'"
             class="debug-code"
-            >{{ JSON.stringify(cardLayoutConfig, null, 2) }}</pre
-          >
+            >{{ JSON.stringify(cardLayoutConfig, null, 2) }}</pre>
         </NTabPane>
       </NTabs>
     </NCard>
@@ -64,10 +54,11 @@
 
 <script setup lang="ts">
   import type {
-    FormModel,
     FormInstance,
+    FormOption,
     LabelPlacement,
-    ActionItem,
+    FormConfig,
+    SubmitEventPayload,
   } from '@robot-admin/naive-ui-components'
   import {
     FORM_OPTIONS,
@@ -76,6 +67,7 @@
     DEBUG_TABS,
     DEBUG_CONFIG,
     MESSAGES,
+    type CardFormData,
   } from './data'
 
   // ==================== Props ====================
@@ -91,68 +83,41 @@
 
   // ==================== Emits ====================
   const emit = defineEmits<{
-    submit: [payload: any]
-    'validate-success': [model: FormModel]
-    'validate-error': [errors: any]
-    'fields-change': [fields: any[]]
+    submit: [payload: SubmitEventPayload<CardFormData>]
+    'validate-success': [model: CardFormData]
+    'validate-error': [errors: unknown]
+    'fields-change': [fields: FormOption<CardFormData>[]]
   }>()
 
   // ==================== v-model ====================
-  const formData = defineModel<FormModel>({ required: true })
+  const formData = defineModel<CardFormData>({ required: true })
 
   // ==================== 响应式状态 ====================
-  const formRef = ref<FormInstance | null>(null)
+  const formRef = ref<FormInstance<CardFormData> | null>(null)
   const isDev = ref(import.meta.env.DEV && DEBUG_CONFIG.showInDev)
 
   const message = useMessage()
 
   // ==================== 表单配置 ====================
-  const formOptions = ref(FORM_OPTIONS)
-  const cardLayoutConfig = ref(CARD_LAYOUT_CONFIG)
+  const getFormOptions = (): FormOption<CardFormData>[] => FORM_OPTIONS
+  const cardLayoutConfig = CARD_LAYOUT_CONFIG
 
   // ==================== 计算属性 ====================
   const { labelPlacement, validateOnChange } = toRefs(props)
 
-  const formConfig = computed(() => ({
+  const formConfig = computed<FormConfig<CardFormData>>(() => ({
     layout: 'card' as const,
-    card: cardLayoutConfig.value?.card,
+    card: cardLayoutConfig.card,
     labelPlacement: labelPlacement.value,
     validateOnChange: validateOnChange.value,
     onFieldsChange: handleFieldsChange,
+    onReset: () => message.info(MESSAGES.resetSuccess),
   }))
 
-  // ==================== 表单操作按钮配置 ====================
-  const getFormActions = (
-    validate: () => Promise<void>,
-    reset: () => void
-  ): ActionItem[] => [
-    {
-      key: 'submit',
-      label: '提交',
-      icon: 'mdi:check-circle-outline',
-      type: 'primary',
-      onClick: async () => {
-        try {
-          await validate()
-          message.success(MESSAGES.submitSuccess)
-        } catch {
-          message.error(MESSAGES.submitError)
-        }
-      },
-    },
-    {
-      key: 'reset',
-      label: '重置',
-      icon: 'mdi:lock-reset',
-      onClick: () => {
-        reset()
-        message.info(MESSAGES.resetSuccess)
-      },
-    },
-  ]
-
   // ==================== 事件处理 ====================
-  const handleSubmit = async (payload: any): Promise<void> => {
+  const handleSubmit = async (
+    payload: SubmitEventPayload<CardFormData>
+  ): Promise<void> => {
     console.log('表单提交:', payload)
     emit('submit', payload) // 🔥 关键：向父组件转发事件
 
@@ -166,17 +131,17 @@
     }
   }
 
-  const handleValidateSuccess = (model: FormModel): void => {
+  const handleValidateSuccess = (model: CardFormData): void => {
     console.log('验证成功:', model)
     emit('validate-success', model) // 🔥 关键：向父组件转发事件
   }
 
-  const handleValidateError = (errors: any): void => {
+  const handleValidateError = (errors: unknown): void => {
     console.error('验证失败:', errors)
     emit('validate-error', errors) // 🔥 关键：向父组件转发事件
   }
 
-  const handleFieldsChange = (fields: any[]): void => {
+  const handleFieldsChange = (fields: FormOption<CardFormData>[]): void => {
     console.log('字段变化:', fields)
     emit('fields-change', fields) // 🔥 关键：向父组件转发事件
   }
@@ -195,7 +160,7 @@
     message.info(MESSAGES.resetSuccess)
   }
 
-  const setFormData = (data: FormModel): void => {
+  const setFormData = (data: CardFormData): void => {
     Object.assign(formData.value, data)
   }
 
@@ -208,7 +173,7 @@
   // ==================== 初始化 ====================
   onMounted(() => {
     // 🔥 关键：主动触发fields-change事件
-    emit('fields-change', formOptions.value)
+    emit('fields-change', getFormOptions())
     console.log('卡片布局表单组件已加载')
   })
 
@@ -219,7 +184,6 @@
     resetForm,
     setFormData,
     loadDemoData,
-    formRef,
   })
 </script>
 

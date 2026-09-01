@@ -52,7 +52,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 
 | 包名                               | 版本   | 功能                            |
 | ---------------------------------- | ------ | ------------------------------- |
-| `@robot-admin/naive-ui-components` | 0.10.3 | 51+ 个业务组件                  |
+| `@robot-admin/naive-ui-components` | 0.11.4 | 51+ 个业务组件                  |
 | `@robot-admin/layout`              | 2.3.2  | 6 种布局 + 安全设置管理         |
 | `@robot-admin/request-core`        | 0.2.0  | Axios + 6 类插件 + useTableCrud |
 | `@robot-admin/theme`               | 0.4.0  | 主题切换 + 安全持久化           |
@@ -186,7 +186,6 @@ Robot_Admin/
 │   │   ├── layout.ts              # 布局系统
 │   │   ├── naive-ui-plugin.ts     # 全局通知服务
 │   │   ├── highlight.ts           # 代码高亮（异步）
-│   │   ├── markdown.ts            # Markdown（异步懒加载）
 │   │   ├── analytics.ts           # Vercel 分析（仅生产）
 │   │   └── index.ts               # 统一导出
 │   │
@@ -308,7 +307,7 @@ Robot_Admin/
 ```typescript
 // 1. 外部样式
 import '@robot-admin/layout/style'
-import '@robot-admin/naive-ui-components/style.css'
+import '@robot-admin/naive-ui-components/C_Editor/style.css' // 动态编辑器页面显式加载重型样式
 import 'virtual:uno.css'
 
 // 2. Vue 核心
@@ -701,9 +700,7 @@ export const formOptions: FormOption[] = [
 // Mock 数据工厂
 export const testDataConfig = {
   getTestData(layout: string) {
-    return {
-      /* ... */
-    }
+    return {/* ... */}
   },
 }
 ```
@@ -1200,7 +1197,7 @@ src/types/components.d.ts
 manualChunks: {
   'vue-vendor':      ['vue', 'vue-router', 'pinia'],
   'ui-vendor':       ['naive-ui'],
-  'editor-vendor':   ['@kangc/v-md-editor', 'highlight.js'],
+  // 编辑器跟随各自动态路由拆分，避免不同编辑器互相捆绑加载
   'office-vendor':   ['xlsx', 'mammoth'],
   'calendar-vendor': ['FullCalendar 全家桶'],
   'spline-vendor':   ['@splinetool/runtime'],
@@ -1273,8 +1270,11 @@ dist/
 ├── resolver.js       # 自动导入解析器
 ├── style.css         # 全量样式
 ├── C_Form.js         # 按需入口
-├── C_Form.css        # 按需样式
-├── C_Table.js        # ...
+├── C_Form.base.css   # 表单基础样式（resolver 默认注入）
+├── C_Form.css        # 表单完整样式（含动态字段依赖）
+├── C_Table.base.css  # 表格基础样式（resolver 默认注入）
+├── C_Table.css       # 表格完整样式（含动态详情依赖）
+├── C_Editor.css      # 编辑器样式（含第三方运行时样式）
 └── ...
 ```
 
@@ -1425,9 +1425,13 @@ NaiveUiResolver（Naive UI 原生组件）
 import './assets/css/main.css' // 基础重置
 import '@/styles/index.scss' // 全局样式
 import '@robot-admin/layout/style' // 布局系统样式
-import '@robot-admin/naive-ui-components/style.css' // 组件库样式
 import 'virtual:uno.css' // UnoCSS（最高优先级）
 ```
+
+业务组件样式由 `RobotNaiveUiResolver({ importStyle: 'base' })` 按需注入，禁止在
+`main.ts` 常驻导入整包 `style.css`。动态编辑器等 resolver 无法静态发现的重型组件，
+只在对应路由页面显式导入，例如
+`@robot-admin/naive-ui-components/C_Editor/style.css`。
 
 ### 5. Store 命名约定
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- **components:** 升级至 `@robot-admin/naive-ui-components@0.11.4`，使用官方 resolver、子路径入口与按需基础样式，移除旧的 CSS 兼容探测插件。
+- **forms:** 表单演示统一使用泛型模型、标准提交载荷和配置助手，补齐卡片、自定义、标签页及步骤布局的强类型契约。
+- **tables:** 表格与展开表格演示统一行模型、列定义和详情渲染类型，移除宽泛类型断言并收紧异步数据边界。
+
+### Fixed
+
+- **components:** 收紧导航搜索、用户信息与详情弹窗的运行时输入校验，保留 `0`/`false` 等有效展示值并隔离非法标签类型。
+- **styles:** 编辑器第三方样式改为路由页面显式加载，其余业务组件由 resolver 按需注入，避免整包样式常驻首屏。
+- **security:** 移除未使用且停止维护的 `@kangc/v-md-editor` 插件链，统一 SheetJS 安全版本并固定已修复的构建期传递依赖；`bun audit` 归零。
+
 ## [2.5.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.4.0...v2.5.0) (2026-08-10)
 
 ### Features

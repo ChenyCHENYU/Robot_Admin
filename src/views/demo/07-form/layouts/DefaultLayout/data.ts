@@ -1,10 +1,30 @@
-import type { FormOption } from '@robot-admin/naive-ui-components'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-01
+ * @FilePath: \Robot_Admin\src\views\demo\07-form\layouts\DefaultLayout\data.ts
+ * @Description: 默认布局表单模型、字段配置与提示文案
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+import { defineFormOptions } from '@robot-admin/naive-ui-components'
 import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
+
+export interface DefaultFormData {
+  username?: string
+  realName?: string
+  age?: number
+  gender?: 'male' | 'female'
+  email?: string
+  phone?: string
+  password?: string
+  address?: string
+  description?: string
+}
 
 /**
  * 表单字段配置
  */
-export const formOptions: FormOption[] = [
+export const formOptions = defineFormOptions<DefaultFormData>([
   {
     type: 'input',
     prop: 'username',
@@ -78,7 +98,7 @@ export const formOptions: FormOption[] = [
     value: '',
     attrs: { height: 200 },
   },
-]
+])
 
 /**
  * 表单提示消息

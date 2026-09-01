@@ -8,7 +8,11 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { FormOption } from '@robot-admin/naive-ui-components'
+import {
+  defineFormOptions,
+  type FormOption,
+} from '@robot-admin/naive-ui-components'
+import type { ApiResponse } from '@/hooks/useFormSubmit'
 import { RULE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
 
 // 类型定义
@@ -28,11 +32,10 @@ export interface EmployeeFormData {
   performance?: number
   isActive?: boolean
   remarks?: string
-  [key: string]: string | number | boolean | string[] | undefined
 }
 
 // 表单配置
-export const employeeFormOptions: FormOption[] = [
+export const employeeFormOptions = defineFormOptions<EmployeeFormData>([
   {
     type: 'input',
     prop: 'employeeId',
@@ -190,10 +193,12 @@ export const employeeFormOptions: FormOption[] = [
     attrs: { rows: 4 },
     layout: { group: 'other' },
   },
-]
+])
 
 // 测试数据模板
-const testDataTemplates: Record<keyof EmployeeFormData, any> = {
+const testDataTemplates: {
+  [K in keyof EmployeeFormData]-?: () => EmployeeFormData[K]
+} = {
   employeeId: () =>
     `EMP${String(Math.floor(Math.random() * 999999)).padStart(6, '0')}`,
   fullName: () =>
@@ -237,14 +242,16 @@ const testDataTemplates: Record<keyof EmployeeFormData, any> = {
 }
 
 // 测试数据生成函数
-export const generateTestData = (fields: FormOption[]): EmployeeFormData => {
+export const generateTestData = (
+  fields: FormOption<EmployeeFormData>[]
+): EmployeeFormData => {
   const data: EmployeeFormData = {}
 
   fields.forEach(field => {
     if (field.prop && field.prop in testDataTemplates) {
-      const template = testDataTemplates[field.prop as keyof EmployeeFormData]
-      data[field.prop as keyof EmployeeFormData] =
-        typeof template === 'function' ? template() : template
+      const fieldName = field.prop as keyof EmployeeFormData
+      const template = testDataTemplates[fieldName]
+      Object.assign(data, { [fieldName]: template() })
     }
   })
 
@@ -252,7 +259,18 @@ export const generateTestData = (fields: FormOption[]): EmployeeFormData => {
 }
 
 // API 提交函数
-export const submitEmployeeAPI = async (employeeData: EmployeeFormData) => {
+export interface EmployeeSubmitResponse extends ApiResponse {
+  data: {
+    id: number
+    employeeId?: string
+    status: 'active'
+    createdAt: string
+  }
+}
+
+export const submitEmployeeAPI = async (
+  employeeData: EmployeeFormData
+): Promise<EmployeeSubmitResponse> => {
   await new Promise(resolve => setTimeout(resolve, 1500))
   return {
     code: '0',

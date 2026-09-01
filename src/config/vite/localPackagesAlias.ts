@@ -131,6 +131,60 @@ const addMonorepoAliases = (aliases: Alias[], packageNames: string[]): void => {
   }
 }
 
+const addStandaloneAliases = (
+  aliases: Alias[],
+  packageNames: string[]
+): void => {
+  for (const [pkgName, relativePath] of Object.entries(
+    STANDALONE_LOCAL_PACKAGES
+  )) {
+    const srcIndex = resolve(process.cwd(), relativePath, 'src', 'index.ts')
+    const srcDir = resolve(process.cwd(), relativePath, 'src')
+    const replacement = existsSync(srcIndex) ? srcIndex : srcDir
+
+    if (!existsSync(replacement)) {
+      console.warn(`⚠️  独立本地包 ${pkgName} 源码未找到，跳过`)
+      console.warn(`    路径: ${replacement}`)
+      continue
+    }
+
+    const fullPackageName = `${LOCAL_PACKAGE_CONFIG.namespace}/${pkgName}`
+
+    if (pkgName === 'naive-ui-components') {
+      aliases.push({
+        find: new RegExp(
+          `^${fullPackageName.replace(/\//g, '\\/')}/(C_[A-Za-z0-9_]+)$`
+        ),
+        replacement: resolve(srcDir, 'components', '$1', 'index.ts'),
+      })
+    }
+
+    aliases.push({
+      find: new RegExp(`^${fullPackageName.replace(/\//g, '\\/')}$`),
+      replacement,
+    })
+
+    // 全局样式入口在本地模式下仅映射共享变量；组件样式由源码 SFC 自行产出。
+    const localStyleScss = resolve(
+      process.cwd(),
+      relativePath,
+      'src',
+      'styles',
+      'global.scss'
+    )
+    if (existsSync(localStyleScss)) {
+      aliases.push({
+        find: new RegExp(
+          `^${fullPackageName.replace(/\//g, '\\/')}/style\\.css$`
+        ),
+        replacement: localStyleScss,
+      })
+    }
+
+    packageNames.push(`${pkgName}(独立)`)
+  }
+}
+
 /**
  * 获取本地包别名配置
  *
@@ -164,46 +218,7 @@ export function getLocalPackagesAlias(): Alias[] {
   if (isFullMode) addMonorepoAliases(aliases, packageNames)
 
   // ── 2. 独立本地包（全量模式 或 组件模式 均启用）──
-  for (const [pkgName, relativePath] of Object.entries(
-    STANDALONE_LOCAL_PACKAGES
-  )) {
-    const srcIndex = resolve(process.cwd(), relativePath, 'src', 'index.ts')
-    const srcDir = resolve(process.cwd(), relativePath, 'src')
-    const replacement = existsSync(srcIndex) ? srcIndex : srcDir
-
-    if (!existsSync(replacement)) {
-      console.warn(`⚠️  独立本地包 ${pkgName} 源码未找到，跳过`)
-      console.warn(`    路径: ${replacement}`)
-      continue
-    }
-
-    const fullPackageName = `${LOCAL_PACKAGE_CONFIG.namespace}/${pkgName}`
-
-    aliases.push({
-      find: new RegExp(`^${fullPackageName.replace(/\//g, '\\/')}$`),
-      replacement,
-    })
-
-    // 同时将 style.css 子路径映射到本地源码的 global.scss
-    // 否则 `import '...naive-ui-components/style.css'` 仍加载安装包的旧 CSS
-    const localStyleScss = resolve(
-      process.cwd(),
-      relativePath,
-      'src',
-      'styles',
-      'global.scss'
-    )
-    if (existsSync(localStyleScss)) {
-      aliases.push({
-        find: new RegExp(
-          `^${fullPackageName.replace(/\//g, '\\/')}/style\\.css$`
-        ),
-        replacement: localStyleScss,
-      })
-    }
-
-    packageNames.push(`${pkgName}(独立)`)
-  }
+  addStandaloneAliases(aliases, packageNames)
 
   if (aliases.length > 0) {
     const modeLabel = isFullMode ? 'dev:local' : 'dev:components'

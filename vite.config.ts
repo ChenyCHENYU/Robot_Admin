@@ -23,7 +23,6 @@ import {
   resolveConfig,
   serverConfig,
   buildConfig,
-  packageCssCompatPlugin,
   createI18nPlugin,
   createVuePluginOptions,
 } from './src/config/vite/index.ts'
@@ -39,7 +38,6 @@ export default defineConfig(
     return {
       plugins: [
         viteConsolePlugin,
-        packageCssCompatPlugin,
         Unocss(),
         vue(createVuePluginOptions()),
         vueJsx(),

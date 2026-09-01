@@ -1,16 +1,24 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-01
+ * @FilePath: \Robot_Admin\src\components\local\c_detail\data.ts
+ * @Description: 详情弹窗的宽松输入契约与安全展示类型
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
 export interface DetailItem {
   label: string
   key: string
-  type?: 'text' | 'tag' | 'date' | 'email' | 'number'
-  tagType?: 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error'
-  formatter?: (value: any) => string
-  span?: 1 | 2 // 占据列数，1表示一列，2表示跨两列
+  type?: string
+  tagType?: string
+  formatter?: (value: unknown) => string
+  span?: number
 }
 
 export interface DetailSection {
   title: string
   items: DetailItem[]
-  columns?: 1 | 2 // 该section的列数，默认2列
+  columns?: number
 }
 
 export interface DetailConfig {
@@ -18,8 +26,8 @@ export interface DetailConfig {
 }
 
 export interface C_DetailProps {
-  data: Record<string, any>
-  config: DetailConfig
+  data: Record<string, unknown>
+  config?: DetailConfig
   title?: string
   width?: number | string
   visible?: boolean
