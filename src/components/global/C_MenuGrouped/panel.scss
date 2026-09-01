@@ -12,8 +12,16 @@
   z-index: 2000;
   width: 620px;
   background:
-    radial-gradient(circle at 12% 0%, rgba(100, 108, 255, 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(248, 250, 255, 0.76));
+    radial-gradient(
+      circle at 12% 0%,
+      rgba(100, 108, 255, 0.12),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.82),
+      rgba(248, 250, 255, 0.76)
+    );
   border: 1px solid rgba(100, 108, 255, 0.08);
   border-left: 1px solid rgba(100, 108, 255, 0.18);
   box-shadow: 14px 0 42px rgba(18, 23, 42, 0.14);
@@ -52,11 +60,9 @@
   height: 34px;
   border-radius: 12px;
   color: #fff;
-  background:
-    linear-gradient(135deg, var(--primary-color, #646cff), #8f9bff);
+  background: linear-gradient(135deg, var(--primary-color, #646cff), #8f9bff);
   box-shadow: 0 10px 22px rgba(100, 108, 255, 0.24);
 }
-
 
 .mg-panel__count {
   --n-color: rgba(100, 108, 255, 0.1) !important;
@@ -67,6 +73,9 @@
   box-shadow: inset 0 0 0 1px rgba(100, 108, 255, 0.12);
 }
 .mg-panel__close {
+  padding: 0;
+  border: 0;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,6 +182,9 @@
 
 // ============ 网格单元 ============
 .mg-panel__cell {
+  width: 100%;
+  text-align: left;
+  font: inherit;
   position: relative;
   display: flex;
   align-items: center;
@@ -204,6 +216,11 @@
       background: rgba(100, 108, 255, 0.16);
       opacity: 1;
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color, #646cff);
+    outline-offset: 1px;
   }
 
   &--active {
@@ -276,8 +293,16 @@
 .mg-panel--signature {
   backdrop-filter: none;
   background:
-    radial-gradient(circle at 0% 4%, rgba(118, 132, 255, 0.18), transparent 32%),
-    radial-gradient(circle at 92% 18%, rgba(91, 141, 239, 0.12), transparent 32%),
+    radial-gradient(
+      circle at 0% 4%,
+      rgba(118, 132, 255, 0.18),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 92% 18%,
+      rgba(91, 141, 239, 0.12),
+      transparent 32%
+    ),
     linear-gradient(180deg, rgba(13, 20, 37, 0.96), rgba(11, 17, 32, 0.94));
   border-color: rgba(118, 132, 255, 0.14);
   border-left-color: rgba(255, 255, 255, 0.05);
@@ -300,7 +325,11 @@
   }
 
   .mg-panel__icon {
-    background: linear-gradient(135deg, rgba(91, 141, 239, 0.9), rgba(132, 116, 255, 0.86));
+    background: linear-gradient(
+      135deg,
+      rgba(91, 141, 239, 0.9),
+      rgba(132, 116, 255, 0.86)
+    );
     box-shadow:
       0 14px 26px rgba(100, 108, 255, 0.22),
       inset 0 1px 0 rgba(255, 255, 255, 0.38);
@@ -356,7 +385,11 @@
 
   .mg-panel__cell {
     color: rgba(232, 238, 255, 0.82);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035));
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.035)
+    );
     border-color: rgba(130, 142, 255, 0.12);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.075),
@@ -364,7 +397,11 @@
 
     &:hover {
       transform: none;
-      background: linear-gradient(135deg, rgba(118, 132, 255, 0.2), rgba(255, 255, 255, 0.07));
+      background: linear-gradient(
+        135deg,
+        rgba(118, 132, 255, 0.2),
+        rgba(255, 255, 255, 0.07)
+      );
       border-color: rgba(130, 142, 255, 0.36);
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.16),
@@ -379,7 +416,11 @@
     }
 
     &--active {
-      background: linear-gradient(135deg, rgba(100, 108, 255, 0.3), rgba(255, 255, 255, 0.08));
+      background: linear-gradient(
+        135deg,
+        rgba(100, 108, 255, 0.3),
+        rgba(255, 255, 255, 0.08)
+      );
       border-color: rgba(100, 108, 255, 0.36);
       color: #fff;
 
@@ -396,5 +437,3 @@
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 }
-
-

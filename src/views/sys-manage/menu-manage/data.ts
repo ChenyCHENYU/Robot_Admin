@@ -1,5 +1,14 @@
 import type { FormRules } from 'naive-ui/es'
 import menuOriginData from '@/assets/data/dynamicRouter.json'
+import {
+  deleteData,
+  getData,
+  postData,
+  putData,
+} from '@robot-admin/request-core'
+import { isMockDataMode } from '@/config/dataMode'
+import type { DynamicRoute } from '@/router/dynamicRouter'
+import { delayWithSignal } from '@/utils/abort'
 
 // ==================== 类型定义 ====================
 export type MenuType = 'directory' | 'menu' | 'button'
@@ -43,10 +52,18 @@ export interface ButtonPermission {
   remark?: string
 }
 
+export type MenuDropPosition = 'inside' | 'before' | 'after'
+
 export interface ApiResponse<T = unknown> {
-  code: string
+  code: string | number
   data: T
   msg: string
+}
+
+interface MenuRouteMeta {
+  title: string
+  icon?: string
+  hidden: boolean
 }
 
 // ==================== 按钮权限配置 ====================
@@ -246,7 +263,7 @@ const generateButtonPermissionsData = (): ButtonPermission[] => {
 export const MOCK_BUTTON_PERMISSIONS = generateButtonPermissionsData()
 
 // ==================== 辅助函数 ====================
-export const generateMenuId = (route: any): string => {
+export const generateMenuId = (route: DynamicRoute): string => {
   if (route.name) return route.name
   if (route.path) return route.path.replace(/\//g, '-').replace(/^-/, '')
   return `menu-${Date.now()}`
@@ -257,7 +274,7 @@ export const processIcon = (icon?: string): string => {
   return icon.startsWith('i-') ? icon.replace('i-', '') : icon
 }
 
-export const getRouteMeta = (route: any) => {
+export const getRouteMeta = (route: DynamicRoute): MenuRouteMeta => {
   if (!route.meta) {
     return {
       title: route.name || route.path || '未命名菜单',
@@ -272,19 +289,19 @@ export const getRouteMeta = (route: any) => {
   }
 }
 
-export const determineMenuType = (route: any): MenuType => {
+export const determineMenuType = (route: DynamicRoute): MenuType => {
   return route.children?.length && route.component === 'layout'
     ? 'directory'
     : 'menu'
 }
 
 // 检查是否应该跳过当前路由
-const shouldSkipRoute = (route: any, meta: any): boolean => {
-  return !meta.title || (route.path === '/' && route.redirect)
+const shouldSkipRoute = (route: DynamicRoute, meta: MenuRouteMeta): boolean => {
+  return !meta.title || Boolean(route.path === '/' && route.redirect)
 }
 
 // 检查是否是需要扁平化的单子菜单容器
-const shouldFlattenContainer = (route: any): boolean => {
+const shouldFlattenContainer = (route: DynamicRoute): boolean => {
   const isSingleUnnamedLayout =
     route.component === 'layout' && route.children?.length === 1 && !route.name
 
@@ -293,8 +310,8 @@ const shouldFlattenContainer = (route: any): boolean => {
 
 // 构建基础菜单数据
 const buildMenuData = (
-  route: any,
-  meta: any,
+  route: DynamicRoute,
+  meta: MenuRouteMeta,
   menuId: string,
   parentId: string | null,
   sort: number
@@ -316,7 +333,7 @@ const buildMenuData = (
 }
 
 export const createMenuFromRoute = (
-  route: any,
+  route: DynamicRoute,
   parentId: string | null = null,
   sort: number = 0
 ): MenuData | null => {
@@ -327,7 +344,8 @@ export const createMenuFromRoute = (
   }
 
   if (shouldFlattenContainer(route)) {
-    return createMenuFromRoute(route.children[0], parentId, sort)
+    const [child] = route.children || []
+    return child ? createMenuFromRoute(child, parentId, sort) : null
   }
 
   const menuId = generateMenuId(route)
@@ -335,90 +353,250 @@ export const createMenuFromRoute = (
 
   if (route.children) {
     menu.children = route.children
-      .map((child: any, index: number) =>
+      .map((child, index: number) =>
         createMenuFromRoute(child, menuId, index + 1)
       )
-      .filter(Boolean)
+      .filter((child): child is MenuData => child !== null)
   }
 
   return menu
 }
 
+const createMockMenuData = (): MenuData[] => {
+  const menuData: MenuData[] = []
+  menuOriginData.data.forEach(route => {
+    const routes =
+      route.path === '/' && route.children ? route.children : [route]
+    routes.forEach(child => {
+      const childMenu = createMenuFromRoute(child, null, menuData.length + 1)
+      if (childMenu) menuData.push(childMenu)
+    })
+  })
+  return menuData
+}
+
+let mockMenuData: MenuData[] | undefined
+
+const getMockMenuData = (): MenuData[] => {
+  mockMenuData ||= createMockMenuData()
+  return mockMenuData
+}
+
+const cloneMenus = (menus: MenuData[]): MenuData[] =>
+  menus.map(menu => ({
+    ...menu,
+    children: menu.children ? cloneMenus(menu.children) : undefined,
+  }))
+
+const findMockMenu = (
+  id: string,
+  menus = getMockMenuData()
+): MenuData | null => {
+  for (const menu of menus) {
+    if (menu.id === id) return menu
+    const child = menu.children ? findMockMenu(id, menu.children) : null
+    if (child) return child
+  }
+  return null
+}
+
+const removeMockMenu = (id: string, menus = getMockMenuData()): boolean => {
+  const index = menus.findIndex(menu => menu.id === id)
+  if (index >= 0) {
+    menus.splice(index, 1)
+    return true
+  }
+  return menus.some(menu =>
+    menu.children ? removeMockMenu(id, menu.children) : false
+  )
+}
+
+const collectMenuIds = (menu: MenuData): string[] => [
+  menu.id,
+  ...(menu.children || []).flatMap(collectMenuIds),
+]
+
+const findMockMenuLocation = (
+  id: string,
+  menus = getMockMenuData()
+): { list: MenuData[]; index: number } | null => {
+  const index = menus.findIndex(menu => menu.id === id)
+  if (index >= 0) return { list: menus, index }
+  for (const menu of menus) {
+    const location = menu.children
+      ? findMockMenuLocation(id, menu.children)
+      : null
+    if (location) return location
+  }
+  return null
+}
+
+const normalizeMockMenuSort = (menus: MenuData[]): void => {
+  menus.forEach((menu, index) => {
+    menu.sort = index + 1
+  })
+}
+
 // ==================== API 方法 ====================
 export const getMenuListApi = async (): Promise<ApiResponse<MenuData[]>> => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const menuData: MenuData[] = []
-
-      menuOriginData.data.forEach(route => {
-        if (route.path === '/' && route.children) {
-          route.children.forEach((child: any) => {
-            const childMenu = createMenuFromRoute(
-              child,
-              null,
-              menuData.length + 1
-            )
-            if (childMenu) {
-              menuData.push(childMenu)
-            }
-          })
-        } else {
-          const menu = createMenuFromRoute(route, null, menuData.length + 1)
-          if (menu) {
-            menuData.push(menu)
-          }
-        }
-      })
-
-      resolve({ code: '0', data: menuData, msg: '成功' })
-    }, 500)
-  })
+  if (!isMockDataMode()) {
+    return getData<ApiResponse<MenuData[]>>('/sys/menus')
+  }
+  await delayWithSignal(300)
+  return { code: '0', data: cloneMenus(getMockMenuData()), msg: '成功' }
 }
 
 export const getButtonPermissionsApi = async (
   menuId?: string
 ): Promise<ApiResponse<ButtonPermission[]>> => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const filteredPermissions = menuId
-        ? MOCK_BUTTON_PERMISSIONS.filter(btn => btn.menuId === menuId)
-        : MOCK_BUTTON_PERMISSIONS
-
-      resolve({ code: '0', data: filteredPermissions, msg: '成功' })
-    }, 300)
-  })
+  if (!isMockDataMode()) {
+    return getData<ApiResponse<ButtonPermission[]>>(
+      menuId ? `/sys/menus/${menuId}/buttons` : '/sys/menu-buttons'
+    )
+  }
+  await delayWithSignal(200)
+  const filteredPermissions = menuId
+    ? MOCK_BUTTON_PERMISSIONS.filter(btn => btn.menuId === menuId)
+    : MOCK_BUTTON_PERMISSIONS
+  return {
+    code: '0',
+    data: filteredPermissions.map(permission => ({ ...permission })),
+    msg: '成功',
+  }
 }
 
 export const addMenuApi = async (data: FormData): Promise<void> => {
-  console.log('添加菜单:', data)
-  return new Promise(resolve => setTimeout(resolve, 500))
+  if (!isMockDataMode()) {
+    await postData('/sys/menus', data)
+    return
+  }
+  await delayWithSignal(300)
+  const record: MenuData = {
+    ...data,
+    id: `menu_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    children: data.type === 'directory' ? [] : undefined,
+  }
+  if (data.parentId) {
+    const parent = findMockMenu(data.parentId)
+    if (!parent) throw new Error('上级菜单不存在')
+    parent.children = [...(parent.children || []), record]
+  } else {
+    getMockMenuData().push(record)
+  }
 }
 
 export const updateMenuApi = async (data: FormData): Promise<void> => {
-  console.log('更新菜单:', data)
-  return new Promise(resolve => setTimeout(resolve, 500))
+  if (!isMockDataMode()) {
+    if (!data.id) throw new Error('更新菜单缺少 id')
+    await putData(`/sys/menus/${data.id}`, data)
+    return
+  }
+  await delayWithSignal(300)
+  if (!data.id) throw new Error('更新菜单缺少 id')
+  const current = findMockMenu(data.id)
+  if (!current) throw new Error('菜单不存在')
+  const { children } = current
+  Object.assign(current, data, { children })
 }
 
 export const deleteMenuApi = async (id: string): Promise<void> => {
-  console.log('删除菜单:', id)
-  return new Promise(resolve => setTimeout(resolve, 500))
+  if (!isMockDataMode()) {
+    await deleteData(`/sys/menus/${id}`)
+    return
+  }
+  await delayWithSignal(250)
+  const current = findMockMenu(id)
+  if (!current) throw new Error('菜单不存在')
+  const removedIds = new Set(collectMenuIds(current))
+  if (!removeMockMenu(id)) throw new Error('菜单不存在')
+  for (let index = MOCK_BUTTON_PERMISSIONS.length - 1; index >= 0; index--) {
+    const menuId = MOCK_BUTTON_PERMISSIONS[index]?.menuId
+    if (menuId && removedIds.has(menuId)) {
+      MOCK_BUTTON_PERMISSIONS.splice(index, 1)
+    }
+  }
+}
+
+const moveMockMenu = (
+  dragId: string,
+  targetId: string,
+  position: MenuDropPosition
+): void => {
+  const dragMenu = findMockMenu(dragId)
+  const targetMenu = findMockMenu(targetId)
+  if (!dragMenu || !targetMenu) throw new Error('拖拽菜单不存在')
+  if (dragId === targetId || collectMenuIds(dragMenu).includes(targetId)) {
+    throw new Error('不能将菜单移动到自身或其子菜单')
+  }
+
+  const dragLocation = findMockMenuLocation(dragId)
+  if (!dragLocation) throw new Error('拖拽菜单位置无效')
+  dragLocation.list.splice(dragLocation.index, 1)
+  normalizeMockMenuSort(dragLocation.list)
+
+  if (position === 'inside') {
+    targetMenu.children = [...(targetMenu.children || []), dragMenu]
+    dragMenu.parentId = targetMenu.id
+    normalizeMockMenuSort(targetMenu.children)
+    return
+  }
+
+  const targetLocation = findMockMenuLocation(targetId)
+  if (!targetLocation) throw new Error('目标菜单位置无效')
+  const insertIndex = targetLocation.index + (position === 'after' ? 1 : 0)
+  dragMenu.parentId = targetMenu.parentId
+  targetLocation.list.splice(insertIndex, 0, dragMenu)
+  normalizeMockMenuSort(targetLocation.list)
+}
+
+export const moveMenuApi = async (
+  dragId: string,
+  targetId: string,
+  position: MenuDropPosition
+): Promise<void> => {
+  if (!isMockDataMode()) {
+    await putData(`/sys/menus/${dragId}/move`, { targetId, position })
+    return
+  }
+
+  await delayWithSignal(200)
+  moveMockMenu(dragId, targetId, position)
 }
 
 export const addButtonPermissionApi = async (
   data: Omit<ButtonPermission, 'id'>
 ): Promise<void> => {
-  console.log('添加按钮权限:', data)
-  return new Promise(resolve => setTimeout(resolve, 500))
+  if (!isMockDataMode()) {
+    await postData(`/sys/menus/${data.menuId}/buttons`, data)
+    return
+  }
+  await delayWithSignal(250)
+  MOCK_BUTTON_PERMISSIONS.push({
+    ...data,
+    id: `btn_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+  })
 }
 
 export const updateButtonPermissionApi = async (
   data: ButtonPermission
 ): Promise<void> => {
-  console.log('更新按钮权限:', data)
-  return new Promise(resolve => setTimeout(resolve, 500))
+  if (!isMockDataMode()) {
+    await putData(`/sys/menu-buttons/${data.id}`, data)
+    return
+  }
+  await delayWithSignal(250)
+  const index = MOCK_BUTTON_PERMISSIONS.findIndex(item => item.id === data.id)
+  if (index < 0) throw new Error('按钮权限不存在')
+  MOCK_BUTTON_PERMISSIONS[index] = { ...data }
 }
 
 export const deleteButtonPermissionApi = async (id: string): Promise<void> => {
-  console.log('删除按钮权限:', id)
-  return new Promise(resolve => setTimeout(resolve, 500))
+  if (!isMockDataMode()) {
+    await deleteData(`/sys/menu-buttons/${id}`)
+    return
+  }
+  await delayWithSignal(200)
+  const index = MOCK_BUTTON_PERMISSIONS.findIndex(item => item.id === id)
+  if (index < 0) throw new Error('按钮权限不存在')
+  MOCK_BUTTON_PERMISSIONS.splice(index, 1)
 }

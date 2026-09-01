@@ -58,7 +58,7 @@ export interface ErrorContext {
   userId?: string // 用户ID（用于错误追踪）
   sessionId?: string // 会话ID（用于错误追踪）
   userAgent?: string // 用户代理
-  additionalInfo?: Record<string, any> // 额外信息
+  additionalInfo?: Record<string, unknown> // 额外信息
 }
 
 /**
@@ -98,6 +98,6 @@ export interface ErrorCacheConfig {
  */
 export interface VueErrorHandlerParams {
   err: unknown
-  instance: any
+  instance: import('vue').ComponentPublicInstance | null
   info: string
 }

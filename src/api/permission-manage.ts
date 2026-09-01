@@ -17,18 +17,18 @@ import type {
 
 /**
  * * @description: 查询权限列表接口
- * ? @param {Record<string, any>} params 查询参数（keyword/type/module/status 等）
+ * ? @param {Record<string, unknown>} params 查询参数（keyword/type/module/status 等）
  * ! @return {Promise<GetSysPermissionsListResponse>} 权限列表响应数据
  */
-export const getPermissionListApi = (params?: Record<string, any>) =>
-  getData<GetSysPermissionsListResponse>('/sys/permissions', params)
+export const getPermissionListApi = (params?: Record<string, unknown>) =>
+  getData<GetSysPermissionsListResponse>('/sys/permissions', { params })
 
 /**
  * * @description: 新增权限接口
- * ? @param {Record<string, any>} data 权限数据对象
+ * ? @param {Record<string, unknown>} data 权限数据对象
  * ! @return {Promise<PostSysPermissionsResponse>} 新增后的权限响应数据
  */
-export const createPermissionApi = (data: Record<string, any>) =>
+export const createPermissionApi = (data: Record<string, unknown>) =>
   postData<PostSysPermissionsResponse>('/sys/permissions', data)
 
 /**
@@ -47,7 +47,7 @@ export const getPermissionByIdApi = (id: number | string) =>
  */
 export const updatePermissionApi = (
   id: number | string,
-  data: Record<string, any>
+  data: Record<string, unknown>
 ) => putData<PutSysPermissionsByIdResponse>(`/sys/permissions/${id}`, data)
 
 /**

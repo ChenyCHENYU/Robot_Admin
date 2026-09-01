@@ -34,7 +34,7 @@ export interface WelcomeTimeSlot {
 }
 
 /** 欢迎语配置 */
-export interface WelcomeConfig<TResponse = any> {
+export interface WelcomeConfig<TResponse = unknown> {
   timeSlots: WelcomeTimeSlot[]
   /** 可含占位符：{greeting} {username} {emoji} */
   templates: string[]
@@ -43,11 +43,29 @@ export interface WelcomeConfig<TResponse = any> {
 }
 
 /** useLoginController 选项 */
-export interface UseLoginControllerOptions<TResponse = any> {
+export interface LoginRequestPayload extends Record<string, unknown> {
+  username: string
+  password: string
+  captcha?: {
+    token: string
+    timestamp?: number
+    type: 'puzzle-captcha'
+  }
+}
+
+export interface LoginControllerResponse<TData = unknown> {
+  code: string | number
+  data?: TData
+  message?: string
+}
+
+export interface UseLoginControllerOptions<
+  TResponse extends LoginControllerResponse = LoginControllerResponse,
+> {
   // ─── 核心：必填 ───
 
   /** 登录 API 函数 */
-  loginApi: (data: Record<string, any>) => Promise<TResponse>
+  loginApi: (data: LoginRequestPayload) => Promise<TResponse>
 
   /**
    * 登录成功后的业务处理
@@ -59,13 +77,13 @@ export interface UseLoginControllerOptions<TResponse = any> {
    */
   onLoginSuccess: (
     response: TResponse,
-    formData: { username: string; password: string }
+    formData: Readonly<{ username: string }>
   ) => Promise<void> | void
 
   // ─── 通知 & 欢迎语 ───
 
   /** 成功状态码（默认 '0'） */
-  successCode?: string
+  successCode?: string | number
   /** 登录成功提示文字 */
   successMessage?: string
   /** 登录失败提示文字 */
@@ -107,7 +125,7 @@ export interface UseLoginControllerOptions<TResponse = any> {
  * @param options - 登录控制器配置
  */
 export function useLoginController<
-  TResponse extends { code: string; data?: any; message?: string } = any,
+  TResponse extends LoginControllerResponse = LoginControllerResponse,
 >(options: UseLoginControllerOptions<TResponse>) {
   const loading = ref(false)
   const loginRef = ref<{ resetCaptcha: () => void } | null>(null)
@@ -143,8 +161,8 @@ export function useLoginController<
   }
 
   /** 构建登录请求体 */
-  const buildPayload = (formData: LoginFormData): Record<string, any> => {
-    const payload: Record<string, any> = {
+  const buildPayload = (formData: LoginFormData): LoginRequestPayload => {
+    const payload: LoginRequestPayload = {
       username: formData.username,
       password: formData.password,
     }
@@ -170,7 +188,6 @@ export function useLoginController<
     })
     await options.onLoginSuccess(response, {
       username: formData.username,
-      password: formData.password,
     })
   }
 
@@ -181,7 +198,11 @@ export function useLoginController<
         ? error.message
         : (options.errorMessage ?? '登录失败')
     notification.error({ content: msg, duration: 3000 })
-    options.onError?.(error as Error)
+    options.onError?.(
+      error instanceof Error
+        ? error
+        : new Error(options.errorMessage ?? '登录失败')
+    )
     loginRef.value?.resetCaptcha()
   }
 
@@ -192,7 +213,7 @@ export function useLoginController<
       const response = await options.loginApi(buildPayload(formData))
       const successCode = options.successCode ?? '0'
 
-      if (response.code === successCode) {
+      if (String(response.code) === String(successCode)) {
         await handleLoginSuccess(response, formData)
       } else {
         throw new Error(response.message ?? options.errorMessage ?? '登录失败')

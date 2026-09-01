@@ -87,7 +87,7 @@
     // 过滤 Spline 的版本兼容性警告（仅在初始化期间）
     const originalWarn = console.warn
     const originalLog = console.log
-    const filterFn = (...args: any[]) => {
+    const filterFn = (...args: unknown[]) => {
       if (
         args.some(
           arg => typeof arg === 'string' && arg.includes('updating from')

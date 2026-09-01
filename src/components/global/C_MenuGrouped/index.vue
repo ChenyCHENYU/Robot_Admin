@@ -34,14 +34,19 @@
       ></div>
 
       <!-- 菜单项 -->
-      <div
+      <button
         v-for="menu in group.items"
         :key="fullPath(menu)"
+        type="button"
         class="mg__item"
         :class="{
           'mg__item--active': isActive(menu),
           'mg__item--expanded': expandedKey === fullPath(menu),
         }"
+        :aria-current="isActive(menu) ? 'page' : undefined"
+        :aria-expanded="
+          menu.children?.length ? expandedKey === fullPath(menu) : undefined
+        "
         @pointerenter="handleRouteIntent(menu)"
         @focusin="handleRouteIntent(menu)"
         @click="onItemClick(menu)"
@@ -62,7 +67,7 @@
             :class="{ 'mg__arrow--open': expandedKey === fullPath(menu) }"
           />
         </template>
-      </div>
+      </button>
     </template>
   </div>
 
@@ -72,6 +77,8 @@
       <div
         v-if="expandedMenu"
         class="mg-panel"
+        role="region"
+        :aria-label="`${fmtLabel(expandedMenu)} 子菜单`"
         :class="{ 'mg-panel--signature': menuTheme === 'signature' }"
         :style="panelPos"
         @click.stop
@@ -93,15 +100,17 @@
             :bordered="false"
             >{{ flatChildren.length }}</NTag
           >
-          <span
+          <button
+            type="button"
             class="mg-panel__close"
+            aria-label="关闭子菜单"
             @click="closePanel"
           >
             <C_Icon
               name="mdi:close"
               :size="16"
             />
-          </span>
+          </button>
         </div>
 
         <!-- 子菜单内容 -->
@@ -113,13 +122,17 @@
               v-if="categorizedChildren.loose.length"
               class="mg-panel__grid mg-panel__grid--top"
             >
-              <div
+              <button
                 v-for="item in categorizedChildren.loose"
                 :key="fullPath(item)"
+                type="button"
                 class="mg-panel__cell"
                 :class="{
                   'mg-panel__cell--active': route.path === fullPath(item),
                 }"
+                :aria-current="
+                  route.path === fullPath(item) ? 'page' : undefined
+                "
                 @pointerenter="handleRouteIntent(item)"
                 @focusin="handleRouteIntent(item)"
                 @click="navigateTo(item)"
@@ -131,7 +144,7 @@
                   class="mg-panel__cell-icon"
                 />
                 <span class="mg-panel__cell-text">{{ fmtLabel(item) }}</span>
-              </div>
+              </button>
             </div>
             <!-- 分类区块 -->
             <div
@@ -148,13 +161,17 @@
                 {{ cat.label }}
               </div>
               <div class="mg-panel__grid">
-                <div
+                <button
                   v-for="leaf in cat.items"
                   :key="fullPath(leaf)"
+                  type="button"
                   class="mg-panel__cell"
                   :class="{
                     'mg-panel__cell--active': route.path === fullPath(leaf),
                   }"
+                  :aria-current="
+                    route.path === fullPath(leaf) ? 'page' : undefined
+                  "
                   @pointerenter="handleRouteIntent(leaf)"
                   @focusin="handleRouteIntent(leaf)"
                   @click="navigateTo(leaf)"
@@ -166,7 +183,7 @@
                     class="mg-panel__cell-icon"
                   />
                   <span class="mg-panel__cell-text">{{ fmtLabel(leaf) }}</span>
-                </div>
+                </button>
               </div>
             </div>
           </template>
@@ -175,13 +192,17 @@
             v-else
             class="mg-panel__grid"
           >
-            <div
+            <button
               v-for="child in flatChildren"
               :key="fullPath(child)"
+              type="button"
               class="mg-panel__cell"
               :class="{
                 'mg-panel__cell--active': route.path === fullPath(child),
               }"
+              :aria-current="
+                route.path === fullPath(child) ? 'page' : undefined
+              "
               @pointerenter="handleRouteIntent(child)"
               @focusin="handleRouteIntent(child)"
               @click="navigateTo(child)"
@@ -193,7 +214,7 @@
                 class="mg-panel__cell-icon"
               />
               <span class="mg-panel__cell-text">{{ fmtLabel(child) }}</span>
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -398,8 +419,11 @@
     return false
   }
 
-  const fmtLabel = (item: MenuOptions | MenuGroup | any): string => {
-    const title = item.meta?.title || item.label || item.name || ''
+  const fmtLabel = (item: MenuOptions | MenuGroup): string => {
+    const title =
+      'meta' in item
+        ? item.meta?.title || item.label || item.name || ''
+        : item.label || ''
     return props.labelFormatter ? props.labelFormatter(title) : title
   }
 

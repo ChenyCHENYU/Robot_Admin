@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-  import { SettingsDrawer } from '@robot-admin/layout'
+  import { SettingsDrawer, type MenuExpandMode } from '@robot-admin/layout'
   import '@robot-admin/layout/style.scss'
   import { s_themeStore, type MenuThemeType } from '@/stores/theme'
   import { s_settingsStore } from '@/stores/settings'
@@ -81,10 +81,10 @@
   const themeStore = s_themeStore()
   const settingsStore = s_settingsStore()
 
-  const menuExpandMode = computed<'inline' | 'panel'>({
-    get: () => (settingsStore.$state as any).menuExpandMode ?? 'panel',
+  const menuExpandMode = computed<MenuExpandMode>({
+    get: () => settingsStore.menuExpandMode,
     set: value => {
-      settingsStore.$patch({ menuExpandMode: value } as any)
+      settingsStore.menuExpandMode = value
     },
   })
 

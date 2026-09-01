@@ -549,6 +549,7 @@
     addMenuApi,
     updateMenuApi,
     deleteMenuApi,
+    moveMenuApi,
     addButtonPermissionApi,
     updateButtonPermissionApi,
     deleteButtonPermissionApi,
@@ -740,7 +741,10 @@
   }
 
   // 事件处理
-  const handleNodeSelect = async (node: any, keys: (string | number)[]) => {
+  const handleNodeSelect = async (
+    _node: unknown,
+    keys: (string | number)[]
+  ) => {
     selectedKeys.value = keys.map(k => String(k))
 
     if (selectedMenu.value && selectedMenu.value.type === 'menu') {
@@ -756,7 +760,7 @@
     }
   }
 
-  const handleNodeAction = (action: string, node: any) => {
+  const handleNodeAction = (action: string, node: unknown) => {
     const menuNode = node as MenuData
     if (action === 'edit') {
       handleEditMenu(menuNode)
@@ -769,13 +773,22 @@
 
   const handleNodeDrop = async (info: DropInfo) => {
     const { node, dragNode, dropPosition } = info
-    message.success(
-      `已将 "${dragNode.name}" 移动到 "${node.name}" ${dropPosition === 'inside' ? '内部' : dropPosition === 'before' ? '前面' : '后面'}`
-    )
-    await loadMenus()
+    try {
+      const dragId = dragNode.id == null ? '' : String(dragNode.id)
+      const targetId = node.id == null ? '' : String(node.id)
+      if (!dragId || !targetId) throw new Error('菜单缺少唯一标识')
+      await moveMenuApi(dragId, targetId, dropPosition)
+      await loadMenus()
+      message.success(
+        `已将 "${dragNode.name}" 移动到 "${node.name}" ${dropPosition === 'inside' ? '内部' : dropPosition === 'before' ? '前面' : '后面'}`
+      )
+    } catch {
+      message.error('菜单移动失败，已恢复原顺序')
+      await loadMenus()
+    }
   }
 
-  const handleAddFromTree = (parentNode?: any) => {
+  const handleAddFromTree = (parentNode?: unknown) => {
     const menuNode = parentNode as MenuData | undefined
     handleAddMenu(menuNode?.id)
   }
@@ -925,6 +938,7 @@
   }
 
   const resetFormData = (): void => {
+    delete formData.id
     Object.assign(formData, DEFAULT_FORM_DATA)
   }
 

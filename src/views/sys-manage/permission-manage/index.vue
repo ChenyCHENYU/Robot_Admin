@@ -219,8 +219,8 @@
 
           <C_Table
             ref="tableRef"
-            v-model:data="filteredData"
-            :columns="tableColumns as any"
+            :data="filteredData"
+            :columns="tableColumns"
             :loading="loading"
             :config="{
               actions: tableActions,
@@ -229,7 +229,7 @@
             }"
             @save="handleSave"
             @row-delete="handleRowDelete"
-            @view-detail="handleViewDetail as any"
+            @view-detail="handleViewDetail"
           />
         </NCard>
       </NTabPane>
@@ -265,7 +265,7 @@
           <NDataTable
             :columns="dataPermissionColumns"
             :data="dataPermissionList"
-            :row-key="(row: any) => row.id"
+            :row-key="getDataPermissionRowKey"
             size="small"
             striped
           />
@@ -397,7 +397,7 @@
           <NDataTable
             :columns="tempAuthColumns"
             :data="tempAuthList"
-            :row-key="(row: any) => row.id"
+            :row-key="getTempAuthorizationRowKey"
             size="small"
             striped
           />
@@ -1012,8 +1012,11 @@
     type PermissionFormData,
     type SearchForm,
     type PermissionType,
+    type DataScopeType,
     type DataPermissionRule,
+    type FieldPermissionItem,
     type TempAuthorization,
+    type PermissionConstraint,
     type AuditLogItem,
     PERMISSION_FORM_RULES,
     DEFAULT_PERMISSION_FORM_DATA,
@@ -1026,18 +1029,35 @@
     AUDIT_ACTION_CONFIG,
     AUDIT_TARGET_CONFIG,
     MOCK_DATA_PERMISSIONS,
+    MOCK_PERMISSION_RESOURCES,
     MOCK_TEMP_AUTHORIZATIONS,
     MOCK_CONSTRAINTS,
     MOCK_AUDIT_LOGS,
     getTableColumns,
   } from './data'
-  import { MOCK_ROLE_DATA } from '../role-manage/data'
   import {
+    createPermissionApi,
     updatePermissionApi,
     deletePermissionApi,
     getPermissionByIdApi,
   } from '@/api/permission-manage'
+  import {
+    createTempAuthorizationApi,
+    getDataPermissionRulesApi,
+    getPermissionAuditLogsApi,
+    getPermissionConstraintsApi,
+    getTempAuthorizationsApi,
+    revokeTempAuthorizationApi,
+    updateDataPermissionRuleApi,
+  } from '@/api/permission-governance'
   import { useTableCrud } from '@robot-admin/request-core'
+  import { isMockDataMode } from '@/config/dataMode'
+  import { useLatestRequest } from '@/composables/useLatestRequest'
+  import {
+    getRoleListApi,
+    MOCK_ROLE_DATA,
+    type RoleData,
+  } from '../role-manage/data'
 
   defineOptions({ name: 'PermissionManage' })
 
@@ -1068,22 +1088,37 @@
     module: null,
   })
 
+  const mockMode = isMockDataMode()
+
   // ============ 表格数据管理 ============
   const table = useTableCrud<PermissionData>({
-    api: { list: '/sys/permissionsList' },
-    columns: getTableColumns() as any,
+    api: { list: '/sys/permissions' },
+    columns: getTableColumns(),
+    autoLoad: !mockMode,
   })
-  const { data: tableData, loading, refresh } = table
+  const { data: tableData, loading, refresh: refreshRemote } = table
+  if (mockMode) {
+    tableData.value = MOCK_PERMISSION_RESOURCES.map(permission => ({
+      ...permission,
+      resources: [...permission.resources],
+    }))
+  }
+
+  const refresh = async (): Promise<void> => {
+    if (!mockMode) await refreshRemote()
+  }
 
   // ============ 数据权限状态 ============
-  const dataPermissionList = ref<DataPermissionRule[]>([
-    ...MOCK_DATA_PERMISSIONS,
-  ])
+  const dataPermissionList = ref<DataPermissionRule[]>(
+    mockMode ? [...MOCK_DATA_PERMISSIONS] : []
+  )
   const selectedDataPermission = ref<DataPermissionRule | null>(null)
 
   // ============ 临时授权状态 ============
   const showTempAuthModal = ref(false)
-  const tempAuthList = ref<TempAuthorization[]>([...MOCK_TEMP_AUTHORIZATIONS])
+  const tempAuthList = ref<TempAuthorization[]>(
+    mockMode ? [...MOCK_TEMP_AUTHORIZATIONS] : []
+  )
   const tempAuthForm = reactive({
     targetRole: null as string | null,
     permissions: [] as string[],
@@ -1093,10 +1128,13 @@
   })
 
   // ============ 权限约束状态 ============
-  const constraintList = ref([...MOCK_CONSTRAINTS])
+  const constraintList = ref<PermissionConstraint[]>(
+    mockMode ? [...MOCK_CONSTRAINTS] : []
+  )
 
   // ============ 审计日志状态 ============
-  const auditLogs = ref<AuditLogItem[]>([...MOCK_AUDIT_LOGS])
+  const auditLogs = ref<AuditLogItem[]>(mockMode ? [...MOCK_AUDIT_LOGS] : [])
+  const roleList = ref<RoleData[]>(mockMode ? [...MOCK_ROLE_DATA] : [])
   const auditFilter = reactive({
     action: null as string | null,
     targetType: null as string | null,
@@ -1153,7 +1191,9 @@
       : `共 ${tableData.value.length} 个权限`
   )
 
-  const tableColumns = computed(() => getTableColumns())
+  const tableColumns = getTableColumns()
+  const getDataPermissionRowKey = (row: DataPermissionRule) => row.id
+  const getTempAuthorizationRowKey = (row: TempAuthorization) => row.id
 
   const permissionStats = computed(() => {
     const stats: Record<string, number> = {
@@ -1219,21 +1259,15 @@
   })
 
   const compareRoleOptions = computed(() =>
-    MOCK_ROLE_DATA.map(r => ({ label: r.name, value: r.id }))
+    roleList.value.map(r => ({ label: r.name, value: r.id }))
   )
 
-  const allPermissionOptions = computed(() => [
-    { label: '新增用户', value: 'perm_1_1_1' },
-    { label: '编辑用户', value: 'perm_1_1_2' },
-    { label: '删除用户', value: 'perm_1_1_3' },
-    { label: '新增角色', value: 'perm_1_2_1' },
-    { label: '编辑角色', value: 'perm_1_2_2' },
-    { label: '删除角色', value: 'perm_1_2_3' },
-    { label: '发布文章', value: 'perm_2_1_1' },
-    { label: '编辑文章', value: 'perm_2_1_2' },
-    { label: '查看报表', value: 'perm_3_1' },
-    { label: '导出数据', value: 'perm_3_2' },
-  ])
+  const allPermissionOptions = computed(() =>
+    tableData.value.map(permission => ({
+      label: permission.name,
+      value: String(permission.id),
+    }))
+  )
 
   const auditActionOptions = Object.entries(AUDIT_ACTION_CONFIG).map(
     ([value, config]) => ({ label: config.text, value })
@@ -1244,7 +1278,7 @@
   )
 
   // ============ 数据权限表格列配置 ============
-  const dataPermissionColumns: DataTableColumns = [
+  const dataPermissionColumns: DataTableColumns<DataPermissionRule> = [
     {
       title: '模块',
       key: 'moduleName',
@@ -1254,12 +1288,12 @@
       title: '数据范围',
       key: 'scope',
       width: 140,
-      render: (row: any) => {
+      render: (row: DataPermissionRule) => {
         const config =
           DATA_SCOPE_CONFIG[row.scope as keyof typeof DATA_SCOPE_CONFIG]
         return h(
           NTag,
-          { type: config?.type as any, size: 'small' },
+          { type: config?.type, size: 'small' },
           { default: () => config?.text || row.scope }
         )
       },
@@ -1268,7 +1302,7 @@
       title: '自定义部门',
       key: 'departmentIds',
       width: 160,
-      render: (row: any) =>
+      render: (row: DataPermissionRule) =>
         row.scope === 'custom'
           ? h('span', null, `${row.departmentIds.length} 个部门`)
           : h('span', { style: { color: '#999' } }, '—'),
@@ -1277,11 +1311,13 @@
       title: '字段权限',
       key: 'fieldPermissions',
       width: 120,
-      render: (row: any) => {
+      render: (row: DataPermissionRule) => {
         const total = row.fieldPermissions.length
-        const masked = row.fieldPermissions.filter((f: any) => f.masked).length
+        const masked = row.fieldPermissions.filter(
+          (f: FieldPermissionItem) => f.masked
+        ).length
         const hidden = row.fieldPermissions.filter(
-          (f: any) => !f.visible
+          (f: FieldPermissionItem) => !f.visible
         ).length
         return h(NSpace, { size: 4 }, () => [
           h(
@@ -1315,7 +1351,7 @@
       title: '操作',
       key: 'actions',
       width: 120,
-      render: (row: any) =>
+      render: (row: DataPermissionRule) =>
         h(NSpace, { size: 8 }, () => [
           h(
             NButton,
@@ -1342,13 +1378,13 @@
   ]
 
   // ============ 临时授权表格列配置 ============
-  const tempAuthColumns: DataTableColumns = [
+  const tempAuthColumns: DataTableColumns<TempAuthorization> = [
     { title: '目标角色', key: 'targetRoleName', width: 120 },
     {
       title: '授权权限',
       key: 'permissionNames',
       width: 180,
-      render: (row: any) =>
+      render: (row: TempAuthorization) =>
         h(NSpace, { size: 4 }, () =>
           row.permissionNames.map((name: string) =>
             h(NTag, { type: 'info', size: 'small' }, { default: () => name })
@@ -1363,7 +1399,7 @@
       title: '状态',
       key: 'status',
       width: 100,
-      render: (row: any) => {
+      render: (row: TempAuthorization) => {
         const config =
           TEMP_AUTH_STATUS_CONFIG[
             row.status as keyof typeof TEMP_AUTH_STATUS_CONFIG
@@ -1379,7 +1415,7 @@
       title: '操作',
       key: 'actions',
       width: 80,
-      render: (row: any) =>
+      render: (row: TempAuthorization) =>
         row.status === 'active'
           ? h(
               NButton,
@@ -1456,29 +1492,91 @@
     ],
   }
 
+  const savePermissionRecord = async (
+    id: number,
+    data: Record<string, unknown>
+  ): Promise<void> => {
+    if (!mockMode) {
+      await updatePermissionApi(id, data)
+      return
+    }
+
+    const index = tableData.value.findIndex(permission => permission.id === id)
+    if (index < 0) throw new Error('权限不存在')
+    tableData.value[index] = {
+      ...tableData.value[index],
+      ...data,
+      id,
+      updateTime: Date.now(),
+    } as PermissionData
+    tableData.value = [...tableData.value]
+  }
+
+  const removePermissionRecord = async (id: number): Promise<void> => {
+    if (!mockMode) {
+      await deletePermissionApi(id)
+      return
+    }
+    tableData.value = tableData.value.filter(permission => permission.id !== id)
+  }
+
+  const createPermissionRecord = async (
+    data: Record<string, unknown>
+  ): Promise<void> => {
+    if (!mockMode) {
+      await createPermissionApi(data)
+      return
+    }
+
+    const now = Date.now()
+    const nextId =
+      Math.max(0, ...tableData.value.map(permission => permission.id)) + 1
+    tableData.value = [
+      {
+        ...data,
+        id: nextId,
+        createTime: now,
+        updateTime: now,
+      } as PermissionData,
+      ...tableData.value,
+    ]
+  }
+
+  const loadPermissionDetail = async (
+    row: PermissionData
+  ): Promise<PermissionData> => {
+    if (mockMode) {
+      const permission = tableData.value.find(item => item.id === row.id)
+      if (!permission) throw new Error('权限不存在')
+      return { ...permission, resources: [...permission.resources] }
+    }
+    const response = await getPermissionByIdApi(row.id)
+    return response.data as PermissionData
+  }
+
   // ============ 表格操作配置 ============
   const tableActions = computed(() => ({
-    edit: (row: any) => updatePermissionApi(row.id, row),
-    delete: (row: any) => deletePermissionApi(row.id),
-    detail: (row: any) => getPermissionByIdApi(row.id),
+    edit: (row: PermissionData) => savePermissionRecord(row.id, row),
+    delete: (row: PermissionData) => removePermissionRecord(row.id),
+    detail: (row: PermissionData) => loadPermissionDetail(row),
     custom: [
       {
         key: 'copy',
         label: '复制',
         icon: 'material-symbols:content-copy',
         type: 'info' as const,
-        onClick: (row: any) => copyPermission(row as PermissionData),
+        onClick: (row: PermissionData) => copyPermission(row),
       },
       {
         key: 'toggle',
-        label: (row: any) => (row?.status === 1 ? '禁用' : '启用'),
-        icon: (row: any) =>
+        label: (row: PermissionData) => (row.status === 1 ? '禁用' : '启用'),
+        icon: (row: PermissionData) =>
           row?.status === 1
             ? 'material-symbols:pause'
             : 'material-symbols:play-arrow',
-        type: (row: any): 'warning' | 'success' =>
+        type: (row: PermissionData): 'warning' | 'success' =>
           row?.status === 1 ? 'warning' : 'success',
-        onClick: (row: any) => togglePermissionStatus(row as PermissionData),
+        onClick: (row: PermissionData) => togglePermissionStatus(row),
       },
     ],
   }))
@@ -1499,8 +1597,10 @@
   }
 
   const clearFilter = (key: keyof SearchForm) => {
-    ;(searchForm as any)[key] =
-      key === 'status' ? null : key === 'type' || key === 'module' ? null : ''
+    if (key === 'keyword') searchForm.keyword = ''
+    else if (key === 'status') searchForm.status = null
+    else if (key === 'type') searchForm.type = null
+    else searchForm.module = null
   }
 
   const clearAllFilters = () => {
@@ -1573,14 +1673,14 @@
     const next = { ...permission }
     next.name = `${permission.name} - 副本`
     next.code = `${permission.code}_copy`
-    openPermissionModal(next)
+    openPermissionModal(next, 'add')
   }
 
   const togglePermissionStatus = async (permission: PermissionData) => {
     try {
       const newStatus = permission.status === 1 ? 0 : 1
       const action = newStatus === 1 ? '启用' : '禁用'
-      await updatePermissionApi(permission.id, { status: newStatus })
+      await savePermissionRecord(permission.id, { status: newStatus })
       message.success(`${action}成功`)
       await refresh()
     } catch {
@@ -1588,11 +1688,11 @@
     }
   }
 
-  const handleSave = async (rowData: any) => {
+  const handleSave = async (rowData: PermissionData) => {
     try {
-      await updatePermissionApi(rowData.id, rowData)
+      await savePermissionRecord(rowData.id, rowData)
       message.success('修改成功')
-      setTimeout(() => refresh(), 500)
+      await refresh()
     } catch {
       message.error('保存失败')
     }
@@ -1605,8 +1705,7 @@
   const handleViewDetail = async (row: PermissionData) => {
     try {
       detailLoading.value = true
-      const { data } = await getPermissionByIdApi(row.id)
-      currentPermission.value = data as PermissionData
+      currentPermission.value = await loadPermissionDetail(row)
       showPermissionDetail.value = true
     } catch {
       message.error('获取详情失败')
@@ -1620,11 +1719,15 @@
     showPermissionDetail.value = false
   }
 
-  const openPermissionModal = (permission?: PermissionData) => {
-    modalMode.value = permission ? 'edit' : 'add'
+  const openPermissionModal = (
+    permission?: PermissionData,
+    mode: 'add' | 'edit' = permission ? 'edit' : 'add'
+  ) => {
+    modalMode.value = mode
+    delete formData.id
     if (permission) {
       Object.assign(formData, {
-        id: permission.id,
+        id: mode === 'edit' ? permission.id : undefined,
         name: permission.name,
         code: permission.code,
         type: permission.type,
@@ -1645,6 +1748,7 @@
 
   const closePermissionModal = () => {
     showModal.value = false
+    delete formData.id
     Object.assign(formData, DEFAULT_PERMISSION_FORM_DATA)
   }
 
@@ -1666,35 +1770,40 @@
   const handleSavePermission = async (): Promise<boolean> => {
     try {
       await formRef.value?.validate()
+    } catch {
+      return false
+    }
+
+    const submitData: Record<string, unknown> = {
+      ...formData,
+      resources: formData.resources
+        ? formData.resources
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean)
+        : [],
+    }
+
+    try {
       if (modalMode.value === 'add') {
-        message.success('权限创建成功（演示模式）')
-        showModal.value = false
-        return true
-      }
-      if (formData.id != null) {
-        const submitData = {
-          ...formData,
-          resources: formData.resources
-            ? formData.resources
-                .split(',')
-                .map(s => s.trim())
-                .filter(Boolean)
-            : [],
-        }
-        await updatePermissionApi(formData.id, submitData)
-        await refresh()
+        await createPermissionRecord(submitData)
+        message.success('权限创建成功')
+      } else if (formData.id != null) {
+        await savePermissionRecord(formData.id, submitData)
         message.success('修改成功')
       }
+      await refresh()
       showModal.value = false
       return true
     } catch {
+      message.error(modalMode.value === 'add' ? '创建失败' : '修改失败')
       return false
     }
   }
 
   // ============ 数据权限事件处理 ============
   const handleAddDataPermission = () => {
-    message.info('新增数据权限规则（演示模式）')
+    message.info('当前页面支持配置已有规则，新增规则请通过策略中心完成')
   }
 
   const handleEditDataPermission = (row: DataPermissionRule) => {
@@ -1705,6 +1814,7 @@
   }
 
   const handleEditScope = (row: DataPermissionRule) => {
+    const pendingScope = ref<DataScopeType>(row.scope)
     dialog.create({
       title: `修改数据范围 — ${row.moduleName}`,
       content: () =>
@@ -1712,7 +1822,7 @@
           h(
             'p',
             { style: { marginBottom: '12px', color: '#666' } },
-            `当前范围: ${DATA_SCOPE_CONFIG[row.scope]?.text}`
+            `当前范围: ${DATA_SCOPE_CONFIG[pendingScope.value].text}`
           ),
           ...DATA_SCOPE_OPTIONS.map(opt =>
             h(
@@ -1722,13 +1832,15 @@
                   padding: '8px 12px',
                   marginBottom: '8px',
                   borderRadius: '6px',
-                  border: `1px solid ${row.scope === opt.value ? '#2080f0' : '#e5e7eb'}`,
+                  border: `1px solid ${pendingScope.value === opt.value ? '#2080f0' : '#e5e7eb'}`,
                   cursor: 'pointer',
                   backgroundColor:
-                    row.scope === opt.value ? '#f0f7ff' : 'transparent',
+                    pendingScope.value === opt.value
+                      ? '#f0f7ff'
+                      : 'transparent',
                 },
                 onClick: () => {
-                  row.scope = opt.value as any
+                  pendingScope.value = opt.value as DataScopeType
                 },
               },
               [
@@ -1743,28 +1855,40 @@
           ),
         ]),
       positiveText: '确认',
-      onPositiveClick: () => {
-        message.success(
-          `数据范围已更新为「${DATA_SCOPE_CONFIG[row.scope]?.text}」`
-        )
+      onPositiveClick: async () => {
+        try {
+          const updatedRule = { ...row, scope: pendingScope.value }
+          await updateDataPermissionRuleApi(row.id, updatedRule)
+          Object.assign(row, updatedRule)
+          message.success(
+            `数据范围已更新为「${DATA_SCOPE_CONFIG[row.scope].text}」`
+          )
+        } catch {
+          message.error('数据范围更新失败')
+          return false
+        }
       },
     })
   }
 
-  const handleSaveFieldPermissions = () => {
+  const handleSaveFieldPermissions = async () => {
     if (!selectedDataPermission.value) return
-    const idx = dataPermissionList.value.findIndex(
-      d => d.id === selectedDataPermission.value!.id
-    )
-    if (idx !== -1) {
-      dataPermissionList.value[idx] = { ...selectedDataPermission.value }
+    const updatedRule = { ...selectedDataPermission.value }
+    try {
+      await updateDataPermissionRuleApi(updatedRule.id, updatedRule)
+      const idx = dataPermissionList.value.findIndex(
+        d => d.id === updatedRule.id
+      )
+      if (idx !== -1) dataPermissionList.value[idx] = updatedRule
+      message.success('字段权限配置已保存')
+      selectedDataPermission.value = null
+    } catch {
+      message.error('字段权限配置保存失败')
     }
-    message.success('字段权限配置已保存')
-    selectedDataPermission.value = null
   }
 
   // ============ 临时授权事件处理 ============
-  const handleSaveTempAuth = (): boolean => {
+  const handleSaveTempAuth = async (): Promise<boolean> => {
     if (!tempAuthForm.targetRole || tempAuthForm.permissions.length === 0) {
       message.warning('请选择目标角色和授权权限')
       return false
@@ -1773,7 +1897,7 @@
       message.warning('请选择有效期')
       return false
     }
-    const role = MOCK_ROLE_DATA.find(r => r.id === tempAuthForm.targetRole)
+    const role = roleList.value.find(r => r.id === tempAuthForm.targetRole)
     const permNames = tempAuthForm.permissions.map(
       id => allPermissionOptions.value.find(o => o.value === id)?.label || id
     )
@@ -1792,8 +1916,14 @@
       status: 'active',
       remark: tempAuthForm.remark,
     }
-    tempAuthList.value.unshift(newAuth)
-    message.success('临时授权创建成功')
+    try {
+      const response = await createTempAuthorizationApi(newAuth)
+      tempAuthList.value.unshift(response.data)
+      message.success('临时授权创建成功')
+    } catch {
+      message.error('临时授权创建失败')
+      return false
+    }
 
     // 重置表单
     tempAuthForm.targetRole = null
@@ -1811,15 +1941,21 @@
       content: `确定撤销对角色「${auth.targetRoleName}」的临时授权吗？`,
       positiveText: '确认撤销',
       negativeText: '取消',
-      onPositiveClick: () => {
-        const idx = tempAuthList.value.findIndex(t => t.id === auth.id)
-        if (idx !== -1) {
-          tempAuthList.value[idx] = {
-            ...tempAuthList.value[idx],
-            status: 'revoked',
+      onPositiveClick: async () => {
+        try {
+          await revokeTempAuthorizationApi(auth.id)
+          const idx = tempAuthList.value.findIndex(t => t.id === auth.id)
+          if (idx !== -1) {
+            tempAuthList.value[idx] = {
+              ...tempAuthList.value[idx],
+              status: 'revoked',
+            }
           }
+          message.success('临时授权已撤销')
+        } catch {
+          message.error('临时授权撤销失败')
+          return false
         }
-        message.success('临时授权已撤销')
       },
     })
   }
@@ -1827,8 +1963,8 @@
   // ============ 权限对比事件处理 ============
   const handleCompare = () => {
     if (!compareRoleA.value || !compareRoleB.value) return
-    const roleA = MOCK_ROLE_DATA.find(r => r.id === compareRoleA.value)
-    const roleB = MOCK_ROLE_DATA.find(r => r.id === compareRoleB.value)
+    const roleA = roleList.value.find(r => r.id === compareRoleA.value)
+    const roleB = roleList.value.find(r => r.id === compareRoleB.value)
     if (!roleA || !roleB) return
 
     const namesA = roleA.permissionNames || []
@@ -1844,6 +1980,33 @@
       onlyB: namesB.filter(n => !setA.has(n)),
     }
   }
+
+  const { run: runLatestGovernanceRequest } = useLatestRequest()
+
+  const loadGovernanceData = async () => {
+    try {
+      const result = await runLatestGovernanceRequest(signal =>
+        Promise.all([
+          getDataPermissionRulesApi(MOCK_DATA_PERMISSIONS, signal),
+          getTempAuthorizationsApi(MOCK_TEMP_AUTHORIZATIONS, signal),
+          getPermissionConstraintsApi(MOCK_CONSTRAINTS, signal),
+          getPermissionAuditLogsApi(MOCK_AUDIT_LOGS, signal),
+          getRoleListApi({ page: 1, pageSize: 1000 }, signal),
+        ])
+      )
+      if (!result) return
+      const [rules, tempAuths, constraints, logs, roles] = result
+      dataPermissionList.value = rules.data
+      tempAuthList.value = tempAuths.data
+      constraintList.value = constraints.data
+      auditLogs.value = logs.data
+      roleList.value = roles.data.list
+    } catch {
+      message.error('权限治理扩展数据加载失败，请稍后重试')
+    }
+  }
+
+  onMounted(loadGovernanceData)
 </script>
 
 <style scoped lang="scss">

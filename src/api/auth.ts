@@ -46,7 +46,7 @@ export const loginApi = (data: LoginRequest): Promise<LoginResponse> =>
  * * @description: 刷新 Token 接口（双 Token 无感刷新）
  * ? @param {string} _refreshToken 刷新令牌
  * ! @return {Promise<RefreshTokenResponse>} 新的 token 和 refreshToken
- * TODO: 对接真实后端后替换为 postData<RefreshTokenResponse>('/auth/refresh-token', { refreshToken })
+ * 远端模式调用真实刷新接口，Mock 模式使用内存令牌轮换实现。
  */
 export const refreshTokenApi = (
   refreshToken: string
@@ -60,7 +60,7 @@ export const getAuthMode = (): typeof AUTH_MODE => AUTH_MODE
 
 /**
  * * @description: 获取用户菜单权限列表
- * ! @return {any} 动态菜单路由配置数据
+ * ! @return {Promise<AuthMenuResponse>} 动态菜单路由配置数据
  */
 export const getAuthMenuListApi = (): Promise<AuthMenuResponse> =>
   AUTH_MODE === 'mock'

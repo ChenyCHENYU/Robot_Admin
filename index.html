@@ -2,15 +2,35 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+    <link
+      rel="icon"
+      href="/favicon.ico"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="color-scheme"
+      content="light dark"
+    />
     <title>%VITE_APP_TITLE%</title>
     <!-- 预加载加载动画图片，消除网络慢时的闪烁 -->
-    <link rel="preload" href="/robot.gif" as="image" />
+    <link
+      rel="preload"
+      href="/robot.gif"
+      as="image"
+    />
     <!-- DNS 预解析 + 预连接：减少 API / CDN 首次请求延迟 -->
-    <link rel="dns-prefetch" href="//api.github.com" />
-    <link rel="preconnect" href="https://api.github.com" crossorigin />
+    <link
+      rel="dns-prefetch"
+      href="//api.github.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://api.github.com"
+      crossorigin
+    />
 
     <!-- ========== 首屏加载动画样式（内联，确保 HTML 渲染后立即生效） ========== -->
     <style id="loading-style">
@@ -125,20 +145,8 @@
       }
     </style>
 
-    <!-- 防止主题闪烁：在页面渲染前立即设置主题 -->
-    <script>
-      (function() {
-        const key = 'theme-mode';
-        const mode = localStorage.getItem(key) || 'system';
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const isDark = mode === 'dark' || (mode === 'system' && prefersDark);
-        const theme = isDark ? 'dark' : 'light';
-        
-        document.documentElement.setAttribute('data-theme', theme);
-        // 立即设置根背景色，彻底消除白/黑闪烁
-        document.documentElement.style.background = isDark ? '#101014' : '#fff';
-      })();
-    </script>
+    <!-- 防止主题闪烁：在页面渲染前立即设置主题；使用外部脚本满足严格 CSP -->
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <!-- 首屏加载动画：放在 #app 之前，确保浏览器第一帧就渲染 -->
@@ -149,7 +157,6 @@
             src="/robot.gif"
             class="app-loading-logo"
             alt="Loading"
-            onload="this.classList.add('loaded')"
           />
         </div>
         <div class="loading-dots">
@@ -162,9 +169,11 @@
       </div>
     </div>
 
+    <script src="/loading-init.js"></script>
     <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <script
+      type="module"
+      src="/src/main.ts"
+    ></script>
   </body>
 </html>
-
-

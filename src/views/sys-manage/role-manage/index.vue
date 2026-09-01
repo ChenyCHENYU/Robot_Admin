@@ -707,8 +707,13 @@
 </template>
 
 <script setup lang="ts">
+  import { useLatestRequest } from '@/composables/useLatestRequest'
   import type { FormInst, DataTableColumns } from 'naive-ui/es'
-  import { C_Icon, type ActionItem } from '@robot-admin/naive-ui-components'
+  import {
+    C_Icon,
+    type ActionItem,
+    type TableColumn,
+  } from '@robot-admin/naive-ui-components'
 
   import {
     type RoleData,
@@ -732,20 +737,25 @@
     getRoleListApi,
     getPermissionListApi,
     getRoleUsersApi,
+    getRoleDataScopesApi,
+    getRoleTempAuthorizationsApi,
+    createRoleApi,
+    updateRoleApi,
+    deleteRoleApi,
+    updateRoleStatusApi,
+    updateRolePermissionsApi,
     MOCK_ROLE_DATA,
-    MOCK_PERMISSION_DATA,
-    MOCK_ROLE_DATA_SCOPES,
     findPermissionById,
     updateRoleInList,
     extractPermissionPreview,
-    getRoleTempAuths,
     compareRolePermissions,
   } from './data'
 
   const message = useMessage()
 
   // ==================== 响应式数据 ====================
-  const loading = ref(false)
+  const { loading, run: runLatestRoleRequest } = useLatestRequest()
+  const { run: runLatestRoleDetailRequest } = useLatestRequest()
   const showModal = ref(false)
   const showRoleDetail = ref(false)
   const showPermissionDrawer = ref(false)
@@ -765,6 +775,8 @@
     ...PERMISSION_TEMPLATES,
   ])
   const roleUserList = reactive<RoleUserData[]>([])
+  const currentDataScopes = ref<RoleDataScope[]>([])
+  const currentTempAuths = ref<RoleTempAuth[]>([])
 
   const formData = reactive<RoleFormData>({ ...DEFAULT_ROLE_FORM_DATA })
   const formRules = ROLE_FORM_RULES
@@ -790,7 +802,7 @@
   const currentPermissionPreview = computed<PermissionPreviewItem[]>(() => {
     if (!currentRole.value?.permissionIds?.length) return []
     return extractPermissionPreview(
-      MOCK_PERMISSION_DATA,
+      permissionList,
       currentRole.value.permissionIds
     )
   })
@@ -803,18 +815,6 @@
     )
     const apis = currentPermissionPreview.value.filter(p => p.type === 'api')
     return { menus, buttons, apis }
-  })
-
-  /** 当前角色的数据权限 */
-  const currentDataScopes = computed<RoleDataScope[]>(() => {
-    if (!currentRole.value) return []
-    return MOCK_ROLE_DATA_SCOPES[currentRole.value.id] || []
-  })
-
-  /** 当前角色的临时授权 */
-  const currentTempAuths = computed<RoleTempAuth[]>(() => {
-    if (!currentRole.value) return []
-    return getRoleTempAuths(currentRole.value.id)
   })
 
   /** 角色选项列表（用于对比选择器） */
@@ -946,16 +946,16 @@
   ])
 
   // ==================== 行键配置 ====================
-  const rowKey = (row: any) => row.id
+  const rowKey = (row: RoleData) => row.id
 
   // ==================== 表格列配置 ====================
-  const tableColumns = computed(() => [
+  const tableColumns = computed<TableColumn<RoleData>[]>(() => [
     {
       key: 'type',
       title: '角色类型',
       width: 100,
       editable: false,
-      render: (row: any) =>
+      render: (row: RoleData) =>
         h(
           NTag,
           {
@@ -997,8 +997,9 @@
       width: 200,
       align: 'center' as const,
       editable: false,
-      render: (row: any) => {
-        if (!row.permissionNames?.length) {
+      render: (row: RoleData) => {
+        const { permissionNames } = row
+        if (!permissionNames?.length) {
           return h('div', { style: { textAlign: 'center' } }, '-')
         }
 
@@ -1016,13 +1017,13 @@
                   h(
                     NTag,
                     { size: 'small', type: 'primary' },
-                    () => row.permissionNames[0]
+                    () => permissionNames[0]
                   ),
-                  row.permissionNames.length > 1 &&
+                  permissionNames.length > 1 &&
                     h(
                       NTag,
                       { size: 'small', type: 'default' },
-                      () => `+${row.permissionNames.length - 1}`
+                      () => `+${permissionNames.length - 1}`
                     ),
                 ]),
               default: () =>
@@ -1037,12 +1038,12 @@
                         paddingBottom: '4px',
                       },
                     },
-                    `权限列表 (${row.permissionNames.length})`
+                    `权限列表 (${permissionNames.length})`
                   ),
                   h(
                     'div',
                     { style: { maxHeight: '200px', overflowY: 'auto' } },
-                    row.permissionNames.map((name: string) =>
+                    permissionNames.map((name: string) =>
                       h(
                         'div',
                         {
@@ -1075,7 +1076,7 @@
       width: 80,
       align: 'center' as const,
       editable: false,
-      render: (row: any) =>
+      render: (row: RoleData) =>
         row.userCount
           ? h(
               NButton,
@@ -1102,7 +1103,7 @@
       width: 80,
       editable: true,
       editType: 'switch' as const,
-      render: (row: any) =>
+      render: (row: RoleData) =>
         h(
           NTag,
           {
@@ -1117,12 +1118,12 @@
 
   // ==================== 表格操作配置 ====================
   const tableActions = computed(() => ({
-    detail: (row: any) => viewRole(row),
-    edit: (row: any) => editRole(row),
-    delete: async (row: any) => {
+    detail: (row: RoleData) => viewRole(row),
+    edit: (row: RoleData) => editRole(row),
+    delete: async (row: RoleData) => {
       if (row.type === 'system') {
         message.warning('系统角色不能删除')
-        return Promise.reject('系统角色不能删除') // 阻止后续执行
+        return Promise.reject(new Error('系统角色不能删除'))
       }
       await deleteRole(row.id)
     },
@@ -1132,15 +1133,15 @@
         label: '权限',
         icon: 'mdi:shield-account',
         type: 'primary' as const,
-        onClick: (row: any) => openPermissionDrawer(row),
+        onClick: (row: RoleData) => openPermissionDrawer(row),
       },
       {
         key: 'enable',
         label: '启用',
         icon: 'mdi:play',
         type: 'success' as const,
-        onClick: (row: any) => toggleRoleStatus(row),
-        show: (row: any) =>
+        onClick: (row: RoleData) => toggleRoleStatus(row),
+        show: (row: RoleData) =>
           row.status === 0 &&
           !(row.type === 'system' && row.code === 'super_admin'),
       },
@@ -1149,8 +1150,8 @@
         label: '禁用',
         icon: 'mdi:pause',
         type: 'warning' as const,
-        onClick: (row: any) => toggleRoleStatus(row),
-        show: (row: any) =>
+        onClick: (row: RoleData) => toggleRoleStatus(row),
+        show: (row: RoleData) =>
           row.status === 1 &&
           !(row.type === 'system' && row.code === 'super_admin'),
       },
@@ -1208,11 +1209,12 @@
 
   // ==================== 工具函数 ====================
   const getPermissionNameById = (permissionId: string): string =>
-    findPermissionById(MOCK_PERMISSION_DATA, permissionId)?.name || ''
+    findPermissionById(permissionList, permissionId)?.name || ''
 
   // ==================== C_Table 事件处理 ====================
-  const handleTableSave = async (rowData: any) => {
+  const handleTableSave = async (rowData: RoleData) => {
     try {
+      await updateRoleApi(rowData.id, rowData)
       updateRoleInList(rowData.id, {
         name: rowData.name,
         description: rowData.description || undefined,
@@ -1233,8 +1235,7 @@
     loadRoles()
   }
 
-  const handlePaginationChange = async (...args: any[]) => {
-    const [page, pageSize] = args
+  const handlePaginationChange = async (page: number, pageSize: number) => {
     pagination.page = page
     pagination.pageSize = pageSize
     loadRoles()
@@ -1248,6 +1249,7 @@
   // 角色操作
   const openRoleModal = (role?: RoleData) => {
     modalMode.value = role ? 'edit' : 'add'
+    delete formData.id
     if (role) {
       Object.assign(formData, {
         id: role.id,
@@ -1268,15 +1270,35 @@
 
   const closeRoleModal = () => {
     showModal.value = false
+    delete formData.id
     Object.assign(formData, DEFAULT_ROLE_FORM_DATA)
   }
 
-  const editRole = (role: any) => openRoleModal(role)
+  const editRole = (role: RoleData) => openRoleModal(role)
+
+  const loadRoleGovernanceDetails = async (roleId: string) => {
+    currentDataScopes.value = []
+    currentTempAuths.value = []
+    try {
+      const result = await runLatestRoleDetailRequest(signal =>
+        Promise.all([
+          getRoleDataScopesApi(roleId, signal),
+          getRoleTempAuthorizationsApi(roleId, signal),
+        ])
+      )
+      if (!result || currentRole.value?.id !== roleId) return
+      currentDataScopes.value = result[0].data
+      currentTempAuths.value = result[1].data
+    } catch {
+      message.error('角色治理详情加载失败')
+    }
+  }
 
   const viewRole = (role: RoleData) => {
     currentRole.value = role
     detailTab.value = 'basic'
     showRoleDetail.value = true
+    void loadRoleGovernanceDetails(role.id)
   }
 
   /** 执行角色权限对比 */
@@ -1304,19 +1326,28 @@
     const newStatus = role.status === 1 ? 0 : 1
     const action = newStatus === 1 ? '启用' : '禁用'
 
-    updateRoleInList(role.id, {
-      status: newStatus,
-      updateTime: new Date().toLocaleString(),
-    })
-    message.success(`${action}成功`)
-    await loadRoles()
+    try {
+      await updateRoleStatusApi(role.id, newStatus)
+      updateRoleInList(role.id, {
+        status: newStatus,
+        updateTime: new Date().toLocaleString(),
+      })
+      message.success(`${action}成功`)
+      await loadRoles()
+    } catch {
+      message.error(`${action}失败`)
+    }
   }
 
   const deleteRole = async (id: string) => {
-    const roleIndex = MOCK_ROLE_DATA.findIndex(role => role.id === id)
-    if (roleIndex !== -1) {
-      MOCK_ROLE_DATA.splice(roleIndex, 1)
+    try {
+      await deleteRoleApi(id)
+      const roleIndex = MOCK_ROLE_DATA.findIndex(role => role.id === id)
+      if (roleIndex !== -1) MOCK_ROLE_DATA.splice(roleIndex, 1)
+      message.success('删除成功')
       await loadRoles()
+    } catch {
+      message.error('删除失败')
     }
   }
 
@@ -1347,9 +1378,11 @@
           createTime: new Date().toLocaleString(),
           remark: formData.remark || undefined,
         }
+        await createRoleApi(formData)
         MOCK_ROLE_DATA.push(newRole)
         message.success('添加成功')
       } else {
+        await updateRoleApi(formData.id!, formData)
         updateRoleInList(formData.id!, {
           name: formData.name,
           description: formData.description || undefined,
@@ -1364,7 +1397,8 @@
       showModal.value = false
       await loadRoles()
       return true
-    } catch {
+    } catch (error) {
+      if (!(error instanceof Array)) message.error('保存失败')
       return false
     }
   }
@@ -1383,15 +1417,23 @@
       .map(id => getPermissionNameById(id))
       .filter(Boolean)
 
-    updateRoleInList(permissionRole.value.id, {
-      permissionIds: [...selectedPermissionIds.value],
-      permissionNames,
-      updateTime: new Date().toLocaleString(),
-    })
+    try {
+      await updateRolePermissionsApi(
+        permissionRole.value.id,
+        selectedPermissionIds.value
+      )
+      updateRoleInList(permissionRole.value.id, {
+        permissionIds: [...selectedPermissionIds.value],
+        permissionNames,
+        updateTime: new Date().toLocaleString(),
+      })
 
-    message.success('权限分配成功')
-    showPermissionDrawer.value = false
-    await loadRoles()
+      message.success('权限分配成功')
+      showPermissionDrawer.value = false
+      await loadRoles()
+    } catch {
+      message.error('权限分配失败')
+    }
   }
 
   const applyPermissionTemplate = () => {
@@ -1419,21 +1461,21 @@
 
   // ==================== 数据加载 ====================
   const loadRoles = async () => {
-    loading.value = true
     try {
       const params = {
         ...searchForm,
         page: pagination.page,
         pageSize: pagination.pageSize,
       }
-      const response = await getRoleListApi(params)
+      const response = await runLatestRoleRequest(signal =>
+        getRoleListApi(params, signal)
+      )
+      if (!response) return
       roleList.length = 0
       roleList.push(...response.data.list)
       pagination.itemCount = response.data.total
     } catch {
       message.error('加载角色列表失败')
-    } finally {
-      loading.value = false
     }
   }
 

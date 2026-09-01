@@ -77,7 +77,7 @@
           </div>
           <div class="metric-chart">
             <div
-              :ref="(el: any) => (chartRefs[index] = el)"
+              :ref="el => setChartRef(el, index)"
               class="mini-chart"
             ></div>
           </div>
@@ -203,14 +203,23 @@
 </template>
 
 <script lang="ts" setup>
+  import type { ComponentPublicInstance } from 'vue'
   import { useInitBarChart } from './useInitBarChart'
   import { useInitGridChart } from './useInitLineChart'
   import { useInitPolorChart } from './useInitPolorChart'
 
   const pickDate = ref()
-  const chartRefs = ref<HTMLElement[]>([])
-  const revenueChartRef = ref()
-  const channelChartRef = ref()
+  const chartRefs = ref<Array<HTMLElement | undefined>>([])
+  const revenueChartRef = ref<HTMLElement | null>(null)
+  const channelChartRef = ref<HTMLElement | null>(null)
+
+  const setChartRef = (
+    element: Element | ComponentPublicInstance | null,
+    index: number
+  ) => {
+    chartRefs.value[index] =
+      element instanceof HTMLElement ? element : undefined
+  }
 
   // 核心指标数据
   const metrics = ref([
@@ -284,8 +293,7 @@
 
   onMounted(() => {
     // 初始化迷你图表
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    chartRefs.value.forEach((el: HTMLElement | undefined, index: any) => {
+    chartRefs.value.forEach((el: HTMLElement | undefined) => {
       if (el) {
         useInitBarChart(el)
       }

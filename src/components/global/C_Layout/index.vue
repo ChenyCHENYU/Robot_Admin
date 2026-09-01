@@ -88,13 +88,22 @@
 </template>
 
 <script setup lang="ts">
-  import { C_LayoutContainer, LAYOUT_CONTEXT_KEY } from '@robot-admin/layout'
+  import {
+    C_LayoutContainer,
+    LAYOUT_CONTEXT_KEY,
+    type MenuOptions,
+  } from '@robot-admin/layout'
   import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import { s_themeStore } from '@/stores/theme'
   import { s_permissionStore } from '@/stores/permission'
   import { s_settingsStore } from '@/stores/settings'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
-  import { buildGroupedMenuData, getMenuGroupColor } from './data'
+  import {
+    buildGroupedMenuData,
+    getMenuGroupColor,
+    toLayoutMenuItems,
+    type LayoutMenuItem,
+  } from './data'
   import C_Settings from '@/components/global/C_Settings/index.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
   import C_MenuGrouped from '@/components/global/C_MenuGrouped/index.vue'
@@ -112,7 +121,7 @@
   const isReady = ref(true)
   const isDarkMode = computed(() => themeStore.isDark)
   const menuExpandMode = computed<'inline' | 'panel'>(
-    () => (settingsStore.$state as any).menuExpandMode ?? 'panel'
+    () => settingsStore.menuExpandMode
   )
 
   /**
@@ -123,7 +132,9 @@
   /**
    * 最终菜单数据：响应式 + 分组模式下自动包装 type:'group'
    */
-  const menuData = computed(() => permissionStore.showMenuListGet as any[])
+  const menuData = computed<LayoutMenuItem[]>(() =>
+    toLayoutMenuItems(permissionStore.showMenuListGet as MenuOptions[])
+  )
 
   const groupedMenuData = computed(() => buildGroupedMenuData(menuData.value))
 

@@ -6,6 +6,8 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import { resolveDataMode, type DataMode } from '../dataMode.ts'
+
 export type AppEnvironment = 'development' | 'test' | 'staging' | 'production'
 export type RouterMode = 'hash' | 'history'
 export type AuthMode = 'mock' | 'remote'
@@ -13,6 +15,7 @@ export type AuthMode = 'mock' | 'remote'
 export interface ValidatedViteEnv {
   appEnv: AppEnvironment
   authMode: AuthMode
+  dataMode: DataMode
   routerMode: RouterMode
   apiBase: string
   port: number
@@ -82,13 +85,26 @@ const resolvePort = (
 const validateProtectedEnvironment = (
   appEnv: AppEnvironment,
   authMode: AuthMode,
+  dataMode: DataMode,
   apiBase: string,
   errors: string[]
 ): void => {
   if (appEnv !== 'production' && appEnv !== 'staging') return
   if (authMode !== 'remote') errors.push(`${appEnv} 环境禁止使用 Mock 认证`)
+  if (dataMode !== 'remote') errors.push(`${appEnv} 环境禁止使用 Mock 业务数据`)
   if (UNSAFE_REMOTE_API_PATTERNS.some(pattern => pattern.test(apiBase))) {
     errors.push(`${appEnv} 环境禁止使用 Mock 或占位 API: ${apiBase}`)
+  }
+}
+
+const validateErrorReportEndpoint = (
+  endpoint: string | undefined,
+  errors: string[]
+): void => {
+  const value = endpoint?.trim()
+  if (!value) return
+  if (!value.startsWith('/') || value.startsWith('//')) {
+    errors.push('VITE_ERROR_REPORT_ENDPOINT 必须是同源绝对路径')
   }
 }
 
@@ -129,19 +145,26 @@ export function validateViteEnv(
   const errors: string[] = []
   const appEnv = resolveAppEnvironment(env, mode, errors)
   const authMode = resolveAuthMode(env, appEnv, errors)
+  let dataMode: DataMode = 'mock'
+  try {
+    dataMode = resolveDataMode(env.VITE_DATA_MODE, appEnv)
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : '业务数据模式无效')
+  }
 
   const apiBase = env.VITE_API_BASE?.trim() || ''
   if (!apiBase) errors.push('VITE_API_BASE 不能为空')
-  validateProtectedEnvironment(appEnv, authMode, apiBase, errors)
+  validateProtectedEnvironment(appEnv, authMode, dataMode, apiBase, errors)
 
   const routerMode = resolveRouterMode(env, errors)
   const port = resolvePort(env, errors)
   validateBooleanVariables(env, errors)
   validateI18nCredentials(env, errors)
+  validateErrorReportEndpoint(env.VITE_ERROR_REPORT_ENDPOINT, errors)
 
   if (errors.length > 0) {
     throw new Error(`环境配置校验失败:\n- ${errors.join('\n- ')}`)
   }
 
-  return { appEnv, authMode, routerMode, apiBase, port }
+  return { appEnv, authMode, dataMode, routerMode, apiBase, port }
 }

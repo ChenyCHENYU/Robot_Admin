@@ -3,7 +3,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { App } from 'vue'
+import type { App, ComponentPublicInstance } from 'vue'
 import { handleError, createErrorContext, stopCleanupTimer } from './handler'
 
 // 资源标签列表
@@ -12,26 +12,37 @@ const RESOURCE_TAGS = ['img', 'script', 'link', 'video', 'audio'] as const
 /**
  * 检查是否为已处理的错误
  */
-const isHandledError = (error: any): boolean => error?.handled === true
+const isHandledError = (error: unknown): boolean =>
+  Boolean(
+    error && typeof error === 'object' && 'handled' in error && error.handled
+  )
 
 /**
  * 获取组件名称
  */
-const getComponentName = (instance: any): string | undefined => {
-  return instance?.$options?.name || instance?.$options?.__name
+const getComponentName = (
+  instance: ComponentPublicInstance | null
+): string | undefined => {
+  const options = instance?.$options as
+    { name?: string; __name?: string } | undefined
+  return options?.name || options?.__name
 }
 
 /**
  * 设置 Vue 错误处理
  */
 const setupVueErrorHandler = (app: App): void => {
-  app.config.errorHandler = (err: any, instance, info: string) => {
+  app.config.errorHandler = (err: unknown, instance, info: string) => {
     if (isHandledError(err)) return
 
     const context = createErrorContext('vue', err, getComponentName(instance), {
       info,
     })
-    handleError(context, { showMessage: true, logToConsole: true })
+    handleError(context, {
+      showMessage: true,
+      logToConsole: true,
+      reportToServer: true,
+    })
   }
 }
 
@@ -43,8 +54,13 @@ const setupPromiseErrorHandler = (): void => {
   const EXTENSION_ERR_RE =
     /Could not establish connection|Receiving end does not exist/
 
-  window.addEventListener('unhandledrejection', (event: any) => {
-    const msg = String(event.reason?.message || event.reason || '')
+  window.addEventListener('unhandledrejection', event => {
+    const reason = event.reason as unknown
+    const msg = String(
+      reason && typeof reason === 'object' && 'message' in reason
+        ? reason.message
+        : reason || ''
+    )
     if (EXTENSION_ERR_RE.test(msg)) {
       event.preventDefault()
       return
@@ -55,10 +71,14 @@ const setupPromiseErrorHandler = (): void => {
       event.preventDefault()
     }
 
-    if (isHandledError(event.reason)) return
+    if (isHandledError(reason)) return
 
-    const context = createErrorContext('promise', event.reason)
-    handleError(context, { showMessage: true, logToConsole: true })
+    const context = createErrorContext('promise', reason)
+    handleError(context, {
+      showMessage: true,
+      logToConsole: true,
+      reportToServer: true,
+    })
   })
 }
 

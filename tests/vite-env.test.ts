@@ -17,6 +17,7 @@ describe('Vite 环境校验', () => {
     )
 
     expect(result.authMode).toBe('mock')
+    expect(result.dataMode).toBe('mock')
     expect(result.routerMode).toBe('hash')
     expect(result.port).toBe(1988)
   })
@@ -27,11 +28,52 @@ describe('Vite 环境校验', () => {
         {
           VITE_APP_ENV: 'production',
           VITE_AUTH_MODE: 'mock',
+          VITE_DATA_MODE: 'mock',
           VITE_API_BASE: 'https://apifoxmock.com/example',
         },
         'production'
       )
     ).toThrow('Mock')
+  })
+
+  test('生产环境拒绝 Mock 业务数据', () => {
+    expect(() =>
+      validateViteEnv(
+        {
+          VITE_APP_ENV: 'production',
+          VITE_AUTH_MODE: 'remote',
+          VITE_DATA_MODE: 'mock',
+          VITE_API_BASE: '/api',
+        },
+        'production'
+      )
+    ).toThrow('Mock 业务数据')
+  })
+
+  test('拒绝无法识别的业务数据模式', () => {
+    expect(() =>
+      validateViteEnv(
+        {
+          VITE_APP_ENV: 'development',
+          VITE_DATA_MODE: 'preview',
+          VITE_API_BASE: '/api',
+        },
+        'development'
+      )
+    ).toThrow('VITE_DATA_MODE 不受支持')
+  })
+
+  test('错误上报仅接受同源绝对路径', () => {
+    expect(() =>
+      validateViteEnv(
+        {
+          VITE_APP_ENV: 'development',
+          VITE_API_BASE: '/api',
+          VITE_ERROR_REPORT_ENDPOINT: 'https://example.com/errors',
+        },
+        'development'
+      )
+    ).toThrow('同源绝对路径')
   })
 
   test('启用自动翻译时要求服务端凭据', () => {

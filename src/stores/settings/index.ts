@@ -26,8 +26,8 @@ export function initSettingsStoreSync() {
     settingsStore.themeMode = savedMode
   }
 
-  if (!(settingsStore.$state as any).menuExpandMode) {
-    settingsStore.$patch({ menuExpandMode: 'panel' } as any)
+  if (!settingsStore.menuExpandMode) {
+    settingsStore.menuExpandMode = 'panel'
   }
 
   // 监听主题色变化，同步到 Naive UI

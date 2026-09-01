@@ -530,14 +530,6 @@ export const devDependencies: ProjectItem[] = [
     url: 'https://iconify.design/',
   },
   {
-    name: 'Inspira UI Plugins',
-    bagName: '@inspira-ui/plugins',
-    desc: 'Inspira UI 插件集',
-    version: '^0.0.1',
-    icon: 'https://inspira-ui.com/favicon.ico',
-    url: 'https://inspira-ui.com/',
-  },
-  {
     name: 'Node.js Types',
     bagName: '@tsconfig/node22',
     desc: 'Node.js 22 TypeScript 配置',
@@ -593,14 +585,6 @@ export const devDependencies: ProjectItem[] = [
     version: '^14.7.0',
     icon: 'https://eslint.org/assets/img/logo.svg',
     url: 'https://eslint.org/',
-  },
-  {
-    name: 'Vue Runtime Core',
-    bagName: '@vue/runtime-core',
-    desc: 'Vue 3 运行时核心',
-    version: '^3.5.30',
-    icon: 'https://vuejs.org/logo.svg',
-    url: 'https://vuejs.org/',
   },
   {
     name: 'Vue TSConfig',

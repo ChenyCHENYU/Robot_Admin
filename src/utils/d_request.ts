@@ -40,7 +40,7 @@ export const getBusinessErrorMessage = (
 }
 
 /**
- * @description 从未知异常中安全提取 message/msg，避免拦截器依赖 any。
+ * @description 从未知异常中安全提取 message/msg，避免拦截器依赖不安全类型。
  * @param error 未知请求异常
  * @returns 可展示的错误信息
  */

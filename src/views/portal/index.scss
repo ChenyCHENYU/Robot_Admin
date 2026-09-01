@@ -68,6 +68,9 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     border: 1px solid transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
 
     &:hover {
       border-color: rgba(91, 143, 249, 0.3);
@@ -81,6 +84,11 @@
           0 8px 16px rgba(91, 143, 249, 0.4),
           inset 0 2px 4px rgba(255, 255, 255, 0.4);
       }
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba(91, 143, 249, 0.35);
+      outline-offset: 2px;
     }
 
     &.active {
@@ -205,6 +213,11 @@
 
     &:active {
       transform: translateX(-50%) translateY(0);
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba(91, 143, 249, 0.35);
+      outline-offset: 2px;
     }
   }
 }
@@ -773,6 +786,8 @@
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         position: relative;
         overflow: hidden;
+        color: inherit;
+        font: inherit;
 
         &:hover {
           transform: translateY(-4px);
@@ -789,6 +804,11 @@
             color: var(--portal-status-info);
             font-weight: 600;
           }
+        }
+
+        &:focus-visible {
+          outline: 3px solid rgba(91, 143, 249, 0.35);
+          outline-offset: 2px;
         }
 
         .app-icon-box {
@@ -1189,6 +1209,11 @@
 
     &:hover {
       background: rgba(24, 160, 88, 0.05);
+    }
+
+    &:focus-visible {
+      outline: 3px solid rgba(24, 160, 88, 0.3);
+      outline-offset: -3px;
     }
 
     .header-left {

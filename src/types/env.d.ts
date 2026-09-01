@@ -18,6 +18,7 @@ interface ImportMetaEnv {
   readonly VITE_ROUTER_MODE: 'hash' | 'history'
   readonly VITE_API_BASE?: string
   readonly VITE_AUTH_MODE?: 'mock' | 'remote'
+  readonly VITE_DATA_MODE?: 'mock' | 'remote'
   readonly VITE_APP_TITLE?: string
   readonly VITE_APP_VERSION?: string
   readonly VITE_APP_ENV?: 'development' | 'test' | 'staging' | 'production'
@@ -25,6 +26,7 @@ interface ImportMetaEnv {
   readonly VITE_I18N_ENABLED?: string
   readonly VITE_ANALYTICS_ENABLED?: 'true' | 'false'
   readonly VITE_ROUTE_IDLE_PREFETCH?: 'true' | 'false'
+  readonly VITE_ERROR_REPORT_ENDPOINT?: string
   readonly VITE_MAP_KEY?: string
   // 可以根据需要添加更多环境变量
 }

@@ -87,7 +87,7 @@ export interface MenuOptions {
     /**
      * 扩展属性（自定义键值对）
      */
-    [key: string]: any
+    [key: string]: unknown
   }
   /**
    * 子菜单

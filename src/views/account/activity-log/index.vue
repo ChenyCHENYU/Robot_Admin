@@ -133,6 +133,7 @@
     NButton,
     NDatePicker,
     NDataTable,
+    useMessage,
   } from 'naive-ui/es'
   import {
     MOCK_ACTIVITY_RECORDS,
@@ -141,8 +142,12 @@
     createColumns,
     type ActivitySearchForm,
   } from './data'
+  import { getAccountActivityLogsApi } from '@/api/account'
+  import { useLatestRequest } from '@/composables/useLatestRequest'
+  import { isMockDataMode } from '@/config/dataMode'
 
   defineOptions({ name: 'AccountActivityLog' })
+  const message = useMessage()
 
   // 搜索表单
   const searchForm = reactive<ActivitySearchForm>({
@@ -170,8 +175,7 @@
     },
   })
 
-  // 全部记录（Mock）
-  const allRecords = ref([...MOCK_ACTIVITY_RECORDS])
+  const allRecords = ref(isMockDataMode() ? [...MOCK_ACTIVITY_RECORDS] : [])
 
   // 过滤后的记录
   const filteredRecords = computed(() => {
@@ -230,6 +234,19 @@
     searchForm.dateRange = null
     pagination.page = 1
   }
+
+  const { run: runLatestActivityRequest } = useLatestRequest()
+
+  onMounted(async () => {
+    try {
+      const response = await runLatestActivityRequest(signal =>
+        getAccountActivityLogsApi(MOCK_ACTIVITY_RECORDS, signal)
+      )
+      if (response) allRecords.value = response.data
+    } catch {
+      message.error('活动记录加载失败，请稍后重试')
+    }
+  })
 </script>
 
 <style scoped lang="scss">

@@ -10,18 +10,43 @@
 
 import type { Plugin } from 'vite'
 
-const wrapI18nLifecycle = (plugin: any): Plugin | null => {
-  if (!plugin) return null
+type LifecycleHook = (this: unknown, ...args: unknown[]) => unknown
 
-  const originalBuildEnd = plugin.buildEnd
-  const originalCloseBundle = plugin.closeBundle
+interface MutableI18nPlugin {
+  name?: unknown
+  buildEnd?: unknown
+  closeBundle?: unknown
+  [key: string]: unknown
+}
 
-  if (originalBuildEnd) {
+interface I18nPluginModule {
+  default: (options: Record<string, unknown>) => unknown
+  YoudaoTranslator: new (options: { appId: string; appKey: string }) => unknown
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error)
+
+const wrapI18nLifecycle = (plugin: unknown): Plugin | null => {
+  if (!isRecord(plugin) || typeof plugin.name !== 'string') return null
+  const mutablePlugin = plugin as MutableI18nPlugin
+
+  const originalBuildEnd = mutablePlugin.buildEnd
+  const originalCloseBundle = mutablePlugin.closeBundle
+
+  if (typeof originalBuildEnd === 'function') {
+    const buildEndHook = originalBuildEnd as LifecycleHook
     /** Run translation with a bounded timeout so builds cannot hang. */
-    plugin.buildEnd = async function (...args: any[]) {
+    mutablePlugin.buildEnd = async function (
+      this: unknown,
+      ...args: unknown[]
+    ) {
       try {
         await Promise.race([
-          originalBuildEnd.apply(this, args),
+          buildEndHook.apply(this, args),
           new Promise((_, reject) =>
             setTimeout(
               () => reject(new Error('i18n buildEnd timeout (30s) — skipping')),
@@ -31,26 +56,28 @@ const wrapI18nLifecycle = (plugin: any): Plugin | null => {
         ])
       } catch (error) {
         console.warn(
-          `⚠️ i18n 翻译阶段跳过（不影响构建）: ${(error as Error).message}`
+          `⚠️ i18n 翻译阶段跳过（不影响构建）: ${getErrorMessage(error)}`
         )
       }
     }
   }
 
-  if (originalCloseBundle) {
+  if (typeof originalCloseBundle === 'function') {
+    const closeBundleHook = originalCloseBundle as LifecycleHook
     /** Isolate optional translation cleanup failures from the main build. */
-    plugin.closeBundle = async function (...args: any[]) {
+    mutablePlugin.closeBundle = async function (
+      this: unknown,
+      ...args: unknown[]
+    ) {
       try {
-        await originalCloseBundle.apply(this, args)
+        await closeBundleHook.apply(this, args)
       } catch (error) {
-        console.warn(
-          `⚠️ i18n closeBundle 阶段跳过: ${(error as Error).message}`
-        )
+        console.warn(`⚠️ i18n closeBundle 阶段跳过: ${getErrorMessage(error)}`)
       }
     }
   }
 
-  return plugin as Plugin
+  return mutablePlugin as Plugin
 }
 
 /**
@@ -80,9 +107,9 @@ export default function createI18nPlugin(): Plugin | null {
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const autoI18n = require('vite-auto-i18n-plugin').default
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { YoudaoTranslator } = require('vite-auto-i18n-plugin')
+    const i18nModule = require('vite-auto-i18n-plugin') as I18nPluginModule
+    const autoI18n = i18nModule.default
+    const { YoudaoTranslator } = i18nModule
 
     const appId = process.env.YOUDAO_APP_ID
     const appKey = process.env.YOUDAO_APP_KEY
@@ -97,7 +124,7 @@ export default function createI18nPlugin(): Plugin | null {
       )
     }
 
-    const pluginOptions: Record<string, any> = {
+    const pluginOptions: Record<string, unknown> = {
       // ========== 基础配置 ==========
       enabled: true, // 是否启用插件
       translateType: 'full-auto', // 全自动翻译中文（full-auto | semi-auto）

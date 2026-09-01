@@ -11,12 +11,36 @@ import {
   GROUP_COLORS,
   OTHER_GROUP_LABEL,
   type MenuGroupConfig,
-} from '@/components/global/C_MenuGrouped/data'
+} from '../C_MenuGrouped/data'
+import type { MenuOptions } from '@robot-admin/layout'
+
+export interface LayoutMenuItem extends Omit<MenuOptions, 'path' | 'children'> {
+  path: string
+  children?: LayoutMenuItem[]
+}
 
 export interface MenuGroup {
   label: string
-  items: any[]
+  items: LayoutMenuItem[]
 }
+
+/**
+ * 将后端菜单契约收敛为 UI 组件要求的必填 path 契约。
+ * 无有效路径的节点不会进入导航，避免点击后意外跳转到根路由。
+ */
+export const toLayoutMenuItems = (menus: MenuOptions[]): LayoutMenuItem[] =>
+  menus.flatMap(menu => {
+    const path = menu.path || menu.key
+    if (!path) return []
+
+    return [
+      {
+        ...menu,
+        path,
+        children: menu.children ? toLayoutMenuItems(menu.children) : undefined,
+      },
+    ]
+  })
 
 export const isMatchGroup = (
   cfg: MenuGroupConfig,
@@ -28,7 +52,7 @@ export const isMatchGroup = (
   return false
 }
 
-export const buildGroupedMenuData = (menus: any[]): MenuGroup[] => {
+export const buildGroupedMenuData = (menus: LayoutMenuItem[]): MenuGroup[] => {
   const buckets: MenuGroup[] = DEFAULT_MENU_GROUPS.map(g => ({
     label: g.label,
     items: [],

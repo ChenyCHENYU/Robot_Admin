@@ -16,12 +16,17 @@
       class="app-shortcuts"
       :class="{ expanded: isShortcutsExpanded }"
     >
-      <div class="shortcuts-container">
-        <div
+      <div
+        id="portal-shortcuts"
+        class="shortcuts-container"
+      >
+        <button
           v-for="app in systems"
           :key="app.id"
+          type="button"
           class="shortcut-item"
           :class="{ active: activeAppId === app.id }"
+          :aria-pressed="activeAppId === app.id"
           @click="handleShortcutClick(app)"
         >
           <div
@@ -48,14 +53,18 @@
             <i class="i-ri:time-line"></i>
             待集成
           </span>
-        </div>
+        </button>
       </div>
 
       <!-- 展开/收起按钮 -->
-      <div
+      <button
         v-if="systems.length > 5"
+        type="button"
         class="expand-toggle"
         :title="isShortcutsExpanded ? '收起' : '点击加载更多'"
+        :aria-expanded="isShortcutsExpanded"
+        aria-controls="portal-shortcuts"
+        :aria-label="isShortcutsExpanded ? '收起快捷应用' : '展开快捷应用'"
         @click="isShortcutsExpanded = !isShortcutsExpanded"
       >
         <Icon
@@ -66,7 +75,7 @@
           "
           :size="14"
         />
-      </div>
+      </button>
     </div>
 
     <!-- 主内容区 -->
@@ -172,7 +181,13 @@
           >
             <div
               class="data-card-header"
+              role="button"
+              tabindex="0"
+              :aria-expanded="isDataExpanded"
+              aria-controls="micro-app-data-content"
               @click="isDataExpanded = !isDataExpanded"
+              @keydown.enter.self="isDataExpanded = !isDataExpanded"
+              @keydown.space.prevent.self="isDataExpanded = !isDataExpanded"
             >
               <div class="header-left">
                 <span class="data-icon">📊</span>
@@ -183,6 +198,7 @@
                 <NButton
                   size="small"
                   text
+                  aria-label="刷新子应用数据"
                   @click.stop="loadMicroAppData"
                 >
                   <template #icon>
@@ -195,6 +211,7 @@
                 <NButton
                   size="small"
                   text
+                  aria-label="清空子应用数据"
                   @click.stop="clearMicroAppData"
                 >
                   <template #icon>
@@ -217,6 +234,7 @@
             </div>
 
             <div
+              id="micro-app-data-content"
               v-show="isDataExpanded"
               class="data-card-content"
             >
@@ -261,9 +279,10 @@
               <span class="card-title">常用功能</span>
             </div>
             <div class="app-grid">
-              <div
+              <button
                 v-for="app in appCenterItems"
                 :key="app.id"
+                type="button"
                 class="app-cell"
                 @click="handleAppClick(app)"
               >
@@ -280,7 +299,7 @@
                   />
                 </div>
                 <div class="app-name">{{ app.name }}</div>
-              </div>
+              </button>
             </div>
           </div>
 
@@ -288,22 +307,28 @@
           <div class="card message-card">
             <div class="card-header">
               <span class="card-title">消息中心</span>
-              <a
-                href="#"
-                class="card-more"
-                >more+</a
-              >
+              <span class="card-more">more+</span>
             </div>
-            <div class="tab-group">
+            <div
+              class="tab-group"
+              role="tablist"
+              aria-label="消息筛选"
+            >
               <button
+                type="button"
                 class="tab-btn"
+                role="tab"
                 :class="{ active: messageTab === 'all' }"
+                :aria-selected="messageTab === 'all'"
                 @click="messageTab = 'all'"
                 >全部</button
               >
               <button
+                type="button"
                 class="tab-btn"
+                role="tab"
                 :class="{ active: messageTab === 'unread' }"
+                :aria-selected="messageTab === 'unread'"
                 @click="messageTab = 'unread'"
                 >未读</button
               >
@@ -385,8 +410,10 @@
           <div class="card calendar-card">
             <div class="calendar-nav">
               <button
-                @click="prevMonth"
+                type="button"
                 class="nav-arrow"
+                aria-label="上个月"
+                @click="prevMonth"
               >
                 <Icon
                   icon="ri:arrow-left-s-line"
@@ -395,8 +422,10 @@
               </button>
               <span class="calendar-title">{{ calendarTitle }}</span>
               <button
-                @click="nextMonth"
+                type="button"
                 class="nav-arrow"
+                aria-label="下个月"
+                @click="nextMonth"
               >
                 <Icon
                   icon="ri:arrow-right-s-line"
@@ -486,6 +515,26 @@
     weatherDesc?: Array<{ value: string }>
   }
 
+  interface MicroAppDataItem {
+    module: string
+    timestamp: number
+    data: unknown
+  }
+
+  const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value !== null && !Array.isArray(value)
+
+  const normalizeMicroAppData = (value: unknown): MicroAppDataItem[] => {
+    if (!Array.isArray(value)) return []
+    return value.filter(
+      (item): item is MicroAppDataItem =>
+        isRecord(item) &&
+        typeof item.module === 'string' &&
+        typeof item.timestamp === 'number' &&
+        'data' in item
+    )
+  }
+
   const currentDay = ref('27')
   const temperature = ref('--')
   const weatherDesc = ref('加载中...')
@@ -548,17 +597,30 @@
     windPower.value = getWindLevel(Number(w.windspeedKmph) || 0)
   }
 
+  let weatherController: AbortController | undefined
+
   const fetchWeather = async () => {
+    weatherController?.abort()
+    const controller = new AbortController()
+    weatherController = controller
     try {
-      const res = await fetch('https://wttr.in/西安?format=j1')
-      const data = await res.json()
-      if (data.current_condition?.[0]) {
-        updateWeatherData(data.current_condition[0])
+      const res = await fetch('https://wttr.in/西安?format=j1', {
+        signal: controller.signal,
+      })
+      if (!res.ok) throw new Error(`天气服务响应异常：${res.status}`)
+      const data: unknown = await res.json()
+      const conditions = isRecord(data) ? data.current_condition : undefined
+      const current = Array.isArray(conditions) ? conditions[0] : undefined
+      if (isRecord(current)) {
+        updateWeatherData(current as WeatherData)
       } else {
         setDefaultWeather()
       }
     } catch {
+      if (controller.signal.aborted) return
       setDefaultWeather()
+    } finally {
+      if (weatherController === controller) weatherController = undefined
     }
   }
 
@@ -566,13 +628,13 @@
   const currentDate = ref(new Date(2030, 9, 1))
 
   // ===== 子应用推送数据 =====
-  const microAppData = ref<any[]>([])
+  const microAppData = ref<MicroAppDataItem[]>([])
 
   const loadMicroAppData = () => {
     const data = sessionStorage.getItem(STORAGE_KEYS.MICRO_APP_DATA)
     if (data) {
       try {
-        microAppData.value = JSON.parse(data)
+        microAppData.value = normalizeMicroAppData(JSON.parse(data))
       } catch (error) {
         console.error('[门户工作台] 数据解析失败:', error)
       }
@@ -670,32 +732,35 @@
 
   let timer: ReturnType<typeof setInterval> | null = null
 
+  const handleDataUpdate = (event: Event) => {
+    const { detail } = event as CustomEvent<unknown>
+    microAppData.value = normalizeMicroAppData(detail)
+  }
+
   onMounted(() => {
     updateDateTime()
     fetchWeather()
     loadMicroAppData()
 
     // 监听子应用数据更新事件
-    const handleDataUpdate = (event: CustomEvent) => {
-      microAppData.value = event.detail
-    }
     window.addEventListener(
       CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE,
-      handleDataUpdate as EventListener
+      handleDataUpdate
     )
 
     timer = setInterval(() => {
       updateDateTime()
       fetchWeather()
     }, 3600000)
+  })
 
-    onUnmounted(() => {
-      window.removeEventListener(
-        CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE,
-        handleDataUpdate as EventListener
-      )
-      if (timer) clearInterval(timer)
-    })
+  onUnmounted(() => {
+    window.removeEventListener(
+      CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE,
+      handleDataUpdate
+    )
+    weatherController?.abort()
+    if (timer) clearInterval(timer)
   })
 </script>
 

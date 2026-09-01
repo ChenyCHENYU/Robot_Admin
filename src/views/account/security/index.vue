@@ -19,6 +19,7 @@
             <NSwitch
               v-if="!item.action"
               v-model:value="item.enabled"
+              :loading="updatingSettingKeys.has(item.key)"
               @update:value="(val: boolean) => handleToggle(item.key, val)"
             />
             <NButton
@@ -147,6 +148,15 @@
     type LoginRecord,
     type ChangePasswordForm,
   } from './data'
+  import {
+    changeAccountPasswordApi,
+    getAccountLoginRecordsApi,
+    getAccountSecuritySettingsApi,
+    updateAccountSecuritySettingApi,
+  } from '@/api/account'
+  import { s_userStore } from '@/stores/user'
+  import { useLatestRequest } from '@/composables/useLatestRequest'
+  import { isMockDataMode } from '@/config/dataMode'
 
   defineOptions({ name: 'AccountSecurity' })
 
@@ -154,10 +164,12 @@
   const passwordFormRef = ref<FormInst | null>(null)
   const showPasswordModal = ref(false)
   const saving = ref(false)
+  const updatingSettingKeys = reactive(new Set<string>())
+  const userStore = s_userStore()
 
   // 安全配置项
-  const securitySettings = reactive<SecuritySetting[]>(
-    JSON.parse(JSON.stringify(SECURITY_SETTINGS))
+  const securitySettings = ref<SecuritySetting[]>(
+    isMockDataMode() ? SECURITY_SETTINGS.map(setting => ({ ...setting })) : []
   )
 
   // 密码表单
@@ -185,7 +197,9 @@
   }
 
   // 登录记录
-  const loginRecords = ref<LoginRecord[]>([...MOCK_LOGIN_RECORDS])
+  const loginRecords = ref<LoginRecord[]>(
+    isMockDataMode() ? [...MOCK_LOGIN_RECORDS] : []
+  )
 
   // 登录记录表格列
   const loginColumns: DataTableColumns<LoginRecord> = [
@@ -212,10 +226,21 @@
   ]
 
   /** 切换安全开关 */
-  const handleToggle = (key: string, val: boolean) => {
-    message.success(
-      `${key === 'twoFactor' ? '两步验证' : key}已${val ? '开启' : '关闭'}`
-    )
+  const handleToggle = async (key: string, val: boolean) => {
+    if (updatingSettingKeys.has(key)) return
+    updatingSettingKeys.add(key)
+    try {
+      await updateAccountSecuritySettingApi(key, val)
+      message.success(
+        `${key === 'twoFactor' ? '两步验证' : key}已${val ? '开启' : '关闭'}`
+      )
+    } catch {
+      const setting = securitySettings.value.find(item => item.key === key)
+      if (setting) setting.enabled = !val
+      message.error('安全设置更新失败，已恢复原状态')
+    } finally {
+      updatingSettingKeys.delete(key)
+    }
   }
 
   /** 操作按钮 */
@@ -227,18 +252,44 @@
   const handleChangePassword = async () => {
     try {
       await passwordFormRef.value?.validate()
-      saving.value = true
-      // TODO: 调用 API
-      await new Promise(resolve => setTimeout(resolve, 800))
+    } catch {
+      return
+    }
+
+    saving.value = true
+    try {
+      await changeAccountPasswordApi({
+        oldPassword: passwordForm.oldPassword,
+        newPassword: passwordForm.newPassword,
+      })
       message.success('密码修改成功，请重新登录')
       showPasswordModal.value = false
       Object.assign(passwordForm, DEFAULT_PASSWORD_FORM)
+      await userStore.logout()
     } catch {
-      // 表单验证失败
+      message.error('密码修改失败，请确认当前密码后重试')
     } finally {
       saving.value = false
     }
   }
+
+  const { run: runLatestRecordsRequest } = useLatestRequest()
+
+  onMounted(async () => {
+    try {
+      const response = await runLatestRecordsRequest(signal =>
+        Promise.all([
+          getAccountLoginRecordsApi(MOCK_LOGIN_RECORDS, signal),
+          getAccountSecuritySettingsApi(SECURITY_SETTINGS, signal),
+        ])
+      )
+      if (!response) return
+      loginRecords.value = response[0].data
+      securitySettings.value = response[1].data
+    } catch {
+      message.error('登录记录加载失败，请稍后重试')
+    }
+  })
 </script>
 
 <style scoped lang="scss">

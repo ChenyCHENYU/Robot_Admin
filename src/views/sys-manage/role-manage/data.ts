@@ -1,4 +1,12 @@
 import type { FormRules } from 'naive-ui/es'
+import {
+  deleteData,
+  getData,
+  postData,
+  putData,
+} from '@robot-admin/request-core'
+import { isMockDataMode } from '@/config/dataMode'
+import { delayWithSignal } from '@/utils/abort'
 
 // ==================== 类型定义 ====================
 export type RoleType = 'system' | 'custom' | 'temp'
@@ -53,7 +61,7 @@ export interface SearchForm {
 }
 
 export interface ApiResponse<T = unknown> {
-  code: string
+  code: string | number
   data: T
   msg: string
 }
@@ -61,6 +69,11 @@ export interface ApiResponse<T = unknown> {
 export interface PageResult<T> {
   list: T[]
   total: number
+  page: number
+  pageSize: number
+}
+
+export interface RoleListParams extends Partial<SearchForm> {
   page: number
   pageSize: number
 }
@@ -714,14 +727,16 @@ export const updateRoleInList = (
   })
 }
 
-const createMockApi = <T>(data: T, delay = 500): Promise<ApiResponse<T>> =>
-  new Promise<ApiResponse<T>>(resolve => {
-    setTimeout(() => {
-      resolve({ code: '0', data, msg: '成功' })
-    }, delay)
-  })
+const createMockApi = async <T>(
+  data: T,
+  delay = 500,
+  signal?: AbortSignal
+): Promise<ApiResponse<T>> => {
+  await delayWithSignal(delay, signal)
+  return { code: '0', data, msg: '成功' }
+}
 
-const filterRoles = (roles: RoleData[], params: any): RoleData[] => {
+const filterRoles = (roles: RoleData[], params: RoleListParams): RoleData[] => {
   let filtered = [...roles]
 
   if (params.keyword) {
@@ -783,24 +798,39 @@ const getUsersByRoleId = (roleId: string): RoleUserData[] => {
 
 // ==================== API 方法 ====================
 export const getRoleListApi = async (
-  params: any
+  params: RoleListParams,
+  signal?: AbortSignal
 ): Promise<ApiResponse<PageResult<RoleData>>> => {
+  if (!isMockDataMode()) {
+    const response = await getData<ApiResponse<PageResult<RoleData>>>(
+      '/sys/roles',
+      { params: { ...params }, signal }
+    )
+    MOCK_ROLE_DATA.splice(0, MOCK_ROLE_DATA.length, ...response.data.list)
+    return response
+  }
   const filteredRoles = filterRoles(MOCK_ROLE_DATA, params)
   const paginatedData = paginateData(
     filteredRoles,
     params.page,
     params.pageSize
   )
-  return createMockApi(paginatedData)
+  return createMockApi(paginatedData, 500, signal)
 }
 
 export const getPermissionListApi = async (): Promise<
   ApiResponse<PermissionData[]>
-> => createMockApi(MOCK_PERMISSION_DATA, 300)
+> =>
+  isMockDataMode()
+    ? createMockApi(MOCK_PERMISSION_DATA, 300)
+    : getData<ApiResponse<PermissionData[]>>('/sys/permissions/tree')
 
 export const getRoleDetailApi = async (
   id: string
 ): Promise<ApiResponse<RoleData>> => {
+  if (!isMockDataMode()) {
+    return getData<ApiResponse<RoleData>>(`/sys/roles/${id}`)
+  }
   const role = MOCK_ROLE_DATA.find(r => r.id === id)
   if (!role) {
     return Promise.reject(new Error('角色不存在'))
@@ -811,17 +841,81 @@ export const getRoleDetailApi = async (
 export const getRoleUsersApi = async (
   roleId: string
 ): Promise<ApiResponse<RoleUserData[]>> => {
+  if (!isMockDataMode()) {
+    return getData<ApiResponse<RoleUserData[]>>(`/sys/roles/${roleId}/users`)
+  }
   const users = getUsersByRoleId(roleId)
   return createMockApi(users, 300)
 }
 
+export const getRoleDataScopesApi = (
+  roleId: string,
+  signal?: AbortSignal
+): Promise<ApiResponse<RoleDataScope[]>> =>
+  isMockDataMode()
+    ? createMockApi(MOCK_ROLE_DATA_SCOPES[roleId] || [], 250, signal)
+    : getData<ApiResponse<RoleDataScope[]>>(
+        `/sys/roles/${roleId}/data-scopes`,
+        { signal }
+      )
+
+export const getRoleTempAuthorizationsApi = (
+  roleId: string,
+  signal?: AbortSignal
+): Promise<ApiResponse<RoleTempAuth[]>> =>
+  isMockDataMode()
+    ? createMockApi(getRoleTempAuths(roleId), 250, signal)
+    : getData<ApiResponse<RoleTempAuth[]>>(
+        `/sys/roles/${roleId}/temp-authorizations`,
+        { signal }
+      )
+
+export const createRoleApi = async (data: RoleFormData): Promise<void> => {
+  if (isMockDataMode()) {
+    await createMockApi(undefined, 300)
+    return
+  }
+  await postData('/sys/roles', data)
+}
+
+export const updateRoleApi = async (
+  id: string,
+  data: Partial<RoleData> | RoleFormData
+): Promise<void> => {
+  if (isMockDataMode()) {
+    await createMockApi(undefined, 300)
+    return
+  }
+  await putData(`/sys/roles/${id}`, data)
+}
+
+export const deleteRoleApi = async (id: string): Promise<void> => {
+  if (isMockDataMode()) {
+    await createMockApi(undefined, 250)
+    return
+  }
+  await deleteData(`/sys/roles/${id}`)
+}
+
+export const updateRoleStatusApi = async (
+  id: string,
+  status: number
+): Promise<void> => updateRoleApi(id, { status })
+
+export const updateRolePermissionsApi = async (
+  id: string,
+  permissionIds: string[]
+): Promise<void> => {
+  if (isMockDataMode()) {
+    await createMockApi(undefined, 300)
+    return
+  }
+  await putData(`/sys/roles/${id}/permissions`, { permissionIds })
+}
+
 // ==================== 权限预览相关类型 ====================
 export type DataScopeType =
-  | 'all'
-  | 'department'
-  | 'department_below'
-  | 'self'
-  | 'custom'
+  'all' | 'department' | 'department_below' | 'self' | 'custom'
 
 export interface RoleDataScope {
   module: string

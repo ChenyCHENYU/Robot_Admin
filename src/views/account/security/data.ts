@@ -1,4 +1,5 @@
 import type { FormRules } from 'naive-ui/es'
+import type { AccountLoginRecord, AccountSecuritySetting } from '@/api/account'
 
 // ==================== 类型定义 ====================
 export interface ChangePasswordForm {
@@ -7,24 +8,9 @@ export interface ChangePasswordForm {
   confirmPassword: string
 }
 
-export interface LoginRecord {
-  id: string
-  time: string
-  ip: string
-  location: string
-  device: string
-  browser: string
-  status: 'success' | 'failed'
-}
+export type LoginRecord = AccountLoginRecord
 
-export interface SecuritySetting {
-  key: string
-  label: string
-  description: string
-  icon: string
-  enabled: boolean
-  action?: string
-}
+export type SecuritySetting = AccountSecuritySetting
 
 // ==================== 表单验证规则 ====================
 export const PASSWORD_FORM_RULES: FormRules = {

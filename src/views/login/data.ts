@@ -37,7 +37,7 @@ export const SOCIAL_PROVIDERS: SocialProvider[] = [
 // ================= 欢迎语配置（工厂函数，接受 i18n 翻译函数） =================
 export const createWelcomeConfig = (
   t: (key: string, fallback: string) => string
-): WelcomeConfig => ({
+): WelcomeConfig<LoginResponse> => ({
   timeSlots: [
     {
       range: [6, 12] as const,

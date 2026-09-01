@@ -1,4 +1,5 @@
 import type { FormRules } from 'naive-ui/es'
+import type { AccountProfile } from '@/api/account'
 
 // ==================== 类型定义 ====================
 export interface ProfileFormData {
@@ -10,19 +11,7 @@ export interface ProfileFormData {
   avatar: string
 }
 
-export interface ProfileInfo {
-  username: string
-  nickname: string
-  email: string
-  phone: string
-  bio: string
-  avatar: string
-  role: string
-  department: string
-  createTime: string
-  lastLoginTime: string
-  lastLoginIp: string
-}
+export type ProfileInfo = AccountProfile
 
 // ==================== 表单验证规则 ====================
 export const PROFILE_FORM_RULES: FormRules = {
@@ -66,6 +55,20 @@ export const MOCK_PROFILE: ProfileInfo = {
   createTime: '2025-01-15 09:30:00',
   lastLoginTime: '2026-03-04 08:15:22',
   lastLoginIp: '192.168.1.100',
+}
+
+export const EMPTY_PROFILE: ProfileInfo = {
+  username: '',
+  nickname: '',
+  email: '',
+  phone: '',
+  bio: '',
+  avatar: '',
+  role: '',
+  department: '',
+  createTime: '',
+  lastLoginTime: '',
+  lastLoginIp: '',
 }
 
 // ==================== 信息展示配置 ====================

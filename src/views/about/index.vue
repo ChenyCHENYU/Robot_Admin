@@ -47,10 +47,12 @@
 
     <!-- 卡片区 -->
     <div class="cards-grid">
-      <div
+      <button
         v-for="project in filteredProjects"
         :key="project.bagName"
+        type="button"
         class="card"
+        :aria-label="`查看 ${project.name} 详情`"
         @click="openModal(project)"
       >
         <div class="icon">
@@ -76,7 +78,7 @@
         >
           {{ project.version }}
         </NTag>
-      </div>
+      </button>
     </div>
 
     <!-- 表格区域 -->

@@ -193,7 +193,9 @@ bun run lint           # 代码检查和修复
 bun run lint:check     # 只检查，不修改文件
 bun run format         # 代码格式化
 bun run test           # 单元测试
-bun run verify         # Lint + 类型 + 测试 + 生产构建
+bun run verify         # 双 Lint + 类型 + 测试 + 生产构建 + 体积预算
+bun run check:bundle   # 校验最近一次生产构建的首屏体积预算
+bun run security:audit # 检查依赖安全公告
 
 # 类型检查
 bun run type-watch     # 监听模式类型检查
@@ -209,9 +211,9 @@ bun run commit         # 规范化提交（git cz）
 
 ### 🔐 认证 Mock 与后端切换
 
-项目在没有后端工程时默认使用闭环 Mock 认证，登录、令牌刷新和用户信息的响应结构与远端接口保持一致。任意非空用户名和密码均可登录；Mock 令牌为随机不透明字符串，不包含明文凭据。
+项目在开发、测试环境默认使用闭环 Mock 认证和业务数据，登录、令牌刷新和用户信息的响应结构与远端接口保持一致。任意非空用户名和密码均可登录；Mock 令牌为随机不透明字符串，不包含明文凭据。
 
-接入后端时只需在环境配置中设置 `VITE_AUTH_MODE=remote`，并通过 `VITE_API_BASE` 指定接口地址，无需修改页面和状态管理代码。认证契约位于 `src/api/auth.contract.ts`，Mock 实现位于 `src/api/auth.mock.ts`。
+接入后端时设置 `VITE_AUTH_MODE=remote`、`VITE_DATA_MODE=remote`，并通过 `VITE_API_BASE` 指定接口地址，无需修改页面和状态管理代码。生产与预发构建会拒绝 Mock 模式，防止演示数据泄漏到真实业务。认证契约位于 `src/api/auth.contract.ts`，账号和权限治理等远端接口约定位于 `src/api/`；完整环境及接口说明见 [`docs/production-readiness.md`](docs/production-readiness.md)。
 
 ---
 
@@ -224,16 +226,16 @@ bun run commit         # 规范化提交（git cz）
 
 **🎭 前端核心**
 
-- **Vue 3.5.13** - 🔥 最新稳定版，Composition API 丝滑体验
+- **Vue 3.5.30** - 🔥 Composition API 丝滑体验
 - **TypeScript 5.8** - 🛡️ 类型安全，智能提示
-- **Naive UI 2.41.0** - 🎨 颜值与性能并存的组件库
+- **Naive UI 2.44.1** - 🎨 颜值与性能并存的组件库
 - **@robot-admin/naive-ui-components** - 🧩 51+ 业务组件库，按需自动导入
-- **UnoCSS 66.3.3** - ⚡ 原子化CSS，按需生成，体积极小
+- **UnoCSS 66.6.6** - ⚡ 原子化CSS，按需生成，体积极小
 
 **⚙️ 构建工具**
 
 - **Bun 1.3.x** - 🚀 性能怪兽，安装速度提升10倍
-- **Vite 8.0.3** - ⚡ Rolldown 统一构建引擎，构建速度提升 10-30x
+- **Vite 8.2.2** - ⚡ Rolldown 统一构建引擎，构建速度提升 10-30x
 - **Sass 1.87** - 🎨 成熟的CSS预处理器
 
 **🔧 开发工具**
@@ -744,7 +746,8 @@ location / {
 
 ### 🚀 近期计划 (2026 Q2)
 
-- [ ] 📊 性能监控与错误追踪集成
+- [x] 📊 可配置的脱敏错误上报与构建体积回归门禁
+- [ ] 📈 Web Vitals 真实用户性能监控与可观测平台接入
 - [ ] 🎨 可视化低代码页面模板
 - [ ] 🏢 多租户系统支持
 - [x] 🔌 Robot CLI 脚手架工具

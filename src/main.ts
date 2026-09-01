@@ -30,7 +30,6 @@ import { setupDirectives } from '@robot-admin/directives' // 👈 直接从包�
 import { setupStore } from '@/plugins/store'
 import { setupNaiveUI } from '@/plugins/naive-ui-plugin'
 import { PassiveScrollPlugin } from '@/plugins/passive-scroll'
-import { setupHighlight } from '@/plugins/highlight'
 import { setupAnalytics } from '@/plugins/analytics'
 import { setupRequestCore } from '@/plugins/request-core'
 import { setupLayoutSystem } from '@/plugins/layout'
@@ -64,7 +63,6 @@ async function bootstrap() {
   app.use(router)
   setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）
   setupNaiveUI(app)
-  setupHighlight(app)
   setupDirectives(app)
   setupAnalytics(app)
 

@@ -19,6 +19,7 @@ export * from './file-utils' // 🆕 文件处理工具包
 
 export {
   setupHighlight,
+  initializeHighlight,
   useHighlight,
   defaultHighlightOptions,
   type HighlightPluginOptions,

@@ -126,13 +126,13 @@
             <!-- 用户表格 -->
             <C_Table
               ref="tableRef"
-              :columns="userColumns as any"
+              :columns="userColumns"
               :data="userList"
               :loading="loading"
-              :row-key="(row: any) => row.id"
+              :row-key="rowKey"
               :row-class-name="getRowClassName"
               :config="{
-                actions: tableActions as any,
+                actions: tableActions,
                 selection: {
                   enabled: true,
                   defaultCheckedKeys: selectedUsers,
@@ -410,6 +410,8 @@
 </template>
 
 <script setup lang="ts">
+  import { useLatestRequest } from '@/composables/useLatestRequest'
+  import type { Component } from 'vue'
   import {
     type FormInst,
     NButton,
@@ -432,7 +434,7 @@
     type ResetPasswordForm,
     type UserType,
     USER_FORM_RULES,
-    RESET_PASSWORD_RULES,
+    createResetPasswordRules,
     DEFAULT_USER_FORM_DATA,
     DEFAULT_RESET_PASSWORD_FORM,
     UI_CONFIG,
@@ -441,6 +443,11 @@
     getUserListApi,
     getDeptListApi,
     getUserRolesApi,
+    createUserApi,
+    updateUserApi,
+    deleteUserApi,
+    updateUserStatusApi,
+    resetUserPasswordApi,
     MOCK_USER_DATA,
     getRoleNameById,
     getDeptNameById,
@@ -454,7 +461,7 @@
   const dialog = useDialog()
 
   // ==================== 响应式数据 ====================
-  const loading = ref(false)
+  const { loading, run: runLatestUserRequest } = useLatestRequest()
   const showModal = ref(false)
   const showUserDetail = ref(false)
   const showResetPasswordModal = ref(false)
@@ -479,7 +486,9 @@
   const resetPasswordForm = reactive<ResetPasswordForm>({
     ...DEFAULT_RESET_PASSWORD_FORM,
   })
-  const resetPasswordRules = RESET_PASSWORD_RULES
+  const resetPasswordRules = createResetPasswordRules(
+    () => resetPasswordForm.newPassword
+  )
 
   const searchForm = reactive<SearchForm>({
     keyword: '',
@@ -569,13 +578,10 @@
   // ==================== 辅助函数 ====================
   const updateUserInList = (userId: string, updates: Partial<UserData>) => {
     // 更新所有相关的数据源
-    const updateTargets = [
-      { data: MOCK_USER_DATA, key: 'id' },
-      { data: userList, key: 'id' },
-    ]
+    const updateTargets: UserData[][] = [MOCK_USER_DATA, userList]
 
-    updateTargets.forEach(({ data, key }) => {
-      const index = data.findIndex((item: any) => item[key] === userId)
+    updateTargets.forEach(data => {
+      const index = data.findIndex(item => item.id === userId)
       if (index !== -1) {
         data[index] = { ...data[index], ...updates }
       }
@@ -589,26 +595,37 @@
 
   const getRowClassName = (row: UserData) =>
     row.status === 0 ? 'disabled-row' : ''
+  const rowKey = (row: UserData) => row.id
 
   // ==================== 渲染函数 ====================
   const createTagRenderer =
-    (getConfig: (value: any) => any, valueKey: string) => (row: UserData) =>
-      h(
+    <T,>(
+      getConfig: (value: T) => {
+        type: 'default' | 'info' | 'success' | 'warning' | 'error'
+        icon: string
+        text: string
+      },
+      getValue: (row: UserData) => T
+    ) =>
+    (row: UserData) => {
+      const config = getConfig(getValue(row))
+      return h(
         NTag,
         {
-          type: getConfig(row[valueKey as keyof UserData]).type,
+          type: config.type,
           size: 'small',
           class: { 'disabled-tag': row.status === 0 },
         },
         {
           icon: () =>
             h(C_Icon, {
-              name: getConfig(row[valueKey as keyof UserData]).icon,
+              name: config.icon,
               size: 10,
             }),
-          default: () => getConfig(row[valueKey as keyof UserData]).text,
+          default: () => config.text,
         }
       )
+    }
 
   const createTextRenderer =
     (key: keyof UserData, fallback = '-') =>
@@ -786,7 +803,7 @@
       title: TABLE_COLUMN_CONFIG.userType.title,
       key: 'userType',
       width: TABLE_COLUMN_CONFIG.userType.width,
-      render: createTagRenderer(getUserTypeConfig, 'userType'),
+      render: createTagRenderer(getUserTypeConfig, row => row.userType),
     },
     {
       title: TABLE_COLUMN_CONFIG.username.title,
@@ -838,7 +855,7 @@
       title: TABLE_COLUMN_CONFIG.status.title,
       key: 'status',
       width: TABLE_COLUMN_CONFIG.status.width,
-      render: createTagRenderer(getUserStatusConfig, 'status'),
+      render: createTagRenderer(getUserStatusConfig, row => row.status),
     },
     {
       title: TABLE_COLUMN_CONFIG.createTime.title,
@@ -942,8 +959,8 @@
     key: keyof UserFormData
     label: string
     path: string
-    component: any
-    props: any
+    component: Component
+    props: Record<string, unknown>
     condition: boolean
   }> => [
     {
@@ -1083,7 +1100,7 @@
   const useBatchOperations = () => {
     const handleBatchOperation = (
       operation: 'delete' | 'toggle',
-      actionFn: (ids: string[]) => void
+      actionFn: (ids: string[]) => Promise<void> | void
     ) => {
       if (selectedUsers.value.length === 0) {
         message.warning('请先选择用户')
@@ -1100,7 +1117,7 @@
         negativeText: '取消',
         onPositiveClick: async () => {
           try {
-            actionFn(selectedUsers.value)
+            await actionFn(selectedUsers.value)
             message.success(
               `批量${operation === 'delete' ? '删除' : '操作'}成功`
             )
@@ -1113,7 +1130,8 @@
       })
     }
 
-    const batchDeleteUsers = (ids: string[]) => {
+    const batchDeleteUsers = async (ids: string[]) => {
+      await Promise.all(ids.map(deleteUserApi))
       ids.forEach(id => {
         const userIndex = MOCK_USER_DATA.findIndex(user => user.id === id)
         if (userIndex !== -1) {
@@ -1122,7 +1140,13 @@
       })
     }
 
-    const batchToggleUsers = (ids: string[]) => {
+    const batchToggleUsers = async (ids: string[]) => {
+      await Promise.all(
+        ids.map(async id => {
+          const user = MOCK_USER_DATA.find(item => item.id === id)
+          if (user) await updateUserStatusApi(id, user.status === 1 ? 0 : 1)
+        })
+      )
       ids.forEach(id => {
         const user = MOCK_USER_DATA.find(u => u.id === id)
         if (user) {
@@ -1207,6 +1231,7 @@
       }
 
       const newUser = buildUserData(userData)
+      await createUserApi(userData)
       MOCK_USER_DATA.push(newUser)
       message.success('添加成功')
       return true
@@ -1232,6 +1257,7 @@
       const existingUser = MOCK_USER_DATA[userIndex]
       const updatedUser = buildUserData(userData, existingUser)
 
+      await updateUserApi(userData.id!, userData)
       MOCK_USER_DATA[userIndex] = updatedUser
 
       if (currentUser.value?.id === userData.id) {
@@ -1251,7 +1277,7 @@
   const { handleAddUserData, handleUpdateUserData } = useUserOperations()
 
   // ==================== 事件处理函数 ====================
-  const handleDeptSelect = (node: any, keys: (string | number)[]) => {
+  const handleDeptSelect = (_node: unknown, keys: (string | number)[]) => {
     selectedDeptKeys.value = keys.map(k => String(k))
     searchForm.deptId = keys.length > 0 ? String(keys[0]) : null
     handleSearch()
@@ -1262,8 +1288,7 @@
     loadUsers()
   }
 
-  const handlePaginationChange = async (...args: any[]) => {
-    const [page, pageSize] = args
+  const handlePaginationChange = async (page: number, pageSize: number) => {
     pagination.page = page
     pagination.pageSize = pageSize
     await loadUsers()
@@ -1306,6 +1331,7 @@
 
   const handleAddUserModal = (deptId?: string) => {
     modalMode.value = 'add'
+    delete formData.id
     Object.assign(formData, DEFAULT_USER_FORM_DATA)
     if (deptId) {
       formData.deptId = deptId
@@ -1350,6 +1376,7 @@
     const statusText = newStatus === 1 ? '启用' : '禁用'
 
     try {
+      await updateUserStatusApi(user.id, newStatus)
       updateUserInList(user.id, {
         status: newStatus,
         updateTime: new Date().toLocaleString(),
@@ -1363,6 +1390,7 @@
 
   const handleDeleteUser = async (id: string) => {
     try {
+      await deleteUserApi(id)
       const userIndex = MOCK_USER_DATA.findIndex(user => user.id === id)
       if (userIndex !== -1) {
         MOCK_USER_DATA.splice(userIndex, 1)
@@ -1387,8 +1415,8 @@
   const handleResetPassword = async (): Promise<boolean> => {
     try {
       await resetPasswordFormRef.value?.validate()
-      console.log(
-        '重置密码:',
+      if (!currentResetUserId.value) throw new Error('未选择需要重置的用户')
+      await resetUserPasswordApi(
         currentResetUserId.value,
         resetPasswordForm.newPassword
       )
@@ -1424,26 +1452,27 @@
 
   const handleCancelModal = () => {
     showModal.value = false
+    delete formData.id
     Object.assign(formData, DEFAULT_USER_FORM_DATA)
   }
 
   // ==================== 数据加载 ====================
   const loadUsers = async () => {
-    loading.value = true
     try {
       const params = {
         ...searchForm,
         page: pagination.page,
         pageSize: pagination.pageSize,
       }
-      const response = await getUserListApi(params)
+      const response = await runLatestUserRequest(signal =>
+        getUserListApi(params, signal)
+      )
+      if (!response) return
       userList.length = 0
       userList.push(...response.data.list)
       pagination.itemCount = response.data.total
     } catch {
       message.error('加载用户列表失败')
-    } finally {
-      loading.value = false
     }
   }
 

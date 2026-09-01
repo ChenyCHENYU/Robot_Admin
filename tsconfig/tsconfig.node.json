@@ -8,7 +8,8 @@
     "../playwright.config.*", // Playwright 配置文件
     "../eslint.config.*", // ESLint 配置文件
     "../src/config/vite/**/*", // Vite 相关配置文件
-    "../mcp/**/*" // MCP Server（Bun 运行时）
+    "../mcp/**/*", // MCP Server（Bun 运行时）
+    "../scripts/**/*.ts" // 构建与质量检查脚本
   ],
   "compilerOptions": {
     "noEmit": true, // 不生成输出文件

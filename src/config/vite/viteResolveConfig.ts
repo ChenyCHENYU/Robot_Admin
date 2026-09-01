@@ -39,7 +39,17 @@ export default {
 
   // 本地源码包从仓库外部加载时，强制复用应用侧的单例运行时与 UI 上下文。
   // 既避免 Vue/Naive UI 双实例，也减少 dev:components 构建的重复模块。
-  dedupe: ['vue', 'vue-router', 'pinia', 'naive-ui', '@iconify/vue'],
+  dedupe: [
+    'vue',
+    'vue-router',
+    'pinia',
+    'naive-ui',
+    '@iconify/vue',
+    // 组件源码模式与应用的甘特图演示都会引用 VisActor；统一解析到应用侧，
+    // 避免两个仓库的 node_modules 各打入一份约 2 MiB 的渲染运行时。
+    '@visactor/vtable',
+    '@visactor/vtable-gantt',
+  ],
 
   // ⚡ 扩展名解析优化
   // .ts 在 .vue 之前：确保目录导入时 index.ts（barrel 文件）优先于 index.vue（SFC）

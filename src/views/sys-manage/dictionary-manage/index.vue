@@ -53,7 +53,7 @@
               :show-toolbar="false"
               :status-configs="dictStatusConfigs"
               :icon-config="dictIconConfig"
-              :actions="dictActions as any"
+              :actions="dictActions"
               :default-expanded-keys="expandedKeys"
               :default-selected-keys="selectedKeys"
               @node-select="handleNodeSelect"
@@ -562,11 +562,15 @@
 
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
-  import { C_Tree, type ActionItem } from '@robot-admin/naive-ui-components'
+  import {
+    C_Tree,
+    type ActionConfig,
+    type ActionItem,
+    type TreeNodeData as ComponentTreeNodeData,
+  } from '@robot-admin/naive-ui-components'
   import {
     type DictData,
     type DictFormData,
-    type TreeNodeData,
     DICT_FORM_RULES,
     DICT_STATUS_CONFIGS,
     DEFAULT_DICT_FORM_DATA,
@@ -611,13 +615,13 @@
     colorMap: { type: '#1890ff', item: '#52c41a' },
   }))
 
-  const dictActions = computed(() => [
+  const dictActions = computed<ActionConfig[]>(() => [
     {
       key: 'add',
       text: '新增字典项',
       icon: 'mdi:plus',
       type: 'primary',
-      show: (node: TreeNodeData) => {
+      show: (node: ComponentTreeNodeData) => {
         const dictNode = node as DictData
         return dictNode.type === 'type' && dictNode.status === 1
       },
@@ -799,11 +803,11 @@
   }
 
   // 事件处理
-  const handleNodeSelect = (node: any, keys: (string | number)[]) => {
+  const handleNodeSelect = (_node: unknown, keys: (string | number)[]) => {
     selectedKeys.value = keys.map(k => String(k))
   }
 
-  const handleNodeAction = (action: string, node: any) => {
+  const handleNodeAction = (action: string, node: unknown) => {
     const dictNode = node as DictData
 
     switch (action) {
@@ -822,7 +826,7 @@
     }
   }
 
-  const handleAddFromTree = (parentNode?: any) => {
+  const handleAddFromTree = (parentNode?: unknown) => {
     const dictNode = parentNode as DictData | undefined
     if (dictNode?.type === 'type') {
       handleAddDictItem(dictNode.id)
@@ -850,6 +854,7 @@
 
   const handleAddDict = (parentId?: string) => {
     modalMode.value = 'add'
+    delete formData.id
     Object.assign(formData, DEFAULT_DICT_FORM_DATA)
     if (parentId) {
       formData.parentId = parentId
@@ -860,6 +865,7 @@
 
   const handleAddDictItem = (parentId?: string) => {
     modalMode.value = 'add'
+    delete formData.id
     Object.assign(formData, DEFAULT_DICT_FORM_DATA)
     formData.type = 'item'
     if (parentId) {
@@ -942,11 +948,7 @@
       } else {
         await updateDictApi(formData)
         message.success('修改成功')
-
-        // 编辑模式：直接更新本地状态
-        if (formData.id) {
-          updateDictStatus(dictList, formData.id, formData.status)
-        }
+        await loadDicts()
       }
 
       showModal.value = false
@@ -960,6 +962,7 @@
 
   const handleCancelModal = () => {
     showModal.value = false
+    delete formData.id
     Object.assign(formData, DEFAULT_DICT_FORM_DATA)
   }
 
