@@ -108,6 +108,21 @@ const validateErrorReportEndpoint = (
   }
 }
 
+const validateAmapServiceHost = (
+  serviceHost: string | undefined,
+  errors: string[]
+): void => {
+  const value = serviceHost?.trim()
+  if (!value) return
+  if (
+    !value.startsWith('/') ||
+    value.startsWith('//') ||
+    !value.endsWith('/_AMapService')
+  ) {
+    errors.push('VITE_AMAP_SERVICE_HOST 必须是同源路径并以 /_AMapService 结尾')
+  }
+}
+
 const validateBooleanVariables = (
   env: Record<string, string | undefined>,
   errors: string[]
@@ -161,6 +176,7 @@ export function validateViteEnv(
   validateBooleanVariables(env, errors)
   validateI18nCredentials(env, errors)
   validateErrorReportEndpoint(env.VITE_ERROR_REPORT_ENDPOINT, errors)
+  validateAmapServiceHost(env.VITE_AMAP_SERVICE_HOST, errors)
 
   if (errors.length > 0) {
     throw new Error(`环境配置校验失败:\n- ${errors.join('\n- ')}`)

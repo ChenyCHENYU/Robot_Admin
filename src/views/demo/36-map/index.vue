@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-12-02 11:44:00
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-12-02 14:23:10
+ * @LastEditTime: 2026-09-02
  * @FilePath: \Robot_Admin\src\views\demo\36-map\index.vue
  * @Description: 地图演示页面
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -31,8 +31,8 @@
       </p>
       <div class="examples-grid">
         <div
-          v-for="(example, index) in MAP_EXAMPLES"
-          :key="index"
+          v-for="example in MAP_EXAMPLES"
+          :key="example.title"
           class="example-card"
         >
           <h3 class="example-title">{{ example.title }}</h3>
@@ -44,8 +44,10 @@
               :zoom="example.zoom"
               :markers="example.markers"
               :map-type="example.mapType"
-              @ready="handleMapReady"
+              :aria-label="`${example.title}地图`"
+              fit-markers-on-init
               @marker-click="handleMarkerClick"
+              @error="handleMapError"
             />
           </div>
         </div>
@@ -95,6 +97,27 @@
             >
               申请Key
             </NButton>
+          </div>
+        </div>
+
+        <div
+          class="control-row"
+          v-if="mapType === 'amap'"
+        >
+          <span class="control-label">安全配置:</span>
+          <div class="control-content">
+            <template v-if="AMAP_SERVICE_HOST">
+              <NTag type="success">服务端代理</NTag>
+              <code>{{ AMAP_SERVICE_HOST }}</code>
+            </template>
+            <NInput
+              v-else
+              v-model:value="amapSecurityCode"
+              :placeholder="AMAP_CONFIG.securityCodePlaceholder"
+              style="width: 360px"
+              type="password"
+              show-password-on="click"
+            />
           </div>
         </div>
 
@@ -183,14 +206,18 @@
         <h3 class="preview-title">地图预览效果</h3>
         <div class="preview-map">
           <C_Map
-            :height="mapHeight + 'px'"
-            :center="[centerLat, centerLng]"
+            ref="previewMapRef"
+            :height="mapHeightStyle"
+            :center="mapCenter"
             :zoom="zoom"
             :markers="markers"
             :map-type="mapType"
             :amap-key="mapType === 'amap' ? amapApiKey : ''"
+            :amap-security-config="amapSecurityConfig"
+            aria-label="实时预览地图"
             @ready="handlePreviewReady"
             @marker-click="handlePreviewMarkerClick"
+            @error="handleMapError"
           />
         </div>
         <div class="preview-info">
@@ -211,6 +238,12 @@
           <div class="info-item">
             <span class="info-label">标记数量:</span>
             <span class="info-value">{{ markers.length }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">加载状态:</span>
+            <span class="info-value">{{
+              previewReady ? '已就绪' : '加载中'
+            }}</span>
           </div>
         </div>
       </div>
@@ -235,60 +268,76 @@
 </template>
 
 <script setup lang="ts">
+  import { MAP_EXAMPLES, CONFIG_OPTIONS, AMAP_CONFIG } from './data'
   import {
     MAP_TYPES,
-    MAP_EXAMPLES,
-    CONFIG_OPTIONS,
-    AMAP_CONFIG,
+    type AMapSecurityConfig,
+    type MapCoordinate,
+    type MapExpose,
+    type MapMarker,
     type MapType,
-  } from './data'
-  import type { MapMarker } from '@robot-admin/naive-ui-components'
+  } from '@robot-admin/naive-ui-components/C_Map'
+  import { AMAP_SERVICE_HOST, MAP_KEY } from '@/constant'
 
   const message = useMessage()
 
   /** 标记管理按钮 */
   const markerActions = computed(() => [
     { label: '添加标记', onClick: addRandomMarker },
+    { label: '适配全部标记', onClick: fitPreviewMarkers },
     { label: '清除标记', type: 'warning' as const, onClick: clearMarkers },
   ])
 
   // 状态管理
   const mapType = ref<MapType>('osm')
-  const amapApiKey = ref('')
+  const amapApiKey = ref(MAP_KEY)
+  const amapSecurityCode = ref('')
   const centerLat = ref(39.9042)
   const centerLng = ref(116.4074)
   const zoom = ref(CONFIG_OPTIONS.zoom.default)
   const mapHeight = ref(CONFIG_OPTIONS.height.default)
   const markers = ref<MapMarker[]>([])
+  const previewMapRef = ref<MapExpose | null>(null)
+  const previewReady = ref(false)
 
   // 计算属性
+  const mapCenter = computed<MapCoordinate>(() => [
+    centerLat.value,
+    centerLng.value,
+  ])
+  const mapHeightStyle = computed(() => `${mapHeight.value}px`)
+  const amapSecurityConfig = computed<AMapSecurityConfig | undefined>(() => {
+    if (mapType.value !== 'amap') return undefined
+    if (AMAP_SERVICE_HOST) return { serviceHost: AMAP_SERVICE_HOST }
+    const securityJsCode = amapSecurityCode.value.trim()
+    return securityJsCode ? { securityJsCode } : undefined
+  })
+
   const getMapTypeLabel = () => {
     const type = MAP_TYPES.find(t => t.value === mapType.value)
     return type?.label || mapType.value
   }
 
-  // 处理地图就绪
-  const handleMapReady = (map: any) => {
-    console.log('示例地图就绪:', map)
-  }
-
-  const handlePreviewReady = (map: any) => {
-    console.log('预览地图就绪:', map)
+  const handlePreviewReady = (): void => {
+    previewReady.value = true
   }
 
   // 处理标记点击
-  const handleMarkerClick = (marker: any, event: any) => {
-    console.log('标记点击:', marker, event)
+  const handleMarkerClick = (marker: MapMarker): void => {
     if (marker.popup) {
       message.info(`点击了标记: ${marker.popup}`)
     }
   }
 
-  const handlePreviewMarkerClick = (marker: any, event: any) => {
-    console.log('预览标记点击:', marker, event)
+  const handlePreviewMarkerClick = (marker: MapMarker): void => {
     if (marker.popup) {
       message.info(`预览标记: ${marker.popup}`)
     }
+  }
+
+  const handleMapError = (error: Error): void => {
+    previewReady.value = false
+    message.error(error.message)
   }
 
   // 添加随机标记
@@ -297,8 +346,13 @@
     const lng = centerLng.value + (Math.random() - 0.5) * 0.1
     const popup = `随机标记 ${markers.value.length + 1}`
 
-    markers.value.push({ lat, lng, popup })
+    markers.value.push({ id: crypto.randomUUID(), lat, lng, popup })
     message.success(`添加了标记: ${popup}`)
+  }
+
+  const fitPreviewMarkers = (): void => {
+    if (previewMapRef.value?.fitToMarkers({ maxZoom: 14 })) return
+    message.warning('请先添加至少一个有效标记')
   }
 
   // 清除所有标记
@@ -327,8 +381,13 @@
 
   // 打开高德地图文档
   const openAmapDocs = () => {
-    window.open(AMAP_CONFIG.note, '_blank')
+    window.open(AMAP_CONFIG.docsUrl, '_blank', 'noopener,noreferrer')
   }
+
+  watch(
+    [mapType, amapApiKey, amapSecurityCode],
+    () => (previewReady.value = false)
+  )
 </script>
 
 <style lang="scss" scoped>

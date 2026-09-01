@@ -13,7 +13,7 @@
         "@robot-admin/form-validate": "2.0.0",
         "@robot-admin/git-standards": "1.0.4",
         "@robot-admin/layout": "2.3.2",
-        "@robot-admin/naive-ui-components": "0.11.4",
+        "@robot-admin/naive-ui-components": "0.11.6",
         "@robot-admin/request-core": "0.2.0",
         "@robot-admin/theme": "0.4.0",
         "@splinetool/runtime": "^1.12.68",
@@ -726,7 +726,7 @@
 
     "@robot-admin/layout": ["@robot-admin/layout@2.3.2", "", { "peerDependencies": { "@robot-admin/theme": "^0.3.0 || ^0.4.0", "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0", "vue-router": "^4.0.0" } }, "sha512-pB2Qx+ExKe313TYhc4wze3sClukO9hUftbetg3j+IaF0I1zFtF4ylwWeZkdBWvoKDiq/Dxde4QRBQ2+hjuEMGA=="],
 
-    "@robot-admin/naive-ui-components": ["@robot-admin/naive-ui-components@0.11.4", "", { "dependencies": { "@antv/x6": "^2.19.2", "@chenfengyuan/vue-barcode": "^2.0.2", "@fullcalendar/core": "^6.1.21", "@fullcalendar/daygrid": "^6.1.21", "@fullcalendar/interaction": "^6.1.21", "@fullcalendar/list": "^6.1.21", "@fullcalendar/vue3": "^6.1.21", "@iconify/vue": "^5.0.1", "@visactor/vtable": "^1.26.7", "@visactor/vtable-gantt": "^1.26.7", "@vue-flow/core": "^1.48.2", "@wangeditor-next/editor": "6.2.0", "@wangeditor-next/editor-for-vue": "6.2.0", "dompurify": "^3.4.14", "driver.js": "^1.8.0", "highlight.js": "^11.12.0", "html2canvas": "^1.4.1", "leaflet": "^1.9.4", "mammoth": "^1.12.2", "md-editor-v3": "6.5.6", "print-js": "^1.6.0", "qrcode": "^1.5.4", "spark-md5": "^3.0.2", "vue-cropper": "^1.1.4", "vue-draggable-plus": "^0.6.1", "vue3-puzzle-vcode": "^1.1.7", "xgplayer": "3.0.26", "xgplayer-hls": "3.0.26", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "peerDependencies": { "naive-ui": "^2.35.0", "sortablejs": "^1.15.7", "vue": "^3.5.0", "vue-router": "^4.6.4" }, "optionalPeers": ["sortablejs", "vue-router"] }, "sha512-eafcqUXumYYcXOc11pg1ZRlHVuO8deC/nsuWnGoglsrWu5CuivoGbzYoj/PyZ3O4/GM9mg5YPTfG9RaXjqriRA=="],
+    "@robot-admin/naive-ui-components": ["@robot-admin/naive-ui-components@0.11.6", "", { "dependencies": { "@antv/x6": "^2.19.2", "@chenfengyuan/vue-barcode": "^2.0.2", "@fullcalendar/core": "^6.1.21", "@fullcalendar/daygrid": "^6.1.21", "@fullcalendar/interaction": "^6.1.21", "@fullcalendar/list": "^6.1.21", "@fullcalendar/vue3": "^6.1.21", "@iconify/vue": "^5.0.1", "@types/leaflet": "^1.9.22", "@visactor/vtable": "^1.26.7", "@visactor/vtable-gantt": "^1.26.7", "@vue-flow/core": "^1.48.2", "@wangeditor-next/editor": "6.2.0", "@wangeditor-next/editor-for-vue": "6.2.0", "dompurify": "^3.4.14", "driver.js": "^1.8.0", "highlight.js": "^11.12.0", "html2canvas": "^1.4.1", "leaflet": "^1.9.4", "mammoth": "^1.12.2", "md-editor-v3": "6.5.6", "print-js": "^1.6.0", "qrcode": "^1.5.4", "spark-md5": "^3.0.2", "vue-cropper": "^1.1.4", "vue-draggable-plus": "^0.6.1", "vue3-puzzle-vcode": "^1.1.7", "xgplayer": "3.0.26", "xgplayer-hls": "3.0.26", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "peerDependencies": { "naive-ui": "^2.35.0", "sortablejs": "^1.15.7", "vue": "^3.5.0", "vue-router": "^4.6.4" }, "optionalPeers": ["sortablejs", "vue-router"] }, "sha512-xoIee7mhlf3QTsMvQIek1Pq/joX0pCxBQjZdau4WZOPswt+b8nH57Jx2a32y27qTENGRYGMOtW/J82JL0W3ytA=="],
 
     "@robot-admin/request-core": ["@robot-admin/request-core@0.2.0", "", { "peerDependencies": { "axios": "^1.7.0", "naive-ui": "^2.38.0", "vue": "^3.4.0" }, "optionalPeers": ["naive-ui", "vue"] }, "sha512-fJabPQHu9sf1yXGvw7R7KJ/gSS8p/HrHxy7l3VM/8mVrJ6OMbBYrg5BSMTZI4HAOoZ52sjKVEyrvl312osIePQ=="],
 
@@ -806,11 +806,15 @@
 
     "@types/event-emitter": ["@types/event-emitter@0.3.5", "", {}, "sha512-zx2/Gg0Eg7gwEiOIIh5w9TrhKKTeQh7CPCOPNc0el4pLSwzebA8SmnHwZs2dWlLONvyulykSwGSQxQHLhjGLvQ=="],
 
+    "@types/geojson": ["@types/geojson@7946.0.16", "", {}, "sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg=="],
+
     "@types/http-errors": ["@types/http-errors@1.8.2", "", {}, "sha512-EqX+YQxINb+MeXaIqYDASb6U6FCHbWjkj4a1CKDBks3d/QiB2+PqBLyO72vLDgAO1wUI4O+9gweRcQK11bTL/w=="],
 
     "@types/json-schema": ["@types/json-schema@7.0.15", "", {}, "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="],
 
     "@types/json5": ["@types/json5@0.0.29", "", {}, "sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ=="],
+
+    "@types/leaflet": ["@types/leaflet@1.9.22", "", { "dependencies": { "@types/geojson": "*" } }, "sha512-h3lhECYEKDasG7LFHu+GiHqAvsgLuQvlJvVZzJDGONo3sEL+wUOqSFLnwkZlK0qVxnxbuGFW8iBlJNYs5wgndA=="],
 
     "@types/linkify-it": ["@types/linkify-it@5.0.0", "", {}, "sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q=="],
 

@@ -28,6 +28,7 @@ interface ImportMetaEnv {
   readonly VITE_ROUTE_IDLE_PREFETCH?: 'true' | 'false'
   readonly VITE_ERROR_REPORT_ENDPOINT?: string
   readonly VITE_MAP_KEY?: string
+  readonly VITE_AMAP_SERVICE_HOST?: string
   // 可以根据需要添加更多环境变量
 }
 

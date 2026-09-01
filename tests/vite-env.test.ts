@@ -76,6 +76,30 @@ describe('Vite 环境校验', () => {
     ).toThrow('同源绝对路径')
   })
 
+  test('高德安全代理仅接受固定前缀的同源路径', () => {
+    expect(() =>
+      validateViteEnv(
+        {
+          VITE_APP_ENV: 'development',
+          VITE_API_BASE: '/api',
+          VITE_AMAP_SERVICE_HOST: 'https://maps.example.com/_AMapService',
+        },
+        'development'
+      )
+    ).toThrow('VITE_AMAP_SERVICE_HOST')
+
+    expect(
+      validateViteEnv(
+        {
+          VITE_APP_ENV: 'development',
+          VITE_API_BASE: '/api',
+          VITE_AMAP_SERVICE_HOST: '/_AMapService',
+        },
+        'development'
+      ).appEnv
+    ).toBe('development')
+  })
+
   test('启用自动翻译时要求服务端凭据', () => {
     expect(() =>
       validateViteEnv(

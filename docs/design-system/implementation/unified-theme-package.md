@@ -423,7 +423,7 @@ app.mount('#app')
 {
   "dependencies": {
     "@robot-admin/design-themes": "^1.0.0",
-    "@robot-admin/naive-ui-components": "0.11.4"
+    "@robot-admin/naive-ui-components": "0.11.6"
   }
 }
 ```

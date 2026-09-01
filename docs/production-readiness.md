@@ -10,7 +10,7 @@
 
 ## 当前生产基线
 
-- 架构保持单体 SPA 和既有路由、状态管理边界不变，业务组件继续通过 `@robot-admin/naive-ui-components@0.11.4` 按需消费。
+- 架构保持单体 SPA 和既有路由、状态管理边界不变，业务组件继续通过 `@robot-admin/naive-ui-components@0.11.6` 按需消费。
 - Markdown、Office、Spline、图表和演示页面保持路由级异步加载；代码高亮仅在实际使用页面初始化，避免全部语言包进入启动链路。
 - 本地组件源码模式对 Vue、Naive UI 和 VisActor 等有状态或重量级依赖进行单例解析，构建模块数由 11,222 降至 9,557，最大 VisActor chunk 由 4.16 MiB 降至 2.08 MiB。
 - 用户、角色列表采用“仅最新请求生效”的可取消请求控制，组件卸载、快速搜索、筛选和翻页不会被旧响应反向覆盖。
@@ -21,14 +21,16 @@
 
 ## 环境与数据模式
 
-| 环境变量                     | 开发/测试默认 | 生产/预发要求 | 作用                                   |
-| ---------------------------- | ------------- | ------------- | -------------------------------------- |
-| `VITE_AUTH_MODE`             | `mock`        | `remote`      | 登录、刷新令牌和当前用户               |
-| `VITE_DATA_MODE`             | `mock`        | `remote`      | 账号与系统管理业务数据                 |
-| `VITE_API_BASE`              | `/api`        | `/api` 或网关 | Axios 请求基地址，推荐由部署层同源代理 |
-| `VITE_ERROR_REPORT_ENDPOINT` | 留空          | 按需配置      | 同源客户端错误接收地址                 |
-| `VITE_ROUTE_IDLE_PREFETCH`   | `false`       | 按需开启      | 登录后网络感知的空闲路由预热           |
-| `VITE_ANALYTICS_ENABLED`     | `false`       | 按需开启      | Vercel Analytics 与 Speed Insights     |
+| 环境变量                     | 开发/测试默认 | 生产/预发要求 | 作用                                    |
+| ---------------------------- | ------------- | ------------- | --------------------------------------- |
+| `VITE_AUTH_MODE`             | `mock`        | `remote`      | 登录、刷新令牌和当前用户                |
+| `VITE_DATA_MODE`             | `mock`        | `remote`      | 账号与系统管理业务数据                  |
+| `VITE_API_BASE`              | `/api`        | `/api` 或网关 | Axios 请求基地址，推荐由部署层同源代理  |
+| `VITE_ERROR_REPORT_ENDPOINT` | 留空          | 按需配置      | 同源客户端错误接收地址                  |
+| `VITE_MAP_KEY`               | 留空          | 按需配置      | 高德 Web 端 JS API Key                  |
+| `VITE_AMAP_SERVICE_HOST`     | 留空          | 同源代理      | 高德安全代理，须以 `/_AMapService` 结尾 |
+| `VITE_ROUTE_IDLE_PREFETCH`   | `false`       | 按需开启      | 登录后网络感知的空闲路由预热            |
+| `VITE_ANALYTICS_ENABLED`     | `false`       | 按需开启      | Vercel Analytics 与 Speed Insights      |
 
 Vite 启动阶段会校验枚举、布尔值、端口、远端 API 和错误上报地址。生产或预发配置 Mock、示例 API、跨域错误上报端点时直接终止构建，避免静默使用不安全默认值。本机密钥只放在 Git 已忽略的 `.env.local` 或 CI Secret。
 
@@ -51,7 +53,9 @@ Vite 启动阶段会校验枚举、布尔值、端口、远端 API 和错误上�
 
 ## 安全策略
 
-Vercel 配置启用 CSP、HSTS、`nosniff`、严格来源策略、权限策略和静态资源缓存。首页主题及加载动画逻辑已经迁移到同源外部脚本，`script-src` 不再允许 `unsafe-inline` 或 `unsafe-eval`。`style-src 'unsafe-inline'` 暂时保留，因为 Naive UI 会在运行时注入组件样式。
+Vercel 配置启用 CSP、HSTS、`nosniff`、严格来源策略、权限策略和静态资源缓存。首页主题及加载动画逻辑已经迁移到同源外部脚本，`script-src` 不再允许 `unsafe-inline` 或 `unsafe-eval`，仅为可选高德地图放行 `https://webapi.amap.com`；定位权限只授予同源页面。`style-src 'unsafe-inline'` 暂时保留，因为 Naive UI 会在运行时注入组件样式。
+
+高德 2021-12-02 后签发的 Key 必须使用安全配置。生产环境通过 `VITE_AMAP_SERVICE_HOST=/_AMapService` 接入后端/Nginx 同源代理，安全密钥只保留在服务端；页面中的明文 `securityJsCode` 输入仅用于本地调试，不持久化。
 
 Spline 的传递依赖 Lottie 源码包含 `eval` 警告，但生产压缩产物中未包含直接 `eval`/`new Function`，因此无需放宽运行时 CSP。外部图片、天气、GitHub、Spline 和 iframe 演示仍需要 HTTPS 连接；如部署为纯内网系统，建议由网关代理这些能力并进一步收紧 `connect-src`、`img-src` 和 `frame-src` 域名白名单。
 
@@ -61,11 +65,11 @@ Spline 的传递依赖 Lottie 源码包含 `eval` 警告，但生产压缩产物
 
 | 指标                | 优化前     | 优化后     | 变化     | 当前预算   |
 | ------------------- | ---------- | ---------- | -------- | ---------- |
-| 入口 JS             | 423.76 KiB | 371.93 KiB | -12.2%   | ≤ 450 KiB  |
-| module preload      | 582.06 KiB | 582.84 KiB | +0.1%    | ≤ 650 KiB  |
+| 入口 JS             | 423.76 KiB | 371.95 KiB | -12.2%   | ≤ 450 KiB  |
+| module preload      | 582.06 KiB | 583.39 KiB | +0.2%    | ≤ 650 KiB  |
 | 首屏 CSS            | 276.17 KiB | 266.38 KiB | -3.5%    | ≤ 300 KiB  |
 | 首屏资源合计        | 1.25 MiB   | 1.19 MiB   | -4.7%    | ≤ 1.42 MiB |
-| module preload 数量 | 83         | 83         | 持平     | ≤ 90       |
+| module preload 数量 | 83         | 84         | +1       | ≤ 90       |
 | 最大异步 chunk      | —          | 2.08 MiB   | 路由隔离 | ≤ 4.88 MiB |
 
 `bun run verify` 顺序执行 Oxlint、ESLint、TypeScript、单元测试、生产构建和 `check:bundle`。预算直接解析 `dist/index.html` 与实际文件大小，任一指标回归即返回失败。Spline、Office 和 VTable 等大模块仍存在于完整产物，但不属于首屏关键链路。

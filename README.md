@@ -320,7 +320,7 @@ bun run commit         # 规范化提交（git cz）
 - `C_WaterFall` - 瀑布流布局
 - `C_Cascade` - 地区级联选择
 - `C_City` - 城市选择器
-- `C_Map` - Leaflet 地图
+- `C_Map` - Leaflet / 高德地图（强类型坐标、标记适配、安全代理）
 - `C_Captcha` - 验证码
 - `C_Guide` - 新手引导
 - `C_GlobalSearch` - 全局搜索
@@ -770,7 +770,7 @@ location / {
 
 **已发布组件库**
 
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.11.4` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.11.6` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
 - **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v2.3.2` - 6 种布局模式 + 安全设置管理 + 无障碍交互
 - **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.2.0` - Axios 请求编排 + 6 类插件能力 + useTableCrud
 - **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v2.0.0` - 48+ 企业级表单验证规则库

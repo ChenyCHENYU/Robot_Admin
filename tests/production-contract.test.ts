@@ -35,12 +35,15 @@ describe('production contracts', () => {
     expect(csp).toContain("object-src 'none'")
     expect(csp).toContain("base-uri 'self'")
     expect(csp).toContain('frame-ancestors')
-    expect(csp).toContain("script-src 'self';")
+    expect(csp).toContain("script-src 'self' https://webapi.amap.com;")
     expect(csp).not.toContain("script-src 'self' 'unsafe-inline'")
     expect(csp).not.toContain("'unsafe-eval'")
     expect(
       securityHeaders.some(header => header.key === 'X-Content-Type-Options')
     ).toBe(true)
+    expect(
+      securityHeaders.find(header => header.key === 'Permissions-Policy')?.value
+    ).toContain('geolocation=(self)')
 
     const indexHtml = await Bun.file(
       new URL('../index.html', import.meta.url)
@@ -59,5 +62,44 @@ describe('production contracts', () => {
     expect(packageJson.scripts.verify).toContain('bun run check:bundle')
     expect(packageJson.devDependencies['@inspira-ui/plugins']).toBeUndefined()
     expect(packageJson.devDependencies['@vue/runtime-core']).toBeUndefined()
+  })
+
+  test('地图组件使用锁定的正式包且发布资源完整', async () => {
+    const packageJson = await readJson<{
+      dependencies: Record<string, string>
+    }>('../package.json')
+    const installedPackage = await readJson<{ version: string }>(
+      '../node_modules/@robot-admin/naive-ui-components/package.json'
+    )
+    expect(packageJson.dependencies['@robot-admin/naive-ui-components']).toBe(
+      installedPackage.version
+    )
+
+    const mapDeclaration = await Bun.file(
+      new URL(
+        '../node_modules/@robot-admin/naive-ui-components/dist/C_Map.d.ts',
+        import.meta.url
+      )
+    ).text()
+    expect(mapDeclaration).toContain('AMapSecurityConfig')
+    const assetFiles = [
+      'layers-2x.png',
+      'layers.png',
+      'marker-icon-2x.png',
+      'marker-icon.png',
+      'marker-shadow.png',
+    ]
+    expect(
+      await Promise.all(
+        assetFiles.map(filename =>
+          Bun.file(
+            new URL(
+              `../node_modules/@robot-admin/naive-ui-components/dist/images/${filename}`,
+              import.meta.url
+            )
+          ).exists()
+        )
+      )
+    ).toEqual(assetFiles.map(() => true))
   })
 })
