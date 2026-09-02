@@ -52,7 +52,7 @@ export const employeeFormOptions = defineFormOptions<EmployeeFormData>([
     prop: 'fullName',
     label: '姓名',
     placeholder: '请输入真实姓名',
-    rules: NAIVE_COMBOS.username('姓名'),
+    rules: [PRESET_RULES.required('姓名'), PRESET_RULES.length('姓名', 2, 20)],
     layout: { group: 'basic' },
   },
   {
@@ -173,7 +173,10 @@ export const employeeFormOptions = defineFormOptions<EmployeeFormData>([
     type: 'rate',
     prop: 'performance',
     label: '绩效评分',
-    rules: [PRESET_RULES.required('绩效评分')],
+    rules: [
+      PRESET_RULES.required('绩效评分'),
+      PRESET_RULES.range('绩效评分', 1, 5),
+    ],
     attrs: { allowHalf: true, count: 5 },
     value: 0,
     layout: { group: 'other' },
