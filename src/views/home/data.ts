@@ -1,3 +1,11 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-02
+ * @FilePath: \Robot_Admin\src\views\home\data.ts
+ * @Description: 首页展示数据
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
 // 项目统计数据
 export const projectStats = [
   { icon: 'fluent-color:approvals-app-16', number: '当前', label: 'Monomer' },
@@ -176,7 +184,7 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'directives',
-    version: '1.1.1',
+    version: '2.0.1',
     icon: 'mdi:code-tags',
     color: '#8b5cf6',
     desc: '11 个 Vue 指令：copy / watermark 等',
@@ -192,7 +200,7 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'file-utils',
-    version: '2.0.0',
+    version: '3.0.1',
     icon: 'mdi:file-multiple-outline',
     color: '#06b6d4',
     desc: 'Excel / ZIP / 分片上传，20+ 格式',

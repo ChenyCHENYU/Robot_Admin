@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-08 01:22:35
+ * @LastEditTime: 2026-09-02
  * @FilePath: \Robot_Admin\src\main.ts
  * @Description: 根入口文件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -26,9 +26,10 @@ import 'virtual:uno.css'
 import '@/router/permission'
 import App from './App.vue'
 import router from './router'
-import { setupDirectives } from '@robot-admin/directives' // 👈 直接从包导入
+import { createDirectives } from '@robot-admin/directives'
 import { setupStore } from '@/plugins/store'
 import { setupNaiveUI } from '@/plugins/naive-ui-plugin'
+import { message } from '@/plugins/discrete'
 import { PassiveScrollPlugin } from '@/plugins/passive-scroll'
 import { setupAnalytics } from '@/plugins/analytics'
 import { setupRequestCore } from '@/plugins/request-core'
@@ -63,7 +64,11 @@ async function bootstrap() {
   app.use(router)
   setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）
   setupNaiveUI(app)
-  setupDirectives(app)
+  app.use(
+    createDirectives({
+      notify: (type, text) => message[type](text),
+    })
+  )
   setupAnalytics(app)
 
   // 第三阶段：等待路由就绪

@@ -1,3 +1,11 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-02
+ * @FilePath: \Robot_Admin\src\views\demo\19-download-all\index.vue
+ * @Description: 通用文件下载场景示例
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="download-demo">
     <c_vTitle
@@ -275,7 +283,7 @@
    * ? @param loadingKey - 加载状态键
    */
   const executeDownload = async (
-    downloadFn: () => Promise<void>,
+    downloadFn: () => Promise<unknown>,
     fileName: string,
     fileType: string,
     loadingKey: keyof typeof loading

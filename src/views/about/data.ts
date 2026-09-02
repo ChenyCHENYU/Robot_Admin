@@ -1,3 +1,11 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-02
+ * @FilePath: \Robot_Admin\src\views\about\data.ts
+ * @Description: 关于页面展示数据
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
 import { NTag, type DataTableColumns } from 'naive-ui/es'
 import { h } from 'vue'
 
@@ -344,7 +352,7 @@ export const productionDependencies: ProjectItem[] = [
     name: 'Robot File Utils',
     bagName: '@robot-admin/file-utils',
     desc: '文件处理工具集 - Excel/下载/压缩/CSV/图片/分片',
-    version: '2.0.0',
+    version: '3.0.1',
     icon: 'https://robotadmin.cn/favicon.ico',
     url: 'https://www.npmjs.com/package/@robot-admin/file-utils',
   },
@@ -352,7 +360,7 @@ export const productionDependencies: ProjectItem[] = [
     name: 'Robot Directives',
     bagName: '@robot-admin/directives',
     desc: 'Vue3 自定义指令集合',
-    version: '1.1.1',
+    version: '2.0.1',
     icon: 'https://robotadmin.cn/favicon.ico',
     url: 'https://www.npmjs.com/package/@robot-admin/directives',
   },
