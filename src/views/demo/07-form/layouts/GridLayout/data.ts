@@ -9,11 +9,11 @@
  */
 
 import type { FormOption } from '@robot-admin/naive-ui-components'
-import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
+import { NAIVE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
 
 // 解构校验规则
 const { required, range, length } = PRESET_RULES
-const { email, mobile } = RULE_COMBOS
+const { email, mobile } = NAIVE_COMBOS
 
 // 栅格列数选项
 export const colsOptions = [

@@ -7,7 +7,7 @@
  */
 
 import { defineFormOptions } from '@robot-admin/naive-ui-components'
-import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
+import { NAIVE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
 
 export interface DefaultFormData {
   username?: string
@@ -30,7 +30,7 @@ export const formOptions = defineFormOptions<DefaultFormData>([
     prop: 'username',
     label: '用户名',
     placeholder: '请输入用户名',
-    rules: RULE_COMBOS.username('用户名'),
+    rules: NAIVE_COMBOS.username('用户名'),
   },
   {
     type: 'input',
@@ -65,21 +65,21 @@ export const formOptions = defineFormOptions<DefaultFormData>([
     prop: 'email',
     label: '邮箱',
     placeholder: '请输入邮箱地址',
-    rules: RULE_COMBOS.email('邮箱'),
+    rules: NAIVE_COMBOS.email('邮箱'),
   },
   {
     type: 'input',
     prop: 'phone',
     label: '手机号',
     placeholder: '请输入手机号',
-    rules: RULE_COMBOS.mobile('手机号'),
+    rules: NAIVE_COMBOS.mobile('手机号'),
   },
   {
     type: 'input',
     prop: 'password',
     label: '密码',
     placeholder: '请输入密码',
-    rules: RULE_COMBOS.password('密码'),
+    rules: NAIVE_COMBOS.password('密码'),
     attrs: { type: 'password', showPasswordOn: 'mousedown' },
   },
   {

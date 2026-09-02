@@ -55,7 +55,7 @@
     "@iconify/vue": "^5.0.0",
     "@robot-admin/directives": "2.0.1",
     "@robot-admin/file-utils": "3.0.1",
-    "@robot-admin/form-validate": "2.0.0",
+    "@robot-admin/form-validate": "3.4.2",
     "@robot-admin/git-standards": "1.0.4",
     "@robot-admin/layout": "2.3.2",
     "@robot-admin/naive-ui-components": "0.11.6",

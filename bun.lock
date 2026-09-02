@@ -10,7 +10,7 @@
         "@iconify/vue": "^5.0.0",
         "@robot-admin/directives": "2.0.1",
         "@robot-admin/file-utils": "3.0.1",
-        "@robot-admin/form-validate": "2.0.0",
+        "@robot-admin/form-validate": "3.4.2",
         "@robot-admin/git-standards": "1.0.4",
         "@robot-admin/layout": "2.3.2",
         "@robot-admin/naive-ui-components": "0.11.6",
@@ -720,7 +720,7 @@
 
     "@robot-admin/file-utils": ["@robot-admin/file-utils@3.0.1", "", { "dependencies": { "jszip": "^3.10.1", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-a2ehFuxyFjD+9UzW6iCfYx7q1x4Fv5Y07iY122rGe1jZlbczTCXOIZmnX8WipQJGrwUIYMuPKbD16W9LcNienw=="],
 
-    "@robot-admin/form-validate": ["@robot-admin/form-validate@2.0.0", "", { "peerDependencies": { "naive-ui": ">=2.34.0" } }, "sha512-vii3VSusR8B6QRrzWrKxQTyvBCBK9DBIlX14h/VxGexl0TgR1sFVbhUG03ddBTZiBw7KH29b8jW4TovCeDvTTg=="],
+    "@robot-admin/form-validate": ["@robot-admin/form-validate@3.4.2", "", {}, "sha512-Lx29eO/rPtX9AUHFM4DU07KsEs4vv44zJtUaI71aVF93WvuVvDQW3rsT6WdwI6WnrUKumPuzSQWQvzhNH1IR0Q=="],
 
     "@robot-admin/git-standards": ["@robot-admin/git-standards@1.0.4", "", { "dependencies": { "@commitlint/cli": "^19.6.0", "@commitlint/config-conventional": "^19.6.0", "@inquirer/prompts": "^7.3.2", "chalk": "^5.4.1", "commander": "^12.1.0", "commitizen": "^4.3.1", "cz-customizable": "^7.2.1", "execa": "^9.5.2", "husky": "^9.1.7", "lint-staged": "^15.2.10", "ora": "^8.1.1" }, "bin": { "robot-standards": "bin/robot-standards.js" } }, "sha512-J0Ln3V/7/gEoyoKXeSo2tPdJtZnaPtSg8WSdgO1Irtm5bDdUif26+F2dpVh9thP4aT3aOkv1ZwXhdrHnxwg8eA=="],
 

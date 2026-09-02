@@ -13,7 +13,7 @@ import {
   type FormOption,
 } from '@robot-admin/naive-ui-components'
 import type { ApiResponse } from '@/hooks/useFormSubmit'
-import { RULE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
+import { NAIVE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
 
 // 类型定义
 export interface EmployeeFormData {
@@ -52,7 +52,7 @@ export const employeeFormOptions = defineFormOptions<EmployeeFormData>([
     prop: 'fullName',
     label: '姓名',
     placeholder: '请输入真实姓名',
-    rules: RULE_COMBOS.username('姓名'),
+    rules: NAIVE_COMBOS.username('姓名'),
     layout: { group: 'basic' },
   },
   {
@@ -80,7 +80,7 @@ export const employeeFormOptions = defineFormOptions<EmployeeFormData>([
     prop: 'phone',
     label: '手机号码',
     placeholder: '请输入手机号码',
-    rules: RULE_COMBOS.mobile('手机号码'),
+    rules: NAIVE_COMBOS.mobile('手机号码'),
     layout: { group: 'contact' },
   },
   {
@@ -88,7 +88,7 @@ export const employeeFormOptions = defineFormOptions<EmployeeFormData>([
     prop: 'email',
     label: '邮箱地址',
     placeholder: '请输入邮箱地址',
-    rules: RULE_COMBOS.email('邮箱地址'),
+    rules: NAIVE_COMBOS.email('邮箱地址'),
     layout: { group: 'contact' },
   },
   {

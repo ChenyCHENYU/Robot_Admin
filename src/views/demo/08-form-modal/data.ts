@@ -9,7 +9,7 @@
  */
 
 import type { FormConfig, FormOption } from '@robot-admin/naive-ui-components'
-import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
+import { NAIVE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
 
 // =================== 卡片展示数据 ===================
 
@@ -91,14 +91,14 @@ export const modalOptions: FormOption[] = [
     prop: 'username',
     label: '用户名',
     placeholder: '请输入用户名',
-    rules: RULE_COMBOS.username('用户名'),
+    rules: NAIVE_COMBOS.username('用户名'),
   },
   {
     type: 'input',
     prop: 'email',
     label: '邮箱',
     placeholder: '请输入邮箱',
-    rules: RULE_COMBOS.email('邮箱'),
+    rules: NAIVE_COMBOS.email('邮箱'),
   },
   {
     type: 'select',
@@ -117,7 +117,7 @@ export const modalOptions: FormOption[] = [
     prop: 'phone',
     label: '手机号',
     placeholder: '请输入手机号',
-    rules: RULE_COMBOS.mobile('手机号'),
+    rules: NAIVE_COMBOS.mobile('手机号'),
   },
 ]
 export const modalConfig: FormConfig = { layout: 'grid' }
