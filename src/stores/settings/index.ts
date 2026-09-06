@@ -65,19 +65,6 @@ export function initSettingsStoreSync() {
     { immediate: true }
   )
 
-  // 监听主题模式变化
-  watch(
-    () => settingsStore.themeMode,
-    mode => {
-      if (mode === 'system') {
-        themeStore.setMode('system')
-      } else {
-        themeStore.setMode(mode)
-      }
-    },
-    { immediate: true }
-  )
-
   // 开发环境：监听布局模式变化
   if (import.meta.env.DEV) {
     console.log(
@@ -108,8 +95,7 @@ export type {
   TagsViewStyle,
   SettingsState,
   SettingsStoreOptions,
+  ThemeMode,
   LayoutInfo,
   PresetColor,
 } from '@robot-admin/layout'
-
-export type { ThemeMode } from '@robot-admin/theme'

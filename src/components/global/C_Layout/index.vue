@@ -90,7 +90,7 @@
 <script setup lang="ts">
   import {
     C_LayoutContainer,
-    LAYOUT_CONTEXT_KEY,
+    provideLayoutContext,
     type MenuOptions,
   } from '@robot-admin/layout'
   import { useLayoutBridge } from '@/composables/useLayoutBridge'
@@ -110,7 +110,7 @@
 
   // 提供布局上下文（桥接业务 Store → 包标准接口）
   const layoutContext = useLayoutBridge()
-  provide(LAYOUT_CONTEXT_KEY, layoutContext)
+  provideLayoutContext(layoutContext)
 
   const permissionStore = s_permissionStore()
   const themeStore = s_themeStore()

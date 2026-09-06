@@ -57,7 +57,7 @@
     "@robot-admin/file-utils": "3.0.1",
     "@robot-admin/form-validate": "3.4.2",
     "@robot-admin/git-standards": "1.0.5",
-    "@robot-admin/layout": "2.3.2",
+    "@robot-admin/layout": "3.0.0",
     "@robot-admin/naive-ui-components": "0.11.6",
     "@robot-admin/request-core": "0.2.0",
     "@robot-admin/theme": "0.4.0",

@@ -42,6 +42,12 @@ export function useLayoutBridge(): LayoutContext {
 
     // 布局配置
     layoutMode: computed(() => settingsStore.layoutMode),
+    collapsed: computed({
+      get: () => settingsStore.collapsed,
+      set: value => {
+        settingsStore.collapsed = value
+      },
+    }),
     menuExpandMode: computed(() => settingsStore.menuExpandMode),
     sidebarWidth: computed(() => settingsStore.sidebarWidth),
     sidebarCollapsedWidth: computed(() => settingsStore.sidebarCollapsedWidth),

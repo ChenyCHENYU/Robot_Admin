@@ -14,7 +14,7 @@ import { initSettingsStoreSync } from '@/stores/settings'
  * @param app - Vue 应用实例
  */
 export function setupLayoutSystem(app: App) {
-  // 初始化布局系统，自动同步主题模式
+  // 初始化布局系统；主题模式通过单一回调同步，避免重复 watcher。
   setupLayout(app, {
     onThemeModeChange: async mode => {
       const themeStore = useThemeStore()

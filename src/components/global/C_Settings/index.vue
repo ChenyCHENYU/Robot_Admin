@@ -1,94 +1,80 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-06
+ * @FilePath: \Robot_Admin\src\components\global\C_Settings\index.vue
+ * @Description: 布局设置抽屉与项目级设置扩展
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ -->
 <template>
-  <!-- 使用 @robot-admin/layout 包中的 SettingsDrawer 组件 -->
-  <SettingsDrawer v-model:show="visible" />
-
-  <!-- 菜单风格切换 — 注入到设置面板的外观 Tab 顶部 -->
-  <Teleport
-    v-if="injectReady"
-    :to="injectTarget!"
+  <SettingsDrawer
+    v-model:show="visible"
+    :actions="settingsActions"
   >
-    <div class="settings-section menu-style-section">
-      <div class="section-title">菜单风格</div>
-      <div class="menu-style-grid">
-        <button
-          v-for="preset in MENU_STYLE_OPTIONS"
-          :key="preset.type"
-          class="menu-style-card"
-          :class="{ active: themeStore.menuTheme === preset.type }"
-          @click="themeStore.setMenuTheme(preset.type)"
-        >
-          <div class="card-preview">
-            <div
-              class="preview-sidebar"
-              :style="{ background: preset.sidebarBg }"
-            >
+    <template #appearance-prepend>
+      <div class="settings-section menu-style-section">
+        <div class="section-title">菜单风格</div>
+        <div class="menu-style-grid">
+          <button
+            v-for="preset in MENU_STYLE_OPTIONS"
+            :key="preset.type"
+            class="menu-style-card"
+            :class="{ active: themeStore.menuTheme === preset.type }"
+            @click="themeStore.setMenuTheme(preset.type)"
+          >
+            <div class="card-preview">
               <div
-                class="preview-item active"
-                :style="{ background: preset.activeBg }"
-              />
-              <div class="preview-item" />
-              <div class="preview-item" />
+                class="preview-sidebar"
+                :style="{ background: preset.sidebarBg }"
+              >
+                <div
+                  class="preview-item active"
+                  :style="{ background: preset.activeBg }"
+                />
+                <div class="preview-item" />
+                <div class="preview-item" />
+              </div>
+              <div class="preview-content">
+                <div class="preview-header" />
+                <div class="preview-body" />
+              </div>
             </div>
-            <div class="preview-content">
-              <div class="preview-header" />
-              <div class="preview-body" />
-            </div>
-          </div>
-          <span class="card-label">{{ preset.icon }} {{ preset.name }}</span>
-          <span class="card-desc">{{ preset.description }}</span>
-        </button>
+            <span class="card-label">{{ preset.icon }} {{ preset.name }}</span>
+            <span class="card-desc">{{ preset.description }}</span>
+          </button>
+        </div>
       </div>
-    </div>
-  </Teleport>
-
-  <Teleport
-    v-if="menuExpandInjectReady"
-    :to="menuExpandInjectTarget!"
-  >
-    <div
-      v-if="!hasBuiltInMenuExpand"
-      class="settings-section menu-expand-section"
-    >
-      <div class="section-title">菜单展开方式</div>
-      <NRadioGroup
-        v-model:value="menuExpandMode"
-        class="menu-expand-group"
-      >
-        <NRadioButton value="inline">传统展开</NRadioButton>
-        <NRadioButton value="panel">右侧面板</NRadioButton>
-      </NRadioGroup>
-    </div>
-  </Teleport>
+    </template>
+  </SettingsDrawer>
 </template>
 
 <script setup lang="ts">
-  import { SettingsDrawer, type MenuExpandMode } from '@robot-admin/layout'
-  import '@robot-admin/layout/style.scss'
+  import {
+    SettingsDrawer,
+    type SettingsDrawerActions,
+  } from '@robot-admin/layout'
   import { s_themeStore, type MenuThemeType } from '@/stores/theme'
-  import { s_settingsStore } from '@/stores/settings'
 
-  /**
-   * 设置抽屉组件包装器
-   *
-   * 包含：@robot-admin/layout 提供的完整设置面板
-   * 扩展：菜单风格切换（通过 Teleport 注入到外观 Tab）
-   */
-  defineOptions({
-    name: 'CSettings',
-  })
+  defineOptions({ name: 'CSettings' })
 
   const visible = defineModel<boolean>('show', { default: false })
   const themeStore = s_themeStore()
-  const settingsStore = s_settingsStore()
 
-  const menuExpandMode = computed<MenuExpandMode>({
-    get: () => settingsStore.menuExpandMode,
-    set: value => {
-      settingsStore.menuExpandMode = value
+  /** 只清理明确登记的可丢弃缓存，绝不触碰认证、主题与语言数据。 */
+  const CLEARABLE_CACHE_KEYS = [
+    'github_stats_cache',
+    '__tags_view_list__',
+  ] as const
+
+  const settingsActions: SettingsDrawerActions = {
+    clearCache: () => {
+      for (const key of CLEARABLE_CACHE_KEYS) {
+        localStorage.removeItem(key)
+      }
     },
-  })
+    reloadPage: () => window.location.reload(),
+  }
 
-  /** 菜单风格选项（仅用于 UI 显示） */
+  /** 菜单风格选项（仅用于 UI 显示）。 */
   const MENU_STYLE_OPTIONS: {
     type: MenuThemeType
     name: string
@@ -114,126 +100,6 @@
       activeBg: 'rgba(32, 128, 240, 0.08)',
     },
   ]
-
-  // Teleport 注入目标
-  const injectTarget = shallowRef<Element | null>(null)
-  const injectReady = ref(false)
-  const menuExpandInjectTarget = shallowRef<Element | null>(null)
-  const menuExpandInjectReady = ref(false)
-  const hasBuiltInMenuExpand = ref(false)
-  let settingsObserver: MutationObserver | null = null
-
-  /**
-   * * @description: 查找设置面板的外观 Tab 容器作为注入锚点
-   * ! @return {Element | null} 目标元素
-   */
-  const findAppearancePane = (): Element | null => {
-    // settings-tabs 是 @robot-admin/layout 的稳定类名
-    const tabs = document.querySelector('.settings-tabs')
-    if (!tabs) return null
-    const panes = Array.from(tabs.querySelectorAll('.n-tab-pane'))
-    const appearancePane = panes.find(pane =>
-      pane.textContent?.includes('主题模式')
-    )
-    return appearancePane ?? null
-  }
-
-  const findLayoutPane = (): Element | null => {
-    const tabs = document.querySelector('.settings-tabs')
-    if (!tabs) return null
-    const panes = Array.from(tabs.querySelectorAll('.n-tab-pane'))
-    const layoutPane = panes.find(pane =>
-      pane.textContent?.includes('布局模式')
-    )
-    return layoutPane ?? null
-  }
-
-  /**
-   * * @description: 在目标容器首部创建注入锚点
-   * ? @param {Element} pane Tab 面板容器
-   * ! @return {Element} 锚点元素
-   */
-  const ensureAnchor = (pane: Element): Element => {
-    const ANCHOR_ID = 'menu-style-inject-anchor'
-    let anchor = pane.querySelector(`#${ANCHOR_ID}`)
-    if (!anchor) {
-      anchor = document.createElement('div')
-      anchor.id = ANCHOR_ID
-      pane.insertBefore(anchor, pane.firstChild)
-    }
-    return anchor
-  }
-
-  const ensureMenuExpandAnchor = (pane: Element): Element => {
-    const ANCHOR_ID = 'menu-expand-inject-anchor'
-    let anchor = pane.querySelector(`#${ANCHOR_ID}`)
-    if (!anchor) {
-      anchor = document.createElement('div')
-      anchor.id = ANCHOR_ID
-      const layoutSection = Array.from(
-        pane.querySelectorAll('.settings-section')
-      ).find(section => section.textContent?.includes('布局模式'))
-      layoutSection?.insertAdjacentElement('afterend', anchor)
-      if (!anchor.parentElement) {
-        pane.insertBefore(anchor, pane.firstChild)
-      }
-    }
-    return anchor
-  }
-
-  const syncInjectedSections = () => {
-    const appearancePane = findAppearancePane()
-    if (appearancePane) {
-      injectTarget.value = ensureAnchor(appearancePane)
-      injectReady.value = true
-    }
-
-    const layoutPane = findLayoutPane()
-    if (layoutPane) {
-      hasBuiltInMenuExpand.value = Boolean(
-        layoutPane.querySelector('[data-menu-expand-mode="built-in"]')
-      )
-      menuExpandInjectTarget.value = ensureMenuExpandAnchor(layoutPane)
-      menuExpandInjectReady.value = true
-    }
-  }
-
-  // 监听抽屉开关，延迟注入（等待 drawer 动画和 DOM 渲染）
-  watch(visible, show => {
-    if (!show) {
-      injectReady.value = false
-      injectTarget.value = null
-      menuExpandInjectReady.value = false
-      menuExpandInjectTarget.value = null
-      settingsObserver?.disconnect()
-      settingsObserver = null
-      return
-    }
-
-    // 递归 rAF 轮询 DOM 就绪（避免 await in loop）
-    const pollForPane = (retriesLeft: number) => {
-      if (retriesLeft <= 0) return
-      nextTick(() => {
-        syncInjectedSections()
-        const tabs = document.querySelector('.settings-tabs')
-        if (tabs) {
-          settingsObserver?.disconnect()
-          settingsObserver = new MutationObserver(syncInjectedSections)
-          settingsObserver.observe(tabs, {
-            childList: true,
-            subtree: true,
-          })
-          return
-        }
-        requestAnimationFrame(() => pollForPane(retriesLeft - 1))
-      })
-    }
-    pollForPane(15)
-  })
-
-  onBeforeUnmount(() => {
-    settingsObserver?.disconnect()
-  })
 </script>
 
 <style lang="scss">
@@ -249,14 +115,6 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     margin-top: 12px;
-  }
-
-  .menu-expand-group {
-    width: 100%;
-
-    .n-radio-button {
-      flex: 1;
-    }
   }
 
   .menu-style-card {

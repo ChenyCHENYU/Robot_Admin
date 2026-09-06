@@ -12,7 +12,7 @@
         "@robot-admin/file-utils": "3.0.1",
         "@robot-admin/form-validate": "3.4.2",
         "@robot-admin/git-standards": "1.0.5",
-        "@robot-admin/layout": "2.3.2",
+        "@robot-admin/layout": "3.0.0",
         "@robot-admin/naive-ui-components": "0.11.6",
         "@robot-admin/request-core": "0.2.0",
         "@robot-admin/theme": "0.4.0",
@@ -724,7 +724,7 @@
 
     "@robot-admin/git-standards": ["@robot-admin/git-standards@1.0.5", "", { "dependencies": { "@commitlint/cli": "^19.6.0", "@commitlint/config-conventional": "^19.6.0", "@inquirer/prompts": "^7.3.2", "chalk": "^5.4.1", "commander": "^12.1.0", "commitizen": "^4.3.1", "cross-spawn": "^7.0.6", "cz-customizable": "^7.2.1", "execa": "^9.5.2", "husky": "^9.1.7", "lint-staged": "^15.2.10", "ora": "^8.1.1" }, "bin": { "robot-standards": "bin/robot-standards.js" } }, "sha512-31GaJF+m45JfojEkm89KqGnz3buuzw1eLBdOQ9r6fZQ0GXW4FlCZgIIgb0DwjWGKseNq0RDIQ2Lms7IQyFukHA=="],
 
-    "@robot-admin/layout": ["@robot-admin/layout@2.3.2", "", { "peerDependencies": { "@robot-admin/theme": "^0.3.0 || ^0.4.0", "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0", "vue-router": "^4.0.0" } }, "sha512-pB2Qx+ExKe313TYhc4wze3sClukO9hUftbetg3j+IaF0I1zFtF4ylwWeZkdBWvoKDiq/Dxde4QRBQ2+hjuEMGA=="],
+    "@robot-admin/layout": ["@robot-admin/layout@3.0.0", "", { "peerDependencies": { "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0", "vue-router": "^4.0.0" } }, "sha512-R5sYxApIUOT3C9xg3NwbXmtMNL4GhdkSghpr/KOu2beh12y7ogqjYvA2SHlA+vZdqGjZvupBps7xSspIJxXMNQ=="],
 
     "@robot-admin/naive-ui-components": ["@robot-admin/naive-ui-components@0.11.6", "", { "dependencies": { "@antv/x6": "^2.19.2", "@chenfengyuan/vue-barcode": "^2.0.2", "@fullcalendar/core": "^6.1.21", "@fullcalendar/daygrid": "^6.1.21", "@fullcalendar/interaction": "^6.1.21", "@fullcalendar/list": "^6.1.21", "@fullcalendar/vue3": "^6.1.21", "@iconify/vue": "^5.0.1", "@types/leaflet": "^1.9.22", "@visactor/vtable": "^1.26.7", "@visactor/vtable-gantt": "^1.26.7", "@vue-flow/core": "^1.48.2", "@wangeditor-next/editor": "6.2.0", "@wangeditor-next/editor-for-vue": "6.2.0", "dompurify": "^3.4.14", "driver.js": "^1.8.0", "highlight.js": "^11.12.0", "html2canvas": "^1.4.1", "leaflet": "^1.9.4", "mammoth": "^1.12.2", "md-editor-v3": "6.5.6", "print-js": "^1.6.0", "qrcode": "^1.5.4", "spark-md5": "^3.0.2", "vue-cropper": "^1.1.4", "vue-draggable-plus": "^0.6.1", "vue3-puzzle-vcode": "^1.1.7", "xgplayer": "3.0.26", "xgplayer-hls": "3.0.26", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "peerDependencies": { "naive-ui": "^2.35.0", "sortablejs": "^1.15.7", "vue": "^3.5.0", "vue-router": "^4.6.4" }, "optionalPeers": ["sortablejs", "vue-router"] }, "sha512-xoIee7mhlf3QTsMvQIek1Pq/joX0pCxBQjZdau4WZOPswt+b8nH57Jx2a32y27qTENGRYGMOtW/J82JL0W3ytA=="],
 

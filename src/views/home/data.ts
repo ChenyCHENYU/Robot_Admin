@@ -168,7 +168,7 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'layout',
-    version: '2.3.2',
+    version: '3.0.0',
     icon: 'mdi:page-layout-sidebar-left',
     color: '#f59e0b',
     desc: '6 种布局模式，设置管理，主题同步',
