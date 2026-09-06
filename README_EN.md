@@ -5,11 +5,11 @@
       <img src="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/img/robot-left.png" height="120" />
     </picture>
   </a>
-  
+
   <h1>
     <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=4FC08D&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=700&height=100&lines=🤖+Robot+Admin;Redefining+Enterprise+Admin+Development" alt="Robot Admin" />
   </h1>
-  
+
   <p><strong>Robot Admin - Multi-Architecture Enterprise Solution</strong></p>
 
   <!-- Architecture Selector -->
@@ -248,6 +248,7 @@ To connect a backend, set `VITE_AUTH_MODE=remote` and configure the endpoint thr
 - **AntV X6** - Professional flowchart engine
 - **FullCalendar** - Complete calendar management
 - **WangEditor** - Rich text editor
+
 </details>
 
 ### 🎯 Feature Matrix
@@ -326,6 +327,7 @@ To connect a backend, set `VITE_AUTH_MODE=remote` and configure the endpoint thr
 - `C_ContextMenu` - Custom right-click context menu
 - `C_Transfer` - Shuttle box for cross-list data migration
 - `C_AvatarGroup` - Stacked avatar group with status badges
+
 </details>
 
 #### 🎮 Custom Directives
@@ -377,6 +379,7 @@ To connect a backend, set `VITE_AUTH_MODE=remote` and configure the endpoint thr
 - Transfer - Cross-list data migration shuttle box
 - Avatar Group - Stacked avatar display with status badges
 - Audio Player - Playlist, progress control & multi-loop modes
+
 </details>
 
 ---
@@ -511,6 +514,7 @@ graph LR
 - `desc:` For quick console print statement generation
 - `use:` Select variable, press shortcut to generate print statement
 - `key:` `ctrl+alt+l` generate `alt+shift+c` comment all **+u** enable all **+d** delete all
+
 </details>
 
 ---
@@ -601,6 +605,7 @@ graph LR
 - **Component Lazy Loading** - Route-level lazy loading
 - **Image Lazy Loading** - Viewport-based image loading
 - **Debounce & Throttle** - High-frequency operation performance optimization
+
 </details>
 
 ---
@@ -744,16 +749,16 @@ location / {
 
 ### 🔗 Core Packages (@robot-admin)
 
-| Package                                                                               | Version                                                               | Description                |
-| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------- |
-| [naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | ![npm](https://img.shields.io/npm/v/@robot-admin/naive-ui-components) | 51+ business components    |
-| [layout](https://www.npmjs.com/package/@robot-admin/layout)                           | ![npm](https://img.shields.io/npm/v/@robot-admin/layout)              | 6 layout modes             |
-| [request-core](https://www.npmjs.com/package/@robot-admin/request-core)               | ![npm](https://img.shields.io/npm/v/@robot-admin/request-core)        | Axios + useTableCrud       |
-| [form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)             | ![npm](https://img.shields.io/npm/v/@robot-admin/form-validate)       | 48+ validation rules       |
-| [directives](https://www.npmjs.com/package/@robot-admin/directives)                   | ![npm](https://img.shields.io/npm/v/@robot-admin/directives)          | 11 Vue directives          |
-| [file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)                   | ![npm](https://img.shields.io/npm/v/@robot-admin/file-utils)          | Excel / ZIP / chunk upload |
-| [theme](https://www.npmjs.com/package/@robot-admin/theme)                             | ![npm](https://img.shields.io/npm/v/@robot-admin/theme)               | Light / Dark / System      |
-| [git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)             | ![npm](https://img.shields.io/npm/v/@robot-admin/git-standards)       | Git engineering standards  |
+| Package                                                                               | Version                                                               | Description                         |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------- |
+| [naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | ![npm](https://img.shields.io/npm/v/@robot-admin/naive-ui-components) | 51+ business components             |
+| [layout](https://www.npmjs.com/package/@robot-admin/layout)                           | ![npm](https://img.shields.io/npm/v/@robot-admin/layout)              | 6 layouts + compact context adapter |
+| [request-core](https://www.npmjs.com/package/@robot-admin/request-core)               | ![npm](https://img.shields.io/npm/v/@robot-admin/request-core)        | Axios + useTableCrud                |
+| [form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)             | ![npm](https://img.shields.io/npm/v/@robot-admin/form-validate)       | 48+ validation rules                |
+| [directives](https://www.npmjs.com/package/@robot-admin/directives)                   | ![npm](https://img.shields.io/npm/v/@robot-admin/directives)          | 11 Vue directives                   |
+| [file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)                   | ![npm](https://img.shields.io/npm/v/@robot-admin/file-utils)          | Excel / ZIP / chunk upload          |
+| [theme](https://www.npmjs.com/package/@robot-admin/theme)                             | ![npm](https://img.shields.io/npm/v/@robot-admin/theme)               | Light / Dark / System               |
+| [git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)             | ![npm](https://img.shields.io/npm/v/@robot-admin/git-standards)       | Git engineering standards           |
 
 ### 🛠️ Related Projects
 
@@ -776,6 +781,7 @@ location / {
 - **[robot-admin-env-manager](https://www.npmjs.com/package/robot-admin-env-manager)** `v1.0.5` - Multi-env configuration manager
 - **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - Smart route preloader
 - **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Branch diff checker
+
 </details>
 
 ---
@@ -833,6 +839,7 @@ location / {
 - **VS Code**: Recommended editor
 - **Git**: >= 2.20.0
 - **Docker**: >= 20.0 (Container deployment)
+
 </details>
 
 ---
@@ -935,6 +942,7 @@ bun run type-build
 - 🧩 **Rich Components**: 37+ business components, ready to use
 - 🎨 **Modern Design**: Naive UI + UnoCSS, beauty and performance coexist
 - 📚 **Learning Friendly**: 36+ demo pages, each is best practice
+
 </details>
 
 ---
@@ -973,6 +981,7 @@ bun run type-build
 - Provide detailed migration guide
 - Component APIs are basically compatible
 - Support progressive migration
+
 </details>
 
 ---

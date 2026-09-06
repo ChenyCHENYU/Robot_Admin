@@ -57,7 +57,7 @@ describe('production contracts', () => {
       scripts: Record<string, string>
       devDependencies: Record<string, string>
     }>('../package.json')
-    expect(packageJson.scripts.verify).toContain('bun run test')
+    expect(packageJson.scripts.verify).toContain('bun test --max-concurrency=1')
     expect(packageJson.scripts.verify).toContain('bun run build')
     expect(packageJson.scripts.verify).toContain('bun run check:bundle')
     expect(packageJson.devDependencies['@inspira-ui/plugins']).toBeUndefined()

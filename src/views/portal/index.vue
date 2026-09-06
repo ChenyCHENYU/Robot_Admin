@@ -466,6 +466,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
   import { Icon } from '@iconify/vue'
+  import { MENU_COLLAPSE_KEY } from '@robot-admin/layout'
   import { s_userStore } from '@/stores/user'
   import { useRouter } from 'vue-router'
   import C_Header from '@/components/global/C_Header/index.vue'
@@ -491,13 +492,13 @@
   const userName = computed(() => userStore.userInfo?.username || '李梦')
 
   // 为 C_Header 提供必要的上下文
-  const isCollapsed = ref(false)
+  const portalCollapsed = ref(false)
   const handleCollapsedChange = (collapsed: boolean) => {
-    isCollapsed.value = collapsed
+    portalCollapsed.value = collapsed
   }
 
-  provide('menuCollapse', {
-    isCollapsed,
+  provide(MENU_COLLAPSE_KEY, {
+    isCollapsed: computed(() => portalCollapsed.value),
     handleCollapsedChange,
   })
   const activeAppId = ref('data-analytics')

@@ -75,7 +75,7 @@ Stores:  s_userStore · s_themeStore · s_permissionStore …
 | `@robot-admin/request-core`        | HTTP 请求（getData / postData / useTableCrud）         |
 | `@robot-admin/form-validate`       | 表单验证（Naive / Element 双框架，48+ 规则）           |
 | `@robot-admin/directives`          | 11 个 Vue 指令（v-copy / v-permission / v-watermark…） |
-| `@robot-admin/layout`              | 6 种布局模式                                           |
+| `@robot-admin/layout`              | 6 种布局模式、精简上下文适配与安全设置协议             |
 | `@robot-admin/file-utils`          | Excel / ZIP / 分片上传                                 |
 | `@robot-admin/theme`               | 主题切换（Light / Dark / System）                      |
 

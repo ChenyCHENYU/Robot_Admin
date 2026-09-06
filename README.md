@@ -727,7 +727,7 @@ location / {
 ### ✅ 已完成里程碑
 
 <details>
-<summary><b>查看完整版本历程 (v1.0 → v2.2)</b></summary>
+<summary><b>查看完整版本历程 (v1.0 → v2.5)</b></summary>
 
 | 版本   | 时间    | 主要更新                                             |
 | ------ | ------- | ---------------------------------------------------- |
@@ -741,6 +741,9 @@ location / {
 | v2.1   | 2026-03 | 🔐 Token 无感刷新 + 权限体系升级 + 可插拔登录组件    |
 | v2.2   | 2026-03 | 🎭 菜单双主题 + Vite 8 升级 + 全量 TypeScript 通过   |
 | v2.2.1 | 2026-03 | 🔧 Vite 8.0.3 正式升级 + 样式细节优化                |
+| v2.3   | 2026-04 | 🤖 AI 技能、MCP Server 与工程协作规范                |
+| v2.4   | 2026-04 | 🎨 设计风格系统与 iOS 拟态玻璃主题                   |
+| v2.5   | 2026-08 | ⚡ 路由级按需加载、菜单分组与生产就绪加固            |
 
 </details>
 
@@ -771,7 +774,7 @@ location / {
 **已发布组件库**
 
 - **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.11.6` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
-- **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v3.0.0` - 6 种布局模式 + 独立核心协议 + 安全扩展接口
+- **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v3.1.0` - 6 种布局模式 + 精简上下文适配 + 独立核心协议
 - **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.2.0` - Axios 请求编排 + 6 类插件能力 + useTableCrud
 - **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v3.4.2` - Naive UI / Element Plus 双框架企业级表单验证规则库
 - **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v2.0.1` - 11 个安全、可回收的 Vue 指令
@@ -1078,12 +1081,12 @@ bun run type-build
 
 ## 📄 更新日志
 
-### 🚀 v2.2.1 (2026-03-27) — 最新版本
+### 🚀 v2.5.0 (2026-08-10) — 最新版本
 
-- 🔧 **Vite 8.0.3 + Rolldown**：升级至 Vite 最新版，构建引擎持续优化
-- 🎨 **样式细节优化**：NCard 全局间距优化，暗色主题细节全面提升
-- 🔒 **工程化修复**：oxlint 版本锁定，修复 pre-commit 钩子兼容性问题
-- 📐 **代码质量**：全量 TypeScript 类型检查通过，演示页面样式统一规范
+- 🧭 **布局与菜单**：新增分组菜单右侧展开面板，完善多布局导航体验
+- ⚡ **按需加载**：大型页面、编辑器和文件能力改为路由级加载，降低首屏负担
+- 🧩 **组件工程化**：业务组件使用子路径入口和官方 Resolver
+- 🛡️ **生产就绪**：补齐远端数据契约、错误脱敏、安全头、质量及体积门禁
 
 <details>
 <summary><b>📆 查看历史版本记录 (v1.0 — v2.2)</b></summary>

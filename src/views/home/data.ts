@@ -168,10 +168,10 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'layout',
-    version: '3.0.0',
+    version: '3.1.0',
     icon: 'mdi:page-layout-sidebar-left',
     color: '#f59e0b',
-    desc: '6 种布局模式，设置管理，主题同步',
+    desc: '6 种布局模式，精简适配，安全设置管理',
     url: 'https://www.npmjs.com/package/@robot-admin/layout',
   },
   {

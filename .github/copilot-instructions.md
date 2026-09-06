@@ -53,7 +53,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 | 包名                               | 版本   | 功能                            |
 | ---------------------------------- | ------ | ------------------------------- |
 | `@robot-admin/naive-ui-components` | 0.11.4 | 51+ 个业务组件                  |
-| `@robot-admin/layout`              | 3.0.0  | 6 种布局 + 核心协议 + 安全扩展  |
+| `@robot-admin/layout`              | 3.1.0  | 6 种布局 + 精简适配 + 核心协议  |
 | `@robot-admin/request-core`        | 0.2.0  | Axios + 6 类插件 + useTableCrud |
 | `@robot-admin/theme`               | 0.4.0  | 主题切换 + 安全持久化           |
 | `@robot-admin/directives`          | 1.1.1  | 11 个 Vue 指令                  |
@@ -1357,6 +1357,10 @@ const table = useTableCrud({ api, columns, pagination })
 | `mix-top`                | 左侧图标 + 顶部菜单   |
 | `reverse-horizontal-mix` | 顶部横向 + 右侧栏     |
 | `card-layout`            | 卡片 hover + 网格抽屉 |
+
+普通宿主使用 `createLayoutContext()` 从设置 Store、菜单和主题状态生成标准上下文；
+仅在高级定制时手工实现完整 `LayoutContext`。`SettingsDrawer` 必须放在应用根部已有的
+`NMessageProvider` 与 `NDialogProvider` 下，缓存清理由宿主白名单动作负责。
 
 ### @robot-admin/file-utils — 文件处理
 

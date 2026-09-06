@@ -77,10 +77,7 @@
 <script setup lang="ts">
   import { s_themeStore } from '@/stores/theme'
   import { s_settingsStore } from '@/stores/settings'
-  import {
-    MENU_COLLAPSE_KEY,
-    type MenuCollapseHandlers,
-  } from '@robot-admin/layout'
+  import { MENU_COLLAPSE_KEY } from '@robot-admin/layout'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
@@ -98,15 +95,11 @@
     showSettings: ref(false), // 提供默认值以兼容旧代码
   })
 
-  // 优先使用 3.0 类型化 key；字符串 key 仅兼容 portal 等旧容器。
-  const legacyMenuCollapse = inject<MenuCollapseHandlers>('menuCollapse', {
+  // 使用布局包的类型化 key；独立页面也提供同一契约。
+  const { isCollapsed, handleCollapsedChange } = inject(MENU_COLLAPSE_KEY, {
     isCollapsed: computed(() => false),
     handleCollapsedChange: () => undefined,
   })
-  const { isCollapsed, handleCollapsedChange } = inject(
-    MENU_COLLAPSE_KEY,
-    legacyMenuCollapse
-  )
 </script>
 
 <style lang="scss" scoped>
