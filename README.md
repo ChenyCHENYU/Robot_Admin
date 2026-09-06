@@ -777,7 +777,7 @@ location / {
 - **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v2.0.1` - 11 个安全、可回收的 Vue 指令
 - **[@robot-admin/file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)** `v3.0.1` - Excel/ZIP/RFC 4180 CSV/可取消分片工具集
 - **[@robot-admin/theme](https://www.npmjs.com/package/@robot-admin/theme)** `v0.4.0` - 主题切换、安全持久化与设计风格系统
-- **[@robot-admin/git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)** `v1.0.4` - 幂等初始化与配置备份的 Git 工程化标准
+- **[@robot-admin/git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)** `v1.0.5` - 安全初始化、配置保护与双模块兼容的 Git 工程化标准
 
 **已发布周边工具**
 
