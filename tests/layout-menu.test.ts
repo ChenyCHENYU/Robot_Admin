@@ -7,11 +7,11 @@
  */
 
 import { describe, expect, test } from 'bun:test'
-import { toLayoutMenuItems } from '../src/components/global/C_Layout/data'
+import { normalizeLayoutMenus } from '@robot-admin/layout/naive'
 
 describe('layout menu normalization', () => {
   test('丢弃无路径节点并递归保留有效子菜单', () => {
-    const result = toLayoutMenuItems([
+    const result = normalizeLayoutMenus([
       { name: 'invalid' },
       {
         key: '/system',
@@ -21,7 +21,9 @@ describe('layout menu normalization', () => {
     ])
 
     expect(result).toHaveLength(1)
+    expect(result[0]?.key).toBe('/system')
     expect(result[0]?.path).toBe('/system')
+    expect(result[0]?.meta.title).toBe('system')
     expect(result[0]?.children?.map(item => item.path)).toEqual([
       '/system/users',
     ])

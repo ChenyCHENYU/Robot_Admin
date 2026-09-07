@@ -223,7 +223,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { MenuOptions } from '@robot-admin/layout'
+  import type { MenuOptions } from '@robot-admin/layout/naive'
   import {
     DEFAULT_MENU_GROUPS,
     OTHER_GROUP_LABEL,

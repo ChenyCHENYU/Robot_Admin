@@ -8,7 +8,7 @@ import { watch } from 'vue'
 import {
   useSettingsStore as useLayoutSettingsStore,
   adjustColor,
-} from '@robot-admin/layout'
+} from '@robot-admin/layout/naive'
 import { s_themeStore } from '@/stores/theme'
 
 /**
@@ -98,4 +98,4 @@ export type {
   ThemeMode,
   LayoutInfo,
   PresetColor,
-} from '@robot-admin/layout'
+} from '@robot-admin/layout/naive'

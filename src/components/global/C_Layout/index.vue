@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <div v-if="isReady">
+  <div>
     <C_LayoutContainer>
       <!-- Side 布局的垂直菜单 -->
       <template #menu="{ collapsed }">
@@ -90,27 +90,22 @@
 <script setup lang="ts">
   import {
     C_LayoutContainer,
-    provideLayoutContext,
+    normalizeLayoutMenus,
+    type LayoutMenuItem,
     type MenuOptions,
-  } from '@robot-admin/layout'
+  } from '@robot-admin/layout/naive'
   import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import { s_themeStore } from '@/stores/theme'
   import { s_permissionStore } from '@/stores/permission'
   import { s_settingsStore } from '@/stores/settings'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
-  import {
-    buildGroupedMenuData,
-    getMenuGroupColor,
-    toLayoutMenuItems,
-    type LayoutMenuItem,
-  } from './data'
+  import { buildGroupedMenuData, getMenuGroupColor } from './data'
   import C_Settings from '@/components/global/C_Settings/index.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
   import C_MenuGrouped from '@/components/global/C_MenuGrouped/index.vue'
 
-  // 提供布局上下文（桥接业务 Store → 包标准接口）
-  const layoutContext = useLayoutBridge()
-  provideLayoutContext(layoutContext)
+  // 创建并提供布局上下文（业务 Store → 包标准接口）
+  useLayoutBridge()
 
   const permissionStore = s_permissionStore()
   const themeStore = s_themeStore()
@@ -118,7 +113,6 @@
   const route = useRoute()
   const router = useRouter()
 
-  const isReady = ref(true)
   const isDarkMode = computed(() => themeStore.isDark)
   const menuExpandMode = computed<'inline' | 'panel'>(
     () => settingsStore.menuExpandMode
@@ -133,7 +127,7 @@
    * 最终菜单数据：响应式 + 分组模式下自动包装 type:'group'
    */
   const menuData = computed<LayoutMenuItem[]>(() =>
-    toLayoutMenuItems(permissionStore.showMenuListGet as MenuOptions[])
+    normalizeLayoutMenus(permissionStore.showMenuListGet as MenuOptions[])
   )
 
   const groupedMenuData = computed(() => buildGroupedMenuData(menuData.value))

@@ -5,7 +5,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type { App } from 'vue'
-import { setupLayout } from '@robot-admin/layout'
+import { setupLayout } from '@robot-admin/layout/naive'
 import { useThemeStore } from '@robot-admin/theme'
 import { initSettingsStoreSync } from '@/stores/settings'
 

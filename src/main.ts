@@ -16,7 +16,7 @@ import { setupLoading } from '@/plugins/loading'
 
 import './assets/css/main.css'
 import '@/styles/index.scss'
-import '@robot-admin/layout/style' // 布局包完整样式（组件 + 布局）
+import '@robot-admin/layout/naive/style' // Naive UI 布局完整样式
 // 🔮 设计风格 CSS（通过 data-design-style 属性自动隔离，互不冲突）
 import '@robot-admin/theme/styles/glass-morphism.css'
 import '@robot-admin/theme/styles/corporate-minimal.css'

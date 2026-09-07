@@ -12,35 +12,12 @@ import {
   OTHER_GROUP_LABEL,
   type MenuGroupConfig,
 } from '../C_MenuGrouped/data'
-import type { MenuOptions } from '@robot-admin/layout'
-
-export interface LayoutMenuItem extends Omit<MenuOptions, 'path' | 'children'> {
-  path: string
-  children?: LayoutMenuItem[]
-}
+import type { LayoutMenuItem } from '@robot-admin/layout/naive'
 
 export interface MenuGroup {
   label: string
   items: LayoutMenuItem[]
 }
-
-/**
- * 将后端菜单契约收敛为 UI 组件要求的必填 path 契约。
- * 无有效路径的节点不会进入导航，避免点击后意外跳转到根路由。
- */
-export const toLayoutMenuItems = (menus: MenuOptions[]): LayoutMenuItem[] =>
-  menus.flatMap(menu => {
-    const path = menu.path || menu.key
-    if (!path) return []
-
-    return [
-      {
-        ...menu,
-        path,
-        children: menu.children ? toLayoutMenuItems(menu.children) : undefined,
-      },
-    ]
-  })
 
 export const isMatchGroup = (
   cfg: MenuGroupConfig,

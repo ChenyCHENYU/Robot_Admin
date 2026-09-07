@@ -51,7 +51,7 @@
   import {
     SettingsDrawer,
     type SettingsDrawerActions,
-  } from '@robot-admin/layout'
+  } from '@robot-admin/layout/naive'
   import { s_themeStore, type MenuThemeType } from '@/stores/theme'
 
   defineOptions({ name: 'CSettings' })

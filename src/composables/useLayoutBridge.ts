@@ -13,14 +13,14 @@
  * ```
  */
 
-import { createLayoutContext, type LayoutContext } from '@robot-admin/layout'
+import { provideLayout, type LayoutContext } from '@robot-admin/layout/naive'
 import { s_permissionStore } from '@/stores/permission'
 import { s_themeStore } from '@/stores/theme'
 import { s_settingsStore } from '@/stores/settings'
 import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
 
 /**
- * 创建布局桥接数据
+ * 创建并提供布局桥接数据
  *
  * 🔌 适配器函数：将业务 Store 转换成 @robot-admin/layout 的 LayoutContext 接口
  *
@@ -33,7 +33,7 @@ export function useLayoutBridge(): LayoutContext {
   const settingsStore = s_settingsStore()
 
   // 包负责桥接标准设置字段，宿主只提供业务数据和品牌能力。
-  return createLayoutContext({
+  return provideLayout({
     settings: settingsStore,
     menus: () => permissionStore.showMenuListGet,
     isDark: () => themeStore.isDark,

@@ -122,6 +122,23 @@ const addMonorepoAliases = (aliases: Alias[], packageNames: string[]): void => {
     if (!existsSync(srcPath)) continue
 
     const fullPackageName = `${LOCAL_PACKAGE_CONFIG.namespace}/${pkgName}`
+
+    // layout 采用分层入口；本地联调时也必须精确指向源码，
+    // 避免 /core、/vue、/naive 静默回落到 node_modules。
+    if (pkgName === 'layout') {
+      for (const subpath of ['core', 'vue', 'naive']) {
+        const subpathEntry = resolve(srcPath, subpath, 'index.ts')
+        if (!existsSync(subpathEntry)) continue
+
+        aliases.push({
+          find: new RegExp(
+            `^${fullPackageName.replace(/\//g, '\\/')}/${subpath}$`
+          ),
+          replacement: subpathEntry,
+        })
+      }
+    }
+
     aliases.push({
       find: new RegExp(`^${fullPackageName.replace(/\//g, '\\/')}$`),
       replacement: srcPath,
@@ -199,7 +216,8 @@ const addStandaloneAliases = (
  *
  * **工作原理：**
  * - 使用正则精确匹配主入口（如 `@robot-admin/layout$`）
- * - 子路径导出（如 `/style`）仍从 node_modules 解析
+ * - layout 的 `/core`、`/vue`、`/naive` 入口同步映射到本地源码
+ * - 样式子路径仍从 node_modules 解析，与已安装版本保持一致
  *
  * @returns Vite alias 配置数组
  */

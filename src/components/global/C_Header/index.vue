@@ -77,7 +77,7 @@
 <script setup lang="ts">
   import { s_themeStore } from '@/stores/theme'
   import { s_settingsStore } from '@/stores/settings'
-  import { MENU_COLLAPSE_KEY } from '@robot-admin/layout'
+  import { MENU_COLLAPSE_KEY } from '@robot-admin/layout/naive'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 

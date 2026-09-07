@@ -466,7 +466,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
   import { Icon } from '@iconify/vue'
-  import { MENU_COLLAPSE_KEY } from '@robot-admin/layout'
+  import { MENU_COLLAPSE_KEY } from '@robot-admin/layout/naive'
   import { s_userStore } from '@/stores/user'
   import { useRouter } from 'vue-router'
   import C_Header from '@/components/global/C_Header/index.vue'
