@@ -6,7 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import { getData, postData, putData } from '@robot-admin/request-core'
+import { getData, postData, putData } from '@robot-admin/request-core/axios'
 import { isMockDataMode } from '@/config/dataMode'
 import { delayWithSignal } from '@/utils/abort'
 

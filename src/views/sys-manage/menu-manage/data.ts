@@ -5,7 +5,7 @@ import {
   getData,
   postData,
   putData,
-} from '@robot-admin/request-core'
+} from '@robot-admin/request-core/axios'
 import { isMockDataMode } from '@/config/dataMode'
 import type { DynamicRoute } from '@/router/dynamicRouter'
 import { delayWithSignal } from '@/utils/abort'

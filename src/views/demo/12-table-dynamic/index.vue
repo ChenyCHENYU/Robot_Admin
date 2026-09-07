@@ -119,7 +119,7 @@
     DataRecord,
     SimpleTableActions,
   } from '@robot-admin/naive-ui-components'
-  import { useTableCrud } from '@robot-admin/request-core'
+  import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import {
     type DynamicEmployee,
     type Log,
@@ -143,7 +143,7 @@
   const watermarkStyle = ref('')
 
   // 表格数据管理
-  const table = useTableCrud<DynamicEmployee>({
+  const table = useNaiveTableCrud<DynamicEmployee>({
     api: { list: 'employees/dynamicList' },
     columns: dynamicTableColumns,
   })

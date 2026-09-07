@@ -1,5 +1,8 @@
 import type { SelectOption, DataRecord } from '@robot-admin/naive-ui-components'
-import type { TableColumn, UseTableCrudConfig } from '@robot-admin/request-core'
+import type {
+  TableColumn,
+  UseTableCrudConfig,
+} from '@robot-admin/request-core/naive'
 import { PRESET_RULES } from '@robot-admin/form-validate'
 
 // ================= 业务类型定义 =================

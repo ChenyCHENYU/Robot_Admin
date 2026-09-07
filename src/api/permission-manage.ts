@@ -4,7 +4,7 @@ import {
   postData,
   deleteData,
   putData,
-} from '@robot-admin/request-core'
+} from '@robot-admin/request-core/axios'
 import type {
   GetSysPermissionsByIdResponse,
   GetSysPermissionsListResponse,

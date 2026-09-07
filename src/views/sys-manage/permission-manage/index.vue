@@ -1050,7 +1050,7 @@
     revokeTempAuthorizationApi,
     updateDataPermissionRuleApi,
   } from '@/api/permission-governance'
-  import { useTableCrud } from '@robot-admin/request-core'
+  import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import { isMockDataMode } from '@/config/dataMode'
   import { useLatestRequest } from '@/composables/useLatestRequest'
   import {
@@ -1091,7 +1091,7 @@
   const mockMode = isMockDataMode()
 
   // ============ 表格数据管理 ============
-  const table = useTableCrud<PermissionData>({
+  const table = useNaiveTableCrud<PermissionData>({
     api: { list: '/sys/permissions' },
     columns: getTableColumns(),
     autoLoad: !mockMode,

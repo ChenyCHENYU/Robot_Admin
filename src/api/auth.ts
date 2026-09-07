@@ -7,7 +7,7 @@
  */
 
 import DynamicRouter from '@/assets/data/dynamicRouter.json'
-import { getData, postData } from '@robot-admin/request-core'
+import { getData, postData } from '@robot-admin/request-core/axios'
 import type { DynamicRoute } from '@/router/dynamicRouter'
 import {
   resolveAuthMode,

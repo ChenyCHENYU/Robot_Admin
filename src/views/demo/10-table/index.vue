@@ -284,7 +284,7 @@
     TableConfig,
   } from '@robot-admin/naive-ui-components'
   import type { DataTableColumns, FormInst } from 'naive-ui/es'
-  import { useTableCrud } from '@robot-admin/request-core'
+  import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import { PRESET_RULES } from '@robot-admin/form-validate'
   import {
     type Employee,
@@ -302,7 +302,7 @@
   } from './data'
 
   // 初始化表格 CRUD
-  const tableCrud = useTableCrud(employeeTableConfig)
+  const tableCrud = useNaiveTableCrud(employeeTableConfig)
 
   // UI 状态
   const activeTab = ref('crud')

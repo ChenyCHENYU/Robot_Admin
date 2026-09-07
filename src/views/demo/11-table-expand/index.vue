@@ -81,7 +81,7 @@
   import { type DataTableRowKey, NSpin } from 'naive-ui/es'
   import type { VNodeChild } from 'vue'
   import { C_Table, type ActionItem } from '@robot-admin/naive-ui-components'
-  import { useTableCrud } from '@robot-admin/request-core'
+  import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import {
     defaultConfig,
     dataColumns,
@@ -95,7 +95,7 @@
   const tableRef = ref()
 
   // 表格数据管理
-  const table = useTableCrud<TestRecord>({
+  const table = useNaiveTableCrud<TestRecord>({
     api: { list: 'employees/expandList' },
     columns: dataColumns,
   })

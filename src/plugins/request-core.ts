@@ -18,7 +18,7 @@ import {
   createRequestCore,
   getReLoginPromise,
   waitForReLogin,
-} from '@robot-admin/request-core'
+} from '@robot-admin/request-core/axios'
 import { s_userStore } from '@/stores/user'
 import { s_reLoginStore } from '@/stores/reLogin'
 import { refreshTokenApi } from '@/api/auth'

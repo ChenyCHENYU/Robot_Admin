@@ -79,7 +79,10 @@
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
   import { loginApi, type LoginResponse } from '@/api/auth'
-  import { onReLoginSuccess, onReLoginCancel } from '@robot-admin/request-core'
+  import {
+    onReLoginSuccess,
+    onReLoginCancel,
+  } from '@robot-admin/request-core/axios'
 
   defineOptions({ name: 'C_ReLoginDialog' })
 
