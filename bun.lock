@@ -15,7 +15,7 @@
         "@robot-admin/layout": "3.2.1",
         "@robot-admin/naive-ui-components": "0.11.6",
         "@robot-admin/request-core": "0.5.0",
-        "@robot-admin/theme": "0.5.0",
+        "@robot-admin/theme": "0.5.1",
         "@splinetool/runtime": "^1.12.68",
         "@vercel/analytics": "^1.6.1",
         "@vercel/speed-insights": "^2.0.0",
@@ -730,7 +730,7 @@
 
     "@robot-admin/request-core": ["@robot-admin/request-core@0.5.0", "", { "peerDependencies": { "axios": "^1.7.0", "naive-ui": "^2.38.0", "vue": "^3.4.0" }, "optionalPeers": ["naive-ui", "vue"] }, "sha512-IpyXvxd+oCjuE+um9NkBoAjYxfmbAussXd+aJgysvz5p9dm7bAQsuMF+NbINsR7zakxmyCDu94PKqBnAJqaChQ=="],
 
-    "@robot-admin/theme": ["@robot-admin/theme@0.5.0", "", { "peerDependencies": { "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0" }, "optionalPeers": ["naive-ui", "pinia", "vue"] }, "sha512-L7FBR0GYtQ04eIEqaz8GA8bAj9qSVHFgO5yiuFt/eul00q/bmVnZcSppclLp3jaqxaXIGBnQ3V5YG7GllqYGkg=="],
+    "@robot-admin/theme": ["@robot-admin/theme@0.5.1", "", { "peerDependencies": { "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0" }, "optionalPeers": ["naive-ui", "pinia", "vue"] }, "sha512-6GXxo+QCRanULdhcavib5NTUBpc0n+IhF+tjFmHdq4kijiTkEFYV448M82CFiuR8wcytl1mSf3B7teZmtB1pyg=="],
 
     "@rolldown/binding-android-arm-eabi": ["@rolldown/binding-android-arm-eabi@1.2.6", "", { "os": "android", "cpu": "arm" }, "sha512-b+jTcARdTiFLI6jB4a5XjTm0RWd6KcRfQj/I2356fxUZemiho9zQLxo0RtCuMDAyKcLo6cEltkgbQp6d1+sjjQ=="],
 

@@ -779,7 +779,7 @@ location / {
 - **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v3.4.2` - Naive UI / Element Plus 双框架企业级表单验证规则库
 - **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v2.0.1` - 11 个安全、可回收的 Vue 指令
 - **[@robot-admin/file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)** `v3.0.1` - Excel/ZIP/RFC 4180 CSV/可取消分片工具集
-- **[@robot-admin/theme](https://www.npmjs.com/package/@robot-admin/theme)** `v0.5.0` - 分层主题核心、Vue 状态管理与 Naive UI 适配
+- **[@robot-admin/theme](https://www.npmjs.com/package/@robot-admin/theme)** `v0.5.1` - 分层主题核心、Vue 状态管理与 Naive UI 适配
 - **[@robot-admin/git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)** `v1.0.5` - 安全初始化、配置保护与双模块兼容的 Git 工程化标准
 
 **已发布周边工具**

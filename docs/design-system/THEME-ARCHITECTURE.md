@@ -1,6 +1,6 @@
 # Robot Admin 主题架构与接入
 
-本文档描述 Robot Admin 当前生产实现。主题包版本为 `@robot-admin/theme@0.5.0`。
+本文档描述 Robot Admin 当前生产实现。主题包版本为 `@robot-admin/theme@0.5.1`。
 
 ## 分层职责
 

@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { GlobalThemeOverrides } from 'naive-ui/es/config-provider'
+import type { GlobalThemeOverrides } from '@robot-admin/theme/naive'
 import {
   PRIMARY_COLORS,
   LIGHT_BACKGROUND,
@@ -16,7 +16,7 @@ import {
   DARK_MENU,
 } from './tokens'
 
-export type { GlobalThemeOverrides } from 'naive-ui/es/config-provider'
+export type { GlobalThemeOverrides } from '@robot-admin/theme/naive'
 
 /**
  * 亮色模式菜单配置

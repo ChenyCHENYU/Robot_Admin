@@ -176,7 +176,7 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'theme',
-    version: '0.5.0',
+    version: '0.5.1',
     icon: 'mdi:palette-outline',
     color: '#ec4899',
     desc: '分层主题核心、Vue 状态与 Naive UI 适配',
