@@ -108,29 +108,27 @@ export const getMockPageResult = (page = 1, pageSize = 20) => {
 }
 ```
 
-### 4. 注入 useTableCrud（可选）
+### 4. 注入 Headless CRUD（可选）
 
-如果页面使用了 `useTableCrud`，可以将 Mock 数据注入，替代真实 API 调用：
+如果页面使用了表格 CRUD，直接通过 `query` 注入 Mock 查询函数，不伪造接口配置：
 
 ```typescript
-// 在 index.vue 中修改 tableCrud 配置（对接真实接口时删除 localData）
-const tableCrud = useTableCrud({
-  api: {
-    list: '/<domain>/<resource>',
-    // ... 其余 API 配置
+import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
+
+const tableCrud = useNaiveTableCrud({
+  autoLoad: 'mounted',
+  defaultPageSize: 20,
+  query: async ({ page, pageSize }) => {
+    const result = getMockList(page, pageSize)
+    return { items: result.list, total: result.total }
   },
-  // ⚠️ 开发 Mock 模式：注释掉 api 中的 list，使用本地数据
-  // localData: getMockList(50),   // 切换为真实 API 时删除此行
   columns: getTableColumns(),
-  pagination: { pageSize: 20 },
 })
 ```
 
-> **提示**：`localData` 字段需 `@robot-admin/request-core` 支持。若不支持，可直接在 `onMounted` 中将 `getMockList()` 赋值给 data ref。
+### 5. 简单赋值模式
 
-### 5. 简单赋值模式（最保险）
-
-若 `useTableCrud` 不支持 `localData`，直接在 `onMounted` 赋值：
+不需要 CRUD 状态机的纯展示页可直接在 `onMounted` 中赋值：
 
 ```typescript
 // index.vue 中

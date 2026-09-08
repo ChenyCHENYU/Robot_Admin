@@ -775,7 +775,7 @@ location / {
 
 - **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.11.6` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
 - **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v3.2.1` - 6 种布局模式 + `/naive` 单入口 + Vue Headless 分层
-- **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.2.0` - Axios 请求编排 + 6 类插件能力 + useTableCrud
+- **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.5.0` - 实例化 Axios 编排、认证恢复与函数式 Headless CRUD
 - **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v3.4.2` - Naive UI / Element Plus 双框架企业级表单验证规则库
 - **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v2.0.1` - 11 个安全、可回收的 Vue 指令
 - **[@robot-admin/file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)** `v3.0.1` - Excel/ZIP/RFC 4180 CSV/可取消分片工具集

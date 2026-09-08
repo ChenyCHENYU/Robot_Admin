@@ -50,16 +50,16 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 
 ### 自有包生态（@robot-admin/\*）
 
-| 包名                               | 版本   | 功能                            |
-| ---------------------------------- | ------ | ------------------------------- |
-| `@robot-admin/naive-ui-components` | 0.11.4 | 51+ 个业务组件                  |
-| `@robot-admin/layout`              | 3.1.0  | 6 种布局 + 精简适配 + 核心协议  |
-| `@robot-admin/request-core`        | 0.2.0  | Axios + 6 类插件 + useTableCrud |
-| `@robot-admin/theme`               | 0.4.0  | 主题切换 + 安全持久化           |
-| `@robot-admin/directives`          | 1.1.1  | 11 个 Vue 指令                  |
-| `@robot-admin/form-validate`       | 3.4.2  | 双框架验证、组合与批量校验      |
-| `@robot-admin/file-utils`          | 2.0.0  | 文件处理（Excel/ZIP/CSV/分片）  |
-| `@robot-admin/git-standards`       | 1.0.4  | Git 工程化标准                  |
+| 包名                               | 版本   | 功能                                  |
+| ---------------------------------- | ------ | ------------------------------------- |
+| `@robot-admin/naive-ui-components` | 0.11.4 | 51+ 个业务组件                        |
+| `@robot-admin/layout`              | 3.1.0  | 6 种布局 + 精简适配 + 核心协议        |
+| `@robot-admin/request-core`        | 0.5.0  | 实例化请求编排 + 函数式 Headless CRUD |
+| `@robot-admin/theme`               | 0.4.0  | 主题切换 + 安全持久化                 |
+| `@robot-admin/directives`          | 1.1.1  | 11 个 Vue 指令                        |
+| `@robot-admin/form-validate`       | 3.4.2  | 双框架验证、组合与批量校验            |
+| `@robot-admin/file-utils`          | 2.0.0  | 文件处理（Excel/ZIP/CSV/分片）        |
+| `@robot-admin/git-standards`       | 1.0.4  | Git 工程化标准                        |
 
 ### 开发工具链
 
@@ -321,7 +321,7 @@ import { storeToRefs } from 'pinia'
 import { NCard, NButton, NSpace } from 'naive-ui'
 
 // 5. 自有包
-import { postData, getData } from '@robot-admin/request-core'
+import { postData, getData } from '@robot-admin/request-core/axios'
 import { PRESET_RULES } from '@robot-admin/form-validate'
 
 // 6. 项目内部（使用路径别名）
@@ -791,7 +791,7 @@ export const s_userStore = defineStore('user', {
 
 ```typescript
 // src/api/auth.ts
-import { postData, getData } from '@robot-admin/request-core'
+import { postData, getData } from '@robot-admin/request-core/axios'
 import type { PostAuthLoginResponse } from './generated'
 
 /**
@@ -814,58 +814,41 @@ export const getAuthMenuListApi = () =>
 
 ```typescript
 // src/plugins/request-core.ts
-import { createRequestCore } from '@robot-admin/request-core'
+import { createRequestClient } from '@robot-admin/request-core/axios'
+import { createRequestPlugin } from '@robot-admin/request-core/vue'
+
+export const request = createRequestClient({
+  request: { baseURL: VITE_API_BASE, timeout: 10_000 },
+  setAsDefault: true, // 让既有 getData/postData 复用同一实例
+  auth: {
+    getToken: () => s_userStore().token,
+    shouldRefresh: () => s_userStore().isTokenExpiringSoon(),
+    refresh: refreshAccessToken,
+    reauthenticate: waitForUserReLogin,
+    isAuthRequest: config => config.url?.startsWith('/auth/') === true,
+  },
+})
 
 export function setupRequestCore(app: App) {
-  const requestCore = createRequestCore({
-    request: {
-      baseURL: VITE_API_BASE,
-      timeout: 10000,
-      headers: { 'Content-Type': 'application/json' },
-    },
-    interceptors: {
-      request: config => {
-        // 注入 token
-        const { token } = s_userStore()
-        if (token) config.headers.Authorization = `Bearer ${token}`
-        return config
-      },
-      response: response => {
-        // 业务码判断
-        const { code, message: msg } = response.data
-        const isSuccess =
-          code === 200 || code === 0 || code === '200' || code === '0'
-        if (!isSuccess) return Promise.reject(new Error(msg))
-        return response
-      },
-      responseError: async error => {
-        // 401 → 重新登录弹窗
-        if (error.response?.status === 401) {
-          reLoginStore.show(userStore.userInfo?.username || '')
-          // ... 等待重新登录
-        }
-        return Promise.reject(error)
-      },
-    },
-  })
+  app.use(createRequestPlugin(request))
 }
 ```
 
 ### useTableCrud 表格数据管理
 
 ```typescript
-import { useTableCrud } from '@robot-admin/request-core'
+import { useTableCrud } from '@robot-admin/request-core/vue'
 
 const table = useTableCrud({
   api: {
     list: '/api/employees',
     create: '/api/employees',
     update: '/api/employees/:id',
-    delete: '/api/employees/:id',
-    detail: '/api/employees/:id',
+    remove: '/api/employees/:id',
+    get: '/api/employees/:id',
   },
   columns: [...],
-  pagination: { pageSize: 20 },
+  defaultPageSize: 20,
 })
 
 // 模板中
@@ -1334,7 +1317,7 @@ PRESET_RULES.ip('IP') // IP 地址
 ### @robot-admin/request-core — 请求方法
 
 ```typescript
-import { getData, postData, putData, deleteData } from '@robot-admin/request-core'
+import { getData, postData, putData, deleteData } from '@robot-admin/request-core/axios'
 
 // CRUD 快捷方法
 getData<T>(url, params?)       // GET 请求
@@ -1343,8 +1326,9 @@ putData<T>(url, data?)         // PUT 请求
 deleteData<T>(url, params?)    // DELETE 请求
 
 // 表格 CRUD
-import { useTableCrud } from '@robot-admin/request-core'
-const table = useTableCrud({ api, columns, pagination })
+import { createTableCrud, useTableCrud } from '@robot-admin/request-core/vue'
+const useAppTable = createTableCrud({ client: request, autoLoad: 'mounted' })
+const table = useAppTable({ api, columns, defaultPageSize: 20 })
 ```
 
 ### @robot-admin/layout — 布局模式

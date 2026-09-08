@@ -28,7 +28,7 @@ import {
   postData,
   putData,
   deleteData,
-} from '@robot-admin/request-core'
+} from '@robot-admin/request-core/axios'
 ```
 
 | 工具函数                      | HTTP Method | 典型场景             |
@@ -182,7 +182,7 @@ export interface Delete{{Resource}}ByIdResponse {
  * Copyright (c) {{year}} by CHENY, All Rights Reserved 😎.
  */
 
-import { getData, postData, putData, deleteData } from '@robot-admin/request-core'
+import { getData, postData, putData, deleteData } from '@robot-admin/request-core/axios'
 import type {
   Get{{Resource}}ListResponse,
   Get{{Resource}}ByIdResponse,
@@ -238,18 +238,18 @@ export const delete{{Resource}}Api = (id: number | string) =>
 当页面模式为 `LIST` 且使用 C_Table 时，额外输出 useTableCrud 配置：
 
 ```typescript
-import { useTableCrud } from '@robot-admin/request-core'
+import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 
-const table = useTableCrud({
+const table = useNaiveTableCrud({
   api: {
     list: '/<domain>/<resource>',
     create: '/<domain>/<resource>',
     update: '/<domain>/<resource>/:id',
-    delete: '/<domain>/<resource>/:id',
-    detail: '/<domain>/<resource>/:id',
+    remove: '/<domain>/<resource>/:id',
+    get: '/<domain>/<resource>/:id',
   },
   columns: [...],
-  pagination: { pageSize: 20 },
+  defaultPageSize: 20,
 })
 ```
 
@@ -292,4 +292,4 @@ import { PRESET_RULES } from '@robot-admin/form-validate'
 3. **文件头注释**：每个新建文件必须包含 `@Author` / `@Date` / `@Description` 文件头
 4. **类型优先**：所有 API 函数必须标注泛型返回类型 `getData<T>(...)`
 5. **路径别名**：内部导入使用 `@/api/generated`，不使用相对路径 `./generated`
-6. **request-core 唯一来源**：请求方法只从 `@robot-admin/request-core` 导入，不直接使用 axios
+6. **request-core 唯一来源**：请求方法从 `/axios`、Naive CRUD 从 `/naive` 导入，不直接使用 axios 或根兼容入口

@@ -133,7 +133,7 @@ src/views/<domain>/<module-name>/
  */
 
 import type { SelectOption, DataRecord } from '@robot-admin/naive-ui-components'
-import type { TableColumn, UseTableCrudConfig } from '@robot-admin/request-core'
+import type { TableColumn, UseTableCrudConfig } from '@robot-admin/request-core/naive'
 import { PRESET_RULES } from '@robot-admin/form-validate'
 
 // ================= 业务类型定义 =================
@@ -223,11 +223,11 @@ export const getTableCrudConfig = (): UseTableCrudConfig => ({
     list: '/<domain>/<resource>',
     create: '/<domain>/<resource>',
     update: '/<domain>/<resource>/:id',
-    delete: '/<domain>/<resource>/:id',
-    detail: '/<domain>/<resource>/:id',
+    remove: '/<domain>/<resource>/:id',
+    get: '/<domain>/<resource>/:id',
   },
   columns: getTableColumns(),
-  pagination: { pageSize: 20 },
+  defaultPageSize: 20,
 })
 ```
 
@@ -277,6 +277,7 @@ export const getTableCrudConfig = (): UseTableCrudConfig => ({
   defineOptions({ name: '{{ComponentName}}' })
 
   // ② 导入配置数据
+  import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import { ... } from './data'
   import { ... } from '@/api/{{domain}}-{{resource}}'
 
@@ -286,8 +287,8 @@ export const getTableCrudConfig = (): UseTableCrudConfig => ({
   const loading = ref(false)
   const searchForm = ref<SearchForm>({ ... })
 
-  // ④ useTableCrud（LIST 模式）
-  const tableCrud = useTableCrud(getTableCrudConfig())
+  // ④ Headless CRUD + Naive 消息适配（LIST 模式）
+  const tableCrud = useNaiveTableCrud(getTableCrudConfig())
 
   // ⑤ 计算属性
 
@@ -614,7 +615,7 @@ export const STATUS_TAG_CONFIG = {
 - [ ] `defineOptions({ name: '...' })` 存在
 - [ ] 文件头注释完整（Author/Date/Description）
 - [ ] JSDoc 注释覆盖所有导出函数
-- [ ] 使用 `@robot-admin/request-core` 的 useTableCrud / getData / postData
+- [ ] 请求函数从 `@robot-admin/request-core/axios` 导入，Naive CRUD 从 `/naive` 导入
 - [ ] 使用 `@robot-admin/form-validate` 的 PRESET_RULES
 - [ ] 使用 `@robot-admin/naive-ui-components` 的 C_Table / C_Form / C_ActionBar
 - [ ] 自动导入的 API 未被手动 import（ref/computed/NCard/useMessage 等）
