@@ -8,6 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
+import type { GlobalThemeOverrides } from 'naive-ui/es/config-provider'
 import {
   PRIMARY_COLORS,
   LIGHT_BACKGROUND,
@@ -15,52 +16,7 @@ import {
   DARK_MENU,
 } from './tokens'
 
-/**
- * 全局主题覆盖类型
- * 与 Naive UI 兼容的主题配置类型
- */
-export interface GlobalThemeOverrides {
-  common?: {
-    primaryColor?: string
-    primaryColorHover?: string
-    primaryColorPressed?: string
-    primaryColorSuppl?: string
-    infoColor?: string
-    infoColorHover?: string
-    infoColorPressed?: string
-    infoColorSuppl?: string
-    bodyColor?: string
-    [key: string]: string | undefined
-  }
-  Menu?: {
-    itemTextColor?: string
-    itemTextColorHover?: string
-    itemTextColorActive?: string
-    itemTextColorChildActive?: string
-    itemTextColorActiveHover?: string
-    itemColorActive?: string
-    itemColorActiveHover?: string
-    itemColorActiveCollapsed?: string
-    arrowColor?: string
-    arrowColorHover?: string
-    arrowColorActive?: string
-    arrowColorChildActive?: string
-    itemIconColor?: string
-    itemIconColorHover?: string
-    itemIconColorActive?: string
-    itemIconColorChildActive?: string
-    itemIconColorActiveHover?: string
-    itemColorHover?: string
-    color?: string
-    scrollbarColor?: string
-    scrollbarColorHover?: string
-    itemPadding?: string
-    itemHeight?: string
-    itemBorderRadius?: string
-    [key: string]: string | undefined
-  }
-  [key: string]: Record<string, string | undefined> | undefined
-}
+export type { GlobalThemeOverrides } from 'naive-ui/es/config-provider'
 
 /**
  * 亮色模式菜单配置
@@ -144,7 +100,7 @@ export const lightThemeOverrides: GlobalThemeOverrides = {
     infoColorHover: PRIMARY_COLORS.hover,
     infoColorPressed: PRIMARY_COLORS.pressed,
     infoColorSuppl: PRIMARY_COLORS.suppl,
-    bodyColor: LIGHT_BACKGROUND.menu, // 保持与原配置一致
+    bodyColor: LIGHT_BACKGROUND.body,
   },
   Menu: lightMenuConfig,
 
@@ -199,17 +155,4 @@ const darkThemeOverridesConfig: GlobalThemeOverrides = {
   },
 }
 
-/**
- * 主题常量导出（向后兼容）
- * 保持与原 theme.ts 的导出一致
- */
-export const themeConstants = {
-  primaryColor: PRIMARY_COLORS.default,
-  primaryColorHover: PRIMARY_COLORS.hover,
-  primaryColorPressed: PRIMARY_COLORS.pressed,
-  primaryColorSuppl: PRIMARY_COLORS.suppl,
-}
-
-// 导出配置（向后兼容）
-export const themeOverrides = lightThemeOverrides
 export const darkThemeOverrides = darkThemeOverridesConfig

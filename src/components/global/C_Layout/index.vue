@@ -137,22 +137,6 @@
   // 设置抽屉状态 - 提升到全局
   const showSettings = ref(false)
 
-  /**
-   * * @description: 预设主题样式，避免白闪（仅在暗色模式下需要）
-   */
-  const _disposeThemeEffect = () => {
-    if (isDarkMode.value) {
-      document.documentElement.style.backgroundColor = '#1c1c21'
-    } else {
-      document.documentElement.style.backgroundColor = '#ffffff'
-    }
-  }
-
-  onMounted(() => {
-    _disposeThemeEffect()
-    themeStore.init()
-  })
-
   // 提供设置抽屉状态给子组件
   provide('settingsDrawer', {
     showSettings,

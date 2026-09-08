@@ -1,94 +1,32 @@
-# Robot Admin Design System
+# Robot Admin 设计系统
 
-> 基于 iOS 拟态玻璃质感的现代化管理系统设计语言
+> Robot Admin 当前设计语言与主题接入文档。
 
-## 🎨 设计理念
+## 当前能力
 
-Robot Admin 设计系统融合了 **Apple iOS 拟态玻璃质感**、**现代极简主义** 和 **企业级可用性**，创造出既美观又实用的管理界面体验。
+- `light` / `dark` / `system` 三种主题偏好。
+- `glass-morphism` / `corporate-minimal` / `dark-tech` 三种设计风格。
+- `signature` / `standard` 两种菜单呈现，独立于内容区设计风格。
+- Naive UI 与 `C_*` 全局组件体系保持一致的主题覆盖。
+- 系统偏好、持久化、跨标签页同步、首屏防闪烁和运行时降级。
 
-### 核心价值观
+## 文档入口
 
-- **🔮 拟态玻璃** - 受 iOS 毛玻璃效果启发，营造层次丰富的视觉深度
-- **⚡ 流畅动效** - 基于物理规律的自然过渡动画
-- **🎯 功能至上** - 美观服务于功能，不做无意义的装饰
-- **🌗 双主题适配** - 完美支持明暗双主题切换
-- **📱 响应式设计** - 从移动端到桌面端的一致体验
+- [主题架构与接入](./THEME-ARCHITECTURE.md)：当前实现的唯一技术事实源。
+- [色彩基础](./foundations/colors.md)：主题色与语义色约定。
+- [动效基础](./foundations/animations.md)：动画与 reduced-motion 约定。
+- [设计风格说明](./DESIGN-STYLES-EXPLAINED.md)：三套视觉风格的适用范围。
+- [玻璃拟态](./themes/glass-morphism.md)：默认风格的视觉说明。
 
-## 📁 文档结构
+`FINAL-EXTENSION-PLAN.md` 及 `implementation/` 下的旧候选方案已移除；这些方案在
+主题包分层前形成，包含重复 Store、重复缓存和过期根入口示例，不再作为实现依据。
 
-```
-docs/design-system/
-├── README.md                 # 设计系统概览
-├── foundations/              # 设计基础
-│   ├── colors.md            # 色彩系统
-│   ├── typography.md        # 字体排版
-│   ├── spacing.md           # 间距系统
-│   ├── shadows.md           # 阴影系统
-│   └── animations.md        # 动效规范
-├── components/              # 组件规范
-│   ├── glass-effects.md     # 玻璃质感组件
-│   ├── cards.md             # 卡片组件
-│   ├── buttons.md           # 按钮组件
-│   └── navigation.md        # 导航组件
-├── patterns/                # 设计模式
-│   ├── layouts.md           # 布局模式
-│   ├── data-display.md      # 数据展示
-│   └── interactions.md      # 交互模式
-├── themes/                  # 主题系统
-│   ├── light-theme.md       # 亮色主题
-│   ├── dark-theme.md        # 暗色主题
-│   └── theme-switching.md   # 主题切换
-└── examples/                # 设计示例
-    ├── dashboard.md         # 仪表盘示例
-    ├── forms.md             # 表单示例
-    └── data-tables.md       # 数据表格示例
-```
+## 维护原则
 
-## 🎭 设计风格分析
+1. 主题模式与设计风格由 `@robot-admin/theme` 管理。
+2. 主色、圆角和布局设置由 `@robot-admin/layout` 管理，主题层只响应式派生覆盖。
+3. 菜单风格属于应用布局呈现，不写入主题包。
+4. 业务代码只消费 `s_themeStore`，不要直接创建第二个主题 Store 或第二份主题缓存。
+5. 视觉调整不得绕过 Token 新增页面级明暗判断。
 
-基于项目代码分析，Robot Admin 已经具备了以下设计特征：
-
-### 1. 玻璃质感系统 ✨
-
-- **backdrop-filter: blur()** - 毛玻璃背景模糊
-- **rgba() 透明度** - 半透明叠加效果
-- **inset 边框高光** - 内发光边框模拟玻璃反射
-- **多层阴影** - 营造悬浮感和深度
-
-### 2. 动效系统 🎬
-
-- **cubic-bezier 缓动** - 自然的物理动画曲线
-- **transform 变换** - 悬停提升、缩放、旋转效果
-- **View Transition API** - 现代浏览器原生过渡
-- **分层动画** - 不同元素的错时动画
-
-### 3. 色彩系统 🌈
-
-- **CSS Variables** - 动态主题切换
-- **语义化色彩** - primary/success/warning/error
-- **透明度渐变** - rgba() 实现层次感
-- **暗色适配** - 完整的暗色主题支持
-
-### 4. 空间系统 📐
-
-- **网格布局** - CSS Grid 响应式布局
-- **圆角系统** - 10px-28px 的圆角层级
-- **间距系统** - 基于 8px 基准的间距规范
-
-## 🚀 快速开始
-
-1. **阅读基础规范** - 从 `foundations/` 开始了解设计基础
-2. **查看组件示例** - 在 `components/` 中学习组件用法
-3. **参考设计模式** - 通过 `patterns/` 了解最佳实践
-4. **应用主题系统** - 使用 `themes/` 中的主题配置
-
-## 🔗 相关资源
-
-- [Naive UI 组件库](https://www.naiveui.com/)
-- [Apple Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
-- [Material Design 3](https://m3.material.io/)
-- [Ant Design](https://ant.design/)
-
----
-
-_最后更新：2026年4月19日_
+最后更新：2026-09-08。

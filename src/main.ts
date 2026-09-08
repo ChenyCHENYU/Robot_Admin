@@ -17,10 +17,7 @@ import { setupLoading } from '@/plugins/loading'
 import './assets/css/main.css'
 import '@/styles/index.scss'
 import '@robot-admin/layout/naive/style' // Naive UI 布局完整样式
-// 🔮 设计风格 CSS（通过 data-design-style 属性自动隔离，互不冲突）
-import '@robot-admin/theme/styles/glass-morphism.css'
-import '@robot-admin/theme/styles/corporate-minimal.css'
-import '@robot-admin/theme/styles/dark-tech.css'
+import '@robot-admin/theme/naive/styles' // 三套设计风格，按 data-design-style 自动隔离
 import 'virtual:uno.css'
 // vue-flow 样式已移至使用页面按需加载（28-work-flow-editor）
 import '@/router/permission'
@@ -34,6 +31,7 @@ import { PassiveScrollPlugin } from '@/plugins/passive-scroll'
 import { setupAnalytics } from '@/plugins/analytics'
 import { setupRequestCore } from '@/plugins/request-core'
 import { setupLayoutSystem } from '@/plugins/layout'
+import { setupThemeSystem } from '@/plugins/theme'
 import { setupRoutePrefetch } from '@/router/routePrefetch'
 // ✅ 移除 app.use(NaiveUIComponents)，由 RobotNaiveUiResolver 按需解析
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
@@ -63,6 +61,7 @@ async function bootstrap() {
   setupRequestCore(app) // 配置 Request Core（axios + 拦截器）
   app.use(router)
   setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）
+  setupThemeSystem(app) // 初始化主题 Store、DOM 属性和生命周期
   setupNaiveUI(app)
   app.use(
     createDirectives({

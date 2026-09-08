@@ -52,14 +52,14 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 
 | 包名                               | 版本   | 功能                                  |
 | ---------------------------------- | ------ | ------------------------------------- |
-| `@robot-admin/naive-ui-components` | 0.11.4 | 51+ 个业务组件                        |
-| `@robot-admin/layout`              | 3.1.0  | 6 种布局 + 精简适配 + 核心协议        |
+| `@robot-admin/naive-ui-components` | 0.11.6 | 51+ 个业务组件                        |
+| `@robot-admin/layout`              | 3.2.1  | 6 种布局 + 精简适配 + 核心协议        |
 | `@robot-admin/request-core`        | 0.5.0  | 实例化请求编排 + 函数式 Headless CRUD |
-| `@robot-admin/theme`               | 0.4.0  | 主题切换 + 安全持久化                 |
-| `@robot-admin/directives`          | 1.1.1  | 11 个 Vue 指令                        |
+| `@robot-admin/theme`               | 0.5.0  | 分层核心 + Vue Store + Naive UI 适配  |
+| `@robot-admin/directives`          | 2.0.1  | 11 个 Vue 指令                        |
 | `@robot-admin/form-validate`       | 3.4.2  | 双框架验证、组合与批量校验            |
-| `@robot-admin/file-utils`          | 2.0.0  | 文件处理（Excel/ZIP/CSV/分片）        |
-| `@robot-admin/git-standards`       | 1.0.4  | Git 工程化标准                        |
+| `@robot-admin/file-utils`          | 3.0.1  | 文件处理（Excel/ZIP/CSV/分片）        |
+| `@robot-admin/git-standards`       | 1.0.5  | Git 工程化标准                        |
 
 ### 开发工具链
 
@@ -969,12 +969,15 @@ Token 超时（8小时无活跃） → 重新登录对话框
 Layer 1: Design Tokens (src/config/theme/tokens.ts)
   → 定义原始颜色、间距常量
   ↓
-Layer 2: @robot-admin/theme (Light/Dark/System)
-  → 基础主题模式管理
+Layer 2: @robot-admin/theme/naive (Light/Dark/System + Design Style)
+  → 模式、设计风格、持久化、跨标签同步与 Naive UI 适配
   ↓
 Layer 3: s_themeStore (Naive UI 集成扩展)
-  → 合并 themeOverrides → NConfigProvider 注入
+  → 仅组合项目 Token、布局设置和菜单呈现 → NConfigProvider 注入
 ```
+
+主题生命周期由 `setupThemeSystem()` 集中管理，业务组件不要重复调用 `init()`；完整
+接入与持久化所有权见 `docs/design-system/THEME-ARCHITECTURE.md`。
 
 ---
 

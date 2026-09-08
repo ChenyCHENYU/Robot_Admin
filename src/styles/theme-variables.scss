@@ -140,6 +140,7 @@
 /**
  * 为 body 元素应用主题变量
  */
+html,
 body {
   background-color: var(--app-bg-body);
   color: var(--app-text-primary);

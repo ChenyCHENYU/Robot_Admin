@@ -160,15 +160,15 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'request-core',
-    version: '0.2.0',
+    version: '0.5.0',
     icon: 'mdi:api',
     color: '#10b981',
-    desc: 'Axios + 6 类插件，CRUD Composables',
+    desc: '请求编排、认证恢复与函数式 Headless CRUD',
     url: 'https://www.npmjs.com/package/@robot-admin/request-core',
   },
   {
     shortName: 'layout',
-    version: '3.1.0',
+    version: '3.2.1',
     icon: 'mdi:page-layout-sidebar-left',
     color: '#f59e0b',
     desc: '6 种布局模式，精简适配，安全设置管理',
@@ -176,10 +176,10 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'theme',
-    version: '0.4.0',
+    version: '0.5.0',
     icon: 'mdi:palette-outline',
     color: '#ec4899',
-    desc: 'Light / Dark / System 主题切换',
+    desc: '分层主题核心、Vue 状态与 Naive UI 适配',
     url: 'https://www.npmjs.com/package/@robot-admin/theme',
   },
   {
@@ -192,10 +192,10 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'form-validate',
-    version: '2.0.0',
+    version: '3.4.2',
     icon: 'mdi:check-decagram-outline',
     color: '#ef4444',
-    desc: '48+ 验证规则，中国本地化，Naive UI 适配',
+    desc: '双框架验证、规则组合与批量校验',
     url: 'https://www.npmjs.com/package/@robot-admin/form-validate',
   },
   {
@@ -208,7 +208,7 @@ export const ecosystemPackages = [
   },
   {
     shortName: 'git-standards',
-    version: '1.0.4',
+    version: '1.0.5',
     icon: 'mdi:source-branch',
     color: '#f97316',
     desc: '规范提交 · 中文引导推送',

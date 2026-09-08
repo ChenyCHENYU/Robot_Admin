@@ -102,4 +102,30 @@ describe('production contracts', () => {
       )
     ).toEqual(assetFiles.map(() => true))
   })
+
+  test('主题集成使用锁定的 Naive 分层入口', async () => {
+    const packageJson = await readJson<{
+      dependencies: Record<string, string>
+    }>('../package.json')
+    const installedTheme = await readJson<{
+      version: string
+      exports: Record<string, unknown>
+    }>('../node_modules/@robot-admin/theme/package.json')
+
+    expect(packageJson.dependencies['@robot-admin/theme']).toBe(
+      installedTheme.version
+    )
+    expect(installedTheme.exports['./core']).toBeDefined()
+    expect(installedTheme.exports['./vue']).toBeDefined()
+    expect(installedTheme.exports['./naive']).toBeDefined()
+    expect(installedTheme.exports['./naive/styles']).toBeDefined()
+
+    const mainSource = await Bun.file(
+      new URL('../src/main.ts', import.meta.url)
+    ).text()
+    expect(mainSource).toContain("'@robot-admin/theme/naive/styles'")
+    expect(mainSource).not.toMatch(
+      /@robot-admin\/theme\/styles\/(glass-morphism|corporate-minimal|dark-tech)/
+    )
+  })
 })
