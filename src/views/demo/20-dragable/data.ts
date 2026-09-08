@@ -8,16 +8,20 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
+import type { TagProps } from 'naive-ui'
+
 // 优先级类型定义
 export type Priority = 'high' | 'medium' | 'low'
 
 // 优先级配置
-export const priorityConfig: Record<Priority, { type: string; text: string }> =
-  {
-    high: { type: 'error', text: '高优先级' },
-    medium: { type: 'warning', text: '中优先级' },
-    low: { type: 'success', text: '低优先级' },
-  }
+export const priorityConfig: Record<
+  Priority,
+  { type: TagProps['type']; text: string }
+> = {
+  high: { type: 'error', text: '高优先级' },
+  medium: { type: 'warning', text: '中优先级' },
+  low: { type: 'success', text: '低优先级' },
+}
 
 // 彩虹色彩数组
 export const rainbowColors = [

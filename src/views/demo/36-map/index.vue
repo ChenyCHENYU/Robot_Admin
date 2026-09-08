@@ -72,7 +72,7 @@
           <div class="control-content">
             <NSelect
               v-model:value="mapType"
-              :options="MAP_TYPES"
+              :options="mapTypeOptions"
               style="width: 150px"
             />
           </div>
@@ -280,6 +280,7 @@
   import { AMAP_SERVICE_HOST, MAP_KEY } from '@/constant'
 
   const message = useMessage()
+  const mapTypeOptions = [...MAP_TYPES]
 
   /** 标记管理按钮 */
   const markerActions = computed(() => [

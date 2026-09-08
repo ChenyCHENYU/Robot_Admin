@@ -1,9 +1,10 @@
-import type { SelectOption, DataRecord } from '@robot-admin/naive-ui-components'
+import type { DataRecord, EditMode } from '@robot-admin/naive-ui-components'
+import type { AlertProps, SelectOption } from 'naive-ui'
 import type {
   TableColumn,
   UseTableCrudConfig,
 } from '@robot-admin/request-core/naive'
-import { PRESET_RULES } from '@robot-admin/form-validate'
+import { PRESET_RULES } from '@/utils/d_formValidate'
 
 // ================= 业务类型定义 =================
 export interface Employee extends DataRecord {
@@ -43,7 +44,10 @@ export const EDIT_MODES = [
   { value: 'none', label: '禁用编辑', icon: 'mdi:lock' },
 ]
 
-export const MODE_CONFIG = {
+export const MODE_CONFIG: Record<
+  EditMode,
+  { title: string; description: string; alertType: AlertProps['type'] }
+> = {
   row: {
     title: '行内编辑模式',
     description:

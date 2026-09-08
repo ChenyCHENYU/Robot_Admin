@@ -42,20 +42,20 @@ function parseStorageValue<T>(raw: string | null, fallback: T): T {
 }
 
 /**
- * 读取会话凭据，并一次性迁移、删除历史 localStorage 中的认证信息。
+ * 读取持久化凭据，并兼容迁移事故版本写入 sessionStorage 的认证信息。
  */
 function readAuthStorage<T>(key: string, fallback: T): T {
   if (typeof window === 'undefined') return fallback
+  const persistedValue = localStorage.getItem(key)
   const sessionValue = sessionStorage.getItem(key)
-  const legacyValue = localStorage.getItem(key)
-  if (sessionValue !== null) {
-    if (legacyValue !== null) localStorage.removeItem(key)
-    return parseStorageValue(sessionValue, fallback)
+  if (persistedValue !== null) {
+    if (sessionValue !== null) sessionStorage.removeItem(key)
+    return parseStorageValue(persistedValue, fallback)
   }
-  if (legacyValue === null) return fallback
-  sessionStorage.setItem(key, legacyValue)
-  localStorage.removeItem(key)
-  return parseStorageValue(legacyValue, fallback)
+  if (sessionValue === null) return fallback
+  localStorage.setItem(key, sessionValue)
+  sessionStorage.removeItem(key)
+  return parseStorageValue(sessionValue, fallback)
 }
 
 /** 清除禁止持久化的密码字段 */
@@ -66,14 +66,15 @@ export function sanitizeUserInfo(userInfo: UserInfo): UserInfo {
   return sanitized
 }
 
-/** 写入仅在当前浏览器标签页有效的认证会话 */
+/** 写入跨标签页和浏览器重启均可恢复的认证状态。 */
 function writeAuthStorage(key: string, value: unknown): void {
   if (typeof window === 'undefined') return
+  sessionStorage.removeItem(key)
   if (value === '' || value === 0 || value === undefined) {
-    sessionStorage.removeItem(key)
+    localStorage.removeItem(key)
     return
   }
-  sessionStorage.setItem(key, JSON.stringify(value))
+  localStorage.setItem(key, JSON.stringify(value))
 }
 
 /** 读取并立即覆盖清洗后的用户信息，确保迁移数据中不残留密码。 */

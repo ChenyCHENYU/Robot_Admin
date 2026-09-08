@@ -222,7 +222,7 @@
           <div class="config-preview">
             <div class="config-file-selector mb-4">
               <NSelect
-                v-model:value="selectedConfigFile"
+                v-model:value="selectedConfigFileKey"
                 :options="configFileOptions"
                 placeholder="选择演示文件"
               />
@@ -298,9 +298,17 @@
   const activeFileIndex = ref(0)
 
   // 场景4: 配置选项
-  const selectedConfigFile = ref<FileOption | null>(null)
+  const selectedConfigFileKey = ref<string | null>(null)
 
   const configFileOptions = CONFIG_FILE_OPTIONS
+
+  const selectedConfigFile = computed<FileOption | null>(() => {
+    return (
+      configFileOptions.find(
+        option => option.value === selectedConfigFileKey.value
+      )?.file ?? null
+    )
+  })
 
   // 计算属性
   const currentBatchFile = computed(() => {

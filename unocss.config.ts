@@ -15,12 +15,7 @@ import {
   presetWind3,
   transformerDirectives,
 } from 'unocss'
-import { icons as carbonIcons } from '@iconify-json/carbon'
-import { icons as icIcons } from '@iconify-json/ic'
-import { icons as laIcons } from '@iconify-json/la'
-import { icons as mdiIcons } from '@iconify-json/mdi'
-import { icons as riIcons } from '@iconify-json/ri'
-
+import { iconSafelist } from './src/utils/unocss/icon-safelist'
 import { shortcutsArr } from './src/utils/unocss/shortcuts-arr'
 
 export default defineConfig({
@@ -31,11 +26,13 @@ export default defineConfig({
       scale: 1.2,
       warn: true,
       collections: {
-        carbon: () => carbonIcons,
-        ic: () => icIcons,
-        la: () => laIcons,
-        mdi: () => mdiIcons,
-        ri: () => riIcons,
+        // 图标集按首次使用加载，避免 Vite 启动阶段同步解析五份大型 JSON。
+        carbon: () =>
+          import('@iconify-json/carbon').then(module => module.icons),
+        ic: () => import('@iconify-json/ic').then(module => module.icons),
+        la: () => import('@iconify-json/la').then(module => module.icons),
+        mdi: () => import('@iconify-json/mdi').then(module => module.icons),
+        ri: () => import('@iconify-json/ri').then(module => module.icons),
       },
       extraProperties: {
         display: 'inline-block',
@@ -45,6 +42,7 @@ export default defineConfig({
   ],
   transformers: [transformerDirectives()],
   shortcuts: shortcutsArr,
+  safelist: iconSafelist,
   content: {
     // 扫描 Vite 管道内的模块（项目自身源码自动覆盖）
     pipeline: {
@@ -55,7 +53,7 @@ export default defineConfig({
       // @robot-admin/layout（本地 link 开发 + node_modules）
       '../robot-admin-packages/packages/layout/src/**/*.{vue,ts}',
       'node_modules/@robot-admin/layout/src/**/*.{vue,ts}',
-      // naive-ui-components 已改用 C_Icon (Iconify runtime)，无需扫描
+      // naive-ui-components 发布产物中的残留 Uno 图标由精确 safelist 覆盖
     ],
   },
 })

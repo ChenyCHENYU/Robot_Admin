@@ -21,7 +21,8 @@ export type { LoginResponse, RefreshTokenResponse } from './auth.contract'
 
 const AUTH_MODE = resolveAuthMode(
   import.meta.env.VITE_AUTH_MODE,
-  import.meta.env.VITE_APP_ENV
+  import.meta.env.VITE_APP_ENV,
+  import.meta.env.VITE_DEPLOYMENT_PROFILE
 )
 
 /** 菜单接口响应契约 */

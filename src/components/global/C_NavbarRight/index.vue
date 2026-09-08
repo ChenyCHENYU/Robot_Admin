@@ -12,7 +12,7 @@
     <!-- 全局搜索 -->
     <C_GlobalSearch :options="searchOptions" />
 
-    <!-- 操作按钮组：显式导入，不依赖 DynamicComponent -->
+    <!-- 操作按钮组：统一由组件解析器按需加载组件与样式 -->
     <div class="action-buttons">
       <!-- 通知中心 -->
       <C_NotificationCenter :on-navigate="handleNavigate" />
@@ -202,18 +202,11 @@
   import { s_languageStore } from '@/stores/language'
   import { s_permissionStore } from '@/stores/permission'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
-  import {
-    C_GlobalSearch,
-    type GlobalSearchOptions,
-    type SearchMenuItem,
+  import type {
+    GlobalSearchOptions,
+    SearchMenuItem,
   } from '@robot-admin/naive-ui-components/C_GlobalSearch'
-  import { C_NotificationCenter } from '@robot-admin/naive-ui-components/C_NotificationCenter'
-  import { C_Language } from '@robot-admin/naive-ui-components/C_Language'
-  import { C_Theme } from '@robot-admin/naive-ui-components/C_Theme'
-  import {
-    C_Guide,
-    type GuideStep,
-  } from '@robot-admin/naive-ui-components/C_Guide'
+  import type { GuideStep } from '@robot-admin/naive-ui-components/C_Guide'
   import {
     createMenuOptions,
     type RouteItem,

@@ -8,6 +8,8 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
+import type { SelectOption } from 'naive-ui'
+
 /**
  * 类型定义
  */
@@ -20,7 +22,7 @@ export interface ArticleData {
   content: string
 }
 
-export interface CategoryOption {
+export interface CategoryOption extends SelectOption {
   label: string
   value: string
 }

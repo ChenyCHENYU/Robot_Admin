@@ -530,11 +530,9 @@
 
 <script setup lang="ts">
   import type { FormInst, TreeSelectOption } from 'naive-ui/es'
-  import {
-    C_Tree,
-    type ActionItem,
-    type DropInfo,
-  } from '@robot-admin/naive-ui-components'
+  import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
+  import '@robot-admin/naive-ui-components/C_Tree/style.css'
+  import type { ActionItem, DropInfo } from '@robot-admin/naive-ui-components'
 
   // 从 data.ts 导入类型和数据配置
   import {

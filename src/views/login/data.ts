@@ -17,13 +17,13 @@ import type { LoginResponse } from '@/api/auth'
 // ================= 登录功能开关 =================
 export const LOGIN_FEATURES: LoginFeatures = {
   passwordLogin: true,
-  captchaLogin: false,
-  qrcodeLogin: false,
-  socialLogin: false,
-  register: false,
-  captchaVerify: false,
-  rememberMe: false,
-  forgotPassword: false,
+  captchaLogin: true,
+  qrcodeLogin: true,
+  socialLogin: true,
+  register: true,
+  captchaVerify: true,
+  rememberMe: true,
+  forgotPassword: true,
 }
 
 // ================= 社交登录配置 =================

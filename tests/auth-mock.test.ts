@@ -24,6 +24,11 @@ describe('认证模式', () => {
     expect(resolveAuthMode(undefined, 'production')).toBe('remote')
     expect(() => resolveAuthMode('mock', 'production')).toThrow('禁止')
   })
+
+  test('公开演示生产配置允许显式 Mock', () => {
+    expect(resolveAuthMode('mock', 'production', 'demo')).toBe('mock')
+    expect(resolveAuthMode(undefined, 'production', 'demo')).toBe('mock')
+  })
 })
 
 describe('认证 Mock 闭环', () => {

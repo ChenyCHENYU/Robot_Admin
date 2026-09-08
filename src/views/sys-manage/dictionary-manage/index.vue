@@ -562,11 +562,12 @@
 
 <script setup lang="ts">
   import type { FormInst } from 'naive-ui/es'
-  import {
-    C_Tree,
-    type ActionConfig,
-    type ActionItem,
-    type TreeNodeData as ComponentTreeNodeData,
+  import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
+  import '@robot-admin/naive-ui-components/C_Tree/style.css'
+  import type {
+    ActionConfig,
+    ActionItem,
+    TreeNodeData as ComponentTreeNodeData,
   } from '@robot-admin/naive-ui-components'
   import {
     type DictData,

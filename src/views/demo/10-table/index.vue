@@ -285,7 +285,7 @@
   } from '@robot-admin/naive-ui-components'
   import type { DataTableColumns, FormInst } from 'naive-ui/es'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
-  import { PRESET_RULES } from '@robot-admin/form-validate'
+  import { PRESET_RULES } from '@/utils/d_formValidate'
   import {
     type Employee,
     type AddEmployeeForm,

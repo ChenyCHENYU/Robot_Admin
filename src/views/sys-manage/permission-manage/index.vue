@@ -1053,6 +1053,7 @@
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import { isMockDataMode } from '@/config/dataMode'
   import { useLatestRequest } from '@/composables/useLatestRequest'
+  import { toCrudTableColumns } from '@/utils/d_tableColumns'
   import {
     getRoleListApi,
     MOCK_ROLE_DATA,
@@ -1093,7 +1094,7 @@
   // ============ 表格数据管理 ============
   const table = useNaiveTableCrud<PermissionData>({
     api: { list: '/sys/permissions' },
-    columns: getTableColumns(),
+    columns: toCrudTableColumns(getTableColumns()),
     autoLoad: !mockMode,
   })
   const { data: tableData, loading, refresh: refreshRemote } = table

@@ -120,6 +120,7 @@
     SimpleTableActions,
   } from '@robot-admin/naive-ui-components'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
+  import { toCrudTableColumns } from '@/utils/d_tableColumns'
   import {
     type DynamicEmployee,
     type Log,
@@ -145,7 +146,7 @@
   // 表格数据管理
   const table = useNaiveTableCrud<DynamicEmployee>({
     api: { list: 'employees/dynamicList' },
-    columns: dynamicTableColumns,
+    columns: toCrudTableColumns(dynamicTableColumns),
   })
 
   const { data: tableData, loading, refresh } = table
@@ -167,22 +168,20 @@
   }
 
   // 表格操作
-  const tableActions = computed(
-    (): SimpleTableActions<DataRecord> => ({
-      detail: async (row: DataRecord) => {
-        await new Promise(resolve => setTimeout(resolve, 200))
-        return { data: row }
-      },
-      edit: async (row: DataRecord) => {
-        await new Promise(resolve => setTimeout(resolve, 300))
-        return { success: true, data: row }
-      },
-      delete: async () => {
-        await new Promise(resolve => setTimeout(resolve, 200))
-        return { success: true }
-      },
-    })
-  )
+  const tableActions = computed((): SimpleTableActions<DataRecord> => ({
+    detail: async (row: DataRecord) => {
+      await new Promise(resolve => setTimeout(resolve, 200))
+      return { data: row }
+    },
+    edit: async (row: DataRecord) => {
+      await new Promise(resolve => setTimeout(resolve, 300))
+      return { success: true, data: row }
+    },
+    delete: async () => {
+      await new Promise(resolve => setTimeout(resolve, 200))
+      return { success: true }
+    },
+  }))
 
   // 表格配置
   const tableConfig = {

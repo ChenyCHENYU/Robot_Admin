@@ -33,6 +33,7 @@ import { setupRequestCore } from '@/plugins/request-core'
 import { setupLayoutSystem } from '@/plugins/layout'
 import { setupThemeSystem } from '@/plugins/theme'
 import { setupRoutePrefetch } from '@/router/routePrefetch'
+import { setupHighlight } from '@/plugins/highlight'
 // ✅ 移除 app.use(NaiveUIComponents)，由 RobotNaiveUiResolver 按需解析
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
@@ -63,6 +64,7 @@ async function bootstrap() {
   setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）
   setupThemeSystem(app) // 初始化主题 Store、DOM 属性和生命周期
   setupNaiveUI(app)
+  setupHighlight(app)
   app.use(
     createDirectives({
       notify: (type, text) => message[type](text),

@@ -99,7 +99,7 @@ pnpm install
 | `bun run dev:local`      | 本地包调试   | `USE_LOCAL_PACKAGES=true`   |
 | `bun run dev:components` | 组件库联调   | `USE_LOCAL_COMPONENTS=true` |
 | `bun run dev:devtools`   | Vue DevTools | `VITE_DEVTOOLS=true`        |
-| `bun run build`          | 生产构建     | env-manager prod 模式       |
+| `bun run build`          | 生产构建     | Vite production 模式        |
 | `bun run build:test`     | 测试构建     | `--mode test`               |
 | `bun run build:staging`  | 预发构建     | `--mode staging --profile`  |
 | `bun run lint`           | 代码检查     | Oxlint → ESLint 双重检查    |

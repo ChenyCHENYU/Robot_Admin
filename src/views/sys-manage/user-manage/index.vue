@@ -419,11 +419,13 @@
     NDropdown,
     NTreeSelect,
   } from 'naive-ui/es'
-  import {
-    C_Icon,
-    C_Tree,
-    type ActionItem,
-    type TableColumn,
+  import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
+  import '@robot-admin/naive-ui-components/C_Icon/style.css'
+  import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
+  import '@robot-admin/naive-ui-components/C_Tree/style.css'
+  import type {
+    ActionItem,
+    TableColumn,
   } from '@robot-admin/naive-ui-components'
   import {
     type UserData,

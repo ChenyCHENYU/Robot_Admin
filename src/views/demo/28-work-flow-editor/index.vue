@@ -232,7 +232,7 @@
                                   2
                                 )"
                                 :key="user?.id || 'unknown'"
-                                v-bind="createAvatarProps(user, 'tiny')"
+                                v-bind="createAvatarProps(user, 24)"
                               />
                               <span
                                 v-if="
@@ -584,7 +584,7 @@
   }
 
   // 创建头像组件的辅助函数 - 完全防御性
-  const createAvatarProps = (user: any, size: 'tiny' | 'small' = 'small') => {
+  const createAvatarProps = (user: any, size: number | 'small' = 'small') => {
     if (!user) return { size, src: '', title: '未知用户' }
     const fullUser = getFullUserInfo(user)
     return {

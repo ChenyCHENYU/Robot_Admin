@@ -61,9 +61,9 @@
 
   <p>
     <img src="https://img.shields.io/badge/bun-%E2%89%A51.3.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
-    <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
+    <img src="https://img.shields.io/badge/vue-3.5.30-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-8.0.3-646CFF?style=flat&logo=vite" alt="Vite Version">
+    <img src="https://img.shields.io/badge/vite-8.2.2-646CFF?style=flat&logo=vite" alt="Vite Version">
     <a href="https://vercel.com"><img src="https://img.shields.io/github/deployments/ChenyCHENYU/robot_admin/production?label=vercel&logo=vercel" alt="Vercel"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
   </p>
@@ -175,7 +175,7 @@ bun install
 bun run dev
 ```
 
-**🔥 首次启动只需 2 秒不到，后续热更新不到 100ms！**
+**🔥 依赖缓存就绪后，开发服务器热启动约 3 秒，后续更新保持毫秒级！**
 
 <details>
 <summary><b>📦 更多命令</b></summary>
@@ -183,6 +183,7 @@ bun run dev
 ```bash
 # 开发相关
 bun run dev            # 开发环境启动
+bun run dev:banner     # 显式启用完整 Git 分支横幅（会增加启动等待）
 bun run build          # 生产环境构建
 bun run build:test     # 测试环境构建
 bun run build:staging  # 预发布构建
@@ -211,9 +212,9 @@ bun run commit         # 规范化提交（git cz）
 
 ### 🔐 认证 Mock 与后端切换
 
-项目在开发、测试环境默认使用闭环 Mock 认证和业务数据，登录、令牌刷新和用户信息的响应结构与远端接口保持一致。任意非空用户名和密码均可登录；Mock 令牌为随机不透明字符串，不包含明文凭据。
+项目在开发、测试环境默认使用闭环 Mock 认证和业务数据，登录、令牌刷新和用户信息的响应结构与远端接口保持一致。任意非空用户名和密码均可登录；Mock 令牌为随机不透明字符串，不包含明文凭据。在线演示构建通过 `VITE_DEPLOYMENT_PROFILE=demo` 显式启用同一套 Mock，真实业务构建必须使用 `application` 配置和远端接口。
 
-接入后端时设置 `VITE_AUTH_MODE=remote`、`VITE_DATA_MODE=remote`，并通过 `VITE_API_BASE` 指定接口地址，无需修改页面和状态管理代码。生产与预发构建会拒绝 Mock 模式，防止演示数据泄漏到真实业务。认证契约位于 `src/api/auth.contract.ts`，账号和权限治理等远端接口约定位于 `src/api/`；完整环境及接口说明见 [`docs/production-readiness.md`](docs/production-readiness.md)。
+接入后端时设置 `VITE_DEPLOYMENT_PROFILE=application`、`VITE_AUTH_MODE=remote`、`VITE_DATA_MODE=remote`，并通过 `VITE_API_BASE` 指定接口地址，无需修改页面和状态管理代码。`application` 的生产与预发构建会拒绝 Mock 模式；只有明确标记为 `demo` 的公开演示构建允许 Mock。认证契约位于 `src/api/auth.contract.ts`，账号和权限治理等远端接口约定位于 `src/api/`；完整环境及接口说明见 [`docs/production-readiness.md`](docs/production-readiness.md)。
 
 ---
 
@@ -236,14 +237,14 @@ bun run commit         # 规范化提交（git cz）
 
 - **Bun 1.3.x** - 🚀 性能怪兽，安装速度提升10倍
 - **Vite 8.2.2** - ⚡ Rolldown 统一构建引擎，构建速度提升 10-30x
-- **Sass 1.87** - 🎨 成熟的CSS预处理器
+- **Sass 1.97** - 🎨 成熟的CSS预处理器
 
 **🔧 开发工具**
 
-- **ESLint 9.21** - 📏 代码质量守护者
-- **Prettier 3.5** - ✨ 代码格式化
-- **Oxlint 0.15** - 🦀 Rust编写的超快Linter
-- **Vitest 3.0** - 🧪 现代化测试框架
+- **ESLint 10.0** - 📏 代码质量守护者
+- **Prettier 3.8** - ✨ 代码格式化
+- **Oxlint 1.52** - 🦀 Rust编写的超快Linter
+- **Bun Test 1.3** - 🧪 与包管理器统一的测试运行时
 
 **📊 功能组件（via @robot-admin/naive-ui-components）**
 
@@ -793,7 +794,6 @@ location / {
 - **[vite-console-plugin](https://www.npmjs.com/package/vite-console-plugin)** `v2.0.15` - Vite 启动台控制台美化与提示插件
 - **[ts-type-cleaner](https://www.npmjs.com/package/ts-type-cleaner)** `v5.0.8` - 智能 TypeScript 类型分析和清理工具
 - **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - 智能路由预加载插件
-- **[robot-admin-env-manager](https://www.npmjs.com/package/robot-admin-env-manager)** `v1.0.5` - Robot Admin 环境配置管理工具
 - **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Git 分支快速比对合并检查
 - **[git-log-formatter](https://www.npmjs.com/package/git-log-formatter)** `v1.0.2` - Git log 格式化美化工具
 - **[standards-cli](https://www.npmjs.com/package/standards-cli)** `v1.0.13` - 前端工程化提交规范初始化工具
@@ -944,21 +944,21 @@ bun run type-build
 <details>
 <summary><b>为什么选择 Robot Admin？</b></summary>
 
-|   特性对比    |       Robot Admin       | Ant Design Pro | Vue Element Admin |   其他框架   |
-| :-----------: | :---------------------: | :------------: | :---------------: | :----------: |
-|  🚀 启动速度  |     **Bun < 100ms**     |    npm ~2s     |    yarn ~1.5s     |   普遍较慢   |
-| ⚡ 热更新速度 |    **< 100ms 极速**     |   ~1.5s 等待   |     ~1s 等待      |   普遍较慢   |
-|  📦 构建工具  | **Vite 8.x (Rolldown)** |  Webpack/Vite  |    Webpack 4/5    |   工具多样   |
-| 🎨 UI 组件库  |    **Naive UI 轻量**    |   Ant Design   |   Element Plus    |   选择多样   |
-| 💪 TypeScript |    **完整类型支持**     |    基础支持    |     基础支持      | 支持程度不一 |
-| 🔧 自定义指令 |     **7个实用指令**     |    少量指令    |     基础指令      |   功能有限   |
-|  📊 演示页面  |    **54+ 完整示例**     |    有限示例    |     有限示例      |   基础示例   |
-|  🎯 学习成本  |      **中等友好**       |    较高门槛    |     中等门槛      |   差异较大   |
-|  📈 维护状态  |     **🔥 积极维护**     |    持续维护    |     持续维护      |   状态不一   |
+|   特性对比    |        Robot Admin        | Ant Design Pro | Vue Element Admin |   其他框架   |
+| :-----------: | :-----------------------: | :------------: | :---------------: | :----------: |
+|  🚀 启动速度  | **热启动约 3 秒（实测）** |   依项目而定   |    依项目而定     |  依项目而定  |
+| ⚡ 热更新速度 |     **< 100ms 极速**      |   ~1.5s 等待   |     ~1s 等待      |   普遍较慢   |
+|  📦 构建工具  |  **Vite 8.x (Rolldown)**  |  Webpack/Vite  |    Webpack 4/5    |   工具多样   |
+| 🎨 UI 组件库  |     **Naive UI 轻量**     |   Ant Design   |   Element Plus    |   选择多样   |
+| 💪 TypeScript |     **完整类型支持**      |    基础支持    |     基础支持      | 支持程度不一 |
+| 🔧 自定义指令 |      **7个实用指令**      |    少量指令    |     基础指令      |   功能有限   |
+|  📊 演示页面  |     **54+ 完整示例**      |    有限示例    |     有限示例      |   基础示例   |
+|  🎯 学习成本  |       **中等友好**        |    较高门槛    |     中等门槛      |   差异较大   |
+|  📈 维护状态  |      **🔥 积极维护**      |    持续维护    |     持续维护      |   状态不一   |
 
 **选择 Robot Admin 的理由**:
 
-- 🚀 **性能优先**: Bun + Vite8 (Rolldown) 双引擎，开发体验极致
+- 🚀 **性能优先**: Bun + Vite 8 (Rolldown)，依赖缓存就绪后开发服务器热启动约 3 秒
 - 🧩 **组件丰富**: 51+ 业务组件，独立组件库按需导入
 - 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
 - 📚 **学习友好**: 54+ 演示页面，每个都是最佳实践

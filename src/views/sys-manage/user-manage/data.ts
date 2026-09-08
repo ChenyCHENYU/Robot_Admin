@@ -120,7 +120,7 @@ export const UI_CONFIG = {
     defaultPageSize: 20,
     pageSizes: [10, 20, 50, 100],
   },
-} as const
+}
 
 // ==================== 组件配置 ====================
 export const COMPONENT_CONFIG = {

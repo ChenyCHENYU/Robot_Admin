@@ -149,13 +149,16 @@
       :width="500"
       placement="right"
     >
-      <NDrawerContent title="商品详情配置">
-        <template #header-extra>
-          <NTag
-            type="success"
-            size="small"
-            >默认布局</NTag
-          >
+      <NDrawerContent>
+        <template #header>
+          <div class="drawer-header">
+            <span>商品详情配置</span>
+            <NTag
+              type="success"
+              size="small"
+              >默认布局</NTag
+            >
+          </div>
         </template>
         <C_Form
           ref="drawerFormRef"
@@ -379,4 +382,11 @@
 
 <style lang="scss" scoped>
   @use './index.scss';
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
 </style>

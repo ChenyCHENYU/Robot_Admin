@@ -708,11 +708,13 @@
 
 <script setup lang="ts">
   import { useLatestRequest } from '@/composables/useLatestRequest'
+  import type { Component } from 'vue'
   import type { FormInst, DataTableColumns } from 'naive-ui/es'
-  import {
-    C_Icon,
-    type ActionItem,
-    type TableColumn,
+  import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
+  import '@robot-admin/naive-ui-components/C_Icon/style.css'
+  import type {
+    ActionItem,
+    TableColumn,
   } from '@robot-admin/naive-ui-components'
 
   import {
@@ -892,7 +894,15 @@
     ]
   })
 
-  const formFields = computed(() => [
+  interface RoleFormField {
+    key: keyof RoleFormData
+    label: string
+    path: string
+    component: Component
+    props: Record<string, unknown>
+  }
+
+  const formFields = computed<RoleFormField[]>(() => [
     {
       key: 'name' as keyof RoleFormData,
       label: '角色名称',

@@ -9,7 +9,7 @@
  */
 
 import type { FormOption } from '@robot-admin/naive-ui-components'
-import { NAIVE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
+import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
 
 // 解构校验规则
 const { required, range, length } = PRESET_RULES

@@ -138,7 +138,7 @@ export const UI_CONFIG = {
     { label: '按钮权限', value: 'button' },
     { label: 'API权限', value: 'api' },
   ],
-} as const
+}
 
 // ==================== 表单验证规则 ====================
 export const ROLE_FORM_RULES: FormRules = {

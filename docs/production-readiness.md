@@ -11,28 +11,29 @@
 ## 当前生产基线
 
 - 架构保持单体 SPA 和既有路由、状态管理边界不变，业务组件继续通过 `@robot-admin/naive-ui-components@0.11.6` 按需消费。
-- Markdown、Office、Spline、图表和演示页面保持路由级异步加载；代码高亮仅在实际使用页面初始化，避免全部语言包进入启动链路。
+- Markdown、Office、Spline、图表和演示页面保持路由级异步加载；代码高亮只注册项目实际使用的语言，不加载完整语言包。
 - 本地组件源码模式对 Vue、Naive UI 和 VisActor 等有状态或重量级依赖进行单例解析，构建模块数由 11,222 降至 9,557，最大 VisActor chunk 由 4.16 MiB 降至 2.08 MiB。
 - 用户、角色列表采用“仅最新请求生效”的可取消请求控制，组件卸载、快速搜索、筛选和翻页不会被旧响应反向覆盖。
-- 账号、用户、角色、菜单、字典及权限治理页面统一支持 Remote/Mock 数据边界；生产和预发不允许回退到演示数据。
+- 账号、用户、角色、菜单、字典及权限治理页面统一支持 Remote/Mock 数据边界；真实业务的 `application` 生产和预发不允许回退到演示数据，公开站点以显式 `demo` 配置闭环运行。
 - 全局 Vue、Promise、资源和脚本错误可上报到同源端点；上报前会去除凭据、个人信息、附加业务数据及 URL 查询参数。
 - 导航、门户、About 卡片和页面内标签/折叠交互补齐原生语义、键盘焦点和 ARIA 状态。
 - 非演示代码不保留显式 `any` 或通配 `declare module`，跨包布局类型直接消费正式导出。
 
 ## 环境与数据模式
 
-| 环境变量                     | 开发/测试默认 | 生产/预发要求 | 作用                                    |
-| ---------------------------- | ------------- | ------------- | --------------------------------------- |
-| `VITE_AUTH_MODE`             | `mock`        | `remote`      | 登录、刷新令牌和当前用户                |
-| `VITE_DATA_MODE`             | `mock`        | `remote`      | 账号与系统管理业务数据                  |
-| `VITE_API_BASE`              | `/api`        | `/api` 或网关 | Axios 请求基地址，推荐由部署层同源代理  |
-| `VITE_ERROR_REPORT_ENDPOINT` | 留空          | 按需配置      | 同源客户端错误接收地址                  |
-| `VITE_MAP_KEY`               | 留空          | 按需配置      | 高德 Web 端 JS API Key                  |
-| `VITE_AMAP_SERVICE_HOST`     | 留空          | 同源代理      | 高德安全代理，须以 `/_AMapService` 结尾 |
-| `VITE_ROUTE_IDLE_PREFETCH`   | `false`       | 按需开启      | 登录后网络感知的空闲路由预热            |
-| `VITE_ANALYTICS_ENABLED`     | `false`       | 按需开启      | Vercel Analytics 与 Speed Insights      |
+| 环境变量                     | 开发/测试默认 | 业务生产/预发要求 | 公开演示 | 作用                                    |
+| ---------------------------- | ------------- | ----------------- | -------- | --------------------------------------- |
+| `VITE_DEPLOYMENT_PROFILE`    | `application` | `application`     | `demo`   | 区分真实业务部署与公开演示              |
+| `VITE_AUTH_MODE`             | `mock`        | `remote`          | `mock`   | 登录、刷新令牌和当前用户                |
+| `VITE_DATA_MODE`             | `mock`        | `remote`          | `mock`   | 账号与系统管理业务数据                  |
+| `VITE_API_BASE`              | `/api`        | `/api` 或网关     | 示例地址 | Axios 请求基地址，推荐由部署层同源代理  |
+| `VITE_ERROR_REPORT_ENDPOINT` | 留空          | 按需配置          | 留空     | 同源客户端错误接收地址                  |
+| `VITE_MAP_KEY`               | 留空          | 按需配置          | 留空     | 高德 Web 端 JS API Key                  |
+| `VITE_AMAP_SERVICE_HOST`     | 留空          | 同源代理          | 留空     | 高德安全代理，须以 `/_AMapService` 结尾 |
+| `VITE_ROUTE_IDLE_PREFETCH`   | `false`       | 按需开启          | `false`  | 登录后网络感知的空闲路由预热            |
+| `VITE_ANALYTICS_ENABLED`     | `false`       | 按需开启          | 按需开启 | Vercel Analytics 与 Speed Insights      |
 
-Vite 启动阶段会校验枚举、布尔值、端口、远端 API 和错误上报地址。生产或预发配置 Mock、示例 API、跨域错误上报端点时直接终止构建，避免静默使用不安全默认值。本机密钥只放在 Git 已忽略的 `.env.local` 或 CI Secret。
+Vite 启动阶段会校验枚举、布尔值、端口、部署用途、远端 API 和错误上报地址。`application` 的生产或预发若配置 Mock、示例 API 或跨域错误上报端点会直接终止构建；`demo` 仅显式允许闭环 Mock，不会改变真实业务部署的规则。本机密钥只放在 Git 已忽略的 `.env.local` 或 CI Secret。
 
 ## 后端接口契约
 
@@ -61,18 +62,20 @@ Spline 的传递依赖 Lottie 源码包含 `eval` 警告，但生产压缩产物
 
 ## 构建验收与预算
 
-2026-09-02 同一生产构建口径的优化结果：
+2026-09-09 同一生产构建口径的最终验收结果：
 
 | 指标                | 优化前     | 优化后     | 变化     | 当前预算   |
 | ------------------- | ---------- | ---------- | -------- | ---------- |
-| 入口 JS             | 423.76 KiB | 371.95 KiB | -12.2%   | ≤ 450 KiB  |
-| module preload      | 582.06 KiB | 583.39 KiB | +0.2%    | ≤ 650 KiB  |
-| 首屏 CSS            | 276.17 KiB | 266.38 KiB | -3.5%    | ≤ 300 KiB  |
-| 首屏资源合计        | 1.25 MiB   | 1.19 MiB   | -4.7%    | ≤ 1.42 MiB |
-| module preload 数量 | 83         | 84         | +1       | ≤ 90       |
+| 入口 JS             | 423.76 KiB | 296.19 KiB | -30.1%   | ≤ 450 KiB  |
+| module preload      | 582.06 KiB | 485.91 KiB | -16.5%   | ≤ 650 KiB  |
+| 首屏 CSS            | 276.17 KiB | 285.40 KiB | +3.3%    | ≤ 300 KiB  |
+| 首屏资源合计        | 1.25 MiB   | 1.04 MiB   | -16.8%   | ≤ 1.42 MiB |
+| module preload 数量 | 83         | 64         | -19      | ≤ 90       |
 | 最大异步 chunk      | —          | 2.08 MiB   | 路由隔离 | ≤ 4.88 MiB |
 
 `bun run verify` 顺序执行 Oxlint、ESLint、TypeScript、单元测试、生产构建和 `check:bundle`。预算直接解析 `dist/index.html` 与实际文件大小，任一指标回归即返回失败。Spline、Office 和 VTable 等大模块仍存在于完整产物，但不属于首屏关键链路。
+
+本轮事故的影响范围、根因、修复清单和验证证据见 [2026-09-09 生产就绪优化回归事故报告](./incident-reports/2026-09-09-production-readiness-regression.md)。
 
 ## 尚需后端或基础设施配合
 

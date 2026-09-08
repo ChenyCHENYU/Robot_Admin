@@ -12,14 +12,15 @@ import type {
   ErrorCorrectionLevel,
   RenderMode,
 } from '@robot-admin/naive-ui-components'
+import type { SelectOption } from 'naive-ui'
 
 // 纠错等级选项
-export const ERROR_LEVELS = [
+export const ERROR_LEVELS: SelectOption[] = [
   { label: 'L (7%)', value: 'L' as ErrorCorrectionLevel },
   { label: 'M (15%)', value: 'M' as ErrorCorrectionLevel },
   { label: 'Q (25%)', value: 'Q' as ErrorCorrectionLevel },
   { label: 'H (30%)', value: 'H' as ErrorCorrectionLevel },
-] as const
+]
 
 // 渲染模式选项
 export const RENDER_MODES = [

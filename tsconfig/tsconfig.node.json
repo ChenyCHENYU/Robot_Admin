@@ -17,6 +17,7 @@
 
     "module": "ESNext", // 使用最新的 ES 模块语法
     "moduleResolution": "Bundler", // 使用打包工具的模块解析策略
-    "types": ["node"] // 包含 Node.js 类型定义
+    "allowImportingTsExtensions": true, // 配置文件使用显式 .ts 扩展名
+    "types": ["node", "vite/client"] // 包含 Node.js 与 import.meta.env 类型
   }
 }

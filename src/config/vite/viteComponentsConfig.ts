@@ -16,7 +16,6 @@ import {
   componentNames,
   RobotNaiveUiResolver,
 } from '@robot-admin/naive-ui-components/resolver'
-import IconsResolver from 'unplugin-icons/resolver'
 
 const PKG = '@robot-admin/naive-ui-components'
 
@@ -46,7 +45,6 @@ export default Components({
   dts: 'src/types/components.d.ts', // 生成类型声明文件
   dirs: ['src/components/local'], // 仅扫描本地组件（C_ 全局组件通过 resolver 解析）
   extensions: ['vue'], // 扩展名
-  version: 3, // 明确指定 Vue 3.x 版本
   resolvers: [
     NaiveUiResolver(),
     // dev:local: 用目录扫描的全量组件名构建 resolver（不受 npm 版本滞后影响）
@@ -75,17 +73,15 @@ export default Components({
       }
       return null
     },
-    IconsResolver({
-      prefix: 'icon',
-    }),
-    componentName => {
-      if (componentName === 'Icon') {
-        return {
-          name: 'Icon',
-          from: '@iconify/vue',
-        }
-      }
-    },
+    // 项目历史模板仍使用 <Icon icon="..." />；直接解析到已安装的
+    // @iconify/vue，不恢复 unplugin-icons，也不增加新的转换或依赖成本。
+    componentName =>
+      componentName === 'Icon'
+        ? {
+            name: 'Icon',
+            from: '@iconify/vue',
+          }
+        : undefined,
   ],
   directives: true, // 自动导入指令，默认目录为 src/directives
 })

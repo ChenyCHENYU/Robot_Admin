@@ -18,9 +18,3 @@ declare module '*.vue' {
 declare module '@/plugins/naive-ui' {
   export function setupNaiveUI(app: App): void
 }
-
-declare module 'naive-ui' {
-  interface NAlertSlots {
-    action?: () => VNode[]
-  }
-}

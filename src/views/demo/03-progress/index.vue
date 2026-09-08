@@ -166,13 +166,14 @@
 </template>
 
 <script lang="ts" setup>
+  import type { CSSProperties } from 'vue'
   import { useThemeVars } from 'naive-ui/es'
   import { changeColor } from 'seemly'
 
   const themeVars = useThemeVars()
 
   // 卡片内容区居中样式（直接内联，绕过 Naive UI CSS 变量覆盖问题）
-  const cardContentStyle = {
+  const cardContentStyle: CSSProperties = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -180,7 +181,7 @@
     padding: '32px 24px',
   }
 
-  const linearCardContentStyle = {
+  const linearCardContentStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',

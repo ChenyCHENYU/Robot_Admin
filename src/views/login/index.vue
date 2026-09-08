@@ -39,6 +39,8 @@
         :features="LOGIN_FEATURES"
         :social-providers="SOCIAL_PROVIDERS"
         :loading="loading"
+        default-username="CHENY"
+        default-password="123456"
         @submit="handleLogin"
         @captcha-submit="handleCaptchaLogin"
         @send-code="handleSendCode"
@@ -117,13 +119,14 @@
         userStore.clearSession()
         throw new Error('动态路由初始化失败')
       }
-      router.replace('/home')
+      await router.replace('/home')
     },
 
     onError: error => console.error('登录错误:', error),
 
-    onCaptchaLogin: () =>
-      message.info(t('lp_captcha_wip', '验证码登录功能开发中，敬请期待')),
+    onCaptchaLogin: () => {
+      message.info(t('lp_captcha_wip', '验证码登录功能开发中，敬请期待'))
+    },
 
     onSendCode: account =>
       message.info(`${t('lp_code_sent', '验证码已发送至')} ${account}`),

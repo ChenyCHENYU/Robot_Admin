@@ -74,14 +74,17 @@ export interface FileOption {
 
 export const CONFIG_FILE_OPTIONS: Array<{
   label: string
-  value: FileOption
+  value: string
+  file: FileOption
 }> = [
   {
     label: 'PDF文档',
-    value: { url: '/demo-files/sample.pdf', name: 'sample.pdf' },
+    value: 'pdf',
+    file: { url: '/demo-files/sample.pdf', name: 'sample.pdf' },
   },
   {
     label: 'Excel表格',
-    value: { url: '/demo-files/sample.xlsx', name: 'sample.xlsx' },
+    value: 'excel',
+    file: { url: '/demo-files/sample.xlsx', name: 'sample.xlsx' },
   },
 ]

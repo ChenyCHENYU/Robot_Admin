@@ -6,6 +6,26 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import type { ButtonProps, TagProps } from 'naive-ui'
+
+interface HomeActionButton {
+  text: string
+  icon: string
+  url: string
+  type?: ButtonProps['type']
+  secondary?: boolean
+  tertiary?: boolean
+  strong?: boolean
+}
+
+interface TechLayer {
+  name: string
+  icon: string
+  className: string
+  tagType: TagProps['type']
+  techs: string[]
+}
+
 // 项目统计数据
 export const projectStats = [
   { icon: 'fluent-color:approvals-app-16', number: '当前', label: 'Monomer' },
@@ -24,7 +44,7 @@ export const projectStats = [
 ]
 
 // 操作按钮
-export const actionButtons = [
+export const actionButtons: HomeActionButton[] = [
   {
     text: '在线演示',
     icon: '▶️',
@@ -100,7 +120,7 @@ export const highlights = [
 ]
 
 // 技术架构层级
-export const techLayers = [
+export const techLayers: TechLayer[] = [
   {
     name: '前端框架层',
     icon: '🖥️',

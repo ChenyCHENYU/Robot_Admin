@@ -7,7 +7,7 @@
  */
 
 import { defineFormOptions } from '@robot-admin/naive-ui-components'
-import { NAIVE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
+import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
 
 export interface DefaultFormData {
   username?: string

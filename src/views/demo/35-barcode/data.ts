@@ -8,8 +8,20 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
+import type { SelectOption } from 'naive-ui'
+
+export type BarcodeFormat =
+  | 'CODE128'
+  | 'CODE39'
+  | 'EAN13'
+  | 'EAN8'
+  | 'UPC'
+  | 'ITF14'
+  | 'MSI'
+  | 'pharmacode'
+
 // 条形码格式选项
-export const BARCODE_FORMATS = [
+export const BARCODE_FORMATS: SelectOption[] = [
   { label: 'CODE128 (通用)', value: 'CODE128' },
   { label: 'CODE39', value: 'CODE39' },
   { label: 'EAN13 (商品码)', value: 'EAN13' },
@@ -18,9 +30,7 @@ export const BARCODE_FORMATS = [
   { label: 'ITF14', value: 'ITF14' },
   { label: 'MSI', value: 'MSI' },
   { label: 'pharmacode', value: 'pharmacode' },
-] as const
-
-export type BarcodeFormat = (typeof BARCODE_FORMATS)[number]['value']
+]
 
 // 示例数据
 export const BARCODE_EXAMPLES = [
@@ -90,9 +100,9 @@ export const COLOR_PRESETS = [
 ]
 
 // 文本位置选项
-export const TEXT_POSITIONS = [
+export type TextPosition = 'bottom' | 'top'
+
+export const TEXT_POSITIONS: SelectOption[] = [
   { label: '底部', value: 'bottom' },
   { label: '顶部', value: 'top' },
-] as const
-
-export type TextPosition = (typeof TEXT_POSITIONS)[number]['value']
+]

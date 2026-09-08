@@ -9,7 +9,6 @@
  */
 
 import { resolve } from 'node:path'
-import { HEAVY_PAGES } from '../heavyPages.ts'
 import { isLocalPackageMode } from './localPackagesAlias.ts'
 
 const localPackageRoots = isLocalPackageMode()
@@ -22,7 +21,7 @@ const localPackageRoots = isLocalPackageMode()
 export default {
   port: 1988,
   hmr: { overlay: true },
-  open: true,
+  open: false,
 
   // 🚫 忽略 lang 目录的文件变化，避免自动刷新页面
   watch: {
@@ -33,19 +32,6 @@ export default {
   fs: {
     strict: true,
     allow: [resolve(process.cwd()), ...localPackageRoots],
-  },
-
-  // ⚡ 预热高频文件（开发环境优化 - 首次访问更快）
-  // 经测试：不影响启动速度（6s → 6s），但能加快首次访问 50-70%
-  warmup: {
-    clientFiles: [
-      // 核心文件
-      './src/App.vue',
-      './src/router/index.ts',
-
-      // 重量级页面（自动映射 HEAVY_PAGE_ROUTES，会自动预热它们的依赖组件）
-      ...HEAVY_PAGES.map(page => `./src/views${page.viewPath}/index.vue`),
-    ],
   },
 
   proxy: {

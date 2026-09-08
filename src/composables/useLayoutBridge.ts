@@ -18,6 +18,7 @@ import { s_permissionStore } from '@/stores/permission'
 import { s_themeStore } from '@/stores/theme'
 import { s_settingsStore } from '@/stores/settings'
 import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
+import '@robot-admin/naive-ui-components/C_Icon/style.css'
 
 /**
  * 创建并提供布局桥接数据

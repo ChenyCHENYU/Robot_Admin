@@ -13,7 +13,7 @@ import {
   type FormOption,
 } from '@robot-admin/naive-ui-components'
 import type { ApiResponse } from '@/hooks/useFormSubmit'
-import { NAIVE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
+import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
 
 // 类型定义
 export interface EmployeeFormData {

@@ -1,5 +1,5 @@
 import type { FormOption } from '@robot-admin/naive-ui-components'
-import { PRESET_RULES } from '@robot-admin/form-validate'
+import { PRESET_RULES } from '@/utils/d_formValidate'
 
 const { required, length, email } = PRESET_RULES
 

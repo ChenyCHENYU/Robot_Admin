@@ -36,6 +36,52 @@ describe('Vite 环境校验', () => {
     ).toThrow('Mock')
   })
 
+  test('公开演示部署必须显式声明 demo 后才允许 Mock 闭环', () => {
+    const result = validateViteEnv(
+      {
+        VITE_APP_ENV: 'production',
+        VITE_DEPLOYMENT_PROFILE: 'demo',
+        VITE_AUTH_MODE: 'mock',
+        VITE_DATA_MODE: 'mock',
+        VITE_API_BASE: 'https://apifoxmock.com/example',
+      },
+      'production'
+    )
+
+    expect(result.deploymentProfile).toBe('demo')
+    expect(result.authMode).toBe('mock')
+    expect(result.dataMode).toBe('mock')
+  })
+
+  test('公开演示部署缺省使用 Mock 闭环', () => {
+    const result = validateViteEnv(
+      {
+        VITE_APP_ENV: 'production',
+        VITE_DEPLOYMENT_PROFILE: 'demo',
+        VITE_API_BASE: 'https://apifoxmock.com/example',
+      },
+      'production'
+    )
+
+    expect(result.authMode).toBe('mock')
+    expect(result.dataMode).toBe('mock')
+  })
+
+  test('拒绝未知部署类型', () => {
+    expect(() =>
+      validateViteEnv(
+        {
+          VITE_APP_ENV: 'production',
+          VITE_DEPLOYMENT_PROFILE: 'preview',
+          VITE_AUTH_MODE: 'remote',
+          VITE_DATA_MODE: 'remote',
+          VITE_API_BASE: '/api',
+        },
+        'production'
+      )
+    ).toThrow('VITE_DEPLOYMENT_PROFILE 不受支持')
+  })
+
   test('生产环境拒绝 Mock 业务数据', () => {
     expect(() =>
       validateViteEnv(

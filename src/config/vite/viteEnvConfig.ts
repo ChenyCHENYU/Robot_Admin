@@ -6,7 +6,11 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import { resolveDataMode, type DataMode } from '../dataMode.ts'
+import {
+  resolveDataMode,
+  type DataMode,
+  type DeploymentProfile,
+} from '../dataMode.ts'
 
 export type AppEnvironment = 'development' | 'test' | 'staging' | 'production'
 export type RouterMode = 'hash' | 'history'
@@ -14,6 +18,7 @@ export type AuthMode = 'mock' | 'remote'
 
 export interface ValidatedViteEnv {
   appEnv: AppEnvironment
+  deploymentProfile: DeploymentProfile
   authMode: AuthMode
   dataMode: DataMode
   routerMode: RouterMode
@@ -34,6 +39,16 @@ const BOOLEAN_ENV_KEYS = [
 ] as const
 const UNSAFE_REMOTE_API_PATTERNS = [/apifoxmock\.com/i, /dummy/i]
 
+const resolveDeploymentProfile = (
+  value: string | undefined,
+  errors: string[]
+): DeploymentProfile => {
+  if (!value || value === 'application') return 'application'
+  if (value === 'demo') return value
+  errors.push(`VITE_DEPLOYMENT_PROFILE 不受支持: ${value}`)
+  return 'application'
+}
+
 const isBooleanValue = (value: string): boolean =>
   value === 'true' || value === 'false'
 
@@ -53,12 +68,16 @@ const resolveAppEnvironment = (
 const resolveAuthMode = (
   env: Record<string, string | undefined>,
   appEnv: AppEnvironment,
+  deploymentProfile: DeploymentProfile,
   errors: string[]
 ): AuthMode => {
   const value = env.VITE_AUTH_MODE
   if (value === 'remote' || value === 'mock') return value
   if (value) errors.push(`VITE_AUTH_MODE 不受支持: ${value}`)
-  return appEnv === 'production' || appEnv === 'staging' ? 'remote' : 'mock'
+  return (appEnv === 'production' || appEnv === 'staging') &&
+    deploymentProfile !== 'demo'
+    ? 'remote'
+    : 'mock'
 }
 
 const resolveRouterMode = (
@@ -84,12 +103,14 @@ const resolvePort = (
 
 const validateProtectedEnvironment = (
   appEnv: AppEnvironment,
+  deploymentProfile: DeploymentProfile,
   authMode: AuthMode,
   dataMode: DataMode,
   apiBase: string,
   errors: string[]
 ): void => {
   if (appEnv !== 'production' && appEnv !== 'staging') return
+  if (deploymentProfile === 'demo') return
   if (authMode !== 'remote') errors.push(`${appEnv} 环境禁止使用 Mock 认证`)
   if (dataMode !== 'remote') errors.push(`${appEnv} 环境禁止使用 Mock 业务数据`)
   if (UNSAFE_REMOTE_API_PATTERNS.some(pattern => pattern.test(apiBase))) {
@@ -159,17 +180,28 @@ export function validateViteEnv(
 ): ValidatedViteEnv {
   const errors: string[] = []
   const appEnv = resolveAppEnvironment(env, mode, errors)
-  const authMode = resolveAuthMode(env, appEnv, errors)
+  const deploymentProfile = resolveDeploymentProfile(
+    env.VITE_DEPLOYMENT_PROFILE,
+    errors
+  )
+  const authMode = resolveAuthMode(env, appEnv, deploymentProfile, errors)
   let dataMode: DataMode = 'mock'
   try {
-    dataMode = resolveDataMode(env.VITE_DATA_MODE, appEnv)
+    dataMode = resolveDataMode(env.VITE_DATA_MODE, appEnv, deploymentProfile)
   } catch (error) {
     errors.push(error instanceof Error ? error.message : '业务数据模式无效')
   }
 
   const apiBase = env.VITE_API_BASE?.trim() || ''
   if (!apiBase) errors.push('VITE_API_BASE 不能为空')
-  validateProtectedEnvironment(appEnv, authMode, dataMode, apiBase, errors)
+  validateProtectedEnvironment(
+    appEnv,
+    deploymentProfile,
+    authMode,
+    dataMode,
+    apiBase,
+    errors
+  )
 
   const routerMode = resolveRouterMode(env, errors)
   const port = resolvePort(env, errors)
@@ -182,5 +214,13 @@ export function validateViteEnv(
     throw new Error(`环境配置校验失败:\n- ${errors.join('\n- ')}`)
   }
 
-  return { appEnv, authMode, dataMode, routerMode, apiBase, port }
+  return {
+    appEnv,
+    deploymentProfile,
+    authMode,
+    dataMode,
+    routerMode,
+    apiBase,
+    port,
+  }
 }

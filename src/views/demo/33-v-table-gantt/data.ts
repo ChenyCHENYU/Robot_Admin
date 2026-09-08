@@ -3,6 +3,8 @@ import type {
   GanttOptions,
   GanttPreset,
 } from '@robot-admin/naive-ui-components'
+import type { ButtonProps } from 'naive-ui'
+import type { ComputedRef } from 'vue'
 
 // ==================== 基础类型定义 ====================
 
@@ -21,9 +23,9 @@ export interface TabConfig {
 
 export interface ControlConfig {
   action: string
-  label: string | any // 支持响应式数据
+  label: string | ComputedRef<string>
   icon: string
-  type?: string
+  type?: ButtonProps['type']
 }
 
 export interface PresetDescription {

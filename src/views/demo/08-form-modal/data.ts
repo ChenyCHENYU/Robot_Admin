@@ -9,7 +9,7 @@
  */
 
 import type { FormConfig, FormOption } from '@robot-admin/naive-ui-components'
-import { NAIVE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
+import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
 
 // =================== 卡片展示数据 ===================
 

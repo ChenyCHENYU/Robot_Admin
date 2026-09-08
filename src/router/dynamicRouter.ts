@@ -131,7 +131,11 @@ export const initDynamicRouter = async (): Promise<boolean> => {
       .map(route => processRoute(route as DynamicRoute))
       .map(route => router.addRoute(route))
 
-    await permissionStore.initializeAuxiliaryPermissions()
+    // 菜单路由是进入页面的唯一关键依赖；按钮/数据权限保持 deny-by-default，
+    // 在后台并行补齐，避免任一辅助接口延迟拖住整次导航和顶部进度条。
+    void permissionStore.initializeAuxiliaryPermissions().catch(error => {
+      console.error('[动态路由] 辅助权限初始化失败:', error)
+    })
 
     if (import.meta.env.DEV) {
       console.debug('[动态路由] 初始化完成:', router.getRoutes())

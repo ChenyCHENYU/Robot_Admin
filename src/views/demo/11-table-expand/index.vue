@@ -80,8 +80,11 @@
 <script setup lang="ts">
   import { type DataTableRowKey, NSpin } from 'naive-ui/es'
   import type { VNodeChild } from 'vue'
-  import { C_Table, type ActionItem } from '@robot-admin/naive-ui-components'
+  import { C_Table } from '@robot-admin/naive-ui-components/C_Table'
+  import '@robot-admin/naive-ui-components/C_Table/base.css'
+  import type { ActionItem } from '@robot-admin/naive-ui-components'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
+  import { toCrudTableColumns } from '@/utils/d_tableColumns'
   import {
     defaultConfig,
     dataColumns,
@@ -97,7 +100,7 @@
   // 表格数据管理
   const table = useNaiveTableCrud<TestRecord>({
     api: { list: 'employees/expandList' },
-    columns: dataColumns,
+    columns: toCrudTableColumns(dataColumns),
   })
 
   // 工具栏按钮
