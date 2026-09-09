@@ -59,7 +59,7 @@
     "@robot-admin/form-validate": "3.4.2",
     "@robot-admin/git-standards": "1.0.5",
     "@robot-admin/layout": "3.2.1",
-    "@robot-admin/naive-ui-components": "0.11.7",
+    "@robot-admin/naive-ui-components": "0.11.8",
     "@robot-admin/request-core": "0.5.0",
     "@robot-admin/theme": "0.5.1",
     "@splinetool/runtime": "^1.12.68",

@@ -6,7 +6,7 @@
 
 - **layout:** 升级至 `@robot-admin/layout@3.2.1`，统一使用 `/naive` 分层入口和包内菜单规范化能力，并同步完整接入、Provider、兼容期与宿主能力边界文档。
 - **quality:** 完整门禁直接串行执行 Bun 测试，避免 Windows 下嵌套测试脚本偶发无法退出。
-- **components:** 升级至 `@robot-admin/naive-ui-components@0.11.7`，使用官方 resolver、子路径入口与自包含按需样式，移除旧的 CSS 兼容探测插件，并接入 C_Map 强类型实例与高德安全配置。
+- **components:** 升级至 `@robot-admin/naive-ui-components@0.11.8`，使用官方 resolver、子路径入口与自包含按需样式；修复 Leaflet CommonJS 默认导出兼容和甘特图异步卸载竞态，并接入 C_Map 强类型实例与高德安全配置。
 - **tooling:** Vite 命令使用 Node 22.18+ 原生配置加载器，并延迟加载 Iconify 图标集，减少开发服务器启动阶段的配置编译和同步 JSON 解析。
 - **forms:** 表单演示统一使用泛型模型、标准提交载荷和配置助手，补齐卡片、自定义、标签页及步骤布局的强类型契约。
 - **tables:** 表格与展开表格演示统一行模型、列定义和详情渲染类型，移除宽泛类型断言并收紧异步数据边界。
@@ -19,6 +19,8 @@
 ### Fixed
 
 - **map:** 修复 Leaflet 图层图片发布、地图示例宽泛类型、高德坐标顺序与申请文档跳转；允许同源定位并为高德 SDK 收紧 CSP 白名单。
+- **map:** 兼容 Leaflet 在 Vite 深层按需加载时的命名空间与 `default` 两种模块形态，避免首次进入地图页出现 `map is not a function`。
+- **gantt:** 异步加载 VTable Gantt 时增加卸载与版本守卫，避免快速离开页面后继续向失效容器创建实例。
 - **components:** 收紧导航搜索、用户信息与详情弹窗的运行时输入校验，保留 `0`/`false` 等有效展示值并隔离非法标签类型。
 - **styles:** 编辑器第三方样式改为路由页面显式加载，其余业务组件由 resolver 按需注入，避免整包样式常驻首屏。
 - **security:** 移除未使用且停止维护的 `@kangc/v-md-editor` 插件链，统一 SheetJS 安全版本并固定已修复的构建期传递依赖；`bun audit` 归零。

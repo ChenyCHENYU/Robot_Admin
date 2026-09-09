@@ -150,6 +150,9 @@ describe('UI regression contracts', () => {
     expect(viteConfig).toContain("'@robot-admin/naive-ui-components'")
     expect(viteConfig).toContain("'@visactor/vtable'")
     expect(viteConfig).toContain("'@visactor/vtable-gantt'")
+    expect(viteConfig).toContain("'leaflet'")
+    expect(viteConfig).toContain("'@robot-admin/naive-ui-components > leaflet'")
+    expect(viteConfig).toContain("'qrcode'")
     expect(viteConfig).toContain("'@robot-admin/naive-ui-components > qrcode'")
     expect(viteConfig).toContain(
       "'@robot-admin/naive-ui-components > spark-md5'"

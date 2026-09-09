@@ -75,6 +75,8 @@ export default defineConfig(async ({ mode }: { mode: string }) => {
         'axios',
         // 组件库保持 ESM 直出；仅预构建其 CJS 或传递依赖含 CJS 的第三方包，
         // 为深层按需入口补齐 default export 互操作，且不触发组件库整体重优化。
+        'leaflet',
+        '@robot-admin/naive-ui-components > leaflet',
         'qrcode',
         '@robot-admin/naive-ui-components > qrcode',
         'spark-md5',
