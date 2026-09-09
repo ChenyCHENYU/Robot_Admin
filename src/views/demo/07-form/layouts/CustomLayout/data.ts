@@ -11,7 +11,7 @@
 import {
   defineFormOptions,
   type FormOption,
-} from '@robot-admin/naive-ui-components'
+} from '@robot-admin/naive-ui-components/C_Form'
 import type { ApiResponse } from '@/hooks/useFormSubmit'
 import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
 

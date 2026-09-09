@@ -230,7 +230,7 @@
     GROUP_COLORS,
     type MenuGroupConfig,
   } from './data'
-  import { prefetchHeavyRoute } from '@/router/routePrefetch'
+  import { prefetchRoute } from '@/router/routePrefetch'
 
   defineOptions({ name: 'C_MenuGrouped' })
 
@@ -262,7 +262,6 @@
   }>()
 
   const route = useRoute()
-  const router = useRouter()
 
   // ============ DOM ============
   const sidebarRef = ref<HTMLElement>()
@@ -428,7 +427,7 @@
   }
 
   const handleRouteIntent = (menu: MenuOptions): void => {
-    if (!menu.children?.length) void prefetchHeavyRoute(fullPath(menu))
+    if (!menu.children?.length) void prefetchRoute(fullPath(menu))
   }
 
   const getGroupColor = (i: number) => GROUP_COLORS[i % GROUP_COLORS.length]
@@ -446,14 +445,12 @@
     // 无子菜单 → 导航
     const path = fullPath(menu)
     emit('select', path)
-    router.push(path)
     closePanel()
   }
 
   const navigateTo = (child: MenuOptions) => {
     const path = fullPath(child)
     emit('select', path)
-    router.push(path)
     closePanel()
   }
 

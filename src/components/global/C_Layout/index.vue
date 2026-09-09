@@ -45,6 +45,7 @@
                 :collapsed="collapsed"
                 :inverted="isDarkMode"
                 :label-formatter="translateRouteTitle"
+                @intent="prefetchRoute"
                 @select="router.push"
               />
             </template>
@@ -99,6 +100,7 @@
   import { s_permissionStore } from '@/stores/permission'
   import { s_settingsStore } from '@/stores/settings'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
+  import { prefetchRoute } from '@/router/routePrefetch'
   import { buildGroupedMenuData, getMenuGroupColor } from './data'
   import C_Settings from '@/components/global/C_Settings/index.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'

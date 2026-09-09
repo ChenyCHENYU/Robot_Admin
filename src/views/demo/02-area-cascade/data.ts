@@ -1,7 +1,7 @@
 /**
  * @Description: 区域级联选择器演示页 - 数据配置与类型定义
  */
-import { type CascadeItem } from '@robot-admin/naive-ui-components'
+import type { CascadeItem } from '@robot-admin/naive-ui-components'
 import pcaCode from '@/assets/data/pca-code.json'
 
 // ================= 类型定义 =================

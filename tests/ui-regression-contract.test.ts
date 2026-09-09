@@ -160,9 +160,7 @@ describe('UI regression contracts', () => {
     expect(viteConfig).toContain(
       "'@robot-admin/naive-ui-components > jsbarcode'"
     )
-    expect(viteConfig).toContain(
-      "'@robot-admin/naive-ui-components > mammoth'"
-    )
+    expect(viteConfig).toContain("'@robot-admin/naive-ui-components > mammoth'")
     expect(viteConfig).toContain(
       "'@robot-admin/naive-ui-components > xgplayer'"
     )
@@ -175,10 +173,78 @@ describe('UI regression contracts', () => {
     expect(viteConfig).toContain("'@visactor/vrender-kits > lottie-web'")
     expect(viteConfig).toContain("'@visactor/vtable > cssfontparser'")
     expect(viteConfig).toContain("'@visactor/vtable > lodash/get'")
-    expect(viteConfig).toContain(
-      "'@visactor/vtable > @visactor/vdataset'"
-    )
+    expect(viteConfig).toContain("'@visactor/vtable > @visactor/vdataset'")
     expect(componentsConfig).toContain("componentName === 'Icon'")
     expect(componentsConfig).toContain("from: '@iconify/vue'")
+  })
+
+  test('first authenticated frame and route intent have stable loading contracts', async () => {
+    const unoConfig = await readText('../unocss.config.ts')
+    const loginSource = await readText('../src/views/login/index.vue')
+    const layoutSource = await readText(
+      '../src/components/global/C_Layout/index.vue'
+    )
+    const groupedMenuSource = await readText(
+      '../src/components/global/C_MenuGrouped/index.vue'
+    )
+    const dynamicRouterSource = await readText('../src/router/dynamicRouter.ts')
+
+    expect(unoConfig).toContain("'src/components/global/**/*.{vue,ts,tsx}'")
+    expect(unoConfig).toContain("'src/views/home/**/*.{vue,ts,tsx}'")
+    expect(loginSource).toContain('preloadAuthenticatedShell()')
+    expect(loginSource).toContain('requestIdleCallback')
+    expect(loginSource).toContain(':paused="loading"')
+    expect(layoutSource).toContain('@intent="prefetchRoute"')
+    expect(groupedMenuSource).toContain('prefetchRoute(fullPath(menu))')
+    expect(groupedMenuSource).not.toContain('router.push(path)')
+    expect(dynamicRouterSource).toContain('dynamicRouteLoaders.set(fullPath')
+    expect(dynamicRouterSource).toContain(
+      'export const prefetchDynamicRouteComponent'
+    )
+  })
+
+  test('composed package styles remain self-contained', async () => {
+    const packageRoot = new URL(
+      '../node_modules/@robot-admin/naive-ui-components/dist/',
+      import.meta.url
+    )
+    const loginCss = await Bun.file(new URL('C_Login.css', packageRoot)).text()
+    const guideCss = await Bun.file(new URL('C_Guide.css', packageRoot)).text()
+
+    expect(loginCss).toContain('.c-captcha-modern[')
+    expect(loginCss).toContain('.c-icon[')
+    expect(loginCss).toContain('.vue-puzzle-vcode')
+    expect(guideCss).toContain('.c-icon[')
+  })
+
+  test('component package runtime imports stay on deep on-demand entries', async () => {
+    const sourceGlob = new Bun.Glob('src/**/*.{ts,vue}')
+    const rootRuntimeImports: string[] = []
+
+    for await (const file of sourceGlob.scan({
+      cwd: import.meta.dir + '/..',
+    })) {
+      const source = await Bun.file(
+        new URL(`../${file.replaceAll('\\', '/')}`, import.meta.url)
+      ).text()
+
+      const lines = source.split('\n')
+      for (const [index, line] of lines.entries()) {
+        if (!line.includes("from '@robot-admin/naive-ui-components'")) continue
+
+        let importStart = index
+        while (importStart >= 0 && !/^\s*import\b/.test(lines[importStart])) {
+          importStart -= 1
+        }
+        if (
+          importStart < 0 ||
+          !/^\s*import\s+type\b/.test(lines[importStart])
+        ) {
+          rootRuntimeImports.push(file)
+        }
+      }
+    }
+
+    expect(rootRuntimeImports).toEqual([])
   })
 })

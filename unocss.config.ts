@@ -50,6 +50,9 @@ export default defineConfig({
     },
     // 扫描文件系统中不经过 Vite 管道的外部包源码
     filesystem: [
+      // 认证后首个稳定帧必须具备完整布局样式，不能依赖首次路由访问后 HMR 补齐。
+      'src/components/global/**/*.{vue,ts,tsx}',
+      'src/views/home/**/*.{vue,ts,tsx}',
       // @robot-admin/layout（本地 link 开发 + node_modules）
       '../robot-admin-packages/packages/layout/src/**/*.{vue,ts}',
       'node_modules/@robot-admin/layout/src/**/*.{vue,ts}',

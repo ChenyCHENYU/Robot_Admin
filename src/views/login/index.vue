@@ -27,6 +27,7 @@
     <div class="spline-background">
       <Spline
         scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+        :paused="loading"
       />
     </div>
 
@@ -55,6 +56,7 @@
 
 <script setup lang="ts">
   import { initDynamicRouter } from '@/router/dynamicRouter'
+  import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
   import { s_userStore } from '@/stores/user/index'
   import { loginApi, type LoginResponse } from '@/api/auth'
   import { useLoginController } from '@/composables/useLoginController'
@@ -86,11 +88,29 @@
   // ===== 打字机 =====
   const showTypewriter = ref(true)
 
+  // 登录页稳定呈现后再空闲预热认证壳层。用户完成人机验证期间即可完成加载，
+  // 不把布局模块的开发态转换/解析成本留到点击登录之后。
+  let cancelShellWarmup: (() => void) | undefined
+  onMounted(() => {
+    const warmup = () => void preloadAuthenticatedShell().catch(() => undefined)
+    if (typeof window.requestIdleCallback === 'function') {
+      const handle = window.requestIdleCallback(warmup, { timeout: 1500 })
+      cancelShellWarmup = () => window.cancelIdleCallback(handle)
+      return
+    }
+
+    const handle = window.setTimeout(warmup, 800)
+    cancelShellWarmup = () => window.clearTimeout(handle)
+  })
+  onBeforeUnmount(() => cancelShellWarmup?.())
+
   // ===== 登录控制器（业务逻辑全部由 composable 托管） =====
+  let pendingShellPreload: Promise<void> | null = null
+
   const {
     loginRef,
     loading,
-    handleLogin,
+    handleLogin: submitLogin,
     handleCaptchaLogin,
     handleSendCode,
     handleSocialLogin,
@@ -114,7 +134,10 @@
           username: String(formData.username ?? ''),
         }
       )
-      const ok = await initDynamicRouter()
+      const [ok] = await Promise.all([
+        initDynamicRouter(),
+        pendingShellPreload ?? preloadAuthenticatedShell(),
+      ])
       if (!ok) {
         userStore.clearSession()
         throw new Error('动态路由初始化失败')
@@ -144,6 +167,13 @@
     onRegisterSendCode: phone =>
       message.info(`${t('lp_code_sent', '验证码已发送至')} ${phone}`),
   })
+
+  /** 登录请求与认证后布局并行加载，避免成功后才开始整条页面加载链。 */
+  const handleLogin: typeof submitLogin = formData => {
+    pendingShellPreload = preloadAuthenticatedShell()
+    void pendingShellPreload.catch(() => undefined)
+    return submitLogin(formData)
+  }
 </script>
 
 <style lang="scss" scoped>

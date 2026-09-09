@@ -1,4 +1,4 @@
-import { defineFormOptions } from '@robot-admin/naive-ui-components'
+import { defineFormOptions } from '@robot-admin/naive-ui-components/C_Form'
 import { PRESET_RULES } from '@/utils/d_formValidate'
 
 const { required, length, email, mobile, range } = PRESET_RULES

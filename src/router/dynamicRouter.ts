@@ -2,7 +2,11 @@ import router from './index'
 import type { RouteRecordRaw } from 'vue-router'
 import { s_permissionStore } from '@/stores/permission'
 import { message as messageApi } from '@/plugins/discrete'
-import { toRouteRecordPath } from './routePath'
+import {
+  joinRoutePath,
+  normalizeAbsoluteRoutePath,
+  toRouteRecordPath,
+} from './routePath'
 
 export interface RouteMeta extends Record<string, unknown> {
   title?: string
@@ -32,6 +36,9 @@ const COMPONENTS = {
 // 所有动态页面统一懒加载；登录页无需预取首页的 3D、图表等重依赖。
 const LAZY_MODULES = import.meta.glob('@/views/**/*.vue')
 let dynamicRouteRemovers: Array<() => void> = []
+type RouteComponentLoader = () => Promise<unknown>
+const dynamicRouteLoaders = new Map<string, RouteComponentLoader>()
+const routePrefetchCache = new Map<string, Promise<unknown>>()
 
 /**
  * 路径规范化处理
@@ -48,7 +55,7 @@ const normalizePath = (path: string, isChild: boolean): string => {
 /**
  * 组件解析 - 最优化版本
  */
-const resolveComponent = (path?: string) => {
+const resolveComponent = (path?: string): RouteComponentLoader | undefined => {
   if (!path) return undefined
 
   // 检查预定义组件
@@ -77,12 +84,20 @@ const resolveComponent = (path?: string) => {
 /**
  * 路由处理中间件
  */
-const processRoute = (route: DynamicRoute, isChild = false): RouteRecordRaw => {
+const processRoute = (
+  route: DynamicRoute,
+  isChild = false,
+  parentPath = ''
+): RouteRecordRaw => {
+  const fullPath = joinRoutePath(parentPath, route.path)
+  const component = resolveComponent(route.component)
+  if (component) dynamicRouteLoaders.set(fullPath, component)
+
   return {
     ...route,
     path: normalizePath(route.path, isChild),
-    component: resolveComponent(route.component),
-    children: route.children?.map(child => processRoute(child, true)),
+    component,
+    children: route.children?.map(child => processRoute(child, true, fullPath)),
     meta: {
       ...route.meta,
       isLayout: route.component === 'layout',
@@ -96,6 +111,30 @@ const processRoute = (route: DynamicRoute, isChild = false): RouteRecordRaw => {
 export const clearExistingRoutes = (): void => {
   for (const removeRoute of dynamicRouteRemovers.reverse()) removeRoute()
   dynamicRouteRemovers = []
+  dynamicRouteLoaders.clear()
+  routePrefetchCache.clear()
+}
+
+/**
+ * 在不触发导航的前提下加载动态路由组件。原生 import 缓存会被后续
+ * Vue Router 导航复用；失败项会移出缓存，允许下一次用户意图重试。
+ */
+export const prefetchDynamicRouteComponent = (
+  path: string
+): Promise<unknown> | undefined => {
+  const normalizedPath = normalizeAbsoluteRoutePath(path.split(/[?#]/, 1)[0])
+  const loader = dynamicRouteLoaders.get(normalizedPath)
+  if (!loader) return undefined
+
+  const cached = routePrefetchCache.get(normalizedPath)
+  if (cached) return cached
+
+  const request = loader().catch(error => {
+    routePrefetchCache.delete(normalizedPath)
+    throw error
+  })
+  routePrefetchCache.set(normalizedPath, request)
+  return request
 }
 
 /**

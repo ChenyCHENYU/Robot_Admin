@@ -15,6 +15,7 @@ import {
   type DynamicRoute,
 } from '@/router/dynamicRouter'
 import { s_permissionStore } from '@/stores/permission'
+import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
 import { message } from '@/plugins/discrete'
 import { setupNProgress } from '@/plugins/nprogress'
 import type {
@@ -64,7 +65,10 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
   }
 
   try {
-    const success = await dynamicRouterInitPromise
+    const [success] = await Promise.all([
+      dynamicRouterInitPromise,
+      preloadAuthenticatedShell(),
+    ])
 
     if (!success) {
       throw new Error('动态路由初始化失败')

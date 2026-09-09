@@ -8,6 +8,7 @@
 
 import type { Router } from 'vue-router'
 import { HEAVY_PAGES, HEAVY_PAGE_ROUTES } from '@/config/heavyPages'
+import { prefetchDynamicRouteComponent } from './dynamicRouter'
 import {
   shouldPrefetchHeavyRoutes,
   type NetworkInformationLike,
@@ -38,6 +39,7 @@ const PREFETCH_START_DELAY = 1800
 const PREFETCH_GAP = 500
 
 const normalizeRoutePath = (path: string): string => path.split(/[?#]/, 1)[0]
+const heavyRoutePaths = new Set<string>(HEAVY_PAGE_ROUTES)
 
 /**
  * 预取单个重量级路由。相同动态 import 会与 Vue Router 共享浏览器模块缓存。
@@ -64,6 +66,23 @@ export const prefetchHeavyRoute = (
   })
   routePrefetchCache.set(normalizedPath, request)
   return request
+}
+
+/**
+ * 根据菜单意图预取单个路由。重量级页面继续遵循网络/设备策略，普通页面
+ * 只加载目标组件，并复用动态路由注册时保存的唯一 loader。
+ */
+export const prefetchRoute = (path: string): Promise<unknown> | undefined => {
+  const normalizedPath = normalizeRoutePath(path)
+  if (heavyRoutePaths.has(normalizedPath)) {
+    return prefetchHeavyRoute(normalizedPath)
+  }
+
+  return prefetchDynamicRouteComponent(normalizedPath)?.catch(error => {
+    if (import.meta.env.DEV) {
+      console.warn(`[route-prefetch] ${normalizedPath} 预取失败`, error)
+    }
+  })
 }
 
 const scheduleIdleTask = (callback: () => void): (() => void) => {

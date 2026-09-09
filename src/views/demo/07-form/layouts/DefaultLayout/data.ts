@@ -6,7 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import { defineFormOptions } from '@robot-admin/naive-ui-components'
+import { defineFormOptions } from '@robot-admin/naive-ui-components/C_Form'
 import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
 
 export interface DefaultFormData {

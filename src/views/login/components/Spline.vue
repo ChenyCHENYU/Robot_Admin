@@ -30,6 +30,10 @@
       type: Boolean,
       default: true,
     },
+    paused: {
+      type: Boolean,
+      default: false,
+    },
     style: Object,
   })
 
@@ -54,6 +58,7 @@
   const CONNECTION_RE = /ERR_CACHE_READ_FAILURE/
   let _rejHandler: ((e: PromiseRejectionEvent) => void) | null = null
   let _errHandler: ((e: ErrorEvent) => void) | null = null
+  let initGeneration = 0
 
   function installErrorGuard() {
     _rejHandler = (e: PromiseRejectionEvent) => {
@@ -82,6 +87,8 @@
   async function initSpline() {
     if (!canvasRef.value) return
 
+    const generation = ++initGeneration
+    const canvas = canvasRef.value
     isLoading.value = true
 
     // 过滤 Spline 的版本兼容性警告（仅在初始化期间）
@@ -111,24 +118,30 @@
 
       // ⚡ 动态导入 Spline Runtime（4.4MB），避免阻塞首屏 JS 解析
       const { Application } = await import('@splinetool/runtime')
+      if (generation !== initGeneration || !canvasRef.value) return
 
-      splineApp.value = new Application(canvasRef.value, {
+      const app = new Application(canvas, {
         renderOnDemand: props.renderOnDemand,
       })
+      splineApp.value = app
 
       try {
-        await splineApp.value.load(props.scene)
+        await app.load(props.scene)
       } catch {
+        if (generation !== initGeneration) return
         // 重试：带 cache-buster
         const retryUrl = props.scene.includes('?')
           ? `${props.scene}&t=${Date.now()}`
           : `${props.scene}?t=${Date.now()}`
-        await splineApp.value.load(retryUrl)
+        await app.load(retryUrl)
       }
 
+      if (generation !== initGeneration) return
       isLoading.value = false
-      props.onLoad?.(splineApp.value)
+      if (props.paused) app.stop()
+      props.onLoad?.(app)
     } catch (err) {
+      if (generation !== initGeneration) return
       console.error('Spline initialization error:', err)
       emit('error', err)
       isLoading.value = false
@@ -140,14 +153,20 @@
   }
 
   // ===== 页面可见性——Tab 切走时暂停 Spline，切回时恢复 =====
-  function handleVisibilityChange() {
+  function syncPlayback() {
     if (!splineApp.value) return
-    if (document.hidden) {
+    if (document.hidden || props.paused) {
       splineApp.value.stop()
     } else {
       splineApp.value.play()
     }
   }
+
+  function handleVisibilityChange() {
+    syncPlayback()
+  }
+
+  watch(() => props.paused, syncPlayback, { flush: 'post' })
 
   onMounted(() => {
     installErrorGuard()
@@ -156,6 +175,7 @@
   })
 
   onUnmounted(() => {
+    initGeneration++
     removeErrorGuard()
     document.removeEventListener('visibilitychange', handleVisibilityChange)
     // 销毁 Spline 实例
