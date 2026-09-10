@@ -61,8 +61,8 @@
 
   <p>
     <img src="https://img.shields.io/badge/bun-%E2%89%A51.3.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
-    <img src="https://img.shields.io/badge/vue-3.5.30-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
-    <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
+    <img src="https://img.shields.io/badge/vue-3.5.42-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
+    <img src="https://img.shields.io/badge/typescript-5.8.3-blue?style=flat&logo=typescript" alt="TypeScript Version">
     <img src="https://img.shields.io/badge/vite-8.2.2-646CFF?style=flat&logo=vite" alt="Vite Version">
     <a href="https://vercel.com"><img src="https://img.shields.io/github/deployments/ChenyCHENYU/robot_admin/production?label=vercel&logo=vercel" alt="Vercel"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
@@ -227,28 +227,31 @@ bun run commit         # 规范化提交（git cz）
 
 **🎭 前端核心**
 
-- **Vue 3.5.30** - 🔥 Composition API 丝滑体验
+- **Vue 3.5.42** - 🔥 Composition API 丝滑体验
 - **TypeScript 5.8** - 🛡️ 类型安全，智能提示
-- **Naive UI 2.44.1** - 🎨 颜值与性能并存的组件库
+- **Pinia 4.0.3** - 🍍 类型安全的模块化状态管理
+- **Vue Router 5.3.1** - 🧭 路由守卫与动态路由
+- **VueUse 14.4.0** - 🧰 按需使用的组合式工具集
+- **Naive UI 2.45.3** - 🎨 颜值与性能并存的组件库
 - **@robot-admin/naive-ui-components** - 🧩 51+ 业务组件库，按需自动导入
-- **UnoCSS 66.6.6** - ⚡ 原子化CSS，按需生成，体积极小
+- **UnoCSS 66.9.1** - ⚡ 原子化CSS，按需生成，体积极小
 
 **⚙️ 构建工具**
 
 - **Bun 1.3.x** - 🚀 性能怪兽，安装速度提升10倍
 - **Vite 8.2.2** - ⚡ Rolldown 统一构建引擎，构建速度提升 10-30x
-- **Sass 1.97** - 🎨 成熟的CSS预处理器
+- **Sass 1.103** - 🎨 成熟的CSS预处理器
 
 **🔧 开发工具**
 
-- **ESLint 10.0** - 📏 代码质量守护者
-- **Prettier 3.8** - ✨ 代码格式化
+- **ESLint 10.9** - 📏 代码质量守护者
+- **Prettier 3.9** - ✨ 代码格式化
 - **Oxlint 1.52** - 🦀 Rust编写的超快Linter
 - **Bun Test 1.3** - 🧪 与包管理器统一的测试运行时
 
 **📊 功能组件（via @robot-admin/naive-ui-components）**
 
-- **ECharts 5.6** - 企业级图表库
+- **ECharts 6.1** - 企业级图表库
 - **AntV X6** - 专业流程图引擎（BPMN/ER/UML）
 - **FullCalendar** - 完整的日程管理
 - **WangEditor** - 富文本编辑器

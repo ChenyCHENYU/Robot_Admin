@@ -198,6 +198,13 @@ const addStandaloneAliases = (
       })
     }
 
+    // 本地独立包与 npm 安装保持同一依赖语义；仅为主项目缺失的传递依赖补精确别名。
+    collectTransitiveDeps(
+      resolve(process.cwd(), relativePath, '..'),
+      pkgName,
+      aliases
+    )
+
     packageNames.push(`${pkgName}(独立)`)
   }
 }

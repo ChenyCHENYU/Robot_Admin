@@ -49,7 +49,7 @@ export interface LoginRequestPayload extends Record<string, unknown> {
   captcha?: {
     token: string
     timestamp?: number
-    type: 'puzzle-captcha'
+    type: 'puzzle-captcha' | 'altcha'
   }
 }
 
@@ -158,6 +158,7 @@ export function useLoginController<
   type LoginFormData = PasswordFormData & {
     captchaToken?: string
     captchaTimestamp?: number
+    captchaType?: 'puzzle-captcha' | 'altcha'
   }
 
   /** 构建登录请求体 */
@@ -170,7 +171,7 @@ export function useLoginController<
       payload.captcha = {
         token: formData.captchaToken,
         timestamp: formData.captchaTimestamp,
-        type: 'puzzle-captcha',
+        type: formData.captchaType ?? 'puzzle-captcha',
       }
     }
     return payload

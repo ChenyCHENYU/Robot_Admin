@@ -15,6 +15,7 @@ import {
 export type AppEnvironment = 'development' | 'test' | 'staging' | 'production'
 export type RouterMode = 'hash' | 'history'
 export type AuthMode = 'mock' | 'remote'
+export type CaptchaProvider = 'puzzle-captcha' | 'altcha'
 
 export interface ValidatedViteEnv {
   appEnv: AppEnvironment
@@ -24,6 +25,7 @@ export interface ValidatedViteEnv {
   routerMode: RouterMode
   apiBase: string
   port: number
+  captchaProvider: CaptchaProvider
 }
 
 const APP_ENVIRONMENTS = new Set<AppEnvironment>([
@@ -129,6 +131,42 @@ const validateErrorReportEndpoint = (
   }
 }
 
+const isSameOriginPath = (value: string): boolean =>
+  value.startsWith('/') && !value.startsWith('//')
+
+const resolveCaptchaProvider = (
+  env: Record<string, string | undefined>,
+  errors: string[]
+): CaptchaProvider => {
+  const provider = env.VITE_CAPTCHA_PROVIDER?.trim()
+  if (!provider || provider === 'puzzle-captcha') return 'puzzle-captcha'
+  if (provider !== 'altcha') {
+    errors.push(`VITE_CAPTCHA_PROVIDER 不受支持: ${provider}`)
+    return 'puzzle-captcha'
+  }
+
+  const challengeUrl = env.VITE_CAPTCHA_CHALLENGE_URL?.trim()
+  const verifyEndpoint = env.VITE_CAPTCHA_VERIFY_ENDPOINT?.trim()
+  if (!challengeUrl) {
+    errors.push('ALTCHA 模式必须配置 VITE_CAPTCHA_CHALLENGE_URL')
+  }
+  if (!verifyEndpoint) {
+    errors.push('ALTCHA 模式必须配置 VITE_CAPTCHA_VERIFY_ENDPOINT')
+  }
+  return 'altcha'
+}
+
+const validateCaptchaEndpoint = (
+  key: 'VITE_CAPTCHA_CHALLENGE_URL' | 'VITE_CAPTCHA_VERIFY_ENDPOINT',
+  value: string | undefined,
+  errors: string[]
+): void => {
+  const endpoint = value?.trim()
+  if (endpoint && !isSameOriginPath(endpoint)) {
+    errors.push(`${key} 必须是同源绝对路径`)
+  }
+}
+
 const validateAmapServiceHost = (
   serviceHost: string | undefined,
   errors: string[]
@@ -208,6 +246,17 @@ export function validateViteEnv(
   validateBooleanVariables(env, errors)
   validateI18nCredentials(env, errors)
   validateErrorReportEndpoint(env.VITE_ERROR_REPORT_ENDPOINT, errors)
+  const captchaProvider = resolveCaptchaProvider(env, errors)
+  validateCaptchaEndpoint(
+    'VITE_CAPTCHA_CHALLENGE_URL',
+    env.VITE_CAPTCHA_CHALLENGE_URL,
+    errors
+  )
+  validateCaptchaEndpoint(
+    'VITE_CAPTCHA_VERIFY_ENDPOINT',
+    env.VITE_CAPTCHA_VERIFY_ENDPOINT,
+    errors
+  )
   validateAmapServiceHost(env.VITE_AMAP_SERVICE_HOST, errors)
 
   if (errors.length > 0) {
@@ -222,5 +271,6 @@ export function validateViteEnv(
     routerMode,
     apiBase,
     port,
+    captchaProvider,
   }
 }

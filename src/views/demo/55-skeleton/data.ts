@@ -107,7 +107,7 @@ export const LOADED_CONTENT = {
   list: [
     {
       title: '系统更新通知',
-      desc: '框架已升级至 Vue 3.5.30，请及时更新依赖',
+      desc: '框架已升级至 Vue 3.5.42，请及时更新依赖',
       time: '2 分钟前',
     },
     {

@@ -126,7 +126,7 @@ export const techLayers: TechLayer[] = [
     icon: '🖥️',
     className: 'layer-frontend',
     tagType: 'info',
-    techs: ['Vue 3.5.13', 'TypeScript 5.8', 'Naive UI 2.41', 'UnoCSS 66.3'],
+    techs: ['Vue 3.5.42', 'TypeScript 5.8', 'Naive UI 2.45', 'UnoCSS 66.9'],
   },
   {
     name: '构建工具层',
@@ -140,14 +140,14 @@ export const techLayers: TechLayer[] = [
     icon: '🔗',
     className: 'layer-state',
     tagType: 'warning',
-    techs: ['Pinia 3.0.1', 'Vue Router 4.5', 'VueUse 13.1', 'Persistedstate'],
+    techs: ['Pinia 4.0', 'Vue Router 5.3', 'VueUse 14.4', 'Persistedstate'],
   },
   {
     name: '工具集成层',
     icon: '🛠️',
     className: 'layer-tools',
     tagType: 'error',
-    techs: ['Axios 1.9', 'ECharts 5.6', 'AntV X6', 'Vue Flow'],
+    techs: ['Axios 1.20', 'ECharts 6.1', 'AntV X6', 'Vue Flow'],
   },
   {
     name: '开发体验层',

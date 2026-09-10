@@ -11,6 +11,7 @@
 ## 当前生产基线
 
 - 架构保持单体 SPA 和既有路由、状态管理边界不变，业务组件继续通过 `@robot-admin/naive-ui-components@0.11.8` 按需消费；每个组件样式入口均包含自身组合组件所需样式，不再依赖全量 CSS 兜底。
+- 核心运行栈采用 `Vue 3.5.42 + Vite 8.2.2 + Pinia 4.0.3 + Vue Router 5.3.1 + VueUse 14.4.0`；Pinia 4 所需的 `@vue/devtools-api` 作为直接依赖锁定，避免依赖传递关系碰巧满足 peer requirement。
 - 登录页在空闲阶段预热认证后的布局与首页，提交期间暂停 Spline 渲染但保留当前画面；动态菜单在鼠标进入或键盘聚焦时只预取目标页面，不改变点击行为和路由权限边界。
 - 组件运行时统一走 `/C_*` 深层入口，根入口仅允许 `import type`；源码门禁阻止单个页面重新拉入整套组件库依赖图。
 - Markdown、Office、Spline、图表和演示页面保持路由级异步加载；代码高亮只注册项目实际使用的语言，不加载完整语言包。
@@ -23,34 +24,39 @@
 
 ## 环境与数据模式
 
-| 环境变量                     | 开发/测试默认 | 业务生产/预发要求 | 公开演示 | 作用                                    |
-| ---------------------------- | ------------- | ----------------- | -------- | --------------------------------------- |
-| `VITE_DEPLOYMENT_PROFILE`    | `application` | `application`     | `demo`   | 区分真实业务部署与公开演示              |
-| `VITE_AUTH_MODE`             | `mock`        | `remote`          | `mock`   | 登录、刷新令牌和当前用户                |
-| `VITE_DATA_MODE`             | `mock`        | `remote`          | `mock`   | 账号与系统管理业务数据                  |
-| `VITE_API_BASE`              | `/api`        | `/api` 或网关     | 示例地址 | Axios 请求基地址，推荐由部署层同源代理  |
-| `VITE_ERROR_REPORT_ENDPOINT` | 留空          | 按需配置          | 留空     | 同源客户端错误接收地址                  |
-| `VITE_MAP_KEY`               | 留空          | 按需配置          | 留空     | 高德 Web 端 JS API Key                  |
-| `VITE_AMAP_SERVICE_HOST`     | 留空          | 同源代理          | 留空     | 高德安全代理，须以 `/_AMapService` 结尾 |
-| `VITE_ROUTE_IDLE_PREFETCH`   | `false`       | 按需开启          | `false`  | 登录后网络感知的空闲路由预热            |
-| `VITE_ANALYTICS_ENABLED`     | `false`       | 按需开启          | 按需开启 | Vercel Analytics 与 Speed Insights      |
+| 环境变量                       | 开发/测试默认    | 业务生产/预发要求 | 公开演示         | 作用                                    |
+| ------------------------------ | ---------------- | ----------------- | ---------------- | --------------------------------------- |
+| `VITE_DEPLOYMENT_PROFILE`      | `application`    | `application`     | `demo`           | 区分真实业务部署与公开演示              |
+| `VITE_AUTH_MODE`               | `mock`           | `remote`          | `mock`           | 登录、刷新令牌和当前用户                |
+| `VITE_DATA_MODE`               | `mock`           | `remote`          | `mock`           | 账号与系统管理业务数据                  |
+| `VITE_API_BASE`                | `/api`           | `/api` 或网关     | 示例地址         | Axios 请求基地址，推荐由部署层同源代理  |
+| `VITE_ERROR_REPORT_ENDPOINT`   | 留空             | 按需配置          | 留空             | 同源客户端错误接收地址                  |
+| `VITE_CAPTCHA_PROVIDER`        | `puzzle-captcha` | 推荐 `altcha`     | `puzzle-captcha` | 人机验证提供方                          |
+| `VITE_CAPTCHA_CHALLENGE_URL`   | 留空             | 同源接口          | 留空             | 签发一次性 ALTCHA 挑战                  |
+| `VITE_CAPTCHA_VERIFY_ENDPOINT` | 留空             | 同源接口          | 留空             | 服务端验证 payload 并返回一次性登录令牌 |
+| `VITE_MAP_KEY`                 | 留空             | 按需配置          | 留空             | 高德 Web 端 JS API Key                  |
+| `VITE_AMAP_SERVICE_HOST`       | 留空             | 同源代理          | 留空             | 高德安全代理，须以 `/_AMapService` 结尾 |
+| `VITE_ROUTE_IDLE_PREFETCH`     | `false`          | 按需开启          | `false`          | 登录后网络感知的空闲路由预热            |
+| `VITE_ANALYTICS_ENABLED`       | `false`          | 按需开启          | 按需开启         | Vercel Analytics 与 Speed Insights      |
 
 Vite 启动阶段会校验枚举、布尔值、端口、部署用途、远端 API 和错误上报地址。`application` 的生产或预发若配置 Mock、示例 API 或跨域错误上报端点会直接终止构建；`demo` 仅显式允许闭环 Mock，不会改变真实业务部署的规则。本机密钥只放在 Git 已忽略的 `.env.local` 或 CI Secret。
+
+验证码默认继续使用本地拼图演示，不影响现有登录。真实国内部署可选择 MIT 开源、无调用额度的自托管 ALTCHA：组件仅在启用后懒加载；挑战和验签端点必须同源，后端必须签发短时一次性挑战、验证 PoW payload、防重放并限流，再返回绑定当前会话/登录请求的一次性 token。当前仓库不包含后端，未配置两个端点时不会开启 ALTCHA，也不会把客户端结果标记为安全验证。
 
 ## 后端接口契约
 
 页面只依赖 `src/api/` 的契约，不直接判断运行模式。远端模式当前需要实现以下业务端点；通用响应兼容 `code: 0 | 200 | '0' | '200'`、`message` 和 `msg`。
 
-| 业务域    | 方法与路径                                                                                                                                                                  |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 认证      | 以 `src/api/auth.contract.ts` 为准                                                                                                                                          |
-| 当前账号  | `GET/PUT /account/profile`、`PUT /account/password`、`GET /account/login-records`、`GET /account/activity-logs`                                                             |
-| 安全设置  | `GET /account/security-settings`、`PUT /account/security/:key`                                                                                                              |
-| 用户/角色 | `GET/POST/PUT/DELETE /sys/users`、`GET/POST/PUT/DELETE /sys/roles`                                                                                                          |
-| 菜单/字典 | `GET/POST/PUT/DELETE /sys/menus`、`PUT /sys/menus/:id/move`、`GET/POST/PUT/DELETE /sys/menu-buttons`、`GET /sys/menus/:id/buttons`、`GET/POST/PUT/DELETE /sys/dictionaries` |
-| 权限      | `GET/POST /sys/permissions`、`GET/PUT /sys/data-permissions`                                                                                                                |
-| 权限治理  | `GET/POST /sys/temp-authorizations`、`PUT /sys/temp-authorizations/:id/revoke`、`GET /sys/permission-constraints`                                                           |
-| 权限审计  | `GET /sys/permission-audit-logs`                                                                                                                                            |
+| 业务域    | 方法与路径                                                                                                                                                                     |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 认证      | 以 `src/api/auth.contract.ts` 为准；ALTCHA 另需 `GET /api/auth/captcha/challenge` 与 `POST /api/auth/captcha/verify`（请求 `{ payload }`，响应 `{ valid, token?, message? }`） |
+| 当前账号  | `GET/PUT /account/profile`、`PUT /account/password`、`GET /account/login-records`、`GET /account/activity-logs`                                                                |
+| 安全设置  | `GET /account/security-settings`、`PUT /account/security/:key`                                                                                                                 |
+| 用户/角色 | `GET/POST/PUT/DELETE /sys/users`、`GET/POST/PUT/DELETE /sys/roles`                                                                                                             |
+| 菜单/字典 | `GET/POST/PUT/DELETE /sys/menus`、`PUT /sys/menus/:id/move`、`GET/POST/PUT/DELETE /sys/menu-buttons`、`GET /sys/menus/:id/buttons`、`GET/POST/PUT/DELETE /sys/dictionaries`    |
+| 权限      | `GET/POST /sys/permissions`、`GET/PUT /sys/data-permissions`                                                                                                                   |
+| 权限治理  | `GET/POST /sys/temp-authorizations`、`PUT /sys/temp-authorizations/:id/revoke`、`GET /sys/permission-constraints`                                                              |
+| 权限审计  | `GET /sys/permission-audit-logs`                                                                                                                                               |
 
 刷新令牌的长期生产方案仍应由后端放入 `HttpOnly`、`Secure`、`SameSite` Cookie；前端只持有短时 access token。
 
@@ -64,18 +70,20 @@ Spline 的传递依赖 Lottie 源码包含 `eval` 警告，但生产压缩产物
 
 ## 构建验收与预算
 
-2026-09-09 同一生产构建口径的最终验收结果：
+2026-09-10 同一生产构建口径的最终验收结果：
 
 | 指标                | 优化前     | 优化后     | 变化     | 当前预算   |
 | ------------------- | ---------- | ---------- | -------- | ---------- |
 | 入口 JS             | 423.76 KiB | 297.21 KiB | -29.9%   | ≤ 450 KiB  |
-| module preload      | 582.06 KiB | 486.22 KiB | -16.5%   | ≤ 650 KiB  |
+| module preload      | 582.06 KiB | 484.38 KiB | -16.8%   | ≤ 650 KiB  |
 | 首屏 CSS            | 276.17 KiB | 285.40 KiB | +3.3%    | ≤ 300 KiB  |
 | 首屏资源合计        | 1.25 MiB   | 1.04 MiB   | -16.8%   | ≤ 1.42 MiB |
 | module preload 数量 | 83         | 64         | -19      | ≤ 90       |
 | 最大异步 chunk      | —          | 2.13 MiB   | 路由隔离 | ≤ 4.88 MiB |
 
 `bun run verify` 顺序执行 Oxlint、ESLint、TypeScript、单元测试、生产构建和 `check:bundle`。预算直接解析 `dist/index.html` 与实际文件大小，任一指标回归即返回失败。Spline、Office 和 VTable 等大模块仍存在于完整产物，但不属于首屏关键链路。
+
+核心依赖升级后全量 52 项测试通过；依赖缓存稳定后的 `dev:components` 热启动实测为 2.669 秒。锁文件变化后的首次启动会执行一次 Vite 依赖预构建，本次实测为 6.596 秒，不作为持续启动基线。
 
 本轮事故的影响范围、根因、修复清单和验证证据见 [2026-09-09 生产就绪优化回归事故报告](./incident-reports/2026-09-09-production-readiness-regression.md)。
 

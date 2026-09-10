@@ -31,9 +31,18 @@ describe('UI regression contracts', () => {
     expect(loginSource).toContain('default-username="CHENY"')
     expect(loginSource).toContain('default-password="123456"')
     expect(loginSource).toContain('login-container bg-[#181818]')
+    expect(loginSource).toContain(':captcha-provider="LOGIN_CAPTCHA_PROVIDER"')
+    expect(loginSource).toContain(':captcha-verifier="LOGIN_CAPTCHA_VERIFIER"')
 
     const loginStyles = await readText('../src/views/login/index.scss')
     expect(loginStyles).toContain('background-color: #181818')
+    expect(loginStyles).toContain('$panel-min-width: 348px')
+    expect(loginStyles).toContain('$panel-max-width: 380px')
+
+    const captchaConfig = await readText('../src/views/login/captcha.ts')
+    expect(captchaConfig).toContain("provider === 'altcha'")
+    expect(captchaConfig).toContain("credentials: 'same-origin'")
+    expect(captchaConfig).toContain("cache: 'no-store'")
   })
 
   test('navbar components load their styles through the resolver', async () => {
@@ -177,8 +186,13 @@ describe('UI regression contracts', () => {
     expect(viteConfig).toContain("'@visactor/vtable > cssfontparser'")
     expect(viteConfig).toContain("'@visactor/vtable > lodash/get'")
     expect(viteConfig).toContain("'@visactor/vtable > @visactor/vdataset'")
+    expect(viteConfig).toContain("'altcha/i18n/zh-cn'")
+    expect(viteConfig).toContain("'vue3-puzzle-vcode'")
+    expect(viteConfig).toContain("'driver.js'")
     expect(componentsConfig).toContain("componentName === 'Icon'")
     expect(componentsConfig).toContain("from: '@iconify/vue'")
+    expect(componentsConfig).toContain("name === 'C_Map'")
+    expect(componentsConfig).toContain("`${PKG}/C_Map/style.css`")
   })
 
   test('first authenticated frame and route intent have stable loading contracts', async () => {
@@ -196,7 +210,12 @@ describe('UI regression contracts', () => {
     expect(unoConfig).toContain("'src/views/home/**/*.{vue,ts,tsx}'")
     expect(loginSource).toContain('preloadAuthenticatedShell()')
     expect(loginSource).toContain('requestIdleCallback')
-    expect(loginSource).toContain(':paused="loading"')
+    expect(loginSource).toContain(
+      ':paused="loading || showTypewriter || captchaVisible"'
+    )
+    expect(loginSource).toContain(
+      '@captcha-visible-change="captchaVisible = $event"'
+    )
     expect(layoutSource).toContain('@intent="prefetchRoute"')
     expect(groupedMenuSource).toContain('prefetchRoute(fullPath(menu))')
     expect(groupedMenuSource).not.toContain('router.push(path)')

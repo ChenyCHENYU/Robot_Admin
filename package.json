@@ -66,18 +66,19 @@
     "@vercel/analytics": "^1.6.1",
     "@vercel/speed-insights": "^2.0.0",
     "@visactor/vtable-gantt": "^1.23.3",
-    "@vueuse/core": "^13.9.0",
+    "@vue/devtools-api": "^8.2.1",
+    "@vueuse/core": "^14.4.0",
     "axios": "^1.20.0",
     "echarts": "^6.1.0",
     "highlight.js": "^11.11.1",
     "html2canvas": "^1.4.1",
     "motion-v": "^1.10.3",
     "nprogress": "^0.2.0",
-    "pinia": "^3.0.4",
+    "pinia": "^4.0.3",
     "pinia-plugin-persistedstate": "^4.7.1",
     "print-js": "^1.6.0",
-    "vue": "^3.5.30",
-    "vue-router": "^4.6.4"
+    "vue": "^3.5.42",
+    "vue-router": "^5.3.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.3",

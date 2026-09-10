@@ -27,7 +27,7 @@
     <div class="spline-background">
       <Spline
         scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-        :paused="loading"
+        :paused="loading || showTypewriter || captchaVisible"
       />
     </div>
 
@@ -40,6 +40,12 @@
         :features="LOGIN_FEATURES"
         :social-providers="SOCIAL_PROVIDERS"
         :loading="loading"
+        :captcha-provider="LOGIN_CAPTCHA_PROVIDER"
+        :captcha-challenge-url="LOGIN_CAPTCHA_CHALLENGE_URL"
+        :captcha-verifier="LOGIN_CAPTCHA_VERIFIER"
+        :require-captcha-server-verification="
+          LOGIN_REQUIRE_CAPTCHA_SERVER_VERIFICATION
+        "
         default-username="CHENY"
         default-password="123456"
         @submit="handleLogin"
@@ -49,6 +55,7 @@
         @forgot-password="handleForgotPassword"
         @register-submit="handleRegisterSubmit"
         @register-send-code="handleRegisterSendCode"
+        @captcha-visible-change="captchaVisible = $event"
       />
     </div>
   </div>
@@ -61,6 +68,12 @@
   import { loginApi, type LoginResponse } from '@/api/auth'
   import { useLoginController } from '@/composables/useLoginController'
   import { LOGIN_FEATURES, SOCIAL_PROVIDERS, createWelcomeConfig } from './data'
+  import {
+    LOGIN_CAPTCHA_CHALLENGE_URL,
+    LOGIN_CAPTCHA_PROVIDER,
+    LOGIN_CAPTCHA_VERIFIER,
+    LOGIN_REQUIRE_CAPTCHA_SERVER_VERIFICATION,
+  } from './captcha'
   import Spline from './components/Spline.vue'
   import Typewriter from './components/Typewriter.vue'
 
@@ -87,6 +100,7 @@
 
   // ===== 打字机 =====
   const showTypewriter = ref(true)
+  const captchaVisible = ref(false)
 
   // 登录页稳定呈现后再空闲预热认证壳层。用户完成人机验证期间即可完成加载，
   // 不把布局模块的开发态转换/解析成本留到点击登录之后。

@@ -120,6 +120,13 @@ export default defineConfig(async ({ mode }: { mode: string }) => {
         // 组件库已发布标准 ESM。排除后深层按需入口不会在登录后被 Vite
         // 重新发现、预构建和强制刷新，从而避免打断 C_Layout 动态导入。
         '@robot-admin/naive-ui-components',
+        // ALTCHA 是仅在生产安全模式启用的 ESM 动态能力；不参与启动预构建，
+        // 避免默认拼图登录为未启用的验证码支付冷启动成本或触发整页刷新。
+        'altcha',
+        'altcha/i18n/zh-cn',
+        'vue3-puzzle-vcode',
+        'driver.js',
+        'dompurify',
         // 甘特图依赖体积较大且是标准 ESM，保持页面级按需转换；若由运行时
         // 动态导入触发依赖发现，Vite 会强制整页刷新并中断当前路由。
         '@visactor/vtable',

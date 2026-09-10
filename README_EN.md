@@ -63,8 +63,8 @@
     <a href="https://github.com/ChenyCHENYU/robot_admin/actions"><img src="https://img.shields.io/github/actions/workflow/status/ChenyCHENYU/robot_admin/main.yml" alt="Build Status"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
     <img src="https://img.shields.io/badge/bun-%E2%89%A51.3.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
-    <img src="https://img.shields.io/badge/vue-3.5.30-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
-    <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
+    <img src="https://img.shields.io/badge/vue-3.5.42-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
+    <img src="https://img.shields.io/badge/typescript-5.8.3-blue?style=flat&logo=typescript" alt="TypeScript Version">
     <img src="https://img.shields.io/badge/vite-8.2.2-646CFF?style=flat&logo=vite" alt="Vite Version">
   </p>
   <p>
@@ -224,28 +224,31 @@ To connect a backend, set `VITE_DEPLOYMENT_PROFILE=application`, `VITE_AUTH_MODE
 
 **🎭 Frontend Core**
 
-- **Vue 3.5.30** - 🔥 Stable Composition API runtime
+- **Vue 3.5.42** - 🔥 Stable Composition API runtime
 - **TypeScript 5.8** - 🛡️ Type safety, intelligent hints
-- **Naive UI 2.44.1** - 🎨 Component library with both beauty and performance
+- **Pinia 4.0.3** - 🍍 Type-safe modular state management
+- **Vue Router 5.3.1** - 🧭 Navigation guards and dynamic routes
+- **VueUse 14.4.0** - 🧰 On-demand composition utilities
+- **Naive UI 2.45.3** - 🎨 Component library with both beauty and performance
 - **@robot-admin/naive-ui-components** - 🧩 51+ business components, auto-import on demand
-- **UnoCSS 66.6.6** - ⚡ Atomic CSS, on-demand generation, minimal size
+- **UnoCSS 66.9.1** - ⚡ Atomic CSS, on-demand generation, minimal size
 
 **⚙️ Build Tools**
 
 - **Bun 1.3.x** - 🚀 Fast package manager and JavaScript runtime
 - **Vite 8.2.2** - ⚡ Unified Rolldown build engine and fast hot updates
-- **Sass 1.97** - 🎨 Mature CSS preprocessor
+- **Sass 1.103** - 🎨 Mature CSS preprocessor
 
 **🔧 Development Tools**
 
-- **ESLint 10.0** - 📏 Code quality guardian
-- **Prettier 3.8** - ✨ Code formatting
+- **ESLint 10.9** - 📏 Code quality guardian
+- **Prettier 3.9** - ✨ Code formatting
 - **Oxlint 1.52** - 🦀 Ultra-fast Linter written in Rust
 - **Bun Test 1.3** - 🧪 Test runtime aligned with the package manager
 
 **📊 Functional Components**
 
-- **ECharts 5.6** - Enterprise-grade chart library
+- **ECharts 6.1** - Enterprise-grade chart library
 - **AntV X6** - Professional flowchart engine
 - **FullCalendar** - Complete calendar management
 - **WangEditor** - Rich text editor

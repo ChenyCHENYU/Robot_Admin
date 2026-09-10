@@ -20,6 +20,7 @@ describe('Vite 环境校验', () => {
     expect(result.dataMode).toBe('mock')
     expect(result.routerMode).toBe('hash')
     expect(result.port).toBe(1988)
+    expect(result.captchaProvider).toBe('puzzle-captcha')
   })
 
   test('生产环境拒绝 Mock 认证和 Mock API', () => {
@@ -157,5 +158,47 @@ describe('Vite 环境校验', () => {
         'development'
       )
     ).toThrow('有道 API 凭据')
+  })
+
+  test('ALTCHA 必须同时配置同源挑战与验签接口', () => {
+    expect(() =>
+      validateViteEnv(
+        {
+          VITE_APP_ENV: 'development',
+          VITE_API_BASE: '/api',
+          VITE_CAPTCHA_PROVIDER: 'altcha',
+          VITE_CAPTCHA_CHALLENGE_URL: 'https://captcha.example.com/challenge',
+        },
+        'development'
+      )
+    ).toThrow('VITE_CAPTCHA_VERIFY_ENDPOINT')
+
+    expect(() =>
+      validateViteEnv(
+        {
+          VITE_APP_ENV: 'development',
+          VITE_API_BASE: '/api',
+          VITE_CAPTCHA_PROVIDER: 'altcha',
+          VITE_CAPTCHA_CHALLENGE_URL: 'https://captcha.example.com/challenge',
+          VITE_CAPTCHA_VERIFY_ENDPOINT: '/auth/captcha/verify',
+        },
+        'development'
+      )
+    ).toThrow('同源绝对路径')
+  })
+
+  test('ALTCHA 接受完整的同源服务端配置', () => {
+    const result = validateViteEnv(
+      {
+        VITE_APP_ENV: 'development',
+        VITE_API_BASE: '/api',
+        VITE_CAPTCHA_PROVIDER: 'altcha',
+        VITE_CAPTCHA_CHALLENGE_URL: '/auth/captcha/challenge',
+        VITE_CAPTCHA_VERIFY_ENDPOINT: '/auth/captcha/verify',
+      },
+      'development'
+    )
+
+    expect(result.captchaProvider).toBe('altcha')
   })
 })

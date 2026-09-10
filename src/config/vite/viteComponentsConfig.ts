@@ -52,7 +52,14 @@ export default Components({
     isLocalMode
       ? (name: string) =>
           libraryComponents.has(name)
-            ? { name, from: `${PKG}/${name}` }
+            ? {
+                name,
+                from: `${PKG}/${name}`,
+                // 源码 SFC 已包含组件自身样式；C_Map 还依赖发布包聚合的
+                // Leaflet CSS 与图片资源，本地模式也必须显式加载该入口。
+                sideEffects:
+                  name === 'C_Map' ? `${PKG}/C_Map/style.css` : undefined,
+              }
             : undefined
       : RobotNaiveUiResolver({ importStyle: 'base' }),
     componentName => {
