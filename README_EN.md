@@ -246,7 +246,7 @@ To connect a backend, set `VITE_DEPLOYMENT_PROFILE=application`, `VITE_AUTH_MODE
 
 **⚙️ Build Tools**
 
-- **Bun 1.3.x** - 🚀 Fast package manager and JavaScript runtime
+- **Bun 1.4.2** - 🚀 High-performance JavaScript runtime and package manager
 - **Vite 8.2.2** - ⚡ Unified Rolldown build engine and fast hot updates
 - **Sass 1.103** - 🎨 Mature CSS preprocessor
 
@@ -843,7 +843,7 @@ location / {
 ### 🔧 Development Environment
 
 - **Node.js**: >= 22.18 (latest LTS recommended)
-- **Bun**: >= 1.3.14 (latest version recommended)
+- **Bun**: >= 1.4.2
 - **Memory**: >= 8GB RAM
 - **Storage**: >= 1GB available space
 - **OS**: Windows 10+, macOS 12+, Ubuntu 20.04+

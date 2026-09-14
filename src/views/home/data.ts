@@ -133,7 +133,7 @@ export const techLayers: TechLayer[] = [
     icon: '⚡',
     className: 'layer-build',
     tagType: 'success',
-    techs: ['Vite 7.0', 'Bun 1.x', 'Sass 1.87', 'Unplugin'],
+    techs: ['Vite 8.2', 'Bun 1.4', 'Sass 1.87', 'Unplugin'],
   },
   {
     name: '状态管理层',
