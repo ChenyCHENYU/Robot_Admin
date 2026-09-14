@@ -274,13 +274,15 @@
   const handleUserAction = (key: string) => {
     switch (key) {
       case 'profile':
-        router.push({ name: 'account-profile' })
+        void router.push({ name: 'account-profile' }).catch(() => undefined)
         break
       case 'security':
-        router.push({ name: 'account-security' })
+        void router.push({ name: 'account-security' }).catch(() => undefined)
         break
       case 'activity':
-        router.push({ name: 'account-activity-log' })
+        void router
+          .push({ name: 'account-activity-log' })
+          .catch(() => undefined)
         break
       case 'docs':
         window.open(
@@ -400,11 +402,11 @@
       if (hasChildren) {
         const childKey = findFirstChildKey(key)
         if (childKey) {
-          router.push(childKey)
+          void router.push(childKey).catch(() => undefined)
           return
         }
       }
-      router.push(key)
+      void router.push(key).catch(() => undefined)
     },
   }
 
@@ -454,7 +456,9 @@
 
   // ==================== 操作事件 ====================
   /** 通知中心 — 跳转到指定 URL */
-  const handleNavigate = (url: string) => router.push(url)
+  const handleNavigate = (url: string): void => {
+    void router.push(url).catch(() => undefined)
+  }
 
   /** 全屏切换 */
   const toggleFullscreen = () => {

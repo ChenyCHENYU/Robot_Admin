@@ -17,12 +17,12 @@ import { getLocalPackagesAlias } from './localPackagesAlias.ts'
  * 配置路径别名和模块解析规则
  *
  * **别名优先级：**
- * 1. 本地包别名（仅在 dev:local 模式启用，包括 monorepo 包和独立本地包）
+ * 1. 本地包别名（按 dev:components、dev:table、dev:local 的边界启用）
  * 2. 项目路径别名（@ 和 _views）
  */
 export default {
   alias: [
-    // 本地包调试别名（仅 dev:local 模式）
+    // 本地包调试别名（源码、子入口与样式入口保持同一仓库来源）
     ...getLocalPackagesAlias(),
     // 项目路径别名
     {
@@ -38,7 +38,7 @@ export default {
   ],
 
   // 本地源码包从仓库外部加载时，强制复用应用侧的单例运行时与 UI 上下文。
-  // 既避免 Vue/Naive UI 双实例，也减少 dev:components 构建的重复模块。
+  // 既避免 Vue/Naive UI 双实例，也减少各源码联调模式的重复模块。
   dedupe: [
     'vue',
     'vue-router',

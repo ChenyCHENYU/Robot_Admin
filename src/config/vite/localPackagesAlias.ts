@@ -31,7 +31,7 @@ interface LocalPackageConfig {
  * **为什么不用 bun link？**
  * `bun link` 让 Vite 加载预构建 dist JS，Vite 7 的 dev transform
  * 会注入 `import { h } from 'vue'`，与压缩后的同名变量冲突崩溃。
- * alias → src/ 让 Vite 直接编译 .vue 源文件，HMR 即时生效，零风险。
+ * alias → src/ 让 Vite 直接编译 .vue 源文件，并通过模式隔离缓存保持 HMR 可预期。
  *
  * **启用方式：**
  * ```bash
@@ -43,6 +43,27 @@ const STANDALONE_LOCAL_PACKAGES: Record<string, string> = {
   'naive-ui-components': '../naive-ui-components',
 }
 
+/** 组件源码自身已携带样式；这些入口只补充无法写入 scoped SFC 的第三方样式。 */
+const COMPONENT_VENDOR_STYLE_ENTRIES: Record<string, string> = {
+  'C_Captcha/style.css': 'vue3-puzzle-vcode/dist/main.css',
+  'C_Login/style.css': 'vue3-puzzle-vcode/dist/main.css',
+  'C_Code/style.css': 'highlight.js/styles/github.css',
+  'C_Editor/style.css': '@wangeditor-next/editor/dist/css/style.css',
+  'C_Form/full.css': '@wangeditor-next/editor/dist/css/style.css',
+  'C_Table/full.css': '@wangeditor-next/editor/dist/css/style.css',
+  'C_Guide/style.css': 'driver.js/dist/driver.css',
+  'C_Map/style.css': 'leaflet/dist/leaflet.css',
+  'C_Markdown/style.css': 'md-editor-v3/lib/style.css',
+  'C_VideoPlayer/style.css': 'xgplayer/dist/index.min.css',
+}
+
+/** MachTable 独立仓库联调；可单独启用，也会纳入 `dev:local` 全量联调。 */
+const MACH_TABLE_LOCAL = {
+  enabled: process.env.USE_LOCAL_MACH_TABLE === 'true',
+  root:
+    process.env.MACH_TABLE_LOCAL_ROOT || '../../../office-project/wl/MachTable',
+} as const
+
 /**
  * 本地包配置
  */
@@ -52,6 +73,14 @@ const LOCAL_PACKAGE_CONFIG: LocalPackageConfig = {
   enabled: process.env.USE_LOCAL_PACKAGES === 'true',
 }
 
+/** 仅联调明确依赖的 monorepo 包，避免为了一个页面扫描并接入整套生态。 */
+const SELECTED_LOCAL_PACKAGES = new Set(
+  (process.env.USE_LOCAL_PACKAGE_NAMES ?? '')
+    .split(',')
+    .map(name => name.trim())
+    .filter(Boolean)
+)
+
 /** 独立包模式：仅 alias 独立本地包，不动 monorepo 包 */
 const STANDALONE_MODE =
   process.env.USE_LOCAL_COMPONENTS === 'true' &&
@@ -59,6 +88,63 @@ const STANDALONE_MODE =
 
 /** 已注册的传递依赖别名（避免重复） */
 const registeredTransitiveDeps = new Set<string>()
+
+/** 将 npm 包名安全转换为精确匹配的正则表达式片段。 */
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/**
+ * 从包的 exports 自动寻找源码子入口。
+ *
+ * @description
+ * 支持当前生态的四种源码布局，新增标准子入口时无需继续手写 Vite alias：
+ * `src/entries/foo.ts`、`src/foo/index.ts`、`src/foo.ts`、`src/directives/foo.ts`。
+ * CSS/SCSS 仍使用包声明的正式样式入口，避免把构建期聚合样式误映射为单个源码文件。
+ */
+function collectSourceSubpathAliases(
+  packageRoot: string,
+  srcPath: string,
+  fullPackageName: string,
+  aliases: Alias[]
+): void {
+  const packageJsonPath = resolve(packageRoot, 'package.json')
+  if (!existsSync(packageJsonPath)) return
+
+  try {
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8')) as {
+      exports?: Record<string, unknown>
+    }
+    const exportKeys = Object.keys(packageJson.exports ?? {})
+
+    for (const exportKey of exportKeys) {
+      if (!exportKey.startsWith('./') || exportKey === './package.json')
+        continue
+
+      const subpath = exportKey.slice(2)
+      if (!subpath || /(?:^|\/)(?:style|styles|css)(?:\.|\/|$)/.test(subpath)) {
+        continue
+      }
+
+      const candidates = [
+        resolve(srcPath, 'entries', `${subpath}.ts`),
+        resolve(srcPath, subpath, 'index.ts'),
+        resolve(srcPath, `${subpath}.ts`),
+        resolve(srcPath, 'directives', `${subpath}.ts`),
+      ]
+      const sourceEntry = candidates.find(existsSync)
+      if (!sourceEntry) continue
+
+      aliases.push({
+        find: new RegExp(
+          `^${escapeRegExp(fullPackageName)}/${escapeRegExp(subpath)}$`
+        ),
+        replacement: sourceEntry,
+      })
+    }
+  } catch {
+    console.warn(`⚠️  无法读取 ${fullPackageName} 的源码子入口，跳过`)
+  }
+}
 
 /**
  * 为被别名的本地包自动解析传递依赖
@@ -109,7 +195,11 @@ function collectTransitiveDeps(
   }
 }
 
-const addMonorepoAliases = (aliases: Alias[], packageNames: string[]): void => {
+const addMonorepoAliases = (
+  aliases: Alias[],
+  packageNames: string[],
+  selectedPackages?: ReadonlySet<string>
+): void => {
   const localPath = resolve(process.cwd(), LOCAL_PACKAGE_CONFIG.packagesDir)
   if (!existsSync(localPath)) {
     console.warn('⚠️  未找到 monorepo 包目录，跳过扫描')
@@ -118,30 +208,23 @@ const addMonorepoAliases = (aliases: Alias[], packageNames: string[]): void => {
   }
 
   for (const pkgName of readdirSync(localPath)) {
+    if (selectedPackages && !selectedPackages.has(pkgName)) continue
     const srcPath = resolve(localPath, pkgName, 'src')
     if (!existsSync(srcPath)) continue
 
     const fullPackageName = `${LOCAL_PACKAGE_CONFIG.namespace}/${pkgName}`
 
-    // layout 采用分层入口；本地联调时也必须精确指向源码，
-    // 避免 /core、/vue、/naive 静默回落到 node_modules。
-    if (pkgName === 'layout') {
-      for (const subpath of ['core', 'vue', 'naive']) {
-        const subpathEntry = resolve(srcPath, subpath, 'index.ts')
-        if (!existsSync(subpathEntry)) continue
-
-        aliases.push({
-          find: new RegExp(
-            `^${fullPackageName.replace(/\//g, '\\/')}/${subpath}$`
-          ),
-          replacement: subpathEntry,
-        })
-      }
-    }
+    // 子入口先注册，防止 /vue、/axios、/core 等静默回落到 node_modules。
+    collectSourceSubpathAliases(
+      resolve(localPath, pkgName),
+      srcPath,
+      fullPackageName,
+      aliases
+    )
 
     aliases.push({
-      find: new RegExp(`^${fullPackageName.replace(/\//g, '\\/')}$`),
-      replacement: srcPath,
+      find: new RegExp(`^${escapeRegExp(fullPackageName)}$`),
+      replacement: resolve(srcPath, 'index.ts'),
     })
     packageNames.push(pkgName)
     collectTransitiveDeps(localPath, pkgName, aliases)
@@ -168,16 +251,46 @@ const addStandaloneAliases = (
     const fullPackageName = `${LOCAL_PACKAGE_CONFIG.namespace}/${pkgName}`
 
     if (pkgName === 'naive-ui-components') {
+      for (const [styleEntry, dependencyStyle] of Object.entries(
+        COMPONENT_VENDOR_STYLE_ENTRIES
+      )) {
+        const localVendorStyle = resolve(
+          process.cwd(),
+          relativePath,
+          'node_modules',
+          dependencyStyle
+        )
+        if (!existsSync(localVendorStyle)) continue
+        aliases.push({
+          find: new RegExp(
+            `^${escapeRegExp(fullPackageName)}/${escapeRegExp(styleEntry)}$`
+          ),
+          replacement: localVendorStyle,
+        })
+      }
+
+      // 源码 SFC 已加载自身 scoped 样式；其余发布态聚合 CSS 在联调模式下必须为空，
+      // 否则会把 node_modules 中的旧组件样式重新叠加到最新源码之上。
       aliases.push({
         find: new RegExp(
-          `^${fullPackageName.replace(/\//g, '\\/')}/(C_[A-Za-z0-9_]+)$`
+          `^${escapeRegExp(fullPackageName)}/C_[A-Za-z0-9_]+/(?:style|base|full)\\.css$`
+        ),
+        replacement: resolve(
+          process.cwd(),
+          'src/styles/local-package-style-noop.css'
+        ),
+      })
+
+      aliases.push({
+        find: new RegExp(
+          `^${escapeRegExp(fullPackageName)}/(C_[A-Za-z0-9_]+)$`
         ),
         replacement: resolve(srcDir, 'components', '$1', 'index.ts'),
       })
     }
 
     aliases.push({
-      find: new RegExp(`^${fullPackageName.replace(/\//g, '\\/')}$`),
+      find: new RegExp(`^${escapeRegExp(fullPackageName)}$`),
       replacement,
     })
 
@@ -191,9 +304,7 @@ const addStandaloneAliases = (
     )
     if (existsSync(localStyleScss)) {
       aliases.push({
-        find: new RegExp(
-          `^${fullPackageName.replace(/\//g, '\\/')}/style\\.css$`
-        ),
+        find: new RegExp(`^${escapeRegExp(fullPackageName)}/style\\.css$`),
         replacement: localStyleScss,
       })
     }
@@ -209,44 +320,133 @@ const addStandaloneAliases = (
   }
 }
 
+const addMachTableAliases = (
+  aliases: Alias[],
+  packageNames: string[]
+): void => {
+  const root = resolve(process.cwd(), MACH_TABLE_LOCAL.root)
+  const coreSrc = resolve(root, 'packages/core/src')
+  const vueSrc = resolve(root, 'packages/vue/src')
+  const styles = resolve(root, 'packages/core/styles/mach-table.css')
+
+  if (![coreSrc, vueSrc, styles].every(existsSync)) {
+    console.warn('⚠️  MachTable 本地源码未找到，回退到 npm 安装版本')
+    console.warn(`    路径: ${root}`)
+    return
+  }
+
+  // 子入口必须先于主入口匹配，保证 Vue 源码中的 adapter 引用也来自同一仓库。
+  aliases.push(
+    {
+      find: /^@agile-team\/mach-table-vue\/styles\.css$/,
+      replacement: styles,
+    },
+    {
+      find: /^@agile-team\/mach-table-vue\/styles\/mach-table\.css$/,
+      replacement: styles,
+    },
+    {
+      find: /^@agile-team\/mach-table\/styles\/mach-table\.css$/,
+      replacement: styles,
+    },
+    {
+      find: /^@agile-team\/mach-table\/adapter$/,
+      replacement: resolve(coreSrc, 'adapter.ts'),
+    },
+    {
+      find: /^@agile-team\/mach-table\/worker$/,
+      replacement: resolve(coreSrc, 'worker.ts'),
+    },
+    ...['async', 'workflows', 'adapters', 'worker', 'ui', 'editors'].map(
+      subpath => ({
+        find: new RegExp(
+          `^@agile-team/mach-table-vue/${escapeRegExp(subpath)}$`
+        ),
+        replacement: resolve(vueSrc, `${subpath}.ts`),
+      })
+    ),
+    {
+      find: /^@agile-team\/mach-table-vue$/,
+      replacement: resolve(vueSrc, 'index.ts'),
+    },
+    {
+      find: /^@agile-team\/mach-table$/,
+      replacement: resolve(coreSrc, 'index.ts'),
+    }
+  )
+  packageNames.push('mach-table(独立)')
+}
+
+/** 返回当前启用的本地联调命令名称。 */
+function getLocalModeLabel(
+  isFullMode: boolean,
+  isComponentsOnly: boolean,
+  isMachTableMode: boolean
+): string {
+  if (isFullMode) return 'dev:local'
+  if (isMachTableMode && isComponentsOnly) return 'dev:table'
+  if (isComponentsOnly) return 'dev:components'
+  return 'dev:table'
+}
+
 /**
  * 获取本地包别名配置
  *
  * @description
- * 支持两种本地调试模式：
+ * 支持按仓库边界启用本地调试：
  *
- * | 命令 | monorepo 包 | 独立包 | 适用场景 |
- * |------|-------------|--------|---------|
- * | `bun run dev` | npm | npm | 日常开发 |
- * | `bun run dev:components` | npm | 本地源码 | 调试组件库 |
- * | `bun run dev:local` | 本地源码 | 本地源码 | 全量调试 |
+ * | 命令 | robot-admin 包 | 组件库 | MachTable | 适用场景 |
+ * |------|-----------------|--------|-----------|---------|
+ * | `bun run dev` | npm | npm | npm | 日常开发 |
+ * | `bun run dev:components` | npm | 本地源码 | npm | 调试组件库 |
+ * | `bun run dev:table` | request-core 本地源码 | 本地源码 | 本地源码 | 联调 MachTable 及其 CRUD 数据源 |
+ * | `bun run dev:local` | 本地源码 | 本地源码 | 本地源码 | 全生态联调（推荐） |
  *
  * **工作原理：**
  * - 使用正则精确匹配主入口（如 `@robot-admin/layout$`）
- * - layout 的 `/core`、`/vue`、`/naive` 入口同步映射到本地源码
- * - 样式子路径仍从 node_modules 解析，与已安装版本保持一致
+ * - 根据各包 `exports` 自动映射 `/core`、`/vue`、`/axios` 等源码子入口
+ * - 样式入口显式映射到对应仓库，避免源码与 npm 构建产物混用
  *
  * @returns Vite alias 配置数组
  */
 export function getLocalPackagesAlias(): Alias[] {
   const isFullMode = LOCAL_PACKAGE_CONFIG.enabled
+  const hasSelectedPackages = SELECTED_LOCAL_PACKAGES.size > 0
   const isComponentsOnly = STANDALONE_MODE
+  const isMachTableMode = MACH_TABLE_LOCAL.enabled
+  const hasLocalMode = [
+    isFullMode,
+    hasSelectedPackages,
+    isComponentsOnly,
+    isMachTableMode,
+  ].some(Boolean)
 
-  if (!isFullMode && !isComponentsOnly) {
-    return []
-  }
+  if (!hasLocalMode) return []
 
   const aliases: Alias[] = []
   const packageNames: string[] = []
+  registeredTransitiveDeps.clear()
 
-  // ── 1. Monorepo packages（仅在全量模式下启用）──
+  // ── 1. Monorepo packages（全量模式或显式选择）──
   if (isFullMode) addMonorepoAliases(aliases, packageNames)
+  else if (hasSelectedPackages) {
+    addMonorepoAliases(aliases, packageNames, SELECTED_LOCAL_PACKAGES)
+  }
 
   // ── 2. 独立本地包（全量模式 或 组件模式 均启用）──
-  addStandaloneAliases(aliases, packageNames)
+  if (isFullMode || isComponentsOnly) {
+    addStandaloneAliases(aliases, packageNames)
+  }
+  if (isFullMode || isMachTableMode) {
+    addMachTableAliases(aliases, packageNames)
+  }
 
   if (aliases.length > 0) {
-    const modeLabel = isFullMode ? 'dev:local' : 'dev:components'
+    const modeLabel = getLocalModeLabel(
+      isFullMode,
+      isComponentsOnly,
+      isMachTableMode
+    )
     console.log(
       `\n🔗 [${modeLabel}] 已启用本地包调试: ${packageNames.join(', ')}\n`
     )
@@ -256,19 +456,16 @@ export function getLocalPackagesAlias(): Alias[] {
 }
 
 /**
- * 检查本地包调试模式是否启用
- */
-export function isLocalPackageMode(): boolean {
-  return LOCAL_PACKAGE_CONFIG.enabled || STANDALONE_MODE
-}
-
-/**
  * 获取本地包信息（用于调试）
  */
 export function getLocalPackageInfo() {
   return {
     enabled: LOCAL_PACKAGE_CONFIG.enabled,
+    selectiveMode: SELECTED_LOCAL_PACKAGES.size > 0,
+    selectedPackages: [...SELECTED_LOCAL_PACKAGES],
     standaloneMode: STANDALONE_MODE,
+    machTableMode: MACH_TABLE_LOCAL.enabled || LOCAL_PACKAGE_CONFIG.enabled,
+    machTableRoot: resolve(process.cwd(), MACH_TABLE_LOCAL.root),
     packagesDir: LOCAL_PACKAGE_CONFIG.packagesDir,
     namespace: LOCAL_PACKAGE_CONFIG.namespace,
     standalonePackages: STANDALONE_LOCAL_PACKAGES,

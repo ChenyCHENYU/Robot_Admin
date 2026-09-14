@@ -10,15 +10,15 @@
     <NSpin :show="loading">
       <div class="c-detail-content">
         <div
-          v-for="(section, sectionIndex) in config.sections"
+          v-for="(section, sectionIndex) in detailConfig.sections"
           :key="sectionIndex"
           class="detail-section"
-          :class="{ 'not-last': sectionIndex < config.sections.length - 1 }"
+          :class="{
+            'not-last': sectionIndex < detailConfig.sections.length - 1,
+          }"
         >
-          <!-- 区域标题 -->
           <h4 class="section-title">{{ section.title }}</h4>
 
-          <!-- 区域内容 -->
           <div
             class="detail-grid"
             :class="{
@@ -36,16 +36,16 @@
             >
               <span class="item-label">{{ item.label }}:</span>
               <div class="item-value">
-                <!-- 标签类型 -->
                 <NTag
                   v-if="item.type === 'tag'"
-                  :type="getTagType(item.tagType)"
-                  size="small"
+                  :type="getTagType(item)"
+                  size="tiny"
+                  :bordered="false"
+                  round
                 >
                   {{ getDisplayValue(item) }}
                 </NTag>
 
-                <!-- 邮箱类型 -->
                 <span
                   v-else-if="item.type === 'email'"
                   class="email-value"
@@ -53,7 +53,6 @@
                   {{ getDisplayValue(item) }}
                 </span>
 
-                <!-- 普通文本类型 -->
                 <span v-else>{{ getDisplayValue(item) }}</span>
               </div>
             </div>
@@ -63,18 +62,19 @@
     </NSpin>
 
     <template #action>
-      <NButton
-        @click="handleClose"
-        type="primary"
-      >
-        关闭
-      </NButton>
+      <C_ActionBar
+        :actions="detailActions"
+        :config="{ align: 'right' }"
+      />
     </template>
   </NModal>
 </template>
 
 <script setup lang="ts">
+  import { defineActions } from '@robot-admin/naive-ui-components/C_ActionBar'
   import type { C_DetailProps, DetailItem } from './data'
+
+  defineOptions({ name: 'C_Detail' })
 
   // ================= Props 定义 =================
   const props = withDefaults(defineProps<C_DetailProps>(), {
@@ -93,9 +93,20 @@
 
   // ================= 响应式状态 =================
   const modalVisible = computed({
-    get: () => props.visible,
-    set: value => emit('update:visible', value),
+    get: () => props.crud?.detail.visible.value ?? props.visible,
+    set: value => {
+      if (props.crud) {
+        if (!value) props.crud.detail.close()
+        return
+      }
+      emit('update:visible', value)
+    },
   })
+
+  const detailData = computed(() => props.crud?.detail.data.value ?? props.data)
+  const detailConfig = computed(() => props.crud?.detailConfig ?? props.config)
+  const title = computed(() => props.crud?.detail.title.value || props.title)
+  const loading = computed(() => props.crud?.loading.value ?? props.loading)
 
   const modalWidth = computed(() => {
     return typeof props.width === 'number' ? `${props.width}px` : props.width
@@ -106,7 +117,9 @@
    * 获取显示值
    */
   const getDisplayValue = (item: DetailItem): unknown => {
-    const value = props.data[item.key]
+    const value = (detailData.value as Record<string, unknown> | undefined)?.[
+      item.key
+    ]
 
     // 如果有自定义格式化函数，优先使用
     if (item.formatter) {
@@ -162,14 +175,27 @@
     detailTagTypes.some(type => type === value)
 
   /** 收窄后再传给 Naive UI，避免后端扩展值污染组件属性。 */
-  const getTagType = (type: string | undefined): DetailTagType =>
-    type && isDetailTagType(type) ? type : 'default'
+  const getTagType = (item: DetailItem): DetailTagType => {
+    const value = (detailData.value as Record<string, unknown> | undefined)?.[
+      item.key
+    ]
+    const type = item.tagTypes?.[String(value)] ?? item.tagType
+    return type && isDetailTagType(type) ? type : 'default'
+  }
 
   // ================= 事件处理 =================
   const handleClose = () => {
-    emit('close')
     modalVisible.value = false
+    emit('close')
   }
+
+  const detailActions = defineActions([
+    {
+      key: 'close',
+      type: 'primary',
+      onClick: handleClose,
+    },
+  ])
 </script>
 
 <style scoped lang="scss">

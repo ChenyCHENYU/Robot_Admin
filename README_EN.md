@@ -183,6 +183,9 @@ bun run dev
 # Development
 bun run dev            # Start development environment
 bun run dev:banner     # Opt in to the full Git branch banner (adds startup latency)
+bun run dev:components # Use local naive-ui-components source for integration work
+bun run dev:table      # Use local MachTable, component, and request-core source
+bun run dev:local      # Use all local packages, component source, and MachTable source
 bun run build          # Production build
 bun run build:test     # Test environment build
 bun run build:staging  # Staging build
@@ -202,6 +205,13 @@ bun run type-build     # Full type checking
 # Others
 bun run commit         # Standardized commit (git cz)
 ```
+
+Local integration commands use exact Vite aliases for repository sources and
+their subpath exports. npm, component, MachTable, and full-local modes use
+isolated caches without changing `package.json` or `bun.lock`. After a
+release, update the real npm versions and verify with plain `bun run dev` and
+`bun run build`. Production builds fail fast when a local-alias flag is present,
+so local paths cannot leak into release artifacts.
 
 </details>
 
@@ -231,6 +241,7 @@ To connect a backend, set `VITE_DEPLOYMENT_PROFILE=application`, `VITE_AUTH_MODE
 - **VueUse 14.4.0** - 🧰 On-demand composition utilities
 - **Naive UI 2.45.3** - 🎨 Component library with both beauty and performance
 - **@robot-admin/naive-ui-components** - 🧩 51+ business components, auto-import on demand
+- **MachTable 0.29.2** - 🧮 Standalone virtualized data grid, route-loaded through its Vue adapter; the demo reuses `C_ActionBar` and a data-driven feature panel for watermark, density, selection, clipboard, pagination, summaries, and status bars
 - **UnoCSS 66.9.1** - ⚡ Atomic CSS, on-demand generation, minimal size
 
 **⚙️ Build Tools**
@@ -782,7 +793,7 @@ location / {
 
 - **[vite-console-plugin](https://www.npmjs.com/package/vite-console-plugin)** `v2.0.15` - Vite console beautification plugin
 - **[ts-type-cleaner](https://www.npmjs.com/package/ts-type-cleaner)** `v5.0.8` - TypeScript type analysis & cleanup tool
-- **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - Smart route preloader
+- **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - Standalone route preloader (Robot Admin now uses Vite native warmup plus runtime intent prefetch instead)
 - **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Branch diff checker
 
 </details>

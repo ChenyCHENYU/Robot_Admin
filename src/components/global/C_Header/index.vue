@@ -53,7 +53,7 @@
             <C_Breadcrumb
               :label-formatter="translateRouteTitle"
               :show-icon="settingsStore.showBreadcrumbIcon"
-              @select="router.push"
+              @select="navigateTo"
             />
           </div>
         </div>
@@ -86,6 +86,11 @@
   const themeStore = s_themeStore()
   const settingsStore = s_settingsStore()
   const router = useRouter()
+
+  /** 面包屑事件不向 Vue 返回导航 Promise，避免把路由加载错误误报为组件错误。 */
+  const navigateTo = (path: string): void => {
+    void router.push(path).catch(() => undefined)
+  }
 
   // 从父组件注入设置抽屉状态
   interface SettingsDrawer {

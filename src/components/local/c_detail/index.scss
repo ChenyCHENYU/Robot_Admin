@@ -1,27 +1,27 @@
 // src/components/C_Detail/index.scss
 
 .c-detail-modal {
-  :deep(.n-card) {
-    border-radius: 12px;
-  }
+  overflow: hidden;
+  border-radius: 10px;
 
   :deep(.n-card__header) {
-    padding-bottom: 16px;
+    min-height: 46px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--n-border-color);
 
     .n-card-header__main {
       font-weight: 600;
-      font-size: 16px;
+      font-size: 15px;
     }
   }
 
   :deep(.n-card__content) {
-    padding: 24px;
+    padding: 14px 16px;
   }
 
   :deep(.n-card__action) {
-    padding: 16px 24px;
-    background: var(--n-color-modal);
+    padding: 10px 16px;
+    background: color-mix(in srgb, var(--n-color-modal) 94%, var(--n-border-color));
     border-top: 1px solid var(--n-border-color);
     display: flex;
     justify-content: flex-end;
@@ -31,23 +31,32 @@
 .c-detail-content {
   .detail-section {
     &.not-last {
-      margin-bottom: 24px;
-      padding-bottom: 20px;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
       border-bottom: 1px solid var(--n-border-color);
     }
 
     .section-title {
-      margin: 0 0 16px 0;
-      font-size: 14px;
-      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 650;
       color: var(--n-text-color-1);
-      padding-bottom: 8px;
-      border-bottom: 2px solid var(--n-color-success);
+
+      &::before {
+        width: 3px;
+        height: 13px;
+        background: var(--app-primary, var(--n-color-target));
+        border-radius: 999px;
+        content: '';
+      }
     }
 
     .detail-grid {
       display: grid;
-      gap: 16px 24px;
+      gap: 8px;
 
       &.single-column {
         grid-template-columns: 1fr;
@@ -58,27 +67,30 @@
       }
 
       .detail-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
+        display: grid;
+        grid-template-columns: minmax(72px, auto) minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        min-height: 38px;
+        padding: 7px 10px;
+        background: var(--app-bg-surface-hover, rgba(127, 127, 127, 0.055));
+        border: 1px solid var(--n-border-color);
+        border-radius: 7px;
 
         &.full-width {
           grid-column: 1 / -1;
         }
 
         .item-label {
-          font-size: 13px;
+          font-size: 12px;
           color: var(--n-text-color-3);
           font-weight: 500;
-          min-width: 60px;
-          flex-shrink: 0;
-          margin-top: 2px; // 与文本对齐
         }
 
         .item-value {
-          font-size: 14px;
+          min-width: 0;
+          font-size: 13px;
           color: var(--n-text-color-1);
-          flex: 1;
           word-break: break-all;
 
           .email-value {
@@ -93,17 +105,12 @@
 // ================= 响应式适配 =================
 @media (max-width: 768px) {
   .c-detail-modal {
-    :deep(.n-card) {
-      margin: 16px;
-      width: calc(100vw - 32px) !important;
-    }
-
     :deep(.n-card__content) {
-      padding: 16px;
+      padding: 12px;
     }
 
     :deep(.n-card__action) {
-      padding: 12px 16px;
+      padding: 10px 12px;
     }
   }
 

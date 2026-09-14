@@ -21,6 +21,7 @@ coverage
 .vscode/*
 !.vscode/extensions.json
 !.vscode/mcp.json
+!.vscode/settings.json
 .idea
 *.suo
 *.ntvs*
@@ -57,4 +58,3 @@ nul
 
 # Design documentation (external references)
 design-md
-

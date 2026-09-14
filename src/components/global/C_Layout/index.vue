@@ -46,7 +46,7 @@
                 :inverted="isDarkMode"
                 :label-formatter="translateRouteTitle"
                 @intent="prefetchRoute"
-                @select="router.push"
+                @select="navigateTo"
               />
             </template>
           </template>
@@ -57,7 +57,7 @@
             :inverted="!isMenuLight"
             :menu-theme="themeStore.menuTheme"
             :label-formatter="translateRouteTitle"
-            @select="router.push"
+            @select="navigateTo"
           />
         </div>
       </template>
@@ -114,6 +114,11 @@
   const settingsStore = s_settingsStore()
   const route = useRoute()
   const router = useRouter()
+
+  /** 菜单事件不向 Vue 返回导航 Promise；导航异常统一交给 router.onError。 */
+  const navigateTo = (path: string): void => {
+    void router.push(path).catch(() => undefined)
+  }
 
   const isDarkMode = computed(() => themeStore.isDark)
   const menuExpandMode = computed<'inline' | 'panel'>(

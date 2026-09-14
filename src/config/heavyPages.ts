@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-08-09
  * @FilePath: \Robot_Admin\src\config\heavyPages.ts
- * @Description: 重量级页面配置（仅用于登录后的生产运行时预取）
+ * @Description: 重量级页面配置（开发预热 + 登录后的运行时预取）
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
@@ -19,21 +19,21 @@
  */
 export const HEAVY_PAGES = [
   {
+    routePath: '/editor/antv-x6-editor',
+    viewPath: '/demo/29-antv-x6-editor',
+    reason: 'AntV X6（冷启动成本最高）',
+    priority: 1,
+  },
+  {
     routePath: '/plugins/calendar',
     viewPath: '/demo/13-calendar',
     reason: 'FullCalendar',
-    priority: 1,
+    priority: 2,
   },
   {
     routePath: '/editor/text-editor',
     viewPath: '/demo/16-text-editor',
     reason: 'WangEditor',
-    priority: 2,
-  },
-  {
-    routePath: '/editor/antv-x6-editor',
-    viewPath: '/demo/29-antv-x6-editor',
-    reason: 'AntV X6',
     priority: 2,
   },
   {
@@ -57,3 +57,8 @@ export const HEAVY_PAGES = [
 ] as const
 
 export const HEAVY_PAGE_ROUTES = HEAVY_PAGES.map(page => page.routePath)
+
+/** 开发服务器只预热最高优先级页面，避免用启动速度换取低频页面的偶发收益。 */
+export const DEV_WARMUP_FILES = HEAVY_PAGES.filter(
+  page => page.priority === 1
+).map(page => `./src/views${page.viewPath}/index.vue`)

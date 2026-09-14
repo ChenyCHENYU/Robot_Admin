@@ -1,62 +1,83 @@
 {
-  // 继承 Vue 官方的 DOM 环境 TypeScript 配置
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-
-  // 指定需要编译的文件和目录（相对于 tsconfig 目录）
-  "include": [
-    "../src/**/*", // src 目录下所有文件（包含 .ts, .vue, .d.ts, .json 等）
-    "../package.json", // 项目包配置文件
-    "../src/**/*.json" // 匹配所有 JSON 文件
-  ],
-
-  // 排除不需要编译的文件和目录
+  "include": ["../src/**/*", "../package.json"],
   "exclude": [
-    "../src/**/__tests__/*", // 测试文件
-    "../src/config/vite/**/*", // Vite 配置文件（由 tsconfig.node.json 处理）
-    "../node_modules", // 依赖包目录
-    "../dist" // 构建输出目录
+    "../src/**/__tests__/*",
+    "../src/config/vite/**/*",
+    "../node_modules",
+    "../dist"
   ],
-
   "compilerOptions": {
-    "rootDir": "../src", // 指定 TypeScript 编译器编译的根目录
-    // ==================== 编译输出配置 ====================
-    "declaration": true, // 生成 .d.ts 类型声明文件
-    "emitDeclarationOnly": true, // 只生成类型声明，不生成 JS 文件
-    "outDir": "../dist/types", // 类型声明文件输出目录
-
-    // ==================== 增量编译配置 ====================
-    "composite": true, // 启用项目组合模式，支持增量构建
-    "incremental": true, // 启用增量编译，提高编译速度
-    "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.app.tsbuildinfo", // 增量编译信息存储位置
-
-    // ==================== 模块解析配置 ====================
-    "moduleResolution": "Bundler", // 使用 Bundler 解析策略（Vite 7 + Vue 官方推荐）
-    "allowImportingTsExtensions": true, // 允许导入 .ts 扩展名（bundler 模式必需）
-    "allowSyntheticDefaultImports": true, // 允许从没有默认导出的模块中合成默认导入
-    "esModuleInterop": true, // 启用 ES 模块与 CommonJS 模块的互操作性
-    "resolveJsonModule": true, // 允许导入 JSON 文件
-
-    // ==================== 兼容性配置 ====================
-    "ignoreDeprecations": "5.0", // 消除 baseUrl 弃用警告（TS 5.x 唯一有效值）
-
-    // ==================== 路径映射配置 ====================
-    "baseUrl": "../", // 基础路径为项目根目录
+    "noEmit": true,
+    "incremental": true,
+    "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "ignoreDeprecations": "5.0",
+    "baseUrl": "../",
     "paths": {
-      "@/*": ["src/*"], // @ 符号映射到 src 目录
-      "_views/*": ["src/views/*"], // _views 映射到 src/views 目录
-      "@vue-flow/*": ["node_modules/@vue-flow/*"]
+      "@/*": ["src/*"],
+      "_views/*": ["src/views/*"],
+      "vue": ["node_modules/vue"],
+      "@vue/*": ["node_modules/@vue/*"],
+      "@vue-flow/*": ["node_modules/@vue-flow/*"],
+      "@robot-admin/naive-ui-components": [
+        "../naive-ui-components/dist/index.d.ts",
+        "node_modules/@robot-admin/naive-ui-components"
+      ],
+      "@robot-admin/naive-ui-components/C_*": [
+        "../naive-ui-components/dist/C_*.d.ts",
+        "node_modules/@robot-admin/naive-ui-components/C_*"
+      ],
+      "@agile-team/mach-table": [
+        "../../../office-project/wl/MachTable/packages/core/dist/index.d.ts",
+        "node_modules/@agile-team/mach-table"
+      ],
+      "@agile-team/mach-table/adapter": [
+        "../../../office-project/wl/MachTable/packages/core/dist/adapter.d.ts",
+        "node_modules/@agile-team/mach-table/adapter"
+      ],
+      "@agile-team/mach-table-vue": [
+        "../../../office-project/wl/MachTable/packages/vue/dist/index.d.ts",
+        "node_modules/@agile-team/mach-table-vue"
+      ],
+      "@agile-team/mach-table-vue/workflows": [
+        "../../../office-project/wl/MachTable/packages/vue/dist/workflows.d.ts",
+        "node_modules/@agile-team/mach-table-vue/workflows"
+      ],
+      "@agile-team/mach-table-vue/styles.css": [
+        "../../../office-project/wl/MachTable/packages/core/styles/mach-table.css",
+        "node_modules/@agile-team/mach-table-vue/dist/mach-table.css"
+      ],
+      "@robot-admin/request-core": [
+        "../robot-admin-packages/packages/request-core/dist/index.d.ts",
+        "node_modules/@robot-admin/request-core"
+      ],
+      "@robot-admin/request-core/axios": [
+        "../robot-admin-packages/packages/request-core/dist/axios.d.ts",
+        "node_modules/@robot-admin/request-core/axios"
+      ],
+      "@robot-admin/request-core/crud": [
+        "../robot-admin-packages/packages/request-core/dist/crud.d.ts",
+        "node_modules/@robot-admin/request-core/crud"
+      ],
+      "@robot-admin/request-core/vue": [
+        "../robot-admin-packages/packages/request-core/dist/vue.d.ts",
+        "node_modules/@robot-admin/request-core/vue"
+      ],
+      "@robot-admin/request-core/naive": [
+        "../robot-admin-packages/packages/request-core/dist/naive.d.ts",
+        "node_modules/@robot-admin/request-core/naive"
+      ]
     },
-
-    // ==================== Vue 框架配置 ====================
-    "jsx": "preserve", // 保留 JSX 语法，交给构建工具处理
-    "jsxImportSource": "vue", // 指定 JSX 的导入源为 Vue
-
-    // ==================== 类型检查配置 ====================
-    "strict": true, // 启用所有严格类型检查选项
-    "noUnusedLocals": false, // 允许未使用的局部变量（开发阶段友好）
-    "noUnusedParameters": false, // 允许未使用的参数（开发阶段友好）
-
-    // ==================== 性能优化配置 ====================
-    "skipLibCheck": true // 跳过库文件的类型检查，提高编译性能
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "skipLibCheck": true
   }
 }

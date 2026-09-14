@@ -172,7 +172,7 @@ export const projectMetrics = [
 export const ecosystemPackages = [
   {
     shortName: 'naive-ui-components',
-    version: '0.11.8',
+    version: '0.12.1',
     icon: 'mdi:puzzle-outline',
     color: '#6366f1',
     desc: '51+ 业务组件，按需导入，主题覆盖',

@@ -137,7 +137,7 @@ describe('UI regression contracts', () => {
     )
   })
 
-  test('development startup does not include duplicate preload work', async () => {
+  test('development startup uses one bounded native warmup path', async () => {
     const packageJson = await Bun.file(
       new URL('../package.json', import.meta.url)
     ).json()
@@ -148,6 +148,7 @@ describe('UI regression contracts', () => {
     const componentsConfig = await readText(
       '../src/config/vite/viteComponentsConfig.ts'
     )
+    const developmentEnv = await readText('../envs/.env.development')
 
     expect(packageJson.devDependencies['vite-plugin-preloader']).toBeUndefined()
     expect(packageJson.scripts.dev).toContain('VITE_CONSOLE_BANNER=false')
@@ -155,8 +156,11 @@ describe('UI regression contracts', () => {
       'VITE_CONSOLE_BANNER=true'
     )
     expect(viteConfig).not.toContain('vite-plugin-preloader')
-    expect(serverConfig).not.toContain('warmup:')
+    expect(serverConfig).toContain('warmup:')
+    expect(serverConfig).toContain('clientFiles: DEV_WARMUP_FILES')
+    expect(serverConfig).not.toContain('HEAVY_PAGE_ROUTES')
     expect(viteConfig).toContain("'@robot-admin/naive-ui-components'")
+    expect(viteConfig).toContain("'@antv/x6'")
     expect(viteConfig).toContain("'@visactor/vtable'")
     expect(viteConfig).toContain("'@visactor/vtable-gantt'")
     expect(viteConfig).toContain("'leaflet'")
@@ -192,7 +196,98 @@ describe('UI regression contracts', () => {
     expect(componentsConfig).toContain("componentName === 'Icon'")
     expect(componentsConfig).toContain("from: '@iconify/vue'")
     expect(componentsConfig).toContain("name === 'C_Map'")
-    expect(componentsConfig).toContain("`${PKG}/C_Map/style.css`")
+    expect(componentsConfig).toContain('`${PKG}/C_Map/style.css`')
+    expect(developmentEnv).toContain('VITE_ROUTE_IDLE_PREFETCH=true')
+  })
+
+  test('local package modes isolate caches and never enter release builds', async () => {
+    const packageJson = await Bun.file(
+      new URL('../package.json', import.meta.url)
+    ).json()
+    const viteConfig = await readText('../vite.config.ts')
+    const aliasConfig = await readText(
+      '../src/config/vite/localPackagesAlias.ts'
+    )
+    const serverConfig = await readText(
+      '../src/config/vite/viteServerConfig.ts'
+    )
+
+    expect(packageJson.scripts['dev:table']).toContain(
+      'USE_LOCAL_COMPONENTS=true USE_LOCAL_MACH_TABLE=true'
+    )
+    expect(packageJson.scripts['dev:table']).toContain(
+      'USE_LOCAL_PACKAGE_NAMES=request-core'
+    )
+    expect(packageJson.scripts['dev:local']).toContain(
+      'USE_LOCAL_PACKAGES=true'
+    )
+    expect(viteConfig).toContain('node_modules/.vite/${localCacheScope}')
+    expect(viteConfig).toContain('assertPublishableDependencies')
+    expect(viteConfig).toContain('生产构建禁止启用本地包 alias')
+    expect(viteConfig).toContain('noDiscovery: true')
+    expect(viteConfig).toContain("'nprogress'")
+    expect(viteConfig).toContain("'highlight.js/lib/core'")
+    expect(viteConfig).toContain("'highlight.js/lib/languages/python'")
+    expect(viteConfig).toContain("'jszip'")
+    expect(serverConfig).toContain("host: '127.0.0.1'")
+    expect(serverConfig).toContain('strictPort: true')
+    expect(serverConfig).toContain("hmr: { host: '127.0.0.1'")
+    expect(aliasConfig).toContain('collectSourceSubpathAliases')
+    expect(aliasConfig).toContain('SELECTED_LOCAL_PACKAGES')
+    expect(aliasConfig).toContain('selectedPackages.has(pkgName)')
+    expect(aliasConfig).toContain('addMachTableAliases')
+    expect(aliasConfig).toContain('local-package-style-noop.css')
+  })
+
+  test('MachTable demo keeps CRUD, form and validation concerns data-driven', async () => {
+    const viewSource = await readText(
+      '../src/views/demo/57-mach-table/index.vue'
+    )
+    const dataSource = await readText('../src/views/demo/57-mach-table/data.ts')
+
+    expect(viewSource).toContain('v-bind="tableBindings"')
+    expect(viewSource).toContain('config: ORDER_TABLE_CONFIG')
+    expect(viewSource).toContain('bindings: tableBindings')
+    expect(viewSource).not.toContain('const machTableConfig = computed')
+    expect(viewSource).toContain('<C_Form')
+    expect(viewSource).toContain('<C_ActionBar')
+    expect(viewSource).toContain('<C_Tabs')
+    expect(viewSource).toContain(':items="TABLE_SCENARIO_TABS"')
+    expect(viewSource).toContain('tabs-only')
+    expect(viewSource).not.toContain('<NTabs')
+    expect(viewSource).not.toContain('<NTabPane')
+    expect(viewSource).toContain('MACH_FEATURE_GROUPS')
+    expect(viewSource).toContain('toMachFeatureOptions(featureSettings.value)')
+    expect(viewSource).not.toContain(
+      'mach-demo-toolbar__actions">\n          <NButton'
+    )
+    expect(viewSource).toContain('<c_detail')
+    expect(viewSource).not.toContain('<NFormItem')
+    expect(viewSource).not.toContain('<NDescriptions')
+    expect(dataSource).toContain('useAppTableCrud({')
+    expect(dataSource).toContain('PRESET_RULES.required')
+    expect(dataSource).toContain('createMemoryTableSource(createOrderRows)')
+    expect(dataSource).toContain('source:')
+    expect(dataSource).not.toContain('UseTableCrudConfig')
+    expect(dataSource).not.toContain('const common =')
+    expect(dataSource).not.toContain('Promise.resolve')
+    expect(dataSource).not.toContain('interface OrderTableActions')
+    expect(dataSource).toContain('selectionColumn<OrderRow>()')
+    expect(dataSource).toContain('indexColumn<OrderRow>(')
+    expect(dataSource.indexOf('selectionColumn<OrderRow>()')).toBeLessThan(
+      dataSource.indexOf('indexColumn<OrderRow>(')
+    )
+    expect(dataSource).toContain("align: 'center'")
+    expect(dataSource).toContain("headerAlign: 'center'")
+    expect(dataSource).toContain('watermark: settings.watermark')
+    expect(dataSource).toContain('suppressClipboard: !settings.clipboard')
+    expect(dataSource).toContain('需要专用列或数据结构的能力不伪装成普通开关')
+    expect(dataSource).toContain("label: '树形表格'")
+    expect(dataSource).toContain('defineTabs(')
+    expect(dataSource).toContain('createOrderTreeRows')
+    expect(viewSource).toContain(':tree-data="isTreeScenario"')
+    expect(viewSource).toContain('TABLE_PREVIEW_OPTIONS')
+    expect(viewSource).not.toContain('<template #empty>')
   })
 
   test('first authenticated frame and route intent have stable loading contracts', async () => {
@@ -223,6 +318,19 @@ describe('UI regression contracts', () => {
     expect(dynamicRouterSource).toContain(
       'export const prefetchDynamicRouteComponent'
     )
+  })
+
+  test('menu navigation errors stay in the router boundary', async () => {
+    const layout = await readText('../src/components/global/C_Layout/index.vue')
+    const header = await readText('../src/components/global/C_Header/index.vue')
+    const permission = await readText('../src/router/permission.ts')
+
+    expect(layout).not.toContain('@select="router.push"')
+    expect(header).not.toContain('@select="router.push"')
+    expect(layout).toContain('@select="navigateTo"')
+    expect(header).toContain('@select="navigateTo"')
+    expect(permission).toContain('Failed to fetch dynamically imported module')
+    expect(permission).toContain('页面模块连接失败')
   })
 
   test('composed package styles remain self-contained', async () => {

@@ -1,0 +1,267 @@
+.mach-table-demo {
+  padding: 20px;
+}
+
+.mach-overview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.mach-overview__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 58px;
+  padding: 0 18px;
+  color: var(--app-text-secondary);
+  background: var(--app-bg-surface);
+  border: 1px solid var(--app-border-default);
+  border-radius: var(--app-radius-medium);
+
+  strong {
+    color: var(--app-text-primary);
+    font-size: 16px;
+    font-weight: 650;
+  }
+
+  .is-ready {
+    color: var(--app-success-color);
+  }
+}
+
+.mach-card {
+  background: var(--app-bg-surface);
+  border: 1px solid var(--app-border-default);
+  border-radius: var(--app-radius-large);
+  box-shadow: var(--app-shadow-card);
+}
+
+.mach-scenario-tabs {
+  min-width: 0;
+}
+
+.mach-scenario-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  .mach-scenario-tabs {
+    flex: 1;
+  }
+}
+
+.mach-demo-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mach-demo-toolbar__search {
+  width: min(340px, 100%);
+}
+
+.mach-demo-toolbar__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.mach-tip {
+  margin: 14px 0;
+}
+
+.mach-grid-shell {
+  height: max(440px, calc(100vh - 420px));
+  max-height: 620px;
+  overflow: hidden;
+  border-radius: 10px;
+
+  .mach-demo-grid {
+    height: 100%;
+  }
+
+  :deep(.mach-root) {
+    --mach-primary: var(--app-primary);
+    --mach-radius: 6px;
+    --mach-radius-lg: 10px;
+
+    height: 100%;
+  }
+}
+
+.mach-feature-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mach-feature-presets {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--app-bg-surface-hover);
+  border: 1px solid var(--app-border-default);
+  border-radius: var(--app-radius-medium);
+
+  > div {
+    display: grid;
+    gap: 3px;
+  }
+
+  span {
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+}
+
+.mach-feature-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  background: color-mix(
+    in srgb,
+    var(--app-primary) 4%,
+    var(--app-bg-surface)
+  );
+  border: 1px solid color-mix(
+    in srgb,
+    var(--app-primary) 16%,
+    var(--app-border-default)
+  );
+  border-radius: var(--app-radius-medium);
+
+  > div {
+    display: grid;
+    gap: 3px;
+  }
+
+  span {
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+}
+
+.mach-feature-preview__select {
+  width: 148px;
+  flex: none;
+}
+
+.mach-feature-presets__select {
+  width: 148px;
+  flex: none;
+}
+
+.mach-feature-group {
+  padding: 16px;
+  background: var(--app-bg-surface);
+  border: 1px solid var(--app-border-default);
+  border-radius: var(--app-radius-medium);
+
+  > header {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 14px;
+
+    span {
+      color: var(--app-text-secondary);
+      font-size: 12px;
+    }
+  }
+
+  :deep(.n-form-item) {
+    margin-bottom: 4px;
+  }
+}
+
+.mach-capability-list {
+  display: grid;
+  gap: 10px;
+}
+
+.mach-capability-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px;
+  background: var(--app-bg-surface-hover);
+  border-radius: var(--app-radius-medium);
+
+  p {
+    margin: 4px 0 0;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .n-tag {
+    flex: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .mach-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mach-demo-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mach-scenario-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mach-demo-toolbar__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .mach-table-demo {
+    padding: 12px;
+  }
+
+  .mach-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .mach-demo-toolbar__search {
+    width: 100%;
+  }
+
+  .mach-feature-presets {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mach-feature-preview {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mach-feature-preview__select {
+    width: 100%;
+  }
+
+  .mach-feature-presets__select {
+    width: 100%;
+  }
+
+  .mach-grid-shell {
+    height: 520px;
+  }
+}

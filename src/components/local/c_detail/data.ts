@@ -11,6 +11,7 @@ export interface DetailItem {
   key: string
   type?: string
   tagType?: string
+  tagTypes?: Record<string, string>
   formatter?: (value: unknown) => string
   span?: number
 }
@@ -25,9 +26,22 @@ export interface DetailConfig {
   sections: DetailSection[]
 }
 
+export interface CrudDetailBinding {
+  loading: { readonly value: boolean }
+  detailConfig?: DetailConfig
+  detail: {
+    visible: { readonly value: boolean }
+    data: { readonly value: object | null }
+    title: { readonly value: string }
+    close(): void
+  }
+}
+
 export interface C_DetailProps {
-  data: Record<string, unknown>
+  data?: object
   config?: DetailConfig
+  /** Optional structural binding returned by request-core useTableCrud(). */
+  crud?: CrudDetailBinding
   title?: string
   width?: number | string
   visible?: boolean

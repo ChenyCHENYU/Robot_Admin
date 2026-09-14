@@ -35,8 +35,8 @@ const HEAVY_ROUTE_LOADERS = {
 } satisfies Record<HeavyRoute, RouteLoader>
 
 const routePrefetchCache = new Map<HeavyRoute, Promise<unknown>>()
-const PREFETCH_START_DELAY = 1800
-const PREFETCH_GAP = 500
+const PREFETCH_START_DELAY = 900
+const PREFETCH_GAP = 450
 
 const normalizeRoutePath = (path: string): string => path.split(/[?#]/, 1)[0]
 const heavyRoutePaths = new Set<string>(HEAVY_PAGE_ROUTES)
@@ -111,7 +111,9 @@ export const setupRoutePrefetch = (router: Router): (() => void) => {
   let started = false
   let cancelPendingTask: (() => void) | undefined
   let startTimer: number | undefined
-  const queue = [...HEAVY_PAGE_ROUTES]
+  const queue = [...HEAVY_PAGES]
+    .sort((left, right) => left.priority - right.priority)
+    .map(page => page.routePath)
 
   const scheduleNext = () => {
     if (stopped || !queue.length) return

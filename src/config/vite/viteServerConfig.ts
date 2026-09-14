@@ -9,26 +9,44 @@
  */
 
 import { resolve } from 'node:path'
-import { isLocalPackageMode } from './localPackagesAlias.ts'
+import { DEV_WARMUP_FILES } from '../heavyPages.ts'
+import { getLocalPackageInfo } from './localPackagesAlias.ts'
 
-const localPackageRoots = isLocalPackageMode()
-  ? [
-      resolve(process.cwd(), '../robot-admin-packages'),
-      resolve(process.cwd(), '../naive-ui-components'),
-    ]
-  : []
+const localPackageInfo = getLocalPackageInfo()
+const useLocalMonorepoRoots =
+  localPackageInfo.enabled ||
+  localPackageInfo.selectiveMode ||
+  localPackageInfo.standaloneMode
+const localPackageRoots = [
+  ...(useLocalMonorepoRoots
+    ? [
+        resolve(process.cwd(), '../robot-admin-packages'),
+        resolve(process.cwd(), '../naive-ui-components'),
+      ]
+    : []),
+  ...(localPackageInfo.machTableMode ? [localPackageInfo.machTableRoot] : []),
+]
 
 export default {
+  // 固定 IPv4 回环地址，避免 Windows 上 localhost 在 ::1 / 127.0.0.1
+  // 之间切换后，旧页面的动态模块或 HMR 请求偶发 ERR_CONNECTION_REFUSED。
+  host: '127.0.0.1',
   port: 1988,
-  hmr: { overlay: true },
+  strictPort: true,
+  hmr: { host: '127.0.0.1', overlay: true },
   open: false,
+
+  // 仅使用 Vite 原生 warmup 预转换冷启动最重的页面；运行时仍保持路由级按需加载。
+  warmup: {
+    clientFiles: DEV_WARMUP_FILES,
+  },
 
   // 🚫 忽略 lang 目录的文件变化，避免自动刷新页面
   watch: {
     ignored: ['**/lang/**', '**/node_modules/**'],
   },
 
-  // 允许访问外部包目录（@robot-admin/layout）
+  // 仅允许当前联调命令声明的外部源码仓库。
   fs: {
     strict: true,
     allow: [resolve(process.cwd()), ...localPackageRoots],

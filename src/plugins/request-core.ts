@@ -13,7 +13,10 @@ import {
   createRequestClient,
   waitForReLogin,
 } from '@robot-admin/request-core/axios'
-import { createRequestPlugin } from '@robot-admin/request-core/vue'
+import {
+  createRequestPlugin,
+  createTableCrud,
+} from '@robot-admin/request-core/vue'
 import { s_userStore } from '@/stores/user'
 import { s_reLoginStore } from '@/stores/reLogin'
 import { refreshTokenApi } from '@/api/auth'
@@ -83,6 +86,16 @@ export const request = createRequestClient({
       return Promise.reject(error)
     },
   },
+})
+
+/**
+ * @description 应用级 Headless CRUD 工厂，统一复用请求实例、挂载时机与消息反馈。
+ * 页面只声明业务端点或特殊 query/mutations，不再重复拼装通用请求能力。
+ */
+export const useAppTableCrud = createTableCrud({
+  client: request,
+  autoLoad: 'mounted',
+  ui: { message },
 })
 
 /**

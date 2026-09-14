@@ -273,6 +273,19 @@
                 "affix": false,
                 "keepAlive": false
               }
+            },
+            {
+              "path": "mach-table",
+              "name": "demo-mach-table",
+              "component": "/demo/57-mach-table/index",
+              "meta": {
+                "icon": "mdi:table-large",
+                "title": "Mach Table",
+                "hidden": false,
+                "full": false,
+                "affix": false,
+                "keepAlive": false
+              }
             }
           ]
         },
