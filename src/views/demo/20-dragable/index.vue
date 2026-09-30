@@ -187,6 +187,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo20Dragable' })
   import {
     type Priority,
     priorityConfig,

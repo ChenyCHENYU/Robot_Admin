@@ -119,9 +119,9 @@ export const CONTACTS = [
     icon: 'i-mdi-phone',
   },
   {
-    type: 'address',
+    type: 'text',
     label: '公司地址',
     value: '北京市朝阳区某某大厦1008室',
     icon: 'i-mdi-map-marker',
   },
-]
+] as const

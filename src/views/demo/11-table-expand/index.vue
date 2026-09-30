@@ -78,6 +78,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo11TableExpand' })
   import { type DataTableRowKey, NSpin } from 'naive-ui/es'
   import type { VNodeChild } from 'vue'
   import { C_Table } from '@robot-admin/naive-ui-components/C_Table'

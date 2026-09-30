@@ -242,7 +242,7 @@ export const formatFieldsForPreview = (fields: FormOption[]) =>
     prop: f.prop,
     label: f.label,
     type: f.type,
-    required: f.rules?.some((rule: any) => rule.required) || false,
+    required: Boolean(f.required || f.rules?.some(rule => rule.required)),
     span: f.layout?.span || 12,
   }))
 

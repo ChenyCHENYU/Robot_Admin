@@ -137,8 +137,6 @@
           :subtitles="DEMO_SUBTITLES"
           :anti-cheat="DEMO_ANTI_CHEAT"
           :playback-rates="[0.5, 0.75, 1.0, 1.25, 1.5, 2.0]"
-          :on-progress="handleProgress"
-          :on-analytics="handleAnalytics"
           fullscreen
           pip
           keyboard
@@ -351,13 +349,13 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo37VideoPlayer' })
   import type {
     PlayerState,
     QualityLevel,
     Chapter,
     Bookmark,
     ProgressData,
-    AnalyticsEvent,
   } from '@robot-admin/naive-ui-components'
   import {
     DEMO_SOURCES,
@@ -502,15 +500,9 @@
   }
   const onBookmarkChange = (b: Bookmark[]) =>
     addLog('bookmarkChange', 'info', `共 ${b.length} 个书签`)
-  const handleProgress = (d: ProgressData) => {
-    completionPercent.value = d.completionPercent
-    console.log('[进度上报]', d)
-  }
   const onProgressUpdate = (d: ProgressData) => {
     completionPercent.value = d.completionPercent
   }
-  const handleAnalytics = (e: AnalyticsEvent) =>
-    console.log('[数据分析]', e.type, e)
 </script>
 
 <style lang="scss" scoped>

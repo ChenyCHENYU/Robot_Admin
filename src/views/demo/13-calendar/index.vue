@@ -42,16 +42,11 @@
 
     <!-- 使用优化后的日历组件 -->
     <C_FullCalendar
-      ref="calendarRef"
       v-model:events="events"
-      :initial-view="currentView"
+      initial-view="dayGridMonth"
       :editable="editable"
       :show-add-dialog="true"
       :show-edit-dialog="true"
-      @event-added="handleEventAdded"
-      @event-updated="handleEventUpdated"
-      @event-deleted="handleEventDeleted"
-      @event-dropped="handleEventDropped"
       class="calendar-container"
     />
 
@@ -71,40 +66,15 @@
 </template>
 
 <script setup lang="ts">
-  import type { CalendarViewType } from '@robot-admin/naive-ui-components'
+  defineOptions({ name: 'Demo13Calendar' })
   import { INITIAL_EVENTS } from './data'
 
   const message = useMessage()
   const dialog = useDialog()
-  const calendarRef = ref()
-
-  // 视图控制
-  const currentView = ref<CalendarViewType>('dayGridMonth')
   const editable = ref(true)
 
   // 事件数据 - 使用 v-model 双向绑定
   const events = ref([...INITIAL_EVENTS])
-
-  // 事件回调处理
-  const handleEventAdded = (event: any) => {
-    console.log('事件已添加:', event)
-    // 可以在这里处理额外的业务逻辑，如保存到服务器
-  }
-
-  const handleEventUpdated = (event: any) => {
-    console.log('事件已更新:', event)
-    // 可以在这里处理额外的业务逻辑
-  }
-
-  const handleEventDeleted = (event: any) => {
-    console.log('事件已删除:', event)
-    // 可以在这里处理额外的业务逻辑
-  }
-
-  const handleEventDropped = (event: any) => {
-    console.log('事件已拖拽:', event)
-    // 拖拽完成的回调
-  }
 
   // 清空所有事件
   const clearAllEvents = () => {
@@ -132,24 +102,20 @@
 
   const thisWeekEventsCount = computed(() => {
     const now = new Date()
-    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()))
-    const endOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 6))
+    const startOfWeek = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - now.getDay()
+    )
+    const nextWeek = new Date(
+      startOfWeek.getFullYear(),
+      startOfWeek.getMonth(),
+      startOfWeek.getDate() + 7
+    )
 
     return events.value.filter(event => {
       const eventDate = new Date(event.start)
-      return eventDate >= startOfWeek && eventDate <= endOfWeek
+      return eventDate >= startOfWeek && eventDate < nextWeek
     }).length
   })
-
-  // 监听事件数量变化，展示提示
-  watch(
-    () => events.value.length,
-    (newCount, oldCount) => {
-      if (newCount > oldCount) {
-        console.log(`事件数量增加到 ${newCount}`)
-      } else if (newCount < oldCount) {
-        console.log(`事件数量减少到 ${newCount}`)
-      }
-    }
-  )
 </script>

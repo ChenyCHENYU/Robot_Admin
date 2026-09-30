@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07FormDefaultLayout' })
   import '@robot-admin/naive-ui-components/C_Editor/style.css'
   import type {
     LabelPlacement,
@@ -111,9 +112,8 @@
       submitLoading.value = true
       const isValid = await submit()
       if (isValid) message.success(FORM_MESSAGES.SUBMIT_SUCCESS)
-    } catch (errors) {
+    } catch {
       message.error(FORM_MESSAGES.VALIDATE_ERROR)
-      console.log('表单验证失败:', errors)
     } finally {
       submitLoading.value = false
     }

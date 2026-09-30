@@ -18,6 +18,7 @@ import { s_permissionStore } from '@/stores/permission'
 import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
 import { message } from '@/plugins/discrete'
 import { setupNProgress } from '@/plugins/nprogress'
+import { claimChunkRecovery, clearChunkRecovery } from './chunkRecovery'
 import type {
   NavigationGuardReturn,
   RouteLocationNormalized,
@@ -30,7 +31,34 @@ const DEFAULT_TITLE = 'Robot Admin'
 const ROUTE_MODULE_LOAD_ERROR_RE =
   /Failed to fetch dynamically imported module|Importing a module script failed|Loading chunk|ChunkLoadError/i
 
+const getRecoveryStorage = (): Storage | undefined => {
+  try {
+    return window.sessionStorage
+  } catch {
+    return undefined
+  }
+}
+
+let chunkRecoveryStarted = false
+
+const handleChunkLoadFailure = (): void => {
+  if (chunkRecoveryStarted) return
+
+  if (
+    import.meta.env.PROD &&
+    navigator.onLine !== false &&
+    claimChunkRecovery(getRecoveryStorage(), window.location.href)
+  ) {
+    chunkRecoveryStarted = true
+    window.location.reload()
+    return
+  }
+
+  message.error('页面模块加载失败，请检查网络后手动刷新重试')
+}
+
 let dynamicRouterInitPromise: Promise<boolean> | null = null
+let dynamicRouterInitToken: string | null = null
 
 /**
  * * @description: 统一错误处理
@@ -40,7 +68,6 @@ const handleRouteError = (error: unknown, customMsg?: string): string => {
   console.error('路由异常:', error)
   message.error(customMsg || '系统异常，请重新登录')
   s_userStore().clearSession()
-  s_permissionStore().resetPermissions()
   clearExistingRoutes()
   return LOGIN_PATH
 }
@@ -59,11 +86,28 @@ const getMetaTitle = (meta: RouteMeta): string | undefined =>
 /**
  * * @description: 初始化动态路由
  */
-const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
-  if (!dynamicRouterInitPromise) {
-    dynamicRouterInitPromise = initDynamicRouter().finally(() => {
-      dynamicRouterInitPromise = null
-    })
+const handleDynamicRouterInit = async (
+  fullPath: string
+): Promise<string | false> => {
+  const tokenAtStart = s_userStore().token
+  if (!dynamicRouterInitPromise || dynamicRouterInitToken !== tokenAtStart) {
+    const pending = initDynamicRouter()
+    dynamicRouterInitToken = tokenAtStart
+    dynamicRouterInitPromise = pending
+    void pending.then(
+      () => {
+        if (dynamicRouterInitPromise === pending) {
+          dynamicRouterInitPromise = null
+          dynamicRouterInitToken = null
+        }
+      },
+      () => {
+        if (dynamicRouterInitPromise === pending) {
+          dynamicRouterInitPromise = null
+          dynamicRouterInitToken = null
+        }
+      }
+    )
   }
 
   try {
@@ -71,6 +115,8 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
       dynamicRouterInitPromise,
       preloadAuthenticatedShell(),
     ])
+
+    if (tokenAtStart !== s_userStore().token) return false
 
     if (!success) {
       throw new Error('动态路由初始化失败')
@@ -86,6 +132,7 @@ const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
     }
     return fullPath
   } catch (error) {
+    if (tokenAtStart !== s_userStore().token) return false
     return handleRouteError(error, '动态路由加载失败')
   }
 }
@@ -167,6 +214,8 @@ router.beforeEach(
       if (shouldInitDynamicRouter(authMenuList)) {
         const result = await handleDynamicRouterInit(to.fullPath)
 
+        if (result === false) return false
+
         if (result !== to.fullPath) {
           return result
         }
@@ -197,24 +246,25 @@ router.onError((error: Error) => {
   }
 
   if (ROUTE_MODULE_LOAD_ERROR_RE.test(error.message)) {
-    // 生产部署后若 HTML 仍引用旧 chunk，刷新即可恢复；开发环境刷新无法
-    // 修复服务未监听，保留现场并给出准确提示，避免进入刷新循环。
-    if (import.meta.env.PROD) {
-      window.location.reload()
-      return
-    }
-
-    message.error('页面模块连接失败，请确认本地服务正常后重试')
+    handleChunkLoadFailure()
     return
   }
 
   message.error('页面加载失败，请刷新重试')
 })
 
+window.addEventListener('vite:preloadError', event => {
+  event.preventDefault()
+  handleChunkLoadFailure()
+})
+
 // 后置钩子
 router.afterEach((_to, _from, failure) => {
   // afterEach 在异步路由组件解析完成后触发，进度条覆盖真实页面加载周期
   nprogress.done()
+  if (!failure && !chunkRecoveryStarted) {
+    clearChunkRecovery(getRecoveryStorage())
+  }
 
   const expectedNavigationInterruption =
     failure &&

@@ -270,6 +270,7 @@
 </template>
 
 <script lang="ts" setup>
+  defineOptions({ name: 'Demo05Date' })
   import { createDateActions } from './data'
 
   const message = useMessage()

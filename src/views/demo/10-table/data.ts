@@ -1,8 +1,9 @@
 import type { DataRecord, EditMode } from '@robot-admin/naive-ui-components'
 import type { AlertProps, SelectOption } from 'naive-ui'
-import type {
-  TableColumn,
-  UseTableCrudConfig,
+import {
+  createMemoryTableSource,
+  type TableColumn,
+  type UseTableCrudConfig,
 } from '@robot-admin/request-core/naive'
 import { PRESET_RULES } from '@/utils/d_formValidate'
 
@@ -397,64 +398,64 @@ export const detailConfig = {
  * 员工表格 CRUD 配置
  * @description 一个配置对象搞定所有表格需求，无需工厂函数和类型体操
  */
-export const employeeTableConfig: UseTableCrudConfig<Employee> = {
-  // API 端点配置
-  api: {
-    list: '/employees/list',
-    get: '/employees/:id',
-    update: '/employees/:id',
-    remove: '/employees/:id',
-    create: '/employees',
-  },
+export const createEmployeeTableConfig = (): UseTableCrudConfig<Employee> => {
+  // 演示页使用独立内存源，进入页面即有数据，不依赖不存在的业务接口。
+  const source = createMemoryTableSource<Employee>(() =>
+    generateMockEmployees(36)
+  )
+  let nextId = Date.now()
 
-  // 表格列配置
-  columns: getTableColumns(),
+  return {
+    source,
 
-  // 自定义操作按钮
-  customActions: [
-    {
-      key: 'copy',
-      label: '复制',
-      icon: 'mdi:content-copy',
-      type: 'default',
-      handler: (row, ctx) => {
-        const newRow: Employee = {
-          ...row,
-          id: Date.now(),
-          name: `${row.name}_副本`,
-        }
-        // 计算实际插入位置（考虑分页）
-        const actualIndex = ctx.paginationEnabled
-          ? (ctx.page.current - 1) * ctx.page.size + ctx.index + 1
-          : ctx.index + 1
-        ctx.data.splice(actualIndex, 0, newRow)
-        ctx.message.success('复制成功')
+    // 表格列配置
+    columns: getTableColumns(),
+
+    // 自定义操作按钮
+    customActions: [
+      {
+        key: 'copy',
+        label: '复制',
+        icon: 'mdi:content-copy',
+        type: 'default',
+        handler: async (row, ctx) => {
+          const newRow: Employee = {
+            ...row,
+            id: ++nextId,
+            name: `${row.name}_副本`,
+          }
+          await source.mutations?.create?.(newRow, {
+            signal: new AbortController().signal,
+          })
+          await ctx.refresh()
+          ctx.message.success('复制成功')
+        },
       },
-    },
-    {
-      key: 'authorize',
-      label: '授权',
-      icon: 'mdi:shield-key',
-      type: 'warning',
-      handler: (row, ctx) => {
-        ctx.dialog.info({
-          title: '员工授权',
-          content: `正在为员工 "${row.name}" 配置系统权限...`,
-          positiveText: '确定',
-          onPositiveClick: () => {
-            ctx.message.success('授权配置完成')
-          },
-        })
+      {
+        key: 'authorize',
+        label: '授权',
+        icon: 'mdi:shield-key',
+        type: 'warning',
+        handler: (row, ctx) => {
+          ctx.dialog.info({
+            title: '员工授权',
+            content: `正在为员工 "${row.name}" 配置系统权限...`,
+            positiveText: '确定',
+            onPositiveClick: () => {
+              ctx.message.success('授权配置完成')
+            },
+          })
+        },
       },
-    },
-  ],
+    ],
 
-  // 详情弹窗配置
-  detail: detailConfig,
+    // 详情弹窗配置
+    detail: detailConfig,
 
-  // 配置选项
-  idKey: 'id',
-  createNewRow: createNewEmployee,
+    // 配置选项
+    idKey: 'id',
+    createNewRow: createNewEmployee,
+  }
 }
 
 // ================= 高级功能演示配置 =================

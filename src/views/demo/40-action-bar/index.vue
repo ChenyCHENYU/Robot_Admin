@@ -248,6 +248,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo40ActionBar' })
   import type {
     ActionItem,
     ActionDropdownItem,

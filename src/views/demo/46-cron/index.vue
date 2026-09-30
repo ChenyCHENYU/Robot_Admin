@@ -34,7 +34,6 @@
       <div class="section-content">
         <C_Cron
           v-model="basicExpr"
-          @change="onBasicChange"
           @validation-change="onValidation"
         />
         <div class="demo-output">
@@ -190,6 +189,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo46Cron' })
   import type {
     CronValidation,
     CronExpose,
@@ -201,11 +201,6 @@
 
   const basicExpr = ref('0 30 8 * * ?')
   const basicValid = ref(true)
-
-  /** 表达式变更回调 */
-  function onBasicChange(value: string) {
-    console.log('[Cron] 表达式变更:', value)
-  }
 
   /** 校验状态变更回调 */
   function onValidation(result: CronValidation) {

@@ -240,6 +240,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo26LongpressDirect' })
   import {
     createDemoState,
     createDemoHandlers,

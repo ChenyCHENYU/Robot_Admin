@@ -437,6 +437,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo44CollapsePanel' })
   import {
     basicItems,
     cardItems,

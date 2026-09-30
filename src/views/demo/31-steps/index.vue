@@ -112,7 +112,7 @@
           :steps="approvalSteps"
           :current="3"
           direction="vertical"
-          :clickable="true"
+          :clickable="!loading"
           @change="handleChange"
         />
       </NCard>
@@ -200,6 +200,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo31Steps' })
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     basicSteps,
@@ -219,6 +220,11 @@
   // 注册流程演示
   const demo2 = reactive({ current: 0 })
   const loading = ref(false)
+  let pendingStep: ReturnType<typeof setTimeout> | undefined
+
+  onUnmounted(() => {
+    if (pendingStep) clearTimeout(pendingStep)
+  })
 
   // 基础步骤操作按钮
   const basicStepActions = computed((): ActionItem[] => [
@@ -262,17 +268,21 @@
   }
 
   // 处理下一步
-  const handleNext = async () => {
-    if (demo2.current >= registerSteps.length - 1) return
+  const handleNext = () => {
+    if (loading.value || demo2.current >= registerSteps.length - 1) return
 
+    const currentStep = demo2.current
     loading.value = true
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    demo2.current++
-    loading.value = false
+    pendingStep = setTimeout(() => {
+      pendingStep = undefined
+      loading.value = false
+      if (demo2.current !== currentStep) return
+      demo2.current = currentStep + 1
 
-    if (demo2.current === registerSteps.length - 1) {
-      message.success('注册完成！')
-    }
+      if (demo2.current === registerSteps.length - 1) {
+        message.info('注册步骤演示完成，未提交注册信息')
+      }
+    }, 1000)
   }
 </script>
 

@@ -424,6 +424,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo45ImageCropper' })
   import type {
     CropOutputFormat,
     CropResult,

@@ -46,8 +46,8 @@
         :require-captcha-server-verification="
           LOGIN_REQUIRE_CAPTCHA_SERVER_VERIFICATION
         "
-        default-username="CHENY"
-        default-password="123456"
+        :default-username="loginDefaults.username"
+        :default-password="loginDefaults.password"
         @submit="handleLogin"
         @captcha-submit="handleCaptchaLogin"
         @send-code="handleSendCode"
@@ -65,9 +65,14 @@
   import { initDynamicRouter } from '@/router/dynamicRouter'
   import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
   import { s_userStore } from '@/stores/user/index'
-  import { loginApi, type LoginResponse } from '@/api/auth'
+  import { getAuthMode, loginApi, type LoginResponse } from '@/api/auth'
   import { useLoginController } from '@/composables/useLoginController'
-  import { LOGIN_FEATURES, SOCIAL_PROVIDERS, createWelcomeConfig } from './data'
+  import {
+    LOGIN_FEATURES,
+    SOCIAL_PROVIDERS,
+    createWelcomeConfig,
+    resolveLoginDefaults,
+  } from './data'
   import {
     LOGIN_CAPTCHA_CHALLENGE_URL,
     LOGIN_CAPTCHA_PROVIDER,
@@ -91,6 +96,7 @@
   const router = useRouter()
   const message = useMessage()
   const userStore = s_userStore()
+  const loginDefaults = resolveLoginDefaults(getAuthMode())
 
   // ===== i18n helper =====
   const t = (key: string, fallback: string) =>
@@ -152,6 +158,7 @@
         initDynamicRouter(),
         pendingShellPreload ?? preloadAuthenticatedShell(),
       ])
+      if (userStore.token !== response.data.token) return
       if (!ok) {
         userStore.clearSession()
         throw new Error('动态路由初始化失败')

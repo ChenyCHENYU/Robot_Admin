@@ -166,6 +166,7 @@
 </template>
 
 <script lang="ts" setup>
+  defineOptions({ name: 'Demo03Progress' })
   import type { CSSProperties } from 'vue'
   import { useThemeVars } from 'naive-ui/es'
   import { changeColor } from 'seemly'

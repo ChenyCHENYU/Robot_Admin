@@ -516,7 +516,7 @@
               <NThing title="组件引入">
                 <template #description>
                   <NCode
-                    code="import C_City from '@/components/C_City.vue'"
+                    code="import { C_City } from '@robot-admin/naive-ui-components/C_City'"
                     language="typescript"
                   />
                 </template>
@@ -560,6 +560,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo06City' })
   import { cityOptions } from './data'
 
   // 各种样式的数据

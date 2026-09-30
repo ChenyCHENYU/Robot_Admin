@@ -268,6 +268,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo36Map' })
   import { MAP_EXAMPLES, CONFIG_OPTIONS, AMAP_CONFIG } from './data'
   import {
     MAP_TYPES,

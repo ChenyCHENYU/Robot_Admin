@@ -336,12 +336,12 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07Form' })
   import type {
     LayoutType,
     LabelPlacement,
     FormModel,
     FormOption,
-    SubmitEventPayload,
   } from '@robot-admin/naive-ui-components'
   import { layoutOptions, layoutDescriptions, testDataConfig } from './data'
 
@@ -418,7 +418,7 @@
     if (value === null || value === undefined || value === '') return false
     if (typeof value === 'string') return value.trim() !== ''
     if (Array.isArray(value)) return value.length > 0
-    if (typeof value === 'number') return value > 0
+    if (typeof value === 'number') return Number.isFinite(value)
     if (typeof value === 'boolean') return value === true
     if (typeof value === 'object') return Object.keys(value).length > 0
     return false
@@ -521,7 +521,6 @@ export default formData;`
         } catch (errors) {
           errorCount.value = Array.isArray(errors) ? errors.length : 1
           message.error('表单验证失败')
-          console.error('验证错误:', errors)
         }
       },
     }
@@ -547,8 +546,7 @@ export default formData;`
 
       await navigator.clipboard.writeText(textToCopy)
       message.success('数据已复制到剪贴板')
-    } catch (error) {
-      console.error('复制失败:', error)
+    } catch {
       message.error('复制失败，请手动选择文本复制')
     } finally {
       copying.value = false
@@ -573,14 +571,12 @@ export default formData;`
   // ========================================
   // 事件处理
   // ========================================
-  const handleSubmit = (payload: SubmitEventPayload<FormModel>): void => {
-    console.log('表单提交:', payload)
-    message.success('表单提交成功')
+  const handleSubmit = (): void => {
+    message.success('已接收表单数据（演示，不会持久化）')
   }
 
   const handleValidateError = (errors: unknown): void => {
     errorCount.value = Array.isArray(errors) ? errors.length : 1
-    console.error('表单验证失败:', errors)
   }
 
   const handleFieldsChange = (fields: unknown): void => {

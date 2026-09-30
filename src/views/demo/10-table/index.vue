@@ -278,6 +278,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo10Table' })
   import type {
     ActionItem,
     EditMode,
@@ -291,7 +292,7 @@
     type AddEmployeeForm,
     EDIT_MODES,
     MODE_CONFIG,
-    employeeTableConfig,
+    createEmployeeTableConfig,
     DEPARTMENT_OPTIONS,
     STATUS_OPTIONS,
     GENDER_OPTIONS,
@@ -302,7 +303,7 @@
   } from './data'
 
   // 初始化表格 CRUD
-  const tableCrud = useNaiveTableCrud(employeeTableConfig)
+  const tableCrud = useNaiveTableCrud(createEmployeeTableConfig())
 
   // UI 状态
   const activeTab = ref('crud')

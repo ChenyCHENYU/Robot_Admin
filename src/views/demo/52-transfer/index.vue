@@ -40,7 +40,7 @@
           <NTag
             :bordered="false"
             size="small"
-            :type="(TAG_TYPE_MAP[feat.tag] as any) ?? 'default'"
+            :type="TAG_TYPE_MAP[feat.tag] ?? 'default'"
           >
             {{ feat.tag }}
           </NTag>
@@ -109,7 +109,6 @@
           :show-select-all="showSelectAll"
           :size="size"
           :titles="currentTitles"
-          @change="handleChange"
         />
       </div>
     </div>
@@ -117,6 +116,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo52Transfer' })
   import { computed, ref } from 'vue'
   import {
     DEMO_SCENES,
@@ -173,15 +173,6 @@
   const size = ref<'small' | 'medium' | 'large'>('medium')
   const filterable = ref(true)
   const showSelectAll = ref(true)
-
-  /** 穿梭框变更事件处理 */
-  function handleChange(
-    targetKeys: Array<string | number>,
-    direction: 'left' | 'right',
-    moveKeys: Array<string | number>
-  ) {
-    console.log('[Transfer]', { direction, moveKeys, targetKeys })
-  }
 </script>
 
 <style lang="scss" scoped>

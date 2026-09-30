@@ -52,7 +52,7 @@ describe('production contracts', () => {
     expect(indexHtml).not.toMatch(/\son\w+\s*=/i)
   })
 
-  test('完整验证包含测试、生产构建和体积预算', async () => {
+  test('完整验证包含测试、双模式构建、体积预算和浏览器门禁', async () => {
     const packageJson = await readJson<{
       scripts: Record<string, string>
       devDependencies: Record<string, string>
@@ -60,6 +60,14 @@ describe('production contracts', () => {
     expect(packageJson.scripts.verify).toContain('bun test --max-concurrency=1')
     expect(packageJson.scripts.verify).toContain('bun run build')
     expect(packageJson.scripts.verify).toContain('bun run check:bundle')
+    expect(packageJson.scripts.verify).toContain('bun run build:application')
+    expect(packageJson.scripts['test:e2e']).toBe('playwright test')
+    expect(packageJson.scripts['security:audit']).toBe('bun audit')
+    const ci = await Bun.file(
+      new URL('../.github/workflows/ci.yml', import.meta.url)
+    ).text()
+    expect(ci).toContain('bun run security:audit')
+    expect(ci).toContain('bun run test:e2e')
     expect(packageJson.devDependencies['@inspira-ui/plugins']).toBeUndefined()
     expect(packageJson.devDependencies['@vue/runtime-core']).toBeUndefined()
   })

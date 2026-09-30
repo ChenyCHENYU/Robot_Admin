@@ -1,5 +1,6 @@
 import type {
   SearchFormItem,
+  SearchFormParams,
   SearchOptionItem,
 } from '@robot-admin/naive-ui-components'
 
@@ -20,10 +21,9 @@ export interface FormItem extends SearchFormItem {
   show?: boolean
 }
 
-export interface BaseFormParams {
+export interface BaseFormParams extends SearchFormParams {
   pageNum: number
   pageSize: number
-  [key: string]: any
 }
 
 export interface BasicFormParams extends BaseFormParams {
@@ -229,7 +229,7 @@ export const megaFormConfig = createMegaFormConfig()
 /**
  *
  */
-export function resetFormParams<T extends Record<string, any>>(
+export function resetFormParams<T extends object>(
   target: { [K in keyof T]: T[K] },
   source: T
 ): void {
@@ -240,7 +240,7 @@ export function resetFormParams<T extends Record<string, any>>(
 
 // 模拟数据生成器
 const mockDataGenerators = {
-  basic: (params: FormParams) => [
+  basic: (params: SearchFormParams) => [
     {
       id: 1,
       name: (params as BasicFormParams).name || '用户1',
@@ -252,7 +252,7 @@ const mockDataGenerators = {
       status: (params as BasicFormParams).status || '禁用',
     },
   ],
-  advanced: (params: FormParams) => [
+  advanced: (params: SearchFormParams) => [
     {
       id: 1,
       keyword: (params as AdvancedFormParams).keyword || '关键词1',
@@ -264,7 +264,7 @@ const mockDataGenerators = {
       category: (params as AdvancedFormParams).category || '教育',
     },
   ],
-  mega: (params: FormParams) => [
+  mega: (params: SearchFormParams) => [
     { id: 1, type: '超多字段测试', fields: Object.keys(params).length },
   ],
 } as const
@@ -275,7 +275,7 @@ const mockDataGenerators = {
  */
 export function generateMockResults(
   type: keyof typeof mockDataGenerators,
-  params: FormParams
+  params: SearchFormParams
 ): SearchResult[] {
   return mockDataGenerators[type]?.(params) || []
 }

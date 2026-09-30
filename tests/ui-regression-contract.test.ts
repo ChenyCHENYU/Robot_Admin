@@ -9,7 +9,7 @@
 import { describe, expect, test } from 'bun:test'
 import { RobotNaiveUiResolver } from '@robot-admin/naive-ui-components/resolver'
 import { iconSafelist } from '../src/utils/unocss/icon-safelist'
-import { LOGIN_FEATURES } from '../src/views/login/data'
+import { LOGIN_FEATURES, resolveLoginDefaults } from '../src/views/login/data'
 
 const readText = (relativePath: string): Promise<string> =>
   Bun.file(new URL(relativePath, import.meta.url)).text()
@@ -28,8 +28,16 @@ describe('UI regression contracts', () => {
     })
 
     const loginSource = await readText('../src/views/login/index.vue')
-    expect(loginSource).toContain('default-username="CHENY"')
-    expect(loginSource).toContain('default-password="123456"')
+    expect(resolveLoginDefaults('mock')).toEqual({
+      username: 'CHENY',
+      password: '123456',
+    })
+    expect(resolveLoginDefaults('remote')).toEqual({
+      username: '',
+      password: '',
+    })
+    expect(loginSource).toContain(':default-username="loginDefaults.username"')
+    expect(loginSource).toContain(':default-password="loginDefaults.password"')
     expect(loginSource).toContain('login-container bg-[#181818]')
     expect(loginSource).toContain(':captcha-provider="LOGIN_CAPTCHA_PROVIDER"')
     expect(loginSource).toContain(':captcha-verifier="LOGIN_CAPTCHA_VERIFIER"')
@@ -330,7 +338,7 @@ describe('UI regression contracts', () => {
     expect(layout).toContain('@select="navigateTo"')
     expect(header).toContain('@select="navigateTo"')
     expect(permission).toContain('Failed to fetch dynamically imported module')
-    expect(permission).toContain('页面模块连接失败')
+    expect(permission).toContain('页面模块加载失败')
   })
 
   test('composed package styles remain self-contained', async () => {

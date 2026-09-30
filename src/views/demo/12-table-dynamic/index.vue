@@ -115,6 +115,7 @@
 </style>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo12TableDynamic' })
   import type {
     DataRecord,
     SimpleTableActions,
@@ -205,8 +206,6 @@
           rotate: -45,
         },
       },
-      onRowChange: (data: DataRecord[]) =>
-        console.log('行数据变化:', data.length, '行'),
       defaultRowData: createDefaultEmployee,
     },
     edit: { modalTitle: '编辑员工信息', modalWidth: 700 },

@@ -134,6 +134,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo19DownloadAll' })
   import { setupFileUtils } from '@/plugins/file-utils'
   import {
     useDownload,

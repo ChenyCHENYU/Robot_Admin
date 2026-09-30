@@ -13,6 +13,15 @@ import type {
 } from '@robot-admin/naive-ui-components'
 import type { WelcomeConfig } from '@/composables/useLoginController'
 import type { LoginResponse } from '@/api/auth'
+import type { AuthMode } from '@/api/auth.contract'
+
+/** 演示认证保留体验账号；远端认证不向用户预填公开凭据。 */
+export const resolveLoginDefaults = (
+  authMode: AuthMode
+): { username: string; password: string } =>
+  authMode === 'mock'
+    ? { username: 'CHENY', password: '123456' }
+    : { username: '', password: '' }
 
 // ================= 登录功能开关 =================
 export const LOGIN_FEATURES: LoginFeatures = {

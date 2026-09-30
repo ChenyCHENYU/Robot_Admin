@@ -245,7 +245,7 @@
                   handleCopy(
                     () =>
                       copy(contact.value, {
-                        dataType: contact.type as any,
+                        dataType: contact.type,
                         successTip: `${contact.label}复制成功！`,
                       }),
                     `contact-${index}`
@@ -331,6 +331,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo18CopyText' })
   import { useCopy } from '@/hooks/useCopy'
   import {
     DEMO_TEXT,
@@ -355,6 +356,7 @@
   } = useCopy({
     showMessage: true,
   })
+  const message = useMessage()
 
   // ==================== 响应式数据 ====================
   const loadingStates = reactive<Record<string, boolean>>({})
@@ -408,7 +410,7 @@
   ])
 
   // ==================== 通用处理函数 ====================
-  const handleCopy = async (copyFn: () => Promise<any>, key: string) => {
+  const handleCopy = async (copyFn: () => Promise<unknown>, key: string) => {
     if (key.includes('text') && !textInput.value.trim()) return
     if (key.includes('url') && !urlInput.value.trim()) return
 
@@ -440,7 +442,7 @@
       const content = await readClipboard()
       clipboardContent.value = content
     } catch (error) {
-      console.error('读取剪贴板失败:', error)
+      message.error(error instanceof Error ? error.message : '读取剪贴板失败')
     } finally {
       loadingStates.readClipboard = false
     }

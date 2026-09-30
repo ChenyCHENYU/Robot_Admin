@@ -107,6 +107,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo14CodeEditor' })
   import { initializeHighlight } from '@/plugins/highlight'
   import { languageOptions, codeExamples, sampleCodes } from './data'
 

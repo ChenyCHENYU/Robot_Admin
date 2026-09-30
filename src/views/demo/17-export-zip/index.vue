@@ -249,6 +249,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo17ExportZip' })
   import { setupFileUtils } from '@/plugins/file-utils'
   import {
     useJSZip,

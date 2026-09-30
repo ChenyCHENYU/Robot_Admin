@@ -1,0 +1,32 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-30
+ * @FilePath: \Robot_Admin\src\views\demo\09-form-search\index.scss
+ * @Description: 表单搜索演示页样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.form-search-demo {
+  padding: 20px;
+
+  .demo-section {
+    margin-bottom: 32px;
+
+    h3 {
+      color: var(--n-text-color);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--n-primary-color);
+      font-size: 16px;
+    }
+  }
+
+  pre {
+    background: var(--n-code-color);
+    padding: 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+}

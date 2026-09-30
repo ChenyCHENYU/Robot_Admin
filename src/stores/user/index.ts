@@ -12,6 +12,7 @@ import { TOKEN, TIME_STAMP, REFRESH_TOKEN, TOKEN_EXPIRES_IN } from '@/constant'
 import router from '@/router'
 import { d_setTimeStamp } from '@/utils/d_auth'
 import { notification } from '@/plugins/discrete'
+import { s_permissionStore } from '@/stores/permission'
 
 interface UserInfo {
   username?: string
@@ -133,6 +134,7 @@ export const s_userStore = defineStore('user', {
       this.refreshToken = ''
       this.tokenExpiresAt = 0
       this.userInfo = {}
+      s_permissionStore().resetPermissions()
 
       if (typeof window === 'undefined') return
       for (const key of AUTH_STORAGE_KEYS) {
@@ -151,13 +153,9 @@ export const s_userStore = defineStore('user', {
         document.title = import.meta.env.VITE_APP_TITLE
 
         // 3. 清理动态路由和权限快照（保留主题、语言等用户偏好）
-        const [{ clearExistingRoutes }, { s_permissionStore }] =
-          await Promise.all([
-            import('@/router/dynamicRouter'),
-            import('@/stores/permission'),
-          ])
+        const { clearExistingRoutes } = await import('@/router/dynamicRouter')
+        if (this.token) return
         clearExistingRoutes()
-        s_permissionStore().resetPermissions()
 
         // 4. 跳转登录页
         router.replace('/login')
@@ -176,7 +174,7 @@ export const s_userStore = defineStore('user', {
         }
       } catch (error) {
         console.error('退出登录失败:', error)
-        router.replace('/login')
+        if (!this.token) router.replace('/login')
       }
     },
 

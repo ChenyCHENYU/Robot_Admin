@@ -159,6 +159,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo50Timeline' })
   import {
     PROJECT_TIMELINE,
     CI_PIPELINE_TIMELINE,

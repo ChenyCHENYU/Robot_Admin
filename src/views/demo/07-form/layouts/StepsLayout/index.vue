@@ -71,8 +71,10 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07FormStepsLayout' })
   import type {
     FormModel,
+    FormOption,
     FormInstance,
     LabelPlacement,
     ActionItem,
@@ -92,10 +94,10 @@
 
   // ==================== Emits ====================
   const emit = defineEmits<{
-    submit: [payload: any]
+    submit: [payload: { model: FormModel }]
     'validate-success': [model: FormModel]
-    'validate-error': [errors: any]
-    'fields-change': [fields: any[]]
+    'validate-error': [errors: unknown]
+    'fields-change': [fields: FormOption[]]
   }>()
 
   // ==================== v-model ====================
@@ -104,6 +106,7 @@
   // ================= 状态管理 =================
   const message = useMessage()
   const formRef = ref<FormInstance>()
+  let draftSnapshot: string | null = null
 
   // ================= 配置数据 =================
   const layoutConfig = reactive(getLayoutConfig())
@@ -118,8 +121,6 @@
     labelPlacement: labelPlacement.value,
     labelWidth: 120,
     validateOnChange: validateOnChange.value,
-    onStepChange: handleStepChange,
-    onStepValidate: handleStepValidate,
     onFieldsChange: handleFieldsChange,
   }))
 
@@ -146,62 +147,41 @@
   ])
 
   // ================= 事件处理 =================
-  const handleStepChange = (stepIndex: number, stepKey: string) => {
-    console.log(`切换到步骤 ${stepIndex + 1}: ${stepKey}`)
-  }
-
-  const handleStepValidate = (stepIndex: number): boolean => {
-    console.log(`验证步骤 ${stepIndex + 1}`)
-    return true
-  }
-
   const handleValidateSuccess = (model: FormModel) => {
-    console.log('表单验证成功', model)
-    emit('validate-success', model) // 🔥 关键：向父组件转发事件
+    emit('validate-success', model)
   }
 
   const handleValidateError = (errors: unknown) => {
-    console.log('表单验证失败', errors)
-    emit('validate-error', errors) // 🔥 关键：向父组件转发事件
+    emit('validate-error', errors)
   }
 
   const handleSubmit = (payload: { model: FormModel }) => {
-    console.log('提交的数据:', payload.model)
-    emit('submit', payload) // 🔥 关键：向父组件转发事件
-    message.success('表单提交成功！')
+    emit('submit', payload)
   }
 
-  const handleFieldsChange = (fields: any[]): void => {
-    console.log('字段变化:', fields)
-    emit('fields-change', fields) // 🔥 关键：向父组件转发事件
+  const handleFieldsChange = (fields: FormOption[]): void => {
+    emit('fields-change', fields)
   }
 
   const handleSaveDraft = () => {
     try {
-      // 🔥 修复：不使用localStorage，改为模拟保存
-      console.log('模拟保存草稿:', JSON.stringify(formData.value))
-      message.success('草稿已保存')
-    } catch (error) {
+      draftSnapshot = JSON.stringify(formData.value)
+      message.success('草稿已保存到当前页面')
+    } catch {
       message.error('草稿保存失败')
-      console.error('草稿保存失败:', error)
     }
   }
 
   const handleLoadDraft = () => {
+    if (!draftSnapshot) {
+      message.warning('请先保存草稿')
+      return
+    }
     try {
-      // 🔥 修复：模拟加载草稿数据
-      const mockDraftData = {
-        username: 'test_user',
-        realName: '测试用户',
-        age: 25,
-        gender: 'male',
-        email: 'test@example.com',
-      }
-      Object.assign(formData.value, mockDraftData)
+      formData.value = JSON.parse(draftSnapshot) as FormModel
       message.success('草稿已加载')
-    } catch (error) {
+    } catch {
       message.error('草稿加载失败')
-      console.error('草稿加载失败:', error)
     }
   }
 

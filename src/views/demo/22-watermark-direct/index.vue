@@ -318,6 +318,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo22WatermarkDirect' })
   import {
     getBasicCode,
     getStyleCode,

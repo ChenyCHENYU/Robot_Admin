@@ -156,10 +156,12 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07FormGridLayout' })
   import type {
     LabelPlacement,
     FormInstance,
     FormModel,
+    FormOption,
     ActionItem,
   } from '@robot-admin/naive-ui-components'
   import { colsOptions, formOptions } from './data'
@@ -179,10 +181,10 @@
   const { labelPlacement, validateOnChange } = toRefs(props)
 
   const emit = defineEmits<{
-    submit: [payload: any]
+    submit: [payload: { model: FormModel }]
     'validate-success': [model: FormModel]
-    'validate-error': [errors: any]
-    'fields-change': [fields: any[]]
+    'validate-error': [errors: unknown]
+    'fields-change': [fields: FormOption[]]
   }>()
 
   const formData = defineModel<FormModel>({ required: true })
@@ -242,8 +244,7 @@
         try {
           submitLoading.value = true
           await validate()
-          emit('submit', formData.value)
-          message.success('网格布局表单提交成功！')
+          emit('submit', { model: formData.value })
         } catch (error) {
           message.error('表单验证失败，请检查输入')
           throw error
@@ -262,10 +263,12 @@
 
   // ==================== 事件处理器 ====================
 
-  const handleSubmit = (payload: any) => emit('submit', payload)
+  const handleSubmit = (payload: { model: FormModel }) =>
+    emit('submit', payload)
   const handleValidateSuccess = (model: FormModel) =>
     emit('validate-success', model)
-  const handleValidateError = (errors: any) => emit('validate-error', errors)
+  const handleValidateError = (errors: unknown) =>
+    emit('validate-error', errors)
 
   // ==================== 生命周期 ====================
 

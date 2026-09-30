@@ -403,15 +403,27 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo30ExcelAll' })
   import { setupFileUtils } from '@/plugins/file-utils'
   import {
     type UploadFileInfo,
     type DataTableColumns,
     type SelectOption,
   } from 'naive-ui/es'
-  import { useExcel, type ExcelTemplate } from '@robot-admin/file-utils'
+  import {
+    useExcel,
+    type ExcelRow,
+    type ExcelTemplate,
+  } from '@robot-admin/file-utils'
 
-  import { PREVIEW_ROWS, sampleData, historyColumns } from './data'
+  import {
+    PREVIEW_ROWS,
+    sampleData,
+    historyColumns,
+    hasNonEmptyCell,
+    type DataSummary,
+    type OperationHistoryItem,
+  } from './data'
 
   setupFileUtils()
 
@@ -437,9 +449,9 @@
   const selectedSheet = ref('')
   const showAllData = ref(false)
   const selectedSheetsForExport = ref<string[]>([])
-  const processedData = ref<any[]>([])
-  const dataSummary = ref<any>(null)
-  const operationHistory = ref<any[]>([])
+  const processedData = ref<ExcelRow[]>([])
+  const dataSummary = ref<DataSummary | null>(null)
+  const operationHistory = ref<OperationHistoryItem[]>([])
 
   // 导出配置
   const exportConfig = reactive({
@@ -644,7 +656,7 @@
     }
 
     try {
-      const exportData: Record<string, any[]> = {}
+      const exportData: Record<string, ExcelRow[]> = {}
       selectedSheetsForExport.value.forEach(sheetName => {
         if (data.value[sheetName]) {
           exportData[sheetName] = data.value[sheetName]
@@ -706,15 +718,7 @@
   const handleFilterEmptyRows = () => {
     if (currentSheetData.value.length === 0) return
 
-    const filtered = currentSheetData.value.filter(row => {
-      return Object.values(row).some(
-        value =>
-          value !== '' &&
-          value !== null &&
-          value !== undefined &&
-          value !== '__rowIndex'
-      )
-    })
+    const filtered = currentSheetData.value.filter(hasNonEmptyCell)
 
     processedData.value = filtered
     message.success(`筛选完成，共 ${filtered.length} 条有效数据`)
@@ -728,15 +732,7 @@
     if (currentSheetData.value.length === 0) return
 
     const totalRows = currentSheetData.value.length
-    const validRows = currentSheetData.value.filter(row => {
-      return Object.values(row).some(
-        value =>
-          value !== '' &&
-          value !== null &&
-          value !== undefined &&
-          value !== '__rowIndex'
-      )
-    }).length
+    const validRows = currentSheetData.value.filter(hasNonEmptyCell).length
     const emptyRows = totalRows - validRows
     const totalFields =
       currentSheetData.value.length > 0

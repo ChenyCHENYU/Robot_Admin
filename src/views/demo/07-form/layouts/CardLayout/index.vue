@@ -53,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07FormCardLayout' })
   import type {
     FormInstance,
     FormOption,
@@ -115,35 +116,20 @@
   }))
 
   // ==================== 事件处理 ====================
-  const handleSubmit = async (
-    payload: SubmitEventPayload<CardFormData>
-  ): Promise<void> => {
-    console.log('表单提交:', payload)
-    emit('submit', payload) // 🔥 关键：向父组件转发事件
-
-    try {
-      // 这里可以调用 API
-      // await submitUserForm(payload.model)
-      message.success(MESSAGES.submitSuccess)
-    } catch (error) {
-      console.error('提交失败:', error)
-      message.error(MESSAGES.submitError)
-    }
+  const handleSubmit = (payload: SubmitEventPayload<CardFormData>): void => {
+    emit('submit', payload)
   }
 
   const handleValidateSuccess = (model: CardFormData): void => {
-    console.log('验证成功:', model)
-    emit('validate-success', model) // 🔥 关键：向父组件转发事件
+    emit('validate-success', model)
   }
 
   const handleValidateError = (errors: unknown): void => {
-    console.error('验证失败:', errors)
-    emit('validate-error', errors) // 🔥 关键：向父组件转发事件
+    emit('validate-error', errors)
   }
 
   const handleFieldsChange = (fields: FormOption<CardFormData>[]): void => {
-    console.log('字段变化:', fields)
-    emit('fields-change', fields) // 🔥 关键：向父组件转发事件
+    emit('fields-change', fields)
   }
 
   // ==================== 工具方法 ====================
@@ -172,9 +158,7 @@
 
   // ==================== 初始化 ====================
   onMounted(() => {
-    // 🔥 关键：主动触发fields-change事件
     emit('fields-change', getFormOptions())
-    console.log('卡片布局表单组件已加载')
   })
 
   // ==================== 暴露方法 ====================

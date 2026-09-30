@@ -139,7 +139,6 @@
             :height="editorConfig.height"
             :theme="isDark ? 'dark' : 'light'"
             @editor-mounted="handleEditorMounted"
-            @editor-change="handleEditorChange"
             class="demo-editor"
           />
         </NCard>
@@ -149,6 +148,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo16TextEditor' })
   import { s_themeStore } from '@/stores/theme'
 
   const message = useMessage()
@@ -243,14 +243,9 @@
     }
   )
 
-  const handleEditorMounted = (editor: any) => {
+  const handleEditorMounted = () => {
     isEditorReady.value = true
     message.success('富文本编辑器已成功初始化！')
-    console.log('[Demo] 编辑器挂载完成:', editor)
-  }
-
-  const handleEditorChange = (html: string) => {
-    console.log('[Demo] 编辑器内容变化:', html.length + ' 字符')
   }
 
   const handleSetContent = () => {

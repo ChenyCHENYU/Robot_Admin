@@ -129,6 +129,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07FormCustomLayout' })
   import type {
     FormOption,
     FormInstance,
@@ -193,22 +194,19 @@
   }
 
   const handleValidateSuccess = (model: EmployeeFormData): void => {
-    console.log('表单验证成功:', model)
-    emit('validate-success', model) // 🔥 关键：向父组件转发事件
+    emit('validate-success', model)
     message.success('表单验证通过')
   }
 
   const handleValidateError = (errors: unknown): void => {
-    console.error('表单验证失败:', errors)
-    emit('validate-error', errors) // 🔥 关键：向父组件转发事件
+    emit('validate-error', errors)
     message.error('表单验证失败，请检查填写内容')
   }
 
   const handleSubmit = (
     payload: SubmitEventPayload<EmployeeFormData>
   ): void => {
-    console.log('表单提交:', payload)
-    emit('submit', payload) // 🔥 关键：向父组件转发事件
+    emit('submit', payload)
   }
 
   // 获取当前表单数据的统一方法
@@ -326,7 +324,6 @@
       data: Object.keys(validFormData.value).length,
       formRef: !!formRef.value,
     }
-    console.log('🔍 表单状态:', stats)
     message.info(`字段: ${stats.fields}个，数据: ${stats.data}个`)
   }
 
@@ -348,9 +345,7 @@
       Object.assign(formData.value, newData)
     }
 
-    setTimeout(() => {
-      message.success(`已为 ${Object.keys(newData).length} 个字段填充测试数据`)
-    }, 300)
+    message.success(`已为 ${Object.keys(newData).length} 个字段填充测试数据`)
   }
 
   const clearFormData = (): void => {
@@ -374,8 +369,8 @@
 
     try {
       await formRef.value.validate()
-    } catch (error) {
-      console.error('表单验证失败:', error)
+    } catch {
+      message.error('表单验证失败，请检查填写内容')
     }
   }
 
@@ -445,9 +440,7 @@
 
   // ==================== 初始化 ====================
   onMounted(() => {
-    // 🔥 关键：主动触发fields-change事件
     emit('fields-change', employeeFormOptions)
-    console.log('自定义布局表单组件已加载')
   })
 
   // ==================== 暴露方法 ====================

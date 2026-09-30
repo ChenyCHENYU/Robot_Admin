@@ -51,7 +51,6 @@
             v-model="config.selected"
             :placeholders="config.placeholders"
             :type="config.type"
-            @change="(val: any) => handleChange(config, val)"
           />
 
           <!-- 操作按钮和结果展示 -->
@@ -115,11 +114,8 @@
 </template>
 
 <script setup lang="ts">
-  import {
-    createCascadeConfigs,
-    type CascadeSelected,
-    type CascadeConfig,
-  } from './data'
+  defineOptions({ name: 'Demo02AreaCascade' })
+  import { createCascadeConfigs, type CascadeConfig } from './data'
 
   // 级联选择器配置
   const cascadeConfigs = reactive(createCascadeConfigs())
@@ -127,15 +123,6 @@
   // 重置选择
   const resetSelected = (config: CascadeConfig) => {
     config.selected = {}
-  }
-
-  // 变更处理
-  const handleChange = (config: CascadeConfig, val: CascadeSelected) => {
-    console.info(`${config.title}:`, {
-      [config.labels.primary]: val.primary?.label,
-      [config.labels.secondary]: val.secondary?.label,
-      [config.labels.tertiary]: val.tertiary?.label,
-    })
   }
 </script>
 

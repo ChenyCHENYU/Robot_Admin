@@ -36,6 +36,8 @@ export const s_permissionStore = defineStore('permission', {
       dataPermissions: [] as DataPermission[],
       /** 已展平的全部合法路由 path 列表（用于路由鉴权） */
       flatRoutePaths: [] as string[],
+      /** 退出或切换账号时使仍在途的权限响应失效 */
+      requestGeneration: 0,
     }
   },
   getters: {
@@ -57,16 +59,19 @@ export const s_permissionStore = defineStore('permission', {
      * ! @return {Promise<void>}
      */
     async getAuthButtonList() {
+      const generation = this.requestGeneration
       if (getAuthMode() === 'mock') {
         this.authButtonList = {}
         return
       }
       try {
         const { data } = await getAuthButtonListApi()
-        this.authButtonList = data ?? {}
+        if (generation === this.requestGeneration) {
+          this.authButtonList = data ?? {}
+        }
       } catch (error) {
         console.error('获取按钮权限失败:', error)
-        this.authButtonList = {}
+        if (generation === this.requestGeneration) this.authButtonList = {}
       }
     },
 
@@ -75,11 +80,14 @@ export const s_permissionStore = defineStore('permission', {
      * ! @return {Promise<AuthMenuResponse>} 菜单列表响应
      */
     async getAuthMenuList(): Promise<AuthMenuResponse> {
+      const generation = this.requestGeneration
       try {
         const res = await getAuthMenuListApi()
-        this.authMenuList = res.data
-        // 构建合法路由路径列表
-        this.flatRoutePaths = collectRoutePaths(res.data)
+        if (generation === this.requestGeneration) {
+          this.authMenuList = res.data
+          // 构建合法路由路径列表
+          this.flatRoutePaths = collectRoutePaths(res.data)
+        }
         return res
       } catch (error) {
         console.error('获取菜单失败:', error)
@@ -89,16 +97,19 @@ export const s_permissionStore = defineStore('permission', {
 
     /** 获取当前用户的数据权限 */
     async getDataPermissions(): Promise<void> {
+      const generation = this.requestGeneration
       if (getAuthMode() === 'mock') {
         this.dataPermissions = []
         return
       }
       try {
         const { data } = await getDataPermissionApi()
-        this.dataPermissions = data ?? []
+        if (generation === this.requestGeneration) {
+          this.dataPermissions = data ?? []
+        }
       } catch (error) {
         console.error('获取数据权限失败:', error)
-        this.dataPermissions = []
+        if (generation === this.requestGeneration) this.dataPermissions = []
       }
     },
 
@@ -109,6 +120,7 @@ export const s_permissionStore = defineStore('permission', {
 
     /** 清除当前账号的全部权限快照 */
     resetPermissions(): void {
+      this.requestGeneration += 1
       this.authButtonList = {}
       this.authMenuList = []
       this.dataPermissions = []

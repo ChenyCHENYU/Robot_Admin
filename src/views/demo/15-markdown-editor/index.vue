@@ -34,7 +34,6 @@
             placeholder="请输入你的 Markdown 内容..."
             :auto-save="true"
             :auto-save-interval="10000"
-            @change="handleBasicChange"
             @save="handleBasicSave"
             @upload-image="handleUploadImage"
             @auto-save="handleAutoSave"
@@ -139,7 +138,6 @@
                   placeholder="请输入文章内容..."
                   :max-length="20000"
                   class="form-markdown-editor"
-                  @change="handleFormContentChange"
                   @max-length-exceeded="handleMaxLengthExceeded"
                   @word-count-change="handleFormWordCountChange"
                 />
@@ -155,10 +153,10 @@
                     <NTag
                       :bordered="false"
                       :type="
-                        formWordCount > 18000
-                          ? 'warning'
-                          : formWordCount > 19000
-                            ? 'error'
+                        formWordCount > 19000
+                          ? 'error'
+                          : formWordCount > 18000
+                            ? 'warning'
                             : 'success'
                       "
                       size="small"
@@ -405,6 +403,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo15MarkdownEditor' })
   // 导入数据和类型
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
@@ -541,20 +540,24 @@
   /**
    * 生命周期
    */
-  onMounted(() => {
-    console.log('Markdown 编辑器演示页面已加载')
+  const pendingActions = new Set<ReturnType<typeof setTimeout>>()
+  const scheduleDemoAction = (callback: () => void, delay: number) => {
+    const timer = setTimeout(() => {
+      pendingActions.delete(timer)
+      callback()
+    }, delay)
+    pendingActions.add(timer)
+  }
+
+  onUnmounted(() => {
+    pendingActions.forEach(clearTimeout)
+    pendingActions.clear()
   })
 
   /**
    * 事件处理函数
    */
-  const handleBasicChange = (text: string, html: string) => {
-    console.log('内容变化:', { text: text.length, html: html.length })
-  }
-
-  const handleBasicSave = (text: string, _html: string) => {
-    console.log('🚀 ~ handleBasicSave ~ _html:', _html)
-    console.log('🚀 ~ handleBasicSave ~ text:', text)
+  const handleBasicSave = () => {
     lastSaveTime.value = new Date().toLocaleString()
     message.success('内容已保存!')
   }
@@ -614,12 +617,6 @@
     })
   }
 
-  // 表单处理
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleFormContentChange = (_text: string, _html: string) => {
-    // 表单内容变化处理
-  }
-
   const handleMaxLengthExceeded = (
     currentLength: number,
     maxLength: number
@@ -634,9 +631,9 @@
       await formRef.value?.validate()
       submitting.value = true
 
-      setTimeout(() => {
+      scheduleDemoAction(() => {
         submitting.value = false
-        message.success('文章发布成功！')
+        message.info('发布流程演示完成，文章未持久化')
       }, 2000)
     } catch {
       message.error('请完善表单信息')
@@ -646,9 +643,9 @@
   const saveAsDraft = async () => {
     savingDraft.value = true
 
-    setTimeout(() => {
+    scheduleDemoAction(() => {
       savingDraft.value = false
-      message.success('草稿保存成功！')
+      message.info('草稿流程演示完成，内容未持久化')
     }, 1000)
   }
 

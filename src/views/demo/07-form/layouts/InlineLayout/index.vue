@@ -118,10 +118,13 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07FormInlineLayout' })
   import type {
     LabelPlacement,
     FormInstance,
     FormModel,
+    FormOption,
+    InlineLayoutConfig,
     ActionItem,
   } from '@robot-admin/naive-ui-components'
   import {
@@ -148,10 +151,10 @@
 
   // ==================== Emits ====================
   const emit = defineEmits<{
-    submit: [payload: any]
+    submit: [payload: { model: FormModel }]
     'validate-success': [model: FormModel]
-    'validate-error': [errors: any]
-    'fields-change': [fields: any[]]
+    'validate-error': [errors: unknown]
+    'fields-change': [fields: FormOption[]]
   }>()
 
   const formData = defineModel<FormModel>({ required: true })
@@ -172,7 +175,7 @@
     layout: 'inline' as const,
     inline: {
       gap: inlineGap.value,
-      align: alignType.value as any,
+      align: alignType.value as InlineLayoutConfig['align'],
     },
     validateOnChange: validateOnChange.value,
     labelPlacement: labelPlacement.value,
@@ -219,7 +222,7 @@
         advanced: showAdvanced.value ? advancedData.value : null,
       }
 
-      emit('submit', submitData)
+      emit('submit', { model: submitData })
     } catch (error) {
       message.error('表单验证失败，请检查输入')
       throw error
@@ -234,10 +237,12 @@
     message.info('表单已重置')
   }
 
-  const handleSubmit = (payload: any) => emit('submit', payload)
+  const handleSubmit = (payload: { model: FormModel }) =>
+    emit('submit', payload)
   const handleValidateSuccess = (model: FormModel) =>
     emit('validate-success', model)
-  const handleValidateError = (errors: any) => emit('validate-error', errors)
+  const handleValidateError = (errors: unknown) =>
+    emit('validate-error', errors)
 
   // ==================== 生命周期 ====================
   onMounted(() => {

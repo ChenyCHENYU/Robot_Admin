@@ -228,6 +228,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo21CopyDirect' })
   import { getBasicCode, getMessageCode, getAdvancedCode } from './data'
 
   // 获取消息实例

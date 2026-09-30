@@ -8,6 +8,29 @@
 
 export const BUSINESS_SUCCESS_CODES = [200, 0, '200', '0'] as const
 
+interface AuthSessionCredentials {
+  token: string
+  refreshToken: string
+}
+
+/** 异步刷新完成时只允许更新发起它的同一会话。 */
+export const isSameAuthSession = (
+  current: AuthSessionCredentials,
+  started: AuthSessionCredentials
+): boolean =>
+  current.token === started.token &&
+  current.refreshToken === started.refreshToken
+
+/** 只对仍属于当前会话的 401 尝试续期，避免旧请求跨账号重试。 */
+export const shouldRecoverUnauthorized = (
+  status: number | undefined,
+  authorization: unknown,
+  currentToken: string
+): boolean =>
+  status === 401 &&
+  currentToken.length > 0 &&
+  authorization === `Bearer ${currentToken}`
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 

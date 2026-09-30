@@ -151,14 +151,17 @@ const handleRouteError = (error: unknown): string => {
  * 初始化动态路由
  */
 export const initDynamicRouter = async (): Promise<boolean> => {
+  const permissionStore = s_permissionStore()
+  const generation = permissionStore.requestGeneration
   try {
-    const permissionStore = s_permissionStore()
     const {
       code,
       data: routes,
       msg,
       message,
     } = await permissionStore.getAuthMenuList()
+
+    if (generation !== permissionStore.requestGeneration) return false
 
     if (![0, 200, '0', '200'].includes(code) || !Array.isArray(routes)) {
       throw new Error(msg || message || '无效的路由数据格式')
@@ -182,8 +185,9 @@ export const initDynamicRouter = async (): Promise<boolean> => {
 
     return true
   } catch (error) {
+    if (generation !== permissionStore.requestGeneration) return false
     clearExistingRoutes()
-    s_permissionStore().resetPermissions()
+    permissionStore.resetPermissions()
     handleRouteError(error)
     return false
   }

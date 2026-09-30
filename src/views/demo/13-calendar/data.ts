@@ -2,14 +2,9 @@
  * @Description: 日历组件演示页 - 静态数据
  */
 
+import type { CalendarEvent } from '@robot-admin/naive-ui-components/C_FullCalendar'
+
 // ================= 初始日历事件 =================
-export interface CalendarEvent {
-  id: string
-  title: string
-  start: Date
-  end: Date
-  color: string
-}
 
 export const INITIAL_EVENTS: CalendarEvent[] = [
   {

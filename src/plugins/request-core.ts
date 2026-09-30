@@ -25,6 +25,8 @@ import {
   BUSINESS_SUCCESS_CODES,
   getBusinessErrorMessage,
   getRequestErrorMessage,
+  isSameAuthSession,
+  shouldRecoverUnauthorized,
 } from '@/utils/d_request'
 
 const { VITE_API_BASE } = import.meta.env
@@ -53,9 +55,19 @@ export const request = createRequestClient({
     },
     refresh: async () => {
       const userStore = s_userStore()
-      if (!userStore.refreshToken) return null
+      const tokenAtStart = userStore.token
+      const refreshTokenAtStart = userStore.refreshToken
+      if (!tokenAtStart || !refreshTokenAtStart) return null
 
-      const response = await refreshTokenApi(userStore.refreshToken)
+      const response = await refreshTokenApi(refreshTokenAtStart)
+      if (
+        !isSameAuthSession(userStore, {
+          token: tokenAtStart,
+          refreshToken: refreshTokenAtStart,
+        })
+      ) {
+        throw new Error('会话已变更，忽略旧刷新响应')
+      }
       const { token, refreshToken, expiresIn } = response.data
       userStore.handleLoginSuccess(token, refreshToken, expiresIn)
       return token
@@ -70,6 +82,14 @@ export const request = createRequestClient({
       return userStore.token
     },
     isAuthRequest: config => isAuthenticationRequest(config.url),
+    isUnauthorized: error => {
+      const { token } = s_userStore()
+      return shouldRecoverUnauthorized(
+        error.response?.status,
+        error.config?.headers?.get('Authorization'),
+        token
+      )
+    },
   },
   interceptors: {
     response: response => {

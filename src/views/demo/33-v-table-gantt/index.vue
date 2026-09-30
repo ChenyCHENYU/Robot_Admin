@@ -64,16 +64,14 @@
             </div>
 
             <C_VtableGantt
-              :ref="(el: any) => setGanttRef(tab.name, el)"
+              :ref="(el: unknown) => setGanttRef(tab.name, el)"
               :data="ganttData[tab.name]"
               :preset="tab.preset"
               :title="tab.ganttTitle"
               :options="tab.options"
               :height="tab.height || '600px'"
               :theme="isDark ? 'dark' : 'light'"
-              @gantt-created="onGanttCreated"
               @task-click="onTaskClick"
-              @error="onGanttError"
             />
           </div>
         </NTabPane>
@@ -106,7 +104,9 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo33VTableGantt' })
   import type { GanttTask, GanttPreset } from '@robot-admin/naive-ui-components'
+  import { VRender } from '@visactor/vtable-gantt'
   import {
     type TabConfig,
     PRESET_DESCRIPTIONS as presetDescriptions,
@@ -123,7 +123,14 @@
   const activeTab = ref('basic')
   const themeStore = s_themeStore()
   const isDark = computed(() => themeStore.isDark)
-  const ganttRefs = ref<Record<string, any>>({})
+  interface GanttHandle {
+    ganttInstance?: {
+      collapseAll?: () => void
+      expandAll?: () => void
+    }
+  }
+
+  const ganttRefs = ref<Record<string, GanttHandle>>({})
   const expandStates = reactive<Record<string, boolean>>({
     basic: true,
     project: true,
@@ -134,9 +141,15 @@
 
   // ==================== 组件引用管理 ====================
 
-  const setGanttRef = (name: string, el: any) => {
-    if (el) ganttRefs.value[name] = el
+  const setGanttRef = (name: string, el: unknown) => {
+    if (el && typeof el === 'object' && 'ganttInstance' in el) {
+      ganttRefs.value[name] = el as GanttHandle
+    }
   }
+
+  // Visactor 的 Group.add 参数类型与其导出的 Group 类型不一致，集中适配一次。
+  const addGroup = (parent: VRender.Group, child: VRender.Group) =>
+    parent.add(child as unknown as Parameters<VRender.Group['add']>[0])
 
   // ==================== 自定义布局函数 ====================
 
@@ -145,9 +158,6 @@
     const { table, row, col, rect } = args
     const taskRecord = table.getCellOriginRecord(col, row)
     const { height, width } = rect ?? table.getCellRect(col, row)
-    const VRender = (window as any).VTableGantt?.VRender
-    if (!VRender) return { rootContainer: null }
-
     const container = new VRender.Group({
       y: 10,
       x: 20,
@@ -191,9 +201,6 @@
   const createTaskBarLayout =
     (barColors0: string[], barColors: string[]) => (args: any) => {
       const { width, height, index, taskDays, progress, taskRecord } = args
-      const VRender = (window as any).VTableGantt?.VRender
-      if (!VRender) return { rootContainer: null }
-
       const colorLength = barColors.length
       const container = new VRender.Group({
         width,
@@ -233,7 +240,7 @@
           cornerRadius: 25,
         })
       )
-      container.add(containerLeft)
+      addGroup(container, containerLeft)
 
       // 中间信息
       const containerCenter = new VRender.Group({
@@ -264,7 +271,7 @@
           boundsPadding: [10, 0, 0, 0],
         })
       )
-      container.add(containerCenter)
+      addGroup(container, containerCenter)
 
       // 右侧进度
       if (width >= 120) {
@@ -291,7 +298,7 @@
             boundsPadding: [0, 0, 0, 0],
           })
         )
-        container.add(containerRight)
+        addGroup(container, containerRight)
       }
 
       return { rootContainer: container }
@@ -300,9 +307,6 @@
   // 时间轴头部自定义布局
   const createTimelineLayout = () => (args: any) => {
     const { width, height, dateIndex } = args
-    const VRender = (window as any).VTableGantt?.VRender
-    if (!VRender) return { rootContainer: null }
-
     const container = new VRender.Group({
       width,
       height,
@@ -321,7 +325,7 @@
       justifyContent: 'space-around',
     })
     containerLeft.add(new VRender.Text({ text: '📅', fontSize: 16 }))
-    container.add(containerLeft)
+    addGroup(container, containerLeft)
 
     const containerCenter = new VRender.Group({
       height,
@@ -341,7 +345,7 @@
         boundsPadding: [15, 0, 0, 0],
       })
     )
-    container.add(containerCenter)
+    addGroup(container, containerCenter)
 
     return { rootContainer: container }
   }
@@ -489,7 +493,7 @@
         ...newTask,
         developer: '新成员',
         priority: 'P2',
-      } as any
+      }
 
       ganttData.value.project[0]?.children?.push(projectTask)
       message.success(`添加了新子任务: ${projectTask.title}`)
@@ -535,27 +539,8 @@
 
   // ==================== 甘特图事件回调 ====================
 
-  const onGanttCreated = (gantt: any) => {
-    console.log('甘特图创建成功:', gantt)
-    // 动态加载 VTableGantt 到 window
-    if (!(window as any).VTableGantt) {
-      import('@visactor/vtable-gantt')
-        .then(module => {
-          ;(window as any).VTableGantt = module
-        })
-        .catch(error => {
-          console.warn('Failed to load VTableGantt:', error)
-        })
-    }
-  }
-
   const onTaskClick = (task: GanttTask) => {
     message.info(`点击了任务: ${task.title}`)
-  }
-
-  const onGanttError = (error: any) => {
-    console.error('甘特图错误:', error)
-    message.error('甘特图加载失败，请刷新页面重试')
   }
 </script>
 

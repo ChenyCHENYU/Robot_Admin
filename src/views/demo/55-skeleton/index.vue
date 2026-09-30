@@ -209,7 +209,7 @@
     SkeletonAnimation,
   } from '@robot-admin/naive-ui-components'
 
-  defineOptions({ name: 'demo-skeleton' })
+  defineOptions({ name: 'Demo55Skeleton' })
 
   const message = useMessage()
 
@@ -218,6 +218,7 @@
   const activePreset = ref<SkeletonPreset>('table')
   const currentAnimation = ref('wave')
   const repeatCount = ref(3)
+  let loadTimer: ReturnType<typeof setTimeout> | null = null
 
   const activeSceneData = computed(() =>
     DEMO_SCENES.find(s => s.key === activePreset.value)
@@ -233,13 +234,26 @@
    * * @description: 模拟 2 秒加载过程
    */
   const simulateLoading = () => {
+    if (loadTimer) clearTimeout(loadTimer)
     isLoading.value = true
     message.info('开始加载数据...')
-    setTimeout(() => {
+    loadTimer = setTimeout(() => {
+      loadTimer = null
       isLoading.value = false
       message.success('数据加载完成')
     }, 2000)
   }
+
+  watch(isLoading, loading => {
+    if (!loading && loadTimer) {
+      clearTimeout(loadTimer)
+      loadTimer = null
+    }
+  })
+
+  onUnmounted(() => {
+    if (loadTimer) clearTimeout(loadTimer)
+  })
 
   /**
    * * @description: 已加载内容渲染组件
