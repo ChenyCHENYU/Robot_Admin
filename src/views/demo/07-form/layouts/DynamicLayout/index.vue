@@ -23,9 +23,9 @@
           @validate-error="handleValidateError"
         >
           <!-- 自定义操作按钮 -->
-          <template #action="{ validate, reset }">
+          <template #action="{ submit, reset, submitting }">
             <C_ActionBar
-              :actions="getFormActions(validate, reset)"
+              :actions="getFormActions(submit, reset, submitting)"
               :config="{ align: 'center', gap: 12 }"
             />
           </template>
@@ -122,7 +122,6 @@
   // ================= 页面状态 =================
   const formRef = ref<FormInstance>()
   const message = useMessage()
-  const submitLoading = ref(false)
   const showPreview = ref(false)
 
   // 动态表单配置（使用响应式对象以支持运行时修改）
@@ -151,8 +150,9 @@
 
   // ================= 表单操作按钮配置 =================
   const getFormActions = (
-    validate: () => Promise<void>,
-    reset: () => void
+    submit: () => Promise<boolean>,
+    reset: () => void,
+    submitting: boolean
   ): ActionItem[] => [
     {
       key: 'reset',
@@ -162,11 +162,13 @@
     },
     {
       key: 'submit',
-      label: FORM_ACTIONS.submit.getText(submitLoading.value),
+      label: FORM_ACTIONS.submit.getText(submitting),
       icon: FORM_ACTIONS.submit.icon,
       type: FORM_ACTIONS.submit.type as 'primary',
-      loading: submitLoading.value,
-      onClick: () => submitWithValidation(validate),
+      loading: submitting,
+      onClick: async () => {
+        if (!(await submit())) message.error('请检查动态表单中的必填字段')
+      },
     },
     {
       key: 'preview',
@@ -213,19 +215,6 @@
   // ================= 工具方法 =================
   const previewData = () => {
     showPreview.value = true
-  }
-
-  const submitWithValidation = async (validate: () => Promise<void>) => {
-    if (submitLoading.value) return
-    try {
-      submitLoading.value = true
-      await validate()
-      emit('submit', { model: formData.value })
-    } catch {
-      message.error('请检查动态表单中的必填字段')
-    } finally {
-      submitLoading.value = false
-    }
   }
 
   // ================= 事件处理方法 =================
@@ -279,7 +268,6 @@
     formConfig,
     dynamicState,
     previewData,
-    submitWithValidation,
     formRef,
   })
 </script>

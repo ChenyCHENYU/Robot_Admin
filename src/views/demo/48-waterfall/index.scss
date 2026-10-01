@@ -96,7 +96,9 @@
     border: 1px solid var(--border-color);
     background: var(--card-color);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
 
     &:hover {
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -125,14 +127,6 @@
       margin-top: 4px;
       font-size: 12px;
       color: var(--text-color-3);
-    }
-
-    &__footer {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      padding: 8px 12px;
-      border-top: 1px solid var(--border-color);
     }
   }
 

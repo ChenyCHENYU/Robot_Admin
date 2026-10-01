@@ -13,6 +13,7 @@ const baseURL = 'http://127.0.0.1:4173'
 export default defineConfig({
   testDir: './e2e',
   testMatch: '**/*.pw.ts',
+  testIgnore: '**/*.local.pw.ts',
   fullyParallel: false,
   workers: 1,
   retries: process.env.CI ? 1 : 0,

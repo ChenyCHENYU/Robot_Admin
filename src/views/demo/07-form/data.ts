@@ -111,6 +111,10 @@ export const testDataConfig = {
       baseData.description = extendedTestData.description
     }
 
+    if (layoutType === 'grid') {
+      Object.assign(baseData, { name: baseData.realName })
+    }
+
     return baseData
   },
 }

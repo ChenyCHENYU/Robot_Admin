@@ -211,7 +211,6 @@
           :height="200"
           :readonly="true"
           :show-toolbar="false"
-          :disabled="true"
         />
         <div class="action-bar">
           <NButton
@@ -266,7 +265,6 @@
               <NButton
                 type="primary"
                 size="small"
-                :disabled="!savedData"
                 @click="handleSaveSignature"
               >
                 <template #icon><C_Icon name="mdi:content-save" /></template>
@@ -313,6 +311,7 @@
 
 <script setup lang="ts">
   import type {
+    ExportOptions,
     SignatureExpose,
     SignatureStroke,
   } from '@robot-admin/naive-ui-components'
@@ -352,7 +351,7 @@
   const handleExport = async (
     signatureRef: SignatureExpose | undefined,
     key: string,
-    options?: any
+    options?: ExportOptions
   ) => {
     if (!signatureRef) return
 

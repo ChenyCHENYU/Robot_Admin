@@ -172,10 +172,10 @@ export const projectMetrics = [
 export const ecosystemPackages = [
   {
     shortName: 'naive-ui-components',
-    version: '0.12.1',
+    version: '0.13.0',
     icon: 'mdi:puzzle-outline',
     color: '#6366f1',
-    desc: '51+ 业务组件，按需导入，主题覆盖',
+    desc: '53 个业务组件，按需导入，主题覆盖',
     url: 'https://www.npmjs.com/package/@robot-admin/naive-ui-components',
   },
   {

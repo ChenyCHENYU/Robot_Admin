@@ -81,9 +81,9 @@ export const coreProjects: ProjectItem[] = [
   {
     name: 'Robot UI Components',
     bagName: '@robot-admin/naive-ui-components',
-    desc: '基于 Naive UI 的 51+ 业务组件库，按需自动导入',
+    desc: '基于 Naive UI 的 53 个业务组件，按需自动导入',
     shortDesc: '业务组件库',
-    version: '0.12.1',
+    version: '0.13.0',
     icon: 'https://robotadmin.cn/favicon.ico',
     url: 'https://www.npmjs.com/package/@robot-admin/naive-ui-components',
   },
@@ -360,8 +360,8 @@ export const productionDependencies: ProjectItem[] = [
   {
     name: 'Robot UI Components',
     bagName: '@robot-admin/naive-ui-components',
-    desc: '基于 Naive UI 的 51+ 业务组件库，按需自动导入',
-    version: '0.12.1',
+    desc: '基于 Naive UI 的 53 个业务组件，按需自动导入',
+    version: '0.13.0',
     icon: 'https://robotadmin.cn/favicon.ico',
     url: 'https://www.npmjs.com/package/@robot-admin/naive-ui-components',
   },

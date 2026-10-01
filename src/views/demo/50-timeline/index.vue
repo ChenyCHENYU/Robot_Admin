@@ -29,11 +29,13 @@
       </p>
 
       <div class="scene-switcher">
-        <div
+        <button
           v-for="scene in DEMO_SCENES"
           :key="scene.key"
+          type="button"
           class="scene-card"
           :class="{ 'is-active': activeScene === scene.key }"
+          :aria-pressed="activeScene === scene.key"
           @click="activeScene = scene.key"
         >
           <C_Icon
@@ -42,7 +44,7 @@
           />
           <span class="scene-card__title">{{ scene.title }}</span>
           <span class="scene-card__desc">{{ scene.description }}</span>
-        </div>
+        </button>
       </div>
     </div>
 
@@ -118,36 +120,11 @@
 
     <!-- ==================== 时间线实例 ==================== -->
     <div class="demo-section demo-section--timeline">
-      <!-- 项目发布 -->
       <C_Timeline
-        v-if="activeScene === 'project'"
+        :key="activeScene"
         ref="tlRef"
-        :items="PROJECT_TIMELINE"
-        :pending="showPending"
-        :reverse="reversed"
-        :show-time="showTime"
-        :line-type="lineType"
-        :size="nodeSize"
-      />
-
-      <!-- CI 流水线（水平） -->
-      <C_Timeline
-        v-else-if="activeScene === 'pipeline'"
-        ref="tlRef"
-        :items="CI_PIPELINE_TIMELINE"
-        mode="horizontal"
-        :reverse="reversed"
-        :show-time="showTime"
-        :line-type="lineType"
-        :size="nodeSize"
-        :pending="showPending"
-      />
-
-      <!-- 物流 -->
-      <C_Timeline
-        v-else
-        ref="tlRef"
-        :items="ORDER_TIMELINE"
+        :items="sceneConfig[activeScene].items"
+        :mode="sceneConfig[activeScene].mode"
         :pending="showPending"
         :reverse="reversed"
         :show-time="showTime"
@@ -160,6 +137,7 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo50Timeline' })
+  import type { TimelineItem } from '@robot-admin/naive-ui-components'
   import {
     PROJECT_TIMELINE,
     CI_PIPELINE_TIMELINE,
@@ -168,8 +146,19 @@
   } from './data'
 
   // ===== 状态 =====
-  const tlRef = ref()
-  const activeScene = ref('project')
+  type SceneKey = (typeof DEMO_SCENES)[number]['key']
+  const sceneConfig: Record<
+    SceneKey,
+    { items: TimelineItem[]; mode: 'vertical' | 'horizontal' }
+  > = {
+    project: { items: PROJECT_TIMELINE, mode: 'vertical' },
+    pipeline: { items: CI_PIPELINE_TIMELINE, mode: 'horizontal' },
+    order: { items: ORDER_TIMELINE, mode: 'vertical' },
+  }
+  const tlRef = ref<{ expandAll: () => void; collapseAll: () => void } | null>(
+    null
+  )
+  const activeScene = ref<SceneKey>('project')
   const showPending = ref(false)
   const reversed = ref(false)
   const showTime = ref(true)

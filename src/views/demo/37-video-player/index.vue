@@ -65,11 +65,13 @@
 
       <!-- 场景选择卡片 -->
       <div class="scene-switcher">
-        <div
+        <button
           v-for="scene in DEMO_SCENES"
           :key="scene.key"
+          type="button"
           class="scene-card"
           :class="{ 'is-active': activeScene === scene.key }"
+          :aria-pressed="activeScene === scene.key"
           @click="switchScene(scene.key)"
         >
           <C_Icon
@@ -78,69 +80,16 @@
           />
           <span class="scene-card__title">{{ scene.title }}</span>
           <span class="scene-card__desc">{{ scene.description }}</span>
-        </div>
+        </button>
       </div>
     </div>
 
     <!-- ==================== 播放器实例 ==================== -->
     <div class="demo-section demo-section--player">
       <div class="player-wrapper">
-        <!-- 场景1: 基础播放 -->
         <C_VideoPlayer
-          v-if="activeScene === 'basic'"
-          ref="playerRef"
-          :url="DEMO_SOURCES.mp4"
-          :poster="DEMO_SOURCES.poster"
-          :subtitles="DEMO_SUBTITLES"
-          fluid
-          :autoplay-muted="true"
-          fullscreen
-          pip
-          keyboard
-          screenshot
-          @ready="onReady"
-          @state-change="onStateChange"
-          @time-update="onTimeUpdate"
-          @ended="onEnded"
-          @error="onError"
-        />
-
-        <!-- 场景2: HLS 流 -->
-        <C_VideoPlayer
-          v-else-if="activeScene === 'hls'"
-          ref="playerRef"
-          :url="DEMO_SOURCES.hls"
-          source-type="hls"
-          fluid
-          :autoplay-muted="true"
-          fullscreen
-          pip
-          keyboard
-          screenshot
-          @ready="onReady"
-          @state-change="onStateChange"
-          @time-update="onTimeUpdate"
-          @error="onError"
-        />
-
-        <!-- 场景3: 教育全功能 -->
-        <C_VideoPlayer
-          v-else-if="activeScene === 'education'"
-          ref="playerRef"
-          :url="DEMO_SOURCES.mp4"
-          :poster="DEMO_SOURCES.poster"
-          fluid
-          :autoplay-muted="false"
-          :quality-list="DEMO_QUALITY_LIST"
-          :chapters="DEMO_CHAPTERS"
-          :quizzes="DEMO_QUIZZES"
-          :subtitles="DEMO_SUBTITLES"
-          :anti-cheat="DEMO_ANTI_CHEAT"
-          :playback-rates="[0.5, 0.75, 1.0, 1.25, 1.5, 2.0]"
-          fullscreen
-          pip
-          keyboard
-          screenshot
+          :key="activeScene"
+          v-bind="DEMO_PLAYER_PROPS[activeScene]"
           @ready="onReady"
           @state-change="onStateChange"
           @time-update="onTimeUpdate"
@@ -292,16 +241,8 @@
         核心 API
       </h2>
       <p class="section-desc">
-        完整文档请参阅组件目录下的
-        <NButton
-          text
-          type="primary"
-          tag="a"
-          href="#"
-          @click.prevent
-        >
-          README.md
-        </NButton>
+        下方列出当前演示使用的核心 API；完整类型以组件库的 VideoPlayerProps
+        为准。
       </p>
       <NCollapse
         arrow-placement="right"
@@ -358,12 +299,7 @@
     ProgressData,
   } from '@robot-admin/naive-ui-components'
   import {
-    DEMO_SOURCES,
-    DEMO_QUALITY_LIST,
-    DEMO_CHAPTERS,
-    DEMO_QUIZZES,
-    DEMO_SUBTITLES,
-    DEMO_ANTI_CHEAT,
+    DEMO_PLAYER_PROPS,
     DEMO_SCENES,
     FEATURE_LIST,
     SHORTCUT_LIST,
@@ -374,14 +310,14 @@
     EXPOSE_COLUMNS,
     EXPOSE_DATA,
     TAG_TYPE_MAP,
+    type DemoSceneKey,
   } from './data'
 
   const message = useMessage()
 
   /* ======================== 状态 ======================== */
 
-  const playerRef = ref()
-  const activeScene = ref('basic')
+  const activeScene = ref<DemoSceneKey>('basic')
   const playerState = ref<PlayerState>('idle')
   const currentTime = ref(0)
   const videoDuration = ref(0)
@@ -400,7 +336,12 @@
 
   /** 播放进度百分比 */
   const progressPercent = computed(() => {
-    if (videoDuration.value <= 0) return 0
+    if (
+      !Number.isFinite(videoDuration.value) ||
+      !Number.isFinite(currentTime.value) ||
+      videoDuration.value <= 0
+    )
+      return 0
     return Math.min(
       100,
       Math.round((currentTime.value / videoDuration.value) * 100)
@@ -428,6 +369,7 @@
 
   /** 格式化时间 mm:ss */
   function formatTime(seconds: number): string {
+    if (!Number.isFinite(seconds) || seconds < 0) return '--:--'
     const m = Math.floor(seconds / 60)
     const s = Math.floor(seconds % 60)
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
@@ -442,6 +384,7 @@
     const now = new Date()
     const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
     eventLogs.value.push({ time, event, type, detail })
+    if (eventLogs.value.length > 100) eventLogs.value.shift()
   }
 
   /** 功能标签配色 */
@@ -450,7 +393,8 @@
   /* ======================== 场景切换 ======================== */
 
   /** 切换演示场景 */
-  function switchScene(key: string) {
+  function switchScene(key: DemoSceneKey) {
+    if (key === activeScene.value) return
     activeScene.value = key
     playerState.value = 'idle'
     currentTime.value = 0

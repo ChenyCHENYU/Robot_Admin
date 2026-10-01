@@ -60,9 +60,9 @@
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
     >
-      <template #action="{ validate, reset }">
+      <template #action="{ submit, submitting, reset }">
         <C_ActionBar
-          :actions="getFormActions(validate, reset)"
+          :actions="getFormActions(submit, submitting, reset)"
           :config="{ gap: 12 }"
         />
       </template>
@@ -161,7 +161,6 @@
 
   // ==================== 响应式状态 ====================
   const formRef = ref<FormInstance | null>(null)
-  const submitLoading = ref(false)
   const showAdvanced = ref(false)
   const inlineGap = ref(defaultConfig.gap)
   const alignType = ref(defaultConfig.align)
@@ -183,16 +182,19 @@
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (
-    validate: () => Promise<void>,
+    submit: () => Promise<boolean>,
+    submitting: boolean,
     reset: () => void
   ): ActionItem[] => [
     {
       key: 'search',
-      label: submitLoading.value ? '搜索中...' : '搜索',
+      label: submitting ? '搜索中...' : '搜索',
       icon: 'mdi:magnify',
       type: 'primary',
-      loading: submitLoading.value,
-      onClick: () => submitForm(validate),
+      loading: submitting,
+      onClick: async () => {
+        if (!(await submit())) message.error('表单验证失败，请检查输入')
+      },
     },
     {
       key: 'reset',
@@ -212,25 +214,6 @@
   ]
 
   // ==================== 方法 ====================
-  const submitForm = async (validate: () => Promise<void>) => {
-    try {
-      submitLoading.value = true
-      await validate()
-
-      const submitData = {
-        ...formData.value,
-        advanced: showAdvanced.value ? advancedData.value : null,
-      }
-
-      emit('submit', { model: submitData })
-    } catch (error) {
-      message.error('表单验证失败，请检查输入')
-      throw error
-    } finally {
-      submitLoading.value = false
-    }
-  }
-
   const resetForm = (reset: () => void) => {
     reset()
     advancedData.value = { ...defaultAdvancedData }
@@ -238,7 +221,12 @@
   }
 
   const handleSubmit = (payload: { model: FormModel }) =>
-    emit('submit', payload)
+    emit('submit', {
+      model: {
+        ...payload.model,
+        advanced: showAdvanced.value ? { ...advancedData.value } : null,
+      },
+    })
   const handleValidateSuccess = (model: FormModel) =>
     emit('validate-success', model)
   const handleValidateError = (errors: unknown) =>

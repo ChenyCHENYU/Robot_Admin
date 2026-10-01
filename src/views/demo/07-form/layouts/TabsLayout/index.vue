@@ -82,9 +82,9 @@
           :config="{ compact: true }"
         />
       </template>
-      <template #action="{ validate, reset }">
+      <template #action="{ submit, reset }">
         <C_ActionBar
-          :actions="getFormActions(validate, reset)"
+          :actions="getFormActions(submit, reset)"
           :config="{ gap: 12 }"
         />
       </template>
@@ -169,7 +169,7 @@
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (
-    validate: () => Promise<void>,
+    submit: () => Promise<boolean>,
     reset: () => void
   ): ActionItem[] => [
     {
@@ -178,11 +178,7 @@
       icon: 'mdi:check-circle-outline',
       type: 'primary',
       onClick: async () => {
-        try {
-          await validate()
-        } catch {
-          message.error('表单验证失败')
-        }
+        await submit()
       },
     },
     {

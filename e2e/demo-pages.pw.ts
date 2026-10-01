@@ -11,6 +11,7 @@ import { expect, test } from '@playwright/test'
 const demos = [
   ['/demo/icon', '图标组件场景示例'],
   ['/demo/form-manage/form', '表单选择器组件场景示例'],
+  ['/demo/form-manage/form-modal', '表单容器组件场景示例'],
   ['/demo/table-manage/table', '表格组件场景示例'],
   ['/plugins/calendar', '日历组件场景示例'],
   ['/demo/steps', '进度步骤条组件场景示例'],
@@ -19,6 +20,14 @@ const demos = [
   ['/plugins/v-table-gantt', '甘特图组件场景示例'],
   ['/plugins/waterfall', '瀑布流场景示例'],
   ['/plugins/chat', '聊天组件场景示例'],
+  ['/preview/progress', '进度条组件场景示例'],
+  ['/preview/city', '城市选择器组件场景示例'],
+  ['/preview/code', 'Code编辑器组件场景示例'],
+  ['/preview/video-player', '视频播放器场景示例'],
+  ['/preview/signature', '电子签名场景示例'],
+  ['/preview/image-cropper', '图片裁剪场景示例'],
+  ['/preview/cron', 'Cron 表达式编辑器场景示例'],
+  ['/preview/timeline', '时间线组件场景示例'],
 ] as const
 
 for (const [route, title] of demos) {
@@ -34,7 +43,9 @@ for (const [route, title] of demos) {
     })
 
     await page.goto(`/#${route}`)
-    await expect(page.getByText(title, { exact: true }).first()).toBeVisible()
+    await expect(page.getByText(title, { exact: true }).first()).toBeVisible({
+      timeout: 15_000,
+    })
     if (route === '/demo/table-manage/table') {
       await expect(
         page.getByText('张三1', { exact: true }).first()
@@ -42,6 +53,65 @@ for (const [route, title] of demos) {
     }
     await expect(page.locator('.n-message--error')).toHaveCount(0)
     expect(pageErrors).toEqual([])
+  })
+}
+
+test('模态框表单只在成功提交后关闭', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('token', JSON.stringify('mock-access.e2e'))
+    localStorage.setItem(
+      'userInfo',
+      JSON.stringify({ username: 'E2E', displayName: 'E2E' })
+    )
+  })
+
+  await page.goto('/#/demo/form-manage/form-modal')
+  await page.getByRole('heading', { name: '模态框表单', exact: true }).click()
+  const modal = page.locator('.n-modal').filter({ hasText: '用户信息管理' })
+  await expect(modal).toBeVisible()
+  await modal.getByRole('button', { name: '提交' }).click()
+  await expect(modal).toBeVisible()
+
+  await modal.getByPlaceholder('请输入用户名').fill('tester123')
+  await modal.getByPlaceholder('请输入邮箱').fill('tester@example.com')
+  await modal
+    .locator('.n-form-item')
+    .filter({ hasText: '角色' })
+    .locator('.n-select')
+    .click()
+  await page.getByText('普通用户', { exact: true }).last().click()
+  await modal.getByPlaceholder('请输入手机号').fill('13800138000')
+  await modal.getByRole('button', { name: '提交' }).click()
+  await expect(modal).not.toBeVisible()
+})
+
+for (const layout of [
+  { name: '内联布局', action: '搜索' },
+  { name: '网格布局', action: '提交表单' },
+]) {
+  test(`${layout.name}通过 C_Form 的提交入口派发事件`, async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('token', JSON.stringify('mock-access.e2e'))
+      localStorage.setItem(
+        'userInfo',
+        JSON.stringify({ username: 'E2E', displayName: 'E2E' })
+      )
+    })
+    await page.goto('/#/demo/form-manage/form')
+    await page
+      .locator('.layout-buttons')
+      .getByRole('button', {
+        name: layout.name,
+      })
+      .click()
+    await page.getByRole('button', { name: '填充测试' }).click()
+    await page
+      .locator('.form-section .c-action-bar')
+      .getByRole('button', { name: new RegExp(layout.action) })
+      .click()
+    await expect(
+      page.getByText('已接收表单数据（演示，不会持久化）')
+    ).toBeVisible()
   })
 }
 

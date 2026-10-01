@@ -117,7 +117,7 @@
         <code>item</code>、<code>index</code>、<code>width</code>、<code
           >height</code
         >
-        四个参数，可自由组合图片、文字、按钮等。
+        四个参数，可自由组合图片与文字；点击卡片会触发 item-click。
       </div>
       <div class="section-content">
         <C_WaterFall
@@ -142,27 +142,6 @@
                 <div class="custom-card__desc">
                   {{ item.description }}
                 </div>
-              </div>
-              <div class="custom-card__footer">
-                <NButton
-                  text
-                  type="primary"
-                  size="tiny"
-                >
-                  <template #icon>
-                    <C_Icon name="mdi:heart-outline" />
-                  </template>
-                  收藏
-                </NButton>
-                <NButton
-                  text
-                  size="tiny"
-                >
-                  <template #icon>
-                    <C_Icon name="mdi:download-outline" />
-                  </template>
-                  下载
-                </NButton>
               </div>
             </div>
           </template>

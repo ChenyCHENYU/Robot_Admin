@@ -94,9 +94,9 @@
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
     >
-      <template #action="{ validate, reset }">
+      <template #action="{ submit, submitting, reset }">
         <C_ActionBar
-          :actions="getFormActions(validate, reset)"
+          :actions="getFormActions(submit, submitting, reset)"
           :config="{ align: 'right', gap: 12 }"
         />
       </template>
@@ -192,7 +192,6 @@
   // ==================== 响应式状态 ====================
 
   const formRef = ref<FormInstance | null>(null)
-  const submitLoading = ref(false)
   const showLayoutPreview = ref(false)
   const gridCols = ref(24)
   const gridGutter = ref(16)
@@ -213,7 +212,8 @@
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (
-    validate: () => Promise<void>,
+    submit: () => Promise<boolean>,
+    submitting: boolean,
     reset: () => void
   ): ActionItem[] => [
     {
@@ -236,21 +236,12 @@
     },
     {
       key: 'submit',
-      label: submitLoading.value ? '提交中...' : '提交表单',
+      label: submitting ? '提交中...' : '提交表单',
       icon: 'mdi:check-circle-outline',
       type: 'primary',
-      loading: submitLoading.value,
+      loading: submitting,
       onClick: async () => {
-        try {
-          submitLoading.value = true
-          await validate()
-          emit('submit', { model: formData.value })
-        } catch (error) {
-          message.error('表单验证失败，请检查输入')
-          throw error
-        } finally {
-          submitLoading.value = false
-        }
+        if (!(await submit())) message.error('表单验证失败，请检查输入')
       },
     },
   ]

@@ -46,7 +46,18 @@
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
-    />
+    >
+      <template #step-actions="{ isLastStep }">
+        <NButton
+          v-if="isLastStep"
+          type="primary"
+          :loading="isSubmitting"
+          @click="submitForm"
+        >
+          提交表单
+        </NButton>
+      </template>
+    </C_Form>
 
     <!-- 表单数据预览 -->
     <NCard
@@ -106,6 +117,16 @@
   // ================= 状态管理 =================
   const message = useMessage()
   const formRef = ref<FormInstance>()
+  const isSubmitting = ref(false)
+  const submitForm = async (): Promise<void> => {
+    if (isSubmitting.value) return
+    isSubmitting.value = true
+    try {
+      await formRef.value?.submit()
+    } finally {
+      isSubmitting.value = false
+    }
+  }
   let draftSnapshot: string | null = null
 
   // ================= 配置数据 =================

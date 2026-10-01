@@ -122,7 +122,7 @@
           </div>
           <p class="card-desc">适用于同时展示两个相关指标，如CPU与内存使用率</p>
         </template>
-        <NProgress
+        <C_Progress
           type="multiple-circle"
           :stroke-width="10"
           :circle-gap="10"
