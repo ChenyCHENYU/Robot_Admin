@@ -6,7 +6,77 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
+
+const vercelConfig = JSON.parse(
+  readFileSync(new URL('../vercel.json', import.meta.url), 'utf8')
+) as {
+  headers: Array<{ headers: Array<{ key: string; value: string }> }>
+}
+const productionCsp =
+  vercelConfig.headers[0]?.headers.find(
+    header => header.key === 'Content-Security-Policy'
+  )?.value ?? ''
+
+test('生产 CSP 允许登录页所需的 WebAssembly 编译', async ({ page }) => {
+  expect(productionCsp).toBeTruthy()
+
+  const probeScript = `
+    window.__cspProbe = (async () => {
+      let jsEvalBlocked = false
+      try { eval('1 + 1') } catch (error) {
+        jsEvalBlocked = error instanceof EvalError
+      }
+      let wasmAvailable = false
+      try {
+        await WebAssembly.compile(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0]))
+        wasmAvailable = true
+      } catch {}
+      return { jsEvalBlocked, wasmAvailable }
+    })()
+  `
+
+  await page.route('**/*', async route => {
+    if (route.request().url().endsWith('/csp-probe.js')) {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/javascript',
+        body: probeScript,
+      })
+      return
+    }
+
+    if (route.request().resourceType() !== 'document') {
+      await route.continue()
+      return
+    }
+
+    const response = await route.fetch()
+    await route.fulfill({
+      response,
+      headers: {
+        ...response.headers(),
+        'content-security-policy': productionCsp,
+      },
+    })
+  })
+
+  await page.goto('/#/login')
+  await page.addScriptTag({ url: new URL('/csp-probe.js', page.url()).href })
+  const capabilities = await page.evaluate(
+    () =>
+      (
+        window as typeof window & {
+          __cspProbe: Promise<{
+            jsEvalBlocked: boolean
+            wasmAvailable: boolean
+          }>
+        }
+      ).__cspProbe
+  )
+  expect(capabilities).toEqual({ jsEvalBlocked: true, wasmAvailable: true })
+})
 
 test('未登录访问业务页会回到登录页，演示凭据保持可见', async ({ page }) => {
   const pageErrors: string[] = []

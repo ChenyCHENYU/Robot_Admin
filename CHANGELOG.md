@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [2.6.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.6.1...v2.6.2) (2026-10-02)
+
+### Fixed
+
+- **login:** 生产 CSP 精确允许 Spline 的 WebAssembly 编译，恢复登录页 3D 机器人，继续禁止普通 JavaScript `eval`；补充浏览器回归验证。
+
 ## [2.6.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.6.0...v2.6.1) (2026-10-01)
 
 ### Documentation

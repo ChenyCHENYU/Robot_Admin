@@ -35,7 +35,9 @@ describe('production contracts', () => {
     expect(csp).toContain("object-src 'none'")
     expect(csp).toContain("base-uri 'self'")
     expect(csp).toContain('frame-ancestors')
-    expect(csp).toContain("script-src 'self' https://webapi.amap.com;")
+    expect(csp).toContain(
+      "script-src 'self' 'wasm-unsafe-eval' https://webapi.amap.com;"
+    )
     expect(csp).not.toContain("script-src 'self' 'unsafe-inline'")
     expect(csp).not.toContain("'unsafe-eval'")
     expect(
