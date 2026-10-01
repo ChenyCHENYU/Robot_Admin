@@ -1074,16 +1074,29 @@ Thanks to all developers who contributed to this project:
 
 ## 📄 Changelog
 
-### 🎉 v2.2.0 (2026-03-11) — Latest
+### 🚀 v2.6.0 (2026-10-01) — Latest
+
+- 🧩 Upgraded the business component library to `0.13.0` and simplified form, table, and demo usage
+- 🛡️ Strengthened remote data contracts, error redaction, security headers, login, and permission regressions
+- ⚡ Improved startup, route prefetching, and on-demand styles with bundle-budget checks
+- 🧪 Expanded unit and browser regression coverage and tightened type and build checks
+
+<details>
+<summary><b>Historical Versions</b></summary>
+
+### v2.5.0 (2026-08-10)
+
+- Improved grouped navigation and layout behavior
+- Moved heavy pages, editing, and file features to route-level loading
+- Adopted component subpath imports and the official resolver
+
+### 🎉 v2.2.0 (2026-03-11)
 
 - ✨ Layout system upgraded to v2.2.0
 - 🔧 env-manager upgraded to v1.0.5
 - 🛠️ Robot CLI scaffolding tool officially released
 - 📦 @robot-admin/naive-ui-components upgraded to v0.8.2 (51+ components)
 - 🐛 Multiple stability improvements
-
-<details>
-<summary><b>Historical Versions</b></summary>
 
 ### v2.1.0 (2026-03-06)
 
