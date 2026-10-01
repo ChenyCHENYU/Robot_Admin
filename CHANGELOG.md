@@ -7,6 +7,7 @@
 ### Fixed
 
 - **login:** 生产 CSP 精确允许 Spline 的 WebAssembly 编译，恢复登录页 3D 机器人，继续禁止普通 JavaScript `eval`；补充浏览器回归验证。
+- **deploy:** Windows Git Bash 发布前验证改由 PowerShell 执行，避免 Bun 测试全部通过后子进程偶发无法退出。
 
 ## [2.6.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.6.0...v2.6.1) (2026-10-01)
 

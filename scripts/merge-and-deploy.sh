@@ -318,9 +318,22 @@ git update-index --no-assume-unchanged envs/.env.development 2>/dev/null || true
 
 print_success "工作区状态干净"
 
+# Git Bash 在 Windows 上嵌套运行 bun test 后偶发不退出；改由 PowerShell
+# 执行同一 verify 命令，并显式透传原生进程退出码。其他平台保持原调用。
+run_verify() {
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*)
+            powershell.exe -NoProfile -NonInteractive -Command 'bun run verify; exit $LASTEXITCODE'
+            ;;
+        *)
+            bun run verify
+            ;;
+    esac
+}
+
 # 发布前必须通过与 CI 相同的完整验证，任何失败都会在切分支、合并和推送前终止。
 print_step "执行发布前完整验证..."
-if ! bun run verify; then
+if ! run_verify; then
     print_error "验证失败，已在任何分支或远程变更前终止发布"
     exit 1
 fi
