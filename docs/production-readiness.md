@@ -8,7 +8,7 @@
 
 # Robot Admin 生产化优化与演进路线
 
-> 当前接入基线为 `v2.6.2`。下文带日期的对比数据是历史快照；最新门禁结果以本地命令或 CI 输出为准。
+> 当前接入基线为 `v2.6.3`。下文带日期的对比数据是历史快照；最新门禁结果以本地命令或 CI 输出为准。
 
 ## 当前生产基线
 
@@ -72,7 +72,7 @@ Vercel 配置启用 CSP、HSTS、`nosniff`、严格来源策略、权限策略�
 
 高德 2021-12-02 后签发的 Key 必须使用安全配置。生产环境通过 `VITE_AMAP_SERVICE_HOST=/_AMapService` 接入后端/Nginx 同源代理，安全密钥只保留在服务端；页面中的明文 `securityJsCode` 输入仅用于本地调试，不持久化。
 
-Spline 的传递依赖 Lottie 源码包含 `eval` 警告，但生产压缩产物中未包含直接 `eval`/`new Function`，因此 `script-src` 仍不开放普通 JavaScript 的 `unsafe-eval`。Spline 运行时会编译 WebAssembly，需精确允许 `wasm-unsafe-eval`；它不放开 JavaScript 的 `eval`。外部图片、天气、GitHub、Spline 和 iframe 演示仍需要 HTTPS 连接；如部署为纯内网系统，建议由网关代理这些能力并进一步收紧 `connect-src`、`img-src` 和 `frame-src` 域名白名单。
+Spline 的传递依赖 Lottie 源码包含 `eval` 警告，但生产压缩产物中未包含直接 `eval`/`new Function`，因此 `script-src` 仍不开放普通 JavaScript 的 `unsafe-eval`。Spline 运行时会编译 WebAssembly，需精确允许 `wasm-unsafe-eval`；它不放开 JavaScript 的 `eval`。场景内嵌视频使用 `data:` URL，因此仅在 `media-src` 中允许 `data:`，不会放开脚本来源。外部图片、天气、GitHub、Spline 和 iframe 演示仍需要 HTTPS 连接；如部署为纯内网系统，建议由网关代理这些能力并进一步收紧 `connect-src`、`img-src` 和 `frame-src` 域名白名单。
 
 ## 构建验收与预算
 

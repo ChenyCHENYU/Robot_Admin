@@ -38,6 +38,7 @@ describe('production contracts', () => {
     expect(csp).toContain(
       "script-src 'self' 'wasm-unsafe-eval' https://webapi.amap.com;"
     )
+    expect(csp).toContain("media-src 'self' data: blob: https:;")
     expect(csp).not.toContain("script-src 'self' 'unsafe-inline'")
     expect(csp).not.toContain("'unsafe-eval'")
     expect(

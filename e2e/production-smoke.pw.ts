@@ -21,6 +21,7 @@ const productionCsp =
 
 test('生产 CSP 允许登录页所需的 WebAssembly 编译', async ({ page }) => {
   expect(productionCsp).toBeTruthy()
+  expect(productionCsp).toContain("media-src 'self' data: blob: https:;")
 
   const probeScript = `
     window.__cspProbe = (async () => {

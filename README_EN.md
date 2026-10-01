@@ -730,6 +730,7 @@ bun run build:application # envs/.env.staging: real-application staging artifact
 | v2.6.0  | 2026-10    | Production hardening, component integration, and demo gates   |
 | v2.6.1  | 2026-10    | Documentation and contribution guidance aligned with the code |
 | v2.6.2  | 2026-10    | Restored the login robot under the production CSP             |
+| v2.6.3  | 2026-10    | Allowed the scene's embedded video under the production CSP   |
 
 </details>
 
@@ -1014,7 +1015,11 @@ Thanks to all developers who contributed to this project:
 
 ## 📄 Changelog
 
-### 🛠️ v2.6.2 (2026-10-02) — Latest
+### 🛠️ v2.6.3 (2026-10-02) — Latest
+
+- Allowed only the embedded media needed by the Spline scene, removing the login page's media CSP error without relaxing script execution
+
+### 🛠️ v2.6.2 (2026-10-02)
 
 - Allowed only the WebAssembly compilation required by Spline in the production CSP, restoring the login robot while keeping JavaScript `eval` blocked
 

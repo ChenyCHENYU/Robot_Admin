@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [2.6.3](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.6.2...v2.6.3) (2026-10-02)
+
+### Fixed
+
+- **login:** 仅在 `media-src` 中允许 Spline 场景使用的内嵌视频，消除生产登录页的 CSP 媒体拦截并保留脚本安全边界。
+
 ## [2.6.2](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.6.1...v2.6.2) (2026-10-02)
 
 ### Fixed
