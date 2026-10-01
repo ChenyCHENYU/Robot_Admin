@@ -7,45 +7,41 @@
 
 ### 第一步：在GitHub上Fork项目 🍴
 
-1. **访问项目主页**：[https://github.com/ChenyCHENYU/robot_admin](https://github.com/ChenyCHENYU/robot_admin)
+1. **访问项目主页**：[Robot_Admin](https://github.com/ChenyCHENYU/Robot_Admin)
 2. **点击右上角的 "Fork" 按钮**
    - 这会在你的GitHub账号下创建一个项目副本
    - 等待几秒钟，GitHub会自动跳转到你的Fork页面
-3. **现在你有了自己的项目副本**：`https://github.com/你的用户名/robot_admin`
+3. **现在你有了自己的项目副本**：`https://github.com/你的用户名/Robot_Admin`
 
 ### 第二步：克隆到本地 💻
 
 ```bash
 # 克隆你Fork的项目（不是原项目！）
-git clone https://github.com/你的用户名/robot_admin.git
+git clone https://github.com/你的用户名/Robot_Admin.git
 
 # 进入项目目录
-cd robot_admin
+cd Robot_Admin
 
 # 添加原项目为上游仓库（重要！用来同步最新代码）
-git remote add upstream https://github.com/ChenyCHENYU/robot_admin.git
+git remote add upstream https://github.com/ChenyCHENYU/Robot_Admin.git
 
 # 验证远程仓库设置
 git remote -v
 # 应该看到：
-# origin    https://github.com/你的用户名/robot_admin.git (fetch)
-# origin    https://github.com/你的用户名/robot_admin.git (push)
-# upstream  https://github.com/ChenyCHENYU/robot_admin.git (fetch)
-# upstream  https://github.com/ChenyCHENYU/robot_admin.git (push)
+# origin    https://github.com/你的用户名/Robot_Admin.git (fetch/push)
+# upstream  https://github.com/ChenyCHENYU/Robot_Admin.git (fetch/push)
 ```
 
 ### 第三步：设置开发环境 ⚙️
 
 ```bash
-# 安装依赖（推荐 Bun，真的很快）
-bun install
-# 如果你还在用 npm/yarn：npm install
+# 仓库统一使用 Bun >= 1.4.2，不要混用 npm/yarn/pnpm
+bun install --frozen-lockfile
 
-# 启动项目（毫秒级启动，不骗人）
-bun dev
+# 启动项目
+bun run dev
 
-# 打开浏览器访问 http://localhost:3000
-# 看到机器人就算成功了 🤖
+# 默认访问 http://localhost:1988（实际端口以终端输出为准）
 ```
 
 ### 第四步：开始开发 🛠️
@@ -53,20 +49,21 @@ bun dev
 ```bash
 # 1. 先同步最新代码（很重要！避免冲突）
 git fetch upstream
-git checkout main
-git merge upstream/main
+git switch main
+git merge --ff-only upstream/main
 
 # 2. 创建新分支（永远不要在main分支直接改代码！）
-git checkout -b feat/你的功能名称
+git switch -c feat/你的功能名称
 # 或者
-git checkout -b fix/修复的问题
+git switch -c fix/修复的问题
 
 # 3. 开始写代码
 # ...编码ing...
 
-# 4. 提交代码（我们使用 git cz，不是普通的 git commit）
-git add .
-git cz  # 这会启动交互式提交工具，按提示选择即可
+# 4. 验证并提交
+bun run verify
+git add -p  # 新文件使用 git add path/to/new-file
+bun run commit  # Commitizen 交互式提交；普通 git commit 也会受 commitlint 校验
 
 # 5. 推送到你的Fork
 git push origin feat/你的功能名称
@@ -74,7 +71,7 @@ git push origin feat/你的功能名称
 
 ### 第五步：创建Pull Request 📤
 
-1. **回到你的GitHub Fork页面**：`https://github.com/你的用户名/robot_admin`
+1. **回到你的GitHub Fork页面**：`https://github.com/你的用户名/Robot_Admin`
 2. **你会看到一个黄色提示条**："Compare & pull request"
 3. **点击 "Compare & pull request" 按钮**
 4. **填写PR信息**：
@@ -87,11 +84,12 @@ git push origin feat/你的功能名称
 ### 第六步：处理反馈 🔄
 
 1. **如果需要修改**：
+
    ```bash
    # 在同一个分支继续修改
    # ...改代码...
-   git add .
-   git cz
+   git add -p  # 新文件使用 git add path/to/new-file
+   bun run commit
    git push origin feat/你的功能名称
    # PR会自动更新，不需要创建新的PR
    ```
@@ -99,13 +97,12 @@ git push origin feat/你的功能名称
 2. **如果PR被合并**：
    ```bash
    # 同步最新代码
-   git checkout main
+   git switch main
    git fetch upstream
-   git merge upstream/main
-   
+   git merge --ff-only upstream/main
+
    # 删除已完成的分支
    git branch -d feat/你的功能名称
-   git push origin --delete feat/你的功能名称
    ```
 
 ## 🎯 常见贡献类型
@@ -113,17 +110,20 @@ git push origin feat/你的功能名称
 ### 🐛 发现Bug了？
 
 **完整流程**：
-1. **先确认**：在 [Issues](https://github.com/ChenyCHENYU/robot_admin/issues) 搜索看是否已存在
+
+1. **先确认**：在 [Issues](https://github.com/ChenyCHENYU/Robot_Admin/issues) 搜索看是否已存在
 2. **创建Issue**：如果没有，就新建一个Bug报告
 3. **修复Bug**：按上面的流程Fork → 修复 → PR
 4. **在PR中关联Issue**：写上 `Fixes #issue号码`
 
 **Bug报告模板**：
+
 ```markdown
 **Bug描述**
 简洁描述问题
 
 **复现步骤**
+
 1. 访问xxx页面
 2. 点击xxx按钮
 3. 看到xxx错误
@@ -135,14 +135,15 @@ git push origin feat/你的功能名称
 实际怎样
 
 **环境信息**
-- 浏览器：Chrome 120
+
+- 浏览器及版本号：
 - 系统：Windows 11
-- 项目版本：v1.0.1
+- 项目版本：填写当前使用的标签或提交 SHA
 ```
 
 ### 💡 有好点子？
 
-1. **先讨论**：在 [Discussions](https://github.com/ChenyCHENYU/robot_admin/discussions) 发起讨论
+1. **先讨论**：在 [Discussions](https://github.com/ChenyCHENYU/Robot_Admin/discussions) 发起讨论
 2. **创建Issue**：讨论通过后创建Feature Request
 3. **开发实现**：按完整流程开发
 4. **关联Issue**：PR中写上 `Closes #issue号码`
@@ -155,24 +156,22 @@ git push origin feat/你的功能名称
 ### 🎨 新功能开发
 
 **推荐方向**：
+
 - **新演示页面**：在 `src/views/demo/` 下添加
-- **实用组件**：在 `src/components/global/` 下添加
+- **实用组件**：优先在独立组件库维护；`src/components/global/` 只放宿主桥接组件
 - **工具函数**：在 `src/utils/` 下添加
-- **自定义指令**：在 `src/directives/` 下添加
+- **自定义指令**：在独立的 `@robot-admin/directives` 包维护
 
 ## 🛠️ 开发规范
 
 ### 代码提交规范
 
-我们使用 **git cz** 进行规范化提交：
+仓库提供 `bun run commit` 交互式提交；普通 `git commit` 也会受 commitlint 钩子校验：
 
 ```bash
-# 安装commitizen（如果没装的话）
-npm install -g commitizen
-
-# 提交代码（不要用 git commit）
-git add .
-git cz  # 启动交互式提交
+# 提交代码
+git add -p
+bun run commit
 
 # 选择提交类型：
 # feat:     新功能
@@ -188,11 +187,12 @@ git cz  # 启动交互式提交
 ### 代码风格
 
 ```bash
-# 检查代码风格
-bun run lint
+# 只检查，不自动修改
+bun run lint:check
+bun run lint:eslint
 
-# 自动修复（大部分问题都能自动搞定）
-bun run lint:fix
+# 需要自动修复时再显式运行
+bun run lint
 
 # 格式化代码
 bun run format
@@ -243,7 +243,7 @@ src/
 ### 开发要求
 
 - **浏览器兼容**：Chrome/Firefox/Safari/Edge 最新两个版本
-- **Node.js版本**：>= 20.19.0
+- **Node.js 版本**：>= 22.18.0；**Bun 版本**：>= 1.4.2
 - **不支持IE**：拜拜了您嘞 👋
 
 ### 性能要求
@@ -263,24 +263,24 @@ src/
 
 ### 组件规范
 
-```typescript
+```vue
 // 组件示例
 <script setup lang="ts">
-interface Props {
-  title: string
-  description?: string
-  loading?: boolean
-}
+  interface Props {
+    title: string
+    description?: string
+    loading?: boolean
+  }
 
-// 使用 C_ 前缀
-defineOptions({
-  name: 'C_MyComponent'
-})
+  // 使用 C_ 前缀
+  defineOptions({
+    name: 'C_MyComponent',
+  })
 
-const props = withDefaults(defineProps<Props>(), {
-  description: '',
-  loading: false
-})
+  const props = withDefaults(defineProps<Props>(), {
+    description: '',
+    loading: false,
+  })
 </script>
 ```
 
@@ -290,7 +290,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 ```bash
 # 启动开发服务器
-bun dev
+bun run dev
 
 # 测试功能
 # ✅ 不同浏览器测试
@@ -301,14 +301,11 @@ bun dev
 ### 提交前检查
 
 ```bash
-# 代码检查
-bun run lint
+# 双 Lint、类型、单测、生产与预发构建、体积预算
+bun run verify
 
-# 类型检查
-bun run type-check
-
-# 构建测试
-bun run build
+# 需要浏览器回归时（首次先运行 bunx playwright install chromium）
+bun run test:e2e
 
 # 确保没有报错再提交
 ```
@@ -318,13 +315,15 @@ bun run build
 ### 常见问题
 
 1. **Fork同步问题**：
+
    ```bash
    git fetch upstream
-   git checkout main
-   git merge upstream/main
+   git switch main
+   git merge --ff-only upstream/main
    ```
 
 2. **提交冲突**：
+
    ```bash
    # 先同步最新代码
    git fetch upstream
@@ -344,7 +343,7 @@ bun run build
 
 ### 获取帮助
 
-1. **查看文档**：[在线文档](https://www.robotadmin.cn)
+1. **查看文档**：[README](./README.md) 与 [生产接入说明](./docs/production-readiness.md)
 2. **搜索Issues**：看看是否有相同问题
 3. **创建Issue**：描述清楚问题，最好有截图
 4. **发邮件**：[ycyplus@gmail.com](mailto:ycyplus@gmail.com)
@@ -371,8 +370,7 @@ bun run build
 
 **项目地址**：
 
-- **在线预览**：[https://www.robotadmin.cn](https://www.robotadmin.cn)
-- **GitHub**：[https://github.com/ChenyCHENYU/robot_admin](https://github.com/ChenyCHENYU/robot_admin)
+- **GitHub**：[Robot_Admin](https://github.com/ChenyCHENYU/Robot_Admin)
 
 ---
 

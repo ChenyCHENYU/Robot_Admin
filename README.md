@@ -69,8 +69,8 @@
   </p>
   <p>
     <img src="https://img.shields.io/badge/components-51+-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
-    <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
+    <img src="https://img.shields.io/badge/demos-64-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
     <img src="https://img.shields.io/badge/node-%E2%89%A522.18-339933?style=flat&logo=nodedotjs" alt="Node Version">
   </p>
@@ -136,16 +136,16 @@ _在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `Type
 
 ## ⚡ 为什么选择 Robot Admin？
 
-### 🔥 性能怪兽级别的开发体验
+### 🔥 按需加载与可验证的开发体验
 
-- **毫秒级热更新** - Bun + Vite8 化学反应，告别等待
-- **智能类型提示** - TypeScript5.8 + 51+ 自定义组件，IDE 智能感知体验拉满
-- **零配置开箱即用** - 一条命令启动，30 秒内搭建完整后台系统
+- **按需加载** - Vite 8 路由分包，组件库使用子路径入口，首屏体积由构建预算检查
+- **智能类型提示** - TypeScript 5.8 与组件库公开类型共同约束使用侧
+- **Bun 统一工具链** - 安装依赖后运行 `bun run dev`，验证使用 `bun run verify`
 
 ### 🎨 不只是一个管理系统，更是一个作品
 
-- **54+ 精心打磨的演示页面** - 每一个都是可直接用于生产的业务组件，51 个组件支持文档站 iframe 在线预览
-- **7 种自定义指令** - 防抖、节流、长按、拖拽、权限...让开发更优雅
+- **64 个演示页面** - 覆盖组件接入与交互场景，另有 38 条免登录预览路由；演示数据不等于生产后端
+- **独立指令包** - 防抖、节流、长按、拖拽、权限等能力由 `@robot-admin/directives` 提供
 - **主题系统** - 深色/浅色模式/跟随系统 + 支持自定义扩展
 - **Preview 路由系统** - 38 个无鉴权独立预览路由，供 [文档站](https://www.tzagileteam.com) 通过 iframe 嵌入实时组件演示
 
@@ -163,10 +163,10 @@ _在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `Type
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/ChenyCHENYU/robot_admin.git
+git clone https://github.com/ChenyCHENYU/Robot_Admin.git
 
 # 2. 进入目录
-cd robot_admin
+cd Robot_Admin
 
 # 3. 安装依赖
 bun install
@@ -175,7 +175,7 @@ bun install
 bun run dev
 ```
 
-**🔥 依赖缓存就绪后，开发服务器热启动约 3 秒，后续更新保持毫秒级！**
+开发服务器的启动和热更新耗时取决于机器、缓存及启用的本地包模式；性能回归以构建预算和实际测量为准。
 
 <details>
 <summary><b>📦 更多命令</b></summary>
@@ -197,7 +197,8 @@ bun run lint           # 代码检查和修复
 bun run lint:check     # 只检查，不修改文件
 bun run format         # 代码格式化
 bun run test           # 单元测试
-bun run verify         # 双 Lint + 类型 + 测试 + 生产构建 + 体积预算
+bun run verify         # 双 Lint + 类型 + 单测 + 双模式构建 + 体积预算
+bun run test:e2e       # 基于正式产物的浏览器回归（首次需安装 Chromium）
 bun run check:bundle   # 校验最近一次生产构建的首屏体积预算
 bun run security:audit # 检查依赖安全公告
 
@@ -208,6 +209,7 @@ bun run type-build:installed # 仅按已安装 npm 版本复核发布态契约
 
 # 其他
 bun run commit         # 规范化提交（git cz）
+bun run deploy         # Bash 分支同步脚本；不升版本、不打标签
 ```
 
 本地联调命令使用 Vite 精确 alias 直连各仓库源码及其子入口，并为 npm、组件库、
@@ -252,7 +254,7 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 **⚙️ 构建工具**
 
 - **Bun 1.4.2** - 🚀 高性能 JavaScript 运行时与包管理器
-- **Vite 8.2.2** - ⚡ Rolldown 统一构建引擎，构建速度提升 10-30x
+- **Vite 8.2.2** - ⚡ Rolldown 构建与路由级按需加载
 - **Sass 1.103** - 🎨 成熟的CSS预处理器
 
 **🔧 开发工具**
@@ -260,7 +262,7 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 - **ESLint 10.9** - 📏 代码质量守护者
 - **Prettier 3.9** - ✨ 代码格式化
 - **Oxlint 1.52** - 🦀 Rust编写的超快Linter
-- **Bun Test 1.3** - 🧪 与包管理器统一的测试运行时
+- **Bun Test 1.4** - 🧪 与包管理器统一的测试运行时
 
 **📊 功能组件（via @robot-admin/naive-ui-components）**
 
@@ -354,7 +356,7 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 
 `v-copy` 复制 | `v-debounce` 防抖 | `v-throttle` 节流 | `v-permission` 权限 | `v-watermark` 水印 | `v-draggable` 拖拽 | `v-longpress` 长按
 
-### 🎪 演示页面（54+ 完整示例）
+### 🎪 演示页面（64 个示例）
 
 <details>
 <summary><b>查看所有演示页面</b></summary>
@@ -420,7 +422,7 @@ Robot_Admin/
 │   │   └── 📁 local/                # 局部组件
 │   ├── 📁 views/                    # 页面视图
 │   │   ├── 📁 dashboard/            # 数据看板
-│   │   ├── 📁 demo/                 # 演示页面（54+ 功能展示）
+│   │   ├── 📁 demo/                 # 演示页面（64 个 index.vue）
 │   │   ├── 📁 preview/              # 组件预览页面（38 个 iframe 嵌入路由）
 │   │   ├── 📁 sys-manage/           # 系统管理
 │   │   ├── 📁 login/                # 登录注册
@@ -431,7 +433,7 @@ Robot_Admin/
 │   ├── 📁 router/                   # 路由配置
 │   ├── 📁 utils/                    # 工具函数
 │   ├── 📁 types/                    # TypeScript类型定义
-│   ├── 📁 directives/               # 自定义指令（7个实用指令）
+│   ├── 📁 config/                   # 环境、主题与构建配置
 │   ├── 📁 assets/                   # 静态资源
 │   └── 📁 plugins/                  # 插件配置
 ├── 📁 scripts/                      # 构建脚本
@@ -600,36 +602,23 @@ graph LR
 
 ---
 
-## 📊 性能优化
-
-### ⚡ 性能基准测试
+## 📊 性能与构建预算
 
 <details>
-<summary><b>查看详细性能数据</b></summary>
+<summary><b>查看可复现的性能门禁</b></summary>
 
-|     指标      | Robot Admin | 传统方案 | 提升幅度 |
-| :-----------: | :---------: | :------: | :------: |
-|  🚀 首屏加载  |   < 800ms   |  ~2.5s   | **70%+** |
-| ⚡ 热更新速度 |   < 100ms   |  ~1.5s   | **90%+** |
-|  📦 构建速度  |    < 30s    |  ~2min   | **75%+** |
-| 💾 Bundle大小 |    < 2MB    |   ~5MB   | **60%+** |
-|  🔄 页面切换  |   < 50ms    |  ~300ms  | **85%+** |
-
-**测试环境**: HP 幽灵360, 16GB RAM, Node.js 22+
+运行 `bun run build && bun run check:bundle` 可复核入口、预加载、样式、首屏合计及最大异步块预算。2026-10-01 的演示生产构建结果为：入口 306.60 KiB、预加载 488.85 KiB / 64 个、样式 290.60 KiB、首屏合计 1086.04 KiB，均通过预算。这里统计的是构建资源体积，不代表真实网络传输量或页面加载耗时；最新数字以命令输出为准。
 
 ### 构建优化
 
 - **Tree Shaking** - 无用代码自动移除
 - **代码分割** - 按需加载，减少首屏时间
-- **资源压缩** - CSS/JS/图片智能压缩
-- **CDN加速** - 静态资源CDN部署
+- **体积预算** - 构建后自动检查首屏资源和最大异步块
 
 ### 运行时优化
 
-- **虚拟滚动** - 大数据表格流畅渲染
 - **组件懒加载** - 路由级别懒加载
-- **图片懒加载** - 视口内图片按需加载
-- **防抖节流** - 高频操作性能优化
+- **可选预取** - 登录后按网络和设备条件渐进预取重量级页面
 
 </details>
 
@@ -663,7 +652,7 @@ graph LR
 
 ```bash
 # 1. Fork + Clone
-git clone https://github.com/你的用户名/robot_admin.git
+git clone https://github.com/你的用户名/Robot_Admin.git
 
 # 2. 安装依赖
 bun install
@@ -672,6 +661,7 @@ bun install
 git checkout -b feat/awesome-feature
 
 # 4. 提交修改
+bun run verify
 git commit -m "feat: 新功能"
 
 # 5. 提交PR
@@ -687,9 +677,9 @@ git commit -m "feat: 新功能"
 
 **🧩 组件开发贡献**
 
-- 放在 `src/components/global/`
-- 组件名以 `C_` 开头
-- 必须有 TypeScript 类型定义
+- 通用业务组件优先在独立的 `@robot-admin/naive-ui-components` 仓库维护
+- 应用内的 `src/components/global/` 仅保留宿主桥接组件，避免复制组件库实现
+- 新组件须声明 `name` 并提供 TypeScript 类型
 
 **🛠️ 工具函数贡献**
 
@@ -717,23 +707,14 @@ git commit -m "feat: 新功能"
 - **预发布环境** - 生产前最后验证
 - **生产环境** - 线上正式环境
 
-**部署选项**
-
-- **Vercel** - 零配置部署（推荐）
-- **GitHub Pages** - 静态部署
-- **Docker** - 容器化部署
-- **传统服务器** - Nginx部署
+**当前仓库提供的构建与部署配置**
 
 ```bash
-# Docker部署
-docker build -t robot-admin .
-docker run -p 80:80 robot-admin
-
-# Nginx配置
-location / {
-  try_files $uri $uri/ /index.html;
-}
+bun run build             # envs/.env.production：公开演示产物 dist/
+bun run build:application # envs/.env.staging：真实业务预发验收产物 dist/application/
 ```
+
+仓库内的 `vercel.json` 提供静态站点路由回退与安全响应头。部署到其他平台时需要等效配置；真实业务部署还必须按 [`envs/README.md`](envs/README.md) 接入远端认证、业务 API 和同源代理，不能直接把公开演示配置用于生产。当前仓库没有 Dockerfile 或 GitHub Pages 工作流。
 
 </details>
 
@@ -744,7 +725,7 @@ location / {
 ### ✅ 已完成里程碑
 
 <details>
-<summary><b>查看完整版本历程 (v1.0 → v2.5)</b></summary>
+<summary><b>查看完整版本历程 (v1.0 → v2.6.1)</b></summary>
 
 | 版本   | 时间    | 主要更新                                             |
 | ------ | ------- | ---------------------------------------------------- |
@@ -760,20 +741,19 @@ location / {
 | v2.2.1 | 2026-03 | 🔧 Vite 8.0.3 正式升级 + 样式细节优化                |
 | v2.3   | 2026-04 | 🤖 AI 技能、MCP Server 与工程协作规范                |
 | v2.4   | 2026-04 | 🎨 设计风格系统与 iOS 拟态玻璃主题                   |
-| v2.5   | 2026-08 | ⚡ 路由级按需加载、菜单分组与生产就绪加固            |
+| v2.5   | 2026-08 | ⚡ 路由级按需加载与菜单分组                          |
+| v2.6   | 2026-10 | 🛡️ 生产就绪加固、组件接入治理与演示页回归门禁        |
+| v2.6.1 | 2026-10 | 📝 中英文文档、贡献与生产接入说明同步当前实现        |
 
 </details>
 
-### 🚀 近期计划 (2026 Q2)
+### 🚀 下一阶段
 
-- [x] 📊 可配置的脱敏错误上报与构建体积回归门禁
 - [ ] 📈 Web Vitals 真实用户性能监控与可观测平台接入
 - [ ] 🎨 可视化低代码页面模板
 - [ ] 🏢 多租户系统支持
-- [x] 🔌 Robot CLI 脚手架工具
-- [x] 📱 Robot uniApp 移动端方案
 
-### 🌟 长期规划 (2026 Q3+)
+### 🌟 长期规划
 
 - [ ] 🏗️ Robot Nest — NestJS 全栈服务
 - [ ] 🔄 完整的 CI/CD 流水线集成示例
@@ -865,7 +845,7 @@ location / {
 ### 🔧 开发环境
 
 - **Node.js**: >= 22.18 (推荐最新 LTS)
-- **Bun**: >= 1.3.x (推荐最新版)
+- **Bun**: >= 1.4.2（以 `package.json` 的 `engines` 为准）
 - **内存**: >= 8GB RAM
 - **存储**: >= 1GB 可用空间
 - **系统**: Windows 10+, macOS 12+, Ubuntu 20.04+
@@ -901,36 +881,28 @@ powershell -c "irm bun.sh/install.ps1 | iex"
 ### ⚠️ 端口占用问题
 
 ```bash
-# 修改 vite.config.ts 中的端口
-server: {
-  port: 1988, # 改为其他端口
-  host: true
-}
+# 在已被 Git 忽略的 envs/.env.local 中设置
+VITE_PORT=1989
 ```
 
 ### 🔧 TypeScript 类型错误
 
 ```bash
-# 重新生成类型文件
+# 检查应用及配置类型
 bun run type-build
 
-# 清除类型缓存
-rm -rf node_modules/.cache
-bun install
+# 只按正式安装包复核跨包类型
+bun run type-build:installed
 ```
 
 ### 📦 构建失败
 
 ```bash
-# 检查依赖版本
-bun outdated
+# 保留仓库的 bun.lock，按锁文件恢复依赖
+bun install --frozen-lockfile
 
-# 清除缓存重新安装
-rm -rf node_modules bun.lockb
-bun install
-
-# 强制类型检查
-bun run type-build
+# 运行完整本地门禁
+bun run verify
 ```
 
 </details>
@@ -955,31 +927,11 @@ bun run type-build
 
 ---
 
-## 🆚 对比其他解决方案
+## 🎯 项目定位
 
-<details>
-<summary><b>为什么选择 Robot Admin？</b></summary>
-
-|   特性对比    |        Robot Admin        | Ant Design Pro | Vue Element Admin |   其他框架   |
-| :-----------: | :-----------------------: | :------------: | :---------------: | :----------: |
-|  🚀 启动速度  | **热启动约 3 秒（实测）** |   依项目而定   |    依项目而定     |  依项目而定  |
-| ⚡ 热更新速度 |     **< 100ms 极速**      |   ~1.5s 等待   |     ~1s 等待      |   普遍较慢   |
-|  📦 构建工具  |  **Vite 8.x (Rolldown)**  |  Webpack/Vite  |    Webpack 4/5    |   工具多样   |
-| 🎨 UI 组件库  |     **Naive UI 轻量**     |   Ant Design   |   Element Plus    |   选择多样   |
-| 💪 TypeScript |     **完整类型支持**      |    基础支持    |     基础支持      | 支持程度不一 |
-| 🔧 自定义指令 |      **7个实用指令**      |    少量指令    |     基础指令      |   功能有限   |
-|  📊 演示页面  |     **54+ 完整示例**      |    有限示例    |     有限示例      |   基础示例   |
-|  🎯 学习成本  |       **中等友好**        |    较高门槛    |     中等门槛      |   差异较大   |
-|  📈 维护状态  |      **🔥 积极维护**      |    持续维护    |     持续维护      |   状态不一   |
-
-**选择 Robot Admin 的理由**:
-
-- 🚀 **性能优先**: Bun + Vite 8 (Rolldown)，依赖缓存就绪后开发服务器热启动约 3 秒
-- 🧩 **组件丰富**: 51+ 业务组件，独立组件库按需导入
-- 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
-- 📚 **学习友好**: 54+ 演示页面，每个都是最佳实践
-
-</details>
+- 单体 SPA 主线提供权限、主题、路由和 Remote/Mock 数据边界；其他架构保留在独立分支。
+- 业务组件与 11 个指令由独立包维护，应用通过深层入口按需消费；`src/views/demo/` 提供 64 个使用示例。
+- `bun run verify` 与 `bun run test:e2e` 提供可复现的静态、构建和浏览器门禁；真实业务仍需接入后端并执行集成验收。
 
 ---
 
@@ -988,35 +940,29 @@ bun run type-build
 <details>
 <summary><b>FAQ</b></summary>
 
-**🔧 为什么推荐使用Bun？**
+**🔧 为什么统一使用 Bun？**
 
-- 安装速度提升10倍+
-- 内存占用更低
-- 内置打包器、测试运行器
-- 完全兼容Node.js生态
+- 项目锁文件、脚本和测试均以 Bun 为准；混用包管理器可能产生不同依赖树。
 
 **🎨 如何自定义主题？**
 
-1. 修改 `src/assets/css/theme.scss` 中的CSS变量
-2. 使用 `C_Theme` 组件进行动态切换
-3. 支持深色/浅色模式自动切换
+1. 在 `src/config/theme/tokens.ts` 调整应用主题 Token，在 `naive-overrides.ts` 调整 Naive UI 覆盖
+2. 使用 `C_Theme` 切换浅色、深色或跟随系统；接入边界见 [主题架构文档](docs/design-system/THEME-ARCHITECTURE.md)
 
 **🔐 权限系统如何使用？**
 
 - 页面级：路由守卫控制
 - 菜单级：动态菜单生成
 - 按钮级：v-permission指令
-- 接口级：axios拦截器
+- 接口级：后端必须自行校验权限；前端请求层不能替代服务端鉴权
 
 **📱 是否支持移动端？**
 
-- 完全支持！响应式设计适配所有设备
+- 提供响应式布局；接入具体业务页面后仍需在目标设备和浏览器上验证交互
 
 **🔄 如何从其他项目迁移？**
 
-- 提供详细的迁移指南
-- 组件API基本兼容
-- 渐进式迁移支持
+- 优先参考组件库公开类型与本仓库的 64 个演示页，按页面逐步接入并运行验证
 
 </details>
 
@@ -1032,16 +978,6 @@ bun run type-build
 - **邮箱：** [ycyplus@gmail.com](mailto:ycyplus@gmail.com)
 - **GitHub：** [@ChenyCHENYU](https://github.com/ChenyCHENYU)
 - **npm：** [@cheny_yang](https://www.npmjs.com/~cheny_yang)
-
----
-
-### 💬 加入交流群
-
-<p align="center">
-  <img src="public/交流群.jpg" width="200" alt="微信交流群">
-  <br>
-  <em>扫码加入微信交流群，与开发者一起交流讨论</em>
-</p>
 
 ---
 
@@ -1097,7 +1033,11 @@ bun run type-build
 
 ## 📄 更新日志
 
-### 🚀 v2.6.0 (2026-10-01) — 最新版本
+### 📝 v2.6.1 (2026-10-01) — 最新版本
+
+- 同步中英文 README、贡献指南、环境与生产接入文档，移除失效的性能宣称和过期联系入口
+
+### 🚀 v2.6.0 (2026-10-01)
 
 - 🧩 **组件接入**：升级业务组件库至 `0.13.0`，精简表单、表格及演示页面的使用方式
 - 🛡️ **生产就绪**：补齐远端数据契约、错误脱敏、安全头与登录及权限回归保护

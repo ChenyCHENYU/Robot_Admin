@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## [2.6.1](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.6.0...v2.6.1) (2026-10-01)
+
+### Documentation
+
+- **readme:** 中英文入口同步当前演示页、性能预算、构建部署、主题与排障方式；移除过期联系入口及不再使用的二维码图片。
+- **guides:** 更新贡献、环境、设计系统及生产接入说明；将过期分析和分支对比明确标为历史快照。
+
 ## [2.6.0](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.5.0...v2.6.0) (2026-10-01)
 
 ### Changed

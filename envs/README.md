@@ -9,7 +9,7 @@
 - `VITE_ROUTE_IDLE_PREFETCH=true` 只会在登录后、浏览器空闲且网络与设备条件允许时渐进预取大页面；开发期另由 Vite 原生 warmup 仅预热最高优先级页面。
 - `VITE_ERROR_REPORT_ENDPOINT` 仅允许配置同源绝对路径（如 `/api/client-errors`），留空即关闭错误上报。
 - `VITE_CAPTCHA_PROVIDER` 默认为兼容演示用的 `puzzle-captcha`；真实登录可切换为免费自托管的 `altcha`，但必须同时提供挑战和服务端验签接口。
-- 本机临时覆盖使用 Git 已忽略的 `.env.local`，不要修改并提交共享环境文件中的密钥。
+- 本机临时覆盖使用 Git 已忽略的 `envs/.env.local`，不要修改并提交共享环境文件中的密钥。
 
 | 变量                           | 开发/测试默认    | 业务生产/预发要求 | 公开演示         | 说明                               |
 | ------------------------------ | ---------------- | ----------------- | ---------------- | ---------------------------------- |
@@ -17,6 +17,7 @@
 | `VITE_AUTH_MODE`               | `mock`           | `remote`          | `mock`           | 登录、刷新令牌和当前用户数据来源   |
 | `VITE_DATA_MODE`               | `mock`           | `remote`          | `mock`           | 账号及系统管理业务数据来源         |
 | `VITE_ROUTE_IDLE_PREFETCH`     | `true`           | `true`            | `true`           | 登录后渐进预取高频重量级页面       |
+| `VITE_PORT`                    | `1988`           | 构建时不使用      | 构建时不使用     | 本地开发服务器端口                 |
 | `VITE_API_BASE`                | `/api`           | `/api` 或网关     | 示例地址         | 建议使用同源反向代理               |
 | `VITE_ERROR_REPORT_ENDPOINT`   | 留空             | 按需配置          | 留空             | 只接受 `/` 开头的同源绝对路径      |
 | `VITE_CAPTCHA_PROVIDER`        | `puzzle-captcha` | 推荐 `altcha`     | `puzzle-captcha` | 人机验证提供方                     |

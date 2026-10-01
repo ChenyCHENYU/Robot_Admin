@@ -23,7 +23,7 @@ AI：好的，不好意思……（下次还会犯）
 AI：（调用 get_component_api('C_Form')，读到真实 .d.ts 类型声明）
 AI：好的，根据类型定义，C_Form 的 Props 是 options + config，
     config.layout 支持 default|grid|card|tabs|steps|dynamic……
-    （100% 准确，永远不会猜错）
+    （以当前安装包的公开类型为准，运行时行为仍需测试验证）
 ```
 
 **核心价值：AI 工具从"根据记忆猜 API"变成"实时查当前项目的精确 API"。**

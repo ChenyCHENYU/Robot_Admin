@@ -8,6 +8,8 @@
 
 # Robot Admin 生产化优化与演进路线
 
+> 当前接入基线为 `v2.6.1`。下文带日期的对比数据是历史快照；最新门禁结果以本地命令或 CI 输出为准。
+
 ## 当前生产基线
 
 - 架构保持单体 SPA 和既有路由、状态管理边界不变，业务组件继续通过 `@robot-admin/naive-ui-components@0.13.0` 按需消费；每个组件样式入口均包含自身组合组件所需样式，不再依赖全量 CSS 兜底。
@@ -39,10 +41,10 @@
 | `VITE_CAPTCHA_VERIFY_ENDPOINT` | 留空             | 同源接口          | 留空             | 服务端验证 payload 并返回一次性登录令牌 |
 | `VITE_MAP_KEY`                 | 留空             | 按需配置          | 留空             | 高德 Web 端 JS API Key                  |
 | `VITE_AMAP_SERVICE_HOST`       | 留空             | 同源代理          | 留空             | 高德安全代理，须以 `/_AMapService` 结尾 |
-| `VITE_ROUTE_IDLE_PREFETCH`     | `false`          | 按需开启          | `false`          | 登录后网络感知的空闲路由预热            |
+| `VITE_ROUTE_IDLE_PREFETCH`     | `true`           | `true`            | `true`           | 登录后网络感知的空闲路由预热            |
 | `VITE_ANALYTICS_ENABLED`       | `false`          | 按需开启          | 按需开启         | Vercel Analytics 与 Speed Insights      |
 
-Vite 启动阶段会校验枚举、布尔值、端口、部署用途、远端 API 和错误上报地址。`application` 的生产或预发若配置 Mock、示例 API 或跨域错误上报端点会直接终止构建；`demo` 仅显式允许闭环 Mock，不会改变真实业务部署的规则。本机密钥只放在 Git 已忽略的 `.env.local` 或 CI Secret。
+Vite 启动阶段会校验枚举、布尔值、端口、部署用途、远端 API 和错误上报地址。`application` 的生产或预发若配置 Mock、示例 API 或跨域错误上报端点会直接终止构建；`demo` 仅显式允许闭环 Mock，不会改变真实业务部署的规则。本机密钥只放在 Git 已忽略的 `envs/.env.local` 或 CI Secret。
 
 验证码默认继续使用本地拼图演示，不影响现有登录。真实国内部署可选择 MIT 开源、无调用额度的自托管 ALTCHA：组件仅在启用后懒加载；挑战和验签端点必须同源，后端必须签发短时一次性挑战、验证 PoW payload、防重放并限流，再返回绑定当前会话/登录请求的一次性 token。当前仓库不包含后端，未配置两个端点时不会开启 ALTCHA，也不会把客户端结果标记为安全验证。
 
@@ -85,13 +87,13 @@ Spline 的传递依赖 Lottie 源码包含 `eval` 警告，但生产压缩产物
 | module preload 数量 | 83         | 64         | -19      | ≤ 90       |
 | 最大异步 chunk      | —          | 2.13 MiB   | 路由隔离 | ≤ 4.88 MiB |
 
-2026-09-30 本轮演示生产构建实测：入口约 306 KiB、预加载约 489 KiB / 64 个、首屏 CSS 约 291 KiB、首屏合计约 1086 KiB、最大异步块约 2132 KiB；均在上述预算内。数值会随锁文件和构建器变化，以 CI 的构建预算结果为准。
+2026-10-01 演示生产构建实测：入口 306.60 KiB、预加载 488.85 KiB / 64 个、首屏 CSS 290.60 KiB、首屏合计 1086.04 KiB、最大异步块 2122.31 KiB；均在上述预算内。数值会随锁文件和构建器变化，以 `bun run check:bundle` 的最新输出为准。
 
 `bun run verify` 顺序执行 Oxlint、ESLint、TypeScript、单元测试、演示生产构建、`check:bundle` 和独立目录的真实业务预发构建。预算直接解析 `dist/index.html` 与实际文件大小，任一指标回归即返回失败。CI 另外执行 `bun run security:audit` 与 `bun run test:e2e`：Playwright 在两套正式产物上验证演示登录、真实业务无预填凭据、认证壳层、地图和退出登录。浏览器测试需要 Chromium（首次本地运行先执行 `bunx playwright install chromium`）；`dist/application` 和测试产物均不入库。Spline、Office 和 VTable 等大模块仍存在于完整产物，但不属于首屏关键链路。
 
-本轮锁文件依赖审计报告 0 个漏洞（检查 1182 个包）；对 `@xmldom/xmldom`、`fast-uri`、`ip-address` 和 `brace-expansion` 的补丁升级只改变依赖解析，不修改插件架构。当前 Bun 1.4.2 在本机 Windows 上会在输出审计结果后偶发不退出；CI 在 Linux 上执行该门禁，若出现相同现象需单独追踪 Bun 工具问题，不应把“已打印通过”误认为进程退出成功。
+本轮锁文件依赖审计报告 0 个漏洞（检查 1182 个包）；对 `@xmldom/xmldom`、`fast-uri`、`ip-address` 和 `brace-expansion` 的补丁升级只改变依赖解析，不修改插件架构。若本机审计进程偶发未退出，应以实际退出码为准，不要只看已打印的结果。
 
-本轮全量 62 项单元测试与 3 项浏览器测试通过。历史依赖缓存稳定后的 `dev:components` 热启动实测为 2.669 秒。锁文件变化后的首次启动会执行一次 Vite 依赖预构建，历史实测为 6.596 秒，不作为持续启动基线。
+`v2.6.0` 发布前全量 65 项单元测试与 27 项浏览器测试通过。历史依赖缓存稳定后的 `dev:components` 热启动实测为 2.669 秒。锁文件变化后的首次启动会执行一次 Vite 依赖预构建，历史实测为 6.596 秒，不作为持续启动基线。
 
 本轮事故的影响范围、根因、修复清单和验证证据见 [2026-09-09 生产就绪优化回归事故报告](./incident-reports/2026-09-09-production-readiness-regression.md)。
 

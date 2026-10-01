@@ -69,8 +69,8 @@
   </p>
   <p>
     <img src="https://img.shields.io/badge/components-51+-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
-    <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
+    <img src="https://img.shields.io/badge/demos-64-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
     <img src="https://img.shields.io/badge/node-%E2%89%A522.18-339933?style=flat&logo=nodedotjs" alt="Node Version">
   </p>
@@ -136,16 +136,16 @@ _Here, when `Bun's` ultimate performance meets `Vue3's` Composition API, when `T
 
 ## ⚡ Why Choose Robot Admin?
 
-### 🔥 Monster-Level Performance Development Experience
+### 🔥 On-Demand Loading and Verifiable Quality
 
-- **Millisecond Hot Updates** - Bun + Vite7 chemical reaction, say goodbye to waiting
-- **Intelligent Type Hints** - TypeScript5.8 + 51+ custom components, IDE intelligence maxed out
-- **Zero Config Out-of-Box** - One command to start, complete admin system in 30 seconds
+- **On-demand loading** - Vite 8 route chunks and component subpath imports, guarded by bundle budgets
+- **Typed integrations** - TypeScript 5.8 and the component library's public types guide consumers
+- **One Bun toolchain** - Install dependencies, run `bun run dev`, and check changes with `bun run verify`
 
 ### 🎨 Not Just a Management System, But a Masterpiece
 
-- **54+ Carefully Crafted Demo Pages** - Each one is production-ready business component, 51 components support docs site iframe live preview
-- **7 Custom Directives** - Debounce, throttle, long press, drag, permission... Make development elegant
+- **64 demo pages** - Component and interaction examples plus 38 public preview routes; demo data is not a production backend
+- **Independent directive package** - Debounce, throttle, long press, drag, and permission helpers come from `@robot-admin/directives`
 - **Theme System** - Dark/Light mode/Follow system + Custom extension support
 
 ### 🛠️ Enterprise Architecture, Personal Projects Can Also Enjoy
@@ -162,10 +162,10 @@ _Here, when `Bun's` ultimate performance meets `Vue3's` Composition API, when `T
 
 ```bash
 # 1. Clone project
-git clone https://github.com/ChenyCHENYU/robot_admin.git
+git clone https://github.com/ChenyCHENYU/Robot_Admin.git
 
 # 2. Enter directory
-cd robot_admin
+cd Robot_Admin
 
 # 3. Install dependencies
 bun install
@@ -174,7 +174,7 @@ bun install
 bun run dev
 ```
 
-**🔥 With the dependency cache ready, the dev server starts in about 3 seconds and keeps millisecond-level updates!**
+Startup and hot-update times depend on the machine, cache, and local-package mode. Use measured results and the build budget to evaluate regressions.
 
 <details>
 <summary><b>📦 More Commands</b></summary>
@@ -196,14 +196,19 @@ bun run lint           # Code check and fix
 bun run lint:check     # Check without modifying files
 bun run format         # Code formatting
 bun run test           # Unit testing
-bun run verify         # Lint + types + tests + production build
+bun run verify         # Both linters + types + unit tests + two builds + bundle budget
+bun run test:e2e       # Browser regressions against built artifacts (install Chromium first)
+bun run check:bundle   # Check the latest production build's bundle budget
+bun run security:audit # Check dependency advisories
 
 # Type Checking
 bun run type-watch     # Watch mode type checking
 bun run type-build     # Full type checking
+bun run type-build:installed # Check contracts against installed package types
 
 # Others
 bun run commit         # Standardized commit (git cz)
+bun run deploy         # Bash branch-sync script; does not bump versions or create tags
 ```
 
 Local integration commands use exact Vite aliases for repository sources and
@@ -255,7 +260,7 @@ To connect a backend, set `VITE_DEPLOYMENT_PROFILE=application`, `VITE_AUTH_MODE
 - **ESLint 10.9** - 📏 Code quality guardian
 - **Prettier 3.9** - ✨ Code formatting
 - **Oxlint 1.52** - 🦀 Ultra-fast Linter written in Rust
-- **Bun Test 1.3** - 🧪 Test runtime aligned with the package manager
+- **Bun Test 1.4** - 🧪 Test runtime aligned with the package manager
 
 **📊 Functional Components**
 
@@ -349,7 +354,7 @@ To connect a backend, set `VITE_DEPLOYMENT_PROFILE=application`, `VITE_AUTH_MODE
 
 `v-copy` Copy | `v-debounce` Debounce | `v-throttle` Throttle | `v-permission` Permission | `v-watermark` Watermark | `v-draggable` Draggable | `v-longpress` Long Press
 
-### 🎪 Demo Pages (54+ Complete Examples)
+### 🎪 Demo Pages (64 Examples)
 
 <details>
 <summary><b>View All Demo Pages</b></summary>
@@ -415,7 +420,7 @@ Robot_Admin/
 │   │   └── 📁 local/                # Local components
 │   ├── 📁 views/                    # Page views
 │   │   ├── 📁 dashboard/            # Data dashboard
-│   │   ├── 📁 demo/                 # Demo pages (54+ feature showcases)
+│   │   ├── 📁 demo/                 # Demo pages (64 index.vue files)
 │   │   ├── 📁 sys-manage/           # System management
 │   │   ├── 📁 login/                # Login/Register
 │   │   └── 📁 home/                 # Project homepage
@@ -425,7 +430,7 @@ Robot_Admin/
 │   ├── 📁 router/                   # Router configuration
 │   ├── 📁 utils/                    # Utility functions
 │   ├── 📁 types/                    # TypeScript type definitions
-│   ├── 📁 directives/               # Custom directives (7 practical directives)
+│   ├── 📁 config/                   # Environment, theme, and build configuration
 │   ├── 📁 assets/                   # Static assets
 │   └── 📁 plugins/                  # Plugin configurations
 ├── 📁 scripts/                      # Build scripts
@@ -590,36 +595,23 @@ graph LR
 
 ---
 
-## 📊 Performance Optimization
-
-### ⚡ Performance Benchmark
+## 📊 Performance and Bundle Budget
 
 <details>
-<summary><b>View Detailed Performance Data</b></summary>
+<summary><b>View the Reproducible Performance Gate</b></summary>
 
-|     Metric     | Robot Admin | Traditional | Improvement |
-| :------------: | :---------: | :---------: | :---------: |
-| 🚀 First Load  |   < 800ms   |    ~2.5s    |  **70%+**   |
-| ⚡ Hot Reload  |   < 100ms   |    ~1.5s    |  **90%+**   |
-| 📦 Build Speed |    < 30s    |    ~2min    |  **75%+**   |
-| 💾 Bundle Size |    < 2MB    |    ~5MB     |  **60%+**   |
-| 🔄 Page Switch |   < 50ms    |   ~300ms    |  **85%+**   |
-
-**Test Environment**: HP Specter 360, 16GB RAM, Node.js 22+
+Run `bun run build && bun run check:bundle` to check entry, preload, CSS, initial-resource total, and largest async chunk budgets. The demo production build on 2026-10-01 measured 306.60 KiB of entry JS, 488.85 KiB / 64 preloads, 290.60 KiB of CSS, and 1086.04 KiB in total; all passed. These are built asset sizes, not network transfer or page-load timings. The command output is the source of truth for current values.
 
 ### Build Optimizations
 
 - **Tree Shaking** - Automatic dead code elimination
 - **Code Splitting** - On-demand loading, reduced initial load time
-- **Asset Compression** - Smart CSS/JS/image compression
-- **CDN Acceleration** - Static asset CDN deployment
+- **Bundle budgets** - Guard initial resources and the largest async chunk after building
 
 ### Runtime Optimizations
 
-- **Virtual Scrolling** - Smooth rendering of large data tables
 - **Component Lazy Loading** - Route-level lazy loading
-- **Image Lazy Loading** - Viewport-based image loading
-- **Debounce & Throttle** - High-frequency operation performance optimization
+- **Optional prefetch** - Progressively warm heavy routes when network and device conditions permit
 
 </details>
 
@@ -653,7 +645,7 @@ We genuinely want to know — please reach out directly:
 
 ```bash
 # 1. Fork + Clone
-git clone https://github.com/yourusername/robot_admin.git
+git clone https://github.com/yourusername/Robot_Admin.git
 
 # 2. Install dependencies
 bun install
@@ -662,6 +654,7 @@ bun install
 git checkout -b feat/awesome-feature
 
 # 4. Commit changes
+bun run verify
 git commit -m "feat: new feature"
 
 # 5. Submit PR
@@ -677,9 +670,9 @@ git commit -m "feat: new feature"
 
 **🧩 Component Development Contributions**
 
-- Place in `src/components/global/`
-- Component names start with `C_`
-- Must have TypeScript type definitions
+- Maintain reusable business components in the separate `@robot-admin/naive-ui-components` repository
+- Keep `src/components/global/` for application-specific bridges, not duplicate library implementations
+- Declare a component `name` and provide TypeScript types
 
 **🛠️ Utility Function Contributions**
 
@@ -707,23 +700,14 @@ See [Contributing Guide](./CONTRIBUTING.md) for more details.
 - **Staging** - Pre-production validation
 - **Production** - Live production environment
 
-**Deployment Options**
-
-- **Vercel** - Zero-config deployment (Recommended)
-- **GitHub Pages** - Static deployment
-- **Docker** - Containerized deployment
-- **Traditional Server** - Nginx deployment
+**Build artifacts and deployment configuration in this repository**
 
 ```bash
-# Docker deployment
-docker build -t robot-admin .
-docker run -p 80:80 robot-admin
-
-# Nginx configuration
-location / {
-  try_files $uri $uri/ /index.html;
-}
+bun run build             # envs/.env.production: public demo artifact in dist/
+bun run build:application # envs/.env.staging: real-application staging artifact in dist/application/
 ```
+
+`vercel.json` supplies the repository's route fallback and security headers. Other hosting platforms need equivalent configuration. A real application also needs remote authentication, business APIs, and a same-origin proxy as described in [`envs/README.md`](envs/README.md); never deploy the public demo profile as a business application. This repository has no Dockerfile or GitHub Pages workflow.
 
 </details>
 
@@ -742,21 +726,23 @@ location / {
 | v2.0.0  | 2026-03-01 | **Breaking** - Single-app restructure, Vite 8, 51+ components |
 | v2.1.0  | 2026-03-06 | SaaS extension, multi-app scaffold                            |
 | v2.2.0  | 2026-03-11 | Layout v2.2.0, env-manager v1.0.5, Robot CLI ✅               |
+| v2.5.0  | 2026-08    | Route-level loading and grouped navigation                    |
+| v2.6.0  | 2026-10    | Production hardening, component integration, and demo gates   |
+| v2.6.1  | 2026-10    | Documentation and contribution guidance aligned with the code |
 
 </details>
 
-### 🚀 Near-term Goals (2026 Q2)
+### 🚀 Next Steps
 
-- [x] ✅ [Robot CLI](https://github.com/ChenyCHENYU/robot-cli) — Scaffolding tool released
-- [x] ✅ [Robot uniApp](https://github.com/ChenyCHENYU/robot-uniapp) — UniApp plugin released
-- [ ] 📚 Component library docs site (VitePress)
-- [ ] 🎨 Visual theme builder
+- [ ] 📈 Real-user Web Vitals and observability integration
+- [ ] 🎨 Visual low-code page templates
+- [ ] 🏢 Multi-tenant support
 
-### 🌟 Long-term Vision (2026 Q3+)
+### 🌟 Long-term Vision
 
 - [ ] 🏗️ Robot Backend — NestJS full-stack service
-- [ ] 🔌 Complete plugin ecosystem
-- [ ] 🤖 AI-assisted code generation integration
+- [ ] 🔄 End-to-end CI/CD example
+- [ ] 🌐 More internationalization coverage
 
 ---
 
@@ -852,7 +838,7 @@ location / {
 
 - **VS Code**: Recommended editor
 - **Git**: >= 2.20.0
-- **Docker**: >= 20.0 (Container deployment)
+- **Docker**: only if you add your own container configuration
 
 </details>
 
@@ -866,49 +852,38 @@ location / {
 ### ❌ Bun Installation Failed
 
 ```bash
-# Windows users
-curl -fsSL https://bun.sh/install | bash
-
 # macOS users
 brew install oven-sh/bun/bun
 
-# PowerShell users can use Bun's official installer
+# Windows PowerShell users can use Bun's official installer
 powershell -c "irm bun.sh/install.ps1 | iex"
 ```
 
 ### ⚠️ Port Occupied Issue
 
 ```bash
-# Modify port in vite.config.ts
-server: {
-  port: 1988, # Change to another port
-  host: true
-}
+# Set this in the Git-ignored envs/.env.local file
+VITE_PORT=1989
 ```
 
 ### 🔧 TypeScript Type Errors
 
 ```bash
-# Regenerate type files
+# Check application and configuration types
 bun run type-build
 
-# Clear type cache
-rm -rf node_modules/.cache
-bun install
+# Check contracts against installed package types
+bun run type-build:installed
 ```
 
 ### 📦 Build Failed
 
 ```bash
-# Check dependency versions
-bun outdated
+# Keep the committed bun.lock and restore its exact dependencies
+bun install --frozen-lockfile
 
-# Clear cache and reinstall
-rm -rf node_modules bun.lockb
-bun install
-
-# Force type check
-bun run type-build
+# Run the complete local gate
+bun run verify
 ```
 
 </details>
@@ -933,31 +908,11 @@ bun run type-build
 
 ---
 
-## 🆚 Comparison with Other Solutions
+## 🎯 Project Scope
 
-<details>
-<summary><b>Why Choose Robot Admin?</b></summary>
-
-|  Feature Comparison   |          Robot Admin          |     Ant Design Pro     |   Vue Element Admin    |   Other Frameworks    |
-| :-------------------: | :---------------------------: | :--------------------: | :--------------------: | :-------------------: |
-|   🚀 Startup Speed    | **~3s warm start (measured)** |   Project-dependent    |   Project-dependent    |   Project-dependent   |
-|     ⚡ Hot Reload     |      **< 100ms Instant**      |       ~1.5s wait       |        ~1s wait        |    Generally slow     |
-|     📦 Build Tool     |    **Vite 8.x (Rolldown)**    |      Webpack/Vite      |      Webpack 4/5       |     Various tools     |
-|     🎨 UI Library     |   **Naive UI Lightweight**    |       Ant Design       |      Element Plus      |    Various choices    |
-|     💪 TypeScript     |   **Complete Type Support**   |     Basic support      |     Basic support      |        Varies         |
-| 🔧 Custom Directives  |  **7 Practical Directives**   |     Few directives     |    Basic directives    | Limited functionality |
-|     📊 Demo Pages     |   **54+ Complete Examples**   |    Limited examples    |    Limited examples    |    Basic examples     |
-|   🎯 Learning Curve   |      **Medium Friendly**      |      High barrier      |     Medium barrier     |    Varies greatly     |
-| 📈 Maintenance Status |   **🔥 Active Maintenance**   | Continuous maintenance | Continuous maintenance |        Varies         |
-
-**Reasons to Choose Robot Admin**:
-
-- 🚀 **Performance First**: Bun + Vite 8 (Rolldown), with an approximately 3-second warm dev-server start after dependency caching
-- 🧩 **Rich Components**: 51+ business components, imported on demand
-- 🎨 **Modern Design**: Naive UI + UnoCSS, beauty and performance coexist
-- 📚 **Learning Friendly**: 54+ demo pages with practical examples
-
-</details>
+- The single-app SPA mainline includes permissions, themes, routing, and Remote/Mock data boundaries; other architectures live on separate branches.
+- Independent packages provide business components and 11 directives; the app consumes deep entries on demand and includes 64 demos under `src/views/demo/`.
+- `bun run verify` and `bun run test:e2e` provide reproducible static, build, and browser gates. Real applications still need backend integration tests.
 
 ---
 
@@ -966,35 +921,29 @@ bun run type-build
 <details>
 <summary><b>FAQ</b></summary>
 
-**🔧 Why recommend using Bun?**
+**🔧 Why use Bun consistently?**
 
-- Installation speed increased by 10x+
-- Lower memory usage
-- Built-in bundler and test runner
-- Fully compatible with Node.js ecosystem
+- The repository's lockfile, scripts, and tests use Bun; mixing package managers can produce different dependency trees.
 
 **🎨 How to customize themes?**
 
-1. Modify CSS variables in `src/assets/css/theme.scss`
-2. Use `C_Theme` component for dynamic switching
-3. Support dark/light mode auto-switching
+1. Adjust application tokens in `src/config/theme/tokens.ts` and Naive UI overrides in `naive-overrides.ts`
+2. Use `C_Theme` for light, dark, or system mode; see the [theme architecture](docs/design-system/THEME-ARCHITECTURE.md)
 
 **🔐 How to use the permission system?**
 
 - Page level: Route guard control
 - Menu level: Dynamic menu generation
 - Button level: v-permission directive
-- API level: axios interceptor
+- API level: the backend must enforce authorization; the client request layer is not a substitute
 
 **📱 Does it support mobile?**
 
-- Full support! Responsive design adapts to all devices
+- Responsive layouts are provided; validate each integrated business page on target devices and browsers
 
 **🔄 How to migrate from other projects?**
 
-- Provide detailed migration guide
-- Component APIs are basically compatible
-- Support progressive migration
+- Use the component library's public types and the 64 demos to migrate one page at a time, then run the checks
 
 </details>
 
@@ -1009,16 +958,6 @@ bun run type-build
 - **GitHub:** [@ChenyCHENYU](https://github.com/ChenyCHENYU)
 - **npm:** [@cheny_yang](https://www.npmjs.com/~cheny_yang)
 - **Public Account:** 前端咔啦咪 (WeChat Official Account)
-
----
-
-### 💬 Join WeChat Group
-
-<p align="center">
-  <img src="public/交流群.jpg" width="200" alt="WeChat Group">
-  <br>
-  <em>Scan to join the WeChat group and chat with the developer</em>
-</p>
 
 ---
 
@@ -1074,7 +1013,11 @@ Thanks to all developers who contributed to this project:
 
 ## 📄 Changelog
 
-### 🚀 v2.6.0 (2026-10-01) — Latest
+### 📝 v2.6.1 (2026-10-01) — Latest
+
+- Updated both READMEs and the contribution, environment, and production guides; removed unverified performance claims and an outdated contact entry
+
+### 🚀 v2.6.0 (2026-10-01)
 
 - 🧩 Upgraded the business component library to `0.13.0` and simplified form, table, and demo usage
 - 🛡️ Strengthened remote data contracts, error redaction, security headers, login, and permission regressions
