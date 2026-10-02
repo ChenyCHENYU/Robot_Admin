@@ -58,10 +58,8 @@
     reLoginStore.hide()
   }
 
-  // 初始化
+  // 首屏渲染完成后移除加载动画；主题已在应用挂载前初始化。
   onMounted(async () => {
-    themeStore.init()
-
     // 确保DOM完全渲染后再移除加载动画
     await nextTick()
 

@@ -27,44 +27,8 @@
     <div class="spline-background">
       <Spline
         scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+        :paused="loading || showTypewriter || captchaVisible"
       />
-    </div>
-
-    <!-- 右上角工具栏：语言 + 主题 -->
-    <div class="login-toolbar">
-      <NButton
-        circle
-        class="login-toolbar__btn"
-        @click="toggleTheme"
-      >
-        <template #icon>
-          <C_Icon
-            :name="
-              themeStore.isDark ? 'mdi:weather-sunny' : 'mdi:weather-night'
-            "
-            :size="16"
-            :title="
-              themeStore.isDark
-                ? t('lp_light_mode', '切换亮色')
-                : t('lp_dark_mode', '切换暗色')
-            "
-          />
-        </template>
-      </NButton>
-
-      <NButton
-        circle
-        class="login-toolbar__btn"
-        @click="toggleLang"
-      >
-        <template #icon>
-          <C_Icon
-            name="mdi:translate"
-            :size="16"
-            :title="langStore.currentLang === 'zh-cn' ? 'English' : '中文'"
-          />
-        </template>
-      </NButton>
     </div>
 
     <!-- 登录面板 -->
@@ -76,8 +40,14 @@
         :features="LOGIN_FEATURES"
         :social-providers="SOCIAL_PROVIDERS"
         :loading="loading"
-        default-username="CHENY"
-        default-password="123456"
+        :captcha-provider="LOGIN_CAPTCHA_PROVIDER"
+        :captcha-challenge-url="LOGIN_CAPTCHA_CHALLENGE_URL"
+        :captcha-verifier="LOGIN_CAPTCHA_VERIFIER"
+        :require-captcha-server-verification="
+          LOGIN_REQUIRE_CAPTCHA_SERVER_VERIFICATION
+        "
+        :default-username="loginDefaults.username"
+        :default-password="loginDefaults.password"
         @submit="handleLogin"
         @captcha-submit="handleCaptchaLogin"
         @send-code="handleSendCode"
@@ -85,6 +55,7 @@
         @forgot-password="handleForgotPassword"
         @register-submit="handleRegisterSubmit"
         @register-send-code="handleRegisterSendCode"
+        @captcha-visible-change="captchaVisible = $event"
       />
     </div>
   </div>
@@ -92,42 +63,74 @@
 
 <script setup lang="ts">
   import { initDynamicRouter } from '@/router/dynamicRouter'
+  import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
   import { s_userStore } from '@/stores/user/index'
-  import { s_themeStore } from '@/stores/theme'
-  import { s_languageStore } from '@/stores/language'
-  import { loginApi, type LoginResponse } from '@/api/auth'
+  import { getAuthMode, loginApi, type LoginResponse } from '@/api/auth'
   import { useLoginController } from '@/composables/useLoginController'
-  import { LOGIN_FEATURES, SOCIAL_PROVIDERS, createWelcomeConfig } from './data'
+  import {
+    LOGIN_FEATURES,
+    SOCIAL_PROVIDERS,
+    createWelcomeConfig,
+    resolveLoginDefaults,
+  } from './data'
+  import {
+    LOGIN_CAPTCHA_CHALLENGE_URL,
+    LOGIN_CAPTCHA_PROVIDER,
+    LOGIN_CAPTCHA_VERIFIER,
+    LOGIN_REQUIRE_CAPTCHA_SERVER_VERIFICATION,
+  } from './captcha'
   import Spline from './components/Spline.vue'
   import Typewriter from './components/Typewriter.vue'
-  import './index.scss'
+
+  defineOptions({ name: 'LoginPage' })
+
+  type TranslateFunction = (
+    key: string,
+    fallback: string,
+    scope: string
+  ) => string
+  const runtimeGlobal = globalThis as typeof globalThis & {
+    $t?: TranslateFunction
+  }
 
   const router = useRouter()
   const message = useMessage()
   const userStore = s_userStore()
-  const themeStore = s_themeStore()
-  const langStore = s_languageStore()
+  const loginDefaults = resolveLoginDefaults(getAuthMode())
 
   // ===== i18n helper =====
   const t = (key: string, fallback: string) =>
-    typeof (globalThis as any).$t === 'function'
-      ? (globalThis as any).$t(key, fallback, 'robot_admin')
+    typeof runtimeGlobal.$t === 'function'
+      ? runtimeGlobal.$t(key, fallback, 'robot_admin')
       : fallback
 
   // ===== 打字机 =====
   const showTypewriter = ref(true)
+  const captchaVisible = ref(false)
 
-  // ===== 工具栏 =====
-  const toggleTheme = () =>
-    themeStore.setMode(themeStore.isDark ? 'light' : 'dark')
-  const toggleLang = () =>
-    langStore.setLanguage(langStore.currentLang === 'zh-cn' ? 'en' : 'zh-cn')
+  // 登录页稳定呈现后再空闲预热认证壳层。用户完成人机验证期间即可完成加载，
+  // 不把布局模块的开发态转换/解析成本留到点击登录之后。
+  let cancelShellWarmup: (() => void) | undefined
+  onMounted(() => {
+    const warmup = () => void preloadAuthenticatedShell().catch(() => undefined)
+    if (typeof window.requestIdleCallback === 'function') {
+      const handle = window.requestIdleCallback(warmup, { timeout: 1500 })
+      cancelShellWarmup = () => window.cancelIdleCallback(handle)
+      return
+    }
+
+    const handle = window.setTimeout(warmup, 800)
+    cancelShellWarmup = () => window.clearTimeout(handle)
+  })
+  onBeforeUnmount(() => cancelShellWarmup?.())
 
   // ===== 登录控制器（业务逻辑全部由 composable 托管） =====
+  let pendingShellPreload: Promise<void> | null = null
+
   const {
     loginRef,
     loading,
-    handleLogin,
+    handleLogin: submitLogin,
     handleCaptchaLogin,
     handleSendCode,
     handleSocialLogin,
@@ -141,17 +144,33 @@
     welcomeConfig: createWelcomeConfig(t),
 
     onLoginSuccess: async (response, formData) => {
-      userStore.handleLoginSuccess(response.data.token)
-      userStore.setUserInfo(formData)
-      const ok = await initDynamicRouter()
-      if (!ok) throw new Error('动态路由初始化失败')
-      router.replace('/home')
+      userStore.handleLoginSuccess(
+        response.data.token,
+        response.data.refreshToken,
+        response.data.expiresIn
+      )
+      userStore.setUserInfo(
+        response.data.user ?? {
+          username: String(formData.username ?? ''),
+        }
+      )
+      const [ok] = await Promise.all([
+        initDynamicRouter(),
+        pendingShellPreload ?? preloadAuthenticatedShell(),
+      ])
+      if (userStore.token !== response.data.token) return
+      if (!ok) {
+        userStore.clearSession()
+        throw new Error('动态路由初始化失败')
+      }
+      await router.replace('/home')
     },
 
     onError: error => console.error('登录错误:', error),
 
-    onCaptchaLogin: () =>
-      message.info(t('lp_captcha_wip', '验证码登录功能开发中，敬请期待')),
+    onCaptchaLogin: () => {
+      message.info(t('lp_captcha_wip', '验证码登录功能开发中，敬请期待'))
+    },
 
     onSendCode: account =>
       message.info(`${t('lp_code_sent', '验证码已发送至')} ${account}`),
@@ -162,12 +181,22 @@
     onForgotPassword: () =>
       message.info(t('lp_forgot_wip', '忘记密码功能开发中，请联系管理员')),
 
-    onRegisterSubmit: data => {
+    onRegisterSubmit: () => {
       message.info(t('lp_reg_wip', '注册功能开发中，敬请期待'))
-      console.log('注册信息:', data)
     },
 
     onRegisterSendCode: phone =>
       message.info(`${t('lp_code_sent', '验证码已发送至')} ${phone}`),
   })
+
+  /** 登录请求与认证后布局并行加载，避免成功后才开始整条页面加载链。 */
+  const handleLogin: typeof submitLogin = formData => {
+    pendingShellPreload = preloadAuthenticatedShell()
+    void pendingShellPreload.catch(() => undefined)
+    return submitLogin(formData)
+  }
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

@@ -23,9 +23,9 @@
           @validate-error="handleValidateError"
         >
           <!-- 自定义操作按钮 -->
-          <template #action="{ validate, reset }">
+          <template #action="{ submit, reset, submitting }">
             <C_ActionBar
-              :actions="getFormActions(validate, reset)"
+              :actions="getFormActions(submit, reset, submitting)"
               :config="{ align: 'center', gap: 12 }"
             />
           </template>
@@ -48,7 +48,7 @@
             @click="showPreview = false"
           >
             <template #icon>
-              <div class="i-mdi:close"></div>
+              <div class="i-mdi-close"></div>
             </template>
           </NButton>
         </template>
@@ -74,16 +74,17 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07FormDynamicLayout' })
   import {
     useDynamicFormState,
     DYNAMIC_FORM_STATE_KEY,
     type FormModel,
+    type FormOption,
     type FormInstance,
     type LabelPlacement,
     type DynamicFormConfig,
-    type DynamicFieldConfig,
-    type ActionItem,
-  } from '@robot-admin/naive-ui-components'
+  } from '@robot-admin/naive-ui-components/C_Form'
+  import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     DYNAMIC_FORM_CONFIG,
     BASE_FORM_OPTIONS,
@@ -94,7 +95,6 @@
     formatFieldsForPreview,
     FORM_ACTIONS,
     PREVIEW_TABS,
-    VALIDATION_CONFIG,
   } from './data'
 
   // ==================== Props ====================
@@ -110,10 +110,10 @@
 
   // ==================== Emits ====================
   const emit = defineEmits<{
-    submit: [payload: any]
+    submit: [payload: { model: FormModel }]
     'validate-success': [model: FormModel]
-    'validate-error': [errors: any]
-    'fields-change': [fields: any[]]
+    'validate-error': [errors: unknown]
+    'fields-change': [fields: FormOption[]]
   }>()
 
   // ==================== v-model ====================
@@ -121,7 +121,7 @@
 
   // ================= 页面状态 =================
   const formRef = ref<FormInstance>()
-  const submitLoading = ref(false)
+  const message = useMessage()
   const showPreview = ref(false)
 
   // 动态表单配置（使用响应式对象以支持运行时修改）
@@ -146,17 +146,13 @@
     dynamic: layoutConfig.value.dynamic,
     labelPlacement: labelPlacement.value,
     validateOnChange: validateOnChange.value,
-    onFieldAdd: handleFieldAdd,
-    onFieldRemove: handleFieldRemove,
-    onFieldToggle: handleFieldToggle,
-    onFieldsClear: handleFieldsClear,
-    onFieldsChange: handleFieldsChange,
   }))
 
   // ================= 表单操作按钮配置 =================
   const getFormActions = (
-    validate: () => Promise<void>,
-    reset: () => void
+    submit: () => Promise<boolean>,
+    reset: () => void,
+    submitting: boolean
   ): ActionItem[] => [
     {
       key: 'reset',
@@ -166,11 +162,13 @@
     },
     {
       key: 'submit',
-      label: FORM_ACTIONS.submit.getText(submitLoading.value),
+      label: FORM_ACTIONS.submit.getText(submitting),
       icon: FORM_ACTIONS.submit.icon,
       type: FORM_ACTIONS.submit.type as 'primary',
-      loading: submitLoading.value,
-      onClick: () => submitWithValidation(validate),
+      loading: submitting,
+      onClick: async () => {
+        if (!(await submit())) message.error('请检查动态表单中的必填字段')
+      },
     },
     {
       key: 'preview',
@@ -219,64 +217,15 @@
     showPreview.value = true
   }
 
-  const submitWithValidation = async (validate: () => Promise<void>) => {
-    try {
-      submitLoading.value = true
-      await validate()
-
-      // 模拟提交延迟
-      await new Promise(resolve =>
-        setTimeout(resolve, VALIDATION_CONFIG.SUBMIT_DELAY)
-      )
-
-      console.log(
-        VALIDATION_CONFIG.MESSAGES.SUBMIT_SUCCESS,
-        '包含字段数量:',
-        allFields.value.length
-      )
-    } catch (error) {
-      console.error(VALIDATION_CONFIG.MESSAGES.SUBMIT_ERROR, error)
-    } finally {
-      submitLoading.value = false
-    }
-  }
-
   // ================= 事件处理方法 =================
-  const handleSubmit = (payload: any) => {
-    console.log(VALIDATION_CONFIG.MESSAGES.SUBMIT_SUCCESS, payload)
-    emit('submit', payload) // 🔥 关键：向父组件转发事件
-  }
+  const handleSubmit = (payload: { model: FormModel }) =>
+    emit('submit', payload)
 
-  const handleValidateSuccess = (model: FormModel) => {
-    console.log(VALIDATION_CONFIG.MESSAGES.VALIDATION_SUCCESS, model)
-    emit('validate-success', model) // 🔥 关键：向父组件转发事件
-  }
+  const handleValidateSuccess = (model: FormModel) =>
+    emit('validate-success', model)
 
-  const handleValidateError = (errors: any) => {
-    console.error(VALIDATION_CONFIG.MESSAGES.VALIDATION_ERROR, errors)
-    emit('validate-error', errors) // 🔥 关键：向父组件转发事件
-  }
-
-  const handleFieldAdd = (fieldConfig: DynamicFieldConfig) => {
-    console.log(VALIDATION_CONFIG.MESSAGES.FIELD_ADD, fieldConfig)
-  }
-
-  const handleFieldRemove = (fieldId: string) => {
-    console.log(VALIDATION_CONFIG.MESSAGES.FIELD_REMOVE, fieldId)
-  }
-
-  const handleFieldToggle = (fieldId: string, visible: boolean) => {
-    console.log(VALIDATION_CONFIG.MESSAGES.FIELD_TOGGLE, fieldId, visible)
-  }
-
-  const handleFieldsClear = () => {
-    console.log(VALIDATION_CONFIG.MESSAGES.FIELDS_CLEAR)
-  }
-
-  const handleFieldsChange = (fields: any[]) => {
-    console.log('字段变化:', fields.length)
-    emit('fields-change', fields) // 🔥 关键：向父组件转发事件
-  }
+  const handleValidateError = (errors: unknown) =>
+    emit('validate-error', errors)
 
   // ==================== 工具方法 ====================
   const validate = async (): Promise<void> => {
@@ -302,22 +251,13 @@
     newFields => {
       emit('fields-change', newFields)
     },
-    { deep: true }
+    { deep: true, immediate: true }
   )
 
   // ================= 生命周期 =================
   onMounted(() => {
     // 初始化动态表单状态
     dynamicState.initialize(BASE_FORM_OPTIONS, formConfig)
-
-    // 🔥 关键：主动触发fields-change事件
-    nextTick(() => {
-      emit('fields-change', allFields.value)
-    })
-
-    console.log('✅ 动态表单演示页面初始化完成')
-    console.log('📝 基础字段数量:', BASE_FORM_OPTIONS.length)
-    console.log('⚙️ 配置信息:', formConfig)
   })
 
   // ================= 对外暴露 =================
@@ -328,7 +268,6 @@
     formConfig,
     dynamicState,
     previewData,
-    submitWithValidation,
     formRef,
   })
 </script>

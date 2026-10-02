@@ -67,7 +67,7 @@
       "path": "/demo",
       "name": "demo",
       "component": "layout",
-      "redirect": "/demo/01-icon",
+      "redirect": "/demo/icon",
       "meta": {
         "icon": "mdi:ev-plug-chademo",
         "title": "示范组件",
@@ -268,6 +268,19 @@
               "meta": {
                 "icon": "mdi:table-multiple",
                 "title": "表格动态行",
+                "hidden": false,
+                "full": false,
+                "affix": false,
+                "keepAlive": false
+              }
+            },
+            {
+              "path": "mach-table",
+              "name": "demo-mach-table",
+              "component": "/demo/57-mach-table/index",
+              "meta": {
+                "icon": "mdi:table-large",
+                "title": "Mach Table",
                 "hidden": false,
                 "full": false,
                 "affix": false,
@@ -729,11 +742,11 @@
         {
           "path": "xxx-xxx",
           "name": "xxx-xxx",
-          "component": "/demo/35-xxx/index",
+          "component": "/demo/34-production-cost/index",
           "meta": {
             "icon": "mdi:performance",
             "title": "绩效看板",
-            "hidden": false,
+            "hidden": true,
             "full": false,
             "affix": false,
             "keepAlive": false
@@ -745,7 +758,7 @@
       "path": "/hooks",
       "name": "hooks",
       "component": "layout",
-      "redirect": "/export-zip",
+      "redirect": "/hooks/export-zip",
       "meta": {
         "icon": "mdi:hook",
         "title": "独立 Hooks ",

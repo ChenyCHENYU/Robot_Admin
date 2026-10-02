@@ -1,4 +1,5 @@
 import type { FormRules } from 'naive-ui/es'
+import type { AccountProfile } from '@/api/account'
 
 // ==================== 类型定义 ====================
 export interface ProfileFormData {
@@ -10,19 +11,7 @@ export interface ProfileFormData {
   avatar: string
 }
 
-export interface ProfileInfo {
-  username: string
-  nickname: string
-  email: string
-  phone: string
-  bio: string
-  avatar: string
-  role: string
-  department: string
-  createTime: string
-  lastLoginTime: string
-  lastLoginIp: string
-}
+export type ProfileInfo = AccountProfile
 
 // ==================== 表单验证规则 ====================
 export const PROFILE_FORM_RULES: FormRules = {
@@ -68,16 +57,30 @@ export const MOCK_PROFILE: ProfileInfo = {
   lastLoginIp: '192.168.1.100',
 }
 
+export const EMPTY_PROFILE: ProfileInfo = {
+  username: '',
+  nickname: '',
+  email: '',
+  phone: '',
+  bio: '',
+  avatar: '',
+  role: '',
+  department: '',
+  createTime: '',
+  lastLoginTime: '',
+  lastLoginIp: '',
+}
+
 // ==================== 信息展示配置 ====================
 export const ACCOUNT_INFO_ITEMS = [
-  { label: '用户名', key: 'username', icon: 'i-mdi:account-outline' },
-  { label: '角色', key: 'role', icon: 'i-mdi:shield-account-outline' },
-  { label: '部门', key: 'department', icon: 'i-mdi:domain' },
-  { label: '注册时间', key: 'createTime', icon: 'i-mdi:calendar-plus-outline' },
+  { label: '用户名', key: 'username', icon: 'i-mdi-account-outline' },
+  { label: '角色', key: 'role', icon: 'i-mdi-shield-account-outline' },
+  { label: '部门', key: 'department', icon: 'i-mdi-domain' },
+  { label: '注册时间', key: 'createTime', icon: 'i-mdi-calendar-plus-outline' },
   {
     label: '上次登录',
     key: 'lastLoginTime',
-    icon: 'i-mdi:clock-outline',
+    icon: 'i-mdi-clock-outline',
   },
-  { label: '登录 IP', key: 'lastLoginIp', icon: 'i-mdi:ip-network-outline' },
+  { label: '登录 IP', key: 'lastLoginIp', icon: 'i-mdi-ip-network-outline' },
 ] as const

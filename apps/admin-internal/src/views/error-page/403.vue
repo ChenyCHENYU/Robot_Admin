@@ -95,12 +95,12 @@
     <!-- 盾牌装饰 -->
     <div class="absolute top-32 right-32 opacity-10">
       <div
-        class="i-mdi:shield-alert text-4xl text-blue-400 animate-pulse"
+        class="i-mdi-shield-alert text-4xl text-blue-400 animate-pulse"
       ></div>
     </div>
     <div class="absolute bottom-32 left-32 opacity-10">
       <div
-        class="i-mdi:shield-lock text-4xl text-indigo-400 animate-pulse"
+        class="i-mdi-shield-lock text-4xl text-indigo-400 animate-pulse"
       ></div>
     </div>
   </div>

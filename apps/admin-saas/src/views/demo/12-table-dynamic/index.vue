@@ -115,11 +115,13 @@
 </style>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo12TableDynamic' })
   import type {
     DataRecord,
     SimpleTableActions,
   } from '@robot-admin/naive-ui-components'
-  import { useTableCrud } from '@robot-admin/request-core'
+  import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
+  import { toCrudTableColumns } from '@/utils/d_tableColumns'
   import {
     type DynamicEmployee,
     type Log,
@@ -143,9 +145,9 @@
   const watermarkStyle = ref('')
 
   // 表格数据管理
-  const table = useTableCrud<DynamicEmployee>({
+  const table = useNaiveTableCrud<DynamicEmployee>({
     api: { list: 'employees/dynamicList' },
-    columns: dynamicTableColumns,
+    columns: toCrudTableColumns(dynamicTableColumns),
   })
 
   const { data: tableData, loading, refresh } = table
@@ -206,8 +208,6 @@
           rotate: -45,
         },
       },
-      onRowChange: (data: DataRecord[]) =>
-        console.log('行数据变化:', data.length, '行'),
       defaultRowData: createDefaultEmployee,
     },
     edit: { modalTitle: '编辑员工信息', modalWidth: 700 },

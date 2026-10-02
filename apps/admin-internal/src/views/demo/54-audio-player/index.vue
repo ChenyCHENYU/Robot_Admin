@@ -31,7 +31,7 @@
           <NTag
             :bordered="false"
             size="small"
-            :type="(TAG_TYPE_MAP[feat.tag] as any) ?? 'default'"
+            :type="TAG_TYPE_MAP[feat.tag] ?? 'default'"
           >
             {{ feat.tag }}
           </NTag>
@@ -87,8 +87,6 @@
             :show-playlist="showPlaylist"
             :show-cover="showCover"
             theme="default"
-            @play="handlePlay"
-            @pause="handlePause"
           />
         </NCard>
 
@@ -107,6 +105,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo54AudioPlayer' })
   import { computed, ref } from 'vue'
   import {
     DEMO_SCENES,
@@ -116,7 +115,6 @@
     TAG_TYPE_MAP,
     VOICE_TRACKS,
   } from './data'
-  import './index.scss'
 
   // 场景切换
   const activeScene = ref<'music' | 'voice' | 'podcast'>('music')
@@ -130,8 +128,8 @@
   // 控制选项
   const showCover = ref(true)
   const showPlaylist = ref(true)
-
-  // 事件处理
-  const handlePlay = (idx: number) => console.log('[AudioPlayer] play:', idx)
-  const handlePause = () => console.log('[AudioPlayer] pause')
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

@@ -107,11 +107,12 @@
 </template>
 
 <script setup lang="ts">
-  import { useHighlight } from '@/plugins/highlight'
+  defineOptions({ name: 'Demo14CodeEditor' })
+  import { initializeHighlight } from '@/plugins/highlight'
   import { languageOptions, codeExamples, sampleCodes } from './data'
 
   const message = useMessage()
-  const highlight = useHighlight()
+  const highlight = initializeHighlight()
 
   const selectedLanguage = ref('cpp')
   const loading = ref(false)

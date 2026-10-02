@@ -1,16 +1,36 @@
-import type { FormOption } from '@robot-admin/naive-ui-components'
-import { PRESET_RULES, RULE_COMBOS } from '@robot-admin/form-validate'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-01
+ * @FilePath: \Robot_Admin\src\views\demo\07-form\layouts\DefaultLayout\data.ts
+ * @Description: 默认布局表单模型、字段配置与提示文案
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+import { defineFormOptions } from '@robot-admin/naive-ui-components/C_Form'
+import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
+
+export interface DefaultFormData {
+  username?: string
+  realName?: string
+  age?: number
+  gender?: 'male' | 'female'
+  email?: string
+  phone?: string
+  password?: string
+  address?: string
+  description?: string
+}
 
 /**
  * 表单字段配置
  */
-export const formOptions: FormOption[] = [
+export const formOptions = defineFormOptions<DefaultFormData>([
   {
     type: 'input',
     prop: 'username',
     label: '用户名',
     placeholder: '请输入用户名',
-    rules: RULE_COMBOS.username('用户名'),
+    rules: NAIVE_COMBOS.username('用户名'),
   },
   {
     type: 'input',
@@ -45,21 +65,21 @@ export const formOptions: FormOption[] = [
     prop: 'email',
     label: '邮箱',
     placeholder: '请输入邮箱地址',
-    rules: RULE_COMBOS.email('邮箱'),
+    rules: NAIVE_COMBOS.email('邮箱'),
   },
   {
     type: 'input',
     prop: 'phone',
     label: '手机号',
     placeholder: '请输入手机号',
-    rules: RULE_COMBOS.mobile('手机号'),
+    rules: NAIVE_COMBOS.mobile('手机号'),
   },
   {
     type: 'input',
     prop: 'password',
     label: '密码',
     placeholder: '请输入密码',
-    rules: RULE_COMBOS.password('密码'),
+    rules: NAIVE_COMBOS.password('密码'),
     attrs: { type: 'password', showPasswordOn: 'mousedown' },
   },
   {
@@ -78,7 +98,7 @@ export const formOptions: FormOption[] = [
     value: '',
     attrs: { height: 200 },
   },
-]
+])
 
 /**
  * 表单提示消息

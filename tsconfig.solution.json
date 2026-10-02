@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./apps/admin-internal/tsconfig.json" },
+    { "path": "./apps/admin-saas/tsconfig.json" },
+    { "path": "./packages/shared-config/tsconfig.json" }
+  ]
+}

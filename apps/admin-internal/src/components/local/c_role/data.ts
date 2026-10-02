@@ -1,3 +1,5 @@
+import type { TagProps } from 'naive-ui'
+
 // ==================== 权限抽屉相关类型定义 ====================
 export type PermissionType = 'menu' | 'button' | 'api'
 
@@ -40,7 +42,7 @@ export const PERMISSION_CONFIG = {
     { label: '按钮权限', value: 'button' },
     { label: '接口权限', value: 'api' },
   ],
-} as const
+}
 
 /** 统计面板类型选项 */
 export const TYPE_STAT_OPTIONS = [
@@ -155,7 +157,7 @@ export const usePermissionUtils = () => {
     api: 'mdi:api',
   }
 
-  const colorMap: Record<PermissionType, string> = {
+  const colorMap: Record<PermissionType, TagProps['type']> = {
     menu: 'info',
     button: 'success',
     api: 'warning',
@@ -170,7 +172,7 @@ export const usePermissionUtils = () => {
   // 简化的获取方法
   const getPermissionIcon = (type: PermissionType): string =>
     iconMap[type] || 'mdi:circle'
-  const getPermissionTypeColor = (type: PermissionType) =>
+  const getPermissionTypeColor = (type: PermissionType): TagProps['type'] =>
     colorMap[type] || 'default'
   const getPermissionTypeName = (type: PermissionType) => nameMap[type] || type
 

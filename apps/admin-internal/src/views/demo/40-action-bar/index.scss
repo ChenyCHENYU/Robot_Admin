@@ -1,1 +1,38 @@
-// 样式已迁移到 index.vue 的 scoped style 中
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-03-28
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-03-28
+ * @FilePath: \Robot_Admin\src\views\demo\40-action-bar\index.scss
+ * @Description: 操作按钮组演示页面样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+*/
+
+.action-bar-demo-page {
+  padding: 20px;
+
+  // 卡片标题右侧说明文字
+  :deep(.n-card-header__extra) {
+    font-size: 13px;
+  }
+}
+
+// 卡片内容区域
+.card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+// 提示文字样式
+.hint-text {
+  font-size: 13px;
+  color: var(--n-text-color-3);
+  line-height: 1.6;
+}
+
+// 配置项标签
+.config-label {
+  font-size: 14px;
+  color: var(--n-text-color-2);
+  margin-right: 8px;
+}

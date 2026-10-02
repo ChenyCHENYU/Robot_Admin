@@ -1,0 +1,32 @@
+name: Monorepo CI
+
+on:
+  push:
+    branches: [monorepo, upgrade/monorepo-2.6.3]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.18.0
+      - name: Install workspace dependencies
+        run: bun ci
+      - name: Verify both applications
+        run: bun run verify
+      - name: Audit workspace dependencies
+        run: bun run security:audit
+      - name: Install Chromium
+        run: bunx playwright install --with-deps chromium
+      - name: Browser smoke for both applications
+        run: bun run test:e2e

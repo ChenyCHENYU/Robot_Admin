@@ -1,4 +1,5 @@
-import type { TableColumn, DataRecord } from '@robot-admin/naive-ui-components'
+import type { DataRecord, TableColumn } from '@robot-admin/naive-ui-components'
+import type { TagProps } from 'naive-ui'
 
 // ================= 类型定义 =================
 export interface ChildWorkData {
@@ -245,8 +246,8 @@ export const dynamicTableColumns: TableColumn<DataRecord>[] = [
 ]
 
 // ================= 工具函数 =================
-export const getLogTagType = (type: Log['type']) => {
-  const typeMap = {
+export const getLogTagType = (type: Log['type']): TagProps['type'] => {
+  const typeMap: Record<Log['type'], TagProps['type']> = {
     add: 'success',
     delete: 'error',
     edit: 'warning',

@@ -75,6 +75,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo29AntvX6Editor' })
   import type {
     DiagramType,
     DiagramData,

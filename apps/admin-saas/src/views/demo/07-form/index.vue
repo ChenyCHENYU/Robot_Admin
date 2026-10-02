@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-06 16:24:01
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-14 16:57:14
+ * @LastEditTime: 2026-03-28 12:26:13
  * @FilePath: \Robot_Admin\src\views\demo\07-form\index.vue
  * @Description: 表单组件 - 演示页面 - 入口文件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -154,7 +154,7 @@
         @submit="handleSubmit"
         @validate-success="errorCount = 0"
         @validate-error="handleValidateError"
-        @fields-change="currentFields = $event || []"
+        @fields-change="handleFieldsChange"
       />
     </NCard>
 
@@ -336,10 +336,12 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07Form' })
   import type {
     LayoutType,
     LabelPlacement,
     FormModel,
+    FormOption,
   } from '@robot-admin/naive-ui-components'
   import { layoutOptions, layoutDescriptions, testDataConfig } from './data'
 
@@ -391,38 +393,45 @@
   // ========================================
   // 响应式状态
   // ========================================
-  const layoutRef = ref()
+  interface LayoutExpose {
+    validate?: () => Promise<void>
+    resetFields?: () => void
+  }
+
+  type PreviewMode = (typeof PREVIEW_MODES)[number]['value']
+
+  const layoutRef = ref<LayoutExpose | null>(null)
   const formData = ref<FormModel>({})
   const currentLayout = ref<LayoutType>('default')
   const labelPlacement = ref<LabelPlacement>('left')
   const validateOnChange = ref(false)
-  const currentFields = ref<any[]>([])
+  const currentFields = ref<FormOption[]>([])
   const errorCount = ref(0)
   const showModal = ref(false)
-  const previewMode = ref('json')
+  const previewMode = ref<PreviewMode>('json')
   const copying = ref(false)
 
   // ========================================
   // 工具函数
   // ========================================
-  const isValueFilled = (value: any): boolean => {
+  const isValueFilled = (value: unknown): boolean => {
     if (value === null || value === undefined || value === '') return false
     if (typeof value === 'string') return value.trim() !== ''
     if (Array.isArray(value)) return value.length > 0
-    if (typeof value === 'number') return value > 0
+    if (typeof value === 'number') return Number.isFinite(value)
     if (typeof value === 'boolean') return value === true
     if (typeof value === 'object') return Object.keys(value).length > 0
     return false
   }
 
-  const getValueType = (value: any): string => {
+  const getValueType = (value: unknown): string => {
     if (value === null) return 'null'
     if (value === undefined) return 'undefined'
     if (Array.isArray(value)) return 'array'
     return typeof value
   }
 
-  const formatValueDisplay = (value: any): string => {
+  const formatValueDisplay = (value: unknown): string => {
     if (value === null || value === undefined) return '空值'
     if (typeof value === 'string') return value || '空字符串'
     if (Array.isArray(value)) return `[${value.length} 项]`
@@ -512,7 +521,6 @@ export default formData;`
         } catch (errors) {
           errorCount.value = Array.isArray(errors) ? errors.length : 1
           message.error('表单验证失败')
-          console.error('验证错误:', errors)
         }
       },
     }
@@ -538,8 +546,7 @@ export default formData;`
 
       await navigator.clipboard.writeText(textToCopy)
       message.success('数据已复制到剪贴板')
-    } catch (error) {
-      console.error('复制失败:', error)
+    } catch {
       message.error('复制失败，请手动选择文本复制')
     } finally {
       copying.value = false
@@ -564,14 +571,27 @@ export default formData;`
   // ========================================
   // 事件处理
   // ========================================
-  const handleSubmit = (payload: any) => {
-    console.log('表单提交:', payload)
-    message.success('表单提交成功')
+  const handleSubmit = (): void => {
+    message.success('已接收表单数据（演示，不会持久化）')
   }
 
-  const handleValidateError = (errors: any) => {
+  const handleValidateError = (errors: unknown): void => {
     errorCount.value = Array.isArray(errors) ? errors.length : 1
-    console.error('表单验证失败:', errors)
+  }
+
+  const handleFieldsChange = (fields: unknown): void => {
+    currentFields.value = Array.isArray(fields)
+      ? fields.filter(isFormOption)
+      : []
+  }
+
+  /** 仅接收包含合法字段名与组件类型的表单配置。 */
+  function isFormOption(value: unknown): value is FormOption {
+    if (typeof value !== 'object' || value === null) return false
+    return (
+      typeof Reflect.get(value, 'prop') === 'string' &&
+      typeof Reflect.get(value, 'type') === 'string'
+    )
   }
 </script>
 

@@ -8,7 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { fileURLToPath, URL } from 'node:url'
-import { getLocalPackagesAlias } from './localPackagesAlias'
+import { getLocalPackagesAlias } from './localPackagesAlias.ts'
 
 /**
  * Vite resolve 配置
@@ -17,12 +17,12 @@ import { getLocalPackagesAlias } from './localPackagesAlias'
  * 配置路径别名和模块解析规则
  *
  * **别名优先级：**
- * 1. 本地包别名（仅在 dev:local 模式启用，包括 monorepo 包和独立本地包）
+ * 1. 本地包别名（按 dev:components、dev:table、dev:local 的边界启用）
  * 2. 项目路径别名（@ 和 _views）
  */
 export default {
   alias: [
-    // 本地包调试别名（仅 dev:local 模式）
+    // 本地包调试别名（源码、子入口与样式入口保持同一仓库来源）
     ...getLocalPackagesAlias(),
     // 项目路径别名
     {
@@ -35,6 +35,20 @@ export default {
         new URL('../../../src/views', import.meta.url)
       ),
     },
+  ],
+
+  // 本地源码包从仓库外部加载时，强制复用应用侧的单例运行时与 UI 上下文。
+  // 既避免 Vue/Naive UI 双实例，也减少各源码联调模式的重复模块。
+  dedupe: [
+    'vue',
+    'vue-router',
+    'pinia',
+    'naive-ui',
+    '@iconify/vue',
+    // 组件源码模式与应用的甘特图演示都会引用 VisActor；统一解析到应用侧，
+    // 避免两个仓库的 node_modules 各打入一份约 2 MiB 的渲染运行时。
+    '@visactor/vtable',
+    '@visactor/vtable-gantt',
   ],
 
   // ⚡ 扩展名解析优化

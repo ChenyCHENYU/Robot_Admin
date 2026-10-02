@@ -106,7 +106,6 @@
               <NButton
                 type="primary"
                 @click="loadUrlFile"
-                :loading="urlLoading"
               >
                 <template #icon>
                   <C_Icon name="ic:outline-preview" />
@@ -222,7 +221,7 @@
           <div class="config-preview">
             <div class="config-file-selector mb-4">
               <NSelect
-                v-model:value="selectedConfigFile"
+                v-model:value="selectedConfigFileKey"
                 :options="configFileOptions"
                 placeholder="选择演示文件"
               />
@@ -265,6 +264,8 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo32FilePreview' })
+  import { resolveExternalLink } from '@/utils/d_externalLink'
   import type { UploadFileInfo } from 'naive-ui/es'
   import {
     SCENARIOS,
@@ -288,7 +289,6 @@
 
   // 场景2: URL预览
   const fileUrl = ref('')
-  const urlLoading = ref(false)
   const currentUrlFile = ref<{ url: string; name: string } | null>(null)
 
   const presetUrls = PRESET_URLS
@@ -298,9 +298,17 @@
   const activeFileIndex = ref(0)
 
   // 场景4: 配置选项
-  const selectedConfigFile = ref<FileOption | null>(null)
+  const selectedConfigFileKey = ref<string | null>(null)
 
   const configFileOptions = CONFIG_FILE_OPTIONS
+
+  const selectedConfigFile = computed<FileOption | null>(() => {
+    return (
+      configFileOptions.find(
+        option => option.value === selectedConfigFileKey.value
+      )?.file ?? null
+    )
+  })
 
   // 计算属性
   const currentBatchFile = computed(() => {
@@ -337,21 +345,16 @@
 
   // 场景2方法
   const loadUrlFile = () => {
-    if (!fileUrl.value) {
-      message.warning('请输入文件URL')
+    const url = resolveExternalLink(fileUrl.value, window.location.origin)
+    if (!url) {
+      message.warning('请输入 HTTPS 地址或站内文件路径')
       return
     }
 
-    urlLoading.value = true
     currentUrlFile.value = {
-      url: fileUrl.value,
-      name: fileUrl.value.split('/').pop() || 'document',
+      url,
+      name: new URL(url).pathname.split('/').pop() || 'document',
     }
-
-    setTimeout(() => {
-      urlLoading.value = false
-      message.success('文件加载成功')
-    }, 1000)
   }
 
   const selectPresetUrl = (preset: (typeof presetUrls)[0]) => {

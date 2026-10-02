@@ -10,7 +10,7 @@
             :src="profileData.avatar"
           />
           <div class="avatar-overlay">
-            <span class="i-mdi:camera-outline"></span>
+            <span class="i-mdi-camera-outline"></span>
           </div>
         </div>
         <div class="info-section">
@@ -22,15 +22,15 @@
           }}</p>
           <div class="info-meta">
             <span class="meta-item">
-              <span class="i-mdi:shield-account-outline meta-icon" />
+              <span class="i-mdi-shield-account-outline meta-icon" />
               {{ profileData.role }}
             </span>
             <span class="meta-item">
-              <span class="i-mdi:domain meta-icon" />
+              <span class="i-mdi-domain meta-icon" />
               {{ profileData.department }}
             </span>
             <span class="meta-item">
-              <span class="i-mdi:clock-outline meta-icon" />
+              <span class="i-mdi-clock-outline meta-icon" />
               上次登录：{{ profileData.lastLoginTime }}
             </span>
           </div>
@@ -154,10 +154,14 @@
   } from 'naive-ui/es'
   import {
     MOCK_PROFILE,
+    EMPTY_PROFILE,
     PROFILE_FORM_RULES,
     ACCOUNT_INFO_ITEMS,
     type ProfileFormData,
   } from './data'
+  import { getAccountProfileApi, updateAccountProfileApi } from '@/api/account'
+  import { useLatestRequest } from '@/composables/useLatestRequest'
+  import { isMockDataMode } from '@/config/dataMode'
 
   defineOptions({ name: 'AccountProfile' })
 
@@ -165,8 +169,9 @@
   const formRef = ref<FormInst | null>(null)
   const saving = ref(false)
 
-  // 个人信息（Mock）
-  const profileData = reactive({ ...MOCK_PROFILE })
+  const profileData = reactive({
+    ...(isMockDataMode() ? MOCK_PROFILE : EMPTY_PROFILE),
+  })
 
   // 表单数据
   const formData = reactive<ProfileFormData>({
@@ -190,17 +195,36 @@
   const handleSave = async () => {
     try {
       await formRef.value?.validate()
-      saving.value = true
-      // TODO: 调用 API 保存
-      await new Promise(resolve => setTimeout(resolve, 800))
+    } catch {
+      return
+    }
+
+    saving.value = true
+    try {
+      await updateAccountProfileApi({ ...formData })
       Object.assign(profileData, formData)
       message.success('个人资料已更新')
     } catch {
-      // 表单验证失败
+      message.error('个人资料更新失败，请稍后重试')
     } finally {
       saving.value = false
     }
   }
+
+  const { run: runLatestProfileRequest } = useLatestRequest()
+
+  onMounted(async () => {
+    try {
+      const response = await runLatestProfileRequest(signal =>
+        getAccountProfileApi(MOCK_PROFILE, signal)
+      )
+      if (!response) return
+      Object.assign(profileData, response.data)
+      Object.assign(formData, response.data)
+    } catch {
+      message.error('个人资料加载失败，请稍后重试')
+    }
+  })
 </script>
 
 <style scoped lang="scss">

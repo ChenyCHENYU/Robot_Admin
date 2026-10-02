@@ -1,3 +1,5 @@
+> Both Monorepo workspace apps are aligned with the monolithic **2.6.3** baseline while retaining independent builds and dev ports. `admin-saas` is still a SaaS architecture scaffold; it does **not** implement a multi-tenant backend yet. The Vite shared-factory comparisons below remain historical design discussion, not the current built-in app configuration. See the [Monorepo upgrade guide](docs/MONOREPO_UPGRADE.md) and repository configuration for commands, deployment boundaries, and verification.
+
 <div align="center">
   <a href="https://robotadmin.cn">
     <picture>
@@ -23,8 +25,8 @@
       <td align="center" width="200">
         <strong>📦 Monorepo</strong><br>
         <sub><b>📍 Current branch</b> — Bun Workspaces</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo-upgrade">
-          <img src="https://img.shields.io/badge/branch-monorepo--upgrade-00d8ff?style=flat-square" alt="Monorepo">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
+          <img src="https://img.shields.io/badge/branch-monorepo-00d8ff?style=flat-square" alt="Monorepo">
         </a>
       </td>
       <td align="center" width="200">
@@ -46,7 +48,7 @@
 
   <br>
 
-  <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo-upgrade/LICENSE">
+  <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
   </a>
   <img src="https://img.shields.io/badge/Node.js-≥22-339933?logo=node.js" alt="Node.js">
@@ -185,14 +187,14 @@ Robot_Admin/
 
 | Package                            | Purpose                                  | Version |
 | ---------------------------------- | ---------------------------------------- | ------- |
-| `@robot-admin/naive-ui-components` | 51 business components                   | 0.6.31  |
-| `@robot-admin/layout`              | 6 layout modes + settings panel          | 2.2.0   |
-| `@robot-admin/request-core`        | Axios + 7 plugins + useTableCrud         | 0.1.3   |
-| `@robot-admin/theme`               | Theme switching (Light/Dark/System)      | 0.1.1   |
-| `@robot-admin/directives`          | 11 Vue directives                        | 1.1.0   |
-| `@robot-admin/form-validate`       | 48+ form validation rules                | 2.0.0   |
-| `@robot-admin/file-utils`          | File processing (Excel/ZIP/chunk upload) | 1.0.0   |
-| `@robot-admin/git-standards`       | Git engineering standards                | 1.0.3   |
+| `@robot-admin/naive-ui-components` | 51 business components                   | 0.13.0  |
+| `@robot-admin/layout`              | 6 layout modes + settings panel          | 3.2.1   |
+| `@robot-admin/request-core`        | Pluggable Axios request layer            | 0.6.1   |
+| `@robot-admin/theme`               | Theme switching (Light/Dark/System)      | 0.6.1   |
+| `@robot-admin/directives`          | Vue directives                           | 2.0.1   |
+| `@robot-admin/form-validate`       | Form validation rules                    | 3.4.2   |
+| `@robot-admin/file-utils`          | File processing (Excel/ZIP/chunk upload) | 3.0.1   |
+| `@robot-admin/git-standards`       | Git engineering standards                | 1.0.5   |
 
 ---
 
@@ -217,7 +219,7 @@ bun -v    # 1.3.x+
 # Clone the repository
 git clone https://github.com/ChenyCHENYU/Robot_Admin.git
 cd Robot_Admin
-git checkout monorepo-upgrade
+git checkout monorepo
 
 # Install all workspace dependencies (one install, entire repo)
 bun install

@@ -1,5 +1,13 @@
 import type { FormRules } from 'naive-ui/es'
 import type { DataRecord } from '@robot-admin/naive-ui-components'
+import {
+  deleteData,
+  getData,
+  postData,
+  putData,
+} from '@robot-admin/request-core/axios'
+import { isMockDataMode } from '@/config/dataMode'
+import { delayWithSignal } from '@/utils/abort'
 
 // ==================== 类型定义 ====================
 export type UserType = 'internal' | 'external' | 'partner' | 'guest'
@@ -78,7 +86,7 @@ export interface ResetPasswordForm {
 }
 
 export interface ApiResponse<T = unknown> {
-  code: string
+  code: string | number
   data: T
   msg: string
 }
@@ -86,6 +94,11 @@ export interface ApiResponse<T = unknown> {
 export interface PageResult<T> {
   list: T[]
   total: number
+  page: number
+  pageSize: number
+}
+
+export interface UserListParams extends Partial<SearchForm> {
   page: number
   pageSize: number
 }
@@ -107,7 +120,7 @@ export const UI_CONFIG = {
     defaultPageSize: 20,
     pageSizes: [10, 20, 50, 100],
   },
-} as const
+}
 
 // ==================== 组件配置 ====================
 export const COMPONENT_CONFIG = {
@@ -212,21 +225,33 @@ export const USER_FORM_RULES: FormRules = {
   password: [
     { required: true, message: '请输入密码', trigger: ['input', 'blur'] },
     {
-      min: 6,
-      max: 20,
-      message: '密码长度在 6 到 20 个字符',
+      min: 8,
+      max: 64,
+      message: '密码长度在 8 到 64 个字符',
+      trigger: ['input', 'blur'],
+    },
+    {
+      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+      message: '密码必须同时包含大写字母、小写字母和数字',
       trigger: ['input', 'blur'],
     },
   ],
 }
 
-export const RESET_PASSWORD_RULES: FormRules = {
+export const createResetPasswordRules = (
+  getNewPassword: () => string
+): FormRules => ({
   newPassword: [
     { required: true, message: '请输入新密码', trigger: ['input', 'blur'] },
     {
-      min: 6,
-      max: 20,
-      message: '密码长度在 6 到 20 个字符',
+      min: 8,
+      max: 64,
+      message: '密码长度在 8 到 64 个字符',
+      trigger: ['input', 'blur'],
+    },
+    {
+      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+      message: '密码必须同时包含大写字母、小写字母和数字',
       trigger: ['input', 'blur'],
     },
   ],
@@ -237,16 +262,15 @@ export const RESET_PASSWORD_RULES: FormRules = {
       trigger: ['input', 'blur'],
     },
     {
-      validator: (rule: any, value: string) => {
-        const form = rule.form as ResetPasswordForm
-        return value !== form.newPassword
-          ? Promise.reject('两次密码输入不一致')
-          : Promise.resolve()
+      validator: (_rule, value: string) => {
+        return value !== getNewPassword()
+          ? Promise.reject(new Error('两次密码输入不一致'))
+          : true
       },
       trigger: ['input', 'blur'],
     },
   ],
-}
+})
 
 // ==================== 默认数据 ====================
 export const DEFAULT_USER_FORM_DATA: UserFormData = {
@@ -257,7 +281,7 @@ export const DEFAULT_USER_FORM_DATA: UserFormData = {
   userType: 'internal',
   deptId: null,
   roleIds: [],
-  password: '123456',
+  password: '',
   status: 1,
   remark: '',
   companyName: '',
@@ -433,14 +457,16 @@ export const MOCK_USER_DATA: UserData[] = [
 ]
 
 // ==================== 工具函数 ====================
-const createMockApi = <T>(data: T, delay = 500) =>
-  new Promise<ApiResponse<T>>(resolve => {
-    setTimeout(() => {
-      resolve({ code: '0', data, msg: '成功' })
-    }, delay)
-  })
+const createMockApi = async <T>(
+  data: T,
+  delay = 500,
+  signal?: AbortSignal
+): Promise<ApiResponse<T>> => {
+  await delayWithSignal(delay, signal)
+  return { code: '0', data, msg: '成功' }
+}
 
-const filterUsers = (users: UserData[], params: any): UserData[] => {
+const filterUsers = (users: UserData[], params: UserListParams): UserData[] => {
   let filtered = [...users]
 
   // 关键词搜索
@@ -470,9 +496,10 @@ const filterUsers = (users: UserData[], params: any): UserData[] => {
   }
 
   // 角色筛选
-  if (params.roleId) {
+  const { roleId } = params
+  if (roleId) {
     filtered = filtered.filter(
-      user => user.roleIds && user.roleIds.includes(params.roleId)
+      user => user.roleIds && user.roleIds.includes(roleId)
     )
   }
 
@@ -489,22 +516,88 @@ const paginateData = <T>(data: T[], page: number, pageSize: number) => {
 
 // ==================== API 方法 ====================
 export const getUserListApi = async (
-  params: any
+  params: UserListParams,
+  signal?: AbortSignal
 ): Promise<ApiResponse<PageResult<UserData>>> => {
+  if (!isMockDataMode()) {
+    const response = await getData<ApiResponse<PageResult<UserData>>>(
+      '/sys/users',
+      { params: { ...params }, signal }
+    )
+    MOCK_USER_DATA.splice(0, MOCK_USER_DATA.length, ...response.data.list)
+    return response
+  }
   const filteredUsers = filterUsers(MOCK_USER_DATA, params)
   const paginatedData = paginateData(
     filteredUsers,
     params.page,
     params.pageSize
   )
-  return createMockApi(paginatedData)
+  return createMockApi(paginatedData, 500, signal)
 }
 
-export const getDeptListApi = async (): Promise<ApiResponse<DeptData[]>> =>
-  createMockApi(MOCK_DEPT_DATA, 300)
+export const getDeptListApi = async (): Promise<ApiResponse<DeptData[]>> => {
+  if (isMockDataMode()) return createMockApi(MOCK_DEPT_DATA, 300)
+  const response = await getData<ApiResponse<DeptData[]>>('/sys/departments')
+  MOCK_DEPT_DATA.splice(0, MOCK_DEPT_DATA.length, ...response.data)
+  return response
+}
 
-export const getUserRolesApi = async (): Promise<ApiResponse<RoleData[]>> =>
-  createMockApi(MOCK_ROLE_DATA, 300)
+export const getUserRolesApi = async (): Promise<ApiResponse<RoleData[]>> => {
+  if (isMockDataMode()) return createMockApi(MOCK_ROLE_DATA, 300)
+  const response = await getData<ApiResponse<RoleData[]>>('/sys/roles/options')
+  MOCK_ROLE_DATA.splice(0, MOCK_ROLE_DATA.length, ...response.data)
+  return response
+}
+
+export const createUserApi = async (data: UserFormData): Promise<void> => {
+  if (isMockDataMode()) {
+    await createMockApi(undefined, 300)
+    return
+  }
+  await postData('/sys/users', data)
+}
+
+export const updateUserApi = async (
+  id: string,
+  data: UserFormData
+): Promise<void> => {
+  if (isMockDataMode()) {
+    await createMockApi(undefined, 300)
+    return
+  }
+  await putData(`/sys/users/${id}`, data)
+}
+
+export const deleteUserApi = async (id: string): Promise<void> => {
+  if (isMockDataMode()) {
+    await createMockApi(undefined, 250)
+    return
+  }
+  await deleteData(`/sys/users/${id}`)
+}
+
+export const updateUserStatusApi = async (
+  id: string,
+  status: number
+): Promise<void> => {
+  if (isMockDataMode()) {
+    await createMockApi(undefined, 250)
+    return
+  }
+  await putData(`/sys/users/${id}/status`, { status })
+}
+
+export const resetUserPasswordApi = async (
+  id: string,
+  password: string
+): Promise<void> => {
+  if (isMockDataMode()) {
+    await createMockApi(undefined, 300)
+    return
+  }
+  await postData(`/sys/users/${id}/reset-password`, { password })
+}
 
 // ==================== 工具函数 ====================
 /**

@@ -8,34 +8,48 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { HEAVY_PAGE_ROUTES } from './heavyPages'
+import { resolve } from 'node:path'
+import { DEV_WARMUP_FILES } from '../heavyPages.ts'
+import { getLocalPackageInfo } from './localPackagesAlias.ts'
+
+const localPackageInfo = getLocalPackageInfo()
+const useLocalMonorepoRoots =
+  localPackageInfo.enabled ||
+  localPackageInfo.selectiveMode ||
+  localPackageInfo.standaloneMode
+const localPackageRoots = [
+  ...(useLocalMonorepoRoots
+    ? [
+        resolve(process.cwd(), '../../../robot-admin-packages'),
+        resolve(process.cwd(), '../../../naive-ui-components'),
+      ]
+    : []),
+  ...(localPackageInfo.machTableMode ? [localPackageInfo.machTableRoot] : []),
+]
 
 export default {
+  // 固定 IPv4 回环地址，避免 Windows 上 localhost 在 ::1 / 127.0.0.1
+  // 之间切换后，旧页面的动态模块或 HMR 请求偶发 ERR_CONNECTION_REFUSED。
+  host: '127.0.0.1',
   port: 1988,
-  hmr: { overlay: true },
-  open: true,
+  strictPort: true,
+  hmr: { host: '127.0.0.1', overlay: true },
+  open: false,
+
+  // 仅使用 Vite 原生 warmup 预转换冷启动最重的页面；运行时仍保持路由级按需加载。
+  warmup: {
+    clientFiles: DEV_WARMUP_FILES,
+  },
 
   // 🚫 忽略 lang 目录的文件变化，避免自动刷新页面
   watch: {
     ignored: ['**/lang/**', '**/node_modules/**'],
   },
 
-  // 允许访问外部包目录（@robot-admin/layout）
+  // 仅允许当前联调命令声明的外部源码仓库。
   fs: {
-    allow: ['..'],
-  },
-
-  // ⚡ 预热高频文件（开发环境优化 - 首次访问更快）
-  // 经测试：不影响启动速度（6s → 6s），但能加快首次访问 50-70%
-  warmup: {
-    clientFiles: [
-      // 核心文件
-      './src/App.vue',
-      './src/router/index.ts',
-
-      // 重量级页面（自动映射 HEAVY_PAGE_ROUTES，会自动预热它们的依赖组件）
-      ...HEAVY_PAGE_ROUTES.map(route => `./src/views${route}/index.vue`),
-    ],
+    strict: true,
+    allow: [resolve(process.cwd()), ...localPackageRoots],
   },
 
   proxy: {

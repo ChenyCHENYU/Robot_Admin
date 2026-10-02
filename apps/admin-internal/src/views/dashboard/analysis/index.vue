@@ -18,14 +18,14 @@
             type="primary"
             class="ml-3"
           >
-            <template #icon><div class="i-mdi:refresh"></div></template>
+            <template #icon><div class="i-mdi-refresh"></div></template>
           </NButton>
           <NButton
             circle
             type="primary"
             class="ml-2"
           >
-            <template #icon><div class="i-mdi:search"></div></template>
+            <template #icon><div class="i-mdi-search"></div></template>
           </NButton>
         </div>
       </NCol>
@@ -62,7 +62,7 @@
               <div class="card-footer">
                 <div
                   :class="
-                    card.trend > 0 ? 'i-mdi:arrow-up' : 'i-mdi:arrow-down'
+                    card.trend > 0 ? 'i-mdi-arrow-up' : 'i-mdi-arrow-down'
                   "
                 ></div>
                 <span :class="card.trend > 0 ? 'text-success' : 'text-danger'"
@@ -87,7 +87,7 @@
         >
           <div class="card-header">
             <h4 class="text-muted">Products</h4>
-            <div class="i-mdi:ellipsis-horizontal"></div>
+            <div class="i-mdi-ellipsis-horizontal"></div>
           </div>
           <div
             class="chart-container no-padding"
@@ -115,7 +115,7 @@
         >
           <div class="card-header">
             <h4 class="text-muted">Revenue</h4>
-            <div class="i-mdi:ellipsis-horizontal"></div>
+            <div class="i-mdi-ellipsis-horizontal"></div>
           </div>
           <div class="chart-legend">
             <NRow>
@@ -153,7 +153,7 @@
         >
           <div class="card-header">
             <h4 class="text-muted">Revenue by Location</h4>
-            <div class="i-mdi:ellipsis-horizontal"></div>
+            <div class="i-mdi-ellipsis-horizontal"></div>
           </div>
           <div
             class="chart-container"
@@ -191,7 +191,7 @@
             <h4 class="text-muted">TOP SELLING PRODUCTS</h4>
             <div class="btn-link">
               <span>Export</span>
-              <div class="i-mdi:download ml-1"></div>
+              <div class="i-mdi-download ml-1"></div>
             </div>
           </div>
           <NDataTable
@@ -223,7 +223,7 @@
             >
               <div class="card-header">
                 <h4 class="text-muted">TOTAL SALES</h4>
-                <div class="i-mdi:ellipsis-horizontal"></div>
+                <div class="i-mdi-ellipsis-horizontal"></div>
               </div>
               <div
                 class="chart-container small"
@@ -256,7 +256,7 @@
             >
               <div class="card-header">
                 <h4 class="text-light">AVERAGE SALE SIZE</h4>
-                <div class="i-mdi:ellipsis-horizontal text-light"></div>
+                <div class="i-mdi-ellipsis-horizontal text-light"></div>
               </div>
               <div class="avg-content">
                 <div class="badge-container">
@@ -270,7 +270,7 @@
                 >
                   more
                   <template #icon
-                    ><div class="i-mdi:chevron-right ml-1"></div
+                    ><div class="i-mdi-chevron-right ml-1"></div
                   ></template>
                 </NButton>
               </div>
@@ -282,7 +282,7 @@
             >
               <div class="card-header">
                 <h4 class="text-muted">RECENT ACTIVITY</h4>
-                <div class="i-mdi:ellipsis-horizontal"></div>
+                <div class="i-mdi-ellipsis-horizontal"></div>
               </div>
               <div class="timeline-container">
                 <NTimeline>
@@ -320,24 +320,24 @@
   const tableRef = ref()
 
   const infoCards = [
-    { title: 'Customers', value: '37,258', trend: 6.28, icon: 'i-mdi:cart' },
+    { title: 'Customers', value: '37,258', trend: 6.28, icon: 'i-mdi-cart' },
     {
       title: 'Orders',
       value: '3,258',
       trend: -2.28,
-      icon: 'i-mdi:jewelry-box',
+      icon: 'i-mdi-jewelry-box',
     },
     {
       title: 'Revenue',
       value: '￥3,258',
       trend: -3.28,
-      icon: 'i-mdi:billboard',
+      icon: 'i-mdi-billboard',
     },
     {
       title: 'Growth',
       value: '+ 20.48%',
       trend: 5.28,
-      icon: 'i-mdi:chart-line',
+      icon: 'i-mdi-chart-line',
     },
   ]
 

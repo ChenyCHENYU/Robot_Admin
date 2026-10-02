@@ -12,6 +12,8 @@ node_modules
 dist
 dist-ssr
 coverage
+test-results/
+playwright-report/
 *.local
 
 # Monorepo

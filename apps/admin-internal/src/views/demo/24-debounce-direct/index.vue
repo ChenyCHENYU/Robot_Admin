@@ -368,6 +368,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo24DebounceDirect' })
   import {
     CODE_EXAMPLES,
     createDemoState,

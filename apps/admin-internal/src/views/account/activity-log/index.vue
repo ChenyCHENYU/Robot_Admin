@@ -15,7 +15,7 @@
         >
           <template #prefix>
             <span
-              class="i-mdi:magnify"
+              class="i-mdi-magnify"
               style="font-size: 16px; color: #9ca3af"
             />
           </template>
@@ -48,13 +48,13 @@
           @click="handleSearch"
         >
           <template #icon>
-            <span class="i-mdi:magnify" />
+            <span class="i-mdi-magnify" />
           </template>
           查询
         </NButton>
         <NButton @click="handleReset">
           <template #icon>
-            <span class="i-mdi:refresh" />
+            <span class="i-mdi-refresh" />
           </template>
           重置
         </NButton>
@@ -69,7 +69,7 @@
       <div class="stats-bar">
         <div class="stat-card">
           <div class="stat-icon stat-total">
-            <span class="i-mdi:format-list-bulleted" />
+            <span class="i-mdi-format-list-bulleted" />
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.total }}</div>
@@ -78,7 +78,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon stat-success">
-            <span class="i-mdi:check-circle-outline" />
+            <span class="i-mdi-check-circle-outline" />
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.success }}</div>
@@ -87,7 +87,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon stat-failed">
-            <span class="i-mdi:close-circle-outline" />
+            <span class="i-mdi-close-circle-outline" />
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.failed }}</div>
@@ -96,7 +96,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon stat-today">
-            <span class="i-mdi:calendar-today" />
+            <span class="i-mdi-calendar-today" />
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.today }}</div>
@@ -133,6 +133,7 @@
     NButton,
     NDatePicker,
     NDataTable,
+    useMessage,
   } from 'naive-ui/es'
   import {
     MOCK_ACTIVITY_RECORDS,
@@ -141,8 +142,12 @@
     createColumns,
     type ActivitySearchForm,
   } from './data'
+  import { getAccountActivityLogsApi } from '@/api/account'
+  import { useLatestRequest } from '@/composables/useLatestRequest'
+  import { isMockDataMode } from '@/config/dataMode'
 
   defineOptions({ name: 'AccountActivityLog' })
+  const message = useMessage()
 
   // 搜索表单
   const searchForm = reactive<ActivitySearchForm>({
@@ -170,8 +175,7 @@
     },
   })
 
-  // 全部记录（Mock）
-  const allRecords = ref([...MOCK_ACTIVITY_RECORDS])
+  const allRecords = ref(isMockDataMode() ? [...MOCK_ACTIVITY_RECORDS] : [])
 
   // 过滤后的记录
   const filteredRecords = computed(() => {
@@ -230,6 +234,19 @@
     searchForm.dateRange = null
     pagination.page = 1
   }
+
+  const { run: runLatestActivityRequest } = useLatestRequest()
+
+  onMounted(async () => {
+    try {
+      const response = await runLatestActivityRequest(signal =>
+        getAccountActivityLogsApi(MOCK_ACTIVITY_RECORDS, signal)
+      )
+      if (response) allRecords.value = response.data
+    } catch {
+      message.error('活动记录加载失败，请稍后重试')
+    }
+  })
 </script>
 
 <style scoped lang="scss">

@@ -1,3 +1,5 @@
+> Monorepo 分支的两个工作区应用已按单体主线 **2.6.3** 对齐依赖、页面和质量门禁，保留独立构建与端口。`admin-saas` 目前仍是 SaaS 架构演示壳层，**不代表多租户后端已经实现**。下文的 Vite 共享工厂等架构对比保留为历史设计讨论，不代表当前内置应用的配置；实际命令、部署边界与验证以 [Monorepo 升级指南](docs/MONOREPO_UPGRADE.md) 和仓库配置为准。
+
 <div align="center">
   <a href="https://robotadmin.cn">
     <picture>
@@ -23,8 +25,8 @@
       <td align="center" width="200">
         <strong>📦 Monorepo</strong><br>
         <sub><b>📍 当前分支</b> — Bun Workspaces</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo-upgrade">
-          <img src="https://img.shields.io/badge/分支-monorepo--upgrade-00d8ff?style=flat-square" alt="Monorepo">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
+          <img src="https://img.shields.io/badge/分支-monorepo-00d8ff?style=flat-square" alt="Monorepo">
         </a>
       </td>
       <td align="center" width="200">
@@ -46,7 +48,7 @@
 
   <br>
 
-  <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo-upgrade/LICENSE">
+  <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
   </a>
   <img src="https://img.shields.io/badge/Node.js-≥22-339933?logo=node.js" alt="Node.js">
@@ -305,17 +307,17 @@ export default createEslintConfig()
 
 ### 应用对比
 
-| 特性         |    admin-internal 🏢    |     admin-saas ☁️     |
-| ------------ | :---------------------: | :-------------------: |
-| **定位**     |     企业内部完整版      |   SaaS 多租户轻量版   |
-| **包名**     | `@robot-admin/internal` |  `@robot-admin/saas`  |
-| **版本**     |          2.2.0          |         1.0.0         |
-| **端口**     |          1988           |         1989          |
-| **标题**     | ROBOT ADMIN \| INTERNAL |  ROBOT ADMIN \| SAAS  |
-| **功能范围** |     55+ 个功能演示      |   按需裁剪核心页面    |
-| **独立构建** |           ✅            |          ✅           |
-| **独立部署** |           ✅            |          ✅           |
-| **共享配置** |  ✅ 继承 shared-config  | ✅ 继承 shared-config |
+| 特性         |    admin-internal 🏢    |         admin-saas ☁️          |
+| ------------ | :---------------------: | :----------------------------: |
+| **定位**     |     企业内部完整版      |       SaaS 架构演示壳层        |
+| **包名**     | `@robot-admin/internal` |      `@robot-admin/saas`       |
+| **版本**     |          2.6.3          |             2.6.3              |
+| **端口**     |          1988           |              1989              |
+| **标题**     | ROBOT ADMIN \| INTERNAL |      ROBOT ADMIN \| SAAS       |
+| **功能范围** |     主线完整演示集      | 同步主线演示集，待细化租户能力 |
+| **独立构建** |           ✅            |               ✅               |
+| **独立部署** |           ✅            |               ✅               |
+| **共享配置** |  ✅ 继承 shared-config  |     ✅ 继承 shared-config      |
 
 ---
 
@@ -404,14 +406,14 @@ ROOT/                                    ROOT/
 
 | 包名                               | 功能                                     | 版本   |
 | ---------------------------------- | ---------------------------------------- | ------ |
-| `@robot-admin/naive-ui-components` | 51 个业务组件（Form / Table / Upload …） | 0.6.31 |
-| `@robot-admin/layout`              | 6 种布局模式 + 设置面板                  | 2.2.0  |
-| `@robot-admin/request-core`        | Axios + 7 插件 + useTableCrud            | 0.1.3  |
-| `@robot-admin/theme`               | 主题切换（Light / Dark / System）        | 0.1.1  |
-| `@robot-admin/directives`          | 11 个 Vue 指令                           | 1.1.0  |
-| `@robot-admin/form-validate`       | 48+ 表单验证规则                         | 2.0.0  |
-| `@robot-admin/file-utils`          | 文件处理（Excel / ZIP / 分片上传）       | 1.0.0  |
-| `@robot-admin/git-standards`       | Git 工程化标准                           | 1.0.3  |
+| `@robot-admin/naive-ui-components` | 51 个业务组件（Form / Table / Upload …） | 0.13.0 |
+| `@robot-admin/layout`              | 6 种布局模式 + 设置面板                  | 3.2.1  |
+| `@robot-admin/request-core`        | Axios + 插件化请求层                     | 0.6.1  |
+| `@robot-admin/theme`               | 主题切换（Light / Dark / System）        | 0.6.1  |
+| `@robot-admin/directives`          | Vue 指令集                               | 2.0.1  |
+| `@robot-admin/form-validate`       | 表单验证规则                             | 3.4.2  |
+| `@robot-admin/file-utils`          | 文件处理（Excel / ZIP / 分片上传）       | 3.0.1  |
+| `@robot-admin/git-standards`       | Git 工程化标准                           | 1.0.5  |
 
 ---
 
@@ -436,7 +438,7 @@ bun -v    # 1.3.x+
 # 克隆仓库
 git clone https://github.com/ChenyCHENYU/Robot_Admin.git
 cd Robot_Admin
-git checkout monorepo-upgrade
+git checkout monorepo
 
 # 安装所有 workspace 依赖（一次安装，全仓生效）
 bun install

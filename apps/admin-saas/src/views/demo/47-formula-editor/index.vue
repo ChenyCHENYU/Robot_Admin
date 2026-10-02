@@ -37,7 +37,6 @@
           v-model="basicFormula"
           :variables="salesVariables"
           :sample-data="salesSampleData"
-          @change="onBasicChange"
           @validation-change="onBasicValidation"
         />
         <div class="demo-output">
@@ -201,6 +200,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo47FormulaEditor' })
   import type {
     FormulaEditorExpose,
     FormulaValidation,
@@ -224,11 +224,6 @@
 
   const basicFormula = ref(DEFAULT_BASIC_FORMULA)
   const basicValid = ref(true)
-
-  /** 公式变更 */
-  function onBasicChange(value: string) {
-    console.log('[Formula] 公式变更:', value)
-  }
 
   /** 校验变更 */
   function onBasicValidation(result: FormulaValidation) {

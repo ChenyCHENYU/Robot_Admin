@@ -14,6 +14,7 @@ import type {
   QualityDefinition,
   SubtitleTrack,
   AntiCheatConfig,
+  VideoPlayerProps,
 } from '@robot-admin/naive-ui-components'
 
 /* ======================== 公开测试视频源 ======================== */
@@ -110,11 +111,13 @@ export const DEMO_ANTI_CHEAT: AntiCheatConfig = {
 /* ======================== 场景配置 ======================== */
 
 export interface DemoScene {
-  key: string
+  key: DemoSceneKey
   title: string
   description: string
   icon: string
 }
+
+export type DemoSceneKey = 'basic' | 'hls' | 'education'
 
 export const DEMO_SCENES: DemoScene[] = [
   {
@@ -136,6 +139,43 @@ export const DEMO_SCENES: DemoScene[] = [
     icon: 'mdi:school-outline',
   },
 ]
+
+/** 公共播放选项只定义一次，场景配置仅补充差异项。 */
+const BASE_PLAYER_PROPS = {
+  fluid: true,
+  fullscreen: true,
+  pip: true,
+  keyboard: true,
+  screenshot: true,
+} satisfies Partial<VideoPlayerProps>
+
+export const DEMO_PLAYER_PROPS: Record<DemoSceneKey, VideoPlayerProps> = {
+  basic: {
+    ...BASE_PLAYER_PROPS,
+    url: DEMO_SOURCES.mp4,
+    poster: DEMO_SOURCES.poster,
+    subtitles: DEMO_SUBTITLES,
+    autoplayMuted: true,
+  },
+  hls: {
+    ...BASE_PLAYER_PROPS,
+    url: DEMO_SOURCES.hls,
+    sourceType: 'hls',
+    autoplayMuted: true,
+  },
+  education: {
+    ...BASE_PLAYER_PROPS,
+    url: DEMO_SOURCES.mp4,
+    poster: DEMO_SOURCES.poster,
+    autoplayMuted: false,
+    qualityList: DEMO_QUALITY_LIST,
+    chapters: DEMO_CHAPTERS,
+    quizzes: DEMO_QUIZZES,
+    subtitles: DEMO_SUBTITLES,
+    antiCheat: DEMO_ANTI_CHEAT,
+    playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
+  },
+}
 
 /* ======================== 功能特性列表 ======================== */
 

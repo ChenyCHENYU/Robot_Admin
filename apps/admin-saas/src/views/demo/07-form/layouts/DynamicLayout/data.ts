@@ -13,7 +13,7 @@ import type {
   FormOption,
   DynamicFormConfig,
 } from '@robot-admin/naive-ui-components'
-import { PRESET_RULES } from '@robot-admin/form-validate'
+import { PRESET_RULES } from '@/utils/d_formValidate'
 
 const { required } = PRESET_RULES
 
@@ -158,17 +158,17 @@ export const PREVIEW_TABS = [
   {
     name: 'formData',
     tab: '表单数据',
-    icon: 'i-mdi:form-select',
+    icon: 'i-mdi-form-select',
   },
   {
     name: 'config',
     tab: '动态配置',
-    icon: 'i-mdi:cog',
+    icon: 'i-mdi-cog',
   },
   {
     name: 'allFields',
     tab: '所有字段',
-    icon: 'i-mdi:view-list',
+    icon: 'i-mdi-view-list',
   },
 ] as const
 
@@ -242,7 +242,7 @@ export const formatFieldsForPreview = (fields: FormOption[]) =>
     prop: f.prop,
     label: f.label,
     type: f.type,
-    required: f.rules?.some((rule: any) => rule.required) || false,
+    required: Boolean(f.required || f.rules?.some(rule => rule.required)),
     span: f.layout?.span || 12,
   }))
 

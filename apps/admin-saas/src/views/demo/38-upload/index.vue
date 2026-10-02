@@ -324,6 +324,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo38Upload' })
   import type {
     UploadFileItem,
     UploadExpose,

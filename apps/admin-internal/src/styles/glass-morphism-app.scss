@@ -1,0 +1,171 @@
+/**
+ * iOS 拟态玻璃风格 — 项目级增强
+ *
+ * 作用域：[data-design-style="glass-morphism"]
+ * 补充 @robot-admin/theme 包级别的组件样式，提供项目级的布局和背景增强
+ * 不影响：菜单系统（由 data-menu-theme 独立控制）
+ */
+
+/* ===========================================
+ * Layer 1: 布局背景 — 让玻璃效果有层次感
+ * =========================================== */
+
+/**
+ * 亮色 + 玻璃风格：柔和的渐变底色
+ * 玻璃组件需要非纯白底色才能体现通透质感
+ */
+[data-design-style='glass-morphism'] body {
+  background:
+    linear-gradient(135deg, #e8eef5 0%, #f0f4f8 40%, #eae8f5 70%, #f0f4f8 100%);
+  background-attachment: fixed;
+}
+
+/**
+ * 暗色 + 玻璃风格：深邃的渐变底色
+ */
+[data-design-style='glass-morphism'][data-theme='dark'] body {
+  background:
+    linear-gradient(135deg, #0f172a 0%, #1a1625 40%, #0f172a 70%, #151520 100%);
+  background-attachment: fixed;
+}
+
+/* ===========================================
+ * Layer 2: 内容区域增强
+ * =========================================== */
+
+/**
+ * 布局内容区（.layout-content / .n-layout-content）
+ * 继承透明背景，让底层渐变穿透
+ */
+[data-design-style='glass-morphism'] {
+  .n-layout,
+  .n-layout-content {
+    background-color: transparent !important;
+  }
+
+  /* 内容区域容器 — 不遮挡底层渐变 */
+  .layout-container .n-layout-content {
+    background-color: transparent !important;
+  }
+}
+
+/* ===========================================
+ * Layer 3: NCard 头部 — 玻璃质感适配
+ * =========================================== */
+
+[data-design-style='glass-morphism'] {
+  /* 卡片头部：微妙的磨砂分隔感 */
+  .n-card-header {
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-bottom: 1px solid rgba(200, 200, 200, 0.2) !important;
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 0 !important;
+    padding: 14px 20px !important;
+  }
+}
+
+[data-design-style='glass-morphism'][data-theme='dark'] {
+  .n-card-header {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+}
+
+/* ===========================================
+ * Layer 4: custom-card 适配拟态玻璃
+ * =========================================== */
+
+[data-design-style='glass-morphism'] {
+  .custom-card {
+    border-radius: var(--dt-radius, 12px);
+    backdrop-filter: blur(var(--dt-blur, 16px)) saturate(var(--dt-saturate, 180%));
+    -webkit-backdrop-filter: blur(var(--dt-blur, 16px)) saturate(var(--dt-saturate, 180%));
+    background: var(--dt-card-bg, rgba(255, 255, 255, 0.65));
+    border: 1px solid var(--dt-card-border, rgba(200, 200, 200, 0.35));
+    box-shadow: var(
+      --dt-card-shadow,
+      0 8px 32px rgba(0, 0, 0, 0.06),
+      inset 0 1px 1px rgba(255, 255, 255, 0.6)
+    );
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* 覆盖 custom.scss 中的渐变装饰条，改为玻璃反光条 */
+    &::before {
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+      );
+      opacity: 1;
+    }
+
+    &:hover {
+      transform: var(--dt-hover-lift, translateY(-3px));
+      box-shadow: var(--dt-hover-shadow, 0 12px 40px rgba(0, 0, 0, 0.1));
+    }
+  }
+
+  .custom-card-bg {
+    background: var(--dt-card-bg, rgba(255, 255, 255, 0.65));
+    border: 1px solid var(--dt-card-border, rgba(200, 200, 200, 0.35));
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.75);
+    }
+  }
+}
+
+[data-design-style='glass-morphism'][data-theme='dark'] {
+  .custom-card-bg {
+    background: var(--dt-card-bg, rgba(255, 255, 255, 0.08));
+    border-color: var(--dt-card-border, rgba(255, 255, 255, 0.12));
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+  }
+}
+
+/* ===========================================
+ * Layer 5: 页面容器通用玻璃化
+ * =========================================== */
+
+[data-design-style='glass-morphism'] {
+  /* 页面内的滚动容器：透明底 */
+  .n-scrollbar-content {
+    background-color: transparent;
+  }
+
+  /* NDrawer 内容：玻璃质感 */
+  .n-drawer-body-content-wrapper {
+    background: var(--dt-overlay-bg, rgba(255, 255, 255, 0.72));
+    backdrop-filter: blur(20px) saturate(var(--dt-saturate, 180%));
+    -webkit-backdrop-filter: blur(20px) saturate(var(--dt-saturate, 180%));
+  }
+
+  /* 下拉菜单/弹出层：轻微玻璃效果 */
+  .n-popover:not(.n-popover--raw) {
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+  }
+}
+
+/* ===========================================
+ * Layer 6: 组件库 C_* 组件桥接增强
+ * =========================================== */
+
+[data-design-style='glass-morphism'] .global-config-provider {
+  /* 让组件库的 --c-bg-card 也参与玻璃效果 */
+  --c-bg-card: var(--dt-card-bg, rgba(255, 255, 255, 0.65));
+  --c-shadow-sm: var(--dt-card-shadow, 0 8px 32px rgba(0, 0, 0, 0.06));
+}
+
+[data-design-style='glass-morphism'][data-theme='dark'] .global-config-provider {
+  --c-bg-card: var(--dt-card-bg, rgba(255, 255, 255, 0.08));
+  --c-shadow-sm: var(--dt-card-shadow, 0 8px 32px rgba(0, 0, 0, 0.25));
+}

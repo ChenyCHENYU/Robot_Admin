@@ -54,7 +54,6 @@
         class="chat-wrapper"
       >
         <C_Chat
-          ref="chatRef"
           :contacts="DEMO_CONTACTS"
           :messages="currentMessages"
           :current-contact-id="currentContactId"
@@ -75,7 +74,6 @@
         class="chat-wrapper"
       >
         <C_Chat
-          ref="aiChatRef"
           :messages="aiMessages"
           :show-contacts="false"
           title="AI 助手"
@@ -90,6 +88,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo49Chat' })
   import type { ChatMessage } from '@robot-admin/naive-ui-components'
   import {
     DEMO_CONTACTS,
@@ -97,13 +96,10 @@
     DEMO_SCENES,
     getRandomReply,
   } from './data'
-  import './index.scss'
 
   const message = useMessage()
 
   // ===== 状态 =====
-  const chatRef = ref()
-  const aiChatRef = ref()
   const activeScene = ref('im')
   const currentContactId = ref('1')
 
@@ -132,9 +128,19 @@
   ])
 
   let msgId = 100
+  const pendingTimers = new Set<ReturnType<typeof setTimeout>>()
+
+  const scheduleDemoReply = (callback: () => void, delay: number): void => {
+    const timer = setTimeout(() => {
+      pendingTimers.delete(timer)
+      callback()
+    }, delay)
+    pendingTimers.add(timer)
+  }
 
   // ===== IM 模式事件 =====
   const handleSend = (content: string) => {
+    const contactId = currentContactId.value
     const id = `msg-${++msgId}`
     const newMsg: ChatMessage = {
       id,
@@ -145,21 +151,24 @@
       status: 'sending',
     }
 
-    if (!messagesMap.value[currentContactId.value]) {
-      messagesMap.value[currentContactId.value] = []
+    if (!messagesMap.value[contactId]) {
+      messagesMap.value[contactId] = []
     }
-    messagesMap.value[currentContactId.value].push(newMsg)
+    messagesMap.value[contactId].push(newMsg)
 
     // 模拟发送成功
-    setTimeout(() => {
-      newMsg.status = 'sent'
+    scheduleDemoReply(() => {
+      const sentMessage = messagesMap.value[contactId]?.find(
+        msg => msg.id === id
+      )
+      if (sentMessage) sentMessage.status = 'sent'
     }, 500)
 
     // 模拟自动回复
-    setTimeout(() => {
+    scheduleDemoReply(() => {
       const replyId = `msg-${++msgId}`
-      const contact = DEMO_CONTACTS.find(c => c.id === currentContactId.value)
-      messagesMap.value[currentContactId.value].push({
+      const contact = DEMO_CONTACTS.find(c => c.id === contactId)
+      messagesMap.value[contactId]?.push({
         id: replyId,
         content: getRandomReply(),
         type: 'text',
@@ -204,7 +213,7 @@
     })
 
     // 模拟 AI 回复
-    setTimeout(() => {
+    scheduleDemoReply(() => {
       aiMessages.value.push({
         id: `ai-reply-${++msgId}`,
         content: getRandomReply(),
@@ -216,6 +225,11 @@
       })
     }, 1200)
   }
+
+  onUnmounted(() => {
+    for (const timer of pendingTimers) clearTimeout(timer)
+    pendingTimers.clear()
+  })
 </script>
 
 <style lang="scss" scoped>

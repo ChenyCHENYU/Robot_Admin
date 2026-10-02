@@ -23,7 +23,7 @@ export interface AppConfig {
  * 应用主题配置类型
  */
 export interface AppThemeConfig {
-  mode: 'light' | 'dark' | 'auto'
+  mode: 'light' | 'dark' | 'system'
   primaryColor: string
   borderRadius: number
   fontSize: number

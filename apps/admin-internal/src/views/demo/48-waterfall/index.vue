@@ -117,7 +117,7 @@
         <code>item</code>、<code>index</code>、<code>width</code>、<code
           >height</code
         >
-        四个参数，可自由组合图片、文字、按钮等。
+        四个参数，可自由组合图片与文字；点击卡片会触发 item-click。
       </div>
       <div class="section-content">
         <C_WaterFall
@@ -142,27 +142,6 @@
                 <div class="custom-card__desc">
                   {{ item.description }}
                 </div>
-              </div>
-              <div class="custom-card__footer">
-                <NButton
-                  text
-                  type="primary"
-                  size="tiny"
-                >
-                  <template #icon>
-                    <C_Icon name="mdi:heart-outline" />
-                  </template>
-                  收藏
-                </NButton>
-                <NButton
-                  text
-                  size="tiny"
-                >
-                  <template #icon>
-                    <C_Icon name="mdi:download-outline" />
-                  </template>
-                  下载
-                </NButton>
               </div>
             </div>
           </template>
@@ -244,6 +223,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo48Waterfall' })
   import type {
     WaterFallItem,
     WaterFallExpose,
@@ -269,10 +249,34 @@
   const basicGap = ref(16)
   const basicLazy = ref(true)
   const basicSkeleton = ref(true)
+  let generation = 0
+  let disposed = false
+  const pendingDelays = new Map<ReturnType<typeof setTimeout>, () => void>()
+
+  const waitForDemo = (duration: number): Promise<void> =>
+    new Promise(resolve => {
+      const timer = setTimeout(() => {
+        pendingDelays.delete(timer)
+        resolve()
+      }, duration)
+      pendingDelays.set(timer, resolve)
+    })
+
+  onUnmounted(() => {
+    disposed = true
+    generation++
+    pendingDelays.forEach((resolve, timer) => {
+      clearTimeout(timer)
+      resolve()
+    })
+    pendingDelays.clear()
+  })
 
   /** 模拟首屏加载（展示骨架屏） */
   onMounted(async () => {
-    await new Promise(r => setTimeout(r, 1200))
+    const request = ++generation
+    await waitForDemo(1200)
+    if (disposed || request !== generation) return
     basicItems.value = [...INITIAL_ITEMS]
     basicLoading.value = false
   })
@@ -280,12 +284,15 @@
   /** 加载更多（模拟异步） */
   async function handleLoadMore() {
     if (basicLoading.value || basicNoMore.value) return
+    const request = ++generation
     basicLoading.value = true
 
     // 模拟网络延迟
-    await new Promise(r => setTimeout(r, 800))
+    await waitForDemo(800)
+    if (disposed || request !== generation) return
 
-    const newItems = generateItems(basicItems.value.length, PAGE_SIZE)
+    const count = Math.min(PAGE_SIZE, MAX_TOTAL - basicItems.value.length)
+    const newItems = generateItems(basicItems.value.length, count)
     basicItems.value.push(...newItems)
 
     if (basicItems.value.length >= MAX_TOTAL) {
@@ -296,10 +303,12 @@
 
   /** 重置（含骨架屏演示） */
   async function handleReset() {
+    const request = ++generation
     basicItems.value = []
     basicNoMore.value = false
     basicLoading.value = true
-    await new Promise(r => setTimeout(r, 1200))
+    await waitForDemo(1200)
+    if (disposed || request !== generation) return
     basicItems.value = [...INITIAL_ITEMS]
     basicLoading.value = false
   }

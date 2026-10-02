@@ -8,23 +8,11 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type {
-  AspectRatioPreset,
-  CropOutputFormat,
-} from '@robot-admin/naive-ui-components'
+import type { CropOutputFormat } from '@robot-admin/naive-ui-components'
 
 /** 示例图片 */
 export const DEMO_IMAGE = 'https://picsum.photos/seed/cropper/800/600'
 export const DEMO_AVATAR = 'https://picsum.photos/seed/avatar/400/400'
-
-/** 比例预设 */
-export const ratioPresets: AspectRatioPreset[] = [
-  { label: '自由', value: 0 },
-  { label: '1:1', value: 1 },
-  { label: '16:9', value: 16 / 9 },
-  { label: '4:3', value: 4 / 3 },
-  { label: '3:2', value: 3 / 2 },
-]
 
 /** 输出格式选项 */
 export const formatOptions: { label: string; value: CropOutputFormat }[] = [

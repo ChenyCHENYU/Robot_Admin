@@ -1,29 +1,13 @@
 import { h } from 'vue'
 import { NTag, type DataTableColumns } from 'naive-ui/es'
+import type { AccountActionType, AccountActivityRecord } from '@/api/account'
 
 // ==================== 类型定义 ====================
-export type ActionType =
-  | 'login'
-  | 'logout'
-  | 'create'
-  | 'update'
-  | 'delete'
-  | 'export'
-  | 'import'
-  | 'other'
+export type ActionType = AccountActionType
 
 export type ActionResult = 'success' | 'failed'
 
-export interface ActivityRecord {
-  id: string
-  time: string
-  actionType: ActionType
-  module: string
-  description: string
-  ip: string
-  result: ActionResult
-  detail?: string
-}
+export type ActivityRecord = AccountActivityRecord
 
 export interface ActivitySearchForm {
   keyword: string

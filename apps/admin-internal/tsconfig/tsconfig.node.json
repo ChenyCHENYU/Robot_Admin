@@ -1,6 +1,6 @@
 {
   // 继承 Monorepo 共享的 Node 工具链 TypeScript 配置
-  "extends": "@robot-admin/shared-config/tsconfig/node",
+  "extends": "../../../packages/shared-config/tsconfig/node.json",
 
   "include": [
     "../vite.config.*",

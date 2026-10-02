@@ -27,7 +27,7 @@ export interface CopyOptions {
   showMessage?: boolean
   dataType?: CopyDataType
   formatData?: boolean
-  formatter?: (data: any) => string
+  formatter?: (data: unknown) => string
   onSuccess?: (text: string) => void
   onError?: (error: Error) => void
 }
@@ -53,6 +53,16 @@ export interface CopyResult {
  * 检测当前环境对 Clipboard API 的支持情况
  */
 const detectClipboardSupport = () => {
+  if (typeof navigator === 'undefined' || typeof window === 'undefined') {
+    return {
+      hasClipboard: false,
+      hasWriteText: false,
+      hasReadText: false,
+      isSecureContext: false,
+      isSupported: false,
+    }
+  }
+
   // 检查基本的 Clipboard API 支持
   const hasClipboard = 'clipboard' in navigator
   const hasWriteText = hasClipboard && 'writeText' in navigator.clipboard
@@ -61,9 +71,9 @@ const detectClipboardSupport = () => {
   // 检查是否在安全上下文中（HTTPS 或 localhost）
   const isSecureContext =
     window.isSecureContext ||
-    location.protocol === 'https:' ||
-    location.hostname === 'localhost' ||
-    location.hostname === '127.0.0.1'
+    window.location.protocol === 'https:' ||
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1'
 
   return {
     hasClipboard,
@@ -76,10 +86,27 @@ const detectClipboardSupport = () => {
 
 // ==================== 数据格式化器 ====================
 
-const dataFormatters: Record<CopyDataType, (data: any) => string> = {
-  text: (data: any) => String(data),
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
 
-  url: (data: any) => {
+const stringifyValue = (value: unknown, space?: number): string => {
+  if (typeof value === 'string') return value
+
+  try {
+    const serialized = JSON.stringify(value, null, space)
+    return serialized ?? String(value)
+  } catch {
+    return String(value)
+  }
+}
+
+const toError = (error: unknown, fallback: string): Error =>
+  error instanceof Error ? error : new Error(fallback)
+
+const dataFormatters: Record<CopyDataType, (data: unknown) => string> = {
+  text: data => String(data),
+
+  url: data => {
     const url = String(data).trim()
     if (!url) return ''
     // 智能添加协议
@@ -89,7 +116,7 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return url
   },
 
-  email: (data: any) => {
+  email: data => {
     const email = String(data).trim()
     // 简单的邮箱格式验证
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -98,7 +125,7 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return email
   },
 
-  phone: (data: any) => {
+  phone: data => {
     const phone = String(data).replace(/[^\d+\-\s()]/g, '')
     // 中国手机号格式化
     if (/^\d{11}$/.test(phone.replace(/\D/g, ''))) {
@@ -108,31 +135,31 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return phone
   },
 
-  json: (data: any) => {
+  json: data => {
     try {
       if (typeof data === 'string') {
         // 验证是否为有效 JSON
         JSON.parse(data)
         return data
       }
-      return JSON.stringify(data, null, 2)
+      return stringifyValue(data, 2)
     } catch (error) {
       console.warn('Invalid JSON data:', error)
       return String(data)
     }
   },
 
-  html: (data: any) => {
-    if (typeof data === 'object') {
-      const jsonStr = JSON.stringify(data, null, 2)
+  html: data => {
+    if (isRecord(data) || Array.isArray(data)) {
+      const jsonStr = stringifyValue(data, 2)
       return `<pre><code>${jsonStr.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`
     }
     return String(data)
   },
 
-  markdown: (data: any) => {
-    if (typeof data === 'object') {
-      const jsonStr = JSON.stringify(data, null, 2)
+  markdown: data => {
+    if (isRecord(data) || Array.isArray(data)) {
+      const jsonStr = stringifyValue(data, 2)
       return `\`\`\`json\n${jsonStr}\n\`\`\``
     }
     const text = String(data)
@@ -143,7 +170,7 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return text
   },
 
-  csv: (data: any) => {
+  csv: data => {
     if (Array.isArray(data) && data.length > 0) {
       // 确保所有对象都有相同的键
       const allKeys = new Set<string>()
@@ -158,8 +185,8 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
       const csvRows = data.map(row =>
         headers
           .map(header => {
-            const value = row && typeof row === 'object' ? row[header] : ''
-            return `"${String(value || '').replace(/"/g, '""')}"`
+            const value = isRecord(row) ? row[header] : ''
+            return `"${String(value ?? '').replace(/"/g, '""')}"`
           })
           .join(',')
       )
@@ -169,9 +196,9 @@ const dataFormatters: Record<CopyDataType, (data: any) => string> = {
     return String(data)
   },
 
-  code: (data: any) => {
-    if (typeof data === 'object') {
-      return JSON.stringify(data, null, 2)
+  code: data => {
+    if (isRecord(data) || Array.isArray(data)) {
+      return stringifyValue(data, 2)
     }
     return String(data).trim()
   },
@@ -214,7 +241,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
 
   // ==================== 工具函数 ====================
 
-  const formatCopyData = (data: any, options: CopyOptions): string => {
+  const formatCopyData = (data: unknown, options: CopyOptions): string => {
     if (options.formatter) {
       return options.formatter(data)
     }
@@ -273,7 +300,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
           throw new Error('当前浏览器不支持复制功能')
         }
       }
-      throw new Error(`复制失败: ${(error as Error).message}`)
+      throw new Error(`复制失败: ${toError(error, '未知错误').message}`)
     }
   }
 
@@ -316,7 +343,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
           reject(new Error('execCommand 复制失败'))
         }
       } catch (error) {
-        reject(new Error(`降级复制失败: ${(error as Error).message}`))
+        reject(new Error(`降级复制失败: ${toError(error, '未知错误').message}`))
       }
     })
   }
@@ -324,7 +351,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
   // ==================== 主要方法 ====================
 
   const copy = async (
-    data: any,
+    data: unknown,
     options: CopyOptions = {}
   ): Promise<CopyResult> => {
     if (!canCopy.value) {
@@ -360,7 +387,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
 
       return result
     } catch (error) {
-      const copyError = error as Error
+      const copyError = toError(error, '复制失败')
       showToast('error', copyError.message, options)
       options.onError?.(copyError)
 
@@ -384,7 +411,10 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
     })
   }
 
-  const copyJSON = async (data: any, formatted = true): Promise<CopyResult> => {
+  const copyJSON = async (
+    data: unknown,
+    formatted = true
+  ): Promise<CopyResult> => {
     return copy(data, {
       dataType: 'json',
       formatData: formatted,
@@ -426,7 +456,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
       if (error instanceof DOMException && error.name === 'NotAllowedError') {
         throw new Error('读取剪贴板权限被拒绝')
       }
-      throw new Error(`读取剪贴板失败: ${(error as Error).message}`)
+      throw new Error(`读取剪贴板失败: ${toError(error, '未知错误').message}`)
     }
   }
 
@@ -437,7 +467,11 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
     html: string,
     plainText?: string
   ): Promise<CopyResult> => {
-    if (!clipboardSupport.isSupported) {
+    if (
+      !clipboardSupport.isSupported ||
+      typeof ClipboardItem === 'undefined' ||
+      typeof navigator.clipboard.write !== 'function'
+    ) {
       // 降级到纯文本复制
       return copyText(plainText || html.replace(/<[^>]*>/g, ''))
     }
@@ -459,7 +493,7 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
         method: 'native-api',
       }
     } catch (error) {
-      throw new Error(`富文本复制失败: ${(error as Error).message}`)
+      throw new Error(`富文本复制失败: ${toError(error, '未知错误').message}`)
     }
   }
 

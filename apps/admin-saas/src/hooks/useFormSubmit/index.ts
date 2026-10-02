@@ -10,7 +10,7 @@
 
 import { notification } from '@/plugins/naive-ui-plugin'
 
-interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   code: string
   message?: string
   data?: T
@@ -23,16 +23,24 @@ export interface SubmitOptions<T extends ApiResponse = ApiResponse> {
   meta?: string | ((data: T) => string) // 直接使用官方的 meta 属性
   errorMsg?: string
   onSuccess?: (data: T) => Promise<void> | void
-  globalErrorHandler?: (error: any) => void
+  globalErrorHandler?: (error: unknown) => void
   debounce?: number | false
 }
 
 // 定义默认的全局错误处理函数
-const defaultGlobalErrorHandler = (error: any) => {
+const defaultGlobalErrorHandler = (error: unknown): void => {
   console.error('默认全局错误处理:', error)
 }
 
-export const useFormSubmit = <T extends ApiResponse = ApiResponse>() => {
+interface FormSubmitScope<TModel extends object> {
+  form?: { validate: () => Promise<void> } | null
+  model: TModel
+}
+
+export const useFormSubmit = <
+  T extends ApiResponse = ApiResponse,
+  TModel extends object = Record<string, unknown>,
+>() => {
   const loading = ref(false)
 
   /**
@@ -48,14 +56,18 @@ export const useFormSubmit = <T extends ApiResponse = ApiResponse>() => {
   /**
    * 验证表单
    */
-  const validateForm = async (formScope: any) => await formScope.form.validate()
+  const validateForm = async (formScope: FormSubmitScope<TModel>) =>
+    formScope.form?.validate()
 
   /**
    * 处理响应数据
    */
-  const handleResponse = (data: T, options: SubmitOptions<T>) => {
+  const handleResponse = async (
+    data: T,
+    options: SubmitOptions<T>
+  ): Promise<boolean> => {
     if (data.code === (options.successCode || '0')) {
-      options.onSuccess?.(data)
+      await options.onSuccess?.(data)
 
       // 处理成功提示信息
       const displayMessage = options.successMsg || '提交成功'
@@ -80,7 +92,7 @@ export const useFormSubmit = <T extends ApiResponse = ApiResponse>() => {
   /**
    * 处理错误
    */
-  const handleError = (error: any, options: SubmitOptions<T>) => {
+  const handleError = (error: unknown, options: SubmitOptions<T>): void => {
     console.error('[表单提交] 错误:', error)
     if (options.globalErrorHandler) {
       options.globalErrorHandler(error)
@@ -94,7 +106,7 @@ export const useFormSubmit = <T extends ApiResponse = ApiResponse>() => {
   }
 
   const createSubmit = (
-    apiFn: (model: any) => Promise<T>,
+    apiFn: (model: TModel) => Promise<T>,
     options: SubmitOptions<T> = {}
   ) => {
     // 智能防抖处理
@@ -103,7 +115,9 @@ export const useFormSubmit = <T extends ApiResponse = ApiResponse>() => {
         ? useDebounceFn(apiFn, options.debounce || 500)
         : apiFn
 
-    return async (formScope: any) => {
+    return async (
+      formScope: FormSubmitScope<TModel>
+    ): Promise<T | undefined> => {
       if (!formScope.form) {
         handleFormNotReady()
         return
@@ -116,7 +130,7 @@ export const useFormSubmit = <T extends ApiResponse = ApiResponse>() => {
         const data = await finalApiFn(formScope.model)
 
         // 处理成功逻辑
-        if (handleResponse(data, options)) {
+        if (await handleResponse(data, options)) {
           return data
         }
 

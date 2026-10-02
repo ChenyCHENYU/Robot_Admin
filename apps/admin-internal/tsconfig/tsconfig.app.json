@@ -1,6 +1,6 @@
 {
   // 继承 Monorepo 共享的应用级 TypeScript 基础配置
-  "extends": "@robot-admin/shared-config/tsconfig/app",
+  "extends": "../../../packages/shared-config/tsconfig/app.json",
 
   "include": ["../src/**/*", "../package.json", "../src/**/*.json"],
 

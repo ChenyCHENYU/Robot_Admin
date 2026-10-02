@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-04 19:20:15
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-09 11:02:00
+ * @LastEditTime: 2026-03-28 12:25:44
  * @FilePath: \Robot_Admin\src\views\demo\08-form-modal\index.vue
  * @Description: 多模态表单 - 演示页面
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -73,12 +73,11 @@
             </template>
             <div class="popover-form">
               <C_Form
-                ref="popoverFormRef"
                 :options="popoverOptions"
                 :config="popoverConfig"
                 v-model="popoverData"
               >
-                <template #action="{ validate }">
+                <template #action="{ submit, submitting }">
                   <C_ActionBar
                     :actions="[
                       {
@@ -90,7 +89,8 @@
                       {
                         label: '保存',
                         type: 'primary',
-                        onClick: () => onSubmit('popover', validate),
+                        loading: submitting,
+                        onClick: () => submitContainer('popover', submit),
                       },
                     ]"
                   />
@@ -135,11 +135,10 @@
         >
       </template>
       <C_Form
-        ref="modalFormRef"
         :options="modalOptions"
         :config="modalConfig"
         v-model="modalData"
-        @submit="onSubmit('modal')"
+        @submit="handleModalSubmit"
       />
     </NModal>
 
@@ -149,13 +148,16 @@
       :width="500"
       placement="right"
     >
-      <NDrawerContent title="商品详情配置">
-        <template #header-extra>
-          <NTag
-            type="success"
-            size="small"
-            >默认布局</NTag
-          >
+      <NDrawerContent>
+        <template #header>
+          <div class="drawer-header">
+            <span>商品详情配置</span>
+            <NTag
+              type="success"
+              size="small"
+              >默认布局</NTag
+            >
+          </div>
         </template>
         <C_Form
           ref="drawerFormRef"
@@ -175,7 +177,7 @@
               {
                 label: '保存',
                 type: 'primary',
-                onClick: () => onSubmit('drawer'),
+                onClick: () => submitContainer('drawer', submitDrawer),
               },
             ]"
           />
@@ -195,7 +197,7 @@
         <template #header>
           <div class="sidebar-header">
             <div class="header-info">
-              <i class="i-mdi:air-filter mr-2" />
+              <i class="i-mdi-air-filter mr-2" />
               <span>筛选条件</span>
               <NTag
                 type="warning"
@@ -211,7 +213,7 @@
               @click="showSidebar = false"
             >
               <template #icon>
-                <i class="i-mdi:close-octagon" />
+                <i class="i-mdi-close-octagon" />
               </template>
             </NButton>
           </div>
@@ -222,7 +224,7 @@
           :config="sidebarConfig"
           v-model="sidebarData"
         >
-          <template #action="{ validate }">
+          <template #action="{ submit, submitting }">
             <C_ActionBar
               :actions="[
                 {
@@ -234,7 +236,8 @@
                   label: '应用筛选',
                   icon: 'mdi:briefcase-search-outline',
                   type: 'primary',
-                  onClick: () => onSubmit('sidebar', validate),
+                  loading: submitting,
+                  onClick: () => submitContainer('sidebar', submit),
                 },
               ]"
             />
@@ -281,7 +284,7 @@
             {
               label: '完成创建',
               type: 'primary',
-              onClick: () => onSubmit('wizard'),
+              onClick: () => submitContainer('wizard', submitWizard),
             },
           ]"
         />
@@ -318,10 +321,8 @@
   const showWizard = ref(false)
 
   // ============ 表单引用 ============
-  const modalFormRef = ref<FormInstance>()
   const drawerFormRef = ref<FormInstance>()
   const sidebarFormRef = ref<FormInstance>()
-  const popoverFormRef = ref<FormInstance>()
   const wizardFormRef = ref<FormInstance>()
 
   // ============ 表单数据 ============
@@ -349,34 +350,46 @@
     }
   }
 
-  /**
-   * * @description: 表单提交（验证 → 提示 → 关闭容器）
-   * ? @param {string} key 容器标识
-   * ? @param {Function} validate 外部传入的验证函数（slot 场景）
-   */
-  const onSubmit = async (key: string, validate?: () => Promise<void>) => {
-    const formRefMap: Record<string, Ref<FormInstance | undefined>> = {
-      modal: modalFormRef,
-      drawer: drawerFormRef,
-      sidebar: sidebarFormRef,
-      popover: popoverFormRef,
-      wizard: wizardFormRef,
+  const closeContainer = (key: 'drawer' | 'popover' | 'wizard') => {
+    const visibility = {
+      drawer: showDrawer,
+      popover: showPopover,
+      wizard: showWizard,
+    }[key]
+    visibility.value = false
+  }
+
+  const handleModalSubmit = () => {
+    message.success('表单提交成功！')
+    showModal.value = false
+  }
+
+  const submitDrawer = () =>
+    drawerFormRef.value?.submit() ?? Promise.resolve(false)
+  const submitWizard = () =>
+    wizardFormRef.value?.submit() ?? Promise.resolve(false)
+
+  const submitContainer = async (
+    key: 'drawer' | 'sidebar' | 'popover' | 'wizard',
+    submit: () => Promise<boolean>
+  ) => {
+    const submitted = await submit()
+    if (!submitted) {
+      message.error('提交未完成，请检查表单输入！')
+      return
     }
-    try {
-      if (validate) {
-        await validate()
-      } else {
-        await formRefMap[key]?.value?.validate()
-      }
-      message.success('表单提交成功！')
-      // 提交后关闭（侧边栏保持展开）
-      if (key !== 'sidebar') openContainer(key)
-    } catch {
-      message.error('表单验证失败，请检查输入')
-    }
+    message.success('表单提交成功！')
+    if (key !== 'sidebar') closeContainer(key)
   }
 </script>
 
 <style lang="scss" scoped>
   @use './index.scss';
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
 </style>

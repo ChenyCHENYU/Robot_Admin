@@ -12,7 +12,7 @@
     <!-- 全局搜索 -->
     <C_GlobalSearch :options="searchOptions" />
 
-    <!-- 操作按钮组：显式导入，不依赖 DynamicComponent -->
+    <!-- 操作按钮组：统一由组件解析器按需加载组件与样式 -->
     <div class="action-buttons">
       <!-- 通知中心 -->
       <C_NotificationCenter :on-navigate="handleNavigate" />
@@ -28,7 +28,7 @@
             @click="toggleFullscreen"
             class="action-btn"
           >
-            <span class="i-mdi:fullscreen"></span>
+            <span class="i-mdi-fullscreen"></span>
           </NButton>
         </template>
         <span>全屏</span>
@@ -60,7 +60,11 @@
             @click="emit('update:showSettings', true)"
             class="action-btn"
           >
-            <span class="i-mdi:settings-transfer-outline"></span>
+            <C_Icon
+              name="mdi:settings-transfer-outline"
+              :size="18"
+              class="action-icon"
+            />
           </NButton>
         </template>
         <span>布局配置</span>
@@ -88,7 +92,7 @@
           </div>
           <div class="user-dropdown">
             <span>{{ userName }}</span>
-            <span class="i-mdi:chevron-down dropdown-arrow"></span>
+            <span class="i-mdi-chevron-down dropdown-arrow"></span>
           </div>
         </div>
       </template>
@@ -108,11 +112,11 @@
           <div class="user-panel__info">
             <div class="user-panel__name">{{ userName }}</div>
             <div class="user-panel__role">
-              <span class="i-mdi:shield-account text-xs"></span>
+              <span class="i-mdi-shield-account text-xs"></span>
               {{ userRole }}
             </div>
             <div class="user-panel__email">
-              <span class="i-mdi:email-outline text-xs"></span>
+              <span class="i-mdi-email-outline text-xs"></span>
               {{ userEmail }}
             </div>
           </div>
@@ -145,7 +149,7 @@
               class="user-panel__item-icon"
             ></span>
             <span class="user-panel__item-label">{{ item.label }}</span>
-            <span class="i-mdi:chevron-right user-panel__item-arrow"></span>
+            <span class="i-mdi-chevron-right user-panel__item-arrow"></span>
           </div>
         </div>
 
@@ -180,7 +184,7 @@
             class="user-panel__item user-panel__item--danger"
             @click="handleLogout"
           >
-            <span class="i-mdi:logout user-panel__item-icon"></span>
+            <span class="i-mdi-logout user-panel__item-icon"></span>
             <span class="user-panel__item-label">退出登录</span>
           </div>
         </div>
@@ -198,17 +202,16 @@
   import { s_languageStore } from '@/stores/language'
   import { s_permissionStore } from '@/stores/permission'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
+  import type {
+    GlobalSearchOptions,
+    SearchMenuItem,
+  } from '@robot-admin/naive-ui-components/C_GlobalSearch'
+  import type { GuideStep } from '@robot-admin/naive-ui-components/C_Guide'
   import {
-    C_GlobalSearch,
-    C_NotificationCenter,
-    C_Language,
-    C_Theme,
-    C_Guide,
     createMenuOptions,
-    type GlobalSearchOptions,
-    type SearchMenuItem,
-    type GuideStep,
-  } from '@robot-admin/naive-ui-components'
+    type RouteItem,
+  } from '@robot-admin/naive-ui-components/C_Menu'
+  import type { MenuOptions } from '@/types/modules/menu'
   import type { MenuOption } from 'naive-ui/es'
   import packageJson from '../../../../package.json'
 
@@ -234,11 +237,9 @@
 
   // 用户名 / 角色 / 邮箱
   const userName = computed(() => userStore.userInfo?.username || 'CHENY')
-  const userRole = computed(
-    () => (userStore.userInfo as any)?.role || '系统管理员'
-  )
+  const userRole = computed(() => userStore.userInfo.role || '系统管理员')
   const userEmail = computed(
-    () => (userStore.userInfo as any)?.email || 'ycyplus@gmail.com'
+    () => userStore.userInfo.email || 'ycyplus@gmail.com'
   )
   const appVersion = packageJson.version
 
@@ -251,21 +252,21 @@
   }
 
   const primaryMenuItems: UserMenuItem[] = [
-    { key: 'profile', label: '个人中心', icon: 'i-mdi:account-circle-outline' },
-    { key: 'security', label: '安全设置', icon: 'i-mdi:shield-lock-outline' },
-    { key: 'activity', label: '操作日志', icon: 'i-mdi:history' },
+    { key: 'profile', label: '个人中心', icon: 'i-mdi-account-circle-outline' },
+    { key: 'security', label: '安全设置', icon: 'i-mdi-shield-lock-outline' },
+    { key: 'activity', label: '操作日志', icon: 'i-mdi-history' },
   ]
 
   const secondaryMenuItems: UserMenuItem[] = [
     {
       key: 'docs',
       label: '使用文档',
-      icon: 'i-mdi:book-open-page-variant-outline',
+      icon: 'i-mdi-book-open-page-variant-outline',
     },
     {
       key: 'feedback',
       label: '反馈建议',
-      icon: 'i-mdi:message-reply-text-outline',
+      icon: 'i-mdi-message-reply-text-outline',
     },
   ]
 
@@ -273,13 +274,15 @@
   const handleUserAction = (key: string) => {
     switch (key) {
       case 'profile':
-        router.push({ name: 'account-profile' })
+        void router.push({ name: 'account-profile' }).catch(() => undefined)
         break
       case 'security':
-        router.push({ name: 'account-security' })
+        void router.push({ name: 'account-security' }).catch(() => undefined)
         break
       case 'activity':
-        router.push({ name: 'account-activity-log' })
+        void router
+          .push({ name: 'account-activity-log' })
+          .catch(() => undefined)
         break
       case 'docs':
         window.open(
@@ -308,18 +311,33 @@
       },
     })
   }
-  /** 将权限菜单树扁平化为 SearchMenuItem[] */
+  /** 将 Naive UI 菜单节点收窄为全局搜索可消费的数据结构。 */
+  function toSearchMenuItem(item: MenuOption): SearchMenuItem | null {
+    if (
+      (typeof item.key !== 'string' && typeof item.key !== 'number') ||
+      typeof item.label !== 'string'
+    ) {
+      return null
+    }
+
+    const children = item.children
+      ?.map(toSearchMenuItem)
+      .filter((child): child is SearchMenuItem => child !== null)
+
+    return {
+      key: String(item.key),
+      label: item.label,
+      icon: item.icon,
+      ...(children?.length ? { children } : {}),
+    }
+  }
+
+  /** 将权限菜单树扁平化为 SearchMenuItem[]。 */
   function flattenMenuItems(items: MenuOption[]): SearchMenuItem[] {
     const result: SearchMenuItem[] = []
     for (const item of items) {
-      if (item.key && item.label) {
-        result.push({
-          key: item.key as string,
-          label: item.label as string,
-          icon: item.icon,
-          children: item.children,
-        })
-      }
+      const searchItem = toSearchMenuItem(item)
+      if (searchItem) result.push(searchItem)
       if (item.children?.length) {
         result.push(...flattenMenuItems(item.children))
       }
@@ -327,22 +345,49 @@
     return result
   }
 
+  /** 将应用菜单路由转换为组件库公开的最小路由契约。 */
+  function toRouteItems(items: MenuOptions[]): RouteItem[] {
+    return items.flatMap(item => {
+      if (!item.path) return []
+
+      const children = item.children?.length
+        ? toRouteItems(item.children)
+        : undefined
+
+      return [
+        {
+          path: item.path,
+          name: item.name,
+          component: item.component,
+          redirect: item.redirect,
+          meta: item.meta,
+          type: item.type,
+          disabled: item.disabled,
+          ...(children?.length ? { children } : {}),
+        },
+      ]
+    })
+  }
+
+  /** 使用统一边界适配权限菜单，避免调用处重复做不安全断言。 */
+  const createSearchMenuOptions = (): MenuOption[] =>
+    createMenuOptions(toRouteItems(permissionStore.showMenuListGet), {
+      labelFormatter: translateRouteTitle,
+    })
+
+  const normalizeMenuKey = (key: unknown): string | null =>
+    typeof key === 'string' || typeof key === 'number' ? String(key) : null
+
   /** 在菜单树中找到父级的第一个子路由 key */
   function findFirstChildKey(parentKey: string): string | null {
-    const normalized = createMenuOptions(
-      permissionStore.showMenuListGet as any[],
-      {
-        labelFormatter: translateRouteTitle,
-      }
-    )
+    const normalized = createSearchMenuOptions()
     const find = (nodes: MenuOption[]): string | null => {
       for (const n of nodes) {
-        if (n.key === parentKey && n.children?.length)
-          return (n.children[0]?.key as string) || null
-        if (n.children?.length) {
-          const r = find(n.children)
-          if (r) return r
+        if (String(n.key) === parentKey && n.children?.length) {
+          return normalizeMenuKey(n.children[0]?.key)
         }
+        const nestedKey = n.children?.length ? find(n.children) : null
+        if (nestedKey) return nestedKey
       }
       return null
     }
@@ -350,23 +395,18 @@
   }
 
   const searchOptions: GlobalSearchOptions = {
-    menuItems: () =>
-      flattenMenuItems(
-        createMenuOptions(permissionStore.showMenuListGet as any[], {
-          labelFormatter: translateRouteTitle,
-        })
-      ),
+    menuItems: () => flattenMenuItems(createSearchMenuOptions()),
     isDark: () => themeStore.isDark,
     /** 选中菜单项后跳转路由 */
     onSelect(key: string, hasChildren: boolean) {
       if (hasChildren) {
         const childKey = findFirstChildKey(key)
         if (childKey) {
-          router.push(childKey)
+          void router.push(childKey).catch(() => undefined)
           return
         }
       }
-      router.push(key)
+      void router.push(key).catch(() => undefined)
     },
   }
 
@@ -416,7 +456,9 @@
 
   // ==================== 操作事件 ====================
   /** 通知中心 — 跳转到指定 URL */
-  const handleNavigate = (url: string) => router.push(url)
+  const handleNavigate = (url: string): void => {
+    void router.push(url).catch(() => undefined)
+  }
 
   /** 全屏切换 */
   const toggleFullscreen = () => {
@@ -436,76 +478,18 @@
 <style lang="scss">
   .user-panel {
     width: 240px;
-    background: #fff;
+    background: var(--c-bg-surface);
     border-radius: 10px;
-    box-shadow:
-      0 6px 24px rgba(0, 0, 0, 0.08),
-      0 1px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--c-shadow-lg);
     overflow: hidden;
     font-size: 13px;
-    color: #1f2937;
+    color: var(--c-text-1);
     animation: user-panel-enter 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 
-    // ---------- 暗色模式 ----------
+    // 保留兼容类名，颜色统一由根节点的语义主题变量驱动
     &--dark {
-      background: #1e1e2e;
-      color: #e5e7eb;
-      box-shadow:
-        0 8px 30px rgba(0, 0, 0, 0.3),
-        0 2px 8px rgba(0, 0, 0, 0.2);
-
-      .user-panel__header {
-        background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
-      }
-
-      .user-panel__name {
-        color: #f3f4f6;
-      }
-      .user-panel__role,
-      .user-panel__email {
-        color: #c4b5fd;
-      }
-
-      .user-panel__item {
-        color: #d1d5db;
-
-        &:hover {
-          background: rgba(99, 102, 241, 0.12);
-          color: #a5b4fc;
-        }
-
-        &--danger {
-          color: #fca5a5 !important;
-
-          &:hover {
-            background: rgba(239, 68, 68, 0.12) !important;
-            color: #fca5a5 !important;
-          }
-        }
-      }
-
-      .user-panel__item-arrow,
-      .user-panel__item-icon {
-        color: #6b7280;
-      }
-      .user-panel__item:hover .user-panel__item-icon {
-        color: #a5b4fc;
-      }
-
-      .user-panel__item-shortcut {
-        background: #374151;
-        color: #9ca3af;
-        border-color: #4b5563;
-      }
-
-      .user-panel__footer {
-        background: #16162a;
-        color: #6b7280;
-      }
-
-      .n-divider {
-        --n-color: rgba(255, 255, 255, 0.06) !important;
-      }
+      background: var(--c-bg-surface);
+      color: var(--c-text-1);
     }
 
     // ---------- 用户卡片头部 ----------
@@ -514,7 +498,7 @@
       align-items: center;
       gap: 10px;
       padding: 12px 14px;
-      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+      background: color-mix(in srgb, var(--c-primary) 12%, var(--c-bg-surface));
       position: relative;
     }
 
@@ -529,7 +513,7 @@
     &__name {
       font-size: 13.5px;
       font-weight: 600;
-      color: #111827;
+      color: var(--c-text-1);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -538,7 +522,7 @@
     &__role,
     &__email {
       font-size: 11px;
-      color: #6366f1;
+      color: var(--c-primary);
       display: flex;
       align-items: center;
       gap: 3px;
@@ -548,7 +532,7 @@
     }
 
     &__email {
-      color: #6b7280;
+      color: var(--c-text-2);
     }
 
     &__status {
@@ -569,16 +553,20 @@
       padding: 7px 8px;
       border-radius: 6px;
       cursor: pointer;
-      color: #374151;
+      color: var(--c-text-2);
       transition: all 0.18s ease;
       user-select: none;
 
       &:hover {
-        background: rgba(99, 102, 241, 0.08);
-        color: #6366f1;
+        background: color-mix(
+          in srgb,
+          var(--c-primary) 10%,
+          var(--c-bg-surface)
+        );
+        color: var(--c-primary);
 
         .user-panel__item-icon {
-          color: #6366f1;
+          color: var(--c-primary);
         }
 
         .user-panel__item-arrow {
@@ -593,18 +581,22 @@
 
       // 危险操作（退出登录）
       &--danger {
-        color: #ef4444 !important;
+        color: var(--error-color, var(--c-error)) !important;
 
         .user-panel__item-icon {
-          color: #ef4444 !important;
+          color: var(--error-color, var(--c-error)) !important;
         }
 
         &:hover {
-          background: rgba(239, 68, 68, 0.08) !important;
-          color: #dc2626 !important;
+          background: color-mix(
+            in srgb,
+            var(--error-color, var(--c-error)) 10%,
+            var(--c-bg-surface)
+          ) !important;
+          color: var(--error-color, var(--c-error)) !important;
 
           .user-panel__item-icon {
-            color: #dc2626 !important;
+            color: var(--error-color, var(--c-error)) !important;
           }
         }
       }
@@ -612,7 +604,7 @@
 
     &__item-icon {
       font-size: 15px;
-      color: #6b7280;
+      color: var(--c-text-3);
       flex-shrink: 0;
       transition: color 0.18s ease;
     }
@@ -625,7 +617,7 @@
 
     &__item-arrow {
       font-size: 14px;
-      color: #d1d5db;
+      color: var(--c-text-4);
       flex-shrink: 0;
       opacity: 0;
       transition: all 0.18s ease;
@@ -636,9 +628,9 @@
       font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
       padding: 1px 5px;
       border-radius: 3px;
-      background: #f3f4f6;
-      color: #6b7280;
-      border: 1px solid #e5e7eb;
+      background: var(--c-bg-body);
+      color: var(--c-text-3);
+      border: 1px solid var(--c-border);
       line-height: 1;
     }
 
@@ -647,15 +639,15 @@
       padding: 6px 14px;
       text-align: center;
       font-size: 10px;
-      color: #9ca3af;
-      background: #fafafa;
-      border-top: 1px solid #f3f4f6;
+      color: var(--c-text-3);
+      background: var(--c-bg-body);
+      border-top: 1px solid var(--c-border);
       letter-spacing: 0.3px;
     }
 
     // ---------- NDivider 微调 ----------
     .n-divider {
-      --n-color: #f0f0f0 !important;
+      --n-color: var(--c-border) !important;
     }
   }
 

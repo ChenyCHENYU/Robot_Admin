@@ -12,7 +12,6 @@ export * from './store'
 export * from './naive-ui-plugin'
 export * from './dynamic-components'
 export * from './passive-scroll'
-export * from './markdown'
 export * from './analytics'
 export * from './request-core' // 🆕 Request Core 插件
 export * from './layout' // 🆕 布局系统插件
@@ -20,6 +19,7 @@ export * from './file-utils' // 🆕 文件处理工具包
 
 export {
   setupHighlight,
+  initializeHighlight,
   useHighlight,
   defaultHighlightOptions,
   type HighlightPluginOptions,

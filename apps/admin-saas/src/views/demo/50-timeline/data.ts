@@ -174,7 +174,7 @@ export const DEMO_SCENES = [
     description: '简洁样式、时间线跟踪',
     icon: 'mdi:truck-delivery',
   },
-]
+] as const
 
 // ==================== 功能特性 ====================
 

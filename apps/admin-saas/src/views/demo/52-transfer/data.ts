@@ -50,7 +50,10 @@ export const FEATURE_LIST = [
   },
 ]
 
-export const TAG_TYPE_MAP: Record<string, string> = {
+export const TAG_TYPE_MAP: Record<
+  string,
+  'default' | 'primary' | 'info' | 'success' | 'warning' | 'error'
+> = {
   核心: 'primary',
   交互: 'success',
   效率: 'warning',

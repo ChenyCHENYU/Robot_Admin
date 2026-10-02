@@ -246,6 +246,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo39Qrcode' })
   import type {
     ActionItem,
     ErrorCorrectionLevel,
