@@ -23,10 +23,7 @@ export type FormatType = 'excel' | 'csv' | 'json'
 
 // 模板ID类型
 export type TemplateId =
-  | 'vue-component'
-  | 'react-hook'
-  | 'typescript-utils'
-  | 'nodejs-api'
+  'vue-component' | 'react-hook' | 'typescript-utils' | 'nodejs-api'
 
 // 模板定义接口
 export interface TemplateDefinition {
@@ -67,18 +64,18 @@ export const frameworkOptions = [
   { label: 'React', value: 'react' as const },
   { label: 'Node.js', value: 'nodejs' as const },
   { label: 'Vanilla JS', value: 'vanilla' as const },
-] as const
+]
 
 export const formatOptions = [
   { label: 'Excel (.csv)', value: 'excel' as const },
   { label: 'CSV (.csv)', value: 'csv' as const },
   { label: 'JSON (.json)', value: 'json' as const },
-] as const
+]
 
 export const bundleModeOptions = [
   { label: '分离模式', value: 'separate' as const },
   { label: '合并模式', value: 'combined' as const },
-] as const
+]
 
 export const availableTemplates: readonly TemplateDefinition[] = [
   { id: 'vue-component', name: 'Vue 组件', category: 'Vue' },

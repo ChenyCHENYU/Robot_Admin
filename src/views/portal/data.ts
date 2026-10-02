@@ -9,7 +9,6 @@ export interface App {
   icon: string
   color: string
   url?: string
-  port?: number
   integrated?: boolean
 }
 
@@ -78,8 +77,7 @@ export const systems: App[] = [
     name: '智慧物流管理系统',
     icon: 'ri:truck-line',
     color: '#6FC5E8',
-    port: 3003,
-    integrated: true,
+    integrated: false,
   },
   {
     id: 'procurement',

@@ -34,7 +34,6 @@
       <div class="section-content">
         <C_Cron
           v-model="basicExpr"
-          @change="onBasicChange"
           @validation-change="onValidation"
         />
         <div class="demo-output">
@@ -53,13 +52,13 @@
           name="mdi:clock-minus-outline"
           class="title-icon"
         />
-        隐藏秒字段（5 字段模式）
+        隐藏秒字段编辑区
       </h2>
       <div class="section-desc">
         设置
         <code>show-second="false"</code>
-        隐藏秒字段，仅显示「分/时/日/月/周」五个 Tab。
-        适合不需要秒级精度的场景，如每日报表、定时备份等。
+        隐藏秒字段编辑区，仅显示「分/时/日/月/周」五个 Tab；输出仍是六字段 Cron
+        表达式，秒值保持模型中的配置。适合每日报表、定时备份等场景。
       </div>
       <div class="section-content">
         <C_Cron
@@ -190,6 +189,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo46Cron' })
   import type {
     CronValidation,
     CronExpose,
@@ -201,11 +201,6 @@
 
   const basicExpr = ref('0 30 8 * * ?')
   const basicValid = ref(true)
-
-  /** 表达式变更回调 */
-  function onBasicChange(value: string) {
-    console.log('[Cron] 表达式变更:', value)
-  }
 
   /** 校验状态变更回调 */
   function onValidation(result: CronValidation) {

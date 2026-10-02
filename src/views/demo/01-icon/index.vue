@@ -49,7 +49,7 @@
             "
             @click.stop="icon.handler?.()"
           >
-            <C_Icon v-bind="icon.props as any" />
+            <C_Icon v-bind="icon.props" />
           </div>
           <span
             v-if="demo.icons.length > 4"
@@ -92,7 +92,7 @@
             class="showcase-item"
             @click="icon.handler?.()"
           >
-            <C_Icon v-bind="icon.props as any" />
+            <C_Icon v-bind="icon.props" />
             <code>{{
               typeof icon.label === 'function' ? icon.label() : icon.label
             }}</code>
@@ -119,6 +119,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo01Icon' })
   import { createHandlers, createDemoSections } from './data'
 
   // 状态管理
@@ -126,9 +127,12 @@
   const rotation = ref(0)
   const flipped = ref(false)
   const activeDemo = ref('iconify')
+  const message = useMessage()
 
   // 创建事件处理器和演示数据
-  const handlers = createHandlers(loading, rotation, flipped)
+  const handlers = createHandlers(loading, rotation, flipped, text =>
+    message.info(text)
+  )
   const demoSections = computed(() =>
     createDemoSections(handlers, loading, rotation, flipped)
   )
@@ -156,11 +160,14 @@
   }
 
   // 复制代码
-  const message = useMessage()
   const copyCode = async () => {
     if (!activeDemoData.value?.code) return
-    await navigator.clipboard.writeText(activeDemoData.value.code)
-    message.success('代码已复制')
+    try {
+      await navigator.clipboard.writeText(activeDemoData.value.code)
+      message.success('代码已复制')
+    } catch {
+      message.error('复制失败，请手动选择代码')
+    }
   }
 </script>
 

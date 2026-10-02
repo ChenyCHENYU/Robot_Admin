@@ -23,7 +23,7 @@ export const SMALL_TABLE_HEADER_STYLE = {
 export const SMALL_TABLE_CELL_STYLE = { ...TABLE_CELL_STYLE, fontSize: '11px' }
 
 // =================== 类型定义 ===================
-interface FactoryData {
+export interface FactoryData {
   id: number
   costCenter: string
   costCenterDesc: string
@@ -43,7 +43,7 @@ interface FactoryData {
   standardPercentage?: number
 }
 
-interface KpiData {
+export interface KpiData {
   wgtDiffRate: number
   amtUnitDiffRate: number
   amtUnitDiff: number
@@ -55,7 +55,7 @@ interface KpiData {
   efficiencyRate?: number
 }
 
-interface TrendDataItem {
+export interface TrendDataItem {
   acctDate: string
   amtUnitReal: number
   day: number

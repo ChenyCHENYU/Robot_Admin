@@ -24,7 +24,6 @@
       v-model="formData"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
-      @update:modelValue="handleFormDataUpdate"
       @submit="handleSubmit"
     />
 
@@ -130,10 +129,11 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07FormCustomLayout' })
   import type {
     FormOption,
     FormInstance,
-    FormModel,
+    SubmitEventPayload,
     LabelPlacement,
     ActionItem,
   } from '@robot-admin/naive-ui-components'
@@ -141,6 +141,7 @@
   import { useDebounceFn } from '@vueuse/core'
   import {
     type EmployeeFormData,
+    type EmployeeSubmitResponse,
     employeeFormOptions,
     generateTestData,
     submitEmployeeAPI,
@@ -159,55 +160,53 @@
 
   // ==================== Emits ====================
   const emit = defineEmits<{
-    submit: [payload: any]
-    'validate-success': [model: FormModel]
-    'validate-error': [errors: any]
-    'fields-change': [fields: any[]]
+    submit: [payload: SubmitEventPayload<EmployeeFormData>]
+    'validate-success': [model: EmployeeFormData]
+    'validate-error': [errors: unknown]
+    'fields-change': [fields: FormOption<EmployeeFormData>[]]
   }>()
 
   // ==================== v-model ====================
   const formData = defineModel<EmployeeFormData>({ required: true })
 
   // 响应式状态
-  const formRef = ref<FormInstance>()
+  const formRef = ref<FormInstance<EmployeeFormData>>()
   const message = useMessage()
-  const actualFields = ref<FormOption[]>([])
+  const actualFields = ref<FormOption<EmployeeFormData>[]>([])
 
   // ================= 计算属性 =================
 
   // 防抖处理字段变化
-  const debouncedHandleFieldsChange = useDebounceFn((fields: FormOption[]) => {
-    actualFields.value = fields
-    emit('fields-change', fields) // 🔥 关键：向父组件转发事件
-    if (fields.length > 0) {
-      message.info(`字段更新: ${fields.length} 个字段`)
-    }
-  }, 200)
+  const debouncedHandleFieldsChange = useDebounceFn(
+    (fields: FormOption<EmployeeFormData>[]) => {
+      actualFields.value = fields
+      emit('fields-change', fields) // 🔥 关键：向父组件转发事件
+      if (fields.length > 0) {
+        message.info(`字段更新: ${fields.length} 个字段`)
+      }
+    },
+    200
+  )
 
   // 事件处理
-  const handleFieldsChange = (fields: FormOption[]): void => {
+  const handleFieldsChange = (fields: FormOption<EmployeeFormData>[]): void => {
     debouncedHandleFieldsChange(fields)
   }
 
-  const handleFormDataUpdate = (data: EmployeeFormData): void => {
-    Object.assign(formData.value, data)
-  }
-
-  const handleValidateSuccess = (model: FormModel): void => {
-    console.log('表单验证成功:', model)
-    emit('validate-success', model) // 🔥 关键：向父组件转发事件
+  const handleValidateSuccess = (model: EmployeeFormData): void => {
+    emit('validate-success', model)
     message.success('表单验证通过')
   }
 
-  const handleValidateError = (errors: any): void => {
-    console.error('表单验证失败:', errors)
-    emit('validate-error', errors) // 🔥 关键：向父组件转发事件
+  const handleValidateError = (errors: unknown): void => {
+    emit('validate-error', errors)
     message.error('表单验证失败，请检查填写内容')
   }
 
-  const handleSubmit = (payload: any): void => {
-    console.log('表单提交:', payload)
-    emit('submit', payload) // 🔥 关键：向父组件转发事件
+  const handleSubmit = (
+    payload: SubmitEventPayload<EmployeeFormData>
+  ): void => {
+    emit('submit', payload)
   }
 
   // 获取当前表单数据的统一方法
@@ -258,8 +257,9 @@
         field.prop in currentData &&
         currentData[field.prop as keyof EmployeeFormData] !== undefined
       ) {
-        validData[field.prop as keyof EmployeeFormData] =
-          currentData[field.prop as keyof EmployeeFormData]
+        Object.assign(validData, {
+          [field.prop]: currentData[field.prop as keyof EmployeeFormData],
+        })
       }
     })
 
@@ -308,7 +308,10 @@
   ])
 
   // 提交配置
-  const { loading: submitLoading, createSubmit } = useFormSubmit()
+  const { loading: submitLoading, createSubmit } = useFormSubmit<
+    EmployeeSubmitResponse,
+    EmployeeFormData
+  >()
   const handleFormSubmit = createSubmit(submitEmployeeAPI, {
     successCode: '0',
     successMsg: '🎉 员工信息提交成功！',
@@ -321,7 +324,6 @@
       data: Object.keys(validFormData.value).length,
       formRef: !!formRef.value,
     }
-    console.log('🔍 表单状态:', stats)
     message.info(`字段: ${stats.fields}个，数据: ${stats.data}个`)
   }
 
@@ -343,9 +345,7 @@
       Object.assign(formData.value, newData)
     }
 
-    setTimeout(() => {
-      message.success(`已为 ${Object.keys(newData).length} 个字段填充测试数据`)
-    }, 300)
+    message.success(`已为 ${Object.keys(newData).length} 个字段填充测试数据`)
   }
 
   const clearFormData = (): void => {
@@ -369,8 +369,8 @@
 
     try {
       await formRef.value.validate()
-    } catch (error) {
-      console.error('表单验证失败:', error)
+    } catch {
+      message.error('表单验证失败，请检查填写内容')
     }
   }
 
@@ -440,9 +440,7 @@
 
   // ==================== 初始化 ====================
   onMounted(() => {
-    // 🔥 关键：主动触发fields-change事件
     emit('fields-change', employeeFormOptions)
-    console.log('自定义布局表单组件已加载')
   })
 
   // ==================== 暴露方法 ====================

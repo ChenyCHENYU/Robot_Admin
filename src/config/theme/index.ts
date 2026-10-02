@@ -17,7 +17,7 @@
  * 3. index.ts (本文件) - 统一导出，便于外部引用
  *
  * 使用示例：
- * import { THEME_TOKENS, themeOverrides, darkThemeOverrides } from '@/config/theme'
+ * import { THEME_TOKENS, lightThemeOverrides, darkThemeOverrides } from '@/config/theme'
  */
 
 // 导出所有 Token
@@ -26,9 +26,7 @@ export * from './tokens'
 // 导出 Naive UI 覆盖配置
 export {
   lightThemeOverrides,
-  themeOverrides,
   darkThemeOverrides,
-  themeConstants,
   type GlobalThemeOverrides,
 } from './naive-overrides'
 

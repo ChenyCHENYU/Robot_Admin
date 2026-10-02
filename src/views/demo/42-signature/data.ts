@@ -8,8 +8,6 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { ExportOptions } from '@robot-admin/naive-ui-components'
-
 export interface ScenarioMeta {
   id: string
   icon: string
@@ -51,20 +49,8 @@ export const SCENARIOS: Record<string, ScenarioMeta> = {
   },
 }
 
-/** 导出格式选项 */
-export const EXPORT_OPTIONS: Array<{
-  label: string
-  value: ExportOptions['format']
-}> = [
-  { label: 'PNG（透明背景）', value: 'png' },
-  { label: 'JPEG（白色背景）', value: 'jpeg' },
-]
-
 /** 自定义配置默认值 */
 export const CUSTOM_CONFIG_DEFAULTS = {
   bgColor: 'transparent',
   showToolbar: true,
 }
-
-/** 预设签名示例图片（Base64） */
-export const SAMPLE_SIGNATURE = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==`

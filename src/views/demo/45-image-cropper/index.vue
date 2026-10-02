@@ -38,6 +38,7 @@
           ref="basicRef"
           :src="DEMO_IMAGE"
           height="400px"
+          @error="onCropperError"
         />
         <div class="action-bar">
           <NButton
@@ -101,6 +102,7 @@
           :aspect-ratio="1"
           :circular="true"
           height="350px"
+          @error="onCropperError"
         />
         <div class="action-bar">
           <NButton
@@ -187,6 +189,7 @@
           :output-quality="outputQuality"
           :max-output-width="maxWidth"
           height="350px"
+          @error="onCropperError"
         />
         <div class="action-bar">
           <NButton
@@ -240,8 +243,9 @@
           </div>
           <p class="card-desc">点击选取本地图片，裁剪后导出</p>
         </template>
-        <div
+        <button
           v-if="!uploadSrc"
+          type="button"
           class="demo-upload-area"
           @click="triggerUpload"
         >
@@ -250,12 +254,13 @@
             class="upload-icon"
           />
           <NText depth="3">点击选择图片</NText>
-        </div>
+        </button>
         <template v-else>
           <C_ImageCropper
             ref="uploadRef"
             :src="uploadSrc"
             height="350px"
+            @error="onCropperError"
           />
           <div class="action-bar">
             <NButton @click="triggerUpload">重新选择</NButton>
@@ -317,6 +322,7 @@
           modal-title="裁剪 Banner"
           :aspect-ratio="16 / 9"
           @confirm="onModalConfirm"
+          @error="onCropperError"
         />
         <div
           v-if="modalResult"
@@ -417,6 +423,7 @@
           :show-toolbar="false"
           :show-preview="false"
           height="350px"
+          @error="onCropperError"
         />
       </NCard>
     </div>
@@ -424,9 +431,12 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo45ImageCropper' })
+  import type { Ref } from 'vue'
   import type {
     CropOutputFormat,
     CropResult,
+    ImageCropperExpose,
   } from '@robot-admin/naive-ui-components'
   import {
     DEMO_AVATAR,
@@ -438,38 +448,48 @@
   const message = useMessage()
 
   // ─── Refs ──────────────────────────────────────
-  const basicRef = ref()
-  const avatarRef = ref()
-  const configRef = ref()
-  const uploadRef = ref()
-  const modalRef = ref()
-  const apiRef = ref()
+  const basicRef = ref<ImageCropperExpose | null>(null)
+  const avatarRef = ref<ImageCropperExpose | null>(null)
+  const configRef = ref<ImageCropperExpose | null>(null)
+  const uploadRef = ref<ImageCropperExpose | null>(null)
+  const modalRef = ref<ImageCropperExpose | null>(null)
+  const apiRef = ref<ImageCropperExpose | null>(null)
   const fileInputRef = ref<HTMLInputElement | null>(null)
 
   // ─── 基础裁剪 ──────────────────────────────────
   const basicResult = ref<CropResult>()
 
-  /** 基础裁剪 */
-  async function handleBasicCrop() {
+  /** 将任意内联裁剪器的导出结果写入对应演示区域。 */
+  async function exportCrop(
+    cropper: ImageCropperExpose | null,
+    output: Ref<CropResult | undefined>,
+    successMessage: string
+  ) {
     try {
-      basicResult.value = await basicRef.value?.getCropResult()
-      message.success('裁剪成功')
+      if (!cropper) throw new Error('裁剪器尚未就绪')
+      output.value = await cropper.getCropResult()
+      message.success(successMessage)
     } catch {
       message.error('裁剪失败')
     }
+  }
+
+  /** 显示组件内部的图片加载和导出错误。 */
+  function onCropperError(error: Event | Error) {
+    message.error(error instanceof Error ? error.message : '图片处理失败')
+  }
+
+  /** 基础裁剪 */
+  function handleBasicCrop() {
+    void exportCrop(basicRef.value, basicResult, '裁剪成功')
   }
 
   // ─── 头像裁剪 ──────────────────────────────────
   const avatarResult = ref<CropResult>()
 
   /** 头像裁剪 */
-  async function handleAvatarCrop() {
-    try {
-      avatarResult.value = await avatarRef.value?.getCropResult()
-      message.success('头像裁剪成功')
-    } catch {
-      message.error('裁剪失败')
-    }
+  function handleAvatarCrop() {
+    void exportCrop(avatarRef.value, avatarResult, '头像裁剪成功')
   }
 
   // ─── 输出配置 ──────────────────────────────────
@@ -479,13 +499,8 @@
   const configResult = ref<CropResult>()
 
   /** 配置导出 */
-  async function handleConfigCrop() {
-    try {
-      configResult.value = await configRef.value?.getCropResult()
-      message.success('导出成功')
-    } catch {
-      message.error('导出失败')
-    }
+  function handleConfigCrop() {
+    void exportCrop(configRef.value, configResult, '导出成功')
   }
 
   // ─── 本地上传 ──────────────────────────────────
@@ -499,24 +514,27 @@
 
   /** 文件选取回调 */
   function handleFileChange(e: Event) {
-    const file = (e.target as HTMLInputElement).files?.[0]
+    const input = e.target as HTMLInputElement
+    const file = input.files?.[0]
+    input.value = ''
     if (!file) return
+    if (!file.type.startsWith('image/')) {
+      message.error('请选择图片文件')
+      return
+    }
     const reader = new FileReader()
+    reader.onerror = () => message.error('读取图片失败')
     reader.onload = ev => {
-      uploadSrc.value = ev.target?.result as string
+      if (typeof ev.target?.result !== 'string') return
+      uploadSrc.value = ev.target.result
       uploadResult.value = undefined
     }
     reader.readAsDataURL(file)
   }
 
   /** 上传裁剪 */
-  async function handleUploadCrop() {
-    try {
-      uploadResult.value = await uploadRef.value?.getCropResult()
-      message.success('裁剪成功')
-    } catch {
-      message.error('裁剪失败')
-    }
+  function handleUploadCrop() {
+    void exportCrop(uploadRef.value, uploadResult, '裁剪成功')
   }
 
   // ─── 弹窗模式 ──────────────────────────────────

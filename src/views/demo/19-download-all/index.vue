@@ -1,3 +1,11 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-02
+ * @FilePath: \Robot_Admin\src\views\demo\19-download-all\index.vue
+ * @Description: 通用文件下载场景示例
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="download-demo">
     <c_vTitle
@@ -12,7 +20,7 @@
         class="demo-card demo-section"
       >
         <template #header-extra>
-          <span class="i-mdi:flash-outline text-yellow-500"></span>
+          <span class="i-mdi-flash-outline text-yellow-500"></span>
         </template>
 
         <C_ActionBar :actions="quickDownloadActions" />
@@ -24,7 +32,7 @@
         class="demo-card demo-section"
       >
         <template #header-extra>
-          <span class="i-mdi:wrench-settings text-purple-500"></span>
+          <span class="i-mdi-wrench-settings text-purple-500"></span>
         </template>
 
         <NForm
@@ -70,7 +78,7 @@
               @click="handleCustomDownload"
             >
               <template #icon>
-                <span class="i-mdi:cloud-download-outline"></span>
+                <span class="i-mdi-cloud-download-outline"></span>
               </template>
               自定义下载
             </NButton>
@@ -84,7 +92,7 @@
         class="demo-card demo-section"
       >
         <template #header-extra>
-          <span class="i-mdi:folder text-green-500"></span>
+          <span class="i-mdi-folder text-green-500"></span>
         </template>
 
         <div class="batch-controls">
@@ -111,7 +119,7 @@
         class="demo-card demo-section"
       >
         <template #header-extra>
-          <span class="i-mdi:clock-time-four-outline text-indigo-500"></span>
+          <span class="i-mdi-clock-time-four-outline text-indigo-500"></span>
         </template>
 
         <NDataTable
@@ -126,6 +134,8 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo19DownloadAll' })
+  import { setupFileUtils } from '@/plugins/file-utils'
   import {
     useDownload,
     useDownloadExcel,
@@ -136,13 +146,15 @@
     getSupportedFileTypes,
     type DownloadConfig,
   } from '@robot-admin/file-utils'
+
   import {
     createMockApi,
     batchFiles,
     historyColumns,
     type HistoryItem,
   } from './data'
-  import './index.scss'
+
+  setupFileUtils()
   const message = useMessage()
 
   // 加载状态
@@ -272,7 +284,7 @@
    * ? @param loadingKey - 加载状态键
    */
   const executeDownload = async (
-    downloadFn: () => Promise<void>,
+    downloadFn: () => Promise<unknown>,
     fileName: string,
     fileType: string,
     loadingKey: keyof typeof loading
@@ -429,3 +441,7 @@
     selectedFiles.value = []
   }
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-05 23:21:56
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-10 21:22:22
+ * @LastEditTime: 2026-03-28 12:24:03
  * @FilePath: \Robot_Admin\src\views\demo\07-form\index.scss
  * @Description: 表单组件 - 演示页面 - 入口页面样式文件
  * Copyright (c) 2025 by CHENY,
@@ -143,6 +143,10 @@ $info: #0ea5e9;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
   }
+}
+
+.n-card .n-card-header {
+  margin-bottom: 0px !important;
 }
 
 // 表单区域
@@ -474,6 +478,7 @@ $info: #0ea5e9;
     }
   }
 }
+
 
 @media (max-width: 480px) {
   .form-demo {

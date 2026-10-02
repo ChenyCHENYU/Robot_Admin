@@ -9,24 +9,56 @@
  */
 import router from '@/router'
 import { s_userStore } from '@/stores/user'
-import { initDynamicRouter, type DynamicRoute } from '@/router/dynamicRouter'
+import {
+  clearExistingRoutes,
+  initDynamicRouter,
+  type DynamicRoute,
+} from '@/router/dynamicRouter'
 import { s_permissionStore } from '@/stores/permission'
+import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
 import { message } from '@/plugins/discrete'
 import { setupNProgress } from '@/plugins/nprogress'
-import type { RouteLocationNormalized } from 'vue-router'
+import { claimChunkRecovery, clearChunkRecovery } from './chunkRecovery'
+import type {
+  NavigationGuardReturn,
+  RouteLocationNormalized,
+  RouteMeta,
+} from 'vue-router'
 const nprogress = setupNProgress()
-const WHITE_LIST = ['/login', '/404', '/401', '/portal']
+const WHITE_LIST = ['/login', '/404', '/401']
 const LOGIN_PATH = '/login'
 const DEFAULT_TITLE = 'Robot Admin'
+const ROUTE_MODULE_LOAD_ERROR_RE =
+  /Failed to fetch dynamically imported module|Importing a module script failed|Loading chunk|ChunkLoadError/i
 
-// 防止重复初始化
-let isInitializing = false
-
-// 扩展 RouteMeta 类型
-interface ExtendedRouteMeta {
-  title?: string
-  [key: string]: any
+const getRecoveryStorage = (): Storage | undefined => {
+  try {
+    return window.sessionStorage
+  } catch {
+    return undefined
+  }
 }
+
+let chunkRecoveryStarted = false
+
+const handleChunkLoadFailure = (): void => {
+  if (chunkRecoveryStarted) return
+
+  if (
+    import.meta.env.PROD &&
+    navigator.onLine !== false &&
+    claimChunkRecovery(getRecoveryStorage(), window.location.href)
+  ) {
+    chunkRecoveryStarted = true
+    window.location.reload()
+    return
+  }
+
+  message.error('页面模块加载失败，请检查网络后手动刷新重试')
+}
+
+let dynamicRouterInitPromise: Promise<boolean> | null = null
+let dynamicRouterInitToken: string | null = null
 
 /**
  * * @description: 统一错误处理
@@ -35,7 +67,8 @@ const handleRouteError = (error: unknown, customMsg?: string): string => {
   nprogress.done()
   console.error('路由异常:', error)
   message.error(customMsg || '系统异常，请重新登录')
-  s_userStore().$reset()
+  s_userStore().clearSession()
+  clearExistingRoutes()
   return LOGIN_PATH
 }
 
@@ -46,56 +79,69 @@ const setPageTitle = (title?: string): void => {
   document.title = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE
 }
 
+/** 从开放的 RouteMeta 中安全读取标题 */
+const getMetaTitle = (meta: RouteMeta): string | undefined =>
+  typeof meta.title === 'string' ? meta.title : undefined
+
 /**
  * * @description: 初始化动态路由
  */
-const handleDynamicRouterInit = async (fullPath: string): Promise<string> => {
-  if (isInitializing) return fullPath
-
-  isInitializing = true
+const handleDynamicRouterInit = async (
+  fullPath: string
+): Promise<string | false> => {
+  const tokenAtStart = s_userStore().token
+  if (!dynamicRouterInitPromise || dynamicRouterInitToken !== tokenAtStart) {
+    const pending = initDynamicRouter()
+    dynamicRouterInitToken = tokenAtStart
+    dynamicRouterInitPromise = pending
+    void pending.then(
+      () => {
+        if (dynamicRouterInitPromise === pending) {
+          dynamicRouterInitPromise = null
+          dynamicRouterInitToken = null
+        }
+      },
+      () => {
+        if (dynamicRouterInitPromise === pending) {
+          dynamicRouterInitPromise = null
+          dynamicRouterInitToken = null
+        }
+      }
+    )
+  }
 
   try {
-    const success = await initDynamicRouter()
+    const [success] = await Promise.all([
+      dynamicRouterInitPromise,
+      preloadAuthenticatedShell(),
+    ])
+
+    if (tokenAtStart !== s_userStore().token) return false
 
     if (!success) {
       throw new Error('动态路由初始化失败')
     }
 
-    // 再次检查菜单列表
     const { authMenuList } = s_permissionStore()
-
     if (!authMenuList.length) {
       throw new Error('菜单数据为空')
     }
 
+    if (import.meta.env.DEV) {
+      console.log('✅ 动态路由初始化成功')
+    }
     return fullPath
   } catch (error) {
+    if (tokenAtStart !== s_userStore().token) return false
     return handleRouteError(error, '动态路由加载失败')
-  } finally {
-    isInitializing = false
   }
 }
 
 /**
  * * @description: 检查是否需要初始化动态路由
  */
-const shouldInitDynamicRouter = (
-  authMenuList: DynamicRoute[],
-  isInitializing: boolean
-): boolean => {
-  // 如果正在初始化，跳过
-  if (isInitializing) return false
-
-  // 如果菜单列表为空，需要初始化
-  if (!authMenuList.length) return true
-
-  // 检查动态路由是否真的已经注册到 router 中
-  const hasHomeRoute = router
-    .getRoutes()
-    .some(r => r.path === '/home' || r.name === 'home')
-
-  // 如果有菜单数据但路由未注册，也需要初始化
-  return !hasHomeRoute
+const shouldInitDynamicRouter = (authMenuList: DynamicRoute[]): boolean => {
+  return !authMenuList.length
 }
 
 /**
@@ -103,10 +149,10 @@ const shouldInitDynamicRouter = (
  */
 const handleUnauthenticated = (
   to: RouteLocationNormalized,
-  meta: ExtendedRouteMeta
+  meta: RouteMeta
 ): string | boolean => {
   if (WHITE_LIST.includes(to.path) || to.path.startsWith('/preview')) {
-    setPageTitle(meta.title)
+    setPageTitle(getMetaTitle(meta))
     return true
   }
   return LOGIN_PATH
@@ -133,31 +179,26 @@ const checkRoutePermission = (to: RouteLocationNormalized): boolean => {
   if (['/home', '/404', '/401'].includes(to.path)) {
     return true
   }
-  // 微前端容器路由放行
-  if (to.path.startsWith('/micro-app/')) {
-    return true
-  }
+  // 门户和微应用属于已登录用户的静态路由，不依赖动态菜单授权。
+  if (to.name === 'portal' || to.name === 'micro-app') return true
   const permissionStore = s_permissionStore()
   return permissionStore.hasRoutePermission(to.path)
 }
 
 // 核心路由守卫
 router.beforeEach(
-  async (
-    to: RouteLocationNormalized,
-    from: RouteLocationNormalized
-  ): Promise<string | boolean> => {
+  async (to: RouteLocationNormalized): Promise<NavigationGuardReturn> => {
     nprogress.start()
 
     try {
       const userStore = s_userStore()
       const { token } = userStore
       const { authMenuList } = s_permissionStore()
-      const meta = to.meta as ExtendedRouteMeta
+      const { meta } = to
 
       // 0. 预览路由直接放行
       if (to.path.startsWith('/preview')) {
-        setPageTitle(meta.title)
+        setPageTitle(getMetaTitle(meta))
         return true
       }
 
@@ -172,8 +213,10 @@ router.beforeEach(
       }
 
       // 3. 动态路由初始化
-      if (shouldInitDynamicRouter(authMenuList, isInitializing)) {
+      if (shouldInitDynamicRouter(authMenuList)) {
         const result = await handleDynamicRouterInit(to.fullPath)
+
+        if (result === false) return false
 
         if (result !== to.fullPath) {
           return result
@@ -188,18 +231,10 @@ router.beforeEach(
         return '/401'
       }
 
-      // 5. 跳过相同路由的重复检查
-      if (to.path === from.path && to.fullPath === from.fullPath) {
-        nprogress.done()
-        return false
-      }
-
-      setPageTitle(meta.title)
+      setPageTitle(getMetaTitle(meta))
       return true
     } catch (error) {
       return handleRouteError(error)
-    } finally {
-      nprogress.done()
     }
   }
 )
@@ -212,24 +247,32 @@ router.onError((error: Error) => {
     console.error('🔥 路由错误:', error)
   }
 
-  if (error.message.includes('Loading chunk')) {
-    window.location.reload()
+  if (ROUTE_MODULE_LOAD_ERROR_RE.test(error.message)) {
+    handleChunkLoadFailure()
     return
   }
 
   message.error('页面加载失败，请刷新重试')
 })
 
-// 后置钩子 - 过滤 micro-app 导航冲突的无害错误
-router.afterEach((to, from, failure) => {
-  if (failure) {
-    const ignoredErrors = [
-      'Navigation cancelled',
-      'Navigation aborted',
-      'redundant navigation',
-    ]
-    if (!ignoredErrors.some(msg => failure.message.includes(msg))) {
-      console.error('❌ 路由跳转失败:', failure.message)
-    }
+window.addEventListener('vite:preloadError', event => {
+  event.preventDefault()
+  handleChunkLoadFailure()
+})
+
+// 后置钩子
+router.afterEach((_to, _from, failure) => {
+  // afterEach 在异步路由组件解析完成后触发，进度条覆盖真实页面加载周期
+  nprogress.done()
+  if (!failure && !chunkRecoveryStarted) {
+    clearChunkRecovery(getRecoveryStorage())
+  }
+
+  const expectedNavigationInterruption =
+    failure &&
+    /Avoided redundant navigation|Navigation cancelled/i.test(failure.message)
+
+  if (import.meta.env.DEV && failure && !expectedNavigationInterruption) {
+    console.error('❌ 路由跳转失败:', failure.message)
   }
 })

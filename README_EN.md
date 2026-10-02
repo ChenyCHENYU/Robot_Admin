@@ -1,3 +1,5 @@
+> The `micro-app` branch is aligned with the monolithic **2.6.3** baseline while retaining its independent micro-frontend architecture. Production requires an explicit trusted HTTPS sub-app URL; without one, the portal marks it as pending and does not load a placeholder. See the [micro-app upgrade guide](docs/MICRO_APP_UPGRADE.md) for configuration, messaging security, and verification.
+
 <div align="center">
   <a href="https://robotadmin.cn">
     <picture>
@@ -38,10 +40,10 @@
         <img src="https://img.shields.io/badge/🔗-Module+Federation-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Webpack/Vite Federation</strong></sub><br>
         <sub>Runtime module sharing</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
           <img src="https://img.shields.io/badge/View+Code-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
           <img src="https://img.shields.io/badge/Usage Guide-DOCS-orange?style=flat-square" alt="MF Docs">
         </a>
       </td>
@@ -59,7 +61,7 @@
 
   <p>
     <img src="https://img.shields.io/badge/branch-micro--app-E74C3C?style=flat&logo=git" alt="Branch">
-    <img src="https://img.shields.io/badge/micro--app-v1.0.0--rc.29-E74C3C?style=flat" alt="micro-app version">
+    <img src="https://img.shields.io/badge/micro--app-v1.0.0--rc.32-E74C3C?style=flat" alt="micro-app version">
     <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
@@ -109,7 +111,7 @@
 | Dimension                | Description                                                                    |
 | ------------------------ | ------------------------------------------------------------------------------ |
 | **Architecture Pattern** | Main app (Shell) + multiple independent sub-apps                               |
-| **Framework**            | `@micro-zoe/micro-app` v1.0.0-rc.29, iframe sandbox                            |
+| **Framework**            | `@micro-zoe/micro-app` v1.0.0-rc.32, iframe sandbox                            |
 | **Applicable Scale**     | Large enterprise apps, multi-team parallel development                         |
 | **Core Value**           | Tech stack agnostic, independent deployment, sandbox isolation, unified portal |
 | **Template Goal**        | Clone → Configure → Ready-to-use, zero boilerplate overhead                    |
@@ -130,7 +132,7 @@
 | --------------------- | --------------------------- | ---------------------------------- | -------------------------- | ---------------------- |
 | **Monolithic SPA**    | `main`                      | Small-medium, single team          | Vue 3.5 + Vite             | ❌ Whole-app redeploy  |
 | **Monorepo**          | `monorepo`                  | Multi-app same repo, unified build | Bun Workspaces             | ⚡ Partial build       |
-| **Module Federation** | `feature/module-federation` | Runtime module sharing             | Webpack/Rsbuild Federation | ✅ Independent         |
+| **Module Federation** | `module-federation` | Runtime module sharing             | Webpack/Rsbuild Federation | ✅ Independent         |
 | **Micro Frontend**    | `micro-app` **← Current**   | Large apps, multi-team             | micro-zoe/micro-app        | ✅ Full independent    |
 
 ---
@@ -308,10 +310,10 @@ Sub-apps are **independent Git repositories**, deployed independently. The main 
 
 ```bash
 # envs/.env.development
-VITE_MICRO_LOGISTICS_URL = http://localhost:3003
+VITE_MICRO_LOGISTICS_URL=http://127.0.0.1:3003
 
 # envs/.env.production
-VITE_MICRO_LOGISTICS_URL = https://logistics.example.com
+VITE_MICRO_LOGISTICS_URL=https://logistics.example.com
 ```
 
 ## 🔌 Integration
@@ -709,13 +711,13 @@ server {
 
 ```bash
 # envs/.env.development
-VITE_MICRO_LOGISTICS_URL = http://localhost:3003
+VITE_MICRO_LOGISTICS_URL=http://127.0.0.1:3003
 
 # envs/.env.production
-VITE_MICRO_LOGISTICS_URL = https://logistics.example.com
+VITE_MICRO_LOGISTICS_URL=https://logistics.example.com
 
 # envs/.env.test
-VITE_MICRO_LOGISTICS_URL = https://logistics-test.example.com
+VITE_MICRO_LOGISTICS_URL=https://logistics-test.example.com
 ```
 
 > URLs are injected at build time via Vite's `--mode` flag. No runtime resolution needed.
@@ -819,7 +821,7 @@ VITE_MICRO_LOGISTICS_URL = https://logistics-test.example.com
 | **Core Framework**  | Vue                     | 3.5.13      | Reactive UI       |
 | **Language**        | TypeScript              | ~5.8.0      | Type safety       |
 | **Build Tool**      | Vite                    | 8.0.1       | Dev / build       |
-| **Micro-Frontend**  | @micro-zoe/micro-app    | 1.0.0-rc.29 | Sub-app container |
+| **Micro-Frontend**  | @micro-zoe/micro-app    | 1.0.0-rc.32 | Sub-app container |
 | **UI Library**      | Naive UI                | 2.41.0+     | Component library |
 | **State**           | Pinia                   | 3.0.1       | State management  |
 | **Routing**         | Vue Router              | 4.5.0       | SPA routing       |

@@ -9,7 +9,7 @@
  */
 
 import type { FormOption } from '@robot-admin/naive-ui-components'
-import { PRESET_RULES } from '@robot-admin/form-validate'
+import { PRESET_RULES } from '@/utils/d_formValidate'
 import { reactive } from 'vue'
 
 // ================= 验证规则 =================

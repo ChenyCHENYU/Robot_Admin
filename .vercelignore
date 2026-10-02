@@ -5,5 +5,3 @@ node_modules
 dist
 .vscode
 .idea
-scripts
-docs

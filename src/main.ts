@@ -2,13 +2,13 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-03-30 17:45:29
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-08 01:22:35
+ * @LastEditTime: 2026-09-02
  * @FilePath: \Robot_Admin\src\main.ts
  * @Description: 根入口文件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import '@lang/index.js'
+import '../lang/index.js'
 import './utils/plugins/i18n-route.ts' // 🌐 扩展路由翻译
 
 // 键：首屏加载动画必须最先执行，确保极速显示
@@ -16,27 +16,24 @@ import { setupLoading } from '@/plugins/loading'
 
 import './assets/css/main.css'
 import '@/styles/index.scss'
-import '@robot-admin/layout/style' // 布局包完整样式（组件 + 布局）
-import '@robot-admin/naive-ui-components/style.css' // 📦 组件库样式
+import '@robot-admin/layout/naive/style' // Naive UI 布局完整样式
+import '@robot-admin/theme/naive/styles' // 三套设计风格，按 data-design-style 自动隔离
 import 'virtual:uno.css'
 // vue-flow 样式已移至使用页面按需加载（28-work-flow-editor）
 import '@/router/permission'
 import App from './App.vue'
 import router from './router'
-import { setupDirectives } from '@robot-admin/directives' // 👈 直接从包导入
-import {
-  setupStore,
-  setupNaiveUI,
-  setupDynamicComponents,
-  PassiveScrollPlugin,
-  setupHighlight,
-  setupMarkdown,
-  setupAnalytics,
-  setupRequestCore, //  Request Core 插件
-  setupLayoutSystem, // 🆕 布局系统插件
-  setupFileUtils, // 🆕 文件处理工具包
-  setupMicroApp, // 🔥 微前端插件
-} from '@/plugins'
+import { createDirectives } from '@robot-admin/directives'
+import { setupStore } from '@/plugins/store'
+import { setupNaiveUI } from '@/plugins/naive-ui-plugin'
+import { message } from '@/plugins/discrete'
+import { PassiveScrollPlugin } from '@/plugins/passive-scroll'
+import { setupAnalytics } from '@/plugins/analytics'
+import { setupRequestCore } from '@/plugins/request-core'
+import { setupLayoutSystem } from '@/plugins/layout'
+import { setupThemeSystem } from '@/plugins/theme'
+import { setupRoutePrefetch } from '@/router/routePrefetch'
+import { setupHighlight } from '@/plugins/highlight'
 // ✅ 移除 app.use(NaiveUIComponents)，由 RobotNaiveUiResolver 按需解析
 import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 
@@ -47,9 +44,6 @@ import { setupGlobalErrorHandler } from '@/utils/errorHandler'
 async function bootstrap() {
   // 第零阶段：立即显示加载动画（innerHTML 方式，极速）
   setupLoading()
-
-  // 🔥 启动 micro-app 微前端框架（早于 Vue 实例创建）
-  setupMicroApp()
 
   // 第一阶段：创建Vue实例
   const app = createApp(App)
@@ -62,19 +56,20 @@ async function bootstrap() {
 
   // ✅ C_ 组件由 RobotNaiveUiResolver 按需自动解析，无需全局注册
 
-  // 使用路由
-  app.use(router)
-
   // 第二阶段：Vue相关插件（使用统一的插件化配置）
   setupStore(app) // 配置 Pinia（包含持久化插件）
-  setupRequestCore(app) // 配置 Request Core（axios + 7 个插件 + CRUD）
+  // Pinia 与请求核心必须先于 Router，避免初始导航守卫访问未初始化依赖
+  setupRequestCore(app) // 配置 Request Core（axios + 拦截器）
+  app.use(router)
   setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）
+  setupThemeSystem(app) // 初始化主题 Store、DOM 属性和生命周期
   setupNaiveUI(app)
-  setupDynamicComponents(app)
   setupHighlight(app)
-  setupMarkdown(app) // 🔄 已改为异步懒加载，不阻塞启动
-  setupDirectives(app)
-  setupFileUtils() // 初始化 file-utils（注入 naive-ui 消息系统）
+  app.use(
+    createDirectives({
+      notify: (type, text) => message[type](text),
+    })
+  )
   setupAnalytics(app)
 
   // 第三阶段：等待路由就绪
@@ -82,6 +77,9 @@ async function bootstrap() {
 
   // 第四阶段：挂载应用
   app.mount('#app')
+
+  // 登录后利用浏览器空闲时间渐进预热大页面，不占用登录页和首屏关键链路
+  setupRoutePrefetch(router)
 
   // 注意：移除加载动画的逻辑已移至 App.vue 的 onMounted 中
   // 确保首屏内容真正渲染完成后才移除

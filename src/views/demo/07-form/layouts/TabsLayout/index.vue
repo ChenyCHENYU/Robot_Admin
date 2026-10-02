@@ -82,9 +82,9 @@
           :config="{ compact: true }"
         />
       </template>
-      <template #action="{ validate, reset }">
+      <template #action="{ submit, reset }">
         <C_ActionBar
-          :actions="getFormActions(validate, reset)"
+          :actions="getFormActions(submit, reset)"
           :config="{ gap: 12 }"
         />
       </template>
@@ -117,18 +117,15 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo07FormTabsLayout' })
   import type {
     FormModel,
+    FormOption,
     FormInstance,
     LabelPlacement,
     ActionItem,
   } from '@robot-admin/naive-ui-components'
-  import {
-    layoutConfig,
-    placementOptions,
-    createFormOptions,
-    mockDraftData,
-  } from './data'
+  import { layoutConfig, placementOptions, createFormOptions } from './data'
 
   // ==================== Props ====================
   interface Props {
@@ -143,10 +140,10 @@
 
   // ==================== Emits ====================
   const emit = defineEmits<{
-    submit: [payload: any]
+    submit: [payload: { model: FormModel }]
     'validate-success': [model: FormModel]
-    'validate-error': [errors: any]
-    'fields-change': [fields: any[]]
+    'validate-error': [errors: unknown]
+    'fields-change': [fields: FormOption[]]
   }>()
 
   // ==================== v-model ====================
@@ -155,6 +152,7 @@
   // ================= 状态管理 =================
   const message = useMessage()
   const formRef = ref<FormInstance>()
+  let draftSnapshot: string | null = null
 
   // ================= 计算属性 =================
   const formOptions = computed(() => createFormOptions())
@@ -165,14 +163,13 @@
     tabs: layoutConfig.tabs,
     labelPlacement: labelPlacement.value,
     validateOnChange: validateOnChange.value,
-    onTabChange: handleTabChange,
     onTabValidate: handleTabValidate,
     onFieldsChange: handleFieldsChange,
   }))
 
   // ==================== 表单操作按钮配置 ====================
   const getFormActions = (
-    validate: () => Promise<void>,
+    submit: () => Promise<boolean>,
     reset: () => void
   ): ActionItem[] => [
     {
@@ -181,11 +178,7 @@
       icon: 'mdi:check-circle-outline',
       type: 'primary',
       onClick: async () => {
-        try {
-          await validate()
-        } catch {
-          message.error('表单验证失败')
-        }
+        await submit()
       },
     },
     {
@@ -250,59 +243,48 @@
   }
 
   // ================= 事件处理 =================
-  const handleTabChange = (tabKey: string) => {
-    const tabIndex = layoutConfig.tabs.tabs.findIndex(t => t.key === tabKey)
-    console.log(`切换到标签页: ${getTabTitle(tabKey)}`, `索引: ${tabIndex}`)
-  }
-
   const handleTabValidate = (tabKey: string): boolean => {
-    console.log(`验证标签页: ${getTabTitle(tabKey)}`)
     message.info(`正在验证 ${getTabTitle(tabKey)}`)
     return true
   }
 
   const handleValidateSuccess = (model: FormModel) => {
-    console.log('表单验证成功', model)
-    emit('validate-success', model) // 🔥 关键：向父组件转发事件
+    emit('validate-success', model)
     message.success('表单验证通过')
   }
 
   const handleValidateError = (errors: unknown) => {
-    console.log('表单验证失败', errors)
-    emit('validate-error', errors) // 🔥 关键：向父组件转发事件
+    emit('validate-error', errors)
     message.error('表单验证失败')
   }
 
   const handleSubmit = (payload: { model: FormModel }) => {
-    console.log('提交的数据:', payload.model)
-    emit('submit', payload) // 🔥 关键：向父组件转发事件
-    message.success('表单提交成功！')
+    emit('submit', payload)
   }
 
-  const handleFieldsChange = (fields: any[]): void => {
-    console.log('字段变化:', fields)
-    emit('fields-change', fields) // 🔥 关键：向父组件转发事件
+  const handleFieldsChange = (fields: FormOption[]): void => {
+    emit('fields-change', fields)
   }
 
   const handleSaveDraft = () => {
     try {
-      const draftData = JSON.stringify(formData.value)
-      // 由于在浏览器artifact环境中不能使用localStorage，这里模拟保存操作
-      console.log('模拟保存草稿:', draftData)
-      message.success('草稿已保存')
-    } catch (error) {
+      draftSnapshot = JSON.stringify(formData.value)
+      message.success('草稿已保存到当前页面')
+    } catch {
       message.error('草稿保存失败')
-      console.error('草稿保存失败:', error)
     }
   }
 
   const handleLoadDraft = () => {
+    if (!draftSnapshot) {
+      message.warning('请先保存草稿')
+      return
+    }
     try {
-      Object.assign(formData.value, mockDraftData)
+      formData.value = JSON.parse(draftSnapshot) as FormModel
       message.success('草稿已加载')
-    } catch (error) {
+    } catch {
       message.error('草稿加载失败')
-      console.error('草稿加载失败:', error)
     }
   }
 

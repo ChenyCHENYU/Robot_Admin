@@ -22,7 +22,7 @@
         @click="handleOpen(item)"
       >
         <div class="card-icon">
-          <i :class="item.icon || 'i-ri:file-text-line'"></i>
+          <C_Icon :name="(item.icon || 'ri:file-text-line').replace('i-', '')" :size="20" />
         </div>
         <div class="card-name">{{ item.name }}</div>
         <div

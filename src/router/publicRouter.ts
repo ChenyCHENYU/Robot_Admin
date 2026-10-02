@@ -26,7 +26,6 @@ export const publicRoutes: RouteRecordRaw[] = [
       keepAlive: false,
     },
   },
-  // 🔥 微前端门户工作台
   {
     path: '/portal',
     name: 'portal',
@@ -40,10 +39,14 @@ export const publicRoutes: RouteRecordRaw[] = [
       keepAlive: true,
     },
   },
-  // 🔥 微前端子应用容器
   {
     path: '/micro-app/:id',
     name: 'micro-app',
+    beforeEnter: async () => {
+      const { setupMicroApp } = await import('@/plugins/micro-app')
+      setupMicroApp()
+      return true
+    },
     component: () => import('_views/micro-app/index.vue'),
     meta: {
       title: '微应用',

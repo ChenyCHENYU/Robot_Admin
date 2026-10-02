@@ -10,6 +10,7 @@ import type {
   StandardError,
 } from '@/types/modules/global-errors'
 import { createDiscreteApi } from 'naive-ui/es'
+import { reportErrorToServer } from './reporter'
 
 // 独立的 message 实例（避免循环依赖）
 const { message } = createDiscreteApi(['message'])
@@ -165,7 +166,7 @@ const safeNumber = (value: unknown): number | undefined => {
 /**
  * 安全地获取URL
  */
-const safeUrl = (url?: string): string => {
+const safeUrl = (url?: unknown): string => {
   if (url && typeof url === 'string') {
     return url
   }
@@ -192,7 +193,7 @@ const extractBasicInfo = (error: StandardError) => {
  */
 const extractLocationInfo = (
   error: StandardError,
-  additionalInfo: Record<string, any>
+  additionalInfo: Record<string, unknown>
 ) => {
   return {
     url: error?.url || additionalInfo?.url,
@@ -206,7 +207,7 @@ const extractLocationInfo = (
  */
 const extractObjectErrorInfo = (
   error: StandardError,
-  additionalInfo: Record<string, any>
+  additionalInfo: Record<string, unknown>
 ) => {
   const basicInfo = extractBasicInfo(error)
   const locationInfo = extractLocationInfo(error, additionalInfo)
@@ -222,7 +223,7 @@ const extractObjectErrorInfo = (
  */
 const extractPrimitiveErrorInfo = (
   error: unknown,
-  additionalInfo: Record<string, any>
+  additionalInfo: Record<string, unknown>
 ) => {
   return {
     message: safeString(error, '未知错误'),
@@ -239,7 +240,7 @@ const extractPrimitiveErrorInfo = (
  */
 const extractErrorInfo = (
   error: unknown,
-  additionalInfo: Record<string, any>
+  additionalInfo: Record<string, unknown>
 ) => {
   if (error && typeof error === 'object') {
     return extractObjectErrorInfo(error as StandardError, additionalInfo)
@@ -255,7 +256,7 @@ export function createErrorContext(
   source: ErrorSource,
   error: unknown,
   componentName?: string,
-  additionalInfo?: Record<string, any>
+  additionalInfo?: Record<string, unknown>
 ): ErrorContext {
   // 边界情况处理：确保所有参数都有有效值
   const safeSource = source || 'unknown'
@@ -309,46 +310,6 @@ const getUserFriendlyMessage = (context: ErrorContext): string => {
 }
 
 /**
- * 脱敏处理：移除敏感信息
- */
-const sanitizeSensitiveInfo = (message: string): string => {
-  // 脱敏常见的敏感信息模式
-  return (
-    message
-      // 移除可能的密码
-      .replace(/password["\s]*[:=]["\s]*[^"\s]+/gi, 'password:***')
-      // 移除可能的token
-      .replace(/token["\s]*[:=]["\s]*[^"\s]+/gi, 'token:***')
-      // 移除可能的API密钥
-      .replace(/api[_-]?key["\s]*[:=]["\s]*[^"\s]+/gi, 'api_key:***')
-      // 移除可能的邮箱
-      .replace(
-        /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-        '***@***.***'
-      )
-      // 移除可能的手机号
-      .replace(/\b1[3-9]\d{9}\b/g, '***********')
-      // 移除可能的身份证号
-      .replace(/\b\d{17}[\dXx]\b/g, '******************')
-  )
-}
-
-/**
- * 安全化错误消息
- */
-const sanitizeErrorMessage = (message: string): string => {
-  if (!message || message.length === 0) {
-    return '发生未知错误'
-  }
-
-  // 先脱敏，再截断
-  const sanitized = sanitizeSensitiveInfo(message)
-  return sanitized.length > 200
-    ? sanitized.substring(0, 200) + '...'
-    : sanitized
-}
-
-/**
  * 显示错误提示（带防护）
  */
 const showErrorMessage = (context: ErrorContext): void => {
@@ -362,37 +323,6 @@ const showErrorMessage = (context: ErrorContext): void => {
   } catch (err) {
     // 如果 message 显示失败，降级到 console
     console.error('错误提示显示失败:', err)
-  }
-}
-
-/**
- * 上报错误到服务器（预留接口）
- */
-const reportErrorToServer = async (context: ErrorContext): Promise<void> => {
-  try {
-    // 上报前对原始错误消息进行脱敏处理
-    const sanitizedMessage = sanitizeErrorMessage(context.message)
-
-    // TODO: 实现错误上报逻辑
-    // await fetch('/api/error-report', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     source: context.source,
-    //     message: sanitizedMessage, // 使用脱敏后的消息
-    //     stack: context.stack,
-    //     url: context.url,
-    //     timestamp: context.timestamp,
-    //     componentName: context.componentName,
-    //   })
-    // })
-
-    if (import.meta.env.DEV) {
-      console.log('[错误上报] 待实现:', sanitizedMessage)
-    }
-  } catch (err) {
-    // 上报失败不影响主流程
-    console.error('[错误上报失败]:', err)
   }
 }
 

@@ -1,3 +1,5 @@
+> 当前 `micro-app` 分支基于单体主线 **2.6.3** 同步维护，但保留独立微前端架构。生产环境须显式配置受信任的 HTTPS 子应用地址；未配置时门户会显示“待集成”，不会加载示例地址。升级后的环境、通信安全与验证约束见 [微前端升级指南](docs/MICRO_APP_UPGRADE.md)。
+
 <div align="center">
   <a href="https://robotadmin.cn">
     <picture>
@@ -38,10 +40,10 @@
         <img src="https://img.shields.io/badge/🔗-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Module Federation</strong></sub><br>
         <sub>运行时模块共享</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
           <img src="https://img.shields.io/badge/查看代码-feature/module--federation-9B59B6?style=flat-square" alt="MF Branch">
         </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md">
+        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
           <img src="https://img.shields.io/badge/使用指南-DOCS-orange?style=flat-square" alt="MF Docs">
         </a>
       </td>
@@ -59,7 +61,7 @@
 
   <p>
     <img src="https://img.shields.io/badge/branch-micro--app-E74C3C?style=flat&logo=git" alt="Branch">
-    <img src="https://img.shields.io/badge/micro--app-v1.0.0--rc.29-E74C3C?style=flat" alt="micro-app version">
+    <img src="https://img.shields.io/badge/micro--app-v1.0.0--rc.32-E74C3C?style=flat" alt="micro-app version">
     <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
@@ -109,7 +111,7 @@
 | 特性           | 说明                                                                                                          |
 | -------------- | ------------------------------------------------------------------------------------------------------------- |
 | **定位**       | 企业级微前端系统架构模板，可直接用于生产                                                                      |
-| **核心框架**   | [@micro-zoe/micro-app](https://micro-zoe.github.io/micro-app/) v1.0.0-rc.29（京东开源）                       |
+| **核心框架**   | [@micro-zoe/micro-app](https://micro-zoe.github.io/micro-app/) v1.0.0-rc.32（京东开源）                       |
 | **沙箱模式**   | iframe 沙箱（Vite 8 原生兼容，零配置）                                                                        |
 | **集成演示**   | 配套智慧物流子应用（独立项目 [`robot-logistics`](https://github.com/ChenyCHENYU/robot-logistics)，端口 3003） |
 | **门户工作台** | 统一系统入口，多子应用切换管理                                                                                |
@@ -137,7 +139,7 @@ Robot Admin 提供多种架构，按业务规模自由选择：
 | --------------- | -------------------- | -------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | **🏠 单体架构** | 中小型项目、快速原型 | 简单直接、开箱即用   | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | 本项目主文档                                                                                                          |
 | **📦 Monorepo** | 多应用统一管理       | 代码复用、统一工具链 | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                    |
-| **🔗 模块联邦** | 微应用动态加载       | 运行时共享、版本隔离 | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
+| **🔗 模块联邦** | 微应用动态加载       | 运行时共享、版本隔离 | [`module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation) |
 | **🧩 微前端** ← | 大型应用、团队协作   | 技术栈无关、独立部署 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | 本文档                                                                                                                |
 
 ---
@@ -318,10 +320,10 @@ Robot Admin 项目根目录即主应用，`src/` 包含全量业务代码。微�
 
 ```bash
 # envs/.env.development
-VITE_MICRO_LOGISTICS_URL = http://localhost:3003
+VITE_MICRO_LOGISTICS_URL=http://127.0.0.1:3003
 
 # envs/.env.production
-VITE_MICRO_LOGISTICS_URL = https://logistics.example.com
+VITE_MICRO_LOGISTICS_URL=https://logistics.example.com
 ```
 
 #### `docs/` — 架构文档
@@ -353,7 +355,7 @@ export const MICRO_APPS: Record<string, MicroAppConfig> = {
   logistics: {
     id: 'logistics',
     name: '智慧物流管理系统',
-    url: import.meta.env.VITE_MICRO_LOGISTICS_URL || 'http://localhost:3003',
+    url: import.meta.env.VITE_MICRO_LOGISTICS_URL || '',
     icon: '🚚',
     description: '物流运输、仓储管理、车辆调度',
   },
@@ -461,7 +463,7 @@ window.microApp?.addGlobalDataListener((data: any) => applyTheme(data.theme))
 
 | 子应用           | 技术栈                    | 端口 | 功能模块                           | 状态      |
 | ---------------- | ------------------------- | ---- | ---------------------------------- | --------- |
-| 智慧物流管理系统 | Vue 3 + Vite 8 + Naive UI | 3003 | 运单管理、车辆调度、仓储、路线规划 | ✅ 已集成 |
+| 智慧物流管理系统 | Vue 3 + Vite 8 + Naive UI | 3003 | 运单管理、车辆调度、仓储、路线规划 | 需部署可信子应用并配置地址 |
 | 智能仓储系统     | —                         | 3004 | 库存管理、出入库、盘点             | ⏳ 待集成 |
 | 数据分析平台     | —                         | 3005 | BI 报表、实时看板                  | ⏳ 待集成 |
 
@@ -659,7 +661,7 @@ bun run build:staging   # 使用 staging 地址
 
 | 技术                             | 版本         | 用途                   |
 | -------------------------------- | ------------ | ---------------------- |
-| @micro-zoe/micro-app             | ^1.0.0-rc.29 | 微前端框架（京东开源） |
+| @micro-zoe/micro-app             | 1.0.0-rc.32 | 微前端框架（京东开源） |
 | Vue                              | 3.5.13       | 主应用框架             |
 | TypeScript                       | ~5.8.0       | 类型安全               |
 | Vite                             | 8.0.1        | 构建工具               |
@@ -667,7 +669,7 @@ bun run build:staging   # 使用 staging 地址
 | Pinia                            | 3.0.1        | 状态管理               |
 | Vue Router                       | 4.5.0        | 路由系统               |
 | UnoCSS                           | 66+          | 原子化 CSS             |
-| @robot-admin/naive-ui-components | 0.6.10       | 51+ 业务组件库         |
+| @robot-admin/naive-ui-components | 0.13.0       | 51+ 业务组件库         |
 | Bun                              | ≥1.x         | 包管理器（必须）       |
 
 ---

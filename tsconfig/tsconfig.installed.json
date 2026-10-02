@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["src/*"],
+      "_views/*": ["src/views/*"],
+      "vue": ["node_modules/vue"],
+      "@vue/*": ["node_modules/@vue/*"],
+      "@vue-flow/*": ["node_modules/@vue-flow/*"]
+    }
+  }
+}

@@ -27,7 +27,7 @@
  * - 完全自动化（插件翻译 -> 自动读取 -> 自动构建映射）
  */
 
-import langJSON from '@lang/index.json'
+import langJSON from '../../../lang/index.json'
 
 type LangData = Record<
   string,
@@ -75,8 +75,7 @@ export function translateRouteTitle(title: string): string {
   if (!title || typeof window === 'undefined') return title
 
   // 获取当前语言
-  const currentLang =
-    (window as any).localStorage?.getItem('robot_admin') || 'zh-cn'
+  const currentLang = window.localStorage.getItem('robot_admin') || 'zh-cn'
 
   // 中文环境直接返回
   if (currentLang === 'zh-cn') return title

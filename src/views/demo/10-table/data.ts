@@ -1,6 +1,11 @@
-import type { SelectOption, DataRecord } from '@robot-admin/naive-ui-components'
-import type { TableColumn, UseTableCrudConfig } from '@robot-admin/request-core'
-import { PRESET_RULES } from '@robot-admin/form-validate'
+import type { DataRecord, EditMode } from '@robot-admin/naive-ui-components'
+import type { AlertProps, SelectOption } from 'naive-ui'
+import {
+  createMemoryTableSource,
+  type TableColumn,
+  type UseTableCrudConfig,
+} from '@robot-admin/request-core/naive'
+import { PRESET_RULES } from '@/utils/d_formValidate'
 
 // ================= 业务类型定义 =================
 export interface Employee extends DataRecord {
@@ -18,6 +23,19 @@ export interface Employee extends DataRecord {
   children?: Employee[]
 }
 
+export interface AddEmployeeForm {
+  name: string
+  age: number | null
+  gender: Employee['gender']
+  email: string
+  department: Employee['department']
+  joinDate: number | null
+  status: Employee['status']
+  level: NonNullable<Employee['level']>
+  salary: number
+  description: string
+}
+
 // ================= 编辑模式配置 =================
 export const EDIT_MODES = [
   { value: 'row', label: '仅行编辑', icon: 'mdi:table-row' },
@@ -27,7 +45,10 @@ export const EDIT_MODES = [
   { value: 'none', label: '禁用编辑', icon: 'mdi:lock' },
 ]
 
-export const MODE_CONFIG = {
+export const MODE_CONFIG: Record<
+  EditMode,
+  { title: string; description: string; alertType: AlertProps['type'] }
+> = {
   row: {
     title: '行内编辑模式',
     description:
@@ -104,7 +125,7 @@ export const STATUS_TAG_CONFIG: Record<
 }
 
 // 新增表单默认值
-export const ADD_FORM_DEFAULTS = {
+export const ADD_FORM_DEFAULTS: AddEmployeeForm = {
   name: '',
   age: 25,
   gender: 'male',
@@ -147,7 +168,7 @@ const formatDescription = (desc?: string) =>
   desc ? (desc.length > 30 ? desc.substring(0, 30) + '...' : desc) : '暂无描述'
 
 // ================= 表格列配置 =================
-export const getTableColumns = (): TableColumn[] => [
+export const getTableColumns = (): TableColumn<Employee>[] => [
   {
     key: 'name',
     title: '姓名',
@@ -319,15 +340,19 @@ export const detailConfig = {
           label: '年龄',
           key: 'age',
           type: 'number',
-          formatter: (val: number) => `${val}岁`,
+          formatter: (val: unknown) =>
+            typeof val === 'number' ? `${val}岁` : String(val ?? '暂无'),
         },
         {
           label: '性别',
           key: 'gender',
           type: 'tag',
           tagType: 'info',
-          formatter: (val: string) =>
-            val === 'male' ? '男' : val === 'female' ? '女' : val,
+          formatter: (val: unknown) => {
+            if (val === 'male') return '男'
+            if (val === 'female') return '女'
+            return String(val ?? '暂无')
+          },
         },
       ],
     },
@@ -360,7 +385,8 @@ export const detailConfig = {
           key: 'description',
           type: 'text',
           span: 2,
-          formatter: (val?: string) => val || '暂无描述信息',
+          formatter: (val: unknown) =>
+            typeof val === 'string' && val ? val : '暂无描述信息',
         },
       ],
     },
@@ -372,64 +398,64 @@ export const detailConfig = {
  * 员工表格 CRUD 配置
  * @description 一个配置对象搞定所有表格需求，无需工厂函数和类型体操
  */
-export const employeeTableConfig: UseTableCrudConfig<Employee> = {
-  // API 端点配置
-  api: {
-    list: '/employees/list',
-    get: '/employees/:id',
-    update: '/employees/:id',
-    remove: '/employees/:id',
-    create: '/employees',
-  },
+export const createEmployeeTableConfig = (): UseTableCrudConfig<Employee> => {
+  // 演示页使用独立内存源，进入页面即有数据，不依赖不存在的业务接口。
+  const source = createMemoryTableSource<Employee>(() =>
+    generateMockEmployees(36)
+  )
+  let nextId = Date.now()
 
-  // 表格列配置
-  columns: getTableColumns(),
+  return {
+    source,
 
-  // 自定义操作按钮
-  customActions: [
-    {
-      key: 'copy',
-      label: '复制',
-      icon: 'mdi:content-copy',
-      type: 'default',
-      handler: (row, ctx) => {
-        const newRow: Employee = {
-          ...row,
-          id: Date.now(),
-          name: `${row.name}_副本`,
-        }
-        // 计算实际插入位置（考虑分页）
-        const actualIndex = ctx.paginationEnabled
-          ? (ctx.page.current - 1) * ctx.page.size + ctx.index + 1
-          : ctx.index + 1
-        ctx.data.splice(actualIndex, 0, newRow)
-        ctx.message.success('复制成功')
+    // 表格列配置
+    columns: getTableColumns(),
+
+    // 自定义操作按钮
+    customActions: [
+      {
+        key: 'copy',
+        label: '复制',
+        icon: 'mdi:content-copy',
+        type: 'default',
+        handler: async (row, ctx) => {
+          const newRow: Employee = {
+            ...row,
+            id: ++nextId,
+            name: `${row.name}_副本`,
+          }
+          await source.mutations?.create?.(newRow, {
+            signal: new AbortController().signal,
+          })
+          await ctx.refresh()
+          ctx.message.success('复制成功')
+        },
       },
-    },
-    {
-      key: 'authorize',
-      label: '授权',
-      icon: 'mdi:shield-key',
-      type: 'warning',
-      handler: (row, ctx) => {
-        ctx.dialog.info({
-          title: '员工授权',
-          content: `正在为员工 "${row.name}" 配置系统权限...`,
-          positiveText: '确定',
-          onPositiveClick: () => {
-            ctx.message.success('授权配置完成')
-          },
-        })
+      {
+        key: 'authorize',
+        label: '授权',
+        icon: 'mdi:shield-key',
+        type: 'warning',
+        handler: (row, ctx) => {
+          ctx.dialog.info({
+            title: '员工授权',
+            content: `正在为员工 "${row.name}" 配置系统权限...`,
+            positiveText: '确定',
+            onPositiveClick: () => {
+              ctx.message.success('授权配置完成')
+            },
+          })
+        },
       },
-    },
-  ],
+    ],
 
-  // 详情弹窗配置
-  detail: detailConfig,
+    // 详情弹窗配置
+    detail: detailConfig,
 
-  // 配置选项
-  idKey: 'id',
-  createNewRow: createNewEmployee,
+    // 配置选项
+    idKey: 'id',
+    createNewRow: createNewEmployee,
+  }
 }
 
 // ================= 高级功能演示配置 =================

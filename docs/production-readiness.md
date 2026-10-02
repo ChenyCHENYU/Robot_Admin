@@ -1,0 +1,106 @@
+<!--
+  @Author: ChenYu ycyplus@gmail.com
+  @Date: 2026-08-09
+  @FilePath: \Robot_Admin\docs\production-readiness.md
+  @Description: Robot Admin 生产化优化记录与演进路线
+  Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
+# Robot Admin 生产化优化与演进路线
+
+> 当前接入基线为 `v2.6.3`。下文带日期的对比数据是历史快照；最新门禁结果以本地命令或 CI 输出为准。
+
+## 当前生产基线
+
+- 架构保持单体 SPA 和既有路由、状态管理边界不变，业务组件继续通过 `@robot-admin/naive-ui-components@0.13.0` 按需消费；每个组件样式入口均包含自身组合组件所需样式，不再依赖全量 CSS 兜底。
+- 核心运行栈采用 `Vue 3.5.42 + Vite 8.2.2 + Pinia 4.0.3 + Vue Router 5.3.1 + VueUse 14.4.0`；Pinia 4 所需的 `@vue/devtools-api` 作为直接依赖锁定，避免依赖传递关系碰巧满足 peer requirement。
+- 登录页在空闲阶段预热认证后的布局与首页，提交期间暂停 Spline 渲染但保留当前画面；动态菜单在鼠标进入或键盘聚焦时只预取目标页面，不改变点击行为和路由权限边界。
+- 组件运行时统一走 `/C_*` 深层入口，根入口仅允许 `import type`；源码门禁阻止单个页面重新拉入整套组件库依赖图。
+- Markdown、Office、Spline、图表和演示页面保持路由级异步加载；代码高亮只注册项目实际使用的语言，不加载完整语言包。
+- 本地组件源码模式对 Vue、Naive UI 和 VisActor 等有状态或重量级依赖进行单例解析；正式包构建模块数由 11,222 降至 8,608，最大 VisActor chunk 由 4.16 MiB 降至 2.13 MiB。
+- 用户、角色列表采用“仅最新请求生效”的可取消请求控制，组件卸载、快速搜索、筛选和翻页不会被旧响应反向覆盖。
+- `useAppTableCrud` 已用于标准订单演示；用户/角色页还包含树筛选、批量操作和独立详情流程，本轮不强行改写为通用 CRUD，以免改变既有交互。后续迁移应先为具体页面补齐契约与浏览器回归，再逐页替换。
+- 登录/退出时会同步失效旧账号的菜单、按钮及数据权限请求；迟到的响应不能回写权限快照或注册旧账号路由。旧会话的刷新响应也不能覆盖新会话，旧请求收到的 401 不再用新账号凭据重试。
+- 动态菜单外链仅接受 HTTPS 地址或同源路径，弹窗禁用 opener；内嵌页固定使用受限 sandbox，动态路由模块失效只会在一分钟内自动刷新一次。
+- 账号、用户、角色、菜单、字典及权限治理页面统一支持 Remote/Mock 数据边界；真实业务的 `application` 生产和预发不允许回退到演示数据，公开站点以显式 `demo` 配置闭环运行。
+- 全局 Vue、Promise、资源和脚本错误可上报到同源端点；上报前会去除凭据、个人信息、附加业务数据及 URL 查询参数。
+- 导航、门户、About 卡片和页面内标签/折叠交互补齐原生语义、键盘焦点和 ARIA 状态。
+- 非演示代码不保留显式 `any` 或通配 `declare module`，跨包布局类型直接消费正式导出。
+
+## 环境与数据模式
+
+| 环境变量                       | 开发/测试默认    | 业务生产/预发要求 | 公开演示         | 作用                                    |
+| ------------------------------ | ---------------- | ----------------- | ---------------- | --------------------------------------- |
+| `VITE_DEPLOYMENT_PROFILE`      | `application`    | `application`     | `demo`           | 区分真实业务部署与公开演示              |
+| `VITE_AUTH_MODE`               | `mock`           | `remote`          | `mock`           | 登录、刷新令牌和当前用户                |
+| `VITE_DATA_MODE`               | `mock`           | `remote`          | `mock`           | 账号与系统管理业务数据                  |
+| `VITE_API_BASE`                | `/api`           | `/api` 或网关     | 示例地址         | Axios 请求基地址，推荐由部署层同源代理  |
+| `VITE_ERROR_REPORT_ENDPOINT`   | 留空             | 按需配置          | 留空             | 同源客户端错误接收地址                  |
+| `VITE_CAPTCHA_PROVIDER`        | `puzzle-captcha` | 推荐 `altcha`     | `puzzle-captcha` | 人机验证提供方                          |
+| `VITE_CAPTCHA_CHALLENGE_URL`   | 留空             | 同源接口          | 留空             | 签发一次性 ALTCHA 挑战                  |
+| `VITE_CAPTCHA_VERIFY_ENDPOINT` | 留空             | 同源接口          | 留空             | 服务端验证 payload 并返回一次性登录令牌 |
+| `VITE_MAP_KEY`                 | 留空             | 按需配置          | 留空             | 高德 Web 端 JS API Key                  |
+| `VITE_AMAP_SERVICE_HOST`       | 留空             | 同源代理          | 留空             | 高德安全代理，须以 `/_AMapService` 结尾 |
+| `VITE_ROUTE_IDLE_PREFETCH`     | `true`           | `true`            | `true`           | 登录后网络感知的空闲路由预热            |
+| `VITE_ANALYTICS_ENABLED`       | `false`          | 按需开启          | 按需开启         | Vercel Analytics 与 Speed Insights      |
+
+Vite 启动阶段会校验枚举、布尔值、端口、部署用途、远端 API 和错误上报地址。`application` 的生产或预发若配置 Mock、示例 API 或跨域错误上报端点会直接终止构建；`demo` 仅显式允许闭环 Mock，不会改变真实业务部署的规则。本机密钥只放在 Git 已忽略的 `envs/.env.local` 或 CI Secret。
+
+验证码默认继续使用本地拼图演示，不影响现有登录。真实国内部署可选择 MIT 开源、无调用额度的自托管 ALTCHA：组件仅在启用后懒加载；挑战和验签端点必须同源，后端必须签发短时一次性挑战、验证 PoW payload、防重放并限流，再返回绑定当前会话/登录请求的一次性 token。当前仓库不包含后端，未配置两个端点时不会开启 ALTCHA，也不会把客户端结果标记为安全验证。
+
+## 后端接口契约
+
+页面只依赖 `src/api/` 的契约，不直接判断运行模式。远端模式当前需要实现以下业务端点；通用响应兼容 `code: 0 | 200 | '0' | '200'`、`message` 和 `msg`。
+
+| 业务域    | 方法与路径                                                                                                                                                                     |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 认证      | 以 `src/api/auth.contract.ts` 为准；ALTCHA 另需 `GET /api/auth/captcha/challenge` 与 `POST /api/auth/captcha/verify`（请求 `{ payload }`，响应 `{ valid, token?, message? }`） |
+| 当前账号  | `GET/PUT /account/profile`、`PUT /account/password`、`GET /account/login-records`、`GET /account/activity-logs`                                                                |
+| 安全设置  | `GET /account/security-settings`、`PUT /account/security/:key`                                                                                                                 |
+| 用户/角色 | `GET/POST/PUT/DELETE /sys/users`、`GET/POST/PUT/DELETE /sys/roles`                                                                                                             |
+| 菜单/字典 | `GET/POST/PUT/DELETE /sys/menus`、`PUT /sys/menus/:id/move`、`GET/POST/PUT/DELETE /sys/menu-buttons`、`GET /sys/menus/:id/buttons`、`GET/POST/PUT/DELETE /sys/dictionaries`    |
+| 权限      | `GET/POST /sys/permissions`、`GET/PUT /sys/data-permissions`                                                                                                                   |
+| 权限治理  | `GET/POST /sys/temp-authorizations`、`PUT /sys/temp-authorizations/:id/revoke`、`GET /sys/permission-constraints`                                                              |
+| 权限审计  | `GET /sys/permission-audit-logs`                                                                                                                                               |
+
+刷新令牌的长期生产方案仍应由后端放入 `HttpOnly`、`Secure`、`SameSite` Cookie；前端只持有短时 access token。
+当前远端接口仍要求返回 `refreshToken`，并由浏览器存储以兼容现有后端契约。只改前端存储会使刷新和重新登录失效，因此这项风险**尚未闭环**：后端提供 Cookie 刷新接口后，应同步调整 `src/api/auth.contract.ts`、`src/plugins/request-core.ts` 与会话持久化逻辑，再做跨站请求、续期、退出和多标签回归。
+
+## 安全策略
+
+Vercel 配置启用 CSP、HSTS、`nosniff`、严格来源策略、权限策略和静态资源缓存。首页主题及加载动画逻辑已经迁移到同源外部脚本，`script-src` 不再允许 `unsafe-inline` 或 `unsafe-eval`，仅为可选高德地图放行 `https://webapi.amap.com`；定位权限只授予同源页面。`style-src 'unsafe-inline'` 暂时保留，因为 Naive UI 会在运行时注入组件样式。
+
+高德 2021-12-02 后签发的 Key 必须使用安全配置。生产环境通过 `VITE_AMAP_SERVICE_HOST=/_AMapService` 接入后端/Nginx 同源代理，安全密钥只保留在服务端；页面中的明文 `securityJsCode` 输入仅用于本地调试，不持久化。
+
+Spline 的传递依赖 Lottie 源码包含 `eval` 警告，但生产压缩产物中未包含直接 `eval`/`new Function`，因此 `script-src` 仍不开放普通 JavaScript 的 `unsafe-eval`。Spline 运行时会编译 WebAssembly，需精确允许 `wasm-unsafe-eval`；它不放开 JavaScript 的 `eval`。场景内嵌视频使用 `data:` URL，因此仅在 `media-src` 中允许 `data:`，不会放开脚本来源。外部图片、天气、GitHub、Spline 和 iframe 演示仍需要 HTTPS 连接；如部署为纯内网系统，建议由网关代理这些能力并进一步收紧 `connect-src`、`img-src` 和 `frame-src` 域名白名单。
+
+## 构建验收与预算
+
+2026-09-10 同一生产构建口径的历史对比：
+
+| 指标                | 优化前     | 优化后     | 变化     | 当前预算   |
+| ------------------- | ---------- | ---------- | -------- | ---------- |
+| 入口 JS             | 423.76 KiB | 297.21 KiB | -29.9%   | ≤ 450 KiB  |
+| module preload      | 582.06 KiB | 484.38 KiB | -16.8%   | ≤ 650 KiB  |
+| 首屏 CSS            | 276.17 KiB | 285.40 KiB | +3.3%    | ≤ 300 KiB  |
+| 首屏资源合计        | 1.25 MiB   | 1.04 MiB   | -16.8%   | ≤ 1.42 MiB |
+| module preload 数量 | 83         | 64         | -19      | ≤ 90       |
+| 最大异步 chunk      | —          | 2.13 MiB   | 路由隔离 | ≤ 4.88 MiB |
+
+2026-10-01 演示生产构建实测：入口 306.60 KiB、预加载 488.85 KiB / 64 个、首屏 CSS 290.60 KiB、首屏合计 1086.04 KiB、最大异步块 2122.31 KiB；均在上述预算内。数值会随锁文件和构建器变化，以 `bun run check:bundle` 的最新输出为准。
+
+`bun run verify` 顺序执行 Oxlint、ESLint、TypeScript、单元测试、演示生产构建、`check:bundle` 和独立目录的真实业务预发构建。预算直接解析 `dist/index.html` 与实际文件大小，任一指标回归即返回失败。CI 另外执行 `bun run security:audit` 与 `bun run test:e2e`：Playwright 在两套正式产物上验证演示登录、真实业务无预填凭据、认证壳层、地图和退出登录。浏览器测试需要 Chromium（首次本地运行先执行 `bunx playwright install chromium`）；`dist/application` 和测试产物均不入库。Spline、Office 和 VTable 等大模块仍存在于完整产物，但不属于首屏关键链路。
+
+本轮锁文件依赖审计报告 0 个漏洞（检查 1182 个包）；对 `@xmldom/xmldom`、`fast-uri`、`ip-address` 和 `brace-expansion` 的补丁升级只改变依赖解析，不修改插件架构。若本机审计进程偶发未退出，应以实际退出码为准，不要只看已打印的结果。
+
+`v2.6.0` 发布前全量 65 项单元测试与 27 项浏览器测试通过。历史依赖缓存稳定后的 `dev:components` 热启动实测为 2.669 秒。锁文件变化后的首次启动会执行一次 Vite 依赖预构建，历史实测为 6.596 秒，不作为持续启动基线。
+
+本轮事故的影响范围、根因、修复清单和验证证据见 [2026-09-09 生产就绪优化回归事故报告](./incident-reports/2026-09-09-production-readiness-regression.md)。
+
+## 尚需后端或基础设施配合
+
+1. 在接入真实后端的部署环境扩展 Playwright 回归，覆盖远端登录、动态菜单与权限按钮、主题、错误页和多账号切换；本轮本地 Mock/无后端浏览器冒烟不能替代该集成验收。
+2. 用 OpenAPI 生成请求类型并在 CI 检查契约漂移，替代目前的手写远端接口类型。
+3. 将错误端点接入正式可观测平台，配置采样、聚合、告警、Source Map 私有上传和版本关联。
+4. 建立 Web Vitals 真实用户基线，再按设备、网络和路由设定性能 SLO；当前体积预算只解决静态回归。
+5. 若不需要 3D、Office、甘特图等演示能力，可在业务发行版删除对应路由和依赖，进一步缩小完整产物与供应链面。

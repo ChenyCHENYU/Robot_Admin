@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-05-25 14:11:31
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-05-25 15:58:27
+ * @LastEditTime: 2026-08-06
  * @FilePath: \Robot_Admin\src\plugins\dynamic-components.ts
  * @Description: 动态组件加载插件(处理:is 动态组件加载)
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -31,7 +31,11 @@ const componentPaths: Record<string, () => Promise<unknown>> = {}
  * * @description 这里使用 `import.meta.glob` 异步导入 `@/components` 目录下及其子目录下的所有 `.vue` 文件
  * ? @param path - 文件的完整路径
  */
-const modules = import.meta.glob('@/components/**/*.vue')
+const modules = import.meta.glob([
+  '/src/components/**/*.vue',
+  // App.vue 已同步加载，排除后可避免生成无效的异步重复 chunk。
+  '!/src/components/global/C_ReLoginDialog/index.vue',
+])
 
 /**
  * * @description 提取文件路径中的文件名和目录名

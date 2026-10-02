@@ -40,7 +40,7 @@
           <NTag
             :bordered="false"
             size="small"
-            :type="(TAG_TYPE_MAP[feat.tag] as any) ?? 'default'"
+            :type="TAG_TYPE_MAP[feat.tag] ?? 'default'"
           >
             {{ feat.tag }}
           </NTag>
@@ -153,6 +153,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo53AvatarGroup' })
   import { computed, ref } from 'vue'
   import type { AvatarItem } from '@robot-admin/naive-ui-components'
   import {
@@ -163,7 +164,6 @@
     TASK_ASSIGNEES,
     TEAM_MEMBERS,
   } from './data'
-  import './index.scss'
 
   // ==================== 场景切换 ====================
 
@@ -204,3 +204,7 @@
     if (clickLogs.value.length > 10) clickLogs.value.length = 10
   }
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

@@ -176,7 +176,7 @@
             <NDataTable
               v-else
               :columns="dataTableColumns"
-              :data="factoryData"
+              :data="apiData"
               :bordered="false"
               :single-line="false"
               size="small"
@@ -199,7 +199,7 @@
           <div class="table-wrapper">
             <NDataTable
               :columns="analysisTableColumns"
-              :data="analysisData"
+              :data="apiData"
               :bordered="false"
               :single-line="false"
               size="small"
@@ -226,7 +226,7 @@
           <div class="table-wrapper">
             <NDataTable
               :columns="productionTableColumns"
-              :data="productionData"
+              :data="apiData"
               :bordered="false"
               :single-line="false"
               size="small"
@@ -243,6 +243,8 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo34ProductionCost' })
+  import type { DataTableColumns } from 'naive-ui/es'
   import * as echarts from 'echarts/core'
   import {
     GridComponent,
@@ -268,6 +270,9 @@
   ])
 
   import {
+    type FactoryData,
+    type KpiData,
+    type TrendDataItem,
     pageConfig,
     factoryHeaders,
     costLegendItems,
@@ -282,54 +287,15 @@
     getDefaultCostData,
   } from './data'
 
-  // 类型定义
-  interface FactoryData {
-    id: number
-    costCenter: string
-    costCenterDesc: string
-    acctDate: string
-    type: { key: number; value: string }
-    wgt: number
-    amtReal: number
-    amtUnitReal: number
-    amtStandard: number
-    amtUnitDiff: number
-    amtUnitDiffRate: number
-    wgtDiff: number
-    wgtDiffRate: number
-    mom: number
-    yoy: number
-    progressPercentage?: number
-    standardPercentage?: number
-  }
-
-  interface KpiData {
-    wgtDiffRate: number
-    amtUnitDiffRate: number
-    amtUnitDiff: number
-    amtReal?: number
-    amtStandard?: number
-    materialCostRate?: number
-    laborCostRate?: number
-    energyCostRate?: number
-    efficiencyRate?: number
-  }
-
-  interface TrendData {
-    acctDate: string
-    amtUnitReal: number
-    day: number
-  }
-
   // 数据状态
   const apiData = ref<FactoryData[]>([])
   const selectedFactory = ref<FactoryData | null>(null)
   const kpiData = ref<KpiData | null>(null)
-  const trendData = ref<TrendData[] | null>(null)
+  const trendData = ref<TrendDataItem[] | null>(null)
 
   // 加载状态
   const loading = ref<boolean>(false)
-  const error = ref<any>(null)
+  const error = ref<Error | null>(null)
 
   // UI状态
   const currentDate = ref<string>('2025.03.12')
@@ -339,8 +305,10 @@
   // 滚动控制
   const factoryListRef = ref<HTMLElement | null>(null)
   const isScrollPaused = ref<boolean>(false)
-  const scrollTimer = ref<NodeJS.Timeout | null>(null)
-  const scrollSpeed = ref<number>(0.3)
+  let scrollFrame: number | null = null
+  let clockTimer: ReturnType<typeof setInterval> | null = null
+  let factoryRequestGeneration = 0
+  let disposed = false
 
   // 图表引用
   const costChart = ref<HTMLElement | null>(null)
@@ -355,11 +323,11 @@
   ): number => {
     if (type === 'actual') {
       return (
-        factory.progressPercentage ||
+        factory.progressPercentage ??
         Math.min((factory.amtUnitReal / 200) * 100, 100)
       )
     }
-    return factory.standardPercentage || 85
+    return factory.standardPercentage ?? 85
   }
 
   const formatCurrency = (value: number): string => value.toLocaleString()
@@ -367,19 +335,23 @@
     `${(value * 100).toFixed(2)}%`
 
   // 创建表格渲染函数
-  const createStatusCell = (row: any, key: string, isPercentage = false) => {
+  const createStatusCell = (row: FactoryData) => {
     const status = getStatus(row.amtUnitDiffRate)
-    const value = isPercentage
-      ? formatPercentage(row[key])
-      : formatCurrency(row[key])
 
     return h('div', { class: 'status-cell' }, [
       h('span', { class: ['status-light', status] }),
-      h('span', { style: 'margin-left: 4px; color: #fff;' }, value),
+      h(
+        'span',
+        { style: 'margin-left: 4px; color: #fff;' },
+        formatPercentage(row.amtUnitDiffRate)
+      ),
     ])
   }
 
-  const createCostValueCell = (row: any, key: string) => {
+  const createCostValueCell = (
+    row: FactoryData,
+    key: 'amtUnitReal' | 'wgt'
+  ) => {
     const status = getStatus(row.amtUnitDiffRate)
     return h('div', { class: 'status-cell' }, [
       h(
@@ -388,7 +360,7 @@
           class: 'cost-value',
           style: 'color: #40a9f3; font-weight: bold; font-size: 11px;',
         },
-        formatCurrency(row[key] || 0)
+        formatCurrency(row[key])
       ),
       h('span', { class: ['status-light', status] }),
     ])
@@ -396,14 +368,11 @@
 
   // 计算属性
   const doubleFactories = computed(() => [...apiData.value, ...apiData.value])
-  const factoryData = computed(() => apiData.value)
-  const analysisData = computed(() => apiData.value)
-  const productionData = computed(() => apiData.value)
   const realKeyIndicators = computed(() => createKeyIndicators(kpiData.value))
   const realTrendData = computed(() => createTrendData(trendData.value))
 
   // 优化后的表格列配置
-  const dataTableColumns: any[] = [
+  const dataTableColumns: DataTableColumns<FactoryData> = [
     {
       title: '厂别',
       key: 'costCenterDesc',
@@ -414,47 +383,47 @@
       title: '产量',
       key: 'wgt',
       width: 90, // 紧凑一些
-      render: (row: any) => formatCurrency(row.wgt || 0),
+      render: row => formatCurrency(row.wgt),
     },
     {
       title: '综合成本',
       key: 'amtReal',
       width: 100, // 紧凑一些
-      render: (row: any) => formatCurrency(row.amtReal || 0),
+      render: row => formatCurrency(row.amtReal),
     },
     {
       title: '综合单本',
       key: 'amtUnitReal',
       width: 90, // 紧凑一些
-      render: (row: any) => (row.amtUnitReal || 0).toFixed(2),
+      render: row => row.amtUnitReal.toFixed(2),
     },
     {
       title: '标准成本',
       key: 'amtStandard',
       width: 100,
-      render: (row: any) => formatCurrency(row.amtStandard || 0),
+      render: row => formatCurrency(row.amtStandard),
     },
     {
       title: '偏差',
       key: 'amtUnitDiff',
       width: 70, // 紧凑一些
-      render: (row: any) => (row.amtUnitDiff || 0).toFixed(2),
+      render: row => row.amtUnitDiff.toFixed(2),
     },
     {
       title: '偏差率',
       key: 'amtUnitDiffRate',
       width: 80,
-      render: (row: any) => createStatusCell(row, 'amtUnitDiffRate', true),
+      render: row => createStatusCell(row),
     },
   ]
 
-  const analysisTableColumns: any[] = [
+  const analysisTableColumns: DataTableColumns<FactoryData> = [
     {
       title: '分厂',
       key: 'costCenterDesc',
       width: 80, // 减小宽度
       ellipsis: { tooltip: true },
-      render: (row: any) =>
+      render: row =>
         h(
           'span',
           { style: 'color: #fff; font-size: 11px;' },
@@ -465,39 +434,39 @@
       title: '环比',
       key: 'mom',
       width: 55, // 紧凑
-      render: (row: any) =>
+      render: row =>
         h(
           'span',
           { style: 'color: #fff; font-size: 11px;' },
-          `${(row.mom || 0).toFixed(1)}%`
+          `${row.mom.toFixed(1)}%`
         ),
     },
     {
       title: '同比',
       key: 'yoy',
       width: 55, // 紧凑
-      render: (row: any) =>
+      render: row =>
         h(
           'span',
           { style: 'color: #fff; font-size: 11px;' },
-          `${(row.yoy || 0).toFixed(1)}%`
+          `${row.yoy.toFixed(1)}%`
         ),
     },
     {
       title: '综合单本',
       key: 'amtUnitReal',
       minWidth: 75, // 稍微减小
-      render: (row: any) => createCostValueCell(row, 'amtUnitReal'),
+      render: row => createCostValueCell(row, 'amtUnitReal'),
     },
   ]
 
-  const productionTableColumns: any[] = [
+  const productionTableColumns: DataTableColumns<FactoryData> = [
     {
       title: '分厂',
       key: 'costCenterDesc',
       minWidth: 80, // 减小宽度
       ellipsis: { tooltip: true },
-      render: (row: any) =>
+      render: row =>
         h(
           'span',
           { style: 'color: #fff; font-size: 11px;' },
@@ -508,17 +477,17 @@
       title: '计划产量',
       key: 'wgt',
       minWidth: 70, // 紧凑
-      render: (row: any) => createCostValueCell(row, 'wgt'),
+      render: row => createCostValueCell(row, 'wgt'),
     },
     {
       title: '计划偏差',
       key: 'wgtDiff',
       minWidth: 60, // 紧凑
-      render: (row: any) =>
+      render: row =>
         h(
           'span',
           { style: 'color: #fff; font-size: 11px;' },
-          formatCurrency(row.wgtDiff || 0)
+          formatCurrency(row.wgtDiff)
         ),
     },
   ]
@@ -535,111 +504,88 @@
     currentTime.value = now.toLocaleTimeString('zh-CN', { hour12: false })
   }
 
-  const handleFactorySelect = (factory: FactoryData): void => {
+  const handleFactorySelect = async (factory: FactoryData): Promise<void> => {
+    const generation = ++factoryRequestGeneration
     selectedFactory.value = factory
-    console.log('选中分厂:', factory)
     updateCostChart(factory)
-    Promise.all([loadKpiData(factory), loadTrendData(factory)])
-  }
-
-  // 数据获取方法 - 合并加载状态管理
-  const loadData = async <T,>(
-    loadFn: () => Promise<T>,
-    loadingRef: Ref<boolean>,
-    errorHandler?: (err: any) => T | null
-  ): Promise<T | null> => {
     try {
-      loadingRef.value = true
-      return await loadFn()
-    } catch (err: any) {
-      console.error('数据加载失败:', err)
-      return errorHandler ? errorHandler(err) : null
-    } finally {
-      loadingRef.value = false
+      const [nextKpi, nextTrend] = await Promise.all([
+        fetchKpiData(factory),
+        fetchTrendData(factory),
+      ])
+      if (disposed || generation !== factoryRequestGeneration) return
+      kpiData.value = nextKpi
+      trendData.value = nextTrend
+    } catch (cause) {
+      if (!disposed && generation === factoryRequestGeneration) {
+        console.error('分厂详情加载失败:', cause)
+      }
     }
   }
 
   const loadBoardData = async (): Promise<void> => {
-    const data = await loadData(fetchBoardData, loading, () => [])
-    if (data) {
+    loading.value = true
+    try {
+      const data = await fetchBoardData()
+      if (disposed) return
       apiData.value = data
-      console.log('数据加载完成，共', data.length, '个分厂')
-    }
-  }
-
-  const loadKpiData = async (factory: FactoryData): Promise<void> => {
-    const kpiLoading = ref(false)
-    const data = await loadData(
-      () => fetchKpiData(factory),
-      kpiLoading,
-      () => ({ wgtDiffRate: 0, amtUnitDiffRate: 0, amtUnitDiff: 0 })
-    )
-    if (data) {
-      kpiData.value = data
-      console.log('KPI数据更新完成:', data)
-    }
-  }
-
-  const loadTrendData = async (factory: FactoryData): Promise<void> => {
-    const trendLoading = ref(false)
-    const data = await loadData(() => fetchTrendData(factory), trendLoading)
-    if (data) {
-      trendData.value = data
-      console.log('趋势数据更新完成:', data)
+      error.value = null
+    } catch (cause) {
+      if (!disposed) {
+        error.value = cause instanceof Error ? cause : new Error('数据加载失败')
+      }
+    } finally {
+      if (!disposed) loading.value = false
     }
   }
 
   // 滚动控制方法
   const scrollControls = {
-    /**
-     *
-     */
+    /** 仅在列表可滚动时启动由浏览器调度的滚动帧。 */
     start() {
       if (
         !factoryListRef.value ||
-        scrollTimer.value ||
-        apiData.value.length === 0
+        scrollFrame !== null ||
+        !apiData.value.length
       )
         return
 
       const container = factoryListRef.value
-      const itemHeight = 42
-      const totalHeight = apiData.value.length * itemHeight
-
       if (container.scrollHeight <= container.clientHeight) return
 
-      const scroll = (): void => {
-        if (isScrollPaused.value) return
-        container.scrollTop += scrollSpeed.value
-        if (container.scrollTop >= totalHeight) {
-          container.scrollTop = 0
+      let previousFrameTime = 0
+      const scroll = (time: number): void => {
+        if (!isScrollPaused.value) {
+          const elapsed = previousFrameTime
+            ? Math.min(time - previousFrameTime, 50)
+            : 16
+          container.scrollTop += elapsed * 0.015
+          if (container.scrollTop >= container.scrollHeight / 2) {
+            container.scrollTop = 0
+          }
         }
+        previousFrameTime = time
+        scrollFrame = requestAnimationFrame(scroll)
       }
 
-      scrollTimer.value = setInterval(scroll, 20)
+      scrollFrame = requestAnimationFrame(scroll)
     },
 
-    /**
-     *
-     */
+    /** 用户悬停时暂停滚动。 */
     pause() {
       isScrollPaused.value = true
     },
 
-    /**
-     *
-     */
+    /** 用户离开列表后恢复滚动。 */
     resume() {
       isScrollPaused.value = false
     },
 
-    /**
-     *
-     */
+    /** 离开页面时撤销已排队的滚动帧。 */
     stop() {
-      if (scrollTimer.value) {
-        clearInterval(scrollTimer.value)
-        scrollTimer.value = null
+      if (scrollFrame !== null) {
+        cancelAnimationFrame(scrollFrame)
+        scrollFrame = null
       }
     },
   }
@@ -710,36 +656,30 @@
   }
 
   // 数据监听
-  watch(
-    trendData,
-    (newData: TrendData[] | null) => {
-      if (newData) updateTrendChart()
-    },
-    { deep: true }
-  )
+  watch(trendData, newData => {
+    if (newData) updateTrendChart()
+  })
 
   // 生命周期
   onMounted(async () => {
     updateTime()
-    setInterval(updateTime, 1000)
+    clockTimer = setInterval(updateTime, 1000)
 
     await loadBoardData()
+    if (disposed) return
+    await nextTick()
+    if (disposed) return
 
-    nextTick(() => {
-      initCharts()
-
-      setTimeout(() => {
-        if (factoryListRef.value && apiData.value.length > 0) {
-          scrollControls.start()
-        }
-      }, 800)
-
-      window.addEventListener('resize', handleResize)
-    })
+    initCharts()
+    scrollControls.start()
+    window.addEventListener('resize', handleResize)
   })
 
   onUnmounted(() => {
+    disposed = true
+    factoryRequestGeneration += 1
     scrollControls.stop()
+    if (clockTimer) clearInterval(clockTimer)
 
     if (costChartInstance) {
       costChartInstance.dispose()

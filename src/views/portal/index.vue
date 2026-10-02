@@ -438,9 +438,10 @@
   import { s_userStore } from '@/stores/user'
   import { useRouter } from 'vue-router'
   import C_Header from '@/components/global/C_Header/index.vue'
+  import { getMicroAppUrl } from '@/config/microApps'
   import { CUSTOM_EVENTS, STORAGE_KEYS } from '@shared/constants'
   import {
-    systems,
+    systems as configuredSystems,
     todoList,
     externalItems,
     appCenterItems,
@@ -451,8 +452,12 @@
 
   const router = useRouter()
   const userStore = s_userStore()
+  const message = useMessage()
+  const systems = computed(() => configuredSystems.map(app => app.id === 'logistics'
+    ? { ...app, integrated: Boolean(getMicroAppUrl(app.id)) }
+    : app))
 
-  const userName = computed(() => userStore.userInfo?.username || '李梦')
+  const userName = computed(() => userStore.userInfo?.username || '用户')
 
   // 为 C_Header 提供必要的上下文
   const isCollapsed = ref(false)
@@ -479,7 +484,7 @@
     weatherDesc?: Array<{ value: string }>
   }
 
-  const currentDay = ref('27')
+  const currentDay = ref(new Date().getDate().toString())
   const temperature = ref('--')
   const weatherDesc = ref('加载中...')
   const humidity = ref('--')
@@ -525,38 +530,31 @@
   const getWindDir = (w: WeatherData) =>
     WIND_DIR_MAP[w.winddir16Point || ''] || w.winddir16Point || '西南'
 
-  const setDefaultWeather = () => {
-    temperature.value = '16'
-    weatherDesc.value = '晴'
-    humidity.value = '85'
-    windDirection.value = '西南'
-    windPower.value = '≤3'
-  }
-
   const updateWeatherData = (w: WeatherData) => {
-    temperature.value = w.temp_C || '16'
+    temperature.value = w.temp_C || '--'
     weatherDesc.value = getWeatherDesc(w)
-    humidity.value = w.humidity || '85'
+    humidity.value = w.humidity || '--'
     windDirection.value = getWindDir(w)
     windPower.value = getWindLevel(Number(w.windspeedKmph) || 0)
   }
 
   const fetchWeather = async () => {
     try {
-      const res = await fetch('https://wttr.in/西安?format=j1')
+      const res = await fetch('https://wttr.in/西安?format=j1', { signal: AbortSignal.timeout(8000) })
+      if (!res.ok) throw new Error(`Weather HTTP ${res.status}`)
       const data = await res.json()
       if (data.current_condition?.[0]) {
         updateWeatherData(data.current_condition[0])
       } else {
-        setDefaultWeather()
+        weatherDesc.value = '天气暂不可用'
       }
     } catch {
-      setDefaultWeather()
+      weatherDesc.value = '天气暂不可用'
     }
   }
 
   // ===== 日历模块 =====
-  const currentDate = ref(new Date(2030, 9, 1))
+  const currentDate = ref(new Date())
 
   // ===== 子应用推送数据 =====
   const microAppData = ref<any[]>([])
@@ -606,9 +604,9 @@
       isOtherMonth: isOther,
       isToday:
         !isOther &&
-        currentDate.value.getFullYear() === 2030 &&
-        currentDate.value.getMonth() === 9 &&
-        offset + i === 12,
+        currentDate.value.getFullYear() === new Date().getFullYear() &&
+        currentDate.value.getMonth() === new Date().getMonth() &&
+        offset + i === new Date().getDate(),
       key: `${prefix}-${i}`,
     }))
 
@@ -649,8 +647,10 @@
     activeAppId.value = app.id
     if (app.url) {
       router.push(app.url)
-    } else if (app.port) {
+    } else if (app.id === 'logistics' && getMicroAppUrl(app.id)) {
       router.push(`/micro-app/${app.id}`)
+    } else {
+      message.info('该系统尚未接入')
     }
   }
 
@@ -662,6 +662,9 @@
   }
 
   let timer: ReturnType<typeof setInterval> | null = null
+  const handleDataUpdate = (event: Event) => {
+    microAppData.value = (event as CustomEvent).detail
+  }
 
   onMounted(() => {
     updateDateTime()
@@ -669,12 +672,9 @@
     loadMicroAppData()
 
     // 监听子应用数据更新事件
-    const handleDataUpdate = (event: CustomEvent) => {
-      microAppData.value = event.detail
-    }
     window.addEventListener(
       CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE,
-      handleDataUpdate as EventListener
+      handleDataUpdate
     )
 
     timer = setInterval(() => {
@@ -682,13 +682,11 @@
       fetchWeather()
     }, 3600000)
 
-    onUnmounted(() => {
-      window.removeEventListener(
-        CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE,
-        handleDataUpdate as EventListener
-      )
-      if (timer) clearInterval(timer)
-    })
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener(CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE, handleDataUpdate)
+    if (timer) clearInterval(timer)
   })
 </script>
 

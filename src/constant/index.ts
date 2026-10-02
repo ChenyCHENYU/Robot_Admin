@@ -51,4 +51,6 @@ export const DATA_SCOPE = {
 export const TABS_WHITE_LIST: string[] = ['/403', '/404', '/500', LOGIN_URL]
 
 // * 高德地图key
-export const MAP_KEY: string = import.meta.env.VITE_MAP_KEY || ''
+export const MAP_KEY: string = import.meta.env.VITE_MAP_KEY?.trim() || ''
+export const AMAP_SERVICE_HOST: string =
+  import.meta.env.VITE_AMAP_SERVICE_HOST?.trim() || ''

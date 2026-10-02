@@ -45,12 +45,30 @@ export const MICRO_APPS: Record<string, MicroAppConfig> = {
  * ! @return {string | null}
  */
 export function getMicroAppUrl(appId: string): string | null {
-  const app = MICRO_APPS[appId]
-  if (!app) {
-    console.error(`[MicroApp] 未找到应用配置: ${appId}`)
+  const app = Object.prototype.hasOwnProperty.call(MICRO_APPS, appId)
+    ? MICRO_APPS[appId]
+    : null
+  if (!app) return null
+  return normalizeMicroAppUrl(app.url)
+}
+
+/** Only explicitly configured, trusted origins may receive the user's session. */
+export function normalizeMicroAppUrl(value: string, allowLocalHttp = import.meta.env.DEV): string | null {
+  try {
+    const url = new URL(value)
+    const local = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)
+    if (
+      (url.protocol !== 'https:' && !(allowLocalHttp && local && url.protocol === 'http:')) ||
+      url.username ||
+      url.password ||
+      url.hash
+    ) {
+      return null
+    }
+    return url.href
+  } catch {
     return null
   }
-  return app.url
 }
 
 /**
@@ -59,7 +77,9 @@ export function getMicroAppUrl(appId: string): string | null {
  * ! @return {MicroAppConfig | null}
  */
 export function getMicroAppConfig(appId: string): MicroAppConfig | null {
-  return MICRO_APPS[appId] || null
+  return Object.prototype.hasOwnProperty.call(MICRO_APPS, appId)
+    ? MICRO_APPS[appId]
+    : null
 }
 
 /**

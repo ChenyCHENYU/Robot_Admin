@@ -7,7 +7,9 @@
     "../nightwatch.conf.*", // Nightwatch 配置文件
     "../playwright.config.*", // Playwright 配置文件
     "../eslint.config.*", // ESLint 配置文件
-    "../src/config/vite/**/*" // Vite 相关配置文件
+    "../src/config/vite/**/*", // Vite 相关配置文件
+    "../mcp/**/*", // MCP Server（Bun 运行时）
+    "../scripts/**/*.ts" // 构建与质量检查脚本
   ],
   "compilerOptions": {
     "noEmit": true, // 不生成输出文件
@@ -15,6 +17,7 @@
 
     "module": "ESNext", // 使用最新的 ES 模块语法
     "moduleResolution": "Bundler", // 使用打包工具的模块解析策略
-    "types": ["node"] // 包含 Node.js 类型定义
+    "allowImportingTsExtensions": true, // 配置文件使用显式 .ts 扩展名
+    "types": ["node", "vite/client"] // 包含 Node.js 与 import.meta.env 类型
   }
 }

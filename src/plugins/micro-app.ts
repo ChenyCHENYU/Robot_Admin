@@ -10,14 +10,17 @@
 
 import microApp from '@micro-zoe/micro-app'
 
+let started = false
+
 /**
  * * @description: 初始化 micro-app 微前端框架
- * 在主应用启动阶段调用，早于 Vue 实例挂载
+ * 首次进入微应用路由时按需调用；重复导航不会重复初始化。
  */
 export function setupMicroApp() {
+  if (started) return
   microApp.start({
     'disable-memory-router': false,
     'disable-patch-request': false,
   })
-  console.log('🚀 [主应用] micro-app 已启动')
+  started = true
 }

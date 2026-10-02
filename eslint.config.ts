@@ -9,7 +9,6 @@ import {
   defineConfigWithVueTs,
   vueTsConfigs,
 } from '@vue/eslint-config-typescript'
-// @ts-ignore - oxlint plugin may not have proper ESM types
 import oxlint from 'eslint-plugin-oxlint'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 import jsdocPlugin from 'eslint-plugin-jsdoc'
@@ -33,7 +32,7 @@ export default defineConfigWithVueTs(
 
   //MARK: 核心规则组（按优先级排序）
 
-  ...(oxlint?.configs?.['flat/recommended'] || []), // 高性能基础校验
+  ...oxlint.configs['flat/recommended'], // 高性能基础校验
 
   //! 忽略转义字符
   {
@@ -62,6 +61,7 @@ export default defineConfigWithVueTs(
       '@typescript-eslint/no-unused-vars': 'error',
     },
   },
+
 
   //MARK: 自定义规则组（优先级最高）
   {
@@ -171,7 +171,10 @@ export default defineConfigWithVueTs(
       'no-eval': 'error',
       'prefer-const': 'warn',
       'no-var': 'warn',
-      'prefer-destructuring': [1, { object: true, array: false }],
+      'prefer-destructuring': [
+        1,
+        { object: true, array: false },
+      ],
       'no-duplicate-imports': 'error',
     },
   },

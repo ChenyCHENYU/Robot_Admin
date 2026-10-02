@@ -1,4 +1,26 @@
+[data-theme='dark'] .portal-workspace {
+  --portal-bg-card-rgb: 28, 28, 28;
+  --portal-shadow: rgba(0, 0, 0, 0.3);
+}
+
 .portal-workspace {
+  // Portal-only tokens keep the architecture skin out of the shared theme.
+  --portal-bg-page: var(--app-bg-layout);
+  --portal-bg-card: var(--app-bg-content);
+  --portal-bg-card-rgb: 255, 255, 255;
+  --portal-bg-hover: var(--app-bg-surface-hover);
+  --portal-text-primary: var(--app-text-primary);
+  --portal-text-secondary: var(--app-text-secondary);
+  --portal-text-tertiary: var(--app-text-tertiary);
+  --portal-border: var(--app-border-default);
+  --portal-shadow: rgba(0, 0, 0, 0.08);
+  --portal-status-success: #52c41a;
+  --portal-status-info: #2080f0;
+  --portal-status-warning: #fa8c16;
+  --portal-status-error: #f56c6c;
+  --portal-status-info-bg: rgba(32, 128, 240, 0.1);
+  --portal-status-success-bg: rgba(82, 196, 26, 0.12);
+  --portal-status-error-bg: rgba(245, 108, 108, 0.12);
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -13,7 +35,7 @@
   flex-shrink: 0;
   width: 100% !important;
 
-  :deep(.n-layout-header) {
+  .n-layout-header {
     width: 100% !important;
     left: 0 !important;
     right: 0 !important;
@@ -115,9 +137,9 @@
         inset 0 -2px 4px rgba(0, 0, 0, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.2);
 
-      :deep(.iconify),
-      :deep(svg),
-      :deep(i) {
+      .iconify,
+      svg,
+      i {
         width: 18px !important;
         height: 18px !important;
         font-size: 18px !important;
@@ -722,7 +744,7 @@
 }
 
 .center-column {
-  :deep(.card.app-function-card) {
+  .card.app-function-card {
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
@@ -778,8 +800,8 @@
             transform: scale(1.1);
             background: var(--portal-status-info-bg);
 
-            :deep(.iconify),
-            :deep(svg) {
+            .iconify,
+            svg {
               color: var(--portal-status-info);
             }
           }
@@ -803,8 +825,8 @@
           background: var(--portal-bg-page);
           border: 1px solid transparent;
 
-          :deep(.iconify),
-          :deep(svg) {
+          .iconify,
+          svg {
             width: 28px !important;
             height: 28px !important;
             color: var(--portal-text-secondary);
@@ -959,8 +981,8 @@
           background: rgba(74, 74, 74, 0.2);
         }
 
-      :deep(.iconify),
-      :deep(svg) {
+      .iconify,
+      svg {
         width: 20px !important;
         height: 20px !important;
         font-size: 20px !important;
@@ -1223,7 +1245,7 @@
       align-items: center;
       gap: 4px;
 
-      :deep(.n-button) {
+      .n-button {
         color: var(--portal-text-secondary);
         transition: all 0.2s ease;
 

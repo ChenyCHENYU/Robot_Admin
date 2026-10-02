@@ -8,9 +8,17 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import { getAuthMenuListApi } from '@/api/auth'
-import { getAuthButtonListApi } from '@/api/permission-manage'
+import {
+  getAuthMenuListApi,
+  getAuthMode,
+  type AuthMenuResponse,
+} from '@/api/auth'
+import {
+  getAuthButtonListApi,
+  getDataPermissionApi,
+} from '@/api/permission-manage'
 import { getKeepAliveRouterName, getShowMenuList } from '@/utils/d_route'
+import { collectRoutePaths } from '@/router/routePath'
 import type { DynamicRoute } from '@/router/dynamicRouter'
 import type {
   ButtonPermissionMap,
@@ -28,6 +36,8 @@ export const s_permissionStore = defineStore('permission', {
       dataPermissions: [] as DataPermission[],
       /** 已展平的全部合法路由 path 列表（用于路由鉴权） */
       flatRoutePaths: [] as string[],
+      /** 退出或切换账号时使仍在途的权限响应失效 */
+      requestGeneration: 0,
     }
   },
   getters: {
@@ -49,30 +59,72 @@ export const s_permissionStore = defineStore('permission', {
      * ! @return {Promise<void>}
      */
     async getAuthButtonList() {
+      const generation = this.requestGeneration
+      if (getAuthMode() === 'mock') {
+        this.authButtonList = {}
+        return
+      }
       try {
         const { data } = await getAuthButtonListApi()
-        this.authButtonList = data ?? {}
+        if (generation === this.requestGeneration) {
+          this.authButtonList = data ?? {}
+        }
       } catch (error) {
         console.error('获取按钮权限失败:', error)
-        this.authButtonList = {}
+        if (generation === this.requestGeneration) this.authButtonList = {}
       }
     },
 
     /**
      * * @description: 获取菜单列表并构建路由 path 集合
-     * ! @return {Promise<any>} 菜单列表响应
+     * ! @return {Promise<AuthMenuResponse>} 菜单列表响应
      */
-    async getAuthMenuList() {
+    async getAuthMenuList(): Promise<AuthMenuResponse> {
+      const generation = this.requestGeneration
       try {
         const res = await getAuthMenuListApi()
-        this.authMenuList = res.data
-        // 构建合法路由路径列表
-        this.flatRoutePaths = [...this._buildFlatPaths(res.data)]
+        if (generation === this.requestGeneration) {
+          this.authMenuList = res.data
+          // 构建合法路由路径列表
+          this.flatRoutePaths = collectRoutePaths(res.data)
+        }
         return res
       } catch (error) {
         console.error('获取菜单失败:', error)
         throw error
       }
+    },
+
+    /** 获取当前用户的数据权限 */
+    async getDataPermissions(): Promise<void> {
+      const generation = this.requestGeneration
+      if (getAuthMode() === 'mock') {
+        this.dataPermissions = []
+        return
+      }
+      try {
+        const { data } = await getDataPermissionApi()
+        if (generation === this.requestGeneration) {
+          this.dataPermissions = data ?? []
+        }
+      } catch (error) {
+        console.error('获取数据权限失败:', error)
+        if (generation === this.requestGeneration) this.dataPermissions = []
+      }
+    },
+
+    /** 菜单建立后并行初始化按钮和数据权限；辅助权限失败不破坏主导航 */
+    async initializeAuxiliaryPermissions(): Promise<void> {
+      await Promise.all([this.getAuthButtonList(), this.getDataPermissions()])
+    },
+
+    /** 清除当前账号的全部权限快照 */
+    resetPermissions(): void {
+      this.requestGeneration += 1
+      this.authButtonList = {}
+      this.authMenuList = []
+      this.dataPermissions = []
+      this.flatRoutePaths = []
     },
 
     /**
@@ -105,42 +157,6 @@ export const s_permissionStore = defineStore('permission', {
      */
     getDataPermission(module: string): DataPermission | undefined {
       return this.dataPermissions.find(dp => dp.module === module)
-    },
-
-    /**
-     * * @description: 递归展平路由树，收集所有叶子节点的 path
-     * ? @param {DynamicRoute[]} routes 路由树
-     * ? @param {string} parentPath 父路径前缀
-     * ! @return {string[]} 路由路径列表
-     */
-    _buildFlatPaths(
-      routes: DynamicRoute[],
-      parentPath = '',
-      isChild = false
-    ): string[] {
-      const paths: string[] = []
-      for (const route of routes) {
-        // 镜像 dynamicRouter.ts 的 normalizePath：子路由相对路径 → 绝对路径
-        let fullPath: string
-        if (isChild && !route.path.startsWith('/')) {
-          fullPath = `/${route.path}`
-        } else if (route.path.startsWith('/')) {
-          fullPath = route.path
-        } else {
-          fullPath = `${parentPath}/${route.path}`.replace(/\/+/g, '/')
-        }
-        if (!paths.includes(fullPath)) paths.push(fullPath)
-        if (route.children?.length) {
-          for (const p of this._buildFlatPaths(
-            route.children,
-            fullPath,
-            true
-          )) {
-            if (!paths.includes(p)) paths.push(p)
-          }
-        }
-      }
-      return paths
     },
   },
 })

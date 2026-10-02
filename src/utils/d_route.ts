@@ -10,26 +10,33 @@
 
 import type { DynamicRoute } from '@/router/dynamicRouter'
 import type { MenuOptions } from '@/types/modules/menu'
+import { joinRoutePath } from '@/router/routePath'
 
 /**
  * @description: 使用递归，过滤需要显示的菜单
  * @param {MenuItem} menuList 所有菜单列表
  * @return {*} {MenuItem[]} 过滤后的菜单列表
  */
-export const getShowMenuList = (menus: DynamicRoute[]): MenuOptions[] => {
+export const getShowMenuList = (
+  menus: DynamicRoute[],
+  parentPath = ''
+): MenuOptions[] => {
   return menus
     .filter(menu => menu.meta?.hidden !== true)
     .flatMap(menu => {
+      const menuPath = joinRoutePath(parentPath, menu.path)
       // 处理单子菜单情况
       if (menu.children?.length === 1) {
         const [child] = menu.children
+        const childPath = joinRoutePath(menuPath, child.path)
         return {
           ...child,
-          key: child.path,
+          path: childPath,
+          key: childPath,
           name: child.name || menu.name || '',
           meta: { ...menu.meta, ...child.meta }, // 合并meta
           children: child.children?.length
-            ? getShowMenuList(child.children)
+            ? getShowMenuList(child.children, childPath)
             : [],
         }
       }
@@ -37,9 +44,12 @@ export const getShowMenuList = (menus: DynamicRoute[]): MenuOptions[] => {
       // 常规处理
       return {
         ...menu,
-        key: menu.path,
+        path: menuPath,
+        key: menuPath,
         name: menu.name || '',
-        children: menu.children?.length ? getShowMenuList(menu.children) : [],
+        children: menu.children?.length
+          ? getShowMenuList(menu.children, menuPath)
+          : [],
       }
     })
     .filter(menu => {
@@ -50,25 +60,6 @@ export const getShowMenuList = (menus: DynamicRoute[]): MenuOptions[] => {
       }
       return true
     })
-}
-
-/**
- * @description: 格式化时间戳为可读字符串
- * @param {number} timestamp - Unix 时间戳（毫秒）
- * @return {string} 格式化后的时间字符串，格式：YYYY-MM-DD HH:mm:ss
- */
-export function formatTime(timestamp: number): string {
-  if (!timestamp) return ''
-
-  const date = new Date(timestamp)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-  const seconds = String(date.getSeconds()).padStart(2, '0')
-
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
 // 优化后的缓存路由名称函数

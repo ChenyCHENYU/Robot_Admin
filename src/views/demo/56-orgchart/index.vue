@@ -69,7 +69,6 @@
 
         <div class="chart-container">
           <C_OrgChart
-            ref="chartRef"
             :data="orgData"
             :direction="direction"
             :line-style="lineStyle"
@@ -207,7 +206,7 @@
     OrgChartLineStyle,
   } from '@robot-admin/naive-ui-components'
 
-  defineOptions({ name: 'demo-orgchart' })
+  defineOptions({ name: 'Demo56OrgChart' })
 
   const message = useMessage()
 
@@ -217,7 +216,6 @@
   const collapsible = ref(true)
   const zoomable = ref(true)
   const selectedNode = ref<OrgChartNode | null>(null)
-  const chartRef = ref<any>(null)
 
   // ─── Computed ───
   /**

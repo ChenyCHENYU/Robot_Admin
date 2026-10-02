@@ -206,6 +206,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo35Barcode' })
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     BARCODE_FORMATS,

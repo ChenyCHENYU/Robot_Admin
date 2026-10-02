@@ -1,4 +1,5 @@
 import type { FormRules } from 'naive-ui/es'
+import type { AccountLoginRecord, AccountSecuritySetting } from '@/api/account'
 
 // ==================== 类型定义 ====================
 export interface ChangePasswordForm {
@@ -7,24 +8,9 @@ export interface ChangePasswordForm {
   confirmPassword: string
 }
 
-export interface LoginRecord {
-  id: string
-  time: string
-  ip: string
-  location: string
-  device: string
-  browser: string
-  status: 'success' | 'failed'
-}
+export type LoginRecord = AccountLoginRecord
 
-export interface SecuritySetting {
-  key: string
-  label: string
-  description: string
-  icon: string
-  enabled: boolean
-  action?: string
-}
+export type SecuritySetting = AccountSecuritySetting
 
 // ==================== 表单验证规则 ====================
 export const PASSWORD_FORM_RULES: FormRules = {
@@ -56,7 +42,7 @@ export const SECURITY_SETTINGS: SecuritySetting[] = [
     key: 'password',
     label: '登录密码',
     description: '定期更换密码可以提高账户安全性',
-    icon: 'i-mdi:lock-outline',
+    icon: 'i-mdi-lock-outline',
     enabled: true,
     action: '修改',
   },
@@ -64,14 +50,14 @@ export const SECURITY_SETTINGS: SecuritySetting[] = [
     key: 'twoFactor',
     label: '两步验证',
     description: '开启后登录需要额外的验证码，推荐开启',
-    icon: 'i-mdi:cellphone-key',
+    icon: 'i-mdi-cellphone-key',
     enabled: false,
   },
   {
     key: 'emailBind',
     label: '邮箱绑定',
     description: '已绑定邮箱：ycyplus@gmail.com',
-    icon: 'i-mdi:email-check-outline',
+    icon: 'i-mdi-email-check-outline',
     enabled: true,
     action: '更换',
   },
@@ -79,7 +65,7 @@ export const SECURITY_SETTINGS: SecuritySetting[] = [
     key: 'phoneBind',
     label: '手机绑定',
     description: '已绑定手机：138****8000',
-    icon: 'i-mdi:cellphone-check',
+    icon: 'i-mdi-cellphone-check',
     enabled: true,
     action: '更换',
   },

@@ -20,11 +20,11 @@
           type="primary"
           @click="saveAllWorkflows"
         >
-          <template #icon><div class="i-mdi:content-save"></div></template>
+          <template #icon><div class="i-mdi-content-save"></div></template>
           保存所有流程
         </NButton>
         <NButton @click="exportAllWorkflows">
-          <template #icon><div class="i-mdi:download"></div></template>
+          <template #icon><div class="i-mdi-download"></div></template>
           批量导出
         </NButton>
       </template>
@@ -80,7 +80,7 @@
                   @click="resetWorkflow"
                   quaternary
                 >
-                  <template #icon><div class="i-mdi:refresh"></div></template>
+                  <template #icon><div class="i-mdi-refresh"></div></template>
                   重置
                 </NButton>
                 <NButton
@@ -89,7 +89,7 @@
                   @click="loadTemplate"
                 >
                   <template #icon
-                    ><div class="i-mdi:magic-staff"></div
+                    ><div class="i-mdi-magic-staff"></div
                   ></template>
                   加载模板
                 </NButton>
@@ -111,7 +111,7 @@
           <aside class="sidebar">
             <div class="sidebar-section stats-section">
               <div class="section-header">
-                <div class="i-mdi:chart-bar"></div>
+                <div class="i-mdi-chart-bar"></div>
                 <h4>流程统计</h4>
               </div>
               <div class="stats-grid">
@@ -141,7 +141,7 @@
             <!-- 修复后的流程预览 -->
             <div class="sidebar-section preview-section">
               <div class="section-header">
-                <div class="i-mdi:eye"></div>
+                <div class="i-mdi-eye"></div>
                 <h4>流程预览</h4>
                 <div class="preview-controls">
                   <NButton
@@ -154,8 +154,8 @@
                       <div
                         :class="
                           previewExpanded
-                            ? 'i-mdi:chevron-up'
-                            : 'i-mdi:chevron-down'
+                            ? 'i-mdi-chevron-up'
+                            : 'i-mdi-chevron-down'
                         "
                       ></div>
                     </template>
@@ -189,10 +189,10 @@
                           <div :class="getNodeIcon(node.type)"></div>
                         </div>
                         <div
-                          v-if="index < workflowData.nodes.length - 1"
+                          v-if="Number(index) < workflowData.nodes.length - 1"
                           class="step-arrow"
                         >
-                          <div class="i-mdi:chevron-right"></div>
+                          <div class="i-mdi-chevron-right"></div>
                         </div>
                       </div>
                     </div>
@@ -206,64 +206,39 @@
                         selectedPreviewNode.data?.title
                       }}</div>
                       <div class="node-details">
-                        <!-- 统一处理所有用户字段 - 完全防御性编程 -->
                         <template
-                          v-for="(label, field) in userFieldsMap"
-                          :key="field"
+                          v-for="group in selectedUserGroups"
+                          :key="group.label"
                         >
-                          <div
-                            v-if="
-                              selectedPreviewNode.data?.[field] &&
-                              Array.isArray(selectedPreviewNode.data[field]) &&
-                              selectedPreviewNode.data[field].length > 0
-                            "
-                            class="detail-item"
-                          >
+                          <div class="detail-item">
                             <span class="detail-label"
-                              >{{ label }}：{{
-                                getUserNames(selectedPreviewNode.data[field])
+                              >{{ group.label }}：{{
+                                getUserNames(group.users)
                               }}</span
                             >
                             <div class="user-list">
                               <NAvatar
-                                v-for="user in safeSlice(
-                                  selectedPreviewNode.data[field],
-                                  0,
-                                  2
-                                )"
+                                v-for="user in safeSlice(group.users, 0, 2)"
                                 :key="user?.id || 'unknown'"
-                                v-bind="createAvatarProps(user, 'tiny')"
+                                v-bind="createAvatarProps(user, 24)"
                               />
                               <span
-                                v-if="
-                                  selectedPreviewNode.data[field].length > 2
-                                "
+                                v-if="group.users.length > 2"
                                 class="more-count"
                               >
-                                +{{
-                                  selectedPreviewNode.data[field].length - 2
-                                }}
+                                +{{ group.users.length - 2 }}
                               </span>
                             </div>
                           </div>
                         </template>
                         <!-- 条件分支显示 -->
                         <div
-                          v-if="
-                            selectedPreviewNode.data?.conditions &&
-                            Array.isArray(
-                              selectedPreviewNode.data.conditions
-                            ) &&
-                            selectedPreviewNode.data.conditions.length > 0
-                          "
+                          v-if="selectedConditionCount > 0"
                           class="detail-item"
                         >
                           <span class="detail-label">条件:</span>
                           <span class="condition-count"
-                            >{{
-                              selectedPreviewNode.data.conditions.length
-                            }}
-                            个分支</span
+                            >{{ selectedConditionCount }} 个分支</span
                           >
                         </div>
                       </div>
@@ -282,7 +257,7 @@
                     >
                       <div
                         class="step-connector"
-                        v-if="index > 0"
+                        v-if="Number(index) > 0"
                       ></div>
                       <div
                         class="step-node"
@@ -293,61 +268,45 @@
                             <div :class="getNodeIcon(node.type)"></div>
                           </div>
                           <div class="node-title">{{ node.data?.title }}</div>
-                          <div>{{ node.data?.name }}</div>
                         </div>
                         <div
                           v-if="hasNodeContent(node)"
                           class="node-content"
                         >
-                          <!-- 统一处理所有用户字段 - 完全防御性编程 -->
+                          <!-- 展示节点关联用户 -->
                           <template
-                            v-for="(label, field) in userFieldsMap"
-                            :key="field"
+                            v-for="group in getUserGroups(node)"
+                            :key="group.label"
                           >
-                            <div
-                              v-if="
-                                node.data?.[field] &&
-                                Array.isArray(node.data[field]) &&
-                                node.data[field].length > 0
-                              "
-                              class="content-item"
-                            >
+                            <div class="content-item">
                               <span class="content-label"
-                                >{{ label }}：{{
-                                  getUserNames(node.data[field])
+                                >{{ group.label }}：{{
+                                  getUserNames(group.users)
                                 }}</span
                               >
                               <div class="user-avatars">
                                 <NAvatar
-                                  v-for="user in safeSlice(
-                                    node.data[field],
-                                    0,
-                                    3
-                                  )"
+                                  v-for="user in safeSlice(group.users, 0, 3)"
                                   :key="user?.id || 'unknown'"
                                   v-bind="createAvatarProps(user, 'small')"
                                 />
                                 <span
-                                  v-if="node.data[field].length > 3"
+                                  v-if="group.users.length > 3"
                                   class="more-users"
                                 >
-                                  +{{ node.data[field].length - 3 }}
+                                  +{{ group.users.length - 3 }}
                                 </span>
                               </div>
                             </div>
                           </template>
                           <!-- 条件分支显示 -->
                           <div
-                            v-if="
-                              node.data?.conditions &&
-                              Array.isArray(node.data.conditions) &&
-                              node.data.conditions.length > 0
-                            "
+                            v-if="getConditionCount(node) > 0"
                             class="content-item"
                           >
                             <span class="content-label">分支条件</span>
                             <span class="condition-text"
-                              >{{ node.data.conditions.length }} 个分支</span
+                              >{{ getConditionCount(node) }} 个分支</span
                             >
                           </div>
                         </div>
@@ -438,7 +397,7 @@
                       v-if="validationResults.length === 0"
                       class="validation-success"
                     >
-                      <div class="i-mdi:check-circle"></div>
+                      <div class="i-mdi-check-circle"></div>
                       <span>流程配置正确</span>
                     </div>
                     <div
@@ -450,7 +409,7 @@
                         :key="index"
                         class="error-item"
                       >
-                        <div class="i-mdi:alert-circle"></div>
+                        <div class="i-mdi-alert-circle"></div>
                         <div class="error-content">
                           <div class="error-message">{{ error.message }}</div>
                           <div class="error-node"
@@ -471,9 +430,14 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo28WorkFlowEditor' })
   // vue-flow 样式按需加载（从 main.ts 移到使用页面）
   import '@vue-flow/core/dist/style.css'
   import '@vue-flow/core/dist/theme-default.css'
+  import type {
+    WorkflowData,
+    WorkflowNode,
+  } from '@robot-admin/naive-ui-components/C_WorkFlow'
 
   import {
     type User,
@@ -482,24 +446,51 @@
     userList,
     roleList,
     deptList,
-    NODE_DESCRIPTION_GENERATORS,
     NODE_MAPS,
     VALIDATION_RULES,
   } from './data'
 
   const message = useMessage()
   const currentScenario = ref('default-designer')
-  const workflowData = ref<any>(null)
+  const workflowData = ref<WorkflowData>({ nodes: [], edges: [] })
   const validationResults = ref<ValidationError[]>([])
   const previewExpanded = ref(false)
-  const selectedPreviewNode = ref<any>(null)
+  const selectedPreviewNode = ref<WorkflowNode | null>(null)
 
-  // 统一的用户字段映射
-  const userFieldsMap = {
-    initiators: '发起人',
-    approvers: '审批人',
-    copyUsers: '抄送人',
+  const userFields = [
+    { key: 'initiators', label: '发起人' },
+    { key: 'approvers', label: '审批人' },
+    { key: 'copyUsers', label: '抄送人' },
+  ] as const
+
+  const getNodeUsers = (
+    node: WorkflowNode,
+    field: (typeof userFields)[number]['key']
+  ): User[] => {
+    const { data } = node
+    if (field === 'initiators' && 'initiators' in data)
+      return data.initiators ?? []
+    if (field === 'approvers' && 'approvers' in data)
+      return data.approvers ?? []
+    if (field === 'copyUsers' && 'copyUsers' in data)
+      return data.copyUsers ?? []
+    return []
   }
+
+  const getUserGroups = (node: WorkflowNode) =>
+    userFields
+      .map(({ key, label }) => ({ label, users: getNodeUsers(node, key) }))
+      .filter(group => group.users.length > 0)
+
+  const getConditionCount = (node: WorkflowNode): number =>
+    'conditions' in node.data ? (node.data.conditions?.length ?? 0) : 0
+
+  const selectedUserGroups = computed(() =>
+    selectedPreviewNode.value ? getUserGroups(selectedPreviewNode.value) : []
+  )
+  const selectedConditionCount = computed(() =>
+    selectedPreviewNode.value ? getConditionCount(selectedPreviewNode.value) : 0
+  )
 
   // 计算属性
   const currentScenarioData = computed(() =>
@@ -523,16 +514,16 @@
     const { nodes } = workflowData.value
     return {
       totalNodes: nodes.length,
-      approvalNodes: nodes.filter((n: any) => n.type === 'approval').length,
-      copyNodes: nodes.filter((n: any) => n.type === 'copy').length,
-      conditionNodes: nodes.filter((n: any) => n.type === 'condition').length,
+      approvalNodes: nodes.filter(n => n.type === 'approval').length,
+      copyNodes: nodes.filter(n => n.type === 'copy').length,
+      conditionNodes: nodes.filter(n => n.type === 'condition').length,
     }
   })
 
   // ============ 工具函数 - 完全防御性编程 ============
 
   // 安全的数组切片函数
-  const safeSlice = (arr: any[], start: number, end: number): any[] => {
+  const safeSlice = <T,>(arr: T[], start: number, end: number): T[] => {
     if (!Array.isArray(arr)) return []
     return arr.slice(start, end).filter(item => item != null)
   }
@@ -544,7 +535,7 @@
   }
 
   // 创建默认用户信息
-  const createDefaultUser = (user: any): User => {
+  const createDefaultUser = (user?: Partial<User> | null): User => {
     const userId = user?.id || ''
     const userName = user?.name || '未知用户'
     const userDepartment = user?.department || ''
@@ -566,16 +557,14 @@
   }
 
   // 获取完整用户信息
-  const getFullUserInfo = (user: any): User => {
+  const getFullUserInfo = (user?: Partial<User> | null): User => {
     if (!user) return createDefaultUser(null)
-    if (user?.avatar) return user
-
-    const fullUser = findUserById(user?.id)
+    const fullUser = user.id ? findUserById(user.id) : null
     return fullUser || createDefaultUser(user)
   }
 
   // 获取用户名列表的辅助函数 - 完全防御性
-  const getUserNames = (users: any[]): string => {
+  const getUserNames = (users: User[]): string => {
     if (!Array.isArray(users)) return ''
     return users
       .filter(user => user && user.name)
@@ -584,7 +573,7 @@
   }
 
   // 创建头像组件的辅助函数 - 完全防御性
-  const createAvatarProps = (user: any, size: 'tiny' | 'small' = 'small') => {
+  const createAvatarProps = (user: User, size: number | 'small' = 'small') => {
     if (!user) return { size, src: '', title: '未知用户' }
     const fullUser = getFullUserInfo(user)
     return {
@@ -595,13 +584,12 @@
   }
 
   // 获取节点描述 - 统一处理
-  const getNodeDescription = (node: any): string => {
-    const parts: string[] = []
-
-    Object.entries(NODE_DESCRIPTION_GENERATORS).forEach(([key, generator]) => {
-      const count = node.data?.[key]?.length
-      if (count) parts.push(generator(count))
-    })
+  const getNodeDescription = (node: WorkflowNode): string => {
+    const parts = getUserGroups(node).map(
+      group => `${group.users.length}个${group.label}`
+    )
+    const conditionCount = getConditionCount(node)
+    if (conditionCount) parts.push(`${conditionCount}个条件`)
 
     return parts.length > 0 ? parts.join(', ') : '无配置'
   }
@@ -611,11 +599,11 @@
     NODE_MAPS.typeClass[type as keyof typeof NODE_MAPS.typeClass] ||
     'node-default'
   const getNodeIcon = (type: string): string =>
-    NODE_MAPS.icon[type as keyof typeof NODE_MAPS.icon] || 'i-mdi:circle'
+    NODE_MAPS.icon[type as keyof typeof NODE_MAPS.icon] || 'i-mdi-circle'
 
   // 验证相关函数
   const createValidationError = (
-    node: any,
+    node: WorkflowNode,
     field: string,
     message: string
   ): ValidationError => ({
@@ -626,7 +614,7 @@
     type: 'required' as const,
   })
 
-  const validateSingleNode = (node: any): ValidationError[] => {
+  const validateSingleNode = (node: WorkflowNode): ValidationError[] => {
     const rule = VALIDATION_RULES[node.type as keyof typeof VALIDATION_RULES]
     const errorMessage = rule?.(node)
     return errorMessage
@@ -640,20 +628,10 @@
   }
 
   // 辅助函数：检查节点是否有内容 - 完全防御性
-  const hasNodeContent = (node: any): boolean => {
+  const hasNodeContent = (node: WorkflowNode): boolean => {
     if (!node?.data) return false
 
-    // 检查所有用户字段
-    const hasUsers = Object.keys(userFieldsMap).some(field => {
-      const arr = node.data[field]
-      return Array.isArray(arr) && arr.length > 0
-    })
-
-    // 检查条件
-    const hasConditions =
-      Array.isArray(node.data.conditions) && node.data.conditions.length > 0
-
-    return hasUsers || hasConditions
+    return getUserGroups(node).length > 0 || getConditionCount(node) > 0
   }
 
   // ============ 预览相关方法 ============
@@ -664,7 +642,7 @@
     }
   }
 
-  const selectPreviewNode = (node: any): void => {
+  const selectPreviewNode = (node: WorkflowNode): void => {
     selectedPreviewNode.value =
       selectedPreviewNode.value?.id === node.id ? null : node
   }
@@ -714,33 +692,17 @@
     message.info('工作流已重置')
   }
 
-  // 修复的工作流变化处理 - 强制触发响应式更新
-  const handleWorkflowChange = (data: any): void => {
-    // 深拷贝数据，确保响应式更新
-    workflowData.value = JSON.parse(JSON.stringify(data))
+  const handleWorkflowChange = (data: WorkflowData): void => {
+    workflowData.value = data
     validateWorkflow()
-
-    if (
-      selectedPreviewNode.value &&
-      !data?.nodes?.find((n: any) => n.id === selectedPreviewNode.value.id)
-    ) {
-      selectedPreviewNode.value = null
+    if (selectedPreviewNode.value) {
+      selectedPreviewNode.value =
+        data.nodes.find(node => node.id === selectedPreviewNode.value?.id) ??
+        null
     }
-
-    // 强制更新预览
-    nextTick(() => {
-      if (selectedPreviewNode.value) {
-        const updatedNode = data?.nodes?.find(
-          (n: any) => n.id === selectedPreviewNode.value.id
-        )
-        if (updatedNode) {
-          selectedPreviewNode.value = JSON.parse(JSON.stringify(updatedNode))
-        }
-      }
-    })
   }
 
-  const handleNodeClick = (nodeData: any): void => {
+  const handleNodeClick = (nodeData: WorkflowNode): void => {
     message.info(`点击了节点: ${nodeData.data?.title}`)
   }
 
@@ -750,15 +712,15 @@
   }
 
   const saveAllWorkflows = (): void => {
-    if (!workflowData.value) {
+    if (workflowData.value.nodes.length === 0) {
       message.warning('暂无工作流数据')
       return
     }
-    message.success('所有工作流保存成功')
+    message.info('当前为演示数据；需要留存请使用导出功能')
   }
 
   const exportAllWorkflows = (): void => {
-    if (!workflowData.value) {
+    if (workflowData.value.nodes.length === 0) {
       message.warning('暂无工作流数据')
       return
     }

@@ -217,8 +217,6 @@
                     :key="card.id"
                     v-drag="{
                       boundary: '.cards-container',
-                      onEnd: (el: HTMLElement, position: any) =>
-                        updateCardPosition(card.id, position),
                     }"
                     class="drag-card"
                     :style="{ backgroundColor: card.color }"
@@ -292,8 +290,10 @@
                     :key="shape.id"
                     v-drag="{
                       boundary: '.canvas-container',
-                      onDrag: (el: HTMLElement, position: any) =>
-                        updateShapePosition(shape.id, position),
+                      onDrag: (el: HTMLElement, position: Position) => {
+                        if (el.isConnected)
+                          updateShapePosition(shape.id, position)
+                      },
                     }"
                     class="canvas-shape"
                     :class="shape.type"
@@ -379,6 +379,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo23DragDirect' })
   import {
     getBasicCode,
     getStyleCode,
@@ -412,25 +413,19 @@
   const lastPosition = ref<Position | null>(null)
 
   // 回调函数
-  const handleDragStart = (el: HTMLElement) => {
+  const handleDragStart = () => {
     dragStatus.value = '拖拽中'
-    console.log('开始拖拽:', el)
   }
 
   const handleDragMove = (el: HTMLElement, position: Position) => {
-    lastPosition.value = position
+    if (el.isConnected) lastPosition.value = position
   }
 
   const handleDragEnd = (el: HTMLElement, position: Position) => {
+    if (!el.isConnected) return
     dragStatus.value = '拖拽完成'
     dragCount.value++
     lastPosition.value = position
-    console.log('拖拽结束:', position)
-  }
-
-  // 场景相关方法
-  const updateCardPosition = (cardId: number, position: Position) => {
-    console.log(`卡片 ${cardId} 移动到:`, position)
   }
 
   const updateShapePosition = (shapeId: number, position: Position) => {

@@ -60,7 +60,7 @@
             <C_Breadcrumb
               :label-formatter="translateRouteTitle"
               :show-icon="settingsStore.showBreadcrumbIcon"
-              @select="router.push"
+              @select="navigateTo"
             />
           </div>
 
@@ -98,7 +98,7 @@
           <C_Breadcrumb
             :label-formatter="translateRouteTitle"
             :show-icon="settingsStore.showBreadcrumbIcon"
-            @select="router.push"
+            @select="navigateTo"
           />
         </div>
 
@@ -230,11 +230,12 @@
                       class="sub-group"
                     >
                       <div class="sub-group-title">
-                        <i
+                        <C_Icon
                           v-if="item.icon"
-                          :class="item.icon"
+                          :name="item.icon.replace('i-', '')"
+                          :size="14"
                           class="text-14px"
-                        ></i>
+                        />
                         <span>{{ item.name }}</span>
                       </div>
                       <div class="sub-group-items">
@@ -361,6 +362,10 @@
   })
 
   const router = useRouter()
+  /** Navigation failures are reported by router.onError, not leaked to Vue event handlers. */
+  const navigateTo = (path: string): void => {
+    void router.push(path).catch(() => undefined)
+  }
   const route = useRoute()
   const themeStore = s_themeStore()
   const settingsStore = s_settingsStore()
@@ -492,15 +497,23 @@
     const isInMicroApp = window !== window.parent
 
     if (isInMicroApp) {
+      // The embedding page is the only permitted navigation recipient.
+      if (!document.referrer) return
+      let parentOrigin: string
+      try {
+        parentOrigin = new URL(document.referrer).origin
+      } catch {
+        return
+      }
       window.parent.postMessage(
         {
           type: MESSAGE_TYPES.MICRO_APP_NAVIGATE,
           payload: { path },
         },
-        '*'
+        parentOrigin
       )
     } else {
-      await router.push(path)
+      navigateTo(path)
     }
   }
 

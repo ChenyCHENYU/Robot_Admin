@@ -1,3 +1,8 @@
+import type {
+  WorkflowData,
+  WorkflowNode,
+} from '@robot-admin/naive-ui-components/C_WorkFlow'
+
 // ============ 类型定义 ============
 export interface User {
   id: string
@@ -28,7 +33,7 @@ export interface WorkflowScenario {
   name: string
   description: string
   icon: string
-  template: any
+  template: WorkflowData
 }
 
 export interface ValidationError {
@@ -521,17 +526,21 @@ export const NODE_MAPS = {
   } as const,
 
   icon: {
-    start: 'i-mdi:play-circle',
-    approval: 'i-mdi:account-check',
-    copy: 'i-mdi:email-outline',
-    condition: 'i-mdi:source-branch',
+    start: 'i-mdi-play-circle',
+    approval: 'i-mdi-account-check',
+    copy: 'i-mdi-email-outline',
+    condition: 'i-mdi-source-branch',
   } as const,
 }
 
 // 验证规则
 export const VALIDATION_RULES = {
-  approval: (node: any) =>
-    !node.data?.approvers?.length ? '审批节点缺少审批人' : null,
-  condition: (node: any) =>
-    !node.data?.conditions?.length ? '条件节点缺少分支条件' : null,
+  approval: (node: WorkflowNode) =>
+    !('approvers' in node.data) || !node.data.approvers?.length
+      ? '审批节点缺少审批人'
+      : null,
+  condition: (node: WorkflowNode) =>
+    !('conditions' in node.data) || !node.data.conditions?.length
+      ? '条件节点缺少分支条件'
+      : null,
 } as const

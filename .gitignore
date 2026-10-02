@@ -12,6 +12,8 @@ node_modules
 dist
 dist-ssr
 coverage
+playwright-report/
+test-results/
 *.local
 
 /cypress/videos/
@@ -20,6 +22,8 @@ coverage
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/mcp.json
+!.vscode/settings.json
 .idea
 *.suo
 *.ntvs*
@@ -44,8 +48,8 @@ type-reports
 src/types/auto-imports.d.ts
 src/types/components.d.ts
 
-# openapi.json 
-# src/api/generated/  
+# openapi.json
+# src/api/generated/
 
 
 .mgit-push.json
@@ -53,3 +57,6 @@ src/types/components.d.ts
 packages/
 apps/robot-admin-*/
 nul
+
+# Design documentation (external references)
+design-md
