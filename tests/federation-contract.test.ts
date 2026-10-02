@@ -20,6 +20,7 @@ describe('module federation contracts', () => {
       logistics.devDependencies['@robot-admin/naive-ui-components']
     )
     expect(host.scripts['build:remote']).toContain('MF_REMOTE_BUILD=true')
+    expect(host.scripts['type-build']).toContain('ensure-generated-types.ts')
     expect(host.scripts['verify:federation']).toContain(
       'verify:federation:integration'
     )
