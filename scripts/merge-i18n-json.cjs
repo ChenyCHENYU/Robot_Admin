@@ -109,8 +109,8 @@ function main() {
   const args = process.argv.slice(2);
   
   if (args.length < 3) {
-    log('yellow', '用法: node merge-i18n-json.js <ours> <theirs> <output>');
-    log('yellow', '示例: node merge-i18n-json.js lang/index.json.ours lang/index.json.theirs lang/index.json');
+    log('yellow', '用法: bun merge-i18n-json.cjs <ours> <theirs> <output>');
+    log('yellow', '示例: bun merge-i18n-json.cjs lang/index.json.ours lang/index.json.theirs lang/index.json');
     process.exit(1);
   }
 

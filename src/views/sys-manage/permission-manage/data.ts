@@ -6,7 +6,7 @@ import type { TableColumn } from '@robot-admin/naive-ui-components'
 export type PermissionType = 'module' | 'function' | 'button' | 'api'
 
 export interface PermissionData {
-  [key: string]: any
+  [key: string]: unknown
   id: number
   name: string
   code: string
@@ -153,12 +153,7 @@ export const getTableColumns = (): TableColumn<PermissionData>[] => [
         NTag,
         {
           type: config.type as
-            | 'default'
-            | 'primary'
-            | 'info'
-            | 'success'
-            | 'warning'
-            | 'error',
+            'default' | 'primary' | 'info' | 'success' | 'warning' | 'error',
           size: 'small',
           class: 'permission-type-tag',
         },
@@ -225,12 +220,7 @@ export const getTableColumns = (): TableColumn<PermissionData>[] => [
         NTag,
         {
           type: config.type as
-            | 'default'
-            | 'primary'
-            | 'info'
-            | 'success'
-            | 'warning'
-            | 'error',
+            'default' | 'primary' | 'info' | 'success' | 'warning' | 'error',
           size: 'small',
           class: `permission-status status-${row.status === 1 ? 'active' : 'inactive'}`,
         },
@@ -308,13 +298,129 @@ export const DEFAULT_PERMISSION_FORM_DATA: PermissionFormData = {
   remark: '',
 }
 
+const MOCK_PERMISSION_TIMESTAMP = new Date(
+  '2026-01-01T08:00:00+08:00'
+).getTime()
+
+/** 开发与测试模式下的权限资源数据，与远端列表保持相同扁平契约。 */
+export const MOCK_PERMISSION_RESOURCES: PermissionData[] = [
+  {
+    id: 1,
+    name: '系统管理',
+    code: 'system',
+    type: 'module',
+    module: 'system',
+    description: '系统管理模块访问权限',
+    resources: ['/sys/*'],
+    status: 1,
+    sort: 1,
+    createTime: MOCK_PERMISSION_TIMESTAMP,
+    updateTime: MOCK_PERMISSION_TIMESTAMP,
+    remark: '',
+  },
+  {
+    id: 2,
+    name: '用户查询',
+    code: 'system:user:list',
+    type: 'function',
+    module: 'user',
+    description: '查看和筛选用户列表',
+    resources: ['GET /sys/users'],
+    status: 1,
+    sort: 10,
+    createTime: MOCK_PERMISSION_TIMESTAMP,
+    updateTime: MOCK_PERMISSION_TIMESTAMP,
+    remark: '',
+  },
+  {
+    id: 3,
+    name: '新增用户',
+    code: 'system:user:add',
+    type: 'button',
+    module: 'user',
+    description: '创建新的系统用户',
+    resources: ['POST /sys/users'],
+    status: 1,
+    sort: 11,
+    createTime: MOCK_PERMISSION_TIMESTAMP,
+    updateTime: MOCK_PERMISSION_TIMESTAMP,
+    remark: '',
+  },
+  {
+    id: 4,
+    name: '删除用户接口',
+    code: 'system:user:delete',
+    type: 'api',
+    module: 'user',
+    description: '删除指定用户',
+    resources: ['DELETE /sys/users/:id'],
+    status: 1,
+    sort: 12,
+    createTime: MOCK_PERMISSION_TIMESTAMP,
+    updateTime: MOCK_PERMISSION_TIMESTAMP,
+    remark: '高风险操作',
+  },
+  {
+    id: 5,
+    name: '角色管理',
+    code: 'system:role:manage',
+    type: 'function',
+    module: 'role',
+    description: '维护角色与角色权限',
+    resources: ['GET /sys/roles', 'PUT /sys/roles/:id'],
+    status: 1,
+    sort: 20,
+    createTime: MOCK_PERMISSION_TIMESTAMP,
+    updateTime: MOCK_PERMISSION_TIMESTAMP,
+    remark: '',
+  },
+  {
+    id: 6,
+    name: '权限审计',
+    code: 'system:permission:audit',
+    type: 'function',
+    module: 'permission',
+    description: '查看权限变更审计记录',
+    resources: ['GET /sys/permission-audit-logs'],
+    status: 1,
+    sort: 30,
+    createTime: MOCK_PERMISSION_TIMESTAMP,
+    updateTime: MOCK_PERMISSION_TIMESTAMP,
+    remark: '',
+  },
+  {
+    id: 7,
+    name: '字典维护',
+    code: 'system:dict:manage',
+    type: 'function',
+    module: 'dict',
+    description: '维护系统字典及字典项',
+    resources: ['/sys/dictionaries/*'],
+    status: 1,
+    sort: 40,
+    createTime: MOCK_PERMISSION_TIMESTAMP,
+    updateTime: MOCK_PERMISSION_TIMESTAMP,
+    remark: '',
+  },
+  {
+    id: 8,
+    name: '导出日志',
+    code: 'system:log:export',
+    type: 'button',
+    module: 'log',
+    description: '导出筛选后的系统日志',
+    resources: ['POST /sys/logs/export'],
+    status: 0,
+    sort: 50,
+    createTime: MOCK_PERMISSION_TIMESTAMP,
+    updateTime: MOCK_PERMISSION_TIMESTAMP,
+    remark: '默认禁用',
+  },
+]
+
 // ==================== 数据权限配置 ====================
 export type DataScopeType =
-  | 'all'
-  | 'department'
-  | 'department_below'
-  | 'self'
-  | 'custom'
+  'all' | 'department' | 'department_below' | 'self' | 'custom'
 
 export interface DataPermissionRule {
   id: string
@@ -337,7 +443,12 @@ export interface FieldPermissionItem {
 
 export const DATA_SCOPE_CONFIG: Record<
   DataScopeType,
-  { text: string; type: string; icon: string; description: string }
+  {
+    text: string
+    type: 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error'
+    icon: string
+    description: string
+  }
 > = {
   all: {
     text: '全部数据',

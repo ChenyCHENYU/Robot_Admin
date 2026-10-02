@@ -385,6 +385,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo43SplitPane' })
   import { SECTIONS, PANELS } from './data'
 
   const message = useMessage()

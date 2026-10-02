@@ -1,4 +1,29 @@
 import { type DataTableColumns } from 'naive-ui/es'
+import type { ExcelRow } from '@robot-admin/file-utils'
+
+export interface DataSummary {
+  totalRows: number
+  validRows: number
+  emptyRows: number
+  totalFields: number
+}
+
+export interface OperationHistoryItem {
+  id: number
+  time: string
+  operation: string
+  description: string
+  status: 'success' | 'error'
+}
+
+export const hasNonEmptyCell = (row: ExcelRow): boolean =>
+  Object.entries(row).some(
+    ([key, value]) =>
+      key !== '__rowIndex' &&
+      value !== '' &&
+      value !== null &&
+      value !== undefined
+  )
 
 // 常量
 export const PREVIEW_ROWS = 10
@@ -29,7 +54,7 @@ export const sampleData = [
 ]
 
 // 操作历史列配置
-export const historyColumns: DataTableColumns = [
+export const historyColumns: DataTableColumns<OperationHistoryItem> = [
   { title: '时间', key: 'time', width: 160 },
   { title: '操作', key: 'operation', width: 120 },
   { title: '描述', key: 'description', ellipsis: true },

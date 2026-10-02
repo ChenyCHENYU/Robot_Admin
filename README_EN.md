@@ -5,11 +5,11 @@
       <img src="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/img/robot-left.png" height="120" />
     </picture>
   </a>
-  
+
   <h1>
     <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=4FC08D&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=700&height=100&lines=🤖+Robot+Admin;Redefining+Enterprise+Admin+Development" alt="Robot Admin" />
   </h1>
-  
+
   <p><strong>Robot Admin - Multi-Architecture Enterprise Solution</strong></p>
 
   <!-- Architecture Selector -->
@@ -17,7 +17,7 @@
     <tr>
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🏗️-Monolithic-4A90E2?style=for-the-badge" alt="Monolithic"><br>
-        <sub><strong>Current Branch</strong></sub><br>
+        <sub><strong>Stable Mainline</strong></sub><br>
         <sub>Traditional SPA</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/main">
           <img src="https://img.shields.io/badge/View Code-main-blue?style=flat-square" alt="Main Branch">
@@ -37,7 +37,7 @@
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🔮-Module Federation-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Vite Module Federation</strong></sub><br>
-        <sub>Pluggable Architecture · Rebuilt on dev</sub><br>
+        <sub>Current Branch · Component Federation</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
           <img src="https://img.shields.io/badge/View Code-module--federation-9B59B6?style=flat-square" alt="MF Branch">
         </a>
@@ -48,7 +48,7 @@
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🚀-Micro Frontend-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
         <sub><strong>MicroApp</strong></sub><br>
-        <sub>Initial Release</sub><br>
+        <sub>Architecture sample pending sync</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
           <img src="https://img.shields.io/badge/View Code-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
@@ -62,17 +62,15 @@
   <p>
     <a href="https://github.com/ChenyCHENYU/robot_admin/actions"><img src="https://img.shields.io/github/actions/workflow/status/ChenyCHENYU/robot_admin/main.yml" alt="Build Status"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
-    <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
-    <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
-    <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-8.0.1-646CFF?style=flat&logo=vite" alt="Vite Version">
+    <img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-ff1e56?style=flat&logo=bun" alt="Bun Version">
+    <img src="https://img.shields.io/badge/app-2.6.3-4FC08D?style=flat" alt="App Version">
+    <img src="https://img.shields.io/badge/vite-8.2.2-646CFF?style=flat&logo=vite" alt="Vite Version">
   </p>
   <p>
     <img src="https://img.shields.io/badge/components-51+-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
-    <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
+    <img src="https://img.shields.io/badge/demos-64-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
-    <img src="https://img.shields.io/badge/test_coverage-85%25-brightgreen?style=flat" alt="Test Coverage">
   </p>
   <p>
     <img src="https://img.shields.io/github/stars/ChenyCHENYU/robot_admin?style=social" alt="GitHub stars">
@@ -110,7 +108,9 @@
 
 ## 🎯 Multi-Architecture Support
 
-> 💡 Robot Admin supports multiple architecture branches for progressive evolution from monolith to micro-frontend. You are currently on the **Single SPA development main line** (`dev`/`main`).
+> This is the `module-federation` architecture sample, aligned with the monolithic `2.6.3` dependency and quality baseline. `main`/`dev` remain the stable monolithic line; `micro-app` and `monorepo` are architecture samples pending synchronization and verification. Matching application versions do not imply identical deployment procedures.
+
+`bun run build` builds the ordinary monolithic app, `bun run build:remote` separately emits `dist/federation/remoteEntry.js` and its manifest, and `bun run build:logistics` builds the logistics consumer. `bun run verify:federation` includes static checks, builds and real-browser integration. The consumer defaults to `http://127.0.0.1:1988/federation/remoteEntry.js`; configure `VITE_MF_REMOTE_URL`, CORS and caching for separate deployments. The monolithic `deploy` script is intentionally unavailable on this branch.
 
 <details>
 <summary><b>👉 View Architecture Comparison</b></summary>
@@ -175,7 +175,7 @@ bun install    # Recommended! 10x speed boost
 bun dev
 ```
 
-**🔥 First startup takes less than 2 seconds, subsequent hot updates under 100ms!**
+**Startup and hot-update times depend on the local environment and dependency cache; measure them in your setup.**
 
 <details>
 <summary><b>📦 More Commands</b></summary>
@@ -191,16 +191,16 @@ bun run preview        # Preview build locally
 # Code Quality
 bun run lint           # Code check and fix
 bun run format         # Code formatting
-bun test:unit          # Unit testing
+bun run test           # Unit testing
 
 # Type Checking
 bun run type-watch     # Watch mode type checking
-bun run type:check     # Smart type analysis
+bun run type-build     # Project type checking
 
 # Others
 bun run commit         # Standardized commit (git cz)
 bun outdated           # Check dependency updates
-bun clean              # Clean cache
+bun run verify:federation # Federation quality checks
 ```
 
 </details>
@@ -241,6 +241,7 @@ bun clean              # Clean cache
 - **AntV X6** - Professional flowchart engine
 - **FullCalendar** - Complete calendar management
 - **WangEditor** - Rich text editor
+
 </details>
 
 ### 🎯 Feature Matrix
@@ -319,6 +320,7 @@ bun clean              # Clean cache
 - `C_ContextMenu` - Custom right-click context menu
 - `C_Transfer` - Shuttle box for cross-list data migration
 - `C_AvatarGroup` - Stacked avatar group with status badges
+
 </details>
 
 #### 🎮 Custom Directives
@@ -370,6 +372,7 @@ bun clean              # Clean cache
 - Transfer - Cross-list data migration shuttle box
 - Avatar Group - Stacked avatar display with status badges
 - Audio Player - Playlist, progress control & multi-loop modes
+
 </details>
 
 ---
@@ -504,6 +507,7 @@ graph LR
 - `desc:` For quick console print statement generation
 - `use:` Select variable, press shortcut to generate print statement
 - `key:` `ctrl+alt+l` generate `alt+shift+c` comment all **+u** enable all **+d** delete all
+
 </details>
 
 ---
@@ -594,6 +598,7 @@ graph LR
 - **Component Lazy Loading** - Route-level lazy loading
 - **Image Lazy Loading** - Viewport-based image loading
 - **Debounce & Throttle** - High-frequency operation performance optimization
+
 </details>
 
 ---
@@ -752,6 +757,7 @@ location / {
 - **[robot-admin-env-manager](https://www.npmjs.com/package/robot-admin-env-manager)** `v1.0.5` - Multi-env configuration manager
 - **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - Smart route preloader
 - **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Branch diff checker
+
 </details>
 
 ---
@@ -809,6 +815,7 @@ location / {
 - **VS Code**: Recommended editor
 - **Git**: >= 2.20.0
 - **Docker**: >= 20.0 (Container deployment)
+
 </details>
 
 ---
@@ -845,7 +852,7 @@ server: {
 
 ```bash
 # Regenerate type files
-bun run type:check
+bun run type-build
 
 # Clear type cache
 rm -rf node_modules/.cache
@@ -911,6 +918,7 @@ bun run type-build
 - 🧩 **Rich Components**: 37+ business components, ready to use
 - 🎨 **Modern Design**: Naive UI + UnoCSS, beauty and performance coexist
 - 📚 **Learning Friendly**: 36+ demo pages, each is best practice
+
 </details>
 
 ---
@@ -949,6 +957,7 @@ bun run type-build
 - Provide detailed migration guide
 - Component APIs are basically compatible
 - Support progressive migration
+
 </details>
 
 ---
@@ -1017,7 +1026,11 @@ Thanks to all developers who contributed to this project:
 
 ## 📄 Changelog
 
-### 🎉 v2.2.0 (2026-03-11) — Latest
+### 🛠️ v2.6.3 (2026-10-02) — Current baseline
+
+This architecture branch aligns with the monolithic `2.6.3` dependency and quality baseline and verifies Module Federation independently. See [CHANGELOG.md](./CHANGELOG.md) and the [federation guide](./docs/MODULE_FEDERATION_BEST_PRACTICES.md).
+
+### 🎉 v2.2.0 (2026-03-11) — Historical
 
 - ✨ Layout system upgraded to v2.2.0
 - 🔧 env-manager upgraded to v1.0.5

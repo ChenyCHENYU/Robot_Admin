@@ -32,10 +32,6 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
-    :deep(.n-card-header) {
-      padding-bottom: 12px;
-    }
-
     .card-header {
       display: flex;
       align-items: center;
@@ -57,13 +53,6 @@
       line-height: 1.5;
     }
 
-    :deep(.n-card__content) {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 200px;
-      padding: 24px;
-    }
   }
 
   // 圈圈赛跑指示器
@@ -116,6 +105,5 @@
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    height: 100% !important;
   }
 }

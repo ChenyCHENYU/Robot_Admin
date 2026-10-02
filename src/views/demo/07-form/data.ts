@@ -7,7 +7,7 @@
  * @Description: 表单演示页面入口文件  - 基本数据配置
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
-import type { LayoutType } from '@robot-admin/naive-ui-components'
+import type { FormModel, LayoutType } from '@robot-admin/naive-ui-components'
 
 /**
  * 布局选项配置
@@ -97,7 +97,7 @@ export const testDataConfig = {
   /**
    * 获取测试数据
    */
-  getTestData(layoutType: LayoutType): Record<string, any> {
+  getTestData(layoutType: LayoutType): FormModel {
     const baseData = { ...baseTestData }
 
     // 根据布局类型添加对应的扩展数据
@@ -109,6 +109,10 @@ export const testDataConfig = {
     // 默认布局添加富文本内容
     if (layoutType === 'default') {
       baseData.description = extendedTestData.description
+    }
+
+    if (layoutType === 'grid') {
+      Object.assign(baseData, { name: baseData.realName })
     }
 
     return baseData

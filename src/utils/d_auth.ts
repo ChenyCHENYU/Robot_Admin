@@ -14,7 +14,7 @@ import { TIME_STAMP, TOKEN_TIMEOUT_VALUE } from '@/constant'
  * @description: 获取缓存的时间戳
  */
 export const d_getTimeStamp = (): number => {
-  const raw = localStorage.getItem(TIME_STAMP)
+  const raw = sessionStorage.getItem(TIME_STAMP)
   if (raw === null) return 0
   try {
     return JSON.parse(raw) as number
@@ -27,13 +27,13 @@ export const d_getTimeStamp = (): number => {
  * @description: 设置缓存时间戳
  */
 export const d_setTimeStamp = (): void =>
-  localStorage.setItem(TIME_STAMP, JSON.stringify(Date.now()))
+  sessionStorage.setItem(TIME_STAMP, JSON.stringify(Date.now()))
 
 /**
  * @description: 刷新过期时间（活跃续期）
  */
 export const d_refreshTokenExpire = (): void => {
-  localStorage.setItem(TIME_STAMP, JSON.stringify(Date.now()))
+  sessionStorage.setItem(TIME_STAMP, JSON.stringify(Date.now()))
 }
 
 /**

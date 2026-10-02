@@ -3,7 +3,7 @@
  *
  * 🎯 目标：将业务 Store 抽象成布局接口，实现布局和业务的解耦
  *
- * � 适配器模式：
+ * 🔌 适配器模式：
  * ```
  * 业务 Stores (项目特定)
  *    ↓ 适配
@@ -13,14 +13,15 @@
  * ```
  */
 
-import type { LayoutContext } from '@robot-admin/layout'
+import { provideLayout, type LayoutContext } from '@robot-admin/layout/naive'
 import { s_permissionStore } from '@/stores/permission'
 import { s_themeStore } from '@/stores/theme'
 import { s_settingsStore } from '@/stores/settings'
-import { C_Icon } from '@robot-admin/naive-ui-components'
+import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
+import '@robot-admin/naive-ui-components/C_Icon/style.css'
 
 /**
- * 创建布局桥接数据
+ * 创建并提供布局桥接数据
  *
  * 🔌 适配器函数：将业务 Store 转换成 @robot-admin/layout 的 LayoutContext 接口
  *
@@ -32,28 +33,11 @@ export function useLayoutBridge(): LayoutContext {
   const themeStore = s_themeStore()
   const settingsStore = s_settingsStore()
 
-  // ============ 数据适配转换 ============
-  return {
-    // 菜单数据
-    menus: computed(() => permissionStore.showMenuListGet),
-
-    // 主题状态
-    isDark: computed(() => themeStore.isDark),
-
-    // 布局配置
-    layoutMode: computed(() => settingsStore.layoutMode),
-    sidebarWidth: computed(() => settingsStore.sidebarWidth),
-    sidebarCollapsedWidth: computed(() => settingsStore.sidebarCollapsedWidth),
-    headerHeight: computed(() => settingsStore.headerHeight),
-    showFooter: computed(() => settingsStore.showFooter),
-    showBreadcrumb: computed(() => settingsStore.showBreadcrumb),
-    showBreadcrumbIcon: computed(() => settingsStore.showBreadcrumbIcon),
-    showTagsView: computed(() => settingsStore.showTagsView),
-    tagsViewHeight: computed(() => settingsStore.tagsViewHeight),
-    fixedHeader: computed(() => settingsStore.fixedHeader),
-    transitionName: computed(() => settingsStore.transitionName),
-
-    // 品牌配置
+  // 包负责桥接标准设置字段，宿主只提供业务数据和品牌能力。
+  return provideLayout({
+    settings: settingsStore,
+    menus: () => permissionStore.showMenuListGet,
+    isDark: () => themeStore.isDark,
     brand: {
       name: 'Robot Admin',
       subtitle: '机器人管理系统',
@@ -62,8 +46,6 @@ export function useLayoutBridge(): LayoutContext {
       logoSize: 36,
       homePath: '/home',
     },
-
-    // 图标组件 - 用于布局内部渲染菜单图标
     iconComponent: C_Icon,
-  }
+  })
 }

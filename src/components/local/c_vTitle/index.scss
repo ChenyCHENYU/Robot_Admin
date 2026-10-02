@@ -14,11 +14,11 @@
   padding: 20px 24px;
   background: linear-gradient(
     135deg,
-    rgba(32, 128, 240, 0.04) 0%,
-    rgba(14, 165, 233, 0.02) 100%
+    color-mix(in srgb, var(--app-primary) 4%, var(--app-bg-content)) 0%,
+    color-mix(in srgb, var(--app-primary) 2%, var(--app-bg-content)) 100%
   );
   border-radius: 12px;
-  border: 1px solid rgba(32, 128, 240, 0.08);
+  border: 1px solid color-mix(in srgb, var(--app-primary) 10%, transparent);
   overflow: hidden;
 
   // 背景装饰光晕
@@ -31,7 +31,7 @@
     height: 200px;
     background: radial-gradient(
       circle,
-      rgba(32, 128, 240, 0.08) 0%,
+      color-mix(in srgb, var(--app-primary) 8%, transparent) 0%,
       transparent 70%
     );
     pointer-events: none;
@@ -90,7 +90,7 @@
     .decoration-dot {
       width: 6px;
       height: 6px;
-      background: linear-gradient(135deg, #2080f0, #0ea5e9);
+      background: var(--app-primary);
       border-radius: 50%;
     }
 
@@ -99,7 +99,7 @@
       height: 1px;
       background: linear-gradient(
         90deg,
-        rgba(32, 128, 240, 0.2) 0%,
+        color-mix(in srgb, var(--app-primary) 20%, transparent) 0%,
         transparent 100%
       );
     }

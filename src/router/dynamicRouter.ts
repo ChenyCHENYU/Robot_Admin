@@ -2,8 +2,13 @@ import router from './index'
 import type { RouteRecordRaw } from 'vue-router'
 import { s_permissionStore } from '@/stores/permission'
 import { message as messageApi } from '@/plugins/discrete'
+import {
+  joinRoutePath,
+  normalizeAbsoluteRoutePath,
+  toRouteRecordPath,
+} from './routePath'
 
-export interface RouteMeta extends Record<string, any> {
+export interface RouteMeta extends Record<string, unknown> {
   title?: string
   icon?: string
   hidden?: boolean
@@ -28,18 +33,12 @@ const COMPONENTS = {
   '404': () => import('@/views/error-page/404.vue'),
 } as const
 
-// ⚡ 最佳实践：根据使用频率使用不同的加载策略
-// 高频页面使用 eager 模式（首页、常用功能）- 打包到主chunk，立即可用
-const EAGER_MODULES = import.meta.glob('@/views/home/**/*.vue', { eager: true })
-const EAGER_DASH = import.meta.glob('@/views/dashboard/**/*.vue', {
-  eager: true,
-})
-
-// 其他页面使用懒加载 - 按需加载，减小初始包体积
-const LAZY_MODULES = import.meta.glob('@/views/**/!(home|dashboard)*.vue')
-
-// 合并所有模块映射
-const VIEW_MODULES = { ...EAGER_MODULES, ...EAGER_DASH, ...LAZY_MODULES }
+// 所有动态页面统一懒加载；登录页无需预取首页的 3D、图表等重依赖。
+const LAZY_MODULES = import.meta.glob('@/views/**/*.vue')
+let dynamicRouteRemovers: Array<() => void> = []
+type RouteComponentLoader = () => Promise<unknown>
+const dynamicRouteLoaders = new Map<string, RouteComponentLoader>()
+const routePrefetchCache = new Map<string, Promise<unknown>>()
 
 /**
  * 路径规范化处理
@@ -50,13 +49,13 @@ const normalizePath = (path: string, isChild: boolean): string => {
       `[路由警告] 子路由path "${path}" 已包含前导/，请确认数据源是否需要修改`
     )
   }
-  return isChild && !path.startsWith('/') ? `/${path}` : path
+  return toRouteRecordPath(path, isChild)
 }
 
 /**
  * 组件解析 - 最优化版本
  */
-const resolveComponent = (path?: string) => {
+const resolveComponent = (path?: string): RouteComponentLoader | undefined => {
   if (!path) return undefined
 
   // 检查预定义组件
@@ -68,14 +67,9 @@ const resolveComponent = (path?: string) => {
     const normalizedPath = path.startsWith('/') ? path : `/${path}`
     const viewPath = `/src/views${normalizedPath}.vue`
 
-    const module = VIEW_MODULES[viewPath]
+    const module = LAZY_MODULES[viewPath]
 
     if (module) {
-      // eager 模式的模块直接返回
-      if (typeof module === 'object' && 'default' in module) {
-        return () => Promise.resolve(module)
-      }
-      // lazy 模式的模块返回函数
       return module
     }
 
@@ -90,12 +84,20 @@ const resolveComponent = (path?: string) => {
 /**
  * 路由处理中间件
  */
-const processRoute = (route: DynamicRoute, isChild = false): RouteRecordRaw => {
+const processRoute = (
+  route: DynamicRoute,
+  isChild = false,
+  parentPath = ''
+): RouteRecordRaw => {
+  const fullPath = joinRoutePath(parentPath, route.path)
+  const component = resolveComponent(route.component)
+  if (component) dynamicRouteLoaders.set(fullPath, component)
+
   return {
     ...route,
     path: normalizePath(route.path, isChild),
-    component: resolveComponent(route.component),
-    children: route.children?.map(child => processRoute(child, true)),
+    component,
+    children: route.children?.map(child => processRoute(child, true, fullPath)),
     meta: {
       ...route.meta,
       isLayout: route.component === 'layout',
@@ -106,11 +108,33 @@ const processRoute = (route: DynamicRoute, isChild = false): RouteRecordRaw => {
 /**
  * 清理现有路由
  */
-export const clearExistingRoutes = (protectedNames = ['login']) => {
-  router
-    .getRoutes()
-    .filter(r => r.name && !protectedNames.includes(r.name.toString()))
-    .forEach(r => router.removeRoute(r.name!))
+export const clearExistingRoutes = (): void => {
+  for (const removeRoute of dynamicRouteRemovers.reverse()) removeRoute()
+  dynamicRouteRemovers = []
+  dynamicRouteLoaders.clear()
+  routePrefetchCache.clear()
+}
+
+/**
+ * 在不触发导航的前提下加载动态路由组件。原生 import 缓存会被后续
+ * Vue Router 导航复用；失败项会移出缓存，允许下一次用户意图重试。
+ */
+export const prefetchDynamicRouteComponent = (
+  path: string
+): Promise<unknown> | undefined => {
+  const normalizedPath = normalizeAbsoluteRoutePath(path.split(/[?#]/, 1)[0])
+  const loader = dynamicRouteLoaders.get(normalizedPath)
+  if (!loader) return undefined
+
+  const cached = routePrefetchCache.get(normalizedPath)
+  if (cached) return cached
+
+  const request = loader().catch(error => {
+    routePrefetchCache.delete(normalizedPath)
+    throw error
+  })
+  routePrefetchCache.set(normalizedPath, request)
+  return request
 }
 
 /**
@@ -127,19 +151,33 @@ const handleRouteError = (error: unknown): string => {
  * 初始化动态路由
  */
 export const initDynamicRouter = async (): Promise<boolean> => {
+  const permissionStore = s_permissionStore()
+  const generation = permissionStore.requestGeneration
   try {
-    const permissionStore = s_permissionStore()
-    const { code, data: routes, msg } = await permissionStore.getAuthMenuList()
+    const {
+      code,
+      data: routes,
+      msg,
+      message,
+    } = await permissionStore.getAuthMenuList()
 
-    if (code !== '0' || !Array.isArray(routes)) {
-      throw new Error(msg || '无效的路由数据格式')
+    if (generation !== permissionStore.requestGeneration) return false
+
+    if (![0, 200, '0', '200'].includes(code) || !Array.isArray(routes)) {
+      throw new Error(msg || message || '无效的路由数据格式')
     }
 
-    clearExistingRoutes(['login', '404', '401'])
+    clearExistingRoutes()
 
-    routes
+    dynamicRouteRemovers = routes
       .map(route => processRoute(route as DynamicRoute))
-      .forEach(route => router.addRoute(route))
+      .map(route => router.addRoute(route))
+
+    // 菜单路由是进入页面的唯一关键依赖；按钮/数据权限保持 deny-by-default，
+    // 在后台并行补齐，避免任一辅助接口延迟拖住整次导航和顶部进度条。
+    void permissionStore.initializeAuxiliaryPermissions().catch(error => {
+      console.error('[动态路由] 辅助权限初始化失败:', error)
+    })
 
     if (import.meta.env.DEV) {
       console.debug('[动态路由] 初始化完成:', router.getRoutes())
@@ -147,6 +185,9 @@ export const initDynamicRouter = async (): Promise<boolean> => {
 
     return true
   } catch (error) {
+    if (generation !== permissionStore.requestGeneration) return false
+    clearExistingRoutes()
+    permissionStore.resetPermissions()
     handleRouteError(error)
     return false
   }

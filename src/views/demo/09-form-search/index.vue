@@ -25,7 +25,6 @@
         :form-search-input-history-string="basicFormConfig.historyKey"
         @search="handleSearch('basic', $event)"
         @reset="handleReset('basic')"
-        @change-params="handleParamsChange"
       />
     </div>
 
@@ -67,8 +66,10 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo09FormSearch' })
   import type { SearchFormParams } from '@robot-admin/naive-ui-components'
   import {
+    type SearchResult,
     basicFormConfig,
     advancedFormConfig,
     megaFormConfig,
@@ -77,7 +78,7 @@
   } from './data'
 
   const message = useMessage()
-  const searchResults = ref<any[]>([])
+  const searchResults = ref<SearchResult[]>([])
 
   // 表单参数
   const basicFormParams = reactive({ ...basicFormConfig.params })
@@ -99,9 +100,8 @@
     type: keyof typeof formConfigs,
     params: SearchFormParams
   ) => {
-    console.log(`${type}搜索参数:`, params)
     message.success('搜索成功！')
-    searchResults.value = generateMockResults(type, params as any)
+    searchResults.value = generateMockResults(type, params)
   }
 
   // 统一重置处理
@@ -111,36 +111,8 @@
     searchResults.value = []
     message.info('表单已重置')
   }
-
-  // 参数变化
-  const handleParamsChange = (params: SearchFormParams) => {
-    console.log('参数变化:', params)
-  }
 </script>
 
 <style lang="scss" scoped>
-  .form-search-demo {
-    padding: 20px;
-
-    .demo-section {
-      margin-bottom: 32px;
-
-      h3 {
-        color: var(--n-text-color);
-        margin-bottom: 16px;
-        padding-bottom: 8px;
-        border-bottom: 2px solid var(--n-primary-color);
-        font-size: 16px;
-      }
-    }
-
-    pre {
-      background: var(--n-code-color);
-      padding: 16px;
-      border-radius: 6px;
-      font-size: 12px;
-      line-height: 1.5;
-      overflow-x: auto;
-    }
-  }
+  @use './index.scss';
 </style>

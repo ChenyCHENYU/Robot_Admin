@@ -211,7 +211,6 @@
           :height="200"
           :readonly="true"
           :show-toolbar="false"
-          :disabled="true"
         />
         <div class="action-bar">
           <NButton
@@ -261,13 +260,11 @@
             <C_Signature
               ref="apiSignatureRef"
               :height="180"
-              @change="handleSignatureChange"
             />
             <div class="action-bar">
               <NButton
                 type="primary"
                 size="small"
-                :disabled="!savedData"
                 @click="handleSaveSignature"
               >
                 <template #icon><C_Icon name="mdi:content-save" /></template>
@@ -314,6 +311,7 @@
 
 <script setup lang="ts">
   import type {
+    ExportOptions,
     SignatureExpose,
     SignatureStroke,
   } from '@robot-admin/naive-ui-components'
@@ -353,7 +351,7 @@
   const handleExport = async (
     signatureRef: SignatureExpose | undefined,
     key: string,
-    options?: any
+    options?: ExportOptions
   ) => {
     if (!signatureRef) return
 
@@ -412,7 +410,6 @@
     }
 
     const data = signatureRef.getSignatureData()
-    console.log('签名数据:', data)
     message.success(`获取成功，共 ${data.length} 个笔画`)
   }
 
@@ -514,13 +511,6 @@
   const handleClearApi = () => {
     apiSignatureRef.value?.clear()
     message.info('已清空')
-  }
-
-  /**
-   * 签名变化回调
-   */
-  const handleSignatureChange = (data: SignatureStroke[]) => {
-    console.log('签名变化:', data.length, '个笔画')
   }
 </script>
 

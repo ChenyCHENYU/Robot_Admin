@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-23 10:28:14
  * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-23 14:16:39
+ * @LastEditTime: 2026-09-02
  * @FilePath: \Robot_Admin\src\views\demo\17-export-zip\index.vue
  * @Description: 导出zip 场景示例
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
@@ -74,7 +74,7 @@
           @click="handleCodeExport"
         >
           <template #icon>
-            <div class="i-mdi:download"></div>
+            <div class="i-mdi-download"></div>
           </template>
           导出项目
         </NButton>
@@ -129,7 +129,7 @@
           @click="handleReportExport"
         >
           <template #icon>
-            <div class="i-mdi:table-arrow-down"></div>
+            <div class="i-mdi-table-arrow-down"></div>
           </template>
           导出报表
         </NButton>
@@ -169,7 +169,7 @@
       >
         <NButton>
           <template #icon>
-            <div class="i-mdi:upload"></div>
+            <div class="i-mdi-upload"></div>
           </template>
           上传文件
         </NButton>
@@ -183,7 +183,7 @@
           @click="handleMediaExport"
         >
           <template #icon>
-            <div class="i-mdi:image-multiple"></div>
+            <div class="i-mdi-image-multiple"></div>
           </template>
           导出媒体包 ({{ mediaFiles.length }})
         </NButton>
@@ -220,7 +220,7 @@
             :class="{ active: selectedTemplates.includes(template.id) }"
             @click="toggleTemplate(template.id)"
           >
-            <div class="i-mdi:code-braces text-xl text-blue-500"></div>
+            <div class="i-mdi-code-braces text-xl text-blue-500"></div>
             <div>
               <div class="font-semibold">{{ template.name }}</div>
               <div class="text-xs text-gray-500">{{ template.category }}</div>
@@ -237,7 +237,7 @@
           @click="handleTemplateExport"
         >
           <template #icon>
-            <div class="i-mdi:package-down"></div>
+            <div class="i-mdi-package-down"></div>
           </template>
           导出模板库 ({{ selectedTemplates.length }})
         </NButton>
@@ -249,6 +249,8 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo17ExportZip' })
+  import { setupFileUtils } from '@/plugins/file-utils'
   import {
     useJSZip,
     type CodeProjectConfig,
@@ -256,6 +258,7 @@
     type MediaConfig,
     type TemplateConfig,
   } from '@robot-admin/file-utils'
+
   import type { UploadFileInfo } from 'naive-ui/es/upload'
   import {
     type FrameworkType,
@@ -273,6 +276,8 @@
     getFileCategory,
     isValidUploadFile,
   } from './data'
+
+  setupFileUtils()
 
   const jszip = useJSZip()
 
@@ -313,6 +318,17 @@
     'typescript-utils',
   ])
 
+  /**
+   * * @description: 执行 ZIP 导出并消费 file-utils 已通知过的异常，避免事件处理器产生未处理拒绝
+   */
+  const safelyExport = async (task: () => Promise<unknown>) => {
+    try {
+      await task()
+    } catch {
+      // file-utils 已更新导出状态并显示错误消息；页面只需消费异常。
+    }
+  }
+
   const toggleTemplate = (templateId: TemplateId) => {
     const index = selectedTemplates.value.indexOf(templateId)
     if (index > -1) {
@@ -337,7 +353,7 @@
       files,
     }
 
-    await jszip.exportCodeProject(config)
+    await safelyExport(() => jszip.exportCodeProject(config))
   }
 
   const handleReportExport = async () => {
@@ -348,7 +364,7 @@
       data: mockData.value,
     }
 
-    await jszip.exportReport(config)
+    await safelyExport(() => jszip.exportReport(config))
   }
 
   const handleMediaExport = async () => {
@@ -367,7 +383,7 @@
       files,
     }
 
-    await jszip.exportMedia(config)
+    await safelyExport(() => jszip.exportMedia(config))
   }
 
   const handleTemplateExport = async () => {
@@ -384,7 +400,7 @@
       templates,
     }
 
-    await jszip.exportTemplates(config)
+    await safelyExport(() => jszip.exportTemplates(config))
   }
 </script>
 

@@ -44,14 +44,6 @@
             (start: number | null, end: number | null) =>
               handleRangeChange('basic', start, end)
           "
-          @change-start="
-            (time: number | null) =>
-              console.log('开始时间变化:', formatTimeHM(time))
-          "
-          @change-end="
-            (time: number | null) =>
-              console.log('结束时间变化:', formatTimeHM(time))
-          "
         />
         <NAlert
           v-if="results.basic"
@@ -229,6 +221,7 @@
 </template>
 
 <script lang="ts" setup>
+  defineOptions({ name: 'Demo04Time' })
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import { commonAttrs } from './data'
 

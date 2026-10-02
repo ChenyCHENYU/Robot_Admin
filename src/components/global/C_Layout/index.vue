@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <div v-if="isReady">
+  <div>
     <C_LayoutContainer>
       <!-- Side 布局的垂直菜单 -->
       <template #menu="{ collapsed }">
@@ -16,16 +16,48 @@
         <div
           id="guide-menu"
           class="menu-scroll-container"
-          :class="{ 'menu-light': isMenuLight }"
+          :class="{
+            'menu-light': isMenuLight,
+            'menu-signature': themeStore.menuTheme === 'signature',
+          }"
         >
-          <C_Menu
+          <template v-if="menuExpandMode === 'inline'">
+            <template
+              v-for="(group, gIdx) in groupedMenuData"
+              :key="group.label"
+            >
+              <div
+                v-if="!collapsed"
+                class="menu-group-title"
+                :style="{ '--group-dot-color': getGroupColor(gIdx) }"
+              >
+                {{ group.label }}
+              </div>
+              <div
+                v-else
+                class="menu-group-dot"
+                :style="{ background: getGroupColor(gIdx) }"
+              ></div>
+              <C_Menu
+                :routes="group.items"
+                :value="route.path"
+                mode="vertical"
+                :collapsed="collapsed"
+                :inverted="isDarkMode"
+                :label-formatter="translateRouteTitle"
+                @intent="prefetchRoute"
+                @select="navigateTo"
+              />
+            </template>
+          </template>
+          <C_MenuGrouped
+            v-else
             :routes="menuData"
-            :value="route.path"
-            mode="vertical"
             :collapsed="collapsed"
-            :inverted="isDarkMode"
+            :inverted="!isMenuLight"
+            :menu-theme="themeStore.menuTheme"
             :label-formatter="translateRouteTitle"
-            @select="router.push"
+            @select="navigateTo"
           />
         </div>
       </template>
@@ -57,55 +89,67 @@
 </template>
 
 <script setup lang="ts">
-  import { C_LayoutContainer, LAYOUT_CONTEXT_KEY } from '@robot-admin/layout'
+  import {
+    C_LayoutContainer,
+    normalizeLayoutMenus,
+    type LayoutMenuItem,
+    type MenuOptions,
+  } from '@robot-admin/layout/naive'
   import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import { s_themeStore } from '@/stores/theme'
   import { s_permissionStore } from '@/stores/permission'
+  import { s_settingsStore } from '@/stores/settings'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
+  import { prefetchRoute } from '@/router/routePrefetch'
+  import { buildGroupedMenuData, getMenuGroupColor } from './data'
   import C_Settings from '@/components/global/C_Settings/index.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
+  import C_MenuGrouped from '@/components/global/C_MenuGrouped/index.vue'
 
-  // 提供布局上下文（桥接业务 Store → 包标准接口）
-  const layoutContext = useLayoutBridge()
-  provide(LAYOUT_CONTEXT_KEY, layoutContext)
+  // 创建并提供布局上下文（业务 Store → 包标准接口）
+  useLayoutBridge()
 
   const permissionStore = s_permissionStore()
   const themeStore = s_themeStore()
+  const settingsStore = s_settingsStore()
   const route = useRoute()
   const router = useRouter()
 
-  const isReady = ref(true)
+  /** 菜单事件不向 Vue 返回导航 Promise；导航异常统一交给 router.onError。 */
+  const navigateTo = (path: string): void => {
+    void router.push(path).catch(() => undefined)
+  }
+
   const isDarkMode = computed(() => themeStore.isDark)
+  const menuExpandMode = computed<'inline' | 'panel'>(
+    () => settingsStore.menuExpandMode
+  )
 
   /**
    * 菜单是否为亮色背景（决定 inverted 和文本配色方案）
    */
   const isMenuLight = computed(() => themeStore.isMenuLight)
 
-  // 获取菜单数据（MenuOptions.path 为可选，RouteItem.path 为必填，此处数据上保证 path 存在）
-  const menuData = permissionStore.showMenuListGet as any[]
+  /**
+   * 最终菜单数据：响应式 + 分组模式下自动包装 type:'group'
+   */
+  const menuData = computed<LayoutMenuItem[]>(() =>
+    normalizeLayoutMenus(permissionStore.showMenuListGet as MenuOptions[])
+  )
+
+  const groupedMenuData = computed(() => buildGroupedMenuData(menuData.value))
+
+  const getGroupColor = (i: number) => getMenuGroupColor(i)
 
   // 设置抽屉状态 - 提升到全局
   const showSettings = ref(false)
-
-  /**
-   * * @description: 预设主题样式，避免白闪（仅在暗色模式下需要）
-   */
-  const _disposeThemeEffect = () => {
-    if (isDarkMode.value) {
-      document.documentElement.style.backgroundColor = '#1c1c21'
-    } else {
-      document.documentElement.style.backgroundColor = '#ffffff'
-    }
-  }
-
-  onMounted(() => {
-    _disposeThemeEffect()
-    themeStore.init()
-  })
 
   // 提供设置抽屉状态给子组件
   provide('settingsDrawer', {
     showSettings,
   })
 </script>
+
+<style scoped lang="scss">
+  @use './index.scss';
+</style>

@@ -5,11 +5,11 @@
       <img src="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/img/robot-left.png" height="120" />
     </picture>
   </a>
-  
+
   <h1>
     <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=4FC08D&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=600&height=100&lines=🤖+Robot+Admin;重新定义企业级中后台开发体验" alt="Robot Admin" />
   </h1>
-  
+
   <p><strong>Robot Admin - 多架构企业级解决方案</strong></p>
 
   <!-- 架构选择器 -->
@@ -17,7 +17,7 @@
     <tr>
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🏗️-单体架构-4A90E2?style=for-the-badge" alt="Monolithic"><br>
-        <sub><strong>当前分支</strong></sub><br>
+        <sub><strong>稳定主线</strong></sub><br>
         <sub>传统 SPA 架构</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/main">
           <img src="https://img.shields.io/badge/查看代码-main-blue?style=flat-square" alt="Main Branch">
@@ -37,7 +37,7 @@
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🔮-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
         <sub><strong>Module Federation</strong></sub><br>
-        <sub>插拔式架构 · 基于 dev 重构</sub><br>
+        <sub>当前分支 · 组件级联邦示例</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
           <img src="https://img.shields.io/badge/查看代码-module--federation-9B59B6?style=flat-square" alt="MF Branch">
         </a>
@@ -48,7 +48,7 @@
       <td align="center" width="200">
         <img src="https://img.shields.io/badge/🚀-微前端-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
         <sub><strong>MicroApp</strong></sub><br>
-        <sub>初版完成</sub><br>
+        <sub>待同步的架构示例</sub><br>
         <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
           <img src="https://img.shields.io/badge/查看代码-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
         </a>
@@ -60,19 +60,17 @@
   </table>
 
   <p>
-    <img src="https://img.shields.io/badge/bun-%E2%89%A51.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
-    <img src="https://img.shields.io/badge/vue-3.5.13-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
-    <img src="https://img.shields.io/badge/typescript-5.8.0-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-8.0.1-646CFF?style=flat&logo=vite" alt="Vite Version">
+    <img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-ff1e56?style=flat&logo=bun" alt="Bun Version">
+    <img src="https://img.shields.io/badge/app-2.6.3-4FC08D?style=flat" alt="App Version">
+    <img src="https://img.shields.io/badge/vite-8.2.2-646CFF?style=flat&logo=vite" alt="Vite Version">
     <a href="https://vercel.com"><img src="https://img.shields.io/github/deployments/ChenyCHENYU/robot_admin/production?label=vercel&logo=vercel" alt="Vercel"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
   </p>
   <p>
     <img src="https://img.shields.io/badge/components-51+-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-54+-orange?style=flat" alt="Demo Pages">
-    <img src="https://img.shields.io/badge/directives-7-purple?style=flat" alt="Custom Directives">
+    <img src="https://img.shields.io/badge/demos-64-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
-    <img src="https://img.shields.io/badge/test_coverage-85%25-brightgreen?style=flat" alt="Test Coverage">
   </p>
   <p>
     <img src="https://img.shields.io/github/stars/ChenyCHENYU/robot_admin?style=social" alt="GitHub stars">
@@ -110,7 +108,9 @@
 
 ## 🎯 多架构支持
 
-> 💡 Robot Admin 提供多种架构分支，支持从单体到微前端的渐进演进。当前所在为**单体 SPA 开发主线**（`dev`/`main`）。
+> 当前为 `module-federation` 架构示例，基于单体 `2.6.3` 的依赖与质量门禁，额外演示组件级联邦。`main`/`dev` 仍是稳定单体主线；`micro-app` 和 `monorepo` 在各自验证通过前标记为「待同步的架构示例」。架构分支的版本号与主线保持一致不代表具有相同的部署方式。
+
+本分支用 `bun run build` 构建普通单体应用，用 `bun run build:remote` 单独生成 `dist/federation/remoteEntry.js` 和清单，再用 `bun run build:logistics` 构建物流消费端。`bun run verify:federation` 包含类型、测试、构建及浏览器联调，验证真实远程加载与表单筛选。物流端默认连接 `http://127.0.0.1:1988/federation/remoteEntry.js`；独立部署时用 `VITE_MF_REMOTE_URL` 指向远程入口，并正确设置跨域和缓存头。此分支不沿用单体分支的 `deploy` 脚本。
 
 <details>
 <summary><b>👉 查看各架构对比一览</b></summary>
@@ -176,7 +176,7 @@ bun install    # 推荐！速度提升10倍
 bun dev
 ```
 
-**🔥 首次启动只需 2 秒不到，后续热更新不到 100ms！**
+**启动与热更新速度取决于本机环境和依赖缓存；以实际测量为准。**
 
 <details>
 <summary><b>📦 更多命令</b></summary>
@@ -192,16 +192,16 @@ bun run preview        # 本地预览构建结果
 # 代码质量
 bun run lint           # 代码检查和修复
 bun run format         # 代码格式化
-bun test:unit          # 单元测试
+bun run test           # 单元测试
 
 # 类型检查
 bun run type-watch     # 监听模式类型检查
-bun run type:check     # 智能类型分析
+bun run type-build     # 项目类型检查
 
 # 其他
 bun run commit         # 规范化提交（git cz）
 bun outdated           # 检查依赖更新
-bun clean              # 清理缓存
+bun run verify:federation # 联邦分支质量检查
 ```
 
 </details>
@@ -244,6 +244,7 @@ bun clean              # 清理缓存
 - **WangEditor** - 富文本编辑器
 - **XGPlayer** - 视频播放器（HLS/防作弊）
 - **Vue Flow** - 工作流编辑器
+
 </details>
 
 ### 🎯 功能矩阵
@@ -320,6 +321,7 @@ bun clean              # 清理缓存
 - `C_ContextMenu` - 右键上下文菜单
 - `C_Transfer` - 穿梭框，跨列表数据迁移
 - `C_AvatarGroup` - 叠加头像组，状态徽标
+
 </details>
 
 #### 🎮 自定义指令
@@ -371,6 +373,7 @@ bun clean              # 清理缓存
 - 穿梭框 - 跨列表数据迁移
 - 头像组 - 叠加头像展示，状态徽标
 - 音频播放器 - 播放列表、进度控制、多循环模式
+
 </details>
 
 ---
@@ -506,6 +509,7 @@ graph LR
 - `desc：` 用于快速生成 console 打印信息
 - `use：` 通过选中变量，按下快捷键，生成打印句柄
 - `key：` `ctrl+alt+l` 生成 `alt+shift+c` 注释所有 **+u** 启用所有 **+d** 删除所有
+
 </details>
 
 ---
@@ -600,6 +604,7 @@ graph LR
 - **组件懒加载** - 路由级别懒加载
 - **图片懒加载** - 视口内图片按需加载
 - **防抖节流** - 高频操作性能优化
+
 </details>
 
 ---
@@ -736,14 +741,14 @@ location / {
 
 **已发布组件库**
 
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.8.2` - 基于 Naive UI 的 Vue 3 业务组件库（51+ 组件，按需导入）
-- **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v2.2.0` - 6 种布局模式 + 设置管理系统
-- **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.1.3` - Axios 请求核心 + 7 插件 + useTableCrud
-- **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v2.0.0` - 48+ 企业级表单验证规则库
-- **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v1.1.0` - 11 个实用 Vue 指令
-- **[@robot-admin/file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)** `v1.0.0` - Excel/ZIP/分片上传文件工具集
-- **[@robot-admin/theme](https://www.npmjs.com/package/@robot-admin/theme)** `v0.1.1` - 主题切换（Light/Dark/System）
-- **[@robot-admin/git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)** `v1.0.3` - Git 工程化标准
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.13.0` - 基于 Naive UI 的 Vue 3 业务组件库（按需导入）
+- **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v3.2.1` - 布局与设置管理
+- **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.6.1` - 请求与业务插件
+- **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v3.4.2` - 表单验证规则
+- **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v2.0.1` - Vue 指令
+- **[@robot-admin/file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)** `v3.0.1` - 文件处理工具
+- **[@robot-admin/theme](https://www.npmjs.com/package/@robot-admin/theme)** `v0.6.1` - 主题状态与切换
+- **[@robot-admin/git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)** `v1.0.5` - Git 工程化标准
 
 **已发布周边工具**
 
@@ -758,6 +763,7 @@ location / {
 - **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - 智能路由预加载插件
 - **[robot-admin-env-manager](https://www.npmjs.com/package/robot-admin-env-manager)** `v1.0.5` - Robot Admin 环境配置管理工具
 - **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Git 分支快速比对合并检查
+
 </details>
 
 ---
@@ -815,6 +821,7 @@ location / {
 - **VS Code**: 推荐编辑器
 - **Git**: >= 2.20.0
 - **Docker**: >= 20.0 (容器部署)
+
 </details>
 
 ---
@@ -851,7 +858,7 @@ server: {
 
 ```bash
 # 重新生成类型文件
-bun run type:check
+bun run type-build
 
 # 清除类型缓存
 rm -rf node_modules/.cache
@@ -917,6 +924,7 @@ bun run type-build
 - 🧩 **组件丰富**: 51+ 业务组件，独立组件库按需导入
 - 🎨 **设计现代**: Naive UI + UnoCSS，颜值与性能并存
 - 📚 **学习友好**: 54+ 演示页面，每个都是最佳实践
+
 </details>
 
 ---
@@ -955,6 +963,7 @@ bun run type-build
 - 提供详细的迁移指南
 - 组件API基本兼容
 - 渐进式迁移支持
+
 </details>
 
 ---
@@ -1024,7 +1033,11 @@ bun run type-build
 
 ## 📄 更新日志
 
-### 🚀 v2.2.0 (2026-03-11) — 最新版本
+### 🛠️ v2.6.3 (2026-10-02) — 当前基线
+
+本架构分支对齐单体 `2.6.3` 依赖与质量门禁，并独立验证模块联邦。详细变更见 [CHANGELOG.md](./CHANGELOG.md) 和 [模块联邦指南](./docs/MODULE_FEDERATION_BEST_PRACTICES.md)。
+
+### 🚀 v2.2.0 (2026-03-11) — 历史版本
 
 - ✨ **菜单双主题**：增加菜单主题切换，提供个性/标准两种多态模式
 - 🔐 **权限体系升级**：按钮权限、路由鉴权、数据权限全面启用

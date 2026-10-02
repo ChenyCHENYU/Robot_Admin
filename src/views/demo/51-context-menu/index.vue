@@ -123,6 +123,7 @@ console.log(greeting)
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo51ContextMenu' })
   import type { ContextMenuItem } from '@robot-admin/naive-ui-components'
   import {
     EDITOR_MENU,
@@ -130,7 +131,6 @@ console.log(greeting)
     TABLE_ROW_MENU,
     DEMO_SCENES,
   } from './data'
-  import './index.scss'
 
   const message = useMessage()
 

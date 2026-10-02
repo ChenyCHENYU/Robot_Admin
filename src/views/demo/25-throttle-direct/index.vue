@@ -431,6 +431,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo25ThrottleDirect' })
   import {
     CODE_EXAMPLES,
     createDemoState,

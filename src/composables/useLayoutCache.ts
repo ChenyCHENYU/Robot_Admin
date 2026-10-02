@@ -9,6 +9,14 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { MAX_CACHE_COUNT, DEV_CONFIG } from '@/config/keepAliveConfig'
 
+declare global {
+  interface Window {
+    __clearCache__?: () => void
+    __removeCache__?: (name: string) => void
+    __getCachedViews__?: () => string[]
+  }
+}
+
 /**
  * 统一的 KeepAlive 缓存管理 composable
  *
@@ -76,9 +84,9 @@ export function useLayoutCache() {
 
   // 暴露缓存管理方法到 window（便于调试）
   if (import.meta.env.DEV && DEV_CONFIG.exposeToWindow) {
-    ;(window as any).__clearCache__ = clearAllCache
-    ;(window as any).__removeCache__ = removeCache
-    ;(window as any).__getCachedViews__ = () => cachedViews.value
+    window.__clearCache__ = clearAllCache
+    window.__removeCache__ = removeCache
+    window.__getCachedViews__ = () => [...cachedViews.value]
   }
 
   // 监听路由变化，动态管理缓存

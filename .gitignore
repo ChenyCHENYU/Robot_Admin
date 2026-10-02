@@ -57,3 +57,6 @@ nul
 # Module Federation 临时文件
 .__mf__temp/
 .mf/
+sub-apps/*/dist/
+test-results/
+playwright-report/

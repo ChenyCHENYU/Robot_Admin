@@ -1,19 +1,36 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-08-09
+ * @FilePath: \Robot_Admin\src\api\auth.ts
+ * @Description: 认证与动态菜单接口，支持 Mock 和远端模式切换
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
 import DynamicRouter from '@/assets/data/dynamicRouter.json'
-import { postData } from '@robot-admin/request-core'
-import type { PostAuthLoginResponse } from './generated'
+import { getData, postData } from '@robot-admin/request-core/axios'
 import type { DynamicRoute } from '@/router/dynamicRouter'
+import {
+  resolveAuthMode,
+  type LoginRequest,
+  type LoginResponse,
+  type RefreshTokenResponse,
+} from './auth.contract'
+import { loginMockApi, refreshTokenMockApi } from './auth.mock'
 
-export type LoginResponse = PostAuthLoginResponse
+export type { LoginResponse, RefreshTokenResponse } from './auth.contract'
 
-/** Token 刷新响应类型 */
-export interface RefreshTokenResponse {
+const AUTH_MODE = resolveAuthMode(
+  import.meta.env.VITE_AUTH_MODE,
+  import.meta.env.VITE_APP_ENV,
+  import.meta.env.VITE_DEPLOYMENT_PROFILE
+)
+
+/** 菜单接口响应契约 */
+export interface AuthMenuResponse {
   code: string | number
-  data: {
-    token: string
-    refreshToken: string
-    expiresIn: number
-  }
+  data: DynamicRoute[]
   msg?: string
+  message?: string
 }
 
 /**
@@ -21,34 +38,32 @@ export interface RefreshTokenResponse {
  * ? @param {object} data 登录表单数据，包含用户名和密码
  * ! @return {Promise<PostAuthLoginResponse>} 登录响应数据，包含用户信息和token
  */
-export const loginApi = (data: Record<string, any>) =>
-  postData<PostAuthLoginResponse>('/auth/login', data)
+export const loginApi = (data: LoginRequest): Promise<LoginResponse> =>
+  AUTH_MODE === 'mock'
+    ? loginMockApi(data)
+    : postData<LoginResponse>('/auth/login', data)
 
 /**
  * * @description: 刷新 Token 接口（双 Token 无感刷新）
  * ? @param {string} _refreshToken 刷新令牌
  * ! @return {Promise<RefreshTokenResponse>} 新的 token 和 refreshToken
- * TODO: 对接真实后端后替换为 postData<RefreshTokenResponse>('/auth/refresh-token', { refreshToken })
+ * 远端模式调用真实刷新接口，Mock 模式使用内存令牌轮换实现。
  */
-export const refreshTokenApi = (_refreshToken: string): Promise<RefreshTokenResponse> => {
-  // Mock 实现：模拟返回新 token，保持登录状态不中断
-  return Promise.resolve({
-    code: '0',
-    data: {
-      token: `mock_token_${Date.now()}`,
-      refreshToken: `mock_refresh_${Date.now()}`,
-      expiresIn: 7200, // 2小时
-    },
-    msg: 'success',
-  })
-}
+export const refreshTokenApi = (
+  refreshToken: string
+): Promise<RefreshTokenResponse> =>
+  AUTH_MODE === 'mock'
+    ? refreshTokenMockApi(refreshToken)
+    : postData<RefreshTokenResponse>('/auth/refresh-token', { refreshToken })
+
+/** 当前认证模式，供诊断页和自动化测试读取 */
+export const getAuthMode = (): typeof AUTH_MODE => AUTH_MODE
 
 /**
  * * @description: 获取用户菜单权限列表
- * ! @return {any} 动态菜单路由配置数据
+ * ! @return {Promise<AuthMenuResponse>} 动态菜单路由配置数据
  */
-export const getAuthMenuListApi = (): {
-  code: string
-  data: DynamicRoute[]
-  msg: string
-} => DynamicRouter as any
+export const getAuthMenuListApi = (): Promise<AuthMenuResponse> =>
+  AUTH_MODE === 'mock'
+    ? Promise.resolve(DynamicRouter as AuthMenuResponse)
+    : getData<AuthMenuResponse>('/auth/menu-list')

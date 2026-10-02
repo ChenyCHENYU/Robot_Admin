@@ -4,51 +4,26 @@
 
 // =================== robotAdmin 远程模块声明 ===================
 declare module 'robotAdmin/Table' {
-  import type { DefineComponent } from 'vue'
-  const component: DefineComponent<
-    Record<string, any>,
-    Record<string, any>,
-    any
-  >
+  const component: typeof import('@robot-admin/naive-ui-components/C_Table').C_Table
   export default component
 }
 
 declare module 'robotAdmin/Form' {
-  import type { DefineComponent } from 'vue'
-  const component: DefineComponent<
-    Record<string, any>,
-    Record<string, any>,
-    any
-  >
+  const component: typeof import('@robot-admin/naive-ui-components/C_Form').C_Form
   export default component
 }
 
 declare module 'robotAdmin/Tree' {
-  import type { DefineComponent } from 'vue'
-  const component: DefineComponent<
-    Record<string, any>,
-    Record<string, any>,
-    any
-  >
+  const component: typeof import('@robot-admin/naive-ui-components/C_Tree').C_Tree
   export default component
 }
 
 declare module 'robotAdmin/Icon' {
-  import type { DefineComponent } from 'vue'
-  const component: DefineComponent<
-    Record<string, any>,
-    Record<string, any>,
-    any
-  >
+  const component: typeof import('@robot-admin/naive-ui-components/C_Icon').C_Icon
   export default component
 }
 
 declare module 'robotAdmin/Editor' {
-  import type { DefineComponent } from 'vue'
-  const component: DefineComponent<
-    Record<string, any>,
-    Record<string, any>,
-    any
-  >
+  const component: typeof import('@robot-admin/naive-ui-components/C_Editor').C_Editor
   export default component
 }

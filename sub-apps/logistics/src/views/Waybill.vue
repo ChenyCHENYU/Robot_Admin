@@ -3,7 +3,12 @@
   /**
    * 运单管理页 — 演示从 robotAdmin 远程消费 Form + Table 组件
    */
-  import { defineAsyncComponent, ref, h } from 'vue'
+  import { computed, defineAsyncComponent, h, ref } from 'vue'
+  import type {
+    FormOption,
+    SubmitEventPayload,
+  } from '@robot-admin/naive-ui-components/C_Form'
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
   import { NCard, NSpin, NResult } from 'naive-ui'
 
   const RemoteForm = defineAsyncComponent({
@@ -14,7 +19,7 @@
         h(NResult, {
           status: 'error',
           title: '远程 Form 组件加载失败',
-          description: '请确保 robotAdmin 主应用正在运行 (localhost:1988)',
+          description: '请检查联邦宿主地址及其 remoteEntry.js 是否可访问',
         }),
     },
     delay: 200,
@@ -32,8 +37,20 @@
     timeout: 10000,
   })
 
-  // 搜索表单配置
-  const searchFormOptions = ref([
+  interface SearchModel {
+    waybillNo: string
+    status: string
+  }
+
+  interface Waybill {
+    waybillNo: string
+    sender: string
+    receiver: string
+    weight: number
+    status: string
+  }
+
+  const searchFormOptions: FormOption<SearchModel>[] = [
     {
       prop: 'waybillNo',
       label: '运单号',
@@ -45,26 +62,28 @@
       label: '状态',
       type: 'select',
       placeholder: '请选择状态',
-      options: [
+      children: [
         { label: '全部', value: '' },
         { label: '待揽收', value: 'pending' },
         { label: '运输中', value: 'transit' },
         { label: '已签收', value: 'delivered' },
       ],
     },
-  ])
+  ]
 
-  const searchModel = ref({ waybillNo: '', status: '' })
+  const searchModel = ref<SearchModel>({ waybillNo: '', status: '' })
+  const appliedSearch = ref<SearchModel>({ ...searchModel.value })
+  const searchFormConfig = { layout: 'inline' as const }
 
-  const tableColumns = ref([
-    { prop: 'waybillNo', label: '运单号', width: 180 },
-    { prop: 'sender', label: '寄件人' },
-    { prop: 'receiver', label: '收件人' },
-    { prop: 'weight', label: '重量(kg)', width: 100 },
-    { prop: 'status', label: '状态', width: 120 },
-  ])
+  const tableColumns: TableColumn<Waybill>[] = [
+    { key: 'waybillNo', title: '运单号', width: 180 },
+    { key: 'sender', title: '寄件人' },
+    { key: 'receiver', title: '收件人' },
+    { key: 'weight', title: '重量(kg)', width: 100 },
+    { key: 'status', title: '状态', width: 120 },
+  ]
 
-  const tableData = ref([
+  const tableData: Waybill[] = [
     {
       waybillNo: 'WB20260326010',
       sender: '张三',
@@ -86,11 +105,21 @@
       weight: 5.0,
       status: '待揽收',
     },
-  ])
+  ]
 
-  /** 执行搜索 */
-  function handleSearch() {
-    console.log('搜索:', searchModel.value)
+  const visibleWaybills = computed(() =>
+    tableData.filter(row => {
+      const { waybillNo, status } = appliedSearch.value
+      return (
+        (!waybillNo || row.waybillNo.includes(waybillNo.trim())) &&
+        (!status || row.status === status)
+      )
+    })
+  )
+
+  /** 提交筛选条件后同步表格数据。 */
+  function handleSearch({ model }: SubmitEventPayload<SearchModel>) {
+    appliedSearch.value = { ...model }
   }
 </script>
 
@@ -107,8 +136,8 @@
     >
       <RemoteForm
         :options="searchFormOptions"
-        :model="searchModel"
-        layout="inline"
+        v-model="searchModel"
+        :config="searchFormConfig"
         @submit="handleSearch"
       />
     </NCard>
@@ -117,7 +146,8 @@
     <NCard title="📦 运单列表">
       <RemoteTable
         :columns="tableColumns"
-        :data="tableData"
+        :data="visibleWaybills"
+        row-key="waybillNo"
       />
     </NCard>
   </div>

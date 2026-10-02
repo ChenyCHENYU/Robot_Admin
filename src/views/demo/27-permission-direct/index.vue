@@ -528,6 +528,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo27PermissionDirect' })
   import {
     createPermissionDemoState,
     createPermissionDemoHandlers,

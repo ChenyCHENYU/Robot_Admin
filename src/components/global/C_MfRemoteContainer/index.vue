@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { GlobalThemeOverrides } from 'naive-ui'
+  import { s_themeStore } from '@/stores/theme'
 
   defineOptions({ name: 'C_MfRemoteContainer' })
 
@@ -38,15 +38,7 @@
   })
 
   const themeStore = s_themeStore()
-  const { isDark } = storeToRefs(themeStore)
-
-  /** 继承主应用的主题模式 */
-  const theme = computed(() => (isDark.value ? darkTheme : null))
-
-  /** 继承主应用的主题覆盖 */
-  const themeOverrides = computed<GlobalThemeOverrides | undefined>(
-    () => themeStore.themeOverrides
-  )
+  const { currentTheme: theme, themeOverrides } = storeToRefs(themeStore)
 </script>
 
 <style lang="scss" scoped>

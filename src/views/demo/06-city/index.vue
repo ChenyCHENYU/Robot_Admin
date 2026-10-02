@@ -56,7 +56,7 @@
               :bordered="false"
             >
               <template #icon>
-                <span class="i-mdi:city" />
+                <span class="i-mdi-city" />
               </template>
               已选择: {{ city1 }}
             </NAlert>
@@ -101,7 +101,7 @@
                 >
                   <template #prefix>
                     <NIcon :size="18">
-                      <span class="i-mdi:city-switch" />
+                      <span class="i-mdi-city-switch" />
                     </NIcon>
                   </template>
                 </NInput>
@@ -114,7 +114,7 @@
               :bordered="false"
             >
               <template #icon>
-                <span class="i-mdi:truck-delivery-outline" />
+                <span class="i-mdi-truck-delivery-outline" />
               </template>
               配送至: {{ city2 }}
             </NAlert>
@@ -155,7 +155,7 @@
                   >
                     <template #icon>
                       <NIcon>
-                        <span class="i-mdi:city-switch" />
+                        <span class="i-mdi-city-switch" />
                       </NIcon>
                     </template>
                     {{ value || '选择城市' }}
@@ -178,7 +178,7 @@
               :bordered="false"
             >
               <template #icon>
-                <span class="i-mdi:city" />
+                <span class="i-mdi-city" />
               </template>
               已选择: {{ city3 }}
             </NAlert>
@@ -226,7 +226,7 @@
                     <template #icon>
                       <NIcon>
                         <span
-                          class="i-mdi:city-switch size-16px vertical--2%"
+                          class="i-mdi-city-switch size-16px vertical--2%"
                         />
                       </NIcon>
                     </template>
@@ -282,7 +282,7 @@
                   >
                     <template #icon>
                       <NIcon size="14">
-                        <span class="i-mdi:city-switch" />
+                        <span class="i-mdi-city-switch" />
                       </NIcon>
                     </template>
                     {{ value || '点击选择' }}
@@ -297,7 +297,7 @@
               type="default"
               :bordered="false"
             >
-              <span class="i-mdi:city vertical--10%"></span>
+              <span class="i-mdi-city vertical--10%"></span>
               服务地区: {{ city5 }}
             </NAlert>
           </NSpace>
@@ -415,7 +415,7 @@
               :bordered="false"
             >
               <template #icon>
-                <span class="i-mdi:city-switch" />
+                <span class="i-mdi-city-switch" />
               </template>
               快速选择: {{ city7 }}
             </NAlert>
@@ -470,7 +470,7 @@
                       }"
                     >
                       <NIcon :size="24">
-                        <span class="i-mdi:city-switch" />
+                        <span class="i-mdi-city-switch" />
                       </NIcon>
                     </NAvatar>
                     <div>
@@ -499,7 +499,7 @@
         <div class="card-header">
           <span class="card-title">
             <NIcon style="margin-right: 8px">
-              <span class="i-mdi:information-box" />
+              <span class="i-mdi-information-box" />
             </NIcon>
             使用说明
           </span>
@@ -516,7 +516,7 @@
               <NThing title="组件引入">
                 <template #description>
                   <NCode
-                    code="import C_City from '@/components/C_City.vue'"
+                    code="import { C_City } from '@robot-admin/naive-ui-components/C_City'"
                     language="typescript"
                   />
                 </template>
@@ -560,6 +560,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'Demo06City' })
   import { cityOptions } from './data'
 
   // 各种样式的数据

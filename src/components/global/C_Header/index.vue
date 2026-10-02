@@ -53,7 +53,7 @@
             <C_Breadcrumb
               :label-formatter="translateRouteTitle"
               :show-icon="settingsStore.showBreadcrumbIcon"
-              @select="router.push"
+              @select="navigateTo"
             />
           </div>
         </div>
@@ -77,6 +77,7 @@
 <script setup lang="ts">
   import { s_themeStore } from '@/stores/theme'
   import { s_settingsStore } from '@/stores/settings'
+  import { MENU_COLLAPSE_KEY } from '@robot-admin/layout/naive'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
 
@@ -86,6 +87,11 @@
   const settingsStore = s_settingsStore()
   const router = useRouter()
 
+  /** 面包屑事件不向 Vue 返回导航 Promise，避免把路由加载错误误报为组件错误。 */
+  const navigateTo = (path: string): void => {
+    void router.push(path).catch(() => undefined)
+  }
+
   // 从父组件注入设置抽屉状态
   interface SettingsDrawer {
     showSettings: Ref<boolean>
@@ -94,13 +100,11 @@
     showSettings: ref(false), // 提供默认值以兼容旧代码
   })
 
-  interface MenuCollapse {
-    isCollapsed: Ref<boolean>
-    handleCollapsedChange: (collapsed: boolean) => void
-  }
-
-  const { isCollapsed, handleCollapsedChange } =
-    inject<MenuCollapse>('menuCollapse')!
+  // 使用布局包的类型化 key；独立页面也提供同一契约。
+  const { isCollapsed, handleCollapsedChange } = inject(MENU_COLLAPSE_KEY, {
+    isCollapsed: computed(() => false),
+    handleCollapsedChange: () => undefined,
+  })
 </script>
 
 <style lang="scss" scoped>

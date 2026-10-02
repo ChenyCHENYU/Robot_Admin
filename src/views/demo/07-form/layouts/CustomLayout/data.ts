@@ -8,8 +8,12 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { FormOption } from '@robot-admin/naive-ui-components'
-import { RULE_COMBOS, PRESET_RULES } from '@robot-admin/form-validate'
+import {
+  defineFormOptions,
+  type FormOption,
+} from '@robot-admin/naive-ui-components/C_Form'
+import type { ApiResponse } from '@/hooks/useFormSubmit'
+import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
 
 // 类型定义
 export interface EmployeeFormData {
@@ -28,11 +32,10 @@ export interface EmployeeFormData {
   performance?: number
   isActive?: boolean
   remarks?: string
-  [key: string]: string | number | boolean | string[] | undefined
 }
 
 // 表单配置
-export const employeeFormOptions: FormOption[] = [
+export const employeeFormOptions = defineFormOptions<EmployeeFormData>([
   {
     type: 'input',
     prop: 'employeeId',
@@ -49,7 +52,7 @@ export const employeeFormOptions: FormOption[] = [
     prop: 'fullName',
     label: '姓名',
     placeholder: '请输入真实姓名',
-    rules: RULE_COMBOS.username('姓名'),
+    rules: [PRESET_RULES.required('姓名'), PRESET_RULES.length('姓名', 2, 20)],
     layout: { group: 'basic' },
   },
   {
@@ -77,7 +80,7 @@ export const employeeFormOptions: FormOption[] = [
     prop: 'phone',
     label: '手机号码',
     placeholder: '请输入手机号码',
-    rules: RULE_COMBOS.mobile('手机号码'),
+    rules: NAIVE_COMBOS.mobile('手机号码'),
     layout: { group: 'contact' },
   },
   {
@@ -85,7 +88,7 @@ export const employeeFormOptions: FormOption[] = [
     prop: 'email',
     label: '邮箱地址',
     placeholder: '请输入邮箱地址',
-    rules: RULE_COMBOS.email('邮箱地址'),
+    rules: NAIVE_COMBOS.email('邮箱地址'),
     layout: { group: 'contact' },
   },
   {
@@ -170,7 +173,10 @@ export const employeeFormOptions: FormOption[] = [
     type: 'rate',
     prop: 'performance',
     label: '绩效评分',
-    rules: [PRESET_RULES.required('绩效评分')],
+    rules: [
+      PRESET_RULES.required('绩效评分'),
+      PRESET_RULES.range('绩效评分', 1, 5),
+    ],
     attrs: { allowHalf: true, count: 5 },
     value: 0,
     layout: { group: 'other' },
@@ -190,10 +196,12 @@ export const employeeFormOptions: FormOption[] = [
     attrs: { rows: 4 },
     layout: { group: 'other' },
   },
-]
+])
 
 // 测试数据模板
-const testDataTemplates: Record<keyof EmployeeFormData, any> = {
+const testDataTemplates: {
+  [K in keyof EmployeeFormData]-?: () => EmployeeFormData[K]
+} = {
   employeeId: () =>
     `EMP${String(Math.floor(Math.random() * 999999)).padStart(6, '0')}`,
   fullName: () =>
@@ -237,14 +245,16 @@ const testDataTemplates: Record<keyof EmployeeFormData, any> = {
 }
 
 // 测试数据生成函数
-export const generateTestData = (fields: FormOption[]): EmployeeFormData => {
+export const generateTestData = (
+  fields: FormOption<EmployeeFormData>[]
+): EmployeeFormData => {
   const data: EmployeeFormData = {}
 
   fields.forEach(field => {
     if (field.prop && field.prop in testDataTemplates) {
-      const template = testDataTemplates[field.prop as keyof EmployeeFormData]
-      data[field.prop as keyof EmployeeFormData] =
-        typeof template === 'function' ? template() : template
+      const fieldName = field.prop as keyof EmployeeFormData
+      const template = testDataTemplates[fieldName]
+      Object.assign(data, { [fieldName]: template() })
     }
   })
 
@@ -252,7 +262,18 @@ export const generateTestData = (fields: FormOption[]): EmployeeFormData => {
 }
 
 // API 提交函数
-export const submitEmployeeAPI = async (employeeData: EmployeeFormData) => {
+export interface EmployeeSubmitResponse extends ApiResponse {
+  data: {
+    id: number
+    employeeId?: string
+    status: 'active'
+    createdAt: string
+  }
+}
+
+export const submitEmployeeAPI = async (
+  employeeData: EmployeeFormData
+): Promise<EmployeeSubmitResponse> => {
   await new Promise(resolve => setTimeout(resolve, 1500))
   return {
     code: '0',

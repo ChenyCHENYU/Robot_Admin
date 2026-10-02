@@ -13,10 +13,9 @@ import { existsSync, readdirSync } from 'node:fs'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import {
-  RobotNaiveUiResolver,
   componentNames,
+  RobotNaiveUiResolver,
 } from '@robot-admin/naive-ui-components/resolver'
-import IconsResolver from 'unplugin-icons/resolver'
 
 const PKG = '@robot-admin/naive-ui-components'
 
@@ -31,7 +30,7 @@ const isLocalMode =
  */
 const libraryComponentNames: readonly string[] = (() => {
   const dir = resolve(process.cwd(), '../naive-ui-components/src/components')
-  if (existsSync(dir)) {
+  if (isLocalMode && existsSync(dir)) {
     return readdirSync(dir).filter(
       n => n.startsWith('C_') && !n.startsWith('_')
     )
@@ -46,15 +45,23 @@ export default Components({
   dts: 'src/types/components.d.ts', // 生成类型声明文件
   dirs: ['src/components/local'], // 仅扫描本地组件（C_ 全局组件通过 resolver 解析）
   extensions: ['vue'], // 扩展名
-  version: 3, // 明确指定 Vue 3.x 版本
   resolvers: [
     NaiveUiResolver(),
     // dev:local: 用目录扫描的全量组件名构建 resolver（不受 npm 版本滞后影响）
     // 正式模式: 使用已发布的 RobotNaiveUiResolver
     isLocalMode
       ? (name: string) =>
-          libraryComponents.has(name) ? { name, from: PKG } : undefined
-      : RobotNaiveUiResolver(),
+          libraryComponents.has(name)
+            ? {
+                name,
+                from: `${PKG}/${name}`,
+                // 源码 SFC 已包含组件自身样式；C_Map 还依赖发布包聚合的
+                // Leaflet CSS 与图片资源，本地模式也必须显式加载该入口。
+                sideEffects:
+                  name === 'C_Map' ? `${PKG}/C_Map/style.css` : undefined,
+              }
+            : undefined
+      : RobotNaiveUiResolver({ importStyle: 'base' }),
     componentName => {
       // 已迁移到组件库的 → 由上方 resolver 处理，此处跳过
       if (libraryComponents.has(componentName)) return null
@@ -73,17 +80,15 @@ export default Components({
       }
       return null
     },
-    IconsResolver({
-      prefix: 'icon',
-    }),
-    componentName => {
-      if (componentName === 'Icon') {
-        return {
-          name: 'Icon',
-          from: '@iconify/vue',
-        }
-      }
-    },
+    // 项目历史模板仍使用 <Icon icon="..." />；直接解析到已安装的
+    // @iconify/vue，不恢复 unplugin-icons，也不增加新的转换或依赖成本。
+    componentName =>
+      componentName === 'Icon'
+        ? {
+            name: 'Icon',
+            from: '@iconify/vue',
+          }
+        : undefined,
   ],
   directives: true, // 自动导入指令，默认目录为 src/directives
 })

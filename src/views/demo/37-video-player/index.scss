@@ -57,7 +57,7 @@
     gap: 10px;
     padding: 12px 14px;
     background: var(--app-bg-content);
-      border: 1px solid var(--app-border-default);
+    border: 1px solid var(--app-border-default);
     border-radius: 8px;
     transition: all var(--app-transition-base);
 
@@ -106,13 +106,15 @@
   }
 
   .scene-card {
+    appearance: none;
+    font: inherit;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
     padding: 20px 16px;
     background: var(--app-bg-content);
-      border: 2px solid var(--app-border-default);
+    border: 2px solid var(--app-border-default);
     border-radius: 12px;
     cursor: pointer;
     transition: all var(--app-transition-base);
@@ -122,6 +124,11 @@
       border-color: var(--primary-color, #409eff);
       transform: translateY(-2px);
       box-shadow: var(--app-shadow-md);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-color, #409eff);
+      outline-offset: 2px;
     }
 
     &.is-active {
@@ -170,7 +177,7 @@
     gap: 8px;
     padding: 10px 16px;
     background: var(--app-bg-content);
-      border: 1px solid var(--app-border-default);
+    border: 1px solid var(--app-border-default);
     border-radius: 8px;
     font-size: 13px;
 
@@ -251,7 +258,7 @@
     gap: 10px;
     padding: 8px 12px;
     background: var(--app-bg-content);
-      border: 1px solid var(--app-border-default);
+    border: 1px solid var(--app-border-default);
     border-radius: 6px;
     font-size: 13px;
   }
@@ -267,8 +274,8 @@
     font-size: 12px;
     font-weight: 600;
     color: var(--app-text-primary);
-      background: var(--app-bg-surface);
-      border: 1px solid var(--app-border-deep);
+    background: var(--app-bg-surface);
+    border: 1px solid var(--app-border-deep);
     border-bottom-width: 2px;
     border-radius: 4px;
   }

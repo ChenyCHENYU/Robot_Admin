@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches:
+      [
+        dev,
+        main,
+        perf/production-readiness,
+        module-federation,
+        'upgrade/module-federation-*',
+      ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        run: bun ci
+
+      - name: Verify
+        run: bun run verify
+
+      - name: Audit dependencies
+        run: bun run security:audit
+
+      - name: Install Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Federation browser integration
+        if: >-
+          github.ref_name == 'module-federation' ||
+          startsWith(github.ref_name, 'upgrade/module-federation-') ||
+          github.head_ref == 'module-federation' ||
+          startsWith(github.head_ref, 'upgrade/module-federation-')
+        run: bun run verify:federation:integration
+
+      - name: Browser smoke
+        run: bun run test:e2e

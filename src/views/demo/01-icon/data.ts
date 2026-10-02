@@ -9,6 +9,7 @@
  */
 
 import { defineComponent, h, type Ref } from 'vue'
+import type { IconProps } from '@robot-admin/naive-ui-components/C_Icon'
 
 /**
  * 内联 SVG 图标组件（用于演示 component 类型图标）
@@ -75,7 +76,7 @@ const DemoIconStar = defineComponent({
 // 类型定义
 export interface IconConfig {
   key: string
-  props: Record<string, any>
+  props: IconProps
   label: string | (() => string)
   handler?: () => void
 }
@@ -233,27 +234,29 @@ import { DemoIconHeart, DemoIconStar } from './data'
  * ? @param loading - 加载状态响应式引用
  * ? @param rotation - 旋转角度响应式引用
  * ? @param flipped - 翻转状态响应式引用
+ * ? @param notify - 向页面展示交互反馈
  * ! @return 包含所有事件处理函数的对象
  */
 export const createHandlers = (
   loading: Ref<boolean>,
   rotation: Ref<number>,
-  flipped: Ref<boolean>
+  flipped: Ref<boolean>,
+  notify: (message: string) => void
 ) => ({
-  click: () => console.log('图标被点击'),
-  like: () => console.log('点赞按钮被点击'),
+  click: () => notify('图标被点击'),
+  like: () => notify('点赞按钮被点击'),
   toggleLoading: () => {
     loading.value = !loading.value
-    console.log(`加载状态: ${loading.value ? '开始' : '结束'}`)
+    notify(`加载状态: ${loading.value ? '开始' : '结束'}`)
   },
   rotate: () => {
     rotation.value += 90
     if (rotation.value >= 360) rotation.value = 0
-    console.log(`旋转角度: ${rotation.value}°`)
+    notify(`旋转角度: ${rotation.value}°`)
   },
   flip: () => {
     flipped.value = !flipped.value
-    console.log(`翻转状态: ${flipped.value ? '已翻转' : '正常'}`)
+    notify(`翻转状态: ${flipped.value ? '已翻转' : '正常'}`)
   },
 })
 
@@ -307,14 +310,14 @@ export const createDemoSections = (
     icons: [
       {
         key: 'home',
-        props: { type: 'unocss', name: 'i-mdi:home-assistant' },
+        props: { type: 'unocss', name: 'i-mdi-home-assistant' },
         label: 'i-mdi-home',
       },
       {
         key: 'settings',
         props: {
           type: 'unocss',
-          name: 'i-mdi:account-multiple-check-outline',
+          name: 'i-mdi-account-multiple-check-outline',
           size: '24',
         },
         label: 'size="24"',
@@ -323,7 +326,7 @@ export const createDemoSections = (
         key: 'user',
         props: {
           type: 'unocss',
-          name: 'i-mdi:user-group',
+          name: 'i-mdi-user-group',
           color: '#42b883',
           size: '32',
         },
@@ -333,7 +336,7 @@ export const createDemoSections = (
         key: 'heart',
         props: {
           type: 'unocss',
-          name: 'i-mdi:ev-plug-chademo',
+          name: 'i-mdi-ev-plug-chademo',
           clickable: true,
         },
         label: '可点击',

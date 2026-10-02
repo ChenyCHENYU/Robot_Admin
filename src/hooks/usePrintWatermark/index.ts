@@ -10,6 +10,7 @@
 
 import html2canvas from 'html2canvas'
 import printJS from 'print-js'
+import type { MessageApi } from 'naive-ui/es'
 
 // ================= 类型定义 =================
 export interface WatermarkConfig {
@@ -476,7 +477,7 @@ function validateAndGetMergeOptions(
     spacing?: number
     backgroundColor?: string
   },
-  message: any
+  message: MessageApi
 ) {
   if (!elements.length) {
     message.warning('没有要打印的元素')
@@ -546,7 +547,7 @@ async function addWatermarkAndPrint(
   options: PrintWatermarkOptions,
   elementsCount: number,
   updateProgress: (value: number) => void,
-  message: any
+  message: MessageApi
 ): Promise<void> {
   updateProgress(70)
 

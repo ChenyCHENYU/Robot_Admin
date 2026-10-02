@@ -22,12 +22,6 @@ import json from 'highlight.js/lib/languages/json'
 import xml from 'highlight.js/lib/languages/xml' // HTML
 import css from 'highlight.js/lib/languages/css'
 import bash from 'highlight.js/lib/languages/bash'
-import yaml from 'highlight.js/lib/languages/yaml'
-import markdown from 'highlight.js/lib/languages/markdown'
-import java from 'highlight.js/lib/languages/java'
-import csharp from 'highlight.js/lib/languages/csharp'
-import go from 'highlight.js/lib/languages/go'
-import python from 'highlight.js/lib/languages/python'
 
 // 可选语言包映射（懒加载）
 const OPTIONAL_LANGUAGES: Record<
@@ -46,6 +40,13 @@ const OPTIONAL_LANGUAGES: Record<
   sql: () => import('highlight.js/lib/languages/sql'),
   dockerfile: () => import('highlight.js/lib/languages/dockerfile'),
   powershell: () => import('highlight.js/lib/languages/powershell'),
+  yaml: () => import('highlight.js/lib/languages/yaml'),
+  yml: () => import('highlight.js/lib/languages/yaml'),
+  markdown: () => import('highlight.js/lib/languages/markdown'),
+  java: () => import('highlight.js/lib/languages/java'),
+  csharp: () => import('highlight.js/lib/languages/csharp'),
+  go: () => import('highlight.js/lib/languages/go'),
+  python: () => import('highlight.js/lib/languages/python'),
 }
 
 // 插件配置选项
@@ -57,6 +58,7 @@ export interface HighlightPluginOptions {
 // 状态管理
 const loadedLanguages = new Set<string>()
 const hlJsInstance: HLJSApi = hljs
+let initialized = false
 
 /**
  * * @description 注册语言包到 highlight.js 实例
@@ -75,6 +77,7 @@ function registerLanguage(name: string, languageFn: LanguageFn): void {
  * ! @return void
  */
 function initializeCore(options: HighlightPluginOptions): void {
+  if (initialized) return
   // 注册默认语言包
   const defaultLanguages = [
     ['javascript', javascript],
@@ -85,13 +88,6 @@ function initializeCore(options: HighlightPluginOptions): void {
     ['css', css],
     ['bash', bash],
     ['shell', bash],
-    ['yaml', yaml],
-    ['yml', yaml],
-    ['markdown', markdown],
-    ['java', java],
-    ['csharp', csharp],
-    ['go', go],
-    ['python', python],
   ] as const
 
   defaultLanguages.forEach(([name, langFn]) => {
@@ -106,8 +102,21 @@ function initializeCore(options: HighlightPluginOptions): void {
 
   // 预加载额外语言
   if (options.extraLanguages?.length) {
-    loadLanguages(options.extraLanguages)
+    void loadLanguages(options.extraLanguages)
   }
+
+  initialized = true
+}
+
+/**
+ * @description 在真正使用代码高亮的路由中按需初始化语言和主题。
+ * @param options 高亮配置
+ * @returns 高亮管理 API
+ */
+export function initializeHighlight(options: HighlightPluginOptions = {}) {
+  initializeCore({ autoDetect: false, extraLanguages: [], ...options })
+  if (typeof window !== 'undefined') window.hljs = hlJsInstance
+  return useHighlight()
 }
 
 /**
@@ -179,22 +188,7 @@ export const useHighlight = () => {
  * ! @return void
  */
 export function setupHighlight(app: App, options: HighlightPluginOptions = {}) {
-  const pluginOptions: HighlightPluginOptions = {
-    autoDetect: false,
-    extraLanguages: [],
-    ...options,
-  }
-
-  // 初始化核心配置
-  initializeCore(pluginOptions)
-
-  // 挂载到全局
-  if (typeof window !== 'undefined') {
-    window.hljs = hlJsInstance
-  }
-
-  // 提供给 Vue 应用
-  const highlightAPI = useHighlight()
+  const highlightAPI = initializeHighlight(options)
   app.provide('highlightManager', highlightAPI)
   app.config.globalProperties.$highlight = highlightAPI
 }

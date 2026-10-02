@@ -26,6 +26,8 @@ export default defineConfigWithVueTs(
       '**/dist/**',
       '**/dist-ssr/**',
       '**/coverage/**',
+      '**/.__mf__temp/**', // Module Federation 构建时生成的运行时源码
+      '**/.mf/**',
       '**/lang/**', // 忽略 i18n 插件生成的文件
     ],
   },
@@ -61,7 +63,6 @@ export default defineConfigWithVueTs(
       '@typescript-eslint/no-unused-vars': 'error',
     },
   },
-
 
   //MARK: 自定义规则组（优先级最高）
   {
@@ -171,10 +172,7 @@ export default defineConfigWithVueTs(
       'no-eval': 'error',
       'prefer-const': 'warn',
       'no-var': 'warn',
-      'prefer-destructuring': [
-        1,
-        { object: true, array: false },
-      ],
+      'prefer-destructuring': [1, { object: true, array: false }],
       'no-duplicate-imports': 'error',
     },
   },

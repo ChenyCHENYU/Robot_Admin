@@ -17,7 +17,8 @@ export default defineConfig(async ({ mode }) => {
             type: 'module',
             name: 'robotAdmin',
             entry:
-              env.VITE_MF_REMOTE_URL || 'http://localhost:1988/remoteEntry.js',
+              env.VITE_MF_REMOTE_URL ||
+              'http://127.0.0.1:1988/federation/remoteEntry.js',
           },
         },
         // 共享依赖 — 与主应用保持一致
@@ -26,12 +27,11 @@ export default defineConfig(async ({ mode }) => {
           'vue-router': { singleton: true },
           pinia: { singleton: true },
           'naive-ui': { singleton: true },
-          '@vueuse/core': { singleton: true },
-          '@iconify/vue': { singleton: true },
-          '@robot-admin/naive-ui-components': { singleton: true },
-          '@robot-admin/request-core': { singleton: true },
-          '@robot-admin/directives': { singleton: true },
         },
+        shareStrategy: 'loaded-first',
+        hostInitInjectLocation: 'entry',
+        // 类型直接来自同版本组件库入口，不生成联邦插件的额外 d.ts 压缩包。
+        dts: false,
       }),
     ],
 

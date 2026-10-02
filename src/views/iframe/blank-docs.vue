@@ -39,6 +39,7 @@
       frameborder="0"
       allowfullscreen
       :sandbox="sandboxRules"
+      referrerpolicy="no-referrer"
       :title="routeTitle"
     />
 
@@ -56,12 +57,15 @@
 </template>
 
 <script lang="ts" setup>
+  import { resolveExternalLink } from '@/utils/d_externalLink'
+
+  defineOptions({ name: 'BlankDocs' })
+
   const route = useRoute()
   const router = useRouter()
 
   const frameSrc = computed(() => {
-    const link = route.meta?.link
-    return typeof link === 'string' ? link : ''
+    return resolveExternalLink(route.meta?.link, window.location.origin) ?? ''
   })
 
   // 路由标题的计算属性
@@ -84,14 +88,14 @@
   const handleAutoRedirect = () => {
     if (isExternal.value && autoOpen.value && frameSrc.value) {
       const target = route.meta?.target
-      const targetWindow = typeof target === 'string' ? target : '_blank'
+      const targetWindow = target === '_self' ? '_self' : '_blank'
 
       if (targetWindow === '_self') {
         // 同窗口跳转，直接替换当前页面
         window.location.replace(frameSrc.value)
       } else {
         // 新窗口打开
-        window.open(frameSrc.value, targetWindow)
+        window.open(frameSrc.value, targetWindow, 'noopener,noreferrer')
 
         // 自动返回上一页
         nextTick(() => {
@@ -118,18 +122,13 @@
   })
 
   // 可配置的沙箱规则（仅用于内嵌iframe）
-  const sandboxRules = computed(() => {
-    const defaultRules =
-      'allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation'
-    const sandbox = route.meta?.sandbox
-    return typeof sandbox === 'string' ? sandbox : defaultRules
-  })
+  const sandboxRules = 'allow-scripts allow-forms allow-popups'
 
   const openExternal = () => {
     if (frameSrc.value) {
       const target = route.meta?.target
-      const targetWindow = typeof target === 'string' ? target : '_blank'
-      window.open(frameSrc.value, targetWindow)
+      const targetWindow = target === '_self' ? '_self' : '_blank'
+      window.open(frameSrc.value, targetWindow, 'noopener,noreferrer')
     }
   }
 </script>

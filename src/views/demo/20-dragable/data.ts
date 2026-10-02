@@ -8,16 +8,20 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
+import type { TagProps } from 'naive-ui'
+
 // 优先级类型定义
 export type Priority = 'high' | 'medium' | 'low'
 
 // 优先级配置
-export const priorityConfig: Record<Priority, { type: string; text: string }> =
-  {
-    high: { type: 'error', text: '高优先级' },
-    medium: { type: 'warning', text: '中优先级' },
-    low: { type: 'success', text: '低优先级' },
-  }
+export const priorityConfig: Record<
+  Priority,
+  { type: TagProps['type']; text: string }
+> = {
+  high: { type: 'error', text: '高优先级' },
+  medium: { type: 'warning', text: '中优先级' },
+  low: { type: 'success', text: '低优先级' },
+}
 
 // 彩虹色彩数组
 export const rainbowColors = [
@@ -133,28 +137,28 @@ export const kanbanColumnsConfig = [
     key: 'todo' as keyof typeof kanbanData,
     title: 'TODO',
     headerClass: 'todo-header',
-    emptyIcon: 'i-mdi:clipboard-list-outline',
+    emptyIcon: 'i-mdi-clipboard-list-outline',
     emptyText: '暂无任务',
   },
   {
     key: 'progress' as keyof typeof kanbanData,
     title: 'IN PROGRESS',
     headerClass: 'progress-header',
-    emptyIcon: 'i-mdi:progress-clock',
+    emptyIcon: 'i-mdi-progress-clock',
     emptyText: '暂无进行中',
   },
   {
     key: 'review' as keyof typeof kanbanData,
     title: 'REVIEW',
     headerClass: 'review-header',
-    emptyIcon: 'i-mdi:eye-check-outline',
+    emptyIcon: 'i-mdi-eye-check-outline',
     emptyText: '暂无待审核',
   },
   {
     key: 'done' as keyof typeof kanbanData,
     title: 'DONE',
     headerClass: 'done-header',
-    emptyIcon: 'i-mdi:check-circle-outline',
+    emptyIcon: 'i-mdi-check-circle-outline',
     emptyText: '暂无已完成',
   },
 ]

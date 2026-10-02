@@ -17,12 +17,22 @@ interface ImportMetaEnv {
   readonly BASE_URL: string
   readonly VITE_ROUTER_MODE: 'hash' | 'history'
   readonly VITE_API_BASE?: string
+  readonly VITE_AUTH_MODE?: 'mock' | 'remote'
+  readonly VITE_DATA_MODE?: 'mock' | 'remote'
+  readonly VITE_DEPLOYMENT_PROFILE?: 'application' | 'demo'
   readonly VITE_APP_TITLE?: string
   readonly VITE_APP_VERSION?: string
   readonly VITE_APP_ENV?: 'development' | 'test' | 'staging' | 'production'
   readonly VITE_PORT?: string
   readonly VITE_I18N_ENABLED?: string
+  readonly VITE_ANALYTICS_ENABLED?: 'true' | 'false'
+  readonly VITE_ROUTE_IDLE_PREFETCH?: 'true' | 'false'
+  readonly VITE_ERROR_REPORT_ENDPOINT?: string
+  readonly VITE_CAPTCHA_PROVIDER?: 'puzzle-captcha' | 'altcha'
+  readonly VITE_CAPTCHA_CHALLENGE_URL?: string
+  readonly VITE_CAPTCHA_VERIFY_ENDPOINT?: string
   readonly VITE_MAP_KEY?: string
+  readonly VITE_AMAP_SERVICE_HOST?: string
   // 可以根据需要添加更多环境变量
 }
 

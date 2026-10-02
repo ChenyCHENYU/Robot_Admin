@@ -12,15 +12,28 @@ import { TOKEN, TIME_STAMP, REFRESH_TOKEN, TOKEN_EXPIRES_IN } from '@/constant'
 import router from '@/router'
 import { d_setTimeStamp } from '@/utils/d_auth'
 import { notification } from '@/plugins/discrete'
+import { s_permissionStore } from '@/stores/permission'
 
 interface UserInfo {
   username?: string
+  id?: string
+  displayName?: string
+  role?: string
+  email?: string
   [key: string]: unknown
 }
 
-/** 安全读取 localStorage 并反序列化 */
-function readStorage<T>(key: string, fallback: T): T {
-  const raw = localStorage.getItem(key)
+const USER_INFO_KEY = 'userInfo'
+const AUTH_STORAGE_KEYS = [
+  TOKEN,
+  REFRESH_TOKEN,
+  TOKEN_EXPIRES_IN,
+  TIME_STAMP,
+  USER_INFO_KEY,
+] as const
+
+/** 安全反序列化存储值 */
+function parseStorageValue<T>(raw: string | null, fallback: T): T {
   if (raw === null) return fallback
   try {
     return JSON.parse(raw) as T
@@ -29,12 +42,57 @@ function readStorage<T>(key: string, fallback: T): T {
   }
 }
 
+/**
+ * 读取持久化凭据，并兼容迁移事故版本写入 sessionStorage 的认证信息。
+ */
+function readAuthStorage<T>(key: string, fallback: T): T {
+  if (typeof window === 'undefined') return fallback
+  const persistedValue = localStorage.getItem(key)
+  const sessionValue = sessionStorage.getItem(key)
+  if (persistedValue !== null) {
+    if (sessionValue !== null) sessionStorage.removeItem(key)
+    return parseStorageValue(persistedValue, fallback)
+  }
+  if (sessionValue === null) return fallback
+  localStorage.setItem(key, sessionValue)
+  sessionStorage.removeItem(key)
+  return parseStorageValue(sessionValue, fallback)
+}
+
+/** 清除禁止持久化的密码字段 */
+export function sanitizeUserInfo(userInfo: UserInfo): UserInfo {
+  const sanitized = { ...userInfo }
+  delete sanitized.password
+  delete sanitized.confirmPassword
+  return sanitized
+}
+
+/** 写入跨标签页和浏览器重启均可恢复的认证状态。 */
+function writeAuthStorage(key: string, value: unknown): void {
+  if (typeof window === 'undefined') return
+  sessionStorage.removeItem(key)
+  if (value === '' || value === 0 || value === undefined) {
+    localStorage.removeItem(key)
+    return
+  }
+  localStorage.setItem(key, JSON.stringify(value))
+}
+
+/** 读取并立即覆盖清洗后的用户信息，确保迁移数据中不残留密码。 */
+function readSanitizedUserInfo(): UserInfo {
+  const sanitized = sanitizeUserInfo(
+    readAuthStorage<UserInfo>(USER_INFO_KEY, {})
+  )
+  writeAuthStorage(USER_INFO_KEY, sanitized)
+  return sanitized
+}
+
 export const s_userStore = defineStore('user', {
   state: () => ({
-    token: readStorage<string>(TOKEN, ''),
-    refreshToken: readStorage<string>(REFRESH_TOKEN, ''),
-    tokenExpiresAt: readStorage<number>(TOKEN_EXPIRES_IN, 0),
-    userInfo: readStorage<UserInfo>('userInfo', {} as UserInfo),
+    token: readAuthStorage<string>(TOKEN, ''),
+    refreshToken: readAuthStorage<string>(REFRESH_TOKEN, ''),
+    tokenExpiresAt: readAuthStorage<number>(TOKEN_EXPIRES_IN, 0),
+    userInfo: readSanitizedUserInfo(),
   }),
 
   getters: {
@@ -44,18 +102,18 @@ export const s_userStore = defineStore('user', {
   actions: {
     setToken(token: string) {
       this.token = token
-      localStorage.setItem(TOKEN, JSON.stringify(token))
+      writeAuthStorage(TOKEN, token)
     },
 
     setRefreshToken(refreshToken: string) {
       this.refreshToken = refreshToken
-      localStorage.setItem(REFRESH_TOKEN, JSON.stringify(refreshToken))
+      writeAuthStorage(REFRESH_TOKEN, refreshToken)
     },
 
     setTokenExpiresAt(expiresIn: number) {
       const expiresAt = Date.now() + expiresIn * 1000
       this.tokenExpiresAt = expiresAt
-      localStorage.setItem(TOKEN_EXPIRES_IN, JSON.stringify(expiresAt))
+      writeAuthStorage(TOKEN_EXPIRES_IN, expiresAt)
     },
 
     /** 判断 token 是否即将过期（提前 5 分钟） */
@@ -65,35 +123,44 @@ export const s_userStore = defineStore('user', {
     },
 
     setUserInfo(userInfo: UserInfo) {
-      this.userInfo = userInfo
-      localStorage.setItem('userInfo', JSON.stringify(userInfo))
+      const sanitized = sanitizeUserInfo(userInfo)
+      this.userInfo = sanitized
+      writeAuthStorage(USER_INFO_KEY, sanitized)
+    },
+
+    /** 同步清除内存、会话存储和历史本地存储中的认证数据 */
+    clearSession() {
+      this.token = ''
+      this.refreshToken = ''
+      this.tokenExpiresAt = 0
+      this.userInfo = {}
+      s_permissionStore().resetPermissions()
+
+      if (typeof window === 'undefined') return
+      for (const key of AUTH_STORAGE_KEYS) {
+        sessionStorage.removeItem(key)
+        localStorage.removeItem(key)
+      }
+      localStorage.removeItem('__tags_view_list__')
     },
 
     async logout(isExpired = false) {
       try {
         // 1. 清除用户状态
-        this.token = ''
-        this.userInfo = {}
+        this.clearSession()
 
         // 2. 重置页面标题
         document.title = import.meta.env.VITE_APP_TITLE
 
-        // 3. 只清除认证相关数据（保留用户配置如主题、语言等）
-        localStorage.removeItem(TOKEN)
-        localStorage.removeItem(REFRESH_TOKEN)
-        localStorage.removeItem(TOKEN_EXPIRES_IN)
-        localStorage.removeItem(TIME_STAMP)
-        localStorage.removeItem('userInfo')
-        localStorage.removeItem('__tags_view_list__')
-
-        // 4. 清理动态路由
+        // 3. 清理动态路由和权限快照（保留主题、语言等用户偏好）
         const { clearExistingRoutes } = await import('@/router/dynamicRouter')
+        if (this.token) return
         clearExistingRoutes()
 
-        // 5. 跳转登录页
+        // 4. 跳转登录页
         router.replace('/login')
 
-        // 6. 根据退出原因显示不同提示
+        // 5. 根据退出原因显示不同提示
         if (isExpired) {
           notification.warning({
             content: '登录已过期，请重新登录',
@@ -107,7 +174,7 @@ export const s_userStore = defineStore('user', {
         }
       } catch (error) {
         console.error('退出登录失败:', error)
-        router.replace('/login')
+        if (!this.token) router.replace('/login')
       }
     },
 
@@ -117,8 +184,12 @@ export const s_userStore = defineStore('user', {
       expiresIn?: number
     ) {
       this.setToken(token)
-      if (refreshToken) this.setRefreshToken(refreshToken)
-      if (expiresIn) this.setTokenExpiresAt(expiresIn)
+      this.setRefreshToken(refreshToken || '')
+      if (expiresIn && expiresIn > 0) this.setTokenExpiresAt(expiresIn)
+      else {
+        this.tokenExpiresAt = 0
+        writeAuthStorage(TOKEN_EXPIRES_IN, 0)
+      }
       d_setTimeStamp()
     },
 
