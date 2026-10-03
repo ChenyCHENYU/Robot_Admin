@@ -1,4 +1,39 @@
 // ==================== 通用样式占位符 ====================
+.membership-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.membership-editor {
+  margin-bottom: 18px;
+
+  p {
+    margin: 0 0 12px;
+    color: var(--c-text-3);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+
+.membership-editor__row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.3fr) minmax(110px, 1fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 720px) {
+  .membership-editor__row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .membership-editor__row :deep(.n-select) {
+    grid-column: 1 / -1;
+  }
+}
+
 %flex-column {
   display: flex;
   flex-direction: column;
@@ -87,18 +122,18 @@
     }
   }
 
-    // ==================== 用户表格样式 ====================
-    // 禁用行样式
-    :deep(.disabled-row) {
-      background-color: #fafafa !important;
-      opacity: 0.7;
+  // ==================== 用户表格样式 ====================
+  // 禁用行样式
+  :deep(.disabled-row) {
+    background-color: #fafafa !important;
+    opacity: 0.7;
 
     &:hover {
-        background-color: #f0f0f0 !important;
-      }
+      background-color: #f0f0f0 !important;
+    }
 
-        td {
-          background-color: transparent !important;
+    td {
+      background-color: transparent !important;
     }
   }
 

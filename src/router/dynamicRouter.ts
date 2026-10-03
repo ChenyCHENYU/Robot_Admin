@@ -1,6 +1,7 @@
 import router from './index'
 import type { RouteRecordRaw } from 'vue-router'
 import { s_permissionStore } from '@/stores/permission'
+import { s_userStore } from '@/stores/user'
 import { message as messageApi } from '@/plugins/discrete'
 import {
   joinRoutePath,
@@ -159,7 +160,7 @@ export const initDynamicRouter = async (): Promise<boolean> => {
       data: routes,
       msg,
       message,
-    } = await permissionStore.getAuthMenuList()
+    } = await permissionStore.getAuthMenuList(s_userStore().activeContext)
 
     if (generation !== permissionStore.requestGeneration) return false
 

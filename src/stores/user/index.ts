@@ -13,6 +13,7 @@ import router from '@/router'
 import { d_setTimeStamp } from '@/utils/d_auth'
 import { notification } from '@/plugins/discrete'
 import { s_permissionStore } from '@/stores/permission'
+import type { AuthContext } from '@/api/auth.contract'
 
 interface UserInfo {
   username?: string
@@ -23,13 +24,39 @@ interface UserInfo {
   [key: string]: unknown
 }
 
+/** 读取持久化上下文时只接受完整的展示结构，损坏缓存直接失效。 */
+const isAuthContext = (value: unknown): value is AuthContext => {
+  if (!value || typeof value !== 'object') return false
+  const context = value as Partial<AuthContext>
+  return (
+    typeof context.id === 'string' &&
+    typeof context.tenantId === 'string' &&
+    typeof context.tenantName === 'string' &&
+    typeof context.companyId === 'string' &&
+    typeof context.companyName === 'string' &&
+    typeof context.isPrimary === 'boolean' &&
+    Array.isArray(context.roles) &&
+    context.roles.every(
+      role =>
+        role !== null &&
+        typeof role === 'object' &&
+        typeof role.id === 'string' &&
+        typeof role.name === 'string'
+    )
+  )
+}
+
 const USER_INFO_KEY = 'userInfo'
+const AUTH_CONTEXTS_KEY = 'authContexts'
+const ACTIVE_AUTH_CONTEXT_KEY = 'activeAuthContext'
 const AUTH_STORAGE_KEYS = [
   TOKEN,
   REFRESH_TOKEN,
   TOKEN_EXPIRES_IN,
   TIME_STAMP,
   USER_INFO_KEY,
+  AUTH_CONTEXTS_KEY,
+  ACTIVE_AUTH_CONTEXT_KEY,
 ] as const
 
 /** 安全反序列化存储值 */
@@ -88,12 +115,31 @@ function readSanitizedUserInfo(): UserInfo {
 }
 
 export const s_userStore = defineStore('user', {
-  state: () => ({
-    token: readAuthStorage<string>(TOKEN, ''),
-    refreshToken: readAuthStorage<string>(REFRESH_TOKEN, ''),
-    tokenExpiresAt: readAuthStorage<number>(TOKEN_EXPIRES_IN, 0),
-    userInfo: readSanitizedUserInfo(),
-  }),
+  state: () => {
+    const storedContexts = readAuthStorage<unknown>(AUTH_CONTEXTS_KEY, [])
+    const availableContexts = Array.isArray(storedContexts)
+      ? storedContexts.filter(isAuthContext)
+      : []
+    const storedActiveContext = readAuthStorage<unknown>(
+      ACTIVE_AUTH_CONTEXT_KEY,
+      null
+    )
+    const activeContext =
+      availableContexts.find(
+        item =>
+          isAuthContext(storedActiveContext) &&
+          item.id === storedActiveContext.id
+      ) ?? null
+
+    return {
+      token: readAuthStorage<string>(TOKEN, ''),
+      refreshToken: readAuthStorage<string>(REFRESH_TOKEN, ''),
+      tokenExpiresAt: readAuthStorage<number>(TOKEN_EXPIRES_IN, 0),
+      userInfo: readSanitizedUserInfo(),
+      availableContexts,
+      activeContext,
+    }
+  },
 
   getters: {
     hasUserInfo: state => Object.keys(state.userInfo).length > 0,
@@ -128,12 +174,24 @@ export const s_userStore = defineStore('user', {
       writeAuthStorage(USER_INFO_KEY, sanitized)
     },
 
+    /** 同步已授权公司清单与当前工作上下文；不在清单中的上下文拒绝激活。 */
+    setAuthContexts(contexts: AuthContext[], activeContext: AuthContext) {
+      const selected = contexts.find(item => item.id === activeContext.id)
+      if (!selected) throw new Error('当前公司不在授权范围内')
+      this.availableContexts = contexts
+      this.activeContext = selected
+      writeAuthStorage(AUTH_CONTEXTS_KEY, contexts)
+      writeAuthStorage(ACTIVE_AUTH_CONTEXT_KEY, selected)
+    },
+
     /** 同步清除内存、会话存储和历史本地存储中的认证数据 */
     clearSession() {
       this.token = ''
       this.refreshToken = ''
       this.tokenExpiresAt = 0
       this.userInfo = {}
+      this.availableContexts = []
+      this.activeContext = null
       s_permissionStore().resetPermissions()
 
       if (typeof window === 'undefined') return

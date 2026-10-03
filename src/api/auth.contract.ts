@@ -19,11 +19,45 @@ export interface LoginRequest {
   [key: string]: unknown
 }
 
+/** 一个可进入的企业工作上下文；角色只由认证服务授予，客户端不能自行提权。 */
+export interface AuthContext {
+  id: string
+  /** 同一账号只能有一个主公司，登录后自动进入该公司。 */
+  isPrimary: boolean
+  tenantId: string
+  tenantName: string
+  companyId: string
+  companyName: string
+  roles: Array<{ id: string; name: string }>
+}
+
+/** 认证服务必须明确标注唯一主公司，避免客户端猜测列表顺序。 */
+export const getPrimaryAuthContext = (contexts: AuthContext[]): AuthContext => {
+  const primary = contexts.filter(context => context.isPrimary === true)
+  if (primary.length !== 1) {
+    throw new Error(
+      contexts.length
+        ? '主公司配置异常，请联系企业管理员'
+        : '当前账号未关联公司，请联系企业管理员'
+    )
+  }
+  return primary[0]
+}
+
+/** 身份验证完成后，服务端签发的短时上下文选择凭据。 */
+export interface ActivateAuthContextRequest {
+  loginTicket: string
+  contextId: string
+}
+
 /** 登录数据契约 */
 export type LoginData = PostAuthLoginResponse['data'] & {
   token: string
   refreshToken?: string
   expiresIn?: number
+  loginTicket?: string
+  availableContexts?: AuthContext[]
+  activeContext?: AuthContext
   user?: {
     id: string
     username: string

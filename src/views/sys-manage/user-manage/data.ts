@@ -8,6 +8,10 @@ import {
 } from '@robot-admin/request-core/axios'
 import { isMockDataMode } from '@/config/dataMode'
 import { delayWithSignal } from '@/utils/abort'
+import {
+  getMockDirectoryUser,
+  type MockCompanyMembership,
+} from '@/api/auth.mock-directory'
 
 // ==================== 类型定义 ====================
 export type UserType = 'internal' | 'external' | 'partner' | 'guest'
@@ -47,6 +51,7 @@ export interface UserFormData {
   remark: string
   companyName: string
   contactPerson: string
+  memberships: MockCompanyMembership[]
 }
 
 export interface DeptData {
@@ -101,6 +106,8 @@ export interface PageResult<T> {
 export interface UserListParams extends Partial<SearchForm> {
   page: number
   pageSize: number
+  /** 仅供演示数据过滤；真实接口必须从服务端会话解析公司。 */
+  contextId?: string
 }
 
 // ==================== UI 配置常量 ====================
@@ -286,6 +293,7 @@ export const DEFAULT_USER_FORM_DATA: UserFormData = {
   remark: '',
   companyName: '',
   contactPerson: '',
+  memberships: [],
 }
 
 export const DEFAULT_RESET_PASSWORD_FORM: ResetPasswordForm = {
@@ -456,6 +464,37 @@ export const MOCK_USER_DATA: UserData[] = [
   },
 ]
 
+const MOCK_USERS_KEY = 'robot-admin:mock-users:v1'
+
+/** 演示用户数据只保存在当前浏览器，避免切换公司刷新后回到初始记录。 */
+export const persistMockUsers = (): void => {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(MOCK_USER_DATA))
+  }
+}
+
+if (typeof localStorage !== 'undefined') {
+  try {
+    const stored: unknown = JSON.parse(
+      localStorage.getItem(MOCK_USERS_KEY) || 'null'
+    )
+    if (
+      Array.isArray(stored) &&
+      stored.every(
+        user =>
+          user &&
+          typeof user.id === 'string' &&
+          typeof user.username === 'string' &&
+          typeof user.status === 'number'
+      )
+    ) {
+      MOCK_USER_DATA.splice(0, MOCK_USER_DATA.length, ...(stored as UserData[]))
+    }
+  } catch {
+    // 损坏的演示缓存使用内置样例，不影响真实 API 模式。
+  }
+}
+
 // ==================== 工具函数 ====================
 const createMockApi = async <T>(
   data: T,
@@ -520,14 +559,23 @@ export const getUserListApi = async (
   signal?: AbortSignal
 ): Promise<ApiResponse<PageResult<UserData>>> => {
   if (!isMockDataMode()) {
+    const remoteParams = { ...params }
+    delete remoteParams.contextId
     const response = await getData<ApiResponse<PageResult<UserData>>>(
       '/sys/users',
-      { params: { ...params }, signal }
+      { params: remoteParams, signal }
     )
     MOCK_USER_DATA.splice(0, MOCK_USER_DATA.length, ...response.data.list)
     return response
   }
-  const filteredUsers = filterUsers(MOCK_USER_DATA, params)
+  const companyUsers = params.contextId
+    ? MOCK_USER_DATA.filter(user =>
+        getMockDirectoryUser(user.username)?.memberships.some(
+          item => item.contextId === params.contextId
+        )
+      )
+    : MOCK_USER_DATA
+  const filteredUsers = filterUsers(companyUsers, params)
   const paginatedData = paginateData(
     filteredUsers,
     params.page,
@@ -555,7 +603,9 @@ export const createUserApi = async (data: UserFormData): Promise<void> => {
     await createMockApi(undefined, 300)
     return
   }
-  await postData('/sys/users', data)
+  const remoteData: Partial<UserFormData> = { ...data }
+  delete remoteData.memberships
+  await postData('/sys/users', remoteData)
 }
 
 export const updateUserApi = async (
@@ -566,7 +616,9 @@ export const updateUserApi = async (
     await createMockApi(undefined, 300)
     return
   }
-  await putData(`/sys/users/${id}`, data)
+  const remoteData: Partial<UserFormData> = { ...data }
+  delete remoteData.memberships
+  await putData(`/sys/users/${id}`, remoteData)
 }
 
 export const deleteUserApi = async (id: string): Promise<void> => {

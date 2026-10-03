@@ -9,22 +9,26 @@
 import { describe, expect, test } from 'bun:test'
 import { RobotNaiveUiResolver } from '@robot-admin/naive-ui-components/resolver'
 import { iconSafelist } from '../src/utils/unocss/icon-safelist'
-import { LOGIN_FEATURES, resolveLoginDefaults } from '../src/views/login/data'
+import {
+  LOGIN_FEATURES,
+  resolveLoginDefaults,
+  resolveLoginFeatures,
+} from '../src/views/login/data'
 
 const readText = (relativePath: string): Promise<string> =>
   Bun.file(new URL(relativePath, import.meta.url)).text()
 
 describe('UI regression contracts', () => {
-  test('login page keeps every existing entry and demo credential', async () => {
+  test('enterprise login only exposes connected entries and keeps demo credential', async () => {
     expect(LOGIN_FEATURES).toEqual({
       passwordLogin: true,
-      rememberMe: true,
-      forgotPassword: true,
+      rememberMe: false,
+      forgotPassword: false,
       captchaVerify: true,
-      captchaLogin: true,
-      qrcodeLogin: true,
-      socialLogin: true,
-      register: true,
+      captchaLogin: false,
+      qrcodeLogin: false,
+      socialLogin: false,
+      register: false,
     })
 
     const loginSource = await readText('../src/views/login/index.vue')
@@ -36,16 +40,20 @@ describe('UI regression contracts', () => {
       username: '',
       password: '',
     })
+    expect(resolveLoginFeatures().captchaVerify).toBe(true)
     expect(loginSource).toContain(':default-username="loginDefaults.username"')
     expect(loginSource).toContain(':default-password="loginDefaults.password"')
-    expect(loginSource).toContain('login-container bg-[#181818]')
+    expect(loginSource).toContain('class="login-container"')
     expect(loginSource).toContain(':captcha-provider="LOGIN_CAPTCHA_PROVIDER"')
     expect(loginSource).toContain(':captcha-verifier="LOGIN_CAPTCHA_VERIFIER"')
+    expect(loginSource).toContain('getPrimaryAuthContext')
+    expect(loginSource).not.toContain('<ContextPicker')
+    expect(loginSource).not.toContain('SOCIAL_PROVIDERS')
 
     const loginStyles = await readText('../src/views/login/index.scss')
-    expect(loginStyles).toContain('background-color: #181818')
-    expect(loginStyles).toContain('$panel-min-width: 348px')
-    expect(loginStyles).toContain('$panel-max-width: 380px')
+    expect(loginStyles).toContain('background-color: #11151d')
+    expect(loginStyles).toContain('$panel-min-width: 354px')
+    expect(loginStyles).toContain('$panel-max-width: 396px')
 
     const captchaConfig = await readText('../src/views/login/captcha.ts')
     expect(captchaConfig).toContain("provider === 'altcha'")
@@ -313,9 +321,8 @@ describe('UI regression contracts', () => {
     expect(unoConfig).toContain("'src/views/home/**/*.{vue,ts,tsx}'")
     expect(loginSource).toContain('preloadAuthenticatedShell()')
     expect(loginSource).toContain('requestIdleCallback')
-    expect(loginSource).toContain(
-      ':paused="loading || showTypewriter || captchaVisible"'
-    )
+    expect(loginSource).toContain(':paused="')
+    expect(loginSource).toContain('loading || captchaVisible')
     expect(loginSource).toContain(
       '@captcha-visible-change="captchaVisible = $event"'
     )

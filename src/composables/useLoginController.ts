@@ -88,6 +88,8 @@ export interface UseLoginControllerOptions<
   successMessage?: string
   /** 登录失败提示文字 */
   errorMessage?: string
+  /** 身份验证后是否立即提示成功，供多阶段登录延迟到上下文激活。 */
+  shouldNotifySuccess?: (response: TResponse) => boolean
 
   /**
    * 基于时段的欢迎语配置（用于 notification.meta）
@@ -182,14 +184,16 @@ export function useLoginController<
     response: TResponse,
     formData: LoginFormData
   ) => {
-    notification.success({
-      content: options.successMessage ?? '登录成功',
-      meta: generateWelcome(response),
-      duration: 3000,
-    })
     await options.onLoginSuccess(response, {
       username: formData.username,
     })
+    if (options.shouldNotifySuccess?.(response) !== false) {
+      notification.success({
+        content: options.successMessage ?? '登录成功',
+        meta: generateWelcome(response),
+        duration: 3000,
+      })
+    }
   }
 
   /** 处理登录错误 */

@@ -14,7 +14,7 @@ export const showVersionInfo = () => {
   console.log(`
 🚀 Robot Admin 后台管理系统
 📦 版本: v${packageJson.version}
-🕐 构建时间: ${new Date().toLocaleString('zh-CN')}
+🕐 本地打开时间: ${new Date().toLocaleString('zh-CN')}
 👨‍💻 作者: CHENY
   `)
 }

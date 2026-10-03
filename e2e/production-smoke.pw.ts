@@ -8,6 +8,7 @@
 
 import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
+import { installMockAdminSession } from './auth-fixture'
 
 const vercelConfig = JSON.parse(
   readFileSync(new URL('../vercel.json', import.meta.url), 'utf8')
@@ -101,13 +102,7 @@ test('真实业务构建不会预填演示账号与密码', async ({ page }) => 
 test('认证壳层、地图及退出登录在正式产物中可用', async ({ page }) => {
   const pageErrors: string[] = []
   page.on('pageerror', error => pageErrors.push(error.message))
-  await page.addInitScript(() => {
-    localStorage.setItem('token', JSON.stringify('mock-access.e2e'))
-    localStorage.setItem(
-      'userInfo',
-      JSON.stringify({ username: 'E2E', displayName: 'E2E' })
-    )
-  })
+  await installMockAdminSession(page)
 
   await page.goto('/#/home')
   await expect(page.locator('#guide-menu')).toBeVisible()

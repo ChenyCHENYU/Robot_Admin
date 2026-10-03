@@ -11,13 +11,25 @@ import { getData, postData } from '@robot-admin/request-core/axios'
 import type { DynamicRoute } from '@/router/dynamicRouter'
 import {
   resolveAuthMode,
+  type ActivateAuthContextRequest,
+  type AuthContext,
   type LoginRequest,
   type LoginResponse,
   type RefreshTokenResponse,
 } from './auth.contract'
-import { loginMockApi, refreshTokenMockApi } from './auth.mock'
+import {
+  activateMockAuthContextApi,
+  isMockRouteAllowed,
+  loginMockApi,
+  refreshTokenMockApi,
+  switchMockAuthContextApi,
+} from './auth.mock'
 
-export type { LoginResponse, RefreshTokenResponse } from './auth.contract'
+export type {
+  AuthContext,
+  LoginResponse,
+  RefreshTokenResponse,
+} from './auth.contract'
 
 const AUTH_MODE = resolveAuthMode(
   import.meta.env.VITE_AUTH_MODE,
@@ -43,6 +55,24 @@ export const loginApi = (data: LoginRequest): Promise<LoginResponse> =>
     ? loginMockApi(data)
     : postData<LoginResponse>('/auth/login', data)
 
+/** 身份验证后，激活服务端授予的企业工作上下文。 */
+export const activateAuthContextApi = (
+  request: ActivateAuthContextRequest
+): Promise<LoginResponse> =>
+  AUTH_MODE === 'mock'
+    ? activateMockAuthContextApi(request)
+    : postData<LoginResponse>('/auth/context/activate', request)
+
+/** 切换当前账号有权访问的公司；远端只发送上下文 ID，不信任客户端角色。 */
+export const switchAuthContextApi = (
+  contextId: string,
+  username: string,
+  refreshToken: string
+): Promise<LoginResponse> =>
+  AUTH_MODE === 'mock'
+    ? switchMockAuthContextApi(username, refreshToken, contextId)
+    : postData<LoginResponse>('/auth/context/switch', { contextId })
+
 /**
  * * @description: 刷新 Token 接口（双 Token 无感刷新）
  * ? @param {string} _refreshToken 刷新令牌
@@ -63,7 +93,14 @@ export const getAuthMode = (): typeof AUTH_MODE => AUTH_MODE
  * * @description: 获取用户菜单权限列表
  * ! @return {Promise<AuthMenuResponse>} 动态菜单路由配置数据
  */
-export const getAuthMenuListApi = (): Promise<AuthMenuResponse> =>
+export const getAuthMenuListApi = (
+  context?: AuthContext | null
+): Promise<AuthMenuResponse> =>
   AUTH_MODE === 'mock'
-    ? Promise.resolve(DynamicRouter as AuthMenuResponse)
+    ? Promise.resolve({
+        ...DynamicRouter,
+        data: (DynamicRouter.data as DynamicRoute[]).filter(route =>
+          isMockRouteAllowed(context ?? null, route.path)
+        ),
+      })
     : getData<AuthMenuResponse>('/auth/menu-list')

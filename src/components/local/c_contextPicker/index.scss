@@ -1,0 +1,172 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-02
+ * @FilePath: \Robot_Admin\src\components\local\c_contextPicker\index.scss
+ * @Description: 企业上下文卡片样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.context-picker {
+  --context-text: #20293b;
+  --context-muted: #64718a;
+  --context-border: #dce3ef;
+  --context-surface: #f8faff;
+  color: var(--context-text);
+}
+
+.context-picker--dark {
+  --context-text: #f5f7fb;
+  --context-muted: #aeb9cd;
+  --context-border: rgba(171, 193, 235, 0.2);
+  --context-surface: rgba(28, 37, 54, 0.68);
+}
+
+.context-picker__header {
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 9px 0 7px;
+    font-size: 24px;
+    font-weight: 680;
+    letter-spacing: 0.01em;
+  }
+
+  p {
+    margin: 0;
+    color: var(--context-muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
+
+.context-picker__eyebrow {
+  color: #82aaff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.context-picker__list {
+  display: grid;
+  gap: 10px;
+  max-height: min(54vh, 420px);
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.context-picker__option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 82px;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--context-border);
+  border-radius: 14px;
+  background: var(--context-surface);
+  color: var(--context-text);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    border-color: #6c9bff;
+    background: rgba(75, 121, 219, 0.16);
+    transform: translateY(-1px);
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.context-picker__option--active {
+  border-color: #6c9bff;
+}
+
+.context-picker__monogram {
+  display: grid;
+  flex: 0 0 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(122, 164, 255, 0.42);
+  border-radius: 11px;
+  background: linear-gradient(
+    140deg,
+    rgba(75, 119, 220, 0.38),
+    rgba(75, 119, 220, 0.08)
+  );
+  color: #8bb0ff;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.context-picker__details {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+
+  strong {
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.context-picker__tenant,
+.context-picker__roles {
+  overflow: hidden;
+  color: var(--context-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.context-picker__end {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: #83aafa;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.context-picker__affiliation {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border: 1px solid var(--context-border);
+  border-radius: 99px;
+  color: var(--context-muted);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.context-picker__affiliation--primary {
+  border-color: rgba(102, 150, 255, 0.5);
+  background: rgba(64, 112, 214, 0.14);
+  color: #8fb2ff;
+}
+
+.context-picker__empty {
+  padding: 22px 14px;
+  border: 1px dashed var(--context-border);
+  border-radius: 12px;
+  color: var(--context-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .context-picker__option {
+    transition: none;
+  }
+}

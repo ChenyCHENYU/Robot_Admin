@@ -1,0 +1,102 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-03
+ * @FilePath: \Robot_Admin\src\views\home\d_enterpriseOverview.scss
+ * @Description: 企业工作空间演示摘要样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+.enterprise-overview {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(210px, 1fr) minmax(300px, 1.45fr);
+  gap: 18px 32px;
+  align-items: center;
+  margin: 18px auto 22px;
+  padding: clamp(20px, 3vw, 30px);
+  border: 1px solid rgba(126, 163, 240, 0.23);
+  border-radius: 22px;
+  background: linear-gradient(118deg, #101b31 0%, #1a2d52 60%, #183b69 100%);
+  box-shadow: 0 18px 46px rgba(8, 27, 60, 0.19);
+  color: #f4f7ff;
+  overflow: hidden;
+}
+
+.enterprise-overview::after {
+  content: '';
+  position: absolute;
+  width: 230px;
+  height: 230px;
+  right: -80px;
+  top: -110px;
+  border: 1px solid rgba(177, 207, 255, 0.14);
+  border-radius: 50%;
+  box-shadow: 0 0 0 48px rgba(177, 207, 255, 0.04);
+  pointer-events: none;
+}
+
+.enterprise-overview__identity,
+.enterprise-overview__metrics,
+.enterprise-overview__note {
+  position: relative;
+  z-index: 1;
+}
+.enterprise-overview__eyebrow {
+  color: #8ab3ff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+}
+.enterprise-overview__identity h2 {
+  margin: 8px 0 5px;
+  font-size: clamp(20px, 2.3vw, 28px);
+  line-height: 1.2;
+}
+.enterprise-overview__identity p {
+  margin: 0;
+  color: #adbedc;
+  font-size: 12px;
+}
+.enterprise-overview__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+.enterprise-overview__metrics > div {
+  display: grid;
+  gap: 6px;
+  padding: 15px;
+  border: 1px solid rgba(178, 207, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.055);
+}
+.enterprise-overview__metrics small {
+  color: #acbfdf;
+  font-size: 11px;
+}
+.enterprise-overview__metrics strong {
+  font-size: clamp(17px, 1.8vw, 24px);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.enterprise-overview__note {
+  grid-column: 1 / -1;
+  color: #91a9cf;
+  font-size: 11px;
+}
+
+@media (max-width: 760px) {
+  .enterprise-overview {
+    grid-template-columns: 1fr;
+    margin-inline: 12px;
+  }
+  .enterprise-overview__metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .enterprise-overview__metrics > div {
+    padding: 10px;
+  }
+  .enterprise-overview__metrics strong {
+    font-size: 15px;
+  }
+}

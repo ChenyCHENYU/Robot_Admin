@@ -3,6 +3,42 @@
     class="project-homepage"
     :class="{ 'dark-theme': isDarkTheme }"
   >
+    <section
+      v-if="activeContext"
+      class="enterprise-overview"
+      aria-label="当前公司业务概览"
+    >
+      <div class="enterprise-overview__identity">
+        <span class="enterprise-overview__eyebrow">CURRENT WORKSPACE</span>
+        <h2>{{ activeContext.companyName }}</h2>
+        <p
+          >{{ activeContext.tenantName }} ·
+          {{ activeContext.isPrimary ? '主公司' : '兼任公司' }} ·
+          {{ activeContext.roles.map(role => role.name).join('、') }}</p
+        >
+      </div>
+      <div
+        v-if="enterpriseOverview"
+        class="enterprise-overview__metrics"
+      >
+        <div
+          ><small>本周订单</small
+          ><strong>{{ enterpriseOverview.orders }}</strong></div
+        >
+        <div
+          ><small>本周营收</small
+          ><strong>{{ enterpriseOverview.revenue }}</strong></div
+        >
+        <div
+          ><small>待处理事项</small
+          ><strong>{{ enterpriseOverview.pending }}</strong></div
+        >
+      </div>
+      <div class="enterprise-overview__note"
+        >{{ enterpriseOverview?.update ?? '公司数据由当前服务端会话决定'
+        }}<span v-if="enterpriseOverview"> · 演示数据</span></div
+      >
+    </section>
     <!-- 顶部横幅 -->
     <section class="hero-banner">
       <div class="hero-content">
@@ -310,6 +346,9 @@
 </template>
 
 <script setup lang="ts">
+  import { s_userStore } from '@/stores/user'
+  import { getAuthMode } from '@/api/auth'
+  import { getMockEnterpriseOverview } from './d_enterpriseOverview'
   import { useThemeVars } from 'naive-ui/es'
   import {
     projectStats,
@@ -320,6 +359,15 @@
     ecosystemPackages,
   } from './data'
   import { ref, computed, onMounted } from 'vue'
+
+  defineOptions({ name: 'HomePage' })
+  const userStore = s_userStore()
+  const activeContext = computed(() => userStore.activeContext)
+  const enterpriseOverview = computed(() =>
+    getAuthMode() === 'mock'
+      ? getMockEnterpriseOverview(activeContext.value?.id)
+      : null
+  )
 
   // 主题检测
   const themeVars = useThemeVars()

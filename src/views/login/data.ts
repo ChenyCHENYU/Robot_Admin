@@ -7,10 +7,7 @@
  * @Description: 登录页数据配置（供 C_Login 组件 + useLoginController 使用）
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
-import type {
-  SocialProvider,
-  LoginFeatures,
-} from '@robot-admin/naive-ui-components'
+import type { LoginFeatures } from '@robot-admin/naive-ui-components'
 import type { WelcomeConfig } from '@/composables/useLoginController'
 import type { LoginResponse } from '@/api/auth'
 import type { AuthMode } from '@/api/auth.contract'
@@ -26,22 +23,19 @@ export const resolveLoginDefaults = (
 // ================= 登录功能开关 =================
 export const LOGIN_FEATURES: LoginFeatures = {
   passwordLogin: true,
-  captchaLogin: true,
-  qrcodeLogin: true,
-  socialLogin: true,
-  register: true,
+  captchaLogin: false,
+  qrcodeLogin: false,
+  socialLogin: false,
+  register: false,
   captchaVerify: true,
-  rememberMe: true,
-  forgotPassword: true,
+  rememberMe: false,
+  forgotPassword: false,
 }
 
-// ================= 社交登录配置 =================
-export const SOCIAL_PROVIDERS: SocialProvider[] = [
-  { key: 'github', label: 'GitHub', icon: 'mdi:github' },
-  { key: 'google', label: 'Google', icon: 'mdi:google' },
-  { key: 'wechat', label: '微信登录', icon: 'mdi:wechat' },
-  { key: 'qq', label: 'QQ 登录', icon: 'mdi:qqchat' },
-]
+/** 演示也保留人机验证交互；Mock 拼图不是安全边界。 */
+export const resolveLoginFeatures = (): LoginFeatures => ({
+  ...LOGIN_FEATURES,
+})
 
 // ================= 欢迎语配置（工厂函数，接受 i18n 翻译函数） =================
 export const createWelcomeConfig = (

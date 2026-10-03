@@ -15,6 +15,8 @@ import {
   type DynamicRoute,
 } from '@/router/dynamicRouter'
 import { s_permissionStore } from '@/stores/permission'
+import { getAuthMode } from '@/api/auth'
+import { getMockAuthContexts } from '@/api/auth.mock-directory'
 import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
 import { message } from '@/plugins/discrete'
 import { setupNProgress } from '@/plugins/nprogress'
@@ -165,6 +167,29 @@ const handleLoginPageRedirect = (): string => {
   return '/home'
 }
 
+/** 旧公司 ID、撤销的成员关系或过期的角色不得继承上一公司权限。 */
+const handleMissingMockContext = (
+  to: RouteLocationNormalized
+): NavigationGuardReturn | undefined => {
+  const userStore = s_userStore()
+  if (getAuthMode() !== 'mock') return undefined
+  const active = userStore.activeContext
+  const authorized = getMockAuthContexts(
+    userStore.userInfo.username || ''
+  ).find(context => context.id === active?.id)
+  if (
+    active &&
+    authorized &&
+    active.isPrimary === authorized.isPrimary &&
+    active.roles.map(role => role.id).join('|') ===
+      authorized.roles.map(role => role.id).join('|')
+  )
+    return undefined
+  userStore.clearSession()
+  clearExistingRoutes()
+  return to.path === LOGIN_PATH ? true : LOGIN_PATH
+}
+
 /**
  * * @description: 校验路由访问权限
  * ? @param {RouteLocationNormalized} to 目标路由
@@ -204,6 +229,10 @@ router.beforeEach(
       if (!token) {
         return handleUnauthenticated(to, meta)
       }
+
+      // 演示多租户必须先激活公司；历史无上下文会话不可继承管理员菜单。
+      const missingMockContext = handleMissingMockContext(to)
+      if (missingMockContext !== undefined) return missingMockContext
 
       // 2. 已登录但访问登录页
       if (to.path === LOGIN_PATH) {

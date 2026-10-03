@@ -226,9 +226,13 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 
 ### 🔐 认证 Mock 与后端切换
 
-项目在开发、测试环境默认使用闭环 Mock 认证和业务数据，登录、令牌刷新和用户信息的响应结构与远端接口保持一致。任意非空用户名和密码均可登录；Mock 令牌为随机不透明字符串，不包含明文凭据。在线演示构建通过 `VITE_DEPLOYMENT_PROFILE=demo` 显式启用同一套 Mock，真实业务构建必须使用 `application` 配置和远端接口。
+项目在开发、测试环境默认使用闭环 Mock 认证和业务数据。企业登录只显示已接通的账号密码与人机验证；`CHENY / 123456` 登录后自动进入江苏金恒（南京）主公司，可在右上角切换江苏金恒（西安）和西安天智兼任公司，菜单与演示业务摘要随之变化。用户管理可维护账号的主／兼任公司及公司内角色；`STAFF` 演示单公司，`NOACCESS` 演示无授权公司。Mock 接受任意非空密码，本地拼图只用于交互演示，不提供真实认证、防刷或租户隔离。在线演示构建通过 `VITE_DEPLOYMENT_PROFILE=demo` 显式启用 Mock；真实业务构建必须使用 `application` 和远端接口。
 
-接入后端时设置 `VITE_DEPLOYMENT_PROFILE=application`、`VITE_AUTH_MODE=remote`、`VITE_DATA_MODE=remote`，并通过 `VITE_API_BASE` 指定接口地址，无需修改页面和状态管理代码。`application` 的生产与预发构建会拒绝 Mock 模式；只有明确标记为 `demo` 的公开演示构建允许 Mock。认证契约位于 `src/api/auth.contract.ts`，账号和权限治理等远端接口约定位于 `src/api/`；完整环境及接口说明见 [`docs/production-readiness.md`](docs/production-readiness.md)。
+接入后端时设置 `VITE_DEPLOYMENT_PROFILE=application`、`VITE_AUTH_MODE=remote`、`VITE_DATA_MODE=remote`，并通过 `VITE_API_BASE` 指定接口地址。现有远端单上下文响应仍可登录；真实多租户需后端实现公司激活、切换、上下文绑定令牌和服务端数据隔离，不能仅启用前端 Mock。`application` 的生产与预发构建会拒绝 Mock 模式。契约与接入步骤见 [`docs/enterprise-auth.md`](docs/enterprise-auth.md)，环境说明见 [`docs/production-readiness.md`](docs/production-readiness.md)。
+
+每次构建都会生成只读的 `/build-info.json` 身份卡，包含应用版本、环境、部署类型、提交、分支与构建时间；开发服务也可访问，但 `builtAt` 为 `null`。登录后可通过右上角用户菜单底部的“构建信息”打开。它参考企业门户的 `env.json` 溯源字段，但不承载运行时配置、接口地址或密钥。字段与缓存策略见 [`docs/build-identity.md`](docs/build-identity.md)。
+
+后续模块联邦版采用 `systemApp` 平台基座、`public` 定制门户、`template` 业务项目模板三类工程，通用系统管理纳入基座。该架构仍处于计划阶段，职责、实施顺序与验收要求见 [`docs/module-federation-platform-plan.md`](docs/module-federation-platform-plan.md)。
 
 ---
 
@@ -753,7 +757,7 @@ bun run build:application # envs/.env.staging：真实业务预发验收产物 d
 
 - [ ] 📈 Web Vitals 真实用户性能监控与可观测平台接入
 - [ ] 🎨 可视化低代码页面模板
-- [ ] 🏢 多租户系统支持
+- [x] 🏢 多租户公司与角色的前端演示闭环（真实隔离待后端接入）
 
 ### 🌟 长期规划
 

@@ -7,6 +7,7 @@
  */
 
 import { expect, test } from '@playwright/test'
+import { installMockAdminSession } from './auth-fixture'
 
 const demos = [
   ['/demo/icon', '图标组件场景示例'],
@@ -34,13 +35,7 @@ for (const [route, title] of demos) {
   test(`${title} 可在正式产物中进入且无运行时异常`, async ({ page }) => {
     const pageErrors: string[] = []
     page.on('pageerror', error => pageErrors.push(error.message))
-    await page.addInitScript(() => {
-      localStorage.setItem('token', JSON.stringify('mock-access.e2e'))
-      localStorage.setItem(
-        'userInfo',
-        JSON.stringify({ username: 'E2E', displayName: 'E2E' })
-      )
-    })
+    await installMockAdminSession(page)
 
     await page.goto(`/#${route}`)
     await expect(page.getByText(title, { exact: true }).first()).toBeVisible({
@@ -57,13 +52,7 @@ for (const [route, title] of demos) {
 }
 
 test('模态框表单只在成功提交后关闭', async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem('token', JSON.stringify('mock-access.e2e'))
-    localStorage.setItem(
-      'userInfo',
-      JSON.stringify({ username: 'E2E', displayName: 'E2E' })
-    )
-  })
+  await installMockAdminSession(page)
 
   await page.goto('/#/demo/form-manage/form-modal')
   await page.getByRole('heading', { name: '模态框表单', exact: true }).click()
@@ -90,13 +79,7 @@ for (const layout of [
   { name: '网格布局', action: '提交表单' },
 ]) {
   test(`${layout.name}通过 C_Form 的提交入口派发事件`, async ({ page }) => {
-    await page.addInitScript(() => {
-      localStorage.setItem('token', JSON.stringify('mock-access.e2e'))
-      localStorage.setItem(
-        'userInfo',
-        JSON.stringify({ username: 'E2E', displayName: 'E2E' })
-      )
-    })
+    await installMockAdminSession(page)
     await page.goto('/#/demo/form-manage/form')
     await page
       .locator('.layout-buttons')
@@ -118,13 +101,7 @@ for (const layout of [
 test('甘特图自定义渲染无需向 window 注入第三方模块', async ({ page }) => {
   const pageErrors: string[] = []
   page.on('pageerror', error => pageErrors.push(error.message))
-  await page.addInitScript(() => {
-    localStorage.setItem('token', JSON.stringify('mock-access.e2e'))
-    localStorage.setItem(
-      'userInfo',
-      JSON.stringify({ username: 'E2E', displayName: 'E2E' })
-    )
-  })
+  await installMockAdminSession(page)
 
   await page.goto('/#/plugins/v-table-gantt')
   await page.locator('.n-tabs-tab').filter({ hasText: '自定义渲染' }).click()
@@ -139,13 +116,7 @@ test('甘特图自定义渲染无需向 window 注入第三方模块', async ({ 
 })
 
 test('聊天自动回复留在发送时的联系人会话', async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem('token', JSON.stringify('mock-access.e2e'))
-    localStorage.setItem(
-      'userInfo',
-      JSON.stringify({ username: 'E2E', displayName: 'E2E' })
-    )
-  })
+  await installMockAdminSession(page)
   await page.goto('/#/plugins/chat')
   await expect(page.locator('.c-chat__contact')).toHaveCount(5)
   await expect(page.locator('.c-chat__msg').first()).toBeVisible()

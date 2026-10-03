@@ -78,7 +78,11 @@
 
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
-  import { loginApi, type LoginResponse } from '@/api/auth'
+  import {
+    activateAuthContextApi,
+    loginApi,
+    type LoginResponse,
+  } from '@/api/auth'
   import {
     onReLoginSuccess,
     onReLoginCancel,
@@ -133,6 +137,77 @@
     return typeof apiMessage === 'string' ? apiMessage : '登录失败，请检查密码'
   }
 
+  /** 重新验证身份，并在多公司模式下重新激活原工作上下文。 */
+  const requestReLoginSession = async (): Promise<LoginResponse> => {
+    const identityResponse = await loginApi({
+      username: formUsername.value,
+      password: password.value,
+    })
+    if (String(identityResponse.code) !== '0') {
+      throw new Error(identityResponse.msg || '身份验证失败')
+    }
+    if (!identityResponse.data.availableContexts) return identityResponse
+
+    const contextId = userStore.activeContext?.id
+    const { loginTicket } = identityResponse.data
+    if (!contextId || !loginTicket) {
+      throw new Error('公司上下文已失效，请重新登录')
+    }
+    const activated = await activateAuthContextApi({ loginTicket, contextId })
+    if (String(activated.code) !== '0') {
+      throw new Error(activated.msg || '公司会话恢复失败')
+    }
+    return activated
+  }
+
+  const assertSameAccount = (username?: string) => {
+    if (
+      username &&
+      userStore.userInfo.username &&
+      username.toLowerCase() !== userStore.userInfo.username.toLowerCase()
+    ) {
+      throw new Error('账号身份已变化，请重新登录')
+    }
+  }
+
+  const assertSameContext = (
+    activeContext: LoginResponse['data']['activeContext'],
+    availableContexts: LoginResponse['data']['availableContexts']
+  ) => {
+    if (
+      userStore.activeContext &&
+      activeContext?.id !== userStore.activeContext.id
+    ) {
+      throw new Error('公司上下文已变化，请重新登录')
+    }
+    if (
+      activeContext &&
+      !availableContexts?.some(item => item.id === activeContext.id)
+    ) {
+      throw new Error('公司上下文已变化，请重新登录')
+    }
+  }
+
+  /** 校验完成后更新同一公司会话，不改动当前页面的业务路由。 */
+  const restoreReLoginSession = (response: LoginResponse) => {
+    const {
+      token,
+      refreshToken,
+      expiresIn,
+      user,
+      activeContext,
+      availableContexts,
+    } = response.data
+    if (!token) throw new Error('登录会话不完整，请重新登录')
+    assertSameAccount(user?.username)
+    assertSameContext(activeContext, availableContexts)
+    userStore.handleLoginSuccess(token, refreshToken, expiresIn)
+    if (user) userStore.setUserInfo(user)
+    if (activeContext && availableContexts) {
+      userStore.setAuthContexts(availableContexts, activeContext)
+    }
+  }
+
   // 处理登录
   const handleLogin = async () => {
     if (!password.value) {
@@ -148,16 +223,7 @@
       userStore.setToken('')
 
       try {
-        // 调用登录 API（不需要验证码）
-        const response: LoginResponse = await loginApi({
-          username: formUsername.value,
-          password: password.value,
-        })
-
-        // 更新 token 并续期
-        const { token, refreshToken, expiresIn } = response.data
-        userStore.handleLoginSuccess(token, refreshToken, expiresIn)
-        if (response.data.user) userStore.setUserInfo(response.data.user)
+        restoreReLoginSession(await requestReLoginSession())
 
         message.success('重新登录成功')
         password.value = ''

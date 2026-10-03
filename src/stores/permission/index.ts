@@ -20,6 +20,7 @@ import {
 import { getKeepAliveRouterName, getShowMenuList } from '@/utils/d_route'
 import { collectRoutePaths } from '@/router/routePath'
 import type { DynamicRoute } from '@/router/dynamicRouter'
+import type { AuthContext } from '@/api/auth.contract'
 import type {
   ButtonPermissionMap,
   DataPermission,
@@ -79,10 +80,12 @@ export const s_permissionStore = defineStore('permission', {
      * * @description: 获取菜单列表并构建路由 path 集合
      * ! @return {Promise<AuthMenuResponse>} 菜单列表响应
      */
-    async getAuthMenuList(): Promise<AuthMenuResponse> {
+    async getAuthMenuList(
+      context?: AuthContext | null
+    ): Promise<AuthMenuResponse> {
       const generation = this.requestGeneration
       try {
-        const res = await getAuthMenuListApi()
+        const res = await getAuthMenuListApi(context)
         if (generation === this.requestGeneration) {
           this.authMenuList = res.data
           // 构建合法路由路径列表

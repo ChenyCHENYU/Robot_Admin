@@ -254,6 +254,34 @@
               </NSpace>
             </NCard>
 
+            <NCard
+              v-if="mockMode"
+              title="企业归属"
+              size="small"
+            >
+              <NSpace
+                vertical
+                :size="10"
+              >
+                <div
+                  v-for="membership in getUserMemberships(currentUser.username)"
+                  :key="membership.contextId"
+                  class="membership-summary"
+                >
+                  <NTag
+                    :type="membership.isPrimary ? 'info' : 'default'"
+                    size="small"
+                  >
+                    {{ membership.isPrimary ? '主公司' : '兼任' }}
+                  </NTag>
+                  <strong>{{ getCompanyName(membership.contextId) }}</strong>
+                  <NText depth="3">{{
+                    getCompanyRoleName(membership.roleId)
+                  }}</NText>
+                </div>
+              </NSpace>
+            </NCard>
+
             <!-- 时间信息 -->
             <NCard
               title="时间信息"
@@ -352,6 +380,56 @@
           </NGi>
         </NGrid>
 
+        <NCard
+          v-if="mockMode"
+          title="企业归属与公司内角色"
+          size="small"
+          class="membership-editor"
+        >
+          <p
+            >登录默认进入主公司；兼任公司可在登录后切换。每个账号必须且只能有一个主公司。</p
+          >
+          <div
+            v-for="(membership, index) in formData.memberships"
+            :key="index"
+            class="membership-editor__row"
+          >
+            <NSelect
+              :value="membership.contextId"
+              :options="getCompanyOptions(membership.contextId)"
+              placeholder="选择公司"
+              @update:value="membership.contextId = $event"
+            />
+            <NSelect
+              :value="membership.roleId"
+              :options="companyRoleOptions"
+              placeholder="公司内角色"
+              @update:value="membership.roleId = $event"
+            />
+            <NButton
+              size="small"
+              :type="membership.isPrimary ? 'primary' : 'default'"
+              @click="setPrimaryMembership(index)"
+            >
+              {{ membership.isPrimary ? '主公司' : '设为主公司' }}
+            </NButton>
+            <NButton
+              size="small"
+              quaternary
+              :disabled="formData.memberships.length === 1"
+              @click="removeCompanyMembership(index)"
+              >移除</NButton
+            >
+          </div>
+          <NButton
+            dashed
+            block
+            :disabled="formData.memberships.length >= companyOptions.length"
+            @click="addCompanyMembership"
+            >+ 添加兼任公司</NButton
+          >
+        </NCard>
+
         <NFormItem
           label="备注"
           path="remark"
@@ -411,6 +489,16 @@
 
 <script setup lang="ts">
   import { useLatestRequest } from '@/composables/useLatestRequest'
+  import { isMockDataMode } from '@/config/dataMode'
+  import { s_userStore } from '@/stores/user'
+  import {
+    getMockCompanies,
+    getMockCompanyRoles,
+    getMockDirectoryUser,
+    removeMockDirectoryUser,
+    upsertMockDirectoryUser,
+    validateMockMemberships,
+  } from '@/api/auth.mock-directory'
   import type { Component } from 'vue'
   import {
     type FormInst,
@@ -451,6 +539,7 @@
     updateUserStatusApi,
     resetUserPasswordApi,
     MOCK_USER_DATA,
+    persistMockUsers,
     getRoleNameById,
     getDeptNameById,
     findDeptById,
@@ -461,6 +550,49 @@
 
   const message = useMessage()
   const dialog = useDialog()
+  const mockMode = isMockDataMode()
+  const userStore = s_userStore()
+  const companyOptions = getMockCompanies().map(company => ({
+    label: `${company.tenantName} · ${company.companyName}`,
+    value: company.id,
+  }))
+  const companyRoleOptions = getMockCompanyRoles().map(role => ({
+    label: role.name,
+    value: role.id,
+  }))
+  const getCompanyName = (contextId: string) =>
+    companyOptions.find(item => item.value === contextId)?.label ?? contextId
+  const getCompanyRoleName = (roleId: string) =>
+    companyRoleOptions.find(item => item.value === roleId)?.label ?? roleId
+  const getUserMemberships = (username: string) =>
+    getMockDirectoryUser(username)?.memberships ?? []
+  const getCompanyOptions = (currentId: string) =>
+    companyOptions.filter(
+      option =>
+        option.value === currentId ||
+        !formData.memberships.some(item => item.contextId === option.value)
+    )
+  const setPrimaryMembership = (index: number) =>
+    formData.memberships.forEach((item, itemIndex) => {
+      item.isPrimary = itemIndex === index
+    })
+  const removeCompanyMembership = (index: number) => {
+    const wasPrimary = formData.memberships[index]?.isPrimary
+    formData.memberships.splice(index, 1)
+    if (wasPrimary && formData.memberships.length) setPrimaryMembership(0)
+  }
+  const addCompanyMembership = () => {
+    const available = companyOptions.find(
+      option =>
+        !formData.memberships.some(item => item.contextId === option.value)
+    )
+    if (!available) return
+    formData.memberships.push({
+      contextId: available.value,
+      isPrimary: !formData.memberships.length,
+      roleId: 'auditor',
+    })
+  }
 
   // ==================== 响应式数据 ====================
   const { loading, run: runLatestUserRequest } = useLatestRequest()
@@ -592,6 +724,17 @@
     // 更新当前用户详情
     if (currentUser.value?.id === userId) {
       currentUser.value = { ...currentUser.value, ...updates }
+    }
+    if (mockMode) {
+      persistMockUsers()
+      const updated = MOCK_USER_DATA.find(user => user.id === userId)
+      const directoryUser = updated && getMockDirectoryUser(updated.username)
+      if (updated && directoryUser) {
+        upsertMockDirectoryUser({
+          ...directoryUser,
+          enabled: updated.status === 1,
+        })
+      }
     }
   }
 
@@ -1137,9 +1280,12 @@
       ids.forEach(id => {
         const userIndex = MOCK_USER_DATA.findIndex(user => user.id === id)
         if (userIndex !== -1) {
+          if (mockMode)
+            removeMockDirectoryUser(MOCK_USER_DATA[userIndex].username)
           MOCK_USER_DATA.splice(userIndex, 1)
         }
       })
+      if (mockMode) persistMockUsers()
     }
 
     const batchToggleUsers = async (ids: string[]) => {
@@ -1213,9 +1359,13 @@
 
       if (mode === 'add') {
         const existingUser = MOCK_USER_DATA.find(
-          user => user.username === userData.username
+          user =>
+            user.username.toLowerCase() === userData.username.toLowerCase()
         )
-        if (existingUser) {
+        if (
+          existingUser ||
+          (mockMode && getMockDirectoryUser(userData.username))
+        ) {
           return { valid: false, error: '用户名已存在' }
         }
       }
@@ -1234,7 +1384,15 @@
 
       const newUser = buildUserData(userData)
       await createUserApi(userData)
+      if (mockMode) {
+        upsertMockDirectoryUser({
+          username: userData.username,
+          enabled: userData.status === 1,
+          memberships: userData.memberships,
+        })
+      }
       MOCK_USER_DATA.push(newUser)
+      if (mockMode) persistMockUsers()
       message.success('添加成功')
       return true
     }
@@ -1260,7 +1418,15 @@
       const updatedUser = buildUserData(userData, existingUser)
 
       await updateUserApi(userData.id!, userData)
+      if (mockMode) {
+        upsertMockDirectoryUser({
+          username: userData.username,
+          enabled: userData.status === 1,
+          memberships: userData.memberships,
+        })
+      }
       MOCK_USER_DATA[userIndex] = updatedUser
+      if (mockMode) persistMockUsers()
 
       if (currentUser.value?.id === userData.id) {
         currentUser.value = { ...updatedUser }
@@ -1335,6 +1501,13 @@
     modalMode.value = 'add'
     delete formData.id
     Object.assign(formData, DEFAULT_USER_FORM_DATA)
+    formData.memberships = [
+      {
+        contextId: userStore.activeContext?.id ?? companyOptions[0].value,
+        isPrimary: true,
+        roleId: 'auditor',
+      },
+    ]
     if (deptId) {
       formData.deptId = deptId
       if (deptId === 'dept_external') {
@@ -1364,6 +1537,7 @@
       remark: user.remark || '',
       companyName: user.companyName || '',
       contactPerson: user.contactPerson || '',
+      memberships: getUserMemberships(user.username).map(item => ({ ...item })),
     })
     showModal.value = true
   }
@@ -1395,7 +1569,10 @@
       await deleteUserApi(id)
       const userIndex = MOCK_USER_DATA.findIndex(user => user.id === id)
       if (userIndex !== -1) {
+        if (mockMode)
+          removeMockDirectoryUser(MOCK_USER_DATA[userIndex].username)
         MOCK_USER_DATA.splice(userIndex, 1)
+        if (mockMode) persistMockUsers()
       }
       message.success('删除成功')
       await loadUsers()
@@ -1435,6 +1612,7 @@
   const handleSaveUser = async (): Promise<boolean> => {
     try {
       await formRef.value?.validate()
+      if (mockMode) validateMockMemberships(formData.memberships)
       const success =
         modalMode.value === 'add'
           ? await handleAddUserData(formData)
@@ -1447,7 +1625,7 @@
       return success
     } catch (error) {
       if (error instanceof Array) return false
-      message.error('保存失败')
+      message.error(error instanceof Error ? error.message : '保存失败')
       return false
     }
   }
@@ -1456,6 +1634,7 @@
     showModal.value = false
     delete formData.id
     Object.assign(formData, DEFAULT_USER_FORM_DATA)
+    formData.memberships = []
   }
 
   // ==================== 数据加载 ====================
@@ -1465,6 +1644,7 @@
         ...searchForm,
         page: pagination.page,
         pageSize: pagination.pageSize,
+        contextId: mockMode ? userStore.activeContext?.id : undefined,
       }
       const response = await runLatestUserRequest(signal =>
         getUserListApi(params, signal)

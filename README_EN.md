@@ -224,9 +224,13 @@ so local paths cannot leak into release artifacts.
 
 ### 🔐 Authentication Mock and Backend Switching
 
-Development and test builds use closed-loop authentication and business-data Mocks by default. Login, token refresh, and user data keep the same response contract as the remote API. Any non-empty username and password can sign in; Mock tokens are random opaque values and never embed plaintext credentials. The public demo must opt in with `VITE_DEPLOYMENT_PROFILE=demo`; real applications use the `application` profile and remote APIs.
+Development and test builds use closed-loop authentication and business-data Mocks by default. The enterprise login shows only password and captcha flows. `CHENY / 123456` enters its primary Jiangsu Jinheng (Nanjing) company automatically; the header switches to concurrent Jiangsu Jinheng (Xi'an) and Xi'an Tianzhi memberships, changing menus and sample business data. User management can edit primary/concurrent companies and company-specific roles. `STAFF` has one company; `NOACCESS` has none. Mock accepts any non-empty password; its local puzzle is only a UI demo, not production authentication, bot protection, or tenant isolation. The public demo must opt in with `VITE_DEPLOYMENT_PROFILE=demo`; real applications use the `application` profile and remote APIs.
 
-To connect a backend, set `VITE_DEPLOYMENT_PROFILE=application`, `VITE_AUTH_MODE=remote`, and `VITE_DATA_MODE=remote`, then configure the endpoint through `VITE_API_BASE`. Production and staging application builds reject Mock mode; only an explicit `demo` profile permits it. No page or store changes are required. The contract lives in `src/api/auth.contract.ts`, and the Mock implementation lives in `src/api/auth.mock.ts`.
+To connect a backend, set `VITE_DEPLOYMENT_PROFILE=application`, `VITE_AUTH_MODE=remote`, and `VITE_DATA_MODE=remote`, then configure `VITE_API_BASE`. Existing single-context remote responses still work. Real multi-tenancy additionally requires server-verified company activation and switching, context-bound tokens, and server-side data isolation. Production and staging application builds reject Mock mode. See [`docs/enterprise-auth.md`](docs/enterprise-auth.md) for the contract and integration boundary.
+
+Each build emits a read-only `/build-info.json` identity card with the app version, environment, deployment profile, Git revision, branch, and build time. It is linked from the signed-in user menu; the development server also serves it with `builtAt: null`. Inspired by the enterprise portal's `env.json`, it deliberately excludes runtime configuration, API addresses, and secrets. See [`docs/build-identity.md`](docs/build-identity.md) for the schema and caching policy.
+
+The planned federation architecture has three project types: a `systemApp` platform host including common administration, a customizable `public` portal, and a `template` for business applications. This split is planned, not yet implemented. Responsibilities, rollout stages, and acceptance criteria are recorded in [`docs/module-federation-platform-plan.md`](docs/module-federation-platform-plan.md).
 
 ---
 
@@ -738,7 +742,7 @@ bun run build:application # envs/.env.staging: real-application staging artifact
 
 - [ ] 📈 Real-user Web Vitals and observability integration
 - [ ] 🎨 Visual low-code page templates
-- [ ] 🏢 Multi-tenant support
+- [x] 🏢 Frontend multi-tenant company and role demo (server isolation pending)
 
 ### 🌟 Long-term Vision
 
