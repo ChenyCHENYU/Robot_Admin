@@ -31,7 +31,7 @@
       >
       <h2>一个账号，<br /><em>连接每个工作空间。</em></h2>
       <p
-        >以主公司开启工作，在已授权的公司间从容切换。<br />角色、权限与业务数据始终跟随当前公司。</p
+        >登录前选好公司，在已授权的公司间从容切换。<br />角色、权限与业务数据始终跟随当前公司。</p
       >
       <div
         v-if="authMode === 'mock'"
@@ -82,8 +82,8 @@
         <div class="workspace-visual__company"
           ><span class="workspace-visual__mark">01</span
           ><div
-            ><strong>自动进入主公司</strong
-            ><small>工作空间由授权关系确定</small></div
+            ><strong>登录前选择公司</strong
+            ><small>输入账号后显示已关联公司</small></div
           ></div
         >
         <div class="workspace-visual__company"
@@ -102,10 +102,11 @@
       <C_Login
         ref="loginRef"
         title="Robot Admin"
-        :subtitle="t('lp_subtitle', '登录后自动进入主公司，兼任公司可随时切换')"
+        :subtitle="t('lp_subtitle', '选择工作公司后登录，进入后也可随时切换')"
         :features="loginFeatures"
         storage-key="robot-admin-enterprise-login"
         :loading="loading"
+        :submit-disabled="!companyReady"
         :captcha-provider="LOGIN_CAPTCHA_PROVIDER"
         :captcha-challenge-url="LOGIN_CAPTCHA_CHALLENGE_URL"
         :captcha-verifier="LOGIN_CAPTCHA_VERIFIER"
@@ -115,8 +116,47 @@
         :default-username="loginDefaults.username"
         :default-password="loginDefaults.password"
         @submit="submitLogin"
+        @username-change="workspaceUsername = $event"
         @captcha-visible-change="captchaVisible = $event"
-      />
+      >
+        <template #password-fields>
+          <div
+            class="login-workspace"
+            aria-live="polite"
+            :aria-busy="companyLoading"
+          >
+            <label
+              id="login-company-label"
+              class="login-workspace__label"
+              >工作公司</label
+            >
+            <NSelect
+              v-model:value="selectedCompanyId"
+              :options="companyOptions"
+              :loading="companyLoading"
+              :disabled="loading || companyLoading || companies.length < 2"
+              :placeholder="companyLoading ? '正在查询公司…' : '请选择工作公司'"
+              :theme-overrides="LOGIN_COMPANY_SELECT_THEME"
+              :status="companyError ? 'error' : undefined"
+              aria-labelledby="login-company-label"
+              filterable
+            />
+            <p
+              class="login-workspace__hint"
+              :class="{ 'login-workspace__hint--error': companyError }"
+              >{{ companyHint }}</p
+            >
+            <button
+              v-if="companyError"
+              type="button"
+              class="login-workspace__retry"
+              :disabled="loading"
+              @click="queryCompanies"
+              >重新查询</button
+            >
+          </div>
+        </template>
+      </C_Login>
     </div>
   </div>
 </template>
@@ -131,11 +171,13 @@
     loginApi,
     type LoginResponse,
   } from '@/api/auth'
-  import { getPrimaryAuthContext } from '@/api/auth.contract'
+  import { resolveLoginAuthContext } from '@/api/auth.contract'
+  import { useLoginWorkspace } from '@/composables/useLoginWorkspace'
   import { applyAuthSession } from '@/utils/d_authSession'
   import { useLoginController } from '@/composables/useLoginController'
   import {
     createWelcomeConfig,
+    LOGIN_COMPANY_SELECT_THEME,
     resolveLoginDefaults,
     resolveLoginFeatures,
   } from './data'
@@ -163,6 +205,20 @@
   const authMode = getAuthMode()
   const loginDefaults = resolveLoginDefaults(authMode)
   const loginFeatures = resolveLoginFeatures()
+
+  const {
+    username: workspaceUsername,
+    companies,
+    selectedCompanyId,
+    companyLoading,
+    companyError,
+    companyOptions,
+    companyHint,
+    companyReady,
+    queryCompanies,
+    requireSelectedCompany,
+  } = useLoginWorkspace()
+  let requestedContextId: string | undefined
 
   // ===== i18n helper =====
   const t = (key: string, fallback: string) =>
@@ -198,24 +254,34 @@
     loading,
     handleLogin: submitLogin,
   } = useLoginController<LoginResponse>({
-    loginApi,
+    loginApi: payload => {
+      requestedContextId = requireSelectedCompany(payload.username)
+      return loginApi({ ...payload, contextId: requestedContextId })
+    },
     successMessage: t('lp_login_ok', '登录成功'),
     errorMessage: t('lp_login_err', '账号或密码错误'),
     welcomeConfig: createWelcomeConfig(t),
-    shouldNotifySuccess: response => !response.data.availableContexts,
 
     onLoginSuccess: async (response, formData) => {
       const contexts = response.data.availableContexts
       if (!contexts) {
+        if (response.data.activeContext?.id !== requestedContextId)
+          throw new Error('公司会话与所选公司不一致，请重新登录')
         await enterSession(response, formData.username)
         return
       }
-      const primary = getPrimaryAuthContext(contexts)
+      const selected = resolveLoginAuthContext(contexts, requestedContextId)
+      if (response.data.activeContext) {
+        if (response.data.activeContext.id !== selected.id)
+          throw new Error('公司会话与所选公司不一致，请重新登录')
+        await enterSession(response, formData.username)
+        return
+      }
       if (!response.data.loginTicket)
         throw new Error('登录验证凭据缺失，请重新登录')
       const activated = await requestActivatedSession(
         response.data.loginTicket,
-        primary.id
+        selected.id
       )
       await enterSession(activated, formData.username)
     },
@@ -249,7 +315,10 @@
     if (String(response.code) !== '0') {
       throw new Error(response.msg || '公司激活失败')
     }
-    if (!response.data.activeContext || !response.data.availableContexts) {
+    if (
+      response.data.activeContext?.id !== contextId ||
+      !response.data.availableContexts
+    ) {
       throw new Error('公司会话不完整，请重新登录')
     }
     return response

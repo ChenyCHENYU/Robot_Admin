@@ -37,7 +37,7 @@ const solveDemoCaptcha = async (page: import('@playwright/test').Page) => {
   ).toBeVisible()
 }
 
-test('登录后自动进入唯一主公司，兼任公司不在登录页选择', async ({ page }) => {
+test('登录前默认选中主公司，登录后进入对应上下文', async ({ page }) => {
   test.setTimeout(60_000)
   await page.addInitScript(() => {
     Math.random = () => 0.5
@@ -46,6 +46,10 @@ test('登录后自动进入唯一主公司，兼任公司不在登录页选择',
   await expect(page.locator('.typewriter-overlay')).toHaveCount(0)
   await expect(page.locator('.c-login__social-row')).toHaveCount(0)
   await expect(page.locator('.c-login__captcha-wrap')).toBeVisible()
+  await expect(page.locator('.login-workspace')).toContainText(
+    '江苏金恒（南京）'
+  )
+  await expect(page.locator('.login-workspace')).toContainText('默认选择主公司')
   await solveDemoCaptcha(page)
   await page.locator('.c-login__submit-btn').click()
 
@@ -63,12 +67,17 @@ test('单公司自动进入，无公司明确阻止', async ({ page }) => {
   })
   await page.goto('/#/login', { waitUntil: 'domcontentloaded' })
   await page.getByPlaceholder('请输入用户名').fill('NOACCESS')
-  await solveDemoCaptcha(page)
-  await page.locator('.c-login__submit-btn').click()
-  await expect(page.getByText('当前账号未关联公司')).toBeVisible()
+  await expect(page.locator('.login-workspace')).toContainText(
+    '当前账号未关联公司'
+  )
+  await expect(page.locator('.c-login__submit-btn')).toBeDisabled()
   expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
 
   await page.getByPlaceholder('请输入用户名').fill('STAFF')
+  await expect(page.locator('.login-workspace')).toContainText('西安天智')
+  await expect(page.locator('.login-workspace')).toContainText(
+    '已自动选择唯一关联公司'
+  )
   await solveDemoCaptcha(page)
   await page.locator('.c-login__submit-btn').click()
   await expect(page).toHaveURL(/#\/home$/, { timeout: 20_000 })
@@ -158,4 +167,75 @@ test('用户管理变更主/兼任公司后，下次登录进入新主公司', a
   await expect(page.locator('.enterprise-overview')).toContainText(
     '江苏金恒（西安）'
   )
+})
+
+test('登录前选择兼任公司，进入后的菜单与切换公司保持一致', async ({ page }) => {
+  test.setTimeout(60_000)
+  await page.addInitScript(() => {
+    Math.random = () => 0.5
+  })
+  await page.goto('/#/login', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('.login-workspace')).toContainText(
+    '江苏金恒（南京）'
+  )
+  await page.locator('.login-workspace .n-base-selection').click()
+  await page.getByText('江苏金恒（西安）', { exact: true }).last().click()
+  await expect(
+    page.locator('.login-workspace .n-base-selection')
+  ).toContainText('江苏金恒（西安）')
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
+  await expect(page).toHaveURL(/#\/home$/, { timeout: 20_000 })
+  await expect(page.locator('.enterprise-overview')).toContainText('运营经理')
+  expect(
+    await page.evaluate(() => JSON.parse(localStorage.getItem('token') || '""'))
+  ).toMatch(/^mock-access\.jinheng-xian\./)
+  await page.goto('/#/sys-manage/menu-manage')
+  await expect(page).toHaveURL(/#\/401$/)
+  await page.locator('.navbar-right .user-info').click()
+  await page.getByRole('button', { name: '切换公司' }).click()
+  await page
+    .getByRole('button', { name: '进入 江苏金恒 · 江苏金恒（南京）' })
+    .click()
+  await expect(page.locator('.enterprise-overview')).toContainText('企业管理员')
+  await page.goto('/#/sys-manage/menu-manage')
+  await expect(page).toHaveURL(/#\/sys-manage\/menu-manage$/)
+})
+
+test('账号改变立即清空已选兼任公司，不能携带旧选择提交', async ({ page }) => {
+  test.setTimeout(60_000)
+  await page.addInitScript(() => {
+    Math.random = () => 0.5
+  })
+  await page.goto('/#/login', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('.login-workspace')).toContainText(
+    '江苏金恒（南京）'
+  )
+  await page.locator('.login-workspace .n-base-selection').click()
+  await page.getByText('江苏金恒（西安）', { exact: true }).last().click()
+  await solveDemoCaptcha(page)
+  await expect(page.locator('.c-login__submit-btn')).toBeEnabled()
+  await page.getByPlaceholder('请输入用户名').fill('STAFF')
+  await expect(page.locator('.login-workspace')).not.toContainText(
+    '江苏金恒（西安）'
+  )
+  await expect(page.locator('.login-workspace')).toContainText('西安天智')
+  await page.getByPlaceholder('请输入用户名').clear()
+  await expect(page.locator('.login-workspace')).toContainText(
+    '输入账号后显示已关联公司'
+  )
+  await expect(page.locator('.login-workspace')).not.toContainText('西安天智')
+  await expect(page.locator('.c-login__submit-btn')).toBeDisabled()
+  await page.getByPlaceholder('请输入密码').first().press('Enter')
+  await expect(page).toHaveURL(/#\/login$/)
+  expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
+})
+
+test('回车不能绕过登录人机验证', async ({ page }) => {
+  await page.goto('/#/login', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('.login-workspace')).toContainText('默认选择主公司')
+  await page.getByPlaceholder('请输入密码').first().press('Enter')
+  await expect(page).toHaveURL(/#\/login$/)
+  expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
+  await expect(page.locator('.c-login__submit-btn')).toBeDisabled()
 })

@@ -15,12 +15,14 @@ import {
   type AuthContext,
   type LoginRequest,
   type LoginResponse,
+  type LoginCompaniesResponse,
   type RefreshTokenResponse,
 } from './auth.contract'
 import {
   activateMockAuthContextApi,
   isMockRouteAllowed,
   loginMockApi,
+  getLoginCompaniesMockApi,
   refreshTokenMockApi,
   switchMockAuthContextApi,
 } from './auth.mock'
@@ -28,6 +30,7 @@ import {
 export type {
   AuthContext,
   LoginResponse,
+  LoginCompaniesResponse,
   RefreshTokenResponse,
 } from './auth.contract'
 
@@ -104,3 +107,11 @@ export const getAuthMenuListApi = (
         ),
       })
     : getData<AuthMenuResponse>('/auth/menu-list')
+
+/** 按账号发现可选公司，不提前创建登录会话。 */
+export const getLoginCompaniesApi = (
+  username: string
+): Promise<LoginCompaniesResponse> =>
+  AUTH_MODE === 'mock'
+    ? getLoginCompaniesMockApi(username)
+    : postData<LoginCompaniesResponse>('/auth/login-companies', { username })

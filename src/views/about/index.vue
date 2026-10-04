@@ -1,244 +1,177 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-05
+ * @FilePath: \Robot_Admin\src\views\about\index.vue
+ * @Description: 项目与实际依赖信息，统一应用主题与响应式布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
-  <div class="tech-profile-page">
-    <!-- 个人栏 -->
-    <div class="profile-header">
-      <div class="profile-info">
-        <NAvatar
-          :size="60"
-          round
+  <div class="about-page">
+    <section class="about-hero">
+      <div class="about-hero__identity">
+        <img
+          class="about-hero__logo"
           src="/robot-avatar.png"
+          alt="Robot Admin"
+          width="64"
+          height="64"
         />
-        <div class="user-info">
-          <div class="name-row">
-            <h2>CHENY</h2>
+        <div>
+          <p class="about-hero__eyebrow">ABOUT THE PROJECT</p>
+          <h1
+            >Robot Admin
             <NTag
-              type="success"
-              size="small"
+              type="info"
               round
-            >
-              <template #icon>
-                <i class="i-mdi-map-marker-alert-outline" />
-              </template>
-              Creator
-            </NTag>
-          </div>
-          <p class="intro">一只小趴菜 | 🐔🐤🐓 菜鸡互啄</p>
-          <p class="id-info">
-            The following are the technical application scenarios and dependent
-            versions used in the project...
-          </p>
+              >v{{ applicationVersion }}</NTag
+            ></h1
+          >
+          <p class="about-hero__description"
+            >企业后台工程底座 · 统一身份、多公司工作空间与角色权限</p
+          >
         </div>
       </div>
-      <div class="profile-version">
-        <span class="version-text">活跃 / 稳定</span>
+      <div class="about-hero__meta">
+        <span>维护者 <strong>CHENY</strong></span>
+        <span
+          >组件库 <strong>{{ componentVersion }}</strong></span
+        >
+        <span>许可证 <strong>MIT</strong></span>
       </div>
-    </div>
+    </section>
 
-    <!-- 项目概览 -->
-    <div class="section-header">
-      <span class="section-title">技术选型</span>
+    <div class="about-toolbar">
+      <div
+        ><h2>技术选型</h2
+        ><p>版本来自当前构建实际安装的依赖，点击查看应用场景。</p></div
+      >
       <NInput
         v-model:value="searchText"
-        placeholder="搜索项目…"
-        size="small"
-        class="project-search"
+        class="about-search"
+        placeholder="搜索技术、包名或场景"
+        clearable
+        aria-label="搜索技术依赖"
       />
     </div>
 
-    <!-- 卡片区 -->
-    <div class="cards-grid">
+    <div class="about-grid">
       <button
-        v-for="project in filteredProjects"
-        :key="project.bagName"
+        v-for="project in filteredCoreProjects"
+        :key="project.name"
         type="button"
-        class="card"
-        :aria-label="`查看 ${project.name} 详情`"
+        class="about-tech"
+        :aria-label="`查看 ${project.title} 详情`"
         @click="openModal(project)"
       >
-        <div class="icon">
-          <NImage
-            width="36"
-            height="36"
-            :src="project.icon"
-            :fallback-src="notDataImage"
-            preview-disabled
-          />
-        </div>
-        <div class="info">
-          <span class="title">{{ project.name }}</span>
-          <span class="short-desc">{{
-            project.shortDesc || project.bagName
-          }}</span>
-        </div>
-        <NTag
-          :type="getVersionType(project.version ?? '')"
-          size="tiny"
-          round
-          class="version-tag"
+        <span
+          class="about-tech__mark"
+          aria-hidden="true"
+          >{{ project.mark }}</span
         >
-          {{ project.version }}
-        </NTag>
+        <span class="about-tech__info"
+          ><strong>{{ project.title }}</strong
+          ><small>{{ project.description }}</small></span
+        >
+        <span class="about-tech__version">{{ project.version }}</span>
       </button>
     </div>
+    <NEmpty
+      v-if="!filteredCoreProjects.length"
+      description="没有匹配的技术选型"
+    />
 
-    <!-- 表格区域 -->
-    <div class="table-area">
-      <div class="table-block">
-        <div class="table-title">生产依赖</div>
-        <NDataTable
-          :columns="projectColumns"
-          :data="productionDependencies"
-          size="small"
-          :bordered="false"
-          striped
-          :row-props="createRowProps"
-        />
-      </div>
+    <section
+      v-for="group in dependencyGroups"
+      :key="group.title"
+      class="about-dependencies"
+    >
+      <div class="about-dependencies__heading"
+        ><h2>{{ group.title }}</h2
+        ><span>{{ group.items.length }} 个直接依赖</span></div
+      >
+      <NDataTable
+        :columns="columns"
+        :data="group.items"
+        :row-key="row => row.name"
+        :row-props="createRowProps"
+        :pagination="{ pageSize: 10 }"
+        :scroll-x="650"
+        :bordered="false"
+        size="small"
+      />
+    </section>
 
-      <div class="table-block">
-        <div class="table-title">开发依赖</div>
-        <NDataTable
-          :columns="devColumns"
-          :data="devDependencies"
-          size="small"
-          :bordered="false"
-          striped
-          :row-props="createRowProps"
-        />
-      </div>
-    </div>
-
-    <!-- 详情弹窗 -->
     <NModal
       v-model:show="showModal"
       preset="card"
-      :style="{ width: '420px' }"
+      :title="currentItem?.title"
+      :style="{ width: 'min(520px, calc(100vw - 32px))' }"
+      class="about-detail"
       :bordered="false"
-      class="detail-modal"
-      :mask-closable="true"
     >
-      <template #header>
-        <div class="modal-header">
-          <div class="icon">
-            <NImage
-              width="40"
-              height="40"
-              :src="currentItem.icon"
-              :fallback-src="notDataImage"
-              preview-disabled
-            />
-          </div>
-          <div class="modal-title-block">
-            <span class="modal-title">{{ currentItem.name }}</span>
-            <NTag
-              :type="getVersionType(currentItem.version || '')"
-              size="small"
-              round
-            >
-              {{ currentItem.version }}
-            </NTag>
-          </div>
-        </div>
-      </template>
-
-      <div class="modal-content">
-        <div class="modal-item">
-          <span class="label">包名：</span>
-          <span class="text">{{ currentItem.bagName }}</span>
-        </div>
-        <div class="modal-item">
-          <span class="label">应用场景：</span>
-          <span class="text">{{ currentItem.desc }}</span>
-        </div>
-        <div class="modal-item">
-          <span class="label">官网地址：</span>
-          <span class="text">
-            <a
-              :href="currentItem.url"
-              target="_blank"
-            >
-              点击访问
-            </a>
-          </span>
-        </div>
-      </div>
+      <dl
+        v-if="currentItem"
+        class="about-detail__fields"
+      >
+        <dt>依赖包</dt><dd>{{ currentItem.name }}</dd> <dt>安装版本</dt
+        ><dd>{{ currentItem.version }}</dd> <dt>声明范围</dt
+        ><dd>{{ currentItem.declaredVersion }}</dd> <dt>应用场景</dt
+        ><dd>{{ currentItem.description }}</dd> <dt>包信息</dt
+        ><dd
+          ><a
+            :href="currentItem.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            >查看包主页 ↗</a
+          ></dd
+        >
+      </dl>
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
+  import type { DataTableRowData } from 'naive-ui'
   import {
-    NTag,
-    NInput,
-    NImage,
-    NAvatar,
-    NDataTable,
-    NModal,
-    type DataTableRowData,
-  } from 'naive-ui/es'
-
-  import notDataImage from '@/assets/images/notData.png'
-  import {
+    applicationVersion,
+    componentVersion,
     coreProjects,
     productionDependencies,
     devDependencies,
-    getVersionType,
+    filterProjects,
     createProjectColumns,
-    createDevColumns,
     type ProjectItem,
   } from './data'
 
-  // 响应式数据
+  defineOptions({ name: 'AboutPage' })
   const searchText = ref('')
   const showModal = ref(false)
-  const currentItem = ref<ProjectItem>({
-    name: '',
-    bagName: '',
-    desc: '',
-    version: '',
-    icon: '',
-    url: '',
-  })
+  const currentItem = ref<ProjectItem | null>(null)
+  const columns = createProjectColumns()
+  const filteredCoreProjects = computed(() =>
+    filterProjects(coreProjects, searchText.value)
+  )
+  const dependencyGroups = computed(() => [
+    {
+      title: '生产依赖',
+      items: filterProjects(productionDependencies, searchText.value),
+    },
+    {
+      title: '开发依赖',
+      items: filterProjects(devDependencies, searchText.value),
+    },
+  ])
 
-  // 计算属性
-  const filteredProjects = computed(() => {
-    const projects = coreProjects
-
-    if (!searchText.value.trim()) return projects
-
-    const keyword = searchText.value.toLowerCase().trim()
-    return projects.filter(
-      project =>
-        project.name.toLowerCase().includes(keyword) ||
-        project.bagName.toLowerCase().includes(keyword) ||
-        project.desc.toLowerCase().includes(keyword)
-    )
-  })
-
-  // 表格列配置
-  const projectColumns = createProjectColumns()
-  const devColumns = createDevColumns()
-
-  /**
-   * 创建行属性
-   * @param row 行数据
-   * @returns 行属性
-   */
-  function createRowProps(row: DataTableRowData) {
-    return {
-      style: 'cursor: pointer;',
-      onClick: () => openModal(row as ProjectItem),
-    }
-  }
-
-  /**
-   * 打开模态框
-   * @param item 项目数据
-   */
-  function openModal(item: ProjectItem) {
-    currentItem.value = { ...item }
+  /** 打开依赖详情，展示安装版本和声明范围的区别。 */
+  const openModal = (item: ProjectItem) => {
+    currentItem.value = item
     showModal.value = true
   }
+  /** 为依赖行提供详情入口。 */
+  const createRowProps = (row: DataTableRowData) => ({
+    style: 'cursor: pointer',
+    onClick: () => openModal(row as ProjectItem),
+  })
 </script>
 
 <style scoped lang="scss">

@@ -403,3 +403,33 @@ $transition-duration: 0.25s;
     }
   }
 }
+
+.login-workspace {
+  margin: 0 0 18px;
+
+  &__label {
+    display: block;
+    margin-bottom: 8px;
+    color: #dce8fc;
+    font-size: 12px;
+  }
+
+  &__hint {
+    margin: 8px 0 0;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #9fb3d2;
+  }
+
+  &__hint--error {
+    color: #ffb4b4;
+  }
+
+  &__retry {
+    padding: 4px 0;
+    background: transparent;
+    border: 0;
+    color: #a9c8ff;
+    cursor: pointer;
+  }
+}

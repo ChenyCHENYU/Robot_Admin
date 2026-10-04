@@ -16,19 +16,34 @@ export type AuthMode = 'mock' | 'remote'
 export interface LoginRequest {
   username?: string
   password?: string
+  /** 用户在登录前选择的公司上下文；认证服务须再次校验成员关系。 */
+  contextId?: string
   [key: string]: unknown
 }
 
 /** 一个可进入的企业工作上下文；角色只由认证服务授予，客户端不能自行提权。 */
 export interface AuthContext {
   id: string
-  /** 同一账号只能有一个主公司，登录后自动进入该公司。 */
+  /** 同一账号只能有一个主公司，登录前默认选中该公司。 */
   isPrimary: boolean
   tenantId: string
   tenantName: string
   companyId: string
   companyName: string
   roles: Array<{ id: string; name: string }>
+}
+
+/** 未登录时仅用于公司选择的展示信息，不携带角色或会话凭据。 */
+export type LoginCompany = Pick<
+  AuthContext,
+  'id' | 'isPrimary' | 'tenantName' | 'companyName'
+>
+
+/** 登录前按账号查询已关联公司，未知或停用账号返回空清单。 */
+export interface LoginCompaniesResponse {
+  code: string | number
+  data: { companies: LoginCompany[] }
+  msg?: string
 }
 
 /** 认证服务必须明确标注唯一主公司，避免客户端猜测列表顺序。 */
@@ -42,6 +57,18 @@ export const getPrimaryAuthContext = (contexts: AuthContext[]): AuthContext => {
     )
   }
   return primary[0]
+}
+
+/** 以认证后的授权清单验证选择；公司归属变化时不静默切换到其他公司。 */
+export const resolveLoginAuthContext = (
+  contexts: AuthContext[],
+  selectedId?: string
+): AuthContext => {
+  const primary = getPrimaryAuthContext(contexts)
+  if (!selectedId) return primary
+  const selected = contexts.find(context => context.id === selectedId)
+  if (!selected) throw new Error('所选公司已不可用，请重新选择公司')
+  return selected
 }
 
 /** 身份验证完成后，服务端签发的短时上下文选择凭据。 */

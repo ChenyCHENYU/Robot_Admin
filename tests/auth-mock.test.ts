@@ -12,12 +12,14 @@ import {
   createMockLoginResponse,
   createMockRefreshResponse,
   getMockAuthContexts,
+  getLoginCompaniesMockApi,
   isMockRouteAllowed,
   switchMockAuthContext,
 } from '../src/api/auth.mock'
 import {
   getPrimaryAuthContext,
   resolveAuthMode,
+  resolveLoginAuthContext,
 } from '../src/api/auth.contract'
 import { validateMockMemberships } from '../src/api/auth.mock-directory'
 
@@ -176,4 +178,32 @@ describe('认证 Mock 闭环', () => {
     )
     expect(refreshed.data.token).toStartWith('mock-access.tianzhi-xian.')
   })
+})
+
+test('登录前公司发现不返回角色与令牌，登录后重新校验所选公司', async () => {
+  const response = await getLoginCompaniesMockApi(' CHENY ')
+  expect(response.data.companies).toHaveLength(3)
+  expect(Object.keys(response.data.companies[0]).sort()).toEqual([
+    'companyName',
+    'id',
+    'isPrimary',
+    'tenantName',
+  ])
+  expect((await getLoginCompaniesMockApi('NOACCESS')).data.companies).toEqual(
+    []
+  )
+  const contexts = getMockAuthContexts('CHENY')
+  expect(resolveLoginAuthContext(contexts, 'jinheng-xian').roles[0].id).toBe(
+    'operations-manager'
+  )
+  expect(resolveLoginAuthContext(contexts).id).toBe('jinheng-nanjing')
+  expect(() => resolveLoginAuthContext(contexts, 'removed-company')).toThrow(
+    '所选公司已不可用'
+  )
+  expect(() =>
+    resolveLoginAuthContext(
+      contexts.filter(item => item.id !== 'jinheng-xian'),
+      'jinheng-xian'
+    )
+  ).toThrow('所选公司已不可用')
 })

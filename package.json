@@ -66,7 +66,7 @@
     "@robot-admin/file-utils": "3.0.1",
     "@robot-admin/form-validate": "3.4.2",
     "@robot-admin/layout": "3.2.1",
-    "@robot-admin/naive-ui-components": "0.13.1",
+    "@robot-admin/naive-ui-components": "0.13.2",
     "@robot-admin/request-core": "0.6.1",
     "@robot-admin/theme": "0.6.1",
     "@splinetool/runtime": "^1.12.68",

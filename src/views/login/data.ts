@@ -77,3 +77,29 @@ export const createWelcomeConfig = (
   getUserName: (response: LoginResponse) =>
     response.data.user?.displayName || response.data.user?.username || 'User',
 })
+
+/** 登录面板采用固定深色品牌背景，公司控件沿用同一色板。 */
+export const LOGIN_COMPANY_SELECT_THEME = {
+  peers: {
+    InternalSelection: {
+      color: 'rgba(7, 14, 27, 0.35)',
+      colorActive: 'rgba(7, 14, 27, 0.35)',
+      textColor: 'rgba(255, 255, 255, 0.95)',
+      placeholderColor: 'rgba(218, 230, 250, 0.55)',
+      border: '1px solid rgba(139, 176, 247, 0.25)',
+      borderHover: '1px solid #77a7ff',
+      borderFocus: '1px solid #77a7ff',
+      borderActive: '1px solid #77a7ff',
+      colorDisabled: 'rgba(7, 14, 27, 0.2)',
+      textColorDisabled: 'rgba(218, 230, 250, 0.8)',
+      placeholderColorDisabled: 'rgba(218, 230, 250, 0.55)',
+    },
+    InternalSelectMenu: {
+      color: '#18263d',
+      optionTextColor: '#e8eef9',
+      optionTextColorActive: '#a9c8ff',
+      optionColorPending: 'rgba(119, 167, 255, 0.12)',
+      optionColorActive: 'rgba(119, 167, 255, 0.18)',
+    },
+  },
+}

@@ -213,6 +213,7 @@ export function useLoginController<
 
   // ─── 密码登录 ───
   const handleLogin = async (formData: LoginFormData) => {
+    if (loading.value) return
     loading.value = true
     try {
       const response = await options.loginApi(buildPayload(formData))

@@ -23,6 +23,7 @@ import {
   createVuePluginOptions,
 } from './src/config/vite/index.ts'
 import { validateViteEnv } from './src/config/vite/viteEnvConfig.ts'
+import { createProjectInfoPlugin } from './src/config/vite/viteProjectInfoPlugin.ts'
 import { createBuildInfoPlugin } from './src/config/vite/viteBuildInfoPlugin.ts'
 import { getLocalPackageInfo } from './src/config/vite/localPackagesAlias.ts'
 
@@ -86,6 +87,7 @@ export default defineConfig(
         viteComponentsPlugin,
         createI18nPlugin(),
         createBuildInfoPlugin(validatedEnv),
+        createProjectInfoPlugin(),
         ...(process.env.ANALYZE
           ? [
               (await import('rollup-plugin-visualizer')).visualizer({

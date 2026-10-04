@@ -11,6 +11,7 @@ import type {
   AuthContext,
   LoginRequest,
   LoginResponse,
+  LoginCompaniesResponse,
   RefreshTokenResponse,
 } from './auth.contract'
 import { getMockAuthContexts } from './auth.mock-directory'
@@ -198,3 +199,22 @@ export const refreshTokenMockApi = (
   refreshToken: string
 ): Promise<RefreshTokenResponse> =>
   withMockLatency(() => createMockRefreshResponse(refreshToken))
+
+/** 公司预查询只返回展示信息，权限与凭据在认证完成后授予。 */
+export const getLoginCompaniesMockApi = (
+  username: string
+): Promise<LoginCompaniesResponse> =>
+  withMockLatency(() => ({
+    code: '0',
+    data: {
+      companies: getMockAuthContexts(username).map(
+        ({ id, isPrimary, tenantName, companyName }) => ({
+          id,
+          isPrimary,
+          tenantName,
+          companyName,
+        })
+      ),
+    },
+    msg: 'success',
+  }))

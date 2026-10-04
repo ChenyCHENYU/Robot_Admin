@@ -46,7 +46,6 @@ describe('UI regression contracts', () => {
     expect(loginSource).toContain('class="login-container"')
     expect(loginSource).toContain(':captcha-provider="LOGIN_CAPTCHA_PROVIDER"')
     expect(loginSource).toContain(':captcha-verifier="LOGIN_CAPTCHA_VERIFIER"')
-    expect(loginSource).toContain('getPrimaryAuthContext')
     expect(loginSource).not.toContain('<ContextPicker')
     expect(loginSource).not.toContain('SOCIAL_PROVIDERS')
 

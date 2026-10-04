@@ -1,432 +1,259 @@
-// 自适应主题变量定义
-$primary-color: #4a90e2;
-$primary-color-hover: #357abd;
-
-// 明亮主题色彩系统
-$text-secondary: rgba(182, 178, 178, 0.6);
-$text-tertiary: rgba(131, 131, 131, 0.38);
-
-// 明亮主题使用微妙的色彩而不是纯白
-$surface-elevated: rgba(248, 250, 252, 0.8);
-$surface-overlay: rgba(255, 255, 255, 0.95);
-$border-light: rgba(207, 203, 203, 0.08);
-$border-medium: rgba(196, 194, 194, 0.12);
-$divider: rgba(155, 152, 152, 0.06);
-$hover-overlay: rgba(0, 0, 0, 0.04);
-
-// 自然阴影定义
-$shadow-sm:
-  0 1px 3px rgba(0, 0, 0, 0.1),
-  0 1px 2px rgba(0, 0, 0, 0.06);
-$shadow-md:
-  0 4px 6px rgba(0, 0, 0, 0.05),
-  0 2px 4px rgba(0, 0, 0, 0.06);
-$shadow-lg:
-  0 10px 15px rgba(0, 0, 0, 0.08),
-  0 4px 6px rgba(0, 0, 0, 0.05);
-
-.tech-profile-page {
-  min-height: 100vh;
-  transition: all 0.3s ease;
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-05
+ * @FilePath: \Robot_Admin\src\views\about\index.scss
+ * @Description: 关于页使用应用主题变量与独立类名，避免异步全局样式冲突
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.about-page {
+  padding: clamp(16px, 2vw, 28px);
+  color: var(--app-text-primary);
+  min-width: 0;
+  container-type: inline-size;
 }
 
-.profile-header {
+.about-hero {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
-  padding: 0 24px;
-  height: 82px;
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid $divider;
-  transition: all 0.3s ease;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 26px;
+  background: linear-gradient(
+    120deg,
+    var(--app-hover-bg),
+    var(--app-bg-content)
+  );
+  border: 1px solid var(--app-border-default);
+  border-radius: 16px;
 
-  .profile-info {
+  &__identity {
     display: flex;
     align-items: center;
-    gap: 16px;
-
-    .user-info {
-      .name-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        h2 {
-          font-size: 21px;
-          font-weight: 600;
-          margin: 0;
-
-          transition: color 0.3s ease;
-        }
-      }
-
-      .intro {
-        color: $text-secondary;
-        font-size: 13px;
-        margin: 0;
-        transition: color 0.3s ease;
-      }
-
-      .id-info {
-        color: $text-tertiary;
-        font-size: 11.5px;
-        margin: 0;
-        transition: color 0.3s ease;
-      }
-    }
+    gap: 20px;
+    min-width: 0;
   }
-
-  .profile-version {
-    .version-text {
-      font-size: 14px;
-      font-weight: 600;
-      padding: 8px 16px;
-      background: $hover-overlay;
-      border-radius: 16px;
-      transition: all 0.3s ease;
-    }
+  &__logo {
+    flex-shrink: 0;
+    border-radius: 18px;
+    object-fit: contain;
+  }
+  &__eyebrow {
+    margin: 0 0 6px;
+    color: var(--app-primary);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+  h1 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: clamp(22px, 2vw, 28px);
+  }
+  &__description {
+    margin: 8px 0 0;
+    color: var(--app-text-secondary);
+    font-size: 13px;
+  }
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+  strong {
+    color: var(--app-text-primary);
+    font-weight: 600;
+    margin-left: 6px;
   }
 }
 
-.section-header {
+.about-toolbar {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
-  padding: 24px;
-
-  .section-title {
+  justify-content: space-between;
+  gap: 16px;
+  margin: 28px 0 18px;
+  h2 {
+    margin: 0;
     font-size: 17px;
-    font-weight: 500;
-    transition: color 0.3s ease;
   }
-
-  .project-search {
-    min-width: 180px;
-    width: 240px;
+  p {
+    margin: 6px 0 0;
+    color: var(--app-text-secondary);
+    font-size: 12px;
   }
 }
-
-.cards-grid {
+.about-search {
+  width: min(100%, 280px);
+}
+.about-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
-  padding: 0 24px 24px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 14px;
+}
+.about-tech {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  min-width: 0;
+  min-height: 90px;
+  border: 1px solid var(--app-border-default);
+  border-radius: 12px;
+  background: var(--app-bg-content);
+  color: var(--app-text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
 
-  .card {
-    width: 100%;
-    border: 1px solid transparent;
-    color: inherit;
-    font: inherit;
-    text-align: left;
-    background: $surface-overlay;
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    min-height: 92px;
-    box-shadow: $shadow-sm;
-    cursor: pointer;
+  &:hover {
+    border-color: var(--app-primary);
+    background: var(--app-hover-bg);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--app-primary);
+    outline-offset: 3px;
+  }
+  &__mark {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--app-hover-bg);
+    color: var(--app-primary);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  &__info {
+    min-width: 0;
+  }
+  strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  small {
+    display: block;
+    margin-top: 4px;
+    color: var(--app-text-secondary);
+    font-size: 11px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  &__version {
+    align-self: start;
+    padding: 3px 7px;
+    border-radius: 6px;
+    color: var(--app-primary);
+    background: var(--app-hover-bg);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+}
+
+.about-dependencies {
+  margin-top: 24px;
+  min-width: 0;
+  border: 1px solid var(--app-border-default);
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--app-bg-content);
+  &__heading {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 14px;
-    padding: 22px 14px;
-    transition: all 0.18s ease;
-
-    &:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: $shadow-md;
-      border-color: $primary-color-hover;
-    }
-
-    &:focus-visible {
-      outline: 3px solid color-mix(in srgb, $primary-color 35%, transparent);
-      outline-offset: 2px;
-    }
-
-    .icon {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      overflow: hidden;
-      flex-shrink: 0;
-
-      :deep(.n-image) {
-        border-radius: 8px;
-      }
-    }
-
-    .info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-
-      .title {
-        font-size: 15px;
-        font-weight: 600;
-        transition: color 0.3s ease;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .short-desc {
-        font-size: 12px;
-        transition: color 0.3s ease;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-
-    .version-tag {
-      margin-left: auto;
-      flex-shrink: 0;
-    }
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  h2 {
+    margin: 0;
+    font-size: 15px;
+  }
+  span {
+    color: var(--app-text-tertiary);
+    font-size: 12px;
   }
 }
-
-.table-area {
-  display: flex;
+.about-detail__fields {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
   gap: 16px;
-  padding: 0 24px 24px 24px;
-
-  .table-block {
-    flex: 1;
-    background: $surface-overlay;
-    backdrop-filter: blur(10px);
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid $border-light;
-    box-shadow: $shadow-sm;
-    transition: all 0.3s ease;
-
-    .table-title {
-      background: $hover-overlay;
-
-      font-size: 15px;
-      font-weight: 600;
-      padding: 13px 18px;
-      border-bottom: 1px solid $divider;
-      transition: all 0.3s ease;
-    }
-
-    :deep(.n-data-table-th) {
-      background: $hover-overlay;
-      color: $text-secondary;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-
-    :deep(.n-data-table-td) {
-      font-size: 13px;
-
-      transition: color 0.3s ease;
-    }
-
-    :deep(.n-data-table-tr) {
-      cursor: pointer;
-      transition: background 0.16s ease;
-
-      &:hover {
-        background: $hover-overlay;
-      }
-    }
+  margin: 0;
+  dt {
+    color: var(--app-text-secondary);
+  }
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  a {
+    color: var(--app-primary);
+    text-decoration: none;
   }
 }
-
-.detail-modal {
-  :deep(.n-card) {
-    border-radius: 22px !important;
-    background: $surface-overlay !important;
-    backdrop-filter: blur(20px) !important;
-    box-shadow: $shadow-lg !important;
-    transition: all 0.3s ease !important;
-    border: 1px solid $border-medium !important;
-
-    .n-card-header {
-      border-bottom: none !important;
-      background: transparent;
-    }
+@media (max-width: 600px) {
+  .about-hero {
+    padding: 18px;
   }
-
-  .modal-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-
-    .icon {
-      width: 42px;
-      height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      overflow: hidden;
-      flex-shrink: 0;
-
-      :deep(.n-image) {
-        border-radius: 8px;
-      }
-    }
-
-    .modal-title-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-
-      .modal-title {
-        font-size: 18px;
-        font-weight: 600;
-
-        transition: color 0.3s ease;
-      }
-    }
-  }
-
-  .modal-content {
-    .modal-item {
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-
-      .label {
-        color: $primary-color;
-        font-size: 14px;
-        min-width: 80px;
-        transition: color 0.3s ease;
-      }
-
-      .text {
-        font-size: 14px;
-        transition: color 0.3s ease;
-        word-break: break-all;
-
-        a {
-          color: $primary-color;
-          text-decoration: none;
-          transition: color 0.3s ease;
-
-          &:hover {
-            color: $primary-color-hover;
-          }
-        }
-      }
-    }
-  }
-}
-
-// 系统主题适配
-@media (prefers-color-scheme: dark) {
-  .tech-profile-page {
-    color: var(--text-primary);
-
-    .profile-header {
-      border-bottom-color: var(--divider);
-
-      .profile-info .user-info {
-        h2 {
-          color: var(--text-primary);
-        }
-        .intro {
-          color: var(--text-secondary);
-        }
-        .id-info {
-          color: var(--text-tertiary);
-        }
-      }
-
-      .profile-version .version-text {
-        color: var(--text-primary);
-        background: var(--hover-overlay);
-      }
-    }
-
-    .section-header .section-title {
-      color: var(--text-primary);
-    }
-
-    .cards-grid .card {
-      background: var(--surface-overlay);
-      border: 1px solid rgb(157 146 146 / 15%);
-
-      .info {
-        .title {
-          color: var(--text-primary);
-        }
-        .bagName {
-          color: var(--text-secondary);
-        }
-      }
-    }
-
-    .table-area .table-block {
-      background: var(--surface-overlay);
-      border-color: var(--border-light);
-
-      .table-title {
-        background: var(--hover-overlay);
-        color: var(--text-primary);
-        border-bottom-color: var(--divider);
-      }
-
-      :deep(.n-data-table-th) {
-        background: var(--hover-overlay);
-        color: var(--text-secondary);
-      }
-
-      :deep(.n-data-table-td) {
-        color: var(--text-primary);
-      }
-
-      :deep(.n-data-table-tr:hover) {
-        background: var(--hover-overlay);
-      }
-    }
-
-    .detail-modal {
-      :deep(.n-card) {
-        background: var(--surface-overlay) !important;
-        border-color: var(--border-medium) !important;
-      }
-
-      .modal-header .modal-title-block .modal-title {
-        color: var(--text-primary);
-      }
-
-      .modal-content .modal-item .text {
-        color: var(--text-primary);
-      }
-    }
-  }
-}
-
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .cards-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 968px) {
-  .cards-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .table-area {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 768px) {
-  .cards-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .section-header {
-    flex-direction: column;
+  .about-hero__identity {
     align-items: flex-start;
-    gap: 16px;
+    gap: 12px;
+  }
+  .about-hero__logo {
+    width: 44px;
+    height: 44px;
+  }
+  .about-search {
+    width: 100%;
+  }
+  .about-dependencies {
+    padding: 12px;
+  }
+}
+
+@container (max-width: 360px) {
+  .about-hero {
+    padding: 14px;
+  }
+  .about-hero__identity {
+    flex-wrap: wrap;
+  }
+  .about-hero__identity > div {
+    min-width: 0;
+  }
+  .about-hero__eyebrow,
+  .about-hero h1 {
+    overflow-wrap: anywhere;
+  }
+  .about-tech {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 8px;
+    padding: 12px;
+  }
+  .about-tech__mark {
+    width: 32px;
+    height: 32px;
+  }
+  .about-tech__version {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .about-tech strong {
+    overflow-wrap: anywhere;
+  }
+  .about-dependencies :deep(.n-pagination) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }
