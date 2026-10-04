@@ -25,6 +25,14 @@ export function createWorkspaceGuideSteps(
 ): GuideStep[] {
   return [
     {
+      popover: {
+        title: '欢迎使用 Robot Admin',
+        illustration: 'overview',
+        description:
+          '接下来认识常用入口：导航、搜索、页面标签和工作空间。你可以随时点击“跳过引导”，之后再从右上角“功能引导”重新查看。',
+      },
+    },
+    {
       element: NAVIGATION_TARGETS[layout],
       popover: {
         title: '找到功能入口',
@@ -62,6 +70,66 @@ export function createWorkspaceGuideSteps(
       },
     },
     {
+      element: '.enterprise-overview',
+      popover: {
+        title: '了解当前工作空间',
+        illustration: 'overview',
+        description:
+          '首页显示当前公司与角色、项目版本、可访问页面数和关联公司数。页面数随当前公司的权限变化，帮助你确认正在使用的工作空间。',
+        side: 'bottom',
+      },
+    },
+    {
+      element: '[data-guide="notifications"]',
+      popover: {
+        title: '查看通知消息',
+        illustration: 'notification',
+        description:
+          '点击铃铛打开消息中心，可按分类查看消息、阅读详情和处理未读状态。消息中的跳转操作会打开对应页面。',
+        side: 'bottom',
+      },
+    },
+    {
+      element: '[data-guide="fullscreen"]',
+      popover: {
+        title: '专注全屏工作',
+        illustration: 'fullscreen',
+        description:
+          '点击此按钮进入或退出浏览器全屏，在查看大屏、图表或复杂表格时获得更大的工作区域。也可以按 Esc 退出全屏。',
+        side: 'bottom',
+      },
+    },
+    {
+      element: '[data-guide="language"]',
+      popover: {
+        title: '切换界面语言',
+        illustration: 'language',
+        description:
+          '从语言菜单选择界面语言，菜单标题和已配置翻译的界面文案会随之更新。业务数据仍由对应页面和服务提供。',
+        side: 'bottom',
+      },
+    },
+    {
+      element: '[data-guide="theme"]',
+      popover: {
+        title: '选择舒适的主题',
+        illustration: 'theme',
+        description:
+          '点击此按钮在跟随系统、浅色和深色模式之间切换。页面与引导弹层会一起适配主题，偏好会保存在当前浏览器。',
+        side: 'bottom',
+      },
+    },
+    {
+      element: '[data-guide="settings"]',
+      popover: {
+        title: '调整布局与偏好',
+        illustration: 'settings',
+        description:
+          '打开布局配置，可以选择六种导航布局，并调整菜单、标签页和外观偏好。关闭的界面区域会自动从引导中跳过。',
+        side: 'bottom',
+      },
+    },
+    {
       element: '[data-guide="workspace"]',
       popover: {
         title: '确认公司与角色',
@@ -69,6 +137,16 @@ export function createWorkspaceGuideSteps(
         description: canSwitchCompany
           ? '这里显示当前公司。点击头像查看身份与角色，并通过“切换公司”选择其他工作空间；切换后会重新加载权限和菜单。'
           : '这里显示当前登录身份与公司。点击头像可查看当前角色和工作空间信息。',
+        side: 'bottom',
+      },
+    },
+    {
+      element: '[data-guide="guide"]',
+      popover: {
+        title: '随时回来查看引导',
+        illustration: 'navigation',
+        description:
+          '这就是功能引导入口，想了解操作时点击即可重新查看。现在可以点击“开始使用”，也可以直接跳过，按自己的节奏使用系统。',
         side: 'bottom',
       },
     },

@@ -17,7 +17,9 @@
     <!-- 操作按钮组：统一由组件解析器按需加载组件与样式 -->
     <div class="action-buttons">
       <!-- 通知中心 -->
-      <C_NotificationCenter :on-navigate="handleNavigate" />
+      <div data-guide="notifications">
+        <C_NotificationCenter :on-navigate="handleNavigate" />
+      </div>
 
       <!-- 全屏 -->
       <NTooltip
@@ -27,6 +29,8 @@
         <template #trigger>
           <NButton
             text
+            data-guide="fullscreen"
+            aria-label="切换全屏"
             @click="toggleFullscreen"
             class="action-btn"
           >
@@ -37,25 +41,31 @@
       </NTooltip>
 
       <!-- 语言切换 -->
-      <C_Language
-        :model-value="languageStore.currentLang"
-        @change="languageStore.setLanguage"
-      />
+      <div data-guide="language">
+        <C_Language
+          :model-value="languageStore.currentLang"
+          @change="languageStore.setLanguage"
+        />
+      </div>
 
       <!-- 主题切换 -->
-      <C_Theme
-        :model-value="themeStore.mode"
-        @update:model-value="themeStore.setMode"
-      />
+      <div data-guide="theme">
+        <C_Theme
+          :model-value="themeStore.mode"
+          @update:model-value="themeStore.setMode"
+        />
+      </div>
 
       <!-- 功能引导 -->
-      <C_Guide
-        ref="guideRef"
-        :steps="guideSteps"
-        :theme="{ overlayOpacity: themeStore.isDark ? 0.55 : 0.38 }"
-        done-btn-text="开始使用"
-        @error="message.error('引导加载失败，请重试')"
-      />
+      <div data-guide="guide">
+        <C_Guide
+          ref="guideRef"
+          :steps="guideSteps"
+          :theme="{ overlayOpacity: themeStore.isDark ? 0.55 : 0.38 }"
+          done-btn-text="开始使用"
+          @error="message.error('引导加载失败，请重试')"
+        />
+      </div>
 
       <!-- 布局配置 -->
       <NTooltip
@@ -65,6 +75,8 @@
         <template #trigger>
           <NButton
             text
+            data-guide="settings"
+            aria-label="布局配置"
             @click="emit('update:showSettings', true)"
             class="action-btn"
           >
