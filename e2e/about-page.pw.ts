@@ -31,6 +31,12 @@ test('关于页展示安装版本，跨页面加载样式后卡片与主题保�
   await expect(page.locator('.about-hero__meta')).toContainText(
     componentVersion
   )
+  await expect(
+    page
+      .locator('.about-tech__package')
+      .filter({ hasText: '@robot-admin/naive-ui-components' })
+  ).toBeVisible()
+  await expect(page.getByText('Robot UI', { exact: true })).toHaveCount(0)
   const firstCard = page.locator('.about-tech').first()
   const before = await firstCard.evaluate(element => ({
     display: getComputedStyle(element).display,
@@ -68,7 +74,7 @@ test('关于页展示安装版本，跨页面加载样式后卡片与主题保�
     element => getComputedStyle(element).backgroundColor
   )
   expect(light).not.toBe(dark)
-  await page.getByRole('button', { name: '查看 Robot UI 详情' }).click()
+  await page.getByRole('button', { name: '查看 业务组件库 详情' }).click()
   await expect(page.locator('.about-detail__fields')).toContainText(
     componentVersion
   )

@@ -151,6 +151,14 @@
     line-height: 1.5;
     overflow-wrap: anywhere;
   }
+  &__package {
+    display: block;
+    margin-top: 4px;
+    color: var(--app-text-tertiary);
+    font-size: 10px;
+    overflow-wrap: anywhere;
+  }
+
   &__version {
     align-self: start;
     padding: 3px 7px;

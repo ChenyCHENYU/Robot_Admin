@@ -24,24 +24,16 @@ const descriptions: Record<string, [string, string, string]> = {
   unocss: ['UnoCSS', 'U', '按需原子样式与图标'],
   '@agile-team/mach-table-vue': ['MachTable Vue', 'M', '企业级虚拟化数据表格'],
   '@robot-admin/naive-ui-components': [
-    'Robot UI',
+    '业务组件库',
     'UI',
     '通用业务组件、登录表单与功能引导',
   ],
-  '@robot-admin/layout': ['Robot Layout', 'L', '多布局适配与导航壳层'],
-  '@robot-admin/request-core': [
-    'Request Core',
-    'API',
-    '请求、认证与业务接口编排',
-  ],
-  '@robot-admin/theme': ['Robot Theme', 'T', '统一亮暗主题与组件主题适配'],
-  '@robot-admin/form-validate': [
-    'Form Validate',
-    'F',
-    '表单校验规则与组合校验',
-  ],
-  '@robot-admin/directives': ['Directives', 'D', '权限、复制与水印指令'],
-  '@robot-admin/file-utils': ['File Utils', 'File', '文件导出、下载与分片处理'],
+  '@robot-admin/layout': ['布局管理', 'L', '多布局适配与导航壳层'],
+  '@robot-admin/request-core': ['请求核心', 'API', '请求、认证与业务接口编排'],
+  '@robot-admin/theme': ['主题系统', 'T', '统一亮暗主题与组件主题适配'],
+  '@robot-admin/form-validate': ['表单校验', 'F', '表单校验规则与组合校验'],
+  '@robot-admin/directives': ['自定义指令', 'D', '权限、复制与水印指令'],
+  '@robot-admin/file-utils': ['文件工具', 'File', '文件导出、下载与分片处理'],
 }
 
 /** 将真实依赖与简短场景说明合并，不维护第二份版本号。 */

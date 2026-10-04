@@ -70,6 +70,7 @@
         >
         <span class="about-tech__info"
           ><strong>{{ project.title }}</strong
+          ><code class="about-tech__package">{{ project.name }}</code
           ><small>{{ project.description }}</small></span
         >
         <span class="about-tech__version">{{ project.version }}</span>

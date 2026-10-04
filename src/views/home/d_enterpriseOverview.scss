@@ -1,156 +1,97 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-10-03
+ * @Date: 2026-10-05
  * @FilePath: \Robot_Admin\src\views\home\d_enterpriseOverview.scss
- * @Description: 企业工作空间项目信息样式
+ * @Description: 工作空间概览与首页响应式网格共用主题变量
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-
 .enterprise-overview {
-  --workspace-accent: var(--primary-color, var(--app-primary));
-  --workspace-text: var(--text-color-1, var(--app-text-primary));
-  --workspace-muted: var(--text-color-2, var(--app-text-secondary));
-  --workspace-label: var(--workspace-muted);
-  --workspace-note: var(--workspace-muted);
-  --workspace-border: color-mix(
-    in srgb,
-    var(--workspace-accent) 15%,
-    var(--app-border-default)
-  );
-  --workspace-background: linear-gradient(
-    118deg,
-    var(--app-bg-content) 0%,
-    color-mix(in srgb, var(--workspace-accent) 3%, var(--app-bg-content)) 60%,
-    color-mix(in srgb, var(--workspace-accent) 7%, var(--app-bg-content)) 100%
-  );
-  --workspace-shadow: 0 10px 30px rgba(34, 64, 108, 0.07);
-  --workspace-metric-border: var(--workspace-border);
-  --workspace-metric-background: color-mix(
-    in srgb,
-    var(--app-bg-content) 80%,
-    transparent
-  );
-  --workspace-decoration-border: color-mix(
-    in srgb,
-    var(--workspace-accent) 12%,
-    transparent
-  );
-  --workspace-decoration-ring: color-mix(
-    in srgb,
-    var(--workspace-accent) 4%,
-    transparent
-  );
+  display: flex;
+  flex-direction: column;
+  padding: 26px;
 
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(210px, 1fr) minmax(300px, 1.45fr);
-  gap: 18px 32px;
-  align-items: center;
-  margin: 18px auto 22px;
-  padding: clamp(20px, 3vw, 30px);
-  border: 1px solid var(--workspace-border);
-  border-radius: 22px;
-  background: var(--workspace-background);
-  box-shadow: var(--workspace-shadow);
-  color: var(--workspace-text);
-  overflow: hidden;
-}
-
-.enterprise-overview::after {
-  content: '';
-  position: absolute;
-  width: 230px;
-  height: 230px;
-  right: -80px;
-  top: -110px;
-  border: 1px solid var(--workspace-decoration-border);
-  border-radius: 50%;
-  box-shadow: 0 0 0 48px var(--workspace-decoration-ring);
-  pointer-events: none;
-}
-
-.enterprise-overview__identity,
-.enterprise-overview__metrics,
-.enterprise-overview__note {
-  position: relative;
-  z-index: 1;
-}
-.enterprise-overview__eyebrow {
-  color: var(--workspace-accent);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.19em;
-}
-.enterprise-overview__identity h2 {
-  margin: 8px 0 5px;
-  font-size: clamp(20px, 2.3vw, 28px);
-  line-height: 1.2;
-}
-.enterprise-overview__identity p {
-  margin: 0;
-  color: var(--workspace-muted);
-  font-size: 12px;
-}
-.enterprise-overview__metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 9px;
-}
-.enterprise-overview__metrics > div {
-  display: grid;
-  gap: 6px;
-  padding: 15px;
-  border: 1px solid var(--workspace-metric-border);
-  border-radius: 14px;
-  background: var(--workspace-metric-background);
-}
-.enterprise-overview__metrics small {
-  color: var(--workspace-label);
-  font-size: 11px;
-}
-.enterprise-overview__metrics strong {
-  font-size: clamp(17px, 1.8vw, 24px);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.enterprise-overview__note {
-  grid-column: 1 / -1;
-  color: var(--workspace-note);
-  font-size: 11px;
-}
-
-.dark-theme .enterprise-overview {
-  --workspace-accent: #8ab3ff;
-  --workspace-text: #f4f7ff;
-  --workspace-muted: #adbedc;
-  --workspace-label: #acbfdf;
-  --workspace-note: #91a9cf;
-  --workspace-border: rgba(126, 163, 240, 0.23);
-  --workspace-background: linear-gradient(
-    118deg,
-    #101b31 0%,
-    #1a2d52 60%,
-    #183b69 100%
-  );
-  --workspace-shadow: 0 18px 46px rgba(8, 27, 60, 0.19);
-  --workspace-metric-border: rgba(178, 207, 255, 0.16);
-  --workspace-metric-background: rgba(255, 255, 255, 0.055);
-  --workspace-decoration-border: rgba(177, 207, 255, 0.14);
-  --workspace-decoration-ring: rgba(177, 207, 255, 0.04);
-}
-
-@media (max-width: 760px) {
-  .enterprise-overview {
-    grid-template-columns: 1fr;
-    margin-inline: 12px;
+  &__company {
+    margin: 0 0 12px;
+    font-size: clamp(20px, 1.7vw, 27px);
+    line-height: 1.4;
   }
-  .enterprise-overview__metrics {
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    span {
+      border-radius: 6px;
+      padding: 4px 9px;
+      background: var(--app-hover-bg);
+      color: var(--app-primary);
+      font-size: 11px;
+    }
+  }
+  &__details {
+    display: grid;
+    grid-template-columns: 66px minmax(0, 1fr);
+    gap: 10px 16px;
+    margin: 0 0 22px;
+    font-size: 12px;
+    line-height: 1.6;
+    dt {
+      color: var(--app-text-tertiary);
+    }
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+  &__metrics {
+    display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: auto;
+    > div {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--app-bg-surface);
+    }
+    small {
+      font-size: 11px;
+      color: var(--app-text-secondary);
+    }
+    strong {
+      font-size: clamp(17px, 1.5vw, 23px);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    span {
+      font-size: 11px;
+      color: var(--app-text-tertiary);
+      font-weight: 400;
+    }
+  }
+}
+@container (max-width: 620px) {
+  .enterprise-overview {
+    padding: 18px;
   }
   .enterprise-overview__metrics > div {
     padding: 10px;
   }
-  .enterprise-overview__metrics strong {
-    font-size: 15px;
+}
+@container (max-width: 320px) {
+  .enterprise-overview {
+    padding: 14px;
+  }
+  .enterprise-overview__metrics {
+    grid-template-columns: 1fr;
+  }
+  .enterprise-overview__details {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    dd {
+      margin-bottom: 8px;
+    }
   }
 }

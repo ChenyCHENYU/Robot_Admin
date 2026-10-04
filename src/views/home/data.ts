@@ -1,230 +1,150 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-09-02
+ * @Date: 2026-10-05
  * @FilePath: \Robot_Admin\src\views\home\data.ts
- * @Description: 首页展示数据
+ * @Description: 首页真实能力、授权功能入口与已安装生态包配置
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import projectInfo from 'virtual:robot-admin-project-info'
 
-import type { ButtonProps, TagProps } from 'naive-ui'
-
-interface HomeActionButton {
-  text: string
-  icon: string
-  url: string
-  type?: ButtonProps['type']
-  secondary?: boolean
-  tertiary?: boolean
-  strong?: boolean
-}
-
-interface TechLayer {
-  name: string
-  icon: string
-  className: string
-  tagType: TagProps['type']
-  techs: string[]
-}
-
-// 项目统计数据
-export const projectStats = [
-  { icon: 'fluent-color:approvals-app-16', number: '当前', label: 'Monomer' },
+/** 功能入口通过当前授权菜单匹配路由名称，未授权项不显示。 */
+export const workspaceEntryConfig = [
   {
-    icon: 'fluent-color:animal-paw-print-20',
-    number: '已完成',
-    label: 'Monorepo',
+    name: 'sys-user-manage',
+    description: '维护用户与公司成员关系',
+    icon: 'i-mdi:account-group-outline',
+    category: '系统管理',
   },
   {
-    icon: 'fluent-color:puzzle-piece-20',
-    number: '已完成',
-    label: '模块联邦',
+    name: 'sys-role-manage',
+    description: '管理角色与权限分配',
+    icon: 'i-mdi:shield-account-outline',
+    category: '系统管理',
   },
-  { icon: 'fluent-color:flag-24', number: '已完成', label: 'MicroApp' },
-  { icon: 'fluent-color:beach-28', number: '规划中', label: 'NestJS' },
+  {
+    name: 'demo-form',
+    description: '查看配置化表单与字段联动',
+    icon: 'i-mdi:form-select',
+    category: '组件示例',
+  },
+  {
+    name: 'demo-mach-table',
+    description: '体验虚拟化表格与数据编辑',
+    icon: 'i-mdi:table-large',
+    category: '组件示例',
+  },
+  {
+    name: 'work-flow',
+    description: '查看节点与连线的可视化编排',
+    icon: 'i-mdi:vector-combine',
+    category: '编辑器',
+  },
+  {
+    name: 'demo-upload',
+    description: '查看文件选择与上传交互',
+    icon: 'i-mdi:cloud-upload-outline',
+    category: '插件示例',
+  },
+  {
+    name: 'dashboard-analysis',
+    description: '查看图表与分析页示例',
+    icon: 'i-mdi:chart-box-outline',
+    category: '仪表盘',
+  },
+  {
+    name: 'about',
+    description: '查看项目与实际依赖版本',
+    icon: 'i-mdi:information-outline',
+    category: '项目信息',
+  },
 ]
 
-// 操作按钮
-export const actionButtons: HomeActionButton[] = [
+export const capabilities = [
   {
-    text: '在线演示',
-    icon: '▶️',
-    secondary: true,
-    strong: true,
-    type: 'primary',
-    url: 'https://robotadmin.cn',
+    title: '公司与权限',
+    description:
+      '登录前选择工作公司；进入后切换公司，角色、菜单与页面状态同步更新。',
+    icon: 'i-mdi:shield-check-outline',
   },
   {
-    text: 'GitHub 仓库',
-    icon: '🐙',
+    title: '配置化页面',
+    description: '表单、表格、按钮组与校验规则分层组织，按需组合现有业务组件。',
+    icon: 'i-mdi:view-dashboard-outline',
+  },
+  {
+    title: '统一界面',
+    description:
+      '明暗主题、多种导航布局、全局搜索与功能引导使用同一套交互风格。',
+    icon: 'i-mdi:palette-outline',
+  },
+  {
+    title: '工程工具',
+    description: 'Bun 管理依赖，类型检查、代码检查和浏览器回归辅助日常开发。',
+    icon: 'i-mdi:code-braces',
+  },
+]
+
+const ecosystemDescriptions: Record<string, string> = {
+  '@robot-admin/naive-ui-components': '表单、表格、登录、引导等通用业务组件',
+  '@robot-admin/request-core': '请求、认证恢复与 CRUD 编排',
+  '@robot-admin/layout': '导航布局、页签与布局设置',
+  '@robot-admin/theme': '主题核心与 Naive UI 主题适配',
+  '@robot-admin/directives': '权限、复制、水印等 Vue 指令',
+  '@robot-admin/form-validate': '校验规则、组合校验与表单适配',
+  '@robot-admin/file-utils': '文件导出、下载与分片处理',
+  '@robot-admin/git-standards': '提交规范与 Git 工程配置',
+}
+
+const dependencies = [
+  ...projectInfo.dependencies,
+  ...projectInfo.devDependencies,
+]
+export const projectVersion = projectInfo.version
+export const ecosystemPackages = Object.entries(ecosystemDescriptions).flatMap(
+  ([name, description]) => {
+    const dependency = dependencies.find(item => item.name === name)
+    return dependency
+      ? [
+          {
+            ...dependency,
+            description,
+            shortName: name.replace('@robot-admin/', ''),
+          },
+        ]
+      : []
+  }
+)
+
+export const technologyGroups = [
+  { title: '界面与交互', names: ['vue', 'typescript', 'naive-ui', 'unocss'] },
+  { title: '状态与路由', names: ['pinia', 'vue-router', '@vueuse/core'] },
+  { title: '构建与检查', names: ['vite', 'oxlint', 'eslint'] },
+].map(group => ({
+  title: group.title,
+  dependencies: group.names.flatMap(name => {
+    const dependency = dependencies.find(item => item.name === name)
+    return dependency ? [dependency] : []
+  }),
+}))
+
+/** 链接来自本项目仓库与实际安装的组件包。 */
+export const projectResources = [
+  {
+    title: '项目仓库',
+    description: '源码、版本与更新记录',
     url: 'https://github.com/ChenyCHENYU/Robot_Admin',
+    icon: 'i-mdi:github',
   },
   {
-    text: '查看文档',
-    icon: '📄',
-    tertiary: true,
-    url: 'https://www.tzagileteam.com/robot/components/preface',
+    title: '项目文档',
+    description: '安装、配置与开发说明',
+    url: 'https://github.com/ChenyCHENYU/Robot_Admin#readme',
+    icon: 'i-mdi:book-open-page-variant-outline',
   },
   {
-    text: 'NPM 组件库',
-    icon: '📦',
-    tertiary: true,
-    url: 'https://www.npmjs.com/package/@nicecool/naive-ui-components',
-  },
-]
-
-// 核心亮点（整合功能模块与核心特性）
-export const highlights = [
-  {
-    name: 'RBAC 权限系统',
-    icon: 'mdi:shield-lock-outline',
-    desc: '角色/菜单/按钮三级权限体系，动态路由按需加载，前后端联动控制',
-    tech: 'Vue Router · Pinia',
-  },
-  {
-    name: '表单引擎',
-    icon: 'mdi:form-select',
-    desc: '动态表单生成，8 种布局模式，48+ 验证规则内置，支持联动配置',
-    tech: 'C_Form · @robot-admin/form-validate',
-  },
-  {
-    name: '表格组件',
-    icon: 'mdi:table-large',
-    desc: '增删改查一体化，行内/弹窗/单元格编辑，虚拟滚动，支持导出 Excel',
-    tech: 'C_Table · useTableCrud',
-  },
-  {
-    name: '工作流引擎',
-    icon: 'mdi:vector-combine',
-    desc: '可视化流程设计，拖拽连线，审批/通知节点，支持复杂业务流',
-    tech: 'Vue Flow · AntV X6',
-  },
-  {
-    name: '多架构支持',
-    icon: 'mdi:layers-triple-outline',
-    desc: '单体 / Monorepo / 模块联邦 / 微前端四种架构已全量验证交付',
-    tech: 'Vite · Module Federation',
-  },
-  {
-    name: '开源组件库',
-    icon: 'mdi:puzzle-outline',
-    desc: '51+ 高质量业务组件，独立 NPM 发布，支持按需导入与主题覆盖',
-    tech: '@robot-admin/naive-ui-components',
-  },
-]
-
-// 技术架构层级
-export const techLayers: TechLayer[] = [
-  {
-    name: '前端框架层',
-    icon: '🖥️',
-    className: 'layer-frontend',
-    tagType: 'info',
-    techs: ['Vue 3.5.42', 'TypeScript 5.8', 'Naive UI 2.45', 'UnoCSS 66.9'],
-  },
-  {
-    name: '构建工具层',
-    icon: '⚡',
-    className: 'layer-build',
-    tagType: 'success',
-    techs: ['Vite 8.2', 'Bun 1.4', 'Sass 1.87', 'Unplugin'],
-  },
-  {
-    name: '状态管理层',
-    icon: '🔗',
-    className: 'layer-state',
-    tagType: 'warning',
-    techs: ['Pinia 4.0', 'Vue Router 5.3', 'VueUse 14.4', 'Persistedstate'],
-  },
-  {
-    name: '工具集成层',
-    icon: '🛠️',
-    className: 'layer-tools',
-    tagType: 'error',
-    techs: ['Axios 1.20', 'ECharts 6.1', 'AntV X6', 'Vue Flow'],
-  },
-  {
-    name: '开发体验层',
-    icon: '🎯',
-    className: 'layer-dx',
-    tagType: 'default',
-    techs: ['ESLint 10', 'Oxlint', 'Vitest', 'Husky'],
-  },
-]
-
-// 项目核心指标
-export const projectMetrics = [
-  { number: '54+', label: 'Demo 页面', icon: 'mdi:view-dashboard-outline' },
-  { number: '51+', label: '业务组件', icon: 'mdi:puzzle-outline' },
-  { number: '8', label: '独立 NPM 包', icon: 'mdi:package-variant-closed' },
-  { number: '11', label: 'Vue 指令', icon: 'mdi:code-tags' },
-  { number: '4', label: '架构模式', icon: 'mdi:layers-triple-outline' },
-  { number: '48+', label: '验证规则', icon: 'mdi:check-circle-outline' },
-]
-
-// @robot-admin 生态包
-export const ecosystemPackages = [
-  {
-    shortName: 'naive-ui-components',
-    version: '0.13.0',
-    icon: 'mdi:puzzle-outline',
-    color: '#6366f1',
-    desc: '53 个业务组件，按需导入，主题覆盖',
+    title: '组件库',
+    description: '@robot-admin/naive-ui-components',
     url: 'https://www.npmjs.com/package/@robot-admin/naive-ui-components',
-  },
-  {
-    shortName: 'request-core',
-    version: '0.5.0',
-    icon: 'mdi:api',
-    color: '#10b981',
-    desc: '请求编排、认证恢复与函数式 Headless CRUD',
-    url: 'https://www.npmjs.com/package/@robot-admin/request-core',
-  },
-  {
-    shortName: 'layout',
-    version: '3.2.1',
-    icon: 'mdi:page-layout-sidebar-left',
-    color: '#f59e0b',
-    desc: '6 种布局模式，精简适配，安全设置管理',
-    url: 'https://www.npmjs.com/package/@robot-admin/layout',
-  },
-  {
-    shortName: 'theme',
-    version: '0.5.1',
-    icon: 'mdi:palette-outline',
-    color: '#ec4899',
-    desc: '分层主题核心、Vue 状态与 Naive UI 适配',
-    url: 'https://www.npmjs.com/package/@robot-admin/theme',
-  },
-  {
-    shortName: 'directives',
-    version: '2.0.1',
-    icon: 'mdi:code-tags',
-    color: '#8b5cf6',
-    desc: '11 个 Vue 指令：copy / watermark 等',
-    url: 'https://www.npmjs.com/package/@robot-admin/directives',
-  },
-  {
-    shortName: 'form-validate',
-    version: '3.4.2',
-    icon: 'mdi:check-decagram-outline',
-    color: '#ef4444',
-    desc: '双框架验证、规则组合与批量校验',
-    url: 'https://www.npmjs.com/package/@robot-admin/form-validate',
-  },
-  {
-    shortName: 'file-utils',
-    version: '3.0.1',
-    icon: 'mdi:file-multiple-outline',
-    color: '#06b6d4',
-    desc: 'Excel / ZIP / 分片上传，20+ 格式',
-    url: 'https://www.npmjs.com/package/@robot-admin/file-utils',
-  },
-  {
-    shortName: 'git-standards',
-    version: '1.0.5',
-    icon: 'mdi:source-branch',
-    color: '#f97316',
-    desc: '规范提交 · 中文引导推送',
-    url: 'https://www.npmjs.com/package/@robot-admin/git-standards',
+    icon: 'i-mdi:package-variant-closed',
   },
 ]

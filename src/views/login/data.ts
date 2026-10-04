@@ -100,6 +100,9 @@ export const LOGIN_COMPANY_SELECT_THEME = {
       optionTextColorActive: '#a9c8ff',
       optionColorPending: 'rgba(119, 167, 255, 0.12)',
       optionColorActive: 'rgba(119, 167, 255, 0.18)',
+      optionColorActivePending: 'rgba(119, 167, 255, 0.24)',
+      optionCheckColor: '#a9c8ff',
+      optionTextColorPressed: '#cfe1ff',
     },
   },
 }
