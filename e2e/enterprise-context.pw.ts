@@ -53,7 +53,7 @@ test('登录后自动进入唯一主公司，兼任公司不在登录页选择',
   await expect(page.locator('.navbar-right .user-dropdown')).toContainText(
     '江苏金恒（南京）'
   )
-  await expect(page.locator('.enterprise-overview')).toContainText('1,286')
+  await expect(page.locator('.enterprise-overview')).toContainText('企业管理员')
 })
 
 test('单公司自动进入，无公司明确阻止', async ({ page }) => {
@@ -96,7 +96,7 @@ test('切换公司后会话和菜单按新角色重建', async ({ page }) => {
   await expect(page.locator('.navbar-right .user-dropdown')).toContainText(
     '江苏金恒（西安）'
   )
-  await expect(page.locator('.enterprise-overview')).toContainText('742')
+  await expect(page.locator('.enterprise-overview')).toContainText('运营经理')
   expect(
     await page.evaluate(() => JSON.parse(localStorage.getItem('token') || '""'))
   ).toMatch(/^mock-access\.jinheng-xian\./)
@@ -155,5 +155,7 @@ test('用户管理变更主/兼任公司后，下次登录进入新主公司', a
   await expect(page.locator('.navbar-right .user-dropdown')).toContainText(
     '江苏金恒（西安）'
   )
-  await expect(page.locator('.enterprise-overview')).toContainText('742')
+  await expect(page.locator('.enterprise-overview')).toContainText(
+    '江苏金恒（西安）'
+  )
 })

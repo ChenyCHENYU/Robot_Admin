@@ -181,8 +181,9 @@ Startup and hot-update times depend on the machine, cache, and local-package mod
 
 ```bash
 # Development
-bun run dev            # Start development environment
-bun run dev:banner     # Opt in to the full Git branch banner (adds startup latency)
+bun run dev            # Start with project version, Git branch and commit information
+bun run dev:banner     # Full startup banner, same as dev
+bun run dev:quiet      # Start without the console banner
 bun run dev:components # Use local naive-ui-components source for integration work
 bun run dev:table      # Use local MachTable, component, and request-core source
 bun run dev:local      # Use all local packages, component source, and MachTable source

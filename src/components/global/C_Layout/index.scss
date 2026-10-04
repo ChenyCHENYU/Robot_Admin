@@ -6,6 +6,18 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+.menu-scroll-container {
+  // 每组由内容决定高度，剩余空间留在菜单末尾，由外层统一滚动。
+  .menu-group {
+    flex: 0 0 auto;
+  }
+
+  .menu-group :deep(.n-menu.n-menu--vertical) {
+    flex: none;
+    overflow: visible;
+  }
+}
+
 .menu-group-title {
   display: flex;
   align-items: center;
@@ -171,4 +183,8 @@
       inset 2px 0 0 rgba(118, 132, 255, 0.72),
       inset 0 0 0 1px rgba(150, 160, 255, 0.1);
   }
+}
+.workspace-tags-target {
+  width: 100%;
+  min-width: 0;
 }

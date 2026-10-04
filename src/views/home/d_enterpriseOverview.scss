@@ -2,11 +2,45 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-03
  * @FilePath: \Robot_Admin\src\views\home\d_enterpriseOverview.scss
- * @Description: 企业工作空间演示摘要样式
+ * @Description: 企业工作空间项目信息样式
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
 .enterprise-overview {
+  --workspace-accent: var(--primary-color, var(--app-primary));
+  --workspace-text: var(--text-color-1, var(--app-text-primary));
+  --workspace-muted: var(--text-color-2, var(--app-text-secondary));
+  --workspace-label: var(--workspace-muted);
+  --workspace-note: var(--workspace-muted);
+  --workspace-border: color-mix(
+    in srgb,
+    var(--workspace-accent) 15%,
+    var(--app-border-default)
+  );
+  --workspace-background: linear-gradient(
+    118deg,
+    var(--app-bg-content) 0%,
+    color-mix(in srgb, var(--workspace-accent) 3%, var(--app-bg-content)) 60%,
+    color-mix(in srgb, var(--workspace-accent) 7%, var(--app-bg-content)) 100%
+  );
+  --workspace-shadow: 0 10px 30px rgba(34, 64, 108, 0.07);
+  --workspace-metric-border: var(--workspace-border);
+  --workspace-metric-background: color-mix(
+    in srgb,
+    var(--app-bg-content) 80%,
+    transparent
+  );
+  --workspace-decoration-border: color-mix(
+    in srgb,
+    var(--workspace-accent) 12%,
+    transparent
+  );
+  --workspace-decoration-ring: color-mix(
+    in srgb,
+    var(--workspace-accent) 4%,
+    transparent
+  );
+
   position: relative;
   display: grid;
   grid-template-columns: minmax(210px, 1fr) minmax(300px, 1.45fr);
@@ -14,11 +48,11 @@
   align-items: center;
   margin: 18px auto 22px;
   padding: clamp(20px, 3vw, 30px);
-  border: 1px solid rgba(126, 163, 240, 0.23);
+  border: 1px solid var(--workspace-border);
   border-radius: 22px;
-  background: linear-gradient(118deg, #101b31 0%, #1a2d52 60%, #183b69 100%);
-  box-shadow: 0 18px 46px rgba(8, 27, 60, 0.19);
-  color: #f4f7ff;
+  background: var(--workspace-background);
+  box-shadow: var(--workspace-shadow);
+  color: var(--workspace-text);
   overflow: hidden;
 }
 
@@ -29,9 +63,9 @@
   height: 230px;
   right: -80px;
   top: -110px;
-  border: 1px solid rgba(177, 207, 255, 0.14);
+  border: 1px solid var(--workspace-decoration-border);
   border-radius: 50%;
-  box-shadow: 0 0 0 48px rgba(177, 207, 255, 0.04);
+  box-shadow: 0 0 0 48px var(--workspace-decoration-ring);
   pointer-events: none;
 }
 
@@ -42,7 +76,7 @@
   z-index: 1;
 }
 .enterprise-overview__eyebrow {
-  color: #8ab3ff;
+  color: var(--workspace-accent);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.19em;
@@ -54,7 +88,7 @@
 }
 .enterprise-overview__identity p {
   margin: 0;
-  color: #adbedc;
+  color: var(--workspace-muted);
   font-size: 12px;
 }
 .enterprise-overview__metrics {
@@ -66,12 +100,12 @@
   display: grid;
   gap: 6px;
   padding: 15px;
-  border: 1px solid rgba(178, 207, 255, 0.16);
+  border: 1px solid var(--workspace-metric-border);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.055);
+  background: var(--workspace-metric-background);
 }
 .enterprise-overview__metrics small {
-  color: #acbfdf;
+  color: var(--workspace-label);
   font-size: 11px;
 }
 .enterprise-overview__metrics strong {
@@ -81,8 +115,28 @@
 }
 .enterprise-overview__note {
   grid-column: 1 / -1;
-  color: #91a9cf;
+  color: var(--workspace-note);
   font-size: 11px;
+}
+
+.dark-theme .enterprise-overview {
+  --workspace-accent: #8ab3ff;
+  --workspace-text: #f4f7ff;
+  --workspace-muted: #adbedc;
+  --workspace-label: #acbfdf;
+  --workspace-note: #91a9cf;
+  --workspace-border: rgba(126, 163, 240, 0.23);
+  --workspace-background: linear-gradient(
+    118deg,
+    #101b31 0%,
+    #1a2d52 60%,
+    #183b69 100%
+  );
+  --workspace-shadow: 0 18px 46px rgba(8, 27, 60, 0.19);
+  --workspace-metric-border: rgba(178, 207, 255, 0.16);
+  --workspace-metric-background: rgba(255, 255, 255, 0.055);
+  --workspace-decoration-border: rgba(177, 207, 255, 0.14);
+  --workspace-decoration-ring: rgba(177, 207, 255, 0.04);
 }
 
 @media (max-width: 760px) {

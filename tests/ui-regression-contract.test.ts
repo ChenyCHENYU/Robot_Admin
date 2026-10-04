@@ -167,7 +167,7 @@ describe('UI regression contracts', () => {
     const developmentEnv = await readText('../envs/.env.development')
 
     expect(packageJson.devDependencies['vite-plugin-preloader']).toBeUndefined()
-    expect(packageJson.scripts.dev).toContain('VITE_CONSOLE_BANNER=false')
+    expect(packageJson.scripts.dev).toContain('VITE_CONSOLE_BANNER=true')
     expect(packageJson.scripts['dev:banner']).toContain(
       'VITE_CONSOLE_BANNER=true'
     )

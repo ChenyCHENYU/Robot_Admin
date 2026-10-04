@@ -21,12 +21,10 @@
       >
         <!-- 左侧：侧边栏折叠 + 面包屑 -->
         <div class="flex items-center h-full gap-12px">
-          <NTooltip
-            id="guide-menu-collapse"
-            placement="bottom"
-          >
+          <NTooltip placement="bottom">
             <template #trigger>
               <button
+                id="guide-menu-collapse"
                 class="collapse-trigger"
                 :class="{ 'is-collapsed': isCollapsed }"
                 @click="handleCollapsedChange(!isCollapsed)"
@@ -67,6 +65,7 @@
     <div
       v-if="settingsStore.showTagsView"
       class="header-bottom w-full flex items-end"
+      data-guide="tags"
       :style="{ height: `${settingsStore.tagsViewHeight}px` }"
     >
       <C_TagsView :label-formatter="translateRouteTitle" />

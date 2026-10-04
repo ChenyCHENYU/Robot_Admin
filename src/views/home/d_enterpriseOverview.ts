@@ -2,39 +2,32 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-03
  * @FilePath: \Robot_Admin\src\views\home\d_enterpriseOverview.ts
- * @Description: 各公司隔离的前端演示业务摘要，真实数据由后端按上下文返回
+ * @Description: 根据当前授权菜单统计工作空间可访问页面
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-interface EnterpriseOverview {
-  orders: string
-  revenue: string
-  pending: string
-  update: string
-}
+import type { MenuOptions } from '@/types/modules/menu'
 
-const MOCK_OVERVIEWS: Record<string, EnterpriseOverview> = {
-  'jinheng-nanjing': {
-    orders: '1,286',
-    revenue: '¥ 438.6 万',
-    pending: '18',
-    update: '南京总部 · 本周订单与营收',
-  },
-  'jinheng-xian': {
-    orders: '742',
-    revenue: '¥ 216.3 万',
-    pending: '9',
-    update: '西安团队 · 本周订单与营收',
-  },
-  'tianzhi-xian': {
-    orders: '396',
-    revenue: '¥ 85.2 万',
-    pending: '4',
-    update: '西安天智 · 本周订单与营收',
-  },
-}
+/** 外链、分组和分隔线不计入内部页面。 */
+const getWorkspacePagePath = (menu: MenuOptions): string | undefined =>
+  menu.meta?.link || menu.type ? undefined : menu.path
 
-export const getMockEnterpriseOverview = (
-  contextId: string | undefined
-): EnterpriseOverview | null =>
-  contextId ? (MOCK_OVERVIEWS[contextId] ?? null) : null
+/** 统计可见菜单中的内部叶子页面，排除分组、外链和重复路径。 */
+export const countWorkspacePages = (menus: MenuOptions[]): number => {
+  const paths = new Set<string>()
+
+  const collectPages = (items: MenuOptions[]): void => {
+    for (const item of items) {
+      if (item.meta?.hidden || item.disabled) continue
+      if (item.children?.length) {
+        collectPages(item.children)
+        continue
+      }
+      const path = getWorkspacePagePath(item)
+      if (path) paths.add(path)
+    }
+  }
+
+  collectPages(menus)
+  return paths.size
+}

@@ -10,7 +10,9 @@
 <template>
   <div class="navbar-right">
     <!-- 全局搜索 -->
-    <C_GlobalSearch :options="searchOptions" />
+    <div data-guide="search">
+      <C_GlobalSearch :options="searchOptions" />
+    </div>
 
     <!-- 操作按钮组：统一由组件解析器按需加载组件与样式 -->
     <div class="action-buttons">
@@ -47,7 +49,13 @@
       />
 
       <!-- 功能引导 -->
-      <C_Guide :steps="guideSteps" />
+      <C_Guide
+        ref="guideRef"
+        :steps="guideSteps"
+        :theme="{ overlayOpacity: themeStore.isDark ? 0.55 : 0.38 }"
+        done-btn-text="开始使用"
+        @error="message.error('引导加载失败，请重试')"
+      />
 
       <!-- 布局配置 -->
       <NTooltip
@@ -81,7 +89,10 @@
       class="user-popover-container"
     >
       <template #trigger>
-        <div class="user-info">
+        <div
+          class="user-info"
+          data-guide="workspace"
+        >
           <div class="avatar-wrapper">
             <NAvatar
               round
@@ -263,12 +274,14 @@
   import { switchAuthContextApi } from '@/api/auth'
   import { applyAuthSession } from '@/utils/d_authSession'
   import ContextPicker from '@/components/local/c_contextPicker/index.vue'
+  import { s_settingsStore } from '@/stores/settings'
+  import type { GuideExpose } from '@robot-admin/naive-ui-components/C_Guide'
+  import { createWorkspaceGuideSteps } from './data'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import type {
     GlobalSearchOptions,
     SearchMenuItem,
   } from '@robot-admin/naive-ui-components/C_GlobalSearch'
-  import type { GuideStep } from '@robot-admin/naive-ui-components/C_Guide'
   import {
     createMenuOptions,
     type RouteItem,
@@ -294,11 +307,25 @@
   const themeStore = s_themeStore()
   const languageStore = s_languageStore()
   const permissionStore = s_permissionStore()
+  const settingsStore = s_settingsStore()
   const router = useRouter()
+  const route = useRoute()
   const dialog = useDialog()
   const message = useMessage()
   const contextModalVisible = ref(false)
   const switchingContextId = ref('')
+  const guideRef = ref<GuideExpose>()
+  const guideSteps = computed(() =>
+    createWorkspaceGuideSteps(
+      settingsStore.layoutMode,
+      userStore.availableContexts.length > 1
+    )
+  )
+
+  watch(
+    () => route.fullPath,
+    () => guideRef.value?.stopGuide()
+  )
 
   // 用户名 / 角色 / 邮箱
   const userName = computed(() => userStore.userInfo?.username || '用户')
@@ -513,50 +540,6 @@
       void router.push(key).catch(() => undefined)
     },
   }
-
-  // ==================== 功能引导步骤 ====================
-  const guideSteps: GuideStep[] = [
-    {
-      element: '#guide-menu-top',
-      popover: {
-        title: '品牌 Logo',
-        description: '这里展示系统品牌标识，点击可返回首页。',
-        side: 'right',
-      },
-    },
-    {
-      element: '#guide-menu',
-      popover: {
-        title: '导航菜单',
-        description: '系统功能模块入口，点击展开子菜单并跳转到对应页面。',
-        side: 'right',
-      },
-    },
-    {
-      element: '#guide-menu-collapse',
-      popover: {
-        title: '折叠菜单',
-        description: '点击此按钮可展开或收起侧边导航栏，获得更大的内容区域。',
-        side: 'bottom',
-      },
-    },
-    {
-      element: '#guide-breadcrumb',
-      popover: {
-        title: '面包屑导航',
-        description: '显示当前页面在系统中的层级位置，可点击快速返回上级。',
-        side: 'bottom',
-      },
-    },
-    {
-      element: '#guide-tags-view',
-      popover: {
-        title: '标签页',
-        description: '已打开的页面标签，支持快速切换、右键关闭操作。',
-        side: 'bottom',
-      },
-    },
-  ]
 
   // ==================== 操作事件 ====================
   /** 通知中心 — 跳转到指定 URL */

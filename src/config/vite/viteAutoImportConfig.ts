@@ -11,6 +11,8 @@
 import AutoImport from 'unplugin-auto-import/vite'
 
 export default AutoImport({
+  // 本地链接的包会解析到仓库 dist，已编译产物不能再次注入自动导入。
+  exclude: [/[\\/]node_modules[\\/]/, /[\\/]dist[\\/]/, /[\\/]\.git[\\/]/],
   imports: [
     'vue',
     'vue-router',

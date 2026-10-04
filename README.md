@@ -182,8 +182,9 @@ bun run dev
 
 ```bash
 # 开发相关
-bun run dev            # 开发环境启动
-bun run dev:banner     # 显式启用完整 Git 分支横幅（会增加启动等待）
+bun run dev            # 开发环境启动，默认显示项目版本、Git 分支与提交信息
+bun run dev:banner     # 完整启动横幅，与 dev 一致
+bun run dev:quiet      # 安静启动，关闭控制台横幅
 bun run dev:components # 直连本地 naive-ui-components 源码联调
 bun run dev:table      # 直连本地 MachTable、组件库与 request-core 源码
 bun run dev:local      # 直连本地全部包、组件库与 MachTable 源码

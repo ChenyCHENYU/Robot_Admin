@@ -72,13 +72,6 @@ export const actionButtons: HomeActionButton[] = [
   },
 ]
 
-// 作者统计 - 动态获取GitHub仓库数据
-export const authorStats = [
-  { number: '12K+', label: '⭐Star' },
-  { number: '212+', label: '🍴Forks' },
-  { number: '1.2K+', label: '📝Commits' },
-]
-
 // 核心亮点（整合功能模块与核心特性）
 export const highlights = [
   {

@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-04
+ * @FilePath: \Robot_Admin\src\views\home\index.vue
+ * @Description: 项目首页与当前公司工作空间概览
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
   <div
     class="project-homepage"
@@ -6,7 +13,7 @@
     <section
       v-if="activeContext"
       class="enterprise-overview"
-      aria-label="当前公司业务概览"
+      aria-label="当前公司工作空间"
     >
       <div class="enterprise-overview__identity">
         <span class="enterprise-overview__eyebrow">CURRENT WORKSPACE</span>
@@ -17,26 +24,21 @@
           {{ activeContext.roles.map(role => role.name).join('、') }}</p
         >
       </div>
-      <div
-        v-if="enterpriseOverview"
-        class="enterprise-overview__metrics"
-      >
+      <div class="enterprise-overview__metrics">
         <div
-          ><small>本周订单</small
-          ><strong>{{ enterpriseOverview.orders }}</strong></div
+          ><small>项目版本</small><strong>v{{ projectVersion }}</strong></div
         >
         <div
-          ><small>本周营收</small
-          ><strong>{{ enterpriseOverview.revenue }}</strong></div
+          ><small>可访问页面</small
+          ><strong>{{ workspacePageCount }} 个</strong></div
         >
         <div
-          ><small>待处理事项</small
-          ><strong>{{ enterpriseOverview.pending }}</strong></div
+          ><small>关联公司</small
+          ><strong>{{ userStore.availableContexts.length }} 家</strong></div
         >
       </div>
       <div class="enterprise-overview__note"
-        >{{ enterpriseOverview?.update ?? '公司数据由当前服务端会话决定'
-        }}<span v-if="enterpriseOverview"> · 演示数据</span></div
+        >可访问页面随当前公司的菜单权限更新。</div
       >
     </section>
     <!-- 顶部横幅 -->
@@ -347,9 +349,10 @@
 
 <script setup lang="ts">
   import { s_userStore } from '@/stores/user'
-  import { getAuthMode } from '@/api/auth'
-  import { getMockEnterpriseOverview } from './d_enterpriseOverview'
-  import { useThemeVars } from 'naive-ui/es'
+  import { s_permissionStore } from '@/stores/permission'
+  import { s_themeStore } from '@/stores/theme'
+  import { version as projectVersion } from '../../../package.json'
+  import { countWorkspacePages } from './d_enterpriseOverview'
   import {
     projectStats,
     actionButtons,
@@ -358,26 +361,18 @@
     projectMetrics,
     ecosystemPackages,
   } from './data'
-  import { ref, computed, onMounted } from 'vue'
 
   defineOptions({ name: 'HomePage' })
   const userStore = s_userStore()
+  const permissionStore = s_permissionStore()
+  const themeStore = s_themeStore()
   const activeContext = computed(() => userStore.activeContext)
-  const enterpriseOverview = computed(() =>
-    getAuthMode() === 'mock'
-      ? getMockEnterpriseOverview(activeContext.value?.id)
-      : null
+  const workspacePageCount = computed(() =>
+    countWorkspacePages(permissionStore.showMenuListGet)
   )
 
-  // 主题检测
-  const themeVars = useThemeVars()
-  const isDarkTheme = computed(() => {
-    return (
-      themeVars.value.bodyColor === '#101014' ||
-      themeVars.value.bodyColor.includes('18') ||
-      themeVars.value.bodyColor.includes('1f')
-    )
-  })
+  // 与全局主题保持一致，包含跟随系统的明暗变化。
+  const isDarkTheme = computed(() => themeStore.isDark)
 
   // 标题动画相关
   const isAnimating = ref(false)
@@ -410,9 +405,9 @@
 
   // 创建响应式的作者统计数据
   const reactiveAuthorStats = ref([
-    { number: '520+', label: '⭐Star' },
-    { number: '52+', label: '🍴Forks' },
-    { number: '397+', label: '📝Commits' },
+    { number: '—', label: '⭐Star' },
+    { number: '—', label: '🍴Forks' },
+    { number: '—', label: '📝Commits' },
   ])
 
   /**
@@ -451,9 +446,9 @@
    * ? @param {object} data 格式化后的统计数据
    */
   const applyStats = (data: GitHubStats) => {
-    reactiveAuthorStats.value[0].number = data.stars
-    reactiveAuthorStats.value[1].number = data.forks
-    reactiveAuthorStats.value[2].number = data.commits
+    reactiveAuthorStats.value[0].number = data.stars || '—'
+    reactiveAuthorStats.value[1].number = data.forks || '—'
+    reactiveAuthorStats.value[2].number = data.commits || '—'
   }
 
   const formatCount = (value: number, threshold: number): string => {

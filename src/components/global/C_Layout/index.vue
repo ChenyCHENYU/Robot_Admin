@@ -15,6 +15,7 @@
         <C_MenuTop id="guide-menu-top" />
         <div
           id="guide-menu"
+          data-guide="navigation"
           class="menu-scroll-container"
           :class="{
             'menu-light': isMenuLight,
@@ -22,9 +23,10 @@
           }"
         >
           <template v-if="menuExpandMode === 'inline'">
-            <template
+            <div
               v-for="(group, gIdx) in groupedMenuData"
               :key="group.label"
+              class="menu-group"
             >
               <div
                 v-if="!collapsed"
@@ -48,7 +50,7 @@
                 @intent="prefetchRoute"
                 @select="navigateTo"
               />
-            </template>
+            </div>
           </template>
           <C_MenuGrouped
             v-else
@@ -74,7 +76,12 @@
 
       <!-- 标签页 -->
       <template #tags-view>
-        <C_TagsView :label-formatter="translateRouteTitle" />
+        <div
+          data-guide="tags"
+          class="workspace-tags-target"
+        >
+          <C_TagsView :label-formatter="translateRouteTitle" />
+        </div>
       </template>
 
       <!-- 页脚 -->
@@ -105,6 +112,8 @@
   import C_Settings from '@/components/global/C_Settings/index.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
   import C_MenuGrouped from '@/components/global/C_MenuGrouped/index.vue'
+
+  defineOptions({ name: 'C_Layout' })
 
   // 创建并提供布局上下文（业务 Store → 包标准接口）
   useLayoutBridge()

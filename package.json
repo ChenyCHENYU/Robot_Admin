@@ -16,8 +16,9 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "VITE_CONSOLE_BANNER=false NODE_NO_WARNINGS=1 vite --configLoader native --mode development",
+    "dev": "VITE_CONSOLE_BANNER=true NODE_NO_WARNINGS=1 vite --configLoader native --mode development",
     "dev:banner": "VITE_CONSOLE_BANNER=true NODE_NO_WARNINGS=1 vite --configLoader native --mode development",
+    "dev:quiet": "VITE_CONSOLE_BANNER=false NODE_NO_WARNINGS=1 vite --configLoader native --mode development",
     "dev:local": "USE_LOCAL_PACKAGES=true bun run dev",
     "dev:components": "USE_LOCAL_COMPONENTS=true bun run dev",
     "dev:table": "USE_LOCAL_COMPONENTS=true USE_LOCAL_MACH_TABLE=true USE_LOCAL_PACKAGE_NAMES=request-core bun run dev",
