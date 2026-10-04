@@ -12,8 +12,9 @@ import { s_userStore } from '@/stores/user'
 import {
   clearExistingRoutes,
   initDynamicRouter,
-  type DynamicRoute,
+  isDynamicRouterReady,
 } from '@/router/dynamicRouter'
+import { hasRouteMatchChanged } from './d_routeMatch'
 import { s_permissionStore } from '@/stores/permission'
 import { getAuthMode } from '@/api/auth'
 import { getMockAuthContexts } from '@/api/auth.mock-directory'
@@ -59,9 +60,6 @@ const handleChunkLoadFailure = (): void => {
   message.error('页面模块加载失败，请检查网络后手动刷新重试')
 }
 
-let dynamicRouterInitPromise: Promise<boolean> | null = null
-let dynamicRouterInitToken: string | null = null
-
 /**
  * * @description: 统一错误处理
  */
@@ -92,29 +90,9 @@ const handleDynamicRouterInit = async (
   fullPath: string
 ): Promise<string | false> => {
   const tokenAtStart = s_userStore().token
-  if (!dynamicRouterInitPromise || dynamicRouterInitToken !== tokenAtStart) {
-    const pending = initDynamicRouter()
-    dynamicRouterInitToken = tokenAtStart
-    dynamicRouterInitPromise = pending
-    void pending.then(
-      () => {
-        if (dynamicRouterInitPromise === pending) {
-          dynamicRouterInitPromise = null
-          dynamicRouterInitToken = null
-        }
-      },
-      () => {
-        if (dynamicRouterInitPromise === pending) {
-          dynamicRouterInitPromise = null
-          dynamicRouterInitToken = null
-        }
-      }
-    )
-  }
-
   try {
     const [success] = await Promise.all([
-      dynamicRouterInitPromise,
+      initDynamicRouter(),
       preloadAuthenticatedShell(),
     ])
 
@@ -137,13 +115,6 @@ const handleDynamicRouterInit = async (
     if (tokenAtStart !== s_userStore().token) return false
     return handleRouteError(error, '动态路由加载失败')
   }
-}
-
-/**
- * * @description: 检查是否需要初始化动态路由
- */
-const shouldInitDynamicRouter = (authMenuList: DynamicRoute[]): boolean => {
-  return !authMenuList.length
 }
 
 /**
@@ -208,6 +179,22 @@ const checkRoutePermission = (to: RouteLocationNormalized): boolean => {
   return permissionStore.hasRoutePermission(to.path)
 }
 
+/** 路由就绪后校验权限；匹配记录被替换时保留地址参数并重新解析一次。 */
+const handleAuthorizedRoute = (
+  to: RouteLocationNormalized
+): NavigationGuardReturn => {
+  if (!checkRoutePermission(to)) {
+    message.error('您无权访问该页面')
+    return '/401'
+  }
+  // beforeEach 前已解析 matched，注册完成前发起的导航可能仍携带 NotFound。
+  if (hasRouteMatchChanged(to, router.resolve(to.fullPath))) {
+    return { path: to.path, query: to.query, hash: to.hash, replace: true }
+  }
+  setPageTitle(getMetaTitle(to.meta))
+  return true
+}
+
 // 核心路由守卫
 router.beforeEach(
   async (to: RouteLocationNormalized): Promise<NavigationGuardReturn> => {
@@ -216,7 +203,6 @@ router.beforeEach(
     try {
       const userStore = s_userStore()
       const { token } = userStore
-      const { authMenuList } = s_permissionStore()
       const { meta } = to
 
       // 0. 预览路由直接放行
@@ -240,7 +226,7 @@ router.beforeEach(
       }
 
       // 3. 动态路由初始化
-      if (shouldInitDynamicRouter(authMenuList)) {
+      if (!isDynamicRouterReady()) {
         const result = await handleDynamicRouterInit(to.fullPath)
 
         if (result === false) return false
@@ -252,14 +238,8 @@ router.beforeEach(
         return to.fullPath
       }
 
-      // 4. 路由权限校验（动态路由已初始化后生效）
-      if (!checkRoutePermission(to)) {
-        message.error('您无权访问该页面')
-        return '/401'
-      }
-
-      setPageTitle(getMetaTitle(meta))
-      return true
+      // 4. 权限校验和匹配快照检查使用已完成注册的当前会话路由。
+      return handleAuthorizedRoute(to)
     } catch (error) {
       return handleRouteError(error)
     }

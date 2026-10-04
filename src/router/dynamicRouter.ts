@@ -1,7 +1,15 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-05
+ * @FilePath: \Robot_Admin\src\router\dynamicRouter.ts
+ * @Description: 会话内共享动态路由初始化，注册完成后才向导航发布就绪状态
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
 import router from './index'
 import type { RouteRecordRaw } from 'vue-router'
 import { s_permissionStore } from '@/stores/permission'
 import { s_userStore } from '@/stores/user'
+import type { AuthMenuResponse } from '@/api/auth'
 import { message as messageApi } from '@/plugins/discrete'
 import {
   joinRoutePath,
@@ -40,6 +48,10 @@ let dynamicRouteRemovers: Array<() => void> = []
 type RouteComponentLoader = () => Promise<unknown>
 const dynamicRouteLoaders = new Map<string, RouteComponentLoader>()
 const routePrefetchCache = new Map<string, Promise<unknown>>()
+let registeredGeneration: number | undefined
+let registrationEpoch = 0
+let pendingInitialization:
+  { generation: number; epoch: number; promise: Promise<boolean> } | undefined
 
 /**
  * 路径规范化处理
@@ -107,14 +119,26 @@ const processRoute = (
 }
 
 /**
- * 清理现有路由
+ * 移除已注册路由；初始化内部替换记录时保留同一份进行中的任务。
  */
-export const clearExistingRoutes = (): void => {
+const removeRegisteredRoutes = (): void => {
+  registeredGeneration = undefined
   for (const removeRoute of dynamicRouteRemovers.reverse()) removeRoute()
   dynamicRouteRemovers = []
   dynamicRouteLoaders.clear()
   routePrefetchCache.clear()
 }
+
+/** 清理旧会话路由与初始化入口，下一次登录必须重新注册。 */
+export const clearExistingRoutes = (): void => {
+  registrationEpoch += 1
+  pendingInitialization = undefined
+  removeRegisteredRoutes()
+}
+
+/** 菜单响应写入 Store 早于 addRoute，不能用菜单非空作为导航就绪条件。 */
+export const isDynamicRouterReady = (): boolean =>
+  registeredGeneration === s_permissionStore().requestGeneration
 
 /**
  * 在不触发导航的前提下加载动态路由组件。原生 import 缓存会被后续
@@ -148,31 +172,45 @@ const handleRouteError = (error: unknown): string => {
   return message
 }
 
+/** 校验菜单响应后才允许进入路由注册阶段，空菜单明确报错。 */
+const readDynamicRoutes = (response: AuthMenuResponse): DynamicRoute[] => {
+  const { code, data, msg, message } = response
+  if (![0, 200, '0', '200'].includes(code))
+    throw new Error(msg || message || '菜单请求失败')
+  if (!Array.isArray(data) || !data.length)
+    throw new Error('菜单数据为空或格式无效，请联系管理员')
+  return data
+}
+
 /**
- * 初始化动态路由
+ * 获取并注册当前会话的路由，旧会话响应不能发布就绪状态。
  */
-export const initDynamicRouter = async (): Promise<boolean> => {
+const registerDynamicRoutes = async (
+  generation: number,
+  epoch: number
+): Promise<boolean> => {
   const permissionStore = s_permissionStore()
-  const generation = permissionStore.requestGeneration
+  /** 会话清除或路由主动失效后，旧任务不得重新注册页面或清除新路由。 */
+  const isCurrent = (): boolean =>
+    generation === permissionStore.requestGeneration &&
+    epoch === registrationEpoch
   try {
-    const {
-      code,
-      data: routes,
-      msg,
-      message,
-    } = await permissionStore.getAuthMenuList(s_userStore().activeContext)
+    const response = await permissionStore.getAuthMenuList(
+      s_userStore().activeContext
+    )
 
-    if (generation !== permissionStore.requestGeneration) return false
+    if (!isCurrent()) return false
+    const routes = readDynamicRoutes(response)
 
-    if (![0, 200, '0', '200'].includes(code) || !Array.isArray(routes)) {
-      throw new Error(msg || message || '无效的路由数据格式')
+    removeRegisteredRoutes()
+
+    for (const route of routes) {
+      dynamicRouteRemovers.push(router.addRoute(processRoute(route)))
     }
-
-    clearExistingRoutes()
-
-    dynamicRouteRemovers = routes
-      .map(route => processRoute(route as DynamicRoute))
-      .map(route => router.addRoute(route))
+    if (router.resolve('/home').name === 'NotFound') {
+      throw new Error('菜单未提供首页路由，请联系管理员')
+    }
+    registeredGeneration = generation
 
     // 菜单路由是进入页面的唯一关键依赖；按钮/数据权限保持 deny-by-default，
     // 在后台并行补齐，避免任一辅助接口延迟拖住整次导航和顶部进度条。
@@ -186,12 +224,34 @@ export const initDynamicRouter = async (): Promise<boolean> => {
 
     return true
   } catch (error) {
-    if (generation !== permissionStore.requestGeneration) return false
+    if (!isCurrent()) return false
     clearExistingRoutes()
     permissionStore.resetPermissions()
     handleRouteError(error)
     return false
   }
+}
+
+/** 登录提交与路由守卫共享当前会话的唯一初始化任务，避免重复清除和注册。 */
+export const initDynamicRouter = (): Promise<boolean> => {
+  const generation = s_permissionStore().requestGeneration
+  const epoch = registrationEpoch
+  if (isDynamicRouterReady()) return Promise.resolve(true)
+  if (
+    pendingInitialization?.generation === generation &&
+    pendingInitialization.epoch === epoch
+  )
+    return pendingInitialization.promise
+
+  const promise = registerDynamicRoutes(generation, epoch)
+  pendingInitialization = { generation, epoch, promise }
+  /** 旧会话任务完成时，不清除新会话正在进行的初始化。 */
+  const release = (): void => {
+    if (pendingInitialization?.promise === promise)
+      pendingInitialization = undefined
+  }
+  void promise.then(release, release)
+  return promise
 }
 
 // 开发环境调试工具
