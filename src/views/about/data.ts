@@ -34,6 +34,7 @@ const descriptions: Record<string, [string, string, string]> = {
   '@robot-admin/form-validate': ['表单校验', 'F', '表单校验规则与组合校验'],
   '@robot-admin/directives': ['自定义指令', 'D', '权限、复制与水印指令'],
   '@robot-admin/file-utils': ['文件工具', 'File', '文件导出、下载与分片处理'],
+  '@robot-admin/git-standards': ['提交规范', 'Git', 'Git 提交约定与工程配置'],
 }
 
 /** 将真实依赖与简短场景说明合并，不维护第二份版本号。 */
@@ -54,12 +55,28 @@ export const productionDependencies =
   projectInfo.dependencies.map(toProjectItem)
 export const devDependencies = projectInfo.devDependencies.map(toProjectItem)
 const allDependencies = [...productionDependencies, ...devDependencies]
-export const coreProjects = Object.keys(descriptions)
-  .slice(0, 12)
-  .flatMap(name => {
-    const dependency = allDependencies.find(item => item.name === name)
-    return dependency ? [dependency] : []
-  })
+export const coreProjects = Object.keys(descriptions).flatMap(name => {
+  const dependency = allDependencies.find(item => item.name === name)
+  return dependency ? [dependency] : []
+})
+/** 按职责组织技术清单，与首页的架构介绍和功能入口区分。 */
+export const technicalGroups = [
+  {
+    number: '01',
+    title: '基础框架与工程',
+    description: '界面、状态、路由与构建工具',
+    items: coreProjects.filter(item => !item.name.startsWith('@robot-admin/')),
+  },
+  {
+    number: '02',
+    title: 'Robot Admin 生态模块',
+    description: '独立包提供基础服务与业务能力',
+    items: coreProjects.filter(item => item.name.startsWith('@robot-admin/')),
+  },
+]
+export const ecosystemCount = allDependencies.filter(item =>
+  item.name.startsWith('@robot-admin/')
+).length
 export const componentVersion =
   allDependencies.find(item => item.name === '@robot-admin/naive-ui-components')
     ?.version ?? '—'

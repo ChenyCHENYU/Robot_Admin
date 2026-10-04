@@ -7,100 +7,147 @@
 -->
 <template>
   <div class="about-page">
-    <section class="about-hero">
-      <div class="about-hero__identity">
-        <img
-          class="about-hero__logo"
-          src="/robot-avatar.png"
-          alt="Robot Admin"
-          width="64"
-          height="64"
+    <header class="about-heading">
+      <p>ROBOT ADMIN / TECHNICAL DOSSIER</p><h1>项目技术档案</h1>
+      <span>理解技术选型，核对安装版本，追溯每一项工程依赖。</span>
+    </header>
+    <div class="about-layout">
+      <aside
+        class="about-profile"
+        aria-label="当前项目档案"
+      >
+        <div class="about-profile__identity"
+          ><img
+            src="/robot-avatar.png"
+            alt=""
+            width="48"
+            height="48"
+          /><div
+            ><strong>Robot Admin</strong><span>企业后台工程底座</span></div
+          ></div
+        >
+        <div class="about-profile__release"
+          ><small>APPLICATION VERSION</small
+          ><strong>v{{ applicationVersion }}</strong
+          ><span>当前构建的项目版本</span></div
+        >
+        <dl class="about-hero__meta"
+          ><dt>维护者</dt><dd>CHENY</dd><dt>许可证</dt><dd>MIT</dd
+          ><dt>应用架构</dt><dd>单体 SPA</dd><dt>业务组件库</dt
+          ><dd>{{ componentVersion }}</dd></dl
+        >
+        <div class="about-profile__counts"
+          ><div
+            ><strong>{{ productionDependencies.length }}</strong
+            ><span>生产依赖</span></div
+          ><div
+            ><strong>{{ devDependencies.length }}</strong
+            ><span>开发依赖</span></div
+          ><div
+            ><strong>{{ ecosystemCount }}</strong
+            ><span>生态模块</span></div
+          ></div
+        >
+        <p class="about-profile__note"
+          >安装版本来自构建时的实际依赖。点击技术条目可核对包名、声明范围与应用场景。</p
+        >
+        <a
+          :href="buildInfoUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="about-profile__link"
+          >查看构建身份 <span aria-hidden="true">↗</span></a
+        >
+        <a
+          href="https://github.com/ChenyCHENYU/Robot_Admin#readme"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="about-profile__link"
+          >阅读项目文档 <span aria-hidden="true">↗</span></a
+        >
+      </aside>
+      <div class="about-content">
+        <div class="about-toolbar"
+          ><div
+            ><h2>技术选型与模块职责</h2
+            ><p>从基础框架到生态模块，查看当前应用的实际组成。</p></div
+          ><NInput
+            v-model:value="searchText"
+            class="about-search"
+            placeholder="搜索技术、包名或场景"
+            clearable
+            aria-label="搜索技术依赖"
+        /></div>
+        <section
+          v-for="group in filteredTechnicalGroups"
+          :key="group.number"
+          class="about-selection"
+          :aria-label="group.title"
+        >
+          <div class="about-selection__heading"
+            ><span>{{ group.number }}</span
+            ><div
+              ><h3>{{ group.title }}</h3
+              ><p>{{ group.description }}</p></div
+            ><small>{{ group.items.length }} 项</small></div
+          >
+          <div class="about-grid">
+            <button
+              v-for="project in group.items"
+              :key="project.name"
+              type="button"
+              class="about-tech"
+              :aria-label="`查看 ${project.title} 详情`"
+              @click="openModal(project)"
+            >
+              <span
+                class="about-tech__mark"
+                aria-hidden="true"
+                >{{ project.mark }}</span
+              >
+              <span class="about-tech__info"
+                ><strong>{{ project.title }}</strong
+                ><code class="about-tech__package">{{ project.name }}</code
+                ><small>{{ project.description }}</small></span
+              >
+              <span class="about-tech__version">{{ project.version }}</span>
+            </button>
+          </div>
+        </section>
+        <NEmpty
+          v-if="!filteredTechnicalGroups.length"
+          description="没有匹配的技术选型"
         />
-        <div>
-          <p class="about-hero__eyebrow">ABOUT THE PROJECT</p>
-          <h1
-            >Robot Admin
-            <NTag
-              type="info"
-              round
-              >v{{ applicationVersion }}</NTag
-            ></h1
+        <div class="about-inventory-heading"
+          ><h2>完整依赖清单</h2
+          ><p
+            >仅列直接依赖；安装版本与 package.json 声明范围可在详情中核对。</p
+          ></div
+        >
+        <div class="about-inventory">
+          <section
+            v-for="group in dependencyGroups"
+            :key="group.title"
+            class="about-dependencies"
           >
-          <p class="about-hero__description"
-            >企业后台工程底座 · 统一身份、多公司工作空间与角色权限</p
-          >
+            <div class="about-dependencies__heading"
+              ><h2>{{ group.title }}</h2
+              ><span>{{ group.items.length }} 个直接依赖</span></div
+            >
+            <NDataTable
+              :columns="columns"
+              :data="group.items"
+              :row-key="row => row.name"
+              :row-props="createRowProps"
+              :pagination="{ pageSize: 10 }"
+              :scroll-x="650"
+              :bordered="false"
+              size="small"
+            />
+          </section>
         </div>
       </div>
-      <div class="about-hero__meta">
-        <span>维护者 <strong>CHENY</strong></span>
-        <span
-          >组件库 <strong>{{ componentVersion }}</strong></span
-        >
-        <span>许可证 <strong>MIT</strong></span>
-      </div>
-    </section>
-
-    <div class="about-toolbar">
-      <div
-        ><h2>技术选型</h2
-        ><p>版本来自当前构建实际安装的依赖，点击查看应用场景。</p></div
-      >
-      <NInput
-        v-model:value="searchText"
-        class="about-search"
-        placeholder="搜索技术、包名或场景"
-        clearable
-        aria-label="搜索技术依赖"
-      />
     </div>
-
-    <div class="about-grid">
-      <button
-        v-for="project in filteredCoreProjects"
-        :key="project.name"
-        type="button"
-        class="about-tech"
-        :aria-label="`查看 ${project.title} 详情`"
-        @click="openModal(project)"
-      >
-        <span
-          class="about-tech__mark"
-          aria-hidden="true"
-          >{{ project.mark }}</span
-        >
-        <span class="about-tech__info"
-          ><strong>{{ project.title }}</strong
-          ><code class="about-tech__package">{{ project.name }}</code
-          ><small>{{ project.description }}</small></span
-        >
-        <span class="about-tech__version">{{ project.version }}</span>
-      </button>
-    </div>
-    <NEmpty
-      v-if="!filteredCoreProjects.length"
-      description="没有匹配的技术选型"
-    />
-
-    <section
-      v-for="group in dependencyGroups"
-      :key="group.title"
-      class="about-dependencies"
-    >
-      <div class="about-dependencies__heading"
-        ><h2>{{ group.title }}</h2
-        ><span>{{ group.items.length }} 个直接依赖</span></div
-      >
-      <NDataTable
-        :columns="columns"
-        :data="group.items"
-        :row-key="row => row.name"
-        :row-props="createRowProps"
-        :pagination="{ pageSize: 10 }"
-        :scroll-x="650"
-        :bordered="false"
-        size="small"
-      />
-    </section>
 
     <NModal
       v-model:show="showModal"
@@ -136,7 +183,8 @@
   import {
     applicationVersion,
     componentVersion,
-    coreProjects,
+    technicalGroups,
+    ecosystemCount,
     productionDependencies,
     devDependencies,
     filterProjects,
@@ -149,8 +197,14 @@
   const showModal = ref(false)
   const currentItem = ref<ProjectItem | null>(null)
   const columns = createProjectColumns()
-  const filteredCoreProjects = computed(() =>
-    filterProjects(coreProjects, searchText.value)
+  const buildInfoUrl = `${import.meta.env.BASE_URL}build-info.json`
+  const filteredTechnicalGroups = computed(() =>
+    technicalGroups
+      .map(group => ({
+        ...group,
+        items: filterProjects(group.items, searchText.value),
+      }))
+      .filter(group => group.items.length)
   )
   const dependencyGroups = computed(() => [
     {

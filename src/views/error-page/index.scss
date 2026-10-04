@@ -1,0 +1,131 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-05
+ * @FilePath: \Robot_Admin\src\views\error-page\index.scss
+ * @Description: 异常页显式渐变与独立调色板，随路由加载且不继承父层渐变变量
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use 'sass:list';
+
+$palettes: (
+  '401': (
+    #7f1d1d,
+    #7c2d12,
+    #f87171,
+    #fb923c,
+    #facc15,
+    #f97316,
+    #ef4444,
+    #f87171,
+  ),
+  '403': (
+    #1e3a8a,
+    #312e81,
+    #60a5fa,
+    #818cf8,
+    #22d3ee,
+    #3b82f6,
+    #6366f1,
+    #60a5fa,
+  ),
+  '404': (
+    #581c87,
+    #4c1d95,
+    #22d3ee,
+    #c084fc,
+    #f472b6,
+    #06b6d4,
+    #a855f7,
+    #c084fc,
+  ),
+  '500': (
+    #064e3b,
+    #134e4a,
+    #34d399,
+    #2dd4bf,
+    #4ade80,
+    #10b981,
+    #14b8a6,
+    #34d399,
+  ),
+);
+@each $code, $colors in $palettes {
+  .error-screen--#{$code} {
+    --error-bg-middle: #{list.nth($colors, 1)};
+    --error-bg-end: #{list.nth($colors, 2)};
+    --error-text-start: #{list.nth($colors, 3)};
+    --error-text-middle: #{list.nth($colors, 4)};
+    --error-text-end: #{list.nth($colors, 5)};
+    --error-button-start: #{list.nth($colors, 6)};
+    --error-button-end: #{list.nth($colors, 7)};
+    --error-secondary: #{list.nth($colors, 8)};
+  }
+}
+.error-screen {
+  background-image: linear-gradient(
+    135deg,
+    #111827,
+    var(--error-bg-middle),
+    var(--error-bg-end)
+  );
+  &__code {
+    background-image: linear-gradient(
+      90deg,
+      var(--error-text-start),
+      var(--error-text-middle),
+      var(--error-text-end)
+    );
+  }
+  &__glow {
+    color: var(--error-text-start);
+  }
+  &__icon,
+  &__countdown {
+    color: var(--error-text-middle);
+  }
+  &__primary {
+    background-image: linear-gradient(
+      90deg,
+      var(--error-button-start),
+      var(--error-button-end)
+    );
+  }
+  &__login {
+    background-image: linear-gradient(90deg, #eab308, #f97316);
+  }
+  &__retry {
+    background-image: linear-gradient(90deg, #22c55e, #10b981);
+  }
+  &__primary:hover,
+  &__retry:hover,
+  &__login:hover {
+    filter: brightness(1.12);
+  }
+  &__secondary {
+    color: var(--error-secondary);
+    border-color: var(--error-secondary);
+    &:hover {
+      background-color: var(--error-secondary);
+      color: #fff;
+    }
+  }
+  &__button-glow {
+    background: inherit;
+  }
+  &__decoration {
+    border-color: color-mix(in srgb, var(--error-secondary) 30%, transparent);
+  }
+  &__decoration-fill {
+    background-image: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--error-text-start) 20%, transparent),
+      color-mix(in srgb, var(--error-text-middle) 20%, transparent)
+    );
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .error-screen,
+  .error-screen * {
+    animation: none;
+  }
+}

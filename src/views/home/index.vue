@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-05
  * @FilePath: \Robot_Admin\src\views\home\index.vue
- * @Description: 响应式项目首页，展示公司上下文、授权入口与实际依赖
+ * @Description: 响应式项目首页，展示真实仓库统计、多架构选择、插件生态与公司工作空间
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
 <template>
@@ -12,25 +12,64 @@
         class="home-intro"
         aria-label="项目概览"
       >
-        <div class="home-intro__heading">
-          <img
-            src="/robot-avatar.png"
-            alt="Robot Admin"
-            width="64"
-            height="64"
-          />
+        <div class="home-intro__topline">
+          <div class="home-intro__heading">
+            <img
+              src="/robot-avatar.png"
+              alt="Robot Admin"
+              width="64"
+              height="64"
+            />
+            <div
+              ><p class="home-eyebrow">BUILD WITH ROBOT ADMIN</p
+              ><h1
+                >Robot Admin
+                <span class="home-version">v{{ projectVersion }}</span></h1
+              ></div
+            >
+          </div>
           <div
-            ><p class="home-eyebrow">PROJECT OVERVIEW</p
-            ><h1
-              >Robot Admin
-              <span class="home-version">v{{ projectVersion }}</span></h1
-            ></div
+            class="home-repository"
+            :aria-busy="loading"
+            aria-label="GitHub 仓库统计"
           >
+            <div class="home-repository__metrics">
+              <a
+                v-for="metric in repositoryMetrics"
+                :key="metric.label"
+                :href="metric.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                :aria-label="`${metric.label}：${metric.value}`"
+              >
+                <span
+                  :class="metric.icon"
+                  class="home-icon"
+                  aria-hidden="true"
+                />
+                <strong>{{ metric.value }}</strong
+                ><small>{{ metric.label }}</small>
+              </a>
+            </div>
+            <div
+              class="home-repository__status"
+              role="status"
+            >
+              <span>{{ statusText }}</span>
+              <button
+                v-if="failed || stats?.commits === null"
+                type="button"
+                :disabled="loading"
+                @click="refresh"
+                >重试</button
+              >
+            </div>
+          </div>
         </div>
-        <h2>统一身份，连接每个工作空间。</h2>
+        <h2>一个工程底座，多种架构可能。</h2>
         <p class="home-intro__description"
-          >基于 Vue 与 Naive UI
-          的企业后台工程模板，将公司上下文、角色权限和通用业务组件串联到日常开发中。</p
+          >从单体 SPA 到 Monorepo、模块联邦与 MicroApp，围绕独立发布的插件生态，
+          将通用能力沉淀为可组合的企业应用底座。</p
         >
         <div class="home-intro__tags"
           ><span>Vue 3</span><span>TypeScript</span><span>Naive UI</span
@@ -48,7 +87,7 @@
             v-if="aboutPage"
             :to="{ name: aboutPage.name }"
             class="home-secondary-link"
-            >项目与版本详情 <span aria-hidden="true">→</span></RouterLink
+            >探索技术档案 <span aria-hidden="true">→</span></RouterLink
           >
         </div>
       </section>
@@ -104,6 +143,48 @@
       </section>
     </div>
 
+    <section
+      class="home-panel home-architecture"
+      aria-label="多架构方案"
+    >
+      <div class="home-panel-heading">
+        <div
+          ><p class="home-eyebrow">ONE FOUNDATION · FOUR ARCHITECTURES</p
+          ><h2>从快速启动，到独立演进</h2
+          ><p
+            >共享工程理念，按应用规模与团队边界选择架构；各方案对应独立实现分支。</p
+          ></div
+        >
+        <span class="home-section-note">Vue 3 · TypeScript · Vite · Bun</span>
+      </div>
+      <div class="home-architecture__grid">
+        <a
+          v-for="mode in architectureModes"
+          :key="mode.branch"
+          :href="mode.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="home-architecture__item"
+          :class="{
+            'home-architecture__item--current': mode.branch === 'main',
+          }"
+        >
+          <div class="home-architecture__meta"
+            ><span
+              :class="mode.icon"
+              class="home-icon"
+              aria-hidden="true"
+            /><span>{{ mode.label }}</span></div
+          >
+          <h3>{{ mode.title }}</h3
+          ><p>{{ mode.description }}</p>
+          <span class="home-architecture__link"
+            >查看 {{ mode.branch }} 分支 <span aria-hidden="true">↗</span></span
+          >
+        </a>
+      </div>
+    </section>
+
     <div class="home-content-grid">
       <div class="home-main-column">
         <section
@@ -152,7 +233,10 @@
           aria-label="项目能力"
         >
           <div class="home-panel-heading"
-            ><div><h2>项目能力</h2><p>围绕现有功能与开发流程组织</p></div></div
+            ><div
+              ><h2>让业务开发更专注</h2
+              ><p>从身份到交付，把重复工作交给工程底座。</p></div
+            ></div
           >
           <div class="home-capability-grid"
             ><article
@@ -174,27 +258,31 @@
 
         <section
           class="home-panel"
-          aria-label="技术栈"
+          aria-label="插件化分层"
         >
           <div class="home-panel-heading"
-            ><div><h2>技术栈</h2><p>当前构建实际安装的版本</p></div></div
-          >
-          <div class="home-technology"
             ><div
-              v-for="group in technologyGroups"
-              :key="group.title"
-              class="home-technology__group"
-              ><h3>{{ group.title }}</h3
-              ><div
-                ><span
-                  v-for="dependency in group.dependencies"
-                  :key="dependency.name"
-                  ><b>{{ dependency.name }}</b
-                  ><small>{{ dependency.version }}</small></span
-                ></div
+              ><p class="home-eyebrow">COMPOSABLE BY DESIGN</p
+              ><h2>能力独立，组合自由</h2
+              ><p
+                >基础服务、业务组件与应用实现分层组织，各自保持清晰边界。</p
               ></div
             ></div
           >
+          <div class="home-platform">
+            <article
+              v-for="layer in platformLayers"
+              :key="layer.number"
+              class="home-platform__layer"
+            >
+              <span class="home-platform__number">{{ layer.number }}</span
+              ><div
+                ><h3>{{ layer.title }}</h3
+                ><p>{{ layer.description }}</p
+                ><small>{{ layer.packages }}</small></div
+              >
+            </article>
+          </div>
         </section>
       </div>
 
@@ -204,7 +292,9 @@
           aria-label="生态包"
         >
           <div class="home-panel-heading"
-            ><div><h2>@robot-admin 生态包</h2><p>项目中已安装的独立包</p></div
+            ><div
+              ><h2>插件生态，按需组合</h2
+              ><p>@robot-admin · 当前应用已接入的独立包</p></div
             ><span class="home-count">{{ ecosystemPackages.length }}</span></div
           >
           <div class="home-package-grid">
@@ -260,11 +350,16 @@
     workspaceEntryConfig,
     capabilities,
     ecosystemPackages,
-    technologyGroups,
+    architectureModes,
+    platformLayers,
     projectResources,
   } from './data'
 
+  import { useRepositoryStats } from './useRepositoryStats'
+  import { repositoryUrl } from './d_repository'
+
   defineOptions({ name: 'HomePage' })
+  const { stats, loading, failed, statusText, refresh } = useRepositoryStats()
   const userStore = s_userStore()
   const permissionStore = s_permissionStore()
   const activeContext = computed(() => userStore.activeContext)
@@ -275,6 +370,29 @@
   const workspacePages = computed(() =>
     getWorkspacePages(permissionStore.showMenuListGet)
   )
+  /** 缺失的公开统计保留占位，不伪造零值。 */
+  const formatRepositoryCount = (value: number | null | undefined) =>
+    typeof value === 'number' ? value.toLocaleString() : '—'
+  const repositoryMetrics = computed(() => [
+    {
+      label: 'Stars',
+      icon: 'i-mdi:star-outline',
+      value: formatRepositoryCount(stats.value?.stars),
+      url: `${repositoryUrl}/stargazers`,
+    },
+    {
+      label: 'Forks',
+      icon: 'i-mdi:source-fork',
+      value: formatRepositoryCount(stats.value?.forks),
+      url: `${repositoryUrl}/forks`,
+    },
+    {
+      label: 'Commits',
+      icon: 'i-mdi:source-commit',
+      value: formatRepositoryCount(stats.value?.commits),
+      url: `${repositoryUrl}/commits/${encodeURIComponent(stats.value?.defaultBranch ?? 'main')}`,
+    },
+  ])
   const aboutPage = computed(() =>
     workspacePages.value.find(page => page.name === 'about')
   )

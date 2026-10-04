@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import projectInfo from 'virtual:robot-admin-project-info'
+import { repositoryUrl } from './d_repository'
 
 /** 功能入口通过当前授权菜单匹配路由名称，未授权项不显示。 */
 export const workspaceEntryConfig = [
@@ -115,24 +116,69 @@ export const ecosystemPackages = Object.entries(ecosystemDescriptions).flatMap(
   }
 )
 
-export const technologyGroups = [
-  { title: '界面与交互', names: ['vue', 'typescript', 'naive-ui', 'unocss'] },
-  { title: '状态与路由', names: ['pinia', 'vue-router', '@vueuse/core'] },
-  { title: '构建与检查', names: ['vite', 'oxlint', 'eslint'] },
-].map(group => ({
-  title: group.title,
-  dependencies: group.names.flatMap(name => {
-    const dependency = dependencies.find(item => item.name === name)
-    return dependency ? [dependency] : []
-  }),
-}))
+/** 四种架构均有实际仓库分支；当前页面运行单体 SPA，其他模式独立部署。 */
+export const architectureModes = [
+  {
+    title: '单体 SPA',
+    label: '当前应用',
+    branch: 'main',
+    description:
+      '一套应用，完整工程基线。适合快速启动，也为其他架构提供统一能力。',
+    icon: 'i-mdi:application-outline',
+  },
+  {
+    title: 'Monorepo',
+    label: '多应用协作',
+    branch: 'monorepo',
+    description:
+      'Bun Workspaces 组织多个应用与共享包，让团队在同一仓库协作演进。',
+    icon: 'i-mdi:source-repository-multiple',
+  },
+  {
+    title: 'Module Federation',
+    label: '运行时共享',
+    branch: 'module-federation',
+    description:
+      'Host 与 Remote 按需组合，通过模块联邦共享能力，支持独立构建。',
+    icon: 'i-mdi:vector-link',
+  },
+  {
+    title: 'MicroApp',
+    label: '微前端集成',
+    branch: 'micro-app',
+    description: '以主应用承载子应用，结合沙箱与通信机制组织独立业务模块。',
+    icon: 'i-mdi:puzzle-outline',
+  },
+].map(mode => ({ ...mode, url: `${repositoryUrl}/tree/${mode.branch}` }))
+
+/** 用现有生态包说明插件化分层，详细安装版本交给关于页。 */
+export const platformLayers = [
+  {
+    number: '01',
+    title: '工程核心',
+    description: '请求、认证、主题与布局各自独立。',
+    packages: 'request-core · theme · layout',
+  },
+  {
+    number: '02',
+    title: '业务插件',
+    description: '表单、表格、校验与文件能力按需组合。',
+    packages: 'naive-ui-components · form-validate · file-utils',
+  },
+  {
+    number: '03',
+    title: '应用交付',
+    description: '从单体到多应用，按业务边界选择架构。',
+    packages: 'SPA · Monorepo · Federation · MicroApp',
+  },
+]
 
 /** 链接来自本项目仓库与实际安装的组件包。 */
 export const projectResources = [
   {
     title: '项目仓库',
     description: '源码、版本与更新记录',
-    url: 'https://github.com/ChenyCHENYU/Robot_Admin',
+    url: repositoryUrl,
     icon: 'i-mdi:github',
   },
   {

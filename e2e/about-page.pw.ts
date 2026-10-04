@@ -52,7 +52,10 @@ test('关于页展示安装版本，跨页面加载样式后卡片与主题保�
     width: element.getBoundingClientRect().width,
     height: element.getBoundingClientRect().height,
   }))
-  expect(after).toEqual(before)
+  expect(after.display).toBe(before.display)
+  // 浏览器的变换与子像素舍入允许极小误差，仍能捕获异步样式造成的布局错乱。
+  expect(after.width).toBeCloseTo(before.width, 1)
+  expect(after.height).toBeCloseTo(before.height, 1)
   await page.locator('[data-guide="theme"] button').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
   await expect

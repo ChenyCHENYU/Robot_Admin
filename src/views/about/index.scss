@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-05
  * @FilePath: \Robot_Admin\src\views\about\index.scss
- * @Description: 关于页使用应用主题变量与独立类名，避免异步全局样式冲突
+ * @Description: 项目档案侧栏与分类技术清单，独立于首页并适配主题和容器宽度
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 .about-page {
@@ -11,128 +11,231 @@
   min-width: 0;
   container-type: inline-size;
 }
-
-.about-hero {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
+.about-heading {
+  padding: 4px 0 26px;
+  p {
+    margin: 0 0 10px;
+    color: var(--app-text-tertiary);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    overflow-wrap: anywhere;
+  }
+  h1 {
+    margin: 0 0 10px;
+    font-size: clamp(24px, 2.3vw, 32px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  > span {
+    color: var(--app-text-secondary);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+}
+.about-layout {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
   gap: 24px;
-  padding: 26px;
-  background: linear-gradient(
-    120deg,
-    var(--app-hover-bg),
-    var(--app-bg-content)
-  );
+  align-items: start;
+}
+.about-profile {
+  position: sticky;
+  top: 16px;
+  min-width: 0;
   border: 1px solid var(--app-border-default);
-  border-radius: 16px;
-
+  border-radius: 14px;
+  padding: 24px;
+  background: var(--app-bg-content);
   &__identity {
     display: flex;
     align-items: center;
-    gap: 20px;
-    min-width: 0;
+    gap: 12px;
   }
-  &__logo {
+  img {
     flex-shrink: 0;
-    border-radius: 18px;
+    border-radius: 12px;
     object-fit: contain;
   }
-  &__eyebrow {
-    margin: 0 0 6px;
-    color: var(--app-primary);
+  &__identity strong {
+    display: block;
+    font-size: 17px;
+    font-weight: 600;
+  }
+  &__identity span {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--app-text-tertiary);
+  }
+  &__release {
+    padding: 26px 0;
+    border-bottom: 1px solid var(--app-border-default);
+    display: grid;
+    gap: 6px;
+    small {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: var(--app-text-tertiary);
+    }
+    strong {
+      font-size: 36px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    span {
+      font-size: 11px;
+      color: var(--app-text-secondary);
+    }
+  }
+  &__counts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 20px 0;
+    border-block: 1px solid var(--app-border-default);
+  }
+  &__counts strong {
+    display: block;
+    font-size: 20px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  &__counts span {
+    display: block;
+    margin-top: 4px;
+    color: var(--app-text-tertiary);
     font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
   }
-  h1 {
+  &__note {
+    margin: 20px 0;
+    font-size: 11px;
+    color: var(--app-text-secondary);
+    line-height: 1.9;
+  }
+  &__link {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    justify-content: space-between;
     gap: 12px;
-    margin: 0;
-    font-size: clamp(22px, 2vw, 28px);
-  }
-  &__description {
-    margin: 8px 0 0;
-    color: var(--app-text-secondary);
-    font-size: 13px;
-  }
-  &__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    color: var(--app-text-secondary);
+    padding: 9px 0;
+    text-decoration: none;
+    color: var(--app-primary);
     font-size: 12px;
   }
-  strong {
-    color: var(--app-text-primary);
-    font-weight: 600;
-    margin-left: 6px;
+}
+.about-hero__meta {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  margin: 22px 0;
+  font-size: 12px;
+  dt {
+    color: var(--app-text-secondary);
+  }
+  dd {
+    margin: 0;
+    font-weight: 500;
   }
 }
-
+.about-content {
+  min-width: 0;
+}
 .about-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin: 28px 0 18px;
+  margin-bottom: 20px;
   h2 {
     margin: 0;
     font-size: 17px;
+    font-weight: 600;
   }
   p {
     margin: 6px 0 0;
     color: var(--app-text-secondary);
     font-size: 12px;
+    line-height: 1.8;
   }
 }
 .about-search {
   width: min(100%, 280px);
 }
+.about-selection {
+  margin-bottom: 20px;
+  min-width: 0;
+  border: 1px solid var(--app-border-default);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--app-bg-content);
+  &__heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    border-bottom: 1px solid var(--app-border-default);
+  }
+  &__heading > span {
+    color: var(--app-primary);
+    font-size: 20px;
+    font-weight: 300;
+  }
+  &__heading h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  &__heading p {
+    margin: 4px 0 0;
+    color: var(--app-text-tertiary);
+    font-size: 11px;
+  }
+  &__heading small {
+    margin-left: auto;
+    color: var(--app-text-tertiary);
+    white-space: nowrap;
+    font-size: 11px;
+  }
+}
 .about-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .about-tech {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  padding: 18px;
+  padding: 20px;
   min-width: 0;
-  min-height: 90px;
-  border: 1px solid var(--app-border-default);
-  border-radius: 12px;
+  min-height: 104px;
+  border: 0;
+  border-bottom: 1px solid var(--app-border-default);
   background: var(--app-bg-content);
   color: var(--app-text-primary);
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition:
-    border-color 0.15s,
-    background-color 0.15s;
-
+  transition: background-color 0.15s;
+  &:nth-child(odd) {
+    border-right: 1px solid var(--app-border-default);
+  }
   &:hover {
-    border-color: var(--app-primary);
     background: var(--app-hover-bg);
   }
   &:focus-visible {
     outline: 2px solid var(--app-primary);
-    outline-offset: 3px;
+    outline-offset: -3px;
   }
   &__mark {
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     background: var(--app-hover-bg);
     color: var(--app-primary);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
   }
   &__info {
@@ -140,15 +243,16 @@
   }
   strong {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
+    overflow-wrap: anywhere;
   }
   small {
     display: block;
     margin-top: 4px;
     color: var(--app-text-secondary);
     font-size: 11px;
-    line-height: 1.5;
+    line-height: 1.7;
     overflow-wrap: anywhere;
   }
   &__package {
@@ -158,20 +262,33 @@
     font-size: 10px;
     overflow-wrap: anywhere;
   }
-
   &__version {
     align-self: start;
-    padding: 3px 7px;
-    border-radius: 6px;
     color: var(--app-primary);
-    background: var(--app-hover-bg);
     font-size: 11px;
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
 }
-
+.about-inventory-heading {
+  margin: 28px 0 16px;
+  h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+  }
+  p {
+    margin: 6px 0 0;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+}
+.about-inventory {
+  display: grid;
+  gap: 20px;
+}
 .about-dependencies {
-  margin-top: 24px;
   min-width: 0;
   border: 1px solid var(--app-border-default);
   border-radius: 12px;
@@ -186,7 +303,8 @@
   }
   h2 {
     margin: 0;
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: 600;
   }
   span {
     color: var(--app-text-tertiary);
@@ -210,44 +328,90 @@
     text-decoration: none;
   }
 }
-@media (max-width: 600px) {
-  .about-hero {
+.about-page a:focus-visible {
+  outline: 2px solid var(--app-primary);
+  outline-offset: 3px;
+}
+@container (min-width: 2000px) {
+  .about-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .about-tech {
+    border-right: 1px solid var(--app-border-default);
+  }
+  .about-inventory {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@container (max-width: 1000px) {
+  .about-layout {
+    grid-template-columns: 1fr;
+  }
+  .about-profile {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 28px;
+  }
+  .about-profile__release {
+    grid-row: span 2;
+    padding: 0;
+    border: 0;
+  }
+  .about-hero__meta {
+    margin: 0;
+  }
+  .about-profile__counts {
+    grid-column: 1 / -1;
+  }
+  .about-profile__note {
+    margin: 0;
+  }
+}
+@container (max-width: 620px) {
+  .about-profile {
+    display: block;
     padding: 18px;
   }
-  .about-hero__identity {
-    align-items: flex-start;
-    gap: 12px;
+  .about-profile__release {
+    padding: 22px 0;
+    border-bottom: 1px solid var(--app-border-default);
   }
-  .about-hero__logo {
-    width: 44px;
-    height: 44px;
+  .about-hero__meta {
+    margin: 20px 0;
+  }
+  .about-profile__note {
+    margin: 20px 0;
+  }
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-tech:nth-child(odd) {
+    border-right: 0;
   }
   .about-search {
     width: 100%;
   }
-  .about-dependencies {
-    padding: 12px;
-  }
 }
-
 @container (max-width: 360px) {
-  .about-hero {
+  .about-profile {
     padding: 14px;
   }
-  .about-hero__identity {
+  .about-profile__identity {
     flex-wrap: wrap;
   }
-  .about-hero__identity > div {
-    min-width: 0;
-  }
-  .about-hero__eyebrow,
-  .about-hero h1 {
+  .about-profile__identity strong,
+  .about-profile__release small {
     overflow-wrap: anywhere;
+  }
+  .about-selection__heading {
+    flex-wrap: wrap;
+    padding: 14px;
   }
   .about-tech {
     grid-template-columns: 32px minmax(0, 1fr);
     gap: 8px;
-    padding: 12px;
+    padding: 14px;
   }
   .about-tech__mark {
     width: 32px;
@@ -255,13 +419,22 @@
   }
   .about-tech__version {
     grid-column: 2;
-    justify-self: start;
   }
-  .about-tech strong {
-    overflow-wrap: anywhere;
+  .about-dependencies {
+    padding: 12px;
   }
   .about-dependencies :deep(.n-pagination) {
     flex-wrap: wrap;
     justify-content: flex-start;
+  }
+}
+
+@container (max-width: 240px) {
+  .about-profile__counts {
+    grid-template-columns: 1fr;
+  }
+  .about-hero__meta {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }

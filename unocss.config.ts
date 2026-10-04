@@ -53,6 +53,8 @@ export default defineConfig({
       // 认证后首个稳定帧必须具备完整布局样式，不能依赖首次路由访问后 HMR 补齐。
       'src/components/global/**/*.{vue,ts,tsx}',
       'src/views/home/**/*.{vue,ts,tsx}',
+      // 异常页被静态和动态路由懒加载，提前生成结构与图标；独立配色由路由 SCSS 提供。
+      'src/views/error-page/*.vue',
       // @robot-admin/layout（本地 link 开发 + node_modules）
       '../robot-admin-packages/packages/layout/src/**/*.{vue,ts}',
       'node_modules/@robot-admin/layout/src/**/*.{vue,ts}',
