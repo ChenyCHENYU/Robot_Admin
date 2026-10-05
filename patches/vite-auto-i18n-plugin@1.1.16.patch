@@ -1,0 +1,474 @@
+diff --git a/node_modules/vite-auto-i18n-plugin/dist/adapter.d.ts b/dist/adapter.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e5904ff3da048c58c934839a67ec1d452b2af99e
+--- /dev/null
++++ b/dist/adapter.d.ts
+@@ -0,0 +1,10 @@
++import type { OptionInfo } from './index'
++import type { Plugin } from 'vite'
++export interface I18nPluginOptions extends OptionInfo {
++  /** 翻译模块依赖此入口，保证按需词典先于静态文案初始化。 */
++  runtimeImport?: string
++  /** 离线编译缓存的模块数量上限，0 为关闭缓存。 */
++  cacheSize?: number
++}
++/** 支持 Vite 8 Vue 查询模块的只读离线编译适配。 */
++export declare function createI18nPlugin(options: I18nPluginOptions): Plugin
+diff --git a/node_modules/vite-auto-i18n-plugin/dist/adapter.mjs b/dist/adapter.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..7cca5afd2264681752604c2c501c05fdf6c160d1
+--- /dev/null
++++ b/dist/adapter.mjs
+@@ -0,0 +1,143 @@
++/*
++ * @Author: ChenYu ycyplus@gmail.com
++ * @Date: 2026-10-05
++ * @Description: Vite 查询模块、只读离线编译及有界缓存适配
++ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
++ */
++import autoI18n, {
++  EmptyTranslator,
++  initOption,
++  FunctionFactoryOption,
++  filter,
++  translateUtils,
++} from './index.mjs'
++import { transformAsync } from '@babel/core'
++
++// 上游编译器使用模块级状态，串行化 AST 编译避免不同命名空间互相污染。
++let compilation = Promise.resolve()
++
++/** 不执行上游文件初始化；联网生成沿用原插件显式开启的生命周期。 */
++export function createI18nPlugin(options) {
++  const {
++    runtimeImport = '/lang/index.js',
++    cacheSize = 128,
++    ...input
++  } = options
++  const enabled =
++    typeof input.enabled === 'function'
++      ? input.enabled()
++      : input.enabled === true
++  const config = {
++    translateType: 'full-auto',
++    languageJsonMode: 'split',
++    isClearSpace: true,
++    deepScan: true,
++    rewriteConfig: false,
++    isClear: false,
++    buildToDist: false,
++    translator: new EmptyTranslator(),
++    excludedCall: ['import', 'console.debug'],
++    excludedPattern: [
++      /\.\w+$/,
++      /^[a-z_]+$/i,
++      /^\/.+\/[gimsuy]*$/,
++      /^https?:\/\//,
++      /^#[0-9a-f]{3,6}$/i,
++      /^\d+(\.\d+)?(px|em|rem|vh|vw|%)?$/,
++    ],
++    ...input,
++    enabled,
++  }
++  const plugin = enabled ? autoI18n(config) : { name: 'vite-auto-i18n-plugin' }
++  const upstream = plugin.transform
++  const cache = new Map()
++  // 保留官方公开工具读取配置的兼容性，无磁盘、网络和定时器副作用。
++  if (!enabled) {
++    initOption(config)
++    FunctionFactoryOption.originLang = config.originLang ?? 'zh-cn'
++    translateUtils.initLangObj({})
++  }
++  plugin.enforce = 'post'
++  /** 样式和业务数据不进入 Babel；无可翻译字符的模块直接跳过。 */
++  plugin.transform = async function (source, id, ...args) {
++    const file = id.split('?')[0].replace(/\\/g, '/')
++    if (
++      /\btype=style\b/.test(id) ||
++      ![
++        '.vue',
++        '.ts',
++        '.js',
++        '.tsx',
++        '.jsx',
++        ...(config.insertFileExtensions ?? []),
++      ].some((extension) => file.endsWith(extension))
++    )
++      return null
++    /** 配置正则即使带 g 标记也不能保留上一次匹配状态。 */
++    const matches = (pattern) => {
++      pattern.lastIndex = 0
++      return pattern.test(file)
++    }
++    if (config.includePath?.length && !config.includePath.some(matches))
++      return null
++    if (
++      (config.excludedPath ?? ['node_modules']).some((pattern) =>
++        typeof pattern === 'string' ? file.includes(pattern) : matches(pattern),
++      )
++    )
++      return null
++    if (
++      config.translateType === 'full-auto' &&
++      (config.originLang ?? 'zh-cn') === 'zh-cn' &&
++      !/[\u3400-\u9fff]|\\u(?:[\da-f]{4}|\{[\da-f]+\})/i.test(source)
++    )
++      return null
++    const cached = cache.get(id)
++    if (!enabled && cached?.source === source) return cached.result
++    let result
++    if (enabled) {
++      result = await upstream.call(this, source, file, ...args)
++      if (typeof result !== 'string') throw new Error(`国际化编译失败: ${id}`)
++      result =
++        result !== source
++          ? {
++              code: `import ${JSON.stringify(runtimeImport)};\n${result}`,
++              map: null,
++            }
++          : null
++    } else {
++      /** 每次编译绑定实例配置，等待 Babel 完成后再允许下一个实例进入。 */
++      const compile = async () => {
++        initOption(config)
++        FunctionFactoryOption.originLang = config.originLang ?? 'zh-cn'
++        translateUtils.initLangObj({})
++        const output = await transformAsync(source, {
++          configFile: false,
++          babelrc: false,
++          filename: file,
++          sourceMaps: true,
++          plugins: [filter.default()],
++        })
++        if (!Object.keys(translateUtils.getLangObj()).length) return null
++        if (!output?.code) throw new Error(`国际化编译失败: ${id}`)
++        if (output.map) output.map.mappings = ';' + output.map.mappings
++        return {
++          code: `import ${JSON.stringify(runtimeImport)};\n${output.code}`,
++          map: output.map,
++        }
++      }
++      const task = compilation.then(compile)
++      compilation = task.then(
++        () => undefined,
++        () => undefined,
++      )
++      result = await task
++      if (cacheSize > 0) {
++        if (cache.size >= cacheSize) cache.delete(cache.keys().next().value)
++        cache.set(id, { source, result })
++      }
++    }
++    return result
++  }
++  return plugin
++}
+diff --git a/node_modules/vite-auto-i18n-plugin/dist/runtime.d.ts b/dist/runtime.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..5e9cc8ec3050bc701b201123832eb4225c2cf95d
+--- /dev/null
++++ b/dist/runtime.d.ts
+@@ -0,0 +1,33 @@
++/** 与自动翻译编译器兼容的文本 hash。 */
++export declare function getTranslationKey(text: string): string
++export declare function normalizeLanguage<
++  L extends string = 'zh-cn' | 'en' | 'ja' | 'ko',
++>(value: unknown, fallback?: L, languages?: readonly L[]): L
++export interface I18nStorage {
++  getItem(key: string): string | null
++  setItem(key: string, value: string): void
++}
++export interface I18nRuntimeOptions<L extends string> {
++  namespace: string
++  storageKey?: string
++  defaultLanguage: L
++  languages: readonly L[]
++  loaders: Partial<Record<L, () => Promise<unknown>>>
++  storage?: () => I18nStorage | undefined
++  cacheSize?: number
++  onError?: (error: unknown, language: L) => void
++}
++export interface I18nRuntime<L extends string> {
++  normalizeLanguage(value: unknown): L
++  getStoredLanguage(): L
++  persistLanguage(language: L): boolean
++  initializeLanguage(language?: L): Promise<void>
++  getCurrentLanguage(): L
++  translateKey(key: string, fallback: string, namespace?: string): string
++  translateText(text: string): string
++  installGlobals(target?: object): void
++}
++/** 实例隔离、并发合并和有界缓存的按需词典运行时。 */
++export declare function createI18nRuntime<L extends string>(
++  options: I18nRuntimeOptions<L>,
++): I18nRuntime<L>
+diff --git a/node_modules/vite-auto-i18n-plugin/dist/runtime.mjs b/dist/runtime.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..ffd943e1fce3bc18c5db0b2be391a73465dc5b22
+--- /dev/null
++++ b/dist/runtime.mjs
+@@ -0,0 +1,237 @@
++/*
++ * @Author: ChenYu ycyplus@gmail.com
++ * @Date: 2026-10-05
++ * @Description: 框架无关的按需词典运行时；不导入 Node、Babel 或翻译 API
++ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
++ */
++
++/** 与自动翻译编译器的 generateId 保持一致。 */
++export function getTranslationKey(text) {
++  const source = text.replace(/'/g, '"').replace(/\n/g, '\\n')
++  let hash = 0
++  for (let index = 0; index < source.length; index++) {
++    hash = ((hash << 5) - hash + source.charCodeAt(index)) | 0
++  }
++  return Math.abs(hash).toString(36) + source.length.toString(36)
++}
++
++/** 保留旧版语言别名，限制结果为当前项目支持的语言。 */
++export function normalizeLanguage(
++  value,
++  fallback = 'zh-cn',
++  languages = ['en', 'ja', 'ko'],
++) {
++  if (typeof value !== 'string') return fallback
++  const normalized = value.trim().toLowerCase().replace(/_/g, '-')
++  const aliases = {
++    'en-us': 'en',
++    'ja-jp': 'ja',
++    'ko-kr': 'ko',
++    'zh-cn': 'zh-cn',
++  }
++  const language = languages.includes(normalized)
++    ? normalized
++    : aliases[normalized]
++  return language === fallback || languages.includes(language)
++    ? language
++    : fallback
++}
++
++/** 工厂实例隔离词典和缓存，加载竞争只允许最新一次选择更新语言。 */
++export function createI18nRuntime(options) {
++  const {
++    namespace,
++    defaultLanguage = 'zh-cn',
++    languages = ['en', 'ja', 'ko'],
++    loaders = {},
++  } = options
++  const storageKey = options.storageKey ?? namespace
++  const cacheSize = Math.max(0, options.cacheSize ?? 512)
++  const pending = new Map()
++  const cache = new Map()
++  const warned = new Set()
++  let currentLanguage = defaultLanguage
++  let dictionary = {}
++  let requestVersion = 0
++  let loaded = false
++
++  /** 按需取得存储，隐私模式或 SSR 不会在模块导入时抛错。 */
++  const getStorage = () =>
++    options.storage ? options.storage() : globalThis.localStorage
++  /** 所有外部语言 key 都经过同一个入口归一化。 */
++  const normalize = (value) =>
++    normalizeLanguage(value, defaultLanguage, languages)
++  /** 读取兼容旧版本的原始字符串 key。 */
++  const getStoredLanguage = () => {
++    try {
++      return normalize(getStorage()?.getItem(storageKey))
++    } catch {
++      return defaultLanguage
++    }
++  }
++  /** 写入失败返回 false，让宿主决定是否刷新。 */
++  const persistLanguage = (language) => {
++    try {
++      const storage = getStorage()
++      if (!storage) return false
++      storage.setItem(storageKey, normalize(language))
++      return true
++    } catch {
++      return false
++    }
++  }
++  /** 只合并相同语言的在途请求；失败后允许重试。 */
++  const loadDictionary = (language) => {
++    if (pending.has(language)) return pending.get(language)
++    const promise = Promise.resolve()
++      .then(async () => {
++        const loader = loaders[language]
++        if (typeof loader !== 'function')
++          throw new Error(`Missing dictionary loader: ${language}`)
++        const result = await loader()
++        const value = result?.default ?? result
++        if (!value || typeof value !== 'object' || Array.isArray(value)) {
++          throw new TypeError(`Invalid dictionary: ${language}`)
++        }
++        return value
++      })
++      .finally(() => pending.delete(language))
++    pending.set(language, promise)
++    return promise
++  }
++  /** 回退路径也安全执行宿主回调，单个语言的异常最多提示一次。 */
++  const reportError = (error, language) => {
++    if (warned.has(language)) return
++    warned.add(language)
++    try {
++      if (options.onError) options.onError(error, language)
++      else
++        console.warn(
++          `[i18n:${namespace}] 语言资源加载失败，已使用 ${defaultLanguage}`,
++          error,
++        )
++    } catch {
++      /* 宿主日志回调不应阻塞应用启动。 */
++    }
++  }
++  /** 加载完成再提交状态，旧请求的成功或失败都不会覆盖新选择。 */
++  const initializeLanguage = async (value = getStoredLanguage()) => {
++    const version = ++requestVersion
++    const language = normalize(value)
++    if (loaded && language === currentLanguage) return
++    let nextDictionary = {}
++    let nextLanguage = language
++    try {
++      if (language !== defaultLanguage)
++        nextDictionary = await loadDictionary(language)
++    } catch (error) {
++      if (version !== requestVersion) return
++      nextLanguage = defaultLanguage
++      persistLanguage(defaultLanguage)
++      reportError(error, language)
++    }
++    if (version !== requestVersion) return
++    dictionary = nextDictionary
++    currentLanguage = nextLanguage
++    loaded = true
++    cache.clear()
++    if (typeof document !== 'undefined') {
++      document.documentElement.lang =
++        currentLanguage === 'zh-cn' ? 'zh-CN' : currentLanguage
++    }
++  }
++  /** 缓存有界，避免来自后端的动态文本长期累积。 */
++  const remember = (key, value) => {
++    if (cacheSize > 0) {
++      if (cache.size >= cacheSize) cache.delete(cache.keys().next().value)
++      cache.set(key, value)
++    }
++    return value
++  }
++  /** 缺失或格式错误的词条回退原文，保留相邻文本节点的空格。 */
++  const translateKey = (key, fallback, scope = namespace) => {
++    if (currentLanguage === defaultLanguage || scope !== namespace)
++      return fallback
++    const cacheKey = `${key}\0${fallback}`
++    if (cache.has(cacheKey)) return cache.get(cacheKey)
++    const source = fallback.trim()
++    const ownValue = Object.hasOwn(dictionary, key)
++      ? dictionary[key]
++      : undefined
++    const trimmedKey = source !== fallback ? getTranslationKey(source) : key
++    const value =
++      ownValue ||
++      (Object.hasOwn(dictionary, trimmedKey)
++        ? dictionary[trimmedKey]
++        : undefined)
++    if (typeof value !== 'string' || !value.trim())
++      return remember(cacheKey, fallback)
++    return remember(
++      cacheKey,
++      (fallback.match(/^\s*/)?.[0] ?? '') +
++        value.trim() +
++        (fallback.match(/\s*$/)?.[0] ?? ''),
++    )
++  }
++  /** 菜单等动态标题只计算一次 hash，不读存储、不扫描 DOM。 */
++  const translateText = (text) => {
++    if (currentLanguage === defaultLanguage) return text
++    const cacheKey = `\0${text}`
++    if (cache.has(cacheKey)) return cache.get(cacheKey)
++    return remember(
++      cacheKey,
++      translateKey(getTranslationKey(text.trim()), text),
++    )
++  }
++  /** 当前词典与 Naive UI 等宿主语言状态使用同一来源。 */
++  const getCurrentLanguage = () => currentLanguage
++  /** 安装命名空间分发器，多个应用不互相覆盖 $t。 */
++  const installGlobals = (target = globalThis) => {
++    const registryKey = Symbol.for('auto-i18n.runtime.registry')
++    let registry = target[registryKey]
++    if (!registry) {
++      registry = new Map()
++      Object.defineProperty(target, registryKey, {
++        value: registry,
++        configurable: true,
++      })
++      const previous = target.$t
++      /** 按编译器传入的命名空间找到对应运行时。 */
++      target.$t = (key, fallback, scope = namespace) => {
++        const instance = registry.get(scope)
++        return instance
++          ? instance.translateKey(key, fallback, scope)
++          : typeof previous === 'function'
++            ? previous(key, fallback, scope)
++            : fallback
++      }
++      /** 兼容原始全局切换协议，宿主可选择刷新以更新静态文案。 */
++      target.$changeLang = (language, scope = namespace) =>
++        registry.get(scope)?.initializeLanguage(language)
++    }
++    registry.set(namespace, runtime)
++    /** 原文标记保持纯函数，不监听 DOM 或创建响应式 watcher。 */
++    target.$$t ??= (value) => value
++    target.$deepScan ??= (value) => value
++    /** 兼容半角和历史翻译中的全角花括号。 */
++    target.$iS ??= (value, args) =>
++      typeof value === 'string' && Array.isArray(args)
++        ? value.replace(/\$(?:\{|｛)(\d+)(?:\}|｝)/g, (match, index) =>
++            args[Number(index)] !== undefined
++              ? String(args[Number(index)])
++              : match,
++          )
++        : value
++  }
++  const runtime = {
++    normalizeLanguage: normalize,
++    getStoredLanguage,
++    persistLanguage,
++    initializeLanguage,
++    getCurrentLanguage,
++    translateKey,
++    translateText,
++    installGlobals,
++  }
++  return runtime
++}
+diff --git a/package.json b/package.json
+index 1b81747e8f4d4ca689893632c30c2aeecb68fff0..9eedff2c4317d0dc9e0da1d6c3055faa8f0fe5e4 100644
+--- a/package.json
++++ b/package.json
+@@ -10,9 +10,19 @@
+     "react i18n"
+   ],
+   "exports": {
+-    "import": "./dist/index.mjs",
+-    "require": "./dist/index.cjs",
+-    "types": "./dist/index.d.ts"
++    ".": {
++      "types": "./dist/index.d.ts",
++      "import": "./dist/index.mjs",
++      "require": "./dist/index.cjs"
++    },
++    "./runtime": {
++      "types": "./dist/runtime.d.ts",
++      "import": "./dist/runtime.mjs"
++    },
++    "./adapter": {
++      "types": "./dist/adapter.d.ts",
++      "import": "./dist/adapter.mjs"
++    }
+   },
+   "types": "./dist/index.d.ts",
+   "files": [

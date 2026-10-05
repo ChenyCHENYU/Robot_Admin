@@ -76,12 +76,16 @@
         "unplugin-auto-import": "^21.0.0",
         "unplugin-vue-components": "^31.0.0",
         "vite": "8.2.2",
-        "vite-auto-i18n-plugin": "^1.1.16",
+        "vite-auto-i18n-plugin": "1.1.16",
         "vite-console-plugin": "^2.0.15",
         "vite-plugin-vue-devtools": "^7.7.9",
         "vue-tsc": "^3.2.6",
       },
     },
+  },
+  "patchedDependencies": {
+    "auto-i18n-plugin-core@1.1.16": "patches/auto-i18n-plugin-core@1.1.16.patch",
+    "vite-auto-i18n-plugin@1.1.16": "patches/vite-auto-i18n-plugin@1.1.16.patch",
   },
   "overrides": {
     "@babel/core": "7.29.7",

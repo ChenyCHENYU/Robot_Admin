@@ -130,7 +130,7 @@
     "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^31.0.0",
     "vite": "8.2.2",
-    "vite-auto-i18n-plugin": "^1.1.16",
+    "vite-auto-i18n-plugin": "1.1.16",
     "vite-console-plugin": "^2.0.15",
     "vite-plugin-vue-devtools": "^7.7.9",
     "vue-tsc": "^3.2.6"
@@ -179,5 +179,9 @@
     "tmp": "0.2.7",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "yaml": "2.9.0"
+  },
+  "patchedDependencies": {
+    "vite-auto-i18n-plugin@1.1.16": "patches/vite-auto-i18n-plugin@1.1.16.patch",
+    "auto-i18n-plugin-core@1.1.16": "patches/auto-i18n-plugin-core@1.1.16.patch"
   }
 }
