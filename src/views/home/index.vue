@@ -40,7 +40,12 @@
                 :href="metric.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                :aria-label="`${metric.label}：${metric.value}`"
+                :title="metric.hint"
+                :aria-label="
+                  metric.hint
+                    ? `${metric.label}：${metric.value}，${metric.hint}`
+                    : `${metric.label}：${metric.value}`
+                "
               >
                 <span
                   :class="metric.icon"
@@ -379,7 +384,8 @@
       label: 'Stars',
       icon: 'i-mdi:star-outline',
       value: formatRepositoryCount(stats.value?.stars),
-      url: `${repositoryUrl}/stargazers`,
+      url: repositoryUrl,
+      hint: '前往 GitHub，点击 Star 支持项目',
     },
     {
       label: 'Forks',
