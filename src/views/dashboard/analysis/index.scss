@@ -1,301 +1,206 @@
-$primary: #2080f0;
-  $success: #0acf97;
-  $danger: #fa5c7c;
-  $muted: #98a6ad;
-
-  .dashboard {
-    color: #333;
-    padding: 20px;
-
-    .header {
-      margin-bottom: 20px;
-    }
-
-    .title-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #6c757d;
-      .title {
-        font-size: 18px;
-        margin: 0;
-        line-height: 60px;
-        font-weight: 700;
-      }
-      .actions {
-        display: flex;
-        align-items: center;
-      }
-    }
-
-    // 卡片通用、继承/合并
-    .info-card,
-    .chart-card,
-    .data-card,
-    .primary-card {
-      margin-bottom: 16px;
-      display: flex;
-      flex-direction: column;
-      .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        flex-shrink: 0;
-        h4,
-        h5 {
-          color: $muted;
-          margin: 0;
-        }
-        &.with-action {
-          margin-bottom: 24px;
-        }
-      }
-    }
-
-    // 卡片辅助，避免重复
-    %iconbox {
-      color: $primary;
-      font-size: 18px;
-      background: rgba($primary, 0.12);
-      height: 40px;
-      width: 40px;
-      border-radius: 4px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .info-card {
-      height: 170px;
-      .widget-icon {
-        @extend %iconbox;
-      }
-      .card-middle {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        h3 {
-          margin: 0;
-          color: #6c757d;
-          font-size: 24px;
-        }
-      }
-      .card-footer {
-        display: flex;
-        align-items: center;
-        color: $muted;
-        margin-top: auto;
-        padding-top: 8px;
-        .text-success {
-          color: $success;
-          margin: 0 8px;
-        }
-        .text-danger {
-          color: $danger;
-          margin: 0 8px;
-        }
-      }
-    }
-
-    .product-chart {
-      height: 356px;
-      .chart-container {
-        flex: 1;
-        height: 270px;
-        &.no-padding {
-          padding-top: 0;
-        }
-      }
-    }
-
-    // 高度/图例等复用
-    .revenue-chart,
-    .location-chart,
-    .bottom-card {
-      height: 400px;
-    }
-    .bottom-card {
-      overflow: hidden;
-    }
-    .revenue-chart .chart-container {
-      flex: 1;
-      min-height: 260px;
-    }
-    .location-chart .chart-container {
-      flex: 1;
-      min-height: 230px;
-      padding-top: 10px;
-    }
-    .location-chart .chart-footer {
-      margin-top: auto;
-      padding-top: 10px;
-    }
-
-    .chart-card {
-      .chart-container {
-        flex: 1;
-        width: 100%;
-        min-height: 200px;
-        &.small {
-          min-height: 150px;
-          padding-top: 10px;
-        }
-      }
-      .chart-legend {
-        padding: 16px;
-        border-radius: 4px;
-        margin-bottom: 16px;
-        .legend-label {
-          color: $muted;
-          text-align: center;
-          margin-bottom: 8px;
-        }
-        .legend-value {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-weight: 400;
-          margin: 0;
-          .dot {
-            width: 12px;
-            height: 12px;
-            display: inline-block;
-            border-radius: 50%;
-            margin-right: 8px;
-            &.primary {
-              background: $primary;
-            }
-            &.green {
-              background: green;
-            }
-          }
-        }
-      }
-      .chart-footer {
-        padding: 16px 0;
-        .location {
-          font-weight: 400;
-          margin-bottom: 8px;
-        }
-      }
-      .chart-legend-list {
-        margin-top: 10px;
-        padding: 0 10px;
-        max-height: 150px;
-        overflow-y: auto;
-        .legend-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-bottom: 8px;
-          margin-bottom: 8px;
-          border-bottom: 1px solid #f1f3fa;
-          .color-box {
-            width: 12px;
-            height: 12px;
-            display: inline-block;
-            margin-right: 8px;
-            &.yellow {
-              background: #f9c761;
-            }
-            &.green {
-              background: #93cb79;
-            }
-            &.deep-blue {
-              background: #5572c3;
-            }
-            &.red {
-              background: #ec6769;
-            }
-          }
-        }
-      }
-    }
-
-    .sales-chart .chart-container.small {
-      height: 160px;
-    }
-    .primary-card {
-      background: #46a0fc;
-      &.sale-size-card {
-        height: 170px;
-      }
-      .card-header h4 {
-        color: rgba(255, 255, 255, 0.8);
-      }
-      .avg-content {
-        text-align: center;
-        padding: 8px 0;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        .badge-container {
-          margin: 8px 0;
-        }
-        .badge {
-          display: inline-block;
-          padding: 0.25em 0.4em;
-          font-size: 75%;
-          font-weight: 700;
-          line-height: 1;
-          text-align: center;
-          white-space: nowrap;
-          border-radius: 0.25rem;
-          &.badge-danger {
-            color: #fff;
-            background: $danger;
-          }
-        }
-        .value {
-          color: white;
-          font-weight: 400;
-          margin: 8px 0;
-        }
-        .subtitle {
-          color: #e3eaef;
-          font-size: 13px;
-          margin-bottom: 8px;
-        }
-      }
-    }
-
-    .activity-card {
-      height: 210px;
-      .timeline-container {
-        height: 130px;
-        overflow: auto;
-        padding: 0;
-      }
-    }
-    .data-card .btn-link {
-      display: flex;
-      align-items: center;
-      color: $primary;
-      cursor: pointer;
-    }
-
-    // 辅助-工具类
-    .text-nowrap {
-      white-space: nowrap;
-    }
-    .text-muted {
-      color: $muted;
-    }
-    .text-light {
-      color: rgba(255, 255, 255, 0.8);
-    }
-    .mt-4 {
-      margin-top: 16px;
-    }
-    .ml-1 {
-      margin-left: 4px;
-    }
-    .ml-2 {
-      margin-left: 8px;
-    }
-    .ml-3 {
-      margin-left: 12px;
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-06
+ * @FilePath: \Robot_Admin\src\views\dashboard\analysis\index.scss
+ * @Description: 工程分析的构建地图、架构分支与资源耗时布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../shared/d_observatory';
+.runtime-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  border-bottom: 1px solid var(--app-border-light);
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+  span {
+    display: block;
+    color: var(--app-text-tertiary);
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+  strong {
+    font-size: clamp(15px, 1.1vw, 20px);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}
+.bundle-budget {
+  border-top: 1px solid var(--app-border-light);
+  padding-top: 16px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  span {
+    font-size: 11px;
+    color: var(--app-text-secondary);
+  }
+  strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+    small {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--app-text-tertiary);
     }
   }
+  .obs-note {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+.budget-track,
+.resource-track {
+  width: 100%;
+  height: 5px;
+  border-radius: 4px;
+  background: var(--app-bg-deep);
+  overflow: hidden;
+  i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--obs-blue), var(--obs-teal));
+  }
+}
+.dependency-chart {
+  position: relative;
+}
+.dependency-center {
+  position: absolute;
+  top: 43%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  text-align: center;
+  strong {
+    display: block;
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+  }
+  span {
+    display: block;
+    font-size: 11px;
+    color: var(--app-text-tertiary);
+    margin-top: 3px;
+  }
+}
+.architecture-panel {
+  margin-bottom: 20px;
+  background: linear-gradient(
+    115deg,
+    var(--app-hover-bg),
+    var(--app-bg-content) 65%
+  );
+}
+.architecture-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  a {
+    position: relative;
+    display: block;
+    color: var(--app-text-primary);
+    text-decoration: none;
+    border: 1px solid var(--app-border-default);
+    background: var(--app-bg-content);
+    border-radius: 10px;
+    padding: 18px;
+    &:hover {
+      border-color: var(--app-primary);
+    }
+  }
+  .architecture-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    color: var(--app-primary);
+    margin-bottom: 18px;
+  }
+  small {
+    color: var(--app-primary);
+    font-size: 10px;
+  }
+  h3 {
+    margin: 7px 0 9px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  p {
+    font-size: 11px;
+    line-height: 1.7;
+  }
+  .architecture-link {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    color: var(--app-text-tertiary);
+  }
+}
+.ecosystem-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+  a {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
+    border: 1px solid var(--app-border-default);
+    background: var(--app-bg-content);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: var(--app-text-secondary);
+    text-decoration: none;
+    font-size: 10px;
+  }
+  strong {
+    font-weight: 500;
+    color: var(--app-primary);
+  }
+}
+.resource-panel {
+  margin-bottom: 20px;
+}
+.resource-bar-cell {
+  width: 25%;
+  min-width: 85px;
+}
+@container (max-width: 800px) {
+  .architecture-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@container (max-width: 500px) {
+  .runtime-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .architecture-grid {
+    gap: 10px;
+    a {
+      padding: 14px;
+    }
+  }
+  .obs-table code {
+    max-width: 180px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+@container (max-width: 320px) {
+  .architecture-grid,
+  .runtime-metrics {
+    grid-template-columns: 1fr;
+  }
+}

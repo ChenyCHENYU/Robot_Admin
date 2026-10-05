@@ -285,6 +285,7 @@
   import { s_languageStore } from '@/stores/language'
   import { s_permissionStore } from '@/stores/permission'
   import { switchAuthContextApi } from '@/api/auth'
+  import { recordTelemetry } from '@/utils/d_telemetry'
   import { applyAuthSession } from '@/utils/d_authSession'
   import ContextPicker from '@/components/local/c_contextPicker/index.vue'
   import { s_settingsStore } from '@/stores/settings'
@@ -448,6 +449,7 @@
       const response = await requestContextSwitchSession(contextId)
       if (tokenAtStart !== userStore.token) return
       applyAuthSession(response)
+      recordTelemetry('company_switch')
       window.location.replace(router.resolve('/home').href)
     } catch (error) {
       message.error(error instanceof Error ? error.message : '公司切换失败')

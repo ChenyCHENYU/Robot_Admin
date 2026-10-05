@@ -10,6 +10,7 @@
 - `VITE_ERROR_REPORT_ENDPOINT` 仅允许配置同源绝对路径（如 `/api/client-errors`），留空即关闭错误上报。
 - `VITE_CAPTCHA_PROVIDER` 默认为兼容演示用的 `puzzle-captcha`；真实登录可切换为免费自托管的 `altcha`，但必须同时提供挑战和服务端验签接口。
 - 本机临时覆盖使用 Git 已忽略的 `envs/.env.local`，不要修改并提交共享环境文件中的密钥。
+- `VITE_OBSERVABILITY_ENABLED` 默认只采集本机匿名事件；设置为 `false` 可停用。`VITE_TELEMETRY_COLLECT_ENDPOINT` 和 `VITE_TELEMETRY_SUMMARY_ENDPOINT` 默认留空，只允许同源绝对路径。全站接口契约与数据口径见 [工程观测说明](../docs/observability.md)。
 
 | 变量                           | 开发/测试默认    | 业务生产/预发要求 | 公开演示         | 说明                               |
 | ------------------------------ | ---------------- | ----------------- | ---------------- | ---------------------------------- |

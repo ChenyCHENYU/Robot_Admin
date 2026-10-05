@@ -48,7 +48,7 @@ export const workspaceEntryConfig = [
   },
   {
     name: 'dashboard-analysis',
-    description: '查看图表与分析页示例',
+    description: '观察项目架构、构建与真实加载性能',
     icon: 'i-mdi:chart-box-outline',
     category: '仪表盘',
   },

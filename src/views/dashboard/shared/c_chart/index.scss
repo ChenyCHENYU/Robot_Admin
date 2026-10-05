@@ -1,0 +1,41 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-06
+ * @FilePath: \Robot_Admin\src\views\dashboard\shared\c_chart\index.scss
+ * @Description: 统一图表尺寸与采集空状态
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.observatory-chart {
+  position: relative;
+  height: 300px;
+  min-width: 0;
+}
+.observatory-chart__canvas {
+  width: 100%;
+  height: 100%;
+  // 全局 SVG 图标尺寸不应缩小 ECharts 的绘图视口。
+  :deep(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    // ECharts 的 inherit 文字颜色继承 SVG fill，而非页面的 CSS color。
+    fill: var(--app-text-secondary);
+  }
+}
+.observatory-chart__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--app-bg-content);
+  color: var(--app-text-tertiary);
+  font-size: 13px;
+  span {
+    width: 32px;
+    height: 32px;
+    opacity: 0.6;
+  }
+}

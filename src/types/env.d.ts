@@ -26,6 +26,9 @@ interface ImportMetaEnv {
   readonly VITE_PORT?: string
   readonly VITE_I18N_ENABLED?: string
   readonly VITE_ANALYTICS_ENABLED?: 'true' | 'false'
+  readonly VITE_OBSERVABILITY_ENABLED?: 'true' | 'false'
+  readonly VITE_TELEMETRY_COLLECT_ENDPOINT?: string
+  readonly VITE_TELEMETRY_SUMMARY_ENDPOINT?: string
   readonly VITE_ROUTE_IDLE_PREFETCH?: 'true' | 'false'
   readonly VITE_ERROR_REPORT_ENDPOINT?: string
   readonly VITE_CAPTCHA_PROVIDER?: 'puzzle-captcha' | 'altcha'

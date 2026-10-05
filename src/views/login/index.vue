@@ -162,6 +162,7 @@
 </template>
 
 <script setup lang="ts">
+  import { recordTelemetry } from '@/utils/d_telemetry'
   import { initDynamicRouter } from '@/router/dynamicRouter'
   import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
   import { s_userStore } from '@/stores/user/index'
@@ -272,7 +273,10 @@
       await enterSession(activated, formData.username)
     },
 
-    onError: error => console.error('登录错误:', error),
+    onError: error => {
+      recordTelemetry('login_failure', { route: 'login' })
+      console.error('登录错误:', error)
+    },
   })
 
   /** 完整会话就绪后，再发布权限路由并进入首页。 */
@@ -289,6 +293,7 @@
       userStore.clearSession()
       throw new Error('动态路由初始化失败')
     }
+    recordTelemetry('login_success', { route: 'login' })
     await router.replace('/home')
   }
 

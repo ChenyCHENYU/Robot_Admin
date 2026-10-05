@@ -29,6 +29,7 @@ import { setupNaiveUI } from '@/plugins/naive-ui-plugin'
 import { message } from '@/plugins/discrete'
 import { PassiveScrollPlugin } from '@/plugins/passive-scroll'
 import { setupAnalytics } from '@/plugins/analytics'
+import { setupObservability } from '@/plugins/observability'
 import { setupRequestCore } from '@/plugins/request-core'
 import { setupLayoutSystem } from '@/plugins/layout'
 import { setupThemeSystem } from '@/plugins/theme'
@@ -42,6 +43,7 @@ import { setupGlobalErrorHandler } from '@/utils/errorHandler'
  * @return {*}
  */
 async function bootstrap() {
+  performance.mark('robot:bootstrap-start')
   // 第零阶段：立即显示加载动画（innerHTML 方式，极速）
   setupLoading()
 
@@ -60,6 +62,7 @@ async function bootstrap() {
   setupStore(app) // 配置 Pinia（包含持久化插件）
   // Pinia 与请求核心必须先于 Router，避免初始导航守卫访问未初始化依赖
   setupRequestCore(app) // 配置 Request Core（axios + 拦截器）
+  setupObservability(router)
   app.use(router)
   setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）
   setupThemeSystem(app) // 初始化主题 Store、DOM 属性和生命周期
@@ -70,13 +73,14 @@ async function bootstrap() {
       notify: (type, text) => message[type](text),
     })
   )
-  setupAnalytics(app)
+  setupAnalytics(router)
 
   // 第三阶段：等待路由就绪
   await router.isReady()
 
   // 第四阶段：挂载应用
   app.mount('#app')
+  performance.mark('robot:mounted')
 
   // 登录后利用浏览器空闲时间渐进预热大页面，不占用登录页和首屏关键链路
   setupRoutePrefetch(router)

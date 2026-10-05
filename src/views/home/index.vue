@@ -41,6 +41,15 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 :title="metric.hint"
+                @click="
+                  recordTelemetry('feature_action', {
+                    route: 'home',
+                    action:
+                      metric.label === 'Stars'
+                        ? 'repository_star'
+                        : 'repository_open',
+                  })
+                "
                 :aria-label="
                   metric.hint
                     ? `${metric.label}：${metric.value}，${metric.hint}`
@@ -347,6 +356,7 @@
 </template>
 
 <script setup lang="ts">
+  import { recordTelemetry } from '@/utils/d_telemetry'
   import { s_userStore } from '@/stores/user'
   import { s_permissionStore } from '@/stores/permission'
   import { getWorkspacePages } from './d_enterpriseOverview'

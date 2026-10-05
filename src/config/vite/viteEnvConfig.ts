@@ -38,6 +38,7 @@ const BOOLEAN_ENV_KEYS = [
   'VITE_I18N_ENABLED',
   'VITE_ANALYTICS_ENABLED',
   'VITE_ROUTE_IDLE_PREFETCH',
+  'VITE_OBSERVABILITY_ENABLED',
 ] as const
 const UNSAFE_REMOTE_API_PATTERNS = [/apifoxmock\.com/i, /dummy/i]
 
@@ -128,6 +129,21 @@ const validateErrorReportEndpoint = (
   if (!value) return
   if (!value.startsWith('/') || value.startsWith('//')) {
     errors.push('VITE_ERROR_REPORT_ENDPOINT 必须是同源绝对路径')
+  }
+}
+
+/** 观测端点只允许同源路径，禁止通过配置携带凭据或跨域上报。 */
+const validateTelemetryEndpoints = (
+  env: Record<string, string | undefined>,
+  errors: string[]
+): void => {
+  for (const key of [
+    'VITE_TELEMETRY_COLLECT_ENDPOINT',
+    'VITE_TELEMETRY_SUMMARY_ENDPOINT',
+  ] as const) {
+    const endpoint = env[key]?.trim()
+    if (endpoint && !/^\/(?!\/)[\w/-]+$/.test(endpoint))
+      errors.push(`${key} 必须是同源绝对路径，不包含查询参数`)
   }
 }
 
@@ -249,6 +265,7 @@ export function validateViteEnv(
   validateBooleanVariables(env, errors)
   validateI18nCredentials(env, errors)
   validateErrorReportEndpoint(env.VITE_ERROR_REPORT_ENDPOINT, errors)
+  validateTelemetryEndpoints(env, errors)
   const captchaProvider = resolveCaptchaProvider(env, errors)
   validateCaptchaEndpoint(
     'VITE_CAPTCHA_CHALLENGE_URL',

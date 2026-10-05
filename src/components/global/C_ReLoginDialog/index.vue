@@ -77,6 +77,7 @@
 </template>
 
 <script setup lang="ts">
+  import { recordTelemetry } from '@/utils/d_telemetry'
   import { s_userStore } from '@/stores/user'
   import {
     activateAuthContextApi,
@@ -224,6 +225,7 @@
 
       try {
         restoreReLoginSession(await requestReLoginSession())
+        recordTelemetry('login_success', { route: 'relogin' })
 
         message.success('重新登录成功')
         password.value = ''
@@ -238,6 +240,7 @@
         throw error
       }
     } catch (error: unknown) {
+      recordTelemetry('login_failure', { route: 'relogin' })
       message.error(getErrorMessage(error))
     } finally {
       loading.value = false

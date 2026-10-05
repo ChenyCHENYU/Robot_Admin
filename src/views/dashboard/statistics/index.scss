@@ -1,408 +1,229 @@
-// 导入SASS模块
-@use 'sass:map';
-
-// 核心变量
-$transitions: (
-  base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-  smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-);
-
-$radii: (
-  sm: 10px,
-  md: 14px,
-  lg: 18px,
-  xl: 22px,
-  2xl: 28px,
-);
-
-$shadows: (
-  light: (
-    base: (0 2px 8px -2px rgba(0, 0, 0, 0.06), 0 4px 12px -2px rgba(0, 0, 0, 0.04)),
-    hover: (0 12px 32px -8px rgba(0, 0, 0, 0.12), 0 8px 20px -6px rgba(0, 0, 0, 0.08)),
-    strong: (0 20px 48px -12px rgba(0, 0, 0, 0.18), 0 12px 32px -8px rgba(0, 0, 0, 0.12)),
-  ),
-  dark: (
-    base: (0 2px 8px -2px rgba(0, 0, 0, 0.4), 0 4px 12px -2px rgba(0, 0, 0, 0.3)),
-    hover: (0 12px 32px -8px rgba(0, 0, 0, 0.5), 0 8px 20px -6px rgba(0, 0, 0, 0.4)),
-    strong: (0 20px 48px -12px rgba(0, 0, 0, 0.6), 0 12px 32px -8px rgba(0, 0, 0, 0.5)),
-  ),
-);
-
-// 主容器
-.statistics-dashboard {
-  min-height: 100vh;
-  padding: 2rem;
-  background: var(--n-body-color);
-  color: var(--n-text-color);
-  
-  @media (max-width: 768px) {
-    padding: 1rem;
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-06
+ * @FilePath: \Robot_Admin\src\views\dashboard\statistics\index.scss
+ * @Description: 使用统计的真实来源、事件时间线与稳定分页布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../shared/d_observatory';
+.obs-legend i.teal {
+  background: var(--obs-teal);
+}
+.event-chart {
+  position: relative;
+}
+.event-center {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  text-align: center;
+  strong {
+    display: block;
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+  }
+  span {
+    display: block;
+    color: var(--app-text-tertiary);
+    font-size: 11px;
+    margin-top: 5px;
   }
 }
-
-// 页面头部
-.dashboard-header {
+.collection-source {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2.5rem;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-
-  .header-left {
-    .page-title {
-      font-size: 2rem;
-      font-weight: 900;
-      margin: 0 0 0.5rem 0;
-      color: var(--n-text-color);
-      letter-spacing: -0.03em;
-    }
-
-    .page-subtitle {
-      font-size: 1rem;
-      color: var(--n-text-color-3);
-      margin: 0;
-      font-weight: 500;
-    }
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid var(--app-border-light);
+  padding: 16px 0;
+  &:first-of-type {
+    padding-top: 5px;
   }
-
-  .header-right {
+  .collection-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--app-primary);
+    margin-top: 2px;
+  }
+  > div {
+    flex: 1;
+    min-width: 0;
+  }
+  h3 {
+    margin: 0 0 7px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  p {
+    font-size: 11px;
+    line-height: 1.8;
+  }
+  a {
+    display: inline-block;
+    margin-top: 7px;
+    font-size: 11px;
+    color: var(--app-primary);
+    text-decoration: none;
+  }
+}
+.source-state {
+  flex-shrink: 0;
+  color: var(--obs-teal);
+  font-size: 10px;
+  margin-top: 2px;
+  &.muted {
+    color: var(--app-text-tertiary);
+  }
+}
+.device-distribution {
+  margin: 22px 0;
+  h3 {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0 16px;
+  }
+  > div {
     display: flex;
     align-items: center;
-    gap: 1rem;
-
-    .date-picker {
-      min-width: 280px;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  span {
+    font-size: 11px;
+    width: 64px;
+    flex-shrink: 0;
+    color: var(--app-text-secondary);
+  }
+  strong {
+    width: 26px;
+    text-align: right;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .device-track {
+    flex: 1;
+    height: 5px;
+    border-radius: 4px;
+    background: var(--app-bg-deep);
+    overflow: hidden;
+    i {
+      display: block;
+      height: 100%;
+      background: var(--obs-blue);
+      border-radius: inherit;
     }
-
-    :deep(.n-button) {
-      height: 40px;
-      padding: 0 1.5rem;
-      border-radius: 12px;
-      font-weight: 600;
-    }
+  }
+  p {
+    margin-top: 18px;
+    font-size: 10px;
   }
 }
-
-// 核心指标网格
-.metrics-grid {
+.collection-summary {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
-
-  @media (max-width: 1400px) {
-    grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  border-top: 1px solid var(--app-border-light);
+  padding-top: 20px;
+  span {
+    color: var(--app-text-tertiary);
+    font-size: 11px;
   }
-
-  @media (max-width: 768px) {
+  strong {
+    display: block;
+    font-size: 23px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    margin-top: 7px;
+  }
+}
+.page-timings {
+  margin-top: 10px;
+}
+.recent-panel {
+  margin-bottom: 20px;
+}
+.recent-table {
+  height: 342px;
+}
+.event-time {
+  color: var(--app-text-tertiary);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.event-kind {
+  color: var(--app-primary);
+  &.login_success {
+    color: var(--obs-teal);
+  }
+  &.login_failure {
+    color: var(--obs-amber);
+  }
+  &.company_switch {
+    color: var(--obs-purple);
+  }
+}
+.mode-label {
+  background: var(--app-bg-surface);
+  color: var(--app-text-secondary);
+  border-radius: 4px;
+  padding: 3px 7px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.recent-pagination {
+  border-top: 1px solid var(--app-border-light);
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--app-text-tertiary);
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  button {
+    min-height: 30px;
+    padding: 4px 9px;
+    font-size: 11px;
+  }
+}
+@container (max-width: 500px) {
+  .recent-pagination {
+    flex-wrap: wrap;
+  }
+  .collection-source {
+    gap: 8px;
+  }
+  .recent-table {
+    height: 360px;
+  }
+  .obs-controls {
+    gap: 7px;
+  }
+}
+@container (max-width: 320px) {
+  .collection-source {
+    flex-wrap: wrap;
+    > div {
+      flex-basis: calc(100% - 28px);
+    }
+    .source-state {
+      margin-left: 28px;
+    }
+  }
+  .device-distribution > div {
+    flex-wrap: wrap;
+  }
+  .collection-summary {
     grid-template-columns: 1fr;
   }
-}
-
-// 指标卡片
-.metric-card {
-  border-radius: map.get($radii, xl) !important;
-  border: 1px solid var(--n-border-color);
-  transition: map.get($transitions, smooth);
-  overflow: hidden;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--n-primary-color);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: map.get($shadows, light, hover);
-    border-color: rgba(0, 0, 0, 0.08);
-
-    &::before {
-      opacity: 1;
-    }
-  }
-
-  :deep(.n-card__content) {
-    padding: 1.75rem !important;
-  }
-
-  .metric-content {
-    .metric-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1.5rem;
-
-      .metric-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: map.get($radii, lg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-        transition: map.get($transitions, base);
-
-        :deep(.n-icon) {
-          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
-      }
-
-      .metric-trend {
-        .trend-value {
-          display: flex;
-          align-items: center;
-          gap: 0.25rem;
-          font-size: 0.875rem;
-          font-weight: 700;
-          padding: 0.375rem 0.75rem;
-          border-radius: 20px;
-          
-          &.trend-up {
-            color: #18a058;
-            background: rgba(24, 160, 88, 0.1);
-          }
-
-          &.trend-down {
-            color: #d03050;
-            background: rgba(208, 48, 80, 0.1);
-          }
-        }
-      }
-    }
-
-    .metric-body {
-      margin-bottom: 1rem;
-
-      .metric-value {
-        font-size: 2.25rem;
-        font-weight: 900;
-        margin: 0 0 0.5rem 0;
-        color: var(--n-text-color);
-        letter-spacing: -0.04em;
-        line-height: 1;
-      }
-
-      .metric-label {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--n-text-color-2);
-        margin: 0 0 0.25rem 0;
-      }
-
-      .metric-desc {
-        font-size: 0.875rem;
-        color: var(--n-text-color-3);
-        margin: 0;
-      }
-    }
-
-    .metric-chart {
-      .mini-chart {
-        height: 60px;
-        width: 100%;
-      }
-    }
-  }
-
-  &:hover .metric-icon {
-    transform: scale(1.1) rotate(-5deg);
-  }
-}
-
-// 图表卡片
-.chart-card {
-  border-radius: map.get($radii, xl) !important;
-  border: 1px solid var(--n-border-color);
-  transition: map.get($transitions, smooth);
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: map.get($shadows, light, hover);
-    border-color: rgba(0, 0, 0, 0.08);
-  }
-
-  :deep(.n-card-header) {
-    padding: 1.75rem 1.75rem 1rem !important;
-    border-bottom: 1px solid var(--n-border-color);
-  }
-
-  :deep(.n-card__content) {
-    padding: 1.75rem !important;
-  }
-
-  .chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+  .recent-pagination > div {
     flex-wrap: wrap;
-    gap: 1rem;
-
-    .chart-title-group {
-      .chart-title {
-        font-size: 1.25rem;
-        font-weight: 800;
-        margin: 0 0 0.375rem 0;
-        color: var(--n-text-color);
-        letter-spacing: -0.02em;
-      }
-
-      .chart-subtitle {
-        font-size: 0.875rem;
-        color: var(--n-text-color-3);
-        margin: 0;
-        font-weight: 500;
-      }
-    }
-
-    .tag-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--n-success-color);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-      box-shadow: 0 0 8px var(--n-success-color);
-    }
-  }
-
-  .chart-container {
-    width: 100%;
-  }
-}
-
-// 收入统计
-.revenue-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  padding: 1.5rem;
-  background: var(--n-modal-color);
-  border-radius: map.get($radii, lg);
-  margin-bottom: 1.5rem;
-
-  .revenue-stat-item {
-    .stat-indicator {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-
-      .stat-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-      }
-
-      .stat-period {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--n-text-color-2);
-      }
-    }
-
-    .stat-amount {
-      font-size: 2rem;
-      font-weight: 900;
-      margin: 0 0 0.5rem 0;
-      color: var(--n-text-color);
-      letter-spacing: -0.03em;
-    }
-
-    .stat-change {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: var(--n-text-color-3);
-      margin: 0;
-    }
-  }
-}
-
-// 渠道图例
-.channel-legend {
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--n-border-color);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  .legend-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.875rem 1rem;
-    background: var(--n-modal-color);
-    border-radius: map.get($radii, md);
-    transition: map.get($transitions, base);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--n-card-color-modal);
-      transform: translateX(4px);
-    }
-
-    .legend-info {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-
-      .legend-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-      }
-
-      .legend-label {
-        font-size: 0.9375rem;
-        font-weight: 600;
-        color: var(--n-text-color);
-      }
-    }
-
-    .legend-value {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-
-      .legend-count {
-        font-size: 1.125rem;
-        font-weight: 800;
-        color: var(--n-text-color);
-      }
-
-      .legend-percent {
-        font-size: 0.875rem;
-        font-weight: 700;
-        color: var(--n-text-color-3);
-        padding: 0.25rem 0.625rem;
-        background: var(--n-color-target);
-        border-radius: 12px;
-      }
-    }
-  }
-}
-
-// 动画
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.1);
   }
 }
