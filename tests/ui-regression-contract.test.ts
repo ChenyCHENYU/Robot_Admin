@@ -316,8 +316,8 @@ describe('UI regression contracts', () => {
     )
     const dynamicRouterSource = await readText('../src/router/dynamicRouter.ts')
 
-    expect(unoConfig).toContain("'src/components/global/**/*.{vue,ts,tsx}'")
-    expect(unoConfig).toContain("'src/views/home/**/*.{vue,ts,tsx}'")
+    // 完整项目扫描涵盖布局、首页、异常页以及未访问过的懒路由。
+    expect(unoConfig).toContain("'src/**/*.{vue,ts,tsx}'")
     expect(loginSource).toContain('preloadAuthenticatedShell()')
     expect(loginSource).toContain('requestIdleCallback')
     expect(loginSource).toContain(':paused="')

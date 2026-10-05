@@ -1,215 +1,286 @@
-// 穿梭框演示 – 页面样式
-.transfer-demo {
-  padding: 24px;
-
-  :deep(.n-h1) {
-    margin-bottom: 4px;
-    font-size: 26px;
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-06
+ * @FilePath: \Robot_Admin\src\views\demo\52-transfer\index.scss
+ * @Description: 分配工作空间样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.assignment-workspace {
+  padding: clamp(20px, 2.4vw, 40px);
+  color: var(--app-text-primary);
+  .eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--app-text-tertiary);
   }
-
-  // ========== 功能特性网格 ==========
-  .feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    margin-top: 16px;
+  h1 {
+    font-size: clamp(25px, 2vw, 34px);
+    letter-spacing: -0.03em;
+    margin: 7px 0 9px;
   }
-
-  .feature-card {
+  h2 {
+    font-size: 18px;
+    margin: 9px 0;
+  }
+  p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--app-text-secondary);
+  }
+  button:focus-visible {
+    outline: 2px solid var(--app-primary);
+    outline-offset: 3px;
+  }
+}
+.assignment-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.demo-badge {
+  padding: 6px 12px;
+  border: 1px solid var(--app-border-default);
+  border-radius: 20px;
+  color: var(--app-text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.assignment-layout {
+  display: grid;
+  grid-template-columns: 225px minmax(0, 1fr) 270px;
+  gap: 24px;
+  align-items: start;
+}
+.assignment-context {
+  padding-top: 15px;
+  > button {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px;
+    gap: 11px;
+    margin-top: 10px;
+    padding: 15px 12px;
     border-radius: 10px;
-    background: var(--body-color);
-    border: 1px solid var(--border-color);
-    transition: box-shadow 0.25s;
-
-    &:hover {
-      box-shadow: 0 2px 12px rgb(0 0 0 / 0.06);
+    cursor: pointer;
+    color: var(--app-text-secondary);
+    text-align: left;
+    font-size: 14px;
+    border: 1px solid transparent;
+    > span:last-child {
+      margin-left: auto;
     }
-
-    &__icon {
-      flex-shrink: 0;
+    &.active {
+      color: var(--app-primary);
+      background: color-mix(in srgb, var(--app-primary) 8%, transparent);
+      border-color: color-mix(in srgb, var(--app-primary) 20%, transparent);
+      font-weight: 600;
+    }
+  }
+  .subject {
+    border-top: 1px solid var(--app-border-default);
+    margin-top: 25px;
+    padding-top: 25px;
+    > span {
+      color: var(--app-text-tertiary);
+      font-size: 12px;
+    }
+    strong {
+      display: block;
+      margin: 8px 0;
+      font-size: 16px;
+    }
+  }
+}
+.assignment-options {
+  margin-top: 24px;
+  display: grid;
+  gap: 17px;
+  label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    font-size: 12px;
+    color: var(--app-text-secondary);
+  }
+  :deep(.n-select) {
+    width: 90px;
+  }
+}
+.assignment-editor {
+  min-width: 0;
+  background: var(--app-bg-content);
+  border: 1px solid var(--app-border-default);
+  border-radius: 16px;
+  padding: 25px;
+  > header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+  .selection-count {
+    color: var(--app-text-tertiary);
+    font-size: 12px;
+    b {
+      font-size: 26px;
+      color: var(--app-primary);
+      margin-right: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+  :deep(.c-transfer__panel) {
+    min-width: 0;
+  }
+  > footer {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--app-border-default);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    > span {
       display: flex;
       align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: color-mix(in srgb, var(--primary-color) 10%, var(--card-color));
-      color: var(--primary-color);
-      font-size: 20px;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--app-text-secondary);
     }
-
-    &__body {
-      flex: 1;
+    > div {
       display: flex;
-      flex-direction: column;
+      gap: 10px;
+    }
+  }
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #21a68c;
+  &.changed {
+    background: #df9a38;
+  }
+}
+.assignment-preview {
+  padding-top: 15px;
+  > p {
+    margin-bottom: 18px;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+  li {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--app-border-default);
+    font-size: 13px;
+    > span:nth-child(2) {
+      flex: 1;
       min-width: 0;
     }
-
-    &__title {
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.4;
-      color: var(--app-text-primary);
+    > span:last-child {
+      color: #21a68c;
     }
-
-    &__desc {
-      font-size: 12px;
-      color: var(--text-color-3);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    small {
+      display: block;
+      font-size: 11px;
+      margin-top: 4px;
+      color: var(--app-text-tertiary);
+      overflow-wrap: anywhere;
     }
   }
-
-  // ========== 通用区块 ==========
-  .demo-section {
-    margin-bottom: 36px;
-    padding: 24px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    background: var(--card-color);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+.selection-meter {
+  height: 4px;
+  background: var(--app-bg-surface);
+  border-radius: 10px;
+  overflow: hidden;
+  span {
+    display: block;
+    height: 100%;
+    background: var(--app-primary);
+    transition: width 0.2s;
+  }
+}
+.assignment-note {
+  display: flex;
+  gap: 9px;
+  margin-top: 25px;
+  > span {
+    color: var(--app-text-tertiary);
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  p {
+    font-size: 12px;
+  }
+}
+@media (max-width: 1400px) {
+  .assignment-layout {
+    grid-template-columns: 205px minmax(0, 1fr);
+  }
+  .assignment-preview {
+    grid-column: 2;
+    ul {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 25px;
     }
   }
-
-  .section-title {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 0 0 8px;
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--app-text-primary);
-
-    .title-icon {
-      flex-shrink: 0;
-      font-size: 20px;
-      color: var(--primary-color);
-    }
+}
+@media (max-width: 900px) {
+  .assignment-layout {
+    grid-template-columns: 1fr;
   }
-
-  .section-desc {
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--text-color-3);
-    border-bottom: 1px dashed color-mix(in srgb, var(--border-color) 60%, transparent);
-  }
-
-  // ========== 场景切换卡片 ==========
-  .scene-switcher {
+  .assignment-context {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    > .eyebrow,
+    .subject,
+    .assignment-options {
+      grid-column: 1 / -1;
+    }
+    > button {
+      margin: 0;
+    }
+    .subject {
+      margin-top: 12px;
+      padding-top: 15px;
+    }
   }
-
-  .scene-card {
-    display: flex;
+  .assignment-preview {
+    grid-column: 1;
+  }
+  .assignment-editor {
+    padding: 18px;
+    > footer {
+      flex-wrap: wrap;
+    }
+  }
+}
+@media (max-width: 520px) {
+  .assignment-heading {
+    align-items: start;
     flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 20px 16px;
-    border-radius: 12px;
-    border: 2px solid var(--border-color);
-    cursor: pointer;
-    text-align: center;
-    transition:
-      border-color 0.25s,
-      box-shadow 0.25s;
-
-    &:hover {
-      border-color: var(--primary-color);
-    }
-
-    &.is-active {
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 12%, transparent);
-    }
-
-    &__icon {
-      font-size: 32px;
-      color: var(--primary-color);
-    }
-
-    &__title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--app-text-primary);
-    }
-
-    &__desc {
-      font-size: 12px;
-      color: var(--text-color-3);
-    }
   }
-
-  // ========== 控制面板 ==========
-  .control-bar {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 20px;
-    align-items: center;
-    flex-wrap: wrap;
+  .assignment-preview ul {
+    grid-template-columns: 1fr;
   }
-
-  .control-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    .label {
-      font-size: 13px;
-      color: var(--text-color-2);
-      white-space: nowrap;
-    }
+  .assignment-context > button {
+    padding: 12px 7px;
+    font-size: 12px;
   }
-
-  /* ---- Transfer Wrapper ---- */
-  .transfer-wrapper {
-    padding: 8px 0;
-  }
-
-  // ========== 暗色主题适配 ==========
-  [data-theme='dark'] & {
-    .demo-section {
-      border-color: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-
-      &:hover {
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-      }
-    }
-
-    .feature-card {
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .scene-card {
-      border-color: rgba(255, 255, 255, 0.12);
-      background: color-mix(in srgb, var(--card-color) 80%, transparent);
-
-      &:hover {
-        border-color: var(--primary-color);
-      }
-
-      &.is-active {
-        border-color: var(--primary-color);
-      }
-    }
-
-    .section-desc {
-      border-bottom-color: rgba(255, 255, 255, 0.08);
-    }
+  .assignment-editor :deep(.c-transfer) {
+    flex-direction: column;
   }
 }

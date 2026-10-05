@@ -1,184 +1,92 @@
-/**
+/*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-03-05
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-05
+ * @Date: 2026-10-06
  * @FilePath: \Robot_Admin\src\views\demo\51-context-menu\data.ts
- * @Description: 右键菜单组件演示数据
+ * @Description: 项目公开配置的资源副本与上下文操作
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-
+import projectInfo from 'virtual:robot-admin-project-info'
 import type { ContextMenuItem } from '@robot-admin/naive-ui-components'
-
-// ==================== 编辑器菜单 ====================
-
-export const EDITOR_MENU: ContextMenuItem[] = [
-  { key: 'undo', label: '撤销', icon: 'mdi:undo', shortcut: 'Ctrl+Z' },
-  { key: 'redo', label: '重做', icon: 'mdi:redo', shortcut: 'Ctrl+Y' },
-  { key: 'd1', label: '', divider: true },
-  { key: 'cut', label: '剪切', icon: 'mdi:content-cut', shortcut: 'Ctrl+X' },
-  { key: 'copy', label: '复制', icon: 'mdi:content-copy', shortcut: 'Ctrl+C' },
+export interface WorkspaceFile {
+  id: string
+  name: string
+  type: string
+  icon: string
+  content: string
+}
+export const WORKSPACE_FILES: WorkspaceFile[] = [
   {
-    key: 'paste',
-    label: '粘贴',
-    icon: 'mdi:content-paste',
-    shortcut: 'Ctrl+V',
+    id: 'package',
+    name: 'package.json',
+    type: 'JSON',
+    icon: 'mdi:nodejs',
+    content: JSON.stringify(
+      {
+        name: 'robot-admin',
+        version: projectInfo.version,
+        dependencies: Object.fromEntries(
+          projectInfo.dependencies.map(item => [
+            item.name,
+            item.declaredVersion,
+          ])
+        ),
+      },
+      null,
+      2
+    ),
   },
-  { key: 'd2', label: '', divider: true },
   {
-    key: 'select-all',
-    label: '全选',
-    icon: 'mdi:select-all',
-    shortcut: 'Ctrl+A',
+    id: 'guide',
+    name: 'component-usage.vue',
+    type: 'Vue',
+    icon: 'mdi:vuejs',
+    content:
+      '<template>\n  <C_Transfer v-model="selected" :data="items" filterable />\n</template>\n\n<script setup lang="ts">\n  const selected = ref([])\n  const items = [{ key: "home", label: "首页工作台" }]\n</script>\n\n<!-- 项目通过 RobotNaiveUiResolver 自动引入组件与样式。 -->',
   },
   {
-    key: 'find',
-    label: '查找与替换',
-    icon: 'mdi:find-replace',
-    shortcut: 'Ctrl+H',
+    id: 'workflow',
+    name: 'verify-notes.md',
+    type: 'Markdown',
+    icon: 'mdi:language-markdown',
+    content:
+      '# Robot Admin 验证流程\n\n- bun run lint:check\n- bun run lint:eslint\n- bun run type-build\n- bun test --max-concurrency=1\n- bun run build\n- bun run check:bundle\n- bun run build:application\n\n这里是上下文菜单演示资源的本地副本。',
+  },
+  {
+    id: 'selection',
+    name: 'selection-example.json',
+    type: 'JSON',
+    icon: 'mdi:code-json',
+    content: JSON.stringify(
+      { scope: 'local-demo', selected: ['layout', 'theme', 'components'] },
+      null,
+      2
+    ),
   },
 ]
-
-// ==================== 文件管理菜单（含子菜单） ====================
-
-export const FILE_MANAGER_MENU: ContextMenuItem[] = [
+export const FILE_MENU: ContextMenuItem[] = [
+  { key: 'preview', label: '查看内容', icon: 'mdi:eye-outline' },
   {
-    key: 'new',
-    label: '新建',
-    icon: 'mdi:plus-circle-outline',
-    children: [
-      {
-        key: 'new-file',
-        label: '文件',
-        icon: 'mdi:file-plus-outline',
-        shortcut: 'Ctrl+N',
-      },
-      { key: 'new-folder', label: '文件夹', icon: 'mdi:folder-plus-outline' },
-      { key: 'd-new', label: '', divider: true },
-      {
-        key: 'new-from-tpl',
-        label: '从模板创建...',
-        icon: 'mdi:file-document-outline',
-      },
-    ],
-  },
-  {
-    key: 'open-with',
-    label: '打开方式',
-    icon: 'mdi:open-in-app',
-    children: [
-      { key: 'open-editor', label: '代码编辑器', icon: 'mdi:code-braces' },
-      { key: 'open-preview', label: '预览', icon: 'mdi:eye-outline' },
-      { key: 'open-terminal', label: '终端', icon: 'mdi:console' },
-    ],
-  },
-  { key: 'd3', label: '', divider: true },
-  {
-    key: 'rename',
-    label: '重命名',
-    icon: 'mdi:rename-outline',
-    shortcut: 'F2',
-  },
-  { key: 'move', label: '移动到...', icon: 'mdi:folder-move-outline' },
-  {
-    key: 'copy-path',
-    label: '复制路径',
+    key: 'copy',
+    label: '复制',
     icon: 'mdi:content-copy',
-    shortcut: 'Shift+Alt+C',
+    children: [
+      { key: 'copy-name', label: '复制文件名', icon: 'mdi:rename-outline' },
+      { key: 'copy-content', label: '复制内容', icon: 'mdi:code-tags' },
+    ],
   },
-  { key: 'd4', label: '', divider: true },
+  { key: 'download', label: '下载副本', icon: 'mdi:download-outline' },
+  { key: 'duplicate', label: '创建副本', icon: 'mdi:file-multiple-outline' },
+  { key: 'divider', label: '', divider: true },
   {
-    key: 'delete',
-    label: '删除',
-    icon: 'mdi:delete-outline',
-    shortcut: 'Delete',
-    danger: true,
-  },
-]
-
-// ==================== 表格行菜单 ====================
-
-export const TABLE_ROW_MENU: ContextMenuItem[] = [
-  { key: 'view', label: '查看详情', icon: 'mdi:eye-outline' },
-  { key: 'edit', label: '编辑', icon: 'mdi:pencil-outline', shortcut: 'Enter' },
-  { key: 'd5', label: '', divider: true },
-  { key: 'export', label: '导出', icon: 'mdi:export-variant' },
-  { key: 'share', label: '分享链接', icon: 'mdi:share-variant-outline' },
-  { key: 'd6', label: '', divider: true },
-  {
-    key: 'disable',
-    label: '禁用（演示）',
-    icon: 'mdi:block-helper',
+    key: 'remote',
+    label: '上传到服务器',
+    icon: 'mdi:cloud-upload-outline',
     disabled: true,
   },
   {
     key: 'remove',
-    label: '从列表移除',
-    icon: 'mdi:close-circle-outline',
+    label: '移除本地副本',
+    icon: 'mdi:trash-can-outline',
     danger: true,
   },
 ]
-
-// ==================== 场景 ====================
-
-export const DEMO_SCENES = [
-  {
-    key: 'editor',
-    title: '编辑器',
-    description: '快捷键标注、经典编辑操作',
-    icon: 'mdi:code-braces',
-  },
-  {
-    key: 'file',
-    title: '文件管理',
-    description: '嵌套子菜单、多级操作',
-    icon: 'mdi:folder-open-outline',
-  },
-  {
-    key: 'table',
-    title: '表格行操作',
-    description: '禁用项、危险操作',
-    icon: 'mdi:table',
-  },
-]
-
-// ==================== 功能特性 ====================
-
-export const FEATURE_LIST = [
-  {
-    icon: 'mdi:file-tree',
-    title: '声明式配置',
-    desc: 'JSON 结构描述菜单，零模板代码',
-    tag: '核心',
-  },
-  {
-    icon: 'mdi:keyboard-outline',
-    title: '快捷键标注',
-    desc: '每项可配 shortcut 文本展示',
-    tag: '核心',
-  },
-  {
-    icon: 'mdi:menu-right',
-    title: '嵌套子菜单',
-    desc: 'children 无限嵌套，悬停展开',
-    tag: '核心',
-  },
-  {
-    icon: 'mdi:alert-circle-outline',
-    title: '危险操作',
-    desc: 'danger 属性标红高亮关键操作',
-    tag: '交互',
-  },
-  {
-    icon: 'mdi:monitor-screenshot',
-    title: '自动边界检测',
-    desc: '智能避免菜单溢出视窗',
-    tag: '交互',
-  },
-]
-
-export const TAG_TYPE_MAP: Record<string, string> = {
-  核心: 'success',
-  交互: 'info',
-  主题: 'default',
-}

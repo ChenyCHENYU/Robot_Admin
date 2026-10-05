@@ -25,6 +25,7 @@ import { validateViteEnv } from './src/config/vite/viteEnvConfig.ts'
 import { createProjectInfoPlugin } from './src/config/vite/viteProjectInfoPlugin.ts'
 import { createBuildInfoPlugin } from './src/config/vite/viteBuildInfoPlugin.ts'
 import { createProjectMetricsPlugin } from './src/config/vite/viteProjectMetricsPlugin.ts'
+import { createDependencyUpdatePlugin } from './src/config/vite/viteDependencyUpdatePlugin.ts'
 import { getLocalPackageInfo } from './src/config/vite/localPackagesAlias.ts'
 
 const ENV_DIR = 'envs'
@@ -89,6 +90,7 @@ export default defineConfig(
         createBuildInfoPlugin(validatedEnv),
         createProjectInfoPlugin(),
         createProjectMetricsPlugin(),
+        createDependencyUpdatePlugin(),
         ...(process.env.ANALYZE
           ? [
               (await import('rollup-plugin-visualizer')).visualizer({

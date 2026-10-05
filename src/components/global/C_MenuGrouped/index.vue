@@ -476,8 +476,5 @@
 
 <style scoped lang="scss">
   @use './index.scss';
-</style>
-
-<style lang="scss">
   @use './panel.scss';
 </style>

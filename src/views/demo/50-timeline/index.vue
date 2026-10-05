@@ -1,171 +1,132 @@
 <!--
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-03-05
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-05
+ * @Date: 2026-10-06
  * @FilePath: \Robot_Admin\src\views\demo\50-timeline\index.vue
- * @Description: 时间线组件演示页面
+ * @Description: 发布日志时间线与验证流程示例
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <div class="timeline-demo">
-    <c_vTitle
-      title="时间线组件场景示例"
-      icon="mdi:timeline-clock-outline"
-      description="支持垂直/水平布局、节点样式自定义、展开折叠等特性，适用于项目进度、审批流程、物流追踪等场景"
-    />
-
-    <!-- ==================== 场景切换 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:television-play"
-          class="title-icon"
-        />
-        在线演示
-      </h2>
-      <p class="section-desc">
-        选择不同场景，体验时间线组件在各类业务场景中的表现。
-      </p>
-
-      <div class="scene-switcher">
-        <button
-          v-for="scene in DEMO_SCENES"
-          :key="scene.key"
-          type="button"
-          class="scene-card"
-          :class="{ 'is-active': activeScene === scene.key }"
-          :aria-pressed="activeScene === scene.key"
-          @click="activeScene = scene.key"
-        >
-          <C_Icon
-            :name="scene.icon"
-            class="scene-card__icon"
-          />
-          <span class="scene-card__title">{{ scene.title }}</span>
-          <span class="scene-card__desc">{{ scene.description }}</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- ==================== 控制面板 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:tune-variant"
-          class="title-icon"
-        />
-        交互控制
-      </h2>
-      <div class="control-panel">
-        <NSpace
-          align="center"
-          :wrap="true"
-        >
-          <NButton
-            size="small"
-            @click="tlRef?.expandAll()"
-          >
-            展开全部
-          </NButton>
-          <NButton
-            size="small"
-            @click="tlRef?.collapseAll()"
-          >
-            折叠全部
-          </NButton>
-          <NDivider vertical />
-          <NSwitch
-            v-model:value="showPending"
-            size="small"
-          >
-            <template #checked>Pending</template>
-            <template #unchecked>Pending</template>
-          </NSwitch>
-          <NSwitch
-            v-model:value="reversed"
-            size="small"
-          >
-            <template #checked>反转</template>
-            <template #unchecked>反转</template>
-          </NSwitch>
-          <NSwitch
-            v-model:value="showTime"
-            size="small"
-          >
-            <template #checked>时间</template>
-            <template #unchecked>时间</template>
-          </NSwitch>
-          <NDivider vertical />
-          <NRadioGroup
-            v-model:value="lineType"
-            size="small"
-          >
-            <NRadioButton value="solid"> 实线 </NRadioButton>
-            <NRadioButton value="dashed"> 虚线 </NRadioButton>
-            <NRadioButton value="dotted"> 点线 </NRadioButton>
-          </NRadioGroup>
-          <NDivider vertical />
-          <NRadioGroup
-            v-model:value="nodeSize"
-            size="small"
-          >
-            <NRadioButton value="small"> S </NRadioButton>
-            <NRadioButton value="medium"> M </NRadioButton>
-            <NRadioButton value="large"> L </NRadioButton>
-          </NRadioGroup>
-        </NSpace>
-      </div>
-    </div>
-
-    <!-- ==================== 时间线实例 ==================== -->
-    <div class="demo-section demo-section--timeline">
-      <C_Timeline
-        :key="activeScene"
-        ref="tlRef"
-        :items="sceneConfig[activeScene].items"
-        :mode="sceneConfig[activeScene].mode"
-        :pending="showPending"
-        :reverse="reversed"
-        :show-time="showTime"
-        :line-type="lineType"
-        :size="nodeSize"
-      />
+  <div class="release-journal">
+    <header class="journal-heading"
+      ><span>RELEASE JOURNAL / C_TIMELINE</span><h1>每一次迭代，都有迹可循</h1
+      ><p>从项目发布记录阅读变化，也从验证流程理解交付。</p></header
+    >
+    <div class="journal-layout">
+      <aside class="journal-index"
+        ><div class="journal-version"
+          ><span>CURRENT APPLICATION</span
+          ><strong>v{{ applicationVersion }}</strong
+          ><p>当前安装项目的应用版本</p></div
+        ><nav aria-label="时间线场景"
+          ><button
+            type="button"
+            :class="{ active: scene === 'release' }"
+            :aria-pressed="scene === 'release'"
+            @click="scene = 'release'"
+            ><span class="i-mdi:source-branch" /><span
+              >发布记录<small>{{ RELEASES.length }} 个已记录版本</small></span
+            ></button
+          ><button
+            type="button"
+            :class="{ active: scene === 'verify' }"
+            :aria-pressed="scene === 'verify'"
+            @click="scene = 'verify'"
+            ><span class="i-mdi:check-decagram-outline" /><span
+              >验证流程<small>项目 verify 脚本顺序</small></span
+            ></button
+          ></nav
+        ><div class="journal-source"
+          ><span>记录来源</span
+          ><strong>{{
+            scene === 'release' ? 'CHANGELOG.md' : 'package.json'
+          }}</strong
+          ><p>{{
+            scene === 'release'
+              ? '直接读取仓库发布记录。当前分支尚未发布的改动，不冒充已发布版本。'
+              : '展示检查流程与实际命令，不表示这些步骤正在执行。'
+          }}</p></div
+        ><a
+          href="https://github.com/ChenyCHENYU/Robot_Admin/blob/main/CHANGELOG.md"
+          target="_blank"
+          rel="noopener noreferrer"
+          >查看仓库日志 <span class="i-mdi:arrow-top-right" /></a
+      ></aside>
+      <section class="journal-content"
+        ><header
+          ><div
+            ><span class="eyebrow">{{
+              scene === 'release' ? 'VERSION HISTORY' : 'DELIVERY WORKFLOW'
+            }}</span
+            ><h2>{{
+              scene === 'release' ? '版本轨迹' : '从检查到交付'
+            }}</h2></div
+          ><div class="journal-controls"
+            ><label v-if="scene === 'release'"
+              ><span>最新优先</span
+              ><NSwitch
+                v-model:value="latestFirst"
+                size="small" /></label
+            ><NButton
+              size="small"
+              @click="toggleDetails"
+              >{{ expanded ? '收起详情' : '展开详情' }}</NButton
+            ></div
+          ></header
+        ><C_Timeline
+          :key="`${scene}-${visibleCount}`"
+          ref="timeline"
+          :items="items"
+          :reverse="scene === 'release' && !latestFirst"
+          :line-type="scene === 'verify' ? 'dashed' : 'solid'"
+          label-placement="left"
+          size="large"
+        /><NButton
+          v-if="scene === 'release' && visibleCount < RELEASE_TIMELINE.length"
+          block
+          class="journal-more"
+          @click="visibleCount += 8"
+          >加载更早的版本</NButton
+        ><div
+          v-if="scene === 'verify'"
+          class="journal-workflow-note"
+          ><span
+            class="i-mdi:information-outline"
+          />蓝色节点表示流程定义。实际构建结果可以在工程分析页或终端验证报告中查看。</div
+        ></section
+      >
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-  defineOptions({ name: 'Demo50Timeline' })
-  import type { TimelineItem } from '@robot-admin/naive-ui-components'
   import {
-    PROJECT_TIMELINE,
-    CI_PIPELINE_TIMELINE,
-    ORDER_TIMELINE,
-    DEMO_SCENES,
+    RELEASES,
+    RELEASE_TIMELINE,
+    VERIFY_TIMELINE,
+    applicationVersion,
   } from './data'
-
-  // ===== 状态 =====
-  type SceneKey = (typeof DEMO_SCENES)[number]['key']
-  const sceneConfig: Record<
-    SceneKey,
-    { items: TimelineItem[]; mode: 'vertical' | 'horizontal' }
-  > = {
-    project: { items: PROJECT_TIMELINE, mode: 'vertical' },
-    pipeline: { items: CI_PIPELINE_TIMELINE, mode: 'horizontal' },
-    order: { items: ORDER_TIMELINE, mode: 'vertical' },
-  }
-  const tlRef = ref<{ expandAll: () => void; collapseAll: () => void } | null>(
-    null
+  defineOptions({ name: 'Demo50Timeline' })
+  const scene = ref<'release' | 'verify'>('release')
+  const latestFirst = ref(true)
+  const visibleCount = ref(8)
+  const expanded = ref(false)
+  const timeline = ref<{ expandAll: () => void; collapseAll: () => void }>()
+  const items = computed(() =>
+    scene.value === 'release'
+      ? RELEASE_TIMELINE.slice(0, visibleCount.value)
+      : VERIFY_TIMELINE
   )
-  const activeScene = ref<SceneKey>('project')
-  const showPending = ref(false)
-  const reversed = ref(false)
-  const showTime = ref(true)
-  const lineType = ref<'solid' | 'dashed' | 'dotted'>('solid')
-  const nodeSize = ref<'small' | 'medium' | 'large'>('medium')
+  /** 将展开控制交给组件公开的方法。 */
+  const toggleDetails = () => {
+    expanded.value = !expanded.value
+    if (expanded.value) timeline.value?.expandAll()
+    else timeline.value?.collapseAll()
+  }
+  watch([scene, visibleCount], async () => {
+    expanded.value = false
+    await nextTick()
+    timeline.value?.collapseAll()
+  })
 </script>
-
 <style lang="scss" scoped>
   @use './index.scss';
 </style>

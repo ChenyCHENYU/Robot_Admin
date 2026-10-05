@@ -48,17 +48,13 @@ export default defineConfig({
     pipeline: {
       include: [/\.(vue|ts|tsx|html)($|\?)/],
     },
-    // 扫描文件系统中不经过 Vite 管道的外部包源码
+    // 首帧生成项目工具类，并兼容布局包的本地源码开发。
     filesystem: [
-      // 认证后首个稳定帧必须具备完整布局样式，不能依赖首次路由访问后 HMR 补齐。
-      'src/components/global/**/*.{vue,ts,tsx}',
-      'src/views/home/**/*.{vue,ts,tsx}',
-      // 异常页被静态和动态路由懒加载，提前生成结构与图标；独立配色由路由 SCSS 提供。
-      'src/views/error-page/*.vue',
+      // 开发首帧就具备全部项目静态工具类与图标，不等懒路由触发 CSS HMR。
+      'src/**/*.{vue,ts,tsx}',
       // @robot-admin/layout（本地 link 开发 + node_modules）
       '../robot-admin-packages/packages/layout/src/**/*.{vue,ts}',
       'node_modules/@robot-admin/layout/src/**/*.{vue,ts}',
-      // naive-ui-components 发布产物中的残留 Uno 图标由精确 safelist 覆盖
     ],
   },
 })

@@ -1,180 +1,175 @@
 <!--
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-03-05
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-05
+ * @Date: 2026-10-06
  * @FilePath: \Robot_Admin\src\views\demo\52-transfer\index.vue
- * @Description: 穿梭框组件演示页面
+ * @Description: 分配工作空间，实时选择、预览与本地确认
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <div class="transfer-demo">
-    <c_vTitle
-      title="穿梭框组件场景示例"
-      icon="mdi:swap-horizontal"
-      description="支持双栏穿梭、搜索过滤、批量操作、禁用项等特性，适用于权限分配、数据迁移、成员管理等场景"
-    />
-
-    <!-- ==================== 功能特性 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:puzzle-outline"
-          class="title-icon"
-        />
-        功能特性
-      </h2>
-      <div class="feature-grid">
-        <div
-          v-for="feat in FEATURE_LIST"
-          :key="feat.title"
-          class="feature-card"
-        >
-          <div class="feature-card__icon">
-            <C_Icon :name="feat.icon" />
-          </div>
-          <div class="feature-card__body">
-            <span class="feature-card__title">{{ feat.title }}</span>
-            <span class="feature-card__desc">{{ feat.desc }}</span>
-          </div>
-          <NTag
-            :bordered="false"
-            size="small"
-            :type="TAG_TYPE_MAP[feat.tag] ?? 'default'"
-          >
-            {{ feat.tag }}
-          </NTag>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== 场景演示 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:television-play"
-          class="title-icon"
-        />
-        在线演示
-      </h2>
-      <p class="section-desc">选择不同场景，体验穿梭框在各类业务中的表现。</p>
-
-      <!-- 场景切换 -->
-      <div class="scene-switcher">
-        <div
-          v-for="scene in DEMO_SCENES"
-          :key="scene.key"
-          class="scene-card"
-          :class="{ 'is-active': activeScene === scene.key }"
-          @click="activeScene = scene.key"
+  <div class="assignment-workspace">
+    <header class="assignment-heading">
+      <div
+        ><span class="eyebrow">ASSIGNMENT / C_TRANSFER</span
+        ><h1>分配工作空间</h1
+        ><p>从候选范围到最终组合，每一次选择都清晰可见。</p></div
+      >
+      <span class="demo-badge">本地交互演示</span>
+    </header>
+    <div class="assignment-layout">
+      <aside class="assignment-context">
+        <span class="eyebrow">01 / 选择场景</span>
+        <button
+          v-for="(scene, key) in TRANSFER_SCENES"
+          :key="key"
+          type="button"
+          :class="{ active: activeScene === key }"
+          :aria-pressed="activeScene === key"
+          @click="activeScene = key"
         >
           <C_Icon
             :name="scene.icon"
-            class="scene-card__icon"
-          />
-          <span class="scene-card__title">{{ scene.title }}</span>
-          <span class="scene-card__desc">{{ scene.description }}</span>
-        </div>
-      </div>
-
-      <!-- 控制面板 -->
-      <div class="control-bar">
-        <div class="control-group">
-          <span class="label">尺寸</span>
-          <NRadioGroup
-            v-model:value="size"
-            size="small"
-          >
-            <NRadioButton value="small">S</NRadioButton>
-            <NRadioButton value="medium">M</NRadioButton>
-            <NRadioButton value="large">L</NRadioButton>
-          </NRadioGroup>
-        </div>
-        <div class="control-group">
-          <span class="label">搜索</span>
-          <NSwitch v-model:value="filterable" />
-        </div>
-        <div class="control-group">
-          <span class="label">全选</span>
-          <NSwitch v-model:value="showSelectAll" />
-        </div>
-      </div>
-
-      <!-- Transfer 实例 -->
-      <div class="transfer-wrapper">
+            :size="21"
+          /><span>{{ scene.label }}</span
+          ><span class="i-mdi:chevron-right" />
+        </button>
+        <div class="subject"
+          ><span>当前分配对象</span><strong>{{ current.subject }}</strong
+          ><p>{{ current.description }}</p></div
+        >
+        <div class="assignment-options"
+          ><label
+            ><span>列表搜索</span
+            ><NSwitch
+              v-model:value="filterable"
+              size="small" /></label
+          ><label
+            ><span>批量选择</span
+            ><NSwitch
+              v-model:value="showSelectAll"
+              size="small" /></label
+          ><label
+            ><span>列表密度</span
+            ><NSelect
+              v-model:value="size"
+              :options="sizes"
+              size="small" /></label
+        ></div>
+      </aside>
+      <section class="assignment-editor">
+        <header
+          ><div
+            ><span class="eyebrow">02 / 编辑范围</span
+            ><h2>{{ current.label }}</h2></div
+          ><span class="selection-count"
+            ><b>{{ currentSelected.length }}</b> /
+            {{ current.data.length }} 已选择</span
+          ></header
+        >
         <C_Transfer
           v-model="currentSelected"
-          :data="currentData"
+          :data="current.data"
+          :titles="current.titles"
           :filterable="filterable"
           :show-select-all="showSelectAll"
           :size="size"
-          :titles="currentTitles"
+          filter-placeholder="搜索名称或描述"
+          target-empty-text="从左侧选择要分配的项目"
         />
-      </div>
+        <footer
+          ><span
+            ><span
+              class="status-dot"
+              :class="{ changed }"
+            />{{ changed ? '选择已变更，等待确认' : '选择结果已确认' }}</span
+          ><div
+            ><NButton
+              :disabled="!changed"
+              @click="reset"
+              >撤销修改</NButton
+            ><NButton
+              type="primary"
+              :disabled="!changed"
+              @click="confirm"
+              >确认选择</NButton
+            ></div
+          ></footer
+        >
+      </section>
+      <aside class="assignment-preview">
+        <span class="eyebrow">03 / 结果预览</span><h2>当前组合</h2
+        ><p>移动项目后实时更新</p>
+        <div class="selection-meter"
+          ><span
+            :style="{
+              width: `${(currentSelected.length / current.data.length) * 100}%`,
+            }"
+        /></div>
+        <ul v-if="selectedItems.length"
+          ><li
+            v-for="item in selectedItems"
+            :key="item.key"
+            ><C_Icon :name="item.icon || 'mdi:check'" /><span
+              >{{ item.label }}<small>{{ item.description }}</small></span
+            ><span class="i-mdi:check" /></li
+        ></ul>
+        <p
+          v-else
+          class="empty"
+          >尚未选择项目</p
+        >
+        <div class="assignment-note"
+          ><span class="i-mdi:information-outline" /><p
+            >这里演示选择与确认流程。结果保存在当前页面，不会更改真实角色、依赖或团队。</p
+          ></div
+        >
+      </aside>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
+  import { TRANSFER_SCENES, type TransferScene } from './data'
   defineOptions({ name: 'Demo52Transfer' })
-  import { computed, ref } from 'vue'
-  import {
-    DEMO_SCENES,
-    FEATURE_LIST,
-    MEMBER_DATA,
-    MEMBER_DEFAULT,
-    MIGRATION_DATA,
-    MIGRATION_DEFAULT,
-    PERMISSION_DATA,
-    PERMISSION_DEFAULT,
-    TAG_TYPE_MAP,
-  } from './data'
-
-  // ==================== 场景切换 ====================
-
-  const activeScene = ref<'permission' | 'migration' | 'member'>('permission')
-
-  const sceneMap = {
-    permission: {
-      data: PERMISSION_DATA,
-      defaults: [...PERMISSION_DEFAULT],
-      titles: ['可分配权限', '已有权限'] as [string, string],
-    },
-    migration: {
-      data: MIGRATION_DATA,
-      defaults: [...MIGRATION_DEFAULT],
-      titles: ['数据源表', '待迁移表'] as [string, string],
-    },
-    member: {
-      data: MEMBER_DATA,
-      defaults: [...MEMBER_DEFAULT],
-      titles: ['团队成员', '已分配成员'] as [string, string],
-    },
-  }
-
-  const selectedMap = ref<Record<string, Array<string | number>>>({
-    permission: [...PERMISSION_DEFAULT],
-    migration: [...MIGRATION_DEFAULT],
-    member: [...MEMBER_DEFAULT],
-  })
-
-  const currentData = computed(() => sceneMap[activeScene.value].data)
-  const currentTitles = computed(() => sceneMap[activeScene.value].titles)
-
-  const currentSelected = computed({
-    get: () => selectedMap.value[activeScene.value],
-    set: val => {
-      selectedMap.value[activeScene.value] = val
-    },
-  })
-
-  // ==================== 控制 ====================
-
-  const size = ref<'small' | 'medium' | 'large'>('medium')
+  const activeScene = ref<TransferScene>('permission')
   const filterable = ref(true)
   const showSelectAll = ref(true)
+  const size = ref<'small' | 'medium' | 'large'>('medium')
+  const sizes = [
+    { label: '紧凑', value: 'small' },
+    { label: '舒适', value: 'medium' },
+    { label: '宽松', value: 'large' },
+  ]
+  const selectedMap = ref<Record<TransferScene, Array<string | number>>>({
+    permission: [...TRANSFER_SCENES.permission.defaults],
+    module: [...TRANSFER_SCENES.module.defaults],
+    member: [...TRANSFER_SCENES.member.defaults],
+  })
+  const confirmedMap = ref<Record<TransferScene, Array<string | number>>>(
+    structuredClone(toRaw(selectedMap.value))
+  )
+  const current = computed(() => TRANSFER_SCENES[activeScene.value])
+  const currentSelected = computed({
+    get: () => selectedMap.value[activeScene.value],
+    set: value => {
+      selectedMap.value[activeScene.value] = value
+    },
+  })
+  const selectedItems = computed(() =>
+    current.value.data.filter(item => currentSelected.value.includes(item.key))
+  )
+  const changed = computed(
+    () =>
+      [...currentSelected.value].sort().join('|') !==
+      [...confirmedMap.value[activeScene.value]].sort().join('|')
+  )
+  /** 撤销尚未确认的选择。 */
+  const reset = () => {
+    currentSelected.value = [...confirmedMap.value[activeScene.value]]
+  }
+  /** 确认当前页面的选择快照。 */
+  const confirm = () => {
+    confirmedMap.value[activeScene.value] = [...currentSelected.value]
+  }
 </script>
-
 <style lang="scss" scoped>
   @use './index.scss';
 </style>

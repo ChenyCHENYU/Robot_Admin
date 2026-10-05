@@ -181,8 +181,8 @@ video {
   --tag-active-hover-bg: rgba(64, 152, 252, 0.2);
 }
 
-/* 这里全局设置一下图标统一的样式 */
-svg {
+/* 图标容器消费尺寸；图表、插图、编辑器的 SVG 保留自身尺寸。 */
+.n-icon > svg {
   display: inline-block;
   vertical-align: middle;
   width: 1.2em;

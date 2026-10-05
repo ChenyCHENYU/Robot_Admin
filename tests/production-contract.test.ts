@@ -7,6 +7,7 @@
  */
 
 import { describe, expect, test } from 'bun:test'
+import { createHash } from 'node:crypto'
 
 const readJson = async <T>(relativePath: string): Promise<T> =>
   Bun.file(new URL(relativePath, import.meta.url)).json()
@@ -75,16 +76,29 @@ describe('production contracts', () => {
     expect(packageJson.devDependencies['@vue/runtime-core']).toBeUndefined()
   })
 
-  test('地图组件使用锁定的正式包且发布资源完整', async () => {
+  test('组件库使用锁定的包产物且发布资源完整', async () => {
     const packageJson = await readJson<{
       dependencies: Record<string, string>
     }>('../package.json')
     const installedPackage = await readJson<{ version: string }>(
       '../node_modules/@robot-admin/naive-ui-components/package.json'
     )
-    expect(packageJson.dependencies['@robot-admin/naive-ui-components']).toBe(
-      installedPackage.version
-    )
+    const declaration =
+      packageJson.dependencies['@robot-admin/naive-ui-components']
+    const artifactMatch =
+      /^\.\/vendor\/robot-admin-naive-ui-components-([\d.]+)-([a-f0-9]{12})\.tgz$/.exec(
+        declaration
+      )
+    if (artifactMatch) {
+      expect(artifactMatch[1]).toBe(installedPackage.version)
+      const artifact = Bun.file(new URL(`../${declaration}`, import.meta.url))
+      expect(await artifact.exists()).toBe(true)
+      expect(artifact.size).toBeGreaterThan(100_000)
+      const digest = createHash('sha256')
+        .update(new Uint8Array(await artifact.arrayBuffer()))
+        .digest('hex')
+      expect(digest.slice(0, 12)).toBe(artifactMatch[2])
+    } else expect(declaration).toBe(installedPackage.version)
 
     const mapDeclaration = await Bun.file(
       new URL(

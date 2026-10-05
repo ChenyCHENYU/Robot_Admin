@@ -20,7 +20,7 @@ const demos = [
   ['/hooks/excel-all', 'Excel All - [useExcel] 场景示例'],
   ['/plugins/v-table-gantt', '甘特图组件场景示例'],
   ['/plugins/waterfall', '瀑布流场景示例'],
-  ['/plugins/chat', '聊天组件场景示例'],
+  ['/plugins/chat', '工程协作台'],
   ['/preview/progress', '进度条组件场景示例'],
   ['/preview/city', '城市选择器组件场景示例'],
   ['/preview/code', 'Code编辑器组件场景示例'],
@@ -28,7 +28,7 @@ const demos = [
   ['/preview/signature', '电子签名场景示例'],
   ['/preview/image-cropper', '图片裁剪场景示例'],
   ['/preview/cron', 'Cron 表达式编辑器场景示例'],
-  ['/preview/timeline', '时间线组件场景示例'],
+  ['/preview/timeline', '每一次迭代，都有迹可循'],
 ] as const
 
 for (const [route, title] of demos) {
@@ -118,16 +118,16 @@ test('甘特图自定义渲染无需向 window 注入第三方模块', async ({ 
 test('聊天自动回复留在发送时的联系人会话', async ({ page }) => {
   await installMockAdminSession(page)
   await page.goto('/#/plugins/chat')
-  await expect(page.locator('.c-chat__contact')).toHaveCount(5)
+  await expect(page.locator('.c-chat__contact')).toHaveCount(3)
   await expect(page.locator('.c-chat__msg').first()).toBeVisible()
   const otherMessages = page.locator('.c-chat__msg.is-other')
   const firstCount = await otherMessages.count()
-  await page.getByPlaceholder('输入消息...').fill('线程隔离回归消息')
+  await page.getByPlaceholder('输入消息，Enter 发送').fill('线程隔离回归消息')
   await page.locator('.c-chat__send-btn').click()
 
   const secondContact = page
     .locator('.c-chat__contact')
-    .filter({ hasText: '张三' })
+    .filter({ hasText: '版本发布' })
   await secondContact.click()
   await expect(secondContact).toHaveClass(/is-active/)
   const secondCount = await otherMessages.count()
@@ -136,7 +136,7 @@ test('聊天自动回复留在发送时的联系人会话', async ({ page }) => 
 
   const firstContact = page
     .locator('.c-chat__contact')
-    .filter({ hasText: '小助手 Bot' })
+    .filter({ hasText: '界面联调' })
   await firstContact.click()
   await expect(firstContact).toHaveClass(/is-active/)
   await expect(otherMessages).toHaveCount(firstCount + 1)

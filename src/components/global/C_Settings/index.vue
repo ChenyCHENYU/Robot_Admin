@@ -102,7 +102,7 @@
   ]
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   /* 菜单风格选择卡片 — 使用 settings-section 风格复用布局包样式 */
   .menu-style-section {
     margin-bottom: 24px;

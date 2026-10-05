@@ -25,5 +25,6 @@ export function setupThemeSystem(app: App): void {
   }
 
   app.onUnmount(() => themeStore.destroy())
-  import.meta.hot?.dispose(() => themeStore.destroy())
+  // 主题属于应用生命周期；模块热替换不等于应用卸载。
+  // 在模块 dispose 中恢复 Token 会让仍在运行的 Provider 与根 DOM 脱节。
 }
