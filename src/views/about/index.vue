@@ -135,6 +135,8 @@
               ><span>{{ group.items.length }} 个直接依赖</span></div
             >
             <NDataTable
+              class="about-dependencies__table"
+              flex-height
               :columns="columns"
               :data="group.items"
               :row-key="row => row.name"
