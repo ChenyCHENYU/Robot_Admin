@@ -1,104 +1,104 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2025-11-06 09:09:51
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-18 10:05:46
+ * @Date: 2026-10-05
  * @FilePath: \Robot_Admin\src\utils\plugins\i18n-route.ts
- * @Description: 路由标题翻译插件
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
- */
-/**
- * @Description: 路由标题翻译 - 自动生成文件
- *
- * ⚠️ 请勿手动编辑此文件！
- * 此文件由 scripts/generate-route-translations.ts 自动生成
- * 运行 `bun run gen:route-i18n` 重新生成
- *
- * 🔑 工作原理（优雅方案 - 直接读取 JSON）：
- * 1. 脚本从 dynamicRouter.json 提取所有路由标题（60 个）
- * 2. 生成导入 lang/index.json 的代码
- * 3. 编译时构建 中文 -> 英文 直接映射表
- * 4. 运行时 O(1) 查找，无需遍历 hash key
- *
- * ✨ 优势：
- * - 不依赖 window.langMap（避免加载时机问题）
- * - 不需要反向查找 hash key（性能更好）
- * - 代码更简洁（50 行 vs 100+ 行）
- * - 完全自动化（插件翻译 -> 自动读取 -> 自动构建映射）
+ * @Description: 菜单标题扫描入口，由 bun run gen:route-i18n 生成
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import langJSON from '../../../lang/index.json'
+export { translateText as translateRouteTitle } from '@/utils/d_i18n'
 
-type LangData = Record<
-  string,
-  { 'zh-cn': string; en: string; ja: string; ko: string }
->
-
-/**
- * 构建翻译映射表（编译时执行）
- *
- * @param json 插件生成的翻译 JSON
- * @param targetLang 目标语言
- * @returns 中文 -> 目标语言 的映射表
- */
-function buildTranslationMap(
-  json: LangData,
-  targetLang: 'en' | 'ja' | 'ko' = 'en'
-): Record<string, string> {
-  const map: Record<string, string> = {}
-
-  // 遍历所有 hash key，构建 中文 -> 目标语言 映射
-  for (const hashKey in json) {
-    const item = json[hashKey]
-    if (item['zh-cn'] && item[targetLang]) {
-      map[item['zh-cn']] = item[targetLang]
-    }
-  }
-
-  return map
-}
-
-// 编译时构建所有语言的映射表（只执行一次）
-const translationMaps = {
-  en: buildTranslationMap(langJSON as LangData, 'en'),
-  ja: buildTranslationMap(langJSON as LangData, 'ja'),
-  ko: buildTranslationMap(langJSON as LangData, 'ko'),
-}
-
-/**
- * 翻译路由标题（优雅方案）
- *
- * @param title 原始标题（中文）
- * @returns 翻译后的标题（根据当前语言）
- */
-export function translateRouteTitle(title: string): string {
-  if (!title || typeof window === 'undefined') return title
-
-  // 获取当前语言
-  const currentLang = window.localStorage.getItem('robot_admin') || 'zh-cn'
-
-  // 中文环境直接返回
-  if (currentLang === 'zh-cn') return title
-
-  // 🎯 直接从对应语言的映射表查找（O(1) 时间复杂度）
-  const translationMap =
-    translationMaps[currentLang as keyof typeof translationMaps]
-  return translationMap?.[title] || title
-}
-
-/**
- * 开发环境调试信息
- */
-if (import.meta.env.DEV && typeof window !== 'undefined') {
-  setTimeout(() => {
-    const enCount = Object.keys(translationMaps.en).length
-    const jaCount = Object.keys(translationMaps.ja).length
-    const koCount = Object.keys(translationMaps.ko).length
-    console.log(
-      `✅ 已加载翻译映射（来自 lang/index.json）：`,
-      `英文 ${enCount} 个，`,
-      `日文 ${jaCount} 个，`,
-      `韩文 ${koCount} 个`
-    )
-  }, 1000)
-}
+/** 让自动翻译插件扫描 JSON 中的标题，生产运行时不使用这份数组。 */
+export const ROUTE_TITLES = [
+  '401',
+  '403',
+  '404',
+  '500',
+  'CHENY 博客',
+  'Cron 表达式',
+  'Excel All',
+  'Expand表格',
+  'Gitee 仓库',
+  'Github 仓库',
+  'Mach Table',
+  'Markdown编辑器',
+  '下载 All',
+  '个人中心',
+  '二维码',
+  '代码编辑器',
+  '仪表盘',
+  '公式编辑器',
+  '关于',
+  '内嵌文档',
+  '分割面板',
+  '分析页',
+  '右键菜单',
+  '图标选择器',
+  '图片裁剪',
+  '图编辑引擎',
+  '地图',
+  '城市选择器',
+  '复制 Text',
+  '复制指令',
+  '外部页面',
+  '多场景表单',
+  '多模态表单',
+  '大屏模板',
+  '头像组',
+  '字典管理',
+  '安全设置',
+  '富文本编辑器',
+  '导出 Zip',
+  '工作流编辑器',
+  '异常页面',
+  '折叠面板',
+  '拖拽指令',
+  '拖拽组件',
+  '插件组件 ',
+  '搜索表单',
+  '操作日志',
+  '文件上传',
+  '文件预览',
+  '日历',
+  '日成本看板',
+  '日期选择器',
+  '时间线',
+  '时间选择器',
+  '权限指令',
+  '权限管理',
+  '条形码',
+  '步骤条',
+  '水印指令',
+  '瀑布流',
+  '独立 Hooks ',
+  '甘特图',
+  '用户管理',
+  '电子签名',
+  '示范组件',
+  '穿梭框',
+  '系统管理',
+  '级联选择器',
+  '线上文档',
+  '组织架构图',
+  '统计页',
+  '绩效看板',
+  '编辑器组件',
+  '聊天组件',
+  '自定义指令',
+  '节流指令',
+  '菜单管理',
+  '表单模块',
+  '表格动态行',
+  '表格模块',
+  '视频播放器',
+  '角色管理',
+  '账户中心',
+  '超级按钮组',
+  '超级表格',
+  '进度条',
+  '长按指令',
+  '防抖指令',
+  '音频播放器',
+  '首页',
+  '骨架屏',
+]

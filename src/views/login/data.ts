@@ -38,41 +38,39 @@ export const resolveLoginFeatures = (): LoginFeatures => ({
 })
 
 // ================= 欢迎语配置（工厂函数，接受 i18n 翻译函数） =================
-export const createWelcomeConfig = (
-  t: (key: string, fallback: string) => string
-): WelcomeConfig<LoginResponse> => ({
+export const createWelcomeConfig = (): WelcomeConfig<LoginResponse> => ({
   timeSlots: [
     {
       range: [6, 12] as const,
-      greeting: t('lp_morning', '早上好'),
+      greeting: '早上好',
       emoji: '🌅',
     },
     {
       range: [12, 14] as const,
-      greeting: t('lp_noon', '中午好'),
+      greeting: '中午好',
       emoji: '☀️',
     },
     {
       range: [14, 18] as const,
-      greeting: t('lp_afternoon', '下午好'),
+      greeting: '下午好',
       emoji: '🌤️',
     },
     {
       range: [18, 22] as const,
-      greeting: t('lp_evening', '晚上好'),
+      greeting: '晚上好',
       emoji: '🌆',
     },
     {
       range: [22, 6] as const,
-      greeting: t('lp_late_night', '夜深了'),
+      greeting: '夜深了',
       emoji: '🌙',
     },
   ],
   templates: [
-    '{greeting}，{username}！' + t('lp_wb1', '欢迎回来～') + ' {emoji}',
-    '{emoji} {greeting}，{username}！' + t('lp_wb2', '开始今天的工作吧'),
-    t('lp_wb3', '欢迎回来') + '，{username}！{greeting} {emoji}',
-    '{greeting}，{username}！' + t('lp_wb4', '准备好了吗？') + ' {emoji}',
+    '{greeting}，{username}！' + '欢迎回来～' + ' {emoji}',
+    '{emoji} {greeting}，{username}！' + '开始今天的工作吧',
+    '欢迎回来' + '，{username}！{greeting} {emoji}',
+    '{greeting}，{username}！' + '准备好了吗？' + ' {emoji}',
   ],
   getUserName: (response: LoginResponse) =>
     response.data.user?.displayName || response.data.user?.username || 'User',

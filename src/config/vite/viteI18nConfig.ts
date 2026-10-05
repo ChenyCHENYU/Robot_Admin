@@ -1,241 +1,93 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2025-11-05
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-11-19 08:35:33
+ * @Date: 2026-10-05
  * @FilePath: \Robot_Admin\src\config\vite\viteI18nConfig.ts
- * @Description: Vite 国际化插件配置（独立维护）
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ * @Description: 始终编译已有翻译，仅在显式启用时联网生成新词条
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import autoI18n, {
+  EmptyTranslator,
+  YoudaoTranslator,
+} from 'vite-auto-i18n-plugin'
 import type { Plugin } from 'vite'
+import { I18N_NAMESPACE, DEFAULT_LANGUAGE, TARGET_LANGUAGES } from '../i18n.ts'
 
-type LifecycleHook = (this: unknown, ...args: unknown[]) => unknown
+/** 用官方空翻译器保证普通开发和生产构建都不会调用默认 Google / 有道 API。 */
+export default function createI18nPlugin(): Plugin {
+  const generateTranslations = process.env.VITE_I18N_ENABLED === 'true'
+  const plugin = autoI18n({
+    // enabled 控制 API 生成阶段，transform 无论是否联网都必须执行。
+    enabled: generateTranslations,
+    translator: generateTranslations
+      ? new YoudaoTranslator({
+          appId: process.env.YOUDAO_APP_ID!.trim(),
+          appKey: process.env.YOUDAO_APP_KEY!.trim(),
+        })
+      : new EmptyTranslator(),
+    translateType: 'full-auto',
+    translateKey: '$t',
+    namespace: I18N_NAMESPACE,
+    originLang: DEFAULT_LANGUAGE,
+    targetLangList: [...TARGET_LANGUAGES],
+    languageJsonMode: 'split',
+    globalPath: './lang',
+    includePath: [
+      /src\/(views|components)\//,
+      /src\/utils\/plugins\/i18n-route\.ts$/,
+    ],
+    excludedPath: ['node_modules', 'src/api', 'src/types', 'dist', 'lang'],
+    excludedCall: [
+      '$t',
+      '$$t',
+      '$deepScan',
+      '_createCommentVNode',
+      'require',
+      'import',
+      'console.log',
+      'console.info',
+      'console.warn',
+      'console.error',
+      'console.debug',
+    ],
+    excludedPattern: [
+      /\.\w+$/,
+      /^[a-z_]+$/i,
+      /^\/.+\/[gimsuy]*$/,
+      /^https?:\/\//,
+      /^#[0-9a-f]{3,6}$/i,
+      /^\d+(\.\d+)?(px|em|rem|vh|vw|%)?$/,
+    ],
+    deepScan: true,
+    // 1.1.16 的 true 实际保留原始空格；运行时兼容去空格的词条，保证混合文案间距。
+    isClearSpace: true,
+    rewriteConfig: false,
+    isClear: false,
+    // 词典由原生动态 import 分包；不让插件在 closeBundle 重写已带 hash 的产物。
+    buildToDist: false,
+  })
 
-interface MutableI18nPlugin {
-  name?: unknown
-  buildEnd?: unknown
-  closeBundle?: unknown
-  [key: string]: unknown
-}
-
-interface I18nPluginModule {
-  default: (options: Record<string, unknown>) => unknown
-  YoudaoTranslator: new (options: { appId: string; appKey: string }) => unknown
-}
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
-
-const getErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : String(error)
-
-const wrapI18nLifecycle = (plugin: unknown): Plugin | null => {
-  if (!isRecord(plugin) || typeof plugin.name !== 'string') return null
-  const mutablePlugin = plugin as MutableI18nPlugin
-
-  const originalBuildEnd = mutablePlugin.buildEnd
-  const originalCloseBundle = mutablePlugin.closeBundle
-
-  if (typeof originalBuildEnd === 'function') {
-    const buildEndHook = originalBuildEnd as LifecycleHook
-    /** Run translation with a bounded timeout so builds cannot hang. */
-    mutablePlugin.buildEnd = async function (
-      this: unknown,
-      ...args: unknown[]
-    ) {
-      try {
-        await Promise.race([
-          buildEndHook.apply(this, args),
-          new Promise((_, reject) =>
-            setTimeout(
-              () => reject(new Error('i18n buildEnd timeout (30s) — skipping')),
-              30_000
-            )
-          ),
-        ])
-      } catch (error) {
-        console.warn(
-          `⚠️ i18n 翻译阶段跳过（不影响构建）: ${getErrorMessage(error)}`
-        )
-      }
-    }
+  // Vite 8 将 Vue 模板/脚本拆成带查询参数的模块，包的扩展名判断会直接漏过它们。
+  const { transform } = plugin
+  if (typeof transform !== 'function') {
+    throw new Error('自动翻译插件缺少 transform 钩子')
+  }
+  plugin.enforce = 'post'
+  /** 为 Vue 查询模块适配扩展名，并为翻译后的模块建立词典就绪依赖。 */
+  plugin.transform = async function (source, id, ...args) {
+    if (id.includes('vue&type=style')) return null
+    const result = await transform.call(this, source, id.split('?')[0], ...args)
+    // 显式依赖异步语言入口，避免 ESM 并行执行时模块常量先拿到中文回退值。
+    return typeof result === 'string' && result !== source
+      ? `import '/lang/index.js';\n${result}`
+      : result
   }
 
-  if (typeof originalCloseBundle === 'function') {
-    const closeBundleHook = originalCloseBundle as LifecycleHook
-    /** Isolate optional translation cleanup failures from the main build. */
-    mutablePlugin.closeBundle = async function (
-      this: unknown,
-      ...args: unknown[]
-    ) {
-      try {
-        await closeBundleHook.apply(this, args)
-      } catch (error) {
-        console.warn(`⚠️ i18n closeBundle 阶段跳过: ${getErrorMessage(error)}`)
-      }
-    }
+  if (!generateTranslations) {
+    // 离线模式无需排队、打印翻译进度或执行清理钩子，也不会修改词典。
+    delete plugin.buildEnd
+    delete plugin.closeBundle
+    delete plugin.configResolved
   }
-
-  return mutablePlugin as Plugin
-}
-
-/**
- * @description i18n 插件配置
- * @returns {Plugin | null} 返回插件实例或 null（禁用时）
- *
- * 📌 使用方式：
- * 1. 安装依赖: bun add -D vite-auto-i18n-plugin
- * 2. 申请有道翻译 API: https://ai.youdao.com/
- * 3. 在 envs/.env.development 中配置:
- *    VITE_I18N_ENABLED=true
- *    YOUDAO_APP_ID=你的AppId
- *    YOUDAO_APP_KEY=你的AppKey
- * 4. 在入口文件 main.ts 顶部添加: import '../lang/index.js'
- *
- * 💡 工作原理：
- * - 开发环境: 自动扫描代码中的中文并调用API翻译，生成 lang/index.json
- * - 生产环境: 直接使用已生成的 lang/index.json，不调用翻译API
- * - 运行时: 所有环境都加载 lang/index.js 提供 window.$t() 函数
- */
-export default function createI18nPlugin(): Plugin | null {
-  const enabled = process.env.VITE_I18N_ENABLED === 'true'
-
-  if (!enabled) {
-    return null
-  }
-
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const i18nModule = require('vite-auto-i18n-plugin') as I18nPluginModule
-    const autoI18n = i18nModule.default
-    const { YoudaoTranslator } = i18nModule
-
-    const appId = process.env.YOUDAO_APP_ID
-    const appKey = process.env.YOUDAO_APP_KEY
-
-    // 判断是否有真实的翻译 API 凭证（排除 dummy 占位符）
-    const hasRealCredentials =
-      appId && appKey && appId !== 'dummy' && appKey !== 'dummy'
-
-    if (!hasRealCredentials) {
-      console.warn(
-        '⚠️ i18n 翻译 API 未配置或为占位凭证，将使用已有翻译，跳过自动翻译'
-      )
-    }
-
-    const pluginOptions: Record<string, unknown> = {
-      // ========== 基础配置 ==========
-      enabled: true, // 是否启用插件
-      translateType: 'full-auto', // 全自动翻译中文（full-auto | semi-auto）
-      translateKey: '$t', // 翻译函数名称
-      logLevel: 'error', //  日志级别：error | warn | info (只在有错误时输出)
-
-      // ========== 路径配置（白名单机制）==========
-      includePath: [
-        /src\/views\//,
-        /src\/components\//,
-        /src\/router\//,
-        /src\/stores\//,
-        /src\/utils\/plugins\//, // ✅ 包含插件目录（i18n-route.ts）
-      ],
-
-      excludedPath: [
-        'node_modules',
-        'src/api/generated', // 🔒 排除自动生成的 API 代码
-        'src/assets/data', // 🔒 排除静态数据文件（JSON 不会被扫描）
-        'src/types', // 🔒 排除类型声明文件
-        'dist',
-        'lang',
-      ],
-
-      // ========== 排除规则（避免误翻译）==========
-      excludedPattern: [
-        /\.\w+$/, // 文件扩展名：.vue .ts .js
-        /^[a-z_]+$/i, // 变量名：userName, user_name
-        /^\/.+\/[gimsuy]*$/, // 正则表达式：/pattern/g
-        /^http(s)?:\/\//, // URL：https://example.com
-        /^#[0-9a-f]{3,6}$/i, // 颜色值：#fff #123456
-        /^\d+(\.\d+)?(px|em|rem|vh|vw|%)?$/, // CSS 数值：100px 1.5rem
-      ],
-
-      excludedCall: [
-        'require',
-        'import',
-        'console.log',
-        'console.info',
-        'console.warn',
-        'console.error',
-        'console.debug',
-      ],
-
-      // ========== 翻译器配置 ==========
-      // 仅在有真实凭证时配置翻译器，否则跳过翻译 API 调用
-      ...(hasRealCredentials
-        ? {
-            translator: new YoudaoTranslator({
-              appId: appId,
-              appKey: appKey,
-            }),
-          }
-        : {}),
-
-      // ========== 语言配置 ==========
-      originLang: 'zh-cn', // 源语言
-      targetLangList: ['en', 'ja', 'ko'], // 目标语言列表（已添加日语和韩语）
-
-      // ========== 输出配置 ==========
-      globalPath: './lang',
-      distPath: './dist',
-      distKey: 'index',
-      namespace: 'robot_admin',
-
-      // ========== 高级配置 ==========
-      deepScan: true, // ✅ 深度扫描（精确切割模板字符串，自动识别对象属性中的中文）
-      isClearSpace: true, // 清除字符串前后空格
-      buildToDist: true, // 构建时打包翻译文件到主包
-      rewriteConfig: false, // 🔒 不重写配置文件（避免覆盖手动修改）
-      isClear: false, // 是否清理未使用的翻译键（生产环境可启用）
-
-      // ========== 插值翻译支持 ==========
-      // 示例："欢迎 {name} 登录" -> $t('xxx', { name: '张三' })
-      // 需要配合 commonTranslateKey 使用
-      commonTranslateKey: '', // 通用翻译 key 前缀
-
-      // ========== 文件扩展名配置 ==========
-      // ✅ 扫描 .ts 和 .tsx 文件（对象属性、数组元素中的中文字符串）
-      insertFileExtensions: ['ts', 'tsx'],
-    }
-
-    return wrapI18nLifecycle(autoI18n(pluginOptions))
-  } catch (error) {
-    console.warn('⚠️ i18n 插件未安装，请运行: bun add -D vite-auto-i18n-plugin')
-    console.warn('错误详情:', error)
-    return null
-  }
-}
-
-/**
- * @description Vue 插件配置（i18n 需要特殊处理）
- * @returns {object} Vue 插件配置对象
- *
- * 重要：i18n 插件需要禁用 Vue 的某些优化
- */
-export function createVuePluginOptions() {
-  const i18nEnabled = process.env.VITE_I18N_ENABLED === 'true'
-
-  // 🔥 仅在启用 i18n 时修改 Vue 配置
-  if (i18nEnabled) {
-    return {
-      template: {
-        compilerOptions: {
-          hoistStatic: false, // 禁用静态提升（i18n 需要）
-          cacheHandlers: false, // 禁用事件处理器缓存（i18n 需要）
-        },
-      },
-    }
-  }
-
-  // 未启用 i18n 时保持默认配置（性能最优）
-  return {}
+  return plugin
 }

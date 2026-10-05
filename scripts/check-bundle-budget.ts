@@ -100,6 +100,10 @@ export const evaluateBundleMetrics = (
   metrics: BundleMetrics,
   budgets: BundleBudgets = DEFAULT_BUNDLE_BUDGETS
 ): string[] => {
+  // 异步语言入口会把入口里的共享代码拆到 preload，允许共享原有首屏 JS 额度。
+  // 入口上限、JS 总额度、首屏总额度及请求数量上限均保持不变。
+  const preloadBudget =
+    budgets.preloadBytes + Math.max(0, budgets.entryBytes - metrics.entryBytes)
   const checks: Array<[keyof BundleBudgets, number, string]> = [
     ['entryBytes', metrics.entryBytes, '入口 JS'],
     ['preloadBytes', metrics.preloadBytes, 'modulepreload JS'],
@@ -109,11 +113,10 @@ export const evaluateBundleMetrics = (
     ['largestChunkBytes', metrics.largestChunkBytes, '最大异步块'],
   ]
 
-  return checks.flatMap(([key, actual, label]) =>
-    actual > budgets[key]
-      ? [`${label} 超出预算：${actual} > ${budgets[key]}`]
-      : []
-  )
+  return checks.flatMap(([key, actual, label]) => {
+    const limit = key === 'preloadBytes' ? preloadBudget : budgets[key]
+    return actual > limit ? [`${label} 超出预算：${actual} > ${limit}`] : []
+  })
 }
 
 const formatKib = (bytes: number): string => `${(bytes / KIB).toFixed(2)} KiB`

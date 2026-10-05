@@ -44,6 +44,7 @@
       <div data-guide="language">
         <C_Language
           :model-value="languageStore.currentLang"
+          tooltip="语言切换"
           @change="languageStore.setLanguage"
         />
       </div>

@@ -1,10 +1,11 @@
-/**
- * 语言管理 Store
- * 管理应用语言状态，同步 Naive UI locale 和路由标题翻译
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-05
+ * @FilePath: \Robot_Admin\src\stores\language\index.ts
+ * @Description: 语言选择与 Naive UI 文案、日期 locale 同步
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
 import {
   zhCN,
   dateZhCN,
@@ -14,64 +15,29 @@ import {
   dateJaJP,
   koKR,
   dateKoKR,
-  type NLocale,
-  type NDateLocale,
 } from 'naive-ui/es'
+import { normalizeLanguage } from '@/config/i18n'
+import { getCurrentLanguage, persistLanguage } from '@/utils/d_i18n'
 
-// lang/index.js 挂载的全局函数类型声明
-declare global {
-  var $changeLang: ((lang: string) => void) | undefined
+const locales = {
+  'zh-cn': { locale: zhCN, dateLocale: dateZhCN },
+  en: { locale: enUS, dateLocale: dateEnUS },
+  ja: { locale: jaJP, dateLocale: dateJaJP },
+  ko: { locale: koKR, dateLocale: dateKoKR },
 }
 
-// 本地存储键名（与 i18n-route.ts 保持一致）
-const LANG_STORAGE_KEY = 'robot_admin'
-
-/** 支持的语言配置映射 */
-const localeMap: Record<string, { locale: NLocale; dateLocale: NDateLocale }> =
-  {
-    'zh-cn': { locale: zhCN, dateLocale: dateZhCN },
-    en: { locale: enUS, dateLocale: dateEnUS },
-    ja: { locale: jaJP, dateLocale: dateJaJP },
-    ko: { locale: koKR, dateLocale: dateKoKR },
-  }
-
 export const s_languageStore = defineStore('language', () => {
-  // 初始值从 localStorage 读取
-  const currentLang = ref(localStorage.getItem(LANG_STORAGE_KEY) || 'zh-cn')
+  const currentLang = ref(getCurrentLanguage())
+  const naiveLocale = computed(() => locales[currentLang.value].locale)
+  const naiveDateLocale = computed(() => locales[currentLang.value].dateLocale)
 
-  /** 当前 Naive UI locale */
-  const naiveLocale = computed(
-    () => localeMap[currentLang.value]?.locale ?? zhCN
-  )
-
-  /** 当前 Naive UI dateLocale */
-  const naiveDateLocale = computed(
-    () => localeMap[currentLang.value]?.dateLocale ?? dateZhCN
-  )
-
-  /** 切换语言 */
-  /** 切换语言 */
-  function setLanguage(lang: string) {
-    if (lang === currentLang.value) return
-    currentLang.value = lang
-    localStorage.setItem(LANG_STORAGE_KEY, lang)
-
-    // 同步运行时 $t() 翻译函数（影响生产构建中自动翻译的中文）
-    if (typeof globalThis.$changeLang === 'function') {
-      globalThis.$changeLang(lang)
-    }
-
-    // 设置 html lang 属性
-    document.documentElement.lang = lang === 'zh-cn' ? 'zh-CN' : lang
-
-    // 刷新页面以应用路由标题翻译等
+  /** 模块级配置在编译后包含已求值的文本，保留一次刷新确保页面和已有标签同时切换。 */
+  function setLanguage(value: string): void {
+    const language = normalizeLanguage(value)
+    if (language === currentLang.value || !persistLanguage(language)) return
+    currentLang.value = language
     window.location.reload()
   }
 
-  return {
-    currentLang,
-    naiveLocale,
-    naiveDateLocale,
-    setLanguage,
-  }
+  return { currentLang, naiveLocale, naiveDateLocale, setLanguage }
 })

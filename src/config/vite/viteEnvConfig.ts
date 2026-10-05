@@ -200,7 +200,10 @@ const validateI18nCredentials = (
 ): void => {
   if (
     env.VITE_I18N_ENABLED === 'true' &&
-    (!env.YOUDAO_APP_ID || !env.YOUDAO_APP_KEY)
+    (!env.YOUDAO_APP_ID?.trim() ||
+      !env.YOUDAO_APP_KEY?.trim() ||
+      env.YOUDAO_APP_ID === 'dummy' ||
+      env.YOUDAO_APP_KEY === 'dummy')
   ) {
     errors.push('启用自动翻译时必须通过本机或 CI 注入有道 API 凭据')
   }

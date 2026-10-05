@@ -55,7 +55,8 @@
     "analyze": "ANALYZE=true vite build --configLoader native --mode production",
     "cz": "git-cz",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "mcp": "bun run mcp/server.ts"
+    "mcp": "bun run mcp/server.ts",
+    "i18n:generate": "bun run gen:route-i18n && VITE_I18N_ENABLED=true vite build --configLoader native --mode development --outDir node_modules/.cache/i18n-scan"
   },
   "dependencies": {
     "@agile-team/mach-table-vue": "0.29.2",

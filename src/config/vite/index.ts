@@ -14,7 +14,4 @@ export { default as viteComponentsPlugin } from './viteComponentsConfig.ts'
 export { default as resolveConfig } from './viteResolveConfig.ts'
 export { default as serverConfig } from './viteServerConfig.ts'
 export { default as buildConfig } from './viteBuildConfig.ts'
-export {
-  default as createI18nPlugin,
-  createVuePluginOptions,
-} from './viteI18nConfig.ts'
+export { default as createI18nPlugin } from './viteI18nConfig.ts'

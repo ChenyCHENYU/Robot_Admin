@@ -20,7 +20,6 @@ import {
   serverConfig,
   buildConfig,
   createI18nPlugin,
-  createVuePluginOptions,
 } from './src/config/vite/index.ts'
 import { validateViteEnv } from './src/config/vite/viteEnvConfig.ts'
 import { createProjectInfoPlugin } from './src/config/vite/viteProjectInfoPlugin.ts'
@@ -81,7 +80,7 @@ export default defineConfig(
       plugins: [
         ...consolePlugins,
         Unocss(),
-        vue(createVuePluginOptions()),
+        vue(),
         ...devToolsPlugins,
         viteAutoImportPlugin,
         viteComponentsPlugin,

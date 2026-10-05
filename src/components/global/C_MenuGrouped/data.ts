@@ -25,17 +25,17 @@ export const DEFAULT_MENU_GROUPS: MenuGroupConfig[] = [
   {
     label: '组件展示',
     paths: ['/demo', '/plugins', '/editor'],
-    keywords: ['示范', '插件', '编辑'],
+    keywords: [$$t('示范'), $$t('插件'), $$t('编辑')],
   },
   {
     label: '开发工具',
     paths: ['/hooks', '/directives', '/large-screen'],
-    keywords: ['Hooks', '指令', '大屏'],
+    keywords: ['Hooks', $$t('指令'), $$t('大屏')],
   },
   {
     label: '系统管理',
     paths: ['/account', '/sys-manage'],
-    keywords: ['账户', '系统'],
+    keywords: [$$t('账户'), $$t('系统')],
   },
   // 未匹配的自动归入 "其他" 分组
 ]

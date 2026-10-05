@@ -14,6 +14,32 @@ import {
 } from '../scripts/check-bundle-budget'
 
 describe('bundle budget', () => {
+  test('共享代码移到 preload 不增加总 JS 预算，也不放宽请求数量', () => {
+    const budgets = {
+      entryBytes: 100,
+      preloadBytes: 100,
+      stylesheetBytes: 100,
+      initialBytes: 300,
+      preloadCount: 5,
+      largestChunkBytes: 100,
+    }
+    const metrics: BundleMetrics = {
+      entryBytes: 20,
+      preloadBytes: 180,
+      stylesheetBytes: 80,
+      initialBytes: 280,
+      preloadCount: 3,
+      largestChunkBytes: 70,
+      largestChunkName: 'feature.js',
+    }
+    expect(evaluateBundleMetrics(metrics, budgets)).toEqual([])
+    expect(
+      evaluateBundleMetrics({ ...metrics, preloadBytes: 181 }, budgets)[0]
+    ).toContain('modulepreload JS')
+    expect(
+      evaluateBundleMetrics({ ...metrics, preloadCount: 6 }, budgets)[0]
+    ).toContain('modulepreload 数量')
+  })
   test('解析入口、预加载和样式资源', () => {
     const assets = parseIndexAssets(`
       <script type="module" crossorigin src="/js/index-a.js"></script>

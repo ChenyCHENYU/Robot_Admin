@@ -15,6 +15,12 @@ const buildConfig: BuildOptions = {
        */
       codeSplitting: {
         groups: [
+          // 合并 Naive UI 的细小主题模块，避免语言初始化后出现过多首屏请求。
+          {
+            name: 'naive-ui-themes',
+            test: /[\\/]node_modules[\\/]naive-ui[\\/]es[\\/].*[\\/]styles[\\/]light\.mjs$/,
+            includeDependenciesRecursively: true,
+          },
           // Vue 核心生态
           {
             name: 'vue-vendor',

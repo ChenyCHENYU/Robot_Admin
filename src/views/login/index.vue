@@ -102,7 +102,7 @@
       <C_Login
         ref="loginRef"
         title="Robot Admin"
-        :subtitle="t('lp_subtitle', '选择工作公司后登录，进入后也可随时切换')"
+        subtitle="选择工作公司后登录，进入后也可随时切换"
         :features="loginFeatures"
         storage-key="robot-admin-enterprise-login"
         :loading="loading"
@@ -144,7 +144,7 @@
             <p
               class="login-workspace__hint"
               :class="{ 'login-workspace__hint--error': companyError }"
-              >{{ companyHint }}</p
+              >{{ translateText(companyHint) }}</p
             >
             <button
               v-if="companyError"
@@ -188,17 +188,9 @@
     LOGIN_REQUIRE_CAPTCHA_SERVER_VERIFICATION,
   } from './captcha'
   import Spline from './components/Spline.vue'
+  import { translateText } from '@/utils/d_i18n'
 
   defineOptions({ name: 'LoginPage' })
-
-  type TranslateFunction = (
-    key: string,
-    fallback: string,
-    scope: string
-  ) => string
-  const runtimeGlobal = globalThis as typeof globalThis & {
-    $t?: TranslateFunction
-  }
 
   const router = useRouter()
   const userStore = s_userStore()
@@ -219,12 +211,6 @@
     requireSelectedCompany,
   } = useLoginWorkspace()
   let requestedContextId: string | undefined
-
-  // ===== i18n helper =====
-  const t = (key: string, fallback: string) =>
-    typeof runtimeGlobal.$t === 'function'
-      ? runtimeGlobal.$t(key, fallback, 'robot_admin')
-      : fallback
 
   const captchaVisible = ref(false)
   const robotReady = ref(false)
@@ -258,9 +244,9 @@
       requestedContextId = requireSelectedCompany(payload.username)
       return loginApi({ ...payload, contextId: requestedContextId })
     },
-    successMessage: t('lp_login_ok', '登录成功'),
-    errorMessage: t('lp_login_err', '账号或密码错误'),
-    welcomeConfig: createWelcomeConfig(t),
+    successMessage: '登录成功',
+    errorMessage: '账号或密码错误',
+    welcomeConfig: createWelcomeConfig(),
 
     onLoginSuccess: async (response, formData) => {
       const contexts = response.data.availableContexts

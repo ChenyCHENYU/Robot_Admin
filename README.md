@@ -549,61 +549,24 @@ graph LR
 
 ## 🌍 国际化 (i18n)
 
-### 自动化路由翻译
+语言切换使用组件库的 `C_Language`，自动扫描与编译使用 `vite-auto-i18n-plugin`。已有翻译始终可切换，普通开发和生产构建不调用翻译 API。
 
-项目集成了 **vite-auto-i18n-plugin**，支持路由标题的自动翻译。
+- `src/config/i18n.ts`：统一语言 key（`zh-cn / en / ja / ko`）、命名空间和持久化 key `robot_admin`。
+- `lang/zh-cn.json`：中文源词条；`en.json / ja.json / ko.json`：按语言拆分的扁平词典。
+- `src/utils/d_i18n.ts`：加载当前语言，提供正文和菜单共用的翻译入口。中文不加载其他词典。
+- `src/stores/language/index.ts`：同步组件库语言、Naive UI 文案与日期 locale。切换保留一次刷新，保证模块级文案、标签页与菜单一致。
 
-<details>
-<summary><b>查看详细使用说明</b></summary>
+`VITE_I18N_ENABLED=false` **仅关闭联网生成新翻译**，编译插件仍会把中文替换为运行时 `$t(hash, 原文, 'robot_admin')`。未翻译的词条回退原文；公司名称、路由路径、权限标识不依赖翻译结果。扫描覆盖项目页面和组件，依赖包内部的文案需通过组件自己的 locale 或文案 props 配置。
 
-#### 快速使用
+新增或修改菜单后，运行 `bun run gen:route-i18n` 更新扫描入口。需要生成新翻译时，在未跟踪的 `envs/.env.local` 中配置 `YOUDAO_APP_ID`、`YOUDAO_APP_KEY`，然后运行：
 
 ```bash
-# 1. 在 dynamicRouter.json 中添加新菜单（只需要中文）
-{
-  "meta": {
-    "title": "新功能模块"
-  }
-}
-
-# 2. 运行自动生成脚本
-bun run gen:route-i18n
-
-# 3. 重启开发服务器（首次需要）
-bun run dev
+bun run i18n:generate
 ```
 
-**就这么简单！** 插件会自动调用有道翻译 API 将中文翻译成英文。
+这条命令显式启用有道 API，扫描全部页面并更新拆分词典；临时构建放在 `node_modules/.cache/i18n-scan`。审核翻译文件后再执行常规构建 `bun run build`。API 凭据只用于本机或 CI，不使用 `VITE_` 前缀、不进入客户端产物。
 
-#### 工作原理
-
-```mermaid
-graph LR
-    A[dynamicRouter.json] --> B[gen:route-i18n]
-    B --> C[提取路由标题]
-    C --> D[vite-auto-i18n-plugin]
-    D --> E[有道翻译 API]
-    E --> F[lang/index.json]
-    F --> G[编译时构建映射]
-    G --> H[运行时 O1 查找]
-```
-
-#### 特性
-
-- ✅ **零配置** - 添加中文标题后运行一条命令即可
-- ✅ **自动翻译** - 调用有道翻译 API 自动生成英文
-- ✅ **高性能** - O(1) 查找，编译时构建映射表
-- ✅ **零维护** - HMR 自动更新，无需手动管理翻译
-
-#### 详细文档
-
-#### 详细文档
-
-📖 完整使用指南：[国际化实践指南 - 在线文档](https://www.tzagileteam.com/robot/guide/i18n-practice)
-
-</details>
-
-</details>
+切换语言使用的是语言 key 和已有词典，**不需要有道 App Key**。插件生成的 hash 是自动索引，项目只维护中文原文，无需逐页手写编号 key。
 
 ---
 

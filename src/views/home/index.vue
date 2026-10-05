@@ -357,6 +357,7 @@
 
   import { useRepositoryStats } from './useRepositoryStats'
   import { repositoryUrl } from './d_repository'
+  import { translateRouteTitle } from '@/utils/plugins/i18n-route'
 
   defineOptions({ name: 'HomePage' })
   const { stats, loading, failed, statusText, refresh } = useRepositoryStats()
@@ -399,7 +400,14 @@
   const quickEntries = computed(() =>
     workspaceEntryConfig.flatMap(entry => {
       const page = workspacePages.value.find(item => item.name === entry.name)
-      return page ? [{ ...entry, title: page.meta?.title || entry.name }] : []
+      return page
+        ? [
+            {
+              ...entry,
+              title: translateRouteTitle(page.meta?.title || entry.name),
+            },
+          ]
+        : []
     })
   )
 </script>
