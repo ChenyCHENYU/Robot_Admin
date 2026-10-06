@@ -10,6 +10,36 @@ import { PNG } from 'pngjs'
 import { installMockAdminSession } from './auth-fixture'
 import routeData from '../src/assets/data/dynamicRouter.json' with { type: 'json' }
 
+/** 在文字外侧取底色；半透明字与渐变菜单不能按纯白背景判断。 */
+function readTextBackground(
+  image: PNG,
+  bounds: { x: number; y: number; right: number; bottom: number }
+): number[] | null {
+  const { x, y, right, bottom } = bounds
+  const frequencies = new Map<string, number>()
+  for (
+    let row = Math.max(0, y - 2);
+    row < Math.min(image.height, bottom + 2);
+    row++
+  ) {
+    for (
+      let col = Math.max(0, x - 2);
+      col < Math.min(image.width, right + 2);
+      col++
+    ) {
+      if (row >= y && row < bottom && col >= x && col < right) continue
+      const offset = (row * image.width + col) * 4
+      const rgb = [...image.data.subarray(offset, offset + 3)].join(',')
+      frequencies.set(rgb, (frequencies.get(rgb) ?? 0) + 1)
+    }
+  }
+  if (!frequencies.size) return null
+  return [...frequencies]
+    .sort((a, b) => b[1] - a[1])[0][0]
+    .split(',')
+    .map(Number)
+}
+
 /** 从视口截图读取文字区域，而不是将 DOM 可见误当作实际绘制成功。 */
 async function paintedTextPixels(page: Page, text: Locator): Promise<number> {
   const target = await text.evaluate(element => {
@@ -19,21 +49,15 @@ async function paintedTextPixels(page: Page, text: Locator): Promise<number> {
     const canvas = document.createElement('canvas')
     canvas.width = canvas.height = 1
     const context = canvas.getContext('2d', { willReadFrequently: true })!
-    context.fillStyle = '#fff'
-    context.fillRect(0, 0, 1, 1)
-    const ancestors: Element[] = []
+    let opacity = 1
     for (
       let parent: Element | null = element;
       parent;
       parent = parent.parentElement
     ) {
-      ancestors.push(parent)
+      opacity *= Number(getComputedStyle(parent).opacity)
     }
-    for (const parent of ancestors.reverse()) {
-      context.fillStyle = getComputedStyle(parent).backgroundColor
-      context.fillRect(0, 0, 1, 1)
-    }
-    // Naive UI 暗色文字是半透明色，必须按背景合成后再核对像素。
+    // 单独读取文字 RGBA，实际背景在截图中取样，支持菜单渐变和半透明文字。
     context.fillStyle = getComputedStyle(element).color
     context.fillRect(0, 0, 1, 1)
     return {
@@ -41,7 +65,8 @@ async function paintedTextPixels(page: Page, text: Locator): Promise<number> {
       y: r.y,
       width: r.width,
       height: r.height,
-      color: [...context.getImageData(0, 0, 1, 1).data].slice(0, 3),
+      color: [...context.getImageData(0, 0, 1, 1).data],
+      opacity,
     }
   })
   // 在测试进程读取 PNG，不向被测页面注入大画布或干预其合成层。
@@ -51,16 +76,27 @@ async function paintedTextPixels(page: Page, text: Locator): Promise<number> {
   const y = Math.max(0, Math.floor(target.y * scale))
   const right = Math.min(image.width, x + Math.ceil(target.width * scale))
   const bottom = Math.min(image.height, y + Math.ceil(target.height * scale))
+  const background = readTextBackground(image, { x, y, right, bottom })
+  if (!background) return 0
+  const alpha = (target.color[3] / 255) * target.opacity
+  const color = background.map(
+    (value, index) => value + (target.color[index] - value) * alpha
+  )
+  const contrast = color.reduce(
+    (sum, value, index) => sum + Math.abs(value - background[index]),
+    0
+  )
+  const tolerance = Math.min(100, contrast * 0.4)
   let count = 0
   for (let row = y; row < bottom; row++) {
     for (let col = x; col < right; col++) {
       const offset = (row * image.width + col) * 4
-      const distance = target.color.reduce(
+      const distance = color.reduce(
         (sum, value, index) =>
           sum + Math.abs(value - image.data[offset + index]),
         0
       )
-      if (distance < 100) count++
+      if (distance < tolerance) count++
     }
   }
   return count
@@ -220,3 +256,134 @@ test('主题、菜单配色、窗口大小和滚动后正文持续绘制', async
   }
   /* eslint-enable no-await-in-loop */
 })
+
+/** 卡片必须逐张检查，避免顶部正常、下方合成层被裁切时仍然通过。 */
+async function expectWorkspacePainted(page: Page): Promise<void> {
+  const bodies = page.locator('.steps-demo .demo-card')
+  /* eslint-disable no-await-in-loop */
+  for (const card of await bodies.all()) {
+    const title = card.locator('.step-title').first()
+    await title.scrollIntoViewIfNeeded()
+    expect(
+      await paintedTextPixels(page, title),
+      `卡片正文「${await title.innerText()}」必须实际绘制`
+    ).toBeGreaterThan(8)
+  }
+  const labels = page.locator(
+    '.menu-scroll-container .n-menu-item-content-header, .mg__label'
+  )
+  const viewportHeight = page.viewportSize()!.height
+  const visible: Locator[] = []
+  for (const label of await labels.all()) {
+    const box = await label.boundingBox()
+    if (box && box.y >= 0 && box.y + box.height <= viewportHeight) {
+      visible.push(label)
+    }
+  }
+  // 覆盖侧栏下方，而不是只断言顶部的「首页」。
+  for (const label of [visible[0], visible.at(-1)]) {
+    if (!label) continue
+    expect(
+      await paintedTextPixels(page, label),
+      `导航「${await label.innerText()}」必须实际绘制`
+    ).toBeGreaterThan(8)
+  }
+  /* eslint-enable no-await-in-loop */
+}
+
+const layoutModes = [
+  'side',
+  'top',
+  'mix',
+  'mix-top',
+  'reverse-horizontal-mix',
+  'card-layout',
+]
+
+for (const layoutMode of layoutModes) {
+  test(`${layoutMode} 布局在浮层、引导和菜单交互后保持完整绘制`, async ({
+    page,
+  }) => {
+    await installMockAdminSession(page)
+    await page.goto('/#/demo/steps')
+    await expect(page.locator('.steps-demo')).toBeVisible()
+    await page.evaluate(async layoutMode => {
+      const app = (
+        document.querySelector('#app') as HTMLElement & {
+          __vue_app__: import('vue').App
+        }
+      ).__vue_app__
+      const stores = (
+        app.config.globalProperties.$pinia as {
+          _s: Map<
+            string,
+            {
+              layoutMode: string
+              menuExpandMode: string
+              setDesignStyle: (style: string) => Promise<void>
+              setMode: (mode: string) => Promise<void>
+              setMenuTheme: (theme: string) => void
+            }
+          >
+        }
+      )._s
+      const theme = stores.get('theme-extended')!
+      await theme.setDesignStyle('glass-morphism')
+      await theme.setMode('light')
+      theme.setMenuTheme('signature')
+      stores.get('settings')!.layoutMode = layoutMode
+    }, layoutMode)
+    await expect(page.locator('html')).toHaveAttribute(
+      'data-design-style',
+      'glass-morphism'
+    )
+    await page.waitForTimeout(900)
+    // 混合布局的二级导航覆盖内容，检查正文前先通过真实入口收起它。
+    if (layoutMode === 'mix') {
+      await page.locator('.first-menu-item.active').click()
+      await expect(page.locator('.second-level-menu-popup')).toHaveCount(0)
+    }
+    await expectWorkspacePainted(page)
+
+    await page.locator('.robot-search-trigger').click()
+    await page.locator('.robot-search-input').fill('步骤')
+    await page.keyboard.press('Escape')
+    await expect(page.locator('.robot-dialog-overlay')).toHaveCount(0)
+    await expectWorkspacePainted(page)
+
+    await page.getByRole('button', { name: '功能引导', exact: true }).click()
+    await expect(page.locator('.driver-popover')).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(page.locator('.driver-overlay')).toHaveCount(0)
+    await expectWorkspacePainted(page)
+
+    if (layoutMode === 'side') {
+      const parent = page
+        .locator('.menu-scroll-container .n-submenu')
+        .filter({ hasText: '示范组件' })
+        .first()
+      await parent.locator('.n-menu-item-content').first().click()
+      await parent.locator('.n-menu-item-content').first().click()
+      await page.waitForTimeout(400)
+      await page.locator('.n-menu-item-content--selected').first().hover()
+      await expectWorkspacePainted(page)
+
+      await page.evaluate(() => {
+        const app = (
+          document.querySelector('#app') as HTMLElement & {
+            __vue_app__: import('vue').App
+          }
+        ).__vue_app__
+        const pinia = app.config.globalProperties.$pinia as {
+          _s: Map<string, { menuExpandMode: string }>
+        }
+        pinia._s.get('settings')!.menuExpandMode = 'panel'
+      })
+      await page.locator('.mg__item').filter({ hasText: '示范组件' }).click()
+      await expect(page.locator('.mg-panel')).toBeVisible()
+      await page.keyboard.press('Escape')
+      await expect(page.locator('.mg-panel')).toHaveCount(0)
+      await expectWorkspacePainted(page)
+    }
+  })
+}
