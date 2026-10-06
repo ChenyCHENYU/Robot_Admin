@@ -697,7 +697,7 @@ bun run build:application # envs/.env.staging：真实业务预发验收产物 d
 ### ✅ 已完成里程碑
 
 <details>
-<summary><b>查看完整版本历程 (v1.0 → v2.6.3)</b></summary>
+<summary><b>查看完整版本历程 (v1.0 → v2.7.0)</b></summary>
 
 | 版本   | 时间    | 主要更新                                             |
 | ------ | ------- | ---------------------------------------------------- |
@@ -718,6 +718,7 @@ bun run build:application # envs/.env.staging：真实业务预发验收产物 d
 | v2.6.1 | 2026-10 | 📝 中英文文档、贡献与生产接入说明同步当前实现        |
 | v2.6.2 | 2026-10 | 🤖 修复生产 CSP 阻断登录页 3D 机器人                 |
 | v2.6.3 | 2026-10 | 🎬 修复场景内嵌视频被生产 CSP 拦截                   |
+| v2.7.0 | 2026-10 | 🏢 多租户体验、真实项目观测与样式绘制根因修复        |
 
 </details>
 
@@ -744,7 +745,7 @@ bun run build:application # envs/.env.staging：真实业务预发验收产物 d
 
 **已发布组件库**
 
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.13.0` - 基于 Naive UI 的 Vue 3 业务组件库（53 个组件，按需导入）
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.13.5` - 基于 Naive UI 的 Vue 3 业务组件库（53 个组件，按需导入）
 - **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v3.2.1` - 6 种布局模式 + `/naive` 单入口 + Vue Headless 分层
 - **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.6.1` - 实例化 Axios 编排、认证恢复与函数式 Headless CRUD
 - **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v3.4.2` - Naive UI / Element Plus 双框架企业级表单验证规则库
@@ -1007,7 +1008,14 @@ bun run verify
 
 ## 📄 更新日志
 
-### 🛠️ v2.6.3 (2026-10-02) — 最新版本
+### 🚀 v2.7.0 (2026-10-06) — 最新版本
+
+- 完善登录前公司选择及公司、角色切换，修复登录后的偶发 404
+- 首页介绍多架构能力，关于页展示技术档案；分析与统计使用明确来源的工程指标和本地事件
+- 使用正式发布的组件库 `0.13.5`，补齐可跳过的图文引导、离线翻译和开发版本信息
+- 从发布样式边界与 Chrome 绘制触发规则修复正文、导航和图标异常，增加普通屏、高分屏与六种布局回归
+
+### 🛠️ v2.6.3 (2026-10-02)
 
 - 仅允许 Spline 场景所需的内嵌媒体，消除登录页控制台的 CSP 媒体拦截；脚本执行限制不变
 

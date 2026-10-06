@@ -723,19 +723,20 @@ bun run build:application # envs/.env.staging: real-application staging artifact
 <details>
 <summary><b>✅ Completed Milestones</b></summary>
 
-| Version | Date       | Highlights                                                    |
-| ------- | ---------- | ------------------------------------------------------------- |
-| v1.0.0  | 2025-11    | First release, Vue 3 + Naive UI core architecture             |
-| v1.13.0 | 2026-01    | 45+ components, 11 directives, 7 packages                     |
-| v1.14.0 | 2026-02    | Monorepo + Micro-frontend dual architecture, Bun migration    |
-| v2.0.0  | 2026-03-01 | **Breaking** - Single-app restructure, Vite 8, 51+ components |
-| v2.1.0  | 2026-03-06 | SaaS extension, multi-app scaffold                            |
-| v2.2.0  | 2026-03-11 | Layout v2.2.0, env-manager v1.0.5, Robot CLI ✅               |
-| v2.5.0  | 2026-08    | Route-level loading and grouped navigation                    |
-| v2.6.0  | 2026-10    | Production hardening, component integration, and demo gates   |
-| v2.6.1  | 2026-10    | Documentation and contribution guidance aligned with the code |
-| v2.6.2  | 2026-10    | Restored the login robot under the production CSP             |
-| v2.6.3  | 2026-10    | Allowed the scene's embedded video under the production CSP   |
+| Version | Date       | Highlights                                                       |
+| ------- | ---------- | ---------------------------------------------------------------- |
+| v1.0.0  | 2025-11    | First release, Vue 3 + Naive UI core architecture                |
+| v1.13.0 | 2026-01    | 45+ components, 11 directives, 7 packages                        |
+| v1.14.0 | 2026-02    | Monorepo + Micro-frontend dual architecture, Bun migration       |
+| v2.0.0  | 2026-03-01 | **Breaking** - Single-app restructure, Vite 8, 51+ components    |
+| v2.1.0  | 2026-03-06 | SaaS extension, multi-app scaffold                               |
+| v2.2.0  | 2026-03-11 | Layout v2.2.0, env-manager v1.0.5, Robot CLI ✅                  |
+| v2.5.0  | 2026-08    | Route-level loading and grouped navigation                       |
+| v2.6.0  | 2026-10    | Production hardening, component integration, and demo gates      |
+| v2.6.1  | 2026-10    | Documentation and contribution guidance aligned with the code    |
+| v2.6.2  | 2026-10    | Restored the login robot under the production CSP                |
+| v2.6.3  | 2026-10    | Allowed the scene's embedded video under the production CSP      |
+| v2.7.0  | 2026-10    | Workspace experience, project observability, and rendering fixes |
 
 </details>
 
@@ -1020,7 +1021,14 @@ Thanks to all developers who contributed to this project:
 
 ## 📄 Changelog
 
-### 🛠️ v2.6.3 (2026-10-02) — Latest
+### 🚀 v2.7.0 (2026-10-06) — Latest
+
+- Added company selection before login and improved company and role switching; fixed intermittent post-login 404s
+- Separated the architecture-focused home page from the technical archive; dashboards identify their engineering and browser-local event sources
+- Adopted the published component package `0.13.5`, skippable illustrated tours, offline translation, and development version information
+- Fixed CSS boundary violations and Chrome rendering triggers; added standard/high-DPI pixel checks and six-layout interaction coverage
+
+### 🛠️ v2.6.3 (2026-10-02)
 
 - Allowed only the embedded media needed by the Spline scene, removing the login page's media CSP error without relaxing script execution
 
