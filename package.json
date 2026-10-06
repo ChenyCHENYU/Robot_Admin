@@ -68,7 +68,7 @@
     "@robot-admin/file-utils": "3.0.1",
     "@robot-admin/form-validate": "3.4.2",
     "@robot-admin/layout": "3.2.1",
-    "@robot-admin/naive-ui-components": "./vendor/robot-admin-naive-ui-components-0.13.4-e758608f0c15.tgz",
+    "@robot-admin/naive-ui-components": "./vendor/robot-admin-naive-ui-components-0.13.5-413e1a4b532f.tgz",
     "@robot-admin/request-core": "0.6.1",
     "@robot-admin/theme": "0.6.1",
     "@splinetool/runtime": "^1.12.68",

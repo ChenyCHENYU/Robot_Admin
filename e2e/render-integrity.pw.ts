@@ -188,6 +188,97 @@ test('全部菜单页连续进入后，公共导航与步骤内容保持完整',
   /* eslint-enable no-await-in-loop */
 })
 
+test('按需加载编辑器和地图不改变宿主同名类的样式', async ({ page }) => {
+  await installMockAdminSession(page)
+  await page.goto('/#/demo/steps')
+  await expect(page.locator('.steps-demo')).toBeVisible()
+  // 放在组件树之外，验证真实安装包的 CSS 不影响宿主同名类。
+  await page.evaluate(() => {
+    const container = document.createElement('div')
+    container.id = 'vendor-style-probe'
+    container.style.cssText = 'position:fixed;left:-10000px;width:180px'
+    for (const name of [
+      'no-scroll',
+      'animation',
+      'zoom-in',
+      'zoom-out',
+      'lvml',
+    ]) {
+      const target = document.createElement('span')
+      target.className = name
+      target.style.display = 'inline-block'
+      target.textContent = 'probe'
+      container.append(target)
+    }
+    document.body.append(container)
+  })
+  const readProbe = () =>
+    page.locator('#vendor-style-probe > span').evaluateAll(elements =>
+      elements.map(element => {
+        const style = getComputedStyle(element)
+        return {
+          name: element.className,
+          width: style.width,
+          position: style.position,
+          animation: style.animationName,
+          duration: style.animationDuration,
+          fill: style.animationFillMode,
+        }
+      })
+    )
+  const baseline = await readProbe()
+  /* eslint-disable no-await-in-loop */
+  for (const [path, selector] of [
+    ['/editor/markdown-editor', '.md-editor'],
+    ['/editor/text-editor', '.w-e-text-container'],
+    ['/plugins/map', '.leaflet-container'],
+  ]) {
+    await page.evaluate(path => {
+      location.hash = path
+    }, path)
+    await expect(page.locator(selector).first()).toBeVisible()
+    await page.waitForTimeout(400)
+    expect(
+      await readProbe(),
+      `${path}: 第三方 CSS 必须留在自己的组件范围`
+    ).toEqual(baseline)
+    if (path === '/editor/markdown-editor') {
+      await page
+        .locator('.md-editor')
+        .first()
+        .getByRole('button', { name: '图片', exact: true })
+        .hover()
+      await page.getByText('裁剪上传', { exact: true }).click()
+      const modal = page.locator('.md-editor-modal').filter({ visible: true })
+      await expect(modal).toBeVisible()
+      expect(
+        await modal.evaluate(
+          element =>
+            element.closest('.md-editor-modal-container')?.parentElement ===
+            document.body
+        )
+      ).toBe(true)
+      await page.waitForTimeout(200)
+      expect(
+        await paintedTextPixels(page, modal.locator('.md-editor-modal-header'))
+      ).toBeGreaterThan(8)
+      await modal.locator('.md-editor-modal-close').click()
+      await expect(modal).toHaveCount(0)
+      expect(await readProbe()).toEqual(baseline)
+    }
+  }
+  /* eslint-enable no-await-in-loop */
+  await page.evaluate(() => {
+    document.querySelector('#vendor-style-probe')?.remove()
+    location.hash = '/demo/steps'
+  })
+  await expect(page.locator('.steps-demo')).toBeVisible()
+  await page.waitForTimeout(400)
+  expect(
+    await paintedTextPixels(page, page.locator('.c-steps .step-title').first())
+  ).toBeGreaterThan(8)
+})
+
 test('主题、菜单配色、窗口大小和滚动后正文持续绘制', async ({ page }) => {
   await installMockAdminSession(page)
   await page.goto('/#/demo/steps')
