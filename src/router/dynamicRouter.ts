@@ -16,6 +16,7 @@ import {
   normalizeAbsoluteRoutePath,
   toRouteRecordPath,
 } from './routePath'
+import { bindCachedRouteComponent } from '@/utils/d_routeComponent'
 
 export interface RouteMeta extends Record<string, unknown> {
   title?: string
@@ -103,7 +104,14 @@ const processRoute = (
   parentPath = ''
 ): RouteRecordRaw => {
   const fullPath = joinRoutePath(parentPath, route.path)
-  const component = resolveComponent(route.component)
+  const resolved = resolveComponent(route.component)
+  const component =
+    resolved &&
+    route.name &&
+    route.meta?.keepAlive === true &&
+    route.component !== 'layout'
+      ? bindCachedRouteComponent(route.name, resolved)
+      : resolved
   if (component) dynamicRouteLoaders.set(fullPath, component)
 
   return {

@@ -1,0 +1,12 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-06
+ * @FilePath: \Robot_Admin\src\styles\mixins\tree-row.scss
+ * @Description: 页面树节点的箭头按实际行高居中，不改变层级线或缩进
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@mixin centered-switcher {
+  :deep(.n-tree-node-switcher) {
+    align-self: center;
+  }
+}

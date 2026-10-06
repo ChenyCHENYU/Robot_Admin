@@ -9,7 +9,7 @@
 -->
 <template>
   <div>
-    <C_LayoutContainer>
+    <C_LayoutContainer :key="permissionStore.requestGeneration">
       <!-- Side 布局的垂直菜单 -->
       <template #menu="{ collapsed }">
         <C_MenuTop id="guide-menu-top" />

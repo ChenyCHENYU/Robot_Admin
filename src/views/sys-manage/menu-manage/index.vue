@@ -1,961 +1,623 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-06
+ * @FilePath: \Robot_Admin\src\views\sys-manage\menu-manage\index.vue
+ * @Description: 菜单结构、路由行为与按钮权限工作区
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
   <div class="menu-management">
-    <!-- 搜索和操作栏 -->
-    <NCard class="header-card">
-      <NSpace
-        justify="space-between"
-        align="center"
-      >
-        <NInput
-          v-model:value="searchPattern"
-          placeholder="搜索菜单名称"
-          clearable
-          style="width: 300px"
-        >
-          <template #prefix>
-            <C_Icon
-              name="mdi:magnify"
-              :size="16"
-            />
-          </template>
-        </NInput>
-
+    <NCard
+      class="workspace-header"
+      :bordered="false"
+    >
+      <div class="workspace-heading">
+        <div class="workspace-title">
+          <span class="workspace-emblem"
+            ><C_Icon
+              name="mdi:file-tree-outline"
+              :size="24"
+          /></span>
+          <div
+            ><h1>菜单管理</h1><p>组织导航结构，配置页面行为与按钮权限</p></div
+          >
+        </div>
         <C_ActionBar
+          class="workspace-actions"
           :actions="toolbarActions"
-          :config="{ compact: true }"
+          :config="{ compact: true, wrap: true }"
         />
-      </NSpace>
+      </div>
+      <div class="workspace-summary">
+        <span
+          ><strong>{{ stats.directories }}</strong> 目录</span
+        >
+        <span
+          ><strong>{{ stats.pages }}</strong> 页面</span
+        >
+        <span
+          ><strong>{{ stats.cached }}</strong> 已开启缓存</span
+        >
+        <NTag
+          size="small"
+          :bordered="false"
+          :type="isMock ? 'warning' : 'success'"
+          >{{ isMock ? '演示数据' : '已连接服务' }}</NTag
+        >
+      </div>
     </NCard>
 
-    <!-- 主要内容区域 -->
-    <div class="main-content">
-      <NGrid
-        :cols="24"
-        :x-gap="16"
-        responsive="screen"
+    <NAlert
+      v-if="navigationDirty"
+      type="info"
+      :show-icon="true"
+      class="navigation-notice"
+    >
+      {{
+        isMock ? '缓存设置已保存' : '配置已保存'
+      }}，点击“同步导航”应用设置。同步会清空已打开页面的缓存状态。
+    </NAlert>
+    <div
+      class="menu-workspace"
+      :aria-busy="loading || busy"
+    >
+      <NCard
+        class="structure-panel"
+        size="small"
+        title="菜单结构"
       >
-        <!-- 左侧菜单树 -->
-        <NGi
-          :span="8"
-          :md="12"
-          :sm="24"
-        >
-          <NCard
-            title="菜单结构"
-            class="content-card"
+        <template #header-extra>
+          <NButton
+            size="tiny"
+            quaternary
+            :disabled="loading"
+            @click="toggleExpansion"
+            >{{ expanded ? '收起全部' : '展开全部' }}</NButton
           >
-            <C_Tree
-              ref="treeRef"
-              mode="menu"
-              :data="filteredMenuList"
-              :search-pattern="searchPattern"
-              :searchable="false"
-              :show-toolbar="false"
-              :status-configs="menuStatusConfigs"
-              :icon-config="menuIconConfig"
-              :default-expanded-keys="expandedKeys"
-              :default-selected-keys="selectedKeys"
-              @node-select="handleNodeSelect"
-              @node-action="handleNodeAction"
-              @node-drop="handleNodeDrop"
-              @add="handleAddFromTree"
-              class="menu-tree"
-            />
-          </NCard>
-        </NGi>
-
-        <!-- 右侧详情面板 -->
-        <NGi
-          :span="16"
-          :md="12"
-          :sm="24"
+        </template>
+        <NInput
+          v-model:value="searchPattern"
+          placeholder="搜索名称、路径或权限"
+          clearable
+          :input-props="{ 'aria-label': '搜索菜单' }"
+          class="tree-search"
         >
-          <NCard class="content-card">
-            <template #header>
-              <NSpace
-                justify="space-between"
-                align="center"
-              >
-                <NText>
-                  {{
-                    selectedMenu
-                      ? `${getMenuTypeText(selectedMenu.type)} - ${selectedMenu.name}`
-                      : '选择菜单查看详情'
-                  }}
-                </NText>
-                <C_ActionBar
-                  v-if="selectedMenu"
-                  :actions="[
-                    {
-                      key: 'edit',
-                      label: '编辑',
-                      icon: 'mdi:pencil',
-                      onClick: () => handleEditMenu(selectedMenu!),
-                    },
-                  ]"
-                  :config="{ compact: true, size: 'small' }"
-                />
-              </NSpace>
-            </template>
-
-            <!-- 未选择状态 -->
-            <NEmpty
-              v-if="!selectedMenu"
-              description="请从左侧选择一个菜单节点查看详细信息"
-              class="mt-80px"
+          <template #prefix
+            ><C_Icon
+              name="mdi:magnify"
+              :size="16"
+          /></template>
+        </NInput>
+        <p class="panel-hint">{{
+          searchPattern.trim()
+            ? '搜索时暂不支持拖拽，清空后恢复'
+            : '拖拽调整顺序；页面节点可移入目录'
+        }}</p>
+        <NSpin
+          :show="loading || mutating"
+          :size="48"
+          :rotate="false"
+          class="tree-loading"
+        >
+          <template #icon><C_Loading /></template>
+          <NResult
+            v-if="loadError"
+            status="error"
+            title="菜单加载失败"
+            :description="loadError"
+          >
+            <template #footer
+              ><NButton @click="loadMenus">重新加载</NButton></template
             >
-              <template #icon>
-                <C_Icon
-                  name="mdi:menu"
-                  :size="72"
-                  class="mt--80px"
-                />
-              </template>
-            </NEmpty>
-
-            <!-- 选中菜单详情 -->
-            <NSpace
-              v-else
-              vertical
-              :size="24"
+          </NResult>
+          <NEmpty
+            v-else-if="!loading && !filteredMenuList.length"
+            :description="searchPattern ? '没有匹配的菜单' : '暂无菜单'"
+            class="panel-empty"
+          >
+            <template #extra
+              ><NButton
+                v-if="searchPattern"
+                size="small"
+                @click="searchPattern = ''"
+                >清空搜索</NButton
+              ><NButton
+                v-else
+                size="small"
+                @click="handleAddMenu()"
+                >新增菜单</NButton
+              ></template
             >
-              <!-- 基本信息 -->
-              <NCard
-                title="基本信息"
-                size="small"
+          </NEmpty>
+          <C_Tree
+            v-else
+            ref="treeRef"
+            mode="menu"
+            :data="filteredMenuList"
+            :searchable="false"
+            :show-toolbar="false"
+            :actions="treeActions"
+            :draggable="!busy && !loading && !searchPattern.trim()"
+            :status-configs="menuStatusConfigs"
+            :icon-config="menuIconConfig"
+            @node-select="handleNodeSelect"
+            @node-action="handleNodeAction"
+            @node-drop="handleNodeDrop"
+            class="menu-tree"
+          />
+        </NSpin>
+      </NCard>
+
+      <NCard
+        class="details-panel"
+        size="small"
+      >
+        <NEmpty
+          v-if="!selectedMenu"
+          description="选择一个菜单，查看路由与页面配置"
+          class="panel-empty"
+        />
+        <template v-else>
+          <div class="detail-heading">
+            <div class="detail-heading-text">
+              <p class="menu-breadcrumb">{{ breadcrumbs.join(' / ') }}</p>
+              <h2
+                >{{ selectedMenu.name }}
+                <NTag
+                  size="small"
+                  :type="getMenuTypeColor(selectedMenu.type)"
+                  >{{ getMenuTypeText(selectedMenu.type) }}</NTag
+                ></h2
               >
-                <NGrid
-                  :cols="2"
-                  :x-gap="16"
-                  :y-gap="12"
-                >
-                  <NGi>
-                    <NSpace align="center">
-                      <NText depth="3">菜单名称：</NText>
-                      <NText>{{ selectedMenu.name }}</NText>
-                    </NSpace>
-                  </NGi>
-                  <NGi>
-                    <NSpace align="center">
-                      <NText depth="3">菜单类型：</NText>
-                      <NTag
-                        :type="getMenuTypeConfig(selectedMenu.type).color"
-                        size="small"
-                      >
-                        <template #icon>
-                          <C_Icon
-                            :name="getMenuTypeConfig(selectedMenu.type).icon"
-                            :size="12"
-                            :color="getMenuTypeIconColor(selectedMenu.type)"
-                          />
-                        </template>
-                        {{ getMenuTypeText(selectedMenu.type) }}
-                      </NTag>
-                    </NSpace>
-                  </NGi>
-                  <NGi v-if="selectedMenu.path">
-                    <NSpace align="center">
-                      <NText depth="3">路由路径：</NText>
-                      <NTag
-                        type="info"
-                        size="small"
-                        >{{ selectedMenu.path }}</NTag
-                      >
-                    </NSpace>
-                  </NGi>
-                  <NGi v-if="selectedMenu.component">
-                    <NSpace align="center">
-                      <NText depth="3">组件路径：</NText>
-                      <NText>{{ selectedMenu.component }}</NText>
-                    </NSpace>
-                  </NGi>
-                  <NGi>
-                    <NSpace align="center">
-                      <NText depth="3">排序：</NText>
-                      <NText>{{ selectedMenu.sort }}</NText>
-                    </NSpace>
-                  </NGi>
-                  <NGi>
-                    <NSpace align="center">
-                      <NText depth="3">状态：</NText>
-                      <NTag
-                        :type="selectedMenu.status === 1 ? 'success' : 'error'"
-                        size="small"
-                      >
-                        {{ selectedMenu.status === 1 ? '启用' : '禁用' }}
-                      </NTag>
-                    </NSpace>
-                  </NGi>
-                  <NGi v-if="selectedMenu.type !== 'button'">
-                    <NSpace align="center">
-                      <NText depth="3">显示状态：</NText>
-                      <NTag
-                        :type="
-                          selectedMenu.hidden === 0 ? 'success' : 'warning'
-                        "
-                        size="small"
-                      >
-                        {{ selectedMenu.hidden === 0 ? '显示' : '隐藏' }}
-                      </NTag>
-                    </NSpace>
-                  </NGi>
-                </NGrid>
-              </NCard>
-
-              <!-- 按钮权限列表 -->
-              <NCard
-                v-if="
-                  selectedMenu.type === 'menu' && buttonPermissions.length > 0
-                "
+            </div>
+            <NSpace :size="8">
+              <NButton
+                v-if="selectedMenu.type === 'directory'"
                 size="small"
+                :disabled="busy"
+                @click="handleAddMenu(selectedMenu.id)"
+                >新增下级</NButton
               >
-                <template #header>
-                  <NSpace
-                    justify="space-between"
-                    align="center"
-                  >
-                    <NText>按钮权限</NText>
-                    <C_ActionBar
-                      :actions="[
-                        {
-                          key: 'add',
-                          label: '添加权限',
-                          icon: 'mdi:plus',
-                          type: 'primary',
-                          onClick: handleAddPermission,
-                        },
-                      ]"
-                      :config="{ compact: true, size: 'small' }"
-                    />
-                  </NSpace>
-                </template>
-
-                <NSpace
-                  vertical
-                  :size="12"
-                >
-                  <NCard
-                    v-for="permission in buttonPermissions"
-                    :key="permission.id"
-                    size="small"
-                    hoverable
-                  >
-                    <NSpace
-                      justify="space-between"
-                      align="center"
-                    >
-                      <NSpace
-                        vertical
-                        :size="6"
-                      >
-                        <NSpace align="center">
-                          <C_Icon
-                            name="mdi:button-cursor"
-                            :size="16"
-                            color="#fa8c16"
-                          />
-                          <NText strong>{{ permission.name }}</NText>
-                        </NSpace>
-                        <NTag
-                          size="small"
-                          type="info"
-                        >
-                          {{ permission.permission }}
-                        </NTag>
-                      </NSpace>
-
-                      <C_ActionBar
-                        :actions="getPermissionActions(permission)"
-                        :config="{ compact: true, size: 'tiny' }"
-                      />
-                    </NSpace>
-                  </NCard>
-                </NSpace>
-              </NCard>
-
-              <!-- 子菜单统计 -->
-              <NCard
-                v-if="selectedMenu.type === 'directory' && childrenStats"
-                title="子菜单统计"
+              <NButton
                 size="small"
+                :disabled="busy || loading"
+                @click="handleEditMenu(selectedMenu)"
+                >编辑菜单</NButton
               >
-                <NGrid
-                  :cols="3"
-                  :x-gap="16"
-                >
-                  <NGi>
-                    <NStatistic label="目录">
-                      <template #default>
-                        <NText
-                          :style="{
-                            fontSize: '28px',
-                            fontWeight: 'bold',
-                            color: getMenuTypeIconColor('directory'),
-                          }"
-                        >
-                          {{ childrenStats.directories }}
-                        </NText>
-                      </template>
-                    </NStatistic>
-                  </NGi>
-                  <NGi>
-                    <NStatistic label="菜单">
-                      <template #default>
-                        <NText
-                          :style="{
-                            fontSize: '28px',
-                            fontWeight: 'bold',
-                            color: getMenuTypeIconColor('menu'),
-                          }"
-                        >
-                          {{ childrenStats.menus }}
-                        </NText>
-                      </template>
-                    </NStatistic>
-                  </NGi>
-                  <NGi>
-                    <NStatistic
-                      label="总计"
-                      :value="childrenStats.directories + childrenStats.menus"
-                    />
-                  </NGi>
-                </NGrid>
-              </NCard>
-
-              <!-- 备注信息 -->
-              <NCard
-                v-if="selectedMenu.remark"
-                title="备注信息"
+              <NButton
                 size="small"
+                quaternary
+                type="error"
+                :disabled="busy || loading"
+                @click="handleDeleteMenu(selectedMenu)"
+                >删除</NButton
               >
-                <NText>{{ selectedMenu.remark }}</NText>
-              </NCard>
             </NSpace>
-          </NCard>
-        </NGi>
-      </NGrid>
+          </div>
+          <section class="detail-section">
+            <h3>路由信息</h3>
+            <dl class="menu-facts">
+              <div
+                ><dt>路由标识</dt
+                ><dd
+                  ><code>{{ selectedMenu.id }}</code></dd
+                ></div
+              >
+              <div
+                ><dt>上级位置</dt
+                ><dd>{{
+                  breadcrumbs.slice(0, -1).join(' / ') || '根目录'
+                }}</dd></div
+              >
+              <div v-if="selectedMenu.path"
+                ><dt>访问路径</dt
+                ><dd
+                  ><code>{{ selectedPath }}</code></dd
+                ></div
+              >
+              <div v-if="selectedMenu.component"
+                ><dt>页面组件</dt
+                ><dd
+                  ><code>{{ selectedMenu.component }}</code></dd
+                ></div
+              >
+              <div
+                ><dt>排列顺序</dt><dd>{{ selectedMenu.sort }}</dd></div
+              >
+              <div
+                ><dt>菜单状态</dt
+                ><dd
+                  ><NTag
+                    size="small"
+                    :type="selectedMenu.status === 1 ? 'success' : 'error'"
+                    :bordered="false"
+                    >{{ selectedMenu.status === 1 ? '启用' : '禁用' }}</NTag
+                  ></dd
+                ></div
+              >
+              <div
+                ><dt>导航可见</dt
+                ><dd>{{
+                  selectedMenu.hidden === 1
+                    ? '隐藏（仍可通过授权路径访问）'
+                    : '显示在导航中'
+                }}</dd></div
+              >
+            </dl>
+          </section>
+          <section
+            v-if="selectedMenu.type === 'menu'"
+            class="detail-section"
+          >
+            <div class="section-heading"
+              ><h3>页面行为</h3
+              ><NTag
+                :type="selectedMenu.keepAlive ? 'success' : 'default'"
+                size="small"
+                :bordered="false"
+                >{{
+                  selectedMenu.keepAlive ? '缓存已开启' : '每次进入重新加载'
+                }}</NTag
+              ></div
+            >
+            <div class="cache-description"
+              ><C_Icon
+                name="mdi:layers-outline"
+                :size="24"
+              /><div
+                ><strong>{{
+                  selectedMenu.keepAlive
+                    ? '切换标签后继续上次操作'
+                    : '进入页面时获取最新状态'
+                }}</strong
+                ><p
+                  >开启后保留筛选、分页和未提交内容。刷新浏览器、退出登录或切换公司后重新加载。</p
+                ></div
+              ></div
+            >
+          </section>
+          <section
+            v-if="selectedMenu.type === 'menu'"
+            class="detail-section permissions-section"
+          >
+            <div class="section-heading"
+              ><h3
+                >按钮权限
+                <NText depth="3">{{ buttonPermissions.length }}</NText></h3
+              ><NButton
+                size="small"
+                type="primary"
+                secondary
+                :disabled="busy || permissionsLoading || !!permissionsError"
+                @click="handleAddPermission"
+                >添加权限</NButton
+              ></div
+            >
+            <NSpin
+              :show="permissionsLoading"
+              :size="48"
+              :rotate="false"
+            >
+              <template #icon><C_Loading /></template>
+              <NAlert
+                v-if="permissionsError"
+                type="error"
+                title="权限加载失败"
+                ><p>{{ permissionsError }}</p
+                ><NButton
+                  size="small"
+                  @click="loadPermissions"
+                  >重试</NButton
+                ></NAlert
+              >
+              <NEmpty
+                v-else-if="!permissionsLoading && !buttonPermissions.length"
+                description="尚未配置按钮权限，可添加新增、编辑或导出等操作权限"
+                class="permission-empty"
+              />
+              <div
+                v-else
+                class="permission-list"
+              >
+                <div
+                  v-for="permission in buttonPermissions"
+                  :key="permission.id"
+                  class="permission-row"
+                >
+                  <C_Icon
+                    name="mdi:shield-key-outline"
+                    :size="20"
+                  />
+                  <div class="permission-copy"
+                    ><strong>{{ permission.name }}</strong
+                    ><code>{{ permission.permission }}</code
+                    ><p v-if="permission.remark">{{
+                      permission.remark
+                    }}</p></div
+                  >
+                  <C_ActionBar
+                    :actions="getPermissionActions(permission)"
+                    :config="{ compact: true, size: 'small' }"
+                  />
+                </div>
+              </div>
+            </NSpin>
+          </section>
+          <section
+            v-if="selectedMenu.type === 'directory'"
+            class="detail-section"
+          >
+            <div class="section-heading"
+              ><h3>直属下级</h3
+              ><NText depth="3"
+                >{{ selectedMenu.children?.length || 0 }} 个节点</NText
+              ></div
+            >
+            <div
+              v-if="selectedMenu.children?.length"
+              class="child-list"
+            >
+              <NButton
+                v-for="child in selectedMenu.children"
+                :key="child.id"
+                text
+                class="child-link"
+                @click="selectMenu(child.id)"
+                ><C_Icon
+                  :name="
+                    child.type === 'directory'
+                      ? 'mdi:folder-outline'
+                      : 'mdi:file-document-outline'
+                  "
+                  :size="18" /><span>{{ child.name }}</span
+                ><C_Icon
+                  name="mdi:chevron-right"
+                  :size="16"
+              /></NButton>
+            </div>
+            <NEmpty
+              v-else
+              description="目录为空，点击新增下级添加页面"
+              class="permission-empty"
+            />
+          </section>
+          <section
+            v-if="selectedMenu.remark"
+            class="detail-section remark-section"
+            ><h3>备注</h3><p>{{ selectedMenu.remark }}</p></section
+          >
+          <p
+            v-if="isMock"
+            class="panel-hint source-hint"
+            >演示模式：菜单维护用于演示交互，缓存开关按公司保存；实际权限以服务端授权为准。</p
+          >
+        </template>
+      </NCard>
     </div>
 
-    <!-- 添加/编辑菜单弹窗 -->
     <NModal
       v-model:show="showModal"
       preset="dialog"
       :title="modalTitle"
-      :positive-text="modalMode === 'add' ? '确认添加' : '确认修改'"
+      :positive-text="modalMode === 'add' ? '确认新增' : '保存配置'"
       negative-text="取消"
+      :loading="saving"
+      :closable="!saving"
+      :mask-closable="!saving"
+      :close-on-esc="!saving"
+      :negative-button-props="{ disabled: saving }"
+      class="menu-editor"
+      style="width: min(640px, calc(100vw - 32px))"
       @positive-click="handleSaveMenu"
       @negative-click="handleCancelModal"
-      style="width: 600px"
     >
       <NForm
         ref="formRef"
         :model="formData"
         :rules="formRules"
-        label-placement="left"
-        label-width="100px"
+        :disabled="saving"
+        label-placement="top"
+        class="menu-editor-form"
       >
         <NFormItem
-          label="菜单类型"
+          label="节点类型"
           path="type"
+          ><NTag
+            v-if="formData.type === 'button'"
+            size="small"
+            type="warning"
+            >按钮权限</NTag
+          ><NRadioGroup
+            v-else
+            v-model:value="formData.type"
+            :disabled="modalMode === 'edit' || saving"
+            ><NSpace
+              ><NRadio value="directory">目录</NRadio
+              ><NRadio value="menu">页面</NRadio></NSpace
+            ></NRadioGroup
+          ></NFormItem
         >
-          <NRadioGroup v-model:value="formData.type">
-            <NRadio value="directory">
-              <NSpace align="center">
-                <C_Icon
-                  name="mdi:folder"
-                  :size="16"
-                  color="#1890ff"
-                  class="vertical-middle"
-                />
-                <NText>目录</NText>
-              </NSpace>
-            </NRadio>
-            <NRadio value="menu">
-              <NSpace align="center">
-                <C_Icon
-                  name="mdi:file-document"
-                  :size="16"
-                  color="#52c41a"
-                  class="vertical-middle"
-                />
-                <NText>菜单</NText>
-              </NSpace>
-            </NRadio>
-            <NRadio value="button">
-              <NSpace align="center">
-                <C_Icon
-                  name="mdi:button-cursor"
-                  :size="16"
-                  color="#fa8c16"
-                  class="vertical-middle"
-                />
-                <NText>按钮</NText>
-              </NSpace>
-            </NRadio>
-          </NRadioGroup>
-        </NFormItem>
-
         <NFormItem
-          label="菜单名称"
+          :label="formData.type === 'button' ? '权限名称' : '菜单名称'"
           path="name"
-        >
-          <NInput
+          ><NInput
             v-model:value="formData.name"
-            placeholder="请输入菜单名称"
-          />
-        </NFormItem>
-
+            placeholder="请输入清晰易懂的名称"
+            :maxlength="60"
+            show-count
+        /></NFormItem>
         <NFormItem
-          label="父级菜单"
+          :label="formData.type === 'button' ? '所属页面' : '上级目录'"
           path="parentId"
-        >
-          <NTreeSelect
+          ><NTreeSelect
             v-model:value="formData.parentId"
             :options="parentMenuOptions"
-            placeholder="请选择父级菜单"
-            clearable
-            key-field="id"
-            label-field="name"
-            children-field="children"
-          />
-        </NFormItem>
-
+            :placeholder="
+              formData.type === 'button' ? '选择所属页面' : '留空表示根目录'
+            "
+            :clearable="formData.type !== 'button'"
+            filterable
+            :disabled="
+              saving || (formData.type === 'button' && modalMode === 'edit')
+            "
+        /></NFormItem>
         <NFormItem
           v-if="formData.type !== 'button'"
           label="路由路径"
           path="path"
-        >
-          <NInput
+          ><NInput
             v-model:value="formData.path"
-            placeholder="请输入路由路径，如：/system/menu"
-          />
-        </NFormItem>
-
+            placeholder="如 /sys-manage/menu-manage"
+        /></NFormItem>
         <NFormItem
           v-if="formData.type === 'menu'"
-          label="组件路径"
+          label="页面组件"
           path="component"
-        >
-          <NInput
+          ><NInput
             v-model:value="formData.component"
-            placeholder="请输入组件路径，如：system/menu/index"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="图标"
-          path="icon"
-        >
-          <NInput
-            v-model:value="formData.icon"
-            placeholder="请输入图标名称，如：mdi:menu"
-          >
-            <template #prefix>
-              <C_Icon
-                :name="formData.icon || 'mdi:menu'"
-                :size="16"
-              />
-            </template>
-          </NInput>
-        </NFormItem>
-
+            placeholder="如 /sys-manage/menu-manage/index"
+        /></NFormItem>
         <NFormItem
           v-if="formData.type === 'button'"
           label="权限标识"
           path="permission"
-        >
-          <NInput
+          ><NInput
             v-model:value="formData.permission"
-            placeholder="请输入权限标识，如：system:menu:add"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="排序号"
-          path="sort"
-        >
-          <NInputNumber
-            v-model:value="formData.sort"
-            placeholder="排序号"
-            :min="0"
-            :max="9999"
-            style="width: 100%"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="菜单状态"
-          path="status"
-        >
-          <NSwitch
-            v-model:value="formData.status"
-            :checked-value="1"
-            :unchecked-value="0"
-          >
-            <template #checked>启用</template>
-            <template #unchecked>禁用</template>
-          </NSwitch>
-        </NFormItem>
-
+            placeholder="如 sys:menu:add"
+        /></NFormItem>
         <NFormItem
           v-if="formData.type !== 'button'"
-          label="是否隐藏"
-          path="hidden"
+          label="菜单图标"
+          path="icon"
+          ><NInput
+            v-model:value="formData.icon"
+            placeholder="如 mdi:folder-outline"
+            ><template #suffix
+              ><C_Icon
+                v-if="formData.icon"
+                :name="formData.icon"
+                :size="20" /></template></NInput
+        ></NFormItem>
+        <div
+          v-if="formData.type !== 'button'"
+          class="editor-settings"
         >
-          <NSwitch
-            v-model:value="formData.hidden"
-            :checked-value="1"
-            :unchecked-value="0"
+          <NFormItem
+            label="排列顺序"
+            path="sort"
+            ><NInputNumber
+              v-model:value="formData.sort"
+              :min="0"
+              :max="9999"
+              :precision="0"
+          /></NFormItem>
+          <NFormItem
+            label="菜单状态"
+            path="status"
+            ><NSwitch
+              v-model:value="formData.status"
+              :checked-value="1"
+              :unchecked-value="0"
+              ><template #checked>启用</template
+              ><template #unchecked>禁用</template></NSwitch
+            ></NFormItem
           >
-            <template #checked>隐藏</template>
-            <template #unchecked>显示</template>
-          </NSwitch>
-        </NFormItem>
-
+          <NFormItem
+            label="导航显示"
+            path="hidden"
+            ><NSwitch
+              v-model:value="formData.hidden"
+              :checked-value="0"
+              :unchecked-value="1"
+              ><template #checked>显示</template
+              ><template #unchecked>隐藏</template></NSwitch
+            ></NFormItem
+          >
+        </div>
+        <NFormItem
+          v-if="formData.type === 'menu'"
+          label="页面缓存"
+          path="keepAlive"
+          ><div class="cache-editor"
+            ><NSwitch
+              v-model:value="formData.keepAlive"
+              aria-label="页面缓存"
+              ><template #checked>开启</template
+              ><template #unchecked>关闭</template></NSwitch
+            ><p
+              >保留切换标签前的筛选、分页和表单状态。保存后同步导航生效；适合需要连续操作的页面。</p
+            ></div
+          ></NFormItem
+        >
         <NFormItem
           label="备注"
           path="remark"
-        >
-          <NInput
+          ><NInput
             v-model:value="formData.remark"
             type="textarea"
-            placeholder="请输入备注信息"
-            :rows="3"
-          />
-        </NFormItem>
+            placeholder="用途或操作说明（选填）"
+            :rows="2"
+            :maxlength="500"
+        /></NFormItem>
       </NForm>
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
-  import type { FormInst, TreeSelectOption } from 'naive-ui/es'
   import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
   import '@robot-admin/naive-ui-components/C_Tree/style.css'
-  import type { ActionItem, DropInfo } from '@robot-admin/naive-ui-components'
+  import { useMenuManagement } from './useMenuManagement'
 
-  // 从 data.ts 导入类型和数据配置
-  import {
-    type MenuData,
-    type FormData,
-    type ButtonPermission,
-    FORM_RULES,
-    MENU_STATUS_CONFIGS,
-    DEFAULT_FORM_DATA,
-    getMenuListApi,
-    getButtonPermissionsApi,
-    addMenuApi,
-    updateMenuApi,
-    deleteMenuApi,
-    moveMenuApi,
-    addButtonPermissionApi,
-    updateButtonPermissionApi,
-    deleteButtonPermissionApi,
-  } from './data'
+  defineOptions({ name: 'MenuManagement' })
 
-  const message = useMessage()
-
-  // 响应式数据
-  const loading = ref(false)
-  const searchPattern = ref('')
-  const showModal = ref(false)
-  const modalMode = ref<'add' | 'edit'>('add')
-  const formRef = ref<FormInst | null>(null)
-  const treeRef = ref<InstanceType<typeof C_Tree> | null>(null)
-  const expandedKeys = ref<string[]>([])
-  const selectedKeys = ref<string[]>([])
-  const isAllExpanded = ref(false)
-  const menuList = ref<MenuData[]>([])
-  const selectedMenuButtonPermissions = ref<ButtonPermission[]>([])
-
-  // 表单数据
-  const formData = reactive<FormData>({ ...DEFAULT_FORM_DATA })
-
-  // 表单验证规则
-  const formRules = FORM_RULES
-
-  // 计算属性
-  const modalTitle = computed(() =>
-    modalMode.value === 'add' ? '新增菜单' : '编辑菜单'
-  )
-  const menuStatusConfigs = computed(() => MENU_STATUS_CONFIGS)
-
-  // 菜单专用的图标配置 - 通过 props 传递，保持 C_Tree 组件的通用性
-  const menuIconConfig = computed(() => ({
-    typeMap: {
-      directory: 'mdi:folder',
-      menu: 'mdi:file-document',
-      button: 'mdi:button-cursor',
-    },
-    colorMap: {
-      directory: '#1890ff', // 蓝色 - 目录
-      menu: '#52c41a', // 绿色 - 菜单
-      button: '#fa8c16', // 橙色 - 按钮
-    },
-  }))
-
-  const selectedMenu = computed(() => {
-    if (selectedKeys.value.length === 0) return null
-    return findMenuById(menuList.value, selectedKeys.value[0])
-  })
-
-  const buttonPermissions = computed(() => selectedMenuButtonPermissions.value)
-
-  const childrenStats = computed(() => {
-    if (
-      !selectedMenu.value ||
-      selectedMenu.value.type !== 'directory' ||
-      !selectedMenu.value.children
-    )
-      return null
-
-    const stats = { directories: 0, menus: 0 }
-    const countChildren = (children: MenuData[]) => {
-      children.forEach(child => {
-        if (child.type === 'directory') stats.directories++
-        else if (child.type === 'menu') stats.menus++
-        if (child.children) countChildren(child.children)
-      })
-    }
-
-    countChildren(selectedMenu.value.children)
-    return stats
-  })
-
-  const parentMenuOptions = computed((): TreeSelectOption[] => {
-    const buildOptions = (menus: MenuData[]): TreeSelectOption[] => {
-      return menus
-        .filter(menu => menu.type !== 'button')
-        .map(menu => ({
-          id: menu.id,
-          name: menu.name,
-          children: menu.children ? buildOptions(menu.children) : undefined,
-        }))
-    }
-    return [{ id: null, name: '根目录' }, ...buildOptions(menuList.value)]
-  })
-
-  const filteredMenuList = computed(() => {
-    if (!searchPattern.value.trim()) return menuList.value
-
-    const filterMenu = (menu: MenuData): MenuData | null => {
-      const matchesKeyword = menu.name
-        .toLowerCase()
-        .includes(searchPattern.value.toLowerCase())
-      const filteredChildren =
-        (menu.children?.map(filterMenu).filter(Boolean) as MenuData[]) || []
-
-      if (matchesKeyword || filteredChildren.length > 0) {
-        return { ...menu, children: filteredChildren }
-      }
-      return null
-    }
-
-    return menuList.value.map(filterMenu).filter(Boolean) as MenuData[]
-  })
-
-  // 工具栏按钮配置
-  const toolbarActions = computed<ActionItem[]>(() => [
-    {
-      key: 'add',
-      label: '新增菜单',
-      icon: 'mdi:plus',
-      type: 'primary',
-      onClick: () => handleAddMenu(),
-    },
-    {
-      key: 'expand',
-      label: isAllExpanded.value ? '收起全部' : '展开全部',
-      icon: 'mdi:file-tree',
-      onClick: expandAll,
-    },
-    {
-      key: 'refresh',
-      label: '刷新',
-      icon: 'mdi:refresh',
-      onClick: refreshMenus,
-    },
-  ])
-
-  // 权限操作按钮配置
-  const getPermissionActions = (permission: ButtonPermission): ActionItem[] => [
-    {
-      key: 'edit',
-      label: '编辑',
-      icon: 'mdi:pencil',
-      tooltip: '编辑',
-      onClick: () => handleEditPermission(permission),
-    },
-    {
-      key: 'delete',
-      label: '删除',
-      icon: 'mdi:delete',
-      type: 'error',
-      tooltip: '删除',
-      onClick: () => handleDeletePermission(permission.id),
-    },
-  ]
-
-  // 工具函数
-  const getMenuTypeText = (type: 'directory' | 'menu' | 'button'): string => {
-    const typeMap = {
-      directory: '目录',
-      menu: '菜单',
-      button: '按钮',
-    }
-    return typeMap[type]
-  }
-
-  const getMenuTypeConfig = (type: 'directory' | 'menu' | 'button') => {
-    const configMap = {
-      directory: { icon: 'mdi:folder', color: 'info' as const },
-      menu: { icon: 'mdi:file-document', color: 'success' as const },
-      button: { icon: 'mdi:button-cursor', color: 'warning' as const },
-    }
-    return configMap[type]
-  }
-
-  // 获取菜单类型对应的图标颜色
-  const getMenuTypeIconColor = (
-    type: 'directory' | 'menu' | 'button'
-  ): string => {
-    const colorMap = {
-      directory: '#1890ff',
-      menu: '#52c41a',
-      button: '#fa8c16',
-    }
-    return colorMap[type]
-  }
-
-  const findMenuById = (menus: MenuData[], id: string): MenuData | null => {
-    for (const menu of menus) {
-      if (menu.id === id) return menu
-      if (menu.children) {
-        const found = findMenuById(menu.children, id)
-        if (found) return found
-      }
-    }
-    return null
-  }
-
-  // 事件处理
-  const handleNodeSelect = async (
-    _node: unknown,
-    keys: (string | number)[]
-  ) => {
-    selectedKeys.value = keys.map(k => String(k))
-
-    if (selectedMenu.value && selectedMenu.value.type === 'menu') {
-      try {
-        const response = await getButtonPermissionsApi(selectedMenu.value.id)
-        selectedMenuButtonPermissions.value = response.data
-      } catch (error) {
-        console.error('获取按钮权限失败:', error)
-        selectedMenuButtonPermissions.value = []
-      }
-    } else {
-      selectedMenuButtonPermissions.value = []
-    }
-  }
-
-  const handleNodeAction = (action: string, node: unknown) => {
-    const menuNode = node as MenuData
-    if (action === 'edit') {
-      handleEditMenu(menuNode)
-    } else if (action === 'delete') {
-      handleDeleteMenu(menuNode.id)
-    } else if (action === 'add') {
-      handleAddMenu(menuNode.id)
-    }
-  }
-
-  const handleNodeDrop = async (info: DropInfo) => {
-    const { node, dragNode, dropPosition } = info
-    try {
-      const dragId = dragNode.id == null ? '' : String(dragNode.id)
-      const targetId = node.id == null ? '' : String(node.id)
-      if (!dragId || !targetId) throw new Error('菜单缺少唯一标识')
-      await moveMenuApi(dragId, targetId, dropPosition)
-      await loadMenus()
-      message.success(
-        `已将 "${dragNode.name}" 移动到 "${node.name}" ${dropPosition === 'inside' ? '内部' : dropPosition === 'before' ? '前面' : '后面'}`
-      )
-    } catch {
-      message.error('菜单移动失败，已恢复原顺序')
-      await loadMenus()
-    }
-  }
-
-  const handleAddFromTree = (parentNode?: unknown) => {
-    const menuNode = parentNode as MenuData | undefined
-    handleAddMenu(menuNode?.id)
-  }
-
-  const expandAll = (): void => {
-    if (isAllExpanded.value) {
-      // 调用组件的 collapseAll 方法
-      treeRef.value?.collapseAll()
-      isAllExpanded.value = false
-    } else {
-      // 调用组件的 expandAll 方法
-      treeRef.value?.expandAll()
-      isAllExpanded.value = true
-    }
-  }
-
-  const refreshMenus = async (): Promise<void> => {
-    await loadMenus()
-    message.success('刷新成功')
-  }
-
-  const handleAddMenu = (parentId?: string): void => {
-    modalMode.value = 'add'
-    resetFormData()
-    if (parentId) formData.parentId = parentId
-    showModal.value = true
-  }
-
-  const handleAddPermission = (): void => {
-    if (!selectedMenu.value) return
-    modalMode.value = 'add'
-    resetFormData()
-    formData.type = 'button'
-    formData.parentId = selectedMenu.value.id
-    showModal.value = true
-  }
-
-  const handleEditMenu = (menu: MenuData): void => {
-    modalMode.value = 'edit'
-    Object.assign(formData, {
-      id: menu.id,
-      name: menu.name,
-      type: menu.type,
-      parentId: menu.parentId,
-      path: menu.path || '',
-      component: menu.component || '',
-      icon: menu.icon || '',
-      permission: menu.permission || '',
-      sort: menu.sort,
-      status: menu.status,
-      hidden: menu.hidden,
-      remark: menu.remark || '',
-    })
-    showModal.value = true
-  }
-
-  const handleEditPermission = (permission: ButtonPermission): void => {
-    modalMode.value = 'edit'
-    Object.assign(formData, {
-      id: permission.id,
-      name: permission.name,
-      type: 'button' as const,
-      parentId: permission.menuId,
-      path: '',
-      component: '',
-      icon: 'mdi:button-cursor',
-      permission: permission.permission,
-      sort: 0,
-      status: 1,
-      hidden: 0,
-      remark: permission.remark || '',
-    })
-    showModal.value = true
-  }
-
-  const handleDeleteMenu = async (id: string): Promise<void> => {
-    try {
-      await deleteMenuApi(id)
-      message.success('删除成功')
-      await loadMenus()
-    } catch {
-      message.error('删除失败')
-    }
-  }
-
-  const handleDeletePermission = async (id: string): Promise<void> => {
-    try {
-      await deleteButtonPermissionApi(id)
-      message.success('删除权限成功')
-      if (selectedMenu.value) {
-        const response = await getButtonPermissionsApi(selectedMenu.value.id)
-        selectedMenuButtonPermissions.value = response.data
-      }
-    } catch {
-      message.error('删除权限失败')
-    }
-  }
-
-  const handleSaveMenu = async (): Promise<boolean> => {
-    try {
-      await formRef.value?.validate()
-
-      if (formData.type === 'button') {
-        const permissionData = {
-          id: formData.id,
-          menuId: formData.parentId!,
-          name: formData.name,
-          permission: formData.permission,
-          remark: formData.remark,
-        }
-
-        if (modalMode.value === 'add') {
-          await addButtonPermissionApi(permissionData)
-          message.success('添加权限成功')
-        } else {
-          await updateButtonPermissionApi(permissionData as ButtonPermission)
-          message.success('修改权限成功')
-        }
-
-        if (selectedMenu.value) {
-          const response = await getButtonPermissionsApi(selectedMenu.value.id)
-          selectedMenuButtonPermissions.value = response.data
-        }
-      } else {
-        if (modalMode.value === 'add') {
-          await addMenuApi(formData)
-          message.success('添加成功')
-        } else {
-          await updateMenuApi(formData)
-          message.success('修改成功')
-        }
-        await loadMenus()
-      }
-
-      showModal.value = false
-      return true
-    } catch (error) {
-      if (error instanceof Array) return false
-      message.error('保存失败')
-      return false
-    }
-  }
-
-  const handleCancelModal = (): void => {
-    showModal.value = false
-    resetFormData()
-  }
-
-  const resetFormData = (): void => {
-    delete formData.id
-    Object.assign(formData, DEFAULT_FORM_DATA)
-  }
-
-  const loadMenus = async (): Promise<void> => {
-    loading.value = true
-    try {
-      const response = await getMenuListApi()
-      menuList.value = response.data
-    } catch {
-      message.error('加载菜单失败')
-    } finally {
-      loading.value = false
-    }
-  }
-
-  // 生命周期
-  onMounted(() => {
-    loadMenus()
-  })
+  const {
+    loading,
+    loadError,
+    permissionsLoading,
+    permissionsError,
+    saving,
+    mutating,
+    busy,
+    navigationDirty,
+    searchPattern,
+    showModal,
+    modalMode,
+    modalTitle,
+    formRef,
+    treeRef,
+    formData,
+    formRules,
+    selectedMenu,
+    filteredMenuList,
+    parentMenuOptions,
+    buttonPermissions,
+    breadcrumbs,
+    selectedPath,
+    stats,
+    treeActions,
+    menuIconConfig,
+    menuStatusConfigs,
+    toolbarActions,
+    expanded,
+    isMock,
+    getMenuTypeText,
+    getMenuTypeColor,
+    getPermissionActions,
+    selectMenu,
+    handleNodeSelect,
+    handleNodeAction,
+    handleNodeDrop,
+    toggleExpansion,
+    handleAddMenu,
+    handleAddPermission,
+    handleEditMenu,
+    handleDeleteMenu,
+    handleSaveMenu,
+    handleCancelModal,
+    loadMenus,
+    loadPermissions,
+  } = useMenuManagement()
 </script>
 
 <style lang="scss" scoped>

@@ -7,6 +7,7 @@
  */
 
 import DynamicRouter from '@/assets/data/dynamicRouter.json'
+import { applyMockMenuCachePolicy } from './menu-cache.mock'
 import { getData, postData } from '@robot-admin/request-core/axios'
 import type { DynamicRoute } from '@/router/dynamicRouter'
 import {
@@ -102,9 +103,10 @@ export const getAuthMenuListApi = (
   AUTH_MODE === 'mock'
     ? Promise.resolve({
         ...DynamicRouter,
-        data: (DynamicRouter.data as DynamicRoute[]).filter(route =>
-          isMockRouteAllowed(context ?? null, route.path)
-        ),
+        data: applyMockMenuCachePolicy(
+          DynamicRouter.data as DynamicRoute[],
+          context?.id
+        ).filter(route => isMockRouteAllowed(context ?? null, route.path)),
       })
     : getData<AuthMenuResponse>('/auth/menu-list')
 

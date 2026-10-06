@@ -1,71 +1,351 @@
-  .menu-management {
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-06
+ * @FilePath: \Robot_Admin\src\views\sys-manage\menu-manage\index.scss
+ * @Description: 菜单工作区响应式样式，所有规则限制在页面或编辑弹窗内
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../../../styles/mixins/tree-row' as tree-row;
+
+.menu-management {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding-bottom: 8px;
+  color: var(--c-text-1);
+
+  .workspace-header {
+    border: 1px solid var(--c-border);
+  }
+  .workspace-heading,
+  .workspace-title,
+  .workspace-summary,
+  .detail-heading,
+  .section-heading {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    height: 100%;
-    overflow: hidden;
-
-    .main-content {
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
-
-      :deep(.n-grid) {
-        height: 100%;
-      }
-    }
-
-    .content-card {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-
-      :deep(.n-card__content) {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: auto;
-      }
-    }
-
-    .menu-tree {
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
-
-      :deep(.c-tree-container) {
-        border: none;
-        padding: 0;
-        height: 100%;
-      }
-
-      :deep(.tree-instance) {
-        height: 100%;
-
-        .n-tree .n-tree-node {
-          margin-bottom: 4px;
-
-          .n-tree-node-content {
-            padding: 12px 8px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-
-            &:hover .tree-actions {
-              opacity: 1 !important;
-            }
-          }
-
-          .n-tree-node-switcher {
-            margin-right: 8px;
-          }
-
-          .n-tree-node-indent {
-            width: 24px;
-          }
-        }
-      }
+    align-items: center;
+    gap: 12px;
+  }
+  .workspace-heading,
+  .detail-heading,
+  .section-heading {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .workspace-title {
+    min-width: 0;
+  }
+  .workspace-actions {
+    min-width: 0;
+    max-width: 100%;
+    :deep(.actions-group) {
+      min-width: 0;
+      flex-wrap: wrap;
     }
   }
+  .workspace-emblem {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid color-mix(in srgb, var(--c-primary) 18%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--c-primary) 8%, transparent);
+    color: var(--c-primary);
+  }
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 650;
+  }
+  .workspace-title p {
+    margin: 4px 0 0;
+    color: var(--c-text-3);
+    font-size: 13px;
+  }
+  .workspace-summary {
+    margin-top: 18px;
+    gap: 24px;
+    flex-wrap: wrap;
+    color: var(--c-text-3);
+    font-size: 12px;
+  }
+  .workspace-summary strong {
+    margin-right: 4px;
+    color: var(--c-text-1);
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+  }
+  .workspace-summary .n-tag {
+    margin-left: auto;
+  }
+  .menu-workspace {
+    display: grid;
+    grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .structure-panel,
+  .details-panel {
+    min-width: 0;
+  }
+  .tree-search {
+    margin-bottom: 8px;
+  }
+  .panel-hint {
+    margin: 0 0 16px;
+    color: var(--c-text-3);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .tree-loading {
+    min-height: 360px;
+  }
+  .menu-tree {
+    @include tree-row.centered-switcher;
+    max-height: max(420px, calc(100dvh - 330px));
+    overflow: auto;
+    :deep(.c-tree-container) {
+      border: none;
+      padding: 0;
+    }
+    :deep(.n-tree-node-content) {
+      min-height: 34px;
+    }
+  }
+  .panel-empty {
+    padding: 80px 12px;
+  }
+  .detail-heading {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--c-border);
+  }
+  .detail-heading-text {
+    min-width: 0;
+  }
+  .menu-breadcrumb {
+    margin: 0 0 8px;
+    color: var(--c-text-3);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+  h2 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 650;
+  }
+  .detail-section {
+    padding: 22px 0;
+    border-bottom: 1px solid var(--c-border);
+  }
+  h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .section-heading {
+    margin-bottom: 16px;
+  }
+  .section-heading h3 .n-text {
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 400;
+  }
+  .menu-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 24px;
+    margin: 18px 0 0;
+  }
+  .menu-facts div {
+    min-width: 0;
+  }
+  dt {
+    margin-bottom: 6px;
+    color: var(--c-text-3);
+    font-size: 12px;
+  }
+  dd {
+    margin: 0;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+  .cache-description {
+    display: flex;
+    align-items: start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--c-primary) 5%, var(--c-bg-card));
+  }
+  .cache-description > :first-child {
+    flex-shrink: 0;
+    color: var(--c-primary);
+  }
+  .cache-description strong {
+    font-weight: 500;
+    font-size: 13px;
+  }
+  .cache-description p,
+  .remark-section p {
+    margin: 6px 0 0;
+    color: var(--c-text-3);
+    line-height: 1.7;
+    font-size: 12px;
+  }
+  .permission-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .permission-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--c-border);
+  }
+  .permission-row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .permission-row > :first-child {
+    color: var(--c-primary);
+    flex-shrink: 0;
+  }
+  .permission-copy {
+    flex: 1;
+    min-width: 0;
+  }
+  .permission-copy strong,
+  .permission-copy code {
+    display: block;
+  }
+  .permission-copy strong {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .permission-copy code {
+    color: var(--c-text-3);
+    margin-top: 3px;
+  }
+  .permission-copy p {
+    margin: 4px 0 0;
+    color: var(--c-text-3);
+    font-size: 12px;
+  }
+  .permission-empty {
+    padding: 24px 8px;
+  }
+  .child-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 16px;
+  }
+  .child-link {
+    justify-content: stretch;
+    padding: 10px 0;
+    min-width: 0;
+  }
+  .child-link :deep(.n-button__content) {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+  }
+  .child-link span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+  }
+  .source-hint {
+    margin: 18px 0 0;
+  }
+
+  @media (min-width: 1800px) {
+    .menu-workspace {
+      grid-template-columns: minmax(360px, 420px) minmax(0, 1fr);
+    }
+    .menu-facts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 1000px) {
+    .menu-workspace {
+      grid-template-columns: 1fr;
+    }
+    .menu-tree {
+      max-height: 380px;
+    }
+    .tree-loading {
+      min-height: 160px;
+    }
+  }
+  @media (max-width: 600px) {
+    .workspace-heading {
+      align-items: start;
+    }
+    .workspace-summary {
+      gap: 12px;
+    }
+    .workspace-summary .n-tag {
+      margin-left: 0;
+    }
+    .menu-facts,
+    .child-list {
+      grid-template-columns: 1fr;
+    }
+    .permission-row {
+      flex-wrap: wrap;
+    }
+    .permission-copy {
+      flex-basis: calc(100% - 40px);
+    }
+    .permission-row > :last-child {
+      margin-left: 32px;
+    }
+  }
+}
+.menu-editor {
+  .menu-editor-form {
+    margin-top: 20px;
+    max-height: calc(100dvh - 220px);
+    overflow: auto;
+    padding-right: 8px;
+  }
+  .editor-settings {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .cache-editor {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .cache-editor .n-switch {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .cache-editor p {
+    margin: 0;
+    line-height: 1.7;
+    color: var(--c-text-3);
+    font-size: 12px;
+  }
+  @media (max-width: 600px) {
+    .editor-settings {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}

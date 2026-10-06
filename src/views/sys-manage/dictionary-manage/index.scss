@@ -1,92 +1,268 @@
-  .dictionary-management {
-    padding: 16px;
-    height: calc(100vh - 120px);
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-06
+ * @FilePath: \Robot_Admin\src\views\sys-manage\dictionary-manage\index.scss
+ * @Description: 字典目录、选项表格与编辑弹窗的独立作用域样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../../../styles/mixins/tree-row' as tree-row;
+
+.dictionary-management {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  color: var(--c-text-1);
+
+  .dictionary-header {
+    border: 1px solid var(--c-border);
+  }
+  .workspace-heading,
+  .workspace-title,
+  .workspace-summary,
+  .detail-heading,
+  .items-heading {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    .main-content {
-      flex: 1;
-      min-height: 0;
-    }
-
-    .content-card {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-
-      :deep(.n-card__content) {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-    }
-
-    .dict-tree {
-      flex: 1;
-      overflow: auto;
-
-      :deep(.c-tree-container) {
-        border: none;
-        padding: 0;
-        height: 100%;
-      }
-
-      :deep(.tree-instance .n-tree .n-tree-node) {
-        margin-bottom: 4px;
-
-        .n-tree-node-content {
-          padding: 12px 8px;
-          border-radius: 6px;
-          transition: all 0.2s ease;
-          min-height: 44px;
-          display: flex;
-          align-items: center;
-
-          &:hover .tree-actions {
-            opacity: 1 !important;
-          }
-        }
-      }
-
-      // 为禁用状态的树节点添加样式
-      :deep(.tree-instance .n-tree .n-tree-node[data-status='0']) {
-        .n-tree-node-content {
-          opacity: 0.6;
-          background-color: var(--n-color-disabled) !important;
-
-          .n-tree-node-content__text {
-            text-decoration: line-through;
-            color: var(--n-text-color-disabled) !important;
-          }
-        }
-      }
-    }
-
-    // 禁用状态样式优化
-    .disabled-item {
-      opacity: 0.6;
-      background-color: var(--n-color-disabled) !important;
-      border: 1px dashed var(--n-border-color) !important;
-
-      &:hover {
-        opacity: 0.7;
-      }
-    }
-
-    .disabled-text {
-      opacity: 0.6;
-      color: var(--n-text-color-disabled) !important;
-      text-decoration: line-through;
-    }
-
-    .disabled-tag {
-      opacity: 0.6;
-      filter: grayscale(50%);
-
-      :deep(.n-tag__content) {
-        text-decoration: line-through;
-      }
+    align-items: center;
+    gap: 12px;
+  }
+  .workspace-heading,
+  .detail-heading,
+  .items-heading {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .workspace-title,
+  .workspace-actions {
+    min-width: 0;
+  }
+  .workspace-actions {
+    max-width: 100%;
+    :deep(.actions-group) {
+      flex-wrap: wrap;
+      min-width: 0;
     }
   }
+  .workspace-emblem {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border: 1px solid color-mix(in srgb, var(--c-primary) 18%, transparent);
+    border-radius: 12px;
+    color: var(--c-primary);
+    background: color-mix(in srgb, var(--c-primary) 8%, transparent);
+  }
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 650;
+  }
+  .workspace-title p {
+    margin: 4px 0 0;
+    color: var(--c-text-3);
+    font-size: 13px;
+  }
+  .workspace-summary {
+    gap: 24px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+    color: var(--c-text-3);
+    font-size: 12px;
+  }
+  .workspace-summary strong {
+    margin-right: 4px;
+    color: var(--c-text-1);
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+  }
+  .workspace-summary .n-tag {
+    margin-left: auto;
+  }
+  .dictionary-workspace {
+    display: grid;
+    grid-template-columns: minmax(290px, 340px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .dictionary-structure,
+  .dictionary-details {
+    min-width: 0;
+  }
+  .panel-hint {
+    margin: 8px 0 16px;
+    color: var(--c-text-3);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .tree-loading {
+    min-height: 280px;
+  }
+  .dictionary-tree {
+    @include tree-row.centered-switcher;
+    max-height: max(420px, calc(100dvh - 330px));
+    overflow: auto;
+    :deep(.c-tree-container) {
+      padding: 0;
+      border: none;
+    }
+  }
+  .panel-empty {
+    padding: 80px 12px;
+  }
+  .detail-heading {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--c-border);
+  }
+  .type-title {
+    min-width: 0;
+  }
+  .eyebrow {
+    font-size: 12px;
+    color: var(--c-text-3);
+  }
+  h2 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 6px 0 8px;
+    font-size: 20px;
+    font-weight: 650;
+  }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+  .type-title code {
+    color: var(--c-text-2);
+  }
+  .type-notice {
+    margin-top: 16px;
+  }
+  .type-remark {
+    color: var(--c-text-3);
+    line-height: 1.7;
+    font-size: 13px;
+    margin: 16px 0 0;
+  }
+  .items-heading {
+    margin: 24px 0 16px;
+  }
+  .items-heading > div {
+    min-width: 0;
+  }
+  h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  h3 span {
+    margin-left: 8px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--c-text-3);
+  }
+  .items-heading p {
+    margin: 6px 0 0;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--c-text-3);
+  }
+  .dictionary-items {
+    min-width: 0;
+  }
+  .dictionary-items :deep(.dictionary-item-status) {
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+  }
+  .dictionary-items :deep(.dictionary-status-note) {
+    color: var(--c-text-3);
+    font-size: 11px;
+    line-height: 1.6;
+    white-space: normal;
+  }
+  .dictionary-items :deep(.selected-dictionary-item .n-data-table-td) {
+    background: color-mix(in srgb, var(--c-primary) 8%, var(--c-bg-card));
+  }
+  .items-empty {
+    padding: 48px 12px;
+    border: 1px dashed var(--c-border);
+    border-radius: 10px;
+  }
+  .source-hint {
+    margin: 18px 0 0;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--c-text-3);
+  }
+  @media (min-width: 1800px) {
+    .dictionary-workspace {
+      grid-template-columns: minmax(340px, 400px) minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 1100px) {
+    .dictionary-workspace {
+      grid-template-columns: 1fr;
+    }
+    .tree-loading {
+      min-height: 160px;
+    }
+    .dictionary-tree {
+      max-height: 320px;
+    }
+  }
+  @media (max-width: 600px) {
+    .workspace-summary {
+      gap: 12px;
+    }
+    .workspace-summary .n-tag {
+      margin-left: 0;
+    }
+    .items-heading {
+      align-items: flex-start;
+    }
+    .items-heading > div {
+      flex-basis: 100%;
+    }
+    .type-actions {
+      max-width: 100%;
+    }
+  }
+}
+.dictionary-editor {
+  .effective-preview {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: var(--c-text-3);
+    font-size: 12px;
+  }
+  .dictionary-editor-form {
+    max-height: calc(100dvh - 240px);
+    overflow: auto;
+    padding-right: 8px;
+  }
+  .editor-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+  .field-hint {
+    margin: -6px 0 20px;
+    color: var(--c-text-3);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  @media (max-width: 600px) {
+    .editor-fields {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+}

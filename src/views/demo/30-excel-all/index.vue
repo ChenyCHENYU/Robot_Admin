@@ -109,7 +109,11 @@
                 striped
                 :scroll-x="1200"
                 class="preview-table"
-              />
+              >
+                <template #loading>
+                  <C_Loading label="正在加载数据" />
+                </template>
+              </NDataTable>
             </NCard>
           </div>
         </NSpace>
