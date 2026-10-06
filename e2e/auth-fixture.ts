@@ -9,7 +9,9 @@
 import type { Page } from '@playwright/test'
 
 /** 在页面脚本执行前注入与演示公司一致的管理员上下文。 */
-export const installMockAdminSession = (page: Page): Promise<void> =>
+export const installMockAdminSession = (
+  page: Page
+): ReturnType<Page['addInitScript']> =>
   page.addInitScript(() => {
     if (sessionStorage.getItem('__e2e_auth_seeded__')) return
     sessionStorage.setItem('__e2e_auth_seeded__', '1')

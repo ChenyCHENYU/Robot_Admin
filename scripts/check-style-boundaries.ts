@@ -9,6 +9,7 @@ import { readFile, readdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { parse, compileStyleAsync } from '@vue/compiler-sfc'
 import postcss from 'postcss'
+import { compileAsync } from 'sass'
 
 /** 递归遍历源码，而不是只检查当前已注册路由。 */
 async function collectVueFiles(directory: string): Promise<string[]> {
@@ -62,8 +63,32 @@ for (const filename of files) {
     })
   }
 }
+
+// 全局入口也必须检查：SFC scoped 无法覆盖全局设计风格增强中的背景采样。
+const globalStyles = await compileAsync(resolve('src/styles/index.scss'))
+postcss.parse(globalStyles.css).walkRules(rule => {
+  const samplesBackground = rule.nodes.some(
+    node =>
+      node.type === 'decl' &&
+      /^(?:-webkit-)?backdrop-filter$/.test(node.prop) &&
+      !/^(?:none|initial|unset|revert)$/.test(node.value.trim())
+  )
+  if (!samplesBackground) return
+  for (const selector of rule.selectors) {
+    const positive = selector.replace(/:(?:not|has)\([^)]*\)/g, '')
+    const card = /\.(?:n-card(?:-header)?|custom-card|custom-statistic)\b/.test(
+      positive
+    )
+    const overlay = /\.n-(?:modal|drawer|popover)\b/.test(positive)
+    if (card && !overlay) {
+      violations.push(
+        `全局入口: ${selector} 对常驻卡片采样背景；模糊应由浮层容器负责`
+      )
+    }
+  }
+})
 if (violations.length)
   throw new Error(`样式越界或编译失败：\n${violations.join('\n')}`)
 console.log(
-  `样式边界通过：${files.length} 个 SFC、${styleCount} 个样式块（含全部页面）。`
+  `样式边界通过：${files.length} 个 SFC、${styleCount} 个样式块与全局入口（含全部页面）。`
 )

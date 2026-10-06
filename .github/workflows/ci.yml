@@ -35,3 +35,8 @@ jobs:
 
       - name: Browser smoke
         run: bun run test:e2e
+
+      - name: High DPI rendering
+        env:
+          RENDER_BASE_URL: http://127.0.0.1:4173
+        run: bunx playwright test --config playwright.render.config.ts --project chromium-retina --grep '冷加载|主题'
