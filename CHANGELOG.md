@@ -23,12 +23,14 @@
 - **styles:** 隔离项目全局 SVG 与局部面板规则，在组件发布阶段生成 scoped 工具类、图标及第三方 CSS 命名空间，兼容挂载在 body 的编辑器弹层。
 - **icons:** 修复 UnoCSS 图标和错误回退的加载、超时及竞态，恢复异常页插图颜色与尺寸。
 - **interactions:** 修复右键菜单的异步滚动竞态、音频 KeepAlive 清理及主题 HMR 清理时机。
+- **dependencies:** 将安全扫描发现的 `proxy-addr`、`source-map-js` 和 `postcss-selector-parser` 更新到兼容的修复版本，仅更新传递依赖锁定结果。
 
 ### Validation
 
 - 项目完整验证通过：117 项测试、样式边界、应用与构建配置类型检查、生产和应用模式构建及体积预算。
 - 组件库完整验证通过：152 项测试、发布入口、消费类型、CSS 命名空间及体积检查。
 - 78 个菜单入口连续导航、六种布局和浮层交互，以及 Chrome 普通屏/高分屏的真实像素绘制回归通过。
+- 安全审计仍报告两项尚无上游修复版本的传递依赖告警；保留现有 CI 门禁，具体范围见 [发布审核记录](docs/production-readiness.md#2026-10-06-发布安全审核)。
 
 ## [2.6.3](https://github.com/ChenyCHENYU/Robot_Admin/compare/v2.6.2...v2.6.3) (2026-10-02)
 

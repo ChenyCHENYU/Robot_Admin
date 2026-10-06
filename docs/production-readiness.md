@@ -27,6 +27,19 @@
 - 导航、门户、About 卡片和页面内标签/折叠交互补齐原生语义、键盘焦点和 ARIA 状态。
 - 非演示代码不保留显式 `any` 或通配 `declare module`，跨包布局类型直接消费正式导出。
 
+## 2026-10-06 发布安全审核
+
+发布前完整 `verify` 与 Chrome 普通屏/高分屏绘制回归通过，组件库固定消费 npm 正式版本 `0.13.5`。额外执行与 CI 一致的 `bun run security:audit` 时发现 5 项传递依赖告警；已将 `proxy-addr` 更新到 `2.0.8`、`source-map-js` 更新到 `1.2.2`、`postcss-selector-parser` 更新到 `7.1.6`，未改变直接依赖范围，也未引入本地包或源码 alias。
+
+当前仍有两项上游尚未发布修复版本的告警：
+
+- `braces@3.0.3`：[GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)，来自 lint-staged、ESLint 配置和 Commitizen 的开发工具链。
+- `sprintf-js@1.0.3`：[GHSA-hp3w-g68c-fv3c](https://github.com/advisories/GHSA-hp3w-g68c-fv3c)，来自 Mammoth/argparse 和提交工具链，需要调用方控制格式字符串才能触发公告所述问题。
+
+官方公告和 npm 可用版本均已核对；没有用空版本号、私有补丁包或忽略列表冒充修复。`bun run security:audit` 仍会返回非零，现有 CI 会在此步骤失败；本地功能、类型、构建验证通过与安全审计通过是不同结论。上游发布修复后需要更新锁文件并重新验证。
+
+同步后还核对了 [GitHub 工作流记录](https://github.com/ChenyCHENYU/Robot_Admin/actions/runs/37464002903)：CI 与 Release Please 的 job 未启动，annotation 明确为账号因 billing issue 被锁定，不能将该结果写成远端构建或测试已通过。代码分支推送和 npm 发布不受此次工作流启动限制；账号恢复后仍需重新运行 CI，并处理上述安全审计结果。
+
 ## 环境与数据模式
 
 | 环境变量                       | 开发/测试默认    | 业务生产/预发要求 | 公开演示         | 作用                                    |
