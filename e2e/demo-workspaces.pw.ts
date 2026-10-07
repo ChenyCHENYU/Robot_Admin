@@ -244,13 +244,13 @@ test('成本台账最后一页不跳高，分厂下钻和导出口径一致', as
   await page.setViewportSize({ width: 1920, height: 1080 })
   await page.goto('/#/large-screen/production-cost')
   await expect(page.locator('.cost-ledger tbody')).toBeVisible()
-  const { height } = (await page.locator('.cost-ledger tbody').boundingBox())!
+  const { height } = (await page.locator('.cost-table-scroll').boundingBox())!
   await page.getByLabel('下一页台账').click()
   await page.getByLabel('下一页台账').click()
   await page.getByLabel('下一页台账').click()
   expect(
     Math.abs(
-      (await page.locator('.cost-ledger tbody').boundingBox())!.height - height
+      (await page.locator('.cost-table-scroll').boundingBox())!.height - height
     )
   ).toBeLessThan(2)
   await page.locator('.plant-list button').first().click()

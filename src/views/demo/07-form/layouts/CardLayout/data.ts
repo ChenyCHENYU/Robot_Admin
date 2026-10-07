@@ -1,5 +1,15 @@
-import { defineFormOptions } from '@robot-admin/naive-ui-components/C_Form'
-import { PRESET_RULES } from '@/utils/d_formValidate'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @FilePath: \Robot_Admin\src\views\demo\07-form\layouts\CardLayout\data.ts
+ * @Description: 卡片表单字段、验证规则与布局配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+import {
+  defineFormOptions,
+  PRESET_RULES,
+} from '@robot-admin/naive-ui-components/C_Form'
 
 const { required, length, email, mobile, range } = PRESET_RULES
 

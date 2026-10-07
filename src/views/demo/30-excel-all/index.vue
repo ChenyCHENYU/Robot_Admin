@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @FilePath: \Robot_Admin\src\views\demo\30-excel-all\index.vue
+ * @Description: 30-excel-all 页面数据与统一表格配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
   <div class="excel-demo">
     <c_vTitle
@@ -16,107 +23,122 @@
           <span class="i-mdi-file-upload text-blue-500"></span>
         </template>
 
-        <NSpace vertical>
-          <div class="upload-area">
-            <NUpload
-              :file-list="fileList"
-              :on-change="handleFileUpload"
-              :show-file-list="false"
-              accept=".xlsx,.xls"
-              :disabled="loading"
-              drag
-              class="upload-dragger"
-            >
-              <div class="upload-content">
-                <span
-                  class="i-mdi-cloud-upload text-4xl text-gray-400 mb-2"
-                ></span>
-                <NText class="upload-text">点击或拖拽Excel文件到此区域</NText>
-                <NText
-                  depth="3"
-                  class="upload-hint"
-                  >支持 .xlsx, .xls 格式</NText
+        <NSpin
+          :show="loading && !currentSheetData.length"
+          :size="48"
+          :rotate="false"
+          description="正在读取 Excel 文件"
+        >
+          <template #icon><C_Loading /></template>
+          <NSpace vertical>
+            <div class="upload-area">
+              <NUpload
+                :file-list="fileList"
+                :on-change="handleFileUpload"
+                :show-file-list="false"
+                accept=".xlsx,.xls"
+                :disabled="loading"
+                drag
+                class="upload-dragger"
+              >
+                <div class="upload-content">
+                  <span
+                    class="i-mdi-cloud-upload text-4xl text-gray-400 mb-2"
+                  ></span>
+                  <NText class="upload-text">点击或拖拽Excel文件到此区域</NText>
+                  <NText
+                    depth="3"
+                    class="upload-hint"
+                    >支持 .xlsx, .xls 格式</NText
+                  >
+                </div>
+              </NUpload>
+
+              <NSpace
+                v-if="fileList.length > 0"
+                class="mt-4"
+              >
+                <NTag type="success">
+                  <template #icon>
+                    <span class="i-mdi-file-check"></span>
+                  </template>
+                  {{ fileList[0].name }}
+                </NTag>
+                <NButton
+                  quaternary
+                  type="error"
+                  size="small"
+                  :disabled="loading"
+                  @click="clearFileData"
                 >
-              </div>
-            </NUpload>
-
-            <NSpace
-              v-if="fileList.length > 0"
-              class="mt-4"
-            >
-              <NTag type="success">
-                <template #icon>
-                  <span class="i-mdi-file-check"></span>
-                </template>
-                {{ fileList[0].name }}
-              </NTag>
-              <NButton
-                quaternary
-                type="error"
-                size="small"
-                @click="clearFileData"
-              >
-                <template #icon>
-                  <span class="i-mdi-close"></span>
-                </template>
-                清除
-              </NButton>
-            </NSpace>
-          </div>
-
-          <!-- 工作表选择和数据预览 -->
-          <div v-if="sheets.length > 0">
-            <div class="sheet-selector mb-3">
-              <NText class="font-semibold mr-2">选择工作表：</NText>
-              <NSelect
-                v-model:value="selectedSheet"
-                :options="sheetOptions"
-                class="w-48"
-                placeholder="请选择工作表"
-              />
-              <NText
-                depth="3"
-                class="ml-4"
-              >
-                共 {{ sheets.length }} 个工作表
-              </NText>
+                  <template #icon>
+                    <span class="i-mdi-close"></span>
+                  </template>
+                  清除
+                </NButton>
+              </NSpace>
             </div>
 
-            <NCard
-              v-if="currentSheetData.length > 0"
-              title="数据预览"
-              size="small"
-              class="mb-4"
-            >
-              <template #header-extra>
-                <NSpace>
-                  <NText depth="3">总计 {{ currentSheetData.length }} 行</NText>
-                  <NButton
-                    text
-                    type="primary"
-                    @click="showAllData = !showAllData"
-                  >
-                    {{ showAllData ? '收起' : '查看全部' }}
-                  </NButton>
-                </NSpace>
-              </template>
+            <!-- 工作表选择和数据预览 -->
+            <div v-if="sheets.length > 0">
+              <div class="sheet-selector mb-3">
+                <NText class="font-semibold mr-2">选择工作表：</NText>
+                <NSelect
+                  v-model:value="selectedSheet"
+                  :options="sheetOptions"
+                  :disabled="loading"
+                  class="w-48"
+                  placeholder="请选择工作表"
+                />
+                <NText
+                  depth="3"
+                  class="ml-4"
+                >
+                  共 {{ sheets.length }} 个工作表
+                </NText>
+              </div>
 
-              <NDataTable
-                :columns="tableColumns"
-                :data="previewData"
-                :loading="loading"
+              <NCard
+                v-if="currentSheetData.length > 0"
+                title="数据预览"
                 size="small"
-                striped
-                :scroll-x="1200"
-                class="preview-table"
+                class="mb-4"
               >
-                <template #loading>
-                  <C_Loading label="正在加载数据" />
+                <template #header-extra>
+                  <NSpace>
+                    <NText depth="3"
+                      >总计 {{ currentSheetData.length }} 行</NText
+                    >
+                    <NButton
+                      text
+                      type="primary"
+                      @click="showAllData = !showAllData"
+                    >
+                      {{ showAllData ? '收起' : '查看全部' }}
+                    </NButton>
+                  </NSpace>
                 </template>
-              </NDataTable>
-            </NCard>
-          </div>
-        </NSpace>
+
+                <C_Table
+                  :columns="tableColumns"
+                  :data="keyedPreviewData"
+                  :loading="loading"
+                  class="preview-table"
+                  row-key="__previewRowKey"
+                  :config="{
+                    toolbar: { show: false },
+                    pagination: false,
+                    display: { size: 'small', striped: true, scrollX: 1200 },
+                  }"
+                >
+                  <template #loading>
+                    <C_Loading label="正在加载数据" />
+                  </template>
+                </C_Table>
+              </NCard>
+            </div>
+          </NSpace>
+        </NSpin>
       </NCard>
 
       <!-- 导出功能区域 -->
@@ -328,11 +350,15 @@
             class="processed-data"
           >
             <NText class="font-semibold mb-2">处理结果预览：</NText>
-            <NDataTable
+            <C_Table
               :columns="processedDataColumns"
-              :data="processedData.slice(0, 5)"
-              size="small"
-              striped
+              :data="keyedProcessedData"
+              row-key="__previewRowKey"
+              :config="{
+                toolbar: { show: false },
+                pagination: false,
+                display: { size: 'small', striped: true },
+              }"
             />
             <NText
               depth="3"
@@ -385,11 +411,18 @@
           </NSpace>
         </div>
 
-        <NDataTable
+        <C_Table
           :columns="historyColumns"
           :data="operationHistory"
-          :pagination="{ pageSize: 8 }"
-          size="small"
+          :config="{
+            toolbar: { show: false },
+            pagination: {
+              showSizePicker: false,
+              showQuickJumper: false,
+              pageSize: 8,
+            },
+            display: { striped: false, size: 'small' },
+          }"
         />
       </NCard>
     </div>
@@ -407,13 +440,11 @@
 </template>
 
 <script setup lang="ts">
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+
   defineOptions({ name: 'Demo30ExcelAll' })
   import { setupFileUtils } from '@/plugins/file-utils'
-  import {
-    type UploadFileInfo,
-    type DataTableColumns,
-    type SelectOption,
-  } from 'naive-ui/es'
+  import { type UploadFileInfo, type SelectOption } from 'naive-ui/es'
   import {
     useExcel,
     type ExcelRow,
@@ -454,6 +485,15 @@
   const showAllData = ref(false)
   const selectedSheetsForExport = ref<string[]>([])
   const processedData = ref<ExcelRow[]>([])
+  // 仅给展示副本补行键，不把内部标识写入导入、处理或导出数据。
+  const keyedPreviewData = computed(() =>
+    previewData.value.map((row, index) => ({ ...row, __previewRowKey: index }))
+  )
+  const keyedProcessedData = computed(() =>
+    processedData.value
+      .slice(0, 5)
+      .map((row, index) => ({ ...row, __previewRowKey: index }))
+  )
   const dataSummary = ref<DataSummary | null>(null)
   const operationHistory = ref<OperationHistoryItem[]>([])
 
@@ -523,7 +563,7 @@
   /**
    * * @description 表格列配置
    */
-  const tableColumns = computed((): DataTableColumns => {
+  const tableColumns = computed((): TableColumn[] => {
     if (currentSheetData.value.length === 0) return []
 
     const firstRow = currentSheetData.value[0]
@@ -540,7 +580,7 @@
   /**
    * * @description 处理后数据的列配置
    */
-  const processedDataColumns = computed((): DataTableColumns => {
+  const processedDataColumns = computed((): TableColumn[] => {
     if (processedData.value.length === 0) return []
 
     const firstRow = processedData.value[0]

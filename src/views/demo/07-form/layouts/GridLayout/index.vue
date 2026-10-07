@@ -94,11 +94,12 @@
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
     >
-      <template #action="{ submit, submitting, reset }">
-        <C_ActionBar
-          :actions="getFormActions(submit, submitting, reset)"
-          :config="{ align: 'right', gap: 12 }"
-        />
+      <template #action-extra="{ submitting }">
+        <NButton
+          :disabled="submitting"
+          @click="showLayoutPreview = true"
+          >预览布局</NButton
+        >
       </template>
     </C_Form>
 
@@ -162,7 +163,6 @@
     FormInstance,
     FormModel,
     FormOption,
-    ActionItem,
   } from '@robot-admin/naive-ui-components'
   import { colsOptions, formOptions } from './data'
 
@@ -196,7 +196,6 @@
   const gridCols = ref(24)
   const gridGutter = ref(16)
   const responsive = ref(true)
-  const message = useMessage()
 
   // ==================== 计算属性 ====================
 
@@ -208,43 +207,10 @@
     },
     validateOnChange: validateOnChange.value,
     labelPlacement: labelPlacement.value,
+    submitText: '提交表单',
+    resetText: '重置表单',
+    resetSuccessText: '表单已重置',
   }))
-
-  // ==================== 表单操作按钮配置 ====================
-  const getFormActions = (
-    submit: () => Promise<boolean>,
-    submitting: boolean,
-    reset: () => void
-  ): ActionItem[] => [
-    {
-      key: 'reset',
-      label: '重置表单',
-      icon: 'mdi:lock-reset',
-      onClick: () => {
-        reset()
-        message.info('表单已重置')
-      },
-    },
-    {
-      key: 'preview',
-      label: '预览布局',
-      icon: 'mdi:eye-outline',
-      type: 'success',
-      onClick: () => {
-        showLayoutPreview.value = true
-      },
-    },
-    {
-      key: 'submit',
-      label: submitting ? '提交中...' : '提交表单',
-      icon: 'mdi:check-circle-outline',
-      type: 'primary',
-      loading: submitting,
-      onClick: async () => {
-        if (!(await submit())) message.error('表单验证失败，请检查输入')
-      },
-    },
-  ]
 
   const layoutInfo = computed(() => [
     { label: '栅格系统', value: `${gridCols.value}列` },

@@ -9,15 +9,25 @@
  */
 
 import { resolve } from 'node:path'
-import { existsSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
+import { pathToFileURL } from 'node:url'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
-import {
-  componentNames,
-  RobotNaiveUiResolver,
-} from '@robot-admin/naive-ui-components/resolver'
-
 const PKG = '@robot-admin/naive-ui-components'
+
+// native 配置重载不会清理 Node 的 ESM 缓存；按真实安装版本加载 resolver。
+// 继续使用包提供的解析规则，避免项目复制一份组件清单或样式规则。
+const installedPackageRoot = resolve(process.cwd(), 'node_modules', PKG)
+const installedVersion = JSON.parse(
+  readFileSync(resolve(installedPackageRoot, 'package.json'), 'utf8')
+).version as string
+const resolverUrl = pathToFileURL(
+  resolve(installedPackageRoot, 'dist/resolver.js')
+)
+resolverUrl.searchParams.set('version', installedVersion)
+const { componentNames, RobotNaiveUiResolver } = (await import(
+  resolverUrl.href
+)) as typeof import('@robot-admin/naive-ui-components/resolver')
 
 const isLocalMode =
   process.env.USE_LOCAL_COMPONENTS === 'true' ||

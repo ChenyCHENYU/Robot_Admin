@@ -15,7 +15,6 @@ import Unocss from 'unocss/vite'
 import {
   viteConsolePlugin,
   viteAutoImportPlugin,
-  viteComponentsPlugin,
   resolveConfig,
   serverConfig,
   buildConfig,
@@ -25,10 +24,23 @@ import { validateViteEnv } from './src/config/vite/viteEnvConfig.ts'
 import { createProjectInfoPlugin } from './src/config/vite/viteProjectInfoPlugin.ts'
 import { createBuildInfoPlugin } from './src/config/vite/viteBuildInfoPlugin.ts'
 import { createProjectMetricsPlugin } from './src/config/vite/viteProjectMetricsPlugin.ts'
-import { createDependencyUpdatePlugin } from './src/config/vite/viteDependencyUpdatePlugin.ts'
+import {
+  createDependencyUpdatePlugin,
+  dependencySignature,
+} from './src/config/vite/viteDependencyUpdatePlugin.ts'
 import { getLocalPackageInfo } from './src/config/vite/localPackagesAlias.ts'
 
 const ENV_DIR = 'envs'
+
+/** 安装清单变化后创建新解析器，避免 native 模式复用旧自动导入缓存。 */
+async function loadComponentsPlugin(): Promise<PluginOption> {
+  const url = new URL(
+    './src/config/vite/viteComponentsConfig.ts',
+    import.meta.url
+  )
+  url.searchParams.set('dependencies', dependencySignature(process.cwd()))
+  return (await import(url.href)).default as PluginOption
+}
 
 type LocalPackageInfo = ReturnType<typeof getLocalPackageInfo>
 
@@ -85,7 +97,7 @@ export default defineConfig(
         vue(),
         ...devToolsPlugins,
         viteAutoImportPlugin,
-        viteComponentsPlugin,
+        await loadComponentsPlugin(),
         createI18nPlugin(),
         createBuildInfoPlugin(validatedEnv),
         createProjectInfoPlugin(),

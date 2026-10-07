@@ -28,12 +28,12 @@ const localPackageRoots = [
 ]
 
 export default {
-  // 固定 IPv4 回环地址，避免 Windows 上 localhost 在 ::1 / 127.0.0.1
-  // 之间切换后，旧页面的动态模块或 HMR 请求偶发 ERR_CONNECTION_REFUSED。
-  host: '127.0.0.1',
+  // 默认仅 localhost；dev:ip 一键开放局域网，启动横幅自动显示两个实际地址。
+  host: 'localhost',
   port: 1988,
   strictPort: true,
-  hmr: { host: '127.0.0.1', overlay: true },
+  // 让热更新跟随页面访问地址，兼容 localhost、IPv4 与实际局域网 IP。
+  hmr: { overlay: true },
   open: false,
 
   // 仅使用 Vite 原生 warmup 预转换冷启动最重的页面；运行时仍保持路由级按需加载。

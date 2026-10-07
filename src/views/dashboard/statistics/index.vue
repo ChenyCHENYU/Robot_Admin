@@ -122,29 +122,16 @@
           :empty="!summary?.pages.length"
           label="真实页面访问次数排行"
         /><div class="obs-table-wrap"
-          ><table class="obs-table page-timings"
-            ><thead
-              ><tr
-                ><th>页面</th><th class="numeric">PV</th
-                ><th class="numeric">P50</th><th class="numeric">P95</th></tr
-              ></thead
-            ><tbody
-              ><tr
-                v-for="page in summary?.pages.slice(0, 5)"
-                :key="page.route"
-                ><td>{{ routeTitle(page.route) }}</td
-                ><td class="numeric">{{ page.views }}</td
-                ><td class="numeric">{{ formatDuration(page.p50Ms) }}</td
-                ><td class="numeric">{{ formatDuration(page.p95Ms) }}</td></tr
-              ><tr v-if="!summary?.pages.length"
-                ><td
-                  colspan="4"
-                  class="obs-empty"
-                  >还没有页面访问记录</td
-                ></tr
-              ></tbody
-            ></table
-          ></div
+          ><C_Table
+            class="obs-table page-timings"
+            :columns="pageColumns"
+            :data="summary?.pages.slice(0, 5) ?? []"
+            row-key="route"
+            :config="{
+              toolbar: { show: false },
+              pagination: false,
+              display: { size: 'small', bordered: false, striped: false },
+            }" /></div
         ><div class="obs-note"
           >P50 / P95
           为组件解析到导航首帧的样本分位数，不含该守卫之前的认证请求，也不是用户停留时间。</div
@@ -255,46 +242,16 @@
           ></div
         ></div
       ><div class="recent-table obs-table-wrap"
-        ><table class="obs-table"
-          ><thead
-            ><tr
-              ><th>发生时间</th><th>事件</th><th>页面 / 功能</th><th>来源</th
-              ><th class="numeric">首帧耗时</th></tr
-            ></thead
-          ><tbody
-            ><tr
-              v-for="(event, index) in currentEvents"
-              :key="`${event.timestamp}-${index}`"
-              ><td class="event-time">{{
-                new Date(event.timestamp).toLocaleString()
-              }}</td
-              ><td
-                ><span
-                  class="event-kind"
-                  :class="event.type"
-                  >{{ eventLabels[event.type] }}</span
-                ></td
-              ><td>{{
-                event.action
-                  ? (actionLabels[event.action] ?? event.action)
-                  : routeTitle(event.route)
-              }}</td
-              ><td
-                ><span class="mode-label">{{
-                  event.mode === 'mock' ? '演示' : '远端'
-                }}</span></td
-              ><td class="numeric">{{
-                formatDuration(event.durationMs)
-              }}</td></tr
-            ><tr v-if="!currentEvents.length"
-              ><td
-                colspan="5"
-                class="obs-empty"
-                >当前筛选范围内暂无记录</td
-              ></tr
-            ></tbody
-          ></table
-        ></div
+        ><C_Table
+          class="obs-table"
+          :columns="eventColumns"
+          :data="currentEvents"
+          row-key="id"
+          :config="{
+            toolbar: { show: false },
+            pagination: false,
+            display: { size: 'small', bordered: false, striped: false },
+          }" /></div
       ><div class="recent-pagination"
         ><span>{{ filteredEvents.length }} 条记录 · 每页 6 条</span
         ><div
@@ -325,12 +282,85 @@
   </div>
 </template>
 <script setup lang="ts">
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+  import type {
+    TelemetryEvent,
+    UsageSummary,
+    TelemetryEventType,
+  } from '@/types/observability'
+  const pageColumns: TableColumn<UsageSummary['pages'][number]>[] = [
+    {
+      title: '页面',
+      key: 'route',
+      width: 220,
+      render: row => routeTitle(row.route),
+    },
+    { title: 'PV', key: 'views', width: 80 },
+    {
+      title: 'P50',
+      key: 'p50Ms',
+      width: 100,
+      render: row => formatDuration(row.p50Ms),
+    },
+    {
+      title: 'P95',
+      key: 'p95Ms',
+      width: 100,
+      render: row => formatDuration(row.p95Ms),
+    },
+  ]
+  const eventColumns: TableColumn<TelemetryEvent>[] = [
+    {
+      title: '发生时间',
+      key: 'timestamp',
+      width: 190,
+      render: row =>
+        h(
+          'span',
+          { class: 'event-time' },
+          new Date(row.timestamp).toLocaleString()
+        ),
+    },
+    {
+      title: '事件',
+      key: 'type',
+      width: 120,
+      render: row =>
+        h('span', { class: ['event-kind', row.type] }, eventLabels[row.type]),
+    },
+    {
+      title: '页面 / 功能',
+      key: 'route',
+      width: 220,
+      render: row =>
+        row.action
+          ? (actionLabels[row.action] ?? row.action)
+          : routeTitle(row.route),
+    },
+    {
+      title: '来源',
+      key: 'mode',
+      width: 80,
+      render: row =>
+        h(
+          'span',
+          { class: 'mode-label' },
+          row.mode === 'mock' ? '演示' : '远端'
+        ),
+    },
+    {
+      title: '首帧耗时',
+      key: 'durationMs',
+      width: 120,
+      render: row => formatDuration(row.durationMs),
+    },
+  ]
+
   import ObservatoryChart from '../shared/c_chart/index.vue'
   import { useProjectReport } from '../shared/useProjectReport'
   import { formatDuration } from '../shared/d_format'
   import { translateText } from '@/utils/d_i18n'
   import { observabilityConfig as config } from '@/config/observability'
-  import type { TelemetryEventType } from '@/types/observability'
   import { useUsageStats } from './useUsageStats'
   import {
     eventLabels,

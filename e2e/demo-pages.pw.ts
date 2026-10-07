@@ -27,7 +27,7 @@ const demos = [
   ['/preview/video-player', '视频播放器场景示例'],
   ['/preview/signature', '电子签名场景示例'],
   ['/preview/image-cropper', '图片裁剪场景示例'],
-  ['/preview/cron', 'Cron 表达式编辑器场景示例'],
+  ['/preview/cron', '让每一次执行，都有明确的计划。'],
   ['/preview/timeline', '每一次迭代，都有迹可循'],
 ] as const
 
@@ -58,7 +58,7 @@ test('模态框表单只在成功提交后关闭', async ({ page }) => {
   await page.getByRole('heading', { name: '模态框表单', exact: true }).click()
   const modal = page.locator('.n-modal').filter({ hasText: '用户信息管理' })
   await expect(modal).toBeVisible()
-  await modal.getByRole('button', { name: '提交' }).click()
+  await modal.getByRole('button', { name: '保存', exact: true }).click()
   await expect(modal).toBeVisible()
 
   await modal.getByPlaceholder('请输入用户名').fill('tester123')
@@ -70,7 +70,7 @@ test('模态框表单只在成功提交后关闭', async ({ page }) => {
     .click()
   await page.getByText('普通用户', { exact: true }).last().click()
   await modal.getByPlaceholder('请输入手机号').fill('13800138000')
-  await modal.getByRole('button', { name: '提交' }).click()
+  await modal.getByRole('button', { name: '保存', exact: true }).click()
   await expect(modal).not.toBeVisible()
 })
 
@@ -89,7 +89,7 @@ for (const layout of [
       .click()
     await page.getByRole('button', { name: '填充测试' }).click()
     await page
-      .locator('.form-section .c-action-bar')
+      .locator('.form-section')
       .getByRole('button', { name: new RegExp(layout.action) })
       .click()
     await expect(

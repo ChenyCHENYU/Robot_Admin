@@ -18,15 +18,7 @@
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
-    >
-      <!-- 自定义表单操作区 -->
-      <template #action="{ submit, reset }">
-        <C_ActionBar
-          :actions="getFormActions(submit, reset)"
-          :config="{ align: 'right', gap: 16 }"
-        />
-      </template>
-    </C_Form>
+    />
   </div>
 </template>
 
@@ -39,7 +31,6 @@
     FormOption,
     FormConfig,
     SubmitEventPayload,
-    ActionItem,
   } from '@robot-admin/naive-ui-components'
   import { formOptions, FORM_MESSAGES, type DefaultFormData } from './data'
 
@@ -69,8 +60,6 @@
 
   // ==================== 响应式状态 ====================
   const formRef = ref<FormInstance<DefaultFormData> | null>(null)
-  const submitLoading = ref<boolean>(false)
-  const message = useMessage()
 
   // ==================== 计算属性 ====================
   const formConfig = computed<FormConfig<DefaultFormData>>(() => ({
@@ -78,50 +67,14 @@
     validateOnChange: validateOnChange.value,
     labelPlacement: labelPlacement.value,
     onFieldsChange: handleFieldsChange,
+    submitText: FORM_MESSAGES.SUBMIT_TEXT,
+    resetText: FORM_MESSAGES.RESET_TEXT,
+    resetSuccessText: FORM_MESSAGES.RESET_INFO,
   }))
 
   // ==================== 事件处理 ====================
   const handleFieldsChange = (fields: FormOption<DefaultFormData>[]): void => {
     emit('fields-change', fields)
-  }
-
-  // ==================== 表单操作按钮配置 ====================
-  const getFormActions = (
-    submit: () => Promise<boolean>,
-    reset: () => void
-  ): ActionItem[] => [
-    {
-      key: 'reset',
-      label: '重置表单',
-      onClick: () => resetForm(reset),
-    },
-    {
-      key: 'submit',
-      label: submitLoading.value
-        ? FORM_MESSAGES.SUBMITTING
-        : FORM_MESSAGES.SUBMIT_TEXT,
-      type: 'primary',
-      loading: submitLoading.value,
-      onClick: () => submitForm(submit),
-    },
-  ]
-
-  // ==================== 表单操作方法 ====================
-  const submitForm = async (submit: () => Promise<boolean>): Promise<void> => {
-    try {
-      submitLoading.value = true
-      const isValid = await submit()
-      if (isValid) message.success(FORM_MESSAGES.SUBMIT_SUCCESS)
-    } catch {
-      message.error(FORM_MESSAGES.VALIDATE_ERROR)
-    } finally {
-      submitLoading.value = false
-    }
-  }
-
-  const resetForm = (reset: () => void): void => {
-    reset()
-    message.info(FORM_MESSAGES.RESET_INFO)
   }
 
   // ==================== 事件处理器 ====================

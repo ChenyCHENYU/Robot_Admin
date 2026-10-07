@@ -79,9 +79,10 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo11TableExpand' })
-  import { type DataTableRowKey, NSpin } from 'naive-ui/es'
+  import type { DataTableRowKey } from 'naive-ui'
   import type { VNodeChild } from 'vue'
   import { C_Table } from '@robot-admin/naive-ui-components/C_Table'
+  import { C_Loading } from '@robot-admin/naive-ui-components/C_Loading'
   import '@robot-admin/naive-ui-components/C_Table/base.css'
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
@@ -169,8 +170,7 @@
   ): VNodeChild => {
     if (isLoading) {
       return h('div', { class: 'flex justify-center items-center py-4' }, [
-        h(NSpin, { size: 'small' }),
-        h('span', { class: 'ml-2' }, '加载中...'),
+        h(C_Loading, { size: 32, label: '正在加载子表数据' }),
       ])
     }
 

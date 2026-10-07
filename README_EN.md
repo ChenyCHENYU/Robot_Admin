@@ -176,12 +176,23 @@ bun run dev
 
 Startup and hot-update times depend on the machine, cache, and local-package mode. Use measured results and the build budget to evaluate regressions.
 
+Run `bun run dev` for localhost-only access at `http://localhost:1988/`.
+Use `bun run dev:ip` to enable localhost, loopback IP, and LAN IP access together;
+the startup banner automatically shows localhost and the current network interface's
+LAN address without manually entering an IP address or `--host` argument.
+For another bind address, run `bun run dev --host <actual-local-IP> --port 1988`;
+the IP must already be assigned to a local network interface. Hot updates follow
+the page address.
+`localhost` and IP addresses are separate browser origins with independent login
+state and local settings.
+
 <details>
 <summary><b>📦 More Commands</b></summary>
 
 ```bash
 # Development
-bun run dev            # Start with project version, Git branch and commit information
+bun run dev            # Localhost-only access with version, Git branch and commit information
+bun run dev:ip         # Enable localhost and LAN IP access and show both addresses automatically
 bun run dev:banner     # Full startup banner, same as dev
 bun run dev:quiet      # Start without the console banner
 bun run dev:components # Use local naive-ui-components source for integration work
@@ -230,6 +241,8 @@ Development and test builds use closed-loop authentication and business-data Moc
 To connect a backend, set `VITE_DEPLOYMENT_PROFILE=application`, `VITE_AUTH_MODE=remote`, and `VITE_DATA_MODE=remote`, then configure `VITE_API_BASE`. Existing single-context remote responses still work. Real multi-tenancy additionally requires server-verified company activation and switching, context-bound tokens, and server-side data isolation. Production and staging application builds reject Mock mode. See [`docs/enterprise-auth.md`](docs/enterprise-auth.md) for the contract and integration boundary.
 
 Each build emits a read-only `/build-info.json` identity card with the app version, environment, deployment profile, Git revision, branch, and build time. It is linked from the signed-in user menu; the development server also serves it with `builtAt: null`. Inspired by the enterprise portal's `env.json`, it deliberately excludes runtime configuration, API addresses, and secrets. See [`docs/build-identity.md`](docs/build-identity.md) for the schema and caching policy.
+
+The form component integrates validation adapters, default actions, and asynchronous submission handling. Pages keep `options + config`, import rules from `/C_Form`, and add business actions through `action-extra`. No separate loading state, rule type adapter, or standard submit buttons are needed. See [form configuration](docs/form-configuration.md); dependency versions are defined by `package.json` and the lockfile.
 
 The planned federation architecture has three project types: a `systemApp` platform host including common administration, a customizable `public` portal, and a `template` for business applications. This split is planned, not yet implemented. Responsibilities, rollout stages, and acceptance criteria are recorded in [`docs/module-federation-platform-plan.md`](docs/module-federation-platform-plan.md).
 

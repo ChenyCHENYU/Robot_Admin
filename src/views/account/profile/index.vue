@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: profile 页面
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="profile-page">
     <!-- 个人信息卡片 -->
@@ -68,94 +75,25 @@
       title="编辑资料"
       class="profile-form-card"
     >
-      <NForm
+      <C_Form
         ref="formRef"
-        :model="formData"
-        :rules="PROFILE_FORM_RULES"
-        label-placement="left"
-        label-width="80"
-      >
-        <NGrid
-          :cols="2"
-          :x-gap="24"
-        >
-          <NGi>
-            <NFormItem
-              label="昵称"
-              path="nickname"
-            >
-              <NInput
-                v-model:value="formData.nickname"
-                placeholder="请输入昵称"
-              />
-            </NFormItem>
-          </NGi>
-          <NGi>
-            <NFormItem
-              label="邮箱"
-              path="email"
-            >
-              <NInput
-                v-model:value="formData.email"
-                placeholder="请输入邮箱"
-              />
-            </NFormItem>
-          </NGi>
-          <NGi>
-            <NFormItem
-              label="手机"
-              path="phone"
-            >
-              <NInput
-                v-model:value="formData.phone"
-                placeholder="请输入手机号"
-              />
-            </NFormItem>
-          </NGi>
-          <NGi>
-            <NFormItem
-              label="简介"
-              path="bio"
-            >
-              <NInput
-                v-model:value="formData.bio"
-                placeholder="一句话介绍自己"
-              />
-            </NFormItem>
-          </NGi>
-        </NGrid>
-      </NForm>
-      <div class="form-actions">
-        <NButton @click="handleReset">重置</NButton>
-        <NButton
-          type="primary"
-          :loading="saving"
-          @click="handleSave"
-        >
-          保存修改
-        </NButton>
-      </div>
+        v-model="formData"
+        :options="PROFILE_FORM_OPTIONS"
+        :config="formConfig"
+      />
     </NCard>
   </div>
 </template>
 
 <script setup lang="ts">
-  import {
-    NCard,
-    NForm,
-    NFormItem,
-    NInput,
-    NGrid,
-    NGi,
-    NAvatar,
-    NButton,
-    useMessage,
-    type FormInst,
-  } from 'naive-ui/es'
+  import type {
+    FormConfig,
+    FormInstance,
+  } from '@robot-admin/naive-ui-components/C_Form'
   import {
     MOCK_PROFILE,
     EMPTY_PROFILE,
-    PROFILE_FORM_RULES,
+    PROFILE_FORM_OPTIONS,
     ACCOUNT_INFO_ITEMS,
     type ProfileFormData,
   } from './data'
@@ -165,16 +103,17 @@
 
   defineOptions({ name: 'AccountProfile' })
 
+  const { loading: profileLoading, run: runLatestProfileRequest } =
+    useLatestRequest()
   const message = useMessage()
-  const formRef = ref<FormInst | null>(null)
-  const saving = ref(false)
+  const formRef = ref<FormInstance<ProfileFormData> | null>(null)
 
   const profileData = reactive({
     ...(isMockDataMode() ? MOCK_PROFILE : EMPTY_PROFILE),
   })
 
   // 表单数据
-  const formData = reactive<ProfileFormData>({
+  const formData = ref<ProfileFormData>({
     username: profileData.username,
     nickname: profileData.nickname,
     email: profileData.email,
@@ -183,35 +122,23 @@
     avatar: profileData.avatar,
   })
 
-  /** 重置表单 */
-  const handleReset = () => {
-    formData.nickname = profileData.nickname
-    formData.email = profileData.email
-    formData.phone = profileData.phone
-    formData.bio = profileData.bio
-  }
-
-  /** 保存修改 */
-  const handleSave = async () => {
-    try {
-      await formRef.value?.validate()
-    } catch {
-      return
-    }
-
-    saving.value = true
-    try {
-      await updateAccountProfileApi({ ...formData })
-      Object.assign(profileData, formData)
+  const formConfig = computed<FormConfig<ProfileFormData>>(() => ({
+    disabled: profileLoading.value || !!formRef.value?.isSubmitting,
+    layout: 'grid',
+    grid: { cols: 2, gutter: 24 },
+    labelPlacement: 'left',
+    labelWidth: 80,
+    preserveRemovedFields: true,
+    submitText: '保存修改',
+    onSubmit: async ({ model }, context) => {
+      await updateAccountProfileApi(model, context?.signal)
+      if (context?.signal.aborted) return
+      Object.assign(profileData, model)
+      await nextTick()
+      formRef.value?.markAsClean()
       message.success('个人资料已更新')
-    } catch {
-      message.error('个人资料更新失败，请稍后重试')
-    } finally {
-      saving.value = false
-    }
-  }
-
-  const { run: runLatestProfileRequest } = useLatestRequest()
+    },
+  }))
 
   onMounted(async () => {
     try {
@@ -220,7 +147,9 @@
       )
       if (!response) return
       Object.assign(profileData, response.data)
-      Object.assign(formData, response.data)
+      Object.assign(formData.value, response.data)
+      await nextTick()
+      formRef.value?.markAsClean()
     } catch {
       message.error('个人资料加载失败，请稍后重试')
     }

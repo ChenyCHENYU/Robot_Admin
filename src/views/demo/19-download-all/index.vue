@@ -35,55 +35,26 @@
           <span class="i-mdi-wrench-settings text-purple-500"></span>
         </template>
 
-        <NForm
-          :model="customForm"
-          label-placement="left"
-          label-width="120"
+        <C_Form
+          :model-value="customForm"
+          @update:model-value="Object.assign(customForm, $event)"
+          :options="customOptions"
+          :config="customConfig"
         >
-          <NFormItem label="文件名称">
-            <NInput
-              v-model:value="customForm.fileName"
-              placeholder="请输入文件名称"
-              clearable
-            />
-          </NFormItem>
-
-          <NFormItem label="文件类型">
-            <NSelect
-              v-model:value="customForm.fileType"
-              :options="fileTypeOptions"
-              placeholder="请选择文件类型"
-              clearable
-            />
-          </NFormItem>
-
-          <NFormItem label="显示通知">
-            <NSwitch v-model:value="customForm.showNotification" />
-          </NFormItem>
-
-          <NFormItem label="自定义参数">
-            <NInput
-              v-model:value="customForm.paramsJson"
-              type="textarea"
-              placeholder='例如: {"category": "report", "format": "detailed"}'
-              :rows="3"
-            />
-          </NFormItem>
-
-          <NFormItem>
+          <template #action="{ submit, submitting }">
             <NButton
               type="primary"
-              :loading="loading.custom"
+              :loading="submitting"
               :disabled="!customForm.fileName || !customForm.fileType"
-              @click="handleCustomDownload"
+              @click="submit"
             >
-              <template #icon>
-                <span class="i-mdi-cloud-download-outline"></span>
-              </template>
+              <template #icon
+                ><span class="i-mdi-cloud-download-outline"
+              /></template>
               自定义下载
             </NButton>
-          </NFormItem>
-        </NForm>
+          </template>
+        </C_Form>
       </NCard>
 
       <!-- 批量下载区域 -->
@@ -122,11 +93,18 @@
           <span class="i-mdi-clock-time-four-outline text-indigo-500"></span>
         </template>
 
-        <NDataTable
+        <C_Table
           :columns="historyColumns"
           :data="downloadHistory"
-          :pagination="{ pageSize: 5 }"
-          size="small"
+          :config="{
+            toolbar: { show: false },
+            pagination: {
+              showSizePicker: false,
+              showQuickJumper: false,
+              pageSize: 5,
+            },
+            display: { striped: false, size: 'small' },
+          }"
         />
       </NCard>
     </div>
@@ -134,6 +112,12 @@
 </template>
 
 <script setup lang="ts">
+  import {
+    PRESET_RULES,
+    type FormConfig,
+    type FormOption,
+    type SubmitEventPayload,
+  } from '@robot-admin/naive-ui-components/C_Form'
   defineOptions({ name: 'Demo19DownloadAll' })
   import { setupFileUtils } from '@/plugins/file-utils'
   import {
@@ -163,7 +147,6 @@
     csv: false,
     pdf: false,
     json: false,
-    custom: false,
     batch: false,
   })
 
@@ -191,6 +174,52 @@
       value: type.value,
     }))
   )
+
+  const customOptions = computed<FormOption<typeof customForm>[]>(() => [
+    {
+      prop: 'fileName',
+      label: '文件名称',
+      type: 'input',
+      placeholder: '请输入文件名称',
+      attrs: { clearable: true },
+      rules: [PRESET_RULES.required('文件名称')],
+    },
+    {
+      prop: 'fileType',
+      label: '文件类型',
+      type: 'select',
+      placeholder: '请选择文件类型',
+      children: fileTypeOptions.value,
+      attrs: { clearable: true },
+      rules: [PRESET_RULES.required('文件类型', 'change')],
+    },
+    { prop: 'showNotification', label: '显示通知', type: 'switch' },
+    {
+      prop: 'paramsJson',
+      label: '自定义参数',
+      type: 'textarea',
+      placeholder: '例如: {"category": "report", "format": "detailed"}',
+      attrs: { rows: 3 },
+      rules: [
+        {
+          trigger: 'blur',
+          validator: (_rule: unknown, value: string) => {
+            try {
+              if (value.trim()) JSON.parse(value)
+              return true
+            } catch {
+              return new Error('参数格式错误，请输入有效的 JSON')
+            }
+          },
+        },
+      ],
+    },
+  ])
+  const customConfig: FormConfig<typeof customForm> = {
+    labelPlacement: 'left',
+    labelWidth: 120,
+    onSubmit: handleCustomDownload,
+  }
 
   /**
    * * @description 快捷下载按钮配置
@@ -355,44 +384,44 @@
   /**
    * * @description 自定义下载处理
    */
-  async function handleCustomDownload() {
-    loading.custom = true
+  async function handleCustomDownload({
+    model,
+  }: SubmitEventPayload<typeof customForm>) {
     try {
       let params = {}
-      if (customForm.paramsJson.trim()) {
+      if (model.paramsJson.trim()) {
         try {
-          params = JSON.parse(customForm.paramsJson)
+          params = JSON.parse(model.paramsJson)
         } catch {
           throw new Error('参数格式错误，请输入有效的 JSON')
         }
       }
 
       const config: DownloadConfig = {
-        fileName: customForm.fileName,
-        fileType: customForm.fileType,
+        fileName: model.fileName,
+        fileType: model.fileType,
         params,
-        showNotification: customForm.showNotification,
+        showNotification: model.showNotification,
         notificationConfig: {
-          loading: `正在生成 ${customForm.fileName} 文件...`,
-          success: `${customForm.fileName} 下载完成！`,
-          error: `${customForm.fileName} 下载失败`,
+          loading: `正在生成 ${model.fileName} 文件...`,
+          success: `${model.fileName} 下载完成！`,
+          error: `${model.fileName} 下载失败`,
         },
       }
 
       await useDownload(createMockApi('custom'), config)
       addDownloadHistory(
-        customForm.fileName + customForm.fileType,
-        customForm.fileType.toUpperCase().substring(1),
+        model.fileName + model.fileType,
+        model.fileType.toUpperCase().substring(1),
         'success'
       )
-    } catch {
+    } catch (error) {
       addDownloadHistory(
-        customForm.fileName + customForm.fileType,
-        customForm.fileType.toUpperCase().substring(1),
+        model.fileName + model.fileType,
+        model.fileType.toUpperCase().substring(1),
         'failed'
       )
-    } finally {
-      loading.custom = false
+      throw error
     }
   }
 

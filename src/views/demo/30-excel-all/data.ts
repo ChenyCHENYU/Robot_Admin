@@ -1,4 +1,11 @@
-import { type DataTableColumns } from 'naive-ui/es'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @FilePath: \Robot_Admin\src\views\demo\30-excel-all\data.ts
+ * @Description: 30-excel-all 页面数据与统一表格配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
 import type { ExcelRow } from '@robot-admin/file-utils'
 
 export interface DataSummary {
@@ -54,7 +61,7 @@ export const sampleData = [
 ]
 
 // 操作历史列配置
-export const historyColumns: DataTableColumns<OperationHistoryItem> = [
+export const historyColumns: TableColumn<OperationHistoryItem>[] = [
   { title: '时间', key: 'time', width: 160 },
   { title: '操作', key: 'operation', width: 120 },
   { title: '描述', key: 'description', ellipsis: true },

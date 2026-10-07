@@ -27,14 +27,6 @@ export interface CategoryOption extends SelectOption {
   value: string
 }
 
-export interface FormRules {
-  [key: string]: {
-    required: boolean
-    message: string
-    trigger: string
-  }
-}
-
 export type InsertImageFunction = (config: {
   url: string
   desc?: string
@@ -84,16 +76,6 @@ function hello() {
 
 [链接示例](https://github.com)
 `
-
-/**
- * 表单验证规则
- */
-export const formRules: FormRules = {
-  title: { required: true, message: '请输入文章标题', trigger: 'blur' },
-  summary: { required: true, message: '请输入文章摘要', trigger: 'blur' },
-  category: { required: true, message: '请选择文章分类', trigger: 'change' },
-  content: { required: true, message: '请输入文章内容', trigger: 'blur' },
-}
 
 /**
  * 分类选项

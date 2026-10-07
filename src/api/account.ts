@@ -100,18 +100,20 @@ export const getAccountProfileApi = (
       })
 
 export const updateAccountProfileApi = (
-  data: UpdateAccountProfilePayload
+  data: UpdateAccountProfilePayload,
+  signal?: AbortSignal
 ): Promise<AccountApiResponse<void>> =>
   isMockDataMode()
-    ? createMockResponse(undefined)
-    : putData<AccountApiResponse<void>>('/account/profile', data)
+    ? createMockResponse(undefined, signal)
+    : putData<AccountApiResponse<void>>('/account/profile', data, { signal })
 
 export const changeAccountPasswordApi = (
-  data: ChangePasswordPayload
+  data: ChangePasswordPayload,
+  signal?: AbortSignal
 ): Promise<AccountApiResponse<void>> =>
   isMockDataMode()
-    ? createMockResponse(undefined)
-    : putData<AccountApiResponse<void>>('/account/password', data)
+    ? createMockResponse(undefined, signal)
+    : putData<AccountApiResponse<void>>('/account/password', data, { signal })
 
 export const getAccountLoginRecordsApi = (
   mockRecords: AccountLoginRecord[],

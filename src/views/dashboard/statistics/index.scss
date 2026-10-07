@@ -148,12 +148,12 @@
 .recent-table {
   height: 342px;
 }
-.event-time {
+.recent-table :deep(.event-time) {
   color: var(--app-text-tertiary);
   font-size: 11px;
   white-space: nowrap;
 }
-.event-kind {
+.recent-table :deep(.event-kind) {
   color: var(--app-primary);
   &.login_success {
     color: var(--obs-teal);
@@ -165,7 +165,7 @@
     color: var(--obs-purple);
   }
 }
-.mode-label {
+.recent-table :deep(.mode-label) {
   background: var(--app-bg-surface);
   color: var(--app-text-secondary);
   border-radius: 4px;

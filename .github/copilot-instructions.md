@@ -173,7 +173,6 @@ Robot_Admin/
 │   │
 │   ├── hooks/                     # 通用 Hooks
 │   │   ├── useCopy/               # 剪贴板复制
-│   │   ├── useFormSubmit/         # 表单提交
 │   │   └── usePrintWatermark/     # 打印水印
 │   │
 │   ├── lib/                       # 第三方库集成
@@ -255,7 +254,7 @@ Robot_Admin/
 | 局部组件目录 | `c_` + snake_case          | `c_detail/`, `c_role/`                  |
 | 组件库组件   | `C_` + PascalCase          | `C_Form`, `C_Table`, `C_Upload`         |
 | Composable   | `use` + PascalCase         | `useLoginController`, `useLayoutBridge` |
-| Hook         | `use` + PascalCase         | `useCopy`, `useFormSubmit`              |
+| Hook         | `use` + PascalCase         | `useCopy`, `usePrintWatermark`          |
 | Store        | `s_` + camelCase + `Store` | `s_userStore`, `s_themeStore`           |
 | 工具函数     | `d_` 前缀（domain 工具）   | `d_auth.ts`, `d_route.ts`               |
 | Demo 目录    | `数字编号-功能名`          | `01-icon/`, `07-form/`, `10-table/`     |

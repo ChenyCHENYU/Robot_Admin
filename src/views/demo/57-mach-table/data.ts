@@ -11,6 +11,7 @@ import { NProgress, NTag } from 'naive-ui'
 import {
   defineFormConfig,
   defineFormOptions,
+  PRESET_RULES,
 } from '@robot-admin/naive-ui-components/C_Form'
 import { defineTabs } from '@robot-admin/naive-ui-components/C_Tabs'
 import { useDownloadCSV } from '@robot-admin/file-utils'
@@ -27,7 +28,6 @@ import {
   type RowActionsConfig,
 } from '@agile-team/mach-table-vue'
 import { request, useAppTableCrud } from '@/plugins/request-core'
-import { PRESET_RULES } from '@/utils/d_formValidate'
 
 export const ORDER_STATUS = {
   pending: { label: '待处理', tagType: 'default' },

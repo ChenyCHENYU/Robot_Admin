@@ -5,7 +5,12 @@
  * @Description: 字典工作区选择、编辑校验与请求生命周期
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import type { DialogReactive, FormInst, FormRules } from 'naive-ui/es'
+
+import type {
+  FormInstance,
+  FormConfig,
+} from '@robot-admin/naive-ui-components/C_Form'
+import type { DialogReactive, FormItemRule } from 'naive-ui/es'
 import type { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
 import type { ActionItem } from '@robot-admin/naive-ui-components'
 import { useLatestRequest } from '@/composables/useLatestRequest'
@@ -56,7 +61,7 @@ export const useDictionaryManagement = () => {
   const searchPattern = ref('')
   const selectedId = ref<string | null>(null)
   const treeRef = ref<InstanceType<typeof C_Tree> | null>(null)
-  const formRef = ref<FormInst | null>(null)
+  const formRef = ref<FormInstance<DictFormData> | null>(null)
   const showModal = ref(false)
   const formData = reactive<DictFormData>({ ...DEFAULT_DICT_FORM_DATA })
   const saving = ref(false)
@@ -132,24 +137,19 @@ export const useDictionaryManagement = () => {
       findDictionary(dictList.value, formData.parentId)
     )
   )
-  const formRules = computed<FormRules>(() =>
-    Object.fromEntries(
-      ['name', 'type', 'parentId', 'typeCode', 'dictValue', 'code', 'sort'].map(
-        field => [
-          field,
-          {
-            trigger: ['input', 'blur', 'change'],
-            validator: () => {
-              const error = validateDictionaryForm(formData, dictList.value)[
-                field as keyof DictFormData
-              ]
-              return error ? new Error(error) : true
-            },
-          },
-        ]
-      )
-    )
-  )
+  /** 字段级规则使用组件当前模型，复用原有领域约束。 */
+  const fieldRules = (
+    field: keyof DictFormData,
+    model: DictFormData
+  ): FormItemRule[] => [
+    {
+      trigger: ['input', 'blur', 'change'],
+      validator: () => {
+        const error = validateDictionaryForm(model, dictList.value)[field]
+        return error ? new Error(error) : true
+      },
+    },
+  ]
   const modalTitle = computed(
     () =>
       `${formData.id ? '编辑' : '新增'}${formData.type === 'type' ? '字典类型' : '字典项'}`
@@ -213,7 +213,7 @@ export const useDictionaryManagement = () => {
   const resetForm = () => {
     delete formData.id
     Object.assign(formData, DEFAULT_DICT_FORM_DATA)
-    formRef.value?.restoreValidation()
+    formRef.value?.clearValidation()
   }
   const handleAdd = (parent?: DictData) => {
     if (busy.value || loading.value || loadError.value) return
@@ -264,7 +264,6 @@ export const useDictionaryManagement = () => {
       if (draft.id) await updateDictApi(draft)
       else await addDictApi(draft)
       if (!isCurrentSession(generation, context)) return false
-      showModal.value = false
       const refreshed = await reloadSavedDraft(draft)
       if (!isCurrentSession(generation, context)) return false
       if (refreshed) message.success('字典已保存')
@@ -272,21 +271,30 @@ export const useDictionaryManagement = () => {
       return true
     } catch (error) {
       if (isCurrentSession(generation, context))
-        message.error(describeError(error, '保存失败，请重试'))
+        throw new Error(describeError(error, '保存失败，请重试'))
       return false
     }
   }
-  const handleSave = async (): Promise<boolean> => {
-    if (busy.value || !formRef.value) return false
-    try {
-      await formRef.value.validate()
-    } catch {
-      return false
-    }
-    if (busy.value) return false
+  const formConfig = computed<FormConfig<DictFormData>>(() => ({
+    layout: 'grid',
+    grid: { cols: 2, gutter: 16 },
+    labelPlacement: 'top',
+    showActions: false,
+    disabled: saving.value,
+    preserveRemovedFields: true,
+    onSubmit: submitDraft,
+  }))
+  /** 统一入口复用组件的校验和提交锁，保留领域提交与导航同步。 */
+  const handleSave = () =>
+    busy.value
+      ? Promise.resolve(false)
+      : (formRef.value?.submit() ?? Promise.resolve(false))
+  /** 提交领域数据，保留鉴权上下文与列表同步。 */
+  async function submitDraft(): Promise<void> {
     saving.value = true
     try {
-      return await saveDraft(prepareDictionaryForm(formData))
+      if (!(await saveDraft(prepareDictionaryForm(formData))))
+        throw new Error('字典保存未完成')
     } finally {
       saving.value = false
     }
@@ -413,7 +421,8 @@ export const useDictionaryManagement = () => {
     treeRef,
     formRef,
     formData,
-    formRules,
+    fieldRules,
+    formConfig,
     parentOptions,
     formItemState,
     showModal,

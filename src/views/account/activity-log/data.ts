@@ -1,5 +1,13 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @FilePath: \Robot_Admin\src\views\account\activity-log\data.ts
+ * @Description: activity-log 页面数据与统一表格配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
 import { h } from 'vue'
-import { NTag, type DataTableColumns } from 'naive-ui/es'
+import { NTag } from 'naive-ui/es'
 import type { AccountActionType, AccountActivityRecord } from '@/api/account'
 
 // ==================== 类型定义 ====================
@@ -41,55 +49,58 @@ export const RESULT_OPTIONS = [
 ]
 
 // ==================== 表格列配置 ====================
-export const createColumns = (): DataTableColumns<ActivityRecord> => [
-  { title: '时间', key: 'time', width: 180, sorter: 'default' },
-  {
-    title: '操作类型',
-    key: 'actionType',
-    width: 100,
-    render: (row: ActivityRecord) => {
-      const info = ACTION_TYPE_MAP[row.actionType]
-      return h(
-        NTag,
-        {
-          size: 'small',
-          round: true,
-          bordered: false,
-          color: { color: `${info.color}18`, textColor: info.color },
-        },
-        () => info.label
-      )
+export const createColumns = (): TableColumn<ActivityRecord>[] => {
+  const columns = [
+    { title: '时间', key: 'time', width: 180, sorter: 'default' as const },
+    {
+      title: '操作类型',
+      key: 'actionType',
+      width: 100,
+      render: (row: ActivityRecord) => {
+        const info = ACTION_TYPE_MAP[row.actionType]
+        return h(
+          NTag,
+          {
+            size: 'small',
+            round: true,
+            bordered: false,
+            color: { color: `${info.color}18`, textColor: info.color },
+          },
+          () => info.label
+        )
+      },
+      filterOptions: ACTION_TYPE_OPTIONS.map(o => ({
+        label: o.label,
+        value: o.value,
+      })),
+      filter: (value: string | number | boolean, row: ActivityRecord) =>
+        row.actionType === value,
     },
-    filterOptions: ACTION_TYPE_OPTIONS.map(o => ({
-      label: o.label,
-      value: o.value,
-    })),
-    filter: (value: string | number | boolean, row: ActivityRecord) =>
-      row.actionType === value,
-  },
-  { title: '功能模块', key: 'module', width: 120 },
-  {
-    title: '操作描述',
-    key: 'description',
-    ellipsis: { tooltip: true },
-  },
-  { title: 'IP 地址', key: 'ip', width: 140 },
-  {
-    title: '结果',
-    key: 'result',
-    width: 80,
-    render: (row: ActivityRecord) =>
-      h(
-        NTag,
-        {
-          type: row.result === 'success' ? 'success' : 'error',
-          size: 'small',
-          round: true,
-        },
-        () => (row.result === 'success' ? '成功' : '失败')
-      ),
-  },
-]
+    { title: '功能模块', key: 'module', width: 120 },
+    {
+      title: '操作描述',
+      key: 'description',
+      ellipsis: { tooltip: true },
+    },
+    { title: 'IP 地址', key: 'ip', width: 140 },
+    {
+      title: '结果',
+      key: 'result',
+      width: 80,
+      render: (row: ActivityRecord) =>
+        h(
+          NTag,
+          {
+            type: row.result === 'success' ? 'success' : 'error',
+            size: 'small',
+            round: true,
+          },
+          () => (row.result === 'success' ? '成功' : '失败')
+        ),
+    },
+  ]
+  return columns
+}
 
 // ==================== Mock 数据 ====================
 export const MOCK_ACTIVITY_RECORDS: ActivityRecord[] = [

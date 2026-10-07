@@ -10,10 +10,15 @@
 
 import {
   defineFormOptions,
+  NAIVE_COMBOS,
+  PRESET_RULES,
   type FormOption,
 } from '@robot-admin/naive-ui-components/C_Form'
-import type { ApiResponse } from '@/hooks/useFormSubmit'
-import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
+interface ApiResponse<T = unknown> {
+  code: string
+  message?: string
+  data?: T
+}
 
 // 类型定义
 export interface EmployeeFormData {

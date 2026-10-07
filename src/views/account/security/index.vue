@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: security 页面
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="security-page">
     <!-- 安全配置 -->
@@ -46,13 +53,20 @@
       title="登录记录"
       class="login-records-card"
     >
-      <NDataTable
+      <C_Table
         :columns="loginColumns"
         :data="loginRecords"
-        :bordered="false"
-        striped
-        size="small"
-      />
+        :loading="recordsLoading"
+        :config="{
+          toolbar: { show: false },
+          pagination: false,
+          display: { bordered: false, striped: true, size: 'small' },
+        }"
+      >
+        <template #loading>
+          <C_Loading label="正在加载登录记录" />
+        </template>
+      </C_Table>
     </NCard>
 
     <!-- 修改密码弹窗 -->
@@ -63,85 +77,48 @@
       :style="{ width: '460px' }"
       :bordered="false"
       :mask-closable="false"
+      :closable="!passwordFormRef?.isSubmitting"
+      :close-on-esc="!passwordFormRef?.isSubmitting"
     >
-      <NForm
+      <C_Form
+        v-if="showPasswordModal"
         ref="passwordFormRef"
-        :model="passwordForm"
-        :rules="passwordRules"
-        label-placement="left"
-        label-width="90"
+        :model-value="passwordForm"
+        @update:model-value="Object.assign(passwordForm, $event)"
+        :options="PASSWORD_FORM_OPTIONS"
+        :config="passwordConfig"
         class="password-form"
       >
-        <NFormItem
-          label="当前密码"
-          path="oldPassword"
-        >
-          <NInput
-            v-model:value="passwordForm.oldPassword"
-            type="password"
-            show-password-on="click"
-            placeholder="请输入当前密码"
-          />
-        </NFormItem>
-        <NFormItem
-          label="新密码"
-          path="newPassword"
-        >
-          <NInput
-            v-model:value="passwordForm.newPassword"
-            type="password"
-            show-password-on="click"
-            placeholder="8-32位，含大小写字母和数字"
-          />
-        </NFormItem>
-        <NFormItem
-          label="确认密码"
-          path="confirmPassword"
-        >
-          <NInput
-            v-model:value="passwordForm.confirmPassword"
-            type="password"
-            show-password-on="click"
-            placeholder="请再次输入新密码"
-          />
-        </NFormItem>
-      </NForm>
-      <template #action>
-        <div class="form-actions">
-          <NButton @click="showPasswordModal = false">取消</NButton>
-          <NButton
-            type="primary"
-            :loading="saving"
-            @click="handleChangePassword"
-          >
-            确认修改
-          </NButton>
-        </div>
-      </template>
+        <template #action="{ submit, submitting }">
+          <div class="form-actions">
+            <NButton
+              :disabled="submitting"
+              @click="showPasswordModal = false"
+              >取消</NButton
+            >
+            <NButton
+              type="primary"
+              :loading="submitting"
+              @click="submit"
+              >确认修改</NButton
+            >
+          </div>
+        </template>
+      </C_Form>
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { h } from 'vue'
-  import {
-    NCard,
-    NForm,
-    NFormItem,
-    NInput,
-    NButton,
-    NSwitch,
-    NDataTable,
-    NModal,
-    NTag,
-    useMessage,
-    type FormInst,
-    type FormRules,
-    type DataTableColumns,
-  } from 'naive-ui/es'
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+
+  import type {
+    FormConfig,
+    FormInstance,
+  } from '@robot-admin/naive-ui-components/C_Form'
   import {
     SECURITY_SETTINGS,
-    PASSWORD_FORM_RULES,
+    PASSWORD_FORM_OPTIONS,
     DEFAULT_PASSWORD_FORM,
     MOCK_LOGIN_RECORDS,
     type SecuritySetting,
@@ -161,9 +138,8 @@
   defineOptions({ name: 'AccountSecurity' })
 
   const message = useMessage()
-  const passwordFormRef = ref<FormInst | null>(null)
+  const passwordFormRef = ref<FormInstance<ChangePasswordForm> | null>(null)
   const showPasswordModal = ref(false)
-  const saving = ref(false)
   const updatingSettingKeys = reactive(new Set<string>())
   const userStore = s_userStore()
 
@@ -177,24 +153,9 @@
     ...DEFAULT_PASSWORD_FORM,
   })
 
-  // 密码规则（含确认密码校验）
-  const confirmPasswordRules = [
-    { required: true, message: '请确认新密码', trigger: 'blur' },
-    {
-      validator: (_: unknown, value: string) => {
-        if (value !== passwordForm.newPassword) {
-          return new Error('两次输入的密码不一致')
-        }
-        return true
-      },
-      trigger: 'blur',
-    },
-  ]
-
-  const passwordRules: FormRules = {
-    ...PASSWORD_FORM_RULES,
-    confirmPassword: confirmPasswordRules,
-  }
+  watch(showPasswordModal, visible => {
+    if (!visible) Object.assign(passwordForm, DEFAULT_PASSWORD_FORM)
+  })
 
   // 登录记录
   const loginRecords = ref<LoginRecord[]>(
@@ -202,7 +163,7 @@
   )
 
   // 登录记录表格列
-  const loginColumns: DataTableColumns<LoginRecord> = [
+  const loginColumns: TableColumn<LoginRecord>[] = [
     { title: '时间', key: 'time', width: 180 },
     { title: 'IP 地址', key: 'ip', width: 140 },
     { title: '地区', key: 'location', width: 120 },
@@ -248,32 +209,24 @@
     message.info(`${key} 功能开发中...`)
   }
 
-  /** 修改密码 */
-  const handleChangePassword = async () => {
-    try {
-      await passwordFormRef.value?.validate()
-    } catch {
-      return
-    }
-
-    saving.value = true
-    try {
-      await changeAccountPasswordApi({
-        oldPassword: passwordForm.oldPassword,
-        newPassword: passwordForm.newPassword,
-      })
+  const passwordConfig = computed<FormConfig<ChangePasswordForm>>(() => ({
+    disabled: !!passwordFormRef.value?.isSubmitting,
+    labelPlacement: 'left',
+    labelWidth: 90,
+    onSubmit: async ({ model }, context) => {
+      await changeAccountPasswordApi(
+        { oldPassword: model.oldPassword, newPassword: model.newPassword },
+        context?.signal
+      )
+      if (context?.signal.aborted) return
       message.success('密码修改成功，请重新登录')
       showPasswordModal.value = false
-      Object.assign(passwordForm, DEFAULT_PASSWORD_FORM)
       await userStore.logout()
-    } catch {
-      message.error('密码修改失败，请确认当前密码后重试')
-    } finally {
-      saving.value = false
-    }
-  }
+    },
+  }))
 
-  const { run: runLatestRecordsRequest } = useLatestRequest()
+  const { loading: recordsLoading, run: runLatestRecordsRequest } =
+    useLatestRequest()
 
   onMounted(async () => {
     try {

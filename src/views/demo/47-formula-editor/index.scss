@@ -1,76 +1,107 @@
-/*
- * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-02-26 10:00:00
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-26 10:00:00
- * @FilePath: \Robot_Admin\src\views\demo\47-formula-editor\index.scss
- * @Description: 公式编辑器演示页样式
- * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
- */
-
+/* 规则实验室：场景入口与工作区分离，结果保持在编辑视线内。 */
 .formula-demo-page {
   padding: 24px;
-
-  .demo-section {
-    margin-bottom: 36px;
-    padding: 24px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    background: var(--card-color);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.2s ease;
-
-    &:hover {
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-    }
-  }
-
-  .section-title {
+  color: var(--c-text-2);
+  &__intro {
     display: flex;
-    gap: 8px;
     align-items: center;
-    justify-content: flex-start;
-    margin: 0 0 8px;
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--app-text-primary);
-
-    .title-icon {
-      flex-shrink: 0;
-      font-size: 20px;
-      color: var(--primary-color);
-    }
-  }
-
-  .section-desc {
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--text-color-3);
-    border-bottom: 1px dashed
-      color-mix(in srgb, var(--border-color) 60%, transparent);
-
-    code {
-      padding: 1px 5px;
-      border-radius: 3px;
-      background: var(--code-color);
-      font-size: 12px;
-    }
-  }
-
-  .section-content {
-    padding: 0;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-  }
-
-  .demo-output {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-top: 14px;
+    justify-content: space-between;
     flex-wrap: wrap;
+    gap: 20px;
+    padding: 6px 0 24px;
+    h1 {
+      margin: 12px 0 8px;
+      color: var(--c-text-1);
+      font-size: clamp(22px, 2vw, 30px);
+      font-weight: 650;
+      letter-spacing: -1px;
+    }
+    p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+  }
+  &__eyebrow {
+    font:
+      600 10px ui-monospace,
+      monospace;
+    letter-spacing: 2px;
+    color: var(--c-primary);
+  }
+  &__scenarios {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+    button {
+      appearance: none;
+      position: relative;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 16px 42px 16px 18px;
+      border: 1px solid var(--c-border);
+      border-radius: 12px;
+      background: var(--c-bg-card);
+      font: inherit;
+      color: var(--c-text-2);
+      cursor: pointer;
+      strong {
+        font-size: 13px;
+        color: var(--c-text-1);
+      }
+      span {
+        font-size: 11px;
+        color: var(--c-text-3);
+      }
+      > :last-child {
+        position: absolute;
+        right: 16px;
+        top: 18px;
+        color: var(--c-primary);
+      }
+      &[aria-pressed='true'],
+      &:hover {
+        border-color: var(--c-primary);
+        background: color-mix(in srgb, var(--c-primary) 6%, var(--c-bg-card));
+      }
+      &:focus-visible {
+        outline: 2px solid var(--c-primary);
+        outline-offset: 2px;
+      }
+    }
+  }
+  &__footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+    gap: 24px;
+    margin-top: 20px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--c-text-3);
+    p {
+      margin: 0;
+    }
+    summary {
+      cursor: pointer;
+      color: var(--c-text-1);
+    }
+    code {
+      display: block;
+      margin: 10px 0;
+      overflow-wrap: anywhere;
+      color: var(--c-primary);
+    }
+  }
+}
+@media (max-width: 700px) {
+  .formula-demo-page {
+    padding: 16px;
+    &__scenarios,
+    &__footer {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 }

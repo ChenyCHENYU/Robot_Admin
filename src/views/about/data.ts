@@ -5,7 +5,7 @@
  * @Description: 关于页技术说明与构建时实际依赖版本
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import type { DataTableColumns } from 'naive-ui'
+import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
 import projectInfo from 'virtual:robot-admin-project-info'
 import type { ProjectDependency } from '@/types/projectInfo'
 
@@ -95,7 +95,7 @@ export const filterProjects = (
 }
 
 /** 表格展示实际安装版本；依赖声明范围放入详情。 */
-export const createProjectColumns = (): DataTableColumns<ProjectItem> => [
+export const createProjectColumns = (): TableColumn<ProjectItem>[] => [
   { title: '依赖包', key: 'name', minWidth: 260, ellipsis: { tooltip: true } },
   { title: '安装版本', key: 'version', width: 110 },
   {

@@ -139,7 +139,7 @@
         size="small"
       >
         <NSpin
-          :show="loading || mutating"
+          :show="(loading || mutating) && !dictItems.length"
           :size="48"
           :rotate="false"
         >
@@ -229,18 +229,32 @@
                 >新增字典项
               </NButton>
             </div>
-            <NDataTable
+            <C_Table
               v-if="dictItems.length"
               class="dictionary-items"
+              :loading="loading || mutating"
               :columns="columns"
               :data="dictItems"
               :row-key="row => row.id"
               :row-props="rowProps"
-              :scroll-x="820"
-              :max-height="500"
-              :pagination="dictItems.length > 10 ? { pageSize: 10 } : false"
-              size="small"
-              :bordered="false"
+              :config="{
+                toolbar: { show: false },
+                pagination:
+                  dictItems.length > 10
+                    ? {
+                        pageSize: 10,
+                        showSizePicker: false,
+                        showQuickJumper: false,
+                      }
+                    : false,
+                display: {
+                  striped: false,
+                  scrollX: 820,
+                  maxHeight: 500,
+                  size: 'small',
+                  bordered: false,
+                },
+              }"
             />
             <NEmpty
               v-else
@@ -277,113 +291,33 @@
       style="width: min(600px, calc(100vw - 32px))"
       @update:show="handleCancel"
     >
-      <NForm
+      <C_Form
+        v-if="showModal"
         ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-placement="top"
+        :model-value="formData"
+        @update:model-value="Object.assign(formData, $event)"
+        :options="formOptions"
+        :config="formConfig"
+        :renderers="formRenderers"
+        @submit="showModal = false"
         class="dictionary-editor-form"
-        :disabled="saving"
+      />
+      <div
+        v-if="formData.type === 'item'"
+        class="effective-preview"
       >
-        <NFormItem
-          :label="formData.type === 'type' ? '类型名称' : '显示标签'"
-          path="name"
+        <span>保存后生效预览</span>
+        <NTag
+          size="small"
+          :bordered="false"
+          :type="formItemState.effective ? 'success' : 'warning'"
+          >{{
+            formItemState.effective
+              ? '可生效'
+              : `不生效 · ${formItemState.reason}`
+          }}</NTag
         >
-          <NInput
-            v-model:value="formData.name"
-            :maxlength="60"
-            :placeholder="
-              formData.type === 'type' ? '如 用户状态' : '用于界面展示，如 正常'
-            "
-          />
-        </NFormItem>
-        <template v-if="formData.type === 'type'">
-          <NFormItem
-            label="类型编码"
-            path="typeCode"
-            ><NInput
-              v-model:value="formData.typeCode"
-              placeholder="如 user_status"
-          /></NFormItem>
-          <p class="field-hint">业务使用类型编码读取字典，请保持稳定且唯一。</p>
-        </template>
-        <template v-else>
-          <NFormItem
-            label="所属类型"
-            path="parentId"
-            ><NSelect
-              v-model:value="formData.parentId"
-              :options="parentOptions"
-              placeholder="选择所属字典类型"
-          /></NFormItem>
-          <div class="editor-fields">
-            <NFormItem
-              label="存储值"
-              path="dictValue"
-              ><NInput
-                v-model:value="formData.dictValue"
-                placeholder="如 1、0 或 enabled"
-            /></NFormItem>
-            <NFormItem
-              label="字典项编码（选填）"
-              path="code"
-              ><NInput
-                v-model:value="formData.code"
-                placeholder="如 normal；留空使用存储值"
-            /></NFormItem>
-          </div>
-          <p class="field-hint"
-            >存储值用于业务提交，同一类型下不能重复；修改显示标签不会改写编码。</p
-          >
-        </template>
-        <div class="editor-fields">
-          <NFormItem
-            label="排序"
-            path="sort"
-            ><NInputNumber
-              v-model:value="formData.sort"
-              :min="0"
-              :max="9999"
-              :precision="0"
-          /></NFormItem>
-          <NFormItem
-            :label="formData.type === 'item' ? '字典项状态' : '类型状态'"
-            path="status"
-            ><NSwitch
-              v-model:value="formData.status"
-              :checked-value="1"
-              :unchecked-value="0"
-              ><template #checked>启用</template
-              ><template #unchecked>停用</template></NSwitch
-            ></NFormItem
-          >
-        </div>
-        <div
-          v-if="formData.type === 'item'"
-          class="effective-preview"
-        >
-          <span>保存后生效预览</span>
-          <NTag
-            size="small"
-            :bordered="false"
-            :type="formItemState.effective ? 'success' : 'warning'"
-            >{{
-              formItemState.effective
-                ? '可生效'
-                : `不生效 · ${formItemState.reason}`
-            }}</NTag
-          >
-        </div>
-        <NFormItem
-          label="备注"
-          path="remark"
-          ><NInput
-            v-model:value="formData.remark"
-            type="textarea"
-            placeholder="说明此字典的用途（选填）"
-            :autosize="{ minRows: 2, maxRows: 4 }"
-        /></NFormItem>
-      </NForm>
+      </div>
       <template #footer
         ><NSpace justify="end"
           ><NButton
@@ -403,10 +337,15 @@
 </template>
 
 <script setup lang="ts">
-  import type { DataTableColumns } from 'naive-ui/es'
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+
   import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
   import '@robot-admin/naive-ui-components/C_Tree/style.css'
-  import type { DictData } from './data'
+  import type {
+    FormOption,
+    FormRenderer,
+  } from '@robot-admin/naive-ui-components/C_Form'
+  import type { DictFormData, DictData } from './data'
   import { getDictionaryState } from './d_dictionary'
   import { useDictionaryManagement } from './useDictionaryManagement'
 
@@ -429,7 +368,8 @@
     treeRef,
     formRef,
     formData,
-    formRules,
+    fieldRules,
+    formConfig,
     parentOptions,
     formItemState,
     showModal,
@@ -485,7 +425,7 @@
         : null,
     ])
   }
-  const columns = computed<DataTableColumns<DictData>>(() => [
+  const columns = computed<TableColumn<DictData>[]>(() => [
     {
       title: '显示标签',
       key: 'name',
@@ -521,7 +461,7 @@
       key: 'actions',
       width: 200,
       render: row =>
-        h(NSpace, { size: 12, wrap: false }, () => [
+        h(NSpace, { size: 12, wrap: false, justify: 'center' }, () => [
           h(
             NButton,
             {
@@ -556,6 +496,84 @@
         ]),
     },
   ])
+  const formOptions = computed<FormOption<DictFormData>[]>(() => [
+    {
+      prop: 'name',
+      layout: { span: 2 },
+      label: formData.type === 'type' ? '类型名称' : '显示标签',
+      type: 'input',
+      placeholder:
+        formData.type === 'type' ? '如 用户状态' : '用于界面展示，如 正常',
+      attrs: { maxlength: 60 },
+      rulesWhen: model => fieldRules('name', model),
+    },
+    {
+      prop: 'typeCode',
+      layout: { span: 2 },
+      label: '类型编码',
+      type: 'input',
+      placeholder: '如 user_status',
+      show: formData.type === 'type',
+      help: '业务使用类型编码读取字典，请保持稳定且唯一。',
+      rulesWhen: model => fieldRules('typeCode', model),
+    },
+    {
+      prop: 'parentId',
+      layout: { span: 2 },
+      label: '所属类型',
+      type: 'select',
+      children: parentOptions.value,
+      placeholder: '选择所属字典类型',
+      show: formData.type === 'item',
+      rulesWhen: model => fieldRules('parentId', model),
+    },
+    {
+      prop: 'dictValue',
+      layout: { span: 1 },
+      label: '存储值',
+      type: 'input',
+      placeholder: '如 1、0 或 enabled',
+      show: formData.type === 'item',
+      help: '存储值用于业务提交，同一类型下不能重复；修改显示标签不会改写编码。',
+      rulesWhen: model => fieldRules('dictValue', model),
+    },
+    {
+      prop: 'code',
+      layout: { span: 1 },
+      label: '字典项编码（选填）',
+      type: 'input',
+      placeholder: '如 normal；留空使用存储值',
+      show: formData.type === 'item',
+      rulesWhen: model => fieldRules('code', model),
+    },
+    {
+      prop: 'sort',
+      layout: { span: 1 },
+      label: '排序',
+      type: 'inputNumber',
+      attrs: { min: 0, max: 9999, precision: 0 },
+      rulesWhen: model => fieldRules('sort', model),
+    },
+    {
+      prop: 'status',
+      layout: { span: 1 },
+      label: formData.type === 'item' ? '字典项状态' : '类型状态',
+      type: 'dictionaryStatus',
+      attrs: { checkedValue: 1, uncheckedValue: 0 },
+    },
+    {
+      prop: 'remark',
+      layout: { span: 2 },
+      label: '备注',
+      type: 'textarea',
+      placeholder: '说明此字典的用途（选填）',
+      attrs: { autosize: { minRows: 2, maxRows: 4 } },
+    },
+  ])
+  const formRenderers: Record<string, FormRenderer> = {
+    dictionaryStatus: props =>
+      h(NSwitch, props, { checked: () => '启用', unchecked: () => '停用' }),
+  }
 </script>
 
 <style lang="scss" scoped>

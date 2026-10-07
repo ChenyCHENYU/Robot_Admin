@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: role-manage 页面
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="role-management">
     <!-- 搜索和操作栏 -->
@@ -402,50 +409,23 @@
       :title="modalTitle"
       :positive-text="modalMode === 'add' ? '确认添加' : '确认修改'"
       negative-text="取消"
-      @positive-click="handleSaveRole"
+      @positive-click="() => formRef?.submit() ?? false"
+      :closable="!formRef?.isSubmitting"
+      :mask-closable="!formRef?.isSubmitting"
+      :close-on-esc="!formRef?.isSubmitting"
+      :negative-button-props="{ disabled: !!formRef?.isSubmitting }"
       @negative-click="closeRoleModal"
       style="width: 800px"
     >
-      <NForm
+      <C_Form
+        v-if="showModal"
         ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-placement="left"
-        label-width="100px"
-      >
-        <NGrid
-          :cols="2"
-          :x-gap="16"
-        >
-          <NGi
-            v-for="field in formFields"
-            :key="field.key"
-          >
-            <NFormItem
-              :label="field.label"
-              :path="field.path"
-            >
-              <component
-                :is="field.component"
-                v-bind="field.props"
-                v-model:value="formData[field.key]"
-              />
-            </NFormItem>
-          </NGi>
-        </NGrid>
-
-        <NFormItem
-          label="备注"
-          path="remark"
-        >
-          <NInput
-            v-model:value="formData.remark"
-            type="textarea"
-            placeholder="请输入备注信息"
-            :rows="3"
-          />
-        </NFormItem>
-      </NForm>
+        :model-value="formData"
+        @update:model-value="Object.assign(formData, $event)"
+        :options="formOptions"
+        :config="formConfig"
+        @submit="showModal = false"
+      />
     </NModal>
 
     <!-- 权限分配抽屉 -->
@@ -535,12 +515,19 @@
       @positive-click="showRoleUsers = false"
       style="width: 800px"
     >
-      <NDataTable
+      <C_Table
         :columns="roleUserColumns"
         :data="roleUserList"
-        :pagination="{ pageSize: 10 }"
-        size="small"
-        striped
+        :loading="roleUsersLoading"
+        :config="{
+          toolbar: { show: false },
+          pagination: {
+            showSizePicker: false,
+            showQuickJumper: false,
+            pageSize: 10,
+          },
+          display: { size: 'small', striped: true },
+        }"
       />
     </NModal>
 
@@ -707,9 +694,13 @@
 </template>
 
 <script setup lang="ts">
+  import type {
+    FormInstance,
+    FormConfig,
+    FormOption,
+    SubmitEventPayload,
+  } from '@robot-admin/naive-ui-components/C_Form'
   import { useLatestRequest } from '@/composables/useLatestRequest'
-  import type { Component } from 'vue'
-  import type { FormInst, DataTableColumns } from 'naive-ui/es'
   import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
   import '@robot-admin/naive-ui-components/C_Icon/style.css'
   import type {
@@ -758,13 +749,25 @@
   // ==================== 响应式数据 ====================
   const { loading, run: runLatestRoleRequest } = useLatestRequest()
   const { run: runLatestRoleDetailRequest } = useLatestRequest()
+  const {
+    loading: roleUsersLoading,
+    run: runLatestRoleUsersRequest,
+    cancel: cancelRoleUsersRequest,
+  } = useLatestRequest()
   const showModal = ref(false)
   const showRoleDetail = ref(false)
   const showPermissionDrawer = ref(false)
   const showPermissionTemplate = ref(false)
   const showRoleUsers = ref(false)
+  watch(showRoleUsers, visible => {
+    if (!visible) cancelRoleUsersRequest()
+  })
+  onDeactivated(() => {
+    showRoleUsers.value = false
+    cancelRoleUsersRequest()
+  })
   const modalMode = ref<'add' | 'edit'>('add')
-  const formRef = ref<FormInst | null>(null)
+  const formRef = ref<FormInstance<RoleFormData> | null>(null)
   const tableRef = ref()
   const selectedPermissionIds = ref<string[]>([])
   const selectedTemplate = ref<string | null>(null)
@@ -781,7 +784,6 @@
   const currentTempAuths = ref<RoleTempAuth[]>([])
 
   const formData = reactive<RoleFormData>({ ...DEFAULT_ROLE_FORM_DATA })
-  const formRules = ROLE_FORM_RULES
 
   const searchForm = reactive<SearchForm>({
     keyword: '',
@@ -894,66 +896,62 @@
     ]
   })
 
-  interface RoleFormField {
-    key: keyof RoleFormData
-    label: string
-    path: string
-    component: Component
-    props: Record<string, unknown>
-  }
-
-  const formFields = computed<RoleFormField[]>(() => [
+  const formOptions = computed<FormOption<RoleFormData>[]>(() => [
     {
-      key: 'name' as keyof RoleFormData,
+      prop: 'name',
       label: '角色名称',
-      path: 'name',
-      component: NInput,
-      props: { placeholder: '请输入角色名称' },
+      type: 'input',
+      placeholder: '请输入角色名称',
+      rules: ROLE_FORM_RULES.name,
     },
     {
-      key: 'code' as keyof RoleFormData,
+      prop: 'code',
       label: '角色编码',
-      path: 'code',
-      component: NInput,
-      props: {
-        placeholder: '请输入角色编码',
-        disabled: modalMode.value === 'edit',
-      },
+      type: 'input',
+      placeholder: '请输入角色编码',
+      disabled: modalMode.value === 'edit' || !!formRef.value?.isSubmitting,
+      rules: ROLE_FORM_RULES.code,
     },
     {
-      key: 'type' as keyof RoleFormData,
+      prop: 'type',
       label: '角色类型',
-      path: 'type',
-      component: NSelect,
-      props: {
-        options: UI_CONFIG.roleType,
-        placeholder: '请选择角色类型',
-        disabled: modalMode.value === 'edit',
-      },
+      type: 'select',
+      children: UI_CONFIG.roleType,
+      disabled: modalMode.value === 'edit' || !!formRef.value?.isSubmitting,
+      rules: ROLE_FORM_RULES.type,
     },
     {
-      key: 'sort' as keyof RoleFormData,
+      prop: 'sort',
       label: '排序',
-      path: 'sort',
-      component: NInputNumber,
-      props: {
-        placeholder: '请输入排序值',
-        min: 0,
-        max: 9999,
-        style: { width: '100%' },
-      },
+      type: 'inputNumber',
+      attrs: { min: 0, max: 9999, style: { width: '100%' } },
+      rules: ROLE_FORM_RULES.sort,
     },
     {
-      key: 'status' as keyof RoleFormData,
+      prop: 'status',
       label: '角色状态',
-      path: 'status',
-      component: NSwitch,
-      props: {
-        checkedValue: 1,
-        uncheckedValue: 0,
-      },
+      type: 'switch',
+      attrs: { checkedValue: 1, uncheckedValue: 0 },
+    },
+    {
+      prop: 'remark',
+      label: '备注',
+      type: 'textarea',
+      placeholder: '请输入备注信息',
+      attrs: { rows: 3 },
+      layout: { span: 2 },
     },
   ])
+  const formConfig = computed<FormConfig<RoleFormData>>(() => ({
+    disabled: !!formRef.value?.isSubmitting,
+    layout: 'grid',
+    grid: { cols: 2, gutter: 16 },
+    labelPlacement: 'left',
+    labelWidth: 100,
+    showActions: false,
+    preserveRemovedFields: true,
+    onSubmit: handleSaveRole,
+  }))
 
   // ==================== 行键配置 ====================
   const rowKey = (row: RoleData) => row.id
@@ -1169,7 +1167,7 @@
   }))
 
   // ==================== 表格用户列配置 ====================
-  const roleUserColumns: DataTableColumns<RoleUserData> = [
+  const roleUserColumns: TableColumn<RoleUserData>[] = [
     { title: '用户名', key: 'username', width: 120 },
     { title: '昵称', key: 'nickname', width: 120 },
     { title: '邮箱', key: 'email', width: 200 },
@@ -1361,55 +1359,52 @@
     }
   }
 
-  const handleSaveRole = async (): Promise<boolean> => {
+  /** 提交角色快照，保留角色编码唯一性与列表刷新。 */
+  async function handleSaveRole({
+    model,
+  }: SubmitEventPayload<RoleFormData>): Promise<void> {
     try {
-      await formRef.value?.validate()
-
       if (modalMode.value === 'add') {
         const existingRole = MOCK_ROLE_DATA.find(
-          role => role.code === formData.code
+          role => role.code === model.code
         )
         if (existingRole) {
-          message.error('角色编码已存在')
-          return false
+          throw new Error('角色编码已存在')
         }
 
         const newRole: RoleData = {
           id: `role_${Date.now()}`,
-          name: formData.name,
-          code: formData.code,
-          type: formData.type,
-          status: formData.status,
-          description: formData.description || undefined,
+          name: model.name,
+          code: model.code,
+          type: model.type,
+          status: model.status,
+          description: model.description || undefined,
           permissionIds: [],
           permissionNames: [],
           userCount: 0,
-          sort: formData.sort,
+          sort: model.sort,
           createTime: new Date().toLocaleString(),
-          remark: formData.remark || undefined,
+          remark: model.remark || undefined,
         }
-        await createRoleApi(formData)
+        await createRoleApi(model)
         MOCK_ROLE_DATA.push(newRole)
         message.success('添加成功')
       } else {
-        await updateRoleApi(formData.id!, formData)
-        updateRoleInList(formData.id!, {
-          name: formData.name,
-          description: formData.description || undefined,
-          status: formData.status,
-          sort: formData.sort,
-          remark: formData.remark || undefined,
+        await updateRoleApi(model.id!, model)
+        updateRoleInList(model.id!, {
+          name: model.name,
+          description: model.description || undefined,
+          status: model.status,
+          sort: model.sort,
+          remark: model.remark || undefined,
           updateTime: new Date().toLocaleString(),
         })
         message.success('修改成功')
       }
 
-      showModal.value = false
       await loadRoles()
-      return true
     } catch (error) {
-      if (!(error instanceof Array)) message.error('保存失败')
-      return false
+      throw error instanceof Error ? error : new Error('保存失败')
     }
   }
 
@@ -1460,10 +1455,14 @@
   // 查看角色用户列表
   const handleViewRoleUsers = async (role: RoleData) => {
     currentRole.value = role
+    roleUserList.splice(0)
+    showRoleUsers.value = true
     try {
-      const response = await getRoleUsersApi(role.id)
+      const response = await runLatestRoleUsersRequest(signal =>
+        getRoleUsersApi(role.id, signal)
+      )
+      if (!response) return
       roleUserList.splice(0, roleUserList.length, ...response.data)
-      showRoleUsers.value = true
     } catch {
       message.error('获取用户列表失败')
     }

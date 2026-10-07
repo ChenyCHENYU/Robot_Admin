@@ -61,10 +61,25 @@
       @validate-error="handleValidateError"
     >
       <template #action="{ submit, submitting, reset }">
-        <C_ActionBar
-          :actions="getFormActions(submit, submitting, reset)"
-          :config="{ gap: 12 }"
-        />
+        <NSpace :size="12">
+          <NButton
+            type="primary"
+            :loading="submitting"
+            @click="submit"
+            >搜索</NButton
+          >
+          <NButton
+            :disabled="submitting"
+            @click="resetForm(reset)"
+            >重置</NButton
+          >
+          <NButton
+            type="info"
+            :disabled="submitting"
+            @click="showAdvanced = !showAdvanced"
+            >{{ showAdvanced ? '收起' : '高级' }}</NButton
+          >
+        </NSpace>
       </template>
     </C_Form>
 
@@ -125,7 +140,6 @@
     FormModel,
     FormOption,
     InlineLayoutConfig,
-    ActionItem,
   } from '@robot-admin/naive-ui-components'
   import {
     formOptions,
@@ -179,39 +193,6 @@
     validateOnChange: validateOnChange.value,
     labelPlacement: labelPlacement.value,
   }))
-
-  // ==================== 表单操作按钮配置 ====================
-  const getFormActions = (
-    submit: () => Promise<boolean>,
-    submitting: boolean,
-    reset: () => void
-  ): ActionItem[] => [
-    {
-      key: 'search',
-      label: submitting ? '搜索中...' : '搜索',
-      icon: 'mdi:magnify',
-      type: 'primary',
-      loading: submitting,
-      onClick: async () => {
-        if (!(await submit())) message.error('表单验证失败，请检查输入')
-      },
-    },
-    {
-      key: 'reset',
-      label: '重置',
-      icon: 'mdi:refresh',
-      onClick: () => resetForm(reset),
-    },
-    {
-      key: 'advanced',
-      label: showAdvanced.value ? '收起' : '高级',
-      icon: showAdvanced.value ? 'mdi:chevron-up' : 'mdi:chevron-down',
-      type: 'info',
-      onClick: () => {
-        showAdvanced.value = !showAdvanced.value
-      },
-    },
-  ]
 
   // ==================== 方法 ====================
   const resetForm = (reset: () => void) => {

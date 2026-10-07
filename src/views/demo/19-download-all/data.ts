@@ -1,5 +1,12 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @FilePath: \Robot_Admin\src\views\demo\19-download-all\data.ts
+ * @Description: 19-download-all 页面数据与统一表格配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
 import { h } from 'vue'
-import type { DataTableColumns } from 'naive-ui/es'
 import type { DownloadApiFunction } from '@robot-admin/file-utils'
 
 /**
@@ -226,7 +233,7 @@ export const batchFiles = [
 /**
  * * @description 历史表格列配置
  */
-export const historyColumns: DataTableColumns = [
+export const historyColumns: TableColumn[] = [
   { title: '文件名', key: 'fileName' },
   { title: '类型', key: 'fileType' },
   {

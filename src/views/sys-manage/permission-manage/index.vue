@@ -90,7 +90,7 @@
             </template>
             导入
           </NButton>
-          <NButton @click="refresh">
+          <NButton @click="handleRefresh">
             <template #icon>
               <C_Icon
                 name="material-symbols:refresh"
@@ -262,13 +262,21 @@
             </NSpace>
           </template>
 
-          <NDataTable
+          <C_Table
             :columns="dataPermissionColumns"
             :data="dataPermissionList"
+            :loading="governanceLoading"
             :row-key="getDataPermissionRowKey"
-            size="small"
-            striped
-          />
+            :config="{
+              toolbar: { show: false },
+              pagination: false,
+              display: { size: 'small', striped: true },
+            }"
+          >
+            <template #loading>
+              <C_Loading label="正在加载数据权限" />
+            </template>
+          </C_Table>
         </NCard>
 
         <!-- 数据权限详细配置 - 字段级权限 -->
@@ -394,13 +402,21 @@
             </NSpace>
           </template>
 
-          <NDataTable
+          <C_Table
             :columns="tempAuthColumns"
             :data="tempAuthList"
+            :loading="governanceLoading"
             :row-key="getTempAuthorizationRowKey"
-            size="small"
-            striped
-          />
+            :config="{
+              toolbar: { show: false },
+              pagination: false,
+              display: { size: 'small', striped: true },
+            }"
+          >
+            <template #loading>
+              <C_Loading label="正在加载临时授权" />
+            </template>
+          </C_Table>
         </NCard>
       </NTabPane>
 
@@ -788,147 +804,24 @@
       :title="modalTitle"
       :positive-text="modalMode === 'add' ? '确认添加' : '确认修改'"
       negative-text="取消"
-      @positive-click="handleSavePermission"
+      @positive-click="() => formRef?.submit() ?? false"
+      :closable="!formRef?.isSubmitting"
+      :mask-closable="!formRef?.isSubmitting"
+      :close-on-esc="!formRef?.isSubmitting"
+      :negative-button-props="{ disabled: !!formRef?.isSubmitting }"
       @negative-click="closePermissionModal"
       style="width: 700px"
     >
-      <NForm
+      <C_Form
+        v-if="showModal"
         ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-placement="left"
-        label-width="100px"
-      >
-        <NGrid
-          :cols="2"
-          :x-gap="16"
-        >
-          <NGi>
-            <NFormItem
-              label="权限名称"
-              path="name"
-            >
-              <NInput
-                v-model:value="formData.name"
-                placeholder="请输入权限名称"
-              />
-            </NFormItem>
-          </NGi>
-          <NGi>
-            <NFormItem
-              label="权限类型"
-              path="type"
-            >
-              <NSelect
-                v-model:value="formData.type"
-                :options="UI_CONFIG.permissionType"
-                @update:value="handleTypeChange"
-              />
-            </NFormItem>
-          </NGi>
-          <NGi>
-            <NFormItem
-              label="所属模块"
-              path="module"
-            >
-              <NSelect
-                v-model:value="formData.module"
-                :options="SYSTEM_MODULES"
-              />
-            </NFormItem>
-          </NGi>
-          <NGi>
-            <NFormItem
-              label="排序"
-              path="sort"
-            >
-              <NInputNumber
-                v-model:value="formData.sort"
-                :min="0"
-                :max="9999"
-                style="width: 100%"
-              />
-            </NFormItem>
-          </NGi>
-        </NGrid>
-
-        <NFormItem
-          label="权限编码"
-          path="code"
-        >
-          <NInput
-            v-model:value="formData.code"
-            placeholder="自动生成或手动输入"
-            :disabled="modalMode === 'edit'"
-          >
-            <template
-              v-if="modalMode === 'add'"
-              #suffix
-            >
-              <NButton
-                text
-                size="small"
-                @click="generateCode"
-              >
-                <C_Icon
-                  name="material-symbols:auto-fix"
-                  :size="14"
-                />
-              </NButton>
-            </template>
-          </NInput>
-        </NFormItem>
-
-        <NFormItem
-          label="关联资源"
-          path="resources"
-        >
-          <NInput
-            v-model:value="formData.resources"
-            type="textarea"
-            :rows="2"
-            placeholder="请输入关联资源，多个用逗号分隔"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="权限描述"
-          path="description"
-        >
-          <NInput
-            v-model:value="formData.description"
-            type="textarea"
-            :rows="3"
-            placeholder="请输入权限描述"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="权限状态"
-          path="status"
-        >
-          <NSwitch
-            v-model:value="formData.status"
-            :checked-value="1"
-            :unchecked-value="0"
-          >
-            <template #checked>启用</template>
-            <template #unchecked>禁用</template>
-          </NSwitch>
-        </NFormItem>
-
-        <NFormItem
-          label="备注"
-          path="remark"
-        >
-          <NInput
-            v-model:value="formData.remark"
-            type="textarea"
-            :rows="2"
-            placeholder="请输入备注信息"
-          />
-        </NFormItem>
-      </NForm>
+        :model-value="formData"
+        @update:model-value="updatePermissionForm"
+        :options="formOptions"
+        :config="formConfig"
+        :renderers="formRenderers"
+        @submit="showModal = false"
+      />
     </NModal>
 
     <!-- ==================== 临时授权模态框 ==================== -->
@@ -938,74 +831,38 @@
       title="新增临时授权"
       positive-text="确认授权"
       negative-text="取消"
-      @positive-click="handleSaveTempAuth"
+      @positive-click="() => tempAuthFormRef?.submit() ?? false"
+      :closable="!tempAuthFormRef?.isSubmitting"
+      :mask-closable="!tempAuthFormRef?.isSubmitting"
+      :close-on-esc="!tempAuthFormRef?.isSubmitting"
+      :negative-button-props="{ disabled: !!tempAuthFormRef?.isSubmitting }"
       style="width: 650px"
     >
-      <NForm
+      <C_Form
+        v-if="showTempAuthModal"
         ref="tempAuthFormRef"
-        :model="tempAuthForm"
-        label-placement="left"
-        label-width="100px"
-      >
-        <NFormItem
-          label="目标角色"
-          path="targetRole"
-        >
-          <NSelect
-            v-model:value="tempAuthForm.targetRole"
-            :options="compareRoleOptions"
-            placeholder="选择授权目标角色"
-          />
-        </NFormItem>
-        <NFormItem
-          label="授权权限"
-          path="permissions"
-        >
-          <NSelect
-            v-model:value="tempAuthForm.permissions"
-            multiple
-            :options="allPermissionOptions"
-            placeholder="选择临时授予的权限"
-          />
-        </NFormItem>
-        <NFormItem
-          label="授权原因"
-          path="reason"
-        >
-          <NInput
-            v-model:value="tempAuthForm.reason"
-            type="textarea"
-            :rows="2"
-            placeholder="请说明临时授权原因"
-          />
-        </NFormItem>
-        <NFormItem
-          label="有效期"
-          path="dateRange"
-        >
-          <NDatePicker
-            v-model:value="tempAuthForm.dateRange"
-            type="datetimerange"
-            style="width: 100%"
-          />
-        </NFormItem>
-        <NFormItem
-          label="备注"
-          path="remark"
-        >
-          <NInput
-            v-model:value="tempAuthForm.remark"
-            placeholder="备注信息（可选）"
-          />
-        </NFormItem>
-      </NForm>
+        :model-value="tempAuthForm"
+        @update:model-value="Object.assign(tempAuthForm, $event)"
+        :options="tempAuthOptions"
+        :config="tempAuthConfig"
+        @submit="showTempAuthModal = false"
+      />
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { h } from 'vue'
-  import type { DataTableColumns, FormInst } from 'naive-ui/es'
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+
+  import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
+  import {
+    PRESET_RULES,
+    type FormInstance,
+    type FormOption,
+    type FormConfig,
+    type FormRenderer,
+    type SubmitEventPayload,
+  } from '@robot-admin/naive-ui-components/C_Form'
   import type { DetailConfig } from '@/components/local/c_detail/data'
   import {
     type PermissionData,
@@ -1053,6 +910,7 @@
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import { isMockDataMode } from '@/config/dataMode'
   import { useLatestRequest } from '@/composables/useLatestRequest'
+  import { delayWithSignal } from '@/utils/abort'
   import { toCrudTableColumns } from '@/utils/d_tableColumns'
   import {
     getRoleListApi,
@@ -1072,15 +930,14 @@
   const showPermissionDetail = ref(false)
   const detailLoading = ref(false)
   const modalMode = ref<'add' | 'edit'>('add')
-  const formRef = ref<FormInst | null>(null)
-  const tempAuthFormRef = ref<FormInst | null>(null)
+  const formRef = ref<FormInstance<PermissionFormData> | null>(null)
+  const tempAuthFormRef = ref<FormInstance<typeof tempAuthForm> | null>(null)
   const tableRef = ref()
   const currentPermission = ref<PermissionData | null>(null)
 
   const formData = reactive<PermissionFormData>({
     ...DEFAULT_PERMISSION_FORM_DATA,
   })
-  const formRules = PERMISSION_FORM_RULES
 
   const searchForm = reactive<SearchForm>({
     keyword: '',
@@ -1092,22 +949,29 @@
   const mockMode = isMockDataMode()
 
   // ============ 表格数据管理 ============
-  const table = useNaiveTableCrud<PermissionData>({
-    api: { list: '/sys/permissions' },
-    columns: toCrudTableColumns(getTableColumns()),
-    autoLoad: !mockMode,
-  })
-  const { data: tableData, loading, refresh: refreshRemote } = table
-  if (mockMode) {
-    tableData.value = MOCK_PERMISSION_RESOURCES.map(permission => ({
+  const mockPermissionRecords = ref<PermissionData[]>(
+    MOCK_PERMISSION_RESOURCES.map(permission => ({
       ...permission,
       resources: [...permission.resources],
     }))
-  }
-
-  const refresh = async (): Promise<void> => {
-    if (!mockMode) await refreshRemote()
-  }
+  )
+  const table = useNaiveTableCrud<PermissionData>({
+    source: mockMode
+      ? {
+          query: async ({ signal }) => {
+            await delayWithSignal(250, signal)
+            const items = mockPermissionRecords.value.map(permission => ({
+              ...permission,
+              resources: [...permission.resources],
+            }))
+            return { items, total: items.length }
+          },
+        }
+      : { list: '/sys/permissions' },
+    columns: toCrudTableColumns(getTableColumns()),
+    autoLoad: 'mounted',
+  })
+  const { data: tableData, loading, refresh } = table
 
   // ============ 数据权限状态 ============
   const dataPermissionList = ref<DataPermissionRule[]>(
@@ -1279,7 +1143,7 @@
   )
 
   // ============ 数据权限表格列配置 ============
-  const dataPermissionColumns: DataTableColumns<DataPermissionRule> = [
+  const dataPermissionColumns: TableColumn<DataPermissionRule>[] = [
     {
       title: '模块',
       key: 'moduleName',
@@ -1320,7 +1184,7 @@
         const hidden = row.fieldPermissions.filter(
           (f: FieldPermissionItem) => !f.visible
         ).length
-        return h(NSpace, { size: 4 }, () => [
+        return h(NSpace, { size: 4, justify: 'center' }, () => [
           h(
             NTag,
             { type: 'info', size: 'small' },
@@ -1353,7 +1217,7 @@
       key: 'actions',
       width: 120,
       render: (row: DataPermissionRule) =>
-        h(NSpace, { size: 8 }, () => [
+        h(NSpace, { size: 8, justify: 'center' }, () => [
           h(
             NButton,
             {
@@ -1379,14 +1243,14 @@
   ]
 
   // ============ 临时授权表格列配置 ============
-  const tempAuthColumns: DataTableColumns<TempAuthorization> = [
+  const tempAuthColumns: TableColumn<TempAuthorization>[] = [
     { title: '目标角色', key: 'targetRoleName', width: 120 },
     {
       title: '授权权限',
       key: 'permissionNames',
       width: 180,
       render: (row: TempAuthorization) =>
-        h(NSpace, { size: 4 }, () =>
+        h(NSpace, { size: 4, justify: 'center' }, () =>
           row.permissionNames.map((name: string) =>
             h(NTag, { type: 'info', size: 'small' }, { default: () => name })
           )
@@ -1502,15 +1366,16 @@
       return
     }
 
-    const index = tableData.value.findIndex(permission => permission.id === id)
+    const index = mockPermissionRecords.value.findIndex(
+      permission => permission.id === id
+    )
     if (index < 0) throw new Error('权限不存在')
-    tableData.value[index] = {
-      ...tableData.value[index],
+    mockPermissionRecords.value[index] = {
+      ...mockPermissionRecords.value[index],
       ...data,
       id,
       updateTime: Date.now(),
     } as PermissionData
-    tableData.value = [...tableData.value]
   }
 
   const removePermissionRecord = async (id: number): Promise<void> => {
@@ -1518,7 +1383,9 @@
       await deletePermissionApi(id)
       return
     }
-    tableData.value = tableData.value.filter(permission => permission.id !== id)
+    mockPermissionRecords.value = mockPermissionRecords.value.filter(
+      permission => permission.id !== id
+    )
   }
 
   const createPermissionRecord = async (
@@ -1531,15 +1398,18 @@
 
     const now = Date.now()
     const nextId =
-      Math.max(0, ...tableData.value.map(permission => permission.id)) + 1
-    tableData.value = [
+      Math.max(
+        0,
+        ...mockPermissionRecords.value.map(permission => permission.id)
+      ) + 1
+    mockPermissionRecords.value = [
       {
         ...data,
         id: nextId,
         createTime: now,
         updateTime: now,
       } as PermissionData,
-      ...tableData.value,
+      ...mockPermissionRecords.value,
     ]
   }
 
@@ -1768,17 +1638,14 @@
     formData.code = codeMap[formData.type] || ''
   }
 
-  const handleSavePermission = async (): Promise<boolean> => {
-    try {
-      await formRef.value?.validate()
-    } catch {
-      return false
-    }
-
+  /** 提交权限与资源列表，成功后刷新列表。 */
+  async function handleSavePermission({
+    model,
+  }: SubmitEventPayload<PermissionFormData>): Promise<void> {
     const submitData: Record<string, unknown> = {
-      ...formData,
-      resources: formData.resources
-        ? formData.resources
+      ...model,
+      resources: model.resources
+        ? model.resources
             .split(',')
             .map(s => s.trim())
             .filter(Boolean)
@@ -1789,16 +1656,13 @@
       if (modalMode.value === 'add') {
         await createPermissionRecord(submitData)
         message.success('权限创建成功')
-      } else if (formData.id != null) {
-        await savePermissionRecord(formData.id, submitData)
+      } else if (model.id != null) {
+        await savePermissionRecord(model.id, submitData)
         message.success('修改成功')
       }
       await refresh()
-      showModal.value = false
-      return true
     } catch {
-      message.error(modalMode.value === 'add' ? '创建失败' : '修改失败')
-      return false
+      throw new Error(modalMode.value === 'add' ? '创建失败' : '修改失败')
     }
   }
 
@@ -1889,14 +1753,13 @@
   }
 
   // ============ 临时授权事件处理 ============
-  const handleSaveTempAuth = async (): Promise<boolean> => {
+  /** 创建临时授权，保留授权期限和权限集合。 */
+  async function handleSaveTempAuth(): Promise<void> {
     if (!tempAuthForm.targetRole || tempAuthForm.permissions.length === 0) {
-      message.warning('请选择目标角色和授权权限')
-      return false
+      throw new Error('请选择目标角色和授权权限')
     }
     if (!tempAuthForm.dateRange) {
-      message.warning('请选择有效期')
-      return false
+      throw new Error('请选择有效期')
     }
     const role = roleList.value.find(r => r.id === tempAuthForm.targetRole)
     const permNames = tempAuthForm.permissions.map(
@@ -1922,8 +1785,7 @@
       tempAuthList.value.unshift(response.data)
       message.success('临时授权创建成功')
     } catch {
-      message.error('临时授权创建失败')
-      return false
+      throw new Error('临时授权创建失败')
     }
 
     // 重置表单
@@ -1932,8 +1794,6 @@
     tempAuthForm.reason = ''
     tempAuthForm.dateRange = null
     tempAuthForm.remark = ''
-    showTempAuthModal.value = false
-    return true
   }
 
   const handleRevokeTempAuth = (auth: TempAuthorization) => {
@@ -1982,16 +1842,17 @@
     }
   }
 
-  const { run: runLatestGovernanceRequest } = useLatestRequest()
+  const { loading: governanceLoading, run: runLatestGovernanceRequest } =
+    useLatestRequest()
 
   const loadGovernanceData = async () => {
     try {
       const result = await runLatestGovernanceRequest(signal =>
         Promise.all([
-          getDataPermissionRulesApi(MOCK_DATA_PERMISSIONS, signal),
-          getTempAuthorizationsApi(MOCK_TEMP_AUTHORIZATIONS, signal),
-          getPermissionConstraintsApi(MOCK_CONSTRAINTS, signal),
-          getPermissionAuditLogsApi(MOCK_AUDIT_LOGS, signal),
+          getDataPermissionRulesApi(dataPermissionList.value, signal),
+          getTempAuthorizationsApi(tempAuthList.value, signal),
+          getPermissionConstraintsApi(constraintList.value, signal),
+          getPermissionAuditLogsApi(auditLogs.value, signal),
           getRoleListApi({ page: 1, pageSize: 1000 }, signal),
         ])
       )
@@ -2007,7 +1868,165 @@
     }
   }
 
+  /** 刷新当前标签页，资源变更仍只重载资源表格。 */
+  const handleRefresh = async (): Promise<void> => {
+    if (activeTab.value === 'resources') await refresh()
+    else await loadGovernanceData()
+  }
+
   onMounted(loadGovernanceData)
+  const formOptions = computed<FormOption<PermissionFormData>[]>(() => [
+    {
+      prop: 'name',
+      label: '权限名称',
+      type: 'input',
+      placeholder: '请输入权限名称',
+      rules: PERMISSION_FORM_RULES.name,
+    },
+    {
+      prop: 'type',
+      label: '权限类型',
+      type: 'select',
+      children: UI_CONFIG.permissionType,
+      rules: PERMISSION_FORM_RULES.type,
+    },
+    {
+      prop: 'module',
+      label: '所属模块',
+      type: 'select',
+      children: SYSTEM_MODULES,
+      rules: PERMISSION_FORM_RULES.module,
+    },
+    {
+      prop: 'sort',
+      label: '排序',
+      type: 'inputNumber',
+      attrs: { min: 0, max: 9999, style: { width: '100%' } },
+      rules: PERMISSION_FORM_RULES.sort,
+    },
+    {
+      prop: 'code',
+      label: '权限编码',
+      type: 'permissionCode',
+      placeholder: '自动生成或手动输入',
+      disabled: modalMode.value === 'edit' || !!formRef.value?.isSubmitting,
+      rules: PERMISSION_FORM_RULES.code,
+      layout: { span: 2 },
+    },
+    {
+      prop: 'resources',
+      label: '关联资源',
+      type: 'textarea',
+      placeholder: '请输入关联资源，多个用逗号分隔',
+      attrs: { rows: 2 },
+      layout: { span: 2 },
+    },
+    {
+      prop: 'description',
+      label: '权限描述',
+      type: 'textarea',
+      placeholder: '请输入权限描述',
+      attrs: { rows: 3 },
+      layout: { span: 2 },
+    },
+    {
+      prop: 'status',
+      label: '权限状态',
+      type: 'permissionStatus',
+      attrs: { checkedValue: 1, uncheckedValue: 0 },
+      layout: { span: 2 },
+    },
+    {
+      prop: 'remark',
+      label: '备注',
+      type: 'textarea',
+      placeholder: '请输入备注信息',
+      attrs: { rows: 2 },
+      layout: { span: 2 },
+    },
+  ])
+  const formConfig = computed<FormConfig<PermissionFormData>>(() => ({
+    disabled: !!formRef.value?.isSubmitting,
+    layout: 'grid',
+    grid: { cols: 2, gutter: 16 },
+    labelPlacement: 'left',
+    labelWidth: 100,
+    showActions: false,
+    preserveRemovedFields: true,
+    onSubmit: handleSavePermission,
+  }))
+  const formRenderers: Record<string, FormRenderer> = {
+    permissionCode: props =>
+      h(NInput, props, {
+        suffix: () =>
+          modalMode.value === 'add'
+            ? h(
+                NButton,
+                {
+                  text: true,
+                  size: 'small',
+                  onClick: generateCode,
+                  'aria-label': '生成权限编码',
+                },
+                () => h(C_Icon, { name: 'material-symbols:auto-fix', size: 14 })
+              )
+            : null,
+      }),
+    permissionStatus: props =>
+      h(NSwitch, props, { checked: () => '启用', unchecked: () => '禁用' }),
+  }
+  /** 模型同步后再生成编码，避免联动结果被输入事件覆盖。 */
+  function updatePermissionForm(model: PermissionFormData) {
+    const typeChanged = model.type !== formData.type
+    Object.assign(formData, model)
+    if (typeChanged) handleTypeChange(model.type)
+  }
+  const tempAuthOptions = computed<FormOption<typeof tempAuthForm>[]>(() => [
+    {
+      prop: 'targetRole',
+      label: '目标角色',
+      type: 'select',
+      children: compareRoleOptions.value,
+      placeholder: '选择授权目标角色',
+      rules: [PRESET_RULES.required('目标角色', 'change')],
+    },
+    {
+      prop: 'permissions',
+      label: '授权权限',
+      type: 'select',
+      children: allPermissionOptions.value,
+      attrs: { multiple: true },
+      placeholder: '选择临时授予的权限',
+      rules: [PRESET_RULES.required('授权权限', 'change')],
+    },
+    {
+      prop: 'reason',
+      label: '授权原因',
+      type: 'textarea',
+      placeholder: '请说明临时授权原因',
+      attrs: { rows: 2 },
+    },
+    {
+      prop: 'dateRange',
+      label: '有效期',
+      type: 'datePicker',
+      attrs: { type: 'datetimerange', style: { width: '100%' } },
+      rules: [PRESET_RULES.required('有效期', 'change')],
+    },
+    {
+      prop: 'remark',
+      label: '备注',
+      type: 'input',
+      placeholder: '备注信息（可选）',
+    },
+  ])
+  const tempAuthConfig = computed<FormConfig<typeof tempAuthForm>>(() => ({
+    disabled: !!tempAuthFormRef.value?.isSubmitting,
+    labelPlacement: 'left',
+    labelWidth: 100,
+    showActions: false,
+    onSubmit: handleSaveTempAuth,
+  }))
 </script>
 
 <style scoped lang="scss">

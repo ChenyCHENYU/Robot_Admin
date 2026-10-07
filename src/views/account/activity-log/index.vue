@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @FilePath: \Robot_Admin\src\views\account\activity-log\index.vue
+ * @Description: activity-log 页面数据与统一表格配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
   <div class="activity-log-page">
     <!-- 搜索栏 -->
@@ -111,16 +118,23 @@
       class="table-card"
       :bordered="true"
     >
-      <NDataTable
+      <C_Table
         :columns="columns"
         :data="filteredRecords"
-        :bordered="false"
+        :loading="recordsLoading"
         :pagination="pagination"
-        striped
-        size="small"
         flex-height
         style="height: 100%"
-      />
+        :config="{
+          toolbar: { show: false },
+          pagination: false,
+          display: { bordered: false, striped: true, size: 'small' },
+        }"
+      >
+        <template #loading>
+          <C_Loading label="正在加载操作记录" />
+        </template>
+      </C_Table>
     </NCard>
   </div>
 </template>
@@ -132,7 +146,6 @@
     NSelect,
     NButton,
     NDatePicker,
-    NDataTable,
     useMessage,
   } from 'naive-ui/es'
   import {
@@ -160,7 +173,7 @@
   // 表格列
   const columns = createColumns()
 
-  // 分页
+  // 本地排序、列筛选与分页由底层引擎一起处理整组数据，避免先切页再排序。
   const pagination = reactive({
     page: 1,
     pageSize: 10,
@@ -235,7 +248,8 @@
     pagination.page = 1
   }
 
-  const { run: runLatestActivityRequest } = useLatestRequest()
+  const { loading: recordsLoading, run: runLatestActivityRequest } =
+    useLatestRequest()
 
   onMounted(async () => {
     try {

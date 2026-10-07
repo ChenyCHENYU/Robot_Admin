@@ -14,7 +14,12 @@ const dictionaryPath = '/sys-manage/dictionary-manage'
 const field = (editor: Locator, name: string) =>
   editor
     .locator('.n-form-item')
-    .filter({ has: editor.page().getByText(name, { exact: true }) })
+    .filter({
+      has: editor
+        .page()
+        .locator('.n-form-item-label')
+        .filter({ hasText: name }),
+    })
     .getByRole('textbox')
 
 /** 测量真实箭头与内容行中心，覆盖收起、展开及悬停状态。 */

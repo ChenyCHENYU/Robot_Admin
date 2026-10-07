@@ -227,23 +227,15 @@
                 tab="表单提交"
               >
                 <div class="demo-container">
-                  <NForm
-                    label-placement="left"
-                    label-width="80px"
+                  <C_Form
+                    v-model="state.formData.value"
+                    :options="formOptions"
+                    :config="{
+                      labelPlacement: 'left',
+                      labelWidth: 80,
+                    }"
                   >
-                    <NFormItem label="用户名">
-                      <NInput
-                        v-model:value="state.formData.value.username"
-                        placeholder="请输入用户名"
-                      />
-                    </NFormItem>
-                    <NFormItem label="邮箱">
-                      <NInput
-                        v-model:value="state.formData.value.email"
-                        placeholder="请输入邮箱"
-                      />
-                    </NFormItem>
-                    <NFormItem>
+                    <template #action>
                       <NSpace>
                         <NButton
                           v-debounce="{
@@ -263,8 +255,8 @@
                           重置
                         </NButton>
                       </NSpace>
-                    </NFormItem>
-                  </NForm>
+                    </template>
+                  </C_Form>
 
                   <div class="form-status">
                     <NSpace>
@@ -368,6 +360,7 @@
 </template>
 
 <script setup lang="ts">
+  import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
   defineOptions({ name: 'Demo24DebounceDirect' })
   import {
     CODE_EXAMPLES,
@@ -376,6 +369,15 @@
     TAB_TITLES,
     DEMO_CONFIG,
   } from './data'
+  const formOptions: FormOption[] = [
+    {
+      prop: 'username',
+      label: '用户名',
+      type: 'input',
+      placeholder: '请输入用户名',
+    },
+    { prop: 'email', label: '邮箱', type: 'input', placeholder: '请输入邮箱' },
+  ]
   // 创建状态和处理函数
   const state = createDemoState()
   const handlers = createDemoHandlers(state)

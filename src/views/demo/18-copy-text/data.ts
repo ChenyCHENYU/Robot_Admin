@@ -1,3 +1,4 @@
+import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
 /*
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2025-06-23 15:45:21
@@ -7,8 +8,6 @@
  * @Description: 复制文本 useCopy Hooks 演示页面 - 数据层
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
-
-import type { DataTableColumns } from 'naive-ui/es/data-table'
 
 // ==================== 常量定义 ====================
 export const DEMO_TEXT = '这是一段演示文本，用于测试复制功能。'
@@ -97,7 +96,7 @@ export const CSV_DATA = [
   { id: 4, name: '赵六', age: 32, department: '运营部', salary: 8500 },
 ]
 
-export const CSV_COLUMNS: DataTableColumns = [
+export const CSV_COLUMNS: TableColumn[] = [
   { title: 'ID', key: 'id', width: 60 },
   { title: '姓名', key: 'name', width: 100 },
   { title: '年龄', key: 'age', width: 80 },

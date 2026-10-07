@@ -25,6 +25,7 @@
         <NNotificationProvider>
           <NMessageProvider>
             <RouterView />
+            <C_PageLoading :show="pageLoadingVisible" />
             <!-- 全局重新登录弹框 -->
             <C_ReLoginDialog
               v-model="reLoginStore.visible"
@@ -44,6 +45,7 @@
   import { s_languageStore } from '@/stores/language'
   import { s_reLoginStore } from '@/stores/reLogin'
   import { removeLoading } from '@/plugins/loading'
+  import { pageLoading } from '@/router/pageLoading'
   import '@/lib/version'
 
   // 获取 hljs 实例用于 NCode 组件
@@ -52,6 +54,8 @@
   const themeStore = s_themeStore()
   const languageStore = s_languageStore()
   const reLoginStore = s_reLoginStore()
+  const { visible: pageLoadingVisible } = pageLoading
+  defineOptions({ name: 'RobotAdminApp' })
 
   // 重新登录成功处理
   const handleReLoginSuccess = () => {

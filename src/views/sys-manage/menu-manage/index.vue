@@ -411,160 +411,29 @@
       @positive-click="handleSaveMenu"
       @negative-click="handleCancelModal"
     >
-      <NForm
+      <C_Form
+        v-if="showModal"
         ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        :disabled="saving"
-        label-placement="top"
+        :model-value="formData"
+        @update:model-value="Object.assign(formData, $event)"
+        :options="formOptions"
+        :config="formConfig"
+        :renderers="formRenderers"
+        @submit="showModal = false"
         class="menu-editor-form"
-      >
-        <NFormItem
-          label="节点类型"
-          path="type"
-          ><NTag
-            v-if="formData.type === 'button'"
-            size="small"
-            type="warning"
-            >按钮权限</NTag
-          ><NRadioGroup
-            v-else
-            v-model:value="formData.type"
-            :disabled="modalMode === 'edit' || saving"
-            ><NSpace
-              ><NRadio value="directory">目录</NRadio
-              ><NRadio value="menu">页面</NRadio></NSpace
-            ></NRadioGroup
-          ></NFormItem
-        >
-        <NFormItem
-          :label="formData.type === 'button' ? '权限名称' : '菜单名称'"
-          path="name"
-          ><NInput
-            v-model:value="formData.name"
-            placeholder="请输入清晰易懂的名称"
-            :maxlength="60"
-            show-count
-        /></NFormItem>
-        <NFormItem
-          :label="formData.type === 'button' ? '所属页面' : '上级目录'"
-          path="parentId"
-          ><NTreeSelect
-            v-model:value="formData.parentId"
-            :options="parentMenuOptions"
-            :placeholder="
-              formData.type === 'button' ? '选择所属页面' : '留空表示根目录'
-            "
-            :clearable="formData.type !== 'button'"
-            filterable
-            :disabled="
-              saving || (formData.type === 'button' && modalMode === 'edit')
-            "
-        /></NFormItem>
-        <NFormItem
-          v-if="formData.type !== 'button'"
-          label="路由路径"
-          path="path"
-          ><NInput
-            v-model:value="formData.path"
-            placeholder="如 /sys-manage/menu-manage"
-        /></NFormItem>
-        <NFormItem
-          v-if="formData.type === 'menu'"
-          label="页面组件"
-          path="component"
-          ><NInput
-            v-model:value="formData.component"
-            placeholder="如 /sys-manage/menu-manage/index"
-        /></NFormItem>
-        <NFormItem
-          v-if="formData.type === 'button'"
-          label="权限标识"
-          path="permission"
-          ><NInput
-            v-model:value="formData.permission"
-            placeholder="如 sys:menu:add"
-        /></NFormItem>
-        <NFormItem
-          v-if="formData.type !== 'button'"
-          label="菜单图标"
-          path="icon"
-          ><NInput
-            v-model:value="formData.icon"
-            placeholder="如 mdi:folder-outline"
-            ><template #suffix
-              ><C_Icon
-                v-if="formData.icon"
-                :name="formData.icon"
-                :size="20" /></template></NInput
-        ></NFormItem>
-        <div
-          v-if="formData.type !== 'button'"
-          class="editor-settings"
-        >
-          <NFormItem
-            label="排列顺序"
-            path="sort"
-            ><NInputNumber
-              v-model:value="formData.sort"
-              :min="0"
-              :max="9999"
-              :precision="0"
-          /></NFormItem>
-          <NFormItem
-            label="菜单状态"
-            path="status"
-            ><NSwitch
-              v-model:value="formData.status"
-              :checked-value="1"
-              :unchecked-value="0"
-              ><template #checked>启用</template
-              ><template #unchecked>禁用</template></NSwitch
-            ></NFormItem
-          >
-          <NFormItem
-            label="导航显示"
-            path="hidden"
-            ><NSwitch
-              v-model:value="formData.hidden"
-              :checked-value="0"
-              :unchecked-value="1"
-              ><template #checked>显示</template
-              ><template #unchecked>隐藏</template></NSwitch
-            ></NFormItem
-          >
-        </div>
-        <NFormItem
-          v-if="formData.type === 'menu'"
-          label="页面缓存"
-          path="keepAlive"
-          ><div class="cache-editor"
-            ><NSwitch
-              v-model:value="formData.keepAlive"
-              aria-label="页面缓存"
-              ><template #checked>开启</template
-              ><template #unchecked>关闭</template></NSwitch
-            ><p
-              >保留切换标签前的筛选、分页和表单状态。保存后同步导航生效；适合需要连续操作的页面。</p
-            ></div
-          ></NFormItem
-        >
-        <NFormItem
-          label="备注"
-          path="remark"
-          ><NInput
-            v-model:value="formData.remark"
-            type="textarea"
-            placeholder="用途或操作说明（选填）"
-            :rows="2"
-            :maxlength="500"
-        /></NFormItem>
-      </NForm>
+      />
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
+  import { NTreeSelect } from 'naive-ui/es'
+  import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
+  import type {
+    FormOption,
+    FormRenderer,
+  } from '@robot-admin/naive-ui-components/C_Form'
+  import type { FormData } from './data'
   import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
   import '@robot-admin/naive-ui-components/C_Tree/style.css'
   import { useMenuManagement } from './useMenuManagement'
@@ -587,7 +456,8 @@
     formRef,
     treeRef,
     formData,
-    formRules,
+    fieldRules,
+    formConfig,
     selectedMenu,
     filteredMenuList,
     parentMenuOptions,
@@ -618,6 +488,140 @@
     loadMenus,
     loadPermissions,
   } = useMenuManagement()
+  const formOptions = computed<FormOption<FormData>[]>(() => [
+    {
+      prop: 'type',
+      layout: { span: 3 },
+      label: '节点类型',
+      type: formData.type === 'button' ? 'buttonType' : 'radio',
+      children: [
+        { label: '目录', value: 'directory' },
+        { label: '页面', value: 'menu' },
+      ],
+      disabled: modalMode.value === 'edit' || saving.value,
+      rulesWhen: model => fieldRules('type', model),
+    },
+    {
+      prop: 'name',
+      layout: { span: 3 },
+      label: formData.type === 'button' ? '权限名称' : '菜单名称',
+      type: 'input',
+      placeholder: '请输入清晰易懂的名称',
+      attrs: { maxlength: 60, showCount: true },
+      rulesWhen: model => fieldRules('name', model),
+    },
+    {
+      prop: 'parentId',
+      layout: { span: 3 },
+      label: formData.type === 'button' ? '所属页面' : '上级目录',
+      type: 'treeSelect',
+      attrs: {
+        options: parentMenuOptions.value,
+        clearable: formData.type !== 'button',
+        filterable: true,
+      },
+      placeholder:
+        formData.type === 'button' ? '选择所属页面' : '留空表示根目录',
+      disabled:
+        saving.value ||
+        (formData.type === 'button' && modalMode.value === 'edit'),
+      rulesWhen: model => fieldRules('parentId', model),
+    },
+    {
+      prop: 'path',
+      layout: { span: 3 },
+      label: '路由路径',
+      type: 'input',
+      placeholder: '如 /sys-manage/menu-manage',
+      show: formData.type !== 'button',
+      rulesWhen: model => fieldRules('path', model),
+    },
+    {
+      prop: 'component',
+      layout: { span: 3 },
+      label: '页面组件',
+      type: 'input',
+      placeholder: '如 /sys-manage/menu-manage/index',
+      show: formData.type === 'menu',
+      rulesWhen: model => fieldRules('component', model),
+    },
+    {
+      prop: 'permission',
+      layout: { span: 3 },
+      label: '权限标识',
+      type: 'input',
+      placeholder: '如 sys:menu:add',
+      show: formData.type === 'button',
+      rulesWhen: model => fieldRules('permission', model),
+    },
+    {
+      prop: 'icon',
+      layout: { span: 3 },
+      label: '菜单图标',
+      type: 'menuIcon',
+      placeholder: '如 mdi:folder-outline',
+      show: formData.type !== 'button',
+    },
+    {
+      prop: 'sort',
+      layout: { span: 1 },
+      label: '排列顺序',
+      type: 'inputNumber',
+      attrs: { min: 0, max: 9999, precision: 0 },
+      show: formData.type !== 'button',
+      rulesWhen: model => fieldRules('sort', model),
+    },
+    {
+      prop: 'status',
+      layout: { span: 1 },
+      label: '菜单状态',
+      type: 'menuSwitch',
+      attrs: { checkedValue: 1, uncheckedValue: 0 },
+      show: formData.type !== 'button',
+    },
+    {
+      prop: 'hidden',
+      layout: { span: 1 },
+      label: '导航显示',
+      type: 'menuSwitch',
+      attrs: { checkedValue: 0, uncheckedValue: 1 },
+      show: formData.type !== 'button',
+    },
+    {
+      prop: 'keepAlive',
+      layout: { span: 3 },
+      label: '页面缓存',
+      type: 'menuSwitch',
+      attrs: { 'aria-label': '页面缓存' },
+      show: formData.type === 'menu',
+      help: '保留切换标签前的筛选、分页和表单状态。保存后同步导航生效；适合需要连续操作的页面。',
+    },
+    {
+      prop: 'remark',
+      layout: { span: 3 },
+      label: '备注',
+      type: 'textarea',
+      placeholder: '用途或操作说明（选填）',
+      attrs: { rows: 2, maxlength: 500 },
+    },
+  ])
+  const formRenderers: Record<string, FormRenderer> = {
+    treeSelect: props => h(NTreeSelect, props),
+    buttonType: () =>
+      h(NTag, { size: 'small', type: 'warning' }, () => '按钮权限'),
+    menuIcon: props =>
+      h(NInput, props, {
+        suffix: () =>
+          formData.icon ? h(C_Icon, { name: formData.icon, size: 20 }) : null,
+      }),
+    menuSwitch: (props, item) =>
+      h(NSwitch, props, {
+        checked: () =>
+          ({ status: '启用', hidden: '显示', keepAlive: '开启' })[item.prop],
+        unchecked: () =>
+          ({ status: '禁用', hidden: '隐藏', keepAlive: '关闭' })[item.prop],
+      }),
+  }
 </script>
 
 <style lang="scss" scoped>

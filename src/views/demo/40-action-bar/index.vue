@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: 40-action-bar 页面
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="action-bar-demo-page">
     <c_vTitle
@@ -68,23 +75,13 @@
             <NText depth="3">居中对齐</NText>
           </template>
           <div class="card-content">
-            <NForm
-              label-placement="left"
-              label-width="80"
-            >
-              <NFormItem label="用户名">
-                <NInput
-                  v-model:value="formData.username"
-                  placeholder="请输入"
-                />
-              </NFormItem>
-              <NFormItem label="邮箱">
-                <NInput
-                  v-model:value="formData.email"
-                  placeholder="请输入"
-                />
-              </NFormItem>
-            </NForm>
+            <C_Form
+              ref="formRef"
+              :model-value="formData"
+              @update:model-value="Object.assign(formData, $event)"
+              :options="formOptions"
+              :config="formConfig"
+            />
             <C_ActionBar
               :actions="formActions"
               :config="{ align: 'center' }"
@@ -248,6 +245,13 @@
 </template>
 
 <script setup lang="ts">
+  import {
+    PRESET_RULES,
+    type FormInstance,
+    type FormConfig,
+    type FormOption,
+  } from '@robot-admin/naive-ui-components/C_Form'
+  import { delayWithSignal } from '@/utils/abort'
   defineOptions({ name: 'Demo40ActionBar' })
   import type {
     ActionItem,
@@ -273,9 +277,37 @@
     isEditing: false,
     isRefreshing: false,
   })
+  const formRef = ref<FormInstance<{ username: string; email: string }> | null>(
+    null
+  )
+  const formSubmitting = computed(() => formRef.value?.isSubmitting ?? false)
   const formData = reactive({ username: '', email: '' })
   const customConfig = reactive({ ...DEFAULT_CUSTOM_CONFIG })
   const tableData = ref([...MOCK_TABLE_DATA])
+
+  const formOptions: FormOption<typeof formData>[] = [
+    {
+      prop: 'username',
+      label: '用户名',
+      type: 'input',
+      placeholder: '请输入',
+      rules: [PRESET_RULES.required('用户名')],
+    },
+    {
+      prop: 'email',
+      label: '邮箱',
+      type: 'input',
+      placeholder: '请输入',
+      rules: [PRESET_RULES.optional(PRESET_RULES.email('邮箱'))],
+    },
+  ]
+  const formConfig: FormConfig<typeof formData> = {
+    labelPlacement: 'left',
+    labelWidth: 80,
+    showActions: false,
+    submitSuccessText: '提交演示完成，数据未持久化',
+    onSubmit: (_payload, context) => delayWithSignal(1000, context?.signal),
+  }
 
   // 场景一：表格工具栏
   const tableActions = computed<ActionItem[]>(() => [
@@ -321,9 +353,9 @@
       key: 'reset',
       label: '重置',
       icon: 'mdi:refresh',
+      disabled: formSubmitting.value,
       onClick: () => {
-        formData.username = ''
-        formData.email = ''
+        formRef.value?.resetFields()
         message.warning('表单已重置')
       },
     },
@@ -332,11 +364,9 @@
       label: '提交',
       icon: 'mdi:check',
       type: 'primary',
+      loading: formSubmitting.value,
       onClick: async () => {
-        loading.value = true
-        await new Promise(r => setTimeout(r, 1000))
-        loading.value = false
-        message.success('提交成功')
+        await formRef.value?.submit()
       },
     },
   ])

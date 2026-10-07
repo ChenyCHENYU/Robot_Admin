@@ -203,12 +203,15 @@
         class="demo-section"
         title="CSV 数据复制"
       >
-        <NDataTable
+        <C_Table
           :columns="CSV_COLUMNS"
           :data="CSV_DATA"
-          :pagination="false"
-          size="small"
           class="csv-table"
+          :config="{
+            toolbar: { show: false },
+            pagination: false,
+            display: { striped: false, size: 'small' },
+          }"
         />
         <C_ActionBar
           class="mt-3"

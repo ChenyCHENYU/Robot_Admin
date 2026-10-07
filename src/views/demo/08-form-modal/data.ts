@@ -9,7 +9,10 @@
  */
 
 import type { FormConfig, FormOption } from '@robot-admin/naive-ui-components'
-import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
+import {
+  NAIVE_COMBOS,
+  PRESET_RULES,
+} from '@robot-admin/naive-ui-components/C_Form'
 
 // =================== 卡片展示数据 ===================
 
@@ -120,7 +123,11 @@ export const modalOptions: FormOption[] = [
     rules: NAIVE_COMBOS.mobile('手机号'),
   },
 ]
-export const modalConfig: FormConfig = { layout: 'grid' }
+export const modalConfig: FormConfig = {
+  layout: 'grid',
+  submitText: '保存',
+  submitSuccessText: '已接收用户信息（演示，不会持久化）',
+}
 
 // =================== 抽屉 - 商品配置（Default） ===================
 
@@ -168,6 +175,7 @@ export const drawerOptions: FormOption[] = [
 export const drawerConfig: FormConfig = {
   layout: 'default',
   showActions: false,
+  submitSuccessText: '已接收商品配置（演示，不会持久化）',
 }
 
 // =================== 侧边栏 - 筛选条件（Compact） ===================
@@ -201,7 +209,12 @@ export const sidebarOptions: FormOption[] = [
     ],
   },
 ]
-export const sidebarConfig: FormConfig = { layout: 'default' }
+export const sidebarConfig: FormConfig = {
+  layout: 'default',
+  resetText: '清空',
+  submitText: '应用筛选',
+  submitSuccessText: '筛选条件已校验（演示）',
+}
 
 // =================== 浮动 - 快速编辑（Inline） ===================
 
@@ -226,7 +239,10 @@ export const popoverOptions: FormOption[] = [
     ],
   },
 ]
-export const popoverConfig: FormConfig = { layout: 'inline' }
+export const popoverConfig: FormConfig = {
+  layout: 'inline',
+  submitSuccessText: '已接收编辑内容（演示，不会持久化）',
+}
 
 // =================== 步骤向导 - 项目创建（Steps） ===================
 
@@ -288,4 +304,16 @@ export const wizardOptions: FormOption[] = [
     layout: { step: 'step3' },
   },
 ]
-export const wizardConfig: FormConfig = { layout: 'steps' }
+export const wizardConfig: FormConfig = {
+  layout: 'steps',
+  steps: {
+    steps: [
+      { key: 'step1', title: '项目信息', description: '填写项目名称和用途' },
+      { key: 'step2', title: '模板与功能', description: '选择模板和功能特性' },
+      { key: 'step3', title: '仓库设置', description: '确认仓库与提交方式' },
+    ],
+    validateBeforeNext: true,
+  },
+  submitText: '完成创建',
+  submitSuccessText: '项目配置已校验（演示，不会创建仓库）',
+}

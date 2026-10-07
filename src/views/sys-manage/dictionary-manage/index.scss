@@ -176,7 +176,7 @@
   }
   .dictionary-items :deep(.dictionary-item-status) {
     display: grid;
-    justify-items: start;
+    justify-items: center;
     gap: 4px;
   }
   .dictionary-items :deep(.dictionary-status-note) {

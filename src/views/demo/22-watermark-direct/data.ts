@@ -130,7 +130,7 @@ export function getScenarioCode(): string {
   textColor: 'rgba(220, 20, 60, 0.25)',
   fontSize: 14
 }" class="data-table">
-  <NDataTable :data="tableData" :columns="columns" />
+  <C_Table :data="tableData" :columns="columns" :config="{ pagination: false, toolbar: { show: false } }" />
 </div>`
 }
 

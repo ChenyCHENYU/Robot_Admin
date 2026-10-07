@@ -237,11 +237,14 @@
                   class="demo-box"
                 >
                   <h4>📊 数据报表</h4>
-                  <NDataTable
+                  <C_Table
                     :data="tableData"
                     :columns="tableColumns"
-                    size="small"
-                    :pagination="false"
+                    :config="{
+                      toolbar: { show: false },
+                      pagination: false,
+                      display: { striped: false, size: 'small' },
+                    }"
                   />
                   <NSpace class="mt-4">
                     <NButton size="small">导出Excel</NButton>

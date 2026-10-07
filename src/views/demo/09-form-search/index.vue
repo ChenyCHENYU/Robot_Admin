@@ -16,39 +16,18 @@
       description="支持基础搜索、高级搜索、超多字段搜索，自动折叠展开、历史记录等功能"
     />
 
-    <!-- 基础用法 -->
-    <div class="demo-section">
-      <h3>基础用法（3个字段）</h3>
+    <div
+      v-for="(example, type) in formConfigs"
+      :key="type"
+      class="demo-section"
+    >
+      <h3>{{ example.title }}</h3>
       <C_FormSearch
-        :form-item-list="basicFormConfig.items"
-        :form-params="basicFormParams"
-        :form-search-input-history-string="basicFormConfig.historyKey"
-        @search="handleSearch('basic', $event)"
-        @reset="handleReset('basic')"
-      />
-    </div>
-
-    <!-- 高级用法 -->
-    <div class="demo-section">
-      <h3>高级用法（12个字段 - 默认显示8个，展开显示全部）</h3>
-      <C_FormSearch
-        :form-item-list="advancedFormConfig.items"
-        :form-params="advancedFormParams"
-        :form-search-input-history-string="advancedFormConfig.historyKey"
-        @search="handleSearch('advanced', $event)"
-        @reset="handleReset('advanced')"
-      />
-    </div>
-
-    <!-- 超多字段测试 -->
-    <div class="demo-section">
-      <h3>超多字段测试（16个字段）</h3>
-      <C_FormSearch
-        :form-item-list="megaFormConfig.items"
-        :form-params="megaFormParams"
-        :form-search-input-history-string="megaFormConfig.historyKey"
-        @search="handleSearch('mega', $event)"
-        @reset="handleReset('mega')"
+        :form-item-list="example.config.items"
+        :form-params="example.params"
+        :form-search-input-history-string="example.config.historyKey"
+        @search="handleSearch(type, $event)"
+        @reset="handleReset(type)"
       />
     </div>
 
@@ -87,12 +66,24 @@
 
   // 表单配置映射
   const formConfigs = {
-    basic: { params: basicFormParams, defaults: basicFormConfig.params },
+    basic: {
+      title: '基础用法（3个字段）',
+      config: basicFormConfig,
+      params: basicFormParams,
+      defaults: basicFormConfig.params,
+    },
     advanced: {
+      title: '高级用法（12个字段 - 默认显示8个，展开显示全部）',
+      config: advancedFormConfig,
       params: advancedFormParams,
       defaults: advancedFormConfig.params,
     },
-    mega: { params: megaFormParams, defaults: megaFormConfig.params },
+    mega: {
+      title: '超多字段测试（16个字段）',
+      config: megaFormConfig,
+      params: megaFormParams,
+      defaults: megaFormConfig.params,
+    },
   }
 
   // 统一搜索处理
@@ -100,7 +91,7 @@
     type: keyof typeof formConfigs,
     params: SearchFormParams
   ) => {
-    message.success('搜索成功！')
+    message.info('搜索条件已接收（演示结果）')
     searchResults.value = generateMockResults(type, params)
   }
 

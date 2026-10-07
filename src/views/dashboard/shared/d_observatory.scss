@@ -227,7 +227,6 @@
   border-collapse: collapse;
   width: 100%;
   font-size: 12px;
-  text-align: left;
   th {
     color: var(--app-text-tertiary);
     font-size: 11px;
@@ -245,11 +244,10 @@
     border-bottom: none;
   }
   .numeric {
-    text-align: right;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
   }
-  code {
+  :deep(code) {
     font-size: 10px;
     color: var(--app-text-tertiary);
   }

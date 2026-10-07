@@ -252,36 +252,45 @@
           title="Props 属性"
           name="props"
         >
-          <NDataTable
+          <C_Table
             :columns="PROPS_COLUMNS"
             :data="PROPS_DATA"
-            :bordered="false"
-            size="small"
-            :pagination="false"
+            row-key="name"
+            :config="{
+              toolbar: { show: false },
+              pagination: false,
+              display: { striped: false, bordered: false, size: 'small' },
+            }"
           />
         </NCollapseItem>
         <NCollapseItem
           title="Events 事件"
           name="events"
         >
-          <NDataTable
+          <C_Table
             :columns="EVENTS_COLUMNS"
             :data="EVENTS_DATA"
-            :bordered="false"
-            size="small"
-            :pagination="false"
+            row-key="name"
+            :config="{
+              toolbar: { show: false },
+              pagination: false,
+              display: { striped: false, bordered: false, size: 'small' },
+            }"
           />
         </NCollapseItem>
         <NCollapseItem
           title="Expose 方法（ref 调用）"
           name="expose"
         >
-          <NDataTable
+          <C_Table
             :columns="EXPOSE_COLUMNS"
             :data="EXPOSE_DATA"
-            :bordered="false"
-            size="small"
-            :pagination="false"
+            row-key="name"
+            :config="{
+              toolbar: { show: false },
+              pagination: false,
+              display: { striped: false, bordered: false, size: 'small' },
+            }"
           />
         </NCollapseItem>
       </NCollapse>

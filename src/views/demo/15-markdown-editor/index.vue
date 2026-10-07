@@ -76,64 +76,20 @@
           title="文章编辑表单"
           class="demo-card"
         >
-          <NForm
+          <C_Form
             ref="formRef"
-            :model="articleForm"
-            :rules="formRules"
-            label-placement="top"
+            :model-value="articleForm"
+            @update:model-value="Object.assign(articleForm, $event)"
+            :options="articleOptions"
+            :config="articleConfig"
+            :renderers="articleRenderers"
           >
-            <NFormItem
-              label="文章标题"
-              path="title"
-            >
-              <NInput
-                v-model:value="articleForm.title"
-                placeholder="请输入文章标题"
-                :maxlength="100"
-                show-count
-              />
-            </NFormItem>
-
-            <NFormItem
-              label="文章摘要"
-              path="summary"
-            >
-              <NInput
-                v-model:value="articleForm.summary"
-                type="textarea"
-                placeholder="请输入文章摘要"
-                :rows="3"
-                :maxlength="200"
-                show-count
-              />
-            </NFormItem>
-
-            <NFormItem
-              label="文章分类"
-              path="category"
-            >
-              <NSelect
-                v-model:value="articleForm.category"
-                placeholder="请选择文章分类"
-                :options="categoryOptions"
-              />
-            </NFormItem>
-
-            <NFormItem
-              label="文章标签"
-              path="tags"
-            >
-              <NDynamicTags v-model:value="articleForm.tags" />
-            </NFormItem>
-
-            <NFormItem
-              label="文章内容"
-              path="content"
-              class="form-markdown-item"
-            >
+            <template #markdownField="{ value, updateValue, disabled }">
               <div class="form-markdown-wrapper">
                 <C_Markdown
-                  v-model="articleForm.content"
+                  :model-value="value"
+                  @update:model-value="updateValue"
+                  :disabled="disabled"
                   height="400px"
                   placeholder="请输入文章内容..."
                   :max-length="20000"
@@ -172,15 +128,14 @@
                   </NSpace>
                 </div>
               </div>
-            </NFormItem>
-
-            <NFormItem>
+            </template>
+            <template #action>
               <C_ActionBar
                 :actions="formActions"
                 :config="{ gap: 12 }"
               />
-            </NFormItem>
-          </NForm>
+            </template>
+          </C_Form>
         </NCard>
       </NTabPane>
 
@@ -405,12 +360,20 @@
 <script setup lang="ts">
   defineOptions({ name: 'Demo15MarkdownEditor' })
   // 导入数据和类型
+  import {
+    PRESET_RULES,
+    type FormInstance,
+    type FormOption,
+    type FormConfig,
+    type FormRenderer,
+  } from '@robot-admin/naive-ui-components/C_Form'
+  import { NDynamicTags } from 'naive-ui/es'
+  import { delayWithSignal } from '@/utils/abort'
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     type ArticleData,
     type InsertImageFunction,
     defaultBasicContent,
-    formRules,
     categoryOptions,
     defaultModeContent,
     defaultConfig,
@@ -434,8 +397,8 @@
   const lastAutoSaveTime = ref('')
 
   // 表单相关
-  const formRef = ref()
-  const submitting = ref(false)
+  const formRef = ref<FormInstance<typeof articleForm> | null>(null)
+  const submitting = computed(() => formRef.value?.isSubmitting ?? false)
   const savingDraft = ref(false)
   const formWordCount = ref(0)
 
@@ -447,13 +410,17 @@
       icon: 'mdi:send',
       type: 'primary',
       loading: submitting.value,
-      onClick: submitForm,
+      disabled: savingDraft.value,
+      onClick: async () => {
+        await formRef.value?.submit()
+      },
     },
     {
       key: 'draft',
       label: '保存草稿',
       icon: 'mdi:content-save-outline',
       loading: savingDraft.value,
+      disabled: submitting.value,
       onClick: saveAsDraft,
     },
     {
@@ -466,6 +433,7 @@
       key: 'reset',
       label: '重置表单',
       icon: 'mdi:lock-reset',
+      disabled: submitting.value || savingDraft.value,
       onClick: resetForm,
     },
   ])
@@ -521,6 +489,61 @@
     tags: [] as string[],
     content: '',
   })
+
+  const articleOptions: FormOption<typeof articleForm>[] = [
+    {
+      prop: 'title',
+      label: '文章标题',
+      type: 'input',
+      placeholder: '请输入文章标题',
+      attrs: { maxlength: 100, showCount: true },
+      rules: [PRESET_RULES.required('文章标题')],
+    },
+    {
+      prop: 'summary',
+      label: '文章摘要',
+      type: 'textarea',
+      placeholder: '请输入文章摘要',
+      attrs: { rows: 3, maxlength: 200, showCount: true },
+      rules: [PRESET_RULES.required('文章摘要')],
+    },
+    {
+      prop: 'category',
+      label: '文章分类',
+      type: 'select',
+      placeholder: '请选择文章分类',
+      children: categoryOptions,
+      rules: [PRESET_RULES.required('文章分类', 'change')],
+    },
+    { prop: 'tags', label: '文章标签', type: 'tags' },
+    {
+      prop: 'content',
+      label: '文章内容',
+      type: 'markdown',
+      rules: [PRESET_RULES.required('文章内容')],
+    },
+  ]
+  const articleConfig = computed<FormConfig<typeof articleForm>>(() => ({
+    disabled: !!formRef.value?.isSubmitting,
+    labelPlacement: 'top',
+    onSubmit: async (_payload, context) => {
+      await delayWithSignal(2000, context?.signal)
+      message.info('发布流程演示完成，文章未持久化')
+    },
+  }))
+  const articleRenderers: Record<string, FormRenderer> = {
+    tags: props => h(NDynamicTags, props),
+    markdown: (props, _item, _config, context) =>
+      h(
+        'div',
+        { class: 'w-full' },
+        context.slots?.markdownField?.({
+          value: props.value,
+          updateValue: props['onUpdate:value'],
+          disabled: props.disabled,
+        })
+      ),
+  }
 
   // 不同模式演示
   const modeContent = reactive({ ...defaultModeContent })
@@ -626,20 +649,6 @@
     )
   }
 
-  const submitForm = async () => {
-    try {
-      await formRef.value?.validate()
-      submitting.value = true
-
-      scheduleDemoAction(() => {
-        submitting.value = false
-        message.info('发布流程演示完成，文章未持久化')
-      }, 2000)
-    } catch {
-      message.error('请完善表单信息')
-    }
-  }
-
   const saveAsDraft = async () => {
     savingDraft.value = true
 
@@ -671,6 +680,7 @@
           tags: [],
           content: '',
         })
+        formRef.value?.clearValidation()
         formWordCount.value = 0
         message.success('表单已重置')
       },

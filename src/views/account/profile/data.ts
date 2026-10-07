@@ -1,4 +1,14 @@
-import type { FormRules } from 'naive-ui/es'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: profile 页面表单与业务配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+import {
+  PRESET_RULES,
+  type FormOption,
+} from '@robot-admin/naive-ui-components/C_Form'
 import type { AccountProfile } from '@/api/account'
 
 // ==================== 类型定义 ====================
@@ -14,23 +24,30 @@ export interface ProfileFormData {
 export type ProfileInfo = AccountProfile
 
 // ==================== 表单验证规则 ====================
-export const PROFILE_FORM_RULES: FormRules = {
-  nickname: [
-    { required: true, message: '请输入昵称', trigger: 'blur' },
-    { min: 2, max: 20, message: '昵称长度在 2-20 个字符', trigger: 'blur' },
-  ],
-  email: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' },
-  ],
-  phone: [
-    {
-      pattern: /^1[3-9]\d{9}$/,
-      message: '请输入正确的手机号',
-      trigger: 'blur',
-    },
-  ],
-}
+export const PROFILE_FORM_OPTIONS: FormOption<ProfileFormData>[] = [
+  {
+    prop: 'nickname',
+    label: '昵称',
+    type: 'input',
+    placeholder: '请输入昵称',
+    rules: [PRESET_RULES.required('昵称'), PRESET_RULES.length('昵称', 2, 20)],
+  },
+  {
+    prop: 'email',
+    label: '邮箱',
+    type: 'input',
+    placeholder: '请输入邮箱',
+    rules: [PRESET_RULES.required('邮箱'), PRESET_RULES.email('邮箱')],
+  },
+  {
+    prop: 'phone',
+    label: '手机',
+    type: 'input',
+    placeholder: '请输入手机号',
+    rules: [PRESET_RULES.optional(PRESET_RULES.mobile('手机号'))],
+  },
+  { prop: 'bio', label: '简介', type: 'input', placeholder: '一句话介绍自己' },
+]
 
 // ==================== 默认表单数据 ====================
 export const DEFAULT_PROFILE_FORM: ProfileFormData = {

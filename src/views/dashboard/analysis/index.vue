@@ -199,38 +199,17 @@
         ></div
       >
       <div class="obs-table-wrap"
-        ><table class="obs-table"
-          ><thead
-            ><tr
-              ><th>资源</th><th>相对耗时</th><th class="numeric">加载耗时</th
-              ><th class="numeric">解码体积</th></tr
-            ></thead
-          ><tbody
-            ><tr
-              v-for="resource in browser.resources"
-              :key="resource.name"
-              ><td
-                ><code>{{ resource.name }}</code></td
-              ><td class="resource-bar-cell"
-                ><div class="resource-track"
-                  ><i
-                    :style="{
-                      width: `${(resource.duration / maxResourceDuration) * 100}%`,
-                    }" /></div></td
-              ><td class="numeric">{{ formatDuration(resource.duration) }}</td
-              ><td class="numeric">{{
-                resource.size ? formatBytes(resource.size) : '缓存或不可读'
-              }}</td></tr
-            ><tr v-if="!browser.resources.length"
-              ><td
-                colspan="4"
-                class="obs-empty"
-                >浏览器尚未提供可读的资源样本</td
-              ></tr
-            ></tbody
-          ></table
-        ></div
-      >
+        ><C_Table
+          class="obs-table"
+          :columns="resourceColumns"
+          :data="browser.resources"
+          row-key="name"
+          :config="{
+            toolbar: { show: false },
+            pagination: false,
+            display: { size: 'small', bordered: false, striped: false },
+          }"
+      /></div>
     </section>
     <footer class="obs-footer"
       ><span>项目清单来自当前源码与安装依赖；浏览器指标仅代表本次文档。</span
@@ -241,10 +220,49 @@
   </div>
 </template>
 <script setup lang="ts">
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+  const resourceColumns: TableColumn<
+    BrowserPerformance['resources'][number]
+  >[] = [
+    {
+      title: '资源',
+      key: 'name',
+      width: 260,
+      ellipsis: { tooltip: true },
+      render: row => h('code', row.name),
+    },
+    {
+      title: '相对耗时',
+      key: 'relativeDuration',
+      width: 180,
+      render: row =>
+        h('div', { class: 'resource-track' }, [
+          h('i', {
+            style: {
+              width: `${(row.duration / maxResourceDuration.value) * 100}%`,
+            },
+          }),
+        ]),
+    },
+    {
+      title: '加载耗时',
+      key: 'duration',
+      width: 120,
+      render: row => formatDuration(row.duration),
+    },
+    {
+      title: '解码体积',
+      key: 'size',
+      width: 140,
+      render: row => (row.size ? formatBytes(row.size) : '缓存或不可读'),
+    },
+  ]
+
   import ObservatoryChart from '../shared/c_chart/index.vue'
   import { useProjectReport } from '../shared/useProjectReport'
   import { formatBytes, formatDuration } from '../shared/d_format'
   import {
+    type BrowserPerformance,
     projectInfo,
     ecosystem,
     architectures,

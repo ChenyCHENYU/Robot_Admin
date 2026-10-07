@@ -230,49 +230,22 @@
                     >
                   </div>
                   <div class="table-container">
-                    <table class="data-table">
-                      <thead>
-                        <tr>
-                          <th>字段名</th>
-                          <th>数据类型</th>
-                          <th>当前值</th>
-                          <th>状态</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr
-                          v-for="[key, value] in Object.entries(formData)"
-                          :key="key"
-                          :class="{ 'filled-row': isValueFilled(value) }"
-                        >
-                          <td
-                            ><span class="field-tag">{{ key }}</span></td
-                          >
-                          <td
-                            ><span class="type-tag">{{
-                              getValueType(value)
-                            }}</span></td
-                          >
-                          <td class="value-cell">
-                            <div class="value-display">{{
-                              formatValueDisplay(value)
-                            }}</div>
-                          </td>
-                          <td>
-                            <span
-                              :class="[
-                                'status-badge',
-                                isValueFilled(value) ? 'filled' : 'empty',
-                              ]"
-                            >
-                              {{
-                                isValueFilled(value) ? '✓ 已填写' : '○ 未填写'
-                              }}
-                            </span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                    <C_Table
+                      :columns="previewColumns"
+                      :data="previewRows"
+                      row-key="key"
+                      :config="{
+                        toolbar: { show: false },
+                        pagination: false,
+                        display: {
+                          size: 'small',
+                          bordered: false,
+                          striped: false,
+                          maxHeight: 360,
+                          scrollX: 580,
+                        },
+                      }"
+                    />
                   </div>
                 </div>
 
@@ -336,6 +309,50 @@
 </template>
 
 <script setup lang="ts">
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+  interface PreviewRow {
+    key: string
+    value: unknown
+  }
+  const previewRows = computed<PreviewRow[]>(() =>
+    Object.entries(formData.value).map(([key, value]) => ({ key, value }))
+  )
+  const previewColumns: TableColumn<PreviewRow>[] = [
+    {
+      title: '字段名',
+      key: 'key',
+      width: 120,
+      render: row => h(NTag, { size: 'small', type: 'info' }, () => row.key),
+    },
+    {
+      title: '数据类型',
+      key: 'type',
+      width: 100,
+      render: row => h(NTag, { size: 'small' }, () => getValueType(row.value)),
+    },
+    {
+      title: '当前值',
+      key: 'value',
+      width: 220,
+      ellipsis: { tooltip: true },
+      render: row => formatValueDisplay(row.value),
+    },
+    {
+      title: '状态',
+      key: 'status',
+      width: 120,
+      render: row =>
+        h(
+          NTag,
+          {
+            size: 'small',
+            type: isValueFilled(row.value) ? 'success' : 'warning',
+          },
+          () => (isValueFilled(row.value) ? '已填写' : '未填写')
+        ),
+    },
+  ]
+
   defineOptions({ name: 'Demo07Form' })
   import type {
     LayoutType,

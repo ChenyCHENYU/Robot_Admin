@@ -14,13 +14,7 @@
     <C_Form
       ref="formRef"
       :options="employeeFormOptions"
-      :config="{
-        layout: 'custom',
-        labelPlacement: props.labelPlacement,
-        validateOnChange: props.validateOnChange,
-        showActions: false,
-        onFieldsChange: handleFieldsChange,
-      }"
+      :config="formConfig"
       v-model="formData"
       @validate-success="handleValidateSuccess"
       @validate-error="handleValidateError"
@@ -133,15 +127,13 @@
   import type {
     FormOption,
     FormInstance,
+    FormConfig,
     SubmitEventPayload,
     LabelPlacement,
     ActionItem,
   } from '@robot-admin/naive-ui-components'
-  import { useFormSubmit } from '@/hooks/useFormSubmit'
-  import { useDebounceFn } from '@vueuse/core'
   import {
     type EmployeeFormData,
-    type EmployeeSubmitResponse,
     employeeFormOptions,
     generateTestData,
     submitEmployeeAPI,
@@ -173,6 +165,21 @@
   const formRef = ref<FormInstance<EmployeeFormData>>()
   const message = useMessage()
   const actualFields = ref<FormOption<EmployeeFormData>[]>([])
+  const submitLoading = computed(() => formRef.value?.isSubmitting ?? false)
+
+  const formConfig = computed<FormConfig<EmployeeFormData>>(() => ({
+    layout: 'custom',
+    labelPlacement: props.labelPlacement,
+    validateOnChange: props.validateOnChange,
+    showActions: false,
+    onFieldsChange: handleFieldsChange,
+    onSubmit: async ({ model }) => {
+      const response = await submitEmployeeAPI(model)
+      if (response.code !== '0') {
+        throw new Error(response.message || '演示提交失败')
+      }
+    },
+  }))
 
   // ================= 计算属性 =================
 
@@ -273,13 +280,14 @@
       label: '🔄 填充测试数据',
       type: 'primary',
       buttonProps: { secondary: true },
+      disabled: submitLoading.value,
       onClick: fillTestData,
     },
     {
       key: 'clear',
       label: '🗑️ 清空表单',
       buttonProps: { secondary: true },
-      disabled: !hasFormFields.value,
+      disabled: submitLoading.value || !hasFormFields.value,
       onClick: clearFormData,
     },
     {
@@ -287,7 +295,7 @@
       label: '✅ 验证表单',
       type: 'success',
       buttonProps: { secondary: true },
-      disabled: !hasFormFields.value,
+      disabled: submitLoading.value || !hasFormFields.value,
       onClick: validateForm,
     },
     {
@@ -306,16 +314,6 @@
       onClick: exportFormData,
     },
   ])
-
-  // 提交配置
-  const { loading: submitLoading, createSubmit } = useFormSubmit<
-    EmployeeSubmitResponse,
-    EmployeeFormData
-  >()
-  const handleFormSubmit = createSubmit(submitEmployeeAPI, {
-    successCode: '0',
-    successMsg: '🎉 员工信息提交成功！',
-  })
 
   // 操作函数
   const debugFormState = (): void => {
@@ -386,12 +384,7 @@
       return
     }
 
-    const formScope = {
-      form: formRef.value,
-      model: dataToSubmit,
-    }
-
-    await handleFormSubmit(formScope)
+    await formRef.value.submit()
   }
 
   const exportFormData = (): void => {

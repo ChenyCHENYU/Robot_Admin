@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: 10-table 页面
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="table-demo-page">
     <c_vTitle
@@ -129,13 +136,16 @@
               字段时自动启用树形模式。
             </NAlert>
 
-            <NDataTable
+            <C_Table
               :columns="treeColumns"
               :data="TREE_TABLE_DATA"
               :row-key="(row: Employee) => row.id"
-              default-expand-all
-              size="small"
-              striped
+              :config="{
+                toolbar: { show: false },
+                pagination: false,
+                display: { size: 'small', striped: true },
+                tree: { enabled: true, defaultExpandAll: true },
+              }"
             />
           </NSpace>
         </NCard>
@@ -163,130 +173,43 @@
         footer: 'soft',
       }"
     >
-      <NForm
-        ref="addFormRef"
-        :model="addFormData"
-        :rules="addFormRules"
-        label-placement="left"
-        label-width="80"
-        require-mark-placement="right-hanging"
+      <C_Form
+        v-if="showAddModal"
+        v-model="addFormData"
+        :options="addFormOptions"
+        :config="addFormConfig"
       >
-        <NFormItem
-          label="姓名"
-          path="name"
-        >
-          <NInput
-            v-model:value="addFormData.name"
-            placeholder="请输入姓名"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="年龄"
-          path="age"
-        >
-          <NInputNumber
-            v-model:value="addFormData.age"
-            :min="18"
-            :max="65"
-            :show-button="false"
-            placeholder="请输入年龄"
-            style="width: 100%"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="性别"
-          path="gender"
-        >
-          <NRadioGroup v-model:value="addFormData.gender">
-            <NRadio
-              v-for="item in GENDER_OPTIONS"
-              :key="item.value"
-              :value="item.value"
+        <template #action="{ submit, submitting }">
+          <NSpace justify="end">
+            <NButton
+              :disabled="submitting"
+              @click="showAddModal = false"
+              >取消</NButton
             >
-              {{ item.label }}
-            </NRadio>
-          </NRadioGroup>
-        </NFormItem>
-
-        <NFormItem
-          label="邮箱"
-          path="email"
-        >
-          <NInput
-            v-model:value="addFormData.email"
-            placeholder="请输入邮箱地址"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="部门"
-          path="department"
-        >
-          <NSelect
-            v-model:value="addFormData.department"
-            :options="DEPARTMENT_OPTIONS"
-            placeholder="请选择部门"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="入职日期"
-          path="joinDate"
-        >
-          <NDatePicker
-            v-model:value="addFormData.joinDate"
-            type="date"
-            placeholder="请选择入职日期"
-            style="width: 100%"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="状态"
-          path="status"
-        >
-          <NSelect
-            v-model:value="addFormData.status"
-            :options="STATUS_OPTIONS"
-            placeholder="请选择状态"
-          />
-        </NFormItem>
-
-        <NFormItem
-          label="描述"
-          path="description"
-        >
-          <NInput
-            v-model:value="addFormData.description"
-            type="textarea"
-            :rows="3"
-            placeholder="请输入员工描述信息（选填）"
-          />
-        </NFormItem>
-      </NForm>
-
-      <template #footer>
-        <C_ActionBar
-          :actions="modalActions"
-          :config="{ align: 'right', gap: 12 }"
-        />
-      </template>
+            <NButton
+              type="primary"
+              :loading="submitting"
+              @click="submit"
+              >保存</NButton
+            >
+          </NSpace>
+        </template>
+      </C_Form>
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+
   defineOptions({ name: 'Demo10Table' })
-  import type {
-    ActionItem,
-    EditMode,
-    TableConfig,
-  } from '@robot-admin/naive-ui-components'
-  import type { DataTableColumns, FormInst } from 'naive-ui/es'
+  import type { EditMode, TableConfig } from '@robot-admin/naive-ui-components'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
-  import { PRESET_RULES } from '@/utils/d_formValidate'
+  import {
+    PRESET_RULES,
+    type FormConfig,
+    type FormOption,
+  } from '@robot-admin/naive-ui-components/C_Form'
   import {
     type Employee,
     type AddEmployeeForm,
@@ -309,7 +232,6 @@
   const activeTab = ref('crud')
   const editMode = ref<EditMode>('modal')
   const showAddModal = ref(false)
-  const addFormRef = ref<FormInst | null>(null)
   const addFormData = ref<AddEmployeeForm>({ ...ADD_FORM_DEFAULTS })
 
   // 当前模式配置
@@ -323,40 +245,86 @@
     },
   }))
 
-  // 模态框按钮
-  const modalActions = computed<ActionItem[]>(() => [
+  const addFormOptions: FormOption<AddEmployeeForm>[] = [
     {
-      key: 'cancel',
-      label: '取消',
-      onClick: () => {
-        showAddModal.value = false
-      },
+      prop: 'name',
+      label: '姓名',
+      type: 'input',
+      placeholder: '请输入姓名',
+      rules: [
+        PRESET_RULES.required('姓名'),
+        PRESET_RULES.length('姓名', 2, 20),
+      ],
     },
     {
-      key: 'save',
-      label: '保存',
-      type: 'primary',
-      loading: tableCrud.loading.value,
-      onClick: handleAddSubmit,
+      prop: 'age',
+      label: '年龄',
+      type: 'inputNumber',
+      placeholder: '请输入年龄',
+      attrs: { min: 18, max: 65, showButton: false, style: { width: '100%' } },
+      rules: [
+        PRESET_RULES.required('年龄', ['blur', 'change']),
+        PRESET_RULES.range('年龄', 18, 65),
+      ],
     },
-  ])
-
-  // 表单验证规则
-  const addFormRules = {
-    name: [PRESET_RULES.required('姓名'), PRESET_RULES.length('姓名', 2, 20)],
-    age: [
-      PRESET_RULES.required('年龄', ['blur', 'change']),
-      PRESET_RULES.range('年龄', 18, 65),
-    ],
-    gender: [PRESET_RULES.required('性别', 'change')],
-    email: [PRESET_RULES.required('邮箱'), PRESET_RULES.email('邮箱')],
-    department: [PRESET_RULES.required('部门', 'change')],
-    joinDate: [PRESET_RULES.required('入职日期', ['blur', 'change'])],
-    status: [PRESET_RULES.required('状态', 'change')],
+    {
+      prop: 'gender',
+      label: '性别',
+      type: 'radio',
+      children: GENDER_OPTIONS,
+      rules: [PRESET_RULES.required('性别', 'change')],
+    },
+    {
+      prop: 'email',
+      label: '邮箱',
+      type: 'input',
+      placeholder: '请输入邮箱地址',
+      rules: [PRESET_RULES.required('邮箱'), PRESET_RULES.email('邮箱')],
+    },
+    {
+      prop: 'department',
+      label: '部门',
+      type: 'select',
+      children: DEPARTMENT_OPTIONS,
+      placeholder: '请选择部门',
+      rules: [PRESET_RULES.required('部门', 'change')],
+    },
+    {
+      prop: 'joinDate',
+      label: '入职日期',
+      type: 'datePicker',
+      attrs: { type: 'date', style: { width: '100%' } },
+      rules: [PRESET_RULES.required('入职日期', ['blur', 'change'])],
+    },
+    {
+      prop: 'status',
+      label: '状态',
+      type: 'select',
+      children: STATUS_OPTIONS,
+      rules: [PRESET_RULES.required('状态', 'change')],
+    },
+    {
+      prop: 'description',
+      label: '描述',
+      type: 'textarea',
+      placeholder: '请输入员工描述信息（选填）',
+      attrs: { rows: 3 },
+    },
+  ]
+  const addFormConfig: FormConfig<AddEmployeeForm> = {
+    labelPlacement: 'left',
+    labelWidth: 80,
+    onSubmit: async ({ model }) => {
+      const { age, joinDate } = model
+      if (age === null || joinDate === null)
+        throw new Error('年龄和入职日期不能为空')
+      await tableCrud.create({ ...model, id: Date.now(), age, joinDate })
+      showAddModal.value = false
+    },
   }
 
   // ============ 树形表格列 ============
-  const treeColumns = computed<DataTableColumns<Employee>>(() => [
+  const treeColumns = computed<TableColumn<Employee>[]>(() => [
     { key: 'name', title: '名称', width: 200 },
     {
       key: 'department',
@@ -400,31 +368,6 @@
   const handleAddEmployee = (): void => {
     addFormData.value = { ...ADD_FORM_DEFAULTS, joinDate: Date.now() }
     showAddModal.value = true
-  }
-
-  const handleAddSubmit = async (): Promise<void> => {
-    if (!addFormRef.value) return
-
-    try {
-      await addFormRef.value.validate()
-    } catch {
-      return
-    }
-
-    const { age, joinDate } = addFormData.value
-    if (age === null || joinDate === null) return
-
-    try {
-      await tableCrud.create({
-        ...addFormData.value,
-        id: Date.now(),
-        age,
-        joinDate,
-      })
-      showAddModal.value = false
-    } catch (error) {
-      console.error('新增失败:', error)
-    }
   }
 </script>
 

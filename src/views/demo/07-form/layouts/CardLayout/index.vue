@@ -14,7 +14,7 @@
     <C_Form
       ref="formRef"
       v-model="formData"
-      :options="getFormOptions()"
+      :options="FORM_OPTIONS"
       :config="formConfig"
       @submit="handleSubmit"
       @validate-success="handleValidateSuccess"
@@ -41,7 +41,7 @@
           <pre
             v-else-if="tab.name === 'options'"
             class="debug-code"
-            >{{ JSON.stringify(getFormOptions(), null, 2) }}</pre>
+            >{{ JSON.stringify(FORM_OPTIONS, null, 2) }}</pre>
           <pre
             v-else-if="tab.name === 'layoutConfig'"
             class="debug-code"
@@ -100,7 +100,6 @@
   const message = useMessage()
 
   // ==================== 表单配置 ====================
-  const getFormOptions = (): FormOption<CardFormData>[] => FORM_OPTIONS
   const cardLayoutConfig = CARD_LAYOUT_CONFIG
 
   // ==================== 计算属性 ====================
@@ -112,7 +111,7 @@
     labelPlacement: labelPlacement.value,
     validateOnChange: validateOnChange.value,
     onFieldsChange: handleFieldsChange,
-    onReset: () => message.info(MESSAGES.resetSuccess),
+    resetSuccessText: MESSAGES.resetSuccess,
   }))
 
   // ==================== 事件处理 ====================
@@ -143,7 +142,6 @@
 
   const resetForm = (): void => {
     resetFields()
-    message.info(MESSAGES.resetSuccess)
   }
 
   const setFormData = (data: CardFormData): void => {
@@ -158,7 +156,7 @@
 
   // ==================== 初始化 ====================
   onMounted(() => {
-    emit('fields-change', getFormOptions())
+    emit('fields-change', FORM_OPTIONS)
   })
 
   // ==================== 暴露方法 ====================

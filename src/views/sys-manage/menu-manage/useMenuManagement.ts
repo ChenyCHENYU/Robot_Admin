@@ -7,11 +7,11 @@
  */
 
 import type {
-  FormInst,
-  FormRules,
-  DialogReactive,
-  DialogOptions,
-} from 'naive-ui/es'
+  FormInstance,
+  FormConfig,
+} from '@robot-admin/naive-ui-components/C_Form'
+
+import type { FormItemRule, DialogReactive, DialogOptions } from 'naive-ui/es'
 import type { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
 import type { ActionItem, DropInfo } from '@robot-admin/naive-ui-components'
 import { useLatestRequest } from '@/composables/useLatestRequest'
@@ -107,7 +107,7 @@ export const useMenuManagement = () => {
   const searchPattern = ref('')
   const showModal = ref(false)
   const modalMode = ref<'add' | 'edit'>('add')
-  const formRef = ref<FormInst | null>(null)
+  const formRef = ref<FormInstance<FormData> | null>(null)
   const treeRef = ref<InstanceType<typeof C_Tree> | null>(null)
   const menuList = ref<MenuData[]>([])
   const selectedId = ref<string | null>(null)
@@ -159,32 +159,23 @@ export const useMenuManagement = () => {
       )
       .replace(/\/{2,}/g, '/')
   })
-  const formRules = computed<FormRules>(() =>
-    Object.fromEntries(
-      [
-        'name',
-        'type',
-        'sort',
-        'parentId',
-        'path',
-        'component',
-        'permission',
-      ].map(field => [
-        field,
-        {
-          trigger: ['input', 'blur', 'change'],
-          validator: () => {
-            const error = validateMenuDraft(
-              formData,
-              menuList.value,
-              buttonPermissions.value
-            )[field as keyof FormData]
-            return error ? new Error(error) : true
-          },
-        },
-      ])
-    )
-  )
+  /** 字段级规则使用组件当前模型，复用原有领域约束。 */
+  const fieldRules = (
+    field: keyof FormData,
+    model: FormData
+  ): FormItemRule[] => [
+    {
+      trigger: ['input', 'blur', 'change'],
+      validator: () => {
+        const error = validateMenuDraft(
+          model,
+          menuList.value,
+          buttonPermissions.value
+        )[field]
+        return error ? new Error(error) : true
+      },
+    },
+  ]
   const modalTitle = computed(
     () =>
       `${modalMode.value === 'add' ? '新增' : '编辑'}${formData.type === 'button' ? '按钮权限' : '菜单'}`
@@ -322,7 +313,7 @@ export const useMenuManagement = () => {
   const resetForm = () => {
     delete formData.id
     Object.assign(formData, DEFAULT_FORM_DATA)
-    formRef.value?.restoreValidation()
+    formRef.value?.clearValidation()
   }
   const handleAddMenu = (parentId?: string) => {
     if (busy.value) return
@@ -426,30 +417,35 @@ export const useMenuManagement = () => {
         !isMockDataMode() || (!!draft.id && changedCache)
     }
   }
-  const handleSaveMenu = async (): Promise<boolean> => {
-    if (busy.value || !formRef.value) return false
-    try {
-      await formRef.value.validate()
-    } catch {
-      return false
-    }
-    if (busy.value) return false
+  const formConfig = computed<FormConfig<FormData>>(() => ({
+    layout: 'grid',
+    grid: { cols: 3, gutter: 16 },
+    labelPlacement: 'top',
+    showActions: false,
+    disabled: saving.value,
+    preserveRemovedFields: true,
+    onSubmit: submitDraft,
+  }))
+  /** 统一入口复用组件的校验和提交锁，保留领域提交与导航同步。 */
+  const handleSaveMenu = () =>
+    busy.value
+      ? Promise.resolve(false)
+      : (formRef.value?.submit() ?? Promise.resolve(false))
+  /** 提交领域数据，保留鉴权上下文与列表同步。 */
+  async function submitDraft(): Promise<void> {
     saving.value = true
     const draft = snapshotDraft()
     const contextId = currentContextId()
     const generation = permissionStore.requestGeneration
     try {
       await saveDraft(draft, contextId)
-      if (!isCurrentSession(generation)) return true
-      showModal.value = false
+      if (!isCurrentSession(generation)) return
       message.success('配置已保存')
       if (draft.type === 'button') await loadPermissions()
       else await loadMenus()
-      return true
     } catch (error) {
       if (isCurrentSession(generation))
-        message.error(describeError(error, '保存失败，请重试'))
-      return false
+        throw new Error(describeError(error, '保存失败，请重试'))
     } finally {
       saving.value = false
     }
@@ -609,7 +605,7 @@ export const useMenuManagement = () => {
   watch(
     () => formData.type,
     () => {
-      formRef.value?.restoreValidation()
+      formRef.value?.clearValidation()
     }
   )
   onMounted(() => {
@@ -636,7 +632,8 @@ export const useMenuManagement = () => {
     formRef,
     treeRef,
     formData,
-    formRules,
+    fieldRules,
+    formConfig,
     menuList,
     selectedMenu,
     filteredMenuList,

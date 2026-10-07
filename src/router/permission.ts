@@ -22,12 +22,15 @@ import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
 import { message } from '@/plugins/discrete'
 import { setupNProgress } from '@/plugins/nprogress'
 import { claimChunkRecovery, clearChunkRecovery } from './chunkRecovery'
+import { installPageLoading } from './pageLoading'
 import type {
   NavigationGuardReturn,
   RouteLocationNormalized,
   RouteMeta,
 } from 'vue-router'
 const nprogress = setupNProgress()
+const disposePageLoading = installPageLoading(router)
+if (import.meta.hot) import.meta.hot.dispose(disposePageLoading)
 const WHITE_LIST = ['/login', '/404', '/401']
 const LOGIN_PATH = '/login'
 const DEFAULT_TITLE = 'Robot Admin'

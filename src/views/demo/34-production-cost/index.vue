@@ -147,39 +147,38 @@
               ><span class="i-mdi:download-outline" />导出当前范围</button
             ></header
           ><div class="cost-table-scroll"
-            ><table
-              ><thead
-                ><tr
-                  ><th>成本中心</th><th>计量产量 / 吨</th><th>实际 / 万元</th
-                  ><th>预算 / 万元</th><th>吨成本 / 元</th><th>预算偏差</th></tr
-                ></thead
-              ><tbody
-                ><tr
-                  v-for="row in visibleRows"
-                  :key="row.id"
-                  ><td
-                    ><button
-                      type="button"
-                      @click="selectScope(row.id)"
-                      >{{ row.name }}<small>{{ row.id }}</small></button
-                    ></td
-                  ><td>{{ formatQuantity(row.quantity) }}</td
-                  ><td>{{ formatCost(row.actual) }}</td
-                  ><td>{{ formatCost(row.standard) }}</td
-                  ><td>{{ formatQuantity(row.actual / row.quantity, 2) }}</td
-                  ><td :class="{ over: row.actual > row.standard }"
-                    >{{ row.actual > row.standard ? '+' : ''
-                    }}{{ (differenceRate(row) * 100).toFixed(2) }}%</td
-                  ></tr
-                ><tr
-                  v-for="empty in emptyRows"
-                  :key="`empty-${empty}`"
-                  aria-hidden="true"
-                  class="cost-empty-row"
-                  ><td colspan="6">&nbsp;</td></tr
-                ></tbody
-              ></table
-            ></div
+            ><NConfigProvider :theme="darkTheme"
+              ><C_Table
+                class="cost-ledger-table"
+                flex-height
+                :columns="ledgerColumns"
+                :data="visibleRows"
+                row-key="id"
+                :theme-overrides="{
+                  thColor: '#0d192b',
+                  thColorHover: '#17253a',
+                  tdColor: 'transparent',
+                  tdColorHover: '#1a2b43',
+                  thTextColor: 'var(--cost-muted)',
+                  tdTextColor: 'var(--cost-text)',
+                  borderColor: 'var(--cost-line)',
+                  borderRadius: '0',
+                  thFontWeight: '400',
+                  fontSizeSmall: 'clamp(11px, 0.65vw, 14px)',
+                  lineHeight: '1.35',
+                  thPaddingSmall: '10px 18px',
+                  tdPaddingSmall: '6px 18px',
+                }"
+                :config="{
+                  toolbar: { show: false },
+                  pagination: false,
+                  display: {
+                    size: 'small',
+                    bordered: false,
+                    striped: false,
+                    scrollX: 780,
+                  },
+                }" /></NConfigProvider></div
           ><footer
             ><span>共 {{ scopeRows.length }} 个成本中心</span
             ><div
@@ -271,9 +270,72 @@
   </div>
 </template>
 <script setup lang="ts">
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+  import { darkTheme } from 'naive-ui'
+  const ledgerColumns: TableColumn<FactoryData>[] = [
+    {
+      title: '成本中心',
+      key: 'name',
+      width: 180,
+      render: row =>
+        h(
+          'button',
+          {
+            type: 'button',
+            class: 'cost-ledger-link',
+            onClick: () => selectScope(row.id),
+          },
+          [row.name, h('small', row.id)]
+        ),
+    },
+    {
+      title: '计量产量 / 吨',
+      key: 'quantity',
+      width: 120,
+      render: row => formatQuantity(row.quantity),
+    },
+    {
+      title: '实际 / 万元',
+      key: 'actual',
+      width: 120,
+      render: row => formatCost(row.actual),
+    },
+    {
+      title: '预算 / 万元',
+      key: 'standard',
+      width: 120,
+      render: row => formatCost(row.standard),
+    },
+    {
+      title: '吨成本 / 元',
+      key: 'unit',
+      width: 120,
+      render: row => formatQuantity(row.actual / row.quantity, 2),
+    },
+    {
+      title: '预算偏差',
+      key: 'difference',
+      width: 120,
+      render: row =>
+        h(
+          'span',
+          {
+            style: {
+              color:
+                row.actual > row.standard
+                  ? 'var(--cost-over)'
+                  : 'var(--cost-accent)',
+            },
+          },
+          `${row.actual > row.standard ? '+' : ''}${(differenceRate(row) * 100).toFixed(2)}%`
+        ),
+    },
+  ]
+
   import type { EChartsCoreOption } from 'echarts/core'
   import ObservatoryChart from '@/views/dashboard/shared/c_chart/index.vue'
   import {
+    type FactoryData,
     COST_DEMO_DATE,
     COST_FACTORIES,
     summarizeCosts,
@@ -325,9 +387,6 @@
   )
   const visibleRows = computed(() =>
     scopeRows.value.slice((page.value - 1) * pageSize, page.value * pageSize)
-  )
-  const emptyRows = computed(() =>
-    Math.max(0, pageSize - visibleRows.value.length)
   )
   /** 切换统计范围时重置台账页码，所有指标同步重算。 */
   const selectScope = (id: string) => {

@@ -1,11 +1,21 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: 10-table 页面表单与业务配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
 import type { DataRecord, EditMode } from '@robot-admin/naive-ui-components'
-import type { AlertProps, SelectOption } from 'naive-ui'
+import type { AlertProps } from 'naive-ui'
 import {
   createMemoryTableSource,
   type TableColumn,
   type UseTableCrudConfig,
 } from '@robot-admin/request-core/naive'
-import { PRESET_RULES } from '@/utils/d_formValidate'
+import {
+  PRESET_RULES,
+  type OptionItem,
+} from '@robot-admin/naive-ui-components/C_Form'
 
 // ================= 业务类型定义 =================
 export interface Employee extends DataRecord {
@@ -80,25 +90,25 @@ export const MODE_CONFIG: Record<
 }
 
 // ================= 选项配置 =================
-export const DEPARTMENT_OPTIONS: SelectOption[] = [
+export const DEPARTMENT_OPTIONS: OptionItem[] = [
   { label: '技术部', value: 'tech' },
   { label: '人事部', value: 'hr' },
   { label: '市场部', value: 'market' },
   { label: '财务部', value: 'finance' },
 ]
 
-export const STATUS_OPTIONS: SelectOption[] = [
+export const STATUS_OPTIONS: OptionItem[] = [
   { label: '在职', value: 'active' },
   { label: '离职', value: 'inactive' },
   { label: '试用期', value: 'probation' },
 ]
 
-export const GENDER_OPTIONS: SelectOption[] = [
+export const GENDER_OPTIONS: OptionItem[] = [
   { label: '男', value: 'male' },
   { label: '女', value: 'female' },
 ]
 
-export const LEVEL_OPTIONS: SelectOption[] = [
+export const LEVEL_OPTIONS: OptionItem[] = [
   { label: '初级', value: 'junior' },
   { label: '中级', value: 'mid' },
   { label: '高级', value: 'senior' },

@@ -13,7 +13,7 @@ import type {
   FormOption,
   DynamicFormConfig,
 } from '@robot-admin/naive-ui-components'
-import { PRESET_RULES } from '@/utils/d_formValidate'
+import { PRESET_RULES } from '@robot-admin/naive-ui-components/C_Form'
 
 const { required } = PRESET_RULES
 
@@ -245,28 +245,6 @@ export const formatFieldsForPreview = (fields: FormOption[]) =>
     required: Boolean(f.required || f.rules?.some(rule => rule.required)),
     span: f.layout?.span || 12,
   }))
-
-/**
- * 创建表单操作按钮配置
- */
-export const FORM_ACTIONS = {
-  submit: {
-    type: 'primary' as const,
-    size: 'large' as const,
-    icon: 'mdi:check-circle-outline',
-    getText: (loading: boolean) => (loading ? '提交中...' : '提交表单'),
-  },
-  reset: {
-    size: 'large' as const,
-    icon: 'mdi:refresh',
-    text: '重置表单',
-  },
-  preview: {
-    size: 'large' as const,
-    icon: 'mdi:code-json',
-    text: '预览数据',
-  },
-} as const
 
 // ================= 演示用的扩展字段模板 =================
 export const DEMO_FIELD_TEMPLATES: Partial<FormOption>[] = [

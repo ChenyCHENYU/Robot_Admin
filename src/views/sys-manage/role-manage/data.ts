@@ -1,4 +1,11 @@
-import type { FormRules } from 'naive-ui/es'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: role-manage 页面表单与业务配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+import type { FormItemRule } from 'naive-ui/es'
 import {
   deleteData,
   getData,
@@ -141,7 +148,7 @@ export const UI_CONFIG = {
 }
 
 // ==================== 表单验证规则 ====================
-export const ROLE_FORM_RULES: FormRules = {
+export const ROLE_FORM_RULES: Record<string, FormItemRule[]> = {
   name: [
     { required: true, message: '请输入角色名称', trigger: ['input', 'blur'] },
     {
@@ -169,7 +176,12 @@ export const ROLE_FORM_RULES: FormRules = {
     { required: true, message: '请选择角色类型', trigger: ['change', 'blur'] },
   ],
   sort: [
-    { required: true, message: '请输入排序值', trigger: ['input', 'blur'] },
+    {
+      required: true,
+      type: 'number',
+      message: '请输入排序值',
+      trigger: ['input', 'blur'],
+    },
     {
       type: 'number',
       min: 0,
@@ -839,13 +851,16 @@ export const getRoleDetailApi = async (
 }
 
 export const getRoleUsersApi = async (
-  roleId: string
+  roleId: string,
+  signal?: AbortSignal
 ): Promise<ApiResponse<RoleUserData[]>> => {
   if (!isMockDataMode()) {
-    return getData<ApiResponse<RoleUserData[]>>(`/sys/roles/${roleId}/users`)
+    return getData<ApiResponse<RoleUserData[]>>(`/sys/roles/${roleId}/users`, {
+      signal,
+    })
   }
   const users = getUsersByRoleId(roleId)
-  return createMockApi(users, 300)
+  return createMockApi(users, 300, signal)
 }
 
 export const getRoleDataScopesApi = (

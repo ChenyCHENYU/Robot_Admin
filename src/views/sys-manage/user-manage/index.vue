@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: user-manage 页面
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+
 <template>
   <div class="user-management">
     <!-- 搜索和操作栏 -->
@@ -346,102 +353,81 @@
       :title="modalTitle"
       :positive-text="modalMode === 'add' ? '确认添加' : '确认修改'"
       negative-text="取消"
-      @positive-click="handleSaveUser"
+      @positive-click="() => formRef?.submit() ?? false"
+      :closable="!formRef?.isSubmitting"
+      :mask-closable="!formRef?.isSubmitting"
+      :close-on-esc="!formRef?.isSubmitting"
+      :negative-button-props="{ disabled: !!formRef?.isSubmitting }"
       @negative-click="handleCancelModal"
       style="width: 800px"
     >
-      <NForm
+      <C_Form
+        v-if="showModal"
         ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-placement="left"
-        label-width="100px"
+        :model-value="formData"
+        @update:model-value="updateUserForm"
+        :options="formOptions"
+        :config="formConfig"
+        :renderers="formRenderers"
+        @submit="showModal = false"
+      />
+      <NCard
+        v-if="mockMode"
+        title="企业归属与公司内角色"
+        size="small"
+        class="membership-editor"
       >
-        <NGrid
-          :cols="2"
-          :x-gap="16"
+        <p
+          >登录默认进入主公司；兼任公司可在登录后切换。每个账号必须且只能有一个主公司。</p
         >
-          <!-- 表单字段 -->
-          <NGi
-            v-for="field in getFormFields()"
-            :key="field.key"
-          >
-            <NFormItem
-              :label="field.label"
-              :path="field.path"
-              v-if="field.condition"
-            >
-              <component
-                :is="field.component"
-                v-bind="field.props"
-                v-model:value="formData[field.key]"
-              />
-            </NFormItem>
-          </NGi>
-        </NGrid>
-
-        <NCard
-          v-if="mockMode"
-          title="企业归属与公司内角色"
-          size="small"
-          class="membership-editor"
+        <div
+          v-for="(membership, index) in formData.memberships"
+          :key="index"
+          class="membership-editor__row"
         >
-          <p
-            >登录默认进入主公司；兼任公司可在登录后切换。每个账号必须且只能有一个主公司。</p
-          >
-          <div
-            v-for="(membership, index) in formData.memberships"
-            :key="index"
-            class="membership-editor__row"
-          >
-            <NSelect
-              :value="membership.contextId"
-              :options="getCompanyOptions(membership.contextId)"
-              placeholder="选择公司"
-              @update:value="membership.contextId = $event"
-            />
-            <NSelect
-              :value="membership.roleId"
-              :options="companyRoleOptions"
-              placeholder="公司内角色"
-              @update:value="membership.roleId = $event"
-            />
-            <NButton
-              size="small"
-              :type="membership.isPrimary ? 'primary' : 'default'"
-              @click="setPrimaryMembership(index)"
-            >
-              {{ membership.isPrimary ? '主公司' : '设为主公司' }}
-            </NButton>
-            <NButton
-              size="small"
-              quaternary
-              :disabled="formData.memberships.length === 1"
-              @click="removeCompanyMembership(index)"
-              >移除</NButton
-            >
-          </div>
-          <NButton
-            dashed
-            block
-            :disabled="formData.memberships.length >= companyOptions.length"
-            @click="addCompanyMembership"
-            >+ 添加兼任公司</NButton
-          >
-        </NCard>
-
-        <NFormItem
-          label="备注"
-          path="remark"
-        >
-          <NInput
-            v-model:value="formData.remark"
-            type="textarea"
-            placeholder="请输入备注信息"
-            :rows="3"
+          <NSelect
+            :disabled="!!formRef?.isSubmitting"
+            :value="membership.contextId"
+            :options="getCompanyOptions(membership.contextId)"
+            placeholder="选择公司"
+            @update:value="membership.contextId = $event"
           />
-        </NFormItem>
-      </NForm>
+          <NSelect
+            :disabled="!!formRef?.isSubmitting"
+            :value="membership.roleId"
+            :options="companyRoleOptions"
+            placeholder="公司内角色"
+            @update:value="membership.roleId = $event"
+          />
+          <NButton
+            size="small"
+            :type="membership.isPrimary ? 'primary' : 'default'"
+            :disabled="!!formRef?.isSubmitting"
+            @click="setPrimaryMembership(index)"
+          >
+            {{ membership.isPrimary ? '主公司' : '设为主公司' }}
+          </NButton>
+          <NButton
+            size="small"
+            quaternary
+            :disabled="
+              formData.memberships.length === 1 || !!formRef?.isSubmitting
+            "
+            @click="removeCompanyMembership(index)"
+            >移除</NButton
+          >
+        </div>
+        <NButton
+          dashed
+          block
+          :disabled="
+            formData.memberships.length >= companyOptions.length ||
+            !!formRef?.isSubmitting
+          "
+          @click="addCompanyMembership"
+          >+ 添加兼任公司</NButton
+        >
+      </NCard>
     </NModal>
 
     <!-- 重置密码弹窗 -->
@@ -451,43 +437,36 @@
       title="重置密码"
       positive-text="确认重置"
       negative-text="取消"
-      @positive-click="handleResetPassword"
+      @positive-click="() => resetPasswordFormRef?.submit() ?? false"
+      :closable="!resetPasswordFormRef?.isSubmitting"
+      :mask-closable="!resetPasswordFormRef?.isSubmitting"
+      :close-on-esc="!resetPasswordFormRef?.isSubmitting"
+      :negative-button-props="{
+        disabled: !!resetPasswordFormRef?.isSubmitting,
+      }"
     >
-      <NForm
+      <C_Form
+        v-if="showResetPasswordModal"
         ref="resetPasswordFormRef"
-        :model="resetPasswordForm"
-        :rules="resetPasswordRules"
-        label-placement="left"
-        label-width="100px"
-      >
-        <NFormItem
-          label="新密码"
-          path="newPassword"
-        >
-          <NInput
-            v-model:value="resetPasswordForm.newPassword"
-            type="password"
-            placeholder="请输入新密码"
-            show-password-on="click"
-          />
-        </NFormItem>
-        <NFormItem
-          label="确认密码"
-          path="confirmPassword"
-        >
-          <NInput
-            v-model:value="resetPasswordForm.confirmPassword"
-            type="password"
-            placeholder="请再次输入新密码"
-            show-password-on="click"
-          />
-        </NFormItem>
-      </NForm>
+        :model-value="resetPasswordForm"
+        @update:model-value="Object.assign(resetPasswordForm, $event)"
+        :options="resetPasswordOptions"
+        :config="resetPasswordConfig"
+        @submit="showResetPasswordModal = false"
+      />
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
+  import {
+    PRESET_RULES,
+    type FormInstance,
+    type FormOption,
+    type FormConfig,
+    type FormRenderer,
+    type SubmitEventPayload,
+  } from '@robot-admin/naive-ui-components/C_Form'
   import { useLatestRequest } from '@/composables/useLatestRequest'
   import { isMockDataMode } from '@/config/dataMode'
   import { s_userStore } from '@/stores/user'
@@ -499,14 +478,7 @@
     upsertMockDirectoryUser,
     validateMockMemberships,
   } from '@/api/auth.mock-directory'
-  import type { Component } from 'vue'
-  import {
-    type FormInst,
-    NButton,
-    NSpace,
-    NDropdown,
-    NTreeSelect,
-  } from 'naive-ui/es'
+  import { NTreeSelect } from 'naive-ui/es'
   import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
   import '@robot-admin/naive-ui-components/C_Icon/style.css'
   import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
@@ -524,7 +496,6 @@
     type ResetPasswordForm,
     type UserType,
     USER_FORM_RULES,
-    createResetPasswordRules,
     DEFAULT_USER_FORM_DATA,
     DEFAULT_RESET_PASSWORD_FORM,
     UI_CONFIG,
@@ -600,8 +571,8 @@
   const showUserDetail = ref(false)
   const showResetPasswordModal = ref(false)
   const modalMode = ref<'add' | 'edit'>('add')
-  const formRef = ref<FormInst | null>(null)
-  const resetPasswordFormRef = ref<FormInst | null>(null)
+  const formRef = ref<FormInstance<UserFormData> | null>(null)
+  const resetPasswordFormRef = ref<FormInstance<ResetPasswordForm> | null>(null)
   const tableRef = ref()
   const deptTreeRef = ref<InstanceType<typeof C_Tree> | null>(null)
   const expandedDeptKeys = ref<string[]>([])
@@ -616,14 +587,9 @@
   const userRoleOptions = ref<{ label: string; value: string }[]>([])
 
   const formData = reactive<UserFormData>({ ...DEFAULT_USER_FORM_DATA })
-  const formRules = USER_FORM_RULES
   const resetPasswordForm = reactive<ResetPasswordForm>({
     ...DEFAULT_RESET_PASSWORD_FORM,
   })
-  const resetPasswordRules = createResetPasswordRules(
-    () => resetPasswordForm.newPassword
-  )
-
   const searchForm = reactive<SearchForm>({
     keyword: '',
     status: null,
@@ -808,7 +774,7 @@
     }
     return h(
       NSpace,
-      { size: 4 },
+      { size: 4, justify: 'center' },
       {
         default: () =>
           row.roleNames!.map(role =>
@@ -938,7 +904,11 @@
         )
       )
 
-      return h(NSpace, { size: 2, wrap: false }, () => buttons)
+      return h(
+        NSpace,
+        { size: 2, wrap: false, justify: 'center' },
+        () => buttons
+      )
     },
   }))
 
@@ -1100,79 +1070,56 @@
   ]
 
   // ==================== 表单字段配置 ====================
-  const getFormFields = (): Array<{
-    key: keyof UserFormData
-    label: string
-    path: string
-    component: Component
-    props: Record<string, unknown>
-    condition: boolean
-  }> => [
+  const formOptions = computed<FormOption<UserFormData>[]>(() => [
     {
-      key: 'userType' as keyof UserFormData,
+      prop: 'userType',
+      rules: USER_FORM_RULES.userType,
       label: '用户类型',
-      path: 'userType',
-      component: NSelect,
-      props: {
-        options: UI_CONFIG.userType,
-        placeholder: '请选择用户类型',
-        onUpdateValue: handleUserTypeChange,
-      },
-      condition: true,
+      type: 'select',
+      children: UI_CONFIG.userType,
+      placeholder: '请选择用户类型',
     },
     {
-      key: 'username' as keyof UserFormData,
+      prop: 'username',
+      rules: USER_FORM_RULES.username,
       label: '用户名',
-      path: 'username',
-      component: NInput,
-      props: {
+      type: 'input',
+      disabled: modalMode.value === 'edit' || !!formRef.value?.isSubmitting,
+      help:
+        modalMode.value === 'edit'
+          ? '用户名作为登录凭证，创建后不可修改'
+          : undefined,
+      attrs: {
         placeholder: '请输入用户名',
-        disabled: modalMode.value === 'edit',
-        ...(modalMode.value === 'edit' && {
-          suffix: () =>
-            h(
-              NTooltip,
-              {},
-              {
-                trigger: () =>
-                  h(C_Icon, { name: COMPONENT_CONFIG.icons.info, size: 16 }),
-                default: () => '用户名作为登录凭证，创建后不可修改',
-              }
-            ),
-        }),
       },
-      condition: true,
     },
     {
-      key: 'nickname' as keyof UserFormData,
+      prop: 'nickname',
+      rules: USER_FORM_RULES.nickname,
       label: '昵称',
-      path: 'nickname',
-      component: NInput,
-      props: { placeholder: '请输入昵称' },
-      condition: true,
+      type: 'input',
+      attrs: { placeholder: '请输入昵称' },
     },
     {
-      key: 'email' as keyof UserFormData,
+      prop: 'email',
+      rules: USER_FORM_RULES.email,
       label: '邮箱',
-      path: 'email',
-      component: NInput,
-      props: { placeholder: '请输入邮箱' },
-      condition: true,
+      type: 'input',
+      attrs: { placeholder: '请输入邮箱' },
     },
     {
-      key: 'phone' as keyof UserFormData,
+      prop: 'phone',
+      rules: USER_FORM_RULES.phone,
       label: '手机号',
-      path: 'phone',
-      component: NInput,
-      props: { placeholder: '请输入手机号' },
-      condition: true,
+      type: 'input',
+      attrs: { placeholder: '请输入手机号' },
     },
     {
-      key: 'deptId' as keyof UserFormData,
+      prop: 'deptId',
+      rules: USER_FORM_RULES.deptId,
       label: '所属部门',
-      path: 'deptId',
-      component: NTreeSelect,
-      props: {
+      type: 'treeSelect',
+      attrs: {
         options: deptTreeOptions.value,
         placeholder: '请选择部门',
         clearable: true,
@@ -1181,65 +1128,118 @@
         labelField: 'name',
         childrenField: 'children',
       },
-      condition: formData.userType === 'internal',
+      show: formData.userType === 'internal',
     },
     {
-      key: 'companyName' as keyof UserFormData,
+      prop: 'companyName',
+      rules: USER_FORM_RULES.companyName,
       label: '公司名称',
-      path: 'companyName',
-      component: NInput,
-      props: { placeholder: '请输入公司名称' },
-      condition: formData.userType === 'external',
+      type: 'input',
+      attrs: { placeholder: '请输入公司名称' },
+      show: formData.userType === 'external',
     },
     {
-      key: 'contactPerson' as keyof UserFormData,
+      prop: 'contactPerson',
+      rules: USER_FORM_RULES.contactPerson,
       label: '联系人',
-      path: 'contactPerson',
-      component: NInput,
-      props: { placeholder: '请输入联系人' },
-      condition: formData.userType === 'external',
+      type: 'input',
+      attrs: { placeholder: '请输入联系人' },
+      show: formData.userType === 'external',
     },
     {
-      key: 'roleIds' as keyof UserFormData,
+      prop: 'roleIds',
+      rules: USER_FORM_RULES.roleIds,
       label: '用户角色',
-      path: 'roleIds',
-      component: NSelect,
-      props: {
-        options: filteredRoleOptions.value,
-        placeholder: '请选择角色',
+      type: 'select',
+      children: filteredRoleOptions.value,
+      placeholder: '请选择角色',
+      attrs: {
         multiple: true,
         clearable: true,
       },
-      condition: true,
     },
     {
-      key: 'password' as keyof UserFormData,
+      prop: 'password',
+      rules: USER_FORM_RULES.password,
       label: '初始密码',
-      path: 'password',
-      component: NInput,
-      props: {
+      type: 'input',
+      attrs: {
         type: 'password',
         placeholder: '请输入初始密码',
         showPasswordOn: 'click',
       },
-      condition: modalMode.value === 'add',
+      show: modalMode.value === 'add',
     },
     {
-      key: 'status' as keyof UserFormData,
+      prop: 'status',
+      rules: USER_FORM_RULES.status,
       label: '用户状态',
-      path: 'status',
-      component: NSwitch,
-      props: {
+      type: 'userStatus',
+      attrs: {
         checkedValue: 1,
         uncheckedValue: 0,
-        ...(modalMode.value === 'edit' && {
-          checked: () => '正常',
-          unchecked: () => '禁用',
-        }),
       },
-      condition: true,
+    },
+    {
+      prop: 'remark',
+      label: '备注',
+      type: 'textarea',
+      placeholder: '请输入备注信息',
+      attrs: { rows: 3 },
+      layout: { span: 2 },
+    },
+  ])
+  const formRenderers: Record<string, FormRenderer> = {
+    treeSelect: props => h(NTreeSelect, props),
+    userStatus: props =>
+      h(NSwitch, props, { checked: () => '正常', unchecked: () => '禁用' }),
+  }
+  const formConfig = computed<FormConfig<UserFormData>>(() => ({
+    disabled: !!formRef.value?.isSubmitting,
+    layout: 'grid',
+    grid: { cols: 2, gutter: 16 },
+    labelPlacement: 'left',
+    labelWidth: 100,
+    showActions: false,
+    preserveRemovedFields: true,
+    onSubmit: handleSaveUser,
+  }))
+  const resetPasswordOptions: FormOption<ResetPasswordForm>[] = [
+    {
+      prop: 'newPassword',
+      label: '新密码',
+      type: 'input',
+      placeholder: '请输入新密码',
+      attrs: { type: 'password', showPasswordOn: 'click' },
+      rules: USER_FORM_RULES.password,
+    },
+    {
+      prop: 'confirmPassword',
+      label: '确认密码',
+      type: 'input',
+      placeholder: '请再次输入新密码',
+      attrs: { type: 'password', showPasswordOn: 'click' },
+      rules: [PRESET_RULES.required('确认密码')],
+      dependsOn: ['newPassword'],
+      crossFieldValidator: model =>
+        model.confirmPassword !== model.newPassword
+          ? '两次密码输入不一致'
+          : null,
     },
   ]
+  const resetPasswordConfig = computed<FormConfig<ResetPasswordForm>>(() => ({
+    disabled: !!resetPasswordFormRef.value?.isSubmitting,
+    labelPlacement: 'left',
+    labelWidth: 100,
+    showActions: false,
+    onSubmit: handleResetPassword,
+  }))
+  /** 先同步模型再处理类型联动，避免旧字段覆盖部门和角色的清理。 */
+  function updateUserForm(model: UserFormData) {
+    const typeChanged = model.userType !== formData.userType
+    Object.assign(formData, model)
+    if (typeChanged) handleUserTypeChange(model.userType)
+  }
 
   // ==================== 组合式函数 ====================
   const useBatchOperations = () => {
@@ -1373,13 +1373,10 @@
       return { valid: true }
     }
 
-    const handleAddUserData = async (
-      userData: UserFormData
-    ): Promise<boolean> => {
+    const handleAddUserData = async (userData: UserFormData): Promise<void> => {
       const validation = validateUserData(userData, 'add')
       if (!validation.valid) {
-        message.error(validation.error!)
-        return false
+        throw new Error(validation.error)
       }
 
       const newUser = buildUserData(userData)
@@ -1394,24 +1391,21 @@
       MOCK_USER_DATA.push(newUser)
       if (mockMode) persistMockUsers()
       message.success('添加成功')
-      return true
     }
 
     const handleUpdateUserData = async (
       userData: UserFormData
-    ): Promise<boolean> => {
+    ): Promise<void> => {
       const validation = validateUserData(userData, 'edit')
       if (!validation.valid) {
-        message.error(validation.error!)
-        return false
+        throw new Error(validation.error)
       }
 
       const userIndex = MOCK_USER_DATA.findIndex(
         user => user.id === userData.id
       )
       if (userIndex === -1) {
-        message.error('用户不存在')
-        return false
+        throw new Error('用户不存在')
       }
 
       const existingUser = MOCK_USER_DATA[userIndex]
@@ -1433,7 +1427,6 @@
       }
 
       message.success('修改成功')
-      return true
     }
 
     return { handleAddUserData, handleUpdateUserData }
@@ -1591,42 +1584,33 @@
     showResetPasswordModal.value = true
   }
 
-  const handleResetPassword = async (): Promise<boolean> => {
+  /** 重置当前用户密码，失败交由组件统一反馈。 */
+  async function handleResetPassword(): Promise<void> {
     try {
-      await resetPasswordFormRef.value?.validate()
       if (!currentResetUserId.value) throw new Error('未选择需要重置的用户')
       await resetUserPasswordApi(
         currentResetUserId.value,
         resetPasswordForm.newPassword
       )
       message.success('密码重置成功')
-      showResetPasswordModal.value = false
-      return true
     } catch (error) {
-      if (error instanceof Array) return false
-      message.error('密码重置失败')
-      return false
+      throw error instanceof Error ? error : new Error('密码重置失败')
     }
   }
 
-  const handleSaveUser = async (): Promise<boolean> => {
+  /** 提交用户快照，校验企业归属并刷新用户列表。 */
+  async function handleSaveUser({
+    model,
+  }: SubmitEventPayload<UserFormData>): Promise<void> {
     try {
-      await formRef.value?.validate()
-      if (mockMode) validateMockMemberships(formData.memberships)
-      const success =
-        modalMode.value === 'add'
-          ? await handleAddUserData(formData)
-          : await handleUpdateUserData(formData)
+      if (mockMode) validateMockMemberships(model.memberships)
+      await (modalMode.value === 'add'
+        ? handleAddUserData(model)
+        : handleUpdateUserData(model))
 
-      if (success) {
-        showModal.value = false
-        await loadUsers()
-      }
-      return success
+      await loadUsers()
     } catch (error) {
-      if (error instanceof Array) return false
-      message.error(error instanceof Error ? error.message : '保存失败')
-      return false
+      throw error instanceof Error ? error : new Error('保存失败')
     }
   }
 

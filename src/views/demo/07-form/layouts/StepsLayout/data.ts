@@ -1,5 +1,13 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @FilePath: \Robot_Admin\src\views\demo\07-form\layouts\StepsLayout\data.ts
+ * @Description: 步骤表单字段、验证规则与布局配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
 import type { FormOption } from '@robot-admin/naive-ui-components'
-import { PRESET_RULES } from '@/utils/d_formValidate'
+import { PRESET_RULES } from '@robot-admin/naive-ui-components/C_Form'
 
 const { required, length, email } = PRESET_RULES
 
@@ -128,12 +136,12 @@ export const getFormOptions = (): FormOption[] => [
     placeholder: '请再次输入密码',
     layout: { step: 'step3' },
     attrs: { type: 'password', showPasswordOn: 'click' },
-    rules: [
-      required('确认密码'),
-      // 跨字段校验：确认密码一致性
-      // 注意：此规则中不直接引用 formData，避免让 options 的 computed 依赖 formModel
-      // naive-ui 验证器会在提交/blur 时按需执行
-    ],
+    rules: [required('确认密码')],
+    dependsOn: ['password'],
+    crossFieldValidator: model =>
+      model.confirmPassword && model.confirmPassword !== model.password
+        ? '两次输入密码不一致'
+        : null,
   },
   {
     type: 'input',

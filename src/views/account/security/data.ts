@@ -1,4 +1,14 @@
-import type { FormRules } from 'naive-ui/es'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: security 页面表单与业务配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+import {
+  PRESET_RULES,
+  type FormOption,
+} from '@robot-admin/naive-ui-components/C_Form'
 import type { AccountLoginRecord, AccountSecuritySetting } from '@/api/account'
 
 // ==================== 类型定义 ====================
@@ -13,21 +23,57 @@ export type LoginRecord = AccountLoginRecord
 export type SecuritySetting = AccountSecuritySetting
 
 // ==================== 表单验证规则 ====================
-export const PASSWORD_FORM_RULES: FormRules = {
-  oldPassword: [{ required: true, message: '请输入当前密码', trigger: 'blur' }],
-  newPassword: [
-    { required: true, message: '请输入新密码', trigger: 'blur' },
-    { min: 8, max: 32, message: '密码长度在 8-32 个字符', trigger: 'blur' },
-    {
-      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      message: '需包含大小写字母和数字',
-      trigger: 'blur',
+export const PASSWORD_FORM_OPTIONS: FormOption<ChangePasswordForm>[] = [
+  {
+    prop: 'oldPassword',
+    label: '当前密码',
+    type: 'input',
+    placeholder: '请输入当前密码',
+    attrs: {
+      type: 'password',
+      showPasswordOn: 'click',
+      autocomplete: 'current-password',
     },
-  ],
-  confirmPassword: [
-    { required: true, message: '请确认新密码', trigger: 'blur' },
-  ],
-}
+    rules: [PRESET_RULES.required('当前密码')],
+  },
+  {
+    prop: 'newPassword',
+    label: '新密码',
+    type: 'input',
+    placeholder: '请输入新密码',
+    attrs: {
+      type: 'password',
+      showPasswordOn: 'click',
+      autocomplete: 'new-password',
+    },
+    rules: [
+      PRESET_RULES.required('新密码'),
+      PRESET_RULES.length('密码', 8, 32),
+      {
+        pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        message: '需包含大小写字母和数字',
+        trigger: 'blur',
+      },
+    ],
+  },
+  {
+    prop: 'confirmPassword',
+    label: '确认密码',
+    type: 'input',
+    placeholder: '请再次输入新密码',
+    attrs: {
+      type: 'password',
+      showPasswordOn: 'click',
+      autocomplete: 'new-password',
+    },
+    rules: [PRESET_RULES.required('确认密码')],
+    dependsOn: ['newPassword'],
+    crossFieldValidator: model =>
+      model.confirmPassword !== model.newPassword
+        ? '两次输入的密码不一致'
+        : null,
+  },
+]
 
 // ==================== 默认表单数据 ====================
 export const DEFAULT_PASSWORD_FORM: ChangePasswordForm = {

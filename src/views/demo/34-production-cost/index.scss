@@ -412,54 +412,34 @@
 }
 .cost-table-scroll {
   overflow-x: auto;
-  table {
-    width: 100%;
-    min-width: 680px;
-    border-collapse: collapse;
-    text-align: right;
-    font-size: clamp(11px, 0.65vw, 17px);
+  :deep(.cost-ledger-table) {
+    // 固定五行的展示空间，末页与单厂下钻时不改变台账及页脚位置。
+    height: calc(5 * clamp(46px, 4.1vh, 58px) + 48px);
+    font-size: clamp(11px, 0.65vw, 14px);
     th {
-      padding: 13px 18px;
-      font-size: clamp(10px, 0.55vw, 14px);
-      font-weight: 400;
-      color: var(--cost-muted);
-      background: #0d192b;
+      height: 48px;
     }
     td {
       height: clamp(46px, 4.1vh, 58px);
-      padding: 6px 18px;
-      line-height: 1.35;
-      border-top: 1px solid #26375066;
-      color: #c3d2e4;
-      &.over {
-        color: var(--cost-over);
-      }
-      &:last-child:not(.over) {
-        color: var(--cost-accent);
-      }
     }
-    th:first-child,
-    td:first-child {
-      text-align: left;
+  }
+  :deep(.cost-ledger-link) {
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    small {
+      display: block;
+      color: var(--cost-muted);
+      font-size: 9px;
+      line-height: 1.2;
+      margin-top: 3px;
     }
-    td button {
-      text-align: left;
-      small {
-        display: block;
-        color: var(--cost-muted);
-        font-size: 9px;
-        line-height: 1.2;
-        margin-top: 3px;
-      }
-      &:hover {
-        color: var(--cost-accent);
-      }
-    }
-    tbody tr:not(.cost-empty-row):hover {
-      background: #1a2b43;
+    &:hover {
+      color: var(--cost-accent);
     }
   }
 }
+
 .cost-insights {
   display: grid;
   gap: 21px;

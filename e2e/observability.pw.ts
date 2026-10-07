@@ -169,7 +169,7 @@ test('事件分页末页与空筛选保持固定高度，演示与远端记录�
     '0',
     '0',
   ])
-  await expect(page.locator('.recent-table')).toContainText('暂无记录')
+  await expect(page.locator('.recent-table .n-empty')).toBeVisible()
   expect((await page.locator('.recent-table').boundingBox())!.height).toBe(
     height
   )

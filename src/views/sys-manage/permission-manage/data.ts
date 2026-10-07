@@ -1,5 +1,12 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: permission-manage 页面表单与业务配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
 import { h } from 'vue'
-import { NTag, type FormRules } from 'naive-ui/es'
+import { NTag, type FormItemRule } from 'naive-ui/es'
 import type { TableColumn } from '@robot-admin/naive-ui-components'
 
 // ==================== 类型定义 ====================
@@ -243,7 +250,7 @@ export const getTableColumns = (): TableColumn<PermissionData>[] => [
 ]
 
 // ==================== 表单校验规则 ====================
-export const PERMISSION_FORM_RULES: FormRules = {
+export const PERMISSION_FORM_RULES: Record<string, FormItemRule[]> = {
   name: [
     { required: true, message: '请输入权限名称', trigger: ['input', 'blur'] },
     {

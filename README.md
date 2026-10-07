@@ -177,12 +177,20 @@ bun run dev
 
 开发服务器的启动和热更新耗时取决于机器、缓存及启用的本地包模式；性能回归以构建预算和实际测量为准。
 
+运行 `bun run dev` 默认仅从 `http://localhost:1988/` 访问。
+需要同时支持 localhost、本机回环 IP 和局域网 IP 时，运行 `bun run dev:ip`；
+启动横幅自动显示 localhost 与当前网卡的局域网地址，无需手动输入 IP 或 `--host` 参数。
+自定义监听地址使用 `bun run dev --host <本机实际IP> --port 1988`；IP 必须已配置在
+本机网卡上。热更新自动跟随页面访问地址。
+`localhost` 与 IP 属于不同浏览器源，登录状态和本地设置分别保存。
+
 <details>
 <summary><b>📦 更多命令</b></summary>
 
 ```bash
 # 开发相关
-bun run dev            # 开发环境启动，默认显示项目版本、Git 分支与提交信息
+bun run dev            # 默认仅 localhost，显示项目版本、Git 分支与提交信息
+bun run dev:ip         # 同时开放 localhost 与局域网 IP，自动显示两个地址
 bun run dev:banner     # 完整启动横幅，与 dev 一致
 bun run dev:quiet      # 安静启动，关闭控制台横幅
 bun run dev:components # 直连本地 naive-ui-components 源码联调
@@ -232,6 +240,8 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 接入后端时设置 `VITE_DEPLOYMENT_PROFILE=application`、`VITE_AUTH_MODE=remote`、`VITE_DATA_MODE=remote`，并通过 `VITE_API_BASE` 指定接口地址。现有远端单上下文响应仍可登录；真实多租户需后端实现公司激活、切换、上下文绑定令牌和服务端数据隔离，不能仅启用前端 Mock。`application` 的生产与预发构建会拒绝 Mock 模式。契约与接入步骤见 [`docs/enterprise-auth.md`](docs/enterprise-auth.md)，环境说明见 [`docs/production-readiness.md`](docs/production-readiness.md)。
 
 每次构建都会生成只读的 `/build-info.json` 身份卡，包含应用版本、环境、部署类型、提交、分支与构建时间；开发服务也可访问，但 `builtAt` 为 `null`。登录后可通过右上角用户菜单底部的“构建信息”打开。它参考企业门户的 `env.json` 溯源字段，但不承载运行时配置、接口地址或密钥。字段与缓存策略见 [`docs/build-identity.md`](docs/build-identity.md)。
+
+表单组件已内置验证库适配、默认操作和异步提交管理。页面保持 `options + config`，直接从 `/C_Form` 导入规则；预览等业务操作用 `action-extra` 补充，无需重复封装 loading、规则类型和提交按钮。用法见 [表单配置](docs/form-configuration.md)，当前依赖版本以 `package.json` 和锁文件为准。
 
 后续模块联邦版采用 `systemApp` 平台基座、`public` 定制门户、`template` 业务项目模板三类工程，通用系统管理纳入基座。该架构仍处于计划阶段，职责、实施顺序与验收要求见 [`docs/module-federation-platform-plan.md`](docs/module-federation-platform-plan.md)。
 
@@ -311,12 +321,12 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 - `C_Code` - 代码编辑器组件
 - `C_Markdown` - Markdown编辑器
 - `C_Editor` - WangEditor 富文本编辑器
-- `C_FormulaEditor` - 公式编辑器
+- `C_FormulaEditor` - 公式编辑器（变量编辑、语法校验与隔离试算）
 - `C_Time` - 时间处理组件
 - `C_Date` - 日期选择组件
 - `C_Progress` - 进度展示组件
 - `C_Upload` - 文件上传组件
-- `C_Cron` - Cron 表达式编辑器
+- `C_Cron` - Cron 表达式编辑器（计划编辑与执行预览）
 - `C_Steps` - 步骤条组件
 
 **可视化 & 图表**
@@ -743,9 +753,11 @@ bun run build:application # envs/.env.staging：真实业务预发验收产物 d
 <details>
 <summary><b>查看生态项目</b></summary>
 
+Cron 与公式编辑器推荐使用 `v-model + config`：项目负责场景配置，包内统一提供模板、校验、初始状态重置与结果预览。公式试算不修改业务数据；Cron 按浏览器本地时区预览，不创建后台任务。浏览器回归见 `e2e/editor-workspaces.pw.ts`。
+
 **已发布组件库**
 
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.13.5` - 基于 Naive UI 的 Vue 3 业务组件库（53 个组件，按需导入）
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.14.1` - 基于 Naive UI 的 Vue 3 业务组件库（55 个组件，按需导入）
 - **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v3.2.1` - 6 种布局模式 + `/naive` 单入口 + Vue Headless 分层
 - **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.6.1` - 实例化 Axios 编排、认证恢复与函数式 Headless CRUD
 - **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v3.4.2` - Naive UI / Element Plus 双框架企业级表单验证规则库

@@ -55,7 +55,7 @@
   }
 }
 .budget-track,
-.resource-track {
+.resource-panel :deep(.resource-track) {
   width: 100%;
   height: 5px;
   border-radius: 4px;

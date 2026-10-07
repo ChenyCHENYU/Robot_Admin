@@ -1,4 +1,11 @@
-import type { FormRules } from 'naive-ui/es'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-07
+ * @Description: user-manage 页面表单与业务配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+
+import type { FormItemRule } from 'naive-ui/es'
 import type { DataRecord } from '@robot-admin/naive-ui-components'
 import {
   deleteData,
@@ -199,7 +206,7 @@ export const TABLE_COLUMN_CONFIG = {
 } as const
 
 // ==================== 表单验证规则 ====================
-export const USER_FORM_RULES: FormRules = {
+export const USER_FORM_RULES: Record<string, FormItemRule[]> = {
   username: [
     { required: true, message: '请输入用户名', trigger: ['input', 'blur'] },
     {
@@ -244,40 +251,6 @@ export const USER_FORM_RULES: FormRules = {
     },
   ],
 }
-
-export const createResetPasswordRules = (
-  getNewPassword: () => string
-): FormRules => ({
-  newPassword: [
-    { required: true, message: '请输入新密码', trigger: ['input', 'blur'] },
-    {
-      min: 8,
-      max: 64,
-      message: '密码长度在 8 到 64 个字符',
-      trigger: ['input', 'blur'],
-    },
-    {
-      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-      message: '密码必须同时包含大写字母、小写字母和数字',
-      trigger: ['input', 'blur'],
-    },
-  ],
-  confirmPassword: [
-    {
-      required: true,
-      message: '请再次输入新密码',
-      trigger: ['input', 'blur'],
-    },
-    {
-      validator: (_rule, value: string) => {
-        return value !== getNewPassword()
-          ? Promise.reject(new Error('两次密码输入不一致'))
-          : true
-      },
-      trigger: ['input', 'blur'],
-    },
-  ],
-})
 
 // ==================== 默认数据 ====================
 export const DEFAULT_USER_FORM_DATA: UserFormData = {

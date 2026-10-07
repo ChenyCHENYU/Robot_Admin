@@ -6,8 +6,11 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import { defineFormOptions } from '@robot-admin/naive-ui-components/C_Form'
-import { NAIVE_COMBOS, PRESET_RULES } from '@/utils/d_formValidate'
+import {
+  defineFormOptions,
+  NAIVE_COMBOS,
+  PRESET_RULES,
+} from '@robot-admin/naive-ui-components/C_Form'
 
 export interface DefaultFormData {
   username?: string
@@ -104,10 +107,7 @@ export const formOptions = defineFormOptions<DefaultFormData>([
  * 表单提示消息
  */
 export const FORM_MESSAGES = {
-  SUBMIT_SUCCESS: '默认布局表单提交成功！',
-  VALIDATE_ERROR: '表单验证失败，请检查输入',
   RESET_INFO: '表单已重置',
-  SUBMITTING: '提交中...',
   SUBMIT_TEXT: '提交表单',
   RESET_TEXT: '重置表单',
 } as const

@@ -17,6 +17,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "VITE_CONSOLE_BANNER=true NODE_NO_WARNINGS=1 vite --configLoader native --mode development",
+    "dev:ip": "bun run dev --host",
     "dev:banner": "VITE_CONSOLE_BANNER=true NODE_NO_WARNINGS=1 vite --configLoader native --mode development",
     "dev:quiet": "VITE_CONSOLE_BANNER=false NODE_NO_WARNINGS=1 vite --configLoader native --mode development",
     "dev:local": "USE_LOCAL_PACKAGES=true bun run dev",
@@ -68,7 +69,7 @@
     "@robot-admin/file-utils": "3.0.1",
     "@robot-admin/form-validate": "3.4.2",
     "@robot-admin/layout": "3.2.1",
-    "@robot-admin/naive-ui-components": "0.13.6",
+    "@robot-admin/naive-ui-components": "0.14.1",
     "@robot-admin/request-core": "0.6.1",
     "@robot-admin/theme": "0.6.1",
     "@splinetool/runtime": "^1.12.68",
@@ -86,6 +87,7 @@
     "pinia": "^4.0.3",
     "pinia-plugin-persistedstate": "^4.7.1",
     "print-js": "^1.6.0",
+    "sortablejs": "1.15.7",
     "vue": "^3.5.42",
     "vue-router": "^5.3.1"
   },

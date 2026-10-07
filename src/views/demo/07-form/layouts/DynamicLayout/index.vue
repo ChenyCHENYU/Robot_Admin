@@ -22,12 +22,12 @@
           @validate-success="handleValidateSuccess"
           @validate-error="handleValidateError"
         >
-          <!-- 自定义操作按钮 -->
-          <template #action="{ submit, reset, submitting }">
-            <C_ActionBar
-              :actions="getFormActions(submit, reset, submitting)"
-              :config="{ align: 'center', gap: 12 }"
-            />
+          <template #action-extra="{ submitting }">
+            <NButton
+              :disabled="submitting"
+              @click="previewData"
+              >预览数据</NButton
+            >
           </template>
         </C_Form>
       </NCard>
@@ -84,7 +84,6 @@
     type LabelPlacement,
     type DynamicFormConfig,
   } from '@robot-admin/naive-ui-components/C_Form'
-  import type { ActionItem } from '@robot-admin/naive-ui-components'
   import {
     DYNAMIC_FORM_CONFIG,
     BASE_FORM_OPTIONS,
@@ -93,7 +92,6 @@
     createFieldStats,
     createFormState,
     formatFieldsForPreview,
-    FORM_ACTIONS,
     PREVIEW_TABS,
   } from './data'
 
@@ -121,7 +119,6 @@
 
   // ================= 页面状态 =================
   const formRef = ref<FormInstance>()
-  const message = useMessage()
   const showPreview = ref(false)
 
   // 动态表单配置（使用响应式对象以支持运行时修改）
@@ -146,37 +143,9 @@
     dynamic: layoutConfig.value.dynamic,
     labelPlacement: labelPlacement.value,
     validateOnChange: validateOnChange.value,
+    submitText: '提交表单',
+    resetText: '重置表单',
   }))
-
-  // ================= 表单操作按钮配置 =================
-  const getFormActions = (
-    submit: () => Promise<boolean>,
-    reset: () => void,
-    submitting: boolean
-  ): ActionItem[] => [
-    {
-      key: 'reset',
-      label: FORM_ACTIONS.reset.text,
-      icon: FORM_ACTIONS.reset.icon,
-      onClick: reset,
-    },
-    {
-      key: 'submit',
-      label: FORM_ACTIONS.submit.getText(submitting),
-      icon: FORM_ACTIONS.submit.icon,
-      type: FORM_ACTIONS.submit.type as 'primary',
-      loading: submitting,
-      onClick: async () => {
-        if (!(await submit())) message.error('请检查动态表单中的必填字段')
-      },
-    },
-    {
-      key: 'preview',
-      label: FORM_ACTIONS.preview.text,
-      icon: FORM_ACTIONS.preview.icon,
-      onClick: previewData,
-    },
-  ]
 
   const dynamicConfigSnapshot = computed(() => {
     // 创建字段统计数据

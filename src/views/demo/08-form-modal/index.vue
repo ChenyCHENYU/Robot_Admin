@@ -73,27 +73,26 @@
             </template>
             <div class="popover-form">
               <C_Form
+                v-if="showPopover"
+                @submit="showPopover = false"
                 :options="popoverOptions"
                 :config="popoverConfig"
                 v-model="popoverData"
               >
                 <template #action="{ submit, submitting }">
-                  <C_ActionBar
-                    :actions="[
-                      {
-                        label: '取消',
-                        onClick: () => {
-                          showPopover = false
-                        },
-                      },
-                      {
-                        label: '保存',
-                        type: 'primary',
-                        loading: submitting,
-                        onClick: () => submitContainer('popover', submit),
-                      },
-                    ]"
-                  />
+                  <NSpace justify="end">
+                    <NButton
+                      :disabled="submitting"
+                      @click="showPopover = false"
+                      >取消</NButton
+                    >
+                    <NButton
+                      type="primary"
+                      :loading="submitting"
+                      @click="submit"
+                      >保存</NButton
+                    >
+                  </NSpace>
                 </template>
               </C_Form>
             </div>
@@ -135,10 +134,11 @@
         >
       </template>
       <C_Form
+        v-if="showModal"
         :options="modalOptions"
         :config="modalConfig"
         v-model="modalData"
-        @submit="handleModalSubmit"
+        @submit="showModal = false"
       />
     </NModal>
 
@@ -160,27 +160,27 @@
           </div>
         </template>
         <C_Form
+          v-if="showDrawer"
+          @submit="showDrawer = false"
           ref="drawerFormRef"
           :options="drawerOptions"
           :config="drawerConfig"
           v-model="drawerData"
         />
         <template #footer>
-          <C_ActionBar
-            :actions="[
-              {
-                label: '取消',
-                onClick: () => {
-                  showDrawer = false
-                },
-              },
-              {
-                label: '保存',
-                type: 'primary',
-                onClick: () => submitContainer('drawer', submitDrawer),
-              },
-            ]"
-          />
+          <NSpace justify="end">
+            <NButton
+              :disabled="drawerSubmitting"
+              @click="showDrawer = false"
+              >取消</NButton
+            >
+            <NButton
+              type="primary"
+              :loading="drawerSubmitting"
+              @click="drawerFormRef?.submit()"
+              >保存</NButton
+            >
+          </NSpace>
         </template>
       </NDrawerContent>
     </NDrawer>
@@ -219,30 +219,10 @@
           </div>
         </template>
         <C_Form
-          ref="sidebarFormRef"
           :options="sidebarOptions"
           :config="sidebarConfig"
           v-model="sidebarData"
-        >
-          <template #action="{ submit, submitting }">
-            <C_ActionBar
-              :actions="[
-                {
-                  label: '清空',
-                  icon: 'mdi:vacuum-cleaner',
-                  onClick: () => sidebarFormRef?.resetFields(),
-                },
-                {
-                  label: '应用筛选',
-                  icon: 'mdi:briefcase-search-outline',
-                  type: 'primary',
-                  loading: submitting,
-                  onClick: () => submitContainer('sidebar', submit),
-                },
-              ]"
-            />
-          </template>
-        </C_Form>
+        />
       </NCard>
     </div>
 
@@ -263,38 +243,33 @@
         >
       </template>
       <C_Form
+        v-if="showWizard"
+        @submit="showWizard = false"
         ref="wizardFormRef"
         :options="wizardOptions"
         :config="wizardConfig"
         v-model="wizardData"
       />
       <template #action>
-        <C_ActionBar
-          :actions="[
-            {
-              label: '取消',
-              onClick: () => {
-                showWizard = false
-              },
-            },
-            {
-              label: '重置',
-              onClick: () => wizardFormRef?.resetFields(),
-            },
-            {
-              label: '完成创建',
-              type: 'primary',
-              onClick: () => submitContainer('wizard', submitWizard),
-            },
-          ]"
-        />
+        <NSpace justify="end">
+          <NButton
+            :disabled="wizardSubmitting"
+            @click="showWizard = false"
+            >取消</NButton
+          >
+          <NButton
+            :disabled="wizardSubmitting"
+            @click="wizardFormRef?.resetFields()"
+            >重置</NButton
+          >
+        </NSpace>
       </template>
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
-  import type { FormInstance } from '@robot-admin/naive-ui-components'
+  import type { FormInstance } from '@robot-admin/naive-ui-components/C_Form'
   import {
     cards,
     modalOptions,
@@ -311,19 +286,22 @@
 
   defineOptions({ name: 'FormModalDemo' })
 
-  const message = useMessage()
-
   // ============ 容器显隐 ============
   const showModal = ref(false)
   const showDrawer = ref(false)
-  const showSidebar = ref(true)
+  const showSidebar = ref(false)
   const showPopover = ref(false)
   const showWizard = ref(false)
 
   // ============ 表单引用 ============
   const drawerFormRef = ref<FormInstance>()
-  const sidebarFormRef = ref<FormInstance>()
   const wizardFormRef = ref<FormInstance>()
+  const drawerSubmitting = computed(
+    () => unref(drawerFormRef.value?.isSubmitting) ?? false
+  )
+  const wizardSubmitting = computed(
+    () => unref(wizardFormRef.value?.isSubmitting) ?? false
+  )
 
   // ============ 表单数据 ============
   const modalData = ref({})
@@ -348,38 +326,6 @@
     } else if (map[key]) {
       map[key].value = true
     }
-  }
-
-  const closeContainer = (key: 'drawer' | 'popover' | 'wizard') => {
-    const visibility = {
-      drawer: showDrawer,
-      popover: showPopover,
-      wizard: showWizard,
-    }[key]
-    visibility.value = false
-  }
-
-  const handleModalSubmit = () => {
-    message.success('表单提交成功！')
-    showModal.value = false
-  }
-
-  const submitDrawer = () =>
-    drawerFormRef.value?.submit() ?? Promise.resolve(false)
-  const submitWizard = () =>
-    wizardFormRef.value?.submit() ?? Promise.resolve(false)
-
-  const submitContainer = async (
-    key: 'drawer' | 'sidebar' | 'popover' | 'wizard',
-    submit: () => Promise<boolean>
-  ) => {
-    const submitted = await submit()
-    if (!submitted) {
-      message.error('提交未完成，请检查表单输入！')
-      return
-    }
-    message.success('表单提交成功！')
-    if (key !== 'sidebar') closeContainer(key)
   }
 </script>
 

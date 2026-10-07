@@ -1,115 +1,139 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-02-26 10:00:00
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-26 10:00:00
- * @FilePath: \Robot_Admin\src\views\demo\47-formula-editor\data.ts
- * @Description: 公式编辑器演示页数据
- * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ * @Date: 2026-10-07
+ * @Description: 规则试算场景，样例数据只用于演示
+ * Copyright (c) 2026 by CHENY, All Rights Reserved.
  */
+import type { FormulaEditorConfig } from '@robot-admin/naive-ui-components/C_FormulaEditor'
 
-import type { FormulaVariable } from '@robot-admin/naive-ui-components'
-
-// ─── 公共变量 / 样例数据（基础用法、精简模式、编程控制共用） ───
-
-/** 销售业务变量 */
-export const salesVariables: FormulaVariable[] = [
-  { name: '销售额', field: 'sales', type: 'number', group: '业绩数据' },
-  { name: '目标额', field: 'target', type: 'number', group: '业绩数据' },
-  { name: '退货额', field: 'returns', type: 'number', group: '业绩数据' },
-  { name: '成本', field: 'cost', type: 'number', group: '财务数据' },
-  { name: '税率', field: 'tax_rate', type: 'number', group: '财务数据' },
+export const formulaScenarios: {
+  id: string
+  label: string
+  description: string
+  expression: string
+  config: FormulaEditorConfig
+}[] = [
   {
-    name: '提成比例',
-    field: 'commission_rate',
-    type: 'number',
-    group: '规则参数',
+    id: 'delivery',
+    label: '交付达成率',
+    description: '比例计算与安全除法',
+    expression:
+      'IF([计划任务] > 0, ROUND([完成任务] / [计划任务] * 100, 2), 0)',
+    config: {
+      variables: [
+        {
+          name: '完成任务',
+          field: 'completed',
+          type: 'number',
+          group: '交付数据',
+          description: '本周期已经完成的任务数',
+        },
+        {
+          name: '计划任务',
+          field: 'planned',
+          type: 'number',
+          group: '交付数据',
+          description: '本周期计划交付的任务数',
+        },
+      ],
+      sampleData: { completed: 42, planned: 50 },
+      templates: [
+        {
+          label: '达成率',
+          value:
+            'IF([计划任务] > 0, ROUND([完成任务] / [计划任务] * 100, 2), 0)',
+          description: '计划为零时返回零，避免除零',
+        },
+        {
+          label: '剩余任务',
+          value: 'MAX([计划任务] - [完成任务], 0)',
+          description: '超额完成时不产生负数',
+        },
+      ],
+    },
   },
-  { name: '基础工资', field: 'base_salary', type: 'number', group: '规则参数' },
+  {
+    id: 'quality',
+    label: '质量门禁',
+    description: '条件判断与文本结果',
+    expression:
+      'IF(AND([通过率] >= [门禁阈值], [阻断问题] == 0), "可交付", "需要复核")',
+    config: {
+      variables: [
+        {
+          name: '通过率',
+          field: 'passRate',
+          type: 'number',
+          group: '质量数据',
+          description: '检查通过率，单位 %',
+        },
+        {
+          name: '门禁阈值',
+          field: 'threshold',
+          type: 'number',
+          group: '规则参数',
+          description: '交付要求的最低通过率',
+        },
+        {
+          name: '阻断问题',
+          field: 'blockers',
+          type: 'number',
+          group: '质量数据',
+          description: '尚未解决的阻断项数量',
+        },
+      ],
+      sampleData: { passRate: 98, threshold: 95, blockers: 0 },
+    },
+  },
+  {
+    id: 'budget',
+    label: '构建预算',
+    description: '聚合计算与超额判断',
+    expression: 'ROUND(SUM([编译耗时], [检查耗时], [打包耗时]), 1)',
+    config: {
+      variables: [
+        {
+          name: '编译耗时',
+          field: 'compile',
+          type: 'number',
+          group: '流水线',
+          description: '示例编译耗时，单位秒',
+        },
+        {
+          name: '检查耗时',
+          field: 'checks',
+          type: 'number',
+          group: '流水线',
+          description: '示例检查耗时，单位秒',
+        },
+        {
+          name: '打包耗时',
+          field: 'bundle',
+          type: 'number',
+          group: '流水线',
+          description: '示例打包耗时，单位秒',
+        },
+        {
+          name: '时间预算',
+          field: 'budget',
+          type: 'number',
+          group: '预算',
+          description: '允许的总耗时，单位秒',
+        },
+      ],
+      sampleData: { compile: 12.4, checks: 8.6, bundle: 19, budget: 45 },
+      templates: [
+        {
+          label: '总耗时',
+          value: 'ROUND(SUM([编译耗时], [检查耗时], [打包耗时]), 1)',
+          description: '聚合三个阶段的耗时',
+        },
+        {
+          label: '预算检查',
+          value: 'SUM([编译耗时], [检查耗时], [打包耗时]) <= [时间预算]',
+          description: '布尔结果：是否满足时间预算',
+        },
+      ],
+    },
+  },
 ]
-
-/** 销售业务样例数据 */
-export const salesSampleData: Record<string, number> = {
-  sales: 150000,
-  target: 100000,
-  returns: 5000,
-  cost: 80000,
-  tax_rate: 0.13,
-  commission_rate: 8,
-  base_salary: 6000,
-}
-
-// ─── 绩效核算场景 ────────────────────────────────
-
-/** 绩效变量 */
-export const perfVariables: FormulaVariable[] = [
-  { name: '完成值', field: 'actual', type: 'number', group: '业绩数据' },
-  {
-    name: '卓越档目标值',
-    field: 'target_excellent',
-    type: 'number',
-    group: '目标值',
-  },
-  {
-    name: '优秀档目标值',
-    field: 'target_good',
-    type: 'number',
-    group: '目标值',
-  },
-  {
-    name: '达标档目标值',
-    field: 'target_standard',
-    type: 'number',
-    group: '目标值',
-  },
-  { name: '卓越系数', field: 'coeff_excellent', type: 'number', group: '系数' },
-  { name: '优秀系数', field: 'coeff_good', type: 'number', group: '系数' },
-  { name: '基础系数', field: 'coeff_base', type: 'number', group: '系数' },
-]
-
-/** 绩效样例数据 */
-export const perfSampleData: Record<string, number> = {
-  actual: 120000,
-  target_excellent: 100000,
-  target_good: 80000,
-  target_standard: 60000,
-  coeff_excellent: 1.5,
-  coeff_good: 1.2,
-  coeff_base: 0.8,
-}
-
-// ─── 成绩 / 函数演示场景 ────────────────────────
-
-/** 成绩变量 */
-export const gradeVariables: FormulaVariable[] = [
-  { name: '语文', field: 'chinese', type: 'number', group: '成绩' },
-  { name: '数学', field: 'math', type: 'number', group: '成绩' },
-  { name: '英语', field: 'english', type: 'number', group: '成绩' },
-  { name: '总分', field: 'total', type: 'number', group: '汇总' },
-  { name: '平均分', field: 'avg_score', type: 'number', group: '汇总' },
-]
-
-/** 成绩样例数据 */
-export const gradeSampleData: Record<string, number> = {
-  chinese: 92,
-  math: 88,
-  english: 95,
-  total: 275,
-  avg_score: 91.67,
-}
-
-// ─── 默认公式 ───────────────────────────────────
-
-/** 基础用法默认公式 */
-export const DEFAULT_BASIC_FORMULA = '[销售额] / [目标额] * 100'
-
-/** 绩效核算默认公式 */
-export const DEFAULT_PERF_FORMULA =
-  '[完成值] >= [卓越档目标值] ? ([完成值] - [卓越档目标值]) * [卓越系数] + 150000 : [完成值] >= [优秀档目标值] ? ([完成值] - [优秀档目标值]) * [优秀系数] + 87500 : [完成值] * [基础系数]'
-
-/** 精简模式默认公式 */
-export const DEFAULT_COMPACT_FORMULA = '[销售额] * [提成比例] / 100'
-
-/** 函数演示默认公式 */
-export const DEFAULT_FUNC_FORMULA =
-  'IF([总分] >= 270, "优秀", IF([总分] >= 180, "良好", "待提升"))'

@@ -82,12 +82,6 @@
           :config="{ compact: true }"
         />
       </template>
-      <template #action="{ submit, reset }">
-        <C_ActionBar
-          :actions="getFormActions(submit, reset)"
-          :config="{ gap: 12 }"
-        />
-      </template>
     </C_Form>
 
     <!-- 表单数据预览 -->
@@ -163,34 +157,10 @@
     tabs: layoutConfig.tabs,
     labelPlacement: labelPlacement.value,
     validateOnChange: validateOnChange.value,
-    onTabValidate: handleTabValidate,
+    submitText: '提交表单',
+    resetText: '重置表单',
     onFieldsChange: handleFieldsChange,
   }))
-
-  // ==================== 表单操作按钮配置 ====================
-  const getFormActions = (
-    submit: () => Promise<boolean>,
-    reset: () => void
-  ): ActionItem[] => [
-    {
-      key: 'submit',
-      label: '提交',
-      icon: 'mdi:check-circle-outline',
-      type: 'primary',
-      onClick: async () => {
-        await submit()
-      },
-    },
-    {
-      key: 'reset',
-      label: '重置',
-      icon: 'mdi:lock-reset',
-      onClick: () => {
-        reset()
-        message.info('表单已重置')
-      },
-    },
-  ]
 
   // ==================== 标签页验证按钮配置 ====================
   const getTabActions = (
@@ -243,19 +213,12 @@
   }
 
   // ================= 事件处理 =================
-  const handleTabValidate = (tabKey: string): boolean => {
-    message.info(`正在验证 ${getTabTitle(tabKey)}`)
-    return true
-  }
-
   const handleValidateSuccess = (model: FormModel) => {
     emit('validate-success', model)
-    message.success('表单验证通过')
   }
 
   const handleValidateError = (errors: unknown) => {
     emit('validate-error', errors)
-    message.error('表单验证失败')
   }
 
   const handleSubmit = (payload: { model: FormModel }) => {
