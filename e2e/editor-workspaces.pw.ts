@@ -114,6 +114,45 @@ test('原生输入准确插入变量、定位错误、支持文本与常量结�
   expect(errors).toEqual([])
 })
 
+test('公式键盘默认可见，替换选区、函数试算、退格和收起保持一致', async ({
+  page,
+}) => {
+  await openEditor(page, 'formula-editor')
+  const input = page.getByRole('textbox', { name: '公式输入', exact: true })
+  const keyboard = page.getByRole('group', { name: '公式键盘', exact: true })
+  const result = page.locator('.formula-preview__result-value')
+  await expect(keyboard).toBeVisible()
+  await input.fill('1 + 2')
+  await input.evaluate((element: HTMLTextAreaElement) => {
+    element.setSelectionRange(4, 5)
+    element.dispatchEvent(new Event('select', { bubbles: true }))
+  })
+  await keyboard.getByRole('button', { name: '输入 9', exact: true }).click()
+  await expect(input).toHaveValue('1 + 9')
+  await expect(result).toHaveText('10')
+  await keyboard.getByRole('button', { name: '退格', exact: true }).click()
+  await keyboard
+    .getByRole('button', { name: '插入函数 SUM', exact: true })
+    .click()
+  await keyboard.getByRole('button', { name: '输入 4', exact: true }).click()
+  await keyboard.getByRole('button', { name: '插入 ,', exact: true }).click()
+  await keyboard.getByRole('button', { name: '输入 6', exact: true }).click()
+  await keyboard.getByRole('button', { name: '插入 )', exact: true }).click()
+  await expect(input).toHaveValue('1 + SUM(4, 6)')
+  await expect(result).toHaveText('11')
+  await keyboard.getByRole('button', { name: '清空', exact: true }).click()
+  await expect(input).toHaveValue('')
+  await expect(input).toBeFocused()
+  await input.fill('[完成任务]')
+  await keyboard.getByRole('button', { name: '退格', exact: true }).click()
+  await expect(input).toHaveValue('')
+  const toggle = page.locator('.c-formula__keyboard summary')
+  await toggle.click()
+  await expect(keyboard).toBeHidden()
+  await toggle.press('Enter')
+  await expect(keyboard).toBeVisible()
+})
+
 for (const route of ['cron-editor', 'formula-editor']) {
   for (const dark of [false, true]) {
     test(`${route} ${dark ? '暗' : '亮'}色窄屏不溢出，切页不污染菜单`, async ({
