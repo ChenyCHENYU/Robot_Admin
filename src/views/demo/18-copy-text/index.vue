@@ -335,7 +335,7 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo18CopyText' })
-  import { useCopy } from '@/hooks/useCopy'
+  import { useCopy } from '@/composables/useCopy'
   import {
     DEMO_TEXT,
     DEMO_URLS,

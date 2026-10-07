@@ -10,7 +10,6 @@
 export * from './loading'
 export * from './store'
 export * from './naive-ui-plugin'
-export * from './dynamic-components'
 export * from './passive-scroll'
 export * from './analytics'
 export * from './request-core' // 🆕 Request Core 插件

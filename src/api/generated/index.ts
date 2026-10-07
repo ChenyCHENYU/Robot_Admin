@@ -4,6 +4,7 @@
  * @Description: API 自动生成类型占位 — 后续由代码生成器覆盖
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import type { PermissionResource } from '../permission-manage.contract'
 
 /** 登录接口响应 */
 export interface PostAuthLoginResponse {
@@ -20,14 +21,14 @@ export interface PostAuthLoginResponse {
 /** 权限详情响应 */
 export interface GetSysPermissionsByIdResponse {
   code: string
-  data: Record<string, unknown>
+  data: PermissionResource
   msg: string
 }
 
 /** 权限更新响应 */
 export interface PutSysPermissionsByIdResponse {
   code: string
-  data: Record<string, unknown>
+  data: PermissionResource
   msg: string
 }
 
@@ -42,7 +43,7 @@ export interface DeleteSysPermissionsByIdResponse {
 export interface GetSysPermissionsListResponse {
   code: string
   data: {
-    list: Array<Record<string, unknown>>
+    list: PermissionResource[]
     total: number
   }
   msg: string
@@ -51,7 +52,7 @@ export interface GetSysPermissionsListResponse {
 /** 权限新增响应 */
 export interface PostSysPermissionsResponse {
   code: string
-  data: Record<string, unknown>
+  data: PermissionResource
   msg: string
 }
 

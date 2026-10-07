@@ -3,7 +3,7 @@
 > 适用于：**GitHub Copilot · Claude Code · Cursor · Codex CLI · Windsurf · Cline** 等所有 AI 编码工具
 >
 > 完整规范 → `.github/copilot-instructions.md`
-> 可用 Skills → `.github/skills/`（6 个流程化技能）
+> 可用 Skills → `.github/skills/`（7 个流程化技能）
 > MCP 工具 → `bun run mcp/server.ts`（组件库 / 路由 / API 实时查询）
 
 ---
@@ -28,7 +28,7 @@ npm / yarn / pnpm
 | Store 导出   | `s_` + camelCase + `Store` | `s_userStore`        | `useUserStore`    |
 | 全局组件目录 | `C_` + PascalCase          | `C_Header/`          | `header/`         |
 | 局部组件目录 | `c_` + camelCase           | `c_detail/`          | `Detail/`         |
-| 工具函数文件 | `d_` 前缀                  | `d_auth.ts`          | `auth.ts`         |
+| 工具函数文件 | `d_` 前缀                  | `d_authSession.ts`   | `auth.ts`         |
 | Composable   | `use` + PascalCase         | `useLoginController` | `loginController` |
 | API 函数     | 动词 + 资源 + `Api`        | `getUserListApi`     | `getUsers`        |
 
@@ -61,9 +61,10 @@ Pinia:   defineStore · storeToRefs
 VueUse:  useLocalStorage · useClipboard · useDebounceFn
 NaiveUI: NCard · NButton · NSpace · NInput · NSelect · NTag · NModal · NDrawer
          NGrid · NGi · NTabs · NTabPane · useMessage · useDialog · useNotification
-C_*:     C_Table · C_Form · C_ActionBar · C_Icon · C_Tree … (51+ 个，用 MCP 查询)
-Stores:  s_userStore · s_themeStore · s_permissionStore …
+C_*:     C_Table · C_Form · C_ActionBar · C_Icon · C_Tree … (55 个，用 MCP 查询)
 ```
+
+领域 Store 和页面控制器显式导入；只自动扫描 `src/composables/`。
 
 ---
 
@@ -71,7 +72,7 @@ Stores:  s_userStore · s_themeStore · s_permissionStore …
 
 | 包                                 | 用途                                                   |
 | ---------------------------------- | ------------------------------------------------------ |
-| `@robot-admin/naive-ui-components` | 51+ 业务组件（C_Form / C_Table / C_ActionBar…）        |
+| `@robot-admin/naive-ui-components` | 55 业务组件（C_Form / C_Table / C_ActionBar…）         |
 | `@robot-admin/request-core`        | HTTP 请求（getData / postData / useTableCrud）         |
 | `@robot-admin/form-validate`       | 表单验证（Naive / Element 双框架，48+ 规则）           |
 | `@robot-admin/directives`          | 11 个 Vue 指令（v-copy / v-permission / v-watermark…） |
@@ -104,6 +105,7 @@ MCP Server 路径：`mcp/server.ts`，配置见 `.vscode/mcp.json`
 | `prototype-scan`   | 原型解析 · axure 扫描 · 详设文档          |
 | `route-sync`       | 注册路由 · 添加菜单                       |
 | `convention-audit` | 规范检查 · 代码审查 · code review         |
+| `branch-sync`      | 分支同步 · 版本升级 · 依赖同步            |
 | `mock-codegen`     | 生成 mock · mock 数据（可选技能）         |
 
 ---

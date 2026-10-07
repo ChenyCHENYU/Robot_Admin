@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'LoginSplineScene' })
   import { ref, onMounted, onUnmounted, computed, shallowRef } from 'vue'
   import type { Application as ApplicationType } from '@splinetool/runtime'
   import ParentSize from './ParentSize.vue'
@@ -60,6 +61,7 @@
   let _errHandler: ((e: ErrorEvent) => void) | null = null
   let initGeneration = 0
 
+  /** 仅过滤 Spline 已知的缓存读取异常。 */
   function installErrorGuard() {
     _rejHandler = (e: PromiseRejectionEvent) => {
       const msg = String(e.reason?.message || e.reason || '')
@@ -73,6 +75,7 @@
     window.addEventListener('error', _errHandler)
   }
 
+  /** 卸载时释放全局监听器。 */
   function removeErrorGuard() {
     if (_rejHandler) {
       window.removeEventListener('unhandledrejection', _rejHandler)
@@ -84,31 +87,13 @@
     }
   }
 
+  /** 按需初始化场景，过期任务不能覆盖或恢复已卸载的画布。 */
   async function initSpline() {
     if (!canvasRef.value) return
 
     const generation = ++initGeneration
     const canvas = canvasRef.value
     isLoading.value = true
-
-    // 过滤 Spline 的版本兼容性警告（仅在初始化期间）
-    const originalWarn = console.warn
-    const originalLog = console.log
-    const filterFn = (...args: unknown[]) => {
-      if (
-        args.some(
-          arg => typeof arg === 'string' && arg.includes('updating from')
-        )
-      )
-        return
-      return true
-    }
-    console.warn = (...args) => {
-      if (filterFn(...args)) originalWarn.apply(console, args)
-    }
-    console.log = (...args) => {
-      if (filterFn(...args)) originalLog.apply(console, args)
-    }
 
     try {
       if (splineApp.value) {
@@ -145,14 +130,11 @@
       console.error('Spline initialization error:', err)
       emit('error', err)
       isLoading.value = false
-    } finally {
-      // 一定要恢复 console，避免全局污染
-      console.warn = originalWarn
-      console.log = originalLog
     }
   }
 
   // ===== 页面可见性——Tab 切走时暂停 Spline，切回时恢复 =====
+  /** 后台标签页或显式暂停时停止场景渲染。 */
   function syncPlayback() {
     if (!splineApp.value) return
     if (document.hidden || props.paused) {
@@ -162,6 +144,7 @@
     }
   }
 
+  /** 浏览器可见性事件复用场景暂停策略。 */
   function handleVisibilityChange() {
     syncPlayback()
   }

@@ -46,7 +46,7 @@
   import { s_reLoginStore } from '@/stores/reLogin'
   import { removeLoading } from '@/plugins/loading'
   import { pageLoading } from '@/router/pageLoading'
-  import '@/lib/version'
+  import '@/utils/d_version'
 
   // 获取 hljs 实例用于 NCode 组件
   const { hljs } = window

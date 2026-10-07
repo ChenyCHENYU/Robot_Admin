@@ -77,14 +77,13 @@ export default defineConfig(
   async ({ mode, command }: { mode: string; command: 'build' | 'serve' }) => {
     const env = loadEnv(mode, ENV_DIR, '')
     const validatedEnv = validateViteEnv(env, mode)
-    process.env = { ...process.env, ...env }
     const localPackageInfo = getLocalPackageInfo()
     const localCacheScope = getLocalCacheScope(localPackageInfo)
     assertPublishableDependencies(command, localPackageInfo)
     const consolePlugins =
-      process.env.VITE_CONSOLE_BANNER === 'false' ? [] : [viteConsolePlugin]
+      env.VITE_CONSOLE_BANNER === 'false' ? [] : [viteConsolePlugin]
     const devToolsPlugins =
-      process.env.VITE_DEVTOOLS === 'true'
+      env.VITE_DEVTOOLS === 'true'
         ? [(await import('vite-plugin-vue-devtools')).default()]
         : []
 
@@ -98,7 +97,7 @@ export default defineConfig(
         ...devToolsPlugins,
         viteAutoImportPlugin,
         await loadComponentsPlugin(),
-        createI18nPlugin(),
+        createI18nPlugin(env),
         createBuildInfoPlugin(validatedEnv),
         createProjectInfoPlugin(),
         createProjectMetricsPlugin(),
@@ -211,7 +210,6 @@ export default defineConfig(
           '@vue/compiler-dom',
           '@vue/compiler-core',
           '@vue/compiler-sfc',
-          'pinia-plugin-persistedstate',
           // 组件库已发布标准 ESM。排除后深层按需入口不会在登录后被 Vite
           // 重新发现、预构建和强制刷新，从而避免打断 C_Layout 动态导入。
           '@robot-admin/naive-ui-components',

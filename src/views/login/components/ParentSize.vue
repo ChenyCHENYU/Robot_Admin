@@ -3,7 +3,7 @@
   <div
     ref="target"
     :style="mergedStyles"
-    :class="cn('w-full h-full', props.class)"
+    :class="['w-full h-full', props.class]"
     v-bind="attrsWithoutClassAndStyle"
   >
     <slot />
@@ -13,7 +13,8 @@
 <script setup lang="ts">
   import { ref, reactive, computed, useAttrs } from 'vue'
   import { useDebounceFn, useResizeObserver } from '@vueuse/core'
-  import { cn } from '@/lib/utils'
+
+  defineOptions({ name: 'LoginParentSize', inheritAttrs: false })
 
   const props = defineProps({
     class: String,
@@ -46,10 +47,13 @@
     ...(attrs.style as object),
   }))
 
-  const attrsWithoutClassAndStyle = computed(() => {
-    const { class: _, style: __, ...rest } = attrs
-    return rest
-  })
+  const attrsWithoutClassAndStyle = computed(() =>
+    Object.fromEntries(
+      Object.entries(attrs).filter(
+        ([key]) => key !== 'class' && key !== 'style'
+      )
+    )
+  )
 
   const normalizedIgnore = computed(() =>
     Array.isArray(props.ignoreDimensions)
@@ -57,6 +61,7 @@
       : [props.ignoreDimensions]
   )
 
+  /** 仅在未忽略的尺寸变化时更新响应式状态。 */
   function updateDimensions(rect: DOMRectReadOnly) {
     const { width, height, top, left } = rect
     const newState = { width, height, top, left }

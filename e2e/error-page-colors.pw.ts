@@ -44,6 +44,17 @@ for (const error of errorPages) {
     }
     await page.goto(`/#/error-page/${error.code}`)
     await assertColors()
+    const particles = page.locator('[data-error-particle]')
+    await expect(particles).toHaveCount(20)
+    const positions = await particles.evaluateAll(elements =>
+      elements.map(el => el.getAttribute('style'))
+    )
+    await expect(page.locator('.error-screen__countdown')).toContainText('4秒')
+    expect(
+      await particles.evaluateAll(elements =>
+        elements.map(el => el.getAttribute('style'))
+      )
+    ).toEqual(positions)
     await page.reload()
     await assertColors()
     await page.goto('/#/home')

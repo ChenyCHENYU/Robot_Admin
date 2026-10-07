@@ -60,15 +60,15 @@
   </table>
 
   <p>
-    <a href="https://github.com/ChenyCHENYU/robot_admin/actions"><img src="https://img.shields.io/github/actions/workflow/status/ChenyCHENYU/robot_admin/main.yml" alt="Build Status"></a>
+    <a href="https://github.com/ChenyCHENYU/robot_admin/actions"><img src="https://img.shields.io/github/actions/workflow/status/ChenyCHENYU/Robot_Admin/ci.yml" alt="Build Status"></a>
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
-    <img src="https://img.shields.io/badge/bun-%E2%89%A51.3.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
+    <img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.42-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.3-blue?style=flat&logo=typescript" alt="TypeScript Version">
     <img src="https://img.shields.io/badge/vite-8.2.2-646CFF?style=flat&logo=vite" alt="Vite Version">
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-51+-success?style=flat" alt="Components">
+    <img src="https://img.shields.io/badge/components-55-success?style=flat" alt="Components">
     <img src="https://img.shields.io/badge/demos-64-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
@@ -263,7 +263,7 @@ The planned federation architecture has three project types: a `systemApp` platf
 - **Vue Router 5.3.1** - 🧭 Navigation guards and dynamic routes
 - **VueUse 14.4.0** - 🧰 On-demand composition utilities
 - **Naive UI 2.45.3** - 🎨 Component library with both beauty and performance
-- **@robot-admin/naive-ui-components** - 🧩 51+ business components, auto-import on demand
+- **@robot-admin/naive-ui-components** - 🧩 55 business components, auto-import on demand
 - **MachTable 0.29.2** - 🧮 Standalone virtualized data grid, route-loaded through its Vue adapter; the demo reuses `C_ActionBar` and a data-driven feature panel for watermark, density, selection, clipboard, pagination, summaries, and status bars
 - **UnoCSS 66.9.1** - ⚡ Atomic CSS, on-demand generation, minimal size
 
@@ -271,7 +271,7 @@ The planned federation architecture has three project types: a `systemApp` platf
 
 - **Bun 1.4.2** - 🚀 High-performance JavaScript runtime and package manager
 - **Vite 8.2.2** - ⚡ Unified Rolldown build engine and fast hot updates
-- **Sass 1.103** - 🎨 Mature CSS preprocessor
+- **Sass (^1.97.3)** - 🎨 Mature CSS preprocessor
 
 **🔧 Development Tools**
 
@@ -298,7 +298,7 @@ The planned federation architecture has three project types: a `systemApp` platf
 - **Button-Level Permissions** - Precise control down to every action button
 - **API-Level Permissions** - API call permission control
 
-#### 🧩 Component Library (51+ Ready-to-Use)
+#### 🧩 Component Library (55 Ready-to-Use)
 
 <details>
 <summary><b>View All Components</b></summary>
@@ -441,10 +441,18 @@ Robot_Admin/
 │   │   ├── 📁 demo/                 # Demo pages (64 index.vue files)
 │   │   ├── 📁 sys-manage/           # System management
 │   │   ├── 📁 login/                # Login/Register
+│   │   ├── 📁 about/                     # Version and project information
+│   │   ├── 📁 account/                     # Account center
+│   │   ├── 📁 editor/                     # Editor workspaces
+│   │   ├── 📁 error-page/                     # Error pages
+│   │   ├── 📁 large-screen/                     # Large-screen templates
+│   │   ├── 📁 plugins/                     # Plugin demos
+│   │   ├── 📁 portal/                     # Portal layout demo
 │   │   └── 📁 home/                 # Project homepage
 │   ├── 📁 stores/                   # Pinia state management
 │   ├── 📁 composables/              # Composable APIs
-│   ├── 📁 hooks/                    # Custom hooks
+│   ├── 📁 constant/                 # Runtime constants
+│   ├── 📁 styles/                   # Global theme and style entry
 │   ├── 📁 router/                   # Router configuration
 │   ├── 📁 utils/                    # Utility functions
 │   ├── 📁 types/                    # TypeScript type definitions
@@ -466,7 +474,7 @@ Robot_Admin/
 ```mermaid
 graph LR
     A[🏠 Monomer<br/>Monolithic] --> B[📦 Monorepo<br/>Multi-package]
-    B --> C[� Module Federation<br/>Federation]
+    B --> C[🧩 Module Federation<br/>Federation]
     B --> D[🔗 MicroApp<br/>Micro-frontend]
     C --> E[🚀 NestJS<br/>Full-stack]
     D --> E
@@ -559,57 +567,24 @@ graph LR
 
 ## 🌍 Internationalization (i18n)
 
-### Automated Route Translation
+`C_Language` provides the language switcher. `vite-auto-i18n-plugin` compiles UI text and loads existing dictionaries; normal development and production builds do not call translation APIs.
 
-The project integrates **vite-auto-i18n-plugin** for automatic route title translation.
+- `src/config/i18n.ts` defines language keys (`zh-cn / en / ja / ko`), the namespace, and the `robot_admin` storage key.
+- `src/config/vite/viteI18nConfig.ts` configures scan paths and optional online generation. Build-only credentials are passed to this factory explicitly, never written to the global process environment.
+- `src/utils/d_i18n.ts` configures dictionary loaders. Chinese loads no external dictionary; other languages load only the selected dictionary.
+- `lang/en.json`, `ja.json`, and `ko.json` hold the reviewed translations.
 
-<details>
-<parameter name="summary"><b>View Detailed Usage Guide</b></summary>
+The dependency is pinned to `vite-auto-i18n-plugin@1.1.16`. Bun applies the adapters in `patches/` automatically. `/adapter` handles Vite 8 query modules, source maps, read-only offline compilation, and bounded compilation caches. `/runtime` provides lazy loading, request deduplication, latest-selection protection, storage fallbacks, namespace isolation, and bounded text caches without Node, Babel, or translation SDKs.
 
-#### Quick Start
+The `auto-i18n-plugin-core@1.1.16` patch removes scan/JSX debug output and fixes escaping of multiline text, backslashes, literal interpolation, and fallback quotes. Normal development does not rewrite dictionaries or start translation timers. A missing dictionary falls back to Chinese and reports at most once per language; repaired resources can be retried. Switching languages currently reloads the page, so unsaved input is lost.
+
+After changing menus, run `bun run gen:route-i18n`. To generate new translations, configure `YOUDAO_APP_ID` and `YOUDAO_APP_KEY` in the ignored `envs/.env.local`, then run:
 
 ```bash
-# 1. Add new menu in dynamicRouter.json (Chinese only)
-{
-  "meta": {
-    "title": "新功能模块"
-  }
-}
-
-# 2. Run auto-generation script
-bun run gen:route-i18n
-
-# 3. Restart dev server (first time only)
-bun run dev
+bun run i18n:generate
 ```
 
-**That's it!** The plugin automatically calls Youdao Translation API to translate Chinese to English.
-
-#### How It Works
-
-```mermaid
-graph LR
-    A[dynamicRouter.json] --> B[gen:route-i18n]
-    B --> C[Extract Route Titles]
-    C --> D[vite-auto-i18n-plugin]
-    D --> E[Youdao Translation API]
-    E --> F[lang/index.json]
-    F --> G[Build Mapping at Compile Time]
-    G --> H[O(1) Lookup at Runtime]
-```
-
-#### Features
-
-- ✅ **Zero Configuration** - Just run one command after adding Chinese titles
-- ✅ **Auto Translation** - Youdao Translation API generates English automatically
-- ✅ **High Performance** - O(1) lookup with compile-time mapping
-- ✅ **Zero Maintenance** - HMR auto-updates, no manual translation management
-
-#### Documentation
-
-📖 Complete Guide: [i18n Practice Guide - Online Docs](https://www.tzagileteam.com/robot/guide/i18n-practice)
-
-</details>
+Review the generated dictionaries before running `bun run build`. The temporary scan build goes to `node_modules/.cache/i18n-scan`. Credentials are only for the build machine or CI, have no `VITE_` prefix, and are not shipped to the browser. Re-audit both patches and run the i18n regression tests before upgrading upstream.
 
 ---
 
@@ -736,20 +711,26 @@ bun run build:application # envs/.env.staging: real-application staging artifact
 <details>
 <summary><b>✅ Completed Milestones</b></summary>
 
-| Version | Date       | Highlights                                                       |
-| ------- | ---------- | ---------------------------------------------------------------- |
-| v1.0.0  | 2025-11    | First release, Vue 3 + Naive UI core architecture                |
-| v1.13.0 | 2026-01    | 45+ components, 11 directives, 7 packages                        |
-| v1.14.0 | 2026-02    | Monorepo + Micro-frontend dual architecture, Bun migration       |
-| v2.0.0  | 2026-03-01 | **Breaking** - Single-app restructure, Vite 8, 51+ components    |
-| v2.1.0  | 2026-03-06 | SaaS extension, multi-app scaffold                               |
-| v2.2.0  | 2026-03-11 | Layout v2.2.0, env-manager v1.0.5, Robot CLI ✅                  |
-| v2.5.0  | 2026-08    | Route-level loading and grouped navigation                       |
-| v2.6.0  | 2026-10    | Production hardening, component integration, and demo gates      |
-| v2.6.1  | 2026-10    | Documentation and contribution guidance aligned with the code    |
-| v2.6.2  | 2026-10    | Restored the login robot under the production CSP                |
-| v2.6.3  | 2026-10    | Allowed the scene's embedded video under the production CSP      |
-| v2.7.0  | 2026-10    | Workspace experience, project observability, and rendering fixes |
+| Version | Date    | Highlights                                                  |
+| ------- | ------- | ----------------------------------------------------------- |
+| v1.0    | 2025-07 | Vue 3, Vite, Naive UI, and Pinia foundation                 |
+| v1.6    | 2025-10 | Theme system, UnoCSS, and demo pages                        |
+| v1.11   | 2025-12 | Component library, i18n, and performance improvements       |
+| v1.12   | 2026-02 | Independent request-core package                            |
+| v1.13   | 2026-02 | Composables and independently versioned packages            |
+| v1.14   | 2026-02 | Ten additional business components                          |
+| v2.0    | 2026-03 | Component extraction into independent npm packages          |
+| v2.1    | 2026-03 | Token refresh, permissions, and pluggable login             |
+| v2.2    | 2026-03 | Menu themes, Vite 8, and TypeScript checks                  |
+| v2.2.1  | 2026-03 | Vite 8.0.3 and style refinements                            |
+| v2.3    | 2026-04 | AI skills, MCP server, and collaboration conventions        |
+| v2.4    | 2026-04 | Design styles and glass theme                               |
+| v2.5    | 2026-08 | Route loading and grouped navigation                        |
+| v2.6    | 2026-10 | Production hardening, component integration, and demo gates |
+| v2.6.1  | 2026-10 | Documentation aligned with the implementation               |
+| v2.6.2  | 2026-10 | Login scene restored under the production CSP               |
+| v2.6.3  | 2026-10 | Scene video permitted under the production CSP              |
+| v2.7.0  | 2026-10 | Workspace experience, observability, and rendering fixes    |
 
 </details>
 
@@ -773,7 +754,7 @@ bun run build:application # envs/.env.staging: real-application staging artifact
 
 | Package                                                                               | Version                                                               | Description                         |
 | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------- |
-| [naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | ![npm](https://img.shields.io/npm/v/@robot-admin/naive-ui-components) | 51+ business components             |
+| [naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | ![npm](https://img.shields.io/npm/v/@robot-admin/naive-ui-components) | 55 business components              |
 | [layout](https://www.npmjs.com/package/@robot-admin/layout)                           | ![npm](https://img.shields.io/npm/v/@robot-admin/layout)              | 6 layouts + compact context adapter |
 | [request-core](https://www.npmjs.com/package/@robot-admin/request-core)               | ![npm](https://img.shields.io/npm/v/@robot-admin/request-core)        | Axios + useTableCrud                |
 | [form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)             | ![npm](https://img.shields.io/npm/v/@robot-admin/form-validate)       | 48+ validation rules                |

@@ -42,6 +42,12 @@ describe('production contracts', () => {
     expect(csp).toContain("media-src 'self' data: blob: https:;")
     expect(csp).not.toContain("script-src 'self' 'unsafe-inline'")
     expect(csp).not.toContain("'unsafe-eval'")
+    const connectSources =
+      csp?.match(/connect-src\s+([^;]+)/)?.[1]?.split(/\s+/) ?? []
+    expect(connectSources).toContain("'self'")
+    expect(connectSources).toContain('https://api.github.com')
+    expect(connectSources).not.toContain('https:')
+    expect(connectSources).not.toContain('wss:')
     expect(
       securityHeaders.some(header => header.key === 'X-Content-Type-Options')
     ).toBe(true)

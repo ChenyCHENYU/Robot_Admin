@@ -33,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'VerticalTitle' })
   withDefaults(
     defineProps<{
       title: string

@@ -492,6 +492,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'RolePicker' })
   import { useThemeVars } from 'naive-ui/es'
   import {
     type PermissionData,

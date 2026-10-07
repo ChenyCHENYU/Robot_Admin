@@ -20,7 +20,6 @@ import {
   type AppLanguage,
 } from '../src/config/i18n'
 
-const originalEnabled = process.env.VITE_I18N_ENABLED
 const storageDescriptor = Object.getOwnPropertyDescriptor(
   globalThis,
   'localStorage'
@@ -72,16 +71,26 @@ afterEach(() => {
   if (storageDescriptor)
     Object.defineProperty(globalThis, 'localStorage', storageDescriptor)
   else Reflect.deleteProperty(globalThis, 'localStorage')
-  if (originalEnabled === undefined) delete process.env.VITE_I18N_ENABLED
-  else process.env.VITE_I18N_ENABLED = originalEnabled
   for (const directory of directories.splice(0))
     rmSync(directory, { recursive: true, force: true })
 })
 
 describe('国际化运行链路', () => {
+  test('项目工厂只接收显式配置，不向进程注入其他环境变量', async () => {
+    const flag = '__ROBOT_I18N_CONFIG_TEST__'
+    const before = process.env[flag]
+    const plugin = createProjectI18nPlugin({
+      VITE_I18N_ENABLED: 'false',
+      YOUDAO_APP_KEY: 'fixture-only-key',
+      [flag]: 'isolated',
+    })
+    expect(process.env[flag]).toBe(before)
+    const code = codeOf(await compile(plugin, "export const title = '首页'"))
+    expect(code).not.toContain('fixture-only-key')
+    expect(plugin.closeBundle).toBeUndefined()
+  })
   test('标题 key 与真实插件算法一致，包括空格、插值和引号', () => {
-    process.env.VITE_I18N_ENABLED = 'false'
-    createProjectI18nPlugin()
+    createProjectI18nPlugin({ VITE_I18N_ENABLED: 'false' })
     for (const text of [
       '首页',
       ' 当前工作空间 ',
@@ -266,8 +275,7 @@ describe('国际化运行链路', () => {
   })
 
   test('离线编译支持 Vue 查询模块和 Unicode 转义，跳过样式及业务数据', async () => {
-    process.env.VITE_I18N_ENABLED = 'false'
-    const plugin = createProjectI18nPlugin()
+    const plugin = createProjectI18nPlugin({ VITE_I18N_ENABLED: 'false' })
     expect(plugin.buildEnd).toBeUndefined()
     expect(plugin.closeBundle).toBeUndefined()
     expect(plugin.configResolved).toBeUndefined()

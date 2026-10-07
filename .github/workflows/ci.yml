@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [dev, main, perf/production-readiness]
+    branches: [dev, main, 'feat/**']
   pull_request:
 
 permissions:

@@ -4,7 +4,7 @@
 
 > **本文件面向 AI 编程助手**（Copilot / Cursor / Claude 等）。
 > 在对本项目生态进行任何代码生成、修改或建议之前，**必须完整阅读本指南**。
-> 最后更新：2026-04-13
+> 最后更新：2026-10-08
 
 ## 目录
 
@@ -19,7 +19,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 | 仓库                     | 简称   | 用途                                     | npm 包名                           |
 | ------------------------ | ------ | ---------------------------------------- | ---------------------------------- |
 | **Robot_Admin**          | 主项目 | Vue 3 SPA 后台应用                       | —                                  |
-| **naive-ui-components**  | 组件库 | 51 个业务组件（基于 Naive UI）           | `@robot-admin/naive-ui-components` |
+| **naive-ui-components**  | 组件库 | 55 个业务组件（基于 Naive UI）           | `@robot-admin/naive-ui-components` |
 | **robot-admin-packages** | 包集合 | 7 个独立 npm 包（指令/请求/布局/主题等） | `@robot-admin/*`                   |
 | **AgileTeam_Doc**        | 文档库 | VitePress 2.0 团队文档站                 | —                                  |
 
@@ -28,23 +28,25 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 - **作者**: ChenYu (`ycyplus@gmail.com`)
 - **许可证**: MIT
 - **演示站**: https://robotadmin.cn
-- **Node 版本要求**: `>=22.x`
-- **包管理器**: **Bun** `>=1.x`（**不使用 npm / yarn / pnpm**）
+- **Node 版本要求**: `>=22.18.0`
+- **包管理器**: **Bun** `>=1.4.2`（**不使用 npm / yarn / pnpm**）
 
 ---
 
 ## 二、技术栈与工具链
 
+版本声明以 `package.json` 为准，实际安装以 `bun.lock` 为准；更新依赖时同步下列表格。
+
 ### 核心框架
 
 | 技术       | 版本   | 用途                                            |
 | ---------- | ------ | ----------------------------------------------- |
-| Vue        | 3.5.30 | 渐进式框架                                      |
+| Vue        | 3.5.42 | 渐进式框架                                      |
 | TypeScript | ~5.8.3 | 类型安全                                        |
-| Vite       | 8.0.3  | 构建工具                                        |
+| Vite       | 8.2.2  | 构建工具                                        |
 | Naive UI   | 2.44.1 | UI 组件库                                       |
-| Pinia      | 3.0.4  | 状态管理                                        |
-| Vue Router | 4.6.4  | 路由系统                                        |
+| Pinia      | 4.0.3  | 状态管理                                        |
+| Vue Router | 5.3.1  | 路由系统                                        |
 | UnoCSS     | 66.6.6 | 原子化 CSS（presetWind3 + attributify + icons） |
 | Sass       | 1.97.3 | 样式预处理                                      |
 
@@ -52,10 +54,10 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 
 | 包名                               | 版本   | 功能                                  |
 | ---------------------------------- | ------ | ------------------------------------- |
-| `@robot-admin/naive-ui-components` | 0.11.6 | 51+ 个业务组件                        |
+| `@robot-admin/naive-ui-components` | 0.14.2 | 55 个业务组件                         |
 | `@robot-admin/layout`              | 3.2.1  | 6 种布局 + 精简适配 + 核心协议        |
-| `@robot-admin/request-core`        | 0.5.0  | 实例化请求编排 + 函数式 Headless CRUD |
-| `@robot-admin/theme`               | 0.5.1  | 分层核心 + Vue Store + Naive UI 适配  |
+| `@robot-admin/request-core`        | 0.6.1  | 实例化请求编排 + 函数式 Headless CRUD |
+| `@robot-admin/theme`               | 0.6.1  | 分层核心 + Vue Store + Naive UI 适配  |
 | `@robot-admin/directives`          | 2.0.1  | 11 个 Vue 指令                        |
 | `@robot-admin/form-validate`       | 3.4.2  | 双框架验证、组合与批量校验            |
 | `@robot-admin/file-utils`          | 3.0.1  | 文件处理（Excel/ZIP/CSV/分片）        |
@@ -142,7 +144,7 @@ Robot_Admin/
 │   ├── api/                       # API 接口定义
 │   │   ├── auth.ts                # 认证接口
 │   │   ├── permission-manage.ts   # 权限 CRUD
-│   │   └── generated/             # 自动生成的 TS 类型
+│   │   └── generated/             # TS 响应类型（当前为占位契约，非 OpenAPI 实时生成）
 │   │
 │   ├── assets/                    # 静态资源（images/css/data）
 │   │
@@ -161,7 +163,8 @@ Robot_Admin/
 │   ├── composables/               # 组合式函数（业务逻辑解耦）
 │   │   ├── useLoginController.ts  # 登录控制器
 │   │   ├── useLayoutBridge.ts     # 布局桥接（适配器模式）
-│   │   └── useLayoutCache.ts      # 页面缓存管理
+│   │   ├── useLayoutCache.ts      # 页面缓存管理
+│   │   └── useCopy.ts             # 剪贴板复制
 │   │
 │   ├── config/                    # 配置汇总
 │   │   ├── theme/                 # 主题系统（tokens + overrides）
@@ -169,18 +172,11 @@ Robot_Admin/
 │   │   └── keepAliveConfig.ts     # 页面缓存配置
 │   │
 │   ├── constant/                  # 常量定义
-│   │   └── index.ts               # TOKEN/TIME_STAMP/TIMEOUT
-│   │
-│   ├── hooks/                     # 通用 Hooks
-│   │   ├── useCopy/               # 剪贴板复制
-│   │   └── usePrintWatermark/     # 打印水印
-│   │
-│   ├── lib/                       # 第三方库集成
-│   │   └── version.ts             # 版本信息输出
+│   │   └── index.ts               # Token key / 路由 / 权限常量
 │   │
 │   ├── plugins/                   # Vue 插件（初始化系统）
 │   │   ├── loading.ts             # 首屏加载动画
-│   │   ├── store.ts               # Pinia + 持久化
+│   │   ├── store.ts               # Pinia 初始化；存储由领域 Store 负责
 │   │   ├── request-core.ts        # Axios 请求核心
 │   │   ├── layout.ts              # 布局系统
 │   │   ├── naive-ui-plugin.ts     # 全局通知服务
@@ -216,16 +212,17 @@ Robot_Admin/
 │   │   └── components.d.ts        # 自动生成
 │   │
 │   ├── utils/                     # 工具函数
-│   │   ├── d_auth.ts              # Token 管理 + 超时检查（8小时）
+│   │   ├── d_authSession.ts       # 会话应用与公司切换
+│   │   ├── d_version.ts           # 开发版本输出
 │   │   ├── d_route.ts             # 菜单过滤 + KeepAlive 收集
 │   │   ├── errorHandler/          # 全局错误处理
 │   │   └── unocss/                # UnoCSS 快捷方式 + 图标 Safelist
 │   │
 │   └── views/                     # 业务页面
-│       ├── home/                  # 首页（eager 加载）
-│       ├── dashboard/             # 数据大屏（eager 加载）
+│       ├── home/                  # 首页（按路由加载）
+│       ├── dashboard/             # 工程分析与统计（按路由加载）
 │       ├── login/                 # 登录页
-│       ├── demo/                  # 54 个功能演示
+│       ├── demo/                  # 功能演示；数量以路由清单为准
 │       │   ├── 01-icon/
 │       │   ├── 07-form/
 │       │   ├── 10-table/
@@ -254,9 +251,9 @@ Robot_Admin/
 | 局部组件目录 | `c_` + snake_case          | `c_detail/`, `c_role/`                  |
 | 组件库组件   | `C_` + PascalCase          | `C_Form`, `C_Table`, `C_Upload`         |
 | Composable   | `use` + PascalCase         | `useLoginController`, `useLayoutBridge` |
-| Hook         | `use` + PascalCase         | `useCopy`, `usePrintWatermark`          |
+| Hook         | `use` + PascalCase         | `useCopy`, `useLatestRequest`           |
 | Store        | `s_` + camelCase + `Store` | `s_userStore`, `s_themeStore`           |
-| 工具函数     | `d_` 前缀（domain 工具）   | `d_auth.ts`, `d_route.ts`               |
+| 工具函数     | `d_` 前缀（domain 工具）   | `d_authSession.ts`, `d_route.ts`        |
 | Demo 目录    | `数字编号-功能名`          | `01-icon/`, `07-form/`, `10-table/`     |
 | 类型文件     | `.d.ts` 后缀               | `form.d.ts`, `table.d.ts`               |
 | 样式文件     | `index.scss`               | 与组件同目录                            |
@@ -321,7 +318,7 @@ import { NCard, NButton, NSpace } from 'naive-ui'
 
 // 5. 自有包
 import { postData, getData } from '@robot-admin/request-core/axios'
-import { PRESET_RULES } from '@robot-admin/form-validate'
+import { PRESET_RULES } from '@robot-admin/naive-ui-components/C_Form'
 
 // 6. 项目内部（使用路径别名）
 import { s_userStore } from '@/stores/user'
@@ -609,6 +606,8 @@ views/demo/XX-feature-name/
         └── index.vue
 ```
 
+契约按领域集中维护在 `src/api/` 与 `docs/production-readiness.md`，演示页无需重复添加空 `api.md`。新增远端接口时记录请求、响应、状态值和错误处理；真实生成器以已确认的 OpenAPI 为准。
+
 ### 演示页面 index.vue 标准模板
 
 ```vue
@@ -764,7 +763,7 @@ export const s_userStore = defineStore('user', {
   actions: {
     setToken(token: string) {
       this.token = token
-      sessionStorage.setItem(TOKEN, JSON.stringify(token))
+      localStorage.setItem(TOKEN, JSON.stringify(token))
     },
 
     async logout(isExpired = false) {
@@ -778,7 +777,7 @@ export const s_userStore = defineStore('user', {
 
 1. **命名**：`s_` 前缀 + 描述 + `Store` 后缀（`s_userStore`, `s_themeStore`）
 2. **文件位置**：`src/stores/<domain>/index.ts`
-3. **持久化**：主题、语言等偏好可持久化；Token、刷新令牌和用户会话只允许使用 `sessionStorage`，禁止存储密码
+3. **持久化**：主题、语言与布局按各 Store 的明确白名单持久化。当前用户 Store 使用 `localStorage` 支持跨标签页及重开浏览器，禁止存储密码。Web Storage 可被同源脚本读取；真实业务应结合后端采用 HttpOnly 会话或刷新令牌 Cookie，不能将改成 `sessionStorage` 当作 XSS 防护。
 4. **区块注释**：使用 `// ============ 状态 ============` 分隔不同关注点
 5. **类型安全**：State 中的复杂对象必须定义 interface
 
@@ -857,7 +856,7 @@ const table = useTableCrud({
 ### 表单验证规则
 
 ```typescript
-import { PRESET_RULES } from '@robot-admin/form-validate'
+import { PRESET_RULES } from '@robot-admin/naive-ui-components/C_Form'
 
 const rules = {
   name: [PRESET_RULES.required('姓名'), PRESET_RULES.length('姓名', 2, 20)],
@@ -1303,7 +1302,7 @@ VITE_API_BASE=https://api.example.com
 ### @robot-admin/form-validate — 验证规则
 
 ```typescript
-import { PRESET_RULES } from '@robot-admin/form-validate'
+import { PRESET_RULES } from '@robot-admin/naive-ui-components/C_Form'
 
 // 常用规则
 PRESET_RULES.required('字段名') // 必填
@@ -1381,7 +1380,7 @@ Vite 8 中 **必须** 将 Vue 全家桶排除预构建，否则 esbuild 会拆�
 
 ```typescript
 optimizeDeps: {
-  exclude: ['vue', 'vue-router', 'vue-demi', 'pinia-plugin-persistedstate'],
+  exclude: ['vue', 'vue-router', '@vue/runtime-core', '@vue/runtime-dom'],
 }
 ```
 
@@ -1394,7 +1393,7 @@ optimizeDeps: {
 - Pinia: `defineStore`, `storeToRefs`
 - VueUse: `useLocalStorage`, `useClipboard`, `useDebounceFn`
 - Naive UI: `NCard`, `NButton`, `NModal`, `NSpace`, `useMessage`, `useDialog` ...
-- 自定义: `src/stores/*`, `src/composables/*`, `src/hooks/*` 下的所有导出
+- 自定义: `src/composables/*` 下的导出；领域 Store 和页面控制器使用显式 import，避免隐式跨域依赖
 
 ### 3. C\_ 组件自动解析优先级
 
@@ -1552,7 +1551,7 @@ app.mount('#app')        # 9. 挂载
 
 ## 二十一、AI 技能调度表（Skills）
 
-本项目配备了 6 个结构化 AI 技能包，位于 `.github/skills/` 目录。
+本项目配备了 7 个结构化 AI 技能包，位于 `.github/skills/` 目录。
 当识别到用户意图匹配下表关键词时，**自动加载对应 SKILL.md 并按其流程执行**。
 
 | 技能         | 目录                       | 触发关键词                                  | 说明                                                    |

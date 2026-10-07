@@ -29,12 +29,15 @@ const files = await collectVueFiles(resolve('src'))
 const violations: string[] = []
 let styleCount = 0
 for (const filename of files) {
+  // 审计逐文件编译，限制 Sass 的并发内存与资源占用。
+  // eslint-disable-next-line no-await-in-loop
   const { descriptor, errors } = parse(await readFile(filename, 'utf8'), {
     filename,
   })
   if (errors.length) violations.push(`${filename}: ${errors.join('; ')}`)
   for (const style of descriptor.styles) {
     styleCount++
+    // eslint-disable-next-line no-await-in-loop -- 同一文件的样式也保持顺序编译。
     const compiled = await compileStyleAsync({
       filename,
       id: 'data-v-style-audit',

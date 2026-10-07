@@ -60,7 +60,7 @@
   </table>
 
   <p>
-    <img src="https://img.shields.io/badge/bun-%E2%89%A51.3.x-ff1e56?style=flat&logo=bun" alt="Bun Version">
+    <img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-ff1e56?style=flat&logo=bun" alt="Bun Version">
     <img src="https://img.shields.io/badge/vue-3.5.42-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
     <img src="https://img.shields.io/badge/typescript-5.8.3-blue?style=flat&logo=typescript" alt="TypeScript Version">
     <img src="https://img.shields.io/badge/vite-8.2.2-646CFF?style=flat&logo=vite" alt="Vite Version">
@@ -68,7 +68,7 @@
     <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-51+-success?style=flat" alt="Components">
+    <img src="https://img.shields.io/badge/components-55-success?style=flat" alt="Components">
     <img src="https://img.shields.io/badge/demos-64-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
@@ -262,7 +262,7 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 - **Vue Router 5.3.1** - 🧭 路由守卫与动态路由
 - **VueUse 14.4.0** - 🧰 按需使用的组合式工具集
 - **Naive UI 2.45.3** - 🎨 颜值与性能并存的组件库
-- **@robot-admin/naive-ui-components** - 🧩 51+ 业务组件库，按需自动导入
+- **@robot-admin/naive-ui-components** - 🧩 55 个业务组件库，按需自动导入
 - **MachTable 0.29.2** - 🧮 独立虚拟化数据网格，通过 Vue 适配层按路由接入；演示页通过统一的 `C_ActionBar` 和数据驱动配置面板完整展示水印、密度、选择、剪贴板、分页、汇总与状态栏等能力
 - **UnoCSS 66.9.1** - ⚡ 原子化CSS，按需生成，体积极小
 
@@ -270,7 +270,7 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 
 - **Bun 1.4.2** - 🚀 高性能 JavaScript 运行时与包管理器
 - **Vite 8.2.2** - ⚡ Rolldown 构建与路由级按需加载
-- **Sass 1.103** - 🎨 成熟的CSS预处理器
+- **Sass (^1.97.3)** - 🎨 成熟的CSS预处理器
 
 **🔧 开发工具**
 
@@ -299,7 +299,7 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 - **按钮级权限** - 精确到每一个操作按钮
 - **接口级权限** - API调用权限控制
 
-#### 🧩 组件库（51+ 开箱即用）
+#### 🧩 组件库（55 个开箱即用）
 
 > 所有业务组件已独立发布为 [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components)，支持按需自动导入。
 
@@ -441,10 +441,18 @@ Robot_Admin/
 │   │   ├── 📁 preview/              # 组件预览页面（38 个 iframe 嵌入路由）
 │   │   ├── 📁 sys-manage/           # 系统管理
 │   │   ├── 📁 login/                # 登录注册
+│   │   ├── 📁 about/                     # 版本与项目信息
+│   │   ├── 📁 account/                     # 个人中心
+│   │   ├── 📁 editor/                     # 编辑器工作区
+│   │   ├── 📁 error-page/                     # 异常页
+│   │   ├── 📁 large-screen/                     # 大屏模板
+│   │   ├── 📁 plugins/                     # 插件演示
+│   │   ├── 📁 portal/                     # 门户布局示例
 │   │   └── 📁 home/                 # 项目主页
 │   ├── 📁 stores/                   # Pinia状态管理
 │   ├── 📁 composables/              # 组合式API
-│   ├── 📁 hooks/                    # 自定义Hooks
+│   ├── 📁 constant/                 # 运行时常量
+│   ├── 📁 styles/                   # 全局主题与样式入口
 │   ├── 📁 router/                   # 路由配置
 │   ├── 📁 utils/                    # 工具函数
 │   ├── 📁 types/                    # TypeScript类型定义
@@ -466,7 +474,7 @@ Robot_Admin/
 ```mermaid
 graph LR
     A[🏠 Monomer<br/>单体架构] --> B[📦 Monorepo<br/>单仓多包]
-    B --> C[� Module Federation<br/>模块联邦]
+    B --> C[🧩 Module Federation<br/>模块联邦]
     B --> D[🔗 MicroApp<br/>微前端]
     C --> E[🚀 NestJS<br/>全栈方案]
     D --> E

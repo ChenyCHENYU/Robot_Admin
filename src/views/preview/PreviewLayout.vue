@@ -47,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'ComponentPreviewLayout' })
   import { onErrorCaptured, ref } from 'vue'
   import { useRouter } from 'vue-router'
 

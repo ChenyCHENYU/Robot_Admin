@@ -94,22 +94,24 @@
               </div>
               <div class="user-text">
                 <div class="user-name">Hi, {{ userName }}</div>
-                <div class="user-subtitle">欢迎回来！</div>
+                <div class="user-subtitle"
+                  >门户布局示例 · 任务与消息为演示数据</div
+                >
               </div>
             </div>
 
             <div class="user-stats">
               <div class="stat-box">
-                <div class="stat-num">249</div>
-                <div class="stat-label">待处理</div>
+                <div class="stat-num">{{ taskSummary.pending }}</div>
+                <div class="stat-label">待处理示例</div>
               </div>
               <div class="stat-box">
-                <div class="stat-num">1,852</div>
-                <div class="stat-label">我发起</div>
+                <div class="stat-num">{{ taskSummary.total }}</div>
+                <div class="stat-label">任务示例</div>
               </div>
               <div class="stat-box">
-                <div class="stat-num">505</div>
-                <div class="stat-label">已完成</div>
+                <div class="stat-num">{{ taskSummary.completed }}</div>
+                <div class="stat-label">完成示例</div>
               </div>
             </div>
           </div>
@@ -464,6 +466,7 @@
 </template>
 
 <script setup lang="ts">
+  defineOptions({ name: 'PortalPage' })
   import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
   import { Icon } from '@iconify/vue'
   import { MENU_COLLAPSE_KEY } from '@robot-admin/layout/naive'
@@ -480,6 +483,11 @@
     type App,
   } from './data'
 
+  const taskSummary = {
+    pending: todoList.filter(item => item.statusClass === 'progress').length,
+    completed: todoList.filter(item => item.statusClass === 'done').length,
+    total: todoList.length,
+  }
   const router = useRouter()
   const userStore = s_userStore()
   const CUSTOM_EVENTS = {
@@ -489,7 +497,7 @@
     MICRO_APP_DATA: 'micro-app-data',
   } as const
 
-  const userName = computed(() => userStore.userInfo?.username || '李梦')
+  const userName = computed(() => userStore.userInfo?.username || '访客')
 
   // 为 C_Header 提供必要的上下文
   const portalCollapsed = ref(false)
@@ -536,7 +544,8 @@
     )
   }
 
-  const currentDay = ref('27')
+  const today = ref(new Date())
+  const currentDay = computed(() => today.value.getDate().toString())
   const temperature = ref('--')
   const weatherDesc = ref('加载中...')
   const humidity = ref('--')
@@ -583,17 +592,17 @@
     WIND_DIR_MAP[w.winddir16Point || ''] || w.winddir16Point || '西南'
 
   const setDefaultWeather = () => {
-    temperature.value = '16'
-    weatherDesc.value = '晴'
-    humidity.value = '85'
-    windDirection.value = '西南'
-    windPower.value = '≤3'
+    temperature.value = '--'
+    weatherDesc.value = '天气暂不可用'
+    humidity.value = '--'
+    windDirection.value = '--'
+    windPower.value = '--'
   }
 
   const updateWeatherData = (w: WeatherData) => {
-    temperature.value = w.temp_C || '16'
+    temperature.value = w.temp_C || '--'
     weatherDesc.value = getWeatherDesc(w)
-    humidity.value = w.humidity || '85'
+    humidity.value = w.humidity || '--'
     windDirection.value = getWindDir(w)
     windPower.value = getWindLevel(Number(w.windspeedKmph) || 0)
   }
@@ -606,10 +615,11 @@
     weatherController = controller
     try {
       const res = await fetch('https://wttr.in/西安?format=j1', {
-        signal: controller.signal,
+        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(6000)]),
       })
       if (!res.ok) throw new Error(`天气服务响应异常：${res.status}`)
       const data: unknown = await res.json()
+      if (controller.signal.aborted) return
       const conditions = isRecord(data) ? data.current_condition : undefined
       const current = Array.isArray(conditions) ? conditions[0] : undefined
       if (isRecord(current)) {
@@ -626,7 +636,7 @@
   }
 
   // ===== 日历模块 =====
-  const currentDate = ref(new Date(2030, 9, 1))
+  const currentDate = ref(new Date())
 
   // ===== 子应用推送数据 =====
   const microAppData = ref<MicroAppDataItem[]>([])
@@ -676,9 +686,9 @@
       isOtherMonth: isOther,
       isToday:
         !isOther &&
-        currentDate.value.getFullYear() === 2030 &&
-        currentDate.value.getMonth() === 9 &&
-        offset + i === 12,
+        currentDate.value.getFullYear() === today.value.getFullYear() &&
+        currentDate.value.getMonth() === today.value.getMonth() &&
+        offset + i === today.value.getDate(),
       key: `${prefix}-${i}`,
     }))
 
@@ -728,7 +738,7 @@
 
   // ===== 定时器 =====
   const updateDateTime = () => {
-    currentDay.value = new Date().getDate().toString()
+    today.value = new Date()
   }
 
   let timer: ReturnType<typeof setInterval> | null = null

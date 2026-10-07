@@ -48,7 +48,7 @@
 | `VITE_DEPLOYMENT_PROFILE`      | `application`    | `application`     | `demo`           | 区分真实业务部署与公开演示              |
 | `VITE_AUTH_MODE`               | `mock`           | `remote`          | `mock`           | 登录、刷新令牌和当前用户                |
 | `VITE_DATA_MODE`               | `mock`           | `remote`          | `mock`           | 账号与系统管理业务数据                  |
-| `VITE_API_BASE`                | `/api`           | `/api` 或网关     | 示例地址         | Axios 请求基地址，推荐由部署层同源代理  |
+| `VITE_API_BASE`                | `/api`           | `/api` 或网关     | `/api`           | Axios 请求基地址，推荐由部署层同源代理  |
 | `VITE_ERROR_REPORT_ENDPOINT`   | 留空             | 按需配置          | 留空             | 同源客户端错误接收地址                  |
 | `VITE_CAPTCHA_PROVIDER`        | `puzzle-captcha` | 推荐 `altcha`     | `puzzle-captcha` | 人机验证提供方                          |
 | `VITE_CAPTCHA_CHALLENGE_URL`   | 留空             | 同源接口          | 留空             | 签发一次性 ALTCHA 挑战                  |

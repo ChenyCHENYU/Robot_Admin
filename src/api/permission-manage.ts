@@ -1,4 +1,10 @@
-// src/api/permissions.ts
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-08
+ * @FilePath: \Robot_Admin\src\api\permission-manage.ts
+ * @Description: 权限资源接口，使用明确的请求与响应契约
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
 import {
   getData,
   postData,
@@ -14,21 +20,25 @@ import type {
   GetAuthButtonListResponse,
   GetDataPermissionResponse,
 } from './generated'
+import type {
+  PermissionDraft,
+  PermissionQuery,
+} from './permission-manage.contract'
 
 /**
  * * @description: 查询权限列表接口
- * ? @param {Record<string, unknown>} params 查询参数（keyword/type/module/status 等）
+ * ? @param {PermissionQuery} params 查询参数（keyword/type/module/status 等）
  * ! @return {Promise<GetSysPermissionsListResponse>} 权限列表响应数据
  */
-export const getPermissionListApi = (params?: Record<string, unknown>) =>
+export const getPermissionListApi = (params?: PermissionQuery) =>
   getData<GetSysPermissionsListResponse>('/sys/permissions', { params })
 
 /**
  * * @description: 新增权限接口
- * ? @param {Record<string, unknown>} data 权限数据对象
+ * ? @param {PermissionDraft} data 权限数据对象
  * ! @return {Promise<PostSysPermissionsResponse>} 新增后的权限响应数据
  */
-export const createPermissionApi = (data: Record<string, unknown>) =>
+export const createPermissionApi = (data: PermissionDraft) =>
   postData<PostSysPermissionsResponse>('/sys/permissions', data)
 
 /**
@@ -42,12 +52,12 @@ export const getPermissionByIdApi = (id: number | string) =>
 /**
  * * @description: 更新权限信息接口（部分字段更新）
  * ? @param {number|string} id 权限唯一标识ID
- * ? @param {object} data 更新的权限数据对象（后端将返回更新后的完整记录）
+ * ? @param {Partial<PermissionDraft>} data 更新的权限数据对象（后端将返回更新后的完整记录）
  * ! @return {Promise<PutSysPermissionsByIdResponse>} 更新后的权限信息响应数据
  */
 export const updatePermissionApi = (
   id: number | string,
-  data: Record<string, unknown>
+  data: Partial<PermissionDraft>
 ) => putData<PutSysPermissionsByIdResponse>(`/sys/permissions/${id}`, data)
 
 /**

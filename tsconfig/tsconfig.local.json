@@ -1,0 +1,61 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.local.tsbuildinfo",
+    "paths": {
+      "@/*": ["src/*"],
+      "_views/*": ["src/views/*"],
+      "vue": ["node_modules/vue"],
+      "@vue/*": ["node_modules/@vue/*"],
+      "@vue-flow/*": ["node_modules/@vue-flow/*"],
+      "@robot-admin/naive-ui-components": [
+        "../naive-ui-components/dist/index.d.ts",
+        "node_modules/@robot-admin/naive-ui-components"
+      ],
+      "@robot-admin/naive-ui-components/C_*": [
+        "../naive-ui-components/dist/C_*.d.ts",
+        "node_modules/@robot-admin/naive-ui-components/C_*"
+      ],
+      "@agile-team/mach-table": [
+        "../../../office-project/wl/MachTable/packages/core/dist/index.d.ts",
+        "node_modules/@agile-team/mach-table"
+      ],
+      "@agile-team/mach-table/adapter": [
+        "../../../office-project/wl/MachTable/packages/core/dist/adapter.d.ts",
+        "node_modules/@agile-team/mach-table/adapter"
+      ],
+      "@agile-team/mach-table-vue": [
+        "../../../office-project/wl/MachTable/packages/vue/dist/index.d.ts",
+        "node_modules/@agile-team/mach-table-vue"
+      ],
+      "@agile-team/mach-table-vue/workflows": [
+        "../../../office-project/wl/MachTable/packages/vue/dist/workflows.d.ts",
+        "node_modules/@agile-team/mach-table-vue/workflows"
+      ],
+      "@agile-team/mach-table-vue/styles.css": [
+        "../../../office-project/wl/MachTable/packages/core/styles/mach-table.css",
+        "node_modules/@agile-team/mach-table-vue/dist/mach-table.css"
+      ],
+      "@robot-admin/request-core": [
+        "../robot-admin-packages/packages/request-core/dist/index.d.ts",
+        "node_modules/@robot-admin/request-core"
+      ],
+      "@robot-admin/request-core/axios": [
+        "../robot-admin-packages/packages/request-core/dist/axios.d.ts",
+        "node_modules/@robot-admin/request-core/axios"
+      ],
+      "@robot-admin/request-core/crud": [
+        "../robot-admin-packages/packages/request-core/dist/crud.d.ts",
+        "node_modules/@robot-admin/request-core/crud"
+      ],
+      "@robot-admin/request-core/vue": [
+        "../robot-admin-packages/packages/request-core/dist/vue.d.ts",
+        "node_modules/@robot-admin/request-core/vue"
+      ],
+      "@robot-admin/request-core/naive": [
+        "../robot-admin-packages/packages/request-core/dist/naive.d.ts",
+        "node_modules/@robot-admin/request-core/naive"
+      ]
+    }
+  }
+}

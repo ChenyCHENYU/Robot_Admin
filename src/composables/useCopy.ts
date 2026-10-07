@@ -3,7 +3,7 @@
  * @Date: 2025-05-12 08:27:36
  * @LastEditors: ChenYu ycyplus@gmail.com
  * @LastEditTime: 2025-06-23 15:05:21
- * @FilePath: \Robot_Admin\src\hooks\useCopy\index.ts
+ * @FilePath: \Robot_Admin\src\composables\useCopy.ts
  * @Description: 基于 Clipboard API 封装的 useCopy Hooks
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */

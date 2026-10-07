@@ -3,7 +3,7 @@
  * @Date: 2025-07-10 08:49:00
  * @LastEditors: ChenYu ycyplus@gmail.com
  * @LastEditTime: 2025-08-01 09:55:11
- * @FilePath: \Robot_Admin\src\lib\version.ts
+ * @FilePath: \Robot_Admin\src\utils\d_version.ts
  * @Description: 版本信息管理工具(配合release-please)
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */

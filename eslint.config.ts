@@ -26,6 +26,8 @@ export default defineConfigWithVueTs(
       '**/dist/**',
       '**/dist-ssr/**',
       '**/coverage/**',
+      '**/test-results/**', // Playwright 生成的截图、追踪与浏览器脚本
+      '**/playwright-report/**',
       '**/lang/**', // 忽略 i18n 插件生成的文件
     ],
   },
@@ -61,7 +63,6 @@ export default defineConfigWithVueTs(
       '@typescript-eslint/no-unused-vars': 'error',
     },
   },
-
 
   //MARK: 自定义规则组（优先级最高）
   {
@@ -171,10 +172,7 @@ export default defineConfigWithVueTs(
       'no-eval': 'error',
       'prefer-const': 'warn',
       'no-var': 'warn',
-      'prefer-destructuring': [
-        1,
-        { object: true, array: false },
-      ],
+      'prefer-destructuring': [1, { object: true, array: false }],
       'no-duplicate-imports': 'error',
     },
   },
@@ -182,27 +180,22 @@ export default defineConfigWithVueTs(
   //MARK: ESLINT 白名单配置组
   {
     name: 'app/ignore-assets',
-    ignores: [
-      'src/assets/images/**/*',
-      '**/*.d.ts',
-      '**/auto-imports.d.ts',
-      'src/views/**/components/*.vue',
-      'scripts/**/*',
-    ],
+    ignores: ['src/assets/images/**/*', '**/*.d.ts', '**/auto-imports.d.ts'],
   },
 
   //MARK: JSDoc 白名单覆盖规则
   {
-    files: [
-      'src/router/**/*.ts',
-      'src/stores/**/*.ts',
-      'src/views/**/components/*.vue',
-    ],
+    files: ['src/router/**/*.ts', 'src/stores/**/*.ts'],
     rules: {
       'jsdoc/require-jsdoc': 'off',
       '@typescript-eslint/require-jsdoc': 'off',
     },
   },
 
+  // Git 合并驱动使用 CommonJS，仍执行其余完整校验。
+  {
+    files: ['scripts/**/*.cjs'],
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
   skipFormatting
 )

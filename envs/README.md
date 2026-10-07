@@ -19,7 +19,7 @@
 | `VITE_DATA_MODE`               | `mock`           | `remote`          | `mock`           | 账号及系统管理业务数据来源         |
 | `VITE_ROUTE_IDLE_PREFETCH`     | `true`           | `true`            | `true`           | 登录后渐进预取高频重量级页面       |
 | `VITE_PORT`                    | `1988`           | 构建时不使用      | 构建时不使用     | 本地开发服务器端口                 |
-| `VITE_API_BASE`                | `/api`           | `/api` 或网关     | 示例地址         | 建议使用同源反向代理               |
+| `VITE_API_BASE`                | `/api`           | `/api` 或网关     | `/api`           | 建议使用同源反向代理               |
 | `VITE_ERROR_REPORT_ENDPOINT`   | 留空             | 按需配置          | 留空             | 只接受 `/` 开头的同源绝对路径      |
 | `VITE_CAPTCHA_PROVIDER`        | `puzzle-captcha` | 推荐 `altcha`     | `puzzle-captcha` | 人机验证提供方                     |
 | `VITE_CAPTCHA_CHALLENGE_URL`   | 留空             | 同源接口          | 留空             | 签发一次性 ALTCHA 挑战             |

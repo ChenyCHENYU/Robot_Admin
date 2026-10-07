@@ -8,20 +8,16 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 import { createPinia } from 'pinia'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import type { App } from 'vue'
 
 /**
  * @description: 创建并配置 Pinia 实例
- * @description: 集成持久化插件，自动保存 store 状态到 localStorage
+ * @description: 持久化由需要存储的 Store 明确维护，不安装未使用的全局插件
  * @param {App} app Vue 应用实例
  * @return {void}
  */
 export function setupStore(app: App) {
   const pinia = createPinia()
-
-  // 添加持久化插件
-  pinia.use(piniaPluginPersistedstate)
 
   app.use(pinia)
 }

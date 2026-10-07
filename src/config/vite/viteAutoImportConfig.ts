@@ -52,6 +52,6 @@ export default AutoImport({
     },
   ],
   dts: 'src/types/auto-imports.d.ts', // 生成类型声明文件
-  dirs: ['src/stores', 'src/composables', 'src/hooks'], // 自动导入自定义组合式函数
+  dirs: ['src/composables'], // 自动导入自定义组合式函数
   vueTemplate: true, // 支持模板自动导入
 })

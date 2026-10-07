@@ -10,7 +10,6 @@
 import { defineStore } from 'pinia'
 import { TOKEN, TIME_STAMP, REFRESH_TOKEN, TOKEN_EXPIRES_IN } from '@/constant'
 import router from '@/router'
-import { d_setTimeStamp } from '@/utils/d_auth'
 import { notification } from '@/plugins/discrete'
 import { s_permissionStore } from '@/stores/permission'
 import type { AuthContext } from '@/api/auth.contract'
@@ -248,7 +247,6 @@ export const s_userStore = defineStore('user', {
         this.tokenExpiresAt = 0
         writeAuthStorage(TOKEN_EXPIRES_IN, 0)
       }
-      d_setTimeStamp()
     },
 
     handleLoginError(error: unknown) {

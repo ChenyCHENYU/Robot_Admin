@@ -24,13 +24,11 @@ const visualPackages = new Set([
   '@iconify/vue',
   '@iconify-json/ri',
   'highlight.js',
-  'motion-v',
 ])
 const corePackages = new Set([
   'vue',
   'vue-router',
   'pinia',
-  'pinia-plugin-persistedstate',
   '@vueuse/core',
   'naive-ui',
 ])
