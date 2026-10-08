@@ -95,20 +95,23 @@ pnpm install
 
 ### 主要脚本
 
-| 命令                     | 用途         | 说明                        |
-| ------------------------ | ------------ | --------------------------- |
-| `bun run dev`            | 标准开发     | 默认端口 1988               |
-| `bun run dev:local`      | 本地包调试   | `USE_LOCAL_PACKAGES=true`   |
-| `bun run dev:components` | 组件库联调   | `USE_LOCAL_COMPONENTS=true` |
-| `bun run dev:devtools`   | Vue DevTools | `VITE_DEVTOOLS=true`        |
-| `bun run build`          | 生产构建     | Vite production 模式        |
-| `bun run build:test`     | 测试构建     | `--mode test`               |
-| `bun run build:staging`  | 预发构建     | `--mode staging --profile`  |
-| `bun run lint`           | 代码检查     | Oxlint → ESLint 双重检查    |
-| `bun run format`         | 代码格式化   | Prettier                    |
-| `bun run type-watch`     | 实时 TS 检查 | `vue-tsc --watch`           |
-| `bun run analyze`        | 构建分析     | rollup-plugin-visualizer    |
-| `bun run cz`             | 规范化提交   | Commitizen 交互式           |
+| 命令                        | 用途         | 说明                               |
+| --------------------------- | ------------ | ---------------------------------- |
+| `bun run dev`               | 标准开发     | 默认端口 1988                      |
+| `bun run dev:local`         | 本地包调试   | `USE_LOCAL_PACKAGES=true`          |
+| `bun run dev:components`    | 组件库联调   | `USE_LOCAL_COMPONENTS=true`        |
+| `bun run dev:devtools`      | Vue DevTools | `VITE_DEVTOOLS=true`               |
+| `bun run build`             | 生产构建     | Vite production 模式               |
+| `bun run build:test`        | 测试构建     | `--mode test`                      |
+| `bun run build:staging`     | 预发构建     | `--mode staging --profile`         |
+| `bun run lint`              | 代码检查     | Oxlint → ESLint 双重检查           |
+| `bun run format`            | 代码格式化   | Prettier                           |
+| `bun run type-watch`        | 实时 TS 检查 | `vue-tsc --watch`                  |
+| `bun run analyze`           | 构建分析     | rollup-plugin-visualizer           |
+| `bun run cz`                | 规范化提交   | Commitizen 交互式                  |
+| `bun run changelog:preview` | 日志预览     | 仅向 stdout 输出，不修改 CHANGELOG |
+
+Robot_Admin 的版本与正式日志由 `.github/workflows/release-please.yml` 管理。
 
 ### 组件库脚本（naive-ui-components）
 
@@ -125,8 +128,8 @@ bun run check:exports # 检测导出命名冲突
 # 在具体包目录下
 bun run build        # 构建单个包
 bun run changeset    # 创建变更集
-bun run version      # 版本号递增
-bun run release      # 发布到 npm
+bun run version-packages # Changesets 更新包版本及日志
+bun run release      # 验证后由 Changesets 发布到 npm
 ```
 
 ---

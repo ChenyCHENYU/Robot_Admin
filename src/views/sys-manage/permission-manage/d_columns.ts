@@ -13,7 +13,10 @@ import type {
   FieldPermissionItem,
   TempAuthorization,
 } from '@/api/permission-governance.contract'
-import { DATA_SCOPE_CONFIG, TEMP_AUTH_STATUS_CONFIG } from './data'
+import {
+  DATA_SCOPE_CONFIG,
+  TEMP_AUTH_STATUS_CONFIG,
+} from '../shared/d_permissionPolicy'
 
 /** 创建列配置，保留页面统一表格行为。 */
 export function createGovernanceColumns(actions: {

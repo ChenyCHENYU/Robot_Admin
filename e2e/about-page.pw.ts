@@ -8,6 +8,74 @@
 import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 import { installMockAdminSession } from './auth-fixture'
+const packageJson: {
+  dependencies: Record<string, string>
+  devDependencies: Record<string, string>
+} = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8')
+)
+
+test('两组依赖行真实绘制，末页、搜索与空结果保持分页器高度', async ({
+  page,
+}) => {
+  await installMockAdminSession(page)
+  await page.goto('/#/about')
+  const sections = page.locator('.about-dependencies')
+  const inspect = async (
+    index: number,
+    dependencies: Record<string, string>
+  ) => {
+    const section = sections.nth(index)
+    await expect(section.locator('tbody tr')).toHaveCount(10)
+    await expect(section).toContainText(
+      `${Object.keys(dependencies).length} 个直接依赖`
+    )
+    const body = section.locator('.n-data-table-base-table-body')
+    await body.scrollIntoViewIfNeeded()
+    // DOM 有行、toBeVisible 为真也不能证明内容未被零高祖先裁掉。
+    const rect = (await body.boundingBox())!
+    expect(rect.height).toBeGreaterThan(350)
+    const row = section.locator('tbody tr').first()
+    await expect(row).toBeInViewport()
+    const cell = row.locator('td').first()
+    await expect
+      .poll(() =>
+        cell.evaluate(element => {
+          const rect = element.getBoundingClientRect()
+          return element.contains(
+            document.elementFromPoint(
+              rect.x + rect.width / 2,
+              rect.y + rect.height / 2
+            )
+          )
+        })
+      )
+      .toBe(true)
+    const pagination = section.locator('.n-pagination')
+    const offset = async () =>
+      (await pagination.boundingBox())!.y - (await section.boundingBox())!.y
+    const before = await offset()
+    await pagination
+      .locator('.n-pagination-item:not(.n-pagination-item--button)')
+      .last()
+      .click()
+    await expect(section.locator('tbody tr')).toHaveCount(
+      Object.keys(dependencies).length % 10 || 10
+    )
+    expect(Math.abs((await offset()) - before)).toBeLessThan(2)
+  }
+  await inspect(0, packageJson.dependencies)
+  await inspect(1, packageJson.devDependencies)
+  const search = page.getByPlaceholder('搜索技术、包名或场景')
+  await search.fill('vite')
+  await expect(sections.last().locator('tbody')).toContainText('vite')
+  const { height } = (await sections.last().boundingBox())!
+  await search.fill('no-such-package-regression')
+  await expect(sections.last().locator('.n-empty')).toContainText('无数据')
+  expect((await sections.last().boundingBox())!.height).toBeCloseTo(height, 1)
+  await search.clear()
+  await expect(sections.last().locator('tbody tr')).toHaveCount(10)
+})
 
 const componentVersion = JSON.parse(
   readFileSync(

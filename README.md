@@ -254,6 +254,8 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 <details>
 <summary><b>查看完整技术栈</b></summary>
 
+以下精确版本对应 `bun.lock` 的实际安装结果；声明范围见 `package.json`。
+
 **🎭 前端核心**
 
 - **Vue 3.5.42** - 🔥 Composition API 丝滑体验
@@ -430,41 +432,41 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 
 ```
 Robot_Admin/
-├── 📁 src/                          # 源代码目录
-│   ├── 📁 api/                      # 接口管理层
-│   ├── 📁 components/               # 组件（桥接层 + 局部组件）
-│   │   ├── 📁 global/               # 全局桥接组件（按需引用组件库）
-│   │   └── 📁 local/                # 局部组件
-│   ├── 📁 views/                    # 页面视图
-│   │   ├── 📁 dashboard/            # 数据看板
-│   │   ├── 📁 demo/                 # 演示页面（64 个 index.vue）
-│   │   ├── 📁 preview/              # 组件预览页面（38 个 iframe 嵌入路由）
-│   │   ├── 📁 sys-manage/           # 系统管理
-│   │   ├── 📁 login/                # 登录注册
-│   │   ├── 📁 about/                     # 版本与项目信息
-│   │   ├── 📁 account/                     # 个人中心
-│   │   ├── 📁 editor/                     # 编辑器工作区
-│   │   ├── 📁 error-page/                     # 异常页
-│   │   ├── 📁 large-screen/                     # 大屏模板
-│   │   ├── 📁 plugins/                     # 插件演示
-│   │   ├── 📁 portal/                     # 门户布局示例
-│   │   └── 📁 home/                 # 项目主页
-│   ├── 📁 stores/                   # Pinia状态管理
-│   ├── 📁 composables/              # 组合式API
-│   ├── 📁 constant/                 # 运行时常量
-│   ├── 📁 styles/                   # 全局主题与样式入口
-│   ├── 📁 router/                   # 路由配置
-│   ├── 📁 utils/                    # 工具函数
-│   ├── 📁 types/                    # TypeScript类型定义
-│   ├── 📁 config/                   # 环境、主题与构建配置
-│   ├── 📁 assets/                   # 静态资源
-│   └── 📁 plugins/                  # 插件配置
-├── 📁 scripts/                      # 构建脚本
-├── 📁 public/                       # 静态资源
-├── ⚙️ vite.config.ts                # Vite配置
-├── 🎨 unocss.config.ts              # UnoCSS配置
-├── 📦 package.json                  # 项目配置
-└── 🔧 tsconfig.json                 # TypeScript配置
+├── 📁 src/                            # 源代码目录
+│   ├── 📁 api/                        # 接口管理层
+│   ├── 📁 components/                 # 组件（桥接层 + 局部组件）
+│   │   ├── 📁 global/                 # 全局桥接组件（按需引用组件库）
+│   │   └── 📁 local/                  # 局部组件
+│   ├── 📁 views/                      # 页面视图
+│   │   ├── 📁 dashboard/              # 数据看板
+│   │   ├── 📁 demo/                   # 演示页面（64 个 index.vue）
+│   │   ├── 📁 preview/                # 组件预览页面（38 个 iframe 嵌入路由）
+│   │   ├── 📁 sys-manage/             # 系统管理
+│   │   ├── 📁 login/                  # 登录注册
+│   │   ├── 📁 about/                  # 版本与项目信息
+│   │   ├── 📁 account/                # 个人中心
+│   │   ├── 📁 editor/                 # 编辑器工作区
+│   │   ├── 📁 error-page/             # 异常页
+│   │   ├── 📁 large-screen/           # 大屏模板
+│   │   ├── 📁 plugins/                # 插件演示
+│   │   ├── 📁 portal/                 # 门户布局示例
+│   │   └── 📁 home/                   # 项目主页
+│   ├── 📁 stores/                     # Pinia状态管理
+│   ├── 📁 composables/                # 组合式API
+│   ├── 📁 constant/                   # 运行时常量
+│   ├── 📁 styles/                     # 全局主题与样式入口
+│   ├── 📁 router/                     # 路由配置
+│   ├── 📁 utils/                      # 工具函数
+│   ├── 📁 types/                      # TypeScript类型定义
+│   ├── 📁 config/                     # 环境、主题与构建配置
+│   ├── 📁 assets/                     # 静态资源
+│   └── 📁 plugins/                    # 插件配置
+├── 📁 scripts/                        # 构建脚本
+├── 📁 public/                         # 静态资源
+├── ⚙️ vite.config.ts                 # Vite配置
+├── 🎨 unocss.config.ts                # UnoCSS配置
+├── 📦 package.json                    # 项目配置
+└── 🔧 tsconfig.json                   # TypeScript配置
 ```
 
 </details>

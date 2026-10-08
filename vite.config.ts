@@ -231,7 +231,7 @@ export default defineConfig(
         ],
       },
 
-      server: { ...serverConfig, port: validatedEnv.port },
+      server: { ...serverConfig(env.API_PROXY_TARGET), port: validatedEnv.port },
       build: buildConfig,
     }
   }

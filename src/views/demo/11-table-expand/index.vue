@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-08
+ * @FilePath: \Robot_Admin\src\views\demo\11-table-expand\index.vue
+ * @Description: 表格演示配置与展示；数据源遵循项目运行模式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ -->
 <template>
   <div class="table-expand-demo">
     <c_vTitle
@@ -86,6 +93,7 @@
   import '@robot-admin/naive-ui-components/C_Table/base.css'
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
+  import { createDemoEmployeeSource } from '@/api/demo-employees'
   import { toCrudTableColumns } from '@/utils/d_tableColumns'
   import {
     defaultConfig,
@@ -101,7 +109,7 @@
 
   // 表格数据管理
   const table = useNaiveTableCrud<TestRecord>({
-    api: { list: 'employees/expandList' },
+    source: createDemoEmployeeSource('employees/expandList'),
     columns: toCrudTableColumns(dataColumns),
   })
 

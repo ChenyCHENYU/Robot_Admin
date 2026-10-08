@@ -1,42 +1,15 @@
-import type { DataRecord, TableColumn } from '@robot-admin/naive-ui-components'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-08
+ * @FilePath: \Robot_Admin\src\views\demo\12-table-dynamic\data.ts
+ * @Description: 表格演示配置与展示；数据源遵循项目运行模式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+import type { TableColumn } from '@robot-admin/naive-ui-components'
 import type { TagProps } from 'naive-ui'
 
-// ================= 类型定义 =================
-export interface ChildWorkData {
-  id: number
-  project?: string
-  progress?: string
-  requirement?: string
-  priority?: string
-  service?: string
-  version?: string
-  status: string
-}
-
-export interface DynamicEmployee extends DataRecord {
-  id: number
-  name: string
-  age: number
-  email: string
-  department: string
-  role: string
-  salary: number
-  status: string
-  hasChildren: boolean
-  childData: ChildWorkData[]
-}
-
-export interface DynamicEmployeeApiResponse {
-  code: string
-  message: string
-  data: {
-    list: DynamicEmployee[]
-    total: number
-    page: number
-    pageSize: number
-  }
-  timestamp: number
-}
+import type { DemoEmployee } from '@/api/demo-employees.contract'
+export type { DemoEmployee as DynamicEmployee } from '@/api/demo-employees.contract'
 
 // ================= 操作日志类型 =================
 export interface Log {
@@ -45,133 +18,8 @@ export interface Log {
   time: string
 }
 
-// ================= 模拟API数据 =================
-export const mockDynamicEmployeeData: DynamicEmployeeApiResponse = {
-  code: '0',
-  message: '操作成功',
-  data: {
-    list: [
-      {
-        id: 1,
-        name: '张三',
-        age: 28,
-        email: 'zhang@example.com',
-        department: '技术部',
-        role: '前端工程师',
-        salary: 15000,
-        status: '在职',
-        hasChildren: true,
-        childData: [
-          {
-            id: 101,
-            project: '管理系统前端',
-            progress: '80%',
-            status: '进行中',
-          },
-          {
-            id: 102,
-            project: '移动应用开发',
-            progress: '60%',
-            status: '设计中',
-          },
-          {
-            id: 103,
-            project: '组件库建设',
-            progress: '90%',
-            status: '测试中',
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: '李四',
-        age: 32,
-        email: 'li@example.com',
-        department: '产品部',
-        role: '产品经理',
-        salary: 18000,
-        status: '在职',
-        hasChildren: true,
-        childData: [
-          {
-            id: 201,
-            requirement: '用户需求调研',
-            status: '已完成',
-            priority: '高',
-          },
-          {
-            id: 202,
-            requirement: '竞品分析报告',
-            status: '进行中',
-            priority: '中',
-          },
-          {
-            id: 203,
-            requirement: '原型设计评审',
-            status: '待开始',
-            priority: '高',
-          },
-        ],
-      },
-      {
-        id: 3,
-        name: '王五',
-        age: 26,
-        email: 'wang@example.com',
-        department: '设计部',
-        role: 'UI设计师',
-        salary: 12000,
-        status: '离职',
-        hasChildren: false,
-        childData: [],
-      },
-      {
-        id: 4,
-        name: '赵六',
-        age: 35,
-        email: 'zhao@example.com',
-        department: '技术部',
-        role: '后端工程师',
-        salary: 20000,
-        status: '在职',
-        hasChildren: true,
-        childData: [
-          {
-            id: 401,
-            service: 'API接口开发',
-            version: 'v2.1',
-            status: '已部署',
-          },
-          {
-            id: 402,
-            service: '数据库优化',
-            version: 'v1.3',
-            status: '测试中',
-          },
-        ],
-      },
-      {
-        id: 5,
-        name: '钱七',
-        age: 29,
-        email: 'qian@example.com',
-        department: '运营部',
-        role: '运营专员',
-        salary: 13000,
-        status: '在职',
-        hasChildren: false,
-        childData: [],
-      },
-    ],
-    total: 5,
-    page: 1,
-    pageSize: 10,
-  },
-  timestamp: Date.now(),
-}
-
 // ================= 表格列配置 =================
-export const dynamicTableColumns: TableColumn<DataRecord>[] = [
+export const dynamicTableColumns: TableColumn<DemoEmployee>[] = [
   {
     key: 'name',
     title: '姓名',
@@ -221,8 +69,8 @@ export const dynamicTableColumns: TableColumn<DataRecord>[] = [
     width: 100,
     editable: true,
     editType: 'number',
-    render: (row: DataRecord) => {
-      const employee = row as DynamicEmployee
+    render: (row: DemoEmployee) => {
+      const employee = row
       return `¥${employee.salary.toLocaleString()}`
     },
   },
@@ -238,8 +86,8 @@ export const dynamicTableColumns: TableColumn<DataRecord>[] = [
         { label: '离职', value: '离职' },
       ],
     },
-    render: (row: DataRecord) => {
-      const employee = row as DynamicEmployee
+    render: (row: DemoEmployee) => {
+      const employee = row
       return employee.status === '在职' ? '🟢 在职' : '🔴 离职'
     },
   },
@@ -257,7 +105,7 @@ export const getLogTagType = (type: Log['type']): TagProps['type'] => {
 }
 
 // ================= 默认新员工数据生成器 =================
-export const createDefaultEmployee = (): DynamicEmployee => ({
+export const createDefaultEmployee = (): DemoEmployee => ({
   id: Date.now(),
   name: '新员工',
   age: 25,
@@ -271,7 +119,7 @@ export const createDefaultEmployee = (): DynamicEmployee => ({
 })
 
 // ================= 随机员工数据生成器 =================
-export const generateRandomEmployee = (): DynamicEmployee => {
+export const generateRandomEmployee = (): DemoEmployee => {
   const names = ['赵六', '钱七', '孙八', '李九', '周十', '吴十一']
   const departments = ['技术部', '产品部', '设计部', '运营部']
   const roles = [

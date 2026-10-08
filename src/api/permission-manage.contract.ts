@@ -8,7 +8,6 @@
 export type PermissionType = 'module' | 'function' | 'button' | 'api'
 
 export interface PermissionResource {
-  [key: string]: unknown
   id: number
   name: string
   code: string

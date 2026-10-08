@@ -1,4 +1,10 @@
-<!-- ParentSize.vue -->
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-08
+ * @FilePath: \Robot_Admin\src\views\login\components\ParentSize.vue
+ * @Description: 登录场景父容器尺寸观察与属性转发
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ -->
 <template>
   <div
     ref="target"

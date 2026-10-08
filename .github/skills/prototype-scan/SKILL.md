@@ -216,7 +216,7 @@ description: 'Use when: analyzing Axure exported HTML prototype files or detaile
 
 ```
 page-spec JSON
-  ├─→ api-contract SKILL → 生成 api.md
+  ├─→ api-contract SKILL → 生成 TypeScript 请求/响应契约与 API 函数
   ├─→ page-codegen SKILL → 生成 index.vue + data.ts + index.scss
   └─→ route-sync SKILL   → 注册到 dynamicRouter.json
 ```

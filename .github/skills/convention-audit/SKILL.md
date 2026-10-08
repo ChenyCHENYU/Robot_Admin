@@ -109,8 +109,8 @@ NCard, NButton, NSpace, NInput, NSelect, NTag, NModal, ...
 // Naive UI Composables
 useMessage, useDialog, useNotification, useLoadingBar
 
-// 用户自定义（stores / composables / hooks）
-s_userStore, s_themeStore, useLoginController, ...
+// 仅自动扫描 src/composables/ 中导出的函数
+// 领域 Store 与页面控制器显式导入，不把 hooks 或页面目录视为自动导入源
 ```
 
 **导入顺序违规：**
@@ -186,7 +186,7 @@ s_userStore, s_themeStore, useLoginController, ...
 
 - [ ] 直接使用 `axios` → 应使用 `@robot-admin/request-core`
 - [ ] API 函数缺少 JSDoc
-- [ ] 响应类型未定义在 `generated/index.ts` 中
+- [ ] 响应类型缺少明确契约 → 使用对应资源的 `*.contract.ts` 或已有 `generated/index.ts`
 - [ ] 缺少泛型标注 `getData<T>(...)`
 
 ### 9. Store 审计

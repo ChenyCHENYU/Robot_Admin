@@ -613,9 +613,14 @@
     weatherController?.abort()
     const controller = new AbortController()
     weatherController = controller
+    let timedOut = false
+    const timeout = setTimeout(() => {
+      timedOut = true
+      controller.abort()
+    }, 6000)
     try {
       const res = await fetch('https://wttr.in/西安?format=j1', {
-        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(6000)]),
+        signal: controller.signal,
       })
       if (!res.ok) throw new Error(`天气服务响应异常：${res.status}`)
       const data: unknown = await res.json()
@@ -628,9 +633,10 @@
         setDefaultWeather()
       }
     } catch {
-      if (controller.signal.aborted) return
+      if (controller.signal.aborted && !timedOut) return
       setDefaultWeather()
     } finally {
+      clearTimeout(timeout)
       if (weatherController === controller) weatherController = undefined
     }
   }

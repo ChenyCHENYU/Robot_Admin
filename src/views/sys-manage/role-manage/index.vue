@@ -388,10 +388,10 @@
                       </NTag>
                     </NSpace>
                     <NTag
-                      :type="TEMP_AUTH_STATUS[auth.status].type"
+                      :type="TEMP_AUTH_STATUS_CONFIG[auth.status].type"
                       size="small"
                     >
-                      {{ TEMP_AUTH_STATUS[auth.status].text }}
+                      {{ TEMP_AUTH_STATUS_CONFIG[auth.status].text }}
                     </NTag>
                   </NSpace>
                 </NTimelineItem>
@@ -696,7 +696,11 @@
 <script setup lang="ts">
   import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
   import '@robot-admin/naive-ui-components/C_Icon/style.css'
-  import { UI_CONFIG, ICONS, DATA_SCOPE_CONFIG, TEMP_AUTH_STATUS } from './data'
+  import { UI_CONFIG, ICONS } from './data'
+  import {
+    DATA_SCOPE_CONFIG,
+    TEMP_AUTH_STATUS_CONFIG,
+  } from '../shared/d_permissionPolicy'
   import { useRoleManagement } from './useRoleManagement'
 
   defineOptions({ name: 'RoleManage' })

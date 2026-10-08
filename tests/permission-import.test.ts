@@ -29,9 +29,16 @@ test('导入规范化资源且保留停用状态和排序 0，不接受 ID 等�
   expect(draft.resources).toEqual([' /sys/users ', '/sys/users'])
 })
 
-test('拒绝字符串状态、错误资源、未知类型及非法排序', () => {
+test('严格拒绝布尔、字符串及非 0/1 状态，拒绝错误资源、未知类型及非法排序', () => {
   for (const patch of [
+    { status: false },
+    { status: true },
     { status: '0' },
+    { status: '1' },
+    { status: null },
+    { status: undefined },
+    { status: 2 },
+    { status: NaN },
     { resources: '/sys/users' },
     { resources: [1] },
     { type: 'invalid' },

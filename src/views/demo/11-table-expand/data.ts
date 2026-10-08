@@ -1,22 +1,24 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-08
+ * @FilePath: \Robot_Admin\src\views\demo\11-table-expand\data.ts
+ * @Description: 表格演示配置与展示；数据源遵循项目运行模式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
 import { h } from 'vue'
 import { NTag } from 'naive-ui/es'
 import type {
-  DataRecord,
   TableColumn,
   ParentChildLinkMode,
 } from '@robot-admin/naive-ui-components'
-import type { GetEmployeesExpandListResponse } from '@/api/generated'
+import type {
+  DemoEmployee as TestRecord,
+  DemoEmployeeTask as ChildDataType,
+} from '@/api/demo-employees.contract'
+export type { DemoEmployeeTask as ChildDataType } from '@/api/demo-employees.contract'
 
 // ================= Demo 专用类型 =================
-export interface TestRecord extends DataRecord {
-  id: number
-  name: string
-  department: string
-  role: string
-  status: string
-  childData?: ChildDataType[]
-  hasChildren?: boolean
-}
+export type { DemoEmployee as TestRecord } from '@/api/demo-employees.contract'
 
 export interface DemoConfig {
   enableSelection: boolean
@@ -31,12 +33,6 @@ export const defaultConfig: DemoConfig = {
   parentChildLinkMode: 'loose',
 }
 
-// ================= 类型别名 - 直接使用API类型 =================
-// 提取API响应中的员工数据类型
-export type EmployeeData = GetEmployeesExpandListResponse['data']['list'][0]
-// 提取子数据类型
-export type ChildDataType = EmployeeData['childData'][0]
-// 增强的记录类型 - 修复类型冲突
 // ================= 子表格列配置 =================
 export const childColumnsConfig = {
   // 项目子表列

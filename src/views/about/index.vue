@@ -134,28 +134,29 @@
               ><h2>{{ group.title }}</h2
               ><span>{{ group.items.length }} 个直接依赖</span></div
             >
-            <C_Table
-              class="about-dependencies__table"
-              flex-height
-              :columns="columns"
-              :data="group.items"
-              :row-key="row => row.name"
-              :row-props="createRowProps"
-              :config="{
-                toolbar: { show: false },
-                pagination: {
-                  showSizePicker: false,
-                  showQuickJumper: false,
-                  pageSize: 10,
-                },
-                display: {
-                  striped: false,
-                  scrollX: 650,
-                  bordered: false,
-                  size: 'small',
-                },
-              }"
-            />
+            <div class="about-dependencies__table">
+              <C_Table
+                flex-height
+                :columns="columns"
+                :data="group.items"
+                :row-key="row => row.name"
+                :row-props="createRowProps"
+                :config="{
+                  toolbar: { show: false },
+                  pagination: {
+                    showSizePicker: false,
+                    showQuickJumper: false,
+                    pageSize: 10,
+                  },
+                  display: {
+                    striped: false,
+                    scrollX: 650,
+                    bordered: false,
+                    size: 'small',
+                  },
+                }"
+              />
+            </div>
           </section>
         </div>
       </div>

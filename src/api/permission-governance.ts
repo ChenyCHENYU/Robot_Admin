@@ -5,6 +5,7 @@
  * @Description: 权限治理扩展数据与变更接口
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import type { ApiResponse } from './management.contract'
 
 import type {
   DataPermissionRule,
@@ -20,30 +21,22 @@ import { getData, postData, putData } from '@robot-admin/request-core/axios'
 import { isMockDataMode } from '@/config/dataMode'
 import { delayWithSignal } from '@/utils/abort'
 
-export interface GovernanceApiResponse<T> {
-  code: string | number
-  data: T
-  message?: string
-  msg?: string
-}
-
 const createMockResponse = async <T>(
   data: T,
   signal?: AbortSignal
-): Promise<GovernanceApiResponse<T>> => {
+): Promise<ApiResponse<T>> => {
   await delayWithSignal(250, signal)
-  return { code: '0', data, message: '操作成功' }
+  return { code: '0', data, msg: '操作成功' }
 }
 
 const getGovernanceList = async <T>(
   endpoint: string,
   mockData: T,
   signal?: AbortSignal
-): Promise<GovernanceApiResponse<T>> => {
-  if (!isMockDataMode())
-    return getData<GovernanceApiResponse<T>>(endpoint, { signal })
+): Promise<ApiResponse<T>> => {
+  if (!isMockDataMode()) return getData<ApiResponse<T>>(endpoint, { signal })
   await delayWithSignal(250, signal)
-  return { code: '0', data: structuredClone(mockData), message: '操作成功' }
+  return { code: '0', data: structuredClone(mockData), msg: '操作成功' }
 }
 
 export const getDataPermissionRulesApi = (signal?: AbortSignal) =>
@@ -65,9 +58,9 @@ export const getPermissionAuditLogsApi = (signal?: AbortSignal) =>
 export const updateDataPermissionRuleApi = async (
   id: string,
   data: DataPermissionRule
-): Promise<GovernanceApiResponse<DataPermissionRule>> => {
+): Promise<ApiResponse<DataPermissionRule>> => {
   if (!isMockDataMode())
-    return putData<GovernanceApiResponse<DataPermissionRule>>(
+    return putData<ApiResponse<DataPermissionRule>>(
       `/sys/data-permissions/${id}`,
       data
     )
@@ -84,9 +77,9 @@ export const updateDataPermissionRuleApi = async (
 
 export const createTempAuthorizationApi = async (
   data: TempAuthorization
-): Promise<GovernanceApiResponse<TempAuthorization>> => {
+): Promise<ApiResponse<TempAuthorization>> => {
   if (!isMockDataMode())
-    return postData<GovernanceApiResponse<TempAuthorization>>(
+    return postData<ApiResponse<TempAuthorization>>(
       '/sys/temp-authorizations',
       data
     )
@@ -101,11 +94,9 @@ export const createTempAuthorizationApi = async (
 
 export const revokeTempAuthorizationApi = async (
   id: string
-): Promise<GovernanceApiResponse<void>> => {
+): Promise<ApiResponse<void>> => {
   if (!isMockDataMode())
-    return putData<GovernanceApiResponse<void>>(
-      `/sys/temp-authorizations/${id}/revoke`
-    )
+    return putData<ApiResponse<void>>(`/sys/temp-authorizations/${id}/revoke`)
   const record = MOCK_TEMP_AUTHORIZATIONS.find(item => item.id === id)
   if (!record) throw new Error('临时授权不存在')
   const result = await createMockResponse(undefined)

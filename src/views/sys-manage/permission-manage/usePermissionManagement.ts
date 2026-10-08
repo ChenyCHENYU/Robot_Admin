@@ -5,6 +5,17 @@
  * @Description: 页面状态、表单及请求控制，模板只负责展示和事件绑定
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import {
+  compareRolePermissions,
+  getRolePermissionName,
+} from '@/utils/d_permissionComparison'
+
+import type { DataScopeType } from '@/api/permission-policy.contract'
+import {
+  DATA_SCOPE_CONFIG,
+  DATA_SCOPE_OPTIONS,
+} from '../shared/d_permissionPolicy'
+
 import { parsePermissionImport } from './d_permissionImport'
 import { createGovernanceColumns } from './d_columns'
 import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
@@ -22,7 +33,6 @@ import {
   type PermissionFormData,
   type SearchForm,
   type PermissionType,
-  type DataScopeType,
   type DataPermissionRule,
   type TempAuthorization,
   type PermissionConstraint,
@@ -32,8 +42,6 @@ import {
   UI_CONFIG,
   PERMISSION_TYPE_CONFIG,
   SYSTEM_MODULES,
-  DATA_SCOPE_CONFIG,
-  DATA_SCOPE_OPTIONS,
   AUDIT_ACTION_CONFIG,
   AUDIT_TARGET_CONFIG,
   MOCK_PERMISSION_RESOURCES,
@@ -855,17 +863,13 @@ export function usePermissionManagement() {
     const roleB = roleList.value.find(r => r.id === compareRoleB.value)
     if (!roleA || !roleB) return
 
-    const namesA = roleA.permissionNames || []
-    const namesB = roleB.permissionNames || []
-    const setA = new Set(namesA)
-    const setB = new Set(namesB)
-
+    const result = compareRolePermissions(roleA, roleB)
     comparisonResult.value = {
       roleAName: roleA.name,
       roleBName: roleB.name,
-      shared: namesA.filter(n => setB.has(n)),
-      onlyA: namesA.filter(n => !setB.has(n)),
-      onlyB: namesB.filter(n => !setA.has(n)),
+      shared: result.shared.map(id => getRolePermissionName(roleA, id)),
+      onlyA: result.onlyA.map(id => getRolePermissionName(roleA, id)),
+      onlyB: result.onlyB.map(id => getRolePermissionName(roleB, id)),
     }
   }
 

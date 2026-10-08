@@ -1,11 +1,14 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-08
+ * @FilePath: \Robot_Admin\src\api\permission-governance.contract.ts
  * @Description: 权限治理领域契约，与页面布局无关
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-export type DataScopeType =
-  'all' | 'department' | 'department_below' | 'self' | 'custom'
+import type {
+  DataScopeType,
+  TemporaryAuthorizationStatus,
+} from './permission-policy.contract'
 
 export interface DataPermissionRule {
   id: string
@@ -37,7 +40,7 @@ export interface TempAuthorization {
   grantedByName: string
   startTime: string
   expireTime: string
-  status: 'active' | 'expired' | 'revoked'
+  status: TemporaryAuthorizationStatus
   remark: string
 }
 

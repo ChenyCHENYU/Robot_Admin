@@ -7,7 +7,7 @@
  */
 import { ref, onMounted, onActivated, onDeactivated, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { LOGIN_URL } from '@/constant'
+import { HOME_URL, LOGIN_URL } from '@/constant'
 
 /** 退出或缓存页面时停止倒计时，避免后台异常页改变当前路由。 */
 export function useErrorPage() {
@@ -21,7 +21,7 @@ export function useErrorPage() {
   }
   const goHome = () => {
     stop()
-    return router.push('/')
+    return router.push(HOME_URL)
   }
   const goLogin = () => {
     stop()

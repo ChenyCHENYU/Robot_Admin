@@ -291,17 +291,12 @@
   import { s_settingsStore } from '@/stores/settings'
   import type { GuideExpose } from '@robot-admin/naive-ui-components/C_Guide'
   import { createWorkspaceGuideSteps } from './data'
-  import { translateRouteTitle } from '@/utils/plugins/i18n-route'
-  import type {
-    GlobalSearchOptions,
-    SearchMenuItem,
-  } from '@robot-admin/naive-ui-components/C_GlobalSearch'
+  import type { GlobalSearchOptions } from '@robot-admin/naive-ui-components/C_GlobalSearch'
   import {
-    createMenuOptions,
-    type RouteItem,
-  } from '@robot-admin/naive-ui-components/C_Menu'
-  import type { MenuOptions } from '@/types/modules/menu'
-  import type { MenuOption } from 'naive-ui/es'
+    createSearchMenuOptions,
+    flattenMenuItems,
+    findFirstChildKey,
+  } from './d_searchMenu'
   import packageJson from '../../../../package.json'
 
   defineOptions({ name: 'C_NavbarRight' })
@@ -457,96 +452,19 @@
       switchingContextId.value = ''
     }
   }
-  /** 将 Naive UI 菜单节点收窄为全局搜索可消费的数据结构。 */
-  function toSearchMenuItem(item: MenuOption): SearchMenuItem | null {
-    if (
-      (typeof item.key !== 'string' && typeof item.key !== 'number') ||
-      typeof item.label !== 'string'
-    ) {
-      return null
-    }
-
-    const children = item.children
-      ?.map(toSearchMenuItem)
-      .filter((child): child is SearchMenuItem => child !== null)
-
-    return {
-      key: String(item.key),
-      label: item.label,
-      icon: item.icon,
-      ...(children?.length ? { children } : {}),
-    }
-  }
-
-  /** 将权限菜单树扁平化为 SearchMenuItem[]。 */
-  function flattenMenuItems(items: MenuOption[]): SearchMenuItem[] {
-    const result: SearchMenuItem[] = []
-    for (const item of items) {
-      const searchItem = toSearchMenuItem(item)
-      if (searchItem) result.push(searchItem)
-      if (item.children?.length) {
-        result.push(...flattenMenuItems(item.children))
-      }
-    }
-    return result
-  }
-
-  /** 将应用菜单路由转换为组件库公开的最小路由契约。 */
-  function toRouteItems(items: MenuOptions[]): RouteItem[] {
-    return items.flatMap(item => {
-      if (!item.path) return []
-
-      const children = item.children?.length
-        ? toRouteItems(item.children)
-        : undefined
-
-      return [
-        {
-          path: item.path,
-          name: item.name,
-          component: item.component,
-          redirect: item.redirect,
-          meta: item.meta,
-          type: item.type,
-          disabled: item.disabled,
-          ...(children?.length ? { children } : {}),
-        },
-      ]
-    })
-  }
-
-  /** 使用统一边界适配权限菜单，避免调用处重复做不安全断言。 */
-  const createSearchMenuOptions = (): MenuOption[] =>
-    createMenuOptions(toRouteItems(permissionStore.showMenuListGet), {
-      labelFormatter: translateRouteTitle,
-    })
-
-  const normalizeMenuKey = (key: unknown): string | null =>
-    typeof key === 'string' || typeof key === 'number' ? String(key) : null
-
-  /** 在菜单树中找到父级的第一个子路由 key */
-  function findFirstChildKey(parentKey: string): string | null {
-    const normalized = createSearchMenuOptions()
-    const find = (nodes: MenuOption[]): string | null => {
-      for (const n of nodes) {
-        if (String(n.key) === parentKey && n.children?.length) {
-          return normalizeMenuKey(n.children[0]?.key)
-        }
-        const nestedKey = n.children?.length ? find(n.children) : null
-        if (nestedKey) return nestedKey
-      }
-      return null
-    }
-    return find(normalized)
-  }
-
   const searchOptions: GlobalSearchOptions = {
-    menuItems: () => flattenMenuItems(createSearchMenuOptions()),
+    menuItems: () =>
+      flattenMenuItems(
+        createSearchMenuOptions(permissionStore.showMenuListGet)
+      ),
     isDark: () => themeStore.isDark,
     /** 选中菜单项后跳转路由 */
     onSelect(key: string, hasChildren: boolean) {
       if (hasChildren) {
-        const childKey = findFirstChildKey(key)
+        const childKey = findFirstChildKey(
+          key,
+          createSearchMenuOptions(permissionStore.showMenuListGet)
+        )
         if (childKey) {
           void router.push(childKey).catch(() => undefined)
           return
@@ -578,234 +496,5 @@
 
 <!-- NPopover raw 内容被 teleport 到 body，scoped 样式无法覆盖，需要独立 style 块 -->
 <style lang="scss">
-  .user-panel {
-    width: 240px;
-    background: var(--c-bg-surface);
-    border-radius: 10px;
-    box-shadow: var(--c-shadow-lg);
-    overflow: hidden;
-    font-size: 13px;
-    color: var(--c-text-1);
-    animation: user-panel-enter 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-
-    // 保留兼容类名，颜色统一由根节点的语义主题变量驱动
-    &--dark {
-      background: var(--c-bg-surface);
-      color: var(--c-text-1);
-    }
-
-    // ---------- 用户卡片头部 ----------
-    &__header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      background: color-mix(in srgb, var(--c-primary) 12%, var(--c-bg-surface));
-      position: relative;
-    }
-
-    &__info {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-    }
-
-    &__name {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--c-text-1);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    &__role,
-    &__email {
-      font-size: 11px;
-      color: var(--c-primary);
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    &__email {
-      color: var(--c-text-2);
-    }
-
-    &__status {
-      flex-shrink: 0;
-      align-self: flex-start;
-      margin-top: 1px;
-    }
-
-    &__context {
-      display: grid;
-      gap: 3px;
-      padding: 10px 14px;
-      color: var(--c-text-2);
-      font-size: 11px;
-
-      strong {
-        color: var(--c-text-1);
-        font-size: 12px;
-        font-weight: 650;
-      }
-
-      button {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        justify-self: start;
-        margin-top: 5px;
-        padding: 0;
-        border: 0;
-        background: transparent;
-        color: var(--c-primary);
-        cursor: pointer;
-        font-size: 11px;
-        font-weight: 650;
-      }
-    }
-
-    &__context-label {
-      color: var(--c-text-3);
-      font-size: 10px;
-      letter-spacing: 0.06em;
-    }
-
-    // ---------- 菜单区块 ----------
-    &__section {
-      padding: 3px 6px;
-    }
-
-    &__item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      color: var(--c-text-2);
-      transition: all 0.18s ease;
-      user-select: none;
-
-      &:hover {
-        background: color-mix(
-          in srgb,
-          var(--c-primary) 10%,
-          var(--c-bg-surface)
-        );
-        color: var(--c-primary);
-
-        .user-panel__item-icon {
-          color: var(--c-primary);
-        }
-
-        .user-panel__item-arrow {
-          opacity: 1;
-          transform: translateX(2px);
-        }
-      }
-
-      &:active {
-        transform: scale(0.98);
-      }
-
-      // 危险操作（退出登录）
-      &--danger {
-        color: var(--error-color, var(--c-error)) !important;
-
-        .user-panel__item-icon {
-          color: var(--error-color, var(--c-error)) !important;
-        }
-
-        &:hover {
-          background: color-mix(
-            in srgb,
-            var(--error-color, var(--c-error)) 10%,
-            var(--c-bg-surface)
-          ) !important;
-          color: var(--error-color, var(--c-error)) !important;
-
-          .user-panel__item-icon {
-            color: var(--error-color, var(--c-error)) !important;
-          }
-        }
-      }
-    }
-
-    &__item-icon {
-      font-size: 15px;
-      color: var(--c-text-3);
-      flex-shrink: 0;
-      transition: color 0.18s ease;
-    }
-
-    &__item-label {
-      flex: 1;
-      font-size: 12.5px;
-      line-height: 1;
-    }
-
-    &__item-arrow {
-      font-size: 14px;
-      color: var(--c-text-4);
-      flex-shrink: 0;
-      opacity: 0;
-      transition: all 0.18s ease;
-    }
-
-    &__item-shortcut {
-      font-size: 10px;
-      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
-      padding: 1px 5px;
-      border-radius: 3px;
-      background: var(--c-bg-body);
-      color: var(--c-text-3);
-      border: 1px solid var(--c-border);
-      line-height: 1;
-    }
-
-    // ---------- 底部版本信息 ----------
-    &__footer {
-      padding: 6px 14px;
-      text-align: center;
-      font-size: 10px;
-      color: var(--c-text-3);
-      background: var(--c-bg-body);
-      border-top: 1px solid var(--c-border);
-      letter-spacing: 0.3px;
-
-      a {
-        color: inherit;
-        text-decoration: none;
-
-        &:hover,
-        &:focus-visible {
-          color: var(--c-primary);
-        }
-      }
-    }
-
-    // ---------- NDivider 微调 ----------
-    .n-divider {
-      --n-color: var(--c-border) !important;
-    }
-  }
-
-  @keyframes user-panel-enter {
-    from {
-      opacity: 0;
-      transform: translateY(-4px) scale(0.98);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
+  @use './popover.scss';
 </style>

@@ -5,6 +5,8 @@
  * @Description: 角色查询与变更适配，演示模式与远端模式保持同一契约
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import type { ApiResponse, PageResult } from './management.contract'
+
 import {
   deleteData,
   getData,
@@ -14,8 +16,6 @@ import {
 import { isMockDataMode } from '@/config/dataMode'
 import { delayWithSignal } from '@/utils/abort'
 import type {
-  ApiResponse,
-  PageResult,
   RoleData,
   RoleFormData,
   RoleListParams,
@@ -138,19 +138,6 @@ export const getPermissionListApi = async (): Promise<
     ? createMockApi(MOCK_PERMISSION_DATA, 300)
     : getData<ApiResponse<PermissionData[]>>('/sys/permissions/tree')
 
-export const getRoleDetailApi = async (
-  id: string
-): Promise<ApiResponse<RoleData>> => {
-  if (!isMockDataMode()) {
-    return getData<ApiResponse<RoleData>>(`/sys/roles/${id}`)
-  }
-  const role = MOCK_ROLE_DATA.find(r => r.id === id)
-  if (!role) {
-    return Promise.reject(new Error('角色不存在'))
-  }
-  return createMockApi(role, 300)
-}
-
 export const getRoleUsersApi = async (
   roleId: string,
   signal?: AbortSignal
@@ -160,8 +147,7 @@ export const getRoleUsersApi = async (
       signal,
     })
   }
-  const users = getUsersByRoleId(roleId)
-  return createMockApi(users, 300, signal)
+  return createMockApi(getUsersByRoleId(roleId), 300, signal)
 }
 
 export const getRoleDataScopesApi = (

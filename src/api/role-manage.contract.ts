@@ -5,6 +5,10 @@
  * @Description: 角色资源请求与响应契约
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import type {
+  DataScopeType,
+  TemporaryAuthorizationStatus,
+} from './permission-policy.contract'
 
 // ==================== 类型定义 ====================
 export type RoleType = 'system' | 'custom' | 'temp'
@@ -53,19 +57,6 @@ export interface PermissionData {
   children?: PermissionData[]
 }
 
-export interface ApiResponse<T = unknown> {
-  code: string | number
-  data: T
-  msg: string
-}
-
-export interface PageResult<T> {
-  list: T[]
-  total: number
-  page: number
-  pageSize: number
-}
-
 export interface RoleListParams {
   keyword?: string
   status?: number | null
@@ -86,8 +77,6 @@ export interface RoleUserData {
 }
 
 // ==================== 权限预览相关类型 ====================
-export type DataScopeType =
-  'all' | 'department' | 'department_below' | 'self' | 'custom'
 
 export interface RoleDataScope {
   module: string
@@ -107,6 +96,6 @@ export interface RoleTempAuth {
   reason: string
   startTime: string
   expireTime: string
-  status: 'active' | 'expired' | 'revoked'
+  status: TemporaryAuthorizationStatus
   grantedBy: string
 }

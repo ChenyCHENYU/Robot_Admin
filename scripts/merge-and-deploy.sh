@@ -295,26 +295,15 @@ fi
 
 print_success "所有必要分支都存在"
 
-# 4. 检查工作区状态（忽略脚本创建的临时文件）
+# 4. 检查工作区状态
 print_step "检查工作区状态..."
 
-# 临时忽略脚本修改的配置文件
-if [ -f "envs/.env.development.backup" ]; then
-    git update-index --assume-unchanged envs/.env.development 2>/dev/null || true
-fi
-
 if ! git diff-index --quiet HEAD --; then
-    # 恢复 git 追踪
-    git update-index --no-assume-unchanged envs/.env.development 2>/dev/null || true
-    
     print_warning "工作区有未提交的更改，请先提交或暂存！"
     echo "使用 'git status' 查看详情："
     git status --short
     exit 1
 fi
-
-# 恢复 git 追踪
-git update-index --no-assume-unchanged envs/.env.development 2>/dev/null || true
 
 print_success "工作区状态干净"
 

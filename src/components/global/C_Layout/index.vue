@@ -109,6 +109,7 @@
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import { prefetchRoute } from '@/router/routePrefetch'
   import { buildGroupedMenuData, getMenuGroupColor } from './data'
+  import { SETTINGS_DRAWER_KEY } from './d_context'
   import C_Settings from '@/components/global/C_Settings/index.vue'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
   import C_MenuGrouped from '@/components/global/C_MenuGrouped/index.vue'
@@ -154,7 +155,7 @@
   const showSettings = ref(false)
 
   // 提供设置抽屉状态给子组件
-  provide('settingsDrawer', {
+  provide(SETTINGS_DRAWER_KEY, {
     showSettings,
   })
 </script>

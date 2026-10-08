@@ -28,12 +28,6 @@ export const HOME_URL: string = '/home'
 // * 登录页地址（默认）
 export const LOGIN_URL: string = '/login'
 
-// * 默认主题颜色
-export const DEFAULT_PRIMARY: string = '#409eff'
-
-// * 权限缓存 key
-export const PERMISSION_CACHE_KEY: string = 'permission_cache'
-
 // * 数据权限范围常量
 export const DATA_SCOPE = {
   ALL: 'all',
@@ -42,9 +36,6 @@ export const DATA_SCOPE = {
   SELF: 'self',
   CUSTOM: 'custom',
 } as const
-
-// * Tabs（白名单地址，不需要添加到 tabs 的路由地址）
-export const TABS_WHITE_LIST: string[] = ['/403', '/404', '/500', LOGIN_URL]
 
 // * 高德地图key
 export const MAP_KEY: string = import.meta.env.VITE_MAP_KEY?.trim() || ''

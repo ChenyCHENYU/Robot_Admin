@@ -1,12 +1,3 @@
-import {
-  NTreeSelect,
-  useMessage,
-  useDialog,
-  NTag,
-  NButton,
-  NSpace,
-  NSwitch,
-} from 'naive-ui/es'
 /*
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-08
@@ -14,7 +5,28 @@ import {
  * @Description: 页面状态、表单及请求控制，模板只负责展示和事件绑定
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import { createUserColumns } from './d_columns'
+import { NTreeSelect, useMessage, useDialog, NTag, NSwitch } from 'naive-ui/es'
+
+import type {
+  UserData,
+  UserFormData,
+  DeptData,
+  DeptTreeOption,
+  SearchForm,
+  ResetPasswordForm,
+  UserType,
+} from '@/api/user-manage.contract'
+import {
+  getUserListApi,
+  getDeptListApi,
+  getUserRolesApi,
+  createUserApi,
+  updateUserApi,
+  deleteUserApi,
+  updateUserStatusApi,
+  resetUserPasswordApi,
+} from '@/api/user-manage'
+import { createUserActions, createUserColumns } from './d_columns'
 import {
   PRESET_RULES,
   type FormInstance,
@@ -30,45 +42,22 @@ import {
   getMockCompanies,
   getMockCompanyRoles,
   getMockDirectoryUser,
-  removeMockDirectoryUser,
-  upsertMockDirectoryUser,
   validateMockMemberships,
 } from '@/api/auth.mock-directory'
 
-import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
-import '@robot-admin/naive-ui-components/C_Icon/style.css'
 import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
 import '@robot-admin/naive-ui-components/C_Tree/style.css'
 import type { ActionItem } from '@robot-admin/naive-ui-components'
 import {
-  type UserData,
-  type UserFormData,
-  type DeptData,
-  type DeptTreeOption,
-  type SearchForm,
-  type ResetPasswordForm,
-  type UserType,
   USER_FORM_RULES,
   DEFAULT_USER_FORM_DATA,
   DEFAULT_RESET_PASSWORD_FORM,
   UI_CONFIG,
   COMPONENT_CONFIG,
-  getUserListApi,
-  getDeptListApi,
-  getUserRolesApi,
-  createUserApi,
-  updateUserApi,
-  deleteUserApi,
-  updateUserStatusApi,
-  resetUserPasswordApi,
-  MOCK_USER_DATA,
-  persistMockUsers,
-  getRoleNameById,
-  getDeptNameById,
   findDeptById,
-  convertDeptListToTreeOptions,
-  getUserStatusConfig,
   getUserTypeConfig,
+  getUserStatusConfig,
+  convertDeptListToTreeOptions,
 } from './data'
 import { ref, computed, watch, reactive, onMounted, h } from 'vue'
 
@@ -232,30 +221,12 @@ export function useUserManagement() {
 
   // ==================== 辅助函数 ====================
   const updateUserInList = (userId: string, updates: Partial<UserData>) => {
-    // 更新所有相关的数据源
-    const updateTargets: UserData[][] = [MOCK_USER_DATA, userList]
-
-    updateTargets.forEach(data => {
-      const index = data.findIndex(item => item.id === userId)
-      if (index !== -1) {
-        data[index] = { ...data[index], ...updates }
-      }
-    })
+    const index = userList.findIndex(item => item.id === userId)
+    if (index !== -1) userList[index] = { ...userList[index], ...updates }
 
     // 更新当前用户详情
     if (currentUser.value?.id === userId) {
       currentUser.value = { ...currentUser.value, ...updates }
-    }
-    if (mockMode) {
-      persistMockUsers()
-      const updated = MOCK_USER_DATA.find(user => user.id === userId)
-      const directoryUser = updated && getMockDirectoryUser(updated.username)
-      if (updated && directoryUser) {
-        upsertMockDirectoryUser({
-          ...directoryUser,
-          enabled: updated.status === 1,
-        })
-      }
     }
   }
 
@@ -265,123 +236,13 @@ export function useUserManagement() {
 
   // ==================== 渲染函数 ====================
   // ==================== 表格操作配置 ====================
-  const tableActions = computed(() => ({
-    // 使用完全自定义渲染
-    render: (row: UserData) => {
-      const buttons = [
-        // 详情按钮
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'info',
-            quaternary: true,
-            onClick: () => handleViewUser(row),
-          },
-          () => [
-            h(C_Icon, {
-              name: COMPONENT_CONFIG.icons.eye,
-              size: 14,
-              title: '详情',
-            }),
-          ]
-        ),
-        // 编辑按钮
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'warning',
-            quaternary: true,
-            onClick: () => handleEditUser(row),
-          },
-          () => [
-            h(C_Icon, {
-              name: COMPONENT_CONFIG.icons.edit,
-              size: 14,
-              title: '编辑',
-            }),
-          ]
-        ),
-        // 删除按钮
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'error',
-            quaternary: true,
-            onClick: () => handleDeleteUser(row.id),
-          },
-          () => [
-            h(C_Icon, {
-              name: COMPONENT_CONFIG.icons.delete,
-              size: 14,
-              title: '删除',
-            }),
-          ]
-        ),
-      ]
-
-      // 更多操作下拉菜单
-      const moreOptions = [
-        {
-          key: 'toggle',
-          label: row.status === 1 ? '禁用' : '启用',
-          icon: () =>
-            h(C_Icon, {
-              name:
-                row.status === 1
-                  ? COMPONENT_CONFIG.icons.pause
-                  : COMPONENT_CONFIG.icons.play,
-              size: 14,
-            }),
-        },
-        {
-          key: 'reset',
-          label: '重置密码',
-          icon: () => h(C_Icon, { name: COMPONENT_CONFIG.icons.key, size: 14 }),
-          disabled: row.status === 0,
-        },
-      ]
-
-      buttons.push(
-        h(
-          NDropdown,
-          {
-            options: moreOptions,
-            onSelect: (key: string) => {
-              if (key === 'toggle') {
-                handleToggleUserStatus(row)
-              } else if (key === 'reset') {
-                handleShowResetPassword(row)
-              }
-            },
-          },
-          () =>
-            h(
-              NButton,
-              {
-                size: 'small',
-                quaternary: true,
-              },
-              () => [
-                h(C_Icon, {
-                  name: 'mdi:dots-horizontal',
-                  size: 14,
-                  title: '更多操作',
-                }),
-              ]
-            )
-        )
-      )
-
-      return h(
-        NSpace,
-        { size: 2, wrap: false, justify: 'center' },
-        () => buttons
-      )
-    },
-  }))
+  const tableActions = createUserActions({
+    view: row => handleViewUser(row),
+    edit: row => handleEditUser(row),
+    delete: row => handleDeleteUser(row.id),
+    toggle: row => handleToggleUserStatus(row),
+    reset: row => handleShowResetPassword(row),
+  })
 
   // ==================== 表格列配置 ====================
   // ==================== 用户详情字段配置 ====================
@@ -645,201 +506,59 @@ export function useUserManagement() {
     if (typeChanged) handleUserTypeChange(model.userType)
   }
 
-  // ==================== 组合式函数 ====================
-  const useBatchOperations = () => {
-    const handleBatchOperation = (
-      operation: 'delete' | 'toggle',
-      actionFn: (ids: string[]) => Promise<void> | void
-    ) => {
-      if (selectedUsers.value.length === 0) {
-        message.warning('请先选择用户')
-        return
-      }
-
-      const config = COMPONENT_CONFIG.batchConfig[operation]
-      const content = `${config.content.replace('选中的用户', `选中的 ${selectedUsers.value.length} 个用户`)}`
-
-      dialog[config.type]({
-        title: config.title,
-        content,
-        positiveText: '确认',
-        negativeText: '取消',
-        onPositiveClick: async () => {
-          try {
-            await actionFn(selectedUsers.value)
-            message.success(
-              `批量${operation === 'delete' ? '删除' : '操作'}成功`
-            )
-            selectedUsers.value = []
-            await loadUsers()
-          } catch {
-            message.error(`批量${operation === 'delete' ? '删除' : '操作'}失败`)
-          }
-        },
-      })
+  /** 统一确认批量变更，变更成功后重新加载服务端或演示列表。 */
+  const handleBatchOperation = (
+    operation: 'delete' | 'toggle',
+    actionFn: (ids: string[]) => Promise<void>
+  ) => {
+    if (!selectedUsers.value.length) {
+      message.warning('请先选择用户')
+      return
     }
-
-    const batchDeleteUsers = async (ids: string[]) => {
-      await Promise.all(ids.map(deleteUserApi))
-      ids.forEach(id => {
-        const userIndex = MOCK_USER_DATA.findIndex(user => user.id === id)
-        if (userIndex !== -1) {
-          if (mockMode)
-            removeMockDirectoryUser(MOCK_USER_DATA[userIndex].username)
-          MOCK_USER_DATA.splice(userIndex, 1)
+    const ids = [...selectedUsers.value]
+    const config = COMPONENT_CONFIG.batchConfig[operation]
+    dialog[config.type]({
+      title: config.title,
+      content: config.content.replace(
+        '选中的用户',
+        `选中的 ${ids.length} 个用户`
+      ),
+      positiveText: '确认',
+      negativeText: '取消',
+      onPositiveClick: async () => {
+        try {
+          await actionFn(ids)
+          message.success(`批量${operation === 'delete' ? '删除' : '操作'}成功`)
+          selectedUsers.value = []
+          await loadUsers()
+        } catch {
+          message.error(`批量${operation === 'delete' ? '删除' : '操作'}失败`)
+          return false
         }
-      })
-      if (mockMode) persistMockUsers()
-    }
-
-    const batchToggleUsers = async (ids: string[]) => {
-      await Promise.all(
-        ids.map(async id => {
-          const user = MOCK_USER_DATA.find(item => item.id === id)
-          if (user) await updateUserStatusApi(id, user.status === 1 ? 0 : 1)
-        })
-      )
-      ids.forEach(id => {
-        const user = MOCK_USER_DATA.find(u => u.id === id)
-        if (user) {
-          updateUserInList(id, {
-            status: user.status === 1 ? 0 : 1,
-            updateTime: new Date().toLocaleString(),
-          })
-        }
-      })
-    }
-
-    return { handleBatchOperation, batchDeleteUsers, batchToggleUsers }
+      },
+    })
   }
-
-  const useUserOperations = () => {
-    // 提取用户数据构建逻辑，降低复杂度
-    const buildUserData = (
-      userData: UserFormData,
-      existingUser?: UserData
-    ): UserData => {
-      const baseData = {
-        nickname: userData.nickname,
-        email: userData.email || undefined,
-        phone: userData.phone || undefined,
-        userType: userData.userType,
-        deptId: userData.deptId || undefined,
-        deptName: userData.deptId
-          ? getDeptNameById(userData.deptId)
-          : undefined,
-        roleIds: userData.roleIds,
-        roleNames: userData.roleIds.map(id => getRoleNameById(id)),
-        status: userData.status,
-        remark: userData.remark || undefined,
-        companyName: userData.companyName || undefined,
-        contactPerson: userData.contactPerson || undefined,
-      }
-
-      if (existingUser) {
-        return {
-          ...existingUser,
-          ...baseData,
-          updateTime: new Date().toLocaleString(),
-        }
-      }
-
-      return {
-        id: `user_${Date.now()}`,
-        username: userData.username,
-        createTime: new Date().toLocaleString(),
-        ...baseData,
-      }
-    }
-
-    // 提取验证逻辑
-    const validateUserData = (
-      userData: UserFormData,
-      mode: 'add' | 'edit'
-    ): { valid: boolean; error?: string } => {
-      if (mode === 'edit' && !userData.id) {
-        return { valid: false, error: '用户ID不存在' }
-      }
-
-      if (mode === 'add') {
-        const existingUser = MOCK_USER_DATA.find(
-          user =>
-            user.username.toLowerCase() === userData.username.toLowerCase()
-        )
-        if (
-          existingUser ||
-          (mockMode && getMockDirectoryUser(userData.username))
-        ) {
-          return { valid: false, error: '用户名已存在' }
-        }
-      }
-
-      return { valid: true }
-    }
-
-    const handleAddUserData = async (userData: UserFormData): Promise<void> => {
-      const validation = validateUserData(userData, 'add')
-      if (!validation.valid) {
-        throw new Error(validation.error)
-      }
-
-      const newUser = buildUserData(userData)
-      await createUserApi(userData)
-      if (mockMode) {
-        upsertMockDirectoryUser({
-          username: userData.username,
-          enabled: userData.status === 1,
-          memberships: userData.memberships,
-        })
-      }
-      MOCK_USER_DATA.push(newUser)
-      if (mockMode) persistMockUsers()
-      message.success('添加成功')
-    }
-
-    const handleUpdateUserData = async (
-      userData: UserFormData
-    ): Promise<void> => {
-      const validation = validateUserData(userData, 'edit')
-      if (!validation.valid) {
-        throw new Error(validation.error)
-      }
-
-      const userIndex = MOCK_USER_DATA.findIndex(
-        user => user.id === userData.id
-      )
-      if (userIndex === -1) {
-        throw new Error('用户不存在')
-      }
-
-      const existingUser = MOCK_USER_DATA[userIndex]
-      const updatedUser = buildUserData(userData, existingUser)
-
-      await updateUserApi(userData.id!, userData)
-      if (mockMode) {
-        upsertMockDirectoryUser({
-          username: userData.username,
-          enabled: userData.status === 1,
-          memberships: userData.memberships,
-        })
-      }
-      MOCK_USER_DATA[userIndex] = updatedUser
-      if (mockMode) persistMockUsers()
-
-      if (currentUser.value?.id === userData.id) {
-        currentUser.value = { ...updatedUser }
-      }
-
-      message.success('修改成功')
-    }
-
-    return { handleAddUserData, handleUpdateUserData }
+  const batchDeleteUsers = async (ids: string[]) => {
+    await Promise.all(ids.map(deleteUserApi))
   }
-
-  // ==================== 使用组合式函数 ====================
-  const { handleBatchOperation, batchDeleteUsers, batchToggleUsers } =
-    useBatchOperations()
-  const { handleAddUserData, handleUpdateUserData } = useUserOperations()
+  const batchToggleUsers = async (ids: string[]) => {
+    await Promise.all(
+      ids.map(async id => {
+        const row = userList.find(user => user.id === id)
+        if (!row) throw new Error('选中的用户已不在当前列表，请重新选择')
+        await updateUserStatusApi(id, row.status === 1 ? 0 : 1)
+      })
+    )
+  }
+  const handleAddUserData = async (draft: UserFormData) => {
+    await createUserApi(draft)
+    message.success('添加成功')
+  }
+  const handleUpdateUserData = async (draft: UserFormData) => {
+    if (!draft.id) throw new Error('用户ID不存在')
+    await updateUserApi(draft.id, draft)
+    message.success('修改成功')
+  }
 
   // ==================== 事件处理函数 ====================
   const handleDeptSelect = (_node: unknown, keys: (string | number)[]) => {
@@ -957,8 +676,7 @@ export function useUserManagement() {
         updateTime: new Date().toLocaleString(),
       })
       message.success(`${statusText}成功`)
-    } catch (error) {
-      console.error('状态切换失败:', error)
+    } catch {
       message.error(`${statusText}失败`)
     }
   }
@@ -966,13 +684,6 @@ export function useUserManagement() {
   const handleDeleteUser = async (id: string) => {
     try {
       await deleteUserApi(id)
-      const userIndex = MOCK_USER_DATA.findIndex(user => user.id === id)
-      if (userIndex !== -1) {
-        if (mockMode)
-          removeMockDirectoryUser(MOCK_USER_DATA[userIndex].username)
-        MOCK_USER_DATA.splice(userIndex, 1)
-        if (mockMode) persistMockUsers()
-      }
       message.success('删除成功')
       await loadUsers()
     } catch {
@@ -1015,6 +726,10 @@ export function useUserManagement() {
         : handleUpdateUserData(model))
 
       await loadUsers()
+      if (currentUser.value?.id === model.id) {
+        const updated = userList.find(user => user.id === model.id)
+        if (updated) currentUser.value = { ...updated }
+      }
     } catch (error) {
       throw error instanceof Error ? error : new Error('保存失败')
     }

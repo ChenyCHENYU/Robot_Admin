@@ -9,9 +9,7 @@ import { h } from 'vue'
 import { NTag, type FormItemRule } from 'naive-ui/es'
 import type { TableColumn } from '@robot-admin/naive-ui-components'
 
-import type { DataScopeType } from '@/api/permission-governance.contract'
 export type {
-  DataScopeType,
   DataPermissionRule,
   FieldPermissionItem,
   TempAuthorization,
@@ -427,71 +425,6 @@ export const MOCK_PERMISSION_RESOURCES: PermissionData[] = [
 ]
 
 // ==================== 数据权限配置 ====================
-
-export const DATA_SCOPE_CONFIG: Record<
-  DataScopeType,
-  {
-    text: string
-    type: 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error'
-    icon: string
-    description: string
-  }
-> = {
-  all: {
-    text: '全部数据',
-    type: 'success',
-    icon: 'mdi:database',
-    description: '可访问系统中所有数据',
-  },
-  department: {
-    text: '本部门',
-    type: 'info',
-    icon: 'mdi:office-building',
-    description: '仅可访问本部门的数据',
-  },
-  department_below: {
-    text: '本部门及下级',
-    type: 'warning',
-    icon: 'mdi:sitemap',
-    description: '可访问本部门及下级部门的数据',
-  },
-  self: {
-    text: '仅本人',
-    type: 'error',
-    icon: 'mdi:account',
-    description: '仅可访问本人创建的数据',
-  },
-  custom: {
-    text: '自定义',
-    type: 'default',
-    icon: 'mdi:tune',
-    description: '自定义选择可访问的部门数据',
-  },
-}
-
-export const DATA_SCOPE_OPTIONS = Object.entries(DATA_SCOPE_CONFIG).map(
-  ([value, config]) => ({
-    label: config.text,
-    value,
-    description: config.description,
-  })
-)
-
-// ==================== 临时授权 ====================
-
-export const TEMP_AUTH_STATUS_CONFIG = {
-  active: {
-    text: '生效中',
-    type: 'success' as const,
-    icon: 'mdi:check-circle',
-  },
-  expired: {
-    text: '已过期',
-    type: 'warning' as const,
-    icon: 'mdi:clock-alert',
-  },
-  revoked: { text: '已撤销', type: 'error' as const, icon: 'mdi:close-circle' },
-}
 
 // ==================== 权限互斥与继承 ====================
 

@@ -9,6 +9,22 @@ import { test, expect, type Page } from '@playwright/test'
 import { installMockAdminSession } from './auth-fixture'
 import { utils, write } from 'xlsx'
 
+for (const route of ['table-expand', 'table-dynamic']) {
+  test(`${route} 的演示不依赖员工接口或第三方代理`, async ({ page }) => {
+    const requests: string[] = []
+    await installMockAdminSession(page)
+    await page.route('**/employees/**', request => {
+      requests.push(request.request().url())
+      return request.abort()
+    })
+    await page.goto(`/#/demo/table-manage/${route}`)
+    const table = page.locator('.c-table-wrapper').first()
+    await expect(table.locator('tbody tr')).toHaveCount(5)
+    await expect(table.locator('tbody')).toContainText('张三')
+    expect(requests).toEqual([])
+  })
+}
+
 const openRoleTable = async (page: Page, dark = false) => {
   await installMockAdminSession(page)
   if (dark) {
@@ -155,6 +171,7 @@ test('展开子表复用 SVG 加载态，数据返回后移除状态', async ({ 
   await page.goto('/#/demo/table-manage/table-expand')
   const demo = page.locator('.table-expand-demo')
   await expect(demo.locator('tbody tr').first()).toBeVisible()
+  await expect(page.locator('.app-loading')).toBeHidden()
   await page.clock.install()
   await page.clock.pauseAt(new Date(Date.now() + 100))
   await demo.locator('.n-data-table-expand-trigger').first().click()

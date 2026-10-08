@@ -5,6 +5,8 @@
  * @Description: 页面状态、表单及请求控制，模板只负责展示和事件绑定
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { compareRolePermissions } from '@/utils/d_permissionComparison'
+
 import {
   getRoleListApi,
   getPermissionListApi,
@@ -46,7 +48,6 @@ import {
   ROLE_TYPE_CONFIG,
   findPermissionById,
   extractPermissionPreview,
-  compareRolePermissions,
 } from './data'
 import { ref, computed, watch, reactive, onMounted, h } from 'vue'
 import { useMessage, NTag } from 'naive-ui/es'

@@ -48,6 +48,10 @@ describe('production contracts', () => {
     expect(connectSources).toContain('https://api.github.com')
     expect(connectSources).not.toContain('https:')
     expect(connectSources).not.toContain('wss:')
+    const frameSources =
+      csp?.match(/frame-src\s+([^;]+)/)?.[1]?.split(/\s+/) ?? []
+    expect(frameSources).not.toContain('https:')
+    expect(frameSources).toContain('https://www.tzagileteam.com')
     expect(
       securityHeaders.some(header => header.key === 'X-Content-Type-Options')
     ).toBe(true)

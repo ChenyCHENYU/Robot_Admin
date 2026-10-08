@@ -8,10 +8,8 @@
 import type { FormItemRule } from 'naive-ui/es'
 import type {
   RoleType,
-  RoleData,
   RoleFormData,
   PermissionData,
-  DataScopeType,
 } from '@/api/role-manage.contract'
 export type {
   RoleType,
@@ -19,7 +17,6 @@ export type {
   RoleFormData,
   PermissionData,
   RoleUserData,
-  DataScopeType,
   RoleDataScope,
   RoleTempAuth,
 } from '@/api/role-manage.contract'
@@ -204,53 +201,6 @@ export interface PermissionPreviewItem {
 }
 
 // ==================== 权限预览常量 ====================
-export const DATA_SCOPE_CONFIG: Record<
-  DataScopeType,
-  {
-    text: string
-    type: 'success' | 'info' | 'warning' | 'error' | 'default'
-    icon: string
-    description: string
-  }
-> = {
-  all: {
-    text: '全部数据',
-    type: 'success',
-    icon: 'mdi:database',
-    description: '可查看系统中所有数据',
-  },
-  department: {
-    text: '本部门',
-    type: 'info',
-    icon: 'mdi:domain',
-    description: '仅可查看本部门数据',
-  },
-  department_below: {
-    text: '本部门及下级',
-    type: 'warning',
-    icon: 'mdi:file-tree',
-    description: '可查看本部门及下级部门数据',
-  },
-  self: {
-    text: '仅本人',
-    type: 'error',
-    icon: 'mdi:account',
-    description: '仅可查看自己创建的数据',
-  },
-  custom: {
-    text: '自定义',
-    type: 'default',
-    icon: 'mdi:tune',
-    description: '自定义可访问的数据范围',
-  },
-}
-
-export const TEMP_AUTH_STATUS = {
-  active: { text: '生效中', type: 'success' as const },
-  expired: { text: '已过期', type: 'warning' as const },
-  revoked: { text: '已撤销', type: 'error' as const },
-}
-
 // ==================== 工具函数：权限预览 ====================
 
 /**
@@ -284,26 +234,4 @@ export const extractPermissionPreview = (
     }
   }
   return result
-}
-
-/**
- * * @description: 比较两个角色的权限差异
- * ? @param {RoleData} roleA 角色A
- * ? @param {RoleData} roleB 角色B
- * ! @return {{ shared, onlyA, onlyB }} 权限差异
- */
-export const compareRolePermissions = (
-  roleA: RoleData,
-  roleB: RoleData
-): {
-  shared: string[]
-  onlyA: string[]
-  onlyB: string[]
-} => {
-  const idsA = new Set(roleA.permissionIds || [])
-  const idsB = new Set(roleB.permissionIds || [])
-  const shared = [...idsA].filter(id => idsB.has(id))
-  const onlyA = [...idsA].filter(id => !idsB.has(id))
-  const onlyB = [...idsB].filter(id => !idsA.has(id))
-  return { shared, onlyA, onlyB }
 }

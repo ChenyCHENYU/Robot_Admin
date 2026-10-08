@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-08
+ * @FilePath: \Robot_Admin\src\views\login\components\Spline.vue
+ * @Description: 登录页 Spline 场景加载及资源清理
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ -->
 <template>
   <ParentSize
     :parent-size-styles="parentSizeStyles"

@@ -79,6 +79,7 @@
   import { MENU_COLLAPSE_KEY } from '@robot-admin/layout/naive'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
+  import { SETTINGS_DRAWER_KEY } from '@/components/global/C_Layout/d_context'
 
   defineOptions({ name: 'C_Header' })
 
@@ -92,10 +93,7 @@
   }
 
   // 从父组件注入设置抽屉状态
-  interface SettingsDrawer {
-    showSettings: Ref<boolean>
-  }
-  const { showSettings } = inject<SettingsDrawer>('settingsDrawer', {
+  const { showSettings } = inject(SETTINGS_DRAWER_KEY, {
     showSettings: ref(false), // 提供默认值以兼容旧代码
   })
 

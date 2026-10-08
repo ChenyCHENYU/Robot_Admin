@@ -255,6 +255,8 @@ The planned federation architecture has three project types: a `systemApp` platf
 <details>
 <summary><b>View Complete Tech Stack</b></summary>
 
+Exact versions below reflect the installation in `bun.lock`; declared ranges are in `package.json`.
+
 **🎭 Frontend Core**
 
 - **Vue 3.5.42** - 🔥 Stable Composition API runtime
@@ -431,40 +433,40 @@ The planned federation architecture has three project types: a `systemApp` platf
 
 ```
 Robot_Admin/
-├── 📁 src/                          # Source code directory
-│   ├── 📁 api/                      # API management layer
-│   ├── 📁 components/               # Component library
-│   │   ├── 📁 global/               # Global components (10+ core components)
-│   │   └── 📁 local/                # Local components
-│   ├── 📁 views/                    # Page views
-│   │   ├── 📁 dashboard/            # Data dashboard
-│   │   ├── 📁 demo/                 # Demo pages (64 index.vue files)
-│   │   ├── 📁 sys-manage/           # System management
-│   │   ├── 📁 login/                # Login/Register
-│   │   ├── 📁 about/                     # Version and project information
-│   │   ├── 📁 account/                     # Account center
-│   │   ├── 📁 editor/                     # Editor workspaces
-│   │   ├── 📁 error-page/                     # Error pages
-│   │   ├── 📁 large-screen/                     # Large-screen templates
-│   │   ├── 📁 plugins/                     # Plugin demos
-│   │   ├── 📁 portal/                     # Portal layout demo
-│   │   └── 📁 home/                 # Project homepage
-│   ├── 📁 stores/                   # Pinia state management
-│   ├── 📁 composables/              # Composable APIs
-│   ├── 📁 constant/                 # Runtime constants
-│   ├── 📁 styles/                   # Global theme and style entry
-│   ├── 📁 router/                   # Router configuration
-│   ├── 📁 utils/                    # Utility functions
-│   ├── 📁 types/                    # TypeScript type definitions
-│   ├── 📁 config/                   # Environment, theme, and build configuration
-│   ├── 📁 assets/                   # Static assets
-│   └── 📁 plugins/                  # Plugin configurations
-├── 📁 scripts/                      # Build scripts
-├── 📁 public/                       # Static resources
-├── ⚙️ vite.config.ts                # Vite configuration
-├── 🎨 unocss.config.ts              # UnoCSS configuration
-├── 📦 package.json                  # Project configuration
-└── 🔧 tsconfig.json                 # TypeScript configuration
+├── 📁 src/                            # Source code directory
+│   ├── 📁 api/                        # API management layer
+│   ├── 📁 components/                 # Component library
+│   │   ├── 📁 global/                 # Global components (10+ core components)
+│   │   └── 📁 local/                  # Local components
+│   ├── 📁 views/                      # Page views
+│   │   ├── 📁 dashboard/              # Data dashboard
+│   │   ├── 📁 demo/                   # Demo pages (64 index.vue files)
+│   │   ├── 📁 sys-manage/             # System management
+│   │   ├── 📁 login/                  # Login/Register
+│   │   ├── 📁 about/                  # Version and project information
+│   │   ├── 📁 account/                # Account center
+│   │   ├── 📁 editor/                 # Editor workspaces
+│   │   ├── 📁 error-page/             # Error pages
+│   │   ├── 📁 large-screen/           # Large-screen templates
+│   │   ├── 📁 plugins/                # Plugin demos
+│   │   ├── 📁 portal/                 # Portal layout demo
+│   │   └── 📁 home/                   # Project homepage
+│   ├── 📁 stores/                     # Pinia state management
+│   ├── 📁 composables/                # Composable APIs
+│   ├── 📁 constant/                   # Runtime constants
+│   ├── 📁 styles/                     # Global theme and style entry
+│   ├── 📁 router/                     # Router configuration
+│   ├── 📁 utils/                      # Utility functions
+│   ├── 📁 types/                      # TypeScript type definitions
+│   ├── 📁 config/                     # Environment, theme, and build configuration
+│   ├── 📁 assets/                     # Static assets
+│   └── 📁 plugins/                    # Plugin configurations
+├── 📁 scripts/                        # Build scripts
+├── 📁 public/                         # Static resources
+├── ⚙️ vite.config.ts                 # Vite configuration
+├── 🎨 unocss.config.ts                # UnoCSS configuration
+├── 📦 package.json                    # Project configuration
+└── 🔧 tsconfig.json                   # TypeScript configuration
 ```
 
 </details>

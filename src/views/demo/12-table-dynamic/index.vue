@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-08
+ * @FilePath: \Robot_Admin\src\views\demo\12-table-dynamic\index.vue
+ * @Description: 表格演示配置与展示；数据源遵循项目运行模式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ -->
 <template>
   <div class="table-dynamic-demo">
     <c_vTitle
@@ -116,11 +123,9 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo12TableDynamic' })
-  import type {
-    DataRecord,
-    SimpleTableActions,
-  } from '@robot-admin/naive-ui-components'
+  import type { SimpleTableActions } from '@robot-admin/naive-ui-components'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
+  import { createDemoEmployeeSource } from '@/api/demo-employees'
   import { toCrudTableColumns } from '@/utils/d_tableColumns'
   import {
     type DynamicEmployee,
@@ -146,7 +151,7 @@
 
   // 表格数据管理
   const table = useNaiveTableCrud<DynamicEmployee>({
-    api: { list: 'employees/dynamicList' },
+    source: createDemoEmployeeSource('employees/dynamicList'),
     columns: toCrudTableColumns(dynamicTableColumns),
   })
 
@@ -169,12 +174,12 @@
   }
 
   // 表格操作
-  const tableActions = computed((): SimpleTableActions<DataRecord> => ({
-    detail: async (row: DataRecord) => {
+  const tableActions = computed((): SimpleTableActions<DynamicEmployee> => ({
+    detail: async (row: DynamicEmployee) => {
       await new Promise(resolve => setTimeout(resolve, 200))
       return { data: row }
     },
-    edit: async (row: DataRecord) => {
+    edit: async (row: DynamicEmployee) => {
       await new Promise(resolve => setTimeout(resolve, 300))
       return { success: true, data: row }
     },
@@ -218,26 +223,26 @@
   }
 
   // 事件处理
-  const handleViewDetail = (data: DataRecord) => {
-    const employee = data as DynamicEmployee
+  const handleViewDetail = (data: DynamicEmployee) => {
+    const employee = data
     message.info(`查看 ${employee.name} 的详细信息`)
     addLog('select', `查看了 ${employee.name} 的详情`)
   }
 
-  const handleRowAdd = (newRow: DataRecord) => {
-    addLog('add', `添加了新员工：${(newRow as DynamicEmployee).name}`)
+  const handleRowAdd = (newRow: DynamicEmployee) => {
+    addLog('add', `添加了新员工：${newRow.name}`)
   }
 
   const handleRowDelete = (...args: unknown[]) => {
-    const [deletedRow] = args as [DataRecord, number]
-    const employee = deletedRow as DynamicEmployee
+    const [deletedRow] = args as [DynamicEmployee, number]
+    const employee = deletedRow
     addLog('delete', `删除了员工：${employee.name}`)
     if (selectedEmployee.value?.id === employee.id)
       selectedEmployee.value = null
   }
 
-  const handleSave = (rowData: DataRecord) => {
-    const employee = rowData as DynamicEmployee
+  const handleSave = (rowData: DynamicEmployee) => {
+    const employee = rowData
     message.success(`保存成功：${employee.name}`)
     addLog('edit', `编辑了员工 ${employee.name} 的信息`)
   }
