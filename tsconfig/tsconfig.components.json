@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.app.json",
+  "include": ["../tests/components/**/*.ts", "../src/types/**/*.d.ts"],
+  "exclude": [],
+  "compilerOptions": { "incremental": false, "types": ["node", "vite/client"] }
+}

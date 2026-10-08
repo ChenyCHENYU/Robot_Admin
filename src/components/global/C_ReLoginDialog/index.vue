@@ -10,13 +10,13 @@
 
 <template>
   <NModal
-    v-model:show="visible"
+    :show="visible"
     :mask-closable="false"
     :close-on-esc="true"
     preset="card"
     title="提示"
     class="re-login-dialog"
-    @close="handleClose"
+    @update:show="handleShowChange"
   >
     <NSpace
       vertical
@@ -121,6 +121,13 @@
 
   const formUsername = computed(() => props.username)
   const password = ref('')
+  let generation = 0
+
+  /** 关闭、切换账号或卸载后，旧请求不再拥有写入会话的权限。 */
+  const invalidateAttempt = () => {
+    generation++
+    loading.value = false
+  }
 
   const getErrorMessage = (error: unknown): string => {
     if (typeof error !== 'object' || error === null)
@@ -139,17 +146,21 @@
   }
 
   /** 重新验证身份，并在多公司模式下重新激活原工作上下文。 */
-  const requestReLoginSession = async (): Promise<LoginResponse> => {
+  const requestReLoginSession = async (
+    credentials: { username: string; password: string; contextId?: string },
+    isCurrent: () => boolean
+  ): Promise<LoginResponse | undefined> => {
     const identityResponse = await loginApi({
-      username: formUsername.value,
-      password: password.value,
+      username: credentials.username,
+      password: credentials.password,
     })
+    if (!isCurrent()) return
     if (String(identityResponse.code) !== '0') {
       throw new Error(identityResponse.msg || '身份验证失败')
     }
     if (!identityResponse.data.availableContexts) return identityResponse
 
-    const contextId = userStore.activeContext?.id
+    const { contextId } = credentials
     const { loginTicket } = identityResponse.data
     if (!contextId || !loginTicket) {
       throw new Error('公司上下文已失效，请重新登录')
@@ -209,46 +220,57 @@
     }
   }
 
-  // 处理登录
+  // 请求期间保存身份快照；任何新会话都优先于这个过期会话。
   const handleLogin = async () => {
+    if (loading.value || !visible.value) return
     if (!password.value) {
       message.error('请输入密码')
       return
     }
 
+    const attempt = ++generation
+    const oldToken = userStore.token
+    const oldRefreshToken = userStore.refreshToken
+    const oldUsername = userStore.userInfo.username
+    const credentials = {
+      username: formUsername.value,
+      password: password.value,
+      contextId: userStore.activeContext?.id,
+    }
+    loading.value = true
+    // 身份认证不携带过期 token，避免进入请求拦截器的重新登录队列。
+    userStore.setToken('')
+    const isCurrent = () =>
+      attempt === generation &&
+      visible.value &&
+      userStore.token === '' &&
+      userStore.refreshToken === oldRefreshToken &&
+      userStore.userInfo.username === oldUsername &&
+      userStore.activeContext?.id === credentials.contextId
+
     try {
-      loading.value = true
-
-      // 重新登录前先清除过期的 token，避免拦截器拦截
-      const oldToken = userStore.token
-      userStore.setToken('')
-
-      try {
-        restoreReLoginSession(await requestReLoginSession())
-        recordTelemetry('login_success', { route: 'relogin' })
-
-        message.success('重新登录成功')
-        password.value = ''
-        visible.value = false
-        emit('success')
-
-        // 通知所有等待的请求：重新登录成功
-        onReLoginSuccess()
-      } catch (error: unknown) {
-        // 登录失败，恢复旧 token
-        userStore.setToken(oldToken)
-        throw error
-      }
+      const response = await requestReLoginSession(credentials, isCurrent)
+      if (!response || !isCurrent()) return
+      restoreReLoginSession(response)
+      recordTelemetry('login_success', { route: 'relogin' })
+      message.success('重新登录成功')
+      password.value = ''
+      visible.value = false
+      emit('success')
+      onReLoginSuccess()
     } catch (error: unknown) {
+      if (!isCurrent()) return
+      userStore.setToken(oldToken)
       recordTelemetry('login_failure', { route: 'relogin' })
       message.error(getErrorMessage(error))
     } finally {
-      loading.value = false
+      if (attempt === generation) loading.value = false
     }
   }
 
   // 处理关闭
   const handleClose = () => {
+    invalidateAttempt()
     password.value = ''
     visible.value = false
     emit('cancel')
@@ -257,6 +279,21 @@
     // 关闭后执行正常退出逻辑
     void userStore.logout(true)
   }
+
+  /** 卡片关闭与 Escape 都走 NModal 的统一 show 更新事件。 */
+  const handleShowChange = (show: boolean) => {
+    if (!show) handleClose()
+  }
+
+  onBeforeUnmount(invalidateAttempt)
+  watch(
+    () => [props.modelValue, props.username],
+    () => {
+      invalidateAttempt()
+      password.value = ''
+    },
+    { flush: 'sync' }
+  )
 </script>
 
 <style lang="scss" scoped>

@@ -39,7 +39,7 @@
     "test:e2e:local-components": "playwright test --config playwright.local-components.config.ts",
     "lint:check": "oxlint . -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --no-fix --no-cache",
-    "verify": "bun run lint:check && bun run lint:eslint && bun run check:styles && bun run type-build && bun test --max-concurrency=1 && bun run build && bun run check:bundle && bun run build:application",
+    "verify": "bun run lint:check && bun run lint:eslint && bun run check:styles && bun run type-build && bun run type-build:components && bun test --max-concurrency=1 && bun run test:components && bun run build && bun run check:bundle && bun run build:application",
     "check:bundle": "bun run scripts/check-bundle-budget.ts",
     "security:audit": "bun audit",
     "lint": "oxlint . --fix -D correctness --ignore-path .gitignore && eslint . --fix",
@@ -58,7 +58,9 @@
     "changelog:preview": "conventional-changelog -p angular",
     "mcp": "bun run mcp/server.ts",
     "i18n:generate": "bun run gen:route-i18n && VITE_I18N_ENABLED=true vite build --configLoader native --mode development --outDir node_modules/.cache/i18n-scan",
-    "check:styles": "bun run scripts/check-style-boundaries.ts"
+    "check:styles": "bun run scripts/check-style-boundaries.ts",
+    "test:components": "vitest run --config vitest.config.ts",
+    "type-build:components": "vue-tsc --noEmit -p tsconfig/tsconfig.components.json"
   },
   "dependencies": {
     "@agile-team/mach-table-vue": "0.29.2",
@@ -68,7 +70,7 @@
     "@robot-admin/file-utils": "3.0.1",
     "@robot-admin/form-validate": "3.4.2",
     "@robot-admin/layout": "3.2.1",
-    "@robot-admin/naive-ui-components": "0.14.2",
+    "@robot-admin/naive-ui-components": "0.14.3",
     "@robot-admin/request-core": "0.6.1",
     "@robot-admin/theme": "0.6.1",
     "@splinetool/runtime": "^1.12.68",
@@ -106,6 +108,7 @@
     "@vitejs/plugin-vue": "^6.0.5",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.7.0",
+    "@vue/test-utils": "^2.5.1",
     "@vue/tsconfig": "^0.7.0",
     "commitizen": "^4.3.1",
     "conventional-changelog-cli": "^5.0.0",
@@ -115,6 +118,7 @@
     "eslint-plugin-oxlint": "~1.52.0",
     "eslint-plugin-vue": "^10.8.0",
     "git-branch-check-diff-commits": "^1.2.2",
+    "happy-dom": "^20.14.5",
     "husky": "^9.1.7",
     "jiti": "^2.6.1",
     "lint-staged": "^16.3.2",
@@ -133,6 +137,7 @@
     "vite-auto-i18n-plugin": "1.1.16",
     "vite-console-plugin": "^2.0.15",
     "vite-plugin-vue-devtools": "^7.7.9",
+    "vitest": "^4.1.11",
     "vue-tsc": "^3.2.6"
   },
   "config": {

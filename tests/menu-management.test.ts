@@ -5,6 +5,9 @@
  * @Description: 菜单父级约束、检索上下文与页面缓存身份回归
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { DEFAULT_FORM_DATA } from '../src/views/sys-manage/menu-manage/data'
+import { validateMenuDraft } from '../src/api/d_menu'
+
 import { describe, expect, test } from 'bun:test'
 import { createSSRApp, defineComponent, h } from 'vue'
 import { renderToString } from 'vue/server-renderer'
@@ -17,12 +20,8 @@ import {
 import {
   filterMenus,
   getParentOptions,
-  validateMenuDraft,
 } from '../src/views/sys-manage/menu-manage/d_menuTree'
-import type {
-  FormData,
-  MenuData,
-} from '../src/views/sys-manage/menu-manage/data'
+import type { MenuFormData, MenuData } from '../src/api/menu-manage.contract'
 
 const page: MenuData = {
   id: 'page-a',
@@ -60,7 +59,7 @@ const root: MenuData = {
   keepAlive: false,
   children: [child],
 }
-const draft: FormData = {
+const draft: MenuFormData = {
   ...page,
   path: page.path!,
   component: page.component!,
@@ -202,8 +201,7 @@ describe('menu management contracts', () => {
 
 describe('menu CRUD and cache metadata', () => {
   test('路由转换保留页面缓存，目录不会被错误标记为可缓存页面', async () => {
-    const { createMenuFromRoute } =
-      await import('../src/views/sys-manage/menu-manage/data')
+    const { createMenuFromRoute } = await import('../src/api/menu-manage.mock')
     const route = {
       path: '/demo',
       name: 'demo',
@@ -217,9 +215,8 @@ describe('menu CRUD and cache metadata', () => {
     ).toBe(false)
   })
   test('更换上级实际移动节点，非法拖拽不会先移除节点，缓存策略不串公司', async () => {
-    const api = await import('../src/views/sys-manage/menu-manage/data')
-    const { flattenMenus } =
-      await import('../src/views/sys-manage/menu-manage/d_menuTree')
+    const api = await import('../src/api/menu-manage')
+    const { flattenMenus } = await import('../src/api/d_menu')
     const suffix = crypto.randomUUID()
     const first = {
       ...draft,
@@ -291,12 +288,38 @@ describe('menu CRUD and cache metadata', () => {
     }
   })
   test('业务接口拒绝不能误报保存成功，空响应和成功码正常通过', async () => {
-    const { checkMenuMutation } =
-      await import('../src/views/sys-manage/menu-manage/data')
+    const { checkMenuMutation } = await import('../src/api/menu-manage')
     await expect(
       checkMenuMutation(Promise.resolve({ code: 403, msg: '没有编辑权限' }))
     ).rejects.toThrow('没有编辑权限')
     await checkMenuMutation(Promise.resolve(undefined))
     await checkMenuMutation(Promise.resolve({ code: '200' }))
   })
+})
+
+test('菜单保存使用调用时的草稿快照，列表修改不会污染下一次读取', async () => {
+  const api = await import('../src/api/menu-manage')
+  const suffix = crypto.randomUUID()
+  const form = {
+    ...DEFAULT_FORM_DATA,
+    type: 'directory' as const,
+    name: `快照-${suffix}`,
+    path: `/snapshot-${suffix}`,
+  }
+  const expectedName = form.name
+  const pending = api.addMenuApi(form)
+  form.name = '保存期间继续输入'
+  await pending
+  const row = (await api.getMenuListApi()).data.find(
+    menu => menu.path === form.path
+  )!
+  try {
+    expect(row.name).toBe(expectedName)
+    row.name = '未保存的列表编辑'
+    expect(
+      (await api.getMenuListApi()).data.find(menu => menu.id === row.id)?.name
+    ).toBe(expectedName)
+  } finally {
+    await api.deleteMenuApi(row.id)
+  }
 })

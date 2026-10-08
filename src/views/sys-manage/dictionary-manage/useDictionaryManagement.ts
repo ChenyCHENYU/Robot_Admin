@@ -25,18 +25,16 @@ import {
   flattenDictionaries,
   prepareDictionaryForm,
   validateDictionaryForm,
-} from './d_dictionary'
+} from '@/api/d_dictionary'
+import { DEFAULT_DICT_FORM_DATA, DICT_STATUS_CONFIGS } from './data'
+import type { DictData, DictFormData } from '@/api/dictionary-manage.contract'
 import {
-  DEFAULT_DICT_FORM_DATA,
-  DICT_STATUS_CONFIGS,
   addDictApi,
   deleteDictApi,
   getDictListApi,
   toggleDictStatusApi,
   updateDictApi,
-  type DictData,
-  type DictFormData,
-} from './data'
+} from '@/api/dictionary-manage'
 
 const describeError = (error: unknown, fallback: string) =>
   error instanceof Error ? error.message : fallback

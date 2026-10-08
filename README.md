@@ -205,8 +205,9 @@ bun run preview        # 本地预览构建结果
 bun run lint           # 代码检查和修复
 bun run lint:check     # 只检查，不修改文件
 bun run format         # 代码格式化
-bun run test           # 单元测试
-bun run verify         # 双 Lint + 类型 + 单测 + 双模式构建 + 体积预算
+bun run test           # Bun 逻辑与契约测试
+bun run test:components # 真实 Vue 挂载回归（happy-dom）
+bun run verify         # 双 Lint + 类型 + 单测/组件 + 双模式构建 + 体积预算
 bun run test:e2e       # 基于正式产物的浏览器回归（首次需安装 Chromium）
 bun run check:bundle   # 校验最近一次生产构建的首屏体积预算
 bun run security:audit # 检查依赖安全公告
@@ -279,7 +280,8 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 - **ESLint 10.9** - 📏 代码质量守护者
 - **Prettier 3.9** - ✨ 代码格式化
 - **Oxlint 1.52** - 🦀 Rust编写的超快Linter
-- **Bun Test 1.4** - 🧪 与包管理器统一的测试运行时
+- **Bun Test 1.4** - 🧪 与包管理器统一的逻辑与契约测试
+- **Vitest 4 + Vue Test Utils + happy-dom** - 🧩 真实 Vue 挂载回归，验证生命周期、交互和状态；CSS 布局与实际绘制由 Playwright 验证
 
 **📊 功能组件（via @robot-admin/naive-ui-components）**
 
@@ -767,7 +769,7 @@ Cron 与公式编辑器推荐使用 `v-model + config`：项目负责场景配�
 
 **已发布组件库**
 
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.14.2` - 基于 Naive UI 的 Vue 3 业务组件库（55 个组件，按需导入）
+- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.14.3` - 基于 Naive UI 的 Vue 3 业务组件库（55 个组件，按需导入）
 - **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v3.2.1` - 6 种布局模式 + `/naive` 单入口 + Vue Headless 分层
 - **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.6.1` - 实例化 Axios 编排、认证恢复与函数式 Headless CRUD
 - **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v3.4.2` - Naive UI / Element Plus 双框架企业级表单验证规则库

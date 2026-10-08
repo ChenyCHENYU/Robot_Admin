@@ -21,19 +21,15 @@ import { getAuthMenuListApi, type AuthMenuResponse } from '@/api/auth'
 import { isMockDataMode } from '@/config/dataMode'
 import { s_userStore } from '@/stores/user'
 import { s_permissionStore } from '@/stores/permission'
+import { filterMenus, getParentOptions } from './d_menuTree'
+import { DEFAULT_FORM_DATA, MENU_STATUS_CONFIGS } from './data'
+import type {
+  MenuData,
+  MenuFormData,
+  ButtonPermission,
+} from '@/api/menu-manage.contract'
+import { flattenMenus, findMenu, validateMenuDraft } from '@/api/d_menu'
 import {
-  flattenMenus,
-  findMenu,
-  filterMenus,
-  getParentOptions,
-  validateMenuDraft,
-} from './d_menuTree'
-import {
-  type MenuData,
-  type FormData,
-  type ButtonPermission,
-  DEFAULT_FORM_DATA,
-  MENU_STATUS_CONFIGS,
   getMenuListApi,
   getButtonPermissionsApi,
   addMenuApi,
@@ -43,7 +39,7 @@ import {
   addButtonPermissionApi,
   updateButtonPermissionApi,
   deleteButtonPermissionApi,
-} from './data'
+} from '@/api/menu-manage'
 
 const describeError = (error: unknown, fallback: string): string =>
   error instanceof Error ? error.message : fallback
@@ -107,12 +103,12 @@ export const useMenuManagement = () => {
   const searchPattern = ref('')
   const showModal = ref(false)
   const modalMode = ref<'add' | 'edit'>('add')
-  const formRef = ref<FormInstance<FormData> | null>(null)
+  const formRef = ref<FormInstance<MenuFormData> | null>(null)
   const treeRef = ref<InstanceType<typeof C_Tree> | null>(null)
   const menuList = ref<MenuData[]>([])
   const selectedId = ref<string | null>(null)
   const buttonPermissions = ref<ButtonPermission[]>([])
-  const formData = reactive<FormData>({ ...DEFAULT_FORM_DATA })
+  const formData = reactive<MenuFormData>({ ...DEFAULT_FORM_DATA })
   const allMenus = computed(() => flattenMenus(menuList.value))
   const selectedMenu = computed(() =>
     findMenu(menuList.value, selectedId.value)
@@ -161,8 +157,8 @@ export const useMenuManagement = () => {
   })
   /** 字段级规则使用组件当前模型，复用原有领域约束。 */
   const fieldRules = (
-    field: keyof FormData,
-    model: FormData
+    field: keyof MenuFormData,
+    model: MenuFormData
   ): FormItemRule[] => [
     {
       trigger: ['input', 'blur', 'change'],
@@ -374,13 +370,13 @@ export const useMenuManagement = () => {
   const handleCancelModal = () => {
     if (!saving.value) showModal.value = false
   }
-  const snapshotDraft = (): FormData => {
+  const snapshotDraft = (): MenuFormData => {
     const draft = Object.fromEntries(
       Object.keys(DEFAULT_FORM_DATA).map(key => [
         key,
-        formData[key as keyof FormData],
+        formData[key as keyof MenuFormData],
       ])
-    ) as unknown as FormData
+    ) as unknown as MenuFormData
     if (formData.id) draft.id = formData.id
     for (const field of [
       'name',
@@ -394,7 +390,7 @@ export const useMenuManagement = () => {
     return draft
   }
   const saveDraft = async (
-    draft: FormData,
+    draft: MenuFormData,
     contextId: string
   ): Promise<void> => {
     if (draft.type === 'button') {
@@ -417,7 +413,7 @@ export const useMenuManagement = () => {
         !isMockDataMode() || (!!draft.id && changedCache)
     }
   }
-  const formConfig = computed<FormConfig<FormData>>(() => ({
+  const formConfig = computed<FormConfig<MenuFormData>>(() => ({
     layout: 'grid',
     grid: { cols: 3, gutter: 16 },
     labelPlacement: 'top',

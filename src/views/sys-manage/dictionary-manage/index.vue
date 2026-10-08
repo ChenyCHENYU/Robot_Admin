@@ -345,8 +345,8 @@
     FormOption,
     FormRenderer,
   } from '@robot-admin/naive-ui-components/C_Form'
-  import type { DictFormData, DictData } from './data'
-  import { getDictionaryState } from './d_dictionary'
+  import type { DictFormData, DictData } from '@/api/dictionary-manage.contract'
+  import { getDictionaryState } from '@/api/d_dictionary'
   import { useDictionaryManagement } from './useDictionaryManagement'
 
   defineOptions({ name: 'DictionaryManage' })

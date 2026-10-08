@@ -297,15 +297,6 @@
   &__table {
     // 保留十行数据的展示空间，末页和搜索结果变少时分页器仍固定在底部。
     height: 480px;
-    :deep(.c-table-wrapper) {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    :deep(.n-data-table) {
-      flex: 1;
-      min-height: 0;
-    }
   }
   &__heading {
     display: flex;

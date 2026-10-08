@@ -207,8 +207,9 @@ bun run preview        # Preview build locally
 bun run lint           # Code check and fix
 bun run lint:check     # Check without modifying files
 bun run format         # Code formatting
-bun run test           # Unit testing
-bun run verify         # Both linters + types + unit tests + two builds + bundle budget
+bun run test           # Bun logic and contract tests
+bun run test:components # Real Vue mounting regressions (happy-dom)
+bun run verify         # Both linters + types + unit/component tests + two builds + bundle budget
 bun run test:e2e       # Browser regressions against built artifacts (install Chromium first)
 bun run check:bundle   # Check the latest production build's bundle budget
 bun run security:audit # Check dependency advisories
@@ -281,6 +282,7 @@ Exact versions below reflect the installation in `bun.lock`; declared ranges are
 - **Prettier 3.9** - ✨ Code formatting
 - **Oxlint 1.52** - 🦀 Ultra-fast Linter written in Rust
 - **Bun Test 1.4** - 🧪 Test runtime aligned with the package manager
+- **Vitest 4 + Vue Test Utils + happy-dom** - Real Vue mounting tests for interactions and lifecycle; Playwright verifies layout and actual rendering.
 
 **📊 Functional Components**
 

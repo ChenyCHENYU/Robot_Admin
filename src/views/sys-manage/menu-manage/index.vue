@@ -433,7 +433,7 @@
     FormOption,
     FormRenderer,
   } from '@robot-admin/naive-ui-components/C_Form'
-  import type { FormData } from './data'
+  import type { MenuFormData } from '@/api/menu-manage.contract'
   import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
   import '@robot-admin/naive-ui-components/C_Tree/style.css'
   import { useMenuManagement } from './useMenuManagement'
@@ -488,7 +488,7 @@
     loadMenus,
     loadPermissions,
   } = useMenuManagement()
-  const formOptions = computed<FormOption<FormData>[]>(() => [
+  const formOptions = computed<FormOption<MenuFormData>[]>(() => [
     {
       prop: 'type',
       layout: { span: 3 },

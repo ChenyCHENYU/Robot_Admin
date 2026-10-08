@@ -5,6 +5,7 @@
  * @Description: 字典编码保留、重复值约束、移动和请求取消回归
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { DEFAULT_DICT_FORM_DATA } from '../src/views/sys-manage/dictionary-manage/data'
 import { describe, expect, test } from 'bun:test'
 import {
   filterDictionaries,
@@ -12,11 +13,11 @@ import {
   findDictionary,
   prepareDictionaryForm,
   validateDictionaryForm,
-} from '../src/views/sys-manage/dictionary-manage/d_dictionary'
+} from '../src/api/d_dictionary'
 import type {
   DictData,
   DictFormData,
-} from '../src/views/sys-manage/dictionary-manage/data'
+} from '../src/api/dictionary-manage.contract'
 
 const item: DictData = {
   id: 'normal',
@@ -148,10 +149,10 @@ describe('dictionary management contracts', () => {
     ).toBeDefined()
   })
   test('演示接口正确移动字典项；非法移动不改变目录，保存使用请求时的草稿快照', async () => {
-    const api = await import('../src/views/sys-manage/dictionary-manage/data')
+    const api = await import('../src/api/dictionary-manage')
     const suffix = crypto.randomUUID().replaceAll('-', '')
     const createType = (name: string, typeCode: string) => ({
-      ...api.DEFAULT_DICT_FORM_DATA,
+      ...DEFAULT_DICT_FORM_DATA,
       name,
       typeCode,
     })
@@ -164,7 +165,7 @@ describe('dictionary management contracts', () => {
     const secondId = dicts.find(dict => dict.code === second.typeCode)!.id
     try {
       const createdDraft = {
-        ...api.DEFAULT_DICT_FORM_DATA,
+        ...DEFAULT_DICT_FORM_DATA,
         type: 'item' as const,
         parentId: firstId,
         name: '可用',
@@ -214,7 +215,7 @@ describe('dictionary management contracts', () => {
     }
   })
   test('加载取消正常终止，业务拒绝不可误报成功，无响应体的成功可兼容', async () => {
-    const api = await import('../src/views/sys-manage/dictionary-manage/data')
+    const api = await import('../src/api/dictionary-manage')
     const controller = new AbortController()
     const pending = api.getDictListApi(controller.signal)
     controller.abort()

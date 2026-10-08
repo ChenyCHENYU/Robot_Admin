@@ -1,11 +1,11 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-10-06
- * @FilePath: \Robot_Admin\src\views\sys-manage\dictionary-manage\d_dictionary.ts
- * @Description: 字典检索与表单规范化，区分显示标签、编码和存储值
+ * @Date: 2026-10-08
+ * @FilePath: \Robot_Admin\src\api\d_dictionary.ts
+ * @Description: 字典领域规范化、检索、实际生效状态和输入校验
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import type { DictData, DictFormData } from './data'
+import type { DictData, DictFormData } from './dictionary-manage.contract'
 
 /** 自身启停配置与父类型决定的实际生效状态分别表达。 */
 export const getDictionaryState = (
@@ -21,15 +21,18 @@ export const getDictionaryState = (
   return { enabled, effective: enabled && parentEnabled, reason }
 }
 
+/** 按树顺序展开字典类型与条目。 */
 export const flattenDictionaries = (dicts: DictData[]): DictData[] =>
   dicts.flatMap(dict => [dict, ...flattenDictionaries(dict.children || [])])
 
+/** 按字典 ID 查找节点，不改变原目录。 */
 export const findDictionary = (
   dicts: DictData[],
   id?: string | null
 ): DictData | undefined =>
   flattenDictionaries(dicts).find(dict => dict.id === id)
 
+/** 检索名称、编码和值，保留命中节点的祖先。 */
 export const filterDictionaries = (
   dicts: DictData[],
   keyword: string
@@ -110,6 +113,7 @@ const validateItem = (draft: DictFormData, dicts: DictData[]): DictErrors => {
   return errors
 }
 
+/** 规范化后验证类型、排序、归属和同类型唯一性。 */
 export const validateDictionaryForm = (
   form: DictFormData,
   dicts: DictData[]
