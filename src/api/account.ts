@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import type { ApiResponse } from './management.contract'
 import { getData, putData } from '@robot-admin/request-core/axios'
 import { isMockDataMode } from '@/config/dataMode'
 import { delayWithSignal } from '@/utils/abort'
@@ -74,65 +75,57 @@ export interface AccountActivityRecord {
   detail?: string
 }
 
-export interface AccountApiResponse<T> {
-  code: string | number
-  data: T
-  message?: string
-  msg?: string
-}
-
 const createMockResponse = async <T>(
   data: T,
   signal?: AbortSignal
-): Promise<AccountApiResponse<T>> => {
+): Promise<ApiResponse<T>> => {
   await delayWithSignal(300, signal)
-  return { code: '0', data, message: '操作成功' }
+  return { code: '0', data, msg: '操作成功' }
 }
 
 export const getAccountProfileApi = (
   mockProfile: AccountProfile,
   signal?: AbortSignal
-): Promise<AccountApiResponse<AccountProfile>> =>
+): Promise<ApiResponse<AccountProfile>> =>
   isMockDataMode()
     ? createMockResponse(mockProfile, signal)
-    : getData<AccountApiResponse<AccountProfile>>('/account/profile', {
+    : getData<ApiResponse<AccountProfile>>('/account/profile', {
         signal,
       })
 
 export const updateAccountProfileApi = (
   data: UpdateAccountProfilePayload,
   signal?: AbortSignal
-): Promise<AccountApiResponse<void>> =>
+): Promise<ApiResponse<void>> =>
   isMockDataMode()
     ? createMockResponse(undefined, signal)
-    : putData<AccountApiResponse<void>>('/account/profile', data, { signal })
+    : putData<ApiResponse<void>>('/account/profile', data, { signal })
 
 export const changeAccountPasswordApi = (
   data: ChangePasswordPayload,
   signal?: AbortSignal
-): Promise<AccountApiResponse<void>> =>
+): Promise<ApiResponse<void>> =>
   isMockDataMode()
     ? createMockResponse(undefined, signal)
-    : putData<AccountApiResponse<void>>('/account/password', data, { signal })
+    : putData<ApiResponse<void>>('/account/password', data, { signal })
 
 export const getAccountLoginRecordsApi = (
   mockRecords: AccountLoginRecord[],
   signal?: AbortSignal
-): Promise<AccountApiResponse<AccountLoginRecord[]>> =>
+): Promise<ApiResponse<AccountLoginRecord[]>> =>
   isMockDataMode()
     ? createMockResponse(mockRecords, signal)
-    : getData<AccountApiResponse<AccountLoginRecord[]>>(
-        '/account/login-records',
-        { signal }
-      )
+    : getData<ApiResponse<AccountLoginRecord[]>>('/account/login-records', {
+        signal,
+      })
 
 export const getAccountSecuritySettingsApi = (
   mockSettings: AccountSecuritySetting[],
   signal?: AbortSignal
-): Promise<AccountApiResponse<AccountSecuritySetting[]>> =>
+): Promise<ApiResponse<AccountSecuritySetting[]>> =>
   isMockDataMode()
     ? createMockResponse(mockSettings, signal)
-    : getData<AccountApiResponse<AccountSecuritySetting[]>>(
+    : getData<ApiResponse<AccountSecuritySetting[]>>(
         '/account/security-settings',
         { signal }
       )
@@ -140,20 +133,19 @@ export const getAccountSecuritySettingsApi = (
 export const updateAccountSecuritySettingApi = (
   key: string,
   enabled: boolean
-): Promise<AccountApiResponse<void>> =>
+): Promise<ApiResponse<void>> =>
   isMockDataMode()
     ? createMockResponse(undefined)
-    : putData<AccountApiResponse<void>>(`/account/security/${key}`, {
+    : putData<ApiResponse<void>>(`/account/security/${key}`, {
         enabled,
       })
 
 export const getAccountActivityLogsApi = (
   mockRecords: AccountActivityRecord[],
   signal?: AbortSignal
-): Promise<AccountApiResponse<AccountActivityRecord[]>> =>
+): Promise<ApiResponse<AccountActivityRecord[]>> =>
   isMockDataMode()
     ? createMockResponse(mockRecords, signal)
-    : getData<AccountApiResponse<AccountActivityRecord[]>>(
-        '/account/activity-logs',
-        { signal }
-      )
+    : getData<ApiResponse<AccountActivityRecord[]>>('/account/activity-logs', {
+        signal,
+      })

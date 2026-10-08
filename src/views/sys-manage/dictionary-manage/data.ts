@@ -5,6 +5,7 @@
  * @Description: 字典契约、演示数据和接口，保持标签、编码与存储值独立
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import type { ApiResponse } from '@/api/management.contract'
 import {
   deleteData,
   getData,
@@ -56,12 +57,6 @@ export interface DictFormData {
   typeCode: string
   dictLabel: string
   dictValue: string
-}
-
-export interface ApiResponse<T = unknown> {
-  code: string | number
-  data: T
-  msg: string
 }
 
 // ==================== 常量配置 ====================

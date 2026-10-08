@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import type { ApiResponse } from '@/api/management.contract'
 import menuOriginData from '@/assets/data/dynamicRouter.json'
 import {
   deleteData,
@@ -67,12 +68,6 @@ export interface ButtonPermission {
 }
 
 export type MenuDropPosition = 'inside' | 'before' | 'after'
-
-export interface ApiResponse<T = unknown> {
-  code: string | number
-  data: T
-  msg: string
-}
 
 interface MenuRouteMeta {
   title: string

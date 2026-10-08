@@ -32,7 +32,14 @@ const localPackageRoots = [
 export default function createServerConfig(apiProxyTarget = ''): ServerOptions {
   const target = apiProxyTarget.trim()
   if (target) {
-    const url = new URL(target)
+    let url: URL
+    try {
+      url = new URL(target)
+    } catch {
+      throw new Error(
+        'API_PROXY_TARGET 必须是有效的 HTTP(S) 地址，例如 http://localhost:8080'
+      )
+    }
     if (
       !['http:', 'https:'].includes(url.protocol) ||
       url.username ||

@@ -7,6 +7,7 @@
  */
 import { expect, test } from 'bun:test'
 import packageJson from '../package.json'
+import { readdirSync } from 'node:fs'
 import { readProjectInfo } from '../src/config/vite/viteProjectInfoPlugin'
 
 test('两版 README 的精确技术栈版本匹配实际安装，与指南声明范围区分', async () => {
@@ -88,5 +89,35 @@ test('README 的 Bun 最低版本徽章匹配 engines，无坏 HTML 和损坏字
     )
     expect(text).not.toContain('\uFFFD')
     expect(text).not.toContain('<parameter')
+  }
+})
+
+test('演示页计数区分顶层页面与内嵌布局，两版徽章和目录口径一致', async () => {
+  const root = new URL('../src/views/demo/', import.meta.url)
+  const pages = readdirSync(root, { withFileTypes: true }).filter(
+    entry => entry.isDirectory() && /^\d+-/.test(entry.name)
+  )
+  const indexFiles = [...new Bun.Glob('**/index.vue').scanSync(root.pathname)]
+  const pageCount = pages.filter(entry =>
+    indexFiles.includes(`${entry.name}/index.vue`)
+  ).length
+  const nestedCount = indexFiles.length - pageCount
+  const names = ['README.md', 'README_EN.md']
+  const texts = await Promise.all(
+    names.map(name => Bun.file(new URL(`../${name}`, import.meta.url)).text())
+  )
+  for (const [index, text] of texts.entries()) {
+    const name = names[index]
+    expect(text).toContain(`badge/demos-${pageCount}-orange`)
+    expect(text).toContain(
+      name === 'README.md'
+        ? `${pageCount} 个演示页面`
+        : `${pageCount} demo pages`
+    )
+    expect(text).toContain(
+      name === 'README.md'
+        ? `${pageCount} 个演示页 + ${nestedCount} 个表单布局（${indexFiles.length} 个 index.vue）`
+        : `${pageCount} demo pages + ${nestedCount} form layouts (${indexFiles.length} index.vue files)`
+    )
   }
 })

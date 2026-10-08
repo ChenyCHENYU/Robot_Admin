@@ -69,7 +69,7 @@
   </p>
   <p>
     <img src="https://img.shields.io/badge/components-55-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-64-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/demos-56-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
     <img src="https://img.shields.io/badge/node-%E2%89%A522.18-339933?style=flat&logo=nodedotjs" alt="Node Version">
@@ -144,7 +144,7 @@ _在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `Type
 
 ### 🎨 不只是一个管理系统，更是一个作品
 
-- **64 个演示页面** - 覆盖组件接入与交互场景，另有 38 条免登录预览路由；演示数据不等于生产后端
+- **56 个演示页面** - 覆盖组件接入与交互场景，另有 38 条免登录预览路由；演示数据不等于生产后端
 - **独立指令包** - 防抖、节流、长按、拖拽、权限等能力由 `@robot-admin/directives` 提供
 - **主题系统** - 深色/浅色模式/跟随系统 + 支持自定义扩展
 - **Preview 路由系统** - 38 个无鉴权独立预览路由，供 [文档站](https://www.tzagileteam.com) 通过 iframe 嵌入实时组件演示
@@ -373,7 +373,7 @@ TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 
 
 `v-copy` 复制 | `v-debounce` 防抖 | `v-throttle` 节流 | `v-permission` 权限 | `v-watermark` 水印 | `v-draggable` 拖拽 | `v-longpress` 长按
 
-### 🎪 演示页面（64 个示例）
+### 🎪 演示页面（56 个示例）
 
 <details>
 <summary><b>查看所有演示页面</b></summary>
@@ -439,7 +439,7 @@ Robot_Admin/
 │   │   └── 📁 local/                  # 局部组件
 │   ├── 📁 views/                      # 页面视图
 │   │   ├── 📁 dashboard/              # 数据看板
-│   │   ├── 📁 demo/                   # 演示页面（64 个 index.vue）
+│   │   ├── 📁 demo/                   # 56 个演示页 + 8 个表单布局（64 个 index.vue）
 │   │   ├── 📁 preview/                # 组件预览页面（38 个 iframe 嵌入路由）
 │   │   ├── 📁 sys-manage/             # 系统管理
 │   │   ├── 📁 login/                  # 登录注册
@@ -927,7 +927,7 @@ bun run verify
 ## 🎯 项目定位
 
 - 单体 SPA 主线提供权限、主题、路由和 Remote/Mock 数据边界；其他架构保留在独立分支。
-- 业务组件与 11 个指令由独立包维护，应用通过深层入口按需消费；`src/views/demo/` 提供 64 个使用示例。
+- 业务组件与 11 个指令由独立包维护，应用通过深层入口按需消费；`src/views/demo/` 提供 56 个使用示例。
 - `bun run verify` 与 `bun run test:e2e` 提供可复现的静态、构建和浏览器门禁；真实业务仍需接入后端并执行集成验收。
 
 ---
@@ -959,7 +959,7 @@ bun run verify
 
 **🔄 如何从其他项目迁移？**
 
-- 优先参考组件库公开类型与本仓库的 64 个演示页，按页面逐步接入并运行验证
+- 优先参考组件库公开类型与本仓库的 56 个演示页，按页面逐步接入并运行验证
 
 </details>
 

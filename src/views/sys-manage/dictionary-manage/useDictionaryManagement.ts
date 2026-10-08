@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import type { ApiResponse } from '@/api/management.contract'
 import type {
   FormInstance,
   FormConfig,
@@ -35,7 +36,6 @@ import {
   updateDictApi,
   type DictData,
   type DictFormData,
-  type ApiResponse,
 } from './data'
 
 const describeError = (error: unknown, fallback: string) =>

@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import type { App } from 'vue'
+import type { App, InjectionKey } from 'vue'
 import type { HLJSApi, LanguageFn } from 'highlight.js'
 import hljs from 'highlight.js/lib/core'
 
@@ -181,6 +181,10 @@ export const useHighlight = () => {
   }
 }
 
+export const HIGHLIGHT_MANAGER_KEY: InjectionKey<
+  ReturnType<typeof useHighlight>
+> = Symbol('highlightManager')
+
 /**
  * * @description 安装 highlight.js 插件到 Vue 应用
  * ? @param app - Vue 应用实例
@@ -189,7 +193,7 @@ export const useHighlight = () => {
  */
 export function setupHighlight(app: App, options: HighlightPluginOptions = {}) {
   const highlightAPI = initializeHighlight(options)
-  app.provide('highlightManager', highlightAPI)
+  app.provide(HIGHLIGHT_MANAGER_KEY, highlightAPI)
   app.config.globalProperties.$highlight = highlightAPI
 }
 

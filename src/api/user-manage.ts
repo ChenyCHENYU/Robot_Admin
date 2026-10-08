@@ -242,14 +242,15 @@ export const updateUserStatusApi = async (
   id: string,
   status: number
 ): Promise<void> => {
+  if (status !== 0 && status !== 1) throw new Error('用户状态只能是 0 或 1')
   if (isMockDataMode()) {
     await delayWithSignal(250)
     const user = requireMockUser(id)
+    const directory = getMockDirectoryUser(user.username)
+    if (!directory) throw new Error('用户公司归属缺失，请先编辑用户并关联公司')
+    upsertMockDirectoryUser({ ...directory, enabled: status === 1 })
     user.status = status
     user.updateTime = new Date().toLocaleString()
-    const directory = getMockDirectoryUser(user.username)
-    if (directory)
-      upsertMockDirectoryUser({ ...directory, enabled: status === 1 })
     persistMockUsers()
     return
   }

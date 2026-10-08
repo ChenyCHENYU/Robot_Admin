@@ -19,6 +19,41 @@ const componentVersion = JSON.parse(
   )
 ).version
 
+for (const mode of ['light', 'dark']) {
+  test(`${mode} 用户弹层退出项的文字与图标在默认和悬停时保持危险操作颜色`, async ({
+    page,
+  }) => {
+    await installMockAdminSession(page)
+    await page.addInitScript(
+      mode => localStorage.setItem('theme-mode', mode),
+      mode
+    )
+    await page.goto('/#/home')
+    await page.locator('.navbar-right .user-info').click()
+    const item = page.locator('.user-panel__item--danger')
+    await expect(item).toBeVisible()
+    const expected = await item.evaluate(element => {
+      const probe = document.createElement('span')
+      probe.style.color = 'var(--error-color, var(--c-error))'
+      element.append(probe)
+      const color = getComputedStyle(probe).color
+      probe.remove()
+      return color
+    })
+    await expect(item).toHaveCSS('color', expected)
+    await expect(item.locator('.user-panel__item-icon')).toHaveCSS(
+      'color',
+      expected
+    )
+    await item.hover()
+    await expect(item).toHaveCSS('color', expected)
+    await expect(item.locator('.user-panel__item-icon')).toHaveCSS(
+      'color',
+      expected
+    )
+  })
+}
+
 for (const width of [1440, 3440]) {
   test(`${width}px 首页铺满内容区域并跟随主题，入口可正常导航`, async ({
     page,

@@ -1,6 +1,7 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-07
+ * @FilePath: \Robot_Admin\e2e\form-pages.pw.ts
  * @Description: 业务页面表单配置迁移与原有交互回归
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
@@ -189,12 +190,59 @@ test('用户类型联动清理部门和角色，外部字段按类型出现', as
   await expect(field(modal, '公司名称')).toBeVisible()
   await expect(field(modal, '所属部门')).toHaveCount(0)
   await expect(field(modal, '用户角色')).toContainText('请选择角色')
+  await select(page, modal, '用户角色', '客户')
+  await expect(field(modal, '用户角色')).toContainText('客户')
   await field(modal, '公司名称').getByRole('textbox').fill('回归公司')
   await select(page, modal, '用户类型', '内部员工')
   await expect(field(modal, '公司名称')).toHaveCount(0)
   await expect(field(modal, '所属部门')).toBeVisible()
   await select(page, modal, '用户类型', '外部客户')
   await expect(field(modal, '公司名称').getByRole('textbox')).toHaveValue('')
+})
+
+test('用户选择通过表格事件显示批量操作，取消确认保留数据和选中状态', async ({
+  page,
+}) => {
+  await page.goto('/#/sys-manage/user-manage')
+  const table = page.locator('.user-management .c-table-wrapper')
+  const row = table.locator('tbody tr').first()
+  await expect(row).toBeVisible()
+  await expect(page.locator('.app-loading')).toBeHidden()
+  const cells = row.locator('td')
+  const before = await cells.allTextContents()
+  const checkbox = row.getByRole('checkbox')
+  await checkbox.check()
+  await page.getByRole('button', { name: '批量删除', exact: true }).click()
+  const confirmation = page
+    .locator('.n-dialog')
+    .filter({ hasText: '确认删除选中的 1 个用户吗' })
+  await confirmation.getByRole('button', { name: '取消', exact: true }).click()
+  await expect(cells).toHaveText(before)
+  await expect(checkbox).toBeChecked()
+  await checkbox.uncheck()
+  await expect(
+    page.getByRole('button', { name: '批量删除', exact: true })
+  ).toHaveCount(0)
+})
+
+test('公司目录缺失时状态操作显示修复提示，保留原行状态', async ({ page }) => {
+  await page.goto('/#/sys-manage/user-manage')
+  const row = page
+    .locator('.user-management tbody tr')
+    .filter({ has: page.getByText('admin', { exact: true }) })
+  await expect(row.getByText('正常', { exact: true })).toBeVisible()
+  await page.evaluate(() =>
+    localStorage.setItem('robot-admin:mock-enterprise-directory:v2', '[]')
+  )
+  await row.getByRole('button', { name: '更多操作', exact: true }).hover()
+  await page
+    .locator('.n-dropdown-menu:visible')
+    .getByText('禁用', { exact: true })
+    .click()
+  await expect(
+    page.getByText('用户公司归属缺失，请先编辑用户并关联公司', { exact: true })
+  ).toBeVisible()
+  await expect(row.getByText('正常', { exact: true })).toBeVisible()
 })
 
 test('权限编码生成、校验、增删改和刷新沿用业务流程', async ({ page }) => {

@@ -27,6 +27,39 @@ export const isAbortError = (error: unknown): boolean => {
   )
 }
 
+/** 兼容普通 AbortController；超时可重试，调用方取消仍按标准 AbortError 处理。 */
+export const withRequestTimeout = async <T>(
+  request: (signal: AbortSignal) => Promise<T>,
+  signal: AbortSignal,
+  timeout: number
+): Promise<T> => {
+  if (signal.aborted) throw createAbortError()
+  const controller = new AbortController()
+  const cancel = () => controller.abort()
+  let timedOut = false
+  const timer = globalThis.setTimeout(() => {
+    timedOut = true
+    controller.abort()
+  }, timeout)
+  signal.addEventListener('abort', cancel, { once: true })
+  try {
+    const result = await request(controller.signal)
+    if (signal.aborted) throw createAbortError()
+    if (timedOut) throw new Error('请求超时')
+    return result
+  } catch (error) {
+    if (signal.aborted) throw createAbortError()
+    if (timedOut)
+      throw Object.assign(new Error('请求超时，请重试'), {
+        name: 'TimeoutError',
+      })
+    throw error
+  } finally {
+    globalThis.clearTimeout(timer)
+    signal.removeEventListener('abort', cancel)
+  }
+}
+
 /** 可被 AbortSignal 立即打断的延迟，供 Mock 与交互测试复用。 */
 export const delayWithSignal = (
   delay: number,

@@ -69,7 +69,7 @@
   </p>
   <p>
     <img src="https://img.shields.io/badge/components-55-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-64-orange?style=flat" alt="Demo Pages">
+    <img src="https://img.shields.io/badge/demos-56-orange?style=flat" alt="Demo Pages">
     <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
     <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
     <img src="https://img.shields.io/badge/node-%E2%89%A522.18-339933?style=flat&logo=nodedotjs" alt="Node Version">
@@ -144,7 +144,7 @@ _Here, when `Bun's` ultimate performance meets `Vue3's` Composition API, when `T
 
 ### 🎨 Not Just a Management System, But a Masterpiece
 
-- **64 demo pages** - Component and interaction examples plus 38 public preview routes; demo data is not a production backend
+- **56 demo pages** - Component and interaction examples plus 38 public preview routes; demo data is not a production backend
 - **Independent directive package** - Debounce, throttle, long press, drag, and permission helpers come from `@robot-admin/directives`
 - **Theme System** - Dark/Light mode/Follow system + Custom extension support
 
@@ -374,7 +374,7 @@ Exact versions below reflect the installation in `bun.lock`; declared ranges are
 
 `v-copy` Copy | `v-debounce` Debounce | `v-throttle` Throttle | `v-permission` Permission | `v-watermark` Watermark | `v-draggable` Draggable | `v-longpress` Long Press
 
-### 🎪 Demo Pages (64 Examples)
+### 🎪 Demo Pages (56 Examples)
 
 <details>
 <summary><b>View All Demo Pages</b></summary>
@@ -440,7 +440,7 @@ Robot_Admin/
 │   │   └── 📁 local/                  # Local components
 │   ├── 📁 views/                      # Page views
 │   │   ├── 📁 dashboard/              # Data dashboard
-│   │   ├── 📁 demo/                   # Demo pages (64 index.vue files)
+│   │   ├── 📁 demo/                   # 56 demo pages + 8 form layouts (64 index.vue files)
 │   │   ├── 📁 sys-manage/             # System management
 │   │   ├── 📁 login/                  # Login/Register
 │   │   ├── 📁 about/                  # Version and project information
@@ -915,7 +915,7 @@ bun run verify
 ## 🎯 Project Scope
 
 - The single-app SPA mainline includes permissions, themes, routing, and Remote/Mock data boundaries; other architectures live on separate branches.
-- Independent packages provide business components and 11 directives; the app consumes deep entries on demand and includes 64 demos under `src/views/demo/`.
+- Independent packages provide business components and 11 directives; the app consumes deep entries on demand and includes 56 demos under `src/views/demo/`.
 - `bun run verify` and `bun run test:e2e` provide reproducible static, build, and browser gates. Real applications still need backend integration tests.
 
 ---
@@ -947,7 +947,7 @@ bun run verify
 
 **🔄 How to migrate from other projects?**
 
-- Use the component library's public types and the 64 demos to migrate one page at a time, then run the checks
+- Use the component library's public types and the 56 demos to migrate one page at a time, then run the checks
 
 </details>
 

@@ -20,11 +20,12 @@ test('默认保留 localhost 与严格端口，无第三方代理；显式地址
   expect(rule.target).toBe('http://localhost:8080')
   expect(rule.rewrite?.('/api/sys/users')).toBe('/sys/users')
   for (const value of [
+    'not-a-url',
     'file:///tmp/api',
     'https://user:password@example.com',
     'https://example.com/?key=x',
     'https://example.com/#api',
   ]) {
-    expect(() => createServerConfig(value)).toThrow()
+    expect(() => createServerConfig(value)).toThrow('API_PROXY_TARGET')
   }
 })

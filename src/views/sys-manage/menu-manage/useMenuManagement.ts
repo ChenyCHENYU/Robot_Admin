@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import type { ApiResponse } from '@/api/management.contract'
 import type {
   FormInstance,
   FormConfig,
@@ -28,7 +29,6 @@ import {
   validateMenuDraft,
 } from './d_menuTree'
 import {
-  type ApiResponse,
   type MenuData,
   type FormData,
   type ButtonPermission,

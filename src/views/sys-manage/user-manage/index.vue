@@ -132,7 +132,6 @@
 
             <!-- 用户表格 -->
             <C_Table
-              ref="tableRef"
               :columns="userColumns"
               :data="userList"
               :loading="loading"
@@ -153,6 +152,7 @@
                 display: { scrollX: 1500 },
               }"
               @pagination-change="handlePaginationChange"
+              @selection-change="handleSelectionChange"
             />
           </NCard>
         </NGi>
@@ -485,7 +485,6 @@
     modalMode,
     formRef,
     resetPasswordFormRef,
-    tableRef,
     deptTreeRef,
     expandedDeptKeys,
     selectedDeptKeys,
@@ -517,6 +516,7 @@
     handleDeptSelect,
     handleSearch,
     handlePaginationChange,
+    handleSelectionChange,
     handleCancelModal,
     userColumns,
   } = useUserManagement()

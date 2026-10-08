@@ -9,7 +9,11 @@
 import { describe, expect, test } from 'bun:test'
 import { effectScope } from 'vue'
 import { useLatestRequest } from '../src/composables/useLatestRequest'
-import { createAbortError, delayWithSignal } from '../src/utils/abort'
+import {
+  createAbortError,
+  delayWithSignal,
+  withRequestTimeout,
+} from '../src/utils/abort'
 
 describe('latest request lifecycle', () => {
   test('新请求会取消旧请求且只返回最新结果', async () => {
@@ -38,5 +42,43 @@ describe('latest request lifecycle', () => {
     const pending = delayWithSignal(1_000, controller.signal)
     controller.abort()
     await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+  })
+
+  test('超时作为可重试失败，调用方取消和新任务取消不污染页面失败态', async () => {
+    const scope = effectScope()
+    const latest = scope.run(() => useLatestRequest())!
+    try {
+      await expect(
+        latest.run(signal =>
+          withRequestTimeout(inner => delayWithSignal(1000, inner), signal, 5)
+        )
+      ).rejects.toMatchObject({ name: 'TimeoutError' })
+      expect(latest.loading.value).toBe(false)
+      const pending = latest.run(signal =>
+        withRequestTimeout(inner => delayWithSignal(1000, inner), signal, 500)
+      )
+      latest.cancel()
+      expect(await pending).toBeUndefined()
+      expect(
+        await latest.run(signal =>
+          withRequestTimeout(async () => '新结果', signal, 500)
+        )
+      ).toBe('新结果')
+      const cancelled = new AbortController()
+      cancelled.abort()
+      let called = false
+      await expect(
+        withRequestTimeout(
+          async () => {
+            called = true
+          },
+          cancelled.signal,
+          5
+        )
+      ).rejects.toMatchObject({ name: 'AbortError' })
+      expect(called).toBe(false)
+    } finally {
+      scope.stop()
+    }
   })
 })

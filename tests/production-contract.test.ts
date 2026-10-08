@@ -51,7 +51,26 @@ describe('production contracts', () => {
     const frameSources =
       csp?.match(/frame-src\s+([^;]+)/)?.[1]?.split(/\s+/) ?? []
     expect(frameSources).not.toContain('https:')
-    expect(frameSources).toContain('https://www.tzagileteam.com')
+    type MenuRoute = {
+      component?: string
+      meta?: { link?: string }
+      children?: MenuRoute[]
+    }
+    const menus = await readJson<{ data: MenuRoute[] }>(
+      '../src/assets/data/dynamicRouter.json'
+    )
+    const iframeOrigins = (nodes: MenuRoute[]): string[] =>
+      nodes.flatMap(node => [
+        ...(node.component === '/iframe/blank-docs' && node.meta?.link
+          ? [new URL(node.meta.link).origin]
+          : []),
+        ...iframeOrigins(node.children ?? []),
+      ])
+    const origins = new Set(iframeOrigins(menus.data))
+    expect(origins.size).toBeGreaterThan(0)
+    for (const origin of origins) {
+      expect(frameSources, `内嵌菜单源 ${origin}`).toContain(origin)
+    }
     expect(
       securityHeaders.some(header => header.key === 'X-Content-Type-Options')
     ).toBe(true)

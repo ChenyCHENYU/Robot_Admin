@@ -172,21 +172,29 @@ export const DEFAULT_RESET_PASSWORD_FORM: ResetPasswordForm = {
 }
 
 /**
- * 根据部门ID查找部门对象
+ * 根据 ID 或类型查找任意层级的部门节点
  */
-export const findDeptById = (
+const findDepartment = (
   depts: DeptData[],
-  id: string
+  key: 'id' | 'type',
+  value: string
 ): DeptData | null => {
   for (const dept of depts) {
-    if (dept.id === id) return dept
+    if (dept[key] === value) return dept
     if (dept.children) {
-      const found = findDeptById(dept.children, id)
+      const found = findDepartment(dept.children, key, value)
       if (found) return found
     }
   }
   return null
 }
+
+/** 按实际部门 ID 查询任意层级节点。 */
+export const findDeptById = (depts: DeptData[], id: string) =>
+  findDepartment(depts, 'id', id)
+/** 外部部门也可能嵌套，不依赖演示数据的固定 ID 或层级。 */
+export const findDeptByType = (depts: DeptData[], type: string) =>
+  findDepartment(depts, 'type', type)
 
 /**
  * 将部门列表转换为树形选项

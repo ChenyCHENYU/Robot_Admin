@@ -99,7 +99,6 @@
       :show-arrow="false"
       raw
       :style="{ padding: 0 }"
-      class="user-popover-container"
     >
       <template #trigger>
         <div
@@ -127,10 +126,7 @@
       </template>
 
       <!-- 用户面板 -->
-      <div
-        class="user-panel"
-        :class="{ 'user-panel--dark': themeStore.isDark }"
-      >
+      <div class="user-panel">
         <!-- 用户卡片区 -->
         <div class="user-panel__header">
           <NAvatar
@@ -191,7 +187,10 @@
           </button>
         </div>
 
-        <NDivider style="margin: 5px 0" />
+        <NDivider
+          style="margin: 5px 0"
+          :theme-overrides="{ color: 'var(--c-border)' }"
+        />
 
         <!-- 功能区 -->
         <div class="user-panel__section">
@@ -210,7 +209,10 @@
           </div>
         </div>
 
-        <NDivider style="margin: 5px 0" />
+        <NDivider
+          style="margin: 5px 0"
+          :theme-overrides="{ color: 'var(--c-border)' }"
+        />
 
         <!-- 辅助区 -->
         <div class="user-panel__section">
@@ -233,7 +235,10 @@
           </div>
         </div>
 
-        <NDivider style="margin: 5px 0" />
+        <NDivider
+          style="margin: 5px 0"
+          :theme-overrides="{ color: 'var(--c-border)' }"
+        />
 
         <!-- 退出区 -->
         <div class="user-panel__section">
@@ -452,19 +457,17 @@
       switchingContextId.value = ''
     }
   }
+  const searchMenuOptions = computed(() =>
+    createSearchMenuOptions(permissionStore.showMenuListGet)
+  )
+  const searchItems = computed(() => flattenMenuItems(searchMenuOptions.value))
   const searchOptions: GlobalSearchOptions = {
-    menuItems: () =>
-      flattenMenuItems(
-        createSearchMenuOptions(permissionStore.showMenuListGet)
-      ),
+    menuItems: () => searchItems.value,
     isDark: () => themeStore.isDark,
     /** 选中菜单项后跳转路由 */
     onSelect(key: string, hasChildren: boolean) {
       if (hasChildren) {
-        const childKey = findFirstChildKey(
-          key,
-          createSearchMenuOptions(permissionStore.showMenuListGet)
-        )
+        const childKey = findFirstChildKey(key, searchMenuOptions.value)
         if (childKey) {
           void router.push(childKey).catch(() => undefined)
           return

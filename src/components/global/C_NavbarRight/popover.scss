@@ -15,12 +15,6 @@
   color: var(--c-text-1);
   animation: user-panel-enter 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 
-  // 保留兼容类名，颜色统一由根节点的语义主题变量驱动
-  &--dark {
-    background: var(--c-bg-surface);
-    color: var(--c-text-1);
-  }
-
   // ---------- 用户卡片头部 ----------
   &__header {
     display: flex;
@@ -141,10 +135,10 @@
 
     // 危险操作（退出登录）
     &--danger {
-      color: var(--error-color, var(--c-error)) !important;
+      color: var(--error-color, var(--c-error));
 
       .user-panel__item-icon {
-        color: var(--error-color, var(--c-error)) !important;
+        color: var(--error-color, var(--c-error));
       }
 
       &:hover {
@@ -152,11 +146,11 @@
           in srgb,
           var(--error-color, var(--c-error)) 10%,
           var(--c-bg-surface)
-        ) !important;
-        color: var(--error-color, var(--c-error)) !important;
+        );
+        color: var(--error-color, var(--c-error));
 
         .user-panel__item-icon {
-          color: var(--error-color, var(--c-error)) !important;
+          color: var(--error-color, var(--c-error));
         }
       }
     }
@@ -213,11 +207,6 @@
         color: var(--c-primary);
       }
     }
-  }
-
-  // ---------- NDivider 微调 ----------
-  .n-divider {
-    --n-color: var(--c-border) !important;
   }
 }
 

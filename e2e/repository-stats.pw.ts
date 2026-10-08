@@ -10,6 +10,41 @@ import { installMockAdminSession } from './auth-fixture'
 
 const api = 'https://api.github.com/repos/ChenyCHENYU/Robot_Admin'
 
+test('缺少 AbortSignal.any 和 timeout 的浏览器仍能读取真实仓库统计', async ({
+  page,
+}) => {
+  await installMockAdminSession(page)
+  await page.addInitScript(() => {
+    Object.defineProperty(AbortSignal, 'any', {
+      value: undefined,
+      configurable: true,
+    })
+    Object.defineProperty(AbortSignal, 'timeout', {
+      value: undefined,
+      configurable: true,
+    })
+  })
+  await page.route(`${api}**`, route =>
+    route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(
+        route.request().url().includes('/commits?')
+          ? [{ sha: 'compatibility' }]
+          : { stargazers_count: 12, forks_count: 3, default_branch: 'main' }
+      ),
+    })
+  )
+  await page.goto('/#/home')
+  await expect(page.locator('.home-repository__metrics strong')).toHaveText([
+    '12',
+    '3',
+    '1',
+  ])
+  await expect(page.locator('.home-repository__status')).toContainText(
+    '实时获取'
+  )
+})
+
 test('仓库统计使用公开响应与默认分支，跨页面返回读取会话缓存', async ({
   page,
 }) => {

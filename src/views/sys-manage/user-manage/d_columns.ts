@@ -104,6 +104,7 @@ export function createUserColumns() {
   }
 
   const userColumns: TableColumn<UserData>[] = [
+    { type: 'selection' },
     {
       title: TABLE_COLUMN_CONFIG.userType.title,
       key: 'userType',

@@ -7,10 +7,12 @@
  * @Description: naive-ui插件
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
-import type { App } from 'vue'
+import type { App, InjectionKey } from 'vue'
 import { notification } from '@/plugins/discrete'
 
 export { notification }
+export const NOTIFICATION_KEY: InjectionKey<typeof notification> =
+  Symbol('notification')
 
 /**
  * * @description: naive-ui插件
@@ -18,5 +20,5 @@ export { notification }
  * ! @return {*}  {void}
  */
 export function setupNaiveUI(app: App) {
-  app.provide('notification', notification)
+  app.provide(NOTIFICATION_KEY, notification)
 }

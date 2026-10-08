@@ -10,6 +10,7 @@ import { s_themeStore } from '@/stores/theme'
 import { s_languageStore } from '@/stores/language'
 import { observabilityConfig as config } from '@/config/observability'
 import type { TelemetryEvent } from '@/types/observability'
+import { withRequestTimeout } from '@/utils/abort'
 import {
   recordTelemetry,
   setTelemetrySink,
@@ -63,6 +64,7 @@ export const setupObservability = (router: Router): (() => void) => {
   let timer: ReturnType<typeof setTimeout> | undefined
   let sending = false
   let closed = false
+  const collectController = new AbortController()
   /** 小批量发送，不重试风暴，不把历史本机记录补发给服务器。 */
   const flush = async () => {
     if (sending || !pending.length) return
@@ -71,14 +73,19 @@ export const setupObservability = (router: Router): (() => void) => {
     sending = true
     const events = pending.splice(0, 20)
     try {
-      await fetch(config.collectEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        keepalive: true,
-        signal: AbortSignal.timeout(4000),
-        body: JSON.stringify({ schemaVersion: 1, events }),
-      })
+      await withRequestTimeout(
+        signal =>
+          fetch(config.collectEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            keepalive: true,
+            signal,
+            body: JSON.stringify({ schemaVersion: 1, events }),
+          }),
+        collectController.signal,
+        4000
+      )
     } catch {
       /* 断网时丢弃批次，不阻塞应用，不持续输出控制台噪声。 */
     } finally {
@@ -115,6 +122,7 @@ export const setupObservability = (router: Router): (() => void) => {
   /** 开发热更新解绑所有钩子、计时器与外部发布器。 */
   const cleanup = () => {
     closed = true
+    collectController.abort()
     stopBefore()
     stopAfter()
     stopTheme()

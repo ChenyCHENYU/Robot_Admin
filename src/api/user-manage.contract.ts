@@ -69,6 +69,8 @@ export interface RoleData {
   name: string
   code: string
   status: number
+  /** 可分配的用户类型；未提供时以接口返回的角色选项为准。 */
+  userTypes?: UserType[]
 }
 
 export interface SearchForm {

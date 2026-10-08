@@ -15,6 +15,7 @@ import type {
   SearchForm,
   ResetPasswordForm,
   UserType,
+  RoleData,
 } from '@/api/user-manage.contract'
 import {
   getUserListApi,
@@ -27,6 +28,7 @@ import {
   resetUserPasswordApi,
 } from '@/api/user-manage'
 import { createUserActions, createUserColumns } from './d_columns'
+import { createUserRoleOptions } from './d_roleOptions'
 import {
   PRESET_RULES,
   type FormInstance,
@@ -55,11 +57,12 @@ import {
   UI_CONFIG,
   COMPONENT_CONFIG,
   findDeptById,
+  findDeptByType,
   getUserTypeConfig,
   getUserStatusConfig,
   convertDeptListToTreeOptions,
 } from './data'
-import { ref, computed, watch, reactive, onMounted, h } from 'vue'
+import { ref, computed, reactive, onMounted, h } from 'vue'
 
 /** 创建用户管理页面的独立状态与业务行为。 */
 export function useUserManagement() {
@@ -117,7 +120,6 @@ export function useUserManagement() {
   const modalMode = ref<'add' | 'edit'>('add')
   const formRef = ref<FormInstance<UserFormData> | null>(null)
   const resetPasswordFormRef = ref<FormInstance<ResetPasswordForm> | null>(null)
-  const tableRef = ref()
   const deptTreeRef = ref<InstanceType<typeof C_Tree> | null>(null)
   const expandedDeptKeys = ref<string[]>([])
   const selectedDeptKeys = ref<string[]>([])
@@ -128,7 +130,8 @@ export function useUserManagement() {
 
   const userList = reactive<UserData[]>([])
   const deptList = reactive<DeptData[]>([])
-  const userRoleOptions = ref<{ label: string; value: string }[]>([])
+  const userRoles = ref<RoleData[]>([])
+  const userRoleOptions = computed(() => createUserRoleOptions(userRoles.value))
 
   const formData = reactive<UserFormData>({ ...DEFAULT_USER_FORM_DATA })
   const resetPasswordForm = reactive<ResetPasswordForm>({
@@ -208,11 +211,7 @@ export function useUserManagement() {
   }))
 
   const filteredRoleOptions = computed(() =>
-    formData.userType === 'external'
-      ? userRoleOptions.value.filter(role =>
-          ['role_4', 'role_5'].includes(role.value)
-        )
-      : userRoleOptions.value
+    createUserRoleOptions(userRoles.value, formData.userType)
   )
 
   const deptTreeOptions = computed((): DeptTreeOption[] =>
@@ -531,8 +530,12 @@ export function useUserManagement() {
           message.success(`批量${operation === 'delete' ? '删除' : '操作'}成功`)
           selectedUsers.value = []
           await loadUsers()
-        } catch {
-          message.error(`批量${operation === 'delete' ? '删除' : '操作'}失败`)
+        } catch (error) {
+          message.error(
+            error instanceof Error
+              ? error.message
+              : `批量${operation === 'delete' ? '删除' : '操作'}失败`
+          )
           return false
         }
       },
@@ -578,16 +581,10 @@ export function useUserManagement() {
     await loadUsers()
   }
 
-  // ==================== 监听选中状态 ====================
-  watch(
-    () =>
-      (tableRef.value?.getManager?.().selection.getSelected?.() || []).map(
-        (row: UserData) => row.id
-      ),
-    newKeys => {
-      selectedUsers.value = newKeys
-    }
-  )
+  /** 通过组件公开事件接收选中键，批量操作使用独立快照。 */
+  const handleSelectionChange = (keys: (string | number)[]) => {
+    selectedUsers.value = keys.map(String)
+  }
 
   const expandAll = () => {
     if (isAllExpanded.value) {
@@ -606,7 +603,7 @@ export function useUserManagement() {
 
   const handleUserTypeChange = (type: UserType) => {
     if (type === 'external') {
-      formData.deptId = 'dept_external'
+      formData.deptId = findDeptByType(deptList, 'external')?.id ?? null
     } else if (type === 'internal') {
       formData.companyName = ''
       formData.contactPerson = ''
@@ -626,17 +623,11 @@ export function useUserManagement() {
         roleId: 'auditor',
       },
     ]
-    if (deptId) {
-      formData.deptId = deptId
-      if (deptId === 'dept_external') {
-        formData.userType = 'external'
-      }
-    } else if (selectedDept.value) {
-      formData.deptId = selectedDept.value.id
-      if (selectedDept.value.id === 'dept_external') {
-        formData.userType = 'external'
-      }
-    }
+    const department = deptId
+      ? findDeptById(deptList, deptId)
+      : selectedDept.value
+    formData.deptId = deptId ?? department?.id ?? null
+    if (department?.type === 'external') formData.userType = 'external'
     showModal.value = true
   }
 
@@ -676,8 +667,10 @@ export function useUserManagement() {
         updateTime: new Date().toLocaleString(),
       })
       message.success(`${statusText}成功`)
-    } catch {
-      message.error(`${statusText}失败`)
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : `${statusText}失败`
+      )
     }
   }
 
@@ -776,10 +769,7 @@ export function useUserManagement() {
   const loadUserRoles = async () => {
     try {
       const response = await getUserRolesApi()
-      userRoleOptions.value = response.data.map(role => ({
-        label: role.name,
-        value: role.id,
-      }))
+      userRoles.value = response.data
     } catch {
       message.error('加载角色列表失败')
     }
@@ -811,7 +801,6 @@ export function useUserManagement() {
     modalMode,
     formRef,
     resetPasswordFormRef,
-    tableRef,
     deptTreeRef,
     expandedDeptKeys,
     selectedDeptKeys,
@@ -843,6 +832,7 @@ export function useUserManagement() {
     handleDeptSelect,
     handleSearch,
     handlePaginationChange,
+    handleSelectionChange,
     handleCancelModal,
     userColumns,
   }

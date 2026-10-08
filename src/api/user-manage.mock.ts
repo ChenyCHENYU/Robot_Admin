@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type { UserData, DeptData, RoleData } from './user-manage.contract'
+import { isMockDataMode } from '@/config/dataMode'
 
 // ==================== 模拟数据 ====================
 export const MOCK_DEPT_DATA: DeptData[] = [
@@ -72,9 +73,27 @@ export const MOCK_DEPT_DATA: DeptData[] = [
 ]
 
 export const MOCK_ROLE_DATA: RoleData[] = [
-  { id: 'role_1', name: '超级管理员', code: 'admin', status: 1 },
-  { id: 'role_2', name: '部门经理', code: 'manager', status: 1 },
-  { id: 'role_3', name: '普通员工', code: 'user', status: 1 },
+  {
+    id: 'role_1',
+    name: '超级管理员',
+    code: 'admin',
+    status: 1,
+    userTypes: ['internal', 'partner', 'guest'],
+  },
+  {
+    id: 'role_2',
+    name: '部门经理',
+    code: 'manager',
+    status: 1,
+    userTypes: ['internal', 'partner', 'guest'],
+  },
+  {
+    id: 'role_3',
+    name: '普通员工',
+    code: 'user',
+    status: 1,
+    userTypes: ['internal', 'partner', 'guest'],
+  },
   { id: 'role_4', name: '客户', code: 'customer', status: 1 },
   { id: 'role_5', name: '访客', code: 'guest', status: 1 },
 ]
@@ -172,6 +191,60 @@ export const MOCK_USER_DATA: UserData[] = [
 
 const MOCK_USERS_KEY = 'robot-admin:mock-users:v1'
 
+const optionalTextFields = [
+  'email',
+  'phone',
+  'deptId',
+  'deptName',
+  'avatar',
+  'remark',
+  'updateTime',
+  'lastLoginTime',
+  'companyName',
+  'contactPerson',
+] as const
+const isStoredUser = (value: unknown): value is UserData => {
+  if (!value || typeof value !== 'object') return false
+  const user = value as Partial<UserData>
+  return (
+    typeof user.id === 'string' &&
+    !!user.id.trim() &&
+    typeof user.username === 'string' &&
+    !!user.username.trim() &&
+    typeof user.nickname === 'string' &&
+    typeof user.createTime === 'string' &&
+    ['internal', 'external', 'partner', 'guest'].includes(
+      user.userType ?? ''
+    ) &&
+    (user.status === 0 || user.status === 1) &&
+    optionalTextFields.every(
+      key => user[key] === undefined || typeof user[key] === 'string'
+    ) &&
+    [user.roleIds, user.roleNames].every(
+      value =>
+        value === undefined ||
+        (Array.isArray(value) && value.every(item => typeof item === 'string'))
+    )
+  )
+}
+
+/** 整批拒绝损坏或重复的缓存，避免恢复后才在过滤/表单代码中崩溃。 */
+export const parseMockUsersCache = (raw: string | null): UserData[] | null => {
+  try {
+    const stored: unknown = JSON.parse(raw ?? 'null')
+    if (!Array.isArray(stored) || !stored.every(isStoredUser)) return null
+    if (
+      new Set(stored.map(user => user.id)).size !== stored.length ||
+      new Set(stored.map(user => user.username.toLowerCase())).size !==
+        stored.length
+    )
+      return null
+    return structuredClone(stored)
+  } catch {
+    return null
+  }
+}
+
 /** 演示用户数据只保存在当前浏览器，避免切换公司刷新后回到初始记录。 */
 export const persistMockUsers = (): void => {
   if (typeof localStorage !== 'undefined') {
@@ -179,23 +252,10 @@ export const persistMockUsers = (): void => {
   }
 }
 
-if (typeof localStorage !== 'undefined') {
+if (isMockDataMode() && typeof localStorage !== 'undefined') {
   try {
-    const stored: unknown = JSON.parse(
-      localStorage.getItem(MOCK_USERS_KEY) || 'null'
-    )
-    if (
-      Array.isArray(stored) &&
-      stored.every(
-        user =>
-          user &&
-          typeof user.id === 'string' &&
-          typeof user.username === 'string' &&
-          typeof user.status === 'number'
-      )
-    ) {
-      MOCK_USER_DATA.splice(0, MOCK_USER_DATA.length, ...(stored as UserData[]))
-    }
+    const stored = parseMockUsersCache(localStorage.getItem(MOCK_USERS_KEY))
+    if (stored) MOCK_USER_DATA.splice(0, MOCK_USER_DATA.length, ...stored)
   } catch {
     // 损坏的演示缓存使用内置样例，不影响真实 API 模式。
   }

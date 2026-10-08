@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { useLatestRequest } from '@/composables/useLatestRequest'
+import { withRequestTimeout } from '@/utils/abort'
 import {
   getRepositoryStatsApi,
   readRepositoryCache,
@@ -31,9 +32,7 @@ export const useRepositoryStats = () => {
     failed.value = false
     try {
       const result = await run(signal =>
-        getRepositoryStatsApi(
-          AbortSignal.any([signal, AbortSignal.timeout(6000)])
-        )
+        withRequestTimeout(getRepositoryStatsApi, signal, 6000)
       )
       if (!result) return
       stats.value = result

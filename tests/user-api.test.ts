@@ -14,7 +14,10 @@ import {
   deleteUserApi,
   getUserListApi,
 } from '../src/api/user-manage'
-import { MOCK_USER_DATA } from '../src/api/user-manage.mock'
+import {
+  MOCK_USER_DATA,
+  parseMockUsersCache,
+} from '../src/api/user-manage.mock'
 import {
   getMockDirectoryUser,
   getMockAuthContexts,
@@ -95,3 +98,49 @@ test('用户 CRUD 不依赖页面，草稿和查询快照隔离，状态与登�
     else Reflect.deleteProperty(globalThis, 'localStorage')
   }
 }, 10_000)
+
+test('损坏用户缓存整批拒绝，合法字段与角色数组可恢复', () => {
+  const sample = structuredClone(MOCK_USER_DATA[0]!)
+  expect(parseMockUsersCache(JSON.stringify([sample]))).toEqual([sample])
+  for (const patch of [
+    { nickname: undefined },
+    { createTime: undefined },
+    { userType: 'unknown' },
+    { status: true },
+    { status: 2 },
+    { email: 8 },
+    { roleIds: [false] },
+    { username: '' },
+    { roleNames: '管理员' },
+  ]) {
+    expect(
+      parseMockUsersCache(
+        JSON.stringify([
+          sample,
+          { ...sample, id: 'other', username: 'other', ...patch },
+        ])
+      )
+    ).toBeNull()
+  }
+  expect(parseMockUsersCache(JSON.stringify([sample, sample]))).toBeNull()
+  expect(parseMockUsersCache('broken')).toBeNull()
+})
+
+test('缺少公司目录的用户不能静默更新状态，失败保持原数据', async () => {
+  const orphan = {
+    ...structuredClone(MOCK_USER_DATA[0]!),
+    id: 'orphan',
+    username: 'orphan_cache_user',
+    status: 1,
+  }
+  MOCK_USER_DATA.push(orphan)
+  try {
+    await expect(updateUserStatusApi(orphan.id, 0)).rejects.toThrow(
+      '用户公司归属缺失'
+    )
+    expect(orphan.status).toBe(1)
+    expect(orphan.updateTime).toBe(MOCK_USER_DATA[0]!.updateTime)
+  } finally {
+    MOCK_USER_DATA.splice(MOCK_USER_DATA.indexOf(orphan), 1)
+  }
+})
