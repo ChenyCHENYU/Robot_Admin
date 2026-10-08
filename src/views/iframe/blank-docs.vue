@@ -32,16 +32,32 @@
     </div>
 
     <!-- 内嵌 iframe（仅在设置为非外部时显示） -->
-    <iframe
+    <section
       v-else-if="!isExternal && frameSrc"
-      :src="frameSrc"
-      class="w-full h-full border-0 rounded shadow-sm"
-      frameborder="0"
-      allowfullscreen
-      :sandbox="sandboxRules"
-      referrerpolicy="no-referrer"
-      :title="routeTitle"
-    />
+      class="flex flex-col h-full min-h-0 gap-3"
+    >
+      <header class="flex items-center justify-between gap-3">
+        <h2 class="m-0 text-base font-medium">{{ routeTitle }}</h2>
+        <NButton
+          tag="a"
+          text
+          type="primary"
+          :href="frameSrc"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          在新窗口打开
+        </NButton>
+      </header>
+      <iframe
+        :src="frameSrc"
+        class="w-full flex-1 min-h-0 border-0 rounded shadow-sm"
+        allowfullscreen
+        :sandbox="sandboxRules"
+        referrerpolicy="no-referrer"
+        :title="routeTitle"
+      />
+    </section>
 
     <!-- 无内容 -->
     <div
@@ -57,7 +73,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { resolveExternalLink } from '@/utils/d_externalLink'
+  import {
+    resolveExternalLink,
+    resolveIframeSandbox,
+  } from '@/utils/d_externalLink'
 
   defineOptions({ name: 'BlankDocs' })
 
@@ -121,8 +140,9 @@
     }
   })
 
-  // 可配置的沙箱规则（仅用于内嵌iframe）
-  const sandboxRules = 'allow-scripts allow-forms allow-popups'
+  const sandboxRules = computed(() =>
+    resolveIframeSandbox(frameSrc.value, window.location.origin)
+  )
 
   const openExternal = () => {
     if (frameSrc.value) {

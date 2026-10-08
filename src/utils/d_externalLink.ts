@@ -39,3 +39,24 @@ export function resolveExternalLink(
     return null
   }
 }
+
+const RESTRICTED_IFRAME_SANDBOX = 'allow-scripts allow-forms allow-popups'
+const TRUSTED_DOCUMENT_ORIGINS = new Set([
+  'https://www.tzagileteam.com',
+  'https://tzagileteam.com',
+])
+
+/** 仅可信跨域文档保留原始来源以支持模块与存储；站内及其他外链保持隔离。 */
+export function resolveIframeSandbox(
+  value: unknown,
+  currentOrigin: string
+): string {
+  const link = resolveExternalLink(value, currentOrigin)
+  if (link) {
+    const { origin } = new URL(link)
+    if (origin !== currentOrigin && TRUSTED_DOCUMENT_ORIGINS.has(origin)) {
+      return `${RESTRICTED_IFRAME_SANDBOX} allow-same-origin`
+    }
+  }
+  return RESTRICTED_IFRAME_SANDBOX
+}

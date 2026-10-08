@@ -13,6 +13,7 @@ export const installMockAdminSession = (
   page: Page
 ): ReturnType<Page['addInitScript']> =>
   page.addInitScript(() => {
+    if (window !== window.top) return
     if (sessionStorage.getItem('__e2e_auth_seeded__')) return
     sessionStorage.setItem('__e2e_auth_seeded__', '1')
     const context = {
