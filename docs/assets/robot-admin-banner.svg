@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="title description">
+  <title id="title">Robot Admin — Enterprise Web</title>
+  <desc id="description">Composable enterprise UI and packages, with SPA, Monorepo, Module Federation and MicroApp architecture branches.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="340" gradientUnits="userSpaceOnUse"><stop stop-color="#0D1932"/><stop offset="1" stop-color="#17234B"/></linearGradient>
+    <radialGradient id="halo"><stop stop-color="#4E71FF" stop-opacity=".24"/><stop offset="1" stop-color="#4E71FF" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#CDD8FF" stroke-opacity=".045"/></pattern>
+    <linearGradient id="robot-blue" x1="8" y1="8" x2="120" y2="124" gradientUnits="userSpaceOnUse"><stop stop-color="#409CFF"/><stop offset=".48" stop-color="#2163EF"/><stop offset="1" stop-color="#6948DC"/></linearGradient>
+    <linearGradient id="robot-light" x1="20" y1="0" x2="100" y2="110" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF" stop-opacity=".28"/><stop offset="1" stop-color="#FFF" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1200" height="340" rx="24" fill="url(#bg)"/>
+  <rect width="1200" height="340" rx="24" fill="url(#grid)"/>
+  <ellipse cx="1040" cy="150" rx="310" ry="220" fill="url(#halo)"/>
+  <!-- 与 Robot H5 共用的 R / 机器人品牌图形，仅用于文档封面。 -->
+  <svg x="70" y="98" width="144" height="144" viewBox="0 0 128 128">
+    <rect x="2" y="2" width="124" height="124" rx="30" fill="url(#robot-blue)"/>
+    <rect x="2.5" y="2.5" width="123" height="123" rx="29.5" fill="url(#robot-light)" stroke="#FFF" stroke-opacity=".25"/>
+    <path d="M35 99V35H69C86 35 96 44 96 60C96 72 90 80 81 83L99 99H78L61 85H51V99H35ZM51 51V69H68C75 69 79 66 79 60C79 54 75 51 68 51H51Z" fill="#FFF"/>
+    <path d="M66 34V28" stroke="#FFF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="66" cy="23" r="4" fill="#B4F6FF"/>
+    <rect x="55" y="56" width="5" height="7" rx="2.5" fill="#B4F6FF"/>
+    <rect x="67" y="56" width="5" height="7" rx="2.5" fill="#B4F6FF"/>
+  </svg>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
+    <text x="254" y="144" fill="#FFF" font-size="58" font-weight="750" letter-spacing="-2">Robot Admin</text>
+    <text x="625" y="141" fill="#8FB6FF" font-size="18" font-weight="650" letter-spacing="2">ENTERPRISE WEB</text>
+    <text x="257" y="185" fill="#BAC9E7" font-size="18">Business-ready UI. Composable packages. Multiple architectures.</text>
+    <g font-size="14" fill="#DCE8FF">
+      <rect x="256" y="214" width="266" height="34" rx="17" fill="#213452" stroke="#365174"/>
+      <text x="275" y="236">Vue 3 · Naive UI · TypeScript · Bun</text>
+      <rect x="534" y="214" width="164" height="34" rx="17" fill="#213452" stroke="#365174"/>
+      <text x="553" y="236">@robot-admin/*</text>
+      <rect x="710" y="214" width="178" height="34" rx="17" fill="#213452" stroke="#365174"/>
+      <text x="729" y="236">Open source · MIT</text>
+    </g>
+    <text x="257" y="283" fill="#8299C2" font-size="12" letter-spacing="1.1">SPA  /  MONOREPO  /  MODULE FEDERATION  /  MICROAPP</text>
+  </g>
+  <g transform="translate(961 93)" fill="none" stroke="#7595DB" stroke-opacity=".3">
+    <rect width="176" height="118" rx="12" stroke-width="2"/>
+    <path d="M0 27H176M42 27V118"/>
+    <circle cx="13" cy="14" r="2"/><circle cx="22" cy="14" r="2"/><circle cx="31" cy="14" r="2"/>
+    <path d="M13 45H29M13 60H29M13 75H29M13 90H29" stroke-width="3" stroke-linecap="round"/>
+    <rect x="55" y="41" width="47" height="25" rx="5"/><rect x="114" y="41" width="47" height="25" rx="5"/>
+    <path d="M56 105V94L75 87L95 96L115 78L140 82L160 71" stroke="#8FB6FF" stroke-width="2"/>
+    <path d="M72 135H104M88 118V135" stroke-width="2" stroke-linecap="round"/>
+    <rect x="8" y="164" width="32" height="22" rx="5"/><rect x="72" y="164" width="32" height="22" rx="5"/><rect x="136" y="164" width="32" height="22" rx="5"/>
+    <path d="M88 140V152M24 164V152H152V164M88 152V164"/>
+  </g>
+</svg>

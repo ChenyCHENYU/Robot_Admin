@@ -1,1217 +1,347 @@
+<!-- 封面源文件与导出方式：docs/assets/robot-admin-banner.svg · bun scripts/render-readme-banner.ts -->
+
+![Robot Admin — 可组合的企业中后台工程底座](docs/assets/robot-admin-banner.png)
+
 <div align="center">
-  <a href="https://robotadmin.cn">
-    <picture>
-      <source srcset="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/img/robot-left.png" media="(prefers-color-scheme: dark)">
-      <img src="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/img/robot-left.png" height="120" />
-    </picture>
-  </a>
-
-  <h1>
-    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=4FC08D&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=600&height=100&lines=🤖+Robot+Admin;重新定义企业级中后台开发体验" alt="Robot Admin" />
-  </h1>
-
-  <p><strong>Robot Admin - 多架构企业级解决方案</strong></p>
-
-  <!-- 架构选择器 -->
-  <table>
-    <tr>
-      <td align="center" width="200">
-        <img src="https://img.shields.io/badge/🏗️-单体架构-4A90E2?style=for-the-badge" alt="Monolithic"><br>
-        <sub><strong>当前分支</strong></sub><br>
-        <sub>传统 SPA 架构</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/main">
-          <img src="https://img.shields.io/badge/查看代码-main-blue?style=flat-square" alt="Main Branch">
-        </a>
-      </td>
-      <td align="center" width="200">
-        <img src="https://img.shields.io/badge/📦-Monorepo-00D8FF?style=for-the-badge" alt="Monorepo"><br>
-        <sub><strong>Bun Workspaces</strong></sub><br>
-        <sub>多应用管理</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
-          <img src="https://img.shields.io/badge/查看代码-monorepo-00D8FF?style=flat-square" alt="Monorepo Branch">
-        </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/README.md">
-          <img src="https://img.shields.io/badge/完整文档-README-orange?style=flat-square" alt="Monorepo Docs">
-        </a>
-      </td>
-      <td align="center" width="200">
-        <img src="https://img.shields.io/badge/🔮-模块联邦-9B59B6?style=for-the-badge" alt="Module Federation"><br>
-        <sub><strong>Module Federation</strong></sub><br>
-        <sub>初版完成</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
-          <img src="https://img.shields.io/badge/查看代码-module--federation-9B59B6?style=flat-square" alt="MF Branch">
-        </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/README.md">
-          <img src="https://img.shields.io/badge/使用指南-README-orange?style=flat-square" alt="MF Docs">
-        </a>
-      </td>
-      <td align="center" width="200">
-        <img src="https://img.shields.io/badge/🚀-微前端-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
-        <sub><strong>MicroApp</strong></sub><br>
-        <sub>初版完成</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
-          <img src="https://img.shields.io/badge/查看代码-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
-        </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md">
-          <img src="https://img.shields.io/badge/查看文档-README-orange?style=flat-square" alt="MicroApp Docs">
-        </a>
-      </td>
-    </tr>
-  </table>
-
+  <p><strong>一个工程底座，连接业务、组件与多种架构。</strong></p>
+  <p>Vue 3 · TypeScript · Vite · Naive UI · UnoCSS · Bun</p>
   <p>
-    <img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-ff1e56?style=flat&logo=bun" alt="Bun Version">
-    <img src="https://img.shields.io/badge/vue-3.5.42-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
-    <img src="https://img.shields.io/badge/typescript-5.8.3-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-8.2.2-646CFF?style=flat&logo=vite" alt="Vite Version">
-    <a href="https://vercel.com"><img src="https://img.shields.io/github/deployments/ChenyCHENYU/robot_admin/production?label=vercel&logo=vercel" alt="Vercel"></a>
-    <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
+    <a href="https://robotadmin.cn">在线体验</a> ·
+    <a href="https://www.tzagileteam.com">组件文档</a> ·
+    <a href="#快速开始">快速开始</a> ·
+    <a href="#多架构选择">多架构</a> ·
+    <a href="#插件生态">插件生态</a> ·
+    <a href="./README_EN.md">English</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-55-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-56-orange?style=flat" alt="Demo Pages">
-    <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
-    <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
-    <img src="https://img.shields.io/badge/node-%E2%89%A522.18-339933?style=flat&logo=nodedotjs" alt="Node Version">
-  </p>
-  <p>
-    <img src="https://img.shields.io/github/stars/ChenyCHENYU/robot_admin?style=social" alt="GitHub stars">
-    <img src="https://img.shields.io/github/forks/ChenyCHENYU/robot_admin?style=social" alt="GitHub forks">
-    <img src="https://img.shields.io/github/watchers/ChenyCHENYU/robot_admin?style=social" alt="GitHub watchers">
-  </p>
-
-  <!-- 快速导航 -->
-  <p>
-    <a href="https://robotadmin.cn">
-      <img src="https://img.shields.io/badge/🚀-在线体验-00D8FF?style=for-the-badge&logo=vercel" alt="Live Demo">
-    </a>
-    <a href="https://www.tzagileteam.com">
-      <img src="https://img.shields.io/badge/📖-完整文档-FF6B6B?style=for-the-badge&logo=gitbook" alt="Documentation">
-    </a>
-    <a href="#-快速开始真的很快">
-      <img src="https://img.shields.io/badge/⚡-快速开始-4ECDC4?style=for-the-badge&logo=rocket" alt="Quick Start">
-    </a>
-    <a href="./CONTRIBUTING.md">
-      <img src="https://img.shields.io/badge/🤝-参与贡献-FFA726?style=for-the-badge&logo=github" alt="Contributing">
-    </a>
-    <a href="./README_EN.md">
-      <img src="https://img.shields.io/badge/🌍-English-95E1D3?style=for-the-badge&logo=googletranslate" alt="English Version">
-    </a>
+    <a href="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml"><img src="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+    <a href="./package.json"><img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-8FB6FF?style=flat-square&amp;logo=bun&amp;logoColor=white" alt="Bun ≥1.4.2"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FB6FF?style=flat-square" alt="MIT License"></a>
+    <a href="#能力地图"><img src="https://img.shields.io/badge/demos-56-orange?style=flat-square" alt="56 个演示页面"></a>
+    <a href="https://github.com/ChenyCHENYU/Robot_Admin"><img src="https://img.shields.io/github/stars/ChenyCHENYU/Robot_Admin?style=flat-square&amp;label=Star" alt="GitHub Stars"></a>
   </p>
 </div>
 
----
+## 项目定位
 
-<div align="center">
-  <p>
-    <strong>中文</strong> | <a href="./README_EN.md">English</a>
-  </p>
-</div>
+**Robot Admin** 是面向企业中后台的 Vue 3 工程模板，也是 Robot 生态的 PC Web 应用入口。它把身份与权限、页面布局、表单表格、编辑器、工程验证沉淀为可组合的能力，应用负责业务配置，独立包负责可复用的实现。
 
-## 🎯 多架构支持
+当前单体主线 **v2.7.0** 提供公司上下文登录、系统管理、工程分析与访问统计；Monorepo、Module Federation、MicroApp 各有独立架构分支。既可以从一个后台应用开始，也可以根据团队协作与部署方式选择相应工程。
 
-> 💡 Robot Admin 提供多种架构分支，支持从单体到微前端的渐进演进。当前所在为**单体 SPA 开发主线**（`dev`/`main`）。
+| 工程视角   | 当前提供                                                                   |
+| ---------- | -------------------------------------------------------------------------- |
+| 架构选择   | SPA、Bun Workspaces、Module Federation、MicroApp 四种分支                  |
+| 组件与插件 | 55 个业务组件、11 个指令；7 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
+| 场景示例   | 56 个演示页面，覆盖数据录入、复杂表格、流程编辑、文件与媒体                |
+| 验证与溯源 | 双 Lint、类型、逻辑与组件测试、构建预算、浏览器绘制回归、构建身份卡        |
 
-<details>
-<summary><b>👉 查看各架构对比一览</b></summary>
+## 快速开始
 
-| 架构类型          | 适用场景             | 特点                             | 分支                                                                                     | 文档                                                                                    |
-| ----------------- | -------------------- | -------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| **🏗️ 单体架构** ← | 中小型项目、快速原型 | 简单直接、开箱即用               | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                           | 本文档                                                                                  |
-| **📦 Monorepo**   | 多应用统一管理       | 代码复用、统一工具链、独立部署   | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                   | [完整指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/README.md)          |
-| **🔮 模块联邦**   | 微应用动态加载       | 运行时共享、独立部署、版本隔离   | [`module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation) | [使用指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/README.md) |
-| **🚀 微前端**     | 大型应用、团队协作   | 技术栈无关、独立部署、渐进式迁移 | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                 | [查看文档](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md)         |
-
-</details>
-
----
-
-## 🚀 重新定义企业级中后台开发体验
-
-> **🎯 一个敏捷的，为开发者体验而生的企业级中后台解决方案**
-
-_在这里，当 `Bun` 的极致性能遇上 `Vue3` 的组合式 API，当 `TypeScript` 的类型安全拥抱 `UnoCSS` 的原子化样式..._
-
----
-
-## ⚡ 为什么选择 Robot Admin？
-
-### 🔥 按需加载与可验证的开发体验
-
-- **按需加载** - Vite 8 路由分包，组件库使用子路径入口，首屏体积由构建预算检查
-- **智能类型提示** - TypeScript 5.8 与组件库公开类型共同约束使用侧
-- **Bun 统一工具链** - 安装依赖后运行 `bun run dev`，验证使用 `bun run verify`
-
-### 🎨 不只是一个管理系统，更是一个作品
-
-- **56 个演示页面** - 覆盖组件接入与交互场景，另有 38 条免登录预览路由；演示数据不等于生产后端
-- **独立指令包** - 防抖、节流、长按、拖拽、权限等能力由 `@robot-admin/directives` 提供
-- **主题系统** - 深色/浅色模式/跟随系统 + 支持自定义扩展
-- **Preview 路由系统** - 38 个无鉴权独立预览路由，供 [文档站](https://www.tzagileteam.com) 通过 iframe 嵌入实时组件演示
-
-### 🛠️ 企业级架构，个人项目也能享受
-
-- **RBAC 权限体系** - 菜单级、按钮级、接口级，权限控制细致入微
-- **渐进式微前端** - 架构设计支持从单体到微前端的平滑演进
-- **生产级工程化** - ESLint + Prettier + Husky，代码质量无忧
-
----
-
-## 🚀 快速开始（真的很快！）
-
-> 🎉 本项目统一使用 **Bun**，请勿混用 npm、yarn 或 pnpm，以免锁文件和依赖树不一致。
+需要 **Node.js ≥22.18.0**、**Bun ≥1.4.2**。依赖声明见 [package.json](./package.json)，实际安装版本由 [bun.lock](./bun.lock) 固定。
 
 ```bash
-# 1. 克隆项目
 git clone https://github.com/ChenyCHENYU/Robot_Admin.git
-
-# 2. 进入目录
 cd Robot_Admin
-
-# 3. 安装依赖
-bun install
-
-# 4. 启动项目
+bun install --frozen-lockfile
 bun run dev
 ```
 
-开发服务器的启动和热更新耗时取决于机器、缓存及启用的本地包模式；性能回归以构建预算和实际测量为准。
+打开 **http://localhost:1988/**。国内代码镜像：[Gitee](https://gitee.com/ycyplus163/Robot_Admin)。
 
-运行 `bun run dev` 默认仅从 `http://localhost:1988/` 访问。
-需要同时支持 localhost、本机回环 IP 和局域网 IP 时，运行 `bun run dev:ip`；
-启动横幅自动显示 localhost 与当前网卡的局域网地址，无需手动输入 IP 或 `--host` 参数。
-自定义监听地址使用 `bun run dev --host <本机实际IP> --port 1988`；IP 必须已配置在
-本机网卡上。热更新自动跟随页面访问地址。
-`localhost` 与 IP 属于不同浏览器源，登录状态和本地设置分别保存。
+| 本地体验   | 说明                                                                    |
+| ---------- | ----------------------------------------------------------------------- |
+| 管理员账号 | `CHENY / 123456`，按页面提示完成人机验证                                |
+| 公司选择   | 输入账号后查询公司归属，选择公司登录；登录后可继续切换公司              |
+| 权限场景   | `STAFF` 演示单公司，`NOACCESS` 演示无授权公司；Mock 接受任意非空密码    |
+| 网络访问   | `bun run dev` 默认 localhost；`bun run dev:ip` 自动显示本机和局域网地址 |
 
-<details>
-<summary><b>📦 更多命令</b></summary>
+开发环境默认启用 Mock，公开演示站也使用明确的 `demo` 部署模式。真实业务通过 `application + remote` 接入后端，步骤见 [接入业务](#接入业务)。
 
-```bash
-# 开发相关
-bun run dev            # 默认仅 localhost，显示项目版本、Git 分支与提交信息
-bun run dev:ip         # 同时开放 localhost 与局域网 IP，自动显示两个地址
-bun run dev:banner     # 完整启动横幅，与 dev 一致
-bun run dev:quiet      # 安静启动，关闭控制台横幅
-bun run dev:components # 直连本地 naive-ui-components 源码联调
-bun run dev:table      # 直连本地 MachTable、组件库与 request-core 源码
-bun run dev:local      # 直连本地全部包、组件库与 MachTable 源码
-bun run build          # 生产环境构建
-bun run build:test     # 测试环境构建
-bun run build:staging  # 预发布构建
-bun run preview        # 本地预览构建结果
+## 能力地图
 
-# 代码质量
-bun run lint           # 代码检查和修复
-bun run lint:check     # 只检查，不修改文件
-bun run format         # 代码格式化
-bun run test           # Bun 逻辑与契约测试
-bun run test:components # 真实 Vue 挂载回归（happy-dom）
-bun run verify         # 双 Lint + 类型 + 单测/组件 + 双模式构建 + 体积预算
-bun run test:e2e       # 基于正式产物的浏览器回归（首次需安装 Chromium）
-bun run check:bundle   # 校验最近一次生产构建的首屏体积预算
-bun run security:audit # 检查依赖安全公告
+### 从身份到工作空间
 
-# 类型检查
-bun run type-watch     # 监听模式类型检查
-bun run type-build     # 完整类型检查；本地联调时优先校验本地包公开类型
-bun run type-build:installed # 仅按已安装 npm 版本复核发布态契约
+| 领域       | 当前实现                                                       | 场景价值                                   |
+| ---------- | -------------------------------------------------------------- | ------------------------------------------ |
+| 公司与身份 | 登录前公司选择、主／兼任公司、公司内角色、登录后切换上下文     | 让登录入口与工作空间使用同一套公司上下文   |
+| 权限与治理 | 用户、角色、权限、菜单、字典；动态路由、按钮权限、数据范围配置 | 从账号授权到菜单与操作展示形成完整前端流程 |
+| 工作空间   | 6 种布局、主题设置、多标签页、菜单配置页面缓存、功能引导       | 为不同业务密度提供一致的导航与反馈         |
+| 工程分析   | 源码与依赖分布、构建产物、浏览器加载时间线、真实仓库计数       | 用当前项目数据展示图表能力与工程状态       |
+| 使用统计   | 成功导航 PV、登录与公司切换、功能操作、页面耗时分位数          | 默认观察当前浏览器；通过接口接入全站汇总   |
 
-# 其他
-bun run commit         # 规范化提交（git cz）
-bun run deploy         # Bash 分支同步脚本；不升版本、不打标签
-```
+公司切换会更新会话，并清理旧权限、动态路由与页签。路由注册和请求响应使用身份代次保护，防止旧会话的迟到结果覆盖新状态。公司激活与服务端隔离契约见 [企业认证](./docs/enterprise-auth.md)；指标口径见 [工程观测](./docs/observability.md)。
 
-本地联调命令使用 Vite 精确 alias 直连各仓库源码及其子入口，并为 npm、组件库、
-MachTable 与全量联调使用隔离缓存，不修改
-`package.json` 或 `bun.lock`。正式发版后应更新真实 npm 版本并使用普通
-`bun run dev` / `bun run build` 验证；生产构建检测到本地 alias 标志会直接终止，
-防止本地路径进入发布产物。
+### 从业务组件到专业工作区
 
-TypeScript 与 Vite 使用同一套本地包边界：Vite 直连源码以获得 HMR，类型检查读取对应仓库最新的 `dist/*.d.ts`，不会再误用 `node_modules` 中的旧声明。只有本地包公开 API 发生变化时才需要先在包仓库执行 build；样式和内部实现联调无需清理 Vite 缓存。正式发布并升级依赖后，使用 `bun run type-build:installed` 再做一次纯 npm 契约复核。
+| 组件领域   | 代表能力                                                                          |
+| ---------- | --------------------------------------------------------------------------------- |
+| 表单       | 配置驱动字段、动态规则、跨字段验证、异步提交、步骤与网格布局                      |
+| 表格       | `C_Table` 统一加载、居中与分页；MachTable 虚拟化、编辑、选择、列状态和响应式列宽  |
+| 编辑与流程 | Cron 表达式与执行时间预览、公式键盘与试算、代码／Markdown／富文本、工作流与流程图 |
+| 文件与媒体 | Excel、CSV、ZIP、上传下载、签名与裁剪、音视频、预览与打印场景                     |
+| 时间与展示 | 日期、城市、日程、时间线、甘特、图表、大屏模板                                    |
+| 全局体验   | 菜单、搜索、主题、语言、引导、空状态、错误页与路由加载反馈                        |
 
-</details>
+演示目录包含 **56 个演示页 + 8 个表单布局（64 个 index.vue）**。组件库提供独立子路径与样式入口，重型编辑器、图表、流程和媒体能力按路由加载。查看 [组件库](https://github.com/ChenyCHENYU/naive-ui-components) 或在 [在线体验](https://robotadmin.cn) 中按场景浏览。
 
----
+> Cron 预览不创建后台任务，公式试算不修改业务数据。演示数据、前端数据范围配置与按钮控制需要真实接口和服务端授权配合，才能用于生产业务。
 
-### 🔐 认证 Mock 与后端切换
+### 页面预览
 
-项目在开发、测试环境默认使用闭环 Mock 认证和业务数据。企业登录只显示已接通的账号密码与人机验证；`CHENY / 123456` 登录后自动进入江苏金恒（南京）主公司，可在右上角切换江苏金恒（西安）和西安天智兼任公司，菜单与演示业务摘要随之变化。用户管理可维护账号的主／兼任公司及公司内角色；`STAFF` 演示单公司，`NOACCESS` 演示无授权公司。Mock 接受任意非空密码，本地拼图只用于交互演示，不提供真实认证、防刷或租户隔离。在线演示构建通过 `VITE_DEPLOYMENT_PROFILE=demo` 显式启用 Mock；真实业务构建必须使用 `application` 和远端接口。
+|                                       工作空间 · 浅色                                       |                                       工程分析 · 深色                                       |
+| :-----------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------: |
+| [![Robot Admin 浅色首页](docs/assets/workspace-light.png)](docs/assets/workspace-light.png) | [![Robot Admin 深色工程分析](docs/assets/analysis-dark.png)](docs/assets/analysis-dark.png) |
 
-接入后端时设置 `VITE_DEPLOYMENT_PROFILE=application`、`VITE_AUTH_MODE=remote`、`VITE_DATA_MODE=remote`，并通过 `VITE_API_BASE` 指定接口地址。现有远端单上下文响应仍可登录；真实多租户需后端实现公司激活、切换、上下文绑定令牌和服务端数据隔离，不能仅启用前端 Mock。`application` 的生产与预发构建会拒绝 Mock 模式。契约与接入步骤见 [`docs/enterprise-auth.md`](docs/enterprise-auth.md)，环境说明见 [`docs/production-readiness.md`](docs/production-readiness.md)。
+截图来自当前单体主线的本地演示。工程指标读取当前构建与浏览器数据；公司与账号采用 Mock 上下文。
 
-每次构建都会生成只读的 `/build-info.json` 身份卡，包含应用版本、环境、部署类型、提交、分支与构建时间；开发服务也可访问，但 `builtAt` 为 `null`。登录后可通过右上角用户菜单底部的“构建信息”打开。它参考企业门户的 `env.json` 溯源字段，但不承载运行时配置、接口地址或密钥。字段与缓存策略见 [`docs/build-identity.md`](docs/build-identity.md)。
+## 多架构选择
 
-表单组件已内置验证库适配、默认操作和异步提交管理。页面保持 `options + config`，直接从 `/C_Form` 导入规则；预览等业务操作用 `action-extra` 补充，无需重复封装 loading、规则类型和提交按钮。用法见 [表单配置](docs/form-configuration.md)，当前依赖版本以 `package.json` 和锁文件为准。
+根据**代码协作方式与部署边界**选择架构。四种方案维护在独立分支，各自具有配置、入口与验证命令。
 
-后续模块联邦版采用 `systemApp` 平台基座、`public` 定制门户、`template` 业务项目模板三类工程，通用系统管理纳入基座。该架构仍处于计划阶段，职责、实施顺序与验收要求见 [`docs/module-federation-platform-plan.md`](docs/module-federation-platform-plan.md)。
+| 架构                  | 当前结构与机制                                                   | 适用场景                                 | 代码与接入指南                                                                                                                                                                     |
+| --------------------- | ---------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SPA**               | 当前主线：单应用、动态权限路由、独立 npm 生态包                  | 单一中后台、团队模板、业务交付起点       | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main) · 本文档                                                                                                            |
+| **Monorepo**          | Bun Workspaces；`admin-internal` / `admin-saas` 应用与共享配置包 | 多产品共仓库维护、复用配置、分别构建部署 | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo) · [升级指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/MONOREPO_UPGRADE.md)             |
+| **Module Federation** | 独立 `remoteEntry.js` 产物、Vue 桥接、物流消费端与联调验证       | 运行时消费远程模块、拆分发布边界         | [`module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation) · [分支说明](https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/README.md) |
+| **MicroApp**          | 门户与独立子应用、iframe 沙箱、主题与上下文通信                  | 已有系统接入门户、多团队独立维护         | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app) · [升级指南](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/docs/MICRO_APP_UPGRADE.md)         |
 
----
+分支的依赖与功能版本以各自清单为准，切换架构需要按对应指南接入与验收。Monorepo 的 SaaS 应用目前是架构演示壳层；`systemApp / public / template` 平台分层是[后续演进计划](./docs/module-federation-platform-plan.md)，与已存在的模块联邦分支分别说明。
 
-## ✨ 核心亮点
+## 插件生态
 
-### 🏗️ 技术栈（高富帅阵容）
+### 独立发布，按职责组合
 
-<details>
-<summary><b>查看完整技术栈</b></summary>
-
-以下精确版本对应 `bun.lock` 的实际安装结果；声明范围见 `package.json`。
-
-**🎭 前端核心**
-
-- **Vue 3.5.42** - 🔥 Composition API 丝滑体验
-- **TypeScript 5.8** - 🛡️ 类型安全，智能提示
-- **Pinia 4.0.3** - 🍍 类型安全的模块化状态管理
-- **Vue Router 5.3.1** - 🧭 路由守卫与动态路由
-- **VueUse 14.4.0** - 🧰 按需使用的组合式工具集
-- **Naive UI 2.45.3** - 🎨 颜值与性能并存的组件库
-- **@robot-admin/naive-ui-components** - 🧩 55 个业务组件库，按需自动导入
-- **MachTable 0.30.1** - 🧮 独立虚拟化数据网格，通过 Vue 适配层按路由接入；演示页通过统一的 `C_ActionBar` 和数据驱动配置面板完整展示水印、密度、选择、剪贴板、分页、汇总与状态栏等能力
-- **UnoCSS 66.9.1** - ⚡ 原子化CSS，按需生成，体积极小
-
-**⚙️ 构建工具**
-
-- **Bun 1.4.2** - 🚀 高性能 JavaScript 运行时与包管理器
-- **Vite 8.2.2** - ⚡ Rolldown 构建与路由级按需加载
-- **Sass (^1.97.3)** - 🎨 成熟的CSS预处理器
-
-**🔧 开发工具**
-
-- **ESLint 10.9** - 📏 代码质量守护者
-- **Prettier 3.9** - ✨ 代码格式化
-- **Oxlint 1.52** - 🦀 Rust编写的超快Linter
-- **Bun Test 1.4** - 🧪 与包管理器统一的逻辑与契约测试
-- **Vitest 4 + Vue Test Utils + happy-dom** - 🧩 真实 Vue 挂载回归，验证生命周期、交互和状态；CSS 布局与实际绘制由 Playwright 验证
-
-**📊 功能组件（via @robot-admin/naive-ui-components）**
-
-- **ECharts 6.1** - 企业级图表库
-- **AntV X6** - 专业流程图引擎（BPMN/ER/UML）
-- **FullCalendar** - 完整的日程管理
-- **WangEditor** - 富文本编辑器
-- **XGPlayer** - 视频播放器（HLS/防作弊）
-- **Vue Flow** - 工作流编辑器
-
-</details>
-
-### 🎯 功能矩阵
-
-#### 🔐 权限管理
-
-- **RBAC权限体系** - 用户-角色-权限，灵活分配
-- **动态路由** - 根据权限实时生成菜单
-- **按钮级权限** - 精确到每一个操作按钮
-- **接口级权限** - API调用权限控制
-
-#### 🧩 组件库（55 个开箱即用）
-
-> 所有业务组件已独立发布为 [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components)，支持按需自动导入。
-
-<details>
-<summary><b>查看所有组件</b></summary>
-
-**核心组件**
-
-- `C_Form` - 动态表单引擎，支持8种布局
-- `C_Table` - 超级表格，支持虚拟滚动、打印水印、列设置
-- `C_FormSearch` - 高级搜索表单组件
-- `C_ActionBar` - 操作按钮组组件，统一按钮布局
-- `C_Icon` - Iconify 运行时图标管理系统
-- `C_Theme` - 主题切换组件
-- `C_Language` - 国际化语言切换
-
-**业务组件**
-
-- `C_Code` - 代码编辑器组件
-- `C_Markdown` - Markdown编辑器
-- `C_Editor` - WangEditor 富文本编辑器
-- `C_FormulaEditor` - 公式编辑器（变量编辑、语法校验与隔离试算）
-- `C_Time` - 时间处理组件
-- `C_Date` - 日期选择组件
-- `C_Progress` - 进度展示组件
-- `C_Upload` - 文件上传组件
-- `C_Cron` - Cron 表达式编辑器（计划编辑与执行预览）
-- `C_Steps` - 步骤条组件
-
-**可视化 & 图表**
-
-- `C_AntV` - AntV X6 流程图引擎（BPMN/ER/UML）
-- `C_WorkFlow` - Vue Flow 工作流编辑器
-- `C_VtableGantt` - 甘特图组件
-- `C_FullCalendar` - 完整日程管理
-
-**媒体 & 文件**
-
-- `C_VideoPlayer` - XGPlayer 视频播放器（HLS/防作弊）
-- `C_FilePreview` - 文件预览（PDF/Excel/Word/图片）
-- `C_ImageCropper` - 图片裁剪
-- `C_Signature` - 电子签名
-- `C_QRCode` - 二维码生成
-- `C_Barcode` - 条形码生成
-- `C_AudioPlayer` - 音频播放器，播放列表、多循环模式
-
-**交互 & 布局**
-
-- `C_Draggable` - 拖拽排序
-- `C_SplitPane` - 分割面板
-- `C_CollapsePanel` - 折叠面板
-- `C_WaterFall` - 瀑布流布局
-- `C_Cascade` - 地区级联选择
-- `C_City` - 城市选择器
-- `C_Map` - Leaflet / 高德地图（强类型坐标、标记适配、安全代理）
-- `C_Captcha` - 验证码
-- `C_Guide` - 新手引导
-- `C_GlobalSearch` - 全局搜索
-- `C_NotificationCenter` - 通知中心
-- `C_Chat` - 聊天组件，消息泡泡、会话列表
-- `C_Timeline` - 时间线，垂直/水平多布局
-- `C_ContextMenu` - 右键上下文菜单
-- `C_Transfer` - 穿梭框，跨列表数据迁移
-- `C_AvatarGroup` - 叠加头像组，状态徽标
-
-</details>
-
-#### 🎮 自定义指令
-
-`v-copy` 复制 | `v-debounce` 防抖 | `v-throttle` 节流 | `v-permission` 权限 | `v-watermark` 水印 | `v-draggable` 拖拽 | `v-longpress` 长按
-
-### 🎪 演示页面（56 个示例）
-
-<details>
-<summary><b>查看所有演示页面</b></summary>
-
-**🎨 基础组件展示**
-
-- 图标组件 - 完整的图标系统使用指南
-- 地区联动 - 省市区三级联动实现
-- 进度条 - 多种样式进度展示
-- 时间组件 - 时间选择和格式化
-- 日期选择 - 日期范围选择器
-- 城市选择 - 城市选择器组件
-
-**📝 表单与表格**
-
-- 表单布局 - 8种表单布局模式
-- 表单搜索 - 高级搜索功能
-- 超级表格 - 表格的各种高级用法
-
-**✏️ 编辑器展示**
-
-- 日历组件 - FullCalendar完整功能
-- 代码编辑器 - 多语言语法高亮
-- Markdown编辑器 - 实时预览编辑
-- 富文本编辑 - WangEditor完整功能
-
-**🛠️ 实用功能**
-
-- 导出ZIP - 批量文件打包下载
-- 复制功能 - 文本复制到剪贴板
-- 批量下载 - 文件批量下载处理
-- 拖拽排序 - 列表项拖拽排序
-- 3D展示 - Spline 3D场景
-- 动画系统 - 流畅的页面转场
-- 用户引导 - 新手引导系统
-
-**💬 示范组件**
-
-- 聊天 - 即时聊天 UI，消息泡泡与会话列表
-- 时间线 - 时间轴事件展示，垂直/水平布局
-- 右键菜单 - 自定义上下文菜单
-- 穿梭框 - 跨列表数据迁移
-- 头像组 - 叠加头像展示，状态徽标
-- 音频播放器 - 播放列表、进度控制、多循环模式
-
-</details>
-
----
-
-## 🏗️ 项目架构
-
-### 📁 目录结构
-
-<details>
-<summary><b>查看完整目录结构</b></summary>
-
-```
-Robot_Admin/
-├── 📁 src/                            # 源代码目录
-│   ├── 📁 api/                        # 接口管理层
-│   ├── 📁 components/                 # 组件（桥接层 + 局部组件）
-│   │   ├── 📁 global/                 # 全局桥接组件（按需引用组件库）
-│   │   └── 📁 local/                  # 局部组件
-│   ├── 📁 views/                      # 页面视图
-│   │   ├── 📁 dashboard/              # 数据看板
-│   │   ├── 📁 demo/                   # 56 个演示页 + 8 个表单布局（64 个 index.vue）
-│   │   ├── 📁 preview/                # 组件预览页面（38 个 iframe 嵌入路由）
-│   │   ├── 📁 sys-manage/             # 系统管理
-│   │   ├── 📁 login/                  # 登录注册
-│   │   ├── 📁 about/                  # 版本与项目信息
-│   │   ├── 📁 account/                # 个人中心
-│   │   ├── 📁 editor/                 # 编辑器工作区
-│   │   ├── 📁 error-page/             # 异常页
-│   │   ├── 📁 large-screen/           # 大屏模板
-│   │   ├── 📁 plugins/                # 插件演示
-│   │   ├── 📁 portal/                 # 门户布局示例
-│   │   └── 📁 home/                   # 项目主页
-│   ├── 📁 stores/                     # Pinia状态管理
-│   ├── 📁 composables/                # 组合式API
-│   ├── 📁 constant/                   # 运行时常量
-│   ├── 📁 styles/                     # 全局主题与样式入口
-│   ├── 📁 router/                     # 路由配置
-│   ├── 📁 utils/                      # 工具函数
-│   ├── 📁 types/                      # TypeScript类型定义
-│   ├── 📁 config/                     # 环境、主题与构建配置
-│   ├── 📁 assets/                     # 静态资源
-│   └── 📁 plugins/                    # 插件配置
-├── 📁 scripts/                        # 构建脚本
-├── 📁 public/                         # 静态资源
-├── ⚙️ vite.config.ts                 # Vite配置
-├── 🎨 unocss.config.ts                # UnoCSS配置
-├── 📦 package.json                    # 项目配置
-└── 🔧 tsconfig.json                   # TypeScript配置
-```
-
-</details>
-
-### 🔄 架构演进路线
+业务组件、框架适配与底层引擎分别维护。Robot Admin 消费包的公开 API，通过页面配置组合能力；这些包也可以按各自文档独立接入其他项目。
 
 ```mermaid
-graph LR
-    A[🏠 Monomer<br/>单体架构] --> B[📦 Monorepo<br/>单仓多包]
-    B --> C[🧩 Module Federation<br/>模块联邦]
-    B --> D[🔗 MicroApp<br/>微前端]
-    C --> E[🚀 NestJS<br/>全栈方案]
-    D --> E
+flowchart TB
+    App[Robot Admin · 页面与领域控制器]
+    App --> UI[业务组件 · 表单 / 表格 / 编辑器 / 引导]
+    App --> Runtime[运行时能力 · 请求 / 布局 / 主题 / 指令 / 文件]
+    UI --> Validation[验证规则 · 框架无关核心与适配]
+    App --> Grid[MachTable · 虚拟化网格与 Vue 适配]
+    App --> Engineering[工程工具 · 构建 / 国际化 / 类型 / Git]
 ```
 
----
+以下版本是**本项目锁定的接入版本**；升级以包的发布记录、公开契约和项目验证结果为依据。
 
-## 🛠️ 开发者工具
+| 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
+| ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.14.3` | 55 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.6.1`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
+| [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.2`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
+| [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.1`  | 6 种布局、框架无关设置协议、Vue Headless 与 Naive 入口     | 宿主提供菜单、路由和插槽，布局由包实现 |
+| [`@robot-admin/theme`](https://www.npmjs.com/package/@robot-admin/theme)                             | `0.6.1`  | 主题核心、Vue 状态、Naive UI 适配、亮／暗／跟随系统        | 统一组件外观与主题状态                 |
+| [`@robot-admin/directives`](https://www.npmjs.com/package/@robot-admin/directives)                   | `2.0.1`  | 11 个指令：权限、复制、拖拽、防抖、节流等                  | 声明式交互，组件卸载时回收资源         |
+| [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.0.1`  | 隔离实例、Excel / CSV / ZIP、可取消分片与文件处理          | 文件场景复用，按需加载重型依赖         |
+| [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`  | 配置保护与 Git 工程标准                                    | 开发期提交规范与初始化工具             |
 
-### VS Code 插件推荐
+组件源码见 [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components)，其余生态包源码见 [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages)。
 
-<details>
-<summary><b>查看完整插件列表和使用说明</b></summary>
+### 数据网格与工程插件
 
-#### 必装插件
+| 能力                 | 接入方式                                                                                       | 实际用途                                                        |
+| -------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **MachTable 0.30.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、内容自适应、编辑与列状态持久化 |
+| 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                        |
+| 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译            |
+| 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                          |
+| 分支比对             | [`git-branch-check-diff-commits`](https://www.npmjs.com/package/git-branch-check-diff-commits) | `bun run check-branch` 查看分支提交差异                         |
 
-- **Vue - Official** - Vue 3 官方支持
-- **TypeScript Vue Plugin** - TypeScript 支持
-- **UnoCSS** - 原子化CSS智能提示
-- **Naive UI Snippets** - Naive UI 代码片段
+MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。Robot Admin 当前只接入 Vue 适配，普通业务表格与高密度数据网格各有使用场景。
 
-#### 实用插件详解
+### 配置留在页面，通用行为留在包内
 
-**1. Vscode Samge Translate 插件**
+例如表单：字段用 `options`，验证与异步保存用 `config`，组件处理校验、重复提交锁定、加载反馈与卸载清理。
 
-- `desc：` 用于快速中英文翻译切换，并生成变量命名方式
-- `use：` Ctrl+Shift+P， 选择 Samge 进行对应功能使用
-- `key：` `Alt+x` 翻译成中文， `Alt+z` 翻译成英文
+```vue
+<script setup lang="ts">
+  import {
+    defineFormConfig,
+    defineFormOptions,
+    PRESET_RULES,
+  } from '@robot-admin/naive-ui-components/C_Form'
 
-**2. any-rule 插件**
+  defineOptions({ name: 'ContactForm' })
+  interface Contact {
+    name: string
+    email: string
+  }
+  const model = ref<Contact>({ name: '', email: '' })
+  const options = defineFormOptions<Contact>([
+    { type: 'input', prop: 'name', label: '名称', required: true },
+    {
+      type: 'input',
+      prop: 'email',
+      label: '邮箱',
+      rules: [PRESET_RULES.email('邮箱')],
+    },
+  ])
+  const config = defineFormConfig<Contact>({ submitText: '校验表单' })
+</script>
 
-- `desc：` 用于快速生成正则
-- `use：` 右键 => 正则大全
-- `key：` `@zz` 弹出正则选项,根据生成的选项,可以图解正则
+<template>
+  <C_Form
+    v-model="model"
+    :options="options"
+    :config="config"
+  />
+</template>
+```
 
-**3. Better Comments 插件**
+示例运行在本项目的自动导入环境，只校验、不保存。真实保存配置 `config.onSubmit` 并返回 Promise；完整用法见 [表单配置](./docs/form-configuration.md)。Cron、公式与引导同样使用模型或步骤数据加配置，复用包内的预览、校验和交互。
 
-- `desc：` 在js文件中,通过颜色标记区分注释评论描述
-- `use：` //\* 绿色 //! 红色 //? 蓝色
+## 工程机制与质量保障
 
-**4. code settings sync 插件**
+### 让发布结果可检查
 
-- `desc：` 用于快速团队同步 vscode 插件及配置
-- `use：` [使用文档](https://marketplace.visualstudio.com/items?itemName=Alex-Chen.gitee-code-settings-sync)
-
-**5. Code Spell Checker 插件**
-
-- `desc：` 用于快速检查代码和文档拼写是否正确
-- `use：` 将非语法错误的单词添加到 cspell.json
-- `key：` 拼写后单词上方提示的黄色小灯泡💡
-
-**6. CodeSnap 插件**
-
-- `desc：` 用于快速生成代码截图
-- `use：` 右键 => 底部选项 CodeSnap
-
-**7. EmoJi 插件**
-
-- `desc：` 用于快速选择表情符号
-- `use：` 输入 `Ctrl+Shift+P` => 输入 `emo`
-- `key：` `F1 => emo`
-
-**8. JSON to JS 插件**
-
-- `desc：` 用于快速将json格式转换为js格式
-- `use：` 从剪切板，选择转换，可选引号 3种 方式进行转换
-- `key：` `Shift + Ctrl + Alt + V | S` 或 `F1 => Clipboard`
-
-**9. koroFileHeader 插件**
-
-- `desc：` 用于添加头部注释，函数注释
-- `use：` 在文件头部使用快捷键，或自动识别生成
-- `key：` `ctrl+win+i` 头部注释 `ctrl+win+t` 函数注释
-
-**10. TODO Tree 插件**
-
-- `desc：` 用于快速高亮代码中的 TODO 等标记性注释
-- `use：` 通过注释关键词的方式，高亮显示
-- `key：` TODO: 待完成 | BUG: 问题 | FIXME: 待修复 | HACK: 自定义
-
-**11. Turbo Console Log 插件**
-
-- `desc：` 用于快速生成 console 打印信息
-- `use：` 通过选中变量，按下快捷键，生成打印句柄
-- `key：` `ctrl+alt+l` 生成 `alt+shift+c` 注释所有 **+u** 启用所有 **+d** 删除所有
-
-</details>
-
----
-
-## 🌍 国际化 (i18n)
-
-语言切换使用组件库的 `C_Language`，自动扫描与编译使用 `vite-auto-i18n-plugin`。已有翻译始终可切换，普通开发和生产构建不调用翻译 API。
-
-- `src/config/i18n.ts`：统一语言 key（`zh-cn / en / ja / ko`）、命名空间和持久化 key `robot_admin`。
-- `lang/zh-cn.json`：中文源词条；`en.json / ja.json / ko.json`：按语言拆分的扁平词典。
-- `src/utils/d_i18n.ts`：配置词典路径并导出包的运行时实例。中文不加载其他词典；外语只请求当前语言。
-- `src/stores/language/index.ts`：同步组件库语言、Naive UI 文案与日期 locale。切换保留一次刷新，保证模块级文案、标签页与菜单一致。
-
-`VITE_I18N_ENABLED=false` **仅关闭联网生成新翻译**，编译插件仍会把中文替换为运行时 `$t(hash, 原文, 'robot_admin')`。未翻译的词条回退原文；公司名称、路由路径、权限标识不依赖翻译结果。扫描覆盖项目页面和组件，依赖包内部的文案需通过组件自己的 locale 或文案 props 配置。
-
-依赖固定为 `vite-auto-i18n-plugin@1.1.16`，Bun 通过 `patchedDependencies` 自动应用 `patches/` 中的适配补丁，无需使用者手动修改 `node_modules`。`/adapter` 承接 Vite 8 查询模块、源码映射、只读离线编译和有界编译缓存；`/runtime` 承接按需加载、并发去重、最新选择保护、存储容错、命名空间隔离和有界文案缓存。运行时入口不包含 Babel、Node 或联网翻译 SDK。升级上游版本时必须审核补丁并运行国际化测试，不可直接移除补丁。
-
-配套的 `auto-i18n-plugin-core@1.1.16` 补丁移除深度扫描和 JSX 的调试输出，修复多行文案中的代码块、反斜杠和字面插值转义，并保留中文回退文案的原始引号。普通开发不会整理、生成或覆盖词典，也不启动自动翻译定时器或输出翻译进度。缺少词典或网络加载失败时回退中文，单个语言最多提示一次；修复资源后可重试。切换语言仍会刷新页面以更新静态文案，尚未保存的页面输入会随刷新丢失。
-
-新增或修改菜单后，运行 `bun run gen:route-i18n` 更新扫描入口。需要生成新翻译时，在未跟踪的 `envs/.env.local` 中配置 `YOUDAO_APP_ID`、`YOUDAO_APP_KEY`，然后运行：
+| 机制         | 落地方式                                                                 | 验证入口                                                          |
+| ------------ | ------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| 配置校验     | 启动阶段验证环境、部署用途、代理地址；业务发布拒绝 Mock 与本地源码 alias | [环境校验](./src/config/vite/viteEnvConfig.ts)                    |
+| 按需加载     | 路由分包、组件子路径入口、网络与设备条件约束的意图／空闲预取             | [构建配置](./src/config/vite/viteBuildConfig.ts)                  |
+| 体积预算     | 入口、预加载 JS、CSS、首屏合计、预加载数量、最大异步块六维检查           | `bun run check:bundle`                                            |
+| 样式边界     | 编译 Vue SFC 审查全局／局部样式；全路由检查文字实际绘制与亮暗主题        | `bun run check:styles` · [绘制回归](./e2e/render-integrity.pw.ts) |
+| 状态正确性   | 逻辑与契约测试、真实 Vue 挂载、生产产物上的浏览器交互                    | `bun run test` · `test:components` · `test:e2e`                   |
+| 构建溯源     | `/build-info.json` 记录版本、环境、部署类型、提交与构建时间              | [构建身份](./docs/build-identity.md)                              |
+| 开发依赖自愈 | 清单与锁文件指纹变化后重启开发服务，模式间缓存隔离                       | [依赖监听](./src/config/vite/viteDependencyUpdatePlugin.ts)       |
 
 ```bash
-bun run i18n:generate
+bun run verify             # 双 Lint、样式、类型、逻辑/组件测试、双模式构建与体积预算
+bunx playwright install chromium  # 首次安装浏览器
+bun run test:e2e           # 对正式构建产物执行交互回归
 ```
 
-这条命令显式启用有道 API，扫描全部页面并更新拆分词典；临时构建放在 `node_modules/.cache/i18n-scan`。审核翻译文件后再执行常规构建 `bun run build`。API 凭据只用于本机或 CI，不使用 `VITE_` 前缀、不进入客户端产物。
+[CI](./.github/workflows/ci.yml) 执行安装、完整验证、依赖审计、浏览器回归与高 DPI 绘制检查。构建资源大小与性能页测量各有统计口径，参见 [工程观测](./docs/observability.md)；不使用固定的启动耗时或流量数字作为性能承诺。
 
-切换语言使用的是语言 key 和已有词典，**不需要有道 App Key**。插件生成的 hash 是自动索引，项目只维护中文原文，无需逐页手写编号 key。
+### AI 协作有项目事实源
 
----
-
-## 📊 性能与构建预算
-
-<details>
-<summary><b>查看可复现的性能门禁</b></summary>
-
-运行 `bun run build && bun run check:bundle` 可复核入口、预加载、样式、首屏合计及最大异步块预算。2026-10-01 的演示生产构建结果为：入口 306.60 KiB、预加载 488.85 KiB / 64 个、样式 290.60 KiB、首屏合计 1086.04 KiB，均通过预算。这里统计的是构建资源体积，不代表真实网络传输量或页面加载耗时；最新数字以命令输出为准。
-
-### 构建优化
-
-- **Tree Shaking** - 无用代码自动移除
-- **代码分割** - 按需加载，减少首屏时间
-- **体积预算** - 构建后自动检查首屏资源和最大异步块
-
-### 运行时优化
-
-- **组件懒加载** - 路由级别懒加载
-- **可选预取** - 登录后按网络和设备条件渐进预取重量级页面
-
-</details>
-
----
-
-## 💬 社区互动
-
-> 🚧 **本项目仍在快速迭代，欢迎任何使用反馈、功能建议、甚至吐槽！没有蠢问题，只有没被发现的优化点。**
-
-### 🎯 你的反馈，让项目变得更好
-
-我明确想知道这些，请直接告诉我：
-
-| 反馈类型        | 你可以告诉我                         | 入口                                                                |
-| --------------- | ------------------------------------ | ------------------------------------------------------------------- |
-| 🏢 **使用场景** | 你在做什么项目？解决了什么业务问题？ | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
-| 🧩 **组件体验** | 哪些组件用着顺手？哪些还需要打磨？   | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
-| 🚀 **上手体验** | 文档哪里说不清楚？部署遇到了什么坑？ | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
-| 💡 **业务需求** | 你需要但还没有的组件或功能是什么？   | [提 Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
-
----
-
-## 🤝 参与贡献
-
-> **来啊，快活啊！一起搞事情啊！** 🎉
-
-<details>
-<summary><b>查看贡献指南</b></summary>
-
-### 🚀 30秒快速上手贡献
+[AGENTS.md](./AGENTS.md) 与 [编码指南](./.github/copilot-instructions.md) 约束命名、目录、导入、样式和提交。7 个项目 Skill 覆盖页面生成、接口契约、原型解析、路由同步、规范审查、分支同步与 Mock；[MCP Server](./mcp/server.ts) 可查询组件 API、路由、接口与验证预设，避免靠猜测接入组件。
 
 ```bash
-# 1. Fork + Clone
-git clone https://github.com/你的用户名/Robot_Admin.git
-
-# 2. 安装依赖
-bun install
-
-# 3. 创建分支
-git checkout -b feat/awesome-feature
-
-# 4. 提交修改
-bun run verify
-git commit -m "feat: 新功能"
-
-# 5. 提交PR
+bun run mcp
 ```
 
-### 💡 贡献方向
+## 接入业务
 
-**🎨 UI/演示页面贡献**
+### 1. 明确环境和数据来源
 
-- 在 `src/views/demo/` 下新建页面
-- 展示一个完整的业务场景
-- 代码要有注释，能复制粘贴直接用
+在本机未跟踪的 `envs/.env.local` 或目标部署环境中配置：
 
-**🧩 组件开发贡献**
-
-- 通用业务组件优先在独立的 `@robot-admin/naive-ui-components` 仓库维护
-- 应用内的 `src/components/global/` 仅保留宿主桥接组件，避免复制组件库实现
-- 新组件须声明 `name` 并提供 TypeScript 类型
-
-**🛠️ 工具函数贡献**
-
-- `src/utils/` 目录下
-- 要有单元测试
-- 要有 JSDoc 注释
-
-查看 [贡献指南](./CONTRIBUTING.md) 了解更多。
-
-</details>
-
----
-
-## 🚀 部署方案
-
-### ☁️ 多环境支持
-
-<details>
-<summary><b>查看部署详情</b></summary>
-
-**环境配置**
-
-- **开发环境** - 本地开发调试
-- **测试环境** - 功能测试验证
-- **预发布环境** - 生产前最后验证
-- **生产环境** - 线上正式环境
-
-**当前仓库提供的构建与部署配置**
-
-```bash
-bun run build             # envs/.env.production：公开演示产物 dist/
-bun run build:application # envs/.env.staging：真实业务预发验收产物 dist/application/
+```dotenv
+VITE_DEPLOYMENT_PROFILE=application
+VITE_AUTH_MODE=remote
+VITE_DATA_MODE=remote
+VITE_API_BASE=/api
+# 仅本地开发需要代理时配置；部署环境由网关提供同源 /api。
+API_PROXY_TARGET=https://your-api.example.com
 ```
 
-仓库内的 `vercel.json` 提供静态站点路由回退与安全响应头。部署到其他平台时需要等效配置；真实业务部署还必须按 [`envs/README.md`](envs/README.md) 接入远端认证、业务 API 和同源代理，不能直接把公开演示配置用于生产。当前仓库没有 Dockerfile 或 GitHub Pages 工作流。
+`bun run build` 默认生成公开演示产物 `dist/`；`bun run build:application` 生成真实业务预发验收产物 `dist/application/`。业务生产发布按 [生产接入基线](./docs/production-readiness.md) 配置目标环境、远端接口与网关，不能直接沿用演示认证。
 
-</details>
+### 2. 对齐认证与领域接口
 
----
+- 按 [企业认证契约](./docs/enterprise-auth.md) 接入账号公司查询、身份验证、公司激活／切换与令牌轮换。后端决定授权与数据隔离。
+- API 使用 `@robot-admin/request-core`，明确资源契约；Mock 与 Remote 实现分开，远端失败不会静默回填演示数据。
+- 系统管理页采用领域控制器、列工厂与配置，页面模板负责组装；表单异步保存由 `config.onSubmit` 返回结果。
+- 页面 `defineOptions({ name })` 与路由组件名称对应，菜单按需配置 `keepAlive`；公司切换按会话边界清理旧页面。
 
-## 📈 路线图
+### 3. 接入观测与部署平台
 
-### ✅ 已完成里程碑
+访问统计默认是当前浏览器的本机匿名样本。配置同源采集／汇总接口后可以显示全站数据，契约见 [工程观测](./docs/observability.md)。Vercel Analytics / Speed Insights 仅在生产且显式启用时接入，跨访客报告在相应服务控制台查看。
 
-<details>
-<summary><b>查看完整版本历程 (v1.0 → v2.7.0)</b></summary>
+仓库提供 [vercel.json](./vercel.json) 的路由回退与安全响应头。部署到其他静态服务时提供等效配置，并核对 API、iframe 白名单和缓存策略。服务端鉴权、真实人机验证与 HttpOnly Cookie 认证升级仍需要后端配合，边界记录在生产接入文档中。
 
-| 版本   | 时间    | 主要更新                                             |
-| ------ | ------- | ---------------------------------------------------- |
-| v1.0   | 2025-07 | 🎉 项目初版：Vue3 + Vite + Naive UI + Pinia 基础架构 |
-| v1.6   | 2025-10 | 🎨 主题系统 + UnoCSS + 演示页面体系                  |
-| v1.11  | 2025-12 | 🧩 组件库雏形 + i18n 国际化 + 性能优化               |
-| v1.12  | 2026-02 | 📦 `@robot-admin/request-core` 独立发布              |
-| v1.13  | 2026-02 | 🔧 Composable 架构重构，各 npm 包逐步独立发布        |
-| v1.14  | 2026-02 | ✨ 新增 10 个组件（签名/裁剪/Cron/瀑布流等）         |
-| v2.0   | 2026-03 | 🏗️ **架构重构**：39 个组件迁移至独立 npm 包，零冗余  |
-| v2.1   | 2026-03 | 🔐 Token 无感刷新 + 权限体系升级 + 可插拔登录组件    |
-| v2.2   | 2026-03 | 🎭 菜单双主题 + Vite 8 升级 + 全量 TypeScript 通过   |
-| v2.2.1 | 2026-03 | 🔧 Vite 8.0.3 正式升级 + 样式细节优化                |
-| v2.3   | 2026-04 | 🤖 AI 技能、MCP Server 与工程协作规范                |
-| v2.4   | 2026-04 | 🎨 设计风格系统与 iOS 拟态玻璃主题                   |
-| v2.5   | 2026-08 | ⚡ 路由级按需加载与菜单分组                          |
-| v2.6   | 2026-10 | 🛡️ 生产就绪加固、组件接入治理与演示页回归门禁        |
-| v2.6.1 | 2026-10 | 📝 中英文文档、贡献与生产接入说明同步当前实现        |
-| v2.6.2 | 2026-10 | 🤖 修复生产 CSP 阻断登录页 3D 机器人                 |
-| v2.6.3 | 2026-10 | 🎬 修复场景内嵌视频被生产 CSP 拦截                   |
-| v2.7.0 | 2026-10 | 🏢 多租户体验、真实项目观测与样式绘制根因修复        |
+## 国际化与设计系统
 
-</details>
+| 主题       | 配置与行为                                                                 |
+| ---------- | -------------------------------------------------------------------------- |
+| 统一设计   | CSS 变量与 Naive UI 主题覆盖，亮／暗／跟随系统；6 种布局共享状态与令牌     |
+| 语言选择   | `zh-cn / en / ja / ko`，命名空间与持久化 key 为 `robot_admin`              |
+| 运行时翻译 | 中文为原文；外语只加载当前词典；普通开发与生产构建不请求翻译服务           |
+| 新词条生成 | 配置服务端侧有道凭据后显式执行 `bun run i18n:generate`，审核语言文件后提交 |
 
-### 🚀 下一阶段
+语言切换当前保留一次刷新，以同步静态文案、菜单与页签；切换前应保存页面输入。`VITE_I18N_ENABLED=false` 只关闭联网生成，已有词典仍然可用。插件补丁、词典路径和生成步骤见 [国际化维护](./docs/internationalization.md)，主题与动画见 [设计系统](./docs/design-system/README.md)。
 
-- [ ] 📈 Web Vitals 真实用户性能监控与可观测平台接入
-- [ ] 🎨 可视化低代码页面模板
-- [x] 🏢 多租户公司与角色的前端演示闭环（真实隔离待后端接入）
+## 技术栈与项目结构
 
-### 🌟 长期规划
+精确版本对应当前锁文件；框架声明范围与完整依赖以 `package.json` 为准。
 
-- [ ] 🏗️ Robot Nest — NestJS 全栈服务
-- [ ] 🔄 完整的 CI/CD 流水线集成示例
-- [ ] 🌐 完整 i18n 国际化方案（更多语言）
+| 层级     | 当前技术                                                                                |
+| -------- | --------------------------------------------------------------------------------------- |
+| 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
+| 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
+| 构建     | **Vite 8.2.2** · Bun · Sass · 自动导入与按需组件 Resolver                               |
+| 数据网格 | **MachTable 0.30.1** · Vue 适配层                                                       |
+| 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
----
-
-## 🌟 生态系统
-
-### 🔗 相关项目
-
-<details>
-<summary><b>查看生态项目</b></summary>
-
-Cron 与公式编辑器推荐使用 `v-model + config`：项目负责场景配置，包内统一提供模板、校验、初始状态重置与结果预览。公式试算不修改业务数据；Cron 按浏览器本地时区预览，不创建后台任务。浏览器回归见 `e2e/editor-workspaces.pw.ts`。
-
-**已发布组件库**
-
-- **[@robot-admin/naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components)** `v0.14.3` - 基于 Naive UI 的 Vue 3 业务组件库（55 个组件，按需导入）
-- **[@robot-admin/layout](https://www.npmjs.com/package/@robot-admin/layout)** `v3.2.1` - 6 种布局模式 + `/naive` 单入口 + Vue Headless 分层
-- **[@robot-admin/request-core](https://www.npmjs.com/package/@robot-admin/request-core)** `v0.6.1` - 实例化 Axios 编排、认证恢复与函数式 Headless CRUD
-- **[@robot-admin/form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)** `v3.4.2` - Naive UI / Element Plus 双框架企业级表单验证规则库
-- **[@robot-admin/directives](https://www.npmjs.com/package/@robot-admin/directives)** `v2.0.1` - 11 个安全、可回收的 Vue 指令
-- **[@robot-admin/file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)** `v3.0.1` - Excel/ZIP/RFC 4180 CSV/可取消分片工具集
-- **[@robot-admin/theme](https://www.npmjs.com/package/@robot-admin/theme)** `v0.6.1` - 分层主题核心、Vue 状态管理与 Naive UI 适配
-- **[@robot-admin/git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)** `v1.0.5` - 安全初始化、配置保护与双模块兼容的 Git 工程化标准
-
-**已发布周边工具**
-
-- **[Robot CLI](https://github.com/ChenyCHENYU/robot-cli)** ✅ - 脚手架工具，快速初始化项目模板
-- **[Robot uniApp](https://github.com/ChenyCHENYU/robot-uniapp)** ✅ - 移动端跨平台解决方案（已完成）
-- **[Robot Nest](https://github.com/ChenyCHENYU/robot-nest)** 🚧 - NestJS 全栈后端服务（规划中）
-
-**已发布 npm 插件**
-
-- **[vite-console-plugin](https://www.npmjs.com/package/vite-console-plugin)** `v2.0.15` - Vite 启动台控制台美化与提示插件
-- **[ts-type-cleaner](https://www.npmjs.com/package/ts-type-cleaner)** `v5.0.8` - 智能 TypeScript 类型分析和清理工具
-- **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - 独立路由预加载工具（Robot Admin 当前使用 Vite 原生 warmup + 运行时意图预取，未接入此插件）
-- **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Git 分支快速比对合并检查
-- **[git-log-formatter](https://www.npmjs.com/package/git-log-formatter)** `v1.0.2` - Git log 格式化美化工具
-- **[standards-cli](https://www.npmjs.com/package/standards-cli)** `v1.0.13` - 前端工程化提交规范初始化工具
-- **[mgit-push](https://www.npmjs.com/package/mgit-push)** `v1.0.5` - 同时推送到多个 Git 平台
-- **[@agile-team/robot-cli](https://www.npmjs.com/package/@agile-team/robot-cli)** `v1.1.12` - 现代化项目脚手架工具
-- **[@agile-team/naive-ui-components](https://www.npmjs.com/package/@agile-team/naive-ui-components)** `v0.1.4` - Naive UI 组件库（旧版，已迁移至 @robot-admin）
-- **[@agile-team/vscode-config](https://www.npmjs.com/package/@agile-team/vscode-config)** `v2.0.8` - 团随 VSCode 配置一键安装工具
-
-</details>
-
----
-
-## 🖼️ 项目预览
-
-<table width="100%">
-<tr>
-<td width="50%" align="center">
-
-![login](https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/robot_admin/login.png)
-<br><strong>登录页面</strong>
-
-</td>
-<td width="50%" align="center">
-
-![home](https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/robot_admin/home.png)
-<br><strong>首页页面</strong>
-
-</td>
-</tr>
-</table>
-
-> **🎯 [在线预览](https://www.robotadmin.cn/)** | **📖 [项目文档](https://www.tzagileteam.com)**
->
-> 注意：若无法访问请关闭科学上网，或访问 [备用地址](https://robot-admin-new.vercel.app/)
-
----
-
-## 🖥️ 浏览器支持
-
-**现代浏览器，拒绝IE**
-
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Safari |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| last 2 versions                                                                                                                                                                                       | last 2 versions                                                                                                                                                                                                   | last 2 versions                                                                                                                                                                                               | last 2 versions                                                                                                                                                                                               |
-
----
-
-## 💻 系统要求
-
-<details>
-<summary><b>查看详细要求</b></summary>
-
-### 🔧 开发环境
-
-- **Node.js**: >= 22.18 (推荐最新 LTS)
-- **Bun**: >= 1.4.2（以 `package.json` 的 `engines` 为准）
-- **内存**: >= 8GB RAM
-- **存储**: >= 1GB 可用空间
-- **系统**: Windows 10+, macOS 12+, Ubuntu 20.04+
-
-### ⚙️ 可选工具
-
-- **VS Code**: 推荐编辑器
-- **Git**: >= 2.20.0
-- **Docker**: >= 20.0 (容器部署)
-
-</details>
-
----
-
-## 🛠️ 故障排除
-
-<details>
-<summary><b>常见问题解决</b></summary>
-
-### ❌ Bun 安装失败
-
-```bash
-# Windows 用户
-curl -fsSL https://bun.sh/install | bash
-
-# macOS 用户
-brew install oven-sh/bun/bun
-
-# PowerShell 用户也可使用 Bun 官方安装脚本
-powershell -c "irm bun.sh/install.ps1 | iex"
+```text
+Robot_Admin/
+├── src/
+│   ├── api/                 # 资源契约、Mock 适配与远端接口
+│   ├── components/          # 全局宿主组件与局部业务组件
+│   ├── composables/         # 登录、布局、缓存等应用组合逻辑
+│   ├── config/              # Vite、主题、引导与观测配置
+│   ├── constant/            # 应用共享常量
+│   ├── plugins/             # 请求、布局、主题与观测初始化
+│   ├── router/              # 动态权限路由与独立预览
+│   ├── stores/              # 用户、权限、语言与设置状态
+│   ├── styles/              # 全局入口与主题变量
+│   ├── types/               # 应用与领域类型
+│   ├── utils/               # 会话、路由、国际化与错误处理
+│   └── views/               # 首页、分析统计、系统管理与场景演示
+├── envs/                    # 环境与部署用途配置
+├── lang/                    # 按语言拆分的扁平词典
+├── patches/                 # 锁定版本的国际化插件适配
+├── scripts/                 # 构建、样式、预算与分支同步
+├── tests/                   # 逻辑、契约与组件挂载测试
+├── e2e/                     # 生产产物的浏览器回归
+├── mcp/                     # 项目事实查询工具
+└── docs/                    # 接入、设计与维护文档
 ```
 
-### ⚠️ 端口占用问题
-
-```bash
-# 在已被 Git 忽略的 envs/.env.local 中设置
-VITE_PORT=1989
-```
-
-### 🔧 TypeScript 类型错误
-
-```bash
-# 检查应用及配置类型
-bun run type-build
-
-# 只按正式安装包复核跨包类型
-bun run type-build:installed
-```
-
-### 📦 构建失败
-
-```bash
-# 保留仓库的 bun.lock，按锁文件恢复依赖
-bun install --frozen-lockfile
-
-# 运行完整本地门禁
-bun run verify
-```
-
-</details>
-
----
-
-## 🔒 安全与权限
-
-### 🛡️ 多层次权限控制
-
-- **页面级权限** - 路由访问控制
-- **菜单级权限** - 导航菜单显示控制
-- **按钮级权限** - 操作按钮权限控制
-- **接口级权限** - API调用权限验证
-
-### 🔐 身份认证
-
-- `JWT Token` 认证
-- 刷新Token自动续期
-- 多终端登录管理
-- 密码强度验证
-
----
-
-## 🎯 项目定位
-
-- 单体 SPA 主线提供权限、主题、路由和 Remote/Mock 数据边界；其他架构保留在独立分支。
-- 业务组件与 11 个指令由独立包维护，应用通过深层入口按需消费；`src/views/demo/` 提供 56 个使用示例。
-- `bun run verify` 与 `bun run test:e2e` 提供可复现的静态、构建和浏览器门禁；真实业务仍需接入后端并执行集成验收。
-
----
-
-## ❓ 你可能会有的一些小疑问
-
-<details>
-<summary><b>FAQ</b></summary>
-
-**🔧 为什么统一使用 Bun？**
-
-- 项目锁文件、脚本和测试均以 Bun 为准；混用包管理器可能产生不同依赖树。
-
-**🎨 如何自定义主题？**
-
-1. 在 `src/config/theme/tokens.ts` 调整应用主题 Token，在 `naive-overrides.ts` 调整 Naive UI 覆盖
-2. 使用 `C_Theme` 切换浅色、深色或跟随系统；接入边界见 [主题架构文档](docs/design-system/THEME-ARCHITECTURE.md)
-
-**🔐 权限系统如何使用？**
-
-- 页面级：路由守卫控制
-- 菜单级：动态菜单生成
-- 按钮级：v-permission指令
-- 接口级：后端必须自行校验权限；前端请求层不能替代服务端鉴权
-
-**📱 是否支持移动端？**
-
-- 提供响应式布局；接入具体业务页面后仍需在目标设备和浏览器上验证交互
-
-**🔄 如何从其他项目迁移？**
-
-- 优先参考组件库公开类型与本仓库的 56 个演示页，按页面逐步接入并运行验证
-
-</details>
-
----
-
-## 📞 联系我们
-
-**🧑‍💻 作者信息**
-
-- **姓名：** CHENY
-- **身份：** 个人开发者 · 前端架构师（开源爱好者）
-- **公众号：** 前端咔啦咪（小红书同名）
-- **邮箱：** [ycyplus@gmail.com](mailto:ycyplus@gmail.com)
-- **GitHub：** [@ChenyCHENYU](https://github.com/ChenyCHENYU)
-- **npm：** [@cheny_yang](https://www.npmjs.com/~cheny_yang)
-
----
-
-### 🤝 贡献者
-
-感谢所有为项目做出贡献的开发者：
-
-<a href="https://github.com/ChenyCHENYU/robot-admin/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ChenyCHENYU/robot-admin" />
-</a>
-
-**期望你成为贡献者:**
-
-- 🐛 报告 Bug | 💡 提出功能建议 | 📝 改进文档 | 🔧 提交代码 | 🌍 翻译文档 | 📢 推广项目
-
----
-
-## 🏆 特别鸣谢
-
-<details>
-<summary><b>致谢名单</b></summary>
-
-### 🌟 开源项目致谢
-
-**核心技术**
-
-- **Vue.js 团队** - 提供强大的框架基础
-- **Naive UI 团队** - 提供优秀的组件库
-- **Vite 团队** - 提供极速的构建工具
-- **Bun 团队** - 提供革命性的运行时
-- **Anthony Fu** - UnoCSS、unplugin等工具的创作者
-- **尤雨溪 (Evan You)** - Vue.js 的创造者
-
-**功能组件**
-
-- **ECharts** - 数据可视化图表库
-- **AntV X6** - 图编辑引擎
-- **FullCalendar** - 日历组件
-- **WangEditor** - 富文本编辑器
-
-### 👨‍💻 社区支持
-
-- **所有 Star 的开发者** - 给予项目信心和动力
-- **提出 Issue 的用户** - 帮助项目发现和改进问题
-- **贡献 PR 的开发者** - 让项目变得更好
-- **使用项目的企业** - 验证项目的实用价值
-
-> _"一个人可以走得很快，但一群人可以走得更远。感谢每一位支持 Robot Admin 的朋友！"_
-
-</details>
-
----
-
-## 📄 更新日志
-
-### 🚀 v2.7.0 (2026-10-06) — 最新版本
-
-- 完善登录前公司选择及公司、角色切换，修复登录后的偶发 404
-- 首页介绍多架构能力，关于页展示技术档案；分析与统计使用明确来源的工程指标和本地事件
-- 使用正式发布的组件库 `0.13.5`，补齐可跳过的图文引导、离线翻译和开发版本信息
-- 从发布样式边界与 Chrome 绘制触发规则修复正文、导航和图标异常，增加普通屏、高分屏与六种布局回归
-
-### 🛠️ v2.6.3 (2026-10-02)
-
-- 仅允许 Spline 场景所需的内嵌媒体，消除登录页控制台的 CSP 媒体拦截；脚本执行限制不变
-
-### 🛠️ v2.6.2 (2026-10-02)
-
-- 精确放行 Spline 所需的 WebAssembly 编译，恢复生产登录页 3D 机器人；继续禁止普通 JavaScript `eval`
-
-### 📝 v2.6.1 (2026-10-01)
-
-- 同步中英文 README、贡献指南、环境与生产接入文档，移除失效的性能宣称和过期联系入口
-
-### 🚀 v2.6.0 (2026-10-01)
-
-- 🧩 **组件接入**：升级业务组件库至 `0.13.0`，精简表单、表格及演示页面的使用方式
-- 🛡️ **生产就绪**：补齐远端数据契约、错误脱敏、安全头与登录及权限回归保护
-- ⚡ **体验与性能**：优化首屏、路由预取及样式按需加载，并增加构建体积预算门禁
-- 🧪 **验证能力**：增加单测和浏览器回归覆盖，收紧类型与构建检查
-
-### 🚀 v2.5.0 (2026-08-10)
-
-- 🧭 **布局与菜单**：新增分组菜单右侧展开面板，完善多布局导航体验
-- ⚡ **按需加载**：大型页面、编辑器和文件能力改为路由级加载，降低首屏负担
-- 🧩 **组件工程化**：业务组件使用子路径入口和官方 Resolver
-
-<details>
-<summary><b>📆 查看历史版本记录 (v1.0 — v2.2)</b></summary>
-
-### 🎭 v2.2.0 (2026-03-11)
-
-- ✨ **菜单双主题**：增加菜单主题切换，提供个性/标准两种多态模式
-- 🔐 **权限体系升级**：按钮权限、路由鉴权、数据权限全面启用
-- ⚡ **Token 无感刷新**：登录态不中断自动刷新 Token
-- 🔧 **Vite 8 + Rolldown**：构建速度提升 10-30 倍
-- 🧩 演示页面批量优化，全量 TypeScript 类型检查通过
-
-### 🎨 v2.1.0 (2026-03-06)
-
-- ✨ 可插拔式 `C_Login` 登录组件，支持自定义扩展
-- 🔄 新增穿梭框 / 头像组 / 音频播放器组件
-- 🚀 38 个无鉴权预览路由，供文档站 iframe 嵌入
-- 🐛 登录页性能、错误拦截、中英文验证全面优化
-
-### 🏗️ v2.0.0 (2026-03-02) — 破坏性升级
-
-- 📦 **39 个组件全面迁移** 至 `@robot-admin/naive-ui-components`
-- ✅ 全量 `vue-tsc` 类型检查通过
-- 🔧 清理冗余依赖，简化主项目依赖树
-
-### ✨ v1.14.0 (2026-02-27)
-
-- 新增电子签名 / 图片裁剪 / Cron 表达式编辑器 / 分割面板 / 公式编辑器 / 瀑布流 等 10 个组件
-- 将 `C_Notice` 升级为 `C_NotificationCenter` 全局通知插件
-
-### 📦 v1.13.x (2026-02-08 — 2026-02-17)
-
-- `@robot-admin/layout` 升级 v2.2.0，支持 View Transition API 主题切换
-- `@robot-admin/*` 各包逐步独立发布到 npm
-- i18n 自动翻译路由 + 分包优化
-
-### v1.11.x (2025-11 — 2025-12)
-
-- 组件库雏形建立、Vitest 测试框架集成
-- 全局搜索组件、内置权限指令系统
-
-### v1.0 — v1.11 (2025-07 — 2025-12)
-
-- 项目核心框架建立、主题系统、动态表单/表格引擎、Demo 页面体系建设
-
-</details>
-
-> 📚 查看完整 [CHANGELOG.md](./CHANGELOG.md)
-
----
-
-## 📄 开源许可
-
-本项目基于 [MIT License](./LICENSE) 开源协议。
-
-```
-MIT License
-
-Copyright (c) 2026 ChenY (Robot Admin)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
-**这意味着您可以：**
-✅ 免费使用 | ✅ 修改源代码 | ✅ 商业使用 | ✅ 私有部署 | ✅ 分发和再许可
-
-**唯一要求：**
-📄 保留版权声明和许可证
-
----
-
-<div align="center">
-
-## 🚀 加入 Robot Admin
-
-<p>
-  <strong>如果这个项目帮助到了你，请给个 ⭐ Star 支持一下！</strong><br>
-  <em>你的 Star 是我们前进的动力 🌟</em>
-</p>
-
-<p>
-  <a href="https://github.com/ChenyCHENYU/robot_admin">
-    <img src="https://img.shields.io/badge/⭐-给个Star-yellow?style=for-the-badge&logo=github" alt="GitHub Star">
-  </a>
-  <a href="https://github.com/ChenyCHENYU/robot_admin/fork">
-    <img src="https://img.shields.io/badge/🍴-Fork项目-blue?style=for-the-badge&logo=github" alt="GitHub Fork">
-  </a>
-  <a href="https://www.robotadmin.cn">
-    <img src="https://img.shields.io/badge/🚀-在线体验-green?style=for-the-badge&logo=vercel" alt="Live Demo">
-  </a>
-</p>
-
-<br>
-
-### 🎯 下一步行动
-
-<p>
-  🔥 <strong>立即使用</strong><br>
-  <code>git clone https://github.com/ChenyCHENYU/robot_admin.git</code><br>
-  <em>30秒启动你的项目</em>
-</p>
-
-<p>
-  📚 <strong>学习文档</strong><br>
-  <a href="https://www.tzagileteam.com">查看完整文档</a><br>
-  <em>从入门到精通</em>
-</p>
-
-<p>
-  💬 <strong>加入讨论</strong><br>
-  <a href="https://github.com/ChenyCHENYU/robot-admin/discussions">GitHub讨论区</a><br>
-  <em>与开发者交流</em>
-</p>
-
-<br>
-
-### 💝 支持项目发展
-
-<p>
-  <a href="https://github.com/sponsors/ChenyCHENYU">
-    <img src="https://img.shields.io/badge/💖-赞助支持-red?style=for-the-badge&logo=github-sponsors" alt="Sponsor">
-  </a>
-  <a href="mailto:ycyplus@gmail.com">
-    <img src="https://img.shields.io/badge/📧-联系作者-blue?style=for-the-badge&logo=gmail" alt="Contact">
-  </a>
-</p>
-
-<br>
-
-**🤖 Robot Admin - 让中后台开发变得简单而优雅**
-
-<p>
-  <em>"好的工具不仅要功能强大，更要让开发者用得愉快"</em><br>
-  <strong>— Robot Admin 团队</strong>
-</p>
-
-<br>
-
-<p>
-  <strong>Made with ❤️ by <a href="https://github.com/ChenyCHENYU">@ChenyCHENYU</a></strong><br>
-  <em>感谢开源让世界更美好 🌍</em>
-</p>
-
-</div>
+### 常用命令
+
+| 目标                      | 命令                                                       |
+| ------------------------- | ---------------------------------------------------------- |
+| 标准开发 / 局域网访问     | `bun run dev` / `bun run dev:ip`                           |
+| 安静启动 / Vue DevTools   | `bun run dev:quiet` / `bun run dev:devtools`               |
+| 线上包类型检查            | `bun run type-build`                                       |
+| 只读代码检查              | `bun run lint:check` + `bun run lint:eslint`               |
+| 生产演示 / 业务预发构建   | `bun run build` / `bun run build:application`              |
+| 产物预览 / 构建分析       | `bun run preview` / `bun run analyze`                      |
+| 规范化提交                | `bun run commit`                                           |
+| 功能分支同步至 dev / main | `bun run deploy`，先验证，再合并与推送；不升版本、不打标签 |
+
+生态包源码联调、独立缓存、端口排查与更多命令见 [开发环境](./docs/development.md)。应用版本与正式日志由 Release Please 管理，历史变更集中在 [CHANGELOG.md](./CHANGELOG.md)。
+
+## Robot 生态
+
+同一品牌面向不同交付平台，各项目沿用适合自身平台的组件、工具链与接入契约。
+
+| 项目                                                              | 定位                                         | 与 Robot Admin 的关系             |
+| ----------------------------------------------------------------- | -------------------------------------------- | --------------------------------- |
+| **Robot Admin**                                                   | 企业 PC 中后台、多架构工程与插件生态         | Web 管理端与公共 npm 包的应用实践 |
+| [**Robot H5**](https://github.com/ChenyCHENYU/Robot_H5)           | Vue 企业移动应用，浏览器 / App / PDA WebView | 面向移动业务与宿主设备能力        |
+| [**Robot UniApp**](https://github.com/ChenyCHENYU/Robot_uniApp)   | uni-app 跨平台应用，H5 / 微信小程序 / App    | 面向跨端页面与原生平台接入        |
+| [**Robot H5 Core**](https://github.com/ChenyCHENYU/Robot_H5_Core) | 移动端设备能力与平台适配                     | 承接 H5 的浏览器与宿主能力边界    |
+| [**Robot CLI**](https://github.com/ChenyCHENYU/robot-cli)         | 项目模板脚手架                               | 创建与初始化项目的工具入口        |
+| [**AgileTeam Doc**](https://www.tzagileteam.com)                  | 团队工程与组件文档                           | 组件 API、实践说明与独立预览      |
+
+封面沿用 Robot H5 的蓝紫 R / 机器人标识、深蓝网格和排版语言，使用本仓库的 SVG 源文件与高清 PNG，便于 GitHub、Gitee 和本地阅读。
+
+## 文档与参与
+
+| 需要了解什么       | 入口                                                                                          |
+| ------------------ | --------------------------------------------------------------------------------------------- |
+| 接入与维护总览     | [文档索引](./docs/README.md)                                                                  |
+| 真实业务上线边界   | [生产接入基线](./docs/production-readiness.md) · [环境配置](./envs/README.md)                 |
+| 登录与公司会话     | [企业认证契约](./docs/enterprise-auth.md)                                                     |
+| 表单与验证         | [表单配置](./docs/form-configuration.md)                                                      |
+| 数据来源与统计口径 | [工程观测](./docs/observability.md)                                                           |
+| 样式、主题与布局   | [设计系统](./docs/design-system/README.md) · [样式隔离审查](./docs/style-isolation-audit.md)  |
+| 参与开发           | [贡献指南](./CONTRIBUTING.md) · [项目编码指南](./AGENTS.md)                                   |
+| 版本记录           | [CHANGELOG](./CHANGELOG.md) · [Releases](https://github.com/ChenyCHENYU/Robot_Admin/releases) |
+
+问题反馈请提供访问路径、复现步骤、浏览器版本与构建身份信息：[GitHub Issues](https://github.com/ChenyCHENYU/Robot_Admin/issues)。作者：[CHENY](https://github.com/ChenyCHENYU) · [ycyplus@gmail.com](mailto:ycyplus@gmail.com)。
+
+**MIT License**。允许商业使用与二次开发，请保留许可证和版权声明；依赖包遵循各自许可证。感谢 Vue、Vite、Naive UI、UnoCSS、Bun 及所有生态依赖的维护者。

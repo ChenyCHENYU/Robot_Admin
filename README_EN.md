@@ -1,1203 +1,347 @@
+<!-- Banner source and export: docs/assets/robot-admin-banner.svg · bun scripts/render-readme-banner.ts -->
+
+![Robot Admin — A composable foundation for enterprise web applications](docs/assets/robot-admin-banner.png)
+
 <div align="center">
-  <a href="https://robotadmin.cn">
-    <picture>
-      <source srcset="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/img/robot-left.png" media="(prefers-color-scheme: dark)">
-      <img src="https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/img/robot-left.png" height="120" />
-    </picture>
-  </a>
-
-  <h1>
-    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=32&duration=3000&pause=1000&color=4FC08D&background=FFFFFF00&center=true&vCenter=true&multiline=true&width=700&height=100&lines=🤖+Robot+Admin;Redefining+Enterprise+Admin+Development" alt="Robot Admin" />
-  </h1>
-
-  <p><strong>Robot Admin - Multi-Architecture Enterprise Solution</strong></p>
-
-  <!-- Architecture Selector -->
-  <table>
-    <tr>
-      <td align="center" width="200">
-        <img src="https://img.shields.io/badge/🏗️-Monolithic-4A90E2?style=for-the-badge" alt="Monolithic"><br>
-        <sub><strong>Current Branch</strong></sub><br>
-        <sub>Traditional SPA</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/main">
-          <img src="https://img.shields.io/badge/View Code-main-blue?style=flat-square" alt="Main Branch">
-        </a>
-      </td>
-      <td align="center" width="200">
-        <img src="https://img.shields.io/badge/📦-Monorepo-00D8FF?style=for-the-badge" alt="Monorepo"><br>
-        <sub><strong>Bun Workspaces</strong></sub><br>
-        <sub>Multi-App Management</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo">
-          <img src="https://img.shields.io/badge/View Code-monorepo-00D8FF?style=flat-square" alt="Monorepo Branch">
-        </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/README.md">
-          <img src="https://img.shields.io/badge/Full Docs-README-orange?style=flat-square" alt="Monorepo Docs">
-        </a>
-      </td>
-      <td align="center" width="200">
-        <img src="https://img.shields.io/badge/🔮-Module Federation-9B59B6?style=for-the-badge" alt="Module Federation"><br>
-        <sub><strong>Webpack/Vite Federation</strong></sub><br>
-        <sub>Initial Release</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation">
-          <img src="https://img.shields.io/badge/View Code-module--federation-9B59B6?style=flat-square" alt="MF Branch">
-        </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/README.md">
-          <img src="https://img.shields.io/badge/Usage Guide-README-orange?style=flat-square" alt="MF Docs">
-        </a>
-      </td>
-      <td align="center" width="200">
-        <img src="https://img.shields.io/badge/🚀-Micro Frontend-E74C3C?style=for-the-badge" alt="Micro Frontend"><br>
-        <sub><strong>MicroApp</strong></sub><br>
-        <sub>Initial Release</sub><br>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app">
-          <img src="https://img.shields.io/badge/View Code-micro--app-E74C3C?style=flat-square" alt="MicroApp Branch">
-        </a>
-        <a href="https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md">
-          <img src="https://img.shields.io/badge/View Docs-README-orange?style=flat-square" alt="MicroApp Docs">
-        </a>
-      </td>
-    </tr>
-  </table>
-
+  <p><strong>One foundation for business, components and multiple architectures.</strong></p>
+  <p>Vue 3 · TypeScript · Vite · Naive UI · UnoCSS · Bun</p>
   <p>
-    <a href="https://github.com/ChenyCHENYU/robot_admin/actions"><img src="https://img.shields.io/github/actions/workflow/status/ChenyCHENYU/Robot_Admin/ci.yml" alt="Build Status"></a>
-    <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen" alt="Code Style"></a>
-    <img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-ff1e56?style=flat&logo=bun" alt="Bun Version">
-    <img src="https://img.shields.io/badge/vue-3.5.42-4FC08D?style=flat&logo=vue.js" alt="Vue Version">
-    <img src="https://img.shields.io/badge/typescript-5.8.3-blue?style=flat&logo=typescript" alt="TypeScript Version">
-    <img src="https://img.shields.io/badge/vite-8.2.2-646CFF?style=flat&logo=vite" alt="Vite Version">
+    <a href="https://robotadmin.cn">Live demo</a> ·
+    <a href="https://www.tzagileteam.com">Component docs</a> ·
+    <a href="#quick-start">Quick start</a> ·
+    <a href="#architecture-options">Architectures</a> ·
+    <a href="#package-ecosystem">Packages</a> ·
+    <a href="./README.md">中文</a>
   </p>
   <p>
-    <img src="https://img.shields.io/badge/components-55-success?style=flat" alt="Components">
-    <img src="https://img.shields.io/badge/demos-56-orange?style=flat" alt="Demo Pages">
-    <img src="https://img.shields.io/badge/directives-11-purple?style=flat" alt="Custom Directives">
-    <img src="https://img.shields.io/badge/i18n-auto_translate-00D8FF?style=flat&logo=googletranslate" alt="Auto i18n">
-    <img src="https://img.shields.io/badge/node-%E2%89%A522.18-339933?style=flat&logo=nodedotjs" alt="Node Version">
-  </p>
-  <p>
-    <img src="https://img.shields.io/github/stars/ChenyCHENYU/robot_admin?style=social" alt="GitHub stars">
-    <img src="https://img.shields.io/github/forks/ChenyCHENYU/robot_admin?style=social" alt="GitHub forks">
-    <img src="https://img.shields.io/github/watchers/ChenyCHENYU/robot_admin?style=social" alt="GitHub watchers">
-  </p>
-
-  <!-- Quick Navigation -->
-  <p>
-    <a href="https://robotadmin.cn">
-      <img src="https://img.shields.io/badge/🚀-Live Demo-00D8FF?style=for-the-badge&logo=vercel" alt="Live Demo">
-    </a>
-    <a href="https://www.tzagileteam.com">
-      <img src="https://img.shields.io/badge/📖-Documentation-FF6B6B?style=for-the-badge&logo=gitbook" alt="Documentation">
-    </a>
-    <a href="#-quick-start-lightning-fast">
-      <img src="https://img.shields.io/badge/⚡-Quick Start-4ECDC4?style=for-the-badge&logo=rocket" alt="Quick Start">
-    </a>
-    <a href="./CONTRIBUTING.md">
-      <img src="https://img.shields.io/badge/🤝-Contributing-FFA726?style=for-the-badge&logo=github" alt="Contributing">
-    </a>
-    <a href="./README.md">
-      <img src="https://img.shields.io/badge/🌍-中文版-95E1D3?style=for-the-badge&logo=googletranslate" alt="Chinese Version">
-    </a>
+    <a href="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml"><img src="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+    <a href="./package.json"><img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-8FB6FF?style=flat-square&amp;logo=bun&amp;logoColor=white" alt="Bun ≥1.4.2"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FB6FF?style=flat-square" alt="MIT License"></a>
+    <a href="#capability-map"><img src="https://img.shields.io/badge/demos-56-orange?style=flat-square" alt="56 demo pages"></a>
+    <a href="https://github.com/ChenyCHENYU/Robot_Admin"><img src="https://img.shields.io/github/stars/ChenyCHENYU/Robot_Admin?style=flat-square&amp;label=Star" alt="GitHub Stars"></a>
   </p>
 </div>
 
----
+## Project scope
 
-<div align="center">
-  <p>
-    <strong>English</strong> | <a href="./README.md">中文</a>
-  </p>
-</div>
+**Robot Admin** is a Vue 3 enterprise admin template and the PC Web entry in the Robot ecosystem. Identity, permissions, layouts, forms, tables, editors and engineering checks are organized as composable capabilities. The application owns business configuration; independently published packages own reusable implementations.
 
-## 🎯 Multi-Architecture Support
+The current SPA mainline, **v2.7.0**, includes company-context login, system management, project analysis and usage statistics. Monorepo, Module Federation and MicroApp have separate architecture branches. Start with a single admin application or choose a structure that matches your collaboration and deployment needs.
 
-> 💡 Robot Admin supports multiple architecture branches for progressive evolution from monolith to micro-frontend. You are currently on the **Single SPA development main line** (`dev`/`main`).
+| Perspective                   | Included today                                                                                           |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Architectures                 | SPA, Bun Workspaces, Module Federation and MicroApp branches                                             |
+| Components and packages       | 55 business components, 11 directives; 7 runtime `@robot-admin/*` packages and 1 Git tooling package     |
+| Examples                      | 56 demo pages covering data entry, complex grids, workflow editing, files and media                      |
+| Verification and traceability | Dual lint, types, logic and component tests, bundle budgets, browser paint regression and build identity |
 
-<details>
-<summary><b>👉 View Architecture Comparison</b></summary>
+## Quick start
 
-| Architecture             | Use Cases                                | Features                                                           | Branch                                                                                                   | Documentation                                                                                                            |
-| ------------------------ | ---------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **🏗️ Monolithic** ←      | Small-Medium Projects, Rapid Prototyping | Simple & Direct, Out-of-Box                                        | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main)                                           | This Document                                                                                                            |
-| **📦 Monorepo**          | Multi-App Management                     | Code Reuse, Unified Toolchain, Independent Deployment              | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo)                                   | [Complete Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/GUIDE.md)                                 |
-| **🔮 Module Federation** | Dynamic Micro-App Loading                | Runtime Sharing, Independent Deployment, Version Isolation         | [`feature/module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/feature/module-federation) | [Usage Guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/feature/module-federation/docs/MODULE_FEDERATION_GUIDE.md) |
-| **🚀 Micro Frontend**    | Large Apps, Team Collaboration           | Tech Stack Agnostic, Independent Deployment, Progressive Migration | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app)                                 | [View Docs](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/README.md)                                         |
-
-</details>
-
----
-
-## 🚀 Redefining Enterprise Admin Development Experience
-
-> **🎯 An agile, developer-experience-first enterprise admin solution**
-
-_Here, when `Bun's` ultimate performance meets `Vue3's` Composition API, when `TypeScript's` type safety embraces `UnoCSS's` atomic styling..._
-
----
-
-## ⚡ Why Choose Robot Admin?
-
-### 🔥 On-Demand Loading and Verifiable Quality
-
-- **On-demand loading** - Vite 8 route chunks and component subpath imports, guarded by bundle budgets
-- **Typed integrations** - TypeScript 5.8 and the component library's public types guide consumers
-- **One Bun toolchain** - Install dependencies, run `bun run dev`, and check changes with `bun run verify`
-
-### 🎨 Not Just a Management System, But a Masterpiece
-
-- **56 demo pages** - Component and interaction examples plus 38 public preview routes; demo data is not a production backend
-- **Independent directive package** - Debounce, throttle, long press, drag, and permission helpers come from `@robot-admin/directives`
-- **Theme System** - Dark/Light mode/Follow system + Custom extension support
-
-### 🛠️ Enterprise Architecture, Personal Projects Can Also Enjoy
-
-- **RBAC Permission System** - Menu-level, button-level, API-level, fine-grained permission control
-- **Progressive Micro-frontend** - Architecture design supports smooth evolution from monolith to micro-frontend
-- **Production-Grade Engineering** - ESLint + Prettier + Husky, code quality assured
-
----
-
-## 🚀 Quick Start (Lightning Fast!)
-
-> 🎉 This project standardizes on **Bun**. Do not mix npm, yarn, or pnpm, as doing so can produce inconsistent lockfiles and dependency trees.
+Requires **Node.js ≥22.18.0** and **Bun ≥1.4.2**. [package.json](./package.json) declares dependency ranges; [bun.lock](./bun.lock) pins the actual installation.
 
 ```bash
-# 1. Clone project
 git clone https://github.com/ChenyCHENYU/Robot_Admin.git
-
-# 2. Enter directory
 cd Robot_Admin
-
-# 3. Install dependencies
-bun install
-
-# 4. Start project
+bun install --frozen-lockfile
 bun run dev
 ```
 
-Startup and hot-update times depend on the machine, cache, and local-package mode. Use measured results and the build budget to evaluate regressions.
-
-Run `bun run dev` for localhost-only access at `http://localhost:1988/`.
-Use `bun run dev:ip` to enable localhost, loopback IP, and LAN IP access together;
-the startup banner automatically shows localhost and the current network interface's
-LAN address without manually entering an IP address or `--host` argument.
-For another bind address, run `bun run dev --host <actual-local-IP> --port 1988`;
-the IP must already be assigned to a local network interface. Hot updates follow
-the page address.
-`localhost` and IP addresses are separate browser origins with independent login
-state and local settings.
-
-<details>
-<summary><b>📦 More Commands</b></summary>
-
-```bash
-# Development
-bun run dev            # Localhost-only access with version, Git branch and commit information
-bun run dev:ip         # Enable localhost and LAN IP access and show both addresses automatically
-bun run dev:banner     # Full startup banner, same as dev
-bun run dev:quiet      # Start without the console banner
-bun run dev:components # Use local naive-ui-components source for integration work
-bun run dev:table      # Use local MachTable, component, and request-core source
-bun run dev:local      # Use all local packages, component source, and MachTable source
-bun run build          # Production build
-bun run build:test     # Test environment build
-bun run build:staging  # Staging build
-bun run preview        # Preview build locally
+Open **http://localhost:1988/**. A code mirror is available on [Gitee](https://gitee.com/ycyplus163/Robot_Admin).
 
-# Code Quality
-bun run lint           # Code check and fix
-bun run lint:check     # Check without modifying files
-bun run format         # Code formatting
-bun run test           # Bun logic and contract tests
-bun run test:components # Real Vue mounting regressions (happy-dom)
-bun run verify         # Both linters + types + unit/component tests + two builds + bundle budget
-bun run test:e2e       # Browser regressions against built artifacts (install Chromium first)
-bun run check:bundle   # Check the latest production build's bundle budget
-bun run security:audit # Check dependency advisories
+| Local experience     | Details                                                                                                                    |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Administrator        | `CHENY / 123456`; complete the verification shown on the login page                                                        |
+| Company selection    | Look up company memberships after entering the account, select one before login, and switch context inside the application |
+| Permission scenarios | `STAFF` demonstrates one company; `NOACCESS` demonstrates no authorized company. Mock accepts any nonempty password        |
+| Network access       | `bun run dev` uses localhost; `bun run dev:ip` displays local and LAN addresses automatically                              |
 
-# Type Checking
-bun run type-watch     # Watch mode type checking
-bun run type-build     # Full type checking
-bun run type-build:installed # Check contracts against installed package types
+Development enables Mock by default. The public demo uses an explicit `demo` deployment profile. Real applications use `application + remote` and a backend, as described in [Business integration](#business-integration).
 
-# Others
-bun run commit         # Standardized commit (git cz)
-bun run deploy         # Bash branch-sync script; does not bump versions or create tags
-```
-
-Local integration commands use exact Vite aliases for repository sources and
-their subpath exports. npm, component, MachTable, and full-local modes use
-isolated caches without changing `package.json` or `bun.lock`. After a
-release, update the real npm versions and verify with plain `bun run dev` and
-`bun run build`. Production builds fail fast when a local-alias flag is present,
-so local paths cannot leak into release artifacts.
-
-</details>
-
----
-
-### 🔐 Authentication Mock and Backend Switching
-
-Development and test builds use closed-loop authentication and business-data Mocks by default. The enterprise login shows only password and captcha flows. `CHENY / 123456` enters its primary Jiangsu Jinheng (Nanjing) company automatically; the header switches to concurrent Jiangsu Jinheng (Xi'an) and Xi'an Tianzhi memberships, changing menus and sample business data. User management can edit primary/concurrent companies and company-specific roles. `STAFF` has one company; `NOACCESS` has none. Mock accepts any non-empty password; its local puzzle is only a UI demo, not production authentication, bot protection, or tenant isolation. The public demo must opt in with `VITE_DEPLOYMENT_PROFILE=demo`; real applications use the `application` profile and remote APIs.
-
-To connect a backend, set `VITE_DEPLOYMENT_PROFILE=application`, `VITE_AUTH_MODE=remote`, and `VITE_DATA_MODE=remote`, then configure `VITE_API_BASE`. Existing single-context remote responses still work. Real multi-tenancy additionally requires server-verified company activation and switching, context-bound tokens, and server-side data isolation. Production and staging application builds reject Mock mode. See [`docs/enterprise-auth.md`](docs/enterprise-auth.md) for the contract and integration boundary.
-
-Each build emits a read-only `/build-info.json` identity card with the app version, environment, deployment profile, Git revision, branch, and build time. It is linked from the signed-in user menu; the development server also serves it with `builtAt: null`. Inspired by the enterprise portal's `env.json`, it deliberately excludes runtime configuration, API addresses, and secrets. See [`docs/build-identity.md`](docs/build-identity.md) for the schema and caching policy.
-
-The form component integrates validation adapters, default actions, and asynchronous submission handling. Pages keep `options + config`, import rules from `/C_Form`, and add business actions through `action-extra`. No separate loading state, rule type adapter, or standard submit buttons are needed. See [form configuration](docs/form-configuration.md); dependency versions are defined by `package.json` and the lockfile.
-
-The planned federation architecture has three project types: a `systemApp` platform host including common administration, a customizable `public` portal, and a `template` for business applications. This split is planned, not yet implemented. Responsibilities, rollout stages, and acceptance criteria are recorded in [`docs/module-federation-platform-plan.md`](docs/module-federation-platform-plan.md).
-
----
-
-## ✨ Core Highlights
-
-### 🏗️ Tech Stack (Premium Arsenal)
-
-<details>
-<summary><b>View Complete Tech Stack</b></summary>
-
-Exact versions below reflect the installation in `bun.lock`; declared ranges are in `package.json`.
-
-**🎭 Frontend Core**
-
-- **Vue 3.5.42** - 🔥 Stable Composition API runtime
-- **TypeScript 5.8** - 🛡️ Type safety, intelligent hints
-- **Pinia 4.0.3** - 🍍 Type-safe modular state management
-- **Vue Router 5.3.1** - 🧭 Navigation guards and dynamic routes
-- **VueUse 14.4.0** - 🧰 On-demand composition utilities
-- **Naive UI 2.45.3** - 🎨 Component library with both beauty and performance
-- **@robot-admin/naive-ui-components** - 🧩 55 business components, auto-import on demand
-- **MachTable 0.30.1** - 🧮 Standalone virtualized data grid, route-loaded through its Vue adapter; the demo reuses `C_ActionBar` and a data-driven feature panel for watermark, density, selection, clipboard, pagination, summaries, and status bars
-- **UnoCSS 66.9.1** - ⚡ Atomic CSS, on-demand generation, minimal size
-
-**⚙️ Build Tools**
-
-- **Bun 1.4.2** - 🚀 High-performance JavaScript runtime and package manager
-- **Vite 8.2.2** - ⚡ Unified Rolldown build engine and fast hot updates
-- **Sass (^1.97.3)** - 🎨 Mature CSS preprocessor
-
-**🔧 Development Tools**
-
-- **ESLint 10.9** - 📏 Code quality guardian
-- **Prettier 3.9** - ✨ Code formatting
-- **Oxlint 1.52** - 🦀 Ultra-fast Linter written in Rust
-- **Bun Test 1.4** - 🧪 Test runtime aligned with the package manager
-- **Vitest 4 + Vue Test Utils + happy-dom** - Real Vue mounting tests for interactions and lifecycle; Playwright verifies layout and actual rendering.
-
-**📊 Functional Components**
-
-- **ECharts 6.1** - Enterprise-grade chart library
-- **AntV X6** - Professional flowchart engine
-- **FullCalendar** - Complete calendar management
-- **WangEditor** - Rich text editor
-
-</details>
-
-### 🎯 Feature Matrix
-
-#### 🔐 Permission Management
-
-- **RBAC Permission System** - User-Role-Permission, flexible assignment
-- **Dynamic Routing** - Real-time menu generation based on permissions
-- **Button-Level Permissions** - Precise control down to every action button
-- **API-Level Permissions** - API call permission control
-
-#### 🧩 Component Library (55 Ready-to-Use)
-
-<details>
-<summary><b>View All Components</b></summary>
+## Capability map
 
-**Core Components**
-
-- `C_Form` - Dynamic form engine, supports 8 layouts
-- `C_Table` - Super table with virtual scrolling support
-- `C_FormSearch` - Advanced search form component
-- `C_ActionBar` - Action button group, unified layout
-- `C_Icon` - Iconify runtime icon management system
-- `C_Theme` - Theme switching component
-- `C_Language` - i18n language switcher
-- `C_Menu` - Smart navigation menu
-- `C_Breadcrumb` - Breadcrumb navigation
-- `C_TagsView` - Tags view navigation
-- `C_GlobalSearch` - Global search panel
-- `C_Login` - Login component (5 modes / captcha / remember me)
-
-**Business Components**
-
-- `C_Code` - Code editor component
-- `C_Markdown` - Markdown editor
-- `C_Editor` - WangEditor rich text editor
-- `C_FormulaEditor` - Formula editor
-- `C_Time` - Time processing component
-- `C_Date` - Date selection component
-- `C_Progress` - Progress display component
-- `C_Upload` - File upload component
-- `C_Cron` - Cron expression editor
-- `C_Steps` - Steps component
+### Identity and workspace
 
-**Visualization & Charts**
+| Domain                     | Current implementation                                                                                          | Practical value                                                               |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Company and identity       | Company selection before login, primary and additional memberships, company roles, context switching            | Login and the workspace use the same company context                          |
+| Permissions and governance | Users, roles, permissions, menus, dictionaries, dynamic routes, button permissions and data-scope configuration | A complete frontend flow from account authorization to navigation and actions |
+| Workspace                  | 6 layouts, theme settings, tabs, menu-configured page caching and feature tours                                 | Consistent navigation and feedback at different information densities         |
+| Project analysis           | Source and dependency distribution, build artifacts, browser loading timeline and real repository counts        | Charts grounded in the current project and its engineering state              |
+| Usage statistics           | Successful-navigation PV, login and company-switch events, feature actions and route-duration percentiles       | Local browser samples by default; API integration for site-wide summaries     |
 
-- `C_AntV` - AntV X6 flowchart engine (BPMN/ER/UML)
-- `C_WorkFlow` - Vue Flow workflow editor
-- `C_VtableGantt` - Gantt chart component
-- `C_FullCalendar` - Full calendar event management
-
-**Media & Files**
-
-- `C_VideoPlayer` - XGPlayer video player (HLS/anti-cheat)
-- `C_FilePreview` - File preview (PDF/Excel/Word/Image)
-- `C_ImageCropper` - Image cropper
-- `C_Signature` - Electronic signature
-- `C_QRCode` - QR code generator
-- `C_Barcode` - Barcode generator
-- `C_AudioPlayer` - Audio player with playlist & multi-loop mode
-
-**Interactive & Layout**
-
-- `C_Draggable` - Drag and drop sorting
-- `C_SplitPane` - Split panel
-- `C_CollapsePanel` - Collapse panel
-- `C_WaterFall` - Waterfall layout
-- `C_Cascade` - Region cascade selection
-- `C_City` - City selector
-- `C_Map` - Leaflet map
-- `C_Captcha` - Verification code
-- `C_Guide` - User guide
-- `C_NotificationCenter` - Notification center
-- `C_Chat` - Chat UI with message bubbles & contact list
-- `C_Timeline` - Timeline events, vertical/horizontal layout
-- `C_ContextMenu` - Custom right-click context menu
-- `C_Transfer` - Shuttle box for cross-list data migration
-- `C_AvatarGroup` - Stacked avatar group with status badges
-
-</details>
-
-#### 🎮 Custom Directives
-
-`v-copy` Copy | `v-debounce` Debounce | `v-throttle` Throttle | `v-permission` Permission | `v-watermark` Watermark | `v-draggable` Draggable | `v-longpress` Long Press
-
-### 🎪 Demo Pages (56 Examples)
-
-<details>
-<summary><b>View All Demo Pages</b></summary>
-
-**🎨 Basic Component Showcase**
-
-- Icon Component - Complete icon system usage guide
-- Region Linkage - Province-City-District three-level linkage
-- Progress Bar - Multiple style progress displays
-- Time Component - Time selection and formatting
-- Date Picker - Date range picker
-- City Selector - City selector component
-
-**📝 Forms & Tables**
-
-- Form Layout - 8 form layout modes
-- Form Search - Advanced search functionality
-- Super Table - Various advanced table usages
-
-**✏️ Editor Showcase**
-
-- Calendar Component - FullCalendar complete functionality
-- Code Editor - Multi-language syntax highlighting
-- Markdown Editor - Real-time preview editing
-- Rich Text Editor - WangEditor complete functionality
-
-**🛠️ Practical Functions**
-
-- Export ZIP - Batch file packaging download
-- Copy Function - Text copy to clipboard
-- Batch Download - Batch file download processing
-- Drag & Drop Sort - List item drag sorting
-- 3D Display - Spline 3D scenes
-- Animation System - Smooth page transitions
-- User Guide - Onboarding guide system
-
-**💬 Interactive Components**
-
-- Chat - Instant chat UI with message bubbles & session list
-- Timeline - Timeline event display, vertical/horizontal layout
-- Context Menu - Custom right-click context menu
-- Transfer - Cross-list data migration shuttle box
-- Avatar Group - Stacked avatar display with status badges
-- Audio Player - Playlist, progress control & multi-loop modes
-
-</details>
-
----
-
-## 🏗️ Project Architecture
-
-### 📁 Directory Structure
-
-<details>
-<summary><b>View Complete Directory Structure</b></summary>
-
-```
-Robot_Admin/
-├── 📁 src/                            # Source code directory
-│   ├── 📁 api/                        # API management layer
-│   ├── 📁 components/                 # Component library
-│   │   ├── 📁 global/                 # Global components (10+ core components)
-│   │   └── 📁 local/                  # Local components
-│   ├── 📁 views/                      # Page views
-│   │   ├── 📁 dashboard/              # Data dashboard
-│   │   ├── 📁 demo/                   # 56 demo pages + 8 form layouts (64 index.vue files)
-│   │   ├── 📁 sys-manage/             # System management
-│   │   ├── 📁 login/                  # Login/Register
-│   │   ├── 📁 about/                  # Version and project information
-│   │   ├── 📁 account/                # Account center
-│   │   ├── 📁 editor/                 # Editor workspaces
-│   │   ├── 📁 error-page/             # Error pages
-│   │   ├── 📁 large-screen/           # Large-screen templates
-│   │   ├── 📁 plugins/                # Plugin demos
-│   │   ├── 📁 portal/                 # Portal layout demo
-│   │   └── 📁 home/                   # Project homepage
-│   ├── 📁 stores/                     # Pinia state management
-│   ├── 📁 composables/                # Composable APIs
-│   ├── 📁 constant/                   # Runtime constants
-│   ├── 📁 styles/                     # Global theme and style entry
-│   ├── 📁 router/                     # Router configuration
-│   ├── 📁 utils/                      # Utility functions
-│   ├── 📁 types/                      # TypeScript type definitions
-│   ├── 📁 config/                     # Environment, theme, and build configuration
-│   ├── 📁 assets/                     # Static assets
-│   └── 📁 plugins/                    # Plugin configurations
-├── 📁 scripts/                        # Build scripts
-├── 📁 public/                         # Static resources
-├── ⚙️ vite.config.ts                 # Vite configuration
-├── 🎨 unocss.config.ts                # UnoCSS configuration
-├── 📦 package.json                    # Project configuration
-└── 🔧 tsconfig.json                   # TypeScript configuration
-```
-
-</details>
-
-### 🔄 Architecture Evolution Roadmap
+Company switches update the session and clear old permissions, dynamic routes and tabs. Route registration and request responses use identity generations to reject stale results. See the [enterprise authentication contract](./docs/enterprise-auth.md) for backend context activation and isolation, and [observability](./docs/observability.md) for metric definitions.
+
+### Business components and specialist workspaces
+
+| Component domain       | Representative capabilities                                                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Forms                  | Configured fields, dynamic and cross-field rules, async submission, step and grid layouts                                                              |
+| Tables                 | `C_Table` provides consistent loading, alignment and pagination; MachTable adds virtualization, editing, selection, column state and responsive widths |
+| Editors and workflows  | Cron expressions and execution previews, formula keyboard and evaluation, code / Markdown / rich text, workflows and diagrams                          |
+| Files and media        | Excel, CSV, ZIP, upload and download, signature and crop, audio and video, preview and print scenarios                                                 |
+| Time and visualization | Date, city, calendars, timelines, Gantt, charts and large-screen templates                                                                             |
+| Application experience | Menus, search, theme, language, tours, empty states, error pages and route-loading feedback                                                            |
+
+The demo directory contains **56 demo pages + 8 form layouts (64 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
+
+> Cron previews do not schedule backend jobs; formula evaluation does not modify business data. Demo data, frontend data-scope configuration and button controls require real APIs and server authorization for production use.
+
+### Page previews
+
+|                                         Workspace · light                                          |                                       Engineering analysis · dark                                        |
+| :------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: |
+| [![Robot Admin light workspace](docs/assets/workspace-light.png)](docs/assets/workspace-light.png) | [![Robot Admin dark engineering analysis](docs/assets/analysis-dark.png)](docs/assets/analysis-dark.png) |
+
+Captured from the current SPA mainline running locally. Engineering metrics come from the current build and browser; company and account contexts are Mock fixtures.
+
+## Architecture options
+
+Choose by **collaboration model and deployment boundaries**. Each architecture lives in a separate branch with its own configuration, entry points and verification commands.
+
+| Architecture          | Current structure                                                                              | Best suited to                                                         | Code and integration                                                                                                                                                                   |
+| --------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SPA**               | Current mainline: one application, dynamic permission routes and independent npm packages      | A single admin system, a team template or an initial business delivery | [`main`](https://github.com/ChenyCHENYU/Robot_Admin/tree/main) · this document                                                                                                         |
+| **Monorepo**          | Bun Workspaces, `admin-internal` / `admin-saas` applications and shared configuration packages | Multiple products maintained together and built or deployed separately | [`monorepo`](https://github.com/ChenyCHENYU/Robot_Admin/tree/monorepo) · [upgrade guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/monorepo/docs/MONOREPO_UPGRADE.md)            |
+| **Module Federation** | Separate `remoteEntry.js` artifact, Vue bridge, logistics consumer and integration checks      | Runtime consumption of remote modules and separate releases            | [`module-federation`](https://github.com/ChenyCHENYU/Robot_Admin/tree/module-federation) · [branch guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/module-federation/README.md) |
+| **MicroApp**          | Portal, independent applications, iframe sandbox, theme and context communication              | Existing systems behind a portal and independently maintained teams    | [`micro-app`](https://github.com/ChenyCHENYU/Robot_Admin/tree/micro-app) · [upgrade guide](https://github.com/ChenyCHENYU/Robot_Admin/blob/micro-app/docs/MICRO_APP_UPGRADE.md)        |
+
+Versions and capabilities follow each branch's manifests. Switching architecture requires its integration and acceptance process. The Monorepo SaaS application is currently an architecture demonstration shell. The `systemApp / public / template` platform split is a [future plan](./docs/module-federation-platform-plan.md), distinct from the existing Module Federation branch.
+
+## Package ecosystem
+
+### Independently published, composed by responsibility
+
+Business components, framework adapters and core engines are maintained separately. Robot Admin consumes public APIs and composes them through page configuration. The packages can also be integrated into other applications according to their own documentation.
 
 ```mermaid
-graph LR
-    A[🏠 Monomer<br/>Monolithic] --> B[📦 Monorepo<br/>Multi-package]
-    B --> C[🧩 Module Federation<br/>Federation]
-    B --> D[🔗 MicroApp<br/>Micro-frontend]
-    C --> E[🚀 NestJS<br/>Full-stack]
-    D --> E
+flowchart TB
+    App[Robot Admin · Pages and domain controllers]
+    App --> UI[Business UI · Forms / Tables / Editors / Tours]
+    App --> Runtime[Runtime · Requests / Layout / Theme / Directives / Files]
+    UI --> Validation[Validation · Core rules and framework adapters]
+    App --> Grid[MachTable · Virtualized grid and Vue adapter]
+    App --> Engineering[Tooling · Build / i18n / Types / Git]
 ```
 
----
+Versions below are **the versions pinned by this application**. Upgrades follow package release notes, public contracts and application verification.
 
-## 🛠️ Developer Tools
+| Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
+| ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.14.3`       | 55 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.6.1`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
+| [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.2`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
+| [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.1`        | 6 layouts, framework-independent settings protocol, Vue Headless and Naive entry points | Host-owned menus, routes and slots; package-owned layout behavior |
+| [`@robot-admin/theme`](https://www.npmjs.com/package/@robot-admin/theme)                             | `0.6.1`        | Theme core, Vue state, Naive UI adapter, light / dark / system                          | Shared component appearance and theme state                       |
+| [`@robot-admin/directives`](https://www.npmjs.com/package/@robot-admin/directives)                   | `2.0.1`        | 11 directives for permissions, copy, drag, debounce, throttle and more                  | Declarative interactions with unmount cleanup                     |
+| [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.0.1`        | Isolated instances, Excel / CSV / ZIP, cancellable chunks and file processing           | Reusable file scenarios with heavy dependencies loaded on demand  |
+| [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`        | Configuration protection and Git engineering standards                                  | Development-time commit conventions and initialization            |
 
-### VS Code Extensions Recommended
+Sources: [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages).
 
-<details>
-<summary><b>View Complete Extension List and Usage</b></summary>
+### Data grid and engineering plugins
 
-#### Essential Extensions
+| Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
+| -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **MachTable 0.30.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, content sizing, editing and column-state persistence         |
+| Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
+| Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
+| Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
+| Branch comparison    | [`git-branch-check-diff-commits`](https://www.npmjs.com/package/git-branch-check-diff-commits) | Commit comparison through `bun run check-branch`                                                                 |
 
-- **Vue - Official** - Vue 3 official support
-- **TypeScript Vue Plugin** - TypeScript support
-- **UnoCSS** - Atomic CSS intelligent hints
-- **Naive UI Snippets** - Naive UI code snippets
+MachTable is a separate data grid project. Core and Vue / React / XLSX adapters are documented in [MachTable](https://github.com/ChenyCHENYU/MachTable). Robot Admin currently integrates the Vue adapter; ordinary business tables and dense data grids serve different scenarios.
 
-#### Detailed Practical Extensions
+### Page configuration, package-owned behavior
 
-**1. Vscode Samge Translate Extension**
+A form uses `options` for fields and `config` for validation and asynchronous saving. The component handles validation, duplicate-submission locking, loading feedback and unmount cleanup.
 
-- `desc:` For quick Chinese-English translation switching and variable naming generation
-- `use:` Ctrl+Shift+P, select Samge for corresponding functionality
-- `key:` `Alt+x` translate to Chinese, `Alt+z` translate to English
+```vue
+<script setup lang="ts">
+  import {
+    defineFormConfig,
+    defineFormOptions,
+    PRESET_RULES,
+  } from '@robot-admin/naive-ui-components/C_Form'
 
-**2. any-rule Extension**
+  defineOptions({ name: 'ContactForm' })
+  interface Contact {
+    name: string
+    email: string
+  }
+  const model = ref<Contact>({ name: '', email: '' })
+  const options = defineFormOptions<Contact>([
+    { type: 'input', prop: 'name', label: 'Name', required: true },
+    {
+      type: 'input',
+      prop: 'email',
+      label: 'Email',
+      rules: [PRESET_RULES.email('Email')],
+    },
+  ])
+  const config = defineFormConfig<Contact>({ submitText: 'Validate' })
+</script>
 
-- `desc:` For quick regex generation
-- `use:` Right-click => Regex Collection
-- `key:` `@zz` popup regex options, can visualize regex based on generated options
+<template>
+  <C_Form
+    v-model="model"
+    :options="options"
+    :config="config"
+  />
+</template>
+```
 
-**3. Better Comments Extension**
+This example uses the application's auto-import environment and validates locally. For persistence, configure `config.onSubmit` and return its Promise; see [form configuration](./docs/form-configuration.md). Cron, formulas and tours similarly use a model or step data plus configuration, reusing package-owned previews, validation and interactions.
 
-- `desc:` Color-code different comment types in JS files
-- `use:` //\* green //! red //? blue
+## Engineering and verification
 
-**4. code settings sync Extension**
+### Inspectable releases
 
-- `desc:` For quick team synchronization of vscode extensions and configurations
-- `use:` [Documentation](https://marketplace.visualstudio.com/items?itemName=Alex-Chen.gitee-code-settings-sync)
-
-**5. Code Spell Checker Extension**
-
-- `desc:` For quick checking of code and document spelling correctness
-- `use:` Add non-grammar error words to cspell.json
-- `key:` Yellow light bulb💡 above misspelled words
-
-**6. CodeSnap Extension**
-
-- `desc:` For quick code screenshot generation
-- `use:` Right-click => Bottom option CodeSnap
-
-**7. EmoJi Extension**
-
-- `desc:` For quick emoji selection
-- `use:` Input `Ctrl+Shift+P` => input `emo`
-- `key:` `F1 => emo`
-
-**8. JSON to JS Extension**
-
-- `desc:` For quick JSON to JS format conversion
-- `use:` From clipboard, select conversion, choose from 3 quote types
-- `key:` `Shift + Ctrl + Alt + V | S` or `F1 => Clipboard`
-
-**9. koroFileHeader Extension**
-
-- `desc:` For adding header comments and function comments
-- `use:` Use shortcuts in file headers or auto-generate, function comments with shortcuts
-- `key:` `ctrl+win+i` header comment `ctrl+win+t` function comment
-
-**10. TODO Tree Extension**
-
-- `desc:` For quick highlighting of TODO and other marker comments in code
-- `use:` Highlight display through comment keywords
-- `key:` TODO: Pending | BUG: Issue | FIXME: Fix needed | HACK: Custom
-
-**11. Turbo Console Log Extension**
-
-- `desc:` For quick console print statement generation
-- `use:` Select variable, press shortcut to generate print statement
-- `key:` `ctrl+alt+l` generate `alt+shift+c` comment all **+u** enable all **+d** delete all
-
-</details>
-
----
-
-## 🌍 Internationalization (i18n)
-
-`C_Language` provides the language switcher. `vite-auto-i18n-plugin` compiles UI text and loads existing dictionaries; normal development and production builds do not call translation APIs.
-
-- `src/config/i18n.ts` defines language keys (`zh-cn / en / ja / ko`), the namespace, and the `robot_admin` storage key.
-- `src/config/vite/viteI18nConfig.ts` configures scan paths and optional online generation. Build-only credentials are passed to this factory explicitly, never written to the global process environment.
-- `src/utils/d_i18n.ts` configures dictionary loaders. Chinese loads no external dictionary; other languages load only the selected dictionary.
-- `lang/en.json`, `ja.json`, and `ko.json` hold the reviewed translations.
-
-The dependency is pinned to `vite-auto-i18n-plugin@1.1.16`. Bun applies the adapters in `patches/` automatically. `/adapter` handles Vite 8 query modules, source maps, read-only offline compilation, and bounded compilation caches. `/runtime` provides lazy loading, request deduplication, latest-selection protection, storage fallbacks, namespace isolation, and bounded text caches without Node, Babel, or translation SDKs.
-
-The `auto-i18n-plugin-core@1.1.16` patch removes scan/JSX debug output and fixes escaping of multiline text, backslashes, literal interpolation, and fallback quotes. Normal development does not rewrite dictionaries or start translation timers. A missing dictionary falls back to Chinese and reports at most once per language; repaired resources can be retried. Switching languages currently reloads the page, so unsaved input is lost.
-
-After changing menus, run `bun run gen:route-i18n`. To generate new translations, configure `YOUDAO_APP_ID` and `YOUDAO_APP_KEY` in the ignored `envs/.env.local`, then run:
+| Mechanism                       | Implementation                                                                                                                   | Verification entry                                                        |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Configuration validation        | Validate environment, deployment profile and proxy URL at startup; reject Mock and local-source aliases for application releases | [Environment validation](./src/config/vite/viteEnvConfig.ts)              |
+| On-demand loading               | Route splitting, component subpaths, network/device-aware intent and idle prefetch                                               | [Build configuration](./src/config/vite/viteBuildConfig.ts)               |
+| Bundle budgets                  | Entry, preloaded JS, CSS, initial total, preload count and largest async chunk                                                   | `bun run check:bundle`                                                    |
+| Style boundaries                | Compile Vue SFCs to audit local/global CSS; check actual text painting and themes across routes                                  | `bun run check:styles` · [paint regression](./e2e/render-integrity.pw.ts) |
+| State correctness               | Logic and contract tests, actual Vue mounting, browser interactions against production artifacts                                 | `bun run test` · `test:components` · `test:e2e`                           |
+| Build traceability              | `/build-info.json` records version, environment, deployment profile, commit and build time                                       | [Build identity](./docs/build-identity.md)                                |
+| Development dependency recovery | Restart on manifest/lock fingerprints and isolate caches between modes                                                           | [Dependency watcher](./src/config/vite/viteDependencyUpdatePlugin.ts)     |
 
 ```bash
-bun run i18n:generate
+bun run verify             # Dual lint, styles, types, logic/component tests, two build modes and bundle budgets
+bunx playwright install chromium  # First browser installation
+bun run test:e2e           # Browser regression against production artifacts
 ```
 
-Review the generated dictionaries before running `bun run build`. The temporary scan build goes to `node_modules/.cache/i18n-scan`. Credentials are only for the build machine or CI, have no `VITE_` prefix, and are not shipped to the browser. Re-audit both patches and run the i18n regression tests before upgrading upstream.
+[CI](./.github/workflows/ci.yml) runs installation, verification, dependency audit, browser regression and high-DPI paint checks. Build resource sizes and browser measurements have explicit definitions in [observability](./docs/observability.md); fixed startup times or traffic numbers are not performance guarantees.
 
----
+### Project facts for AI collaboration
 
-## 📊 Performance and Bundle Budget
-
-<details>
-<summary><b>View the Reproducible Performance Gate</b></summary>
-
-Run `bun run build && bun run check:bundle` to check entry, preload, CSS, initial-resource total, and largest async chunk budgets. The demo production build on 2026-10-01 measured 306.60 KiB of entry JS, 488.85 KiB / 64 preloads, 290.60 KiB of CSS, and 1086.04 KiB in total; all passed. These are built asset sizes, not network transfer or page-load timings. The command output is the source of truth for current values.
-
-### Build Optimizations
-
-- **Tree Shaking** - Automatic dead code elimination
-- **Code Splitting** - On-demand loading, reduced initial load time
-- **Bundle budgets** - Guard initial resources and the largest async chunk after building
-
-### Runtime Optimizations
-
-- **Component Lazy Loading** - Route-level lazy loading
-- **Optional prefetch** - Progressively warm heavy routes when network and device conditions permit
-
-</details>
-
----
-
-## 💬 Community & Feedback
-
-> 🚧 **This project is actively evolving. We welcome any usage feedback, feature requests, or even complaints! There are no silly questions — only undiscovered improvements.**
-
-### 🎯 Tell Us What You Think
-
-We genuinely want to know — please reach out directly:
-
-| Feedback Type                | What you can share                                                | Where                                                                    |
-| ---------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| 🏢 **Use Cases**             | What project are you building? What problem does it solve?        | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
-| 🧩 **Component Experience**  | Which components work great? Which need polish?                   | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
-| 🚀 **Onboarding Experience** | What was confusing in the docs? What tripped you up during setup? | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
-| 💡 **Feature Requests**      | What component or capability do you wish existed?                 | [Open an Issue →](https://github.com/ChenyCHENYU/Robot_Admin/issues/new) |
-
----
-
-## 🤝 Contributing
-
-> **Come on, let's have fun! Let's build something together!** 🎉
-
-<details>
-<summary><b>View Contributing Guide</b></summary>
-
-### 🚀 30-Second Quick Contribution
+[AGENTS.md](./AGENTS.md) and the [coding guide](./.github/copilot-instructions.md) define naming, structure, imports, styles and commits. Seven project Skills cover page generation, API contracts, prototype analysis, route sync, convention audits, branch sync and Mock. The [MCP Server](./mcp/server.ts) exposes component APIs, routes, endpoints and validation presets for integrations based on real contracts.
 
 ```bash
-# 1. Fork + Clone
-git clone https://github.com/yourusername/Robot_Admin.git
-
-# 2. Install dependencies
-bun install
-
-# 3. Create branch
-git checkout -b feat/awesome-feature
-
-# 4. Commit changes
-bun run verify
-git commit -m "feat: new feature"
-
-# 5. Submit PR
+bun run mcp
 ```
 
-### 💡 Contribution Directions
+## Business integration
 
-**🎨 UI/Demo Page Contributions**
+### 1. Set the environment and data source
 
-- Create new pages under `src/views/demo/`
-- Showcase complete business scenarios
-- Code should be commented and copy-paste ready
+Configure the untracked `envs/.env.local` for local overrides or the target deployment environment:
 
-**🧩 Component Development Contributions**
-
-- Maintain reusable business components in the separate `@robot-admin/naive-ui-components` repository
-- Keep `src/components/global/` for application-specific bridges, not duplicate library implementations
-- Declare a component `name` and provide TypeScript types
-
-**🛠️ Utility Function Contributions**
-
-- Under `src/utils/` directory
-- Should have unit tests
-- Should have JSDoc comments
-
-See [Contributing Guide](./CONTRIBUTING.md) for more details.
-
-</details>
-
----
-
-## 🚀 Deployment Solutions
-
-### ☁️ Multi-Environment Support
-
-<details>
-<summary><b>View Deployment Details</b></summary>
-
-**Environment Configuration**
-
-- **Development** - Local development debugging
-- **Testing** - Feature testing validation
-- **Staging** - Pre-production validation
-- **Production** - Live production environment
-
-**Build artifacts and deployment configuration in this repository**
-
-```bash
-bun run build             # envs/.env.production: public demo artifact in dist/
-bun run build:application # envs/.env.staging: real-application staging artifact in dist/application/
+```dotenv
+VITE_DEPLOYMENT_PROFILE=application
+VITE_AUTH_MODE=remote
+VITE_DATA_MODE=remote
+VITE_API_BASE=/api
+# Local development proxy only; deployment gateways provide same-origin /api.
+API_PROXY_TARGET=https://your-api.example.com
 ```
 
-`vercel.json` supplies the repository's route fallback and security headers. Other hosting platforms need equivalent configuration. A real application also needs remote authentication, business APIs, and a same-origin proxy as described in [`envs/README.md`](envs/README.md); never deploy the public demo profile as a business application. This repository has no Dockerfile or GitHub Pages workflow.
+`bun run build` defaults to the public demo in `dist/`. `bun run build:application` creates the application staging acceptance artifact in `dist/application/`. Production business deployment requires target environment, remote APIs and gateway configuration following the [production baseline](./docs/production-readiness.md).
 
-</details>
+### 2. Align identity and domain contracts
 
----
+- Implement company lookup, authentication, context activation/switching and token rotation according to the [enterprise contract](./docs/enterprise-auth.md). The backend determines authorization and data isolation.
+- Use `@robot-admin/request-core` and explicit resource contracts. Mock and Remote implementations are separate; remote failure does not silently substitute demo data.
+- System management pages use domain controllers, column factories and configuration; templates assemble the views. Async form saves return their result through `config.onSubmit`.
+- Match `defineOptions({ name })` to route component names, configure menu `keepAlive` where needed, and clear old pages at company-session boundaries.
 
-## 📈 Roadmap
+### 3. Connect observability and hosting
 
-<details>
-<summary><b>✅ Completed Milestones</b></summary>
+Usage statistics default to anonymous local browser samples. Same-origin collection and summary APIs enable site-wide data; see [observability](./docs/observability.md). Vercel Analytics / Speed Insights require an explicit production opt-in; their service consoles provide cross-visitor reports.
 
-| Version | Date    | Highlights                                                  |
-| ------- | ------- | ----------------------------------------------------------- |
-| v1.0    | 2025-07 | Vue 3, Vite, Naive UI, and Pinia foundation                 |
-| v1.6    | 2025-10 | Theme system, UnoCSS, and demo pages                        |
-| v1.11   | 2025-12 | Component library, i18n, and performance improvements       |
-| v1.12   | 2026-02 | Independent request-core package                            |
-| v1.13   | 2026-02 | Composables and independently versioned packages            |
-| v1.14   | 2026-02 | Ten additional business components                          |
-| v2.0    | 2026-03 | Component extraction into independent npm packages          |
-| v2.1    | 2026-03 | Token refresh, permissions, and pluggable login             |
-| v2.2    | 2026-03 | Menu themes, Vite 8, and TypeScript checks                  |
-| v2.2.1  | 2026-03 | Vite 8.0.3 and style refinements                            |
-| v2.3    | 2026-04 | AI skills, MCP server, and collaboration conventions        |
-| v2.4    | 2026-04 | Design styles and glass theme                               |
-| v2.5    | 2026-08 | Route loading and grouped navigation                        |
-| v2.6    | 2026-10 | Production hardening, component integration, and demo gates |
-| v2.6.1  | 2026-10 | Documentation aligned with the implementation               |
-| v2.6.2  | 2026-10 | Login scene restored under the production CSP               |
-| v2.6.3  | 2026-10 | Scene video permitted under the production CSP              |
-| v2.7.0  | 2026-10 | Workspace experience, observability, and rendering fixes    |
+[vercel.json](./vercel.json) provides route fallback and security headers. Other static hosts need equivalent configuration and verified API, iframe allowlists and caching policies. Server authorization, real human verification and an HttpOnly Cookie authentication upgrade require backend cooperation, documented in the production baseline.
 
-</details>
+## Internationalization and design
 
-### 🚀 Next Steps
+| Topic               | Configuration and behavior                                                                                                                         |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Shared design       | CSS variables and Naive UI overrides; light / dark / system modes; 6 layouts sharing state and tokens                                              |
+| Languages           | `zh-cn / en / ja / ko`; namespace and persistence key `robot_admin`                                                                                |
+| Runtime translation | Chinese source fallback; load only the selected foreign-language dictionary; no translation API calls in ordinary development or production builds |
+| New translations    | Configure build-side Youdao credentials, explicitly run `bun run i18n:generate`, then review dictionary changes                                    |
 
-- [ ] 📈 Real-user Web Vitals and observability integration
-- [ ] 🎨 Visual low-code page templates
-- [x] 🏢 Frontend multi-tenant company and role demo (server isolation pending)
+Language switching currently refreshes once to synchronize static labels, menus and tabs, so save pending input first. `VITE_I18N_ENABLED=false` disables online generation only; existing dictionaries still work. Patch maintenance, dictionary paths and generation are documented in [internationalization](./docs/internationalization.md); themes and animation are in the [design system](./docs/design-system/README.md).
 
-### 🌟 Long-term Vision
+## Technology and structure
 
-- [ ] 🏗️ Robot Backend — NestJS full-stack service
-- [ ] 🔄 End-to-end CI/CD example
-- [ ] 🌐 More internationalization coverage
+Exact versions reflect the current lockfile. Declared ranges and the full dependency list remain in `package.json`.
 
----
+| Layer        | Current technology                                                                      |
+| ------------ | --------------------------------------------------------------------------------------- |
+| Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
+| UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
+| Build        | **Vite 8.2.2** · Bun · Sass · Auto-import and component Resolver                        |
+| Data grid    | **MachTable 0.30.1** · Vue adapter                                                      |
+| Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
-## 🌟 Ecosystem
-
-### 🔗 Core Packages (@robot-admin)
-
-| Package                                                                               | Version                                                               | Description                         |
-| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------- |
-| [naive-ui-components](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | ![npm](https://img.shields.io/npm/v/@robot-admin/naive-ui-components) | 55 business components              |
-| [layout](https://www.npmjs.com/package/@robot-admin/layout)                           | ![npm](https://img.shields.io/npm/v/@robot-admin/layout)              | 6 layouts + compact context adapter |
-| [request-core](https://www.npmjs.com/package/@robot-admin/request-core)               | ![npm](https://img.shields.io/npm/v/@robot-admin/request-core)        | Axios + useTableCrud                |
-| [form-validate](https://www.npmjs.com/package/@robot-admin/form-validate)             | ![npm](https://img.shields.io/npm/v/@robot-admin/form-validate)       | 48+ validation rules                |
-| [directives](https://www.npmjs.com/package/@robot-admin/directives)                   | ![npm](https://img.shields.io/npm/v/@robot-admin/directives)          | 11 Vue directives                   |
-| [file-utils](https://www.npmjs.com/package/@robot-admin/file-utils)                   | ![npm](https://img.shields.io/npm/v/@robot-admin/file-utils)          | Excel / ZIP / chunk upload          |
-| [theme](https://www.npmjs.com/package/@robot-admin/theme)                             | ![npm](https://img.shields.io/npm/v/@robot-admin/theme)               | Light / Dark / System               |
-| [git-standards](https://www.npmjs.com/package/@robot-admin/git-standards)             | ![npm](https://img.shields.io/npm/v/@robot-admin/git-standards)       | Git engineering standards           |
-
-### 🛠️ Related Projects
-
-<details>
-<summary><b>View All Ecosystem Projects</b></summary>
-
-**Released Projects ✅**
-
-- **[Robot CLI](https://github.com/ChenyCHENYU/robot-cli)** - Project scaffolding tool
-- **[Robot uniApp](https://github.com/ChenyCHENYU/robot-uniapp)** - UniApp mobile solution (replaces Robot Mobile)
-
-**In Progress 🚧**
-
-- **[Robot Backend](https://github.com/ChenyCHENYU/robot-backend)** - NestJS backend service
-
-**Published Plugins**
-
-- **[vite-console-plugin](https://www.npmjs.com/package/vite-console-plugin)** `v2.0.15` - Vite console beautification plugin
-- **[ts-type-cleaner](https://www.npmjs.com/package/ts-type-cleaner)** `v5.0.8` - TypeScript type analysis & cleanup tool
-- **[vite-plugin-preloader](https://www.npmjs.com/package/vite-plugin-preloader)** `v2.0.1` - Standalone route preloader (Robot Admin now uses Vite native warmup plus runtime intent prefetch instead)
-- **[git-branch-check-diff-commits](https://www.npmjs.com/package/git-branch-check-diff-commits)** `v1.2.2` - Branch diff checker
-
-</details>
-
----
-
-## 🖼️ Project Preview
-
-<table width="100%">
-<tr>
-<td width="50%" align="center">
-
-![login](https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/robot_admin/login.png)
-<br><strong>Login Page</strong>
-
-</td>
-<td width="50%" align="center">
-
-![home](https://cheny-chenyu.oss-cn-chengdu.aliyuncs.com/robot_admin/home.png)
-<br><strong>Homepage</strong>
-
-</td>
-</tr>
-</table>
-
-> **🎯 [Live Demo](https://www.robotadmin.cn/)** | **📖 [Documentation](https://www.tzagileteam.com)**
->
-> Note: If inaccessible, please disable VPN or visit [Backup URL](https://robot-admin-new.vercel.app/)
-
----
-
-## 🖥️ Browser Support
-
-**Modern Browsers, No IE**
-
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Safari |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| last 2 versions                                                                                                                                                                                       | last 2 versions                                                                                                                                                                                                   | last 2 versions                                                                                                                                                                                               | last 2 versions                                                                                                                                                                                               |
-
----
-
-## 💻 System Requirements
-
-<details>
-<summary><b>View Detailed Requirements</b></summary>
-
-### 🔧 Development Environment
-
-- **Node.js**: >= 22.18 (latest LTS recommended)
-- **Bun**: >= 1.4.2
-- **Memory**: >= 8GB RAM
-- **Storage**: >= 1GB available space
-- **OS**: Windows 10+, macOS 12+, Ubuntu 20.04+
-
-### ⚙️ Optional Tools
-
-- **VS Code**: Recommended editor
-- **Git**: >= 2.20.0
-- **Docker**: only if you add your own container configuration
-
-</details>
-
----
-
-## 🛠️ Troubleshooting
-
-<details>
-<summary><b>Common Issue Solutions</b></summary>
-
-### ❌ Bun Installation Failed
-
-```bash
-# macOS users
-brew install oven-sh/bun/bun
-
-# Windows PowerShell users can use Bun's official installer
-powershell -c "irm bun.sh/install.ps1 | iex"
+```text
+Robot_Admin/
+├── src/
+│   ├── api/                 # Resource contracts, Mock adapters and remote APIs
+│   ├── components/          # Global host components and local business components
+│   ├── composables/         # Application logic for login, layouts and caching
+│   ├── config/              # Vite, themes, tours and observability
+│   ├── constant/            # Shared application constants
+│   ├── plugins/             # Request, layout, theme and telemetry initialization
+│   ├── router/              # Permission routes and standalone previews
+│   ├── stores/              # User, permission, language and settings state
+│   ├── styles/              # Global entry and theme variables
+│   ├── types/               # Application and domain types
+│   ├── utils/               # Sessions, routes, i18n and error handling
+│   └── views/               # Home, analytics, system management and examples
+├── envs/                    # Environment and deployment profiles
+├── lang/                    # Flat per-language dictionaries
+├── patches/                 # Pinned i18n plugin adapters
+├── scripts/                 # Builds, styles, budgets and branch synchronization
+├── tests/                   # Logic, contracts and mounted component tests
+├── e2e/                     # Browser regression against production artifacts
+├── mcp/                     # Project fact tools
+└── docs/                    # Integration, design and maintenance
 ```
 
-### ⚠️ Port Occupied Issue
-
-```bash
-# Set this in the Git-ignored envs/.env.local file
-VITE_PORT=1989
-```
-
-### 🔧 TypeScript Type Errors
-
-```bash
-# Check application and configuration types
-bun run type-build
-
-# Check contracts against installed package types
-bun run type-build:installed
-```
-
-### 📦 Build Failed
-
-```bash
-# Keep the committed bun.lock and restore its exact dependencies
-bun install --frozen-lockfile
-
-# Run the complete local gate
-bun run verify
-```
-
-</details>
-
----
-
-## 🔒 Security & Permissions
-
-### 🛡️ Multi-Level Permission Control
-
-- **Page-Level Permissions** - Route access control
-- **Menu-Level Permissions** - Navigation menu display control
-- **Button-Level Permissions** - Operation button permission control
-- **API-Level Permissions** - API call permission verification
-
-### 🔐 Authentication
-
-- `JWT Token` authentication
-- Automatic refresh token renewal
-- Multi-device login management
-- Password strength validation
-
----
-
-## 🎯 Project Scope
-
-- The single-app SPA mainline includes permissions, themes, routing, and Remote/Mock data boundaries; other architectures live on separate branches.
-- Independent packages provide business components and 11 directives; the app consumes deep entries on demand and includes 56 demos under `src/views/demo/`.
-- `bun run verify` and `bun run test:e2e` provide reproducible static, build, and browser gates. Real applications still need backend integration tests.
-
----
-
-## ❓ You Might Have Some Questions
-
-<details>
-<summary><b>FAQ</b></summary>
-
-**🔧 Why use Bun consistently?**
-
-- The repository's lockfile, scripts, and tests use Bun; mixing package managers can produce different dependency trees.
-
-**🎨 How to customize themes?**
-
-1. Adjust application tokens in `src/config/theme/tokens.ts` and Naive UI overrides in `naive-overrides.ts`
-2. Use `C_Theme` for light, dark, or system mode; see the [theme architecture](docs/design-system/THEME-ARCHITECTURE.md)
-
-**🔐 How to use the permission system?**
-
-- Page level: Route guard control
-- Menu level: Dynamic menu generation
-- Button level: v-permission directive
-- API level: the backend must enforce authorization; the client request layer is not a substitute
-
-**📱 Does it support mobile?**
-
-- Responsive layouts are provided; validate each integrated business page on target devices and browsers
-
-**🔄 How to migrate from other projects?**
-
-- Use the component library's public types and the 56 demos to migrate one page at a time, then run the checks
-
-</details>
-
----
-
-## 📞 Contact Us
-
-**🧑‍💻 Author Information**
-
-- **Name:** CHENY (Frontend Developer & Agile Practitioner)
-- **Email:** [ycyplus@gmail.com](mailto:ycyplus@gmail.com)
-- **GitHub:** [@ChenyCHENYU](https://github.com/ChenyCHENYU)
-- **npm:** [@cheny_yang](https://www.npmjs.com/~cheny_yang)
-- **Public Account:** 前端咔啦咪 (WeChat Official Account)
-
----
-
-### 🤝 Contributors
-
-Thanks to all developers who contributed to this project:
-
-<a href="https://github.com/ChenyCHENYU/robot-admin/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ChenyCHENYU/robot-admin" />
-</a>
-
-**We hope you become a contributor:**
-
-- 🐛 Report Bugs | 💡 Feature Suggestions | 📝 Improve Documentation | 🔧 Submit Code | 🌍 Translate Documentation | 📢 Promote Project
-
----
-
-## 🏆 Special Thanks
-
-<details>
-<summary><b>Acknowledgment List</b></summary>
-
-### 🌟 Open Source Project Acknowledgments
-
-**Core Technologies**
-
-- **Vue.js Team** - Providing powerful framework foundation
-- **Naive UI Team** - Providing excellent component library
-- **Vite Team** - Providing ultra-fast build tools
-- **Bun Team** - Providing revolutionary runtime
-- **Anthony Fu** - Creator of UnoCSS, unplugin and other tools
-- **Evan You** - Creator of Vue.js
-
-**Functional Components**
-
-- **ECharts** - Data visualization chart library
-- **AntV X6** - Graph editing engine
-- **FullCalendar** - Calendar component
-- **WangEditor** - Rich text editor
-
-### 👨‍💻 Community Support
-
-- **All developers who starred** - Giving the project confidence and motivation
-- **Users who raised issues** - Helping the project discover and improve problems
-- **Developers who contributed PRs** - Making the project better
-- **Enterprises using the project** - Validating the project's practical value
-
-> _"One person can go fast, but a group can go far. Thanks to every friend who supports Robot Admin!"_
-
-</details>
-
----
-
-## 📄 Changelog
-
-### 🚀 v2.7.0 (2026-10-06) — Latest
-
-- Added company selection before login and improved company and role switching; fixed intermittent post-login 404s
-- Separated the architecture-focused home page from the technical archive; dashboards identify their engineering and browser-local event sources
-- Adopted the published component package `0.13.5`, skippable illustrated tours, offline translation, and development version information
-- Fixed CSS boundary violations and Chrome rendering triggers; added standard/high-DPI pixel checks and six-layout interaction coverage
-
-### 🛠️ v2.6.3 (2026-10-02)
-
-- Allowed only the embedded media needed by the Spline scene, removing the login page's media CSP error without relaxing script execution
-
-### 🛠️ v2.6.2 (2026-10-02)
-
-- Allowed only the WebAssembly compilation required by Spline in the production CSP, restoring the login robot while keeping JavaScript `eval` blocked
-
-### 📝 v2.6.1 (2026-10-01)
-
-- Updated both READMEs and the contribution, environment, and production guides; removed unverified performance claims and an outdated contact entry
-
-### 🚀 v2.6.0 (2026-10-01)
-
-- 🧩 Upgraded the business component library to `0.13.0` and simplified form, table, and demo usage
-- 🛡️ Strengthened remote data contracts, error redaction, security headers, login, and permission regressions
-- ⚡ Improved startup, route prefetching, and on-demand styles with bundle-budget checks
-- 🧪 Expanded unit and browser regression coverage and tightened type and build checks
-
-<details>
-<summary><b>Historical Versions</b></summary>
-
-### v2.5.0 (2026-08-10)
-
-- Improved grouped navigation and layout behavior
-- Moved heavy pages, editing, and file features to route-level loading
-- Adopted component subpath imports and the official resolver
-
-### 🎉 v2.2.0 (2026-03-11)
-
-- ✨ Layout system upgraded to v2.2.0
-- 🔧 env-manager upgraded to v1.0.5
-- 🛠️ Robot CLI scaffolding tool officially released
-- 📦 @robot-admin/naive-ui-components upgraded to v0.8.2 (51+ components)
-- 🐛 Multiple stability improvements
-
-### v2.1.0 (2026-03-06)
-
-- 🏗️ SaaS application extension (admin-saas)
-- 🔄 Monorepo workspace support
-- ⚡ Build performance optimization
-
-### v2.0.0 (2026-03-01) — Breaking Change
-
-- 🔄 Single-app architecture restructured (main/dev branches)
-- ⚡ Adopted the Vite 8 and Bun 1.x toolchain
-- 🧩 Components upgraded to 51+
-- 📐 UnoCSS presetWind3 migration
-- 🗑️ Removed legacy code, modular refactor
-
-### v1.14.0 (2026-02)
-
-- 🔀 Micro-frontend (micro-app branch) + Monorepo (monorepo branch)
-- 📦 core-packages refactor
-- ⚡ Bun migration
-
-### v1.13.x (2026-01)
-
-- 🧩 45+ components, 11 directives
-- 📝 54+ demo pages
-- 🎨 Theme system stability improvements
-
-### v1.0.0 (2025-11)
-
-- ✨ First official release
-- 🎨 30+ core components
-- 🛡️ Complete permission management
-
-</details>
-
-See [CHANGELOG.md](./CHANGELOG.md) for the complete version history.
-
----
-
-## 📄 Open Source License
-
-This project is based on [MIT License](./LICENSE) open source agreement.
-
-```
-MIT License
-
-Copyright (c) 2026 ChenY (Robot Admin)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
-**This means you can:**
-✅ Free to use | ✅ Modify source code | ✅ Commercial use | ✅ Private deployment | ✅ Distribute and sublicense
-
-**Only requirement:**
-📄 Retain copyright notice and license
-
----
-
-<div align="center">
-
-## 🚀 Join Robot Admin
-
-<p>
-  <strong>If this project helped you, please give it a ⭐ Star!</strong><br>
-  <em>Your Star is our motivation to move forward 🌟</em>
-</p>
-
-<p>
-  <a href="https://github.com/ChenyCHENYU/robot_admin">
-    <img src="https://img.shields.io/badge/⭐-Give a Star-yellow?style=for-the-badge&logo=github" alt="GitHub Star">
-  </a>
-  <a href="https://github.com/ChenyCHENYU/robot_admin/fork">
-    <img src="https://img.shields.io/badge/🍴-Fork Project-blue?style=for-the-badge&logo=github" alt="GitHub Fork">
-  </a>
-  <a href="https://www.robotadmin.cn">
-    <img src="https://img.shields.io/badge/🚀-Live Demo-green?style=for-the-badge&logo=vercel" alt="Live Demo">
-  </a>
-</p>
-
-<br>
-
-### 🎯 Next Steps
-
-<p>
-  🔥 <strong>Start Using</strong><br>
-  <code>git clone https://github.com/ChenyCHENYU/robot_admin.git</code><br>
-  <em>Start your project in 30 seconds</em>
-</p>
-
-<p>
-  📚 <strong>Learn Documentation</strong><br>
-  <a href="https://www.tzagileteam.com">View Complete Documentation</a><br>
-  <em>From beginner to expert</em>
-</p>
-
-<p>
-  💬 <strong>Join Discussion</strong><br>
-  <a href="https://github.com/ChenyCHENYU/robot-admin/discussions">GitHub Discussions</a><br>
-  <em>Communicate with developers</em>
-</p>
-
-<br>
-
-### 💝 Support Project Development
-
-<p>
-  <a href="https://github.com/sponsors/ChenyCHENYU">
-    <img src="https://img.shields.io/badge/💖-Sponsor Support-red?style=for-the-badge&logo=github-sponsors" alt="Sponsor">
-  </a>
-  <a href="mailto:ycyplus@gmail.com">
-    <img src="https://img.shields.io/badge/📧-Contact Author-blue?style=for-the-badge&logo=gmail" alt="Contact">
-  </a>
-</p>
-
-<br>
-
-**🤖 Robot Admin - Making Admin Development Simple and Elegant**
-
-<p>
-  <em>"Good tools should not only be powerful, but also make developers happy to use"</em><br>
-  <strong>— Robot Admin Team</strong>
-</p>
-
-<br>
-
-<p>
-  <strong>Made with ❤️ by <a href="https://github.com/ChenyCHENYU">@ChenyCHENYU</a></strong><br>
-  <em>Thanks to open source making the world better 🌍</em>
-</p>
-
-</div>
+### Common commands
+
+| Goal                                  | Command                                                           |
+| ------------------------------------- | ----------------------------------------------------------------- |
+| Standard development / LAN access     | `bun run dev` / `bun run dev:ip`                                  |
+| Quiet startup / Vue DevTools          | `bun run dev:quiet` / `bun run dev:devtools`                      |
+| Published-package type checks         | `bun run type-build`                                              |
+| Read-only code checks                 | `bun run lint:check` + `bun run lint:eslint`                      |
+| Production demo / application staging | `bun run build` / `bun run build:application`                     |
+| Artifact preview / bundle analysis    | `bun run preview` / `bun run analyze`                             |
+| Conventional commit                   | `bun run commit`                                                  |
+| Feature branch to dev / main          | `bun run deploy`; verify, merge and push; no version bump or tags |
+
+Source-package development, isolated caches, port troubleshooting and further commands are covered in the [development guide](./docs/development.md). Release Please manages application versions and formal changelogs; history lives in [CHANGELOG.md](./CHANGELOG.md).
+
+## Robot ecosystem
+
+One brand spans several delivery platforms, with each project retaining the components, toolchain and integration contracts appropriate to its platform.
+
+| Project                                                           | Scope                                                                 | Relationship to Robot Admin                            |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------ |
+| **Robot Admin**                                                   | PC enterprise admin, architecture options and package ecosystem       | Web application practice for reusable npm packages     |
+| [**Robot H5**](https://github.com/ChenyCHENYU/Robot_H5)           | Vue enterprise mobile applications in browsers and App / PDA WebViews | Mobile business workflows and host device capabilities |
+| [**Robot UniApp**](https://github.com/ChenyCHENYU/Robot_uniApp)   | uni-app for H5, WeChat mini programs and App                          | Cross-platform pages and native integrations           |
+| [**Robot H5 Core**](https://github.com/ChenyCHENYU/Robot_H5_Core) | Mobile device capabilities and platform adapters                      | Browser and host boundaries used by Robot H5           |
+| [**Robot CLI**](https://github.com/ChenyCHENYU/robot-cli)         | Project scaffolding                                                   | Template creation and initialization                   |
+| [**AgileTeam Doc**](https://www.tzagileteam.com)                  | Team engineering and component documentation                          | Component APIs, practices and standalone previews      |
+
+The cover uses Robot H5's blue-violet R / robot mark, navy grid and typography. Its SVG source and high-resolution PNG are stored locally for GitHub, Gitee and offline reading.
+
+## Documentation and contribution
+
+| Topic                               | Entry                                                                                                      |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Integration and maintenance         | [Documentation index](./docs/README.md)                                                                    |
+| Production requirements             | [Production baseline](./docs/production-readiness.md) · [Environment configuration](./envs/README.md)      |
+| Login and company sessions          | [Enterprise authentication](./docs/enterprise-auth.md)                                                     |
+| Forms and validation                | [Form configuration](./docs/form-configuration.md)                                                         |
+| Data sources and metric definitions | [Observability](./docs/observability.md)                                                                   |
+| Styles, themes and layouts          | [Design system](./docs/design-system/README.md) · [Style isolation audit](./docs/style-isolation-audit.md) |
+| Contributing                        | [Contribution guide](./CONTRIBUTING.md) · [Agent guide](./AGENTS.md)                                       |
+| Release history                     | [CHANGELOG](./CHANGELOG.md) · [Releases](https://github.com/ChenyCHENYU/Robot_Admin/releases)              |
+
+Report issues with the route, reproduction steps, browser version and build identity through [GitHub Issues](https://github.com/ChenyCHENYU/Robot_Admin/issues). Author: [CHENY](https://github.com/ChenyCHENYU) · [ycyplus@gmail.com](mailto:ycyplus@gmail.com).
+
+**MIT License**. Commercial use and modification are permitted while retaining license and copyright notices. Dependencies follow their own licenses. Thanks to the maintainers of Vue, Vite, Naive UI, UnoCSS, Bun and all ecosystem dependencies.
