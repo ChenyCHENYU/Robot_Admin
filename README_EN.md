@@ -267,7 +267,7 @@ Exact versions below reflect the installation in `bun.lock`; declared ranges are
 - **VueUse 14.4.0** - 🧰 On-demand composition utilities
 - **Naive UI 2.45.3** - 🎨 Component library with both beauty and performance
 - **@robot-admin/naive-ui-components** - 🧩 55 business components, auto-import on demand
-- **MachTable 0.29.2** - 🧮 Standalone virtualized data grid, route-loaded through its Vue adapter; the demo reuses `C_ActionBar` and a data-driven feature panel for watermark, density, selection, clipboard, pagination, summaries, and status bars
+- **MachTable 0.30.1** - 🧮 Standalone virtualized data grid, route-loaded through its Vue adapter; the demo reuses `C_ActionBar` and a data-driven feature panel for watermark, density, selection, clipboard, pagination, summaries, and status bars
 - **UnoCSS 66.9.1** - ⚡ Atomic CSS, on-demand generation, minimal size
 
 **⚙️ Build Tools**
