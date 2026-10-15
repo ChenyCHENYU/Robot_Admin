@@ -249,7 +249,12 @@ describe('menu CRUD and cache metadata', () => {
         menu => menu.name === `test-page-${suffix}`
       )!
       await expect(
-        api.moveMenuApi(firstNode.id, targetPage.id, 'inside')
+        api.moveMenuApi(
+          firstNode.id,
+          targetPage.id,
+          'inside',
+          firstNode.revision
+        )
       ).rejects.toThrow()
       expect(
         (await api.getMenuListApi()).data.some(menu => menu.id === firstNode.id)
@@ -259,6 +264,7 @@ describe('menu CRUD and cache metadata', () => {
         {
           ...draft,
           id: targetPage.id,
+          revision: targetPage.revision,
           name: targetPage.name,
           parentId: secondNode.id,
           keepAlive: true,
@@ -283,8 +289,8 @@ describe('menu CRUD and cache metadata', () => {
           .keepAlive
       ).toBe(false)
     } finally {
-      await api.deleteMenuApi(firstNode.id)
-      await api.deleteMenuApi(secondNode.id)
+      await api.deleteMenuApi(firstNode.id, firstNode.revision)
+      await api.deleteMenuApi(secondNode.id, secondNode.revision)
     }
   })
   test('业务接口拒绝不能误报保存成功，空响应和成功码正常通过', async () => {
@@ -320,6 +326,6 @@ test('菜单保存使用调用时的草稿快照，列表修改不会污染下�
       (await api.getMenuListApi()).data.find(menu => menu.id === row.id)?.name
     ).toBe(expectedName)
   } finally {
-    await api.deleteMenuApi(row.id)
+    await api.deleteMenuApi(row.id, row.revision)
   }
 })

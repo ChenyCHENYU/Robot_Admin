@@ -96,3 +96,50 @@ describe('登录提交', () => {
     expect(notification.success).toHaveBeenCalledTimes(1)
   })
 })
+
+test('待激活阶段不提示会话成功，认证错误回调只收到受控诊断', async () => {
+  const onError = vi.fn()
+  const api = vi
+    .fn()
+    .mockResolvedValueOnce({ code: '0' })
+    .mockRejectedValueOnce({
+      message: 'raw credential-secret',
+      config: {
+        data: { password: 'credential-secret' },
+        headers: { authorization: 'token-secret' },
+      },
+      response: { status: 401, data: { code: 40102, message: 'disabled' } },
+    })
+  const wrapper = mount(
+    defineComponent({
+      /** 挂载身份验证和错误诊断消费方。 */
+      setup() {
+        const controller = useLoginController({
+          loginApi: api,
+          onLoginSuccess: vi.fn(),
+          shouldNotifySuccess: () => false,
+          resolveErrorMessage: () => '账号或密码错误，请重新验证',
+          onError,
+        })
+        return () =>
+          h('button', { onClick: () => controller.handleLogin(form) }, '登录')
+      },
+    })
+  )
+  await wrapper.get('button').trigger('click')
+  await flushPromises()
+  expect(notification.success).not.toHaveBeenCalled()
+  await wrapper.get('button').trigger('click')
+  await flushPromises()
+  const error = onError.mock.calls[0][0]
+  expect(error).toBeInstanceOf(Error)
+  expect(error.message).toBe('账号或密码错误，请重新验证')
+  expect(error.status).toBe(401)
+  expect(error.code).toBe(40102)
+  expect(error.config).toBeUndefined()
+  expect(JSON.stringify(error)).not.toContain('secret')
+  expect(notification.error).toHaveBeenCalledWith({
+    content: '账号或密码错误，请重新验证',
+    duration: 3000,
+  })
+})

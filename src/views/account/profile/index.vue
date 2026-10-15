@@ -16,7 +16,10 @@
             :size="80"
             :src="profileData.avatar"
           />
-          <div class="avatar-overlay">
+          <div
+            v-if="mockMode"
+            class="avatar-overlay"
+          >
             <span class="i-mdi-camera-outline"></span>
           </div>
         </div>
@@ -75,10 +78,15 @@
       title="编辑资料"
       class="profile-form-card"
     >
+      <NAlert
+        v-if="!mockMode"
+        type="info"
+        >当前服务可保存昵称、邮箱和手机号；头像与简介暂不支持修改。</NAlert
+      >
       <C_Form
         ref="formRef"
         v-model="formData"
-        :options="PROFILE_FORM_OPTIONS"
+        :options="profileOptions"
         :config="formConfig"
       />
     </NCard>
@@ -105,6 +113,10 @@
 
   const { loading: profileLoading, run: runLatestProfileRequest } =
     useLatestRequest()
+  const mockMode = isMockDataMode()
+  const profileOptions = computed(() =>
+    PROFILE_FORM_OPTIONS.filter(option => mockMode || option.prop !== 'bio')
+  )
   const message = useMessage()
   const formRef = ref<FormInstance<ProfileFormData> | null>(null)
 
@@ -131,9 +143,24 @@
     preserveRemovedFields: true,
     submitText: '保存修改',
     onSubmit: async ({ model }, context) => {
-      await updateAccountProfileApi(model, context?.signal)
+      await updateAccountProfileApi(
+        mockMode
+          ? model
+          : {
+              nickname: model.nickname,
+              email: model.email,
+              phone: model.phone,
+            },
+        context?.signal
+      )
       if (context?.signal.aborted) return
-      Object.assign(profileData, model)
+      const updated = await getAccountProfileApi(
+        mockMode ? { ...profileData, ...model } : EMPTY_PROFILE,
+        context?.signal
+      )
+      if (context?.signal.aborted) return
+      Object.assign(profileData, updated.data)
+      Object.assign(formData.value, updated.data)
       await nextTick()
       formRef.value?.markAsClean()
       message.success('个人资料已更新')

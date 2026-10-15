@@ -92,6 +92,7 @@ export const MOCK_DICT_DATA: DictData[] = [
 export const cloneDicts = (dicts: DictData[]): DictData[] =>
   dicts.map(dict => ({
     ...dict,
+    revision: dict.revision ?? 0,
     children: dict.children ? cloneDicts(dict.children) : undefined,
   }))
 

@@ -31,7 +31,7 @@
       >
       <h2>一个账号，<br /><em>连接每个工作空间。</em></h2>
       <p
-        >登录前选好公司，在已授权的公司间从容切换。<br />角色、权限与业务数据始终跟随当前公司。</p
+        >验证账号后选择公司，在已授权的公司间从容切换。<br />角色、权限与业务数据始终跟随当前公司。</p
       >
       <div
         v-if="authMode === 'mock'"
@@ -82,8 +82,8 @@
         <div class="workspace-visual__company"
           ><span class="workspace-visual__mark">01</span
           ><div
-            ><strong>登录前选择公司</strong
-            ><small>输入账号后显示已关联公司</small></div
+            ><strong>验证账号后选择公司</strong
+            ><small>密码验证成功后显示已关联公司</small></div
           ></div
         >
         <div class="workspace-visual__company"
@@ -100,21 +100,22 @@
     <div class="login-wrapper">
       <div class="enterprise-caption">企业工作台 <span>·</span> 安全访问</div>
       <C_Login
+        :key="loginFormGeneration"
         ref="loginRef"
         title="Robot Admin"
-        subtitle="选择工作公司后登录，进入后也可随时切换"
+        subtitle="先验证账号，再按授权选择工作公司"
         :features="loginFeatures"
         storage-key="robot-admin-enterprise-login"
         :loading="loading"
-        :submit-disabled="!companyReady"
+        :submit-disabled="companyLoading || hasPendingActivation"
         :captcha-provider="LOGIN_CAPTCHA_PROVIDER"
         :captcha-challenge-url="LOGIN_CAPTCHA_CHALLENGE_URL"
         :captcha-verifier="LOGIN_CAPTCHA_VERIFIER"
         :require-captcha-server-verification="
           LOGIN_REQUIRE_CAPTCHA_SERVER_VERIFICATION
         "
-        :default-username="loginDefaults.username"
-        :default-password="loginDefaults.password"
+        :default-username="workspaceUsername || loginDefaults.username"
+        :default-password="hasPendingActivation ? '' : loginDefaults.password"
         @submit="submitLogin"
         @username-change="workspaceUsername = $event"
         @captcha-visible-change="captchaVisible = $event"
@@ -135,7 +136,7 @@
               :options="companyOptions"
               :loading="companyLoading"
               :disabled="loading || companyLoading || companies.length < 2"
-              :placeholder="companyLoading ? '正在查询公司…' : '请选择工作公司'"
+              :placeholder="companyLoading ? '正在验证…' : '验证成功后选择公司'"
               :theme-overrides="LOGIN_COMPANY_SELECT_THEME"
               :status="companyError ? 'error' : undefined"
               aria-labelledby="login-company-label"
@@ -146,13 +147,22 @@
               :class="{ 'login-workspace__hint--error': companyError }"
               >{{ translateText(companyHint) }}</p
             >
+            <NButton
+              v-if="hasPendingActivation"
+              type="primary"
+              block
+              :disabled="!companyReady"
+              :loading="companyLoading"
+              @click="activatePendingCompany"
+              >确认工作公司</NButton
+            >
             <button
-              v-if="companyError"
+              v-if="companyError || hasPendingActivation"
               type="button"
               class="login-workspace__retry"
               :disabled="loading"
-              @click="queryCompanies"
-              >重新查询</button
+              @click="restartIdentityVerification"
+              >重新验证账号</button
             >
           </div>
         </template>
@@ -162,6 +172,8 @@
 </template>
 
 <script setup lang="ts">
+  import { getAuthorizedLandingPath } from '@/router/d_routeIdentity'
+  import { s_permissionStore } from '@/stores/permission'
   import { recordTelemetry } from '@/utils/d_telemetry'
   import { initDynamicRouter } from '@/router/dynamicRouter'
   import { preloadAuthenticatedShell } from '@/router/authenticatedShell'
@@ -208,10 +220,17 @@
     companyOptions,
     companyHint,
     companyReady,
-    queryCompanies,
-    requireSelectedCompany,
+    hasPendingActivation,
+    beginLogin,
+    isCurrentLogin,
+    acceptPendingLogin,
+    failLogin,
+    beginActivation,
+    activationFailed,
+    resetCompanySelection,
   } = useLoginWorkspace()
-  let requestedContextId: string | undefined
+  const loginFormGeneration = ref(0)
+  let loginRequestId = 0
 
   const captchaVisible = ref(false)
   const robotReady = ref(false)
@@ -242,42 +261,57 @@
     handleLogin: submitLogin,
   } = useLoginController<LoginResponse>({
     loginApi: payload => {
-      requestedContextId = requireSelectedCompany(payload.username)
-      return loginApi({ ...payload, contextId: requestedContextId })
+      loginRequestId = beginLogin(payload.username)
+      return loginApi(payload)
     },
     successMessage: '登录成功',
     errorMessage: '账号或密码错误',
+    resolveErrorMessage: () => '账号或密码错误，请重新验证',
     welcomeConfig: createWelcomeConfig(),
+    shouldNotifySuccess: response => Boolean(response.data.activeContext),
 
     onLoginSuccess: async (response, formData) => {
+      if (!isCurrentLogin(loginRequestId, formData.username))
+        throw new Error('账号已变化，请重新验证')
       const contexts = response.data.availableContexts
-      if (!contexts) {
-        if (response.data.activeContext?.id !== requestedContextId)
-          throw new Error('公司会话与所选公司不一致，请重新登录')
-        await enterSession(response, formData.username)
-        return
-      }
-      const selected = resolveLoginAuthContext(contexts, requestedContextId)
       if (response.data.activeContext) {
-        if (response.data.activeContext.id !== selected.id)
-          throw new Error('公司会话与所选公司不一致，请重新登录')
+        if (!contexts) throw new Error('公司会话不完整，请重新登录')
+        resolveLoginAuthContext(contexts, response.data.activeContext.id)
         await enterSession(response, formData.username)
         return
       }
-      if (!response.data.loginTicket)
-        throw new Error('登录验证凭据缺失，请重新登录')
-      const activated = await requestActivatedSession(
-        response.data.loginTicket,
-        selected.id
-      )
-      await enterSession(activated, formData.username)
+      acceptPendingLogin(response, formData.username, loginRequestId)
+      // 通过公开key/default props更新实例，清除组件持有的旧密码，不读取私有表单。
+      loginFormGeneration.value++
     },
 
-    onError: error => {
+    onError: () => {
+      failLogin(loginRequestId)
       recordTelemetry('login_failure', { route: 'login' })
-      console.error('登录错误:', error)
     },
   })
+
+  /** 放弃待激活票据，重新验证账号；不复用旧密码或旧公司关系。 */
+  const restartIdentityVerification = () => {
+    resetCompanySelection()
+    loginFormGeneration.value++
+  }
+
+  /** 已验证身份只用一次性票据确认公司，不再次提交明文密码。 */
+  const activatePendingCompany = async () => {
+    if (!companyReady.value) return
+    const activation = beginActivation()
+    try {
+      const response = await requestActivatedSession(
+        activation.request.loginTicket,
+        activation.request.contextId
+      )
+      if (!isCurrentLogin(activation.requestId, activation.username)) return
+      await enterSession(response, activation.username)
+    } catch {
+      activationFailed(activation.requestId)
+    }
+  }
 
   /** 完整会话就绪后，再发布权限路由并进入首页。 */
   const enterSession = async (
@@ -294,7 +328,9 @@
       throw new Error('动态路由初始化失败')
     }
     recordTelemetry('login_success', { route: 'login' })
-    await router.replace('/home')
+    await router.replace(
+      getAuthorizedLandingPath(s_permissionStore().authMenuList)
+    )
   }
 
   /** 激活响应必须包含完整的上下文，而不能回退到旧版单公司会话。 */

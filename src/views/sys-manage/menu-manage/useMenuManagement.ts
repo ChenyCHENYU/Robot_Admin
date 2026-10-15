@@ -308,6 +308,7 @@ export const useMenuManagement = () => {
   }
   const resetForm = () => {
     delete formData.id
+    delete formData.revision
     Object.assign(formData, DEFAULT_FORM_DATA)
     formRef.value?.clearValidation()
   }
@@ -359,6 +360,7 @@ export const useMenuManagement = () => {
     modalMode.value = 'edit'
     Object.assign(formData, {
       id: permission.id,
+      revision: permission.revision,
       name: permission.name,
       type: 'button',
       parentId: permission.menuId,
@@ -377,7 +379,10 @@ export const useMenuManagement = () => {
         formData[key as keyof MenuFormData],
       ])
     ) as unknown as MenuFormData
-    if (formData.id) draft.id = formData.id
+    if (formData.id) {
+      draft.id = formData.id
+      draft.revision = formData.revision
+    }
     for (const field of [
       'name',
       'path',
@@ -396,6 +401,7 @@ export const useMenuManagement = () => {
     if (draft.type === 'button') {
       const permission = {
         id: draft.id,
+        revision: draft.revision,
         menuId: draft.parentId!,
         name: draft.name,
         permission: draft.permission,
@@ -461,7 +467,7 @@ export const useMenuManagement = () => {
         if (busy.value) return false
         mutating.value = true
         try {
-          await deleteMenuApi(menu.id)
+          await deleteMenuApi(menu.id, menu.revision)
           if (!isCurrentSession(generation)) return false
           navigationDirty.value ||= !isMockDataMode()
           await loadMenus()
@@ -486,7 +492,7 @@ export const useMenuManagement = () => {
         if (busy.value) return false
         mutating.value = true
         try {
-          await deleteButtonPermissionApi(permission.id)
+          await deleteButtonPermissionApi(permission.id, permission.revision)
           if (!isCurrentSession(generation)) return false
           await loadPermissions()
           message.success('权限已删除')
@@ -519,7 +525,7 @@ export const useMenuManagement = () => {
         menuList.value
       )
       if (errors.parentId) throw new Error(errors.parentId)
-      await moveMenuApi(source.id, target.id, dropPosition)
+      await moveMenuApi(source.id, target.id, dropPosition, source.revision)
       navigationDirty.value ||= !isMockDataMode()
       message.success('菜单顺序已更新')
     } catch (error) {

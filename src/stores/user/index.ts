@@ -13,6 +13,7 @@ import router from '@/router'
 import { notification } from '@/plugins/discrete'
 import { s_permissionStore } from '@/stores/permission'
 import type { AuthContext } from '@/api/auth.contract'
+import { getSafeRequestDiagnostic } from '@/utils/d_request'
 
 interface UserInfo {
   username?: string
@@ -230,7 +231,7 @@ export const s_userStore = defineStore('user', {
           })
         }
       } catch (error) {
-        console.error('退出登录失败:', error)
+        console.error('退出登录请求未完成:', getSafeRequestDiagnostic(error))
         if (!this.token) router.replace('/login')
       }
     },

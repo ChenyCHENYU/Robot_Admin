@@ -521,13 +521,15 @@
         :loading="roleUsersLoading"
         :config="{
           toolbar: { show: false },
-          pagination: {
-            showSizePicker: false,
-            showQuickJumper: false,
-            pageSize: 10,
-          },
+          pagination: false,
           display: { size: 'small', striped: true },
         }"
+      />
+      <NPagination
+        :page="roleUsersPage"
+        :item-count="roleUsersTotal"
+        :page-size="20"
+        @update:page="loadRoleUsersPage"
       />
     </NModal>
 
@@ -707,6 +709,9 @@
   const {
     loading,
     roleUsersLoading,
+    roleUsersPage,
+    roleUsersTotal,
+    loadRoleUsersPage,
     showModal,
     showRoleDetail,
     showPermissionDrawer,

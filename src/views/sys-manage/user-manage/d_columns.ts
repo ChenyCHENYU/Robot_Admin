@@ -158,10 +158,16 @@ export function createUserColumns() {
       render: createRolesRenderer,
     },
     {
-      title: TABLE_COLUMN_CONFIG.status.title,
+      title: '本公司成员',
       key: 'status',
       width: TABLE_COLUMN_CONFIG.status.width,
-      render: createTagRenderer(getUserStatusConfig, row => row.status),
+      render: row =>
+        h(NSpace, { size: 4 }, () => [
+          createTagRenderer(getUserStatusConfig, item => item.status)(row),
+          row.accountStatus === 0
+            ? h(NTag, { type: 'error', size: 'small' }, () => '账号停用')
+            : null,
+        ]),
     },
     {
       title: TABLE_COLUMN_CONFIG.createTime.title,

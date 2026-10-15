@@ -5,6 +5,7 @@
  * @Description: 菜单和按钮权限请求适配，隔离远端与演示 CRUD 并按公司保存缓存策略
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { assertMockRevision, requireRevision } from './management-revision'
 import type { ApiResponse } from './management.contract'
 import type {
   MenuData,
@@ -49,6 +50,7 @@ export const getMenuListApi = async (
   const applyPolicy = (menus: MenuData[]): MenuData[] =>
     menus.map(menu => ({
       ...menu,
+      revision: menu.revision ?? 0,
       keepAlive:
         menu.type === 'menu' &&
         (Object.prototype.hasOwnProperty.call(policy, menu.id)
@@ -80,7 +82,10 @@ export const getButtonPermissionsApi = async (
     : MOCK_BUTTON_PERMISSIONS
   return {
     code: '0',
-    data: filteredPermissions.map(permission => ({ ...permission })),
+    data: filteredPermissions.map(permission => ({
+      ...permission,
+      revision: permission.revision ?? 0,
+    })),
     msg: '成功',
   }
 }
@@ -96,6 +101,7 @@ export const addMenuApi = async (data: MenuFormData): Promise<void> => {
   assertValidDraft(draft)
   const record: MenuData = {
     ...draft,
+    revision: 0,
     id: `menu_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
     children: draft.type === 'directory' ? [] : undefined,
   }
@@ -126,7 +132,7 @@ export const updateMenuApi = async (
   data: MenuFormData,
   contextId = 'default'
 ): Promise<void> => {
-  const draft = { ...data }
+  const draft = { ...data, revision: requireRevision(data.revision) }
   if (!isMockDataMode()) {
     if (!draft.id) throw new Error('更新菜单缺少 id')
     await checkMenuMutation(putData(`/sys/menus/${draft.id}`, draft))
@@ -137,10 +143,11 @@ export const updateMenuApi = async (
   assertValidDraft(draft)
   const current = findMockMenu(draft.id)
   if (!current) throw new Error('菜单不存在')
+  assertMockRevision(current.revision, draft.revision)
   relocateMockMenu(current, draft.parentId)
   // 缓存策略属于公司上下文，不写入共享演示目录。
   const { keepAlive, ...fields } = draft
-  Object.assign(current, fields)
+  Object.assign(current, fields, { revision: draft.revision + 1 })
   setMockMenuCachePolicy(
     contextId,
     current.id,
@@ -149,19 +156,27 @@ export const updateMenuApi = async (
 }
 
 /** 删除菜单及下级按钮权限。 */
-export const deleteMenuApi = async (id: string): Promise<void> => {
+export const deleteMenuApi = async (
+  id: string,
+  expectedRevision?: number
+): Promise<void> => {
+  const revision = requireRevision(expectedRevision)
   if (!isMockDataMode()) {
-    await checkMenuMutation(deleteData(`/sys/menus/${id}`))
+    await checkMenuMutation(
+      deleteData(`/sys/menus/${id}`, { params: { expectedRevision: revision } })
+    )
     return
   }
   await delayWithSignal(250)
   const current = findMockMenu(id)
   if (!current) throw new Error('菜单不存在')
+  assertMockRevision(current.revision, revision)
   const removedIds = new Set(collectMenuIds(current))
   if (!removeMockMenu(id)) throw new Error('菜单不存在')
   for (let index = MOCK_BUTTON_PERMISSIONS.length - 1; index >= 0; index--) {
     const menuId = MOCK_BUTTON_PERMISSIONS[index]?.menuId
     if (menuId && removedIds.has(menuId)) {
+      assertMockRevision(MOCK_BUTTON_PERMISSIONS[index].revision, revision)
       MOCK_BUTTON_PERMISSIONS.splice(index, 1)
     }
   }
@@ -219,17 +234,23 @@ const moveMockMenu = (
 export const moveMenuApi = async (
   dragId: string,
   targetId: string,
-  position: MenuDropPosition
+  position: MenuDropPosition,
+  expectedRevision?: number
 ): Promise<void> => {
+  const revision = requireRevision(expectedRevision)
   if (!isMockDataMode()) {
     await checkMenuMutation(
-      putData(`/sys/menus/${dragId}/move`, { targetId, position })
+      putData(`/sys/menus/${dragId}/move`, { targetId, position, revision })
     )
     return
   }
 
   await delayWithSignal(200)
+  const current = findMockMenu(dragId)
+  if (!current) throw new Error('菜单不存在')
+  assertMockRevision(current.revision, revision)
   moveMockMenu(dragId, targetId, position)
+  current.revision = revision + 1
 }
 
 /** 新增按钮权限并校验页面归属。 */
@@ -247,6 +268,7 @@ export const addButtonPermissionApi = async (
   assertValidPermission(draft)
   MOCK_BUTTON_PERMISSIONS.push({
     ...draft,
+    revision: 0,
     id: `btn_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
   })
 }
@@ -255,7 +277,7 @@ export const addButtonPermissionApi = async (
 export const updateButtonPermissionApi = async (
   data: ButtonPermission
 ): Promise<void> => {
-  const draft = { ...data }
+  const draft = { ...data, revision: requireRevision(data.revision) }
   if (!isMockDataMode()) {
     await checkMenuMutation(putData(`/sys/menu-buttons/${draft.id}`, draft))
     return
@@ -264,18 +286,28 @@ export const updateButtonPermissionApi = async (
   assertValidPermission(draft)
   const index = MOCK_BUTTON_PERMISSIONS.findIndex(item => item.id === draft.id)
   if (index < 0) throw new Error('按钮权限不存在')
-  MOCK_BUTTON_PERMISSIONS[index] = { ...draft }
+  assertMockRevision(MOCK_BUTTON_PERMISSIONS[index].revision, draft.revision)
+  MOCK_BUTTON_PERMISSIONS[index] = { ...draft, revision: draft.revision + 1 }
 }
 
 /** 删除指定按钮权限。 */
-export const deleteButtonPermissionApi = async (id: string): Promise<void> => {
+export const deleteButtonPermissionApi = async (
+  id: string,
+  expectedRevision?: number
+): Promise<void> => {
+  const revision = requireRevision(expectedRevision)
   if (!isMockDataMode()) {
-    await checkMenuMutation(deleteData(`/sys/menu-buttons/${id}`))
+    await checkMenuMutation(
+      deleteData(`/sys/menu-buttons/${id}`, {
+        params: { expectedRevision: revision },
+      })
+    )
     return
   }
   await delayWithSignal(200)
   const index = MOCK_BUTTON_PERMISSIONS.findIndex(item => item.id === id)
   if (index < 0) throw new Error('按钮权限不存在')
+  assertMockRevision(MOCK_BUTTON_PERMISSIONS[index].revision, revision)
   MOCK_BUTTON_PERMISSIONS.splice(index, 1)
 }
 

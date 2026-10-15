@@ -187,6 +187,11 @@
                 vertical
                 :size="16"
               >
+                <NAlert
+                  v-if="currentUser.accountStatus === 0"
+                  type="warning"
+                  >全局账号已停用；启用本公司成员不会恢复账号访问。</NAlert
+                >
                 <NSpace
                   align="center"
                   justify="center"

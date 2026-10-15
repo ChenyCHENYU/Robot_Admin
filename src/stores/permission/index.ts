@@ -19,6 +19,7 @@ import {
 } from '@/api/permission-manage'
 import { getKeepAliveRouterName, getShowMenuList } from '@/utils/d_route'
 import { collectRoutePaths } from '@/router/routePath'
+import { isAuthenticatedAccountPath } from '@/router/authenticatedRoutes'
 import type { DynamicRoute } from '@/router/dynamicRouter'
 import type { AuthContext } from '@/api/auth.contract'
 import type {
@@ -136,8 +137,10 @@ export const s_permissionStore = defineStore('permission', {
      * ! @return {boolean} 是否有访问权限
      */
     hasRoutePermission(path: string): boolean {
-      // 空列表表示尚未初始化，放行（由守卫初始化逻辑处理）
-      if (this.flatRoutePaths.length === 0) return true
+      // 个人资料/安全/本人日志无需业务角色；导航守卫仍先验证token。
+      if (isAuthenticatedAccountPath(path)) return true
+      // 初始化由独立 generation 管理；已加载的空授权清单必须拒绝业务路由。
+      if (this.flatRoutePaths.length === 0) return false
       return this.flatRoutePaths.includes(path)
     },
 

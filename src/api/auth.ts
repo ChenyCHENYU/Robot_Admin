@@ -10,6 +10,7 @@ import DynamicRouter from '@/assets/data/dynamicRouter.json'
 import { applyMockMenuCachePolicy } from './menu-cache.mock'
 import { getData, postData } from '@robot-admin/request-core/axios'
 import type { DynamicRoute } from '@/router/dynamicRouter'
+import { withoutLegacyAccountMenus } from '@/router/authenticatedRoutes'
 import {
   resolveAuthMode,
   type ActivateAuthContextRequest,
@@ -17,6 +18,7 @@ import {
   type LoginRequest,
   type LoginResponse,
   type LoginCompaniesResponse,
+  type LoginCompaniesRequest,
   type RefreshTokenResponse,
 } from './auth.contract'
 import {
@@ -97,23 +99,43 @@ export const getAuthMode = (): typeof AUTH_MODE => AUTH_MODE
  * * @description: 获取用户菜单权限列表
  * ! @return {Promise<AuthMenuResponse>} 动态菜单路由配置数据
  */
-export const getAuthMenuListApi = (
+export const getAuthMenuListApi = async (
   context?: AuthContext | null
-): Promise<AuthMenuResponse> =>
-  AUTH_MODE === 'mock'
-    ? Promise.resolve({
-        ...DynamicRouter,
-        data: applyMockMenuCachePolicy(
-          DynamicRouter.data as DynamicRoute[],
-          context?.id
-        ).filter(route => isMockRouteAllowed(context ?? null, route.path)),
-      })
-    : getData<AuthMenuResponse>('/auth/menu-list')
+): Promise<AuthMenuResponse> => {
+  const response =
+    AUTH_MODE === 'mock'
+      ? {
+          ...DynamicRouter,
+          data: applyMockMenuCachePolicy(
+            DynamicRouter.data as DynamicRoute[],
+            context?.id
+          ).filter(route => isMockRouteAllowed(context ?? null, route.path)),
+        }
+      : await getData<AuthMenuResponse>('/auth/menu-list')
+  return Array.isArray(response.data)
+    ? { ...response, data: withoutLegacyAccountMenus(response.data) }
+    : response
+}
 
-/** 按账号发现可选公司，不提前创建登录会话。 */
-export const getLoginCompaniesApi = (
-  username: string
-): Promise<LoginCompaniesResponse> =>
-  AUTH_MODE === 'mock'
-    ? getLoginCompaniesMockApi(username)
-    : postData<LoginCompaniesResponse>('/auth/login-companies', { username })
+/** 显式凭据发现工具；密码只进入POST体，主页面不进行账号预发现。 */
+export const getLoginCompaniesApi = async (
+  request: LoginCompaniesRequest
+): Promise<LoginCompaniesResponse> => {
+  const username = request.username.trim()
+  if (!username || !request.password?.trim()) throw new Error('账号或密码错误')
+  const payload = { username, password: request.password }
+  try {
+    const response =
+      AUTH_MODE === 'mock'
+        ? await getLoginCompaniesMockApi(payload)
+        : await postData<LoginCompaniesResponse>(
+            '/auth/login-companies',
+            payload
+          )
+    if (String(response.code) !== '0') throw new Error('账号验证失败')
+    return response
+  } catch {
+    // 不向调用方传播携带config/data/header的原始Axios错误。
+    throw new Error('账号或密码错误或验证暂不可用，请重试')
+  }
+}

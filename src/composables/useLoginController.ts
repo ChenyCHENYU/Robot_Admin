@@ -22,6 +22,7 @@ import type {
   CaptchaFormData,
   RegisterFormData,
 } from '@robot-admin/naive-ui-components/C_Login'
+import { getSafeRequestDiagnostic } from '@/utils/d_request'
 
 // ======================== Types ========================
 
@@ -88,6 +89,8 @@ export interface UseLoginControllerOptions<
   successMessage?: string
   /** 登录失败提示文字 */
   errorMessage?: string
+  /** 认证页面用统一文案，不透传不同账号状态或原始请求错误。 */
+  resolveErrorMessage?: (error: unknown) => string
   /** 身份验证后是否立即提示成功，供多阶段登录延迟到上下文激活。 */
   shouldNotifySuccess?: (response: TResponse) => boolean
 
@@ -199,14 +202,13 @@ export function useLoginController<
   /** 处理登录错误 */
   const handleLoginError = (error: unknown) => {
     const msg =
-      error instanceof Error
+      options.resolveErrorMessage?.(error) ??
+      (error instanceof Error
         ? error.message
-        : (options.errorMessage ?? '登录失败')
+        : (options.errorMessage ?? '登录失败'))
     notification.error({ content: msg, duration: 3000 })
     options.onError?.(
-      error instanceof Error
-        ? error
-        : new Error(options.errorMessage ?? '登录失败')
+      Object.assign(new Error(msg), getSafeRequestDiagnostic(error))
     )
     loginRef.value?.resetCaptcha()
   }

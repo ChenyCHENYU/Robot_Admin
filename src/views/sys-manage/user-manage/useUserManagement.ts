@@ -127,6 +127,8 @@ export function useUserManagement() {
   const isAllExpanded = ref(false)
   const currentUser = ref<UserData | null>(null)
   const currentResetUserId = ref<string>('')
+  const resetRevision = ref<number>()
+  const resetMembershipRevision = ref<number>()
 
   const userList = reactive<UserData[]>([])
   const deptList = reactive<DeptData[]>([])
@@ -219,16 +221,6 @@ export function useUserManagement() {
   )
 
   // ==================== 辅助函数 ====================
-  const updateUserInList = (userId: string, updates: Partial<UserData>) => {
-    const index = userList.findIndex(item => item.id === userId)
-    if (index !== -1) userList[index] = { ...userList[index], ...updates }
-
-    // 更新当前用户详情
-    if (currentUser.value?.id === userId) {
-      currentUser.value = { ...currentUser.value, ...updates }
-    }
-  }
-
   const getRowClassName = (row: UserData) =>
     row.status === 0 ? 'disabled-row' : ''
   const rowKey = (row: UserData) => row.id
@@ -287,7 +279,8 @@ export function useUserManagement() {
     },
     {
       key: 'deptName',
-      label: '所属部门',
+      label: '公司主部门',
+      help: '仅维护当前公司成员的主部门，其他公司独立保存',
       value: user.deptName || '-',
       component: NTag,
       props: {
@@ -316,7 +309,7 @@ export function useUserManagement() {
       : []),
     {
       key: 'status',
-      label: '用户状态',
+      label: '本公司成员状态',
       value: getUserStatusConfig(user.status).text,
       component: NTag,
       props: { type: getUserStatusConfig(user.status).type, size: 'small' },
@@ -337,6 +330,7 @@ export function useUserManagement() {
   const formOptions = computed<FormOption<UserFormData>[]>(() => [
     {
       prop: 'userType',
+      show: mockMode,
       rules: USER_FORM_RULES.userType,
       label: '用户类型',
       type: 'select',
@@ -381,7 +375,8 @@ export function useUserManagement() {
     {
       prop: 'deptId',
       rules: USER_FORM_RULES.deptId,
-      label: '所属部门',
+      label: '公司主部门',
+      help: '仅维护当前公司成员的主部门，其他公司独立保存',
       type: 'treeSelect',
       attrs: {
         options: deptTreeOptions.value,
@@ -392,7 +387,7 @@ export function useUserManagement() {
         labelField: 'name',
         childrenField: 'children',
       },
-      show: formData.userType === 'internal',
+      show: !mockMode || formData.userType === 'internal',
     },
     {
       prop: 'companyName',
@@ -400,7 +395,7 @@ export function useUserManagement() {
       label: '公司名称',
       type: 'input',
       attrs: { placeholder: '请输入公司名称' },
-      show: formData.userType === 'external',
+      show: mockMode && formData.userType === 'external',
     },
     {
       prop: 'contactPerson',
@@ -408,7 +403,7 @@ export function useUserManagement() {
       label: '联系人',
       type: 'input',
       attrs: { placeholder: '请输入联系人' },
-      show: formData.userType === 'external',
+      show: mockMode && formData.userType === 'external',
     },
     {
       prop: 'roleIds',
@@ -437,7 +432,7 @@ export function useUserManagement() {
     {
       prop: 'status',
       rules: USER_FORM_RULES.status,
-      label: '用户状态',
+      label: '本公司成员状态',
       type: 'userStatus',
       attrs: {
         checkedValue: 1,
@@ -542,24 +537,42 @@ export function useUserManagement() {
     })
   }
   const batchDeleteUsers = async (ids: string[]) => {
-    await Promise.all(ids.map(deleteUserApi))
+    await Promise.all(
+      ids.map(id => {
+        const row = userList.find(user => user.id === id)
+        if (!row) throw new Error('选中的用户已不在当前列表，请重新选择')
+        return deleteUserApi(
+          id,
+          row.membershipRevision,
+          userStore.activeContext?.id
+        )
+      })
+    )
   }
   const batchToggleUsers = async (ids: string[]) => {
     await Promise.all(
       ids.map(async id => {
         const row = userList.find(user => user.id === id)
         if (!row) throw new Error('选中的用户已不在当前列表，请重新选择')
-        await updateUserStatusApi(id, row.status === 1 ? 0 : 1)
+        await updateUserStatusApi(
+          id,
+          row.status === 1 ? 0 : 1,
+          row.membershipRevision,
+          userStore.activeContext?.id
+        )
       })
     )
   }
   const handleAddUserData = async (draft: UserFormData) => {
-    await createUserApi(draft)
+    await createUserApi({ ...draft, contextId: userStore.activeContext?.id })
     message.success('添加成功')
   }
   const handleUpdateUserData = async (draft: UserFormData) => {
     if (!draft.id) throw new Error('用户ID不存在')
-    await updateUserApi(draft.id, draft)
+    await updateUserApi(draft.id, {
+      ...draft,
+      contextId: userStore.activeContext?.id,
+    })
     message.success('修改成功')
   }
 
@@ -615,6 +628,8 @@ export function useUserManagement() {
   const handleAddUserModal = (deptId?: string) => {
     modalMode.value = 'add'
     delete formData.id
+    delete formData.revision
+    delete formData.membershipRevision
     Object.assign(formData, DEFAULT_USER_FORM_DATA)
     formData.memberships = [
       {
@@ -635,12 +650,14 @@ export function useUserManagement() {
     modalMode.value = 'edit'
     Object.assign(formData, {
       id: user.id,
+      revision: user.revision,
+      membershipRevision: user.membershipRevision,
       username: user.username,
       nickname: user.nickname,
       email: user.email || '',
       phone: user.phone || '',
-      userType: user.userType,
-      deptId: user.deptId,
+      userType: user.userType ?? 'internal',
+      deptId: user.deptId ?? null,
       roleIds: user.roleIds || [],
       status: user.status,
       remark: user.remark || '',
@@ -661,11 +678,13 @@ export function useUserManagement() {
     const statusText = newStatus === 1 ? '启用' : '禁用'
 
     try {
-      await updateUserStatusApi(user.id, newStatus)
-      updateUserInList(user.id, {
-        status: newStatus,
-        updateTime: new Date().toLocaleString(),
-      })
+      await updateUserStatusApi(
+        user.id,
+        newStatus,
+        user.membershipRevision,
+        userStore.activeContext?.id
+      )
+      await loadUsers()
       message.success(`${statusText}成功`)
     } catch (error) {
       message.error(
@@ -676,7 +695,13 @@ export function useUserManagement() {
 
   const handleDeleteUser = async (id: string) => {
     try {
-      await deleteUserApi(id)
+      const row = userList.find(user => user.id === id)
+      if (!row) throw new Error('用户快照已失效，请刷新后重试')
+      await deleteUserApi(
+        id,
+        row.membershipRevision,
+        userStore.activeContext?.id
+      )
       message.success('删除成功')
       await loadUsers()
     } catch {
@@ -690,6 +715,8 @@ export function useUserManagement() {
       return
     }
     currentResetUserId.value = user.id
+    resetRevision.value = user.revision
+    resetMembershipRevision.value = user.membershipRevision
     Object.assign(resetPasswordForm, DEFAULT_RESET_PASSWORD_FORM)
     showResetPasswordModal.value = true
   }
@@ -700,9 +727,13 @@ export function useUserManagement() {
       if (!currentResetUserId.value) throw new Error('未选择需要重置的用户')
       await resetUserPasswordApi(
         currentResetUserId.value,
-        resetPasswordForm.newPassword
+        resetPasswordForm.newPassword,
+        resetRevision.value,
+        resetMembershipRevision.value,
+        userStore.activeContext?.id
       )
       message.success('密码重置成功')
+      await loadUsers()
     } catch (error) {
       throw error instanceof Error ? error : new Error('密码重置失败')
     }

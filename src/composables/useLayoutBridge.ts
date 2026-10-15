@@ -14,6 +14,7 @@
  */
 
 import { provideLayout, type LayoutContext } from '@robot-admin/layout/naive'
+import { getAuthorizedLandingPath } from '@/router/d_routeIdentity'
 import { s_permissionStore } from '@/stores/permission'
 import { s_themeStore } from '@/stores/theme'
 import { s_settingsStore } from '@/stores/settings'
@@ -44,7 +45,10 @@ export function useLayoutBridge(): LayoutContext {
       logoSrc: '/menu-too-logo.webm',
       logoType: 'video',
       logoSize: 36,
-      homePath: '/home',
+      /** 根据当前授权清单更新品牌返回入口。 */
+      get homePath() {
+        return getAuthorizedLandingPath(permissionStore.authMenuList)
+      },
     },
     iconComponent: C_Icon,
   })

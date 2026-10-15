@@ -14,6 +14,9 @@ export interface MockCompanyMembership {
   contextId: string
   isPrimary: boolean
   roleId: MockCompanyRole
+  departmentId?: string | null
+  enabled?: boolean
+  revision?: number
 }
 export interface MockDirectoryUser {
   username: string
@@ -271,17 +274,32 @@ export const removeMockDirectoryUser = (username: string): void => {
 export const getMockAuthContexts = (username: string): AuthContext[] => {
   const user = getMockDirectoryUser(username)
   if (!user?.enabled) return []
-  return user.memberships.flatMap(membership => {
-    const company = COMPANY_CATALOG.find(
-      item => item.id === membership.contextId
-    )
-    if (!company) return []
-    return [
-      {
-        ...company,
-        isPrimary: membership.isPrimary,
-        roles: [{ id: membership.roleId, name: ROLE_NAMES[membership.roleId] }],
-      },
-    ]
-  })
+  const contexts = user.memberships
+    .filter(membership => membership.enabled !== false)
+    .flatMap(membership => {
+      const company = COMPANY_CATALOG.find(
+        item => item.id === membership.contextId
+      )
+      if (!company) return []
+      return [
+        {
+          ...company,
+          isPrimary: membership.isPrimary,
+          roles: [
+            { id: membership.roleId, name: ROLE_NAMES[membership.roleId] },
+          ],
+        },
+      ]
+    })
+  // 默认只由有效清单派生，不改存储主公司；显式选择和已认证上下文仍按 ID 校验。
+  if (contexts.length && !contexts.some(context => context.isPrimary)) {
+    const fallback = [...contexts].sort((left, right) =>
+      left.id.localeCompare(right.id)
+    )[0]
+    return contexts.map(context => ({
+      ...context,
+      isPrimary: context.id === fallback.id,
+    }))
+  }
+  return contexts
 }

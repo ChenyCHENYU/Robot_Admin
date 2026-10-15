@@ -59,6 +59,7 @@ export const DATA_SCOPE_OPTIONS = Object.entries(DATA_SCOPE_CONFIG).map(
 // ==================== 临时授权 ====================
 
 export const TEMP_AUTH_STATUS_CONFIG = {
+  pending: { text: '未生效', type: 'info' as const, icon: 'mdi:clock-outline' },
   active: {
     text: '生效中',
     type: 'success' as const,

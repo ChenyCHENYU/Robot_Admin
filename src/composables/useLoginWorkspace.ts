@@ -1,76 +1,90 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-10-05
+ * @Date: 2026-10-14
  * @FilePath: \Robot_Admin\src\composables\useLoginWorkspace.ts
- * @Description: 登录前按账号查询公司，隔离旧请求与旧账号的选择状态
+ * @Description: 身份验证后的公司选择与一次性激活票据，仅保存在页面生命周期内
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import { getLoginCompaniesApi } from '@/api/auth'
-import type { LoginCompany } from '@/api/auth.contract'
+import type {
+  ActivateAuthContextRequest,
+  LoginCompany,
+  LoginResponse,
+} from '@/api/auth.contract'
 
-/** 将账号输入与公司查询、默认选择和提交前校验连接起来。 */
+/** 公司清单只接收已证明密码的登录响应；页面不持有密码或预发现账号关系。 */
 export const useLoginWorkspace = () => {
   const username = ref('')
   const companies = ref<LoginCompany[]>([])
   const selectedCompanyId = ref<string | null>(null)
   const companyLoading = ref(false)
   const companyError = ref('')
+  const pendingTicket = ref('')
+  let verifiedUsername = ''
   let sequence = 0
-  let timer: ReturnType<typeof setTimeout> | undefined
-  let resolvedUsername = ''
 
-  /** 收敛请求失败文案。 */
-  const getCompanyError = (error: unknown) =>
-    error instanceof Error ? error.message : '公司查询失败，请重试'
-
-  /** 未绑定公司不构造默认项；多主公司拒绝猜测选择。 */
-  const getDefaultCompany = (
-    list: LoginCompany[]
-  ): LoginCompany | undefined => {
-    if (!list.length) return undefined
-    const primary = list.filter(company => company.isPrimary)
-    if (primary.length !== 1)
-      throw new Error('主公司配置异常，请联系企业管理员')
-    return primary[0]
-  }
-
-  /** 忽略已经换账号或卸载页面的查询结果。 */
-  const loadCompanies = async (account: string, requestId: number) => {
-    try {
-      const response = await getLoginCompaniesApi(account)
-      if (requestId !== sequence) return
-      if (String(response.code) !== '0')
-        throw new Error(response.msg || '公司查询失败')
-      const list = response.data.companies
-      const primary = getDefaultCompany(list)
-      companies.value = list
-      selectedCompanyId.value = primary?.id ?? null
-      resolvedUsername = account
-    } catch (error) {
-      if (requestId === sequence) companyError.value = getCompanyError(error)
-    } finally {
-      if (requestId === sequence) companyLoading.value = false
-    }
-  }
-
-  /** 输入立即使旧选择失效，短暂防抖后查询新账号。 */
-  const queryCompanies = () => {
-    const requestId = ++sequence
-    if (timer) clearTimeout(timer)
+  /** 改账号、重新验证或离开页面立即使原票据与选择失效。 */
+  const resetCompanySelection = () => {
+    sequence++
     companies.value = []
     selectedCompanyId.value = null
+    pendingTicket.value = ''
+    verifiedUsername = ''
     companyError.value = ''
-    resolvedUsername = ''
-    const account = username.value.trim()
-    companyLoading.value = Boolean(account)
-    if (!account) return
-    timer = setTimeout(() => void loadCompanies(account, requestId), 300)
+    companyLoading.value = false
   }
-  watch(() => username.value.trim(), queryCompanies, { flush: 'sync' })
-  onBeforeUnmount(() => {
-    sequence++
-    if (timer) clearTimeout(timer)
-  })
+  watch(() => username.value.trim(), resetCompanySelection, { flush: 'sync' })
+  onBeforeUnmount(resetCompanySelection)
+
+  /** 记录本次登录代次；旧请求不能恢复已失效的账号或票据。 */
+  const beginLogin = (account: string): number => {
+    username.value = account.trim()
+    resetCompanySelection()
+    companyLoading.value = true
+    return sequence
+  }
+
+  /** 登录和激活都只接受本页面当前账号、当前代次的结果。 */
+  const isCurrentLogin = (requestId: number, account: string): boolean =>
+    requestId === sequence && account.trim() === username.value.trim()
+
+  /** 身份成功后保留唯一默认公司；元数据异常时拒绝猜测或发布票据。 */
+  const acceptPendingLogin = (
+    response: LoginResponse,
+    account: string,
+    requestId: number
+  ): void => {
+    if (!isCurrentLogin(requestId, account))
+      throw new Error('账号已变化，请重新验证')
+    const contexts = response.data.availableContexts ?? []
+    const primary = contexts.filter(context => context.isPrimary)
+    if (!contexts.length || primary.length !== 1)
+      throw new Error('可用公司配置异常，请重新验证并联系管理员')
+    if (
+      !response.data.loginTicket ||
+      response.data.token ||
+      response.data.activeContext
+    )
+      throw new Error('登录验证凭据异常，请重新验证')
+    companies.value = contexts.map(
+      ({ id, isPrimary, tenantName, companyName }) => ({
+        id,
+        isPrimary,
+        tenantName,
+        companyName,
+      })
+    )
+    selectedCompanyId.value = primary[0].id
+    verifiedUsername = account.trim()
+    pendingTicket.value = response.data.loginTicket
+    companyLoading.value = false
+  }
+
+  /** 失败只给出受控提示，不保存原始请求错误或凭据。 */
+  const failLogin = (requestId: number) => {
+    if (requestId !== sequence) return
+    resetCompanySelection()
+    companyError.value = '账号或密码错误，请重新验证'
+  }
 
   const companyOptions = computed(() =>
     companies.value.map(company => ({
@@ -81,44 +95,69 @@ export const useLoginWorkspace = () => {
   const selectedCompany = computed(() =>
     companies.value.find(company => company.id === selectedCompanyId.value)
   )
-  const companyHint = computed(() => {
-    if (!username.value.trim()) return '输入账号后显示已关联公司'
-    if (companyLoading.value) return '正在查询账号关联的公司…'
-    if (companyError.value) return companyError.value
-    if (!companies.value.length) return '当前账号未关联公司，请联系企业管理员'
-    return companies.value.length === 1
-      ? '已自动选择唯一关联公司'
-      : '默认选择主公司，也可选择其他已关联公司'
-  })
+  const hasPendingActivation = computed(() => Boolean(pendingTicket.value))
   const companyReady = computed(
     () =>
+      hasPendingActivation.value &&
       !companyLoading.value &&
-      !companyError.value &&
       Boolean(selectedCompany.value)
   )
+  const companyHint = computed(() => {
+    if (companyLoading.value) return '正在验证账号或激活工作公司…'
+    if (companyError.value) return companyError.value
+    if (!hasPendingActivation.value) return '账号验证成功后才能选择工作公司'
+    return companies.value.length === 1
+      ? '身份已验证，确认唯一关联公司后进入'
+      : '身份已验证，默认选择主公司，也可选择其他已关联公司'
+  })
 
-  /** 防止回车、快速改账号或失效选择绕过表单的就绪状态。 */
-  const requireSelectedCompany = (account: string): string => {
+  /** 激活只发送短时一次性票据和本次已验证的公司选择，不再次发送密码。 */
+  const beginActivation = (): {
+    requestId: number
+    username: string
+    request: ActivateAuthContextRequest
+  } => {
     if (
-      resolvedUsername !== account.trim() ||
       !companyReady.value ||
+      verifiedUsername !== username.value.trim() ||
       !selectedCompanyId.value
     )
-      throw new Error(companyHint.value)
-    return selectedCompanyId.value
+      throw new Error('请先验证账号并选择可用公司')
+    companyLoading.value = true
+    companyError.value = ''
+    return {
+      requestId: sequence,
+      username: verifiedUsername,
+      request: {
+        loginTicket: pendingTicket.value,
+        contextId: selectedCompanyId.value,
+      },
+    }
+  }
+
+  /** 供给失败允许用原票据重试；已变化的账号不恢复旧选择。 */
+  const activationFailed = (requestId: number) => {
+    if (requestId !== sequence) return
+    companyLoading.value = false
+    companyError.value = '工作公司激活失败，请重试或重新验证账号'
   }
 
   return {
     username,
     companies,
     selectedCompanyId,
-    selectedCompany,
     companyLoading,
     companyError,
     companyOptions,
     companyHint,
     companyReady,
-    queryCompanies,
-    requireSelectedCompany,
+    hasPendingActivation,
+    beginLogin,
+    isCurrentLogin,
+    acceptPendingLogin,
+    failLogin,
+    beginActivation,
+    activationFailed,
+    resetCompanySelection,
   }
 }

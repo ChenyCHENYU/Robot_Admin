@@ -8,6 +8,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import router from '@/router'
+import { getAuthorizedLandingPath } from './d_routeIdentity'
 import { s_userStore } from '@/stores/user'
 import {
   clearExistingRoutes,
@@ -105,11 +106,6 @@ const handleDynamicRouterInit = async (
       throw new Error('动态路由初始化失败')
     }
 
-    const { authMenuList } = s_permissionStore()
-    if (!authMenuList.length) {
-      throw new Error('菜单数据为空')
-    }
-
     if (import.meta.env.DEV) {
       console.log('✅ 动态路由初始化成功')
     }
@@ -138,7 +134,9 @@ const handleUnauthenticated = (
  * * @description: 处理已登录访问登录页
  */
 const handleLoginPageRedirect = (): string => {
-  return '/home'
+  return isDynamicRouterReady()
+    ? getAuthorizedLandingPath(s_permissionStore().authMenuList)
+    : '/home'
 }
 
 /** 旧公司 ID、撤销的成员关系或过期的角色不得继承上一公司权限。 */
@@ -175,7 +173,7 @@ const checkRoutePermission = (to: RouteLocationNormalized): boolean => {
     return true
   }
   // 首页/错误页始终放行
-  if (['/home', '/404', '/401'].includes(to.path)) {
+  if (['/404', '/401'].includes(to.path)) {
     return true
   }
   const permissionStore = s_permissionStore()
@@ -186,6 +184,9 @@ const checkRoutePermission = (to: RouteLocationNormalized): boolean => {
 const handleAuthorizedRoute = (
   to: RouteLocationNormalized
 ): NavigationGuardReturn => {
+  if (to.path === '/home' && !s_permissionStore().hasRoutePermission(to.path)) {
+    return getAuthorizedLandingPath(s_permissionStore().authMenuList)
+  }
   if (!checkRoutePermission(to)) {
     message.error('您无权访问该页面')
     return '/401'

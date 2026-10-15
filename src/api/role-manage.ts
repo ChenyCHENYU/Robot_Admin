@@ -6,6 +6,11 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type { ApiResponse, PageResult } from './management.contract'
+import {
+  toTemporaryRoleGrant,
+  type RemoteTemporaryRoleGrant,
+} from './d_governance'
+import { assertMockRevision, requireRevision } from './management-revision'
 
 import {
   deleteData,
@@ -38,6 +43,7 @@ const updateRoleInList = (roleId: string, updates: Partial<RoleData>) => {
   MOCK_ROLE_DATA[index] = {
     ...MOCK_ROLE_DATA[index],
     ...updates,
+    revision: (MOCK_ROLE_DATA[index].revision ?? 0) + 1,
     updateTime: new Date().toLocaleString(),
   }
 }
@@ -122,7 +128,10 @@ export const getRoleListApi = async (
       signal,
     })
   }
-  const filteredRoles = filterRoles(MOCK_ROLE_DATA, params)
+  const filteredRoles = filterRoles(MOCK_ROLE_DATA, params).map(role => ({
+    ...role,
+    revision: role.revision ?? 0,
+  }))
   const paginatedData = paginateData(
     filteredRoles,
     params.page,
@@ -143,34 +152,76 @@ export const getRoleUsersApi = async (
   signal?: AbortSignal
 ): Promise<ApiResponse<RoleUserData[]>> => {
   if (!isMockDataMode()) {
-    return getData<ApiResponse<RoleUserData[]>>(`/sys/roles/${roleId}/users`, {
-      signal,
-    })
+    const response = await getData<
+      ApiResponse<
+        Array<{
+          id: string
+          username: string
+          name?: string
+          status: string | number
+          createTime?: string
+        }>
+      >
+    >(`/sys/roles/${roleId}/users`, { signal })
+    return {
+      ...response,
+      data: response.data.map(user => ({
+        ...user,
+        nickname: user.name ?? user.username,
+        status: user.status === 1 || user.status === 'active' ? 1 : 0,
+        createTime: user.createTime ?? '—',
+      })),
+    }
   }
   return createMockApi(getUsersByRoleId(roleId), 300, signal)
 }
 
-export const getRoleDataScopesApi = (
+/** 当前角色的数据范围摘要。 */
+export const getRoleDataScopesApi = async (
   roleId: string,
   signal?: AbortSignal
-): Promise<ApiResponse<RoleDataScope[]>> =>
-  isMockDataMode()
-    ? createMockApi(MOCK_ROLE_DATA_SCOPES[roleId] || [], 250, signal)
-    : getData<ApiResponse<RoleDataScope[]>>(
-        `/sys/roles/${roleId}/data-scopes`,
-        { signal }
-      )
+): Promise<ApiResponse<RoleDataScope[]>> => {
+  if (isMockDataMode())
+    return createMockApi(MOCK_ROLE_DATA_SCOPES[roleId] || [], 250, signal)
+  const response = await getData<ApiResponse<RoleDataScope[]>>(
+    `/sys/roles/${roleId}/data-scopes`,
+    { signal }
+  )
+  return {
+    ...response,
+    data: response.data.map(row => ({
+      ...row,
+      moduleName:
+        row.moduleName || (row.module === '*' ? '所有模块' : row.module),
+    })),
+  }
+}
 
-export const getRoleTempAuthorizationsApi = (
+/** 角色抽屉显示向成员授予本角色的时间窗口，与治理页保持相同事实。 */
+export const getRoleTempAuthorizationsApi = async (
   roleId: string,
   signal?: AbortSignal
-): Promise<ApiResponse<RoleTempAuth[]>> =>
-  isMockDataMode()
-    ? createMockApi(getRoleTempAuths(roleId), 250, signal)
-    : getData<ApiResponse<RoleTempAuth[]>>(
-        `/sys/roles/${roleId}/temp-authorizations`,
-        { signal }
-      )
+): Promise<ApiResponse<RoleTempAuth[]>> => {
+  if (isMockDataMode())
+    return createMockApi(getRoleTempAuths(roleId), 250, signal)
+  const response = await getData<ApiResponse<RemoteTemporaryRoleGrant[]>>(
+    `/sys/roles/${roleId}/temp-authorizations`,
+    { signal }
+  )
+  return {
+    ...response,
+    data: response.data.map(record => {
+      const grant = toTemporaryRoleGrant(record)
+      return {
+        ...grant,
+        roleId: record.roleId,
+        roleName: record.roleName ?? record.roleId,
+        targetRoleId: record.userId,
+        targetRoleName: record.userNickname ?? record.userId,
+      }
+    }),
+  }
+}
 
 export const createRoleApi = async (data: RoleFormData): Promise<void> => {
   const draft = { ...data, permissionIds: [...data.permissionIds] }
@@ -181,6 +232,7 @@ export const createRoleApi = async (data: RoleFormData): Promise<void> => {
     MOCK_ROLE_DATA.push({
       ...draft,
       id: `role_${crypto.randomUUID()}`,
+      revision: 0,
       permissionNames: [],
       userCount: 0,
       createTime: new Date().toLocaleString(),
@@ -195,40 +247,67 @@ export const updateRoleApi = async (
   data: Partial<RoleData> | RoleFormData
 ): Promise<void> => {
   const draft = { ...data }
+  draft.revision = requireRevision(data.revision)
   if (draft.permissionIds) draft.permissionIds = [...draft.permissionIds]
   if ('permissionNames' in draft && draft.permissionNames)
     draft.permissionNames = [...draft.permissionNames]
   if (isMockDataMode()) {
     await createMockApi(undefined, 300)
+    assertMockRevision(
+      MOCK_ROLE_DATA.find(role => role.id === id)?.revision,
+      draft.revision
+    )
     updateRoleInList(id, draft)
     return
   }
   await putData(`/sys/roles/${id}`, draft)
 }
 
-export const deleteRoleApi = async (id: string): Promise<void> => {
+export const deleteRoleApi = async (
+  id: string,
+  expectedRevision?: number
+): Promise<void> => {
+  const revision = requireRevision(expectedRevision)
   if (isMockDataMode()) {
     await createMockApi(undefined, 250)
     const index = MOCK_ROLE_DATA.findIndex(role => role.id === id)
     if (index < 0) throw new Error('角色不存在')
+    assertMockRevision(MOCK_ROLE_DATA[index].revision, revision)
     MOCK_ROLE_DATA.splice(index, 1)
     return
   }
-  await deleteData(`/sys/roles/${id}`)
+  await deleteData(`/sys/roles/${id}`, {
+    params: { expectedRevision: revision },
+  })
 }
 
 export const updateRoleStatusApi = async (
   id: string,
-  status: number
-): Promise<void> => updateRoleApi(id, { status })
+  status: number,
+  expectedRevision?: number
+): Promise<void> => {
+  const revision = requireRevision(expectedRevision)
+  if (status !== 0 && status !== 1) throw new Error('角色状态只能是 0 或 1')
+  if (isMockDataMode()) return updateRoleApi(id, { status, revision })
+  await putData(`/sys/roles/${id}/status`, {
+    status,
+    expectedRevision: revision,
+  })
+}
 
 export const updateRolePermissionsApi = async (
   id: string,
-  permissionIds: string[]
+  permissionIds: string[],
+  expectedRevision?: number
 ): Promise<void> => {
+  const revision = requireRevision(expectedRevision)
   const ids = [...permissionIds]
   if (isMockDataMode()) {
     await createMockApi(undefined, 300)
+    assertMockRevision(
+      MOCK_ROLE_DATA.find(role => role.id === id)?.revision,
+      revision
+    )
     const names = new Map<string, string>()
     const collectNames = (items: PermissionData[]) => {
       for (const item of items) {
@@ -245,5 +324,44 @@ export const updateRolePermissionsApi = async (
     })
     return
   }
-  await putData(`/sys/roles/${id}/permissions`, { permissionIds: ids })
+  await putData(`/sys/roles/${id}/permissions`, {
+    permissionIds: ids,
+    revision,
+  })
+}
+
+/** 公司角色成员由数据库分页并返回真实总数，启停状态同时考虑账号和成员。 */
+export const getRoleUsersPageApi = async (
+  roleId: string,
+  query: { page: number; pageSize: number },
+  signal?: AbortSignal
+): Promise<ApiResponse<PageResult<RoleUserData>>> => {
+  if (isMockDataMode())
+    return createMockApi(
+      paginateData(getUsersByRoleId(roleId), query.page, query.pageSize),
+      300,
+      signal
+    )
+  const response = await getData<
+    ApiResponse<
+      PageResult<{
+        id: string
+        username: string
+        name?: string
+        status: string | number
+      }>
+    >
+  >(`/sys/roles/${roleId}/users/page`, { params: query, signal })
+  return {
+    ...response,
+    data: {
+      ...response.data,
+      list: response.data.list.map(user => ({
+        ...user,
+        nickname: user.name ?? user.username,
+        status: user.status === 1 || user.status === 'active' ? 1 : 0,
+        createTime: '—',
+      })),
+    },
+  }
 }

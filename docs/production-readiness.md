@@ -28,6 +28,20 @@
 - 非演示代码不保留显式 `any` 或通配 `declare module`，跨包布局类型直接消费正式导出。
 - 表单验证适配、默认操作按钮和异步提交生命周期由组件库承担，项目直接配置 `options + config`；用法与自定义边界见 [表单配置](./form-configuration.md)。
 
+## 2026-10-14 Robot Cloud 合同配对
+
+本次配对保留原有用户/角色版本变更，并补齐菜单、按钮、字典的编辑、删除、移动与字典启停版本。删除使用查询参数 `expectedRevision`，移动使用请求体 `revision`；缺失/非法版本在客户端即拒绝，旧版本由服务端 CAS 判定，禁止自动读取最新版重试。
+
+动态菜单消费 Cloud 的 `robot-menu:<稳定ID>`，注册前核对名称与页面路径；可保留无名称的布局容器。KeepAlive 包装组件使用对应路由身份，两条相同组件路径的资源不会共享缓存身份。授权变更后重新读取当前会话菜单；没有 `/home` 的合法角色进入首个授权页，空菜单进入 `/401`，不会附送首页或清除合法会话。
+
+临时授权统一为当前公司成员的 `userId + roleId + effectFrom + effectTo + reason`；创建响应为授权 ID，提交后重读分页清单。提前撤回使用该授权的 `expectedRevision`，包括尚未开始的时间窗口。角色成员、临时授权和权限审计清单使用数据库分页；审计可按动作编码/目标对象精确检索，成员搜索按账号/昵称有界查询。全局账号状态 `accountStatus` 只读展示，成员启停只操作当前公司 `status`。用户编辑的部门表示当前公司成员的一个主部门，空选择显式发送 `departmentId: null`，邮箱/手机号清空发送 null；这些字段省略时由后端保留。
+
+`GET /sys/governance-capabilities` 声明真实能力。数据范围为有效角色只读摘要，字段规则和通用约束不提供保存/执行引擎；界面禁用这些保存操作，权限资源目录的写入转到菜单/按钮管理。约束配置与审计只读展示实际字段，不补造操作人昵称、IP 或不存在的关系模型。Mock 同样呈现该能力边界，不能用演示保存推断 Remote 可用。
+
+本人资料Remote仅提交昵称/邮箱/手机号白名单，联系方式显式清空保留null，保存后重读；头像/简介不提供编辑，未知字段在API适配器明确拒绝。认证安全开关Remote只读，保留Mock演示能力与单独的可用改密入口。
+
+验证入口仍为 `bun run verify`。新增真实 Vue Router 与 KeepAlive 身份回归、跨公司成员部门/启停/移出隔离、版本请求和拒绝负例；`e2e/cloud-contract.pw.ts` 使用 application 业务构建与受控 HTTP 响应验证浏览器消费合同。该 HTTP fixture 与演示页面回归均不能替代当前 Cloud 制品的三服务、MySQL 升级、真实权限和并发联调；相应运行证据由 Cloud 发布验收单独记录。
+
 ## 2026-10-06 发布安全审核
 
 发布前完整 `verify` 与 Chrome 普通屏/高分屏绘制回归通过，组件库固定消费 npm 正式版本 `0.13.5`。额外执行与 CI 一致的 `bun run security:audit` 时发现 5 项传递依赖告警；已将 `proxy-addr` 更新到 `2.0.8`、`source-map-js` 更新到 `1.2.2`、`postcss-selector-parser` 更新到 `7.1.6`，未改变直接依赖范围，也未引入本地包或源码 alias。
@@ -70,12 +84,12 @@ Vite 启动阶段会校验枚举、布尔值、端口、部署用途、远端 AP
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 认证      | 以 `src/api/auth.contract.ts` 为准；ALTCHA 另需 `GET /api/auth/captcha/challenge` 与 `POST /api/auth/captcha/verify`（请求 `{ payload }`，响应 `{ valid, token?, message? }`） |
 | 当前账号  | `GET/PUT /account/profile`、`PUT /account/password`、`GET /account/login-records`、`GET /account/activity-logs`                                                                |
-| 安全设置  | `GET /account/security-settings`、`PUT /account/security/:key`                                                                                                                 |
+| 安全设置  | `GET /account/security-settings`；Cloud 只读展示认证能力，Remote开关已禁用且不会发送不存在的PUT；Mock开关仅作演示                                                              |
 | 用户/角色 | `GET/POST/PUT/DELETE /sys/users`、`GET/POST/PUT/DELETE /sys/roles`                                                                                                             |
 | 菜单/字典 | `GET/POST/PUT/DELETE /sys/menus`、`PUT /sys/menus/:id/move`、`GET/POST/PUT/DELETE /sys/menu-buttons`、`GET /sys/menus/:id/buttons`、`GET/POST/PUT/DELETE /sys/dictionaries`    |
-| 权限      | `GET/POST /sys/permissions`、`GET/PUT /sys/data-permissions`                                                                                                                   |
+| 权限      | `GET /sys/permissions`、`GET /sys/data-permissions`（只读摘要，目录写入经菜单/按钮；数据范围和字段规则不提供保存）                                                             |
 | 权限治理  | `GET/POST /sys/temp-authorizations`、`PUT /sys/temp-authorizations/:id/revoke`、`GET /sys/permission-constraints`                                                              |
-| 权限审计  | `GET /sys/permission-audit-logs`                                                                                                                                               |
+| 权限审计  | `GET /sys/permission-audit-logs/page`（动作、目标与时间筛选，稳定分页）                                                                                                        |
 
 刷新令牌的长期生产方案仍应由后端放入 `HttpOnly`、`Secure`、`SameSite` Cookie；前端只持有短时 access token。
 当前远端接口仍要求返回 `refreshToken`，并由浏览器存储以兼容现有后端契约。只改前端存储会使刷新和重新登录失效，因此这项风险**尚未闭环**：后端提供 Cookie 刷新接口后，应同步调整 `src/api/auth.contract.ts`、`src/plugins/request-core.ts` 与会话持久化逻辑，再做跨站请求、续期、退出和多标签回归。
@@ -118,3 +132,9 @@ Spline 的传递依赖 Lottie 源码包含 `eval` 警告，但生产压缩产物
 3. 将错误端点接入正式可观测平台，配置采样、聚合、告警、Source Map 私有上传和版本关联。
 4. 建立 Web Vitals 真实用户基线，再按设备、网络和路由设定性能 SLO；当前体积预算只解决静态回归。
 5. 若不需要 3D、Office、甘特图等演示能力，可在业务发行版删除对应路由和依赖，进一步缩小完整产物与供应链面。
+
+## 2026-10-15 当前制品本地验收
+
+完整 `bun run verify`、175项单测、31项Vue测试及23项浏览器HTTP fixture通过。当前 application 构建与Cloud四个不可变JAR绑定的真实浏览器114项检查通过：公司2票据激活、账号资料null清空/服务端重读/恢复、安全只读、活动记录、治理能力以及随机自有成员/角色的临授UI创建与版本撤回。finally资料恢复、授权撤回、成员/角色精确清理与登出均成功。Cloud另完成用户/角色命令19项、旧权限缓存回填18项、MySQL20项和双实例故障15项。
+
+详细规模、制品SHA和生产边界见[Cloud验收记录](https://github.com/ChenyCHENYU/Robot_Cloud/blob/main/docs/verification-2026-10-15.md)。本地拼图仅作演示，ALTCHA、生产HA、部署容量、Nacos及恢复目标按目标环境验收；本轮没有部署生产。

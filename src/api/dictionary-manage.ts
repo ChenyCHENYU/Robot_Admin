@@ -5,6 +5,7 @@
  * @Description: 字典远端和演示 CRUD 适配，保留规范化、移动与独立启停语义
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { assertMockRevision, requireRevision } from './management-revision'
 import type { ApiResponse } from './management.contract'
 import type { DictData, DictFormData } from './dictionary-manage.contract'
 import {
@@ -60,6 +61,7 @@ export const addDictApi = async (data: DictFormData): Promise<void> => {
   const id = `dict_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
   const record: DictData = {
     ...draft,
+    revision: 0,
     id,
     children: draft.type === 'type' ? [] : undefined,
   }
@@ -76,6 +78,7 @@ export const addDictApi = async (data: DictFormData): Promise<void> => {
 export const updateDictApi = async (data: DictFormData): Promise<void> => {
   const draft = prepareDictionaryForm(data)
   if (!draft.id) throw new Error('更新字典缺少 id')
+  draft.revision = requireRevision(data.revision)
   if (!isMockDataMode()) {
     checkDictionaryMutation(
       await putData(`/sys/dictionaries/${draft.id}`, draft)
@@ -85,6 +88,7 @@ export const updateDictApi = async (data: DictFormData): Promise<void> => {
   await delayWithSignal(300)
   const current = findMockDict(draft.id)
   if (!current) throw new Error('字典不存在')
+  assertMockRevision(current.revision, draft.revision)
   validateMockDraft(draft)
   if (draft.type === 'item' && current.parentId !== draft.parentId) {
     const parent = findMockDict(draft.parentId!)!
@@ -92,33 +96,48 @@ export const updateDictApi = async (data: DictFormData): Promise<void> => {
     parent.children = [...(parent.children || []), current]
   }
   const { children } = current
-  Object.assign(current, draft, { children })
+  Object.assign(current, draft, { children, revision: draft.revision + 1 })
 }
 
 /** 删除字典类型或条目。 */
-export const deleteDictApi = async (id: string): Promise<void> => {
+export const deleteDictApi = async (
+  id: string,
+  expectedRevision?: number
+): Promise<void> => {
+  const revision = requireRevision(expectedRevision)
   if (!isMockDataMode()) {
-    checkDictionaryMutation(await deleteData(`/sys/dictionaries/${id}`))
+    checkDictionaryMutation(
+      await deleteData(`/sys/dictionaries/${id}`, {
+        params: { expectedRevision: revision },
+      })
+    )
     return
   }
   await delayWithSignal(250)
+  const current = findMockDict(id)
+  if (!current) throw new Error('字典不存在')
+  assertMockRevision(current.revision, revision)
   if (!removeMockDict(id)) throw new Error('字典不存在')
 }
 
 /** 独立切换启停状态，拒绝非法状态值。 */
 export const toggleDictStatusApi = async (
   id: string,
-  status: number
+  status: number,
+  expectedRevision?: number
 ): Promise<void> => {
+  const revision = requireRevision(expectedRevision)
   if (![0, 1].includes(status)) throw new Error('字典状态无效')
   if (!isMockDataMode()) {
     checkDictionaryMutation(
-      await putData(`/sys/dictionaries/${id}/status`, { status })
+      await putData(`/sys/dictionaries/${id}/status`, { status, revision })
     )
     return
   }
   await delayWithSignal(200)
   const current = findMockDict(id)
   if (!current) throw new Error('字典不存在')
+  assertMockRevision(current.revision, revision)
   current.status = status
+  current.revision = revision + 1
 }

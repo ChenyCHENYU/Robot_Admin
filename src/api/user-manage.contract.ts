@@ -12,6 +12,9 @@ export type UserType = 'internal' | 'external' | 'partner' | 'guest'
 
 export interface UserData {
   id: string
+  /** 全局账号版本与当前公司成员版本分别控制资料和成员命令。 */
+  revision?: number
+  membershipRevision?: number
   username: string
   nickname: string
   email?: string
@@ -22,6 +25,8 @@ export interface UserData {
   roleIds?: string[]
   roleNames?: string[]
   status: number
+  /** 全局账号状态只读，status 为当前公司成员状态。 */
+  accountStatus?: number
   avatar?: string
   remark?: string
   createTime: string
@@ -32,7 +37,11 @@ export interface UserData {
 }
 
 export interface UserFormData {
+  /** 仅演示存储使用；远端公司由可信会话解析。 */
+  contextId?: string
   id?: string
+  revision?: number
+  membershipRevision?: number
   username: string
   nickname: string
   email: string

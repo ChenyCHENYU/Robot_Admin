@@ -23,6 +23,10 @@ export function createGovernanceColumns(actions: {
   handleEditDataPermission: (row: DataPermissionRule) => void
   handleEditScope: (row: DataPermissionRule) => void
   handleRevokeTempAuth: (row: TempAuthorization) => void
+  canEditScope: () => boolean
+  canReadFields: () => boolean
+  canEditFields: () => boolean
+  canRevoke: () => boolean
 }) {
   const { handleEditDataPermission, handleEditScope, handleRevokeTempAuth } =
     actions
@@ -60,6 +64,7 @@ export function createGovernanceColumns(actions: {
       key: 'fieldPermissions',
       width: 120,
       render: (row: DataPermissionRule) => {
+        if (!actions.canReadFields()) return '字段权限模型未接入'
         const total = row.fieldPermissions.length
         const masked = row.fieldPermissions.filter(
           (f: FieldPermissionItem) => f.masked
@@ -107,6 +112,7 @@ export function createGovernanceColumns(actions: {
               text: true,
               type: 'primary',
               size: 'small',
+              disabled: !actions.canEditFields(),
               onClick: () => handleEditDataPermission(row),
             },
             { default: () => '配置字段' }
@@ -117,6 +123,7 @@ export function createGovernanceColumns(actions: {
               text: true,
               type: 'info',
               size: 'small',
+              disabled: !actions.canEditScope(),
               onClick: () => handleEditScope(row),
             },
             { default: () => '修改范围' }
@@ -127,17 +134,18 @@ export function createGovernanceColumns(actions: {
 
   // ============ 临时授权表格列配置 ============
   const tempAuthColumns: TableColumn<TempAuthorization>[] = [
-    { title: '目标角色', key: 'targetRoleName', width: 120 },
     {
-      title: '授权权限',
-      key: 'permissionNames',
+      title: '目标成员',
+      key: 'userNickname',
+      width: 140,
+      render: row => row.userNickname || row.userId || '—',
+    },
+    { title: '授予角色', key: 'targetRoleName', width: 140 },
+    {
+      title: '授权模型',
+      key: 'grantModel',
       width: 180,
-      render: (row: TempAuthorization) =>
-        h(NSpace, { size: 4, justify: 'center' }, () =>
-          row.permissionNames.map((name: string) =>
-            h(NTag, { type: 'info', size: 'small' }, { default: () => name })
-          )
-        ),
+      render: () => '临时使用角色已有权限',
     },
     { title: '授权原因', key: 'reason', width: 200 },
     { title: '授权人', key: 'grantedByName', width: 100 },
@@ -164,7 +172,7 @@ export function createGovernanceColumns(actions: {
       key: 'actions',
       width: 80,
       render: (row: TempAuthorization) =>
-        row.status === 'active'
+        actions.canRevoke() && ['active', 'pending'].includes(row.status)
           ? h(
               NButton,
               {

@@ -1,41 +1,52 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-10-08
+ * @Date: 2026-10-14
  * @FilePath: \Robot_Admin\tests\components\login-workspace.component.ts
- * @Description: 挂载账号公司选择，验证防抖、竞态、非法主公司和卸载
- * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ * @Description: 真实页面生命周期中的已验证公司选择、票据失效与激活重试
+ * Copyright (c) 2026 by CHENY, All Rights Reserved.
  */
 import { describe, expect, test, vi } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { defineComponent, h, type ShallowUnwrapRef } from 'vue'
 import { useLoginWorkspace } from '@/composables/useLoginWorkspace'
 import { getLoginCompaniesApi } from '@/api/auth'
-import type { LoginCompaniesResponse } from '@/api/auth.contract'
-import { deferred } from './d_deferred'
+import type { LoginResponse } from '@/api/auth.contract'
 
 vi.mock('@/api/auth', () => ({ getLoginCompaniesApi: vi.fn() }))
-const companies = (name: string): LoginCompaniesResponse => ({
+const pending = (name: string): LoginResponse => ({
   code: '0',
+  msg: 'success',
   data: {
-    companies: [
+    token: '',
+    refreshToken: '',
+    expiresIn: 0,
+    loginTicket: 'ticket-' + name,
+    user: { id: name, username: name, displayName: name },
+    availableContexts: [
       {
         id: name + '-primary',
+        tenantId: 'tenant',
+        companyId: name + '-primary',
         tenantName: '租户',
         companyName: name + '主公司',
         isPrimary: true,
+        roles: [],
       },
       {
         id: name + '-second',
+        tenantId: 'tenant',
+        companyId: name + '-second',
         tenantName: '租户',
         companyName: name + '兼任公司',
         isPrimary: false,
+        roles: [],
       },
     ],
   },
 })
 const Harness = defineComponent({
   name: 'LoginWorkspaceHarness',
-  /** 挂载真实响应式消费方，保持生命周期和模板事件。 */
+  /** 挂载真实生命周期与表单消费方。 */
   setup(_, { expose }) {
     const workspace = useLoginWorkspace()
     expose(workspace)
@@ -61,106 +72,95 @@ const Harness = defineComponent({
             h('option', { value: option.value }, option.label)
           )
         ),
-        h('button', { disabled: !workspace.companyReady.value }, '登录'),
+        h('button', { disabled: !workspace.companyReady.value }, '确认公司'),
         h('p', workspace.companyHint.value),
       ])
   },
 })
+type Workspace = ShallowUnwrapRef<ReturnType<typeof useLoginWorkspace>>
+const state = (wrapper: ReturnType<typeof mount>): Workspace =>
+  wrapper.vm as unknown as Workspace
 
-describe('账号公司选择', () => {
-  test('防抖合并输入，默认主公司并允许选择兼任公司', async () => {
-    vi.useFakeTimers()
-    vi.mocked(getLoginCompaniesApi).mockResolvedValue(companies('A'))
+describe('验证后的公司选择', () => {
+  test('只输入账号不会查询公司，验证成功后才允许选兼任公司并仅发送票据', async () => {
     const wrapper = mount(Harness)
     await wrapper.get('input').setValue(' A ')
-    await vi.advanceTimersByTimeAsync(299)
     expect(getLoginCompaniesApi).not.toHaveBeenCalled()
-    await vi.advanceTimersByTimeAsync(1)
-    await flushPromises()
-    expect(getLoginCompaniesApi).toHaveBeenCalledExactlyOnceWith('A')
+    expect(wrapper.get('button').attributes('disabled')).toBeDefined()
+    const workspace = state(wrapper)
+    const requestId = workspace.beginLogin(' A ')
+    workspace.acceptPendingLogin(pending('A'), 'A', requestId)
+    await wrapper.vm.$nextTick()
     expect(wrapper.get('select').element.value).toBe('A-primary')
-    expect(wrapper.get('button').attributes('disabled')).toBeUndefined()
     await wrapper.get('select').setValue('A-second')
-    expect(
-      (
-        wrapper.vm as unknown as ShallowUnwrapRef<
-          ReturnType<typeof useLoginWorkspace>
-        >
-      ).requireSelectedCompany(' A ')
-    ).toBe('A-second')
+    expect(workspace.beginActivation()).toEqual({
+      requestId,
+      username: 'A',
+      request: { loginTicket: 'ticket-A', contextId: 'A-second' },
+    })
+    expect(JSON.stringify(workspace)).not.toContain('password')
+    expect(localStorage.length).toBe(0)
+    expect(sessionStorage.length).toBe(0)
   })
-  test('改账号立即清除旧选择，迟到的旧响应不能覆盖新账号', async () => {
-    vi.useFakeTimers()
-    const first = deferred<LoginCompaniesResponse>()
-    const second = deferred<LoginCompaniesResponse>()
-    vi.mocked(getLoginCompaniesApi)
-      .mockReturnValueOnce(first.promise)
-      .mockReturnValueOnce(second.promise)
+  test('改账号或重新验证立即使旧请求和票据失效', async () => {
     const wrapper = mount(Harness)
-    await wrapper.get('input').setValue('A')
-    await vi.advanceTimersByTimeAsync(300)
+    const workspace = state(wrapper)
+    const first = workspace.beginLogin('A')
+    workspace.acceptPendingLogin(pending('A'), 'A', first)
     await wrapper.get('input').setValue('B')
-    expect(wrapper.get('button').attributes('disabled')).toBeDefined()
+    expect(workspace.hasPendingActivation).toBe(false)
+    expect(workspace.companies).toEqual([])
+    expect(() => workspace.beginActivation()).toThrow('请先验证')
     expect(() =>
-      (
-        wrapper.vm as unknown as ShallowUnwrapRef<
-          ReturnType<typeof useLoginWorkspace>
-        >
-      ).requireSelectedCompany('A')
-    ).toThrow()
-    await vi.advanceTimersByTimeAsync(300)
-    second.resolve(companies('B'))
-    await flushPromises()
-    first.resolve(companies('A'))
-    await flushPromises()
-    expect(wrapper.get('select').element.value).toBe('B-primary')
-    expect(wrapper.text()).not.toContain('A主公司')
+      workspace.acceptPendingLogin(pending('A'), 'A', first)
+    ).toThrow('账号已变化')
+    const second = workspace.beginLogin('B')
+    workspace.acceptPendingLogin(pending('B'), 'B', second)
+    workspace.failLogin(first)
+    expect(workspace.hasPendingActivation).toBe(true)
+    workspace.resetCompanySelection()
+    expect(workspace.isCurrentLogin(second, 'B')).toBe(false)
   })
-  test('多主公司及无公司都不能绕过就绪校验', async () => {
-    vi.useFakeTimers()
-    const invalid = companies('A')
-    invalid.data.companies[1].isPrimary = true
-    vi.mocked(getLoginCompaniesApi)
-      .mockResolvedValueOnce(invalid)
-      .mockResolvedValueOnce({ code: '0', data: { companies: [] } })
-    const wrapper = mount(Harness)
-    await wrapper.get('input').setValue('A')
-    await vi.advanceTimersByTimeAsync(300)
-    await flushPromises()
-    expect(wrapper.text()).toContain('主公司配置异常')
+  test('不完整票据、提前令牌、无公司及多主公司都拒绝发布选择', () => {
+    const workspace = state(mount(Harness))
+    const requestId = workspace.beginLogin('A')
+    const noTicket = pending('A')
+    noTicket.data.loginTicket = ''
     expect(() =>
-      (
-        wrapper.vm as unknown as ShallowUnwrapRef<
-          ReturnType<typeof useLoginWorkspace>
-        >
-      ).requireSelectedCompany('A')
-    ).toThrow('主公司配置异常')
-    await wrapper.get('input').setValue('B')
-    await vi.advanceTimersByTimeAsync(300)
-    await flushPromises()
-    expect(wrapper.text()).toContain('未关联公司')
-    expect(wrapper.get('button').attributes('disabled')).toBeDefined()
+      workspace.acceptPendingLogin(noTicket, 'A', requestId)
+    ).toThrow('凭据异常')
+    const token = pending('A')
+    token.data.token = 'premature-token'
+    expect(() => workspace.acceptPendingLogin(token, 'A', requestId)).toThrow(
+      '凭据异常'
+    )
+    const empty = pending('A')
+    empty.data.availableContexts = []
+    expect(() => workspace.acceptPendingLogin(empty, 'A', requestId)).toThrow(
+      '配置异常'
+    )
+    const multi = pending('A')
+    multi.data.availableContexts![1].isPrimary = true
+    expect(() => workspace.acceptPendingLogin(multi, 'A', requestId)).toThrow(
+      '配置异常'
+    )
+    expect(workspace.hasPendingActivation).toBe(false)
   })
-  test('卸载取消待触发查询，在途响应不能回写已销毁实例', async () => {
-    vi.useFakeTimers()
+  test('激活失败可重试原票据，卸载后不能恢复任何待激活状态', () => {
     const wrapper = mount(Harness)
-    await wrapper.get('input').setValue('A')
+    const workspace = state(wrapper)
+    const requestId = workspace.beginLogin('A')
+    workspace.acceptPendingLogin(pending('A'), 'A', requestId)
+    const first = workspace.beginActivation()
+    workspace.activationFailed(first.requestId)
+    expect(workspace.companyReady).toBe(true)
+    expect(workspace.companyError).toContain('重试')
+    expect(workspace.beginActivation().request).toEqual(first.request)
     wrapper.unmount()
-    await vi.advanceTimersByTimeAsync(300)
-    expect(getLoginCompaniesApi).not.toHaveBeenCalled()
-    const response = deferred<LoginCompaniesResponse>()
-    vi.mocked(getLoginCompaniesApi).mockReturnValue(response.promise)
-    const next = mount(Harness)
-    await next.get('input').setValue('B')
-    await vi.advanceTimersByTimeAsync(300)
-    const state = (
-      next.vm as unknown as ShallowUnwrapRef<
-        ReturnType<typeof useLoginWorkspace>
-      >
-    ).companies
-    next.unmount()
-    response.resolve(companies('B'))
-    await flushPromises()
-    expect(state).toEqual([])
+    expect(workspace.hasPendingActivation).toBe(false)
+    expect(workspace.companies).toEqual([])
+    expect(() =>
+      workspace.acceptPendingLogin(pending('A'), 'A', requestId)
+    ).toThrow('账号已变化')
   })
 })

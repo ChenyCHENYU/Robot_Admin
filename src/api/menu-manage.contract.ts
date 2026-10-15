@@ -8,6 +8,7 @@
 export type MenuType = 'directory' | 'menu' | 'button'
 
 export interface MenuData {
+  revision?: number
   id: string
   name: string
   type: MenuType
@@ -25,6 +26,7 @@ export interface MenuData {
 }
 
 export interface MenuFormData {
+  revision?: number
   id?: string
   name: string
   type: MenuType
@@ -41,6 +43,7 @@ export interface MenuFormData {
 }
 
 export interface ButtonPermission {
+  revision?: number
   id: string
   menuId: string
   name: string

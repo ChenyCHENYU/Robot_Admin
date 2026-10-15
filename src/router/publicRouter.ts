@@ -9,6 +9,7 @@
  */
 import type { RouteRecordRaw } from 'vue-router'
 import { previewRoutes } from './previewRouter'
+import { authenticatedRoutes } from './authenticatedRoutes'
 
 export const publicRoutes: RouteRecordRaw[] = [
   // 组件预览路由（免登录，文档站 iframe 嵌入用）
@@ -54,6 +55,6 @@ export const publicRoutes: RouteRecordRaw[] = [
   },
 ]
 
-const routes = [...publicRoutes]
+const routes = [...publicRoutes, ...authenticatedRoutes]
 
 export default routes

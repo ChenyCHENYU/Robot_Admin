@@ -34,6 +34,53 @@ export const shouldRecoverUnauthorized = (
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
+/** 诊断数字接受限定整数，拒绝字符串、无限值和任意错误内容。 */
+const boundedDiagnosticInteger = (
+  value: unknown,
+  minimum: number,
+  maximum: number
+): number | undefined =>
+  typeof value === 'number' &&
+  Number.isInteger(value) &&
+  value >= minimum &&
+  value <= maximum
+    ? value
+    : undefined
+
+/** 拒绝任意文字进入追踪字段，只接受服务端约定的UUID或32位十六进制值。 */
+const safeDiagnosticTraceValue = (value: unknown): string | undefined =>
+  typeof value === 'string' &&
+  /^(?:[\da-f]{32}|[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12})$/i.test(value)
+    ? value
+    : undefined
+
+/** 认证头和任意错误文字不进入追踪字段。 */
+const safeDiagnosticTrace = (headers: unknown): string | undefined => {
+  if (!isRecord(headers)) return undefined
+  return safeDiagnosticTraceValue(
+    headers['x-trace-id'] ?? headers['X-Trace-Id']
+  )
+}
+
+/** 请求诊断只保留状态、有限业务码和追踪ID，不传播Axios配置、报文或认证头。 */
+export const getSafeRequestDiagnostic = (
+  error: unknown
+): { status?: number; code?: number; traceId?: string } => {
+  if (!isRecord(error)) return {}
+  const response = isRecord(error.response) ? error.response : error
+  const data = isRecord(response.data) ? response.data : {}
+  const result: { status?: number; code?: number; traceId?: string } = {}
+  const status = boundedDiagnosticInteger(response.status, 100, 599)
+  const code = boundedDiagnosticInteger(data.code ?? response.code, 0, 999999)
+  const traceId =
+    safeDiagnosticTrace(response.headers) ??
+    safeDiagnosticTraceValue(response.traceId)
+  if (status !== undefined) result.status = status
+  if (code !== undefined) result.code = code
+  if (traceId !== undefined) result.traceId = traceId
+  return result
+}
+
 /**
  * @description 解析业务响应；无业务码或成功业务码均不返回错误。
  * @param payload 响应数据

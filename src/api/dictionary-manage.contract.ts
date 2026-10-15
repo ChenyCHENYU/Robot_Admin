@@ -17,6 +17,7 @@ export interface TreeNodeData {
 
 // 字典数据接口
 export interface DictData extends TreeNodeData {
+  revision?: number
   parentId?: string | null
   code: string
   value?: string
@@ -32,6 +33,7 @@ export interface DictData extends TreeNodeData {
 }
 
 export interface DictFormData {
+  revision?: number
   id?: string
   name: string
   type: DictType

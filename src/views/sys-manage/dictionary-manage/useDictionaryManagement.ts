@@ -210,6 +210,7 @@ export const useDictionaryManagement = () => {
   }
   const resetForm = () => {
     delete formData.id
+    delete formData.revision
     Object.assign(formData, DEFAULT_DICT_FORM_DATA)
     formRef.value?.clearValidation()
   }
@@ -236,6 +237,7 @@ export const useDictionaryManagement = () => {
       })
     Object.assign(formData, {
       id: dict.id,
+      revision: dict.revision,
       typeCode: dict.type === 'type' ? dict.code : '',
       dictValue: dict.dictValue ?? dict.value ?? '',
       name: dict.dictLabel || dict.name,
@@ -324,7 +326,8 @@ export const useDictionaryManagement = () => {
   }
   const handleToggle = (dict: DictData) =>
     mutate(
-      () => toggleDictStatusApi(dict.id, dict.status === 1 ? 0 : 1),
+      () =>
+        toggleDictStatusApi(dict.id, dict.status === 1 ? 0 : 1, dict.revision),
       '字典状态已更新'
     )
   const handleDelete = (dict: DictData) => {
@@ -339,7 +342,7 @@ export const useDictionaryManagement = () => {
       negativeText: '取消',
       onPositiveClick: async () => {
         const done = await mutate(
-          () => deleteDictApi(dict.id),
+          () => deleteDictApi(dict.id, dict.revision),
           '字典已删除',
           dict.parentId || null
         )

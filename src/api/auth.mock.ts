@@ -12,6 +12,7 @@ import type {
   LoginRequest,
   LoginResponse,
   LoginCompaniesResponse,
+  LoginCompaniesRequest,
   RefreshTokenResponse,
 } from './auth.contract'
 import { getMockAuthContexts } from './auth.mock-directory'
@@ -52,14 +53,30 @@ const createLoginTicket = (username: string): string => {
   return key
 }
 
+/** 明确公司选择和单公司场景直接建立会话，多公司保留选择票据。 */
+const selectMockLoginContext = (
+  contextId: string | undefined,
+  contexts: AuthContext[]
+): AuthContext | undefined => {
+  if (!contextId) return contexts.length === 1 ? contexts[0] : undefined
+  const selected = contexts.find(context => context.id === contextId)
+  if (!selected) throw new Error('无权进入所选公司')
+  return selected
+}
+
 /** 构造登录 Mock 响应，保持与未来后端契约一致 */
 export const createMockLoginResponse = (
   request: LoginRequest
 ): LoginResponse => {
   const username = request.username?.trim()
-  if (!username || !request.password) {
+  if (!username || !request.password?.trim()) {
     throw new Error('请输入用户名和密码')
   }
+
+  const contexts = getMockAuthContexts(username)
+  if (!contexts.length) throw new Error('当前账号未关联可用公司')
+  const selected = selectMockLoginContext(request.contextId, contexts)
+  if (selected) return createMockContextSession(username, selected, contexts)
 
   return {
     code: '0',
@@ -68,7 +85,7 @@ export const createMockLoginResponse = (
       refreshToken: '',
       expiresIn: 0,
       loginTicket: createLoginTicket(username),
-      availableContexts: getMockAuthContexts(username),
+      availableContexts: contexts,
       user: {
         id: `mock-user:${username.toLowerCase()}`,
         username,
@@ -200,21 +217,25 @@ export const refreshTokenMockApi = (
 ): Promise<RefreshTokenResponse> =>
   withMockLatency(() => createMockRefreshResponse(refreshToken))
 
-/** 公司预查询只返回展示信息，权限与凭据在认证完成后授予。 */
+/** 显式凭据发现演示：仅返回公司展示信息；任意非空密码不能证明生产认证能力。 */
 export const getLoginCompaniesMockApi = (
-  username: string
+  request: LoginCompaniesRequest
 ): Promise<LoginCompaniesResponse> =>
-  withMockLatency(() => ({
-    code: '0',
-    data: {
-      companies: getMockAuthContexts(username).map(
-        ({ id, isPrimary, tenantName, companyName }) => ({
-          id,
-          isPrimary,
-          tenantName,
-          companyName,
-        })
-      ),
-    },
-    msg: 'success',
-  }))
+  withMockLatency(() => {
+    if (!request.username.trim() || !request.password.trim())
+      throw new Error('账号或密码错误')
+    return {
+      code: '0',
+      data: {
+        companies: getMockAuthContexts(request.username).map(
+          ({ id, isPrimary, tenantName, companyName }) => ({
+            id,
+            isPrimary,
+            tenantName,
+            companyName,
+          })
+        ),
+      },
+      msg: 'success',
+    }
+  })

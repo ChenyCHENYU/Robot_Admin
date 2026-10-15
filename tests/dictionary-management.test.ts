@@ -181,6 +181,7 @@ describe('dictionary management contracts', () => {
       const moving = {
         ...createdDraft,
         id: created.id,
+        revision: created.revision,
         name: created.name,
         parentId: secondId,
       }
@@ -200,7 +201,11 @@ describe('dictionary management contracts', () => {
       ).rejects.toThrow('存储值不能重复')
       dicts = (await api.getDictListApi()).data
       expect(findDictionary(dicts, secondId)!.children).toHaveLength(1)
-      await api.toggleDictStatusApi(secondId, 0)
+      await api.toggleDictStatusApi(
+        secondId,
+        0,
+        findDictionary(dicts, secondId)!.revision
+      )
       await expect(
         api.addDictApi({
           ...moving,
@@ -210,8 +215,14 @@ describe('dictionary management contracts', () => {
         })
       ).rejects.toThrow('请先启用字典类型')
     } finally {
-      await api.deleteDictApi(firstId)
-      await api.deleteDictApi(secondId)
+      await api.deleteDictApi(
+        firstId,
+        findDictionary((await api.getDictListApi()).data, firstId)!.revision
+      )
+      await api.deleteDictApi(
+        secondId,
+        findDictionary((await api.getDictListApi()).data, secondId)!.revision
+      )
     }
   })
   test('加载取消正常终止，业务拒绝不可误报成功，无响应体的成功可兼容', async () => {

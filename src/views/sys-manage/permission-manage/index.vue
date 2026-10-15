@@ -62,6 +62,7 @@
         <NSpace>
           <NButton
             type="primary"
+            :disabled="!mockMode"
             @click="openPermissionModal()"
           >
             <template #icon>
@@ -113,6 +114,16 @@
     </NCard>
 
     <!-- 功能标签页 -->
+    <NAlert
+      v-if="
+        !governanceCapabilities.dataScope.write ||
+        !governanceCapabilities.fieldPermission.write
+      "
+      type="info"
+      :show-icon="false"
+    >
+      数据范围为有效角色的只读摘要；字段规则与通用约束尚不支持保存。临时授权按成员授予现有角色。
+    </NAlert>
     <NTabs
       v-model:value="activeTab"
       type="card"
@@ -233,7 +244,11 @@
             :loading="loading"
             :config="{
               actions: tableActions,
-              edit: { mode: 'modal', modalTitle: '编辑权限', modalWidth: 800 },
+              edit: {
+                mode: mockMode ? 'modal' : 'none',
+                modalTitle: '编辑权限',
+                modalWidth: 800,
+              },
               display: { striped: true, bordered: true, size: 'small' },
             }"
             @save="handleSave"
@@ -248,6 +263,20 @@
         name="data-permission"
         tab="数据权限"
       >
+        <NAlert
+          v-if="!governanceCapabilities.fieldPermission.read"
+          type="info"
+          :show-icon="false"
+        >
+          字段权限模型未接入。当前服务仅提供有效角色的数据范围摘要。
+        </NAlert>
+        <NAlert
+          v-else-if="mockMode"
+          type="info"
+          :show-icon="false"
+        >
+          Mock 字段权限数据仅用于演示，不代表远程服务已接入字段权限模型。
+        </NAlert>
         <NCard class="content-card">
           <template #header>
             <NSpace
@@ -258,6 +287,7 @@
               <NButton
                 type="primary"
                 size="small"
+                :disabled="!governanceCapabilities.dataScope.write"
                 @click="handleAddDataPermission"
               >
                 <template #icon>
@@ -290,7 +320,10 @@
 
         <!-- 数据权限详细配置 - 字段级权限 -->
         <NCard
-          v-if="selectedDataPermission"
+          v-if="
+            selectedDataPermission &&
+            governanceCapabilities.fieldPermission.read
+          "
           class="content-card"
           style="margin-top: 16px"
         >
@@ -334,6 +367,7 @@
                     <NSwitch
                       v-model:value="field.visible"
                       size="small"
+                      :disabled="!canEditFields"
                     >
                       <template #checked>可见</template>
                       <template #unchecked>隐藏</template>
@@ -341,7 +375,7 @@
                     <NSwitch
                       v-model:value="field.editable"
                       size="small"
-                      :disabled="!field.visible"
+                      :disabled="!canEditFields || !field.visible"
                     >
                       <template #checked>可编辑</template>
                       <template #unchecked>只读</template>
@@ -349,7 +383,7 @@
                     <NSwitch
                       v-model:value="field.masked"
                       size="small"
-                      :disabled="!field.visible"
+                      :disabled="!canEditFields || !field.visible"
                     >
                       <template #checked>脱敏</template>
                       <template #unchecked>明文</template>
@@ -367,6 +401,7 @@
             <NButton @click="selectedDataPermission = null">取消</NButton>
             <NButton
               type="primary"
+              :disabled="!canEditFields"
               @click="handleSaveFieldPermissions"
             >
               保存字段权限
@@ -398,6 +433,7 @@
               <NButton
                 type="primary"
                 size="small"
+                :disabled="!governanceCapabilities.temporaryRoleGrant.write"
                 @click="showTempAuthModal = true"
               >
                 <template #icon>
@@ -426,6 +462,12 @@
               <C_Loading label="正在加载临时授权" />
             </template>
           </C_Table>
+          <NPagination
+            v-model:page="tempAuthPage"
+            :item-count="tempAuthTotal"
+            :page-size="20"
+            @update:page="loadGovernanceData"
+          />
         </NCard>
       </NTabPane>
 
@@ -434,6 +476,19 @@
         name="constraints"
         tab="权限约束"
       >
+        <NAlert
+          type="info"
+          :show-icon="false"
+          >当前约束仅供配置摘要展示，尚未实现通用约束保存与执行引擎。</NAlert
+        >
+        <NCard
+          v-for="constraint in readOnlyConstraints"
+          :key="constraint.id"
+          size="small"
+        >
+          <NText strong>{{ constraint.ruleName }}</NText>
+          <NP>{{ constraint.ruleType }} · {{ constraint.configJson }}</NP>
+        </NCard>
         <NGrid
           :cols="2"
           :x-gap="16"
@@ -593,7 +648,23 @@
             >
               <NText strong>权限变更日志</NText>
               <NSpace>
+                <NInput
+                  v-if="!mockMode"
+                  v-model:value="auditFilter.action"
+                  placeholder="动作编码（精确匹配）"
+                  clearable
+                  @change="applyAuditFilter"
+                />
+                <NInput
+                  v-if="!mockMode"
+                  v-model:value="auditTarget"
+                  placeholder="目标对象ID（精确匹配）"
+                  clearable
+                  @change="applyAuditFilter"
+                />
+
                 <NSelect
+                  v-if="mockMode"
                   v-model:value="auditFilter.action"
                   placeholder="操作类型"
                   clearable
@@ -601,6 +672,7 @@
                   :options="auditActionOptions"
                 />
                 <NSelect
+                  v-if="mockMode"
                   v-model:value="auditFilter.targetType"
                   placeholder="目标类型"
                   clearable
@@ -615,8 +687,8 @@
             <NTimelineItem
               v-for="log in filteredAuditLogs"
               :key="log.id"
-              :type="AUDIT_ACTION_CONFIG[log.action].type"
-              :title="`${log.operatorName} ${AUDIT_ACTION_CONFIG[log.action].text}了${AUDIT_TARGET_CONFIG[log.targetType].text}「${log.targetName}」`"
+              :type="AUDIT_ACTION_CONFIG[log.action]?.type"
+              :title="`${log.operatorName} ${log.actionRaw || AUDIT_ACTION_CONFIG[log.action]?.text || log.action} ${AUDIT_TARGET_CONFIG[log.targetType]?.text || '对象'}「${log.targetName}」`"
               :content="log.detail"
               :time="`${log.timestamp} | IP: ${log.ip}`"
             />
@@ -624,6 +696,12 @@
           <NEmpty
             v-if="filteredAuditLogs.length === 0"
             description="暂无审计日志"
+          />
+          <NPagination
+            v-model:page="auditPage"
+            :item-count="auditTotal"
+            :page-size="20"
+            @update:page="loadGovernanceData"
           />
         </NCard>
       </NTabPane>
@@ -847,6 +925,7 @@
       :negative-button-props="{ disabled: !!tempAuthFormRef?.isSubmitting }"
       style="width: 650px"
     >
+      <p>有效期按您当前浏览器的时区选择和显示。</p>
       <C_Form
         v-if="showTempAuthModal"
         ref="tempAuthFormRef"
@@ -873,6 +952,9 @@
   defineOptions({ name: 'PermissionManage' })
   const {
     mockMode,
+    governanceCapabilities,
+    canEditFields,
+    readOnlyConstraints,
     activeTab,
     exportLoading,
     showModal,
@@ -890,8 +972,15 @@
     selectedDataPermission,
     showTempAuthModal,
     tempAuthList,
+    tempAuthPage,
+    tempAuthTotal,
+    loadGovernanceData,
     tempAuthForm,
     auditFilter,
+    auditPage,
+    auditTotal,
+    auditTarget,
+    applyAuditFilter,
     compareRoleA,
     compareRoleB,
     comparisonResult,

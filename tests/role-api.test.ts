@@ -42,14 +42,18 @@ test('演示角色 CRUD 独立于页面，草稿与列表不得提前改写共�
     )
     await expect(createRoleApi(draft)).rejects.toThrow('角色编码已存在')
     expect((await getRoleListApi(query)).data.total).toBe(1)
-    await updateRoleApi(first.id, { name: '已保存名称', status: 0 })
-    await updateRolePermissionsApi(first.id, ['perm_3_1'])
+    await updateRoleApi(first.id, {
+      name: '已保存名称',
+      status: 0,
+      revision: first.revision,
+    })
+    await updateRolePermissionsApi(first.id, ['perm_3_1'], 1)
     const updated = (await getRoleListApi(query)).data.list[0]!
     expect(updated.name).toBe('已保存名称')
     expect(updated.status).toBe(0)
     expect(updated.permissionIds).toEqual(['perm_3_1'])
     expect(updated.permissionNames?.length).toBe(1)
-    await deleteRoleApi(first.id)
+    await deleteRoleApi(first.id, updated.revision)
     expect((await getRoleListApi(query)).data.total).toBe(0)
   } finally {
     MOCK_ROLE_DATA.splice(0, MOCK_ROLE_DATA.length, ...original)

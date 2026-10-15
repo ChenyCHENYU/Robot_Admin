@@ -188,14 +188,14 @@ test('用户类型联动清理部门和角色，外部字段按类型出现', as
   await expect(field(modal, '用户角色')).toContainText('普通员工')
   await select(page, modal, '用户类型', '外部客户')
   await expect(field(modal, '公司名称')).toBeVisible()
-  await expect(field(modal, '所属部门')).toHaveCount(0)
+  await expect(field(modal, '公司主部门')).toHaveCount(0)
   await expect(field(modal, '用户角色')).toContainText('请选择角色')
   await select(page, modal, '用户角色', '客户')
   await expect(field(modal, '用户角色')).toContainText('客户')
   await field(modal, '公司名称').getByRole('textbox').fill('回归公司')
   await select(page, modal, '用户类型', '内部员工')
   await expect(field(modal, '公司名称')).toHaveCount(0)
-  await expect(field(modal, '所属部门')).toBeVisible()
+  await expect(field(modal, '公司主部门')).toBeVisible()
   await select(page, modal, '用户类型', '外部客户')
   await expect(field(modal, '公司名称').getByRole('textbox')).toHaveValue('')
 })
@@ -305,14 +305,17 @@ test('权限编码生成、校验、增删改和刷新沿用业务流程', async
   await expect(row).toHaveCount(0)
 })
 
-test('临时授权的角色、权限集合和有效期缺失时逐字段拦截', async ({ page }) => {
+test('临时角色授予的成员、角色、原因和有效期缺失时逐字段拦截', async ({
+  page,
+}) => {
   await page.goto('/#/sys-manage/permission-manage')
   await page.locator('.n-tabs-tab').filter({ hasText: '临时授权' }).click()
   await page.getByRole('button', { name: /新增临时授权/ }).click()
   const modal = page.locator('.n-dialog').filter({ hasText: '确认授权' })
   await modal.getByRole('button', { name: '确认授权', exact: true }).click()
-  await expect(field(modal, '目标角色')).toContainText('目标角色不能为空')
-  await expect(field(modal, '授权权限')).toContainText('授权权限不能为空')
+  await expect(field(modal, '授予角色')).toContainText('授予角色不能为空')
+  await expect(field(modal, '目标成员')).toContainText('目标成员不能为空')
+  await expect(field(modal, '授权原因')).toContainText('授权原因不能为空')
   await expect(field(modal, '有效期')).toContainText('有效期不能为空')
   await expect(modal).toBeVisible()
   await modal.getByRole('button', { name: '取消', exact: true }).click()

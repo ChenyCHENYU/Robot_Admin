@@ -9,35 +9,9 @@
 import { expect, test } from '@playwright/test'
 import { installMockAdminSession } from './auth-fixture'
 
-/** 固定演示拼图的随机目标，真实拖动验证滑块以覆盖交互链路。 */
-const solveDemoCaptcha = async (page: import('@playwright/test').Page) => {
-  await page.locator('.c-captcha-modern .captcha-trigger').click()
-  const slider = page.locator('.vue-puzzle-vcode.show_ .range-btn')
-  await expect(slider).toBeVisible()
-  await page.waitForFunction(() => {
-    const canvas = document.querySelector<HTMLCanvasElement>(
-      '.vue-puzzle-vcode.show_ .auth-canvas1_'
-    )
-    const data = canvas?.getContext('2d')?.getImageData(0, 0, 310, 160).data
-    return Boolean(
-      data &&
-      Array.from(data).some((value, index) => index % 4 === 3 && value > 0)
-    )
-  })
-  const box = await slider.boundingBox()
-  if (!box) throw new Error('拼图滑块不可见')
-  const x = box.x + box.width / 2
-  const y = box.y + box.height / 2
-  await page.mouse.move(x, y)
-  await page.mouse.down()
-  await page.mouse.move(x + 163, y, { steps: 12 })
-  await page.mouse.up()
-  await expect(
-    page.locator('.c-captcha-modern .captcha-trigger.verified')
-  ).toBeVisible()
-}
+import { solveDemoCaptcha } from './d_login'
 
-test('登录前默认选中主公司，登录后进入对应上下文', async ({ page }) => {
+test('验证身份后默认选中主公司，确认后进入对应上下文', async ({ page }) => {
   test.setTimeout(60_000)
   await page.addInitScript(() => {
     Math.random = () => 0.5
@@ -47,11 +21,16 @@ test('登录前默认选中主公司，登录后进入对应上下文', async ({
   await expect(page.locator('.c-login__social-row')).toHaveCount(0)
   await expect(page.locator('.c-login__captcha-wrap')).toBeVisible()
   await expect(page.locator('.login-workspace')).toContainText(
+    '账号验证成功后才能选择工作公司'
+  )
+  await expect(page.locator('.login-workspace')).not.toContainText(
     '江苏金恒（南京）'
   )
-  await expect(page.locator('.login-workspace')).toContainText('默认选择主公司')
   await solveDemoCaptcha(page)
   await page.locator('.c-login__submit-btn').click()
+  await expect(page.locator('.login-workspace')).toContainText('默认选择主公司')
+  await expect(page.getByPlaceholder('请输入密码').first()).toHaveValue('')
+  await page.getByRole('button', { name: '确认工作公司' }).click()
 
   await expect(page).toHaveURL(/#\/home$/, { timeout: 20_000 })
   await expect(page.locator('.navbar-right .user-dropdown')).toContainText(
@@ -67,17 +46,11 @@ test('单公司自动进入，无公司明确阻止', async ({ page }) => {
   })
   await page.goto('/#/login', { waitUntil: 'domcontentloaded' })
   await page.getByPlaceholder('请输入用户名').fill('NOACCESS')
-  await expect(page.locator('.login-workspace')).toContainText(
-    '当前账号未关联公司'
-  )
-  await expect(page.locator('.c-login__submit-btn')).toBeDisabled()
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
+  await expect(page.locator('.login-workspace')).toContainText('账号或密码错误')
   expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
-
   await page.getByPlaceholder('请输入用户名').fill('STAFF')
-  await expect(page.locator('.login-workspace')).toContainText('西安天智')
-  await expect(page.locator('.login-workspace')).toContainText(
-    '已自动选择唯一关联公司'
-  )
   await solveDemoCaptcha(page)
   await page.locator('.c-login__submit-btn').click()
   await expect(page).toHaveURL(/#\/home$/, { timeout: 20_000 })
@@ -160,6 +133,7 @@ test('用户管理变更主/兼任公司后，下次登录进入新主公司', a
   await page.getByPlaceholder('请输入用户名').fill('zhangsan')
   await solveDemoCaptcha(page)
   await page.locator('.c-login__submit-btn').click()
+  await page.getByRole('button', { name: '确认工作公司' }).click()
   await expect(page).toHaveURL(/#\/home$/, { timeout: 20_000 })
   await expect(page.locator('.navbar-right .user-dropdown')).toContainText(
     '江苏金恒（西安）'
@@ -169,12 +143,14 @@ test('用户管理变更主/兼任公司后，下次登录进入新主公司', a
   )
 })
 
-test('登录前选择兼任公司，进入后的菜单与切换公司保持一致', async ({ page }) => {
+test('验证后选择兼任公司，进入后的菜单与切换公司保持一致', async ({ page }) => {
   test.setTimeout(60_000)
   await page.addInitScript(() => {
     Math.random = () => 0.5
   })
   await page.goto('/#/login', { waitUntil: 'domcontentloaded' })
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
   await expect(page.locator('.login-workspace')).toContainText(
     '江苏金恒（南京）'
   )
@@ -183,8 +159,7 @@ test('登录前选择兼任公司，进入后的菜单与切换公司保持一�
   await expect(
     page.locator('.login-workspace .n-base-selection')
   ).toContainText('江苏金恒（西安）')
-  await solveDemoCaptcha(page)
-  await page.locator('.c-login__submit-btn').click()
+  await page.getByRole('button', { name: '确认工作公司' }).click()
   await expect(page).toHaveURL(/#\/home$/, { timeout: 20_000 })
   await expect(page.locator('.enterprise-overview')).toContainText('运营经理')
   expect(
@@ -202,29 +177,28 @@ test('登录前选择兼任公司，进入后的菜单与切换公司保持一�
   await expect(page).toHaveURL(/#\/sys-manage\/menu-manage$/)
 })
 
-test('账号改变立即清空已选兼任公司，不能携带旧选择提交', async ({ page }) => {
+test('账号改变立即清空已验证公司和票据，不能携带旧选择提交', async ({
+  page,
+}) => {
   test.setTimeout(60_000)
   await page.addInitScript(() => {
     Math.random = () => 0.5
   })
   await page.goto('/#/login', { waitUntil: 'domcontentloaded' })
-  await expect(page.locator('.login-workspace')).toContainText(
-    '江苏金恒（南京）'
-  )
-  await page.locator('.login-workspace .n-base-selection').click()
-  await page.getByText('江苏金恒（西安）', { exact: true }).last().click()
   await solveDemoCaptcha(page)
-  await expect(page.locator('.c-login__submit-btn')).toBeEnabled()
+  await page.locator('.c-login__submit-btn').click()
+  await expect(page.getByRole('button', { name: '确认工作公司' })).toBeEnabled()
   await page.getByPlaceholder('请输入用户名').fill('STAFF')
   await expect(page.locator('.login-workspace')).not.toContainText(
-    '江苏金恒（西安）'
+    '江苏金恒（南京）'
   )
-  await expect(page.locator('.login-workspace')).toContainText('西安天智')
+  await expect(page.getByRole('button', { name: '确认工作公司' })).toHaveCount(
+    0
+  )
   await page.getByPlaceholder('请输入用户名').clear()
   await expect(page.locator('.login-workspace')).toContainText(
-    '输入账号后显示已关联公司'
+    '账号验证成功后才能选择工作公司'
   )
-  await expect(page.locator('.login-workspace')).not.toContainText('西安天智')
   await expect(page.locator('.c-login__submit-btn')).toBeDisabled()
   await page.getByPlaceholder('请输入密码').first().press('Enter')
   await expect(page).toHaveURL(/#\/login$/)
@@ -233,7 +207,9 @@ test('账号改变立即清空已选兼任公司，不能携带旧选择提交',
 
 test('回车不能绕过登录人机验证', async ({ page }) => {
   await page.goto('/#/login', { waitUntil: 'domcontentloaded' })
-  await expect(page.locator('.login-workspace')).toContainText('默认选择主公司')
+  await expect(page.locator('.login-workspace')).toContainText(
+    '账号验证成功后才能选择工作公司'
+  )
   await page.getByPlaceholder('请输入密码').first().press('Enter')
   await expect(page).toHaveURL(/#\/login$/)
   expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()

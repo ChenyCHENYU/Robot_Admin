@@ -8,4 +8,5 @@
 import type { DATA_SCOPE } from '@/constant'
 
 export type DataScopeType = (typeof DATA_SCOPE)[keyof typeof DATA_SCOPE]
-export type TemporaryAuthorizationStatus = 'active' | 'expired' | 'revoked'
+export type TemporaryAuthorizationStatus =
+  'pending' | 'active' | 'expired' | 'revoked'

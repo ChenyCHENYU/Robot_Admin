@@ -5,12 +5,14 @@
  * @Description: 页面状态、表单及请求控制，模板只负责展示和事件绑定
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { refreshCurrentAuthorization } from '@/utils/d_refreshPermissions'
+
 import { compareRolePermissions } from '@/utils/d_permissionComparison'
 
 import {
   getRoleListApi,
   getPermissionListApi,
-  getRoleUsersApi,
+  getRoleUsersPageApi,
   getRoleDataScopesApi,
   getRoleTempAuthorizationsApi,
   createRoleApi,
@@ -394,9 +396,11 @@ export function useRoleManagement() {
   const openRoleModal = (role?: RoleData) => {
     modalMode.value = role ? 'edit' : 'add'
     delete formData.id
+    delete formData.revision
     if (role) {
       Object.assign(formData, {
         id: role.id,
+        revision: role.revision,
         name: role.name,
         code: role.code,
         type: role.type,
@@ -471,7 +475,7 @@ export function useRoleManagement() {
     const action = newStatus === 1 ? '启用' : '禁用'
 
     try {
-      await updateRoleStatusApi(role.id, newStatus)
+      await updateRoleStatusApi(role.id, newStatus, role.revision)
       message.success(`${action}成功`)
       await loadRoles()
     } catch {
@@ -481,7 +485,9 @@ export function useRoleManagement() {
 
   const deleteRole = async (id: string) => {
     try {
-      await deleteRoleApi(id)
+      const row = roleList.find(role => role.id === id)
+      if (!row) throw new Error('角色快照已失效，请刷新后重试')
+      await deleteRoleApi(id, row.revision)
       message.success('删除成功')
       await loadRoles()
     } catch {
@@ -521,8 +527,10 @@ export function useRoleManagement() {
     try {
       await updateRolePermissionsApi(
         permissionRole.value.id,
-        selectedPermissionIds.value
+        selectedPermissionIds.value,
+        permissionRole.value.revision
       )
+      await refreshCurrentAuthorization()
       message.success('权限分配成功')
       showPermissionDrawer.value = false
       await loadRoles()
@@ -542,20 +550,29 @@ export function useRoleManagement() {
     }
   }
 
-  // 查看角色用户列表
+  const roleUsersPage = ref(1)
+  const roleUsersTotal = ref(0)
+  /** 服务端分页读取当前角色的公司成员。 */
+  const loadRoleUsersPage = async (page: number) => {
+    const role = currentRole.value
+    if (!role) return
+    roleUsersPage.value = page
+    try {
+      const response = await runLatestRoleUsersRequest(signal =>
+        getRoleUsersPageApi(role.id, { page, pageSize: 20 }, signal)
+      )
+      if (!response || currentRole.value?.id !== role.id) return
+      roleUserList.splice(0, roleUserList.length, ...response.data.list)
+      roleUsersTotal.value = response.data.total
+    } catch {
+      message.error('获取角色成员失败，请刷新后重试')
+    }
+  }
   const handleViewRoleUsers = async (role: RoleData) => {
     currentRole.value = role
     roleUserList.splice(0)
     showRoleUsers.value = true
-    try {
-      const response = await runLatestRoleUsersRequest(signal =>
-        getRoleUsersApi(role.id, signal)
-      )
-      if (!response) return
-      roleUserList.splice(0, roleUserList.length, ...response.data)
-    } catch {
-      message.error('获取用户列表失败')
-    }
+    await loadRoleUsersPage(1)
   }
 
   // ==================== 数据加载 ====================
@@ -598,6 +615,9 @@ export function useRoleManagement() {
   return {
     loading,
     roleUsersLoading,
+    roleUsersPage,
+    roleUsersTotal,
+    loadRoleUsersPage,
     showModal,
     showRoleDetail,
     showPermissionDrawer,

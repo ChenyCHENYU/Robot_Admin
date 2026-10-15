@@ -240,6 +240,7 @@ export const getTableColumns = (): TableColumn<PermissionData>[] => [
     width: 160,
     render: (row: PermissionData) => {
       // 如果是时间戳，可以进行格式化
+      if (!row.createTime) return '—'
       if (typeof row.createTime === 'number') {
         return new Date(row.createTime).toLocaleString()
       }

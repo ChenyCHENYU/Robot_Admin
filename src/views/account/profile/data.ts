@@ -37,7 +37,7 @@ export const PROFILE_FORM_OPTIONS: FormOption<ProfileFormData>[] = [
     label: '邮箱',
     type: 'input',
     placeholder: '请输入邮箱',
-    rules: [PRESET_RULES.required('邮箱'), PRESET_RULES.email('邮箱')],
+    rules: [PRESET_RULES.optional(PRESET_RULES.email('邮箱'))],
   },
   {
     prop: 'phone',

@@ -92,40 +92,39 @@ test('第二条权限不合法时整批拒绝，第一条也不能写入', async
   ).toHaveCount(0)
 })
 
-test('字段和数据范围保存后重新加载仍保持最新配置', async ({ page }) => {
-  const errors: string[] = []
-  page.on('pageerror', error => errors.push(error.message))
+test('未实现的数据范围和字段规则明确只读，刷新后仍不能保存', async ({
+  page,
+}) => {
+  await expect(
+    page.getByText(
+      '数据范围为有效角色的只读摘要；字段规则与通用约束尚不支持保存。临时授权按成员授予现有角色。'
+    )
+  ).toBeVisible()
   await page
     .locator('.n-tabs-tab')
     .filter({ hasText: /^数据权限$/ })
     .click()
   const table = page.locator('.c-table-wrapper').last()
   await expect(table).toHaveAttribute('aria-busy', 'false')
+  await expect(
+    page.getByText(
+      'Mock 字段权限数据仅用于演示，不代表远程服务已接入字段权限模型。'
+    )
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: /新增规则$/ })).toBeDisabled()
   const row = table.locator('tbody tr').first()
-  await row.getByRole('button', { name: '配置字段', exact: true }).click()
-  const card = page.locator('.field-permission-card').first()
-  const visibleSwitch = card.getByRole('switch').first()
-  const before = await visibleSwitch.getAttribute('aria-checked')
-  await visibleSwitch.click()
-  await page.getByRole('button', { name: '保存字段权限', exact: true }).click()
-  const refresh = page
+  await expect(
+    row.getByRole('button', { name: '配置字段', exact: true })
+  ).toBeDisabled()
+  await expect(
+    row.getByRole('button', { name: '修改范围', exact: true })
+  ).toBeDisabled()
+  await page
     .locator('.header-card')
     .getByRole('button', { name: /刷新$/ })
-  await refresh.click()
+    .click()
   await expect(table).toHaveAttribute('aria-busy', 'false')
-  await row.getByRole('button', { name: '配置字段', exact: true }).click()
-  await expect(visibleSwitch).toHaveAttribute(
-    'aria-checked',
-    before === 'true' ? 'false' : 'true'
-  )
-  await page.getByRole('button', { name: '取消', exact: true }).click()
-  await row.getByRole('button', { name: '修改范围', exact: true }).click()
-  const dialog = page.getByRole('dialog')
-  await dialog.getByText('仅本人', { exact: true }).click()
-  await dialog.getByRole('button', { name: '确认', exact: true }).click()
-  await expect(row).toContainText('仅本人')
-  await refresh.click()
-  await expect(table).toHaveAttribute('aria-busy', 'false')
-  await expect(row).toContainText('仅本人')
-  expect(errors).toEqual([])
+  await expect(
+    row.getByRole('button', { name: '修改范围', exact: true })
+  ).toBeDisabled()
 })

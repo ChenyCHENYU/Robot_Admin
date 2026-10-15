@@ -17,6 +17,7 @@ export type PermissionType = 'menu' | 'button' | 'api'
 
 export interface RoleData {
   id: string
+  revision?: number
   name: string
   code: string
   type: RoleType
@@ -33,6 +34,7 @@ export interface RoleData {
 
 export interface RoleFormData {
   id?: string
+  revision?: number
   name: string
   code: string
   type: RoleType

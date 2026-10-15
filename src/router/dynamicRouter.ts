@@ -6,6 +6,12 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import router from './index'
+import { publicRoutes } from './publicRouter'
+import {
+  authenticatedRoutes,
+  collectStaticRouteIdentities,
+} from './authenticatedRoutes'
+import { validateDynamicRouteIdentities } from './d_routeIdentity'
 import type { RouteRecordRaw } from 'vue-router'
 import { s_permissionStore } from '@/stores/permission'
 import { s_userStore } from '@/stores/user'
@@ -185,8 +191,7 @@ const readDynamicRoutes = (response: AuthMenuResponse): DynamicRoute[] => {
   const { code, data, msg, message } = response
   if (![0, 200, '0', '200'].includes(code))
     throw new Error(msg || message || '菜单请求失败')
-  if (!Array.isArray(data) || !data.length)
-    throw new Error('菜单数据为空或格式无效，请联系管理员')
+  if (!Array.isArray(data)) throw new Error('菜单数据格式无效，请联系管理员')
   return data
 }
 
@@ -210,13 +215,16 @@ const registerDynamicRoutes = async (
     if (!isCurrent()) return false
     const routes = readDynamicRoutes(response)
 
+    const reserved = collectStaticRouteIdentities([
+      ...publicRoutes,
+      ...authenticatedRoutes,
+    ])
+    reserved.paths.add('/404')
+    validateDynamicRouteIdentities(routes, reserved.names, reserved.paths)
     removeRegisteredRoutes()
 
     for (const route of routes) {
       dynamicRouteRemovers.push(router.addRoute(processRoute(route)))
-    }
-    if (router.resolve('/home').name === 'NotFound') {
-      throw new Error('菜单未提供首页路由，请联系管理员')
     }
     registeredGeneration = generation
 

@@ -1,84 +1,179 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-10-05
- * @FilePath: \Robot_Admin\e2e\login-discovery.pw.ts
- * @Description: 远端公司发现的乱序响应、清空账号和重试交互
- * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ * @Date: 2026-10-14
+ * @Description: 正式remote构建的登录HTTP fixture，验证公司发现无枚举、票据激活和受控错误
+ * Copyright (c) 2026 by CHENY, All Rights Reserved.
  */
-import { expect, test, type Route } from '@playwright/test'
+import { expect, test } from '@playwright/test'
+import { solveDemoCaptcha } from './d_login'
 
 test.use({ baseURL: process.env.E2E_REMOTE_URL || 'http://127.0.0.1:4174' })
-
-const company = {
-  id: 'company-new',
-  isPrimary: true,
-  tenantName: '测试租户',
-  companyName: '当前账号公司',
+const contexts = [
+  {
+    id: 'company-primary',
+    tenantId: 'tenant',
+    tenantName: '测试租户',
+    companyId: 'primary',
+    companyName: '主公司',
+    isPrimary: true,
+    roles: [],
+  },
+  {
+    id: 'company-second',
+    tenantId: 'tenant',
+    tenantName: '测试租户',
+    companyId: 'second',
+    companyName: '兼任公司',
+    isPrimary: false,
+    roles: [],
+  },
+]
+const pending = {
+  code: 0,
+  data: {
+    loginTicket: 'fixture-login-ticket',
+    availableContexts: contexts,
+    user: { id: 'fixture-user', username: 'fixture-user' },
+  },
 }
 
-/** 按远端稳定契约返回最小公司展示信息。 */
-const fulfillCompanies = (route: Route, companies: (typeof company)[]) =>
-  route.fulfill({ json: { code: '0', data: { companies } } })
-
-test('旧账号延迟响应不会覆盖新账号公司，清空账号立即禁用提交', async ({
+test('账号输入不发现公司；验证后清空密码并仅用票据激活所选公司', async ({
   page,
 }) => {
-  let oldRoute: Route | undefined
-  let signalOldRequest: () => void = () => undefined
-  const oldRequest = new Promise<void>(resolve => {
-    signalOldRequest = resolve
+  test.setTimeout(60_000)
+  const requests: { path: string; body: Record<string, unknown> }[] = []
+  const diagnostics: string[] = []
+  page.on('console', message => {
+    if (message.type() === 'error') diagnostics.push(message.text())
   })
-  await page.route('**/auth/login-companies', async route => {
-    if (route.request().postDataJSON().username === 'old-account') {
-      oldRoute = route
-      signalOldRequest()
-      return
-    }
-    await fulfillCompanies(route, [company])
+  await page.addInitScript(() => {
+    Math.random = () => 0.5
+  })
+  await page.route('**/api/**', async route => {
+    const path = new URL(route.request().url()).pathname
+    const body =
+      route.request().method() === 'POST' ? route.request().postDataJSON() : {}
+    requests.push({ path, body })
+    if (path.endsWith('/auth/login')) return route.fulfill({ json: pending })
+    if (path.endsWith('/auth/context/activate'))
+      return route.fulfill({
+        json: {
+          code: 0,
+          data: {
+            token: 'fixture-access',
+            refreshToken: 'fixture-refresh',
+            expiresIn: 3600,
+            user: pending.data.user,
+            activeContext: contexts[1],
+            availableContexts: contexts,
+          },
+        },
+      })
+    return route.fulfill({ json: { code: 0, data: [] } })
   })
   await page.goto('/#/login')
-  await page.getByPlaceholder('请输入用户名').fill('old-account')
-  await oldRequest
-  await page.getByPlaceholder('请输入用户名').fill('new-account')
-  await expect(page.locator('.login-workspace')).toContainText('当前账号公司')
-  if (!oldRoute) throw new Error('旧账号查询未发起')
-  const oldResponse = page.waitForResponse(
-    response =>
-      response.url().includes('/auth/login-companies') &&
-      response.request().postDataJSON().username === 'old-account'
+  await page.getByPlaceholder('请输入用户名').fill('fixture-user')
+  await page.getByPlaceholder('请输入密码').first().fill('fixture-password')
+  await expect(page.locator('.login-workspace')).toContainText(
+    '账号验证成功后才能选择工作公司'
   )
-  await fulfillCompanies(oldRoute, [
-    { ...company, id: 'company-old', companyName: '旧账号公司' },
-  ])
-  await (await oldResponse).finished()
-  await expect(page.locator('.login-workspace')).toContainText('当前账号公司')
-  await expect(page.locator('.login-workspace')).not.toContainText('旧账号公司')
-  await page.getByPlaceholder('请输入用户名').clear()
-  await expect(page.locator('.login-workspace')).not.toContainText(
-    '当前账号公司'
+  expect(requests.filter(request => request.path.includes('/auth/'))).toEqual(
+    []
   )
-  await expect(page.locator('.c-login__submit-btn')).toBeDisabled()
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
+  await expect(page.getByRole('button', { name: '确认工作公司' })).toBeEnabled()
+  await expect(page.getByPlaceholder('请输入密码').first()).toHaveValue('')
+  await page.locator('.login-workspace .n-base-selection').click()
+  await page.getByText('兼任公司', { exact: true }).last().click()
+  const stored = await page.evaluate(() =>
+    JSON.stringify({
+      local: { ...localStorage },
+      session: { ...sessionStorage },
+    })
+  )
+  expect(stored).not.toContain('fixture-password')
+  expect(stored).not.toContain('fixture-login-ticket')
+  expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
+  await page.getByRole('button', { name: '确认工作公司' }).click()
+  await expect(page).toHaveURL(/#\/401$/)
+  const login = requests.filter(request => request.path.endsWith('/auth/login'))
+  expect(login).toHaveLength(1)
+  expect(login[0].body.password).toBe('fixture-password')
+  expect(
+    requests.find(request => request.path.endsWith('/auth/context/activate'))
+      ?.body
+  ).toEqual({
+    loginTicket: 'fixture-login-ticket',
+    contextId: 'company-second',
+  })
+  expect(
+    requests.some(request => request.path.endsWith('/auth/login-companies'))
+  ).toBe(false)
+  expect(diagnostics.join(' ')).not.toContain('fixture-password')
+  expect(page.url()).not.toContain('fixture-password')
 })
 
-test('公司查询失败可重试，成功后恢复默认选择', async ({ page }) => {
+test('不同账号认证失败使用相同提示且不显示公司或原始错误报文', async ({
+  page,
+}) => {
+  test.setTimeout(60_000)
   let attempts = 0
-  await page.route('**/auth/login-companies', async route => {
-    attempts++
-    if (attempts === 1)
-      await route.fulfill({
-        json: { code: '1', msg: '查询暂不可用', data: { companies: [] } },
-      })
-    else await fulfillCompanies(route, [company])
+  await page.addInitScript(() => {
+    Math.random = () => 0.5
   })
-  await page.goto('/#/login')
-  await page.getByPlaceholder('请输入用户名').fill('new-account')
-  await expect(page.getByRole('button', { name: '重新查询' })).toBeVisible()
-  await expect(page.locator('.c-login__submit-btn')).toBeDisabled()
-  await page.getByRole('button', { name: '重新查询' }).click()
-  await expect(page.locator('.login-workspace')).toContainText('当前账号公司')
-  await expect(page.locator('.login-workspace')).toContainText(
-    '已自动选择唯一关联公司'
+  await page.route('**/auth/login', route =>
+    route.fulfill({
+      json: {
+        code: ++attempts === 1 ? 40101 : 40102,
+        msg: 'raw fixture-password disabled-account',
+        data: null,
+      },
+    })
   )
-  await expect(page.getByRole('button', { name: '重新查询' })).toHaveCount(0)
+  await page.goto('/#/login')
+  await page.getByPlaceholder('请输入用户名').fill('unknown-account')
+  await page.getByPlaceholder('请输入密码').first().fill('fixture-password')
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
+  await expect(page.locator('.login-workspace')).toContainText(
+    '账号或密码错误，请重新验证'
+  )
+  await expect(page.locator('body')).not.toContainText('raw fixture-password')
+  await page.getByPlaceholder('请输入用户名').fill('disabled-account')
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
+  await expect(page.locator('.login-workspace')).toContainText(
+    '账号或密码错误，请重新验证'
+  )
+  await expect(page.getByRole('button', { name: '确认工作公司' })).toHaveCount(
+    0
+  )
   expect(attempts).toBe(2)
+  expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
+})
+
+test('账号改变立即作废已验证公司和票据，重新验证不复用密码', async ({
+  page,
+}) => {
+  test.setTimeout(60_000)
+  await page.addInitScript(() => {
+    Math.random = () => 0.5
+  })
+  await page.route('**/auth/login', route => route.fulfill({ json: pending }))
+  await page.goto('/#/login')
+  await page.getByPlaceholder('请输入用户名').fill('fixture-user')
+  await page.getByPlaceholder('请输入密码').first().fill('fixture-password')
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
+  await expect(page.getByRole('button', { name: '确认工作公司' })).toBeEnabled()
+  await page.getByRole('button', { name: '重新验证账号' }).click()
+  await expect(page.getByRole('button', { name: '确认工作公司' })).toHaveCount(
+    0
+  )
+  await expect(page.getByPlaceholder('请输入密码').first()).toHaveValue('')
+  await expect(page.locator('.login-workspace')).toContainText(
+    '账号验证成功后才能选择工作公司'
+  )
+  expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
 })

@@ -10,6 +10,7 @@ import { describe, expect, test } from 'bun:test'
 import {
   getBusinessErrorMessage,
   getRequestErrorMessage,
+  getSafeRequestDiagnostic,
   isSameAuthSession,
   shouldRecoverUnauthorized,
 } from '../src/utils/d_request'
@@ -61,4 +62,48 @@ describe('请求响应契约', () => {
       false
     )
   })
+})
+
+test('请求诊断仅允许状态业务码和合法traceId，拒绝原始认证报文', () => {
+  const traceId = '12345678-1234-1234-1234-123456789abc'
+  const error = {
+    message: 'raw password=credential-secret',
+    config: {
+      data: { username: 'Alice', password: 'credential-secret' },
+      headers: { Authorization: 'Bearer token-secret' },
+    },
+    request: { responseText: 'credential-secret' },
+    response: {
+      status: 401,
+      data: {
+        code: 40101,
+        password: 'credential-secret',
+        message: 'user disabled',
+      },
+      headers: { 'x-trace-id': traceId, authorization: 'token-secret' },
+    },
+  }
+  expect(getSafeRequestDiagnostic(error)).toEqual({
+    status: 401,
+    code: 40101,
+    traceId,
+  })
+  expect(getSafeRequestDiagnostic(getSafeRequestDiagnostic(error))).toEqual({
+    status: 401,
+    code: 40101,
+    traceId,
+  })
+  expect(JSON.stringify(getSafeRequestDiagnostic(error))).not.toContain(
+    'secret'
+  )
+  expect(
+    getSafeRequestDiagnostic({
+      response: {
+        status: -1,
+        data: { code: '40101' },
+        headers: { 'x-trace-id': 'password=credential-secret' },
+      },
+    })
+  ).toEqual({})
+  expect(getSafeRequestDiagnostic(null)).toEqual({})
 })

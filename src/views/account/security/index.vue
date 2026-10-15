@@ -9,6 +9,16 @@
   <div class="security-page">
     <!-- 安全配置 -->
     <NCard title="安全设置">
+      <NAlert
+        v-if="!mockMode"
+        type="info"
+        >认证能力由服务端统一配置，当前页面只读展示；双因素认证尚未启用。修改密码仍可使用。</NAlert
+      >
+      <NAlert
+        v-if="mockMode"
+        type="info"
+        >当前为演示安全配置，开关变化不代表服务器已实现对应能力。</NAlert
+      >
       <div class="security-list">
         <div
           v-for="item in securitySettings"
@@ -27,6 +37,7 @@
               v-if="!item.action"
               v-model:value="item.enabled"
               :loading="updatingSettingKeys.has(item.key)"
+              :disabled="!mockMode"
               @update:value="(val: boolean) => handleToggle(item.key, val)"
             />
             <NButton
@@ -38,6 +49,7 @@
             </NButton>
             <NButton
               v-else
+              :disabled="!mockMode"
               size="small"
               @click="handleAction(item.key)"
             >
@@ -137,6 +149,7 @@
 
   defineOptions({ name: 'AccountSecurity' })
 
+  const mockMode = isMockDataMode()
   const message = useMessage()
   const passwordFormRef = ref<FormInstance<ChangePasswordForm> | null>(null)
   const showPasswordModal = ref(false)
@@ -188,6 +201,10 @@
 
   /** 切换安全开关 */
   const handleToggle = async (key: string, val: boolean) => {
+    if (!mockMode) {
+      message.info('当前服务安全配置只读')
+      return
+    }
     if (updatingSettingKeys.has(key)) return
     updatingSettingKeys.add(key)
     try {

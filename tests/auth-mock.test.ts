@@ -44,7 +44,7 @@ describe('认证模式', () => {
 describe('认证 Mock 闭环', () => {
   test('身份验证阶段仅返回选择凭据，不提前签发访问令牌', async () => {
     const response = await createMockLoginResponse({
-      username: 'admin',
+      username: 'CHENY',
       password: 'robot-admin',
     })
 
@@ -52,7 +52,7 @@ describe('认证 Mock 闭环', () => {
     expect(response.data.token).toBe('')
     expect(response.data.refreshToken).toBe('')
     expect(response.data.loginTicket).toStartWith('mock-ticket.')
-    expect(response.data.user.username).toBe('admin')
+    expect(response.data.user.username).toBe('CHENY')
     expect(response.data.token).not.toContain('robot-admin')
   })
 
@@ -64,7 +64,7 @@ describe('认证 Mock 闭环', () => {
 
   test('刷新令牌可轮换且拒绝非法令牌', async () => {
     const login = await createMockLoginResponse({
-      username: 'admin',
+      username: 'CHENY',
       password: 'robot-admin',
     })
     const session = activateMockAuthContext({
@@ -115,17 +115,9 @@ describe('认证 Mock 闭环', () => {
       password: 'demo',
     })
     expect(identity.data.availableContexts).toHaveLength(1)
-    expect(() =>
-      activateMockAuthContext({
-        loginTicket: identity.data.loginTicket as string,
-        contextId: 'jinheng-nanjing',
-      })
-    ).toThrow('无权进入')
-
-    const session = activateMockAuthContext({
-      loginTicket: identity.data.loginTicket as string,
-      contextId: 'tianzhi-xian',
-    })
+    expect(identity.data.activeContext?.id).toBe('tianzhi-xian')
+    expect(identity.data.loginTicket).toBeUndefined()
+    const session = identity
     expect(() =>
       switchMockAuthContext(
         'STAFF',
@@ -180,8 +172,11 @@ describe('认证 Mock 闭环', () => {
   })
 })
 
-test('登录前公司发现不返回角色与令牌，登录后重新校验所选公司', async () => {
-  const response = await getLoginCompaniesMockApi(' CHENY ')
+test('凭据公司发现不返回角色与令牌，登录后重新校验所选公司', async () => {
+  const response = await getLoginCompaniesMockApi({
+    username: ' CHENY ',
+    password: 'demo',
+  })
   expect(response.data.companies).toHaveLength(3)
   expect(Object.keys(response.data.companies[0]).sort()).toEqual([
     'companyName',
@@ -189,9 +184,10 @@ test('登录前公司发现不返回角色与令牌，登录后重新校验所�
     'isPrimary',
     'tenantName',
   ])
-  expect((await getLoginCompaniesMockApi('NOACCESS')).data.companies).toEqual(
-    []
-  )
+  expect(
+    (await getLoginCompaniesMockApi({ username: 'NOACCESS', password: 'demo' }))
+      .data.companies
+  ).toEqual([])
   const contexts = getMockAuthContexts('CHENY')
   expect(resolveLoginAuthContext(contexts, 'jinheng-xian').roles[0].id).toBe(
     'operations-manager'
@@ -206,4 +202,16 @@ test('登录前公司发现不返回角色与令牌，登录后重新校验所�
       'jinheng-xian'
     )
   ).toThrow('所选公司已不可用')
+})
+
+test('发现公司必须先具备账号密码，无公司正式登录拒绝供给会话', async () => {
+  await expect(
+    getLoginCompaniesMockApi({ username: 'CHENY', password: '' })
+  ).rejects.toThrow('账号或密码错误')
+  await expect(
+    getLoginCompaniesMockApi({ username: '', password: 'demo' })
+  ).rejects.toThrow('账号或密码错误')
+  expect(() =>
+    createMockLoginResponse({ username: 'NOACCESS', password: 'demo' })
+  ).toThrow('未关联')
 })

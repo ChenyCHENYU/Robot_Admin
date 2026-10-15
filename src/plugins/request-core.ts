@@ -25,6 +25,7 @@ import {
   BUSINESS_SUCCESS_CODES,
   getBusinessErrorMessage,
   getRequestErrorMessage,
+  getSafeRequestDiagnostic,
   isSameAuthSession,
   shouldRecoverUnauthorized,
 } from '@/utils/d_request'
@@ -32,7 +33,11 @@ import {
 const { VITE_API_BASE } = import.meta.env
 
 const isAuthenticationRequest = (url?: string): boolean =>
-  Boolean(url?.includes('/auth/login') || url?.includes('/auth/refresh-token'))
+  Boolean(
+    url?.includes('/auth/login') ||
+    url?.includes('/auth/refresh-token') ||
+    url?.includes('/auth/context/activate')
+  )
 
 /** 应用唯一请求 Client；旧快捷方法通过 setAsDefault 平滑复用该实例。 */
 export const request = createRequestClient({
@@ -96,8 +101,16 @@ export const request = createRequestClient({
       const businessError = getBusinessErrorMessage(response.data)
       if (!businessError) return response
 
-      message.error(businessError)
-      return Promise.reject(new Error(businessError))
+      const authentication = isAuthenticationRequest(response.config.url)
+      if (!authentication) message.error(businessError)
+      return Promise.reject(
+        Object.assign(
+          new Error(
+            authentication ? '账号或密码错误，请重新验证' : businessError
+          ),
+          getSafeRequestDiagnostic(response)
+        )
+      )
     },
     responseError: error => {
       if (!isAuthenticationRequest(error.config?.url)) {
