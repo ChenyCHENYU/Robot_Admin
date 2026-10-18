@@ -20,6 +20,7 @@ import {
   type NotificationGovernance,
   type NotificationPreferences,
   type NotificationRecord,
+  type NotificationWorkflowCommand,
 } from '@/api/notifications.contract'
 import { createNotificationService } from '@/api/notifications'
 import {
@@ -77,7 +78,7 @@ test('重复初始化与布局持有共享同一服务，过滤列表不会污�
   const originalPreview = store.previewItems.map(item => item.id)
   await store.search({ keyword: '安全登录' })
   expect(store.items).toHaveLength(1)
-  expect(store.stats.total).toBe(11)
+  expect(store.stats.total).toBe(21)
   expect(store.previewItems.map(item => item.id)).toEqual(originalPreview)
   releaseA()
   releaseA()
@@ -128,7 +129,9 @@ test('有凭据但没有已验证用户或公司时拒绝猜测身份，不播�
 test('失败操作保留状态并可重试，办结与已读分别流转，删除末页回到有效页', async () => {
   const store = s_notificationStore()
   await store.initialize()
-  const task = store.items.find(item => item.taskStatus === 'pending')!
+  const task = store.items.find(
+    item => item.taskStatus === 'pending' && !item.workflow
+  )!
   store.simulateFailure()
   await expect(store.mutate('read', [task.id])).rejects.toThrow('模拟操作失败')
   expect(store.items.find(item => item.id === task.id)!.readAt).toBeNull()
@@ -138,10 +141,10 @@ test('失败操作保留状态并可重试，办结与已读分别流转，删�
   )
   await store.mutate('complete-task', [task.id])
   expect(store.items.find(item => item.id === task.id)!.taskStatus).toBe('done')
-  await store.changePage(2, 10)
+  await store.changePage(3, 10)
   const lastPage = store.items.map(item => item.id)
   await store.mutate('delete', lastPage)
-  expect(store.query.page).toBe(1)
+  expect(store.query.page).toBe(2)
   expect(store.items).toHaveLength(10)
 })
 
@@ -240,7 +243,7 @@ test('明确重置取消此前挂起的单条消息命令，新演示场景不�
   gate.resolve()
   expect((await pending).name).toBe('AbortError')
   await store.refresh()
-  expect(store.stats.unread).toBe(6)
+  expect(store.stats.unread).toBe(9)
   expect(store.items.find(item => item.id === id)!.readAt).toBeNull()
 })
 
@@ -254,7 +257,11 @@ test('新筛选失败不会把旧列表包装成新页签，查询和结果原�
   expect(store.items.map(item => item.id)).toEqual(ids)
   await store.search({ status: 'todo' })
   expect(store.query.status).toBe('todo')
-  expect(store.items.every(item => item.taskStatus === 'pending')).toBe(true)
+  expect(
+    store.items.every(item =>
+      ['pending', 'in_progress'].includes(item.taskStatus ?? '')
+    )
+  ).toBe(true)
 })
 
 const createDispatchInput = (): NotificationDispatchDraft => ({
@@ -406,4 +413,230 @@ test('保存偏好后的新读取胜过旧慢响应，能力撤销也会失效�
   await pendingGovernance
   expect(store.templates).toEqual([])
   expect(store.capabilities.manage).toBe(false)
+})
+
+test('铃铛与主列表独立查询，慢预览和失败不改主列表筛选或错误', async () => {
+  const backend = createNotificationDemoService(
+    { userId: 'account-a', tenantId: 'tenant-a', companyId: 'company-a' },
+    { delay: 0 }
+  )
+  const old = deferred<NotificationSnapshot>()
+  let hold = false
+  let fail = false
+  state.factory = () => ({
+    ...backend,
+    query: (query, signal) => {
+      if (hold && query.topic === 'workflow') return old.promise
+      if (fail && query.topic === 'workflow')
+        throw new Error('审批预览网络失败')
+      return backend.query(query, signal)
+    },
+  })
+  const store = s_notificationStore()
+  await store.initialize()
+  await store.search({ keyword: '安全登录' })
+  const mainIds = store.items.map(item => item.id)
+  hold = true
+  const pending = store.setPreviewQuery({ topic: 'workflow' })
+  await store.setPreviewQuery({ topic: 'general', status: 'unread' })
+  const currentPreviewIds = store.previewItems.map(item => item.id)
+  old.resolve(
+    await backend.query({
+      ...defaultNotificationQuery(),
+      topic: 'workflow',
+      pageSize: 20,
+    })
+  )
+  await pending
+  expect(store.previewQuery.topic).toBe('general')
+  expect(store.previewItems.map(item => item.id)).toEqual(currentPreviewIds)
+  expect(store.previewItems.every(item => !item.workflow && !item.readAt)).toBe(
+    true
+  )
+  expect(store.query.keyword).toBe('安全登录')
+  expect(store.items.map(item => item.id)).toEqual(mainIds)
+  hold = false
+  fail = true
+  await expect(store.setPreviewQuery({ topic: 'workflow' })).rejects.toThrow(
+    '预览网络失败'
+  )
+  expect(store.previewError).toContain('预览网络失败')
+  expect(store.previewItems).toEqual([])
+  expect(store.error).toBe('')
+  expect(store.items.map(item => item.id)).toEqual(mainIds)
+})
+
+test('审批未知确认重试复用operationId，安全返回原结果且不重复审批审计', async () => {
+  const identity = {
+    userId: 'account-a',
+    tenantId: 'tenant-a',
+    companyId: 'company-a',
+  }
+  const backend = createNotificationDemoService(identity, { delay: 0 })
+  const operationIds: string[] = []
+  let dropAck = true
+  const transport: NotificationTransport = {
+    get: async <T>(url: string, config: unknown) => ({
+      code: 0,
+      msg: 'ok',
+      data: (url.endsWith('/management')
+        ? await backend.governance()
+        : {
+            ...(await backend.query(
+              (
+                config as {
+                  params?: ReturnType<typeof defaultNotificationQuery>
+                }
+              )?.params ?? defaultNotificationQuery()
+            )),
+            capabilities: {
+              manage: true,
+              preferences: true,
+              realtime: false,
+              workflow: true,
+            },
+          }) as T,
+    }),
+    post: async <T>(_url: string, data: unknown) => {
+      const input = data as Omit<
+        NotificationWorkflowCommand,
+        'revision' | 'recordId'
+      > & { expectedRevision: number }
+      operationIds.push(input.operationId)
+      const result = await backend.workflowAction!({
+        ...input,
+        recordId: 'demo-workflow-1',
+        revision: input.expectedRevision,
+      })
+      if (dropAck) {
+        dropAck = false
+        throw new Error('审批已提交但ACK丢失')
+      }
+      return { code: 0, msg: 'ok', data: result as T }
+    },
+    put: async () => {
+      throw new Error('未调用')
+    },
+    delete: async () => {
+      throw new Error('未调用')
+    },
+  }
+  state.factory = scope => createNotificationRemoteService(scope, transport)
+  const store = s_notificationStore()
+  await store.initialize()
+  const input = {
+    recordId: 'demo-workflow-1',
+    action: 'approve' as const,
+    comment: '材料完整',
+    revision: 1,
+  }
+  await expect(store.workflowAction(input)).rejects.toThrow('ACK丢失')
+  const result = await store.workflowAction(input)
+  expect(result.workflow?.status).toBe('approved')
+  expect(operationIds[0]).toBe(operationIds[1])
+  expect(store.stats.workflowPending).toBe(0)
+  expect(
+    (await backend.governance()).audit.filter(
+      item => item.action === 'workflow-approve'
+    )
+  ).toHaveLength(1)
+})
+
+test('重置使在途预览失效并恢复加载状态，旧预览不能盖过新场景', async () => {
+  const oldPreview = deferred<NotificationSnapshot>()
+  const backend = createNotificationDemoService(
+    { userId: 'account-a', tenantId: 'tenant-a', companyId: 'company-a' },
+    { delay: 0 }
+  )
+  let holdPreview = true
+  state.factory = () => ({
+    ...backend,
+    query: (query, signal) =>
+      query.topic === 'workflow' && holdPreview
+        ? oldPreview.promise
+        : backend.query(query, signal),
+  })
+  const store = s_notificationStore()
+  await store.initialize()
+  const pending = store
+    .setPreviewQuery({ topic: 'workflow' })
+    .catch(error => error)
+  expect(store.previewLoading).toBe(true)
+  holdPreview = false
+  await store.resetDemo()
+  expect(store.previewLoading).toBe(false)
+  expect(store.previewItems).toHaveLength(8)
+  oldPreview.resolve({
+    ...(await backend.query(defaultNotificationQuery())),
+    items: [],
+  })
+  expect((await pending).name).toBe('AbortError')
+  expect(store.previewItems).toHaveLength(8)
+})
+
+test('预览请求撤销审批能力后，迟到的主列表响应不能恢复旧授权', async () => {
+  const backend = createNotificationDemoService(
+    { userId: 'account-a', tenantId: 'tenant-a', companyId: 'company-a' },
+    { delay: 0 }
+  )
+  const snapshot = await backend.query(defaultNotificationQuery())
+  const old = deferred<NotificationSnapshot>()
+  let calls = 0
+  const transport: NotificationTransport = {
+    get: async <T>() => {
+      calls++
+      if (calls === 2)
+        return { code: 0, msg: 'ok', data: (await old.promise) as T }
+      return {
+        code: 0,
+        msg: 'ok',
+        data: {
+          ...snapshot,
+          capabilities: {
+            manage: calls === 1,
+            preferences: calls === 1,
+            realtime: false,
+            workflow: calls === 1,
+          },
+        } as T,
+      }
+    },
+    post: async () => {
+      throw new Error('已撤销的能力不应写入')
+    },
+    put: async () => {
+      throw new Error('未调用')
+    },
+    delete: async () => {
+      throw new Error('未调用')
+    },
+  }
+  state.factory = scope => createNotificationRemoteService(scope, transport)
+  const store = s_notificationStore()
+  await store.initialize()
+  expect(store.capabilities.workflow).toBe(true)
+  const pendingMain = store.refresh()
+  await store.setPreviewQuery({ topic: 'workflow' })
+  expect(store.capabilities.workflow).toBe(false)
+  old.resolve({
+    ...snapshot,
+    capabilities: {
+      manage: true,
+      preferences: true,
+      realtime: false,
+      workflow: true,
+    },
+  })
+  await pendingMain
+  expect(store.capabilities.workflow).toBe(false)
+  expect(store.capabilities.manage).toBe(false)
+  expect(store.capabilities.preferences).toBe(false)
+  await expect(
+    store.workflowAction({
+      recordId: 'demo-workflow-1',
+      revision: 1,
+      action: 'approve',
+      comment: '',
+    })
+  ).rejects.toThrow('未授权')
 })

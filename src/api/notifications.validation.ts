@@ -59,7 +59,9 @@ const isRecordContent = (value: Record<string, unknown>) =>
 const isRecordState = (value: Record<string, unknown>) => {
   const task =
     value.kind === 'task' &&
-    ['pending', 'done'].includes(String(value.taskStatus))
+    ['pending', 'in_progress', 'done', 'cancelled'].includes(
+      String(value.taskStatus)
+    )
   const notification =
     value.kind === 'notification' && value.taskStatus === null
   return (
@@ -75,23 +77,65 @@ const isRecordDates = (value: Record<string, unknown>) =>
   (value.receivedRevision === undefined ||
     isNotificationCount(value.receivedRevision))
 
+const isWorkflowHistory = (value: unknown) =>
+  isObject(value) &&
+  isId(value.id) &&
+  ['submit', 'approve', 'reject', 'return', 'withdraw', 'cancel'].includes(
+    String(value.action)
+  ) &&
+  isText(value.actor, 200) &&
+  isDate(value.at) &&
+  isText(value.node, 200) &&
+  isText(value.comment, 1000)
+const isWorkflowDatesAndHistory = (value: Record<string, unknown>) =>
+  (value.dueAt === undefined || isNullableDate(value.dueAt)) &&
+  Array.isArray(value.history) &&
+  value.history.length <= 200 &&
+  value.history.every(isWorkflowHistory)
+const isWorkflow = (value: unknown): boolean => {
+  if (!isObject(value)) return false
+  const textFields = ['processName', 'businessNo', 'initiator', 'currentNode']
+  return (
+    isId(value.instanceId) &&
+    textFields.every(key => isText(value[key], 200)) &&
+    ['assignee', 'initiator', 'cc'].includes(String(value.relationship)) &&
+    [
+      'pending',
+      'approved',
+      'rejected',
+      'returned',
+      'withdrawn',
+      'cancelled',
+    ].includes(String(value.status)) &&
+    isWorkflowDatesAndHistory(value)
+  )
+}
+const isRecordTopic = (value: Record<string, unknown>): boolean => {
+  if (
+    value.topic !== undefined &&
+    !['general', 'workflow'].includes(String(value.topic))
+  )
+    return false
+  if (value.workflow !== undefined)
+    return value.topic !== 'general' && isWorkflow(value.workflow)
+  return value.topic !== 'workflow'
+}
+const isAttachments = (value: unknown) =>
+  value === undefined ||
+  (Array.isArray(value) && value.length <= 30 && value.every(isAttachment))
 /** 只接受完整且有界的消息记录，包括详情独立请求的响应。 */
 export const isNotificationRecord = (
   value: unknown
 ): value is NotificationRecord => {
   if (!isObject(value)) return false
-  const attachments =
-    value.attachments === undefined ||
-    (Array.isArray(value.attachments) &&
-      value.attachments.length <= 30 &&
-      value.attachments.every(isAttachment))
   return (
     isRecordIdentity(value) &&
     isRecordContent(value) &&
+    isRecordTopic(value) &&
     isRecordState(value) &&
     isRecordDates(value) &&
     isTarget(value.target) &&
-    attachments
+    isAttachments(value.attachments)
   )
 }
 const isRecordList = (
@@ -102,6 +146,29 @@ const isRecordList = (
   value.length <= limit &&
   value.every(isNotificationRecord) &&
   new Set(value.map(item => item.id)).size === value.length
+const isTopicCounts = (value: unknown) =>
+  value === undefined ||
+  (isObject(value) &&
+    ['general', 'workflow'].every(key => isNotificationCount(value[key])))
+const isExtendedStats = (value: Record<string, unknown>): boolean => {
+  if (!isTopicCounts(value.byTopic)) return false
+  if (
+    [value.workflowPending, value.overdue].some(
+      count => count !== undefined && !isNotificationCount(count)
+    )
+  )
+    return false
+  const stats = value as unknown as NotificationStats
+  if (
+    stats.byTopic &&
+    stats.byTopic.general + stats.byTopic.workflow !== stats.total
+  )
+    return false
+  const pendingMax = Math.min(stats.todo, stats.byTopic?.workflow ?? stats.todo)
+  if (stats.workflowPending !== undefined && stats.workflowPending > pendingMax)
+    return false
+  return stats.overdue === undefined || stats.overdue <= stats.todo
+}
 const isStats = (value: unknown): value is NotificationStats => {
   if (!isObject(value) || !isObject(value.byCategory)) return false
   const counts = [
@@ -121,6 +188,7 @@ const isStats = (value: unknown): value is NotificationStats => {
     !categories.every(isNotificationCount)
   )
     return false
+  if (!isExtendedStats(value)) return false
   const stats = value as unknown as NotificationStats
   return (
     stats.unread + stats.read === stats.total &&
@@ -134,7 +202,8 @@ const isCapabilities = (value: unknown) =>
   (isObject(value) &&
     ['manage', 'realtime', 'preferences'].every(
       key => typeof value[key] === 'boolean'
-    ))
+    ) &&
+    (value.workflow === undefined || typeof value.workflow === 'boolean'))
 const invalidResponse = () =>
   new Error('消息服务响应不符合约定，请联系服务维护人员')
 

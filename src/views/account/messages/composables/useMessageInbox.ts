@@ -6,23 +6,17 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
-import type {
-  TableColumn,
-  TableInstance,
-} from '@robot-admin/naive-ui-components/C_Table'
+import type { TableInstance } from '@robot-admin/naive-ui-components/C_Table'
 import type {
   NotificationMutation,
+  NotificationQuery,
   NotificationRecord,
   NotificationStatus,
 } from '@/api/notifications.contract'
 import { s_notificationStore } from '@/stores/notification'
-import {
-  CATEGORY_OPTIONS,
-  PRIORITY_OPTIONS,
-  formatMessageTime,
-  getMessageState,
-  getOptionLabel,
-} from '../data'
+import { CATEGORY_OPTIONS, getOptionLabel } from '../data'
+import { useMessageColumns } from './useMessageColumns'
+import { getNotificationTopicLabel } from '@/utils/d_notificationPresentation'
 
 /** 消息列表仅消费领域 Store，查询表单和当前页选择保留在视图。 */
 export function useMessageInbox() {
@@ -38,6 +32,9 @@ export function useMessageInbox() {
     source: '',
     priority: null as string | null,
     dateRange: null as [number, number] | null,
+    workflowStatus: null as NotificationQuery['workflowStatus'] | null,
+    taskStatus: null as NotificationQuery['taskStatus'] | null,
+    relationship: null as NotificationQuery['relationship'] | null,
   })
   const commandLoading = ref(false)
 
@@ -76,6 +73,9 @@ export function useMessageInbox() {
         priority: (filters.priority || undefined) as
           NotificationRecord['priority'] | undefined,
         source: filters.source.trim() || undefined,
+        workflowStatus: filters.workflowStatus || undefined,
+        taskStatus: filters.taskStatus || undefined,
+        relationship: filters.relationship || undefined,
         dateFrom:
           start === undefined ? undefined : new Date(start).toISOString(),
         dateTo: endDate?.toISOString(),
@@ -92,6 +92,9 @@ export function useMessageInbox() {
       source: '',
       priority: null,
       dateRange: null,
+      workflowStatus: null,
+      taskStatus: null,
+      relationship: null,
     })
     await search()
   }
@@ -100,6 +103,40 @@ export function useMessageInbox() {
   const changeStatus = async (status: NotificationStatus): Promise<void> => {
     clearSelection()
     await run(() => store.search({ status, page: 1 }))
+  }
+
+  /** 业务入口对应完整的新查询，失败保留原列表与已提交条件。 */
+  const changeView = async (
+    patch: Partial<NotificationQuery>
+  ): Promise<void> => {
+    clearSelection()
+    const next: NotificationQuery = {
+      status: 'all',
+      keyword: '',
+      page: 1,
+      pageSize: store.query.pageSize,
+      topic: undefined,
+      category: undefined,
+      source: undefined,
+      priority: undefined,
+      dateFrom: undefined,
+      dateTo: undefined,
+      workflowStatus: undefined,
+      taskStatus: undefined,
+      relationship: undefined,
+      ...patch,
+    }
+    if (!(await run(() => store.search(next)))) return
+    Object.assign(filters, {
+      keyword: next.keyword,
+      category: next.category ?? null,
+      source: next.source ?? '',
+      priority: next.priority ?? null,
+      dateRange: null,
+      workflowStatus: next.workflowStatus ?? null,
+      taskStatus: next.taskStatus ?? null,
+      relationship: next.relationship ?? null,
+    })
   }
 
   /** 翻页前清理当前页选择，远端总数由领域服务提供。 */
@@ -139,114 +176,30 @@ export function useMessageInbox() {
 
   /** 全部已读明确按当前分类及调用时的收件边界执行。 */
   const markAllRead = (): void => {
-    const category = (filters.category || undefined) as
-      NotificationRecord['category'] | undefined
+    const { category, topic } = store.query
     dialog.info({
       title: '全部标为已读',
-      content: `将${category ? getOptionLabel(CATEGORY_OPTIONS, category) : '所有分类'}当前已收到的消息标为已读，之后收到的新消息仍保持未读。`,
+      content: `将${topic ? getNotificationTopicLabel(topic) : '全部消息'}${category ? `中的${getOptionLabel(CATEGORY_OPTIONS, category)}` : ''}当前已收到的消息标为已读。办理与审批状态保持独立，之后收到的新消息仍保持未读。`,
       positiveText: '标为已读',
       negativeText: '取消',
       onPositiveClick: () =>
-        run(() => store.markAllRead(category), '已标记为已读'),
+        run(
+          () => store.markAllRead(category, store.revision, topic),
+          '已标记为已读'
+        ),
     })
   }
 
-  const columns = computed<TableColumn<NotificationRecord>[]>(() => [
-    { type: 'selection', width: 46 },
-    {
-      key: 'title',
-      title: '消息',
-      minWidth: 270,
-      render: row =>
-        h('div', { class: 'message-title-cell' }, [
-          h(
-            NButton,
-            {
-              text: true,
-              type: row.readAt ? 'default' : 'primary',
-              onClick: () => {
-                detailId.value = row.id
-              },
-            },
-            { default: () => row.title }
-          ),
-          h('div', { class: 'message-summary' }, row.summary),
-        ]),
+  const columns = useMessageColumns({
+    store,
+    busy: () => commandLoading.value,
+    open: id => {
+      detailId.value = id
     },
-    {
-      key: 'category',
-      title: '分类 / 来源',
-      width: 160,
-      render: row =>
-        h('div', [
-          h('div', getOptionLabel(CATEGORY_OPTIONS, row.category)),
-          h('small', { class: 'message-summary' }, row.source),
-        ]),
+    star: row => {
+      void mutate(row.starred ? 'unstar' : 'star', [row.id])
     },
-    {
-      key: 'priority',
-      title: '优先级',
-      width: 92,
-      render: row =>
-        h(
-          NTag,
-          {
-            size: 'small',
-            bordered: false,
-            type:
-              row.priority === 'urgent'
-                ? 'error'
-                : row.priority === 'high'
-                  ? 'warning'
-                  : 'default',
-          },
-          { default: () => getOptionLabel(PRIORITY_OPTIONS, row.priority) }
-        ),
-    },
-    {
-      key: 'readAt',
-      title: '状态',
-      width: 100,
-      render: row =>
-        h(
-          NTag,
-          {
-            size: 'small',
-            bordered: false,
-            type:
-              row.taskStatus === 'pending'
-                ? 'warning'
-                : row.readAt
-                  ? 'default'
-                  : 'info',
-          },
-          { default: () => getMessageState(row) }
-        ),
-    },
-    {
-      key: 'createdAt',
-      title: '收到时间',
-      width: 176,
-      render: row => formatMessageTime(row.createdAt),
-    },
-    {
-      key: 'starred',
-      title: '星标',
-      width: 68,
-      render: row =>
-        h(
-          NButton,
-          {
-            text: true,
-            type: row.starred ? 'warning' : 'default',
-            disabled: commandLoading.value,
-            'aria-label': row.starred ? '取消星标' : '添加星标',
-            onClick: () => mutate(row.starred ? 'unstar' : 'star', [row.id]),
-          },
-          { default: () => (row.starred ? '★' : '☆') }
-        ),
-    },
-  ])
+  })
   const actions = computed<ActionItem[]>(() => [
     {
       key: 'read',
@@ -307,6 +260,7 @@ export function useMessageInbox() {
     search,
     resetFilters,
     changeStatus,
+    changeView,
     changePage,
     markAllRead,
     clearSelection,

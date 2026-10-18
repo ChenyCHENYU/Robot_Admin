@@ -7,9 +7,23 @@
 import type {
   NotificationRecord,
   NotificationStatus,
+  NotificationQuery,
 } from '@/api/notifications.contract'
 import { useMessageInbox } from './useMessageInbox'
-import { CATEGORY_OPTIONS, INBOX_TABS, PRIORITY_OPTIONS } from '../data'
+import {
+  parseMessageRouteQuery,
+  matchesMessageRouteQuery,
+  toMessageRouteQuery,
+} from './useMessageRoute'
+import {
+  CATEGORY_OPTIONS,
+  INBOX_TABS,
+  PRIORITY_OPTIONS,
+  TASK_STATUS_OPTIONS,
+  WORKFLOW_STATUS_OPTIONS,
+  WORKFLOW_RELATION_OPTIONS,
+} from '../data'
+import { getNotificationTopicLabel } from '@/utils/d_notificationPresentation'
 import { s_permissionStore } from '@/stores/permission'
 import { resolveNotificationTarget } from '@/utils/d_notificationTarget'
 
@@ -28,7 +42,8 @@ export function useMessageWorkspace() {
     run,
     search,
     resetFilters,
-    changeStatus,
+    changeStatus: updateStatus,
+    changeView,
     changePage,
     markAllRead,
     clearSelection,
@@ -42,6 +57,7 @@ export function useMessageWorkspace() {
     'inbox'
   )
   const demoBusy = ref(false)
+  const advancedFilters = ref(false)
   const failureOperation = ref('mutation')
   const failureOptions = [
     { label: '下一次状态操作', value: 'mutation' },
@@ -67,11 +83,11 @@ export function useMessageWorkspace() {
       icon: 'i-mdi-clipboard-check-outline',
     },
     {
-      key: 'starred',
-      label: '星标关注',
-      value: store.stats.starred,
-      status: 'starred' as const,
-      icon: 'i-mdi-star-outline',
+      key: 'workflow',
+      label: '待我审批',
+      value: store.stats.workflowPending ?? '—',
+      status: 'todo' as const,
+      icon: 'i-mdi-source-branch',
     },
     {
       key: 'all',
@@ -81,11 +97,93 @@ export function useMessageWorkspace() {
       icon: 'i-mdi-inbox-outline',
     },
   ])
+  const topicItems = computed(() => [
+    {
+      key: 'all',
+      label: '全部消息',
+      icon: 'i-mdi-inbox-outline',
+      count: store.stats.total,
+    },
+    {
+      key: 'general',
+      label: '通用消息',
+      icon: 'i-mdi-bell-outline',
+      count: store.stats.byTopic?.general ?? '—',
+    },
+    {
+      key: 'workflow',
+      label: '审批流程',
+      icon: 'i-mdi-source-branch',
+      count: store.stats.byTopic?.workflow ?? '—',
+    },
+  ])
+  const workflowViews = [
+    {
+      key: 'pending',
+      label: '待我审批',
+      icon: 'i-mdi-clipboard-list-outline',
+      patch: { topic: 'workflow', relationship: 'assignee', status: 'todo' },
+    },
+    {
+      key: 'handled',
+      label: '我已审批',
+      icon: 'i-mdi-check-circle-outline',
+      patch: { topic: 'workflow', relationship: 'assignee', status: 'done' },
+    },
+    {
+      key: 'initiated',
+      label: '我发起的',
+      icon: 'i-mdi-arrow-top-right',
+      patch: { topic: 'workflow', relationship: 'initiator', status: 'all' },
+    },
+    {
+      key: 'cc',
+      label: '抄送给我',
+      icon: 'i-mdi-content-copy',
+      patch: { topic: 'workflow', relationship: 'cc', status: 'all' },
+    },
+  ] as const
+  const activeWorkflowView = computed(() => {
+    const current = store.query
+    if (current.topic !== 'workflow' || !current.relationship) return ''
+    if (current.relationship === 'initiator') return 'initiated'
+    if (current.relationship === 'cc') return 'cc'
+    if (current.status === 'done') return 'handled'
+    return current.status === 'todo' ? 'pending' : ''
+  })
+  const inboxTitle = computed(
+    () =>
+      workflowViews.find(item => item.key === activeWorkflowView.value)
+        ?.label ??
+      (store.query.topic
+        ? getNotificationTopicLabel(store.query.topic)
+        : '全部消息')
+  )
+
+  /** 业务分类和个人审批入口共享统一的分页查询。 */
+  const navigateInbox = async (
+    patch: Partial<NotificationQuery>
+  ): Promise<void> => {
+    section.value = 'inbox'
+    await changeView(patch)
+    await router.replace({ query: toMessageRouteQuery(store.query) })
+  }
+
+  /** 状态页签变更同步到 URL，刷新后仍可回到对应业务视图。 */
+  const changeStatus = async (status: NotificationStatus): Promise<void> => {
+    await updateStatus(status)
+    await router.replace({ query: toMessageRouteQuery(store.query) })
+  }
 
   /** 概览与状态页签使用同一个领域查询。 */
-  const selectStat = async (status: NotificationStatus): Promise<void> => {
-    section.value = 'inbox'
-    await changeStatus(status)
+  const selectStat = async (key: string): Promise<void> => {
+    if (key === 'workflow')
+      await navigateInbox({
+        topic: 'workflow',
+        relationship: 'assignee',
+        status: 'todo',
+      })
+    else await navigateInbox({ status: key as NotificationStatus })
   }
   /** 表格勾选仅保留当前页稳定 ID。 */
   const selectionChange = (keys: (string | number)[]): void => {
@@ -173,15 +271,21 @@ export function useMessageWorkspace() {
     }
   )
   watch(
-    () => [route.query.message, store.scopeKey],
-    async ([value]) => {
+    () => [route.query, store.scopeKey] as const,
+    async ([query]) => {
       const request = ++detailRequest
-      if (typeof value !== 'string') return
+      const value = query.message
+      const patch = parseMessageRouteQuery(query)
+      if (typeof value !== 'string' && !patch) return
       try {
         await store.initialize()
         if (request !== detailRequest || !store.scopeKey) return
         section.value = 'inbox'
-        detailId.value = value
+        if (patch && !matchesMessageRouteQuery(store.query, patch)) {
+          await changeView(patch)
+          if (request !== detailRequest) return
+        }
+        if (typeof value === 'string') detailId.value = value
       } catch {
         /* 连接错误由统一状态区展示。 */
       }
@@ -209,6 +313,7 @@ export function useMessageWorkspace() {
     search,
     resetFilters,
     changeStatus,
+    navigateInbox,
     changePage,
     markAllRead,
     clearSelection,
@@ -217,6 +322,11 @@ export function useMessageWorkspace() {
     failureOperation,
     failureOptions,
     statCards,
+    topicItems,
+    workflowViews,
+    activeWorkflowView,
+    inboxTitle,
+    advancedFilters,
     selectStat,
     selectionChange,
     demoOperation,
@@ -227,5 +337,8 @@ export function useMessageWorkspace() {
     CATEGORY_OPTIONS,
     INBOX_TABS,
     PRIORITY_OPTIONS,
+    TASK_STATUS_OPTIONS,
+    WORKFLOW_STATUS_OPTIONS,
+    WORKFLOW_RELATION_OPTIONS,
   }
 }

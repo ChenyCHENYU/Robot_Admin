@@ -11,7 +11,12 @@ import {
   type NotificationRecord,
   type NotificationSnapshot,
   type NotificationStatus,
+  type NotificationStats,
 } from './notifications.contract'
+import {
+  isNotificationTodo,
+  resolveNotificationTopic,
+} from './notifications.workflow'
 import type { NotificationDemoDocument } from './notifications.demo.seed'
 
 const statusMatches = (
@@ -24,7 +29,7 @@ const statusMatches = (
     all: true,
     unread: !item.readAt,
     read: !!item.readAt,
-    todo: item.taskStatus === 'pending',
+    todo: isNotificationTodo(item),
     done: item.taskStatus === 'done',
     starred: item.starred,
   }
@@ -43,31 +48,71 @@ const dateBoundary = (
   if (!Number.isFinite(timestamp)) throw new Error('消息时间筛选无效')
   return timestamp
 }
-const matchesFields = (item: NotificationRecord, query: NotificationQuery) =>
-  (!query.category || query.category === item.category) &&
-  (!query.source || query.source === item.source) &&
-  (!query.priority || query.priority === item.priority)
+const matchesFields = (item: NotificationRecord, query: NotificationQuery) => {
+  const fields = {
+    category: item.category,
+    topic: resolveNotificationTopic(item),
+    workflowStatus: item.workflow?.status,
+    taskStatus: item.taskStatus,
+    relationship: item.workflow?.relationship,
+    source: item.source,
+    priority: item.priority,
+  }
+  return Object.entries(fields).every(([key, value]) => {
+    const expected = query[key as keyof typeof fields]
+    return !expected || expected === value
+  })
+}
+const addNotificationStats = (
+  stats: NotificationStats,
+  item: NotificationRecord,
+  now: Date
+) => {
+  if (item.archivedAt) {
+    stats.archived++
+    return
+  }
+  stats.total++
+  stats.byTopic![resolveNotificationTopic(item)]++
+  const todo = isNotificationTodo(item)
+  stats.workflowPending! += Number(
+    item.workflow?.status === 'pending' &&
+      item.workflow.relationship === 'assignee'
+  )
+  const dueAt = item.workflow?.dueAt
+  stats.overdue! += Number(todo && !!dueAt && Date.parse(dueAt) < now.getTime())
+  if (item.readAt) stats.read++
+  else {
+    stats.unread++
+    stats.byCategory[item.category]++
+  }
+  stats.starred += Number(item.starred)
+  stats.todo += Number(todo)
+  stats.done += Number(item.taskStatus === 'done')
+}
+const searchableNotificationText = (item: NotificationRecord): string => {
+  const fields = [item.title, item.summary, item.source, item.content]
+  if (item.workflow)
+    fields.push(
+      item.workflow.businessNo,
+      item.workflow.initiator,
+      item.workflow.processName
+    )
+  return fields.join(' ').toLocaleLowerCase()
+}
+const matchesDate = (item: NotificationRecord, from?: number, to?: number) => {
+  const at = Date.parse(item.createdAt)
+  if (from !== undefined && at < from) return false
+  return to === undefined || at <= to
+}
 
 export const queryNotificationDocument = (
   document: NotificationDemoDocument,
-  query: NotificationQuery
+  query: NotificationQuery,
+  now = new Date()
 ): NotificationSnapshot => {
   const stats = emptyNotificationStats()
-  for (const item of document.items) {
-    if (item.archivedAt) {
-      stats.archived++
-      continue
-    }
-    stats.total++
-    if (item.readAt) stats.read++
-    else {
-      stats.unread++
-      stats.byCategory[item.category]++
-    }
-    if (item.starred) stats.starred++
-    if (item.taskStatus === 'pending') stats.todo++
-    if (item.taskStatus === 'done') stats.done++
-  }
+  for (const item of document.items) addNotificationStats(stats, item, now)
   const sorted = [...document.items].sort(
     (a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id)
   )
@@ -77,15 +122,8 @@ export const queryNotificationDocument = (
   const filtered = sorted.filter(item => {
     if (!statusMatches(item, query.status)) return false
     if (!matchesFields(item, query)) return false
-    const at = Date.parse(item.createdAt)
-    if (from !== undefined && at < from) return false
-    if (to !== undefined && at > to) return false
-    return (
-      !keyword ||
-      `${item.title} ${item.summary} ${item.source} ${item.content}`
-        .toLocaleLowerCase()
-        .includes(keyword)
-    )
+    if (!matchesDate(item, from, to)) return false
+    return !keyword || searchableNotificationText(item).includes(keyword)
   })
   const start = (Math.max(1, query.page) - 1) * Math.max(1, query.pageSize)
   return structuredClone({

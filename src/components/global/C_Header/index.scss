@@ -7,6 +7,12 @@
  */
 .header-navigation {
   min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.header-content {
+  gap: 12px;
 }
 
 .header-divider {

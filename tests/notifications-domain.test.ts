@@ -63,9 +63,9 @@ test('分页列表和预览共用全量权威统计，搜索不缩小角标', as
   const service = setup()
   const page = await service.query({ ...all, pageSize: 1 })
   expect(page.items).toHaveLength(1)
-  expect(page.stats.total).toBe(11)
-  expect(page.stats.unread).toBe(6)
-  expect(page.previewItems).toHaveLength(11)
+  expect(page.stats.total).toBe(21)
+  expect(page.stats.unread).toBe(9)
+  expect(page.previewItems).toHaveLength(20)
   const filtered = await service.query({ ...all, keyword: '安全登录' })
   expect(filtered.total).toBe(1)
   expect(filtered.stats).toEqual(page.stats)
@@ -78,7 +78,7 @@ test('已读不等于办结；同范围实例在最新快照上串行写入且�
   const a = setup(storage)
   const b = setup(storage)
   const item = (await a.query(all)).items.find(
-    record => record.taskStatus === 'pending'
+    record => record.taskStatus === 'pending' && !record.workflow
   )!
   await Promise.all([
     a.mutate({ type: 'read', ids: [item.id], operationId: 'read-1' }),
@@ -112,7 +112,7 @@ test('用户、租户、公司分别隔离，scope编码不会产生碰撞', asy
       { ...scope, companyId: 'company-b' },
     ].map(identity => setup(storage, identity).query(all))
   )
-  expect(isolated.map(item => item.stats.total)).toEqual([11, 11, 11])
+  expect(isolated.map(item => item.stats.total)).toEqual([21, 21, 21])
   expect(
     notificationScopeKey({ ...scope, userId: 'a:b', tenantId: 'c' })
   ).not.toBe(notificationScopeKey({ ...scope, userId: 'a', tenantId: 'b:c' }))
@@ -153,7 +153,7 @@ test('可控失败不回滚任何后来成功操作，新消息和阅读状态�
   await service.mutate({ type: 'read', ids: [id], operationId: 'retry' })
   await service.simulateIncoming!()
   expect((await service.detail(id)).readAt).toBeTruthy()
-  expect((await service.query(all)).stats.total).toBe(12)
+  expect((await service.query(all)).stats.total).toBe(22)
   service.setOnline!(false)
   await expect(
     service.mutate({ type: 'delete', ids: [id], operationId: 'offline' })
@@ -177,7 +177,7 @@ test('跨实例订阅、取消订阅和重置清晰，清空后刷新不会恢�
   stop()
   await a.resetDemo!()
   expect(notifications).toBe(1)
-  expect((await b.query(all)).stats.total).toBe(11)
+  expect((await b.query(all)).stats.total).toBe(21)
 })
 
 test('重置保留单调收件版本，重置前的旧批量命令不能清掉新场景数据', async () => {
@@ -190,12 +190,12 @@ test('重置保留单调收件版本，重置前的旧批量命令不能清掉�
     throughRevision: revision,
     operationId: 'old-clear-after-reset',
   })
-  expect((await service.query(all)).stats.total).toBe(11)
+  expect((await service.query(all)).stats.total).toBe(21)
   await service.markAllRead({
     throughRevision: revision,
     operationId: 'old-read-after-reset',
   })
-  expect((await service.query(all)).stats.unread).toBe(6)
+  expect((await service.query(all)).stats.unread).toBe(9)
 })
 
 test('模板编辑采用版本控制，发送快照不受调用后草稿修改影响', async () => {
@@ -234,13 +234,13 @@ test('投递失败可重试，撤回移除站内副本并保留不可追回的�
   const governance = await service.governance()
   const failed = governance.deliveries.find(item => item.status === 'failed')!
   expect(failed.channel).toBe('inbox')
-  expect((await service.query(all)).stats.total).toBe(11)
+  expect((await service.query(all)).stats.total).toBe(21)
   await service.retryDelivery(failed.id)
-  expect((await service.query(all)).stats.total).toBe(12)
+  expect((await service.query(all)).stats.total).toBe(22)
   const sent = (await service.governance()).dispatches[0]
   await service.withdrawDispatch(sent.id, sent.revision)
   const withdrawn = await service.governance()
-  expect((await service.query(all)).stats.total).toBe(11)
+  expect((await service.query(all)).stats.total).toBe(21)
   expect(
     withdrawn.deliveries.find(item => item.channel === 'email')!.status
   ).toBe('delivered')
@@ -272,7 +272,7 @@ test('关闭通道与免打扰实际影响模拟投递，恢复偏好后可重�
       item => item.status === 'delivered'
     )
   ).toBe(true)
-  expect((await service.query(all)).stats.total).toBe(12)
+  expect((await service.query(all)).stats.total).toBe(22)
 })
 
 test('定时发送仅在页面运行推进，撤回定时任务不会投递', async () => {
@@ -291,9 +291,9 @@ test('定时发送仅在页面运行推进，撤回定时任务不会投递', as
     item => item.id === second.id
   )!
   await service.withdrawDispatch(second.id, secondScheduled.revision)
-  expect((await service.query(all)).stats.total).toBe(11)
+  expect((await service.query(all)).stats.total).toBe(21)
   now = new Date(clock.getTime() + 120_000)
-  expect((await service.query(all)).stats.total).toBe(12)
+  expect((await service.query(all)).stats.total).toBe(22)
   const state = await service.governance()
   expect(state.dispatches.find(item => item.id === first.id)!.status).toBe(
     'sent'
@@ -312,7 +312,7 @@ test('损坏存储显示恢复要求而不悄悄播种，明确重置才能恢�
   const service = setup(storage)
   await expect(service.query(all)).rejects.toThrow('重置演示')
   await service.resetDemo!()
-  expect((await service.query(all)).stats.total).toBe(11)
+  expect((await service.query(all)).stats.total).toBe(21)
 })
 
 test('远端服务缺失绝不回退演示；身份作用域不以body参数充当授权', async () => {

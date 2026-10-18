@@ -40,7 +40,7 @@ test('演示无需后端；已读持久化、预览与全局统计同步，新�
       backend.push(request.url())
   })
   await openDemo(page)
-  await expect(statistic(page, '未读消息')).toHaveText('6')
+  await expect(statistic(page, '未读消息')).toHaveText('9')
   await page.getByRole('button', { name: '全部标为已读', exact: true }).click()
   await page
     .getByRole('button', { name: '标为已读', exact: true })
@@ -53,23 +53,23 @@ test('演示无需后端；已读持久化、预览与全局统计同步，新�
   await page.getByRole('button', { name: '生成新通知', exact: true }).click()
   await expect(statistic(page, '未读消息')).toHaveText('1')
   await page.getByTestId('notification-bell').getByRole('button').click()
-  await expect(page.locator('.c-notification-center__panel')).toContainText(
-    '演示'
-  )
-  await page.getByRole('button', { name: '查看全部消息', exact: true }).click()
-  await expect(page).toHaveURL(/#\/account\/messages$/)
+  await expect(page.getByTestId('notification-preview')).toContainText('演示')
+  await page
+    .getByRole('button', { name: '查看筛选下全部', exact: true })
+    .click()
+  await expect(page).toHaveURL(/#\/account\/messages\?status=all$/)
   expect(backend).toEqual([])
 })
 
 test('阅读待办不会办结；明确办理、星标、归档均可恢复检查', async ({ page }) => {
   await openDemo(page)
-  await expect(statistic(page, '待办理事项')).toHaveText('4')
+  await expect(statistic(page, '待办理事项')).toHaveText('6')
   await page
     .getByRole('button', { name: '采购申请待你审批', exact: true })
     .click()
   const drawer = page.locator('.message-detail-drawer')
   await expect(drawer).toContainText('打开详情仅标记已读')
-  await expect(statistic(page, '待办理事项')).toHaveText('4')
+  await expect(statistic(page, '待办理事项')).toHaveText('6')
   await drawer.getByRole('button', { name: '添加星标', exact: true }).click()
   await expect(
     drawer.getByRole('button', { name: '取消星标', exact: true })
@@ -79,7 +79,7 @@ test('阅读待办不会办结；明确办理、星标、归档均可恢复检�
     .click()
   await page.getByRole('button', { name: '确认完成', exact: true }).click()
   await expect(drawer).toContainText('此待办已完成')
-  await expect(statistic(page, '待办理事项')).toHaveText('3')
+  await expect(statistic(page, '待办理事项')).toHaveText('5')
   await drawer.getByRole('button', { name: '归档', exact: true }).click()
   await expect(
     drawer.getByRole('button', { name: '移回收件箱', exact: true })
@@ -160,7 +160,7 @@ test('草稿明确发送、查看模拟投递、撤回与审计形成闭环', as
     .filter({ hasText: '收件箱' })
     .click()
   await page
-    .getByPlaceholder('搜索标题、摘要、正文', { exact: true })
+    .getByRole('textbox', { name: '消息关键词', exact: true })
     .fill('浏览器验收公告')
   await page.getByRole('button', { name: '查询', exact: true }).click()
   await expect(

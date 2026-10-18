@@ -57,7 +57,7 @@ test('dispose 在异步延迟期间取消无外部 signal 的模拟消息，旧�
   await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
   const reader = setup(storage)
   try {
-    expect((await reader.query(query)).stats.total).toBe(11)
+    expect((await reader.query(query)).stats.total).toBe(21)
   } finally {
     reader.dispose()
   }
@@ -99,7 +99,7 @@ test('dispose 在 Web Lock 排队后仍阻止提交，即使锁实现不主动�
   }
   const reader = setup(storage)
   try {
-    expect((await reader.query(query)).stats.total).toBe(11)
+    expect((await reader.query(query)).stats.total).toBe(21)
   } finally {
     reader.dispose()
   }
@@ -112,10 +112,10 @@ test('显式重置会取消此前仍在延迟中的 incoming，新场景不会�
     const pending = service.simulateIncoming!()
     await service.resetDemo!()
     await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
-    expect((await service.query(query)).stats.total).toBe(11)
+    expect((await service.query(query)).stats.total).toBe(21)
     // 新一代命令仍然正常工作，重置不会永久关闭服务。
     await service.simulateIncoming!()
-    expect((await service.query(query)).stats.total).toBe(12)
+    expect((await service.query(query)).stats.total).toBe(22)
   } finally {
     service.dispose()
   }
@@ -184,7 +184,7 @@ test('非法模板 category、priority、enabled 在写入前拒绝，演示文�
       })
     )
     expect((await service.governance()).templates).toEqual(before.templates)
-    expect((await service.query(query)).stats.total).toBe(11)
+    expect((await service.query(query)).stats.total).toBe(21)
   } finally {
     service.dispose()
   }
@@ -204,13 +204,13 @@ test('非法发送 category、priority 不会进入草稿或破坏收件箱', as
       })
     )
     expect((await service.governance()).dispatches).toEqual([])
-    expect((await service.query(query)).stats.total).toBe(11)
+    expect((await service.query(query)).stats.total).toBe(21)
   } finally {
     service.dispose()
   }
 })
 
-test('迟到旧查询不能恢复新快照已经撤销的远端治理和偏好能力', async () => {
+test('迟到旧查询不能恢复新快照已经撤销的远端治理、偏好与审批能力', async () => {
   const demo = setup()
   const snapshot = await demo.query(query)
   demo.dispose()
@@ -222,6 +222,7 @@ test('迟到旧查询不能恢复新快照已经撤销的远端治理和偏好�
       manage: false,
       realtime: false,
       preferences: false,
+      workflow: false,
     },
   }
   const transport: NotificationTransport = {
@@ -247,11 +248,17 @@ test('迟到旧查询不能恢复新快照已经撤销的远端治理和偏好�
     expect(remote.capabilities.manage).toBe(false)
     old.resolve({
       ...snapshot,
-      capabilities: { manage: true, realtime: false, preferences: true },
+      capabilities: {
+        manage: true,
+        realtime: false,
+        preferences: true,
+        workflow: true,
+      },
     })
     await first
     expect(remote.capabilities.manage).toBe(false)
     expect(remote.capabilities.preferences).toBe(false)
+    expect(remote.capabilities.workflow).toBe(false)
   } finally {
     remote.dispose()
   }
