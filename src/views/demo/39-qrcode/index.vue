@@ -280,7 +280,7 @@
 
   // Logo 配置
   const enableLogo = ref(false)
-  const logoSrc = ref('/vite.svg')
+  const logoSrc = ref('/robot-avatar.png')
   const logoSize = ref(LOGO_SIZE_OPTIONS.default)
 
   const logoOptions = computed<LogoOptions | undefined>(() => {
@@ -338,7 +338,7 @@
     customBgColor.value = '#FFFFFF'
     selectedColorIndex.value = 0
     enableLogo.value = false
-    logoSrc.value = '/vite.svg'
+    logoSrc.value = '/robot-avatar.png'
     logoSize.value = LOGO_SIZE_OPTIONS.default
     message.success('配置已重置')
   }

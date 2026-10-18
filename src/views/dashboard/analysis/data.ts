@@ -8,8 +8,8 @@
 import projectInfo from 'virtual:robot-admin-project-info'
 import type { EChartsCoreOption } from 'echarts/core'
 import type { ProjectMetrics } from '@/types/observability'
-import { translateText } from '@/utils/d_i18n'
 import { categoryAxis, valueAxis, formatBytes } from '../shared/d_format'
+import type { StructureNode } from './components/c_structureMap/types'
 
 export { projectInfo }
 export const ecosystem = [
@@ -24,6 +24,7 @@ const visualPackages = new Set([
   '@iconify/vue',
   '@iconify-json/ri',
   'highlight.js',
+  '@agile-team/mach-table-vue',
 ])
 const corePackages = new Set([
   'vue',
@@ -32,35 +33,113 @@ const corePackages = new Set([
   '@vueuse/core',
   'naive-ui',
 ])
-export const dependencyGroups = [
-  {
-    name: 'Robot 生态',
-    value: projectInfo.dependencies.filter(item =>
-      item.name.startsWith('@robot-admin/')
-    ).length,
-  },
-  {
-    name: '框架与状态',
-    value: projectInfo.dependencies.filter(item => corePackages.has(item.name))
-      .length,
-  },
-  {
-    name: '可视化与交互',
-    value: projectInfo.dependencies.filter(item =>
-      visualPackages.has(item.name)
-    ).length,
-  },
-  {
-    name: '其他运行依赖',
-    value: projectInfo.dependencies.filter(
-      item =>
-        !item.name.startsWith('@robot-admin/') &&
-        !corePackages.has(item.name) &&
-        !visualPackages.has(item.name)
-    ).length,
-  },
-  { name: '开发与工程', value: projectInfo.devDependencies.length },
-]
+/** 按互斥职责分类直接依赖；连线表达分类包含关系，不代表依赖调用关系。 */
+export const createDependencyNodes = (): StructureNode[] => {
+  const groups = [
+    {
+      key: 'robot',
+      label: 'Robot 生态',
+      note: '业务能力与统一协议',
+      items: projectInfo.dependencies.filter(item =>
+        item.name.startsWith('@robot-admin/')
+      ),
+    },
+    {
+      key: 'framework',
+      label: '框架与状态',
+      note: '应用运行的基础',
+      items: projectInfo.dependencies.filter(item =>
+        corePackages.has(item.name)
+      ),
+    },
+    {
+      key: 'visual',
+      label: '可视化与交互',
+      note: '图表、表格与编辑体验',
+      items: projectInfo.dependencies.filter(item =>
+        visualPackages.has(item.name)
+      ),
+    },
+    {
+      key: 'runtime',
+      label: '其他运行依赖',
+      note: '网络、文件与安全能力',
+      items: projectInfo.dependencies.filter(
+        item =>
+          !item.name.startsWith('@robot-admin/') &&
+          !corePackages.has(item.name) &&
+          !visualPackages.has(item.name)
+      ),
+    },
+    {
+      key: 'tooling',
+      label: '开发与工程',
+      note: '构建、质量与开发工具',
+      items: projectInfo.devDependencies,
+    },
+  ]
+  return groups.map(group => ({
+    ...group,
+    count: group.items.length,
+    children: group.items.map(item => ({
+      label: item.name,
+      detail: item.version,
+    })),
+  }))
+}
+
+/** 能力域由真实菜单分组归并，每个菜单分组恰好归入一个域。 */
+export const createCapabilityNodes = (
+  inventory: ProjectMetrics['inventory'] | undefined
+): StructureNode[] => {
+  const groups = [
+    {
+      key: 'experiences',
+      label: '组件与场景',
+      note: '可复用的前端能力',
+      names: ['示范组件', '插件组件', '编辑器组件', '大屏模板'],
+    },
+    {
+      key: 'business',
+      label: '业务与账户',
+      note: '组织、权限与个人工作区',
+      names: ['系统管理', '账户中心'],
+    },
+    {
+      key: 'engineering',
+      label: '工程与扩展',
+      note: '观测、Hooks 与指令',
+      names: ['仪表盘', '独立 Hooks', '自定义指令'],
+    },
+    {
+      key: 'foundation',
+      label: '应用基础',
+      note: '入口、外部集成与异常状态',
+      names: [],
+    },
+  ]
+  return groups
+    .map(group => {
+      const routes = (inventory?.routes ?? []).filter(route =>
+        group.key === 'foundation'
+          ? !groups.some(item => item.names.includes(route.group.trim()))
+          : group.names.includes(route.group.trim())
+      )
+      return {
+        key: group.key,
+        label: group.label,
+        note: group.note,
+        count: routes.reduce((sum, route) => sum + route.count, 0),
+        children: routes
+          .sort((a, b) => b.count - a.count)
+          .map(route => ({
+            label: route.group,
+            detail: `${route.count} 个页面`,
+          })),
+      }
+    })
+    .filter(group => group.count > 0)
+}
 export const architectures = [
   {
     name: 'SPA',
@@ -91,62 +170,6 @@ export const architectures = [
     icon: 'i-mdi:view-grid-plus-outline',
   },
 ]
-
-/** 环形图只表达直接依赖的数量，不借数量暗示包体积。 */
-export const dependencyOption: EChartsCoreOption = {
-  legend: {
-    bottom: 0,
-    textStyle: { color: 'inherit', fontSize: 10 },
-    itemWidth: 8,
-    itemHeight: 8,
-  },
-  series: [
-    {
-      type: 'pie',
-      radius: ['46%', '68%'],
-      center: ['50%', '43%'],
-      padAngle: 3,
-      label: { show: false },
-      itemStyle: { borderRadius: 5 },
-      data: dependencyGroups.map(group => ({
-        ...group,
-        name: translateText(group.name),
-      })),
-    },
-  ],
-}
-
-/** 菜单分布基于仓库清单，与当前账号获授菜单区分。 */
-export const createRouteOption = (
-  inventory: ProjectMetrics['inventory'] | undefined
-): EChartsCoreOption => {
-  const routes = [...(inventory?.routes ?? [])].sort(
-    (a, b) => b.count - a.count
-  )
-  return {
-    grid: { left: 90, right: 25, top: 10, bottom: 22 },
-    xAxis: { ...valueAxis, minInterval: 1 },
-    yAxis: {
-      ...categoryAxis,
-      inverse: true,
-      data: routes.map(item => translateText(item.group)),
-    },
-    series: [
-      {
-        type: 'bar',
-        barMaxWidth: 17,
-        data: routes.map(item => item.count),
-        itemStyle: { borderRadius: [0, 5, 5, 0] },
-        label: {
-          show: true,
-          position: 'right',
-          color: 'inherit',
-          fontSize: 10,
-        },
-      },
-    ],
-  }
-}
 
 /** 整个 JS 产物以矩形面积表示；汇总余下块，避免少量大块隐藏其他资源。 */
 export const createBundleOption = (

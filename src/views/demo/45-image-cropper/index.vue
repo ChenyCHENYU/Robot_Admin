@@ -1,552 +1,339 @@
 <!--
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-02-25 10:00:00
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-25 10:00:00
- * @FilePath: \Robot_Admin\src\views\demo\45-image-cropper\index.vue
- * @Description: 图片裁剪组件演示
+ * @Date: 2026-10-18
+ * @Description: 图片裁剪工作台，素材、场景、编辑与输出形成完整路径
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
-
 <template>
-  <div class="image-cropper-demo-page">
-    <c_vTitle
-      title="图片裁剪场景示例"
-      icon="mdi:crop"
-      description="支持拖拽缩放旋转、多种比例预设、圆形头像裁剪、弹窗模式等特性，适用于头像上传、图片编辑等场景"
-    />
-
-    <div class="demo-grid">
-      <!-- 基础裁剪 -->
-      <NCard
-        class="demo-card"
-        :bordered="false"
+  <div class="crop-workspace">
+    <header class="crop-heading"
+      ><div
+        ><span>IMAGE STUDIO / LOCAL FIRST</span><h1>图片裁剪工作台</h1
+        ><p
+          >从头像到内容封面，选好用途，调整画面，得到可直接使用的图片。</p
+        ></div
+      ><NButton
+        size="small"
+        :disabled="exporting"
+        @click="fileRef?.click()"
+        ><template #icon><span class="i-mdi:upload" /></template
+        >选择本地图片</NButton
+      ></header
+    >
+    <nav
+      class="crop-flow"
+      aria-label="裁剪步骤"
+      ><span><b>01</b> 选择素材与用途</span><i /><span
+        ><b>02</b> 调整裁剪区域</span
+      ><i /><span><b>03</b> 预览并下载</span></nav
+    >
+    <div
+      class="crop-presets"
+      aria-label="裁剪用途"
+    >
+      <button
+        v-for="item in CROP_PRESETS"
+        :key="item.key"
+        type="button"
+        :aria-pressed="preset === item.key"
+        :disabled="exporting"
+        @click="applyPreset(item.key)"
+        ><span :class="item.icon" /><span
+          ><strong>{{ item.label }}</strong
+          ><small>{{ item.note }}</small></span
+        ><span
+          class="crop-presets__check"
+          aria-hidden="true"
+          >{{ preset === item.key ? '✓' : '' }}</span
+        ></button
       >
-        <template #header>
-          <div class="card-header">
-            <h3>基础裁剪</h3>
-            <NTag
-              type="info"
-              size="small"
-              round
-              >默认</NTag
-            >
-          </div>
-          <p class="card-desc">支持拖拽、缩放、旋转，工具栏提供常用比例预设</p>
-        </template>
-        <C_ImageCropper
-          ref="basicRef"
-          :src="DEMO_IMAGE"
-          height="400px"
-          @error="onCropperError"
-        />
-        <div class="action-bar">
-          <NButton
-            type="primary"
-            @click="handleBasicCrop"
-          >
-            <template #icon>
-              <C_Icon name="mdi:content-cut" />
-            </template>
-            裁剪
-          </NButton>
-        </div>
-        <div
-          v-if="basicResult"
-          class="demo-result"
+    </div>
+    <div class="crop-layout">
+      <section class="crop-editor">
+        <header class="crop-source"
+          ><img
+            :src="src"
+            alt="当前素材缩略图"
+          /><div
+            ><strong>{{ fileName }}</strong
+            ><span
+              >{{ sourceInfo.width }} × {{ sourceInfo.height }} px
+              <template v-if="sourceInfo.size"
+                >· {{ formatFileSize(sourceInfo.size) }}</template
+              ></span
+            ></div
+          ><NButton
+            size="tiny"
+            :disabled="!ready || exporting"
+            @click="modalRef?.open(src)"
+            >弹窗编辑</NButton
+          ></header
         >
-          <img
-            :src="basicResult.base64"
-            alt="裁剪结果"
-          />
-          <div class="demo-info">
-            <NTag
-              size="small"
-              type="info"
-            >
-              {{ basicResult.width }} × {{ basicResult.height }}
-            </NTag>
-            <NTag
-              size="small"
-              type="success"
-            >
-              {{ basicResult.format.toUpperCase() }}
-            </NTag>
-            <NText depth="3">
-              {{ (basicResult.blob.size / 1024).toFixed(1) }} KB
-            </NText>
-          </div>
-        </div>
-      </NCard>
-
-      <!-- 头像裁剪 -->
-      <NCard
-        class="demo-card"
-        :bordered="false"
-      >
-        <template #header>
-          <div class="card-header">
-            <h3>头像裁剪</h3>
-            <NTag
-              type="success"
-              size="small"
-              round
-              >圆形</NTag
-            >
-          </div>
-          <p class="card-desc">设置 circular + aspect-ratio="1" 实现圆形头像</p>
-        </template>
-        <C_ImageCropper
-          ref="avatarRef"
-          :src="DEMO_AVATAR"
-          :aspect-ratio="1"
-          :circular="true"
-          height="350px"
-          @error="onCropperError"
-        />
-        <div class="action-bar">
-          <NButton
-            type="primary"
-            @click="handleAvatarCrop"
-          >
-            <template #icon>
-              <C_Icon name="mdi:check" />
-            </template>
-            裁剪头像
-          </NButton>
-        </div>
         <div
-          v-if="avatarResult"
-          class="demo-result demo-result__circular"
+          class="crop-stage"
+          :class="{ 'is-dropping': dropping }"
+          @dragover.prevent="dropping = true"
+          @dragleave.prevent="dropping = false"
+          @drop.prevent="onDrop"
+          @pointerup="markStale"
+          @wheel.passive="markStale"
         >
-          <img
-            :src="avatarResult.base64"
-            alt="头像结果"
+          <C_ImageCropper
+            ref="cropperRef"
+            :src="src"
+            :aspect-ratio="ratio"
+            :output-format="format"
+            :output-quality="quality / 100"
+            :max-output-width="maxWidth || 0"
+            :show-toolbar="false"
+            :show-preview="false"
+            :disabled="exporting"
+            :height="440"
+            @ready="onReady"
+            @error="onError"
           />
+          <div
+            v-if="dropping"
+            class="crop-stage__drop"
+            >松开以替换图片</div
+          >
         </div>
-      </NCard>
-
-      <!-- 输出配置 - 全宽 -->
-      <NCard
-        class="demo-card full-width"
-        :bordered="false"
-      >
-        <template #header>
-          <div class="card-header">
-            <h3>输出格式 & 质量</h3>
-            <NTag
-              type="warning"
+        <div class="crop-tools"
+          ><C_ActionBar
+            :actions="transformActions"
+            :config="{ size: 'tiny', wrap: true }"
+        /></div>
+        <footer class="crop-editor__footer"
+          ><span><i />拖动画面调整位置，拖动裁剪框改变范围</span
+          ><span>图片仅在本地处理</span></footer
+        >
+      </section>
+      <aside class="crop-output">
+        <section class="crop-output__settings"
+          ><header><span>输出设置</span><small>EXPORT</small></header>
+          <label
+            >文件格式<NSelect
+              v-model:value="format"
+              :options="FORMAT_OPTIONS"
               size="small"
-              round
-              >配置</NTag
-            >
-          </div>
-          <p class="card-desc"
-            >支持 PNG / JPEG / WebP 输出，可调节质量和限制最大尺寸</p
-          >
-        </template>
-        <div class="output-config">
-          <NFormItem
-            label="格式"
-            label-placement="left"
-          >
-            <NSelect
-              v-model:value="outputFormat"
-              :options="formatOptions"
-              style="width: 120px"
-              size="small"
-            />
-          </NFormItem>
-          <NFormItem
-            label="质量"
-            label-placement="left"
-          >
-            <NSelect
-              v-model:value="outputQuality"
-              :options="qualityOptions"
-              style="width: 140px"
-              size="small"
-            />
-          </NFormItem>
-          <NFormItem
-            label="最大宽度"
-            label-placement="left"
-          >
+              :disabled="exporting"
+              aria-label="输出文件格式"
+          /></label>
+          <label
+            >最大输出宽度
             <NInputNumber
               v-model:value="maxWidth"
-              :min="0"
-              :step="100"
-              placeholder="0=不限"
-              style="width: 120px"
+              :min="64"
+              :max="4096"
+              :step="64"
               size="small"
-            />
-          </NFormItem>
-        </div>
-        <C_ImageCropper
-          ref="configRef"
-          :src="DEMO_IMAGE"
-          :output-format="outputFormat"
-          :output-quality="outputQuality"
-          :max-output-width="maxWidth"
-          height="350px"
-          @error="onCropperError"
-        />
-        <div class="action-bar">
+              :disabled="exporting"
+              aria-label="最大输出宽度"
+              ><template #suffix>px</template></NInputNumber
+            ><small>保持裁剪比例，原图较小时不放大。</small></label
+          >
+          <label
+            v-if="format !== 'png'"
+            class="crop-quality"
+            ><span
+              >图片质量 <strong>{{ quality }}%</strong></span
+            ><NSlider
+              v-model:value="quality"
+              :min="30"
+              :max="100"
+              :step="5"
+              :disabled="exporting"
+              aria-label="图片质量"
+          /></label>
+          <p
+            v-else
+            class="crop-output__note"
+            >PNG 保留透明背景，适合 Logo 与需要透明边缘的素材。</p
+          >
+          <NCheckbox
+            v-model:checked="circular"
+            :disabled="exporting"
+            >圆形预览</NCheckbox
+          >
           <NButton
+            block
             type="primary"
-            @click="handleConfigCrop"
+            size="small"
+            :disabled="!ready"
+            :loading="exporting"
+            @click="exportCrop"
+            ><template #icon><span class="i-mdi:crop" /></template
+            >生成裁剪结果</NButton
           >
-            导出
-          </NButton>
-        </div>
-        <div
-          v-if="configResult"
-          class="demo-result"
-        >
-          <img
-            :src="configResult.base64"
-            alt="配置结果"
-          />
-          <div class="demo-info">
-            <NTag
+        </section>
+        <section
+          class="crop-result"
+          aria-label="输出预览"
+          ><header
+            ><span>输出预览</span
+            ><NTag
+              v-if="result"
               size="small"
-              type="info"
-            >
-              {{ configResult.width }} × {{ configResult.height }}
-            </NTag>
-            <NTag
-              size="small"
-              type="success"
-            >
-              {{ configResult.format.toUpperCase() }}
-            </NTag>
-            <NText depth="3">
-              {{ (configResult.blob.size / 1024).toFixed(1) }} KB
-            </NText>
-          </div>
-        </div>
-      </NCard>
-
-      <!-- 本地上传裁剪 -->
-      <NCard
-        class="demo-card"
-        :bordered="false"
-      >
-        <template #header>
-          <div class="card-header">
-            <h3>本地文件裁剪</h3>
-            <NTag
-              size="small"
-              round
-              >上传</NTag
-            >
-          </div>
-          <p class="card-desc">点击选取本地图片，裁剪后导出</p>
-        </template>
-        <button
-          v-if="!uploadSrc"
-          type="button"
-          class="demo-upload-area"
-          @click="triggerUpload"
-        >
-          <C_Icon
-            name="mdi:cloud-upload-outline"
-            class="upload-icon"
-          />
-          <NText depth="3">点击选择图片</NText>
-        </button>
-        <template v-else>
-          <C_ImageCropper
-            ref="uploadRef"
-            :src="uploadSrc"
-            height="350px"
-            @error="onCropperError"
-          />
-          <div class="action-bar">
-            <NButton @click="triggerUpload">重新选择</NButton>
-            <NButton
-              type="primary"
-              @click="handleUploadCrop"
-            >
-              裁剪
-            </NButton>
-          </div>
+              :type="stale ? 'warning' : 'success'"
+              :bordered="false"
+              >{{ stale ? '需要重新生成' : '已生成' }}</NTag
+            ></header
+          >
           <div
-            v-if="uploadResult"
-            class="demo-result"
+            class="crop-result__canvas"
+            :class="{ 'is-circular': circular }"
+            ><img
+              v-if="result"
+              :src="result.base64"
+              alt="裁剪输出结果"
+            /><div
+              v-else
+              class="crop-result__empty"
+              ><span class="i-mdi:image-outline" /><strong
+                >成片会显示在这里</strong
+              ><p>调整好画面后，点击上方生成按钮</p></div
+            ></div
           >
-            <img
-              :src="uploadResult.base64"
-              alt="上传裁剪结果"
-            />
-          </div>
-        </template>
-        <input
-          ref="fileInputRef"
-          type="file"
-          accept="image/*"
-          hidden
-          @change="handleFileChange"
-        />
-      </NCard>
-
-      <!-- 弹窗模式 -->
-      <NCard
-        class="demo-card"
-        :bordered="false"
-      >
-        <template #header>
-          <div class="card-header">
-            <h3>弹窗模式</h3>
-            <NTag
-              type="info"
+          <template v-if="result"
+            ><div class="crop-result__meta"
+              ><span>{{ result.width }} × {{ result.height }} px</span
+              ><span
+                >{{ result.format.toUpperCase() }} ·
+                {{ formatFileSize(result.blob.size) }}</span
+              ></div
+            ><NButton
+              block
               size="small"
-              round
-              >Modal</NTag
-            >
-          </div>
-          <p class="card-desc">以弹窗形式打开裁剪器，适配上传后二次裁剪</p>
-        </template>
-        <NButton
-          type="primary"
-          @click="modalRef?.open(DEMO_IMAGE)"
-        >
-          <template #icon>
-            <C_Icon name="mdi:crop" />
-          </template>
-          打开裁剪弹窗
-        </NButton>
-        <C_ImageCropper
-          ref="modalRef"
-          :modal="true"
-          modal-title="裁剪 Banner"
-          :aspect-ratio="16 / 9"
-          @confirm="onModalConfirm"
-          @error="onCropperError"
-        />
-        <div
-          v-if="modalResult"
-          class="demo-result"
-        >
-          <img
-            :src="modalResult.base64"
-            alt="弹窗裁剪结果"
-          />
-          <div class="demo-info">
-            <NTag
-              size="small"
-              type="info"
-            >
-              {{ modalResult.width }} × {{ modalResult.height }}
-            </NTag>
-          </div>
-        </div>
-      </NCard>
-
-      <!-- 编程控制 - 全宽 -->
-      <NCard
-        class="demo-card full-width"
-        :bordered="false"
-      >
-        <template #header>
-          <div class="card-header">
-            <h3>编程控制</h3>
-            <NTag
-              type="success"
-              size="small"
-              round
-              >API</NTag
-            >
-          </div>
-          <p class="card-desc">通过 ref 调用旋转、缩放、翻转、设置比例等方法</p>
-        </template>
-        <div class="action-bar">
-          <NButton
-            size="small"
-            @click="apiRef?.rotate(-90)"
+              :disabled="stale || exporting"
+              @click="download"
+              ><template #icon><span class="i-mdi:download" /></template
+              >下载图片</NButton
+            ></template
           >
-            逆时针 90°
-          </NButton>
-          <NButton
-            size="small"
-            @click="apiRef?.rotate(90)"
+          <small
+            v-if="circular"
+            class="crop-result__hint"
+            >圆形仅用于预览，文件保留矩形画布。</small
           >
-            顺时针 90°
-          </NButton>
-          <NButton
-            size="small"
-            @click="apiRef?.zoom(0.2)"
-          >
-            放大
-          </NButton>
-          <NButton
-            size="small"
-            @click="apiRef?.zoom(-0.2)"
-          >
-            缩小
-          </NButton>
-          <NButton
-            size="small"
-            @click="apiRef?.flipX()"
-          >
-            水平翻转
-          </NButton>
-          <NButton
-            size="small"
-            @click="apiRef?.flipY()"
-          >
-            垂直翻转
-          </NButton>
-          <NButton
-            size="small"
-            @click="apiRef?.setAspectRatio(16 / 9)"
-          >
-            16:9
-          </NButton>
-          <NButton
-            size="small"
-            @click="apiRef?.setAspectRatio(0)"
-          >
-            自由
-          </NButton>
-          <NButton
-            size="small"
-            type="warning"
-            @click="apiRef?.reset()"
-          >
-            重置
-          </NButton>
-        </div>
-        <C_ImageCropper
-          ref="apiRef"
-          :src="DEMO_IMAGE"
-          :show-toolbar="false"
-          :show-preview="false"
-          height="350px"
-          @error="onCropperError"
-        />
-      </NCard>
+        </section>
+      </aside>
     </div>
+    <section class="crop-samples"
+      ><div
+        ><h2>先用示例试一试</h2
+        ><p>内置品牌素材，无需上传即可体验完整流程。</p></div
+      ><button
+        v-for="sample in SAMPLE_IMAGES"
+        :key="sample.key"
+        type="button"
+        :disabled="exporting"
+        @click="selectSample(sample)"
+        ><img
+          :src="sample.src"
+          alt=""
+        /><span>{{ sample.label }}</span></button
+      ><small>支持 PNG / JPEG / WebP，单张不超过 15 MB</small></section
+    >
+    <input
+      ref="fileRef"
+      type="file"
+      accept="image/png,image/jpeg,image/webp"
+      class="crop-file-input"
+      aria-label="上传裁剪图片"
+      @change="onFileChange"
+    />
+    <C_ImageCropper
+      ref="modalRef"
+      modal
+      modal-title="放大编辑图片"
+      :aspect-ratio="ratio"
+      :output-format="format"
+      :output-quality="quality / 100"
+      :max-output-width="maxWidth || 0"
+      :circular="circular"
+      @confirm="acceptModalResult"
+      @error="onError"
+    />
   </div>
 </template>
-
 <script setup lang="ts">
+  import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
+  import { CROP_PRESETS, SAMPLE_IMAGES, FORMAT_OPTIONS } from './data'
+  import { useCropWorkspace } from './useCropWorkspace'
   defineOptions({ name: 'Demo45ImageCropper' })
-  import type { Ref } from 'vue'
-  import type {
-    CropOutputFormat,
-    CropResult,
-    ImageCropperExpose,
-  } from '@robot-admin/naive-ui-components'
-  import {
-    DEMO_AVATAR,
-    DEMO_IMAGE,
-    formatOptions,
-    qualityOptions,
-  } from './data'
-
-  const message = useMessage()
-
-  // ─── Refs ──────────────────────────────────────
-  const basicRef = ref<ImageCropperExpose | null>(null)
-  const avatarRef = ref<ImageCropperExpose | null>(null)
-  const configRef = ref<ImageCropperExpose | null>(null)
-  const uploadRef = ref<ImageCropperExpose | null>(null)
-  const modalRef = ref<ImageCropperExpose | null>(null)
-  const apiRef = ref<ImageCropperExpose | null>(null)
-  const fileInputRef = ref<HTMLInputElement | null>(null)
-
-  // ─── 基础裁剪 ──────────────────────────────────
-  const basicResult = ref<CropResult>()
-
-  /** 将任意内联裁剪器的导出结果写入对应演示区域。 */
-  async function exportCrop(
-    cropper: ImageCropperExpose | null,
-    output: Ref<CropResult | undefined>,
-    successMessage: string
-  ) {
-    try {
-      if (!cropper) throw new Error('裁剪器尚未就绪')
-      output.value = await cropper.getCropResult()
-      message.success(successMessage)
-    } catch {
-      message.error('裁剪失败')
-    }
-  }
-
-  /** 显示组件内部的图片加载和导出错误。 */
-  function onCropperError(error: Event | Error) {
-    message.error(error instanceof Error ? error.message : '图片处理失败')
-  }
-
-  /** 基础裁剪 */
-  function handleBasicCrop() {
-    void exportCrop(basicRef.value, basicResult, '裁剪成功')
-  }
-
-  // ─── 头像裁剪 ──────────────────────────────────
-  const avatarResult = ref<CropResult>()
-
-  /** 头像裁剪 */
-  function handleAvatarCrop() {
-    void exportCrop(avatarRef.value, avatarResult, '头像裁剪成功')
-  }
-
-  // ─── 输出配置 ──────────────────────────────────
-  const outputFormat = ref<CropOutputFormat>('png')
-  const outputQuality = ref(0.92)
-  const maxWidth = ref(0)
-  const configResult = ref<CropResult>()
-
-  /** 配置导出 */
-  function handleConfigCrop() {
-    void exportCrop(configRef.value, configResult, '导出成功')
-  }
-
-  // ─── 本地上传 ──────────────────────────────────
-  const uploadSrc = ref('')
-  const uploadResult = ref<CropResult>()
-
-  /** 触发文件选择 */
-  function triggerUpload() {
-    fileInputRef.value?.click()
-  }
-
-  /** 文件选取回调 */
-  function handleFileChange(e: Event) {
-    const input = e.target as HTMLInputElement
-    const file = input.files?.[0]
-    input.value = ''
-    if (!file) return
-    if (!file.type.startsWith('image/')) {
-      message.error('请选择图片文件')
-      return
-    }
-    const reader = new FileReader()
-    reader.onerror = () => message.error('读取图片失败')
-    reader.onload = ev => {
-      if (typeof ev.target?.result !== 'string') return
-      uploadSrc.value = ev.target.result
-      uploadResult.value = undefined
-    }
-    reader.readAsDataURL(file)
-  }
-
-  /** 上传裁剪 */
-  function handleUploadCrop() {
-    void exportCrop(uploadRef.value, uploadResult, '裁剪成功')
-  }
-
-  // ─── 弹窗模式 ──────────────────────────────────
-  const modalResult = ref<CropResult>()
-
-  /** 弹窗裁剪确认 */
-  function onModalConfirm(result: CropResult) {
-    modalResult.value = result
-    message.success('弹窗裁剪确认')
-  }
+  const {
+    cropperRef,
+    modalRef,
+    fileRef,
+    src,
+    fileName,
+    sourceInfo,
+    preset,
+    ratio,
+    format,
+    quality,
+    maxWidth,
+    ready,
+    exporting,
+    result,
+    circular,
+    stale,
+    dropping,
+    markStale,
+    selectSample,
+    onFileChange,
+    onDrop,
+    applyPreset,
+    transform,
+    exportCrop,
+    download,
+    onReady,
+    onError,
+    acceptModalResult,
+    formatFileSize,
+  } = useCropWorkspace()
+  const transformActions = computed<ActionItem[]>(() =>
+    [
+      {
+        key: 'rotate-left',
+        label: '左转',
+        icon: 'mdi:rotate-left',
+        onClick: () => transform('left'),
+      },
+      {
+        key: 'rotate-right',
+        label: '右转',
+        icon: 'mdi:rotate-right',
+        onClick: () => transform('right'),
+      },
+      {
+        key: 'zoom-in',
+        label: '放大',
+        icon: 'mdi:magnify-plus-outline',
+        onClick: () => transform('zoom-in'),
+      },
+      {
+        key: 'zoom-out',
+        label: '缩小',
+        icon: 'mdi:magnify-minus-outline',
+        onClick: () => transform('zoom-out'),
+      },
+      {
+        key: 'flip-x',
+        label: '水平翻转',
+        icon: 'mdi:flip-horizontal',
+        onClick: () => transform('flip-x'),
+      },
+      {
+        key: 'flip-y',
+        label: '垂直翻转',
+        icon: 'mdi:flip-vertical',
+        onClick: () => transform('flip-y'),
+      },
+      { key: 'reset', label: '重置', onClick: () => transform('reset') },
+    ].map(item => ({ ...item, disabled: !ready.value || exporting.value }))
+  )
 </script>
-
 <style lang="scss" scoped>
   @use './index.scss';
 </style>

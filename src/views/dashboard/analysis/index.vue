@@ -125,28 +125,30 @@
         <div class="obs-panel__head"
           ><div
             ><h2>功能版图</h2
-            ><p>仓库菜单清单的叶子路由分布，覆盖各能力域。</p></div
+            ><p>从能力域展开真实菜单清单，点击节点查看组成。</p></div
           ><span class="obs-chip">{{ routeCount }} routes</span></div
         >
-        <ObservatoryChart
-          :option="routeOption"
-          :empty="!report"
-          label="仓库功能菜单数量分布"
+        <StructureMap
+          :nodes="capabilityNodes"
+          label="Robot Admin"
+          unit="个页面入口"
         />
+        <p class="obs-note">连线表示分类包含关系，数量来自仓库叶子菜单清单。</p>
       </section>
       <section class="obs-panel dependency-panel">
         <div class="obs-panel__head"
-          ><div><h2>依赖的组成</h2><p>当前直接依赖数量，包含开发工具。</p></div
+          ><div
+            ><h2>依赖的组成</h2
+            ><p>按职责追溯安装包，点击节点核对实际版本。</p></div
           ><span class="obs-chip">{{ dependencyCount }} packages</span></div
         >
-        <div class="dependency-chart"
-          ><ObservatoryChart
-            :option="dependencyOption"
-            label="直接依赖按职责分组的环形图"
-          /><div class="dependency-center"
-            ><strong>{{ ecosystem.length }}</strong
-            ><span>独立生态包</span></div
-          ></div
+        <StructureMap
+          :nodes="dependencyNodes"
+          label="直接依赖"
+          unit="个安装包"
+        />
+        <p class="obs-note"
+          >按职责分类计数，包含开发工具；不以包数量推断产物体积。</p
         >
       </section>
     </div>
@@ -259,6 +261,7 @@
   ]
 
   import ObservatoryChart from '../shared/c_chart/index.vue'
+  import StructureMap from './components/c_structureMap/index.vue'
   import { useProjectReport } from '../shared/useProjectReport'
   import { formatBytes, formatDuration } from '../shared/d_format'
   import {
@@ -266,9 +269,9 @@
     projectInfo,
     ecosystem,
     architectures,
-    dependencyOption,
+    createDependencyNodes,
+    createCapabilityNodes,
     createBundleOption,
-    createRouteOption,
     readBrowserPerformance,
     createWaterfallOption,
   } from './data'
@@ -320,7 +323,10 @@
   const bundleOption = computed(() =>
     createBundleOption(report.value?.build, compressed.value)
   )
-  const routeOption = computed(() => createRouteOption(report.value?.inventory))
+  const dependencyNodes = createDependencyNodes()
+  const capabilityNodes = computed(() =>
+    createCapabilityNodes(report.value?.inventory)
+  )
   const waterfallOption = computed(() => createWaterfallOption(browser.value))
   const budgetPercent = computed(() =>
     report.value?.build

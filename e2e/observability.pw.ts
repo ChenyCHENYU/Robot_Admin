@@ -35,7 +35,7 @@ test('工程报告与产物一致，图表保持容器尺寸，切换体积口�
   await expect(page.locator('.obs-metric strong').nth(1)).toHaveText(
     String(report.inventory.components)
   )
-  await expect(page.locator('.observatory-chart svg')).toHaveCount(4)
+  await expect(page.locator('.observatory-chart svg')).toHaveCount(2)
   const sizes = await page
     .locator('.observatory-chart svg')
     .evaluateAll(items =>
@@ -182,7 +182,7 @@ test('暗色、窄屏与反复导航保持图表可见，不累积旧 SVG 或出
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('/#/dashboard/analysis')
-  await expect(page.locator('.observatory-chart svg')).toHaveCount(4)
+  await expect(page.locator('.observatory-chart svg')).toHaveCount(2)
   await page.evaluate(() => {
     const app = (
       document.querySelector('#app') as HTMLElement & {
@@ -210,7 +210,7 @@ test('暗色、窄屏与反复导航保持图表可见，不累积旧 SVG 或出
     await page.goto('/#/dashboard/statistics')
     await expect(page.locator('.observatory-chart svg')).toHaveCount(3)
     await page.goto('/#/dashboard/analysis')
-    await expect(page.locator('.observatory-chart svg')).toHaveCount(4)
+    await expect(page.locator('.observatory-chart svg')).toHaveCount(2)
   }
   await roundTrip()
   await roundTrip()

@@ -14,7 +14,7 @@ const demos = [
   ['/demo/form-manage/form', '表单选择器组件场景示例'],
   ['/demo/form-manage/form-modal', '表单容器组件场景示例'],
   ['/demo/table-manage/table', '表格组件场景示例'],
-  ['/plugins/calendar', '日历组件场景示例'],
+  ['/plugins/calendar', '日程工作台'],
   ['/demo/steps', '进度步骤条组件场景示例'],
   ['/editor/work-flow-editor', '工作流设计器场景示例'],
   ['/hooks/excel-all', 'Excel All - [useExcel] 场景示例'],
@@ -26,7 +26,7 @@ const demos = [
   ['/preview/code', 'Code编辑器组件场景示例'],
   ['/preview/video-player', '视频播放器场景示例'],
   ['/preview/signature', '电子签名场景示例'],
-  ['/preview/image-cropper', '图片裁剪场景示例'],
+  ['/preview/image-cropper', '图片裁剪工作台'],
   ['/preview/cron', '让每一次执行，都有明确的计划。'],
   ['/preview/timeline', '每一次迭代，都有迹可循'],
 ] as const

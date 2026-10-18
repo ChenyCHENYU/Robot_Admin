@@ -297,6 +297,13 @@
   &__table {
     // 保留十行数据的展示空间，末页和搜索结果变少时分页器仍固定在底部。
     height: 480px;
+    // 分页作为容器的一部分预留底部空间，避免 flex-height 将其压到边框。
+    padding-bottom: 14px;
+    box-sizing: content-box;
+  }
+  :deep(.pagination-wrapper) {
+    padding: 14px 4px 2px;
+    margin-top: 0;
   }
   &__heading {
     display: flex;

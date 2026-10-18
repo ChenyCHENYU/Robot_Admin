@@ -1,0 +1,267 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @Description: 原生结构图的连接线、分层节点与主题适配
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.structure-map {
+  min-width: 0;
+  &__canvas {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 360px;
+    padding: 12px 0;
+  }
+  &__links {
+    position: absolute;
+    inset: 12px 0;
+    width: 100%;
+    height: calc(100% - 24px);
+    pointer-events: none;
+    fill: none;
+    stroke: var(--app-border-default);
+    stroke-width: 1.4;
+    path {
+      transition: stroke 0.2s;
+    }
+    .is-selected {
+      stroke: var(--app-primary);
+      stroke-width: 1.8;
+    }
+  }
+  &__root {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    flex: 0 0 30%;
+    padding: 22px 8px;
+    border: 1px solid var(--app-border-default);
+    border-radius: 14px;
+    background: var(--app-bg-content);
+    box-shadow: 0 6px 24px
+      color-mix(in srgb, var(--app-primary) 5%, transparent);
+    small {
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--app-text-secondary);
+    }
+    > strong {
+      margin: 8px 0 2px;
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -0.05em;
+      font-variant-numeric: tabular-nums;
+    }
+    > span:last-child {
+      font-size: 10px;
+      color: var(--app-text-tertiary);
+    }
+  }
+  &__root-mark {
+    display: grid;
+    place-items: center;
+    position: relative;
+    width: 38px;
+    height: 38px;
+    background: var(--app-primary);
+    color: white;
+    font-size: 23px;
+    font-weight: 700;
+    border-radius: 11px;
+    span {
+      position: absolute;
+      right: -3px;
+      bottom: -3px;
+      width: 10px;
+      height: 10px;
+      border: 3px solid var(--app-bg-content);
+      border-radius: 50%;
+      background: #35b595;
+    }
+  }
+  &__nodes {
+    position: relative;
+    display: flex;
+    flex: 0 0 52%;
+    flex-direction: column;
+    justify-content: space-between;
+    align-self: stretch;
+    gap: 12px;
+  }
+  &__node {
+    --node-tone: #5283e8;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 56px;
+    padding: 10px 12px;
+    font: inherit;
+    text-align: left;
+    color: var(--app-text-primary);
+    background: var(--app-bg-content);
+    border: 1px solid var(--app-border-default);
+    border-radius: 10px;
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      background 0.2s;
+    &.tone-1 {
+      --node-tone: #28a69a;
+    }
+    &.tone-2 {
+      --node-tone: #9474dc;
+    }
+    &.tone-3 {
+      --node-tone: #c89444;
+    }
+    &.tone-4 {
+      --node-tone: #cf738f;
+    }
+    &.is-selected,
+    &:hover {
+      border-color: color-mix(
+        in srgb,
+        var(--node-tone) 55%,
+        var(--app-border-default)
+      );
+      background: color-mix(
+        in srgb,
+        var(--node-tone) 5%,
+        var(--app-bg-content)
+      );
+    }
+    &:focus-visible {
+      outline: 2px solid var(--app-primary);
+      outline-offset: 3px;
+    }
+    > strong {
+      margin-left: auto;
+      font-size: 18px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+  &__node-dot {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    border-radius: 3px;
+    background: var(--node-tone);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--node-tone) 10%, transparent);
+  }
+  &__node-name {
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 500;
+    small {
+      display: block;
+      margin-top: 4px;
+      color: var(--app-text-tertiary);
+      font-size: 10px;
+      font-weight: 400;
+    }
+  }
+  &__arrow {
+    color: var(--app-text-tertiary);
+    font-size: 11px;
+  }
+  &__detail {
+    padding-top: 16px;
+    border-top: 1px solid var(--app-border-light);
+    > header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+      strong {
+        font-weight: 500;
+      }
+      span {
+        font-size: 10px;
+        color: var(--app-text-tertiary);
+      }
+    }
+  }
+  &__list {
+    display: grid;
+    gap: 0 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 164px;
+    overflow: auto;
+    margin-top: 8px;
+    padding-right: 4px;
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 0;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--app-border-light);
+    }
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 11px;
+    }
+    small {
+      flex: none;
+      font-size: 10px;
+      color: var(--app-text-tertiary);
+    }
+  }
+}
+@container (max-width: 600px) {
+  .structure-map__list {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 550px) {
+  .structure-map__canvas {
+    min-height: 0;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .structure-map__links {
+    display: none;
+  }
+  .structure-map__root {
+    grid-template-columns: auto 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 14px;
+  }
+  .structure-map__root small {
+    margin: 0;
+    justify-self: start;
+  }
+  .structure-map__root > strong {
+    margin: 0;
+  }
+  .structure-map__nodes {
+    align-self: auto;
+  }
+}
+
+@container (max-width: 320px) {
+  .structure-map__root {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 12px 8px;
+    gap: 8px;
+    > small,
+    > span:last-child {
+      width: 100%;
+      text-align: center;
+    }
+  }
+  .structure-map__detail > header {
+    flex-wrap: wrap;
+  }
+}
