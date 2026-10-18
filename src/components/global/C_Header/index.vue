@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @FilePath: \Robot_Admin\src\components\global\C_Header\index.vue
+ * @Description: 顶部导航与可访问的侧边栏折叠入口
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
   <NLayoutHeader
     bordered
@@ -20,28 +27,51 @@
         class="header-content w-full h-full flex items-center justify-between"
       >
         <!-- 左侧：侧边栏折叠 + 面包屑 -->
-        <div class="flex items-center h-full gap-12px">
+        <div class="header-navigation flex items-center h-full gap-12px">
           <NTooltip placement="bottom">
             <template #trigger>
               <button
                 id="guide-menu-collapse"
+                type="button"
                 class="collapse-trigger"
                 :class="{ 'is-collapsed': isCollapsed }"
+                :aria-label="isCollapsed ? '展开菜单' : '收起菜单'"
+                :aria-expanded="!isCollapsed"
                 @click="handleCollapsedChange(!isCollapsed)"
               >
-                <i
-                  :class="[
-                    'text-18px transition-transform duration-300 ease-in-out',
-                    isCollapsed ? 'i-ri:side-bar-fill' : 'i-ri:side-bar-line',
-                  ]"
-                ></i>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <rect
+                    x="3"
+                    y="4"
+                    width="18"
+                    height="16"
+                    rx="3"
+                  />
+                  <path d="M9 4v16" />
+                  <path
+                    class="collapse-trigger__arrow"
+                    d="m15.5 9-3 3 3 3"
+                  />
+                </svg>
               </button>
             </template>
             {{ isCollapsed ? '展开菜单' : '收起菜单' }}
           </NTooltip>
 
           <!-- 分隔线 -->
-          <div class="h-16px w-1px bg-gray-200 dark:bg-gray-700 op-60"></div>
+          <div
+            class="header-divider"
+            aria-hidden="true"
+          />
 
           <!-- 面包屑导航 -->
           <div
@@ -105,31 +135,5 @@
 </script>
 
 <style lang="scss" scoped>
-  .collapse-trigger {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--app-text-secondary, #666);
-    cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-
-    &:hover {
-      background: var(--app-hover-bg, rgba(99, 102, 241, 0.08));
-      color: #6366f1;
-    }
-
-    &:active {
-      transform: scale(0.92);
-    }
-
-    &.is-collapsed i {
-      transform: scaleX(-1);
-    }
-  }
+  @use './index.scss';
 </style>

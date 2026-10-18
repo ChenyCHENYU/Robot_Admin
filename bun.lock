@@ -85,6 +85,8 @@
     },
   },
   "patchedDependencies": {
+    "@agile-team/mach-table@0.30.1": "patches/@agile-team%2Fmach-table@0.30.1.patch",
+    "@agile-team/mach-table-vue@0.30.1": "patches/@agile-team%2Fmach-table-vue@0.30.1.patch",
     "auto-i18n-plugin-core@1.1.16": "patches/auto-i18n-plugin-core@1.1.16.patch",
     "vite-auto-i18n-plugin@1.1.16": "patches/vite-auto-i18n-plugin@1.1.16.patch",
   },

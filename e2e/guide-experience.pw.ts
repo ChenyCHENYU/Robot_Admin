@@ -37,7 +37,7 @@ for (const layout of layouts) {
   test(`${layout} 的引导定位真实目标并能完成`, async ({ page }) => {
     await installMockAdminSession(page)
     await page.goto('/#/home')
-    await page.locator('[aria-label="mdi:settings-transfer-outline"]').click()
+    await page.getByRole('button', { name: '布局配置', exact: true }).click()
     await page.locator('.n-tabs-tab').filter({ hasText: '布局' }).click()
     await page.locator('.layout-item').filter({ hasText: layout }).click()
     await page.locator('.n-drawer-header__close').click()
@@ -123,7 +123,7 @@ test('引导按需加载、跟随主题，并在隐藏标签或导航时清理',
   ]
   expect(backgrounds[0]).not.toBe(backgrounds[1])
 
-  await page.locator('[aria-label="mdi:settings-transfer-outline"]').click()
+  await page.getByRole('button', { name: '布局配置', exact: true }).click()
   await page.locator('.n-tabs-tab').filter({ hasText: '布局' }).click()
   await page
     .locator('.setting-item')

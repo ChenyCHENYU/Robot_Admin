@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-10
+ * @FilePath: \Robot_Admin\src\views\demo\57-mach-table\index.vue
+ * @Description: MachTable 业务场景与即时功能配置演示
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
   <div class="mach-table-demo">
     <c_vTitle
@@ -41,23 +48,32 @@
           @change="handleScenarioChange"
         />
 
-        <C_ActionBar :actions="featureActions" />
+        <C_ActionBar
+          :actions="featureActions"
+          :config="{ size: 'small' }"
+        />
       </div>
 
       <div class="mach-demo-toolbar">
         <NInput
           v-model:value="quickFilter"
           class="mach-demo-toolbar__search"
+          size="small"
           clearable
           placeholder="搜索订单、客户、产品或区域"
         >
-          <template #prefix><C_Icon name="mdi:magnify" /></template>
+          <template #prefix>
+            <C_Icon
+              type="unocss"
+              :name="'i-mdi-magnify'"
+            />
+          </template>
         </NInput>
 
         <C_ActionBar
           class="mach-demo-toolbar__actions"
           :actions="tableActions"
-          :config="{ wrap: true, align: 'right' }"
+          :config="{ wrap: true, align: 'right', size: 'small' }"
         />
       </div>
 
@@ -95,42 +111,78 @@
 
     <NDrawer
       v-model:show="showFeatureDrawer"
-      width="min(560px, 94vw)"
+      width="min(600px, 100vw)"
       placement="right"
     >
       <NDrawerContent
-        title="MachTable 功能配置"
+        class="mach-feature-drawer"
         closable
       >
-        <div class="mach-feature-panel">
-          <NAlert
-            type="info"
-            :show-icon="false"
-          >
-            普通选项会即时、原子地更新当前表格；需要专用列或数据结构的能力单独标识，不会制造无效组合。
-          </NAlert>
-
-          <div class="mach-feature-presets">
+        <template #header>
+          <div class="mach-feature-heading">
+            <span class="mach-feature-heading__icon">
+              <C_Icon
+                type="unocss"
+                :name="'i-mdi-tune-variant'"
+                :size="22"
+              />
+            </span>
             <div>
-              <strong>场景预设</strong>
-              <span>一键体验常见组合，也可以继续逐项调整。</span>
+              <strong>功能配置</strong>
+              <span>打造适合当前任务的表格视图</span>
             </div>
-            <NSelect
-              v-model:value="featurePreset"
-              class="mach-feature-presets__select"
-              :options="MACH_FEATURE_PRESET_OPTIONS"
-              @update:value="applyFeaturePreset"
-            />
           </div>
+        </template>
+
+        <div class="mach-feature-panel">
+          <div class="mach-feature-context">
+            <span>{{ currentScenario.label }}</span>
+            <span class="mach-feature-context__live">修改即时生效</span>
+          </div>
+
+          <section class="mach-feature-presets">
+            <header class="mach-feature-section-title">
+              <strong>从预设开始</strong>
+              <span>{{ currentFeaturePresetLabel }}</span>
+            </header>
+            <div class="mach-feature-preset-grid">
+              <button
+                v-for="preset in MACH_FEATURE_PRESET_OPTIONS"
+                :key="preset.value"
+                type="button"
+                class="mach-feature-preset"
+                :class="{ 'is-active': featurePreset === preset.value }"
+                :aria-pressed="featurePreset === preset.value"
+                @click="applyFeaturePreset(preset.value)"
+              >
+                <C_Icon
+                  type="unocss"
+                  :name="preset.icon"
+                />
+                <span>
+                  <strong>{{ preset.label }}</strong>
+                  <small>{{ preset.description }}</small>
+                </span>
+                <C_Icon
+                  v-if="featurePreset === preset.value"
+                  class="mach-feature-preset__check"
+                  type="unocss"
+                  :name="'i-mdi-check-circle'"
+                  :size="14"
+                />
+              </button>
+            </div>
+          </section>
 
           <div class="mach-feature-preview">
             <div>
               <strong>状态预览</strong>
-              <span>直接检查内置加载态、空态和正常数据，不修改业务数据。</span>
+              <span>检查表格在不同数据状态下的呈现</span>
             </div>
             <NSelect
               v-model:value="previewState"
               class="mach-feature-preview__select"
+              size="small"
               :options="TABLE_PREVIEW_OPTIONS"
             />
           </div>
@@ -141,8 +193,18 @@
             class="mach-feature-group"
           >
             <header>
-              <strong>{{ group.title }}</strong>
-              <span>{{ group.description }}</span>
+              <span class="mach-feature-group__icon">
+                <C_Icon
+                  type="unocss"
+                  :name="group.icon"
+                  :size="17"
+                />
+              </span>
+              <div>
+                <strong>{{ group.title }}</strong>
+                <span>{{ group.description }}</span>
+              </div>
+              <small>{{ group.options.length }} 项</small>
             </header>
             <C_Form
               v-model="featureSettings"
@@ -151,13 +213,24 @@
             />
           </section>
 
-          <section class="mach-feature-group">
-            <header>
-              <strong>结构化与扩展能力</strong>
-              <span
-                >这些能力需要匹配的数据模型或独立入口，不能伪装成普通开关。</span
-              >
-            </header>
+          <details class="mach-capabilities">
+            <summary>
+              <span>
+                <C_Icon
+                  type="unocss"
+                  :name="'i-mdi-puzzle-outline'"
+                />
+                <strong>场景与扩展能力</strong>
+              </span>
+              <C_Icon
+                class="mach-capabilities__chevron"
+                type="unocss"
+                :name="'i-mdi-chevron-down'"
+              />
+            </summary>
+            <p class="mach-capabilities__description">
+              以下能力需要对应的数据结构或独立入口，查看接入说明。
+            </p>
             <div class="mach-capability-list">
               <article
                 v-for="capability in MACH_SCENE_CAPABILITIES"
@@ -177,13 +250,18 @@
                 </NTag>
               </article>
             </div>
-          </section>
-
-          <C_ActionBar
-            :actions="featurePanelActions"
-            :config="{ align: 'space-between' }"
-          />
+          </details>
         </div>
+
+        <template #footer>
+          <div class="mach-feature-footer">
+            <span>配置仅作用于当前演示</span>
+            <C_ActionBar
+              :actions="featurePanelActions"
+              :config="{ align: 'space-between', size: 'small', wrap: true }"
+            />
+          </div>
+        </template>
       </NDrawerContent>
     </NDrawer>
   </div>
@@ -240,10 +318,24 @@
   const previewState = ref<TablePreviewState>('data')
   const treeRows = createOrderTreeRows()
   const showFeatureDrawer = ref(false)
-  const featurePreset = ref<MachFeaturePreset>('standard')
   const featureSettings = ref<MachFeatureSettings>({
     ...DEFAULT_MACH_FEATURE_SETTINGS,
   })
+  const featurePreset = computed(
+    () =>
+      MACH_FEATURE_PRESET_OPTIONS.find(preset =>
+        (
+          Object.keys(
+            DEFAULT_MACH_FEATURE_SETTINGS
+          ) as (keyof MachFeatureSettings)[]
+        ).every(key => featureSettings.value[key] === preset.settings[key])
+      )?.value
+  )
+  const currentFeaturePresetLabel = computed(() =>
+    featurePreset.value
+      ? `当前：${MACH_FEATURE_PRESETS[featurePreset.value].label}`
+      : '当前：自定义配置'
+  )
   const currentScenario = computed(() => TABLE_SCENARIOS[activeScenario.value])
   const inlineEditMode = computed(() => currentScenario.value.editMode)
   const scenarioTip = computed(() => currentScenario.value.tip)
@@ -257,13 +349,12 @@
     if (previewState.value === 'empty') return []
     return isTreeScenario.value ? treeRows : rows.value
   })
-  const totalRows = computed(() =>
-    isTreeScenario.value
+  const totalRows = computed(() => {
+    if (previewState.value === 'empty') return 0
+    return isTreeScenario.value
       ? countTreeRows(treeRows)
-      : previewState.value === 'empty'
-        ? 0
-        : orderCrud.total.value
-  )
+      : orderCrud.total.value
+  })
 
   const handleView = async (
     params: CellRendererParams<OrderRow>
@@ -359,7 +450,6 @@
   const applyFeaturePreset = (value: string | number | null): void => {
     if (typeof value !== 'string' || !(value in MACH_FEATURE_PRESETS)) return
     const preset = value as MachFeaturePreset
-    featurePreset.value = preset
     featureSettings.value = { ...MACH_FEATURE_PRESETS[preset].settings }
     message.success(`已应用“${MACH_FEATURE_PRESETS[preset].label}”配置`)
   }
@@ -375,7 +465,6 @@
   }
 
   const resetFeatureSettings = (): void => {
-    featurePreset.value = 'standard'
     featureSettings.value = { ...DEFAULT_MACH_FEATURE_SETTINGS }
     message.success('已恢复企业列表推荐配置')
   }

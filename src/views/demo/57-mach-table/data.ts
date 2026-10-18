@@ -342,16 +342,24 @@ export const DEFAULT_MACH_FEATURE_SETTINGS: MachFeatureSettings = {
   statusBar: true,
 }
 
-const featureItem = { layout: { span: 12 } } as const
+// 设置抽屉采用完整一行，避免窄屏下标签与控件争抢宽度。
+const featureItem = { layout: { span: 24 } } as const
 
 /** 抽屉表单完全数据驱动，新增普通开关无需继续堆模板。 */
 export const MACH_FEATURE_GROUPS = [
   {
     key: 'appearance',
     title: '外观与布局',
-    description: '这些能力可以安全地即时切换，不会改变业务数据。',
+    icon: 'i-mdi-palette-outline',
+    description: '调整阅读密度、列宽和表格外观。',
     options: defineFormOptions<MachFeatureSettings>([
-      { ...featureItem, type: 'switch', prop: 'watermark', label: '实时水印' },
+      {
+        ...featureItem,
+        type: 'switch',
+        prop: 'watermark',
+        label: '实时水印',
+        help: '在表格上显示淡色水印，不影响单元格操作。',
+      },
       {
         ...featureItem,
         type: 'input',
@@ -376,6 +384,7 @@ export const MACH_FEATURE_GROUPS = [
         type: 'select',
         prop: 'columnLayout',
         label: '列宽布局',
+        help: '自适应会分配剩余空间；保持声明宽度时，超出的列可横向滚动。',
         children: [
           { label: '自适应填满', value: 'fit' },
           { label: '保持声明宽度', value: 'normal' },
@@ -393,13 +402,15 @@ export const MACH_FEATURE_GROUPS = [
   {
     key: 'interaction',
     title: '列、选择与剪贴板',
-    description: '适合数据工作台和类 Excel 操作场景。',
+    icon: 'i-mdi-cursor-default-click-outline',
+    description: '按任务开启选择、编辑辅助和快捷操作。',
     options: defineFormOptions<MachFeatureSettings>([
       {
         ...featureItem,
         type: 'switch',
         prop: 'enableColumnResize',
         label: '调整列宽',
+        help: '拖动表头列边界调整宽度，双击边界可按内容适配。',
       },
       {
         ...featureItem,
@@ -436,6 +447,7 @@ export const MACH_FEATURE_GROUPS = [
         type: 'switch',
         prop: 'fillHandle',
         label: '范围填充柄',
+        help: '开启范围选择后，可拖动选区右下角继续填充。',
         disabled: model => !model.enableRangeSelection,
       },
       {
@@ -449,7 +461,8 @@ export const MACH_FEATURE_GROUPS = [
   {
     key: 'data',
     title: '数据与辅助信息',
-    description: '控制分页、合计和底部运行状态，不影响列定义。',
+    icon: 'i-mdi-database-outline',
+    description: '控制分页、合计与底部状态信息。',
     options: defineFormOptions<MachFeatureSettings>([
       {
         ...featureItem,
@@ -470,17 +483,25 @@ export const MACH_FEATURE_GROUPS = [
 
 export const MACH_FEATURE_FORM_CONFIG = defineFormConfig<MachFeatureSettings>({
   layout: 'grid',
-  grid: { cols: 24, gutter: 14, yGutter: 4 },
+  grid: { cols: 24, gutter: 0, yGutter: 0 },
   labelPlacement: 'left',
-  labelWidth: 104,
+  labelWidth: 156,
+  size: 'small',
   showActions: false,
   validateOnChange: false,
 })
 
 export const MACH_FEATURE_PRESETS = {
-  standard: { label: '企业列表', settings: DEFAULT_MACH_FEATURE_SETTINGS },
+  standard: {
+    label: '企业列表',
+    description: '紧凑清晰，高效处理订单',
+    icon: 'i-mdi-table-large',
+    settings: DEFAULT_MACH_FEATURE_SETTINGS,
+  },
   spreadsheet: {
     label: '数据工作台',
+    description: '右键操作，汇总数据',
+    icon: 'i-mdi-table-edit',
     settings: {
       ...DEFAULT_MACH_FEATURE_SETTINGS,
       contextMenu: true,
@@ -489,6 +510,8 @@ export const MACH_FEATURE_PRESETS = {
   },
   report: {
     label: '报表审阅',
+    description: '专注阅读，显示水印与合计',
+    icon: 'i-mdi-chart-box-outline',
     settings: {
       ...DEFAULT_MACH_FEATURE_SETTINGS,
       watermark: true,
@@ -499,6 +522,8 @@ export const MACH_FEATURE_PRESETS = {
   },
   minimal: {
     label: '精简只读',
+    description: '减少干扰，突出业务内容',
+    icon: 'i-mdi-text-box-outline',
     settings: {
       ...DEFAULT_MACH_FEATURE_SETTINGS,
       rowSelection: 'none',
@@ -512,9 +537,9 @@ export const MACH_FEATURE_PRESETS = {
 
 export type MachFeaturePreset = keyof typeof MACH_FEATURE_PRESETS
 
-export const MACH_FEATURE_PRESET_OPTIONS = Object.entries(
-  MACH_FEATURE_PRESETS
-).map(([value, preset]) => ({ value, label: preset.label }))
+export const MACH_FEATURE_PRESET_OPTIONS = (
+  Object.keys(MACH_FEATURE_PRESETS) as MachFeaturePreset[]
+).map(value => ({ value, ...MACH_FEATURE_PRESETS[value] }))
 
 /** 需要专用列或数据结构的能力不伪装成普通开关。 */
 export const MACH_SCENE_CAPABILITIES = [
@@ -649,18 +674,23 @@ export const TABLE_PREVIEW_OPTIONS = [
 
 /** 订单业务列：普通值直接声明，富内容优先使用 Vue render。 */
 const createOrderBusinessColumns = (
-  editMode: () => 'none' | 'cell' | 'row'
+  editMode: () => 'none' | 'cell' | 'row',
+  tree = false
 ) => {
   const inlineEditable = () => editMode() !== 'none'
 
   return defineVueColumns<OrderRow>([
     {
       field: 'orderNo',
-      headerName: '订单编号',
-      width: 150,
-      minWidth: 138,
+      // 树层级与普通订单列隔离身份，避免复用已保存的窄列宽和排序。
+      colId: tree ? 'treeLabel' : 'orderNo',
+      headerName: tree ? '区域 / 客户 / 订单' : '订单编号',
+      width: tree ? 280 : 164,
+      minWidth: tree ? 250 : 150,
       pinned: 'left',
-      initialSort: 'desc',
+      align: 'left',
+      headerAlign: 'left',
+      initialSort: tree ? undefined : 'desc',
     },
     {
       field: 'customer',
@@ -668,6 +698,8 @@ const createOrderBusinessColumns = (
       width: 160,
       minWidth: 140,
       flex: 1,
+      align: 'left',
+      headerAlign: 'left',
       editable: inlineEditable,
     },
     {
@@ -676,6 +708,8 @@ const createOrderBusinessColumns = (
       width: 210,
       minWidth: 165,
       flex: 1.15,
+      align: 'left',
+      headerAlign: 'left',
       editable: inlineEditable,
     },
     {
@@ -696,6 +730,8 @@ const createOrderBusinessColumns = (
       headerName: '数量',
       width: 90,
       maxWidth: 120,
+      align: 'right',
+      headerAlign: 'right',
       filter: 'number',
       editable: inlineEditable,
       cellEditor: 'number',
@@ -707,6 +743,8 @@ const createOrderBusinessColumns = (
       width: 138,
       minWidth: 138,
       maxWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
       filter: 'number',
       editable: inlineEditable,
       cellEditor: 'number',
@@ -804,7 +842,7 @@ export const createOrderTreeColumns = () =>
   defineVueColumns<OrderRow>([
     ...(ORDER_TABLE_FEATURES.selection ? [selectionColumn<OrderRow>()] : []),
     indexColumn<OrderRow>({ headerName: '序号' }),
-    ...createOrderBusinessColumns(() => 'none'),
+    ...createOrderBusinessColumns(() => 'none', true),
   ])
 
 /** 页面稳定配置；行数据、列、搜索、主题和事件仍由页面显式传入。 */
@@ -833,7 +871,8 @@ export const ORDER_TABLE_CONFIG = defineVueTableConfig<OrderRow>({
   enableRangeSelection: true,
   statusBar: true,
   summaryMethod: ({ colId, values }) => {
-    if (colId === 'orderNo') return `合计 ${values.length} 行`
+    if (colId === 'orderNo' || colId === 'treeLabel')
+      return `合计 ${values.length} 行`
     if (colId === 'quantity')
       return String(values.reduce((sum, value) => sum + Number(value || 0), 0))
     if (colId === 'amount')

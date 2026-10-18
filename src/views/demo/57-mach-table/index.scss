@@ -1,4 +1,12 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-09-10
+ * @FilePath: \Robot_Admin\src\views\demo\57-mach-table\index.scss
+ * @Description: MachTable 场景页面与功能配置面板样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
 .mach-table-demo {
+  min-width: 0;
   padding: 20px;
 }
 
@@ -13,10 +21,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   min-height: 58px;
   padding: 0 18px;
   color: var(--app-text-secondary);
-  background: var(--app-bg-surface);
+  background: var(--app-bg-content);
   border: 1px solid var(--app-border-default);
   border-radius: var(--app-radius-medium);
 
@@ -24,6 +33,7 @@
     color: var(--app-text-primary);
     font-size: 16px;
     font-weight: 650;
+    font-variant-numeric: tabular-nums;
   }
 
   .is-ready {
@@ -32,10 +42,14 @@
 }
 
 .mach-card {
-  background: var(--app-bg-surface);
+  background: var(--app-bg-content);
   border: 1px solid var(--app-border-default);
   border-radius: var(--app-radius-large);
   box-shadow: var(--app-shadow-card);
+
+  :deep(.n-card__content) {
+    padding: 18px;
+  }
 }
 
 .mach-scenario-tabs {
@@ -63,6 +77,7 @@
 
 .mach-demo-toolbar__search {
   width: min(340px, 100%);
+  flex: 0 1 340px;
 }
 
 .mach-demo-toolbar__actions {
@@ -75,12 +90,15 @@
 
 .mach-tip {
   margin: 14px 0;
+  font-size: 12px;
+  line-height: 1.65;
 }
 
 .mach-grid-shell {
   height: max(440px, calc(100vh - 420px));
   max-height: 620px;
   overflow: hidden;
+  border: 1px solid var(--app-border-default);
   border-radius: 10px;
 
   .mach-demo-grid {
@@ -96,31 +114,205 @@
   }
 }
 
-.mach-feature-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.mach-feature-drawer {
+  color: var(--app-text-primary);
+  background: var(--app-bg-content);
+
+  :deep(.n-drawer-header) {
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--app-border-default);
+  }
+
+  :deep(.n-drawer-body-content-wrapper) {
+    padding: 18px 24px 24px;
+    background: var(--app-bg-surface);
+  }
+
+  :deep(.n-drawer-footer) {
+    padding: 14px 24px 18px;
+    background: var(--app-bg-content);
+    border-top: 1px solid var(--app-border-default);
+  }
 }
 
-.mach-feature-presets {
+.mach-feature-heading {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 16px;
-  background: var(--app-bg-surface-hover);
-  border: 1px solid var(--app-border-default);
-  border-radius: var(--app-radius-medium);
+  gap: 12px;
 
   > div {
     display: grid;
     gap: 3px;
   }
 
-  span {
+  strong {
+    font-size: 18px;
+    font-weight: 650;
+    line-height: 1.45;
+  }
+
+  > div > span {
+    color: var(--app-text-secondary);
+    font-size: 12px;
+    font-weight: 400;
+  }
+}
+
+.mach-feature-heading__icon,
+.mach-feature-group__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--app-primary);
+  background: color-mix(in srgb, var(--app-primary) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--app-primary) 12%, transparent);
+  border-radius: 10px;
+}
+
+.mach-feature-heading__icon {
+  width: 42px;
+  height: 42px;
+  font-size: 23px;
+}
+
+.mach-feature-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mach-feature-context,
+.mach-feature-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mach-feature-context {
+  color: var(--app-text-secondary);
+  font-size: 12px;
+
+  > span:first-child {
+    padding: 3px 9px;
+    color: var(--app-text-primary);
+    background: var(--app-bg-content);
+    border: 1px solid var(--app-border-default);
+    border-radius: 6px;
+  }
+}
+
+.mach-feature-context__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  &::before {
+    width: 6px;
+    height: 6px;
+    background: var(--app-success-color, var(--app-primary));
+    border-radius: 50%;
+    content: '';
+  }
+}
+
+.mach-feature-section-title {
+  margin-bottom: 10px;
+
+  strong {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  > span {
     color: var(--app-text-secondary);
     font-size: 12px;
   }
+}
+
+.mach-feature-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mach-feature-preset {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px;
+  color: var(--app-text-secondary);
+  text-align: left;
+  background: var(--app-bg-content);
+  border: 1px solid var(--app-border-default);
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+
+  > :first-child {
+    flex: none;
+    margin-top: 2px;
+    font-size: 18px;
+  }
+
+  > span {
+    display: grid;
+    min-width: 0;
+    gap: 5px;
+  }
+
+  strong {
+    padding-right: 14px;
+    color: var(--app-text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  small {
+    color: var(--app-text-secondary);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  &:hover {
+    border-color: color-mix(
+      in srgb,
+      var(--app-primary) 50%,
+      var(--app-border-default)
+    );
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--app-primary);
+    outline-offset: 2px;
+  }
+
+  &.is-active {
+    color: var(--app-primary);
+    background: color-mix(
+      in srgb,
+      var(--app-primary) 5%,
+      var(--app-bg-content)
+    );
+    border-color: var(--app-primary);
+    box-shadow: 0 0 0 1px
+      color-mix(in srgb, var(--app-primary) 10%, transparent);
+  }
+}
+
+.mach-feature-preset__check {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  color: var(--app-primary);
+  font-size: 14px;
 }
 
 .mach-feature-preview {
@@ -128,85 +320,211 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 16px;
-  background: color-mix(
-    in srgb,
-    var(--app-primary) 4%,
-    var(--app-bg-surface)
-  );
-  border: 1px solid color-mix(
-    in srgb,
-    var(--app-primary) 16%,
-    var(--app-border-default)
-  );
-  border-radius: var(--app-radius-medium);
+  padding: 13px 16px;
+  background: var(--app-bg-content);
+  border: 1px solid var(--app-border-default);
+  border-radius: 10px;
 
   > div {
     display: grid;
-    gap: 3px;
+    min-width: 0;
+    gap: 4px;
+  }
+
+  strong {
+    font-size: 13px;
+    font-weight: 600;
   }
 
   span {
     color: var(--app-text-secondary);
     font-size: 12px;
+    line-height: 1.5;
   }
 }
 
 .mach-feature-preview__select {
-  width: 148px;
-  flex: none;
-}
-
-.mach-feature-presets__select {
-  width: 148px;
+  width: 144px;
   flex: none;
 }
 
 .mach-feature-group {
-  padding: 16px;
-  background: var(--app-bg-surface);
+  overflow: hidden;
+  background: var(--app-bg-content);
   border: 1px solid var(--app-border-default);
-  border-radius: var(--app-radius-medium);
+  border-radius: 10px;
 
   > header {
-    display: grid;
-    gap: 4px;
-    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+    border-bottom: 1px solid var(--app-border-default);
 
-    span {
+    > div {
+      display: grid;
+      min-width: 0;
+      gap: 4px;
+    }
+
+    strong {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    span:not(.mach-feature-group__icon) {
       color: var(--app-text-secondary);
       font-size: 12px;
+      line-height: 1.5;
+    }
+
+    > small {
+      flex: none;
+      margin-left: auto;
+      color: var(--app-text-tertiary);
+      font-size: 11px;
     }
   }
 
-  :deep(.n-form-item) {
-    margin-bottom: 4px;
+  :deep(.grid-item) {
+    animation: none;
   }
+
+  :deep(.n-form-item) {
+    margin: 0 16px;
+    padding: 10px 0;
+  }
+
+  :deep(.grid-item + .grid-item .n-form-item) {
+    border-top: 1px solid var(--app-border-light);
+  }
+
+  :deep(.n-form-item-label) {
+    align-items: center;
+    padding-top: 0;
+    color: var(--app-text-primary);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  :deep(.n-form-item-blank) {
+    justify-content: flex-end;
+    min-height: 30px;
+  }
+
+  :deep(.n-form-item-blank .n-select),
+  :deep(.n-form-item-blank .n-input) {
+    max-width: 224px;
+  }
+
+  :deep(.n-form-item-feedback-wrapper) {
+    display: none;
+  }
+}
+
+.mach-feature-group__icon {
+  width: 32px;
+  height: 32px;
+  font-size: 17px;
+  border-radius: 8px;
+}
+
+.mach-capabilities {
+  background: var(--app-bg-content);
+  border: 1px solid var(--app-border-default);
+  border-radius: 10px;
+
+  > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px;
+    list-style: none;
+    cursor: pointer;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    > span {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 16px;
+    }
+
+    strong {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--app-primary);
+      outline-offset: -3px;
+      border-radius: 10px;
+    }
+  }
+
+  &[open] .mach-capabilities__chevron {
+    transform: rotate(180deg);
+  }
+}
+
+.mach-capabilities__chevron {
+  color: var(--app-text-tertiary);
+  transition: transform 0.18s ease;
+}
+
+.mach-capabilities__description {
+  margin: 0 16px 12px;
+  color: var(--app-text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .mach-capability-list {
   display: grid;
-  gap: 10px;
+  gap: 0;
+  padding: 0 16px 4px;
 }
 
 .mach-capability-item {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 14px;
-  padding: 12px;
-  background: var(--app-bg-surface-hover);
-  border-radius: var(--app-radius-medium);
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--app-border-light);
+
+  strong {
+    font-size: 12px;
+    font-weight: 550;
+  }
 
   p {
-    margin: 4px 0 0;
+    margin: 5px 0 0;
     color: var(--app-text-secondary);
     font-size: 12px;
-    line-height: 1.55;
+    line-height: 1.6;
   }
 
   .n-tag {
     flex: none;
+    margin-top: 1px;
+    font-size: 11px;
+  }
+}
+
+.mach-feature-footer {
+  display: grid;
+  width: 100%;
+  gap: 10px;
+
+  > span {
+    color: var(--app-text-secondary);
+    font-size: 11px;
   }
 }
 
@@ -218,6 +536,10 @@
   .mach-demo-toolbar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .mach-demo-toolbar__search {
+    flex-basis: auto;
   }
 
   .mach-scenario-bar {
@@ -236,32 +558,87 @@
   }
 
   .mach-overview {
-    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mach-overview__item {
+    min-height: 54px;
+    padding: 0 12px;
+    font-size: 12px;
+
+    strong {
+      font-size: 14px;
+    }
+  }
+
+  .mach-card :deep(.n-card__content) {
+    padding: 12px;
   }
 
   .mach-demo-toolbar__search {
     width: 100%;
   }
 
-  .mach-feature-presets {
-    align-items: stretch;
-    flex-direction: column;
+  .mach-grid-shell {
+    height: 520px;
+  }
+
+  .mach-feature-drawer {
+    :deep(.n-drawer-header) {
+      padding: 18px 16px;
+    }
+
+    :deep(.n-drawer-body-content-wrapper) {
+      padding: 14px 14px 20px;
+    }
+
+    :deep(.n-drawer-footer) {
+      padding: 12px 16px 16px;
+    }
+  }
+
+  .mach-feature-preset {
+    gap: 8px;
+    padding: 12px 10px;
+  }
+
+  .mach-feature-preset__check {
+    top: 11px;
+    right: 7px;
   }
 
   .mach-feature-preview {
-    align-items: stretch;
-    flex-direction: column;
+    flex-wrap: wrap;
+    padding: 12px;
   }
 
   .mach-feature-preview__select {
-    width: 100%;
+    flex: 1 1 124px;
   }
 
-  .mach-feature-presets__select {
-    width: 100%;
+  .mach-feature-group {
+    > header {
+      padding: 14px 12px;
+    }
+
+    :deep(.n-form-item) {
+      margin: 0 12px;
+    }
+
+    :deep(.n-form-item-label) {
+      max-width: 132px;
+    }
   }
 
-  .mach-grid-shell {
-    height: 520px;
+  .mach-capability-item {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mach-feature-preset,
+  .mach-capabilities__chevron {
+    transition: none;
   }
 }

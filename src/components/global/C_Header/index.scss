@@ -1,0 +1,74 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @FilePath: \Robot_Admin\src\components\global\C_Header\index.scss
+ * @Description: 顶部导航与菜单折叠按钮样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.header-navigation {
+  min-width: 0;
+}
+
+.header-divider {
+  flex: none;
+  width: 1px;
+  height: 16px;
+  background: var(--app-border-default);
+}
+
+.collapse-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--c-radius);
+  background: transparent;
+  color: var(--app-text-secondary);
+  cursor: pointer;
+  transition:
+    color var(--app-transition-fast),
+    background-color var(--app-transition-fast),
+    border-color var(--app-transition-fast);
+
+  svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    border-color: var(--app-border-default);
+    background: var(--app-hover-bg);
+    color: var(--app-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--app-primary);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    background: var(--app-bg-surface-hover);
+    color: var(--app-primary-pressed);
+  }
+
+  &__arrow {
+    transform-origin: 14px 12px;
+    transition: transform var(--app-transition-fast);
+  }
+
+  &.is-collapsed &__arrow {
+    transform: rotate(180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapse-trigger,
+  .collapse-trigger__arrow {
+    transition: none;
+  }
+}

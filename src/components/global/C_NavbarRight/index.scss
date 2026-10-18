@@ -1,35 +1,104 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @FilePath: \Robot_Admin\src\components\global\C_NavbarRight\index.scss
+ * @Description: 顶部操作区统一尺寸、图标对齐与用户入口样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
 .action-buttons {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 6px;
 }
 
-.action-btn {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.navbar-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  overflow: visible;
+  line-height: 1;
+}
 
-  span {
-    color: var(--app-text-secondary);
-    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+// 组件 0.15 的按钮结构不同，在宿主统一命中框与图标行盒。
+.action-btn,
+.navbar-action :deep(.n-button),
+.navbar-action :deep(.notification-badge__trigger) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: var(--c-radius);
+  color: var(--app-text-secondary);
+  font-size: 18px;
+  line-height: 1;
+  overflow: visible;
+  transition:
+    color var(--app-transition-fast),
+    background-color var(--app-transition-fast);
+
+  &:hover {
+    color: var(--app-primary);
+    background-color: var(--app-hover-bg);
   }
 
-  &:hover span {
-    color: #6366f1;
-  }
-  .action-icon {
-    color: var(--app-text-secondary);
-    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  &:focus-visible {
+    outline: 2px solid var(--app-primary);
+    outline-offset: 2px;
   }
 
-  &:hover .action-icon {
-    color: #6366f1;
+  &:active {
+    color: var(--app-primary-pressed);
+    background-color: var(--app-bg-surface-hover);
   }
+}
+
+.navbar-action :deep(.n-button__content),
+.navbar-action :deep(.c-notification-center),
+.navbar-action :deep(.notification-badge) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.navbar-action :deep(.n-button__content) {
+  width: 100%;
+  height: 100%;
+}
+
+.action-icon,
+.navbar-action :deep(.c-icon) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.navbar-action :deep(.notification-badge__icon) {
+  color: inherit;
+}
+
+.navbar-action :deep(.notification-badge__count),
+.navbar-action :deep(.notification-badge__pulse) {
+  top: -1px;
+  right: -1px;
 }
 
 .user-info {
@@ -42,7 +111,7 @@
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: var(--app-bg-surface, rgba(0, 0, 0, 0.04));
+    background-color: var(--app-bg-surface);
   }
 }
 
@@ -58,19 +127,19 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 2px solid var(--app-bg-content, #fff);
+  border: 2px solid var(--app-bg-content);
 
   &.status-online {
-    background-color: #22c55e;
+    background-color: var(--c-success);
   }
   &.status-away {
-    background-color: #f59e0b;
+    background-color: var(--c-warning);
   }
   &.status-busy {
-    background-color: #ef4444;
+    background-color: var(--c-error);
   }
   &.status-offline {
-    background-color: #6b7280;
+    background-color: var(--app-text-tertiary);
   }
 }
 
@@ -81,7 +150,7 @@
   border-radius: 50%;
 
   &.status-online {
-    background-color: #22c55e;
+    background-color: var(--c-success);
   }
 }
 

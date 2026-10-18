@@ -17,7 +17,10 @@
     <!-- 操作按钮组：统一由组件解析器按需加载组件与样式 -->
     <div class="action-buttons">
       <!-- 通知中心 -->
-      <div data-guide="notifications">
+      <div
+        class="navbar-action"
+        data-guide="notifications"
+      >
         <C_NotificationCenter :on-navigate="handleNavigate" />
       </div>
 
@@ -32,16 +35,22 @@
             data-guide="fullscreen"
             aria-label="切换全屏"
             @click="toggleFullscreen"
-            class="action-btn"
+            class="navbar-action action-btn"
           >
-            <span class="i-mdi-fullscreen"></span>
+            <span
+              class="i-mdi-fullscreen action-icon"
+              aria-hidden="true"
+            />
           </NButton>
         </template>
         <span>全屏</span>
       </NTooltip>
 
       <!-- 语言切换 -->
-      <div data-guide="language">
+      <div
+        class="navbar-action"
+        data-guide="language"
+      >
         <C_Language
           :model-value="languageStore.currentLang"
           tooltip="语言切换"
@@ -50,7 +59,10 @@
       </div>
 
       <!-- 主题切换 -->
-      <div data-guide="theme">
+      <div
+        class="navbar-action"
+        data-guide="theme"
+      >
         <C_Theme
           :model-value="themeStore.mode"
           @update:model-value="themeStore.setMode"
@@ -58,7 +70,10 @@
       </div>
 
       <!-- 功能引导 -->
-      <div data-guide="guide">
+      <div
+        class="navbar-action"
+        data-guide="guide"
+      >
         <C_Guide
           ref="guideRef"
           :steps="guideSteps"
@@ -79,10 +94,11 @@
             data-guide="settings"
             aria-label="布局配置"
             @click="emit('update:showSettings', true)"
-            class="action-btn"
+            class="navbar-action action-btn"
           >
             <C_Icon
-              name="mdi:settings-transfer-outline"
+              type="unocss"
+              :name="'i-mdi-cog-outline'"
               :size="18"
               class="action-icon"
             />
@@ -296,6 +312,7 @@
   import { s_settingsStore } from '@/stores/settings'
   import type { GuideExpose } from '@robot-admin/naive-ui-components/C_Guide'
   import { createWorkspaceGuideSteps } from './data'
+  import { registerNavbarIcons } from './d_navbarIcons'
   import type { GlobalSearchOptions } from '@robot-admin/naive-ui-components/C_GlobalSearch'
   import {
     createSearchMenuOptions,
@@ -305,6 +322,8 @@
   import packageJson from '../../../../package.json'
 
   defineOptions({ name: 'C_NavbarRight' })
+
+  registerNavbarIcons()
 
   // 定义 props 和 emits
   interface Props {

@@ -22,42 +22,47 @@
         <NText depth="3">新增/删除/刷新 + 中间显示选中数</NText>
       </template>
 
-      <C_ActionBar
-        :actions="tableActions"
-        @action-click="handleActionClick"
-      >
-        <template #center>
-          <NSpace
-            v-if="selectedCount > 0"
-            align="center"
-          >
-            <NText depth="3">已选择:</NText>
-            <NTag
-              type="primary"
-              :bordered="false"
+      <div class="action-bar-demo-table-example">
+        <C_ActionBar
+          class="action-bar-demo-toolbar"
+          :actions="tableActions"
+          :config="{ size: 'small', wrap: true }"
+          @action-click="handleActionClick"
+        >
+          <template #center>
+            <NSpace
+              v-if="selectedCount > 0"
+              align="center"
             >
-              {{ selectedCount }} 条
-            </NTag>
-            <NButton
-              text
-              size="small"
-              @click="tableRef?.clearSelection()"
-            >
-              清空
-            </NButton>
-          </NSpace>
-        </template>
-      </C_ActionBar>
+              <NText depth="3">已选择:</NText>
+              <NTag
+                type="primary"
+                :bordered="false"
+              >
+                {{ selectedCount }} 条
+              </NTag>
+              <NButton
+                text
+                size="small"
+                @click="tableRef?.clearSelection()"
+              >
+                清空
+              </NButton>
+            </NSpace>
+          </template>
+        </C_ActionBar>
 
-      <C_Table
-        ref="tableRef"
-        :data="tableData"
-        :columns="columns"
-        :loading="loading"
-        row-key="id"
-        :config="{ selection: { enabled: true }, pagination: false }"
-        @selection-change="handleSelectionChange"
-      />
+        <C_Table
+          ref="tableRef"
+          wrapper-class="action-bar-demo-table"
+          :data="tableData"
+          :columns="columns"
+          :loading="loading"
+          row-key="id"
+          :config="{ selection: { enabled: true }, pagination: false }"
+          @selection-change="handleSelectionChange"
+        />
+      </div>
     </NCard>
 
     <!-- 两列布局 -->

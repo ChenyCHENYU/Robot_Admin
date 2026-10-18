@@ -17,6 +17,49 @@
   }
 }
 
+// 由宿主布局提供间距，不与操作栏 inline 模式的零外边距竞争。
+.action-bar-demo-table-example {
+  display: grid;
+  row-gap: 12px;
+}
+
+.action-bar-demo-page :deep(.action-bar-demo-table) {
+  > .table-toolbar {
+    min-height: 48px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: var(--app-bg-surface);
+    border: 1px solid var(--app-border-default);
+    border-radius: 8px;
+  }
+
+  .column-settings-btn {
+    // C_Icon 内联尺寸属于图形本身，点击内边距不能挤压图形。
+    box-sizing: content-box;
+    padding: 6px;
+    color: var(--app-text-secondary);
+    border: 1px solid transparent;
+    border-radius: 7px;
+    opacity: 1;
+    transition:
+      color 0.18s ease,
+      background-color 0.18s ease,
+      border-color 0.18s ease;
+
+    &:hover {
+      color: var(--app-primary);
+      background: color-mix(in srgb, var(--app-primary) 8%, transparent);
+      border-color: color-mix(in srgb, var(--app-primary) 18%, transparent);
+      transform: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--app-primary);
+      outline-offset: 2px;
+    }
+  }
+}
+
 // 卡片内容区域
 .card-content {
   display: flex;
