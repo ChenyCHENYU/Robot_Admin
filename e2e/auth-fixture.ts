@@ -52,7 +52,11 @@ export const installMockAdminSession = (
     )
     localStorage.setItem(
       'userInfo',
-      JSON.stringify({ username: 'CHENY', displayName: 'CHENY' })
+      JSON.stringify({
+        id: 'mock-user:cheny',
+        username: 'CHENY',
+        displayName: 'CHENY',
+      })
     )
     localStorage.setItem(
       'refresh_token',

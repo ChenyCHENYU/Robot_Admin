@@ -10,6 +10,12 @@ import { joinRoutePath, normalizeAbsoluteRoutePath } from './routePath'
 
 const SELF_PAGES = [
   {
+    path: '/account/messages',
+    name: 'account-messages',
+    component: 'account/messages/index',
+    title: '消息中心',
+  },
+  {
     path: '/account/profile',
     name: 'account-profile',
     component: 'account/profile/index',
@@ -44,6 +50,17 @@ export const authenticatedRoutes: RouteRecordRaw[] = [
     component: () => import('@/components/global/C_Layout/index.vue'),
     meta: { title: '账户中心', hidden: true, keepAlive: false, isLayout: true },
     children: [
+      {
+        path: 'messages',
+        name: 'account-messages',
+        component: () => import('@/views/account/messages/index.vue'),
+        meta: {
+          title: '消息中心',
+          hidden: true,
+          keepAlive: false,
+          isLayout: false,
+        },
+      },
       {
         path: 'profile',
         name: 'account-profile',

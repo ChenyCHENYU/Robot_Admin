@@ -944,6 +944,19 @@
       },
       "children": [
         {
+          "path": "messages",
+          "name": "account-messages",
+          "component": "/account/messages/index",
+          "meta": {
+            "icon": "mdi:bell-outline",
+            "title": "消息中心",
+            "hidden": true,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
           "path": "profile",
           "name": "account-profile",
           "component": "/account/profile/index",

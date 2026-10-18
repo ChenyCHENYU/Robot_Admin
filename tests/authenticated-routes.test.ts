@@ -24,6 +24,7 @@ test('静态自助页真实匹配嵌套Layout，保留Navbar名称且不加入�
     routes: [...publicRoutes, ...authenticatedRoutes],
   })
   for (const [path, name] of [
+    ['/account/messages', 'account-messages'],
     ['/account/profile', 'account-profile'],
     ['/account/security', 'account-security'],
     ['/account/activity-log', 'account-activity-log'],

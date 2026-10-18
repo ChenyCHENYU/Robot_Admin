@@ -34,13 +34,14 @@ const installSelfSession = (page: Page) =>
     localStorage.setItem('authContexts', JSON.stringify([context]))
   })
 
-for (const path of ['profile', 'security', 'activity-log']) {
+for (const path of ['messages', 'profile', 'security', 'activity-log']) {
   test(`匿名访问${path}自助页仍回到登录，不发本人数据请求`, async ({
     page,
   }) => {
     const requested: string[] = []
     page.on('request', request => {
-      if (request.url().includes('/api/account/')) requested.push(request.url())
+      if (/\/api\/(account|notifications)\//.test(request.url()))
+        requested.push(request.url())
     })
     await page.goto('/#/account/' + path)
     await expect(page).toHaveURL(/#\/login$/)

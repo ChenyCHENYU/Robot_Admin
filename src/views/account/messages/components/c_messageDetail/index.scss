@@ -1,0 +1,60 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @Description: 消息详情正文与窄屏排版
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.message-detail {
+  .read-sync-warning {
+    margin-bottom: 20px;
+  }
+  h2 {
+    margin: 18px 0 10px;
+    font-size: 24px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .detail-meta {
+    opacity: 0.65;
+    margin-bottom: 28px;
+  }
+  .message-body {
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+    margin-bottom: 28px;
+    overflow-x: auto;
+  }
+  .message-body--text {
+    white-space: pre-wrap;
+  }
+  .detail-attachments {
+    margin-bottom: 24px;
+  }
+  .detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  :deep(.message-body pre) {
+    padding: 16px;
+    border-radius: 8px;
+    background: var(--app-bg-body, rgba(128, 128, 128, 0.08));
+    overflow-x: auto;
+  }
+  :deep(.message-body table) {
+    border-collapse: collapse;
+    max-width: 100%;
+  }
+  :deep(.message-body td),
+  :deep(.message-body th) {
+    border: 1px solid rgba(128, 128, 128, 0.25);
+    padding: 8px 12px;
+  }
+  :deep(.message-body blockquote) {
+    border-left: 3px solid var(--primary-color, #2080f0);
+    margin: 16px 0;
+    padding-left: 16px;
+    opacity: 0.8;
+  }
+}

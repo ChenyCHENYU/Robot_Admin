@@ -1,0 +1,250 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @Description: 企业消息工作台亮暗主题与响应式布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.enterprise-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 4px 24px;
+  .message-page-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: center;
+  }
+  .message-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    opacity: 0.5;
+  }
+  .message-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 5px;
+    h1 {
+      margin: 0;
+      font-size: 27px;
+      letter-spacing: -0.04em;
+      font-weight: 650;
+    }
+  }
+  .message-page-header p {
+    margin: 8px 0 0;
+    opacity: 0.6;
+  }
+  .connection-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    opacity: 0.7;
+    i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #d69e2e;
+    }
+    &.is-online i {
+      background: #18a058;
+    }
+  }
+  .message-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .message-stat {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid var(--border-color, rgba(128, 128, 128, 0.16));
+    color: inherit;
+    border-radius: 12px;
+    background: var(--card-color, var(--app-bg-card, transparent));
+    text-align: left;
+    padding: 22px;
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      transform 0.2s;
+    &:hover {
+      border-color: var(--primary-color, #2080f0);
+      transform: translateY(-2px);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--primary-color, #2080f0);
+      outline-offset: 3px;
+    }
+    strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1.3;
+      font-variant-numeric: tabular-nums;
+      margin-top: 4px;
+    }
+  }
+  .stat-label {
+    font-size: 12px;
+    opacity: 0.6;
+  }
+  .stat-symbol {
+    font-size: 24px;
+    color: var(--primary-color, #2080f0);
+    padding: 12px;
+    box-sizing: content-box;
+    border-radius: 12px;
+    background: color-mix(
+      in srgb,
+      var(--primary-color, #2080f0) 9%,
+      transparent
+    );
+  }
+  .message-stat--todo .stat-symbol {
+    color: #d69e2e;
+    background: rgba(214, 158, 46, 0.1);
+  }
+  .message-stat--starred .stat-symbol {
+    color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.1);
+  }
+  .stat-arrow {
+    position: absolute;
+    right: 15px;
+    top: 16px;
+    font-size: 16px;
+    opacity: 0.25;
+  }
+  .message-sections {
+    margin-bottom: -16px;
+  }
+  .inbox-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .inbox-status-tabs {
+    max-width: 620px;
+    margin-bottom: 20px;
+  }
+  .message-filters {
+    display: grid;
+    grid-template-columns:
+      minmax(190px, 1.6fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr)
+      minmax(120px, 0.8fr) minmax(250px, 1.4fr) auto;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .inbox-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 14px 0 18px;
+    border-top: 1px solid var(--border-color, rgba(128, 128, 128, 0.12));
+  }
+  .selection-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    opacity: 0.6;
+  }
+  :deep(.message-title-cell .n-button) {
+    max-width: 100%;
+    font-weight: 600;
+    .n-button__content {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+  }
+  :deep(.message-summary) {
+    opacity: 0.55;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 5px;
+    max-width: 360px;
+  }
+  .message-error-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .capability-note {
+    font-size: 12px;
+  }
+  .demo-controls-card {
+    opacity: 0.9;
+  }
+  .demo-description {
+    margin: 0 0 18px;
+    opacity: 0.65;
+  }
+  .demo-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    :deep(.n-select) {
+      width: 180px;
+    }
+  }
+}
+@media (max-width: 1400px) {
+  .enterprise-messages .message-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .enterprise-messages {
+    .message-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .message-page-header {
+      align-items: flex-start;
+    }
+    .message-filters {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+@media (max-width: 540px) {
+  .enterprise-messages {
+    padding: 4px 0 16px;
+    gap: 16px;
+    .message-page-header {
+      flex-direction: column;
+      gap: 16px;
+    }
+    .message-stat {
+      padding: 16px 12px;
+      gap: 10px;
+      strong {
+        font-size: 24px;
+      }
+    }
+    .stat-symbol {
+      font-size: 20px;
+      padding: 8px;
+    }
+    .message-filters {
+      grid-template-columns: 1fr;
+    }
+    .inbox-status-tabs {
+      :deep(.n-tabs-tab) {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    }
+  }
+}

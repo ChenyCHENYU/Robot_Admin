@@ -1,0 +1,47 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @Description: 通知偏好的自适应分组布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.notification-preferences {
+  .preference-intro {
+    opacity: 0.65;
+    margin: 0 0 28px;
+  }
+  .preference-groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px;
+  }
+  h3 {
+    font-size: 15px;
+    margin: 0 0 14px;
+  }
+  .preference-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    min-height: 46px;
+  }
+  .quiet-hours {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .preferences-footer {
+    margin-top: 32px;
+  }
+  .preferences-alert {
+    margin-bottom: 20px;
+  }
+}
+@media (max-width: 640px) {
+  .notification-preferences .preference-groups {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

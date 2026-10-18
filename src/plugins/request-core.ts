@@ -12,6 +12,7 @@ import type { App } from 'vue'
 import {
   createRequestClient,
   waitForReLogin,
+  type EnhancedAxiosRequestConfig,
 } from '@robot-admin/request-core/axios'
 import {
   createRequestPlugin,
@@ -102,7 +103,11 @@ export const request = createRequestClient({
       if (!businessError) return response
 
       const authentication = isAuthenticationRequest(response.config.url)
-      if (!authentication) message.error(businessError)
+      if (
+        !authentication &&
+        !(response.config as EnhancedAxiosRequestConfig).silent
+      )
+        message.error(businessError)
       return Promise.reject(
         Object.assign(
           new Error(
@@ -113,7 +118,10 @@ export const request = createRequestClient({
       )
     },
     responseError: error => {
-      if (!isAuthenticationRequest(error.config?.url)) {
+      if (
+        !isAuthenticationRequest(error.config?.url) &&
+        !(error.config as EnhancedAxiosRequestConfig | undefined)?.silent
+      ) {
         message.error(getRequestErrorMessage(error))
       }
       return Promise.reject(error)

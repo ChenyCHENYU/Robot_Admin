@@ -85,7 +85,7 @@ export function createWorkspaceGuideSteps(
         title: '查看通知消息',
         illustration: 'notification',
         description:
-          '点击铃铛打开消息中心，可按分类查看消息、阅读详情和处理未读状态。消息中的跳转操作会打开对应页面。',
+          '点击铃铛查看最新消息和未读数，点击“查看全部消息”进入完整消息中心，统一处理通知、待办和归档。演示模式无需后端即可体验。',
         side: 'bottom',
       },
     },

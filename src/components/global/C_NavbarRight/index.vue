@@ -21,7 +21,7 @@
         class="navbar-action"
         data-guide="notifications"
       >
-        <C_NotificationCenter :on-navigate="handleNavigate" />
+        <C_NotificationBell />
       </div>
 
       <!-- 全屏 -->
@@ -381,6 +381,7 @@
   }
 
   const primaryMenuItems: UserMenuItem[] = [
+    { key: 'messages', label: '消息中心', icon: 'i-mdi-bell-outline' },
     { key: 'profile', label: '个人中心', icon: 'i-mdi-account-circle-outline' },
     { key: 'security', label: '安全设置', icon: 'i-mdi-shield-lock-outline' },
     { key: 'activity', label: '操作日志', icon: 'i-mdi-history' },
@@ -402,6 +403,9 @@
   /** 处理用户面板菜单点击 */
   const handleUserAction = (key: string) => {
     switch (key) {
+      case 'messages':
+        void router.push({ name: 'account-messages' }).catch(() => undefined)
+        break
       case 'profile':
         void router.push({ name: 'account-profile' }).catch(() => undefined)
         break
@@ -497,11 +501,6 @@
   }
 
   // ==================== 操作事件 ====================
-  /** 通知中心 — 跳转到指定 URL */
-  const handleNavigate = (url: string): void => {
-    void router.push(url).catch(() => undefined)
-  }
-
   /** 全屏切换 */
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {

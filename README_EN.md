@@ -61,13 +61,14 @@ Development enables Mock by default. The public demo uses an explicit `demo` dep
 
 ### Identity and workspace
 
-| Domain                     | Current implementation                                                                                          | Practical value                                                               |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Company and identity       | Company selection before login, primary and additional memberships, company roles, context switching            | Login and the workspace use the same company context                          |
-| Permissions and governance | Users, roles, permissions, menus, dictionaries, dynamic routes, button permissions and data-scope configuration | A complete frontend flow from account authorization to navigation and actions |
-| Workspace                  | 6 layouts, theme settings, tabs, menu-configured page caching and feature tours                                 | Consistent navigation and feedback at different information densities         |
-| Project analysis           | Source and dependency distribution, build artifacts, browser loading timeline and real repository counts        | Charts grounded in the current project and its engineering state              |
-| Usage statistics           | Successful-navigation PV, login and company-switch events, feature actions and route-duration percentiles       | Local browser samples by default; API integration for site-wide summaries     |
+| Domain                     | Current implementation                                                                                          | Practical value                                                                     |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Company and identity       | Company selection before login, primary and additional memberships, company roles, context switching            | Login and the workspace use the same company context                                |
+| Permissions and governance | Users, roles, permissions, menus, dictionaries, dynamic routes, button permissions and data-scope configuration | A complete frontend flow from account authorization to navigation and actions       |
+| Workspace                  | 6 layouts, theme settings, tabs, menu-configured page caching and feature tours                                 | Consistent navigation and feedback at different information densities               |
+| Project analysis           | Source and dependency distribution, build artifacts, browser loading timeline and real repository counts        | Charts grounded in the current project and its engineering state                    |
+| Usage statistics           | Successful-navigation PV, login and company-switch events, feature actions and route-duration percentiles       | Local browser samples by default; API integration for site-wide summaries           |
+| Enterprise notifications   | Shared inbox, independent todos, templates, dispatches, delivery records, audit and preferences                 | [Backend-free demo and remote adapter contract](./docs/enterprise-notifications.md) |
 
 Company switches update the session and clear old permissions, dynamic routes and tabs. Route registration and request responses use identity generations to reject stale results. See the [enterprise authentication contract](./docs/enterprise-auth.md) for backend context activation and isolation, and [observability](./docs/observability.md) for metric definitions.
 
@@ -127,7 +128,7 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.15.0`       | 55 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.16.0`       | 55 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.6.1`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.2`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.1`        | 6 layouts, framework-independent settings protocol, Vue Headless and Naive entry points | Host-owned menus, routes and slots; package-owned layout behavior |

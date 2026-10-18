@@ -1,0 +1,37 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @Description: 消息治理面板、编辑和投递记录布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.message-governance {
+  display: grid;
+  gap: 16px;
+}
+.template-picker {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.editor-note {
+  margin-bottom: 20px;
+}
+.preview-body {
+  white-space: pre-wrap;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+  margin: 24px 0;
+}
+.delivery-error {
+  color: var(--error-color, #d03050);
+}
+.message-editor-modal.n-card {
+  width: min(680px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+.message-preview-modal.n-card {
+  width: min(680px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
