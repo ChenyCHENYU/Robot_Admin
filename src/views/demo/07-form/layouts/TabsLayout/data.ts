@@ -10,7 +10,6 @@
 
 import type { FormOption } from '@robot-admin/naive-ui-components'
 import { PRESET_RULES } from '@robot-admin/naive-ui-components/C_Form'
-import { reactive } from 'vue'
 
 // ================= 验证规则 =================
 export const { required, length, email, mobile } = PRESET_RULES
@@ -24,7 +23,8 @@ export const placementOptions = [
 ]
 
 // ================= 布局配置 =================
-export const layoutConfig = reactive({
+/** 每次挂载独立创建配置，避免不同页面实例共享控制面板状态。 */
+export const getLayoutConfig = () => ({
   tabs: {
     tabs: [
       {
@@ -237,10 +237,12 @@ export const createFormOptions = (): FormOption[] => [
     placeholder: '请再次输入密码',
     value: '',
     layout: { tab: 'security' },
-    rules: [
-      required('确认密码'),
-      // 跨字段校验在提交时由 C_Form 统一处理
-    ],
+    rules: [required('确认密码')],
+    dependsOn: ['password'],
+    crossFieldValidator: model =>
+      model.confirmPassword && model.confirmPassword !== model.password
+        ? '两次输入密码不一致'
+        : null,
     attrs: {
       type: 'password',
       showPasswordOn: 'click',

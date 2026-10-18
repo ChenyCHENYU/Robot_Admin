@@ -23,11 +23,11 @@
     >
       <h3>{{ example.title }}</h3>
       <C_FormSearch
+        v-model="example.params"
         :form-item-list="example.config.items"
-        :form-params="example.params"
+        :config="example.searchConfig"
         :form-search-input-history-string="example.config.historyKey"
-        @search="handleSearch(type, $event)"
-        @reset="handleReset(type)"
+        @reset="handleReset"
       />
     </div>
 
@@ -46,45 +46,54 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo09FormSearch' })
-  import type { SearchFormParams } from '@robot-admin/naive-ui-components'
+  import type {
+    SearchConfig,
+    SearchFormParams,
+  } from '@robot-admin/naive-ui-components/C_FormSearch'
   import {
     type SearchResult,
     basicFormConfig,
     advancedFormConfig,
     megaFormConfig,
     generateMockResults,
-    resetFormParams,
+    createSearchFields,
   } from './data'
 
   const message = useMessage()
   const searchResults = ref<SearchResult[]>([])
 
-  // 表单参数
-  const basicFormParams = reactive({ ...basicFormConfig.params })
-  const advancedFormParams = reactive({ ...advancedFormConfig.params })
-  const megaFormParams = reactive({ ...megaFormConfig.params })
+  // onSearch 返回完整任务；search 事件只用于通知，避免同一查询执行两次。
+  const searchConfig = (type: 'basic' | 'advanced' | 'mega'): SearchConfig => ({
+    foldThreshold: 8,
+    onSearch: params => handleSearch(type, params),
+  })
 
-  // 表单配置映射
-  const formConfigs = {
+  const formConfigs = reactive({
     basic: {
       title: '基础用法（3个字段）',
-      config: basicFormConfig,
-      params: basicFormParams,
-      defaults: basicFormConfig.params,
+      config: {
+        ...basicFormConfig,
+        items: createSearchFields(basicFormConfig),
+      },
+      params: { ...basicFormConfig.params },
+      searchConfig: searchConfig('basic'),
     },
     advanced: {
       title: '高级用法（12个字段 - 默认显示8个，展开显示全部）',
-      config: advancedFormConfig,
-      params: advancedFormParams,
-      defaults: advancedFormConfig.params,
+      config: {
+        ...advancedFormConfig,
+        items: createSearchFields(advancedFormConfig),
+      },
+      params: { ...advancedFormConfig.params },
+      searchConfig: searchConfig('advanced'),
     },
     mega: {
       title: '超多字段测试（16个字段）',
-      config: megaFormConfig,
-      params: megaFormParams,
-      defaults: megaFormConfig.params,
+      config: { ...megaFormConfig, items: createSearchFields(megaFormConfig) },
+      params: { ...megaFormConfig.params },
+      searchConfig: searchConfig('mega'),
     },
-  }
+  })
 
   // 统一搜索处理
   const handleSearch = (
@@ -96,9 +105,7 @@
   }
 
   // 统一重置处理
-  const handleReset = (type: keyof typeof formConfigs) => {
-    const { params, defaults } = formConfigs[type]
-    resetFormParams(params, defaults)
+  const handleReset = () => {
     searchResults.value = []
     message.info('表单已重置')
   }

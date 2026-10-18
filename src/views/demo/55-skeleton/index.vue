@@ -203,6 +203,9 @@
 </template>
 
 <script setup lang="ts">
+  import '@robot-admin/naive-ui-components/C_Icon/style.css'
+  import { NTable } from 'naive-ui'
+  import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
   import { DEMO_SCENES, ANIMATION_OPTIONS, LOADED_CONTENT } from './data'
   import type {
     SkeletonPreset,
@@ -276,7 +279,7 @@
           case 'avatar':
             return h('div', { class: 'loaded-avatar' }, [
               h('div', { class: 'loaded-avatar__icon' }, [
-                h(resolveComponent('C_Icon'), {
+                h(C_Icon, {
                   name: 'mdi:account-circle',
                   size: 40,
                 }),
@@ -295,7 +298,7 @@
             ])
           case 'table':
             return h(
-              resolveComponent('NTable'),
+              NTable,
               { size: 'small', bordered: true },
               {
                 default: () => [
@@ -312,7 +315,7 @@
                         ...row.map(cell => h('td', cell)),
                         h('td', [
                           h(
-                            resolveComponent('NButton'),
+                            NButton,
                             { size: 'tiny', type: 'primary', quaternary: true },
                             { default: () => '编辑' }
                           ),
@@ -329,7 +332,7 @@
               { class: 'loaded-list' },
               LOADED_CONTENT.list.map(item =>
                 h('div', { class: 'loaded-list__item' }, [
-                  h(resolveComponent('C_Icon'), {
+                  h(C_Icon, {
                     name: 'mdi:bell-outline',
                     size: 20,
                   }),

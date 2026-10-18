@@ -71,18 +71,7 @@ import { toCrudTableColumns } from '@/utils/d_tableColumns'
 import { getRoleListApi } from '@/api/role-manage'
 import type { RoleData } from '@/api/role-manage.contract'
 import type { PermissionDraft } from '@/api/permission-manage.contract'
-import { ref, computed, reactive, onMounted, onScopeDispose, h } from 'vue'
-import {
-  useMessage,
-  useDialog,
-  NButton,
-  NInput,
-  NSwitch,
-  NRadioGroup,
-  NRadio,
-  NSpace,
-  NText,
-} from 'naive-ui/es'
+import { NRadioGroup, NRadio, NText } from 'naive-ui/es'
 
 /** 创建权限管理页面的独立状态与业务行为。 */
 export function usePermissionManagement() {
@@ -457,7 +446,7 @@ export function usePermissionManagement() {
     !mockMode
       ? { detail: (row: PermissionData) => loadPermissionDetail(row) }
       : {
-          edit: (row: PermissionData) => savePermissionRecord(row.id, row),
+          edit: (row: PermissionData) => openPermissionModal(row),
           delete: (row: PermissionData) => removePermissionRecord(row.id),
           detail: (row: PermissionData) => loadPermissionDetail(row),
           custom: [
@@ -643,8 +632,9 @@ export function usePermissionManagement() {
       await savePermissionRecord(rowData.id, rowData)
       message.success('修改成功')
       await refresh()
-    } catch {
+    } catch (error) {
       message.error('保存失败')
+      throw error instanceof Error ? error : new Error('保存失败')
     }
   }
 
@@ -841,18 +831,20 @@ export function usePermissionManagement() {
 
   // ============ 临时授权事件处理 ============
   /** 按当前公司成员授予现有角色，提交后重读服务端事实。 */
-  async function handleSaveTempAuth(): Promise<void> {
+  async function handleSaveTempAuth({
+    model,
+  }: SubmitEventPayload<typeof tempAuthForm>): Promise<void> {
     if (!governanceCapabilities.value.temporaryRoleGrant.write)
       throw new Error('当前服务不支持临时角色授予')
-    if (!tempAuthForm.userId || !tempAuthForm.targetRole)
+    if (!model.userId || !model.targetRole)
       throw new Error('请选择目标成员和角色')
-    if (!tempAuthForm.dateRange) throw new Error('请选择有效期')
+    if (!model.dateRange) throw new Error('请选择有效期')
     await createTempAuthorizationApi({
-      userId: tempAuthForm.userId,
-      roleId: tempAuthForm.targetRole,
-      effectFrom: formatGrantDateTime(tempAuthForm.dateRange[0]),
-      effectTo: formatGrantDateTime(tempAuthForm.dateRange[1]),
-      reason: tempAuthForm.reason,
+      userId: model.userId,
+      roleId: model.targetRole,
+      effectFrom: formatGrantDateTime(model.dateRange[0]),
+      effectTo: formatGrantDateTime(model.dateRange[1]),
+      reason: model.reason,
     })
     tempAuthPage.value = 1
     await loadGovernanceData()
@@ -988,78 +980,83 @@ export function usePermissionManagement() {
   }
 
   onMounted(loadGovernanceData)
-  const formOptions = computed<FormOption<PermissionFormData>[]>(() => [
-    {
-      prop: 'name',
-      label: '权限名称',
-      type: 'input',
-      placeholder: '请输入权限名称',
-      rules: PERMISSION_FORM_RULES.name,
-    },
-    {
-      prop: 'type',
-      label: '权限类型',
-      type: 'select',
-      children: UI_CONFIG.permissionType,
-      rules: PERMISSION_FORM_RULES.type,
-    },
-    {
-      prop: 'module',
-      label: '所属模块',
-      type: 'select',
-      children: SYSTEM_MODULES,
-      rules: PERMISSION_FORM_RULES.module,
-    },
-    {
-      prop: 'sort',
-      label: '排序',
-      type: 'inputNumber',
-      attrs: { min: 0, max: 9999, style: { width: '100%' } },
-      rules: PERMISSION_FORM_RULES.sort,
-    },
-    {
-      prop: 'code',
-      label: '权限编码',
-      type: 'permissionCode',
-      placeholder: '自动生成或手动输入',
-      disabled: modalMode.value === 'edit' || !!formRef.value?.isSubmitting,
-      rules: PERMISSION_FORM_RULES.code,
-      layout: { span: 2 },
-    },
-    {
-      prop: 'resources',
-      label: '关联资源',
-      type: 'textarea',
-      placeholder: '请输入关联资源，多个用逗号分隔',
-      attrs: { rows: 2 },
-      layout: { span: 2 },
-    },
-    {
-      prop: 'description',
-      label: '权限描述',
-      type: 'textarea',
-      placeholder: '请输入权限描述',
-      attrs: { rows: 3 },
-      layout: { span: 2 },
-    },
-    {
-      prop: 'status',
-      label: '权限状态',
-      type: 'permissionStatus',
-      attrs: { checkedValue: 1, uncheckedValue: 0 },
-      layout: { span: 2 },
-    },
-    {
-      prop: 'remark',
-      label: '备注',
-      type: 'textarea',
-      placeholder: '请输入备注信息',
-      attrs: { rows: 2 },
-      layout: { span: 2 },
-    },
-  ])
+  const formOptions = computed<FormOption<PermissionFormData>[]>(() => {
+    const options: FormOption<PermissionFormData>[] = [
+      {
+        prop: 'name',
+        label: '权限名称',
+        type: 'input',
+        placeholder: '请输入权限名称',
+        rules: PERMISSION_FORM_RULES.name,
+      },
+      {
+        prop: 'type',
+        label: '权限类型',
+        type: 'select',
+        children: UI_CONFIG.permissionType,
+        rules: PERMISSION_FORM_RULES.type,
+      },
+      {
+        prop: 'module',
+        label: '所属模块',
+        type: 'select',
+        children: SYSTEM_MODULES,
+        rules: PERMISSION_FORM_RULES.module,
+      },
+      {
+        prop: 'sort',
+        label: '排序',
+        type: 'inputNumber',
+        attrs: { min: 0, max: 9999, style: { width: '100%' } },
+        rules: PERMISSION_FORM_RULES.sort,
+      },
+      {
+        prop: 'code',
+        label: '权限编码',
+        type: 'permissionCode',
+        placeholder: '自动生成或手动输入',
+        disabled: modalMode.value === 'edit',
+        rules: PERMISSION_FORM_RULES.code,
+        layout: { span: 2 },
+      },
+      {
+        prop: 'resources',
+        label: '关联资源',
+        type: 'textarea',
+        placeholder: '请输入关联资源，多个用逗号分隔',
+        attrs: { rows: 2 },
+        layout: { span: 2 },
+      },
+      {
+        prop: 'description',
+        label: '权限描述',
+        type: 'textarea',
+        placeholder: '请输入权限描述',
+        attrs: { rows: 3 },
+        layout: { span: 2 },
+      },
+      {
+        prop: 'status',
+        label: '权限状态',
+        type: 'permissionStatus',
+        attrs: { checkedValue: 1, uncheckedValue: 0 },
+        layout: { span: 2 },
+      },
+      {
+        prop: 'remark',
+        label: '备注',
+        type: 'textarea',
+        placeholder: '请输入备注信息',
+        attrs: { rows: 2 },
+        layout: { span: 2 },
+      },
+    ]
+    return options.map(option => ({
+      ...option,
+      disabled: !!formRef.value?.isSubmitting || option.disabled,
+    }))
+  })
   const formConfig = computed<FormConfig<PermissionFormData>>(() => ({
-    disabled: !!formRef.value?.isSubmitting,
     layout: 'grid',
     grid: { cols: 2, gutter: 16 },
     labelPlacement: 'left',
@@ -1097,6 +1094,7 @@ export function usePermissionManagement() {
   const tempAuthOptions = computed<FormOption<typeof tempAuthForm>[]>(() => [
     {
       prop: 'targetRole',
+      disabled: () => !!tempAuthFormRef.value?.isSubmitting,
       label: '授予角色',
       type: 'select',
       children: compareRoleOptions.value,
@@ -1105,6 +1103,7 @@ export function usePermissionManagement() {
     },
     {
       prop: 'userId',
+      disabled: () => !!tempAuthFormRef.value?.isSubmitting,
       label: '目标成员',
       type: 'select',
       children: grantUserOptions.value,
@@ -1114,6 +1113,7 @@ export function usePermissionManagement() {
     },
     {
       prop: 'reason',
+      disabled: () => !!tempAuthFormRef.value?.isSubmitting,
       label: '授权原因',
       type: 'textarea',
       placeholder: '请说明临时授权原因',
@@ -1122,6 +1122,7 @@ export function usePermissionManagement() {
     },
     {
       prop: 'dateRange',
+      disabled: () => !!tempAuthFormRef.value?.isSubmitting,
       label: '有效期',
       type: 'datePicker',
       attrs: { type: 'datetimerange', style: { width: '100%' } },
@@ -1129,7 +1130,6 @@ export function usePermissionManagement() {
     },
   ])
   const tempAuthConfig = computed<FormConfig<typeof tempAuthForm>>(() => ({
-    disabled: !!tempAuthFormRef.value?.isSubmitting,
     labelPlacement: 'left',
     labelWidth: 100,
     showActions: false,

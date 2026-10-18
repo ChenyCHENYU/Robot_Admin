@@ -8,6 +8,7 @@
 import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 import { installMockAdminSession } from './auth-fixture'
+import { solveDemoCaptcha } from './d_login'
 
 const componentVersion = JSON.parse(
   readFileSync(
@@ -167,8 +168,18 @@ test('切换到审计公司后首页入口和页面统计随授权刷新', async
 test('登录公司下拉在悬停、选中和重新展开时保持柔和的深色高亮', async ({
   page,
 }) => {
+  test.setTimeout(60_000)
   await page.emulateMedia({ colorScheme: 'light' })
+  await page.addInitScript(() => {
+    Math.random = () => 0.5
+  })
   await page.goto('/#/login')
+  await expect(page.locator('.login-workspace')).toContainText(
+    '账号验证成功后才能选择工作公司'
+  )
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
+  await expect(page.getByRole('button', { name: '确认工作公司' })).toBeEnabled()
   const selection = page.locator('.login-workspace .n-base-selection')
   await expect(selection).toContainText('江苏金恒（南京）')
   await selection.click()

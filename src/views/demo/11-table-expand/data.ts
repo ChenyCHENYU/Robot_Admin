@@ -5,12 +5,12 @@
  * @Description: 表格演示配置与展示；数据源遵循项目运行模式
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import { h } from 'vue'
-import { NTag } from 'naive-ui/es'
+import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
 import type {
   TableColumn,
+  TableInstance,
   ParentChildLinkMode,
-} from '@robot-admin/naive-ui-components'
+} from '@robot-admin/naive-ui-components/C_Table'
 import type {
   DemoEmployee as TestRecord,
   DemoEmployeeTask as ChildDataType,
@@ -34,30 +34,37 @@ export const defaultConfig: DemoConfig = {
 }
 
 // ================= 子表格列配置 =================
+const childIndexColumn = {
+  key: '_index',
+  title: '序号',
+  width: 50,
+  render: (_row: ChildDataType, index: number) => index + 1,
+}
+
 export const childColumnsConfig = {
   // 项目子表列
   project: [
-    { type: 'index', title: '序号', width: 50 },
+    childIndexColumn,
     { key: 'project', title: '项目名称', width: 150 },
     { key: 'progress', title: '进度', width: 100 },
     { key: 'status', title: '状态', width: 100 },
-  ] as TableColumn<ChildDataType>[],
+  ] satisfies DataTableColumns<ChildDataType>,
 
   // 需求子表列
   requirement: [
-    { type: 'index', title: '序号', width: 50 },
+    childIndexColumn,
     { key: 'requirement', title: '需求名称', width: 150 },
     { key: 'priority', title: '优先级', width: 100 },
     { key: 'status', title: '状态', width: 100 },
-  ] as TableColumn<ChildDataType>[],
+  ] satisfies DataTableColumns<ChildDataType>,
 
   // 服务子表列
   service: [
-    { type: 'index', title: '序号', width: 50 },
+    childIndexColumn,
     { key: 'service', title: '服务名称', width: 150 },
     { key: 'version', title: '版本', width: 100 },
     { key: 'status', title: '状态', width: 100 },
-  ] as TableColumn<ChildDataType>[],
+  ] satisfies DataTableColumns<ChildDataType>,
 }
 
 // ================= 子表格列配置获取函数 =================
@@ -68,7 +75,7 @@ export const childColumnsConfig = {
  */
 export const getChildColumns = (
   childData: ChildDataType
-): TableColumn<ChildDataType>[] => {
+): DataTableColumns<ChildDataType> => {
   // 通过检查数据对象的属性来判断类型
   if ('project' in childData) {
     return childColumnsConfig.project
@@ -83,6 +90,48 @@ export const getChildColumns = (
   // 默认返回项目列配置
   console.warn('无法识别子数据类型，使用默认项目列配置')
   return childColumnsConfig.project
+}
+
+type NestedSelectionController = Pick<
+  TableInstance<TestRecord, ChildDataType>,
+  'selectChildRow' | 'unselectChildRow' | 'selectRow' | 'unselectRow'
+>
+
+const matchesParentSelection = (
+  mode: ParentChildLinkMode,
+  count: number,
+  total: number
+) => (mode === 'strict' ? total > 0 && count === total : count > 0)
+
+/** 自定义子表复用父实例的选择状态；公开逐行方法需要由消费方同步联动。 */
+export function syncChildSelection(
+  table: NestedSelectionController,
+  parent: TestRecord,
+  previousKeys: DataTableRowKey[],
+  nextKeys: DataTableRowKey[],
+  children: ChildDataType[],
+  config: DemoConfig
+): void {
+  if (!config.enableChildSelection) return
+  const available = new Set<DataTableRowKey>(children.map(child => child.id))
+  const next = new Set(nextKeys.filter(key => available.has(key)))
+  const previous = new Set(previousKeys)
+  for (const key of previous) {
+    if (!next.has(key)) table.unselectChildRow(parent.id, key)
+  }
+  for (const key of next) {
+    if (!previous.has(key)) table.selectChildRow(parent.id, key)
+  }
+  if (!config.enableSelection) return
+  const shouldSelect =
+    parent.status === '在职' &&
+    matchesParentSelection(
+      config.parentChildLinkMode,
+      next.size,
+      children.length
+    )
+  if (shouldSelect) table.selectRow(parent.id)
+  else table.unselectRow(parent.id)
 }
 
 // ================= 主表格列配置 =================

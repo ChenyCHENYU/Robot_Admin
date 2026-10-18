@@ -5,7 +5,7 @@
  * @Description: 页面状态、表单及请求控制，模板只负责展示和事件绑定
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import { NTreeSelect, useMessage, useDialog, NTag, NSwitch } from 'naive-ui/es'
+import { NTreeSelect } from 'naive-ui/es'
 
 import type {
   UserData,
@@ -50,6 +50,7 @@ import {
 import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
 import '@robot-admin/naive-ui-components/C_Tree/style.css'
 import type { ActionItem } from '@robot-admin/naive-ui-components'
+import type { TableInstance } from '@robot-admin/naive-ui-components/C_Table'
 import {
   USER_FORM_RULES,
   DEFAULT_USER_FORM_DATA,
@@ -62,7 +63,6 @@ import {
   getUserStatusConfig,
   convertDeptListToTreeOptions,
 } from './data'
-import { ref, computed, reactive, onMounted, h } from 'vue'
 
 /** 创建用户管理页面的独立状态与业务行为。 */
 export function useUserManagement() {
@@ -120,6 +120,7 @@ export function useUserManagement() {
   const modalMode = ref<'add' | 'edit'>('add')
   const formRef = ref<FormInstance<UserFormData> | null>(null)
   const resetPasswordFormRef = ref<FormInstance<ResetPasswordForm> | null>(null)
+  const userTableRef = ref<TableInstance<UserData> | null>(null)
   const deptTreeRef = ref<InstanceType<typeof C_Tree> | null>(null)
   const expandedDeptKeys = ref<string[]>([])
   const selectedDeptKeys = ref<string[]>([])
@@ -327,134 +328,139 @@ export function useUserManagement() {
   ]
 
   // ==================== 表单字段配置 ====================
-  const formOptions = computed<FormOption<UserFormData>[]>(() => [
-    {
-      prop: 'userType',
-      show: mockMode,
-      rules: USER_FORM_RULES.userType,
-      label: '用户类型',
-      type: 'select',
-      children: UI_CONFIG.userType,
-      placeholder: '请选择用户类型',
-    },
-    {
-      prop: 'username',
-      rules: USER_FORM_RULES.username,
-      label: '用户名',
-      type: 'input',
-      disabled: modalMode.value === 'edit' || !!formRef.value?.isSubmitting,
-      help:
-        modalMode.value === 'edit'
-          ? '用户名作为登录凭证，创建后不可修改'
-          : undefined,
-      attrs: {
-        placeholder: '请输入用户名',
+  const formOptions = computed<FormOption<UserFormData>[]>(() => {
+    const options: FormOption<UserFormData>[] = [
+      {
+        prop: 'userType',
+        show: mockMode,
+        rules: USER_FORM_RULES.userType,
+        label: '用户类型',
+        type: 'select',
+        children: UI_CONFIG.userType,
+        placeholder: '请选择用户类型',
       },
-    },
-    {
-      prop: 'nickname',
-      rules: USER_FORM_RULES.nickname,
-      label: '昵称',
-      type: 'input',
-      attrs: { placeholder: '请输入昵称' },
-    },
-    {
-      prop: 'email',
-      rules: USER_FORM_RULES.email,
-      label: '邮箱',
-      type: 'input',
-      attrs: { placeholder: '请输入邮箱' },
-    },
-    {
-      prop: 'phone',
-      rules: USER_FORM_RULES.phone,
-      label: '手机号',
-      type: 'input',
-      attrs: { placeholder: '请输入手机号' },
-    },
-    {
-      prop: 'deptId',
-      rules: USER_FORM_RULES.deptId,
-      label: '公司主部门',
-      help: '仅维护当前公司成员的主部门，其他公司独立保存',
-      type: 'treeSelect',
-      attrs: {
-        options: deptTreeOptions.value,
-        placeholder: '请选择部门',
-        clearable: true,
-        checkStrategy: 'child',
-        keyField: 'id',
-        labelField: 'name',
-        childrenField: 'children',
+      {
+        prop: 'username',
+        rules: USER_FORM_RULES.username,
+        label: '用户名',
+        type: 'input',
+        disabled: modalMode.value === 'edit',
+        help:
+          modalMode.value === 'edit'
+            ? '用户名作为登录凭证，创建后不可修改'
+            : undefined,
+        attrs: {
+          placeholder: '请输入用户名',
+        },
       },
-      show: !mockMode || formData.userType === 'internal',
-    },
-    {
-      prop: 'companyName',
-      rules: USER_FORM_RULES.companyName,
-      label: '公司名称',
-      type: 'input',
-      attrs: { placeholder: '请输入公司名称' },
-      show: mockMode && formData.userType === 'external',
-    },
-    {
-      prop: 'contactPerson',
-      rules: USER_FORM_RULES.contactPerson,
-      label: '联系人',
-      type: 'input',
-      attrs: { placeholder: '请输入联系人' },
-      show: mockMode && formData.userType === 'external',
-    },
-    {
-      prop: 'roleIds',
-      rules: USER_FORM_RULES.roleIds,
-      label: '用户角色',
-      type: 'select',
-      children: filteredRoleOptions.value,
-      placeholder: '请选择角色',
-      attrs: {
-        multiple: true,
-        clearable: true,
+      {
+        prop: 'nickname',
+        rules: USER_FORM_RULES.nickname,
+        label: '昵称',
+        type: 'input',
+        attrs: { placeholder: '请输入昵称' },
       },
-    },
-    {
-      prop: 'password',
-      rules: USER_FORM_RULES.password,
-      label: '初始密码',
-      type: 'input',
-      attrs: {
-        type: 'password',
-        placeholder: '请输入初始密码',
-        showPasswordOn: 'click',
+      {
+        prop: 'email',
+        rules: USER_FORM_RULES.email,
+        label: '邮箱',
+        type: 'input',
+        attrs: { placeholder: '请输入邮箱' },
       },
-      show: modalMode.value === 'add',
-    },
-    {
-      prop: 'status',
-      rules: USER_FORM_RULES.status,
-      label: '本公司成员状态',
-      type: 'userStatus',
-      attrs: {
-        checkedValue: 1,
-        uncheckedValue: 0,
+      {
+        prop: 'phone',
+        rules: USER_FORM_RULES.phone,
+        label: '手机号',
+        type: 'input',
+        attrs: { placeholder: '请输入手机号' },
       },
-    },
-    {
-      prop: 'remark',
-      label: '备注',
-      type: 'textarea',
-      placeholder: '请输入备注信息',
-      attrs: { rows: 3 },
-      layout: { span: 2 },
-    },
-  ])
+      {
+        prop: 'deptId',
+        rules: USER_FORM_RULES.deptId,
+        label: '公司主部门',
+        help: '仅维护当前公司成员的主部门，其他公司独立保存',
+        type: 'treeSelect',
+        attrs: {
+          options: deptTreeOptions.value,
+          placeholder: '请选择部门',
+          clearable: true,
+          checkStrategy: 'child',
+          keyField: 'id',
+          labelField: 'name',
+          childrenField: 'children',
+        },
+        show: !mockMode || formData.userType === 'internal',
+      },
+      {
+        prop: 'companyName',
+        rules: USER_FORM_RULES.companyName,
+        label: '公司名称',
+        type: 'input',
+        attrs: { placeholder: '请输入公司名称' },
+        show: mockMode && formData.userType === 'external',
+      },
+      {
+        prop: 'contactPerson',
+        rules: USER_FORM_RULES.contactPerson,
+        label: '联系人',
+        type: 'input',
+        attrs: { placeholder: '请输入联系人' },
+        show: mockMode && formData.userType === 'external',
+      },
+      {
+        prop: 'roleIds',
+        rules: USER_FORM_RULES.roleIds,
+        label: '用户角色',
+        type: 'select',
+        children: filteredRoleOptions.value,
+        placeholder: '请选择角色',
+        attrs: {
+          multiple: true,
+          clearable: true,
+        },
+      },
+      {
+        prop: 'password',
+        rules: USER_FORM_RULES.password,
+        label: '初始密码',
+        type: 'input',
+        attrs: {
+          type: 'password',
+          placeholder: '请输入初始密码',
+          showPasswordOn: 'click',
+        },
+        show: modalMode.value === 'add',
+      },
+      {
+        prop: 'status',
+        rules: USER_FORM_RULES.status,
+        label: '本公司成员状态',
+        type: 'userStatus',
+        attrs: {
+          checkedValue: 1,
+          uncheckedValue: 0,
+        },
+      },
+      {
+        prop: 'remark',
+        label: '备注',
+        type: 'textarea',
+        placeholder: '请输入备注信息',
+        attrs: { rows: 3 },
+        layout: { span: 2 },
+      },
+    ]
+    return options.map(option => ({
+      ...option,
+      disabled: !!formRef.value?.isSubmitting || option.disabled,
+    }))
+  })
   const formRenderers: Record<string, FormRenderer> = {
     treeSelect: props => h(NTreeSelect, props),
     userStatus: props =>
       h(NSwitch, props, { checked: () => '正常', unchecked: () => '禁用' }),
   }
   const formConfig = computed<FormConfig<UserFormData>>(() => ({
-    disabled: !!formRef.value?.isSubmitting,
     layout: 'grid',
     grid: { cols: 2, gutter: 16 },
     labelPlacement: 'left',
@@ -466,6 +472,7 @@ export function useUserManagement() {
   const resetPasswordOptions: FormOption<ResetPasswordForm>[] = [
     {
       prop: 'newPassword',
+      disabled: () => !!resetPasswordFormRef.value?.isSubmitting,
       label: '新密码',
       type: 'input',
       placeholder: '请输入新密码',
@@ -474,6 +481,7 @@ export function useUserManagement() {
     },
     {
       prop: 'confirmPassword',
+      disabled: () => !!resetPasswordFormRef.value?.isSubmitting,
       label: '确认密码',
       type: 'input',
       placeholder: '请再次输入新密码',
@@ -487,7 +495,6 @@ export function useUserManagement() {
     },
   ]
   const resetPasswordConfig = computed<FormConfig<ResetPasswordForm>>(() => ({
-    disabled: !!resetPasswordFormRef.value?.isSubmitting,
     labelPlacement: 'left',
     labelWidth: 100,
     showActions: false,
@@ -523,6 +530,7 @@ export function useUserManagement() {
         try {
           await actionFn(ids)
           message.success(`批量${operation === 'delete' ? '删除' : '操作'}成功`)
+          userTableRef.value?.clearSelection()
           selectedUsers.value = []
           await loadUsers()
         } catch (error) {
@@ -722,12 +730,14 @@ export function useUserManagement() {
   }
 
   /** 重置当前用户密码，失败交由组件统一反馈。 */
-  async function handleResetPassword(): Promise<void> {
+  async function handleResetPassword({
+    model,
+  }: SubmitEventPayload<ResetPasswordForm>): Promise<void> {
     try {
       if (!currentResetUserId.value) throw new Error('未选择需要重置的用户')
       await resetUserPasswordApi(
         currentResetUserId.value,
-        resetPasswordForm.newPassword,
+        model.newPassword,
         resetRevision.value,
         resetMembershipRevision.value,
         userStore.activeContext?.id
@@ -832,6 +842,7 @@ export function useUserManagement() {
     modalMode,
     formRef,
     resetPasswordFormRef,
+    userTableRef,
     deptTreeRef,
     expandedDeptKeys,
     selectedDeptKeys,

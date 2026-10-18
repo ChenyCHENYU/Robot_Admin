@@ -115,7 +115,12 @@
     useLatestRequest()
   const mockMode = isMockDataMode()
   const profileOptions = computed(() =>
-    PROFILE_FORM_OPTIONS.filter(option => mockMode || option.prop !== 'bio')
+    PROFILE_FORM_OPTIONS.filter(
+      option => mockMode || option.prop !== 'bio'
+    ).map(option => ({
+      ...option,
+      disabled: !!formRef.value?.isSubmitting || option.disabled,
+    }))
   )
   const message = useMessage()
   const formRef = ref<FormInstance<ProfileFormData> | null>(null)
@@ -135,7 +140,7 @@
   })
 
   const formConfig = computed<FormConfig<ProfileFormData>>(() => ({
-    disabled: profileLoading.value || !!formRef.value?.isSubmitting,
+    disabled: profileLoading.value,
     layout: 'grid',
     grid: { cols: 2, gutter: 24 },
     labelPlacement: 'left',

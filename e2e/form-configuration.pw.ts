@@ -15,6 +15,31 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('.form-section .n-form')).toBeVisible()
 })
 
+test('重复选择当前布局保留模型和字段统计，仍可填充测试数据', async ({
+  page,
+}) => {
+  const form = page.locator('.form-section .n-form')
+  const fieldBadge = page.locator('.form-section .field-badge')
+  const username = form.getByPlaceholder('请输入用户名', { exact: true })
+  const currentLayout = page
+    .locator('.layout-buttons')
+    .getByRole('button', { name: '默认布局', exact: true })
+
+  await expect(fieldBadge).toHaveText('9 字段')
+  await username.fill('draft_01')
+  await currentLayout.click()
+  await currentLayout.click()
+  await expect(username).toHaveValue('draft_01')
+  await expect(fieldBadge).toHaveText('9 字段')
+
+  await page.getByRole('button', { name: '填充测试', exact: true }).click()
+  await expect(username).toHaveValue('cheny_888')
+  await expect(form.getByPlaceholder('请输入邮箱地址')).toHaveValue(
+    'demo@cheny-test.com'
+  )
+  await expect(fieldBadge).toHaveText('9 字段')
+})
+
 test('默认按钮使用正式验证规则，成功只报告演示结果，重置清空模型', async ({
   page,
 }) => {
@@ -36,6 +61,141 @@ test('默认按钮使用正式验证规则，成功只报告演示结果，重�
   await form.getByRole('button', { name: '重置表单', exact: true }).click()
   await expect(form.getByPlaceholder('请输入用户名')).toHaveValue('')
   await expect(form.getByPlaceholder('请输入邮箱地址')).toHaveValue('')
+})
+
+test('标签布局填充全部字段后提交成功，密码按最新模型交叉重验', async ({
+  page,
+}) => {
+  await page
+    .locator('.layout-buttons')
+    .getByRole('button', { name: '标签页布局', exact: true })
+    .click()
+  const form = page.locator('.form-section .n-form')
+  await expect(page.locator('.form-section .field-badge')).toHaveText('24 字段')
+  await page.getByRole('button', { name: '填充测试', exact: true }).click()
+  await form.getByRole('button', { name: '提交表单', exact: true }).click()
+  await expect(
+    page.getByText('已接收表单数据（演示，不会持久化）')
+  ).toHaveCount(1)
+  await expect(form.locator('.n-form-item-feedback--error')).toHaveCount(0)
+
+  await page
+    .locator('.tabs-demo .n-tabs-tab')
+    .filter({ hasText: '账户安全' })
+    .click()
+  const password = form.getByPlaceholder('请输入登录密码', { exact: true })
+  const confirmation = form.getByPlaceholder('请再次输入密码', { exact: true })
+  const mismatch = form.getByText('两次输入密码不一致', { exact: true })
+  const validateTab = form.getByRole('button', {
+    name: '验证 账户安全',
+    exact: true,
+  })
+
+  await confirmation.fill('Changed123456')
+  await confirmation.press('Tab')
+  await expect(mismatch).toBeVisible()
+
+  // 修改原密码后通过公开标签验证动作重验，读取最新的两个字段值。
+  await password.fill('Changed123456')
+  await password.press('Tab')
+  await validateTab.click()
+  await expect(mismatch).toHaveCount(0)
+
+  await password.fill('Demo123456')
+  await password.press('Tab')
+  await validateTab.click()
+  await expect(mismatch).toBeVisible()
+  await confirmation.fill('Demo123456')
+  await confirmation.press('Tab')
+  await validateTab.click()
+  await expect(mismatch).toHaveCount(0)
+})
+
+test('卡片布局填充后日期可见，完整必填校验通过并提交', async ({ page }) => {
+  await page
+    .locator('.layout-buttons')
+    .getByRole('button', { name: '卡片布局', exact: true })
+    .click()
+  const form = page.locator('.form-section .n-form')
+  const submit = form.getByRole('button', { name: /提交(?:表单)?$/ })
+  await submit.click()
+  await expect(
+    form.locator('.n-form-item-feedback--error').first()
+  ).toBeVisible()
+
+  await page.getByRole('button', { name: '填充测试', exact: true }).click()
+  await expect(form.getByPlaceholder('请选择出生日期')).toHaveValue(
+    '1995-06-15'
+  )
+  await expect(
+    form.getByRole('checkbox', { name: '阅读', exact: true })
+  ).toBeChecked()
+  await submit.click()
+  await expect(form.locator('.n-form-item-feedback--error')).toHaveCount(0)
+  await expect(
+    page.getByText('已接收表单数据（演示，不会持久化）')
+  ).toHaveCount(1)
+})
+
+test('父级重置保留标签与步骤字段统计，并恢复各自默认值', async ({ page }) => {
+  const layoutButtons = page.locator('.layout-buttons')
+  const form = page.locator('.form-section .n-form')
+  const fieldBadge = page.locator('.form-section .field-badge')
+  const fill = page.getByRole('button', { name: '填充测试', exact: true })
+  const reset = page.getByRole('button', { name: '重置数据', exact: true })
+
+  await layoutButtons
+    .getByRole('button', { name: '标签页布局', exact: true })
+    .click()
+  await expect(fieldBadge).toHaveText('24 字段')
+  await fill.click()
+  await page
+    .locator('.tabs-demo .n-tabs-tab')
+    .filter({ hasText: '偏好设置' })
+    .click()
+  const autoSave = form
+    .locator('.n-form-item')
+    .filter({ hasText: '自动保存' })
+    .getByRole('switch')
+  const emailNotification = form.getByRole('checkbox', {
+    name: '邮件通知',
+    exact: true,
+  })
+  await expect(emailNotification).toBeChecked()
+  await autoSave.click()
+  await expect(autoSave).not.toBeChecked()
+  await reset.click()
+  await expect(fieldBadge).toHaveText('24 字段')
+  await expect(autoSave).toBeChecked()
+  await expect(emailNotification).not.toBeChecked()
+  await expect(form.getByPlaceholder('请输入真实姓名')).toHaveValue('')
+
+  await layoutButtons
+    .getByRole('button', { name: '步骤布局', exact: true })
+    .click()
+  await expect(fieldBadge).toHaveText('15 字段')
+  await fill.click()
+  const next = form.getByRole('button', { name: /下一步/ })
+  await next.click()
+  await next.click()
+  await next.click()
+  const newsletter = form
+    .locator('.n-form-item')
+    .filter({ hasText: '接收邮件通知' })
+    .getByRole('switch')
+  const agreement = form.getByRole('checkbox', {
+    name: '我已阅读并同意《用户协议》',
+    exact: true,
+  })
+  await expect(newsletter).toBeChecked()
+  await expect(agreement).toBeChecked()
+  await reset.click()
+  await expect(fieldBadge).toHaveText('15 字段')
+  await expect(newsletter).not.toBeChecked()
+  await expect(agreement).not.toBeChecked()
+  await expect(
+    form.getByPlaceholder('请输入姓名', { exact: true })
+  ).toHaveValue('')
 })
 
 for (const layout of [

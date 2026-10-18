@@ -1,10 +1,16 @@
-import type {
-  TableColumn,
-  ActionDropdownItem,
-} from '@robot-admin/naive-ui-components'
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @FilePath: \Robot_Admin\src\views\demo\40-action-bar\data.ts
+ * @Description: 操作栏演示列、下拉项与默认布局配置
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+import type { ActionDropdownItem } from '@robot-admin/naive-ui-components/C_ActionBar'
 
 // 表格列定义
-export const columns: TableColumn[] = [
+export const columns: TableColumn<EmployeeRow>[] = [
+  { type: 'selection' },
   { title: 'ID', key: 'id', width: 80 },
   { title: '姓名', key: 'name' },
   { title: '部门', key: 'department' },
@@ -61,7 +67,7 @@ export const DEFAULT_CUSTOM_CONFIG = {
   wrap: false,
 }
 
-// 场景六：「更多」下拉子选项配置（无回调，通过 @dropdown-click 统一分发）
+// 场景六：「更多」下拉子选项配置，页面为每项绑定可等待的 onClick。
 export const MORE_DROPDOWN_ITEMS: ActionDropdownItem[] = [
   { key: 'export-excel', label: '导出Excel', icon: 'mdi:file-excel' },
   { key: 'export-pdf', label: '导出PDF', icon: 'mdi:file-pdf' },

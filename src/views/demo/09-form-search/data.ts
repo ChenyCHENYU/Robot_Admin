@@ -1,3 +1,10 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @FilePath: \Robot_Admin\src\views\demo\09-form-search\data.ts
+ * @Description: 搜索演示字段、重置默认值与结果生成
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
 import type {
   SearchFormItem,
   SearchFormParams,
@@ -225,17 +232,14 @@ function createMegaFormConfig(fieldCount = 16): FormConfig<MegaFormParams> {
 
 export const megaFormConfig = createMegaFormConfig()
 
-// 重置表单参数
-/**
- *
- */
-export function resetFormParams<T extends object>(
-  target: { [K in keyof T]: T[K] },
-  source: T
-): void {
-  Object.keys(target).forEach(key => {
-    target[key as keyof T] = source[key as keyof T]
-  })
+/** 将初始值交给搜索组件，输入和重置共用同一份字段契约。 */
+export function createSearchFields<T extends BaseFormParams>(
+  config: FormConfig<T>
+): SearchFormItem[] {
+  return config.items.map(item => ({
+    ...item,
+    defaultValue: config.params[item.prop],
+  }))
 }
 
 // 模拟数据生成器
@@ -244,12 +248,12 @@ const mockDataGenerators = {
     {
       id: 1,
       name: (params as BasicFormParams).name || '用户1',
-      status: (params as BasicFormParams).status || '启用',
+      status: (params as BasicFormParams).status ?? '启用',
     },
     {
       id: 2,
       name: (params as BasicFormParams).name || '用户2',
-      status: (params as BasicFormParams).status || '禁用',
+      status: (params as BasicFormParams).status ?? '禁用',
     },
   ],
   advanced: (params: SearchFormParams) => [

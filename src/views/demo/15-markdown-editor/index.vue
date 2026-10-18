@@ -490,7 +490,7 @@
     content: '',
   })
 
-  const articleOptions: FormOption<typeof articleForm>[] = [
+  const articleFields: FormOption<typeof articleForm>[] = [
     {
       prop: 'title',
       label: '文章标题',
@@ -523,8 +523,12 @@
       rules: [PRESET_RULES.required('文章内容')],
     },
   ]
+  // 输入锁放在字段级，避免把表单自身提交锁反馈为全表单不可提交状态。
+  const articleOptions = computed<FormOption<typeof articleForm>[]>(() =>
+    articleFields.map(field => ({ ...field, disabled: submitting.value }))
+  )
   const articleConfig = computed<FormConfig<typeof articleForm>>(() => ({
-    disabled: !!formRef.value?.isSubmitting,
+    disabled: savingDraft.value,
     labelPlacement: 'top',
     onSubmit: async (_payload, context) => {
       await delayWithSignal(2000, context?.signal)

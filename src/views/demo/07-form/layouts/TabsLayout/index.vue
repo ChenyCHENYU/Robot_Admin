@@ -119,7 +119,7 @@
     LabelPlacement,
     ActionItem,
   } from '@robot-admin/naive-ui-components'
-  import { layoutConfig, placementOptions, createFormOptions } from './data'
+  import { getLayoutConfig, placementOptions, createFormOptions } from './data'
 
   // ==================== Props ====================
   interface Props {
@@ -146,6 +146,7 @@
   // ================= 状态管理 =================
   const message = useMessage()
   const formRef = ref<FormInstance>()
+  const layoutConfig = reactive(getLayoutConfig())
   let draftSnapshot: string | null = null
 
   // ================= 计算属性 =================
@@ -164,7 +165,7 @@
 
   // ==================== 标签页验证按钮配置 ====================
   const getTabActions = (
-    validateTab: () => void,
+    validateTab: () => Promise<boolean>,
     currentTab: string
   ): ActionItem[] => [
     {
@@ -173,7 +174,9 @@
       icon: 'mdi:task-auto',
       type: 'primary',
       size: 'small',
-      onClick: validateTab,
+      onClick: async () => {
+        await validateTab()
+      },
     },
   ]
 
@@ -252,10 +255,7 @@
   }
 
   const handleReset = () => {
-    if (formRef.value?.resetFields) {
-      formRef.value.resetFields()
-    }
-    formData.value = {}
+    formRef.value?.resetFields()
     message.info('表单已重置')
   }
 
@@ -286,6 +286,10 @@
   const resetFields = (): void => {
     formRef.value?.resetFields()
   }
+
+  onMounted(() => {
+    emit('fields-change', formOptions.value)
+  })
 
   // ==================== 暴露方法 ====================
   defineExpose({

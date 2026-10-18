@@ -248,10 +248,10 @@
                 mode: mockMode ? 'modal' : 'none',
                 modalTitle: '编辑权限',
                 modalWidth: 800,
+                onSave: handleSave,
               },
               display: { striped: true, bordered: true, size: 'small' },
             }"
-            @save="handleSave"
             @row-delete="handleRowDelete"
             @view-detail="handleViewDetail"
           />

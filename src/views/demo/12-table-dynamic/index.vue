@@ -10,7 +10,7 @@
     <c_vTitle
       title="动态表格场景示例"
       icon="mdi:table-sync"
-      description="支持动态增删行、行内编辑、拖拽排序、打印水印等高级功能"
+      description="支持动态增删行、行内编辑、顺序调整与打印水印，修改仅保存在当前演示中"
     />
 
     <NCard class="mb-4">
@@ -27,14 +27,16 @@
       >
         <C_Table
           ref="tableRef"
-          :data="tableData"
+          v-model:data="tableData"
           :columns="dynamicTableColumns"
           :loading="loading"
+          row-key="id"
           :config="{ ...tableConfig, actions: tableActions }"
           @row-add="handleRowAdd"
           @row-delete="handleRowDelete"
           @save="handleSave"
           @view-detail="handleViewDetail"
+          @row-selection-change="handleRowSelectionChange"
         />
 
         <!-- 自动铺满水印 -->
@@ -95,38 +97,19 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-  .table-dynamic-demo {
-    padding: 20px;
-  }
-  .log-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .log-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px;
-    border-radius: 4px;
-    background: var(--n-color-modal);
-  }
-  .log-message {
-    flex: 1;
-  }
-  .log-time {
-    font-size: 12px;
-    color: var(--n-text-color-3);
-  }
-</style>
-
 <script setup lang="ts">
   defineOptions({ name: 'Demo12TableDynamic' })
-  import type { SimpleTableActions } from '@robot-admin/naive-ui-components'
+  import type { DataTableRowKey } from 'naive-ui'
+  import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
+  import type {
+    SimpleTableActions,
+    TableConfig,
+    TableInstance,
+  } from '@robot-admin/naive-ui-components/C_Table'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import { createDemoEmployeeSource } from '@/api/demo-employees'
   import { toCrudTableColumns } from '@/utils/d_tableColumns'
+  import { delayWithSignal } from '@/utils/abort'
   import {
     type DynamicEmployee,
     type Log,
@@ -139,23 +122,40 @@
   const message = useMessage()
 
   // 表头操作按钮
-  const headerActions = computed(() => [
-    { label: '重置数据', onClick: resetData },
-    { label: '添加员工', type: 'primary' as const, onClick: addEmployee },
+  const headerActions = computed<ActionItem[]>(() => [
+    {
+      key: 'reset',
+      label: '重置数据',
+      loading: loading.value,
+      onClick: resetData,
+    },
+    {
+      key: 'add',
+      label: '添加员工',
+      disabled: loading.value,
+      onClick: addEmployee,
+    },
   ])
 
-  const tableRef = ref()
-  const selectedEmployee = ref<DynamicEmployee | null>(null)
+  const tableRef = ref<TableInstance<DynamicEmployee> | null>(null)
+  const selectedEmployeeKey = ref<DataTableRowKey | null>(null)
   const logs = ref<Log[]>([])
   const watermarkStyle = ref('')
 
   // 表格数据管理
+  const source = createDemoEmployeeSource('employees/dynamicList')
   const table = useNaiveTableCrud<DynamicEmployee>({
-    source: createDemoEmployeeSource('employees/dynamicList'),
+    // 本页的增删编辑是本地草稿，仅复用查询；真实接口契约的数字 id 不被改写。
+    source: 'query' in source ? { query: source.query } : source,
+    defaultPaginationEnabled: false,
     columns: toCrudTableColumns(dynamicTableColumns),
   })
 
   const { data: tableData, loading, refresh } = table
+  const selectedEmployee = computed(
+    () =>
+      tableData.value.find(row => row.id === selectedEmployeeKey.value) ?? null
+  )
 
   // 水印生成
   const createWatermark = () => {
@@ -167,30 +167,25 @@
           transform="rotate(-45 90 50)">${text}</text>
       </svg>
     `
-    const svgUrl = URL.createObjectURL(
-      new Blob([svg], { type: 'image/svg+xml' })
-    )
+    const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
     watermarkStyle.value = `background-image: url("${svgUrl}"); background-repeat: repeat;`
   }
 
   // 表格操作
   const tableActions = computed((): SimpleTableActions<DynamicEmployee> => ({
     detail: async (row: DynamicEmployee) => {
-      await new Promise(resolve => setTimeout(resolve, 200))
+      await delayWithSignal(200)
       return { data: row }
     },
-    edit: async (row: DynamicEmployee) => {
-      await new Promise(resolve => setTimeout(resolve, 300))
-      return { success: true, data: row }
-    },
     delete: async () => {
-      await new Promise(resolve => setTimeout(resolve, 200))
+      await delayWithSignal(200)
       return { success: true }
     },
   }))
 
   // 表格配置
-  const tableConfig = {
+  const tableConfig: TableConfig<DynamicEmployee> = {
+    pagination: false,
     dynamicRows: {
       enableRadioSelection: true,
       enableAdd: true,
@@ -213,7 +208,10 @@
       },
       defaultRowData: createDefaultEmployee,
     },
-    edit: { modalTitle: '编辑员工信息', modalWidth: 700 },
+    edit: {
+      mode: 'both',
+      onSave: () => delayWithSignal(300),
+    },
   }
 
   // 日志管理
@@ -233,12 +231,11 @@
     addLog('add', `添加了新员工：${newRow.name}`)
   }
 
-  const handleRowDelete = (...args: unknown[]) => {
-    const [deletedRow] = args as [DynamicEmployee, number]
-    const employee = deletedRow
+  const handleRowDelete = (employee: DynamicEmployee) => {
+    tableData.value = tableData.value.filter(row => row.id !== employee.id)
     addLog('delete', `删除了员工：${employee.name}`)
-    if (selectedEmployee.value?.id === employee.id)
-      selectedEmployee.value = null
+    if (selectedEmployeeKey.value === employee.id)
+      selectedEmployeeKey.value = null
   }
 
   const handleSave = (rowData: DynamicEmployee) => {
@@ -247,25 +244,33 @@
     addLog('edit', `编辑了员工 ${employee.name} 的信息`)
   }
 
-  const resetData = () => {
-    refresh()
+  const resetData = async () => {
+    await refresh()
+    if (table.error.value) return
     logs.value = []
-    selectedEmployee.value = null
+    tableRef.value?.clearRowSelection()
     message.success('数据已重置')
   }
 
   const addEmployee = () => {
     const newEmployee = generateRandomEmployee()
-    ;(tableData.value as DynamicEmployee[]).push(newEmployee)
+    tableData.value = [...tableData.value, newEmployee]
     message.success(`添加员工：${newEmployee.name}`)
     addLog('add', `手动添加了员工：${newEmployee.name}`)
   }
 
   const clearSelection = () => {
-    selectedEmployee.value = null
     tableRef.value?.clearRowSelection()
     message.info('已清空选择')
   }
 
+  const handleRowSelectionChange = (key: DataTableRowKey | null) => {
+    selectedEmployeeKey.value = key
+  }
+
   onMounted(createWatermark)
 </script>
+
+<style lang="scss" scoped>
+  @use './index.scss';
+</style>

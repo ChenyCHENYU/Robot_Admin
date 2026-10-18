@@ -9,7 +9,11 @@ import type { TableColumn } from '@robot-admin/naive-ui-components'
 import type { TagProps } from 'naive-ui'
 
 import type { DemoEmployee } from '@/api/demo-employees.contract'
-export type { DemoEmployee as DynamicEmployee } from '@/api/demo-employees.contract'
+
+// 接口返回数字 id，组件动态增行使用字符串 id；消费层兼容两种稳定主键。
+export interface DynamicEmployee extends Omit<DemoEmployee, 'id'> {
+  id: number | string
+}
 
 // ================= 操作日志类型 =================
 export interface Log {
@@ -19,7 +23,7 @@ export interface Log {
 }
 
 // ================= 表格列配置 =================
-export const dynamicTableColumns: TableColumn<DemoEmployee>[] = [
+export const dynamicTableColumns: TableColumn<DynamicEmployee>[] = [
   {
     key: 'name',
     title: '姓名',
@@ -69,7 +73,7 @@ export const dynamicTableColumns: TableColumn<DemoEmployee>[] = [
     width: 100,
     editable: true,
     editType: 'number',
-    render: (row: DemoEmployee) => {
+    render: (row: DynamicEmployee) => {
       const employee = row
       return `¥${employee.salary.toLocaleString()}`
     },
@@ -86,7 +90,7 @@ export const dynamicTableColumns: TableColumn<DemoEmployee>[] = [
         { label: '离职', value: '离职' },
       ],
     },
-    render: (row: DemoEmployee) => {
+    render: (row: DynamicEmployee) => {
       const employee = row
       return employee.status === '在职' ? '🟢 在职' : '🔴 离职'
     },
@@ -105,8 +109,15 @@ export const getLogTagType = (type: Log['type']): TagProps['type'] => {
 }
 
 // ================= 默认新员工数据生成器 =================
-export const createDefaultEmployee = (): DemoEmployee => ({
-  id: Date.now(),
+let employeeKeySequence = 0
+
+/** 生成演示行主键，兼容内网 HTTP 环境，并保证同毫秒内跨工厂连续创建不重复。 */
+const createEmployeeRowKey = (): string =>
+  globalThis.crypto?.randomUUID?.() ??
+  `dynamic-employee-${Date.now()}-${++employeeKeySequence}`
+
+export const createDefaultEmployee = (): DynamicEmployee => ({
+  id: createEmployeeRowKey(),
   name: '新员工',
   age: 25,
   email: '',
@@ -119,7 +130,7 @@ export const createDefaultEmployee = (): DemoEmployee => ({
 })
 
 // ================= 随机员工数据生成器 =================
-export const generateRandomEmployee = (): DemoEmployee => {
+export const generateRandomEmployee = (): DynamicEmployee => {
   const names = ['赵六', '钱七', '孙八', '李九', '周十', '吴十一']
   const departments = ['技术部', '产品部', '设计部', '运营部']
   const roles = [
@@ -132,7 +143,7 @@ export const generateRandomEmployee = (): DemoEmployee => {
   ]
 
   return {
-    id: Date.now(),
+    id: createEmployeeRowKey(),
     name: names[Math.floor(Math.random() * names.length)],
     age: Math.floor(Math.random() * 20) + 23,
     email: `user${Date.now()}@example.com`,

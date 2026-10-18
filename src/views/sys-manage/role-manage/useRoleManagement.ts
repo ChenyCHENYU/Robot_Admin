@@ -51,8 +51,6 @@ import {
   findPermissionById,
   extractPermissionPreview,
 } from './data'
-import { ref, computed, watch, reactive, onMounted, h } from 'vue'
-import { useMessage, NTag } from 'naive-ui/es'
 
 /** 创建角色管理页面的独立状态与业务行为。 */
 export function useRoleManagement() {
@@ -208,54 +206,59 @@ export function useRoleManagement() {
     ]
   })
 
-  const formOptions = computed<FormOption<RoleFormData>[]>(() => [
-    {
-      prop: 'name',
-      label: '角色名称',
-      type: 'input',
-      placeholder: '请输入角色名称',
-      rules: ROLE_FORM_RULES.name,
-    },
-    {
-      prop: 'code',
-      label: '角色编码',
-      type: 'input',
-      placeholder: '请输入角色编码',
-      disabled: modalMode.value === 'edit' || !!formRef.value?.isSubmitting,
-      rules: ROLE_FORM_RULES.code,
-    },
-    {
-      prop: 'type',
-      label: '角色类型',
-      type: 'select',
-      children: UI_CONFIG.roleType,
-      disabled: modalMode.value === 'edit' || !!formRef.value?.isSubmitting,
-      rules: ROLE_FORM_RULES.type,
-    },
-    {
-      prop: 'sort',
-      label: '排序',
-      type: 'inputNumber',
-      attrs: { min: 0, max: 9999, style: { width: '100%' } },
-      rules: ROLE_FORM_RULES.sort,
-    },
-    {
-      prop: 'status',
-      label: '角色状态',
-      type: 'switch',
-      attrs: { checkedValue: 1, uncheckedValue: 0 },
-    },
-    {
-      prop: 'remark',
-      label: '备注',
-      type: 'textarea',
-      placeholder: '请输入备注信息',
-      attrs: { rows: 3 },
-      layout: { span: 2 },
-    },
-  ])
+  const formOptions = computed<FormOption<RoleFormData>[]>(() => {
+    const options: FormOption<RoleFormData>[] = [
+      {
+        prop: 'name',
+        label: '角色名称',
+        type: 'input',
+        placeholder: '请输入角色名称',
+        rules: ROLE_FORM_RULES.name,
+      },
+      {
+        prop: 'code',
+        label: '角色编码',
+        type: 'input',
+        placeholder: '请输入角色编码',
+        disabled: modalMode.value === 'edit',
+        rules: ROLE_FORM_RULES.code,
+      },
+      {
+        prop: 'type',
+        label: '角色类型',
+        type: 'select',
+        children: UI_CONFIG.roleType,
+        disabled: modalMode.value === 'edit',
+        rules: ROLE_FORM_RULES.type,
+      },
+      {
+        prop: 'sort',
+        label: '排序',
+        type: 'inputNumber',
+        attrs: { min: 0, max: 9999, style: { width: '100%' } },
+        rules: ROLE_FORM_RULES.sort,
+      },
+      {
+        prop: 'status',
+        label: '角色状态',
+        type: 'switch',
+        attrs: { checkedValue: 1, uncheckedValue: 0 },
+      },
+      {
+        prop: 'remark',
+        label: '备注',
+        type: 'textarea',
+        placeholder: '请输入备注信息',
+        attrs: { rows: 3 },
+        layout: { span: 2 },
+      },
+    ]
+    return options.map(option => ({
+      ...option,
+      disabled: !!formRef.value?.isSubmitting || option.disabled,
+    }))
+  })
   const formConfig = computed<FormConfig<RoleFormData>>(() => ({
-    disabled: !!formRef.value?.isSubmitting,
     layout: 'grid',
     grid: { cols: 2, gutter: 16 },
     labelPlacement: 'left',
@@ -370,8 +373,9 @@ export function useRoleManagement() {
       await updateRoleApi(rowData.id, rowData)
       message.success('修改成功')
       await loadRoles()
-    } catch {
+    } catch (error) {
       message.error('保存失败')
+      throw error instanceof Error ? error : new Error('保存失败')
     }
   }
 

@@ -10,6 +10,7 @@ import type { ApiResponse } from '@/api/management.contract'
 import type {
   FormInstance,
   FormConfig,
+  SubmitEventPayload,
 } from '@robot-admin/naive-ui-components/C_Form'
 
 import type { FormItemRule, DialogReactive, DialogOptions } from 'naive-ui/es'
@@ -372,16 +373,16 @@ export const useMenuManagement = () => {
   const handleCancelModal = () => {
     if (!saving.value) showModal.value = false
   }
-  const snapshotDraft = (): MenuFormData => {
+  const snapshotDraft = (model: MenuFormData): MenuFormData => {
     const draft = Object.fromEntries(
       Object.keys(DEFAULT_FORM_DATA).map(key => [
         key,
-        formData[key as keyof MenuFormData],
+        model[key as keyof MenuFormData],
       ])
     ) as unknown as MenuFormData
-    if (formData.id) {
-      draft.id = formData.id
-      draft.revision = formData.revision
+    if (model.id) {
+      draft.id = model.id
+      draft.revision = model.revision
     }
     for (const field of [
       'name',
@@ -434,9 +435,11 @@ export const useMenuManagement = () => {
       ? Promise.resolve(false)
       : (formRef.value?.submit() ?? Promise.resolve(false))
   /** 提交领域数据，保留鉴权上下文与列表同步。 */
-  async function submitDraft(): Promise<void> {
+  async function submitDraft({
+    model,
+  }: SubmitEventPayload<MenuFormData>): Promise<void> {
     saving.value = true
-    const draft = snapshotDraft()
+    const draft = snapshotDraft(model)
     const contextId = currentContextId()
     const generation = permissionStore.requestGeneration
     try {

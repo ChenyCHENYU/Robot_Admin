@@ -177,6 +177,7 @@
             <NButton
               type="primary"
               :loading="drawerSubmitting"
+              :disabled="!drawerFormRef || drawerSubmitting"
               @click="drawerFormRef?.submit()"
               >保存</NButton
             >
@@ -296,11 +297,12 @@
   // ============ 表单引用 ============
   const drawerFormRef = ref<FormInstance>()
   const wizardFormRef = ref<FormInstance>()
+  // 组件实例公开属性由 Vue 自动解包；组合函数返回的 Ref 才需要 .value。
   const drawerSubmitting = computed(
-    () => unref(drawerFormRef.value?.isSubmitting) ?? false
+    () => drawerFormRef.value?.isSubmitting ?? false
   )
   const wizardSubmitting = computed(
-    () => unref(wizardFormRef.value?.isSubmitting) ?? false
+    () => wizardFormRef.value?.isSubmitting ?? false
   )
 
   // ============ 表单数据 ============

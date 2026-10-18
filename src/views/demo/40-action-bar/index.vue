@@ -41,7 +41,7 @@
             <NButton
               text
               size="small"
-              @click="selectedCount = 0"
+              @click="tableRef?.clearSelection()"
             >
               清空
             </NButton>
@@ -50,12 +50,13 @@
       </C_ActionBar>
 
       <C_Table
+        ref="tableRef"
         :data="tableData"
         :columns="columns"
         :loading="loading"
-        :row-key="(row: any) => row.id"
+        row-key="id"
         :config="{ selection: { enabled: true }, pagination: false }"
-        @update:checked-row-keys="handleSelectionChange"
+        @selection-change="handleSelectionChange"
       />
     </NCard>
 
@@ -77,8 +78,7 @@
           <div class="card-content">
             <C_Form
               ref="formRef"
-              :model-value="formData"
-              @update:model-value="Object.assign(formData, $event)"
+              v-model="formData"
               :options="formOptions"
               :config="formConfig"
             />
@@ -188,7 +188,6 @@
               :actions="dropdownActionsSimple"
               class="mt-4"
               @action-click="handleActionClick"
-              @dropdown-click="handleDropdownClick"
             />
           </div>
         </NCard>
@@ -256,14 +255,15 @@
   import type {
     ActionItem,
     ActionDropdownItem,
-  } from '@robot-admin/naive-ui-components'
-  import { useMessage } from 'naive-ui/es'
+  } from '@robot-admin/naive-ui-components/C_ActionBar'
+  import type { TableInstance } from '@robot-admin/naive-ui-components/C_Table'
   import {
     columns,
     MOCK_TABLE_DATA,
     DEFAULT_CUSTOM_CONFIG,
     MORE_DROPDOWN_ITEMS,
     SETTINGS_DROPDOWN_ITEMS,
+    type EmployeeRow,
   } from './data'
 
   const message = useMessage()
@@ -275,17 +275,17 @@
   const states = reactive({
     hasSelection: false,
     isEditing: false,
-    isRefreshing: false,
   })
   const formRef = ref<FormInstance<{ username: string; email: string }> | null>(
     null
   )
   const formSubmitting = computed(() => formRef.value?.isSubmitting ?? false)
-  const formData = reactive({ username: '', email: '' })
+  const formData = ref({ username: '', email: '' })
   const customConfig = reactive({ ...DEFAULT_CUSTOM_CONFIG })
   const tableData = ref([...MOCK_TABLE_DATA])
+  const tableRef = ref<TableInstance<EmployeeRow> | null>(null)
 
-  const formOptions: FormOption<typeof formData>[] = [
+  const formOptions: FormOption<typeof formData.value>[] = [
     {
       prop: 'username',
       label: '用户名',
@@ -301,7 +301,7 @@
       rules: [PRESET_RULES.optional(PRESET_RULES.email('邮箱'))],
     },
   ]
-  const formConfig: FormConfig<typeof formData> = {
+  const formConfig: FormConfig<typeof formData.value> = {
     labelPlacement: 'left',
     labelWidth: 80,
     showActions: false,
@@ -335,6 +335,7 @@
       label: '刷新',
       icon: 'mdi:refresh',
       type: 'info',
+      loading: loading.value,
       onClick: handleRefresh,
     },
   ])
@@ -473,8 +474,8 @@
       label: '删除',
       icon: 'mdi:delete',
       type: 'error',
-      disabled: computed(() => !states.hasSelection),
-      show: computed(() => states.hasSelection),
+      disabled: !states.hasSelection,
+      show: states.hasSelection,
       onClick: () => {
         message.error('删除')
       },
@@ -494,17 +495,14 @@
       label: '刷新',
       icon: 'mdi:refresh',
       type: 'info',
-      loading: computed(() => states.isRefreshing),
       onClick: async () => {
-        states.isRefreshing = true
-        await new Promise(r => setTimeout(r, 2000))
-        states.isRefreshing = false
+        await delayWithSignal(2000)
         message.success('刷新完成')
       },
     },
   ])
 
-  // 场景六：下拉菜单（子选项配置来自 data.ts，回调由 handleDropdownClick 统一分发）
+  // 下拉项的 Promise 交给操作栏管理，事件仅保留为点击通知。
   const dropdownActionsSimple = computed<ActionItem[]>(() => [
     {
       key: 'add',
@@ -519,13 +517,19 @@
       key: 'more',
       label: '更多',
       icon: 'mdi:dots-horizontal',
-      dropdown: MORE_DROPDOWN_ITEMS,
+      dropdown: MORE_DROPDOWN_ITEMS.map(item => ({
+        ...item,
+        onClick: () => handleDropdownClick(item),
+      })),
     },
     {
       key: 'settings',
       label: '设置',
       icon: 'mdi:cog',
-      dropdown: SETTINGS_DROPDOWN_ITEMS,
+      dropdown: SETTINGS_DROPDOWN_ITEMS.map(item => ({
+        ...item,
+        onClick: () => handleDropdownClick(item),
+      })),
     },
   ])
 
@@ -545,6 +549,7 @@
       label: '刷新',
       icon: 'mdi:refresh',
       type: 'info',
+      loading: loading.value,
       onClick: handleRefresh,
     },
   ])
@@ -565,9 +570,12 @@
 
   const handleRefresh = async () => {
     loading.value = true
-    await new Promise(r => setTimeout(r, 1500))
-    loading.value = false
-    message.success('刷新成功')
+    try {
+      await delayWithSignal(1500)
+      message.success('刷新成功')
+    } finally {
+      loading.value = false
+    }
   }
 
   const handleSelectionChange = (keys: Array<string | number>) => {

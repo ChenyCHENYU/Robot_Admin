@@ -40,7 +40,8 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted, nextTick } from 'vue'
+  defineOptions({ name: 'RobotAdminApp' })
+  import { useHighlight } from '@/plugins/highlight'
   import { s_themeStore } from '@/stores/theme'
   import { s_languageStore } from '@/stores/language'
   import { s_reLoginStore } from '@/stores/reLogin'
@@ -48,14 +49,13 @@
   import { pageLoading } from '@/router/pageLoading'
   import '@/utils/d_version'
 
-  // 获取 hljs 实例用于 NCode 组件
-  const { hljs } = window
+  // 与 C_Code 共享应用实例，无需向 window 暴露语言注册表。
+  const hljs = useHighlight().getHljs()
 
   const themeStore = s_themeStore()
   const languageStore = s_languageStore()
   const reLoginStore = s_reLoginStore()
   const { visible: pageLoadingVisible } = pageLoading
-  defineOptions({ name: 'RobotAdminApp' })
 
   // 重新登录成功处理
   const handleReLoginSuccess = () => {

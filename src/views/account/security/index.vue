@@ -97,7 +97,7 @@
         ref="passwordFormRef"
         :model-value="passwordForm"
         @update:model-value="Object.assign(passwordForm, $event)"
-        :options="PASSWORD_FORM_OPTIONS"
+        :options="passwordOptions"
         :config="passwordConfig"
         class="password-form"
       >
@@ -227,7 +227,6 @@
   }
 
   const passwordConfig = computed<FormConfig<ChangePasswordForm>>(() => ({
-    disabled: !!passwordFormRef.value?.isSubmitting,
     labelPlacement: 'left',
     labelWidth: 90,
     onSubmit: async ({ model }, context) => {
@@ -241,6 +240,13 @@
       await userStore.logout()
     },
   }))
+
+  const passwordOptions = computed(() =>
+    PASSWORD_FORM_OPTIONS.map(option => ({
+      ...option,
+      disabled: !!passwordFormRef.value?.isSubmitting || option.disabled,
+    }))
+  )
 
   const { loading: recordsLoading, run: runLatestRecordsRequest } =
     useLatestRequest()

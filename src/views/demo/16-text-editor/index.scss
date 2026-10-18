@@ -93,6 +93,18 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         min-width: 0;
 
+        &.demo-editor--disabled {
+          opacity: 0.4;
+          pointer-events: none;
+          user-select: none;
+          filter: grayscale(50%);
+        }
+
+        // 编辑能力由 C_Editor 的公开 props 管理，此处只调整演示外观。
+        &.demo-editor--readonly :deep(.w-e-toolbar) {
+          display: none;
+        }
+
         :deep(.w-e-toolbar),
         :deep(.w-e-text-container) {
           width: 100% !important;

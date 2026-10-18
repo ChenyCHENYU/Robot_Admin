@@ -85,7 +85,11 @@
           :row-key="rowKey"
           :config="{
             actions: tableActions,
-            edit: { modalTitle: '编辑角色', modalWidth: 800 },
+            edit: {
+              modalTitle: '编辑角色',
+              modalWidth: 800,
+              onSave: handleTableSave,
+            },
             pagination: {
               page: pagination.page,
               pageSize: pagination.pageSize,
@@ -93,7 +97,6 @@
               remote: true,
             },
           }"
-          @save="handleTableSave"
           @pagination-change="handlePaginationChange"
         />
       </NCard>

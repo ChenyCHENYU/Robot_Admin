@@ -145,7 +145,7 @@
   }
 
   const setFormData = (data: CardFormData): void => {
-    Object.assign(formData.value, data)
+    formRef.value?.setFields(data)
   }
 
   // 加载示例数据的方法（可选择性使用）

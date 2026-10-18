@@ -79,7 +79,7 @@ export const MODE_CONFIG: Record<
   modal: {
     title: '模态框编辑模式',
     description:
-      '使用模态框表单进行编辑，表单验证、防抖、加载状态、错误处理全部自动化。代码简洁，功能强大。',
+      '使用模态框表单进行编辑，表单校验、防重提交、加载状态与错误处理由组件统一管理。',
     alertType: 'success',
   },
   none: {

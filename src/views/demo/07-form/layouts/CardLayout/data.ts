@@ -22,7 +22,7 @@ export interface CardFormData {
   phone?: string
   address?: string
   wechat?: string
-  birthday?: string | number
+  birthday?: number | null
   hobbies?: string[]
   newsletter?: boolean
   satisfaction?: number
@@ -203,7 +203,7 @@ export const DEMO_FORM_DATA = {
   phone: '16888888888',
   address: '西安市未央区某某街道188号',
   wechat: 'demo_cheny',
-  birthday: '1995-06-15',
+  birthday: new Date(1995, 5, 15).getTime(),
   hobbies: ['reading', 'music'],
   newsletter: true,
   satisfaction: 4.5,

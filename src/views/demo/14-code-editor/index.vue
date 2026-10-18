@@ -48,6 +48,7 @@
           <NSpace>
             <NSelect
               v-model:value="selectedLanguage"
+              :disabled="loading"
               :options="languageOptions"
               placeholder="选择语言"
               style="width: 200px"
@@ -64,8 +65,8 @@
           <C_Code
             v-if="dynamicCode"
             :code="dynamicCode"
-            :language="selectedLanguage"
-            :title="`${selectedLanguage.toUpperCase()} 示例`"
+            :language="loadedLanguage"
+            :title="`${loadedLanguage.toUpperCase()} 示例`"
             @copy="handleCopy"
           />
         </NSpace>
@@ -108,15 +109,17 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo14CodeEditor' })
-  import { initializeHighlight } from '@/plugins/highlight'
+  import { useHighlight } from '@/plugins/highlight'
   import { languageOptions, codeExamples, sampleCodes } from './data'
 
   const message = useMessage()
-  const highlight = initializeHighlight()
+  const highlight = useHighlight()
 
   const selectedLanguage = ref('cpp')
   const loading = ref(false)
   const dynamicCode = ref('')
+  const loadedLanguage = ref('')
+  let disposed = false
 
   const tabLabels: Record<string, string> = {
     javascript: 'JavaScript',
@@ -139,18 +142,29 @@
     message.info(isFullscreen ? '已进入全屏' : '已退出全屏')
 
   const loadLanguage = async () => {
-    if (!selectedLanguage.value) return
+    if (!selectedLanguage.value || loading.value) return
+    const language = selectedLanguage.value
     loading.value = true
     try {
-      await highlight.loadLanguage(selectedLanguage.value)
-      dynamicCode.value = sampleCodes[selectedLanguage.value] || '// 示例代码'
-      message.success(`${selectedLanguage.value} 加载成功`)
+      const loaded = await highlight.loadLanguage(language)
+      if (disposed) return
+      if (!loaded) {
+        message.error(`${language} 语言包加载失败`)
+        return
+      }
+      dynamicCode.value = sampleCodes[language] || '// 示例代码'
+      loadedLanguage.value = language
+      message.success(`${language} 加载成功`)
     } catch (error) {
-      message.error(`加载失败: ${error}`)
+      if (!disposed) message.error(`加载失败: ${error}`)
     } finally {
-      loading.value = false
+      if (!disposed) loading.value = false
     }
   }
+
+  onBeforeUnmount(() => {
+    disposed = true
+  })
 </script>
 
 <style scoped lang="scss">

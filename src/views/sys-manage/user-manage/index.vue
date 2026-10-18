@@ -132,6 +132,7 @@
 
             <!-- 用户表格 -->
             <C_Table
+              ref="userTableRef"
               :columns="userColumns"
               :data="userList"
               :loading="loading"
@@ -141,7 +142,6 @@
                 actions: tableActions,
                 selection: {
                   enabled: true,
-                  defaultCheckedKeys: selectedUsers,
                 },
                 pagination: {
                   page: pagination.page,
@@ -490,6 +490,7 @@
     modalMode,
     formRef,
     resetPasswordFormRef,
+    userTableRef,
     deptTreeRef,
     expandedDeptKeys,
     selectedDeptKeys,

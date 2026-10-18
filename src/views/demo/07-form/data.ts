@@ -65,9 +65,6 @@ export const layoutDescriptions: Record<
   },
 }
 
-/**
- * 测试数据配置
- */
 const baseTestData = {
   username: 'cheny_888',
   realName: 'CHENY',
@@ -80,14 +77,117 @@ const baseTestData = {
   description: '',
 }
 
-const extendedTestData = {
-  hobbies: ['reading', 'music'],
-  newsletter: true,
-  satisfaction: 4.5,
-  birthday: '1995-06-15',
-  wechat: 'demo_cheny',
-  volume: 60,
-  description: '<p>这是<strong>富文本编辑器</strong>示例</p>',
+// Naive 日期控件的 value 使用时间戳；每套示例只提供该布局真实存在的字段。
+const birthday = new Date(1995, 5, 15).getTime()
+const testDataByLayout: Record<LayoutType, FormModel> = {
+  default: {
+    ...baseTestData,
+    description: '<p>这是<strong>富文本编辑器</strong>示例</p>',
+  },
+  inline: {
+    username: baseTestData.username,
+    email: baseTestData.email,
+    gender: baseTestData.gender,
+    age: baseTestData.age,
+    city: 'shanghai',
+  },
+  grid: {
+    name: baseTestData.realName,
+    email: baseTestData.email,
+    phone: baseTestData.phone,
+    gender: baseTestData.gender,
+    age: baseTestData.age,
+    city: 'shanghai',
+    company: 'Robot Admin 团队',
+    address: baseTestData.address,
+    zipcode: '710000',
+    birthday,
+    profession: 'frontend',
+    bio: '专注于企业管理系统与 Vue 组件开发。',
+  },
+  card: {
+    username: baseTestData.username,
+    realName: baseTestData.realName,
+    age: baseTestData.age,
+    gender: baseTestData.gender,
+    email: baseTestData.email,
+    phone: baseTestData.phone,
+    address: baseTestData.address,
+    wechat: 'demo_cheny',
+    birthday,
+    hobbies: ['reading', 'music'],
+    newsletter: true,
+    satisfaction: 4.5,
+    volume: 60,
+  },
+  tabs: {
+    realName: baseTestData.realName,
+    nickname: 'Robot 开发者',
+    gender: baseTestData.gender,
+    birthday,
+    education: 'bachelor',
+    mobile: baseTestData.phone,
+    email: baseTestData.email,
+    wechat: 'demo_cheny',
+    qq: '123456789',
+    address: baseTestData.address,
+    username: baseTestData.username,
+    password: baseTestData.password,
+    confirmPassword: baseTestData.password,
+    securityQuestion: '喜欢的开源项目？',
+    securityAnswer: 'Robot Admin',
+    language: 'zh-CN',
+    timezone: 'Asia/Shanghai',
+    notifications: ['email', 'push'],
+    darkMode: false,
+    autoSave: true,
+    company: 'Robot Admin 团队',
+    position: '前端工程师',
+    bio: '专注于企业管理系统与 Vue 组件开发。',
+    remarks: '仅用于演示',
+  },
+  steps: {
+    name: baseTestData.realName,
+    idCard: '110101199001010010',
+    birthday,
+    gender: baseTestData.gender,
+    phone: baseTestData.phone,
+    email: baseTestData.email,
+    address: baseTestData.address,
+    company: 'Robot Admin 团队',
+    password: baseTestData.password,
+    confirmPassword: baseTestData.password,
+    securityQuestion: '喜欢的开源项目？',
+    securityAnswer: 'Robot Admin',
+    agreements: ['user', 'privacy'],
+    newsletter: true,
+    remarks: '仅用于演示',
+  },
+  dynamic: {
+    name: baseTestData.realName,
+    gender: baseTestData.gender,
+    age: baseTestData.age,
+    isActive: true,
+    rating: 4,
+    description: '支持添加、排序和隐藏动态字段。',
+  },
+  custom: {
+    employeeId: 'EMP123456',
+    fullName: baseTestData.realName,
+    gender: baseTestData.gender,
+    birthDate: birthday,
+    phone: baseTestData.phone,
+    email: baseTestData.email,
+    address: baseTestData.address,
+    department: 'tech',
+    position: 'frontend',
+    joinDate: new Date(2024, 0, 2).getTime(),
+    salary: 18000,
+    skills: ['vue', 'node'],
+    performance: 4.5,
+    isActive: true,
+    remarks: '仅用于演示',
+  },
 }
 
 /**
@@ -98,23 +198,6 @@ export const testDataConfig = {
    * 获取测试数据
    */
   getTestData(layoutType: LayoutType): FormModel {
-    const baseData = { ...baseTestData }
-
-    // 根据布局类型添加对应的扩展数据
-    const needsExtended = ['card', 'tabs', 'steps', 'dynamic', 'custom']
-    if (needsExtended.includes(layoutType)) {
-      Object.assign(baseData, extendedTestData)
-    }
-
-    // 默认布局添加富文本内容
-    if (layoutType === 'default') {
-      baseData.description = extendedTestData.description
-    }
-
-    if (layoutType === 'grid') {
-      Object.assign(baseData, { name: baseData.realName })
-    }
-
-    return baseData
+    return structuredClone(testDataByLayout[layoutType])
   },
 }

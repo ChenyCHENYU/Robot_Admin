@@ -99,6 +99,10 @@
     formRef.value?.resetFields()
   }
 
+  onMounted(() => {
+    emit('fields-change', formOptions)
+  })
+
   defineExpose({
     validate,
     resetFields,

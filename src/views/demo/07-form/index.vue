@@ -396,7 +396,7 @@
   const FORM_ACTIONS = [
     { key: 'fill', type: 'fill', label: '填充测试' },
     { key: 'preview', type: 'preview', label: '预览数据' },
-    { key: 'clear', type: 'clear', label: '清空数据' },
+    { key: 'clear', type: 'clear', label: '重置数据' },
     { key: 'validate', type: 'validate', label: '验证表单' },
   ] as const
 
@@ -493,6 +493,7 @@ export default formData;`
   // 核心方法
   // ========================================
   const switchLayout = (layout: LayoutType) => {
+    if (layout === currentLayout.value) return
     currentLayout.value = layout
     resetForm()
 
@@ -514,16 +515,27 @@ export default formData;`
     const actions = {
       fill: () => {
         const testData = testDataConfig.getTestData(currentLayout.value)
-        Object.assign(formData.value, testData)
+        const values = Object.fromEntries(
+          currentFields.value
+            .filter(field =>
+              Object.prototype.hasOwnProperty.call(testData, field.prop)
+            )
+            .map(field => [field.prop, testData[field.prop]])
+        )
+        if (Object.keys(values).length === 0) {
+          message.warning('请先等待表单加载或添加可填写字段')
+          return
+        }
+        formData.value = { ...formData.value, ...values }
         message.success('已填充测试数据')
       },
       preview: () => {
         showModal.value = true
       },
       clear: () => {
-        resetForm()
         layoutRef.value?.resetFields?.()
-        message.info('已清空所有数据')
+        errorCount.value = 0
+        message.info('已恢复表单初始值')
       },
       validate: async () => {
         try {

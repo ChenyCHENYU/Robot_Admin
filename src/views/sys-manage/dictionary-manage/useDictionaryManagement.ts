@@ -10,6 +10,7 @@ import type { ApiResponse } from '@/api/management.contract'
 import type {
   FormInstance,
   FormConfig,
+  SubmitEventPayload,
 } from '@robot-admin/naive-ui-components/C_Form'
 import type { DialogReactive, FormItemRule } from 'naive-ui/es'
 import type { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
@@ -290,10 +291,12 @@ export const useDictionaryManagement = () => {
       ? Promise.resolve(false)
       : (formRef.value?.submit() ?? Promise.resolve(false))
   /** 提交领域数据，保留鉴权上下文与列表同步。 */
-  async function submitDraft(): Promise<void> {
+  async function submitDraft({
+    model,
+  }: SubmitEventPayload<DictFormData>): Promise<void> {
     saving.value = true
     try {
-      if (!(await saveDraft(prepareDictionaryForm(formData))))
+      if (!(await saveDraft(prepareDictionaryForm(model))))
         throw new Error('字典保存未完成')
     } finally {
       saving.value = false

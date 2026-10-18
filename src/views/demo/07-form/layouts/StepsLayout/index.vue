@@ -188,7 +188,6 @@
 
   const handleReset = () => {
     formRef.value?.resetFields()
-    formData.value = {}
     message.info('表单已重置')
   }
 
@@ -200,6 +199,10 @@
   const resetFields = (): void => {
     formRef.value?.resetFields()
   }
+
+  onMounted(() => {
+    emit('fields-change', formOptions.value)
+  })
 
   // ==================== 暴露方法 ====================
   defineExpose({

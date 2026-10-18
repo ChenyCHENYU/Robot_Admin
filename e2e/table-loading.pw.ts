@@ -184,7 +184,8 @@ test('展开子表复用 SVG 加载态，数据返回后移除状态', async ({ 
   await expect(loading.locator('..').locator('.n-spin')).toHaveCount(0)
   await page.clock.runFor(500)
   await expect(loading).toHaveCount(0)
-  await expect(demo.locator('.c-table-wrapper')).toHaveCount(2)
+  await expect(demo.locator('.c-table-wrapper')).toHaveCount(1)
+  await expect(demo.locator('.n-data-table')).toHaveCount(2)
 })
 
 /** 推进路由离场动画，目标挂载后立刻停止，让请求等待状态可稳定观测。 */

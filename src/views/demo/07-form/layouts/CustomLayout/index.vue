@@ -183,21 +183,10 @@
 
   // ================= 计算属性 =================
 
-  // 防抖处理字段变化
-  const debouncedHandleFieldsChange = useDebounceFn(
-    (fields: FormOption<EmployeeFormData>[]) => {
-      actualFields.value = fields
-      emit('fields-change', fields) // 🔥 关键：向父组件转发事件
-      if (fields.length > 0) {
-        message.info(`字段更新: ${fields.length} 个字段`)
-      }
-    },
-    200
-  )
-
-  // 事件处理
+  // 字段状态即时发布，预览和操作按钮始终使用同一份实际布局字段。
   const handleFieldsChange = (fields: FormOption<EmployeeFormData>[]): void => {
-    debouncedHandleFieldsChange(fields)
+    actualFields.value = fields
+    emit('fields-change', fields)
   }
 
   const handleValidateSuccess = (model: EmployeeFormData): void => {
@@ -216,24 +205,9 @@
     emit('submit', payload)
   }
 
-  // 获取当前表单数据的统一方法
-  const getCurrentFormData = (): EmployeeFormData => {
-    if (
-      formRef.value?.getModel &&
-      typeof formRef.value.getModel === 'function'
-    ) {
-      const formModel = formRef.value.getModel()
-      if (formModel && Object.keys(formModel).length > 0) {
-        return formModel
-      }
-    }
-    return formData.value
-  }
-
   // 检查字段是否有有效值
   const hasFieldValue = (fieldProp: string): boolean => {
-    const currentData = getCurrentFormData()
-    const value = currentData[fieldProp as keyof EmployeeFormData]
+    const value = formData.value[fieldProp as keyof EmployeeFormData]
     if (value === undefined || value === null || value === '') return false
     if (Array.isArray(value) && value.length === 0) return false
     return true
@@ -242,23 +216,15 @@
   // 计算属性
   const hasFormFields = computed(() => actualFields.value.length > 0)
 
-  const hasFormData = computed(() => {
-    if (!hasFormFields.value) return false
-    const currentData = getCurrentFormData()
-    return Object.values(currentData).some(
-      value =>
-        value !== undefined &&
-        value !== null &&
-        value !== '' &&
-        !(Array.isArray(value) && value.length === 0)
-    )
-  })
+  const hasFormData = computed(() =>
+    actualFields.value.some(field => hasFieldValue(field.prop))
+  )
 
   const validFormData = computed(() => {
     const validData: EmployeeFormData = {}
     if (!hasFormFields.value) return validData
 
-    const currentData = getCurrentFormData()
+    const currentData = formData.value
     actualFields.value.forEach(field => {
       if (
         field.prop in currentData &&
@@ -337,11 +303,7 @@
       return
     }
 
-    if (formRef.value?.setFieldsValue) {
-      formRef.value.setFieldsValue(newData)
-    } else {
-      Object.assign(formData.value, newData)
-    }
+    formRef.value?.setFields(newData)
 
     message.success(`已为 ${Object.keys(newData).length} 个字段填充测试数据`)
   }
@@ -352,11 +314,8 @@
       return
     }
 
-    formData.value = {}
-    if (formRef.value?.resetFields) {
-      formRef.value.resetFields()
-    }
-    message.info('表单已清空')
+    formRef.value?.resetFields()
+    message.info('表单已重置')
   }
 
   const validateForm = async (): Promise<void> => {
@@ -368,19 +327,13 @@
     try {
       await formRef.value.validate()
     } catch {
-      message.error('表单验证失败，请检查填写内容')
+      // 统一由 validate-error 回调提示，避免同一次校验重复报错。
     }
   }
 
   const submitForm = async (): Promise<void> => {
     if (!formRef.value || !hasFormFields.value) {
       message.warning('表单不可用或无字段')
-      return
-    }
-
-    const dataToSubmit = validFormData.value
-    if (Object.keys(dataToSubmit).length === 0) {
-      message.warning('没有可提交的数据')
       return
     }
 
@@ -430,11 +383,6 @@
   const resetFields = (): void => {
     formRef.value?.resetFields()
   }
-
-  // ==================== 初始化 ====================
-  onMounted(() => {
-    emit('fields-change', employeeFormOptions)
-  })
 
   // ==================== 暴露方法 ====================
   defineExpose({

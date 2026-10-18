@@ -127,7 +127,6 @@
         style="height: 100%"
         :config="{
           toolbar: { show: false },
-          pagination: false,
           display: { bordered: false, striped: true, size: 'small' },
         }"
       >
@@ -140,14 +139,6 @@
 </template>
 
 <script setup lang="ts">
-  import {
-    NCard,
-    NInput,
-    NSelect,
-    NButton,
-    NDatePicker,
-    useMessage,
-  } from 'naive-ui/es'
   import {
     MOCK_ACTIVITY_RECORDS,
     ACTION_TYPE_OPTIONS,
