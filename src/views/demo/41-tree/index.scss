@@ -1,0 +1,101 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-18
+ * @FilePath: \Robot_Admin\src\views\demo\41-tree\index.scss
+ * @Description: 树组件演示布局，沿用主题令牌与容器自适应
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.tree-demo-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  .density-control {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .density-select {
+    width: 120px;
+  }
+  .tree-demo-grid {
+    display: grid;
+    grid-template-columns: minmax(300px, 1.15fr) minmax(300px, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .tree-demo-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+  .controlled-tree-card {
+    min-width: 0;
+  }
+  .section-description {
+    color: var(--app-text-tertiary);
+    font-size: 13px;
+    line-height: 1.7;
+    margin: 0 0 14px;
+  }
+  .controlled-tree {
+    height: 420px;
+  }
+  .virtual-tree {
+    height: 260px;
+  }
+  .lazy-tree {
+    min-height: 110px;
+    max-height: 220px;
+  }
+  .demo-commands {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .tree-state {
+    display: grid;
+    gap: 10px;
+    padding: 14px 0 0;
+    margin: 14px 0 0;
+    border-top: 1px solid var(--app-border-default);
+    font-size: 13px;
+    > div {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 8px;
+    }
+    dt {
+      color: var(--app-text-tertiary);
+    }
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+  .lazy-error {
+    margin-bottom: 12px;
+  }
+  .lazy-error-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .lazy-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+  }
+}
+@media (max-width: 1000px) {
+  .tree-demo-page .tree-demo-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

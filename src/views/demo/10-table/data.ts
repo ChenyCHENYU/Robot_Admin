@@ -17,6 +17,13 @@ import {
   type OptionItem,
 } from '@robot-admin/naive-ui-components/C_Form'
 
+/** 表格、搜索与编辑表单使用同一密度协议。 */
+export const DENSITY_OPTIONS = [
+  { label: '紧凑', value: 'compact' },
+  { label: '标准', value: 'default' },
+  { label: '舒适', value: 'comfortable' },
+] as const
+
 // ================= 业务类型定义 =================
 export interface Employee extends DataRecord {
   id: number

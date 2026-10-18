@@ -8,6 +8,10 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
+import { proxyRefs } from 'vue'
+import type { SplitPaneExpose } from '@robot-admin/naive-ui-components/C_SplitPane'
+import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+
 /** 演示面板样式 colorClass 枚举 */
 export type PanelColorClass =
   | 'demo-panel--primary'
@@ -151,4 +155,135 @@ export const PANELS: Record<string, PanelConfig> = {
     label: '锁定面板',
     colorClass: 'demo-panel--disabled',
   },
+}
+
+interface WorkOrder {
+  id: number
+  orderNo: string
+  customer: string
+  amount: number
+  status: string
+}
+
+interface WorkDetail {
+  id: string
+  material: string
+  specification: string
+  quantity: number
+  progress: string
+}
+
+const WORK_ORDERS: WorkOrder[] = Array.from({ length: 24 }, (_, index) => ({
+  id: index + 1,
+  orderNo: `SO-202610-${String(index + 1).padStart(3, '0')}`,
+  customer: ['华东制造', '远航供应链', '星海科技', '新锐装备'][index % 4],
+  amount: (index + 1) * 12,
+  status: ['待排产', '生产中', '待质检', '已入库'][index % 4],
+}))
+
+export const WORKBENCH_TABLE_CONFIG = {
+  density: 'compact',
+  edit: 'none',
+  pagination: false,
+  toolbar: { show: false },
+  display: { striped: true },
+} as const
+
+export const WORK_ORDER_COLUMNS: TableColumn<WorkOrder>[] = [
+  { type: 'index', width: 46, fixed: 'left' },
+  { key: 'orderNo', title: '订单编号', width: 165 },
+  { key: 'customer', title: '客户', width: 120 },
+  { key: 'amount', title: '计划数量', width: 90 },
+  { key: 'status', title: '状态', width: 90 },
+]
+
+export const WORK_DETAIL_COLUMNS: TableColumn<WorkDetail>[] = [
+  { type: 'index', width: 46, fixed: 'left' },
+  { key: 'material', title: '物料', width: 130 },
+  { key: 'specification', title: '规格', width: 100 },
+  { key: 'quantity', title: '数量', width: 70 },
+  { key: 'progress', title: '进度', width: 100 },
+]
+
+/** 根据当前订单生成固定演示明细，拖动布局不会重新请求或改变业务数据。 */
+const createWorkDetails = (
+  orderId: number,
+  kind: 'material' | 'delivery'
+): WorkDetail[] =>
+  Array.from({ length: kind === 'material' ? 18 : 12 }, (_, index) => ({
+    id: `${orderId}-${kind}-${index}`,
+    material:
+      kind === 'material'
+        ? `精密部件 ${orderId}-${index + 1}`
+        : `发运批次 ${orderId}-${index + 1}`,
+    specification: ['M20 × 120', 'M24 × 160', 'M30 × 180'][index % 3],
+    quantity: (orderId + index + 1) * 3,
+    progress:
+      kind === 'material'
+        ? ['已齐套', '采购中', '待确认'][index % 3]
+        : ['已发运', '待装车', '运输中'][index % 3],
+  }))
+
+/** 管理工作台的业务上下文与受控布局；尺寸变化仅用于响应式布局。 */
+export const useSplitWorkbench = () => {
+  const workbenchRef = ref<HTMLElement | null>(null)
+  const splitRef = ref<SplitPaneExpose>()
+  const outerSize = ref(40)
+  const detailSize = ref(52)
+  const selectedId = ref(1)
+  const stacked = ref(false)
+  let observer: ResizeObserver | undefined
+  const selected = computed(() =>
+    WORK_ORDERS.find(order => order.id === selectedId.value)!
+  )
+  const materialRows = computed(() =>
+    createWorkDetails(selectedId.value, 'material')
+  )
+  const deliveryRows = computed(() =>
+    createWorkDetails(selectedId.value, 'delivery')
+  )
+  const rowProps = (row: WorkOrder) => ({
+    class: row.id === selectedId.value ? 'workbench-selected-row' : undefined,
+    tabindex: 0,
+    'aria-selected': row.id === selectedId.value,
+    onKeydown: (event: KeyboardEvent) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return
+      event.preventDefault()
+      selectedId.value = row.id
+    },
+    onClick: () => {
+      selectedId.value = row.id
+    },
+    style: { cursor: 'pointer' },
+  })
+  const resetLayout = () => {
+    outerSize.value = 40
+    detailSize.value = 52
+  }
+  onMounted(() => {
+    const element = workbenchRef.value
+    if (!element) return
+    const measure = () => {
+      stacked.value = element.clientWidth < 920
+    }
+    measure()
+    observer = new ResizeObserver(measure)
+    observer.observe(element)
+  })
+  onBeforeUnmount(() => observer?.disconnect())
+  return {
+    workbenchRef,
+    workbenchSplitRef: splitRef,
+    workbench: proxyRefs({
+      outerSize,
+      detailSize,
+      selected,
+      stacked,
+      rowProps,
+      resetLayout,
+      orders: WORK_ORDERS,
+      materialRows,
+      deliveryRows,
+    }),
+  }
 }

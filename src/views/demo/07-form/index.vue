@@ -77,6 +77,20 @@
           </template>
           <div class="config-section">
             <div class="config-item">
+              <span class="config-label">界面密度</span>
+              <NRadioGroup
+                v-model:value="density"
+                name="formDensity"
+              >
+                <NRadioButton
+                  v-for="item in DENSITY_OPTIONS"
+                  :key="item.value"
+                  :value="item.value"
+                  >{{ item.label }}</NRadioButton
+                >
+              </NRadioGroup>
+            </div>
+            <div class="config-item">
               <label class="config-label">
                 <Icon icon="mdi:format-align-left" />
                 标签位置
@@ -235,10 +249,10 @@
                       :data="previewRows"
                       row-key="key"
                       :config="{
+                        density,
                         toolbar: { show: false },
                         pagination: false,
                         display: {
-                          size: 'small',
                           bordered: false,
                           striped: false,
                           maxHeight: 360,
@@ -310,6 +324,10 @@
 
 <script setup lang="ts">
   import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+  import {
+    FORM_GLOBAL_CONFIG_KEY,
+    type ComponentDensity,
+  } from '@robot-admin/naive-ui-components/C_Form'
   interface PreviewRow {
     key: string
     value: unknown
@@ -360,7 +378,12 @@
     FormModel,
     FormOption,
   } from '@robot-admin/naive-ui-components'
-  import { layoutOptions, layoutDescriptions, testDataConfig } from './data'
+  import {
+    DENSITY_OPTIONS,
+    layoutOptions,
+    layoutDescriptions,
+    testDataConfig,
+  } from './data'
 
   // 导入布局组件
   import DefaultLayout from './layouts/DefaultLayout/index.vue'
@@ -373,6 +396,9 @@
   import CustomLayout from './layouts/CustomLayout/index.vue'
 
   const message = useMessage()
+  const density = ref<ComponentDensity>('compact')
+  // 限定在此演示页的后代组件，不修改其他页面或全局注册表。
+  provide(FORM_GLOBAL_CONFIG_KEY, reactive({ density }))
 
   // ========================================
   // 静态配置常量

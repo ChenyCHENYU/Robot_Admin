@@ -2,6 +2,10 @@
 .table-demo-page {
   padding: 20px;
 
+  .density-panel {
+    margin-bottom: 16px;
+  }
+
   .controls-section {
     background: transparent;
     border: 1px solid var(--app-border-default);
@@ -29,7 +33,6 @@
     border-radius: 8px !important;
     font-weight: 500;
     padding: 0 20px !important;
-    height: 36px !important;
   }
 
   .pagination-status {
@@ -54,13 +57,13 @@
     background: rgba(0, 0, 0, 0.15);
     margin: 0 8px;
   }
-// 展开行内容
-.expand-content {
-  padding: 16px 24px;
-  background: var(--app-bg-surface);
-  border-radius: 8px;
-  margin: 8px 0;
-}
+  // 展开行内容
+  .expand-content {
+    padding: 16px 24px;
+    background: var(--app-bg-surface);
+    border-radius: 8px;
+    margin: 8px 0;
+  }
 }
 
 // ================= 单选按钮样式 =================
@@ -95,7 +98,6 @@
 
 // ================= 表格编辑输入框宽度修复（精简版）=================
 :deep(.n-data-table .n-data-table-td) {
-
   // 统一处理所有表单组件的宽度
   .n-input,
   .n-input-number,
@@ -138,7 +140,7 @@
   &.n-data-table-td--editing {
     padding: 4px 8px !important;
 
-    >* {
+    > * {
       width: 100% !important;
     }
   }
@@ -146,10 +148,8 @@
 
 // ================= 表格列宽设置 =================
 :deep(.n-data-table) {
-
   .n-data-table-th,
   .n-data-table-td {
-
     // 使用循环简化列宽设置
     @for $i from 1 through 9 {
       &:nth-child(#{$i}) {
@@ -224,61 +224,44 @@
     padding: 12px;
 
     .controls-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
 
       .elegant-divider {
-          display: none;
-        }
+        display: none;
       }
-      }
-    :deep(.n-data-table) {
-      min-width: 900px;
+    }
+  }
+  :deep(.n-data-table) {
+    min-width: 900px;
 
-      .n-data-table-th,
-      .n-data-table-td {
-
-        // 移动端列宽优化
-        @for $i from 1 through 9 {
-          &:nth-child(#{$i}) {
-            @if $i ==1 {
-              min-width: 70px;
-            }
-
-            @else if $i ==2 {
-              min-width: 70px;
-            }
-
-            @else if $i ==3 {
-              min-width: 50px;
-            }
-
-            @else if $i ==4 {
-              min-width: 180px;
-            }
-
-            @else if $i ==5 {
-              min-width: 90px;
-            }
-
-            @else if $i ==6 {
-              min-width: 120px;
-            }
-
-            @else if $i ==7 {
-              min-width: 70px;
-            }
-
-            @else if $i ==8 {
-              min-width: 150px;
-            }
-
-            @else if $i ==9 {
-              min-width: 100px;
-            }
+    .n-data-table-th,
+    .n-data-table-td {
+      // 移动端列宽优化
+      @for $i from 1 through 9 {
+        &:nth-child(#{$i}) {
+          @if $i ==1 {
+            min-width: 70px;
+          } @else if $i ==2 {
+            min-width: 70px;
+          } @else if $i ==3 {
+            min-width: 50px;
+          } @else if $i ==4 {
+            min-width: 180px;
+          } @else if $i ==5 {
+            min-width: 90px;
+          } @else if $i ==6 {
+            min-width: 120px;
+          } @else if $i ==7 {
+            min-width: 70px;
+          } @else if $i ==8 {
+            min-width: 150px;
+          } @else if $i ==9 {
+            min-width: 100px;
           }
         }
       }
     }
-    }
+  }
+}

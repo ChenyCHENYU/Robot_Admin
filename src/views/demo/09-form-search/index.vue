@@ -16,6 +16,33 @@
       description="支持基础搜索、高级搜索、超多字段搜索，自动折叠展开、历史记录等功能"
     />
 
+    <NCard
+      class="density-controls"
+      size="small"
+    >
+      <NSpace
+        align="center"
+        justify="space-between"
+      >
+        <div>
+          <strong>搜索与表格统一密度</strong>
+          <p>切换后字段、按钮与表格同步调整，已输入的条件保持不变。</p>
+        </div>
+        <NRadioGroup
+          v-model:value="density"
+          name="searchDensity"
+        >
+          <NRadioButton
+            v-for="item in DENSITY_OPTIONS"
+            :key="item.value"
+            :value="item.value"
+          >
+            {{ item.label }}
+          </NRadioButton>
+        </NRadioGroup>
+      </NSpace>
+    </NCard>
+
     <div
       v-for="(example, type) in formConfigs"
       :key="type"
@@ -25,9 +52,17 @@
       <C_FormSearch
         v-model="example.params"
         :form-item-list="example.config.items"
-        :config="example.searchConfig"
+        :config="{ ...example.searchConfig, density }"
         :form-search-input-history-string="example.config.historyKey"
-        @reset="handleReset"
+        @reset="handleReset(type)"
+      />
+      <C_Table
+        v-if="type === 'basic'"
+        class="search-result-table"
+        :columns="previewColumns"
+        :data="basicRows"
+        row-key="id"
+        :config="{ density, toolbar: { show: false }, pagination: false }"
       />
     </div>
 
@@ -49,7 +84,9 @@
   import type {
     SearchConfig,
     SearchFormParams,
+    ComponentDensity,
   } from '@robot-admin/naive-ui-components/C_FormSearch'
+  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
   import {
     type SearchResult,
     basicFormConfig,
@@ -57,10 +94,32 @@
     megaFormConfig,
     generateMockResults,
     createSearchFields,
+    DENSITY_OPTIONS,
+    SEARCH_PREVIEW_ROWS,
+    filterSearchPreview,
+    type SearchPreviewRow,
   } from './data'
 
   const message = useMessage()
   const searchResults = ref<SearchResult[]>([])
+  const density = ref<ComponentDensity>('compact')
+  const basicRows = ref<SearchPreviewRow[]>([...SEARCH_PREVIEW_ROWS])
+  const previewColumns: TableColumn<SearchPreviewRow>[] = [
+    { type: 'index', title: '序号', width: 64 },
+    { key: 'name', title: '姓名', minWidth: 120 },
+    {
+      key: 'status',
+      title: '状态',
+      width: 100,
+      render: row => ['禁用', '启用', '待审核'][row.status] ?? '未知',
+    },
+    {
+      key: 'createdAt',
+      title: '创建时间',
+      minWidth: 180,
+      render: row => new Date(row.createdAt).toLocaleString('zh-CN'),
+    },
+  ]
 
   // onSearch 返回完整任务；search 事件只用于通知，避免同一查询执行两次。
   const searchConfig = (type: 'basic' | 'advanced' | 'mega'): SearchConfig => ({
@@ -101,11 +160,15 @@
     params: SearchFormParams
   ) => {
     message.info('搜索条件已接收（演示结果）')
-    searchResults.value = generateMockResults(type, params)
+    if (type === 'basic') {
+      basicRows.value = filterSearchPreview(params)
+      searchResults.value = basicRows.value
+    } else searchResults.value = generateMockResults(type, params)
   }
 
   // 统一重置处理
-  const handleReset = () => {
+  const handleReset = (type: keyof typeof formConfigs) => {
+    if (type === 'basic') basicRows.value = [...SEARCH_PREVIEW_ROWS]
     searchResults.value = []
     message.info('表单已重置')
   }

@@ -43,9 +43,8 @@ test('状态 0 独立查询一次，重置后提交使用已清空的最终条�
   await buttons.nth(0).click()
   const results = page.locator('.demo-section pre')
   await expect(results).toContainText('"status": 0')
-  expect(JSON.parse(await results.innerText())).toEqual([
-    { id: 1, name: '用户1', status: 0 },
-    { id: 2, name: '用户2', status: 0 },
+  expect(JSON.parse(await results.innerText())).toMatchObject([
+    { id: 2, name: '李四', status: 0 },
   ])
   await expect(
     page.getByText('搜索条件已接收（演示结果）', { exact: true })
@@ -57,12 +56,11 @@ test('状态 0 独立查询一次，重置后提交使用已清空的最终条�
   await expect(basic.locator('.n-select')).toContainText('请选择状态')
   await expect(basic.getByPlaceholder('开始时间')).toHaveValue('')
   await expect(basic.getByPlaceholder('结束时间')).toHaveValue('')
-  await basic.getByPlaceholder('请输入用户名称').fill('重置后的条件')
+  await basic.getByPlaceholder('请输入用户名称').fill('张三')
   await buttons.nth(0).click()
-  await expect(results).toContainText('重置后的条件')
-  expect(JSON.parse(await results.innerText())).toEqual([
-    { id: 1, name: '重置后的条件', status: '启用' },
-    { id: 2, name: '重置后的条件', status: '禁用' },
+  await expect(results).toContainText('张三')
+  expect(JSON.parse(await results.innerText())).toMatchObject([
+    { id: 1, name: '张三', status: 1 },
   ])
 })
 

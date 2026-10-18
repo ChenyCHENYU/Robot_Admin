@@ -13,6 +13,30 @@
       description="支持多种编辑模式、树形数据等完整企业级功能"
     />
 
+    <NCard
+      class="density-panel"
+      size="small"
+    >
+      <NSpace
+        align="center"
+        justify="space-between"
+      >
+        <span>界面密度 · 表格、分页、行内编辑与弹窗表单同步调整</span>
+        <NRadioGroup
+          v-model:value="density"
+          name="tableDensity"
+        >
+          <NRadioButton
+            v-for="item in DENSITY_OPTIONS"
+            :key="item.value"
+            :value="item.value"
+          >
+            {{ item.label }}
+          </NRadioButton>
+        </NRadioGroup>
+      </NSpace>
+    </NCard>
+
     <NTabs
       v-model:value="activeTab"
       type="line"
@@ -57,7 +81,7 @@
                   type="primary"
                   :disabled="editMode === 'none'"
                   class="action-button"
-                  size="medium"
+                  :size="controlSize"
                 >
                   <template #icon>
                     <C_Icon name="mdi:plus-circle" />
@@ -71,7 +95,7 @@
                   <span class="status-label">分页状态：</span>
                   <NSwitch
                     v-model:value="tableCrud.paginationEnabled.value"
-                    size="medium"
+                    :size="controlSize"
                   >
                     <template #checked> 开启 </template>
                     <template #unchecked> 关闭 </template>
@@ -83,7 +107,7 @@
                 <NButton
                   @click="tableCrud.refresh()"
                   type="info"
-                  size="medium"
+                  :size="controlSize"
                   :loading="tableCrud.loading.value"
                 >
                   <template #icon>
@@ -141,9 +165,10 @@
               :data="TREE_TABLE_DATA"
               :row-key="(row: Employee) => row.id"
               :config="{
+                density,
                 toolbar: { show: false },
                 pagination: false,
-                display: { size: 'small', striped: true },
+                display: { striped: true },
                 tree: { enabled: true, defaultExpandAll: true },
               }"
             />
@@ -182,12 +207,14 @@
         <template #action="{ submit, submitting }">
           <NSpace justify="end">
             <NButton
+              :size="controlSize"
               :disabled="submitting"
               @click="showAddModal = false"
               >取消</NButton
             >
             <NButton
               type="primary"
+              :size="controlSize"
               :loading="submitting"
               @click="submit"
               >保存</NButton
@@ -200,10 +227,14 @@
 </template>
 
 <script setup lang="ts">
-  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
-
   defineOptions({ name: 'Demo10Table' })
-  import type { EditMode, TableConfig } from '@robot-admin/naive-ui-components'
+  import {
+    resolveComponentDensity,
+    type ComponentDensity,
+    type EditMode,
+    type TableConfig,
+    type TableColumn,
+  } from '@robot-admin/naive-ui-components/C_Table'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import {
     PRESET_RULES,
@@ -223,6 +254,7 @@
     STATUS_TAG_CONFIG,
     ADD_FORM_DEFAULTS,
     TREE_TABLE_DATA,
+    DENSITY_OPTIONS,
   } from './data'
 
   // 初始化表格 CRUD
@@ -230,6 +262,10 @@
 
   // UI 状态
   const activeTab = ref('crud')
+  const density = ref<ComponentDensity>('compact')
+  const controlSize = computed(
+    () => resolveComponentDensity(density.value).size
+  )
   const editMode = ref<EditMode>('modal')
   const showAddModal = ref(false)
   const addFormData = ref<AddEmployeeForm>({ ...ADD_FORM_DEFAULTS })
@@ -238,11 +274,12 @@
   const currentModeConfig = computed(() => MODE_CONFIG[editMode.value])
 
   const tableConfig = computed<TableConfig<Employee>>(() => ({
-    edit: {
-      mode: editMode.value,
-      modalTitle: '编辑员工信息',
-      modalWidth: 700,
-    },
+    density: density.value,
+    // 常见模式只需一个字符串；定制弹窗时再传完整对象。
+    edit:
+      editMode.value === 'modal'
+        ? { mode: 'modal', modalTitle: '编辑员工信息', modalWidth: 700 }
+        : editMode.value,
   }))
 
   const addFormOptions: FormOption<AddEmployeeForm>[] = [
@@ -311,7 +348,8 @@
       attrs: { rows: 3 },
     },
   ]
-  const addFormConfig: FormConfig<AddEmployeeForm> = {
+  const addFormConfig = computed<FormConfig<AddEmployeeForm>>(() => ({
+    density: density.value,
     labelPlacement: 'left',
     labelWidth: 80,
     onSubmit: async ({ model }) => {
@@ -321,7 +359,7 @@
       await tableCrud.create({ ...model, id: Date.now(), age, joinDate })
       showAddModal.value = false
     },
-  }
+  }))
 
   // ============ 树形表格列 ============
   const treeColumns = computed<TableColumn<Employee>[]>(() => [

@@ -9,6 +9,20 @@
 .form-search-demo {
   padding: 20px;
 
+  .density-controls {
+    margin-bottom: 24px;
+
+    p {
+      margin: 4px 0 0;
+      color: var(--app-text-secondary);
+      font-size: 13px;
+    }
+  }
+
+  .search-result-table {
+    margin-top: 12px;
+  }
+
   .demo-section {
     margin-bottom: 32px;
 

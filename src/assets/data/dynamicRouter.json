@@ -303,6 +303,19 @@
           }
         },
         {
+          "path": "tree",
+          "name": "demo-tree",
+          "component": "/demo/41-tree/index",
+          "meta": {
+            "icon": "mdi:file-tree",
+            "title": "树工作台",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": false
+          }
+        },
+        {
           "path": "split-pane",
           "name": "demo-split-pane",
           "component": "/demo/43-split-pane/index",

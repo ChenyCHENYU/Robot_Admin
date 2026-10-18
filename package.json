@@ -70,7 +70,7 @@
     "@robot-admin/file-utils": "3.0.1",
     "@robot-admin/form-validate": "3.4.2",
     "@robot-admin/layout": "3.2.1",
-    "@robot-admin/naive-ui-components": "0.16.0",
+    "@robot-admin/naive-ui-components": "0.17.0",
     "@robot-admin/request-core": "0.6.1",
     "@robot-admin/theme": "0.6.1",
     "@splinetool/runtime": "^1.12.68",
@@ -190,7 +190,6 @@
     "vite-auto-i18n-plugin@1.1.16": "patches/vite-auto-i18n-plugin@1.1.16.patch",
     "auto-i18n-plugin-core@1.1.16": "patches/auto-i18n-plugin-core@1.1.16.patch",
     "@agile-team/mach-table@0.30.1": "patches/@agile-team%2Fmach-table@0.30.1.patch",
-    "@agile-team/mach-table-vue@0.30.1": "patches/@agile-team%2Fmach-table-vue@0.30.1.patch",
-    "@robot-admin/naive-ui-components@0.16.0": "patches/@robot-admin%2Fnaive-ui-components@0.16.0.patch"
+    "@agile-team/mach-table-vue@0.30.1": "patches/@agile-team%2Fmach-table-vue@0.30.1.patch"
   }
 }

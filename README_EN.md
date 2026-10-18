@@ -17,7 +17,7 @@
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml"><img src="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-8FB6FF?style=flat-square&amp;logo=bun&amp;logoColor=white" alt="Bun ≥1.4.2"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FB6FF?style=flat-square" alt="MIT License"></a>
-    <a href="#capability-map"><img src="https://img.shields.io/badge/demos-56-orange?style=flat-square" alt="56 demo pages"></a>
+    <a href="#capability-map"><img src="https://img.shields.io/badge/demos-57-orange?style=flat-square" alt="57 demo pages"></a>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin"><img src="https://img.shields.io/github/stars/ChenyCHENYU/Robot_Admin?style=flat-square&amp;label=Star" alt="GitHub Stars"></a>
   </p>
 </div>
@@ -32,7 +32,7 @@ The current SPA mainline, **v2.7.0**, includes company-context login, system man
 | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Architectures                 | SPA, Bun Workspaces, Module Federation and MicroApp branches                                             |
 | Components and packages       | 55 business components, 11 directives; 7 runtime `@robot-admin/*` packages and 1 Git tooling package     |
-| Examples                      | 56 demo pages covering data entry, complex grids, workflow editing, files and media                      |
+| Examples                      | 57 demo pages covering data entry, complex grids, workflow editing, files and media                      |
 | Verification and traceability | Dual lint, types, logic and component tests, bundle budgets, browser paint regression and build identity |
 
 ## Quick start
@@ -69,6 +69,7 @@ Development enables Mock by default. The public demo uses an explicit `demo` dep
 | Project analysis           | Source and dependency distribution, build artifacts, browser loading timeline and real repository counts        | Charts grounded in the current project and its engineering state                    |
 | Usage statistics           | Successful-navigation PV, login and company-switch events, feature actions and route-duration percentiles       | Local browser samples by default; API integration for site-wide summaries           |
 | Enterprise notifications   | Shared inbox, independent todos, templates, dispatches, delivery records, audit and preferences                 | [Backend-free demo and remote adapter contract](./docs/enterprise-notifications.md) |
+| Data workbenches           | Shared form/search/table density, controlled virtual trees and nested three-table layouts                       | [0.17 integration and demos (Chinese)](./docs/core-components-0.17.md)              |
 
 Company switches update the session and clear old permissions, dynamic routes and tabs. Route registration and request responses use identity generations to reject stale results. See the [enterprise authentication contract](./docs/enterprise-auth.md) for backend context activation and isolation, and [observability](./docs/observability.md) for metric definitions.
 
@@ -83,7 +84,7 @@ Company switches update the session and clear old permissions, dynamic routes an
 | Time and visualization | Date, city, calendars, timelines, Gantt, charts and large-screen templates                                                                             |
 | Application experience | Menus, search, theme, language, tours, empty states, error pages and route-loading feedback                                                            |
 
-The demo directory contains **56 demo pages + 8 form layouts (64 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
+The demo directory contains **57 demo pages + 8 form layouts (65 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
 
 > Cron previews do not schedule backend jobs; formula evaluation does not modify business data. Demo data, frontend data-scope configuration and button controls require real APIs and server authorization for production use.
 
@@ -128,7 +129,7 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.16.0`       | 55 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.17.0`       | 55 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.6.1`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.2`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.1`        | 6 layouts, framework-independent settings protocol, Vue Headless and Naive entry points | Host-owned menus, routes and slots; package-owned layout behavior |

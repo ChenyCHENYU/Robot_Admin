@@ -453,22 +453,18 @@ test('搜索表单精简模板后条件、历史和展开状态互不串联', as
   const advanced = sections.nth(1)
   const searchButtons = (container: Locator) =>
     container.locator('.form-search-item-box').last().getByRole('button')
-  await basic.getByPlaceholder('请输入用户名称').fill('独立基础条件')
+  await basic.getByPlaceholder('请输入用户名称').fill('张三')
   await searchButtons(basic).nth(0).click()
-  await expect(page.locator('.demo-section pre')).toContainText('独立基础条件')
+  await expect(page.locator('.demo-section pre')).toContainText('张三')
   await advanced.getByPlaceholder('请输入关键词搜索').fill('独立高级条件')
   await searchButtons(advanced).nth(2).click()
   await expect(advanced.getByPlaceholder('请输入版本号')).toBeVisible()
-  await expect(basic.getByPlaceholder('请输入用户名称')).toHaveValue(
-    '独立基础条件'
-  )
+  await expect(basic.getByPlaceholder('请输入用户名称')).toHaveValue('张三')
   await searchButtons(advanced).nth(1).click()
   await expect(advanced.getByPlaceholder('请输入关键词搜索')).toHaveValue('')
-  await expect(basic.getByPlaceholder('请输入用户名称')).toHaveValue(
-    '独立基础条件'
-  )
+  await expect(basic.getByPlaceholder('请输入用户名称')).toHaveValue('张三')
   await basic.getByPlaceholder('请输入用户名称').focus()
-  await expect(basic.locator('.history-item')).toContainText('独立基础条件')
+  await expect(basic.locator('.history-item')).toContainText('张三')
   await expect(advanced.locator('.input-history')).toHaveCount(0)
 })
 

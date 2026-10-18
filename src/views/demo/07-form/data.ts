@@ -9,6 +9,13 @@
  */
 import type { FormModel, LayoutType } from '@robot-admin/naive-ui-components'
 
+/** 表单、搜索与表格共用的三档密度。 */
+export const DENSITY_OPTIONS = [
+  { label: '紧凑', value: 'compact' },
+  { label: '标准', value: 'default' },
+  { label: '舒适', value: 'comfortable' },
+] as const
+
 /**
  * 布局选项配置
  */

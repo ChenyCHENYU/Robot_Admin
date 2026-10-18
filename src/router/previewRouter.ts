@@ -83,6 +83,12 @@ export const previewRoutes: RouteRecordRaw = {
 
     // ==================== 操作/导航 ====================
     {
+      path: 'tree',
+      name: 'preview-tree',
+      component: () => import('_views/demo/41-tree/index.vue'),
+      meta: { title: '树工作台' },
+    },
+    {
       path: 'action-bar',
       name: 'preview-action-bar',
       component: () => import('_views/demo/40-action-bar/index.vue'),

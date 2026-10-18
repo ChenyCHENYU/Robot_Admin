@@ -17,7 +17,7 @@
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml"><img src="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-8FB6FF?style=flat-square&amp;logo=bun&amp;logoColor=white" alt="Bun ≥1.4.2"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FB6FF?style=flat-square" alt="MIT License"></a>
-    <a href="#能力地图"><img src="https://img.shields.io/badge/demos-56-orange?style=flat-square" alt="56 个演示页面"></a>
+    <a href="#能力地图"><img src="https://img.shields.io/badge/demos-57-orange?style=flat-square" alt="57 个演示页面"></a>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin"><img src="https://img.shields.io/github/stars/ChenyCHENYU/Robot_Admin?style=flat-square&amp;label=Star" alt="GitHub Stars"></a>
   </p>
 </div>
@@ -32,7 +32,7 @@
 | ---------- | -------------------------------------------------------------------------- |
 | 架构选择   | SPA、Bun Workspaces、Module Federation、MicroApp 四种分支                  |
 | 组件与插件 | 55 个业务组件、11 个指令；7 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
-| 场景示例   | 56 个演示页面，覆盖数据录入、复杂表格、流程编辑、文件与媒体                |
+| 场景示例   | 57 个演示页面，覆盖数据录入、复杂表格、流程编辑、文件与媒体                |
 | 验证与溯源 | 双 Lint、类型、逻辑与组件测试、构建预算、浏览器绘制回归、构建身份卡        |
 
 ## 快速开始
@@ -67,6 +67,7 @@ bun run dev
 | 权限与治理 | 用户、角色、菜单、字典；动态路由、按钮权限、临时角色授权与治理摘要 | 按后端能力开放操作并处理并发冲突                             |
 | 工作空间   | 6 种布局、主题设置、多标签页、菜单配置页面缓存、功能引导           | 为不同业务密度提供一致的导航与反馈                           |
 | 企业消息   | 共享收件箱、待办、模板、发送投递、审计与偏好；无需后端即可演示     | [演示与真实接口共用契约](./docs/enterprise-notifications.md) |
+| 高频工作台 | 表单/搜索/表格统一密度、受控虚拟树、嵌套三表分屏                   | [0.17 接入与演示](./docs/core-components-0.17.md)            |
 | 工程分析   | 源码与依赖分布、构建产物、浏览器加载时间线、真实仓库计数           | 用当前项目数据展示图表能力与工程状态                         |
 | 使用统计   | 成功导航 PV、登录与公司切换、功能操作、页面耗时分位数              | 默认观察当前浏览器；通过接口接入全站汇总                     |
 
@@ -83,7 +84,7 @@ bun run dev
 | 时间与展示 | 日期、城市、日程、时间线、甘特、图表、大屏模板                                    |
 | 全局体验   | 菜单、搜索、主题、语言、引导、空状态、错误页与路由加载反馈                        |
 
-演示目录包含 **56 个演示页 + 8 个表单布局（64 个 index.vue）**。组件库提供独立子路径与样式入口，重型编辑器、图表、流程和媒体能力按路由加载。查看 [组件库](https://github.com/ChenyCHENYU/naive-ui-components) 或在 [在线体验](https://robotadmin.cn) 中按场景浏览。
+演示目录包含 **57 个演示页 + 8 个表单布局（65 个 index.vue）**。组件库提供独立子路径与样式入口，重型编辑器、图表、流程和媒体能力按路由加载。查看 [组件库](https://github.com/ChenyCHENYU/naive-ui-components) 或在 [在线体验](https://robotadmin.cn) 中按场景浏览。
 
 > Cron 预览不创建后台任务，公式试算不修改业务数据。演示数据、前端数据范围配置与按钮控制需要真实接口和服务端授权配合，才能用于生产业务。
 
@@ -128,7 +129,7 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.16.0` | 55 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.17.0` | 55 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.6.1`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.2`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.1`  | 6 种布局、框架无关设置协议、Vue Headless 与 Naive 入口     | 宿主提供菜单、路由和插槽，布局由包实现 |

@@ -16,6 +16,163 @@
       description="支持水平/垂直分割、折叠展开、尺寸限制、嵌套布局等特性，适用于编辑器布局、管理后台等场景"
     />
 
+    <section
+      class="demo-section split-workbench-section"
+      aria-labelledby="split-workbench-title"
+    >
+      <div class="split-workbench-heading">
+        <div>
+          <span class="split-workbench-eyebrow">MASTER / DETAIL WORKSPACE</span>
+          <h2
+            id="split-workbench-title"
+            class="section-title"
+            >订单与双明细工作台</h2
+          >
+          <p class="section-desc"
+            >选择左侧订单联动两张明细表；拖动仅调整空间，每张表独立滚动。</p
+          >
+        </div>
+        <NSpace
+          :size="8"
+          class="split-workbench-actions"
+        >
+          <NButton
+            size="small"
+            @click="workbenchSplitRef?.toggle('first')"
+            >订单区折叠 / 展开</NButton
+          >
+          <NButton
+            size="small"
+            @click="workbench.resetLayout"
+            >恢复布局</NButton
+          >
+        </NSpace>
+      </div>
+      <div
+        ref="workbenchRef"
+        class="split-workbench"
+        :class="{ 'split-workbench--stacked': workbench.stacked }"
+        data-testid="split-workbench"
+      >
+        <C_SplitPane
+          ref="workbenchSplitRef"
+          v-model:size="workbench.outerSize"
+          :direction="workbench.stacked ? 'vertical' : 'horizontal'"
+          :min-first-size="workbench.stacked ? 200 : 280"
+          :min-second-size="workbench.stacked ? 400 : 360"
+          aria-label="订单列表"
+        >
+          <template #first="{ collapsed }">
+            <section
+              v-if="!collapsed"
+              class="split-workbench-panel"
+              aria-label="订单列表区域"
+              data-testid="split-orders-panel"
+            >
+              <header class="split-workbench-panel__header"
+                ><h3>订单列表</h3
+                ><NTag
+                  size="small"
+                  :bordered="false"
+                  >24 笔订单</NTag
+                ></header
+              >
+              <div class="split-workbench-panel__table">
+                <C_Table
+                  :columns="WORK_ORDER_COLUMNS"
+                  :data="workbench.orders"
+                  :config="WORKBENCH_TABLE_CONFIG"
+                  :row-props="workbench.rowProps"
+                  flex-height
+                />
+              </div>
+            </section>
+          </template>
+          <template #second="{ collapsed }">
+            <C_SplitPane
+              v-if="!collapsed"
+              v-model:size="workbench.detailSize"
+              direction="vertical"
+              :min-first-size="180"
+              :min-second-size="180"
+              aria-label="订单物料明细"
+            >
+              <template #first="{ collapsed: materialCollapsed }">
+                <section
+                  v-if="!materialCollapsed"
+                  class="split-workbench-panel"
+                  data-testid="split-material-panel"
+                >
+                  <header class="split-workbench-panel__header"
+                    ><div
+                      ><h3>物料明细</h3
+                      ><span>{{ workbench.selected.orderNo }}</span></div
+                    ><NTag
+                      size="small"
+                      type="info"
+                      :bordered="false"
+                      >{{ workbench.materialRows.length }} 项</NTag
+                    ></header
+                  >
+                  <div class="split-workbench-panel__table">
+                    <C_Table
+                      :columns="WORK_DETAIL_COLUMNS"
+                      :data="workbench.materialRows"
+                      :config="WORKBENCH_TABLE_CONFIG"
+                      flex-height
+                    />
+                  </div>
+                </section>
+              </template>
+              <template #second="{ collapsed: deliveryCollapsed }">
+                <section
+                  v-if="!deliveryCollapsed"
+                  class="split-workbench-panel"
+                  data-testid="split-delivery-panel"
+                >
+                  <header class="split-workbench-panel__header"
+                    ><div
+                      ><h3>发运记录</h3
+                      ><span>{{ workbench.selected.customer }}</span></div
+                    ><NTag
+                      size="small"
+                      type="success"
+                      :bordered="false"
+                      >{{ workbench.deliveryRows.length }} 批</NTag
+                    ></header
+                  >
+                  <div class="split-workbench-panel__table">
+                    <C_Table
+                      :columns="WORK_DETAIL_COLUMNS"
+                      :data="workbench.deliveryRows"
+                      :config="WORKBENCH_TABLE_CONFIG"
+                      flex-height
+                    />
+                  </div>
+                </section>
+              </template>
+            </C_SplitPane>
+          </template>
+        </C_SplitPane>
+      </div>
+      <div
+        class="split-workbench-status"
+        role="status"
+      >
+        <span
+          >当前订单 <strong>{{ workbench.selected.orderNo }}</strong></span
+        >
+        <span
+          >订单区 {{ workbench.outerSize.toFixed(1) }}% · 物料区
+          {{ workbench.detailSize.toFixed(1) }}%</span
+        >
+        <span
+          >{{ workbench.stacked ? '窄屏上下布局' : '宽屏左右布局' }} ·
+          收起区域暂停渲染</span
+        >
+      </div>
+    </section>
+
     <!-- 基础水平分割 -->
     <div class="demo-section">
       <h2 class="section-title">
@@ -386,7 +543,16 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo43SplitPane' })
-  import { SECTIONS, PANELS } from './data'
+  import {
+    SECTIONS,
+    PANELS,
+    useSplitWorkbench,
+    WORKBENCH_TABLE_CONFIG,
+    WORK_ORDER_COLUMNS,
+    WORK_DETAIL_COLUMNS,
+  } from './data'
+
+  const { workbenchRef, workbenchSplitRef, workbench } = useSplitWorkbench()
 
   const message = useMessage()
   const basicRef = ref()

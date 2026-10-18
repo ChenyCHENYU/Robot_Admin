@@ -87,6 +87,63 @@ export interface SearchResult {
   [key: string]: unknown
 }
 
+/** 搜索与表格共享密度，保留每个示例的独立草稿。 */
+export const DENSITY_OPTIONS = [
+  { label: '紧凑', value: 'compact' },
+  { label: '标准', value: 'default' },
+  { label: '舒适', value: 'comfortable' },
+] as const
+
+export interface SearchPreviewRow extends SearchResult {
+  name: string
+  status: number
+  createdAt: number
+}
+
+/** 基础搜索使用真实可筛选的内存数据，状态 0 同样有效。 */
+export const SEARCH_PREVIEW_ROWS: SearchPreviewRow[] = [
+  {
+    id: 1,
+    name: '张三',
+    status: 1,
+    createdAt: new Date(2026, 9, 16, 10).getTime(),
+  },
+  {
+    id: 2,
+    name: '李四',
+    status: 0,
+    createdAt: new Date(2026, 9, 17, 14).getTime(),
+  },
+  {
+    id: 3,
+    name: '王五',
+    status: 2,
+    createdAt: new Date(2026, 9, 18, 9).getTime(),
+  },
+]
+
+/** 根据已提交的条件筛选，输入草稿与列表查询分开。 */
+export function filterSearchPreview(
+  params: SearchFormParams
+): SearchPreviewRow[] {
+  const name =
+    typeof params.name === 'string' ? params.name.trim().toLowerCase() : ''
+  const range = Array.isArray(params.dateRange) ? params.dateRange : []
+  const timestamps = range.map(value =>
+    typeof value === 'number' ? value : new Date(String(value)).getTime()
+  )
+  return SEARCH_PREVIEW_ROWS.filter(
+    row =>
+      (!name || row.name.toLowerCase().includes(name)) &&
+      (params.status === null ||
+        params.status === undefined ||
+        row.status === params.status) &&
+      (timestamps.length !== 2 ||
+        !timestamps.every(Number.isFinite) ||
+        (row.createdAt >= timestamps[0] && row.createdAt <= timestamps[1]))
+  )
+}
+
 // 基础示例配置
 export const basicFormConfig: FormConfig<BasicFormParams> = {
   params: {

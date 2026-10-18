@@ -120,3 +120,120 @@
     }
   }
 }
+
+.split-workbench-section {
+  padding: 22px;
+  border: 1px solid var(--app-border-default);
+  border-radius: 14px;
+  background: var(--app-bg-content);
+}
+
+.split-workbench-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+
+  .section-title {
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    margin-bottom: 0;
+  }
+}
+
+.split-workbench-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  color: var(--app-text-tertiary);
+}
+
+// 明确传递到每层面板和表格的高度；表格独立管理行滚动。
+.split-workbench {
+  height: 640px;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--app-border-default);
+  border-radius: 10px;
+
+  &--stacked {
+    height: 900px;
+  }
+}
+
+.split-workbench-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--app-bg-content);
+
+  &__header {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--app-border-default);
+
+    h3 {
+      margin: 0;
+      color: var(--app-text-primary);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    span:not(.n-tag) {
+      color: var(--app-text-tertiary);
+      font-size: 11px;
+    }
+  }
+
+  &__table {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  :deep(.workbench-selected-row td) {
+    background: color-mix(
+      in srgb,
+      var(--primary-color) 10%,
+      var(--app-bg-content)
+    );
+  }
+}
+
+.split-workbench-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-top: 12px;
+  color: var(--app-text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  strong {
+    font-weight: 600;
+    color: var(--app-text-primary);
+  }
+}
+
+@media (max-width: 640px) {
+  .split-pane-demo-page {
+    padding: 12px;
+  }
+  .split-workbench-section {
+    padding: 12px;
+  }
+}

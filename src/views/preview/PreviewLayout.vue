@@ -71,8 +71,8 @@
   .preview-layout {
     padding: 24px;
     min-height: 100vh;
-    background: var(--body-color, #fff);
-    color: var(--text-color-1, #333);
+    background: var(--app-bg-body, #fff);
+    color: var(--app-text-primary, #333);
     overflow-y: auto;
   }
 
@@ -83,7 +83,7 @@
     justify-content: center;
     gap: 16px;
     min-height: 60vh;
-    color: var(--text-color-3, #999);
+    color: var(--app-text-tertiary, #999);
     font-size: 14px;
   }
 
@@ -94,7 +94,7 @@
     justify-content: center;
     min-height: 60vh;
     text-align: center;
-    color: var(--text-color-2, #666);
+    color: var(--app-text-secondary, #666);
   }
 
   .preview-error .error-icon {
