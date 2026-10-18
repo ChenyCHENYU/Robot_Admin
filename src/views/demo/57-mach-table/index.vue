@@ -50,7 +50,7 @@
 
         <C_ActionBar
           :actions="featureActions"
-          :config="{ size: 'small' }"
+          :config="{ size: 'tiny' }"
         />
       </div>
 
@@ -73,7 +73,7 @@
         <C_ActionBar
           class="mach-demo-toolbar__actions"
           :actions="tableActions"
-          :config="{ wrap: true, align: 'right', size: 'small' }"
+          :config="{ wrap: true, align: 'right', size: 'tiny' }"
         />
       </div>
 

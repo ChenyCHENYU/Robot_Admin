@@ -75,7 +75,67 @@
 
 // 配置项标签
 .config-label {
-  font-size: 14px;
-  color: var(--n-text-color-2);
-  margin-right: 8px;
+  flex: none;
+  width: 56px;
+  font-size: 12px;
+  color: var(--app-text-secondary);
+}
+
+.action-bar-config {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+
+  &__controls {
+    display: grid;
+    gap: 14px;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__size {
+    width: 112px;
+  }
+
+  &__preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--app-text-secondary);
+
+    > span:first-child {
+      font-weight: 500;
+      color: var(--app-text-primary);
+    }
+  }
+
+  &__preview {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 360px;
+    min-width: 0;
+    padding: 12px;
+    overflow-x: auto;
+    background: var(--app-bg-surface);
+    border: 1px dashed var(--app-border-default);
+    border-radius: 8px;
+
+    :deep(.c-action-bar) {
+      margin-bottom: 0;
+    }
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: 12px;
+    color: var(--app-text-tertiary);
+    line-height: 1.6;
+  }
 }

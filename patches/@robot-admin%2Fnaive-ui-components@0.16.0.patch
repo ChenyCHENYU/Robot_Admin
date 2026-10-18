@@ -1,0 +1,579 @@
+diff --git a/dist/C_ActionBar.css b/dist/C_ActionBar.css
+index 201d0d46d6092861e1ee38bdc5fe5be860bc5297..b9841c00a7543cb11493b17f3ed0fb38438694bf 100644
+--- a/dist/C_ActionBar.css
++++ b/dist/C_ActionBar.css
+@@ -67,8 +67,9 @@
+ 
+ /* 通用操作按钮组件样式 */
+ /* ================= 主容器 ================= */
+-.c-action-bar[data-v-3c85fa90] {
++.c-action-bar[data-v-48eb3073] {
+   display: flex;
++  min-width: 0;
+   align-items: center;
+   justify-content: space-between;
+   padding: 16px;
+@@ -78,26 +79,26 @@
+   border: 1px solid var(--c-border);
+   transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+ }
+-.c-action-bar.is-align-left[data-v-3c85fa90] {
++.c-action-bar.is-align-left[data-v-48eb3073] {
+   justify-content: flex-start;
+ }
+-.c-action-bar.is-align-center[data-v-3c85fa90] {
++.c-action-bar.is-align-center[data-v-48eb3073] {
+   justify-content: center;
+ }
+-.c-action-bar.is-align-right[data-v-3c85fa90] {
++.c-action-bar.is-align-right[data-v-48eb3073] {
+   justify-content: flex-end;
+ }
+-.c-action-bar.is-align-space-between[data-v-3c85fa90] {
++.c-action-bar.is-align-space-between[data-v-48eb3073] {
+   justify-content: space-between;
+ }
+-.c-action-bar.is-align-space-around[data-v-3c85fa90] {
++.c-action-bar.is-align-space-around[data-v-48eb3073] {
+   justify-content: space-around;
+ }
+-.c-action-bar.is-compact[data-v-3c85fa90] {
++.c-action-bar.is-compact[data-v-48eb3073] {
+   padding: 8px;
+   margin-bottom: 8px;
+ }
+-.c-action-bar.is-inline[data-v-3c85fa90] {
++.c-action-bar.is-inline[data-v-48eb3073] {
+   padding: 0;
+   margin-bottom: 0;
+   background: transparent;
+@@ -105,97 +106,104 @@
+   border-radius: 0;
+   box-shadow: none;
+ }
+-.c-action-bar.is-wrap[data-v-3c85fa90] {
++.c-action-bar.is-wrap[data-v-48eb3073] {
+   flex-wrap: wrap;
+   gap: 8px;
+ }
++.c-action-bar.is-wrap .actions-group[data-v-48eb3073] {
++  flex-wrap: wrap;
++  min-width: 0;
++  max-width: 100%;
++}
+ @media (max-width: 768px) {
+-.c-action-bar[data-v-3c85fa90] {
++.c-action-bar[data-v-48eb3073] {
+     flex-direction: column;
+     gap: 12px;
+ }
+-.c-action-bar .actions-group[data-v-3c85fa90] {
++.c-action-bar .actions-group[data-v-48eb3073] {
+     width: 100%;
+     justify-content: center;
+ }
+ }
+ 
+ /* ================= 按钮组 ================= */
+-.actions-group[data-v-3c85fa90] {
++.actions-group[data-v-48eb3073] {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+   flex-wrap: nowrap;
++  flex-shrink: 0;
+ }
+-.actions-group.actions-left[data-v-3c85fa90] {
++.actions-group.actions-left[data-v-48eb3073] {
+   justify-content: flex-start;
+ }
+-.actions-group.actions-right[data-v-3c85fa90] {
++.actions-group.actions-right[data-v-48eb3073] {
+   justify-content: flex-end;
+ }
+-.c-action-bar.has-only-left.is-align-center .actions-group.actions-left[data-v-3c85fa90], .c-action-bar.has-only-right.is-align-center .actions-group.actions-right[data-v-3c85fa90] {
++.c-action-bar.has-only-left.is-align-center .actions-group.actions-left[data-v-48eb3073], .c-action-bar.has-only-right.is-align-center .actions-group.actions-right[data-v-48eb3073] {
+   width: 100%;
+   justify-content: center;
+ }
+-.c-action-bar.has-only-left.is-align-space-between .actions-group.actions-left[data-v-3c85fa90], .c-action-bar.has-only-right.is-align-space-between .actions-group.actions-right[data-v-3c85fa90] {
++.c-action-bar.has-only-left.is-align-space-between .actions-group.actions-left[data-v-48eb3073], .c-action-bar.has-only-right.is-align-space-between .actions-group.actions-right[data-v-48eb3073] {
+   width: 100%;
+   justify-content: space-between;
+ }
+-.c-action-bar.has-only-left.is-align-space-around .actions-group.actions-left[data-v-3c85fa90], .c-action-bar.has-only-right.is-align-space-around .actions-group.actions-right[data-v-3c85fa90] {
++.c-action-bar.has-only-left.is-align-space-around .actions-group.actions-left[data-v-48eb3073], .c-action-bar.has-only-right.is-align-space-around .actions-group.actions-right[data-v-48eb3073] {
+   width: 100%;
+   justify-content: space-around;
+ }
+-.c-action-bar.has-only-left.is-align-right .actions-group.actions-left[data-v-3c85fa90] {
++.c-action-bar.has-only-left.is-align-right .actions-group.actions-left[data-v-48eb3073] {
+   width: 100%;
+   justify-content: flex-end;
+ }
+-.c-action-bar.has-only-right.is-align-left .actions-group.actions-right[data-v-3c85fa90] {
++.c-action-bar.has-only-right.is-align-left .actions-group.actions-right[data-v-48eb3073] {
+   width: 100%;
+   justify-content: flex-start;
+ }
+-.actions-group[data-v-3c85fa90] .n-button {
++.actions-group[data-v-48eb3073] .n-button {
++  flex-shrink: 0;
+   transition: color 0.16s ease, background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+   font-weight: 500;
+ }
+-.actions-group[data-v-3c85fa90] .n-button .n-icon {
++.actions-group[data-v-48eb3073] .n-button .n-icon {
+   transition: transform 0.3s ease;
+ }
+-.actions-group[data-v-3c85fa90] .n-button:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button:hover:not(:disabled) {
+   transform: translateY(-1px);
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+ }
+-.actions-group[data-v-3c85fa90] .n-button:hover:not(:disabled) .n-icon {
++.actions-group[data-v-48eb3073] .n-button:hover:not(:disabled) .n-icon {
+   transform: scale(1.1);
+ }
+-.actions-group[data-v-3c85fa90] .n-button:active:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button:active:not(:disabled) {
+   transform: translateY(0);
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ }
+-.actions-group[data-v-3c85fa90] .n-button:disabled {
++.actions-group[data-v-48eb3073] .n-button:disabled {
+   cursor: not-allowed;
+   opacity: 0.5;
+ }
+-.actions-group[data-v-3c85fa90] .n-button.n-button--loading {
++.actions-group[data-v-48eb3073] .n-button.n-button--loading {
+   pointer-events: none;
+ }
+-.actions-group[data-v-3c85fa90] .n-button--primary-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--primary-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(24, 160, 88, 0.3);
+ }
+-.actions-group[data-v-3c85fa90] .n-button--info-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--info-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(42, 148, 125, 0.3);
+ }
+-.actions-group[data-v-3c85fa90] .n-button--success-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--success-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(99, 226, 183, 0.3);
+ }
+-.actions-group[data-v-3c85fa90] .n-button--warning-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--warning-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(240, 138, 0, 0.3);
+ }
+-.actions-group[data-v-3c85fa90] .n-button--error-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--error-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(208, 48, 80, 0.3);
+ }
+ 
+ /* ================= 中间插槽区域 ================= */
+-.actions-center[data-v-3c85fa90] {
++.actions-center[data-v-48eb3073] {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+@@ -205,32 +213,32 @@
+ }
+ 
+ /* ================= 分隔线 ================= */
+-.action-divider[data-v-3c85fa90] {
++.action-divider[data-v-48eb3073] {
+   margin: 0 8px !important;
+   height: 20px;
+   opacity: 0.3;
+   transition: opacity 0.3s ease;
+ }
+-.action-divider[data-v-3c85fa90]:hover {
++.action-divider[data-v-48eb3073]:hover {
+   opacity: 0.6;
+ }
+ 
+ /* ================= 下拉菜单优化 ================= */
+-[data-v-3c85fa90] .n-dropdown-option {
++[data-v-48eb3073] .n-dropdown-option {
+   transition: all 0.2s ease;
+ }
+-[data-v-3c85fa90] .n-dropdown-option:hover {
++[data-v-48eb3073] .n-dropdown-option:hover {
+   transform: translateX(4px);
+ }
+-[data-v-3c85fa90] .n-dropdown-option .n-icon {
++[data-v-48eb3073] .n-dropdown-option .n-icon {
+   transition: transform 0.2s ease;
+ }
+-[data-v-3c85fa90] .n-dropdown-option:hover .n-icon {
++[data-v-48eb3073] .n-dropdown-option:hover .n-icon {
+   transform: scale(1.15);
+ }
+ 
+ /* ================= 加载动画 ================= */
+-@keyframes button-loading-3c85fa90 {
++@keyframes button-loading-48eb3073 {
+ 0% {
+     opacity: 0.6;
+ }
+@@ -241,12 +249,12 @@
+     opacity: 0.6;
+ }
+ }
+-[data-v-3c85fa90] .n-button--loading {
+-  animation: button-loading-3c85fa90 1.5s ease-in-out infinite;
++[data-v-48eb3073] .n-button--loading {
++  animation: button-loading-48eb3073 1.5s ease-in-out infinite;
+ }
+ 
+ /* ================= Tooltip 样式 ================= */
+-[data-v-3c85fa90] .n-tooltip .n-tooltip__content {
++[data-v-48eb3073] .n-tooltip .n-tooltip__content {
+   font-size: 12px;
+   padding: 6px 10px;
+   border-radius: 4px;
+@@ -255,20 +263,20 @@
+ }
+ 
+ /* ================= 暗黑模式适配 ================= */
+-html.dark .c-action-bar[data-v-3c85fa90] {
++html.dark .c-action-bar[data-v-48eb3073] {
+   border-color: rgba(255, 255, 255, 0.09);
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+ }
+-html.dark .actions-group[data-v-3c85fa90] .n-button:hover:not(:disabled) {
++html.dark .actions-group[data-v-48eb3073] .n-button:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+ }
+-html.dark .action-divider[data-v-3c85fa90] {
++html.dark .action-divider[data-v-48eb3073] {
+   opacity: 0.15;
+ }
+-html.dark .action-divider[data-v-3c85fa90]:hover {
++html.dark .action-divider[data-v-48eb3073]:hover {
+   opacity: 0.4;
+ }
+ 
+ /* layer: default */
+-.inline[data-v-3c85fa90]{display:inline;}
+-.px[data-v-3c85fa90]{padding-left:1rem;padding-right:1rem;}
++.inline[data-v-48eb3073]{display:inline;}
++.px[data-v-48eb3073]{padding-left:1rem;padding-right:1rem;}
+diff --git a/dist/C_ActionBar2.cjs b/dist/C_ActionBar2.cjs
+index 180898afa25ffbda67b5b76077a1b6d295bdfa66..11c77dda63a318d7a87e060c413b8c84c07b9a81 100644
+--- a/dist/C_ActionBar2.cjs
++++ b/dist/C_ActionBar2.cjs
+@@ -1 +1 @@
+-require(`./chunk.cjs`);const e=require(`./C_Icon2.cjs`),t=require(`./export-helper.cjs`),n=require(`./useActionTask.cjs`);let r=require(`vue`),i=require(`naive-ui`);const a=`mdi:gesture-tap-button`,o={align:`left`,size:`tiny`,gap:6,wrap:!1,showDivider:!1,dividerType:`vertical`,compact:!0,inline:!0},s={add:{label:`新增`,icon:`mdi:plus`,type:`primary`},create:{label:`新增`,icon:`mdi:plus`,type:`primary`},save:{label:`保存`,icon:`mdi:content-save-outline`,type:`primary`},confirm:{label:`确认`,icon:`mdi:check`,type:`primary`},cancel:{label:`取消`,icon:`mdi:close`},close:{label:`关闭`,icon:`mdi:close`},view:{label:`查看`,icon:`mdi:eye-outline`},edit:{label:`编辑`,icon:`mdi:pencil-outline`},delete:{label:`删除`,icon:`mdi:delete-outline`,type:`error`},remove:{label:`删除`,icon:`mdi:delete-outline`,type:`error`},refresh:{label:`刷新`,icon:`mdi:refresh`},import:{label:`导入`,icon:`mdi:file-import-outline`},export:{label:`导出`,icon:`mdi:file-export-outline`},print:{label:`打印`,icon:`mdi:printer-outline`},reset:{label:`重置`,icon:`mdi:restore`},columns:{label:`列设置`,icon:`mdi:view-column-outline`},fullscreen:{label:`全屏`,icon:`mdi:fullscreen`},settings:{label:`功能配置`,icon:`mdi:tune-variant`},more:{label:`更多`,icon:`mdi:dots-horizontal`}},c=e=>{let t=e.key?s[e.key]:void 0;return{...t,...e,label:e.label||t?.label||e.key||`操作`,icon:e.icon||t?.icon||a}},l=e=>typeof e==`function`?e():(0,r.unref)(e),u=e=>e,d={key:1,class:`actions-center`},f=(0,r.defineComponent)({name:`C_ActionBar`,__name:`index`,props:{actions:{default:()=>[]},leftActions:{default:()=>[]},rightActions:{default:()=>[]},config:{default:()=>({})}},emits:[`action-click`,`dropdown-click`,`action-error`],setup(t,{emit:a}){let s=t,u=a,f=(0,r.computed)(()=>({...o,...s.config})),p=(0,r.computed)(()=>{if(s.leftActions&&s.leftActions.length>0)return s.leftActions.filter(e=>h(e));if(s.actions.length>0){let e=s.rightActions&&s.rightActions.length>0,t=s.actions.some(e=>e.group===`right`);return!e&&!t?s.actions.filter(e=>h(e)):s.actions.filter(e=>e.group!==`right`&&h(e))}return[]}),m=(0,r.computed)(()=>s.rightActions&&s.rightActions.length>0?s.rightActions.filter(e=>h(e)):s.actions.filter(e=>e.group===`right`&&h(e))),h=e=>e.show===void 0?!0:l(e.show)??!0,g=(e,t)=>{let n=new Map;return e.map((e,r)=>{let i=JSON.stringify(e.key===void 0?[`position`,t,r]:[`key`,e.key]),a=n.get(i)??0;return n.set(i,a+1),{action:e,taskKey:i,renderKey:`${i}:${a}`}})},_=(0,r.computed)(()=>g(p.value,`left`)),v=(0,r.computed)(()=>g(m.value,`right`)),y=n.t(),b=(e,t)=>!!(l(e.disabled)||e.buttonProps?.disabled||y.isRunning(t)),x=(e,t)=>!!(l(e.loading)||e.buttonProps?.loading||e.autoLoading!==!1&&y.isRunning(t)),S=async({action:e,taskKey:t})=>{if(!(e.dropdown&&e.dropdown.length>0))try{await y.run(t,async()=>{u(`action-click`,e),await e.onClick?.()},()=>!b(e,t)&&!x(e,t))}catch(t){throw u(`action-error`,t,e),t}},C=async(e,{action:t,taskKey:n})=>{try{await y.run(n,async()=>{u(`dropdown-click`,e,t),await e.onClick?.()},()=>!b(t,n)&&!x(t,n)&&l(e.disabled)!==!0&&l(e.show)!==!1)}catch(n){throw u(`action-error`,n,t,e),n}},w=(0,r.defineComponent)({name:`ActionButton`,props:{action:{type:Object,required:!0},taskKey:{type:String,required:!0}},emits:[`click`,`dropdown-select`],setup(t,{emit:n}){let a=(0,r.computed)(()=>t.action),o=(0,r.computed)(()=>c(a.value)),s=(0,r.computed)(()=>o.value.size||f.value.size),u=(0,r.computed)(()=>({tiny:14,small:15,medium:16,large:18})[s.value]),d=(0,r.computed)(()=>o.value.dropdown?o.value.dropdown.filter(e=>e.show===void 0?!0:l(e.show)).map(n=>{let{icon:i}=n;return{key:n.key,label:n.label,icon:i?()=>(0,r.h)(e.t,{name:i,size:14,"aria-hidden":!0}):void 0,disabled:b(a.value,t.taskKey)||x(a.value,t.taskKey)||l(n.disabled)}}):[]),p=e=>{let r=o.value.dropdown?.find(t=>t.key===e);r&&!b(a.value,t.taskKey)&&!x(a.value,t.taskKey)&&l(r.disabled)!==!0&&l(r.show)!==!1&&n(`dropdown-select`,r)},m=n=>{let{icon:c,buttonProps:l}=o.value,d=e=>{if(b(a.value,t.taskKey)||x(a.value,t.taskKey))return;n?.();let r=l?.onClick;Array.isArray(r)?r.forEach(t=>t(e)):r?.(e)},f=(0,r.h)(i.NButton,{type:o.value.type||`default`,size:s.value,...l,loading:x(a.value,t.taskKey),disabled:b(a.value,t.taskKey),onClick:d},{default:()=>o.value.label,icon:c?()=>(0,r.h)(e.t,{name:c,size:u.value,"aria-hidden":!0}):void 0});return o.value.directives&&o.value.directives.length>0?(0,r.withDirectives)(f,o.value.directives):f},h=()=>{let e=m(()=>n(`click`));return o.value.tooltip?(0,r.h)(i.NTooltip,{placement:`top`},{trigger:()=>e,default:()=>o.value.tooltip}):e},g=()=>{let e=m();return(0,r.h)(i.NDropdown,{disabled:b(a.value,t.taskKey)||x(a.value,t.taskKey),options:d.value,onSelect:p},{default:()=>e})};return()=>o.value.dropdown&&o.value.dropdown.length>0?g():h()}});return(e,t)=>((0,r.openBlock)(),(0,r.createElementBlock)(`div`,{class:(0,r.normalizeClass)([`c-action-bar`,{"is-compact":f.value.compact,"is-inline":f.value.inline,"is-wrap":f.value.wrap,[`is-align-${f.value.align}`]:!0,"has-only-left":_.value.length>0&&v.value.length===0&&!e.$slots.center,"has-only-right":v.value.length>0&&_.value.length===0&&!e.$slots.center}])},[_.value.length>0?((0,r.openBlock)(),(0,r.createElementBlock)(`div`,{key:0,class:`actions-group actions-left`,style:(0,r.normalizeStyle)({gap:`${f.value.gap}px`})},[((0,r.openBlock)(!0),(0,r.createElementBlock)(r.Fragment,null,(0,r.renderList)(_.value,(e,t)=>((0,r.openBlock)(),(0,r.createElementBlock)(r.Fragment,{key:e.renderKey},[(0,r.createVNode)((0,r.unref)(w),{action:e.action,"task-key":e.taskKey,onClick:t=>S(e),onDropdownSelect:t=>C(t,e)},null,8,[`action`,`task-key`,`onClick`,`onDropdownSelect`]),f.value.showDivider&&t<_.value.length-1&&f.value.dividerType===`vertical`?((0,r.openBlock)(),(0,r.createBlock)((0,r.unref)(i.NDivider),{key:0,vertical:``,class:`action-divider`})):(0,r.createCommentVNode)(`v-if`,!0)],64))),128))],4)):(0,r.createCommentVNode)(`v-if`,!0),e.$slots.center?((0,r.openBlock)(),(0,r.createElementBlock)(`div`,d,[(0,r.renderSlot)(e.$slots,`center`,{},void 0,!0)])):(0,r.createCommentVNode)(`v-if`,!0),v.value.length>0?((0,r.openBlock)(),(0,r.createElementBlock)(`div`,{key:2,class:`actions-group actions-right`,style:(0,r.normalizeStyle)({gap:`${f.value.gap}px`})},[((0,r.openBlock)(!0),(0,r.createElementBlock)(r.Fragment,null,(0,r.renderList)(v.value,(e,t)=>((0,r.openBlock)(),(0,r.createElementBlock)(r.Fragment,{key:e.renderKey},[(0,r.createVNode)((0,r.unref)(w),{action:e.action,"task-key":e.taskKey,onClick:t=>S(e),onDropdownSelect:t=>C(t,e)},null,8,[`action`,`task-key`,`onClick`,`onDropdownSelect`]),f.value.showDivider&&t<v.value.length-1&&f.value.dividerType===`vertical`?((0,r.openBlock)(),(0,r.createBlock)((0,r.unref)(i.NDivider),{key:0,vertical:``,class:`action-divider`})):(0,r.createCommentVNode)(`v-if`,!0)],64))),128))],4)):(0,r.createCommentVNode)(`v-if`,!0)],2))}});var p=t.t(f,[[`__scopeId`,`data-v-3c85fa90`]]);Object.defineProperty(exports,`a`,{enumerable:!0,get:function(){return u}}),Object.defineProperty(exports,`i`,{enumerable:!0,get:function(){return a}}),Object.defineProperty(exports,`n`,{enumerable:!0,get:function(){return o}}),Object.defineProperty(exports,`o`,{enumerable:!0,get:function(){return c}}),Object.defineProperty(exports,`r`,{enumerable:!0,get:function(){return s}}),Object.defineProperty(exports,`t`,{enumerable:!0,get:function(){return p}});
+\ No newline at end of file
++require(`./chunk.cjs`);const e=require(`./C_Icon2.cjs`),t=require(`./export-helper.cjs`),n=require(`./useActionTask.cjs`);let r=require(`vue`),i=require(`naive-ui`);const a=`mdi:gesture-tap-button`,o={align:`left`,size:`tiny`,gap:6,wrap:!1,showDivider:!1,dividerType:`vertical`,compact:!0,inline:!0},s={add:{label:`新增`,icon:`mdi:plus`,type:`primary`},create:{label:`新增`,icon:`mdi:plus`,type:`primary`},save:{label:`保存`,icon:`mdi:content-save-outline`,type:`primary`},confirm:{label:`确认`,icon:`mdi:check`,type:`primary`},cancel:{label:`取消`,icon:`mdi:close`},close:{label:`关闭`,icon:`mdi:close`},view:{label:`查看`,icon:`mdi:eye-outline`},edit:{label:`编辑`,icon:`mdi:pencil-outline`},delete:{label:`删除`,icon:`mdi:delete-outline`,type:`error`},remove:{label:`删除`,icon:`mdi:delete-outline`,type:`error`},refresh:{label:`刷新`,icon:`mdi:refresh`},import:{label:`导入`,icon:`mdi:file-import-outline`},export:{label:`导出`,icon:`mdi:file-export-outline`},print:{label:`打印`,icon:`mdi:printer-outline`},reset:{label:`重置`,icon:`mdi:restore`},columns:{label:`列设置`,icon:`mdi:view-column-outline`},fullscreen:{label:`全屏`,icon:`mdi:fullscreen`},settings:{label:`功能配置`,icon:`mdi:tune-variant`},more:{label:`更多`,icon:`mdi:dots-horizontal`}},c=e=>{let t=e.key?s[e.key]:void 0;return{...t,...e,label:e.label||t?.label||e.key||`操作`,icon:e.icon||t?.icon||a}},l=e=>typeof e==`function`?e():(0,r.unref)(e),u=e=>e,d={key:1,class:`actions-center`},f=(0,r.defineComponent)({name:`C_ActionBar`,__name:`index`,props:{actions:{default:()=>[]},leftActions:{default:()=>[]},rightActions:{default:()=>[]},config:{default:()=>({})}},emits:[`action-click`,`dropdown-click`,`action-error`],setup(t,{emit:a}){let s=t,u=a,f=(0,r.computed)(()=>({...o,...s.config,gap:s.config.gap??(s.config.compact===!1?12:o.gap)})),p=(0,r.computed)(()=>{if(s.leftActions&&s.leftActions.length>0)return s.leftActions.filter(e=>h(e));if(s.actions.length>0){let e=s.rightActions&&s.rightActions.length>0,t=s.actions.some(e=>e.group===`right`);return!e&&!t?s.actions.filter(e=>h(e)):s.actions.filter(e=>e.group!==`right`&&h(e))}return[]}),m=(0,r.computed)(()=>s.rightActions&&s.rightActions.length>0?s.rightActions.filter(e=>h(e)):s.actions.filter(e=>e.group===`right`&&h(e))),h=e=>e.show===void 0?!0:l(e.show)??!0,g=(e,t)=>{let n=new Map;return e.map((e,r)=>{let i=JSON.stringify(e.key===void 0?[`position`,t,r]:[`key`,e.key]),a=n.get(i)??0;return n.set(i,a+1),{action:e,taskKey:i,renderKey:`${i}:${a}`}})},_=(0,r.computed)(()=>g(p.value,`left`)),v=(0,r.computed)(()=>g(m.value,`right`)),y=n.t(),b=(e,t)=>!!(l(e.disabled)||e.buttonProps?.disabled||y.isRunning(t)),x=(e,t)=>!!(l(e.loading)||e.buttonProps?.loading||e.autoLoading!==!1&&y.isRunning(t)),S=async({action:e,taskKey:t})=>{if(!(e.dropdown&&e.dropdown.length>0))try{await y.run(t,async()=>{u(`action-click`,e),await e.onClick?.()},()=>!b(e,t)&&!x(e,t))}catch(t){throw u(`action-error`,t,e),t}},C=async(e,{action:t,taskKey:n})=>{try{await y.run(n,async()=>{u(`dropdown-click`,e,t),await e.onClick?.()},()=>!b(t,n)&&!x(t,n)&&l(e.disabled)!==!0&&l(e.show)!==!1)}catch(n){throw u(`action-error`,n,t,e),n}},w=(0,r.defineComponent)({name:`ActionButton`,props:{action:{type:Object,required:!0},taskKey:{type:String,required:!0}},emits:[`click`,`dropdown-select`],setup(t,{emit:n}){let a=(0,r.computed)(()=>t.action),o=(0,r.computed)(()=>c(a.value)),s=(0,r.computed)(()=>o.value.buttonProps?.size||o.value.size||f.value.size),u=(0,r.computed)(()=>({tiny:14,small:15,medium:16,large:18})[s.value]),d=(0,r.computed)(()=>o.value.dropdown?o.value.dropdown.filter(e=>e.show===void 0?!0:l(e.show)).map(n=>{let{icon:i}=n;return{key:n.key,label:n.label,icon:i?()=>(0,r.h)(e.t,{name:i,size:14,"aria-hidden":!0}):void 0,disabled:b(a.value,t.taskKey)||x(a.value,t.taskKey)||l(n.disabled)}}):[]),p=e=>{let r=o.value.dropdown?.find(t=>t.key===e);r&&!b(a.value,t.taskKey)&&!x(a.value,t.taskKey)&&l(r.disabled)!==!0&&l(r.show)!==!1&&n(`dropdown-select`,r)},m=n=>{let{icon:c,buttonProps:l}=o.value,d=e=>{if(b(a.value,t.taskKey)||x(a.value,t.taskKey))return;n?.();let r=l?.onClick;Array.isArray(r)?r.forEach(t=>t(e)):r?.(e)},f=(0,r.h)(i.NButton,{type:o.value.type||`default`,size:s.value,...l,loading:x(a.value,t.taskKey),disabled:b(a.value,t.taskKey),onClick:d},{default:()=>o.value.label,icon:c?()=>(0,r.h)(e.t,{name:c,size:u.value,"aria-hidden":!0}):void 0});return o.value.directives&&o.value.directives.length>0?(0,r.withDirectives)(f,o.value.directives):f},h=()=>{let e=m(()=>n(`click`));return o.value.tooltip?(0,r.h)(i.NTooltip,{placement:`top`},{trigger:()=>e,default:()=>o.value.tooltip}):e},g=()=>{let e=m();return(0,r.h)(i.NDropdown,{disabled:b(a.value,t.taskKey)||x(a.value,t.taskKey),options:d.value,onSelect:p},{default:()=>e})};return()=>o.value.dropdown&&o.value.dropdown.length>0?g():h()}});return(e,t)=>((0,r.openBlock)(),(0,r.createElementBlock)(`div`,{class:(0,r.normalizeClass)([`c-action-bar`,{"is-compact":f.value.compact,"is-inline":f.value.inline,"is-wrap":f.value.wrap,[`is-align-${f.value.align}`]:!0,"has-only-left":_.value.length>0&&v.value.length===0&&!e.$slots.center,"has-only-right":v.value.length>0&&_.value.length===0&&!e.$slots.center}])},[_.value.length>0?((0,r.openBlock)(),(0,r.createElementBlock)(`div`,{key:0,class:`actions-group actions-left`,style:(0,r.normalizeStyle)({gap:`${f.value.gap}px`})},[((0,r.openBlock)(!0),(0,r.createElementBlock)(r.Fragment,null,(0,r.renderList)(_.value,(e,t)=>((0,r.openBlock)(),(0,r.createElementBlock)(r.Fragment,{key:e.renderKey},[(0,r.createVNode)((0,r.unref)(w),{action:e.action,"task-key":e.taskKey,onClick:t=>S(e),onDropdownSelect:t=>C(t,e)},null,8,[`action`,`task-key`,`onClick`,`onDropdownSelect`]),f.value.showDivider&&t<_.value.length-1&&f.value.dividerType===`vertical`?((0,r.openBlock)(),(0,r.createBlock)((0,r.unref)(i.NDivider),{key:0,vertical:``,class:`action-divider`})):(0,r.createCommentVNode)(`v-if`,!0)],64))),128))],4)):(0,r.createCommentVNode)(`v-if`,!0),e.$slots.center?((0,r.openBlock)(),(0,r.createElementBlock)(`div`,d,[(0,r.renderSlot)(e.$slots,`center`,{},void 0,!0)])):(0,r.createCommentVNode)(`v-if`,!0),v.value.length>0?((0,r.openBlock)(),(0,r.createElementBlock)(`div`,{key:2,class:`actions-group actions-right`,style:(0,r.normalizeStyle)({gap:`${f.value.gap}px`})},[((0,r.openBlock)(!0),(0,r.createElementBlock)(r.Fragment,null,(0,r.renderList)(v.value,(e,t)=>((0,r.openBlock)(),(0,r.createElementBlock)(r.Fragment,{key:e.renderKey},[(0,r.createVNode)((0,r.unref)(w),{action:e.action,"task-key":e.taskKey,onClick:t=>S(e),onDropdownSelect:t=>C(t,e)},null,8,[`action`,`task-key`,`onClick`,`onDropdownSelect`]),f.value.showDivider&&t<v.value.length-1&&f.value.dividerType===`vertical`?((0,r.openBlock)(),(0,r.createBlock)((0,r.unref)(i.NDivider),{key:0,vertical:``,class:`action-divider`})):(0,r.createCommentVNode)(`v-if`,!0)],64))),128))],4)):(0,r.createCommentVNode)(`v-if`,!0)],2))}});var p=t.t(f,[[`__scopeId`,`data-v-48eb3073`]]);Object.defineProperty(exports,`a`,{enumerable:!0,get:function(){return u}}),Object.defineProperty(exports,`i`,{enumerable:!0,get:function(){return a}}),Object.defineProperty(exports,`n`,{enumerable:!0,get:function(){return o}}),Object.defineProperty(exports,`o`,{enumerable:!0,get:function(){return c}}),Object.defineProperty(exports,`r`,{enumerable:!0,get:function(){return s}}),Object.defineProperty(exports,`t`,{enumerable:!0,get:function(){return p}});
+\ No newline at end of file
+diff --git a/dist/C_ActionBar2.js b/dist/C_ActionBar2.js
+index 94ffb455c97346b850290129fe2a690684860991..35a894219c9d3c0c850c6eabfa1a22ce0765489c 100644
+--- a/dist/C_ActionBar2.js
++++ b/dist/C_ActionBar2.js
+@@ -1 +1 @@
+-import{t as e}from"./C_Icon2.js";import{t}from"./export-helper.js";import{t as n}from"./useActionTask.js";import{Fragment as r,computed as i,createBlock as a,createCommentVNode as o,createElementBlock as s,createVNode as c,defineComponent as l,h as u,normalizeClass as d,normalizeStyle as f,openBlock as p,renderList as m,renderSlot as h,unref as g,withDirectives as _}from"vue";import{NButton as v,NDivider as y,NDropdown as b,NTooltip as x}from"naive-ui";const S=`mdi:gesture-tap-button`,C={align:`left`,size:`tiny`,gap:6,wrap:!1,showDivider:!1,dividerType:`vertical`,compact:!0,inline:!0},w={add:{label:`新增`,icon:`mdi:plus`,type:`primary`},create:{label:`新增`,icon:`mdi:plus`,type:`primary`},save:{label:`保存`,icon:`mdi:content-save-outline`,type:`primary`},confirm:{label:`确认`,icon:`mdi:check`,type:`primary`},cancel:{label:`取消`,icon:`mdi:close`},close:{label:`关闭`,icon:`mdi:close`},view:{label:`查看`,icon:`mdi:eye-outline`},edit:{label:`编辑`,icon:`mdi:pencil-outline`},delete:{label:`删除`,icon:`mdi:delete-outline`,type:`error`},remove:{label:`删除`,icon:`mdi:delete-outline`,type:`error`},refresh:{label:`刷新`,icon:`mdi:refresh`},import:{label:`导入`,icon:`mdi:file-import-outline`},export:{label:`导出`,icon:`mdi:file-export-outline`},print:{label:`打印`,icon:`mdi:printer-outline`},reset:{label:`重置`,icon:`mdi:restore`},columns:{label:`列设置`,icon:`mdi:view-column-outline`},fullscreen:{label:`全屏`,icon:`mdi:fullscreen`},settings:{label:`功能配置`,icon:`mdi:tune-variant`},more:{label:`更多`,icon:`mdi:dots-horizontal`}},T=e=>{let t=e.key?w[e.key]:void 0;return{...t,...e,label:e.label||t?.label||e.key||`操作`,icon:e.icon||t?.icon||S}},E=e=>typeof e==`function`?e():g(e),D=e=>e,O={key:1,class:`actions-center`};var k=t(l({name:`C_ActionBar`,__name:`index`,props:{actions:{default:()=>[]},leftActions:{default:()=>[]},rightActions:{default:()=>[]},config:{default:()=>({})}},emits:[`action-click`,`dropdown-click`,`action-error`],setup(t,{emit:S}){let w=t,D=S,k=i(()=>({...C,...w.config})),A=i(()=>{if(w.leftActions&&w.leftActions.length>0)return w.leftActions.filter(e=>M(e));if(w.actions.length>0){let e=w.rightActions&&w.rightActions.length>0,t=w.actions.some(e=>e.group===`right`);return!e&&!t?w.actions.filter(e=>M(e)):w.actions.filter(e=>e.group!==`right`&&M(e))}return[]}),j=i(()=>w.rightActions&&w.rightActions.length>0?w.rightActions.filter(e=>M(e)):w.actions.filter(e=>e.group===`right`&&M(e))),M=e=>e.show===void 0?!0:E(e.show)??!0,N=(e,t)=>{let n=new Map;return e.map((e,r)=>{let i=JSON.stringify(e.key===void 0?[`position`,t,r]:[`key`,e.key]),a=n.get(i)??0;return n.set(i,a+1),{action:e,taskKey:i,renderKey:`${i}:${a}`}})},P=i(()=>N(A.value,`left`)),F=i(()=>N(j.value,`right`)),I=n(),L=(e,t)=>!!(E(e.disabled)||e.buttonProps?.disabled||I.isRunning(t)),R=(e,t)=>!!(E(e.loading)||e.buttonProps?.loading||e.autoLoading!==!1&&I.isRunning(t)),z=async({action:e,taskKey:t})=>{if(!(e.dropdown&&e.dropdown.length>0))try{await I.run(t,async()=>{D(`action-click`,e),await e.onClick?.()},()=>!L(e,t)&&!R(e,t))}catch(t){throw D(`action-error`,t,e),t}},B=async(e,{action:t,taskKey:n})=>{try{await I.run(n,async()=>{D(`dropdown-click`,e,t),await e.onClick?.()},()=>!L(t,n)&&!R(t,n)&&E(e.disabled)!==!0&&E(e.show)!==!1)}catch(n){throw D(`action-error`,n,t,e),n}},V=l({name:`ActionButton`,props:{action:{type:Object,required:!0},taskKey:{type:String,required:!0}},emits:[`click`,`dropdown-select`],setup(t,{emit:n}){let r=i(()=>t.action),a=i(()=>T(r.value)),o=i(()=>a.value.size||k.value.size),s=i(()=>({tiny:14,small:15,medium:16,large:18})[o.value]),c=i(()=>a.value.dropdown?a.value.dropdown.filter(e=>e.show===void 0?!0:E(e.show)).map(n=>{let{icon:i}=n;return{key:n.key,label:n.label,icon:i?()=>u(e,{name:i,size:14,"aria-hidden":!0}):void 0,disabled:L(r.value,t.taskKey)||R(r.value,t.taskKey)||E(n.disabled)}}):[]),l=e=>{let i=a.value.dropdown?.find(t=>t.key===e);i&&!L(r.value,t.taskKey)&&!R(r.value,t.taskKey)&&E(i.disabled)!==!0&&E(i.show)!==!1&&n(`dropdown-select`,i)},d=n=>{let{icon:i,buttonProps:c}=a.value,l=e=>{if(L(r.value,t.taskKey)||R(r.value,t.taskKey))return;n?.();let i=c?.onClick;Array.isArray(i)?i.forEach(t=>t(e)):i?.(e)},d=u(v,{type:a.value.type||`default`,size:o.value,...c,loading:R(r.value,t.taskKey),disabled:L(r.value,t.taskKey),onClick:l},{default:()=>a.value.label,icon:i?()=>u(e,{name:i,size:s.value,"aria-hidden":!0}):void 0});return a.value.directives&&a.value.directives.length>0?_(d,a.value.directives):d},f=()=>{let e=d(()=>n(`click`));return a.value.tooltip?u(x,{placement:`top`},{trigger:()=>e,default:()=>a.value.tooltip}):e},p=()=>{let e=d();return u(b,{disabled:L(r.value,t.taskKey)||R(r.value,t.taskKey),options:c.value,onSelect:l},{default:()=>e})};return()=>a.value.dropdown&&a.value.dropdown.length>0?p():f()}});return(e,t)=>(p(),s(`div`,{class:d([`c-action-bar`,{"is-compact":k.value.compact,"is-inline":k.value.inline,"is-wrap":k.value.wrap,[`is-align-${k.value.align}`]:!0,"has-only-left":P.value.length>0&&F.value.length===0&&!e.$slots.center,"has-only-right":F.value.length>0&&P.value.length===0&&!e.$slots.center}])},[P.value.length>0?(p(),s(`div`,{key:0,class:`actions-group actions-left`,style:f({gap:`${k.value.gap}px`})},[(p(!0),s(r,null,m(P.value,(e,t)=>(p(),s(r,{key:e.renderKey},[c(g(V),{action:e.action,"task-key":e.taskKey,onClick:t=>z(e),onDropdownSelect:t=>B(t,e)},null,8,[`action`,`task-key`,`onClick`,`onDropdownSelect`]),k.value.showDivider&&t<P.value.length-1&&k.value.dividerType===`vertical`?(p(),a(g(y),{key:0,vertical:``,class:`action-divider`})):o(`v-if`,!0)],64))),128))],4)):o(`v-if`,!0),e.$slots.center?(p(),s(`div`,O,[h(e.$slots,`center`,{},void 0,!0)])):o(`v-if`,!0),F.value.length>0?(p(),s(`div`,{key:2,class:`actions-group actions-right`,style:f({gap:`${k.value.gap}px`})},[(p(!0),s(r,null,m(F.value,(e,t)=>(p(),s(r,{key:e.renderKey},[c(g(V),{action:e.action,"task-key":e.taskKey,onClick:t=>z(e),onDropdownSelect:t=>B(t,e)},null,8,[`action`,`task-key`,`onClick`,`onDropdownSelect`]),k.value.showDivider&&t<F.value.length-1&&k.value.dividerType===`vertical`?(p(),a(g(y),{key:0,vertical:``,class:`action-divider`})):o(`v-if`,!0)],64))),128))],4)):o(`v-if`,!0)],2))}}),[[`__scopeId`,`data-v-3c85fa90`]]);export{D as a,S as i,C as n,T as o,w as r,k as t};
+\ No newline at end of file
++import{t as e}from"./C_Icon2.js";import{t}from"./export-helper.js";import{t as n}from"./useActionTask.js";import{Fragment as r,computed as i,createBlock as a,createCommentVNode as o,createElementBlock as s,createVNode as c,defineComponent as l,h as u,normalizeClass as d,normalizeStyle as f,openBlock as p,renderList as m,renderSlot as h,unref as g,withDirectives as _}from"vue";import{NButton as v,NDivider as y,NDropdown as b,NTooltip as x}from"naive-ui";const S=`mdi:gesture-tap-button`,C={align:`left`,size:`tiny`,gap:6,wrap:!1,showDivider:!1,dividerType:`vertical`,compact:!0,inline:!0},w={add:{label:`新增`,icon:`mdi:plus`,type:`primary`},create:{label:`新增`,icon:`mdi:plus`,type:`primary`},save:{label:`保存`,icon:`mdi:content-save-outline`,type:`primary`},confirm:{label:`确认`,icon:`mdi:check`,type:`primary`},cancel:{label:`取消`,icon:`mdi:close`},close:{label:`关闭`,icon:`mdi:close`},view:{label:`查看`,icon:`mdi:eye-outline`},edit:{label:`编辑`,icon:`mdi:pencil-outline`},delete:{label:`删除`,icon:`mdi:delete-outline`,type:`error`},remove:{label:`删除`,icon:`mdi:delete-outline`,type:`error`},refresh:{label:`刷新`,icon:`mdi:refresh`},import:{label:`导入`,icon:`mdi:file-import-outline`},export:{label:`导出`,icon:`mdi:file-export-outline`},print:{label:`打印`,icon:`mdi:printer-outline`},reset:{label:`重置`,icon:`mdi:restore`},columns:{label:`列设置`,icon:`mdi:view-column-outline`},fullscreen:{label:`全屏`,icon:`mdi:fullscreen`},settings:{label:`功能配置`,icon:`mdi:tune-variant`},more:{label:`更多`,icon:`mdi:dots-horizontal`}},T=e=>{let t=e.key?w[e.key]:void 0;return{...t,...e,label:e.label||t?.label||e.key||`操作`,icon:e.icon||t?.icon||S}},E=e=>typeof e==`function`?e():g(e),D=e=>e,O={key:1,class:`actions-center`};var k=t(l({name:`C_ActionBar`,__name:`index`,props:{actions:{default:()=>[]},leftActions:{default:()=>[]},rightActions:{default:()=>[]},config:{default:()=>({})}},emits:[`action-click`,`dropdown-click`,`action-error`],setup(t,{emit:S}){let w=t,D=S,k=i(()=>({...C,...w.config,gap:w.config.gap??(w.config.compact===!1?12:C.gap)})),A=i(()=>{if(w.leftActions&&w.leftActions.length>0)return w.leftActions.filter(e=>M(e));if(w.actions.length>0){let e=w.rightActions&&w.rightActions.length>0,t=w.actions.some(e=>e.group===`right`);return!e&&!t?w.actions.filter(e=>M(e)):w.actions.filter(e=>e.group!==`right`&&M(e))}return[]}),j=i(()=>w.rightActions&&w.rightActions.length>0?w.rightActions.filter(e=>M(e)):w.actions.filter(e=>e.group===`right`&&M(e))),M=e=>e.show===void 0?!0:E(e.show)??!0,N=(e,t)=>{let n=new Map;return e.map((e,r)=>{let i=JSON.stringify(e.key===void 0?[`position`,t,r]:[`key`,e.key]),a=n.get(i)??0;return n.set(i,a+1),{action:e,taskKey:i,renderKey:`${i}:${a}`}})},P=i(()=>N(A.value,`left`)),F=i(()=>N(j.value,`right`)),I=n(),L=(e,t)=>!!(E(e.disabled)||e.buttonProps?.disabled||I.isRunning(t)),R=(e,t)=>!!(E(e.loading)||e.buttonProps?.loading||e.autoLoading!==!1&&I.isRunning(t)),z=async({action:e,taskKey:t})=>{if(!(e.dropdown&&e.dropdown.length>0))try{await I.run(t,async()=>{D(`action-click`,e),await e.onClick?.()},()=>!L(e,t)&&!R(e,t))}catch(t){throw D(`action-error`,t,e),t}},B=async(e,{action:t,taskKey:n})=>{try{await I.run(n,async()=>{D(`dropdown-click`,e,t),await e.onClick?.()},()=>!L(t,n)&&!R(t,n)&&E(e.disabled)!==!0&&E(e.show)!==!1)}catch(n){throw D(`action-error`,n,t,e),n}},V=l({name:`ActionButton`,props:{action:{type:Object,required:!0},taskKey:{type:String,required:!0}},emits:[`click`,`dropdown-select`],setup(t,{emit:n}){let r=i(()=>t.action),a=i(()=>T(r.value)),o=i(()=>a.value.buttonProps?.size||a.value.size||k.value.size),s=i(()=>({tiny:14,small:15,medium:16,large:18})[o.value]),c=i(()=>a.value.dropdown?a.value.dropdown.filter(e=>e.show===void 0?!0:E(e.show)).map(n=>{let{icon:i}=n;return{key:n.key,label:n.label,icon:i?()=>u(e,{name:i,size:14,"aria-hidden":!0}):void 0,disabled:L(r.value,t.taskKey)||R(r.value,t.taskKey)||E(n.disabled)}}):[]),l=e=>{let i=a.value.dropdown?.find(t=>t.key===e);i&&!L(r.value,t.taskKey)&&!R(r.value,t.taskKey)&&E(i.disabled)!==!0&&E(i.show)!==!1&&n(`dropdown-select`,i)},d=n=>{let{icon:i,buttonProps:c}=a.value,l=e=>{if(L(r.value,t.taskKey)||R(r.value,t.taskKey))return;n?.();let i=c?.onClick;Array.isArray(i)?i.forEach(t=>t(e)):i?.(e)},d=u(v,{type:a.value.type||`default`,size:o.value,...c,loading:R(r.value,t.taskKey),disabled:L(r.value,t.taskKey),onClick:l},{default:()=>a.value.label,icon:i?()=>u(e,{name:i,size:s.value,"aria-hidden":!0}):void 0});return a.value.directives&&a.value.directives.length>0?_(d,a.value.directives):d},f=()=>{let e=d(()=>n(`click`));return a.value.tooltip?u(x,{placement:`top`},{trigger:()=>e,default:()=>a.value.tooltip}):e},p=()=>{let e=d();return u(b,{disabled:L(r.value,t.taskKey)||R(r.value,t.taskKey),options:c.value,onSelect:l},{default:()=>e})};return()=>a.value.dropdown&&a.value.dropdown.length>0?p():f()}});return(e,t)=>(p(),s(`div`,{class:d([`c-action-bar`,{"is-compact":k.value.compact,"is-inline":k.value.inline,"is-wrap":k.value.wrap,[`is-align-${k.value.align}`]:!0,"has-only-left":P.value.length>0&&F.value.length===0&&!e.$slots.center,"has-only-right":F.value.length>0&&P.value.length===0&&!e.$slots.center}])},[P.value.length>0?(p(),s(`div`,{key:0,class:`actions-group actions-left`,style:f({gap:`${k.value.gap}px`})},[(p(!0),s(r,null,m(P.value,(e,t)=>(p(),s(r,{key:e.renderKey},[c(g(V),{action:e.action,"task-key":e.taskKey,onClick:t=>z(e),onDropdownSelect:t=>B(t,e)},null,8,[`action`,`task-key`,`onClick`,`onDropdownSelect`]),k.value.showDivider&&t<P.value.length-1&&k.value.dividerType===`vertical`?(p(),a(g(y),{key:0,vertical:``,class:`action-divider`})):o(`v-if`,!0)],64))),128))],4)):o(`v-if`,!0),e.$slots.center?(p(),s(`div`,O,[h(e.$slots,`center`,{},void 0,!0)])):o(`v-if`,!0),F.value.length>0?(p(),s(`div`,{key:2,class:`actions-group actions-right`,style:f({gap:`${k.value.gap}px`})},[(p(!0),s(r,null,m(F.value,(e,t)=>(p(),s(r,{key:e.renderKey},[c(g(V),{action:e.action,"task-key":e.taskKey,onClick:t=>z(e),onDropdownSelect:t=>B(t,e)},null,8,[`action`,`task-key`,`onClick`,`onDropdownSelect`]),k.value.showDivider&&t<F.value.length-1&&k.value.dividerType===`vertical`?(p(),a(g(y),{key:0,vertical:``,class:`action-divider`})):o(`v-if`,!0)],64))),128))],4)):o(`v-if`,!0)],2))}}),[[`__scopeId`,`data-v-48eb3073`]]);export{D as a,S as i,C as n,T as o,w as r,k as t};
+\ No newline at end of file
+diff --git a/dist/presets.d.cts b/dist/presets.d.cts
+index 35db0cac3f94cb0b84be64c39b6e53b40540b3f9..d56cf327f1ceb30b1179075e1531c9af7063df95 100644
+--- a/dist/presets.d.cts
++++ b/dist/presets.d.cts
+@@ -39,10 +39,13 @@ interface ActionItem {
+ interface ActionBarConfig {
+   align?: ActionGroupAlign;
+   size?: ActionButtonSize;
++  /** 按钮间距；省略时紧凑模式为 6px，常规模式为 12px。 */
+   gap?: number;
++  /** 允许分组及组内按钮随可用宽度换行。 */
+   wrap?: boolean;
+   showDivider?: boolean;
+   dividerType?: 'vertical' | 'horizontal';
++  /** 减少容器留白和默认按钮间距；行内模式也生效。 */
+   compact?: boolean;
+   inline?: boolean;
+ }
+diff --git a/dist/presets.d.ts b/dist/presets.d.ts
+index 35db0cac3f94cb0b84be64c39b6e53b40540b3f9..d56cf327f1ceb30b1179075e1531c9af7063df95 100644
+--- a/dist/presets.d.ts
++++ b/dist/presets.d.ts
+@@ -39,10 +39,13 @@ interface ActionItem {
+ interface ActionBarConfig {
+   align?: ActionGroupAlign;
+   size?: ActionButtonSize;
++  /** 按钮间距；省略时紧凑模式为 6px，常规模式为 12px。 */
+   gap?: number;
++  /** 允许分组及组内按钮随可用宽度换行。 */
+   wrap?: boolean;
+   showDivider?: boolean;
+   dividerType?: 'vertical' | 'horizontal';
++  /** 减少容器留白和默认按钮间距；行内模式也生效。 */
+   compact?: boolean;
+   inline?: boolean;
+ }
+diff --git a/dist/style.css b/dist/style.css
+index 2721dcba09e1443577f7bcbc2fa6d5af41cae97f..d2cf596362e355fefbc833281e1b367697b84af9 100644
+--- a/dist/style.css
++++ b/dist/style.css
+@@ -1708,8 +1708,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
+ /* --- C_ActionBar --- */
+ /* 通用操作按钮组件样式 */
+ /* ================= 主容器 ================= */
+-.c-action-bar[data-v-3c85fa90] {
++.c-action-bar[data-v-48eb3073] {
+   display: flex;
++  min-width: 0;
+   align-items: center;
+   justify-content: space-between;
+   padding: 16px;
+@@ -1719,26 +1720,26 @@ svg.leaflet-image-layer.leaflet-interactive path {
+   border: 1px solid var(--c-border);
+   transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+ }
+-.c-action-bar.is-align-left[data-v-3c85fa90] {
++.c-action-bar.is-align-left[data-v-48eb3073] {
+   justify-content: flex-start;
+ }
+-.c-action-bar.is-align-center[data-v-3c85fa90] {
++.c-action-bar.is-align-center[data-v-48eb3073] {
+   justify-content: center;
+ }
+-.c-action-bar.is-align-right[data-v-3c85fa90] {
++.c-action-bar.is-align-right[data-v-48eb3073] {
+   justify-content: flex-end;
+ }
+-.c-action-bar.is-align-space-between[data-v-3c85fa90] {
++.c-action-bar.is-align-space-between[data-v-48eb3073] {
+   justify-content: space-between;
+ }
+-.c-action-bar.is-align-space-around[data-v-3c85fa90] {
++.c-action-bar.is-align-space-around[data-v-48eb3073] {
+   justify-content: space-around;
+ }
+-.c-action-bar.is-compact[data-v-3c85fa90] {
++.c-action-bar.is-compact[data-v-48eb3073] {
+   padding: 8px;
+   margin-bottom: 8px;
+ }
+-.c-action-bar.is-inline[data-v-3c85fa90] {
++.c-action-bar.is-inline[data-v-48eb3073] {
+   padding: 0;
+   margin-bottom: 0;
+   background: transparent;
+@@ -1746,97 +1747,104 @@ svg.leaflet-image-layer.leaflet-interactive path {
+   border-radius: 0;
+   box-shadow: none;
+ }
+-.c-action-bar.is-wrap[data-v-3c85fa90] {
++.c-action-bar.is-wrap[data-v-48eb3073] {
+   flex-wrap: wrap;
+   gap: 8px;
+ }
++.c-action-bar.is-wrap .actions-group[data-v-48eb3073] {
++  flex-wrap: wrap;
++  min-width: 0;
++  max-width: 100%;
++}
+ @media (max-width: 768px) {
+-.c-action-bar[data-v-3c85fa90] {
++.c-action-bar[data-v-48eb3073] {
+     flex-direction: column;
+     gap: 12px;
+ }
+-.c-action-bar .actions-group[data-v-3c85fa90] {
++.c-action-bar .actions-group[data-v-48eb3073] {
+     width: 100%;
+     justify-content: center;
+ }
+ }
+ 
+ /* ================= 按钮组 ================= */
+-.actions-group[data-v-3c85fa90] {
++.actions-group[data-v-48eb3073] {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+   flex-wrap: nowrap;
++  flex-shrink: 0;
+ }
+-.actions-group.actions-left[data-v-3c85fa90] {
++.actions-group.actions-left[data-v-48eb3073] {
+   justify-content: flex-start;
+ }
+-.actions-group.actions-right[data-v-3c85fa90] {
++.actions-group.actions-right[data-v-48eb3073] {
+   justify-content: flex-end;
+ }
+-.c-action-bar.has-only-left.is-align-center .actions-group.actions-left[data-v-3c85fa90], .c-action-bar.has-only-right.is-align-center .actions-group.actions-right[data-v-3c85fa90] {
++.c-action-bar.has-only-left.is-align-center .actions-group.actions-left[data-v-48eb3073], .c-action-bar.has-only-right.is-align-center .actions-group.actions-right[data-v-48eb3073] {
+   width: 100%;
+   justify-content: center;
+ }
+-.c-action-bar.has-only-left.is-align-space-between .actions-group.actions-left[data-v-3c85fa90], .c-action-bar.has-only-right.is-align-space-between .actions-group.actions-right[data-v-3c85fa90] {
++.c-action-bar.has-only-left.is-align-space-between .actions-group.actions-left[data-v-48eb3073], .c-action-bar.has-only-right.is-align-space-between .actions-group.actions-right[data-v-48eb3073] {
+   width: 100%;
+   justify-content: space-between;
+ }
+-.c-action-bar.has-only-left.is-align-space-around .actions-group.actions-left[data-v-3c85fa90], .c-action-bar.has-only-right.is-align-space-around .actions-group.actions-right[data-v-3c85fa90] {
++.c-action-bar.has-only-left.is-align-space-around .actions-group.actions-left[data-v-48eb3073], .c-action-bar.has-only-right.is-align-space-around .actions-group.actions-right[data-v-48eb3073] {
+   width: 100%;
+   justify-content: space-around;
+ }
+-.c-action-bar.has-only-left.is-align-right .actions-group.actions-left[data-v-3c85fa90] {
++.c-action-bar.has-only-left.is-align-right .actions-group.actions-left[data-v-48eb3073] {
+   width: 100%;
+   justify-content: flex-end;
+ }
+-.c-action-bar.has-only-right.is-align-left .actions-group.actions-right[data-v-3c85fa90] {
++.c-action-bar.has-only-right.is-align-left .actions-group.actions-right[data-v-48eb3073] {
+   width: 100%;
+   justify-content: flex-start;
+ }
+-.actions-group[data-v-3c85fa90] .n-button {
++.actions-group[data-v-48eb3073] .n-button {
++  flex-shrink: 0;
+   transition: color 0.16s ease, background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+   font-weight: 500;
+ }
+-.actions-group[data-v-3c85fa90] .n-button .n-icon {
++.actions-group[data-v-48eb3073] .n-button .n-icon {
+   transition: transform 0.3s ease;
+ }
+-.actions-group[data-v-3c85fa90] .n-button:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button:hover:not(:disabled) {
+   transform: translateY(-1px);
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+ }
+-.actions-group[data-v-3c85fa90] .n-button:hover:not(:disabled) .n-icon {
++.actions-group[data-v-48eb3073] .n-button:hover:not(:disabled) .n-icon {
+   transform: scale(1.1);
+ }
+-.actions-group[data-v-3c85fa90] .n-button:active:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button:active:not(:disabled) {
+   transform: translateY(0);
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ }
+-.actions-group[data-v-3c85fa90] .n-button:disabled {
++.actions-group[data-v-48eb3073] .n-button:disabled {
+   cursor: not-allowed;
+   opacity: 0.5;
+ }
+-.actions-group[data-v-3c85fa90] .n-button.n-button--loading {
++.actions-group[data-v-48eb3073] .n-button.n-button--loading {
+   pointer-events: none;
+ }
+-.actions-group[data-v-3c85fa90] .n-button--primary-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--primary-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(24, 160, 88, 0.3);
+ }
+-.actions-group[data-v-3c85fa90] .n-button--info-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--info-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(42, 148, 125, 0.3);
+ }
+-.actions-group[data-v-3c85fa90] .n-button--success-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--success-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(99, 226, 183, 0.3);
+ }
+-.actions-group[data-v-3c85fa90] .n-button--warning-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--warning-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(240, 138, 0, 0.3);
+ }
+-.actions-group[data-v-3c85fa90] .n-button--error-type:hover:not(:disabled) {
++.actions-group[data-v-48eb3073] .n-button--error-type:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(208, 48, 80, 0.3);
+ }
+ 
+ /* ================= 中间插槽区域 ================= */
+-.actions-center[data-v-3c85fa90] {
++.actions-center[data-v-48eb3073] {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+@@ -1846,32 +1854,32 @@ svg.leaflet-image-layer.leaflet-interactive path {
+ }
+ 
+ /* ================= 分隔线 ================= */
+-.action-divider[data-v-3c85fa90] {
++.action-divider[data-v-48eb3073] {
+   margin: 0 8px !important;
+   height: 20px;
+   opacity: 0.3;
+   transition: opacity 0.3s ease;
+ }
+-.action-divider[data-v-3c85fa90]:hover {
++.action-divider[data-v-48eb3073]:hover {
+   opacity: 0.6;
+ }
+ 
+ /* ================= 下拉菜单优化 ================= */
+-[data-v-3c85fa90] .n-dropdown-option {
++[data-v-48eb3073] .n-dropdown-option {
+   transition: all 0.2s ease;
+ }
+-[data-v-3c85fa90] .n-dropdown-option:hover {
++[data-v-48eb3073] .n-dropdown-option:hover {
+   transform: translateX(4px);
+ }
+-[data-v-3c85fa90] .n-dropdown-option .n-icon {
++[data-v-48eb3073] .n-dropdown-option .n-icon {
+   transition: transform 0.2s ease;
+ }
+-[data-v-3c85fa90] .n-dropdown-option:hover .n-icon {
++[data-v-48eb3073] .n-dropdown-option:hover .n-icon {
+   transform: scale(1.15);
+ }
+ 
+ /* ================= 加载动画 ================= */
+-@keyframes button-loading-3c85fa90 {
++@keyframes button-loading-48eb3073 {
+ 0% {
+     opacity: 0.6;
+ }
+@@ -1882,12 +1890,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
+     opacity: 0.6;
+ }
+ }
+-[data-v-3c85fa90] .n-button--loading {
+-  animation: button-loading-3c85fa90 1.5s ease-in-out infinite;
++[data-v-48eb3073] .n-button--loading {
++  animation: button-loading-48eb3073 1.5s ease-in-out infinite;
+ }
+ 
+ /* ================= Tooltip 样式 ================= */
+-[data-v-3c85fa90] .n-tooltip .n-tooltip__content {
++[data-v-48eb3073] .n-tooltip .n-tooltip__content {
+   font-size: 12px;
+   padding: 6px 10px;
+   border-radius: 4px;
+@@ -1896,23 +1904,23 @@ svg.leaflet-image-layer.leaflet-interactive path {
+ }
+ 
+ /* ================= 暗黑模式适配 ================= */
+-html.dark .c-action-bar[data-v-3c85fa90] {
++html.dark .c-action-bar[data-v-48eb3073] {
+   border-color: rgba(255, 255, 255, 0.09);
+   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+ }
+-html.dark .actions-group[data-v-3c85fa90] .n-button:hover:not(:disabled) {
++html.dark .actions-group[data-v-48eb3073] .n-button:hover:not(:disabled) {
+   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+ }
+-html.dark .action-divider[data-v-3c85fa90] {
++html.dark .action-divider[data-v-48eb3073] {
+   opacity: 0.15;
+ }
+-html.dark .action-divider[data-v-3c85fa90]:hover {
++html.dark .action-divider[data-v-48eb3073]:hover {
+   opacity: 0.4;
+ }
+ 
+ /* layer: default */
+-.inline[data-v-3c85fa90]{display:inline;}
+-.px[data-v-3c85fa90]{padding-left:1rem;padding-right:1rem;}
++.inline[data-v-48eb3073]{display:inline;}
++.px[data-v-48eb3073]{padding-left:1rem;padding-right:1rem;}
+ 
+ 
+ /* --- C_AntV --- */

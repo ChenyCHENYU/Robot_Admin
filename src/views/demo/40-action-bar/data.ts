@@ -61,11 +61,19 @@ export interface LogItem {
 // 自定义配置初始值
 export const DEFAULT_CUSTOM_CONFIG = {
   align: 'left' as 'left' | 'center' | 'right' | 'space-between',
-  size: 'small' as 'tiny' | 'small' | 'medium' | 'large',
+  size: 'tiny' as 'tiny' | 'small' | 'medium' | 'large',
   showDivider: false,
   compact: false,
   wrap: false,
+  inline: false,
 }
+
+export const ACTION_SIZE_OPTIONS = [
+  { label: '微型', value: 'tiny' },
+  { label: '小型', value: 'small' },
+  { label: '中型', value: 'medium' },
+  { label: '大型', value: 'large' },
+]
 
 // 场景六：「更多」下拉子选项配置，页面为每项绑定可等待的 onClick。
 export const MORE_DROPDOWN_ITEMS: ActionDropdownItem[] = [

@@ -26,7 +26,7 @@
         <C_ActionBar
           class="action-bar-demo-toolbar"
           :actions="tableActions"
-          :config="{ size: 'small', wrap: true }"
+          :config="{ size: 'tiny', wrap: true }"
           @action-click="handleActionClick"
         >
           <template #center>
@@ -207,13 +207,10 @@
           <template #header-extra>
             <NText depth="3">动态调整</NText>
           </template>
-          <div class="card-content">
-            <NSpace
-              align="center"
-              :size="16"
-            >
-              <NSpace align="center">
-                <span class="config-label">对齐:</span>
+          <div class="action-bar-config">
+            <div class="action-bar-config__controls">
+              <div class="action-bar-config__row">
+                <span class="config-label">对齐方式</span>
                 <NRadioGroup
                   v-model:value="customConfig.align"
                   size="small"
@@ -223,24 +220,49 @@
                   <NRadio value="right">右</NRadio>
                   <NRadio value="space-between">两端</NRadio>
                 </NRadioGroup>
-              </NSpace>
-              <NDivider vertical />
-              <NSpace :size="12">
-                <NCheckbox v-model:checked="customConfig.showDivider"
-                  >分隔线</NCheckbox
-                >
-                <NCheckbox v-model:checked="customConfig.compact"
-                  >紧凑</NCheckbox
-                >
-                <NCheckbox v-model:checked="customConfig.wrap">换行</NCheckbox>
-              </NSpace>
-            </NSpace>
-            <C_ActionBar
-              :actions="basicActions"
-              :config="customConfig"
-              class="mt-4"
-              @action-click="handleActionClick"
-            />
+              </div>
+              <div class="action-bar-config__row">
+                <span class="config-label">按钮尺寸</span>
+                <NSelect
+                  v-model:value="customConfig.size"
+                  aria-label="预览按钮尺寸"
+                  size="small"
+                  :options="ACTION_SIZE_OPTIONS"
+                  class="action-bar-config__size"
+                />
+              </div>
+              <div class="action-bar-config__row">
+                <span class="config-label">布局选项</span>
+                <NSpace :size="12">
+                  <NCheckbox v-model:checked="customConfig.showDivider"
+                    >分隔线</NCheckbox
+                  >
+                  <NCheckbox v-model:checked="customConfig.compact"
+                    >紧凑</NCheckbox
+                  >
+                  <NCheckbox v-model:checked="customConfig.wrap"
+                    >换行</NCheckbox
+                  >
+                  <NCheckbox v-model:checked="customConfig.inline"
+                    >行内</NCheckbox
+                  >
+                </NSpace>
+              </div>
+            </div>
+            <div class="action-bar-config__preview-header">
+              <span>实时预览</span>
+              <span>窄容器 · 最宽 360px</span>
+            </div>
+            <div class="action-bar-config__preview">
+              <C_ActionBar
+                :actions="basicActions"
+                :config="customConfig"
+                @action-click="handleActionClick"
+              />
+            </div>
+            <p class="action-bar-config__hint">
+              紧凑会缩小留白和按钮间距；开启换行后，按钮随容器宽度自动折行。
+            </p>
           </div>
         </NCard>
       </NGridItem>
@@ -266,6 +288,7 @@
     columns,
     MOCK_TABLE_DATA,
     DEFAULT_CUSTOM_CONFIG,
+    ACTION_SIZE_OPTIONS,
     MORE_DROPDOWN_ITEMS,
     SETTINGS_DROPDOWN_ITEMS,
     type EmployeeRow,
@@ -557,6 +580,12 @@
       loading: loading.value,
       onClick: handleRefresh,
     },
+    ...(['edit', 'import', 'export', 'settings'] as const).map(key => ({
+      key,
+      onClick: () => {
+        message.info('配置预览演示，未执行业务操作')
+      },
+    })),
   ])
 
   // 事件处理

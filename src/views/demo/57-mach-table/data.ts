@@ -118,45 +118,48 @@ export const createOrderTreeRows = (): OrderTreeRow[] => {
 
   return REGIONS.map((region, regionIndex) => {
     const regionRows = source.filter(row => row.region === region)
-    const customerGroups = CUSTOMERS.slice(0, 2).map(
-      (customer, customerIndex) => {
-        const children = regionRows
-          .filter((_, index) => index % 2 === customerIndex)
-          .slice(0, 3)
-          .map(row => ({
-            ...row,
-            id: `tree:${region}:${customer}:${row.id}`,
-            children: undefined,
-          }))
-        const amount = children.reduce((sum, row) => sum + row.amount, 0)
+    const regionCustomers = [
+      CUSTOMERS[(regionIndex * 2) % CUSTOMERS.length],
+      CUSTOMERS[(regionIndex * 2 + 1) % CUSTOMERS.length],
+    ]
+    const customerGroups = regionCustomers.map((customer, customerIndex) => {
+      const children = regionRows
+        .filter((_, index) => index % 2 === customerIndex)
+        .slice(0, 3)
+        .map(row => ({
+          ...row,
+          id: `tree:${region}:${customer}:${row.id}`,
+          customer,
+          children: undefined,
+        }))
+      const amount = children.reduce((sum, row) => sum + row.amount, 0)
 
-        return {
-          ...children[0],
-          id: `tree:${region}:${customer}`,
-          orderNo: customer,
-          customer: `${children.length} 个订单`,
-          product: '客户订单汇总',
-          region,
-          quantity: children.reduce((sum, row) => sum + row.quantity, 0),
-          amount,
-          status: 'processing' as const,
-          progress: Math.round(
-            children.reduce((sum, row) => sum + row.progress, 0) /
-              Math.max(children.length, 1)
-          ),
-          updatedAt: children[0]?.updatedAt ?? '2026-09-10',
-          children,
-        }
+      return {
+        ...children[0],
+        id: `tree:${region}:${customer}`,
+        orderNo: customer,
+        customer,
+        product: '—',
+        region,
+        quantity: children.reduce((sum, row) => sum + row.quantity, 0),
+        amount,
+        status: 'processing' as const,
+        progress: Math.round(
+          children.reduce((sum, row) => sum + row.progress, 0) /
+            Math.max(children.length, 1)
+        ),
+        updatedAt: children[0]?.updatedAt ?? '2026-09-10',
+        children,
       }
-    )
+    })
     const allOrders = customerGroups.flatMap(group => group.children ?? [])
 
     return {
       ...(allOrders[0] ?? source[regionIndex]),
       id: `tree:${region}`,
       orderNo: `${region}区域`,
-      customer: `${allOrders.length} 个订单`,
-      product: '区域订单总览',
+      customer: '—',
+      product: '—',
       region,
       quantity: allOrders.reduce((sum, row) => sum + row.quantity, 0),
       amount: allOrders.reduce((sum, row) => sum + row.amount, 0),
@@ -688,8 +691,8 @@ const createOrderBusinessColumns = (
       width: tree ? 280 : 164,
       minWidth: tree ? 250 : 150,
       pinned: 'left',
-      align: 'left',
-      headerAlign: 'left',
+      align: tree ? 'left' : 'center',
+      headerAlign: tree ? 'left' : 'center',
       initialSort: tree ? undefined : 'desc',
     },
     {
@@ -698,8 +701,8 @@ const createOrderBusinessColumns = (
       width: 160,
       minWidth: 140,
       flex: 1,
-      align: 'left',
-      headerAlign: 'left',
+      align: 'center',
+      headerAlign: 'center',
       editable: inlineEditable,
     },
     {
@@ -708,8 +711,8 @@ const createOrderBusinessColumns = (
       width: 210,
       minWidth: 165,
       flex: 1.15,
-      align: 'left',
-      headerAlign: 'left',
+      align: 'center',
+      headerAlign: 'center',
       editable: inlineEditable,
     },
     {
