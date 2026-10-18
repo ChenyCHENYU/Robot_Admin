@@ -192,3 +192,24 @@
     transform: rotate(180deg);
   }
 }
+
+// 窄窗口优先保证消息、主题、设置与账户入口留在可视区。
+@media (max-width: 1000px) {
+  .navbar-right {
+    gap: 8px;
+    > [data-guide='search'] {
+      display: none;
+    }
+  }
+  .action-buttons [data-guide='fullscreen'],
+  .action-buttons [data-guide='language'],
+  .action-buttons [data-guide='guide'] {
+    display: none;
+  }
+  .user-dropdown {
+    display: none;
+  }
+  .user-info {
+    padding: 4px;
+  }
+}

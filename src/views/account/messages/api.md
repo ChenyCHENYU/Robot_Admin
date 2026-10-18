@@ -4,29 +4,34 @@
 
 所有相对地址追加到项目 `VITE_API_BASE`。除二进制附件外，响应为 `{ code: 0 | 200 | '0' | '200', msg: string, data: T }`。请求经过统一 request-core，携带当前会话；服务端必须从会话确认用户、租户、公司和业务资源权限。
 
-| 方法      | 路径                                                           | 作用与返回                                               |
-| --------- | -------------------------------------------------------------- | -------------------------------------------------------- |
-| GET       | `/notifications/inbox`                                         | `NotificationQuery` 查询，返回 `NotificationSnapshot`    |
-| GET       | `/notifications/inbox/:id`                                     | 按需详情 `NotificationRecord`                            |
-| POST      | `/notifications/inbox/commands`                                | `{type, ids, operationId}` 状态命令                      |
-| POST      | `/notifications/inbox/read-all`                                | `{category?, throughRevision, operationId}` 全部已读     |
-| POST      | `/notifications/inbox/clear`                                   | 同上，清除截止版本内未归档收件                           |
-| GET       | `/notifications/inbox/:id/attachments/:attachmentId`           | 授权后二进制附件，前端忽略元数据 URL                     |
-| GET       | `/notifications/management`                                    | 授权范围内的模板、发送、投递与审计集合                   |
-| PUT       | `/notifications/templates` 或 `/notifications/templates/:id`   | 创建/更新模板，返回完整模板                              |
-| DELETE    | `/notifications/templates/:id`                                 | query `expectedRevision`，按版本删除                     |
-| PUT       | `/notifications/dispatches` 或 `/notifications/dispatches/:id` | 保存草稿，返回完整发送实体                               |
-| POST      | `/notifications/dispatches/:id/send`                           | `{expectedRevision, operationId}` 明确发送或进入定时计划 |
-| POST      | `/notifications/dispatches/:id/withdraw`                       | `{expectedRevision}` 撤回                                |
-| POST      | `/notifications/deliveries/:id/retry`                          | 重试单条失败/阻塞投递，禁止重复成功通道                  |
-| GET / PUT | `/notifications/preferences`                                   | 获取/保存完整通知偏好                                    |
+| 方法      | 路径                                                           | 作用与返回                                                                        |
+| --------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| GET       | `/notifications/inbox`                                         | `NotificationQuery` 查询，返回 `NotificationSnapshot`                             |
+| GET       | `/notifications/inbox/:id`                                     | 按需详情 `NotificationRecord`                                                     |
+| POST      | `/notifications/inbox/commands`                                | `{type, ids, operationId}` 状态命令                                               |
+| POST      | `/notifications/inbox/:id/workflow-actions`                    | `{action, comment, expectedRevision, operationId}` 审批命令，返回更新后的完整消息 |
+| POST      | `/notifications/inbox/read-all`                                | `{category?, topic?, throughRevision, operationId}` 全部已读                      |
+| POST      | `/notifications/inbox/clear`                                   | 同上，清除截止版本内未归档收件                                                    |
+| GET       | `/notifications/inbox/:id/attachments/:attachmentId`           | 授权后二进制附件，前端忽略元数据 URL                                              |
+| GET       | `/notifications/management`                                    | 授权范围内的模板、发送、投递与审计集合                                            |
+| PUT       | `/notifications/templates` 或 `/notifications/templates/:id`   | 创建/更新模板，返回完整模板                                                       |
+| DELETE    | `/notifications/templates/:id`                                 | query `expectedRevision`，按版本删除                                              |
+| PUT       | `/notifications/dispatches` 或 `/notifications/dispatches/:id` | 保存草稿，返回完整发送实体                                                        |
+| POST      | `/notifications/dispatches/:id/send`                           | `{expectedRevision, operationId}` 明确发送或进入定时计划                          |
+| POST      | `/notifications/dispatches/:id/withdraw`                       | `{expectedRevision}` 撤回                                                         |
+| POST      | `/notifications/deliveries/:id/retry`                          | 重试单条失败/阻塞投递，禁止重复成功通道                                           |
+| GET / PUT | `/notifications/preferences`                                   | 获取/保存完整通知偏好                                                             |
 
-类型定义以 `src/api/notifications.contract.ts` 为准。快照包含当前查询 `items/total`、独立最新 `previewItems`、全局 `stats`、服务端收件 `revision` 和可选 `capabilities`。`stats.byCategory` 是分类未读数，其和等于全局 `unread`；不能用当前页数量计算角标。日期参数是精确 ISO 边界，查询支持状态、关键词、分类、来源、优先级和分页。
+类型定义以 `src/api/notifications.contract.ts` 为准。快照包含当前查询 `items/total`、独立最新 `previewItems`、全局 `stats`、服务端收件 `revision` 和可选 `capabilities`。`stats.byCategory` 是分类未读数，其和等于全局 `unread`；`byTopic?` 是未归档分类总数，`workflowPending?` 是当前身份的待审批数，`overdue?` 是待办中已超期数。缺少可选统计表示未知，不能用当前页数量计算。日期参数是精确 ISO 边界；查询除状态、关键词、分类、来源、优先级和分页，还支持 `topic/workflowStatus/taskStatus/relationship`。顶部以相同查询端点独立请求最多 20 条，必须返回同一身份下的权威全局统计与能力。
 
-状态命令支持 `read/unread/archive/unarchive/star/unstar/delete/complete-task`。阅读与待办办理独立；后端必须针对 `complete-task` 校验真实业务办理权限和状态。全部已读与清空按 `throughRevision` 截止，后到消息保持未读。跨页、推送和统计需要使用同一服务端版本规则。
+状态命令支持 `read/unread/archive/unarchive/star/unstar/delete/start-task/complete-task/cancel-task`。普通待办 `pending` 可开始、完成或取消，`in_progress` 可完成或取消，结束状态不能再次推进；带 `workflow` 的收件不能使用普通待办命令。阅读与待办办理独立；后端必须校验真实业务权限和状态。全部已读与清空按 `throughRevision` 截止，并遵循可选 `category/topic` 范围，后到消息保持未读。跨页、推送和统计需要使用同一服务端版本规则。
+
+审批消息携带可选 `workflow`：实例 ID、流程名称、业务单号、发起人、当前节点、`relationship`、流程 `status`、截止时间及意见 `history`。审批命令为 `approve/reject/return/withdraw`；驳回或退回必须有 1–1000 字意见，其他意见最多 1000 字。审批中且由我审批才允许前三种操作；审批中的我发起记录才允许撤回；抄送、归档及结束状态不可办理。服务端必须根据会话重新核验关系、节点及资源权限，并用 `expectedRevision` 拒绝过期快照，以 `operationId` 持久化去重和返回同一原结果。响应 ID 必须匹配原消息且版本前进，权限不能信任请求体或客户端判断。
+
+本地示例将同意、驳回或撤回推进到结束结果，退回到申请人修改。正式多节点、会签、转办、代理与业务事务由审批服务负责，当前前端协议和 HTTP fixture 不表示这些引擎能力已上线。
 
 创建模板和草稿也携带 `operationId`；更新携带 `id/revision`。网络未确认时前端保留同一逻辑命令的幂等键；后端必须持久化去重，并对重复创建返回原实体。命令已经确认而刷新失败时，界面提示“操作已完成，刷新同步失败”，只需重试刷新。演示只缓存最近 32 条创建结果及有界命令记录，不能代替后端持久化幂等。
 
-`capabilities.manage/preferences` 只有服务返回明确授权后开放，相同会话撤权会清理对应缓存并取消旧结果。当前未约定远端实时补偿协议，`realtime` 始终关闭，使用页面可见时轮询和联网恢复补刷。
+`capabilities.manage/preferences/workflow` 只有服务返回明确授权后开放。旧服务未返回 `workflow` 时不会展示审批办理按钮；相同会话撤权会停止对应操作，旧查询不能回滚新权限。当前未约定远端实时补偿协议，`realtime` 始终关闭，使用页面可见时轮询和联网恢复补刷。
 
 演示通道和受众全部是本地模拟。定时任务仅在应用运行期间推进；真实邮件/短信/企业微信一旦送达不能由前端追回。生产环境仍需后端调度、通道工作进程、业务审计、访问控制、去重、版本冲突处理和事件补偿。

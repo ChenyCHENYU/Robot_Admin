@@ -7,23 +7,29 @@
 import { s_notificationStore } from '@/stores/notification'
 import type {
   NotificationAttachment,
-  NotificationMutation,
   NotificationRecord,
 } from '@/api/notifications.contract'
 import { sanitizeNotificationHtml } from '@/utils/d_notificationHtml'
 import { downloadNotificationAttachment } from '@/api/notifications.attachments'
+import { CATEGORY_OPTIONS, formatMessageTime, getOptionLabel } from '../../data'
 import {
-  CATEGORY_OPTIONS,
-  formatMessageTime,
-  getMessageState,
-  getOptionLabel,
-} from '../../data'
+  getNotificationIcon,
+  getNotificationTopic,
+  getNotificationTopicLabel,
+  getNotificationTaskLabel,
+  getNotificationTaskTone,
+  getNotificationWorkflowLabel,
+  getNotificationWorkflowTone,
+  getNotificationWorkflowRelationLabel,
+  getNotificationPriorityLabel,
+  getNotificationPriorityTone,
+} from '@/utils/d_notificationPresentation'
+import { useMessageDetailActions } from './useMessageDetailActions'
 
 /** 管理当前视图的独立加载、命令与生命周期。 */
 export function useMessageDetail(props: Readonly<{ id: string | null }>) {
   const store = s_notificationStore()
   const message = useMessage()
-  const dialog = useDialog()
   const detail = ref<NotificationRecord | null>(null)
   const loading = ref(false)
   const busy = ref(false)
@@ -37,12 +43,47 @@ export function useMessageDetail(props: Readonly<{ id: string | null }>) {
   /** 判断异步结果是否仍属于当前详情与身份。 */
   const isCurrent = (version: number, scope: string): boolean =>
     version === generation && scope === store.scopeKey
+  const actions = useMessageDetailActions({
+    store,
+    detail,
+    busy,
+    getVersion: () => generation,
+    isCurrent,
+  })
+  const workflow = computed(() => detail.value?.workflow)
+  const isOverdue = computed(() => {
+    const process = workflow.value
+    return (
+      !!process &&
+      process.status === 'pending' &&
+      !!process.dueAt &&
+      Date.parse(process.dueAt) < Date.now()
+    )
+  })
+  const taskDescription = computed(() => {
+    if (detail.value?.taskStatus === 'done')
+      return '此待办已完成。阅读状态与办理状态分别记录。'
+    if (detail.value?.taskStatus === 'cancelled')
+      return '此待办已取消，保留原始内容供后续查询。'
+    if (detail.value?.taskStatus === 'in_progress')
+      return '此待办正在办理，完成相关事项后再确认办结。'
+    return '此消息需要办理。打开详情仅标记已读，完成办理需单独确认。'
+  })
+  const historyLabels = {
+    submit: '发起申请',
+    approve: '同意',
+    reject: '驳回',
+    return: '退回修改',
+    withdraw: '撤回申请',
+    cancel: '取消流程',
+  } as const
 
   /** 详情与正文按需查询，作用域或打开目标变化后丢弃旧响应。 */
   const load = async (): Promise<void> => {
     const { id } = props
     const version = ++generation
     const scope = store.scopeKey
+    loading.value = false
     detail.value = null
     error.value = ''
     readError.value = ''
@@ -55,11 +96,11 @@ export function useMessageDetail(props: Readonly<{ id: string | null }>) {
       detail.value = item
       if (!item.readAt) await syncRead(id, version, scope)
     } catch (cause) {
-      if (version === generation)
+      if (isCurrent(version, scope))
         error.value =
           cause instanceof Error ? cause.message : '无法加载消息详情'
     } finally {
-      if (version === generation) loading.value = false
+      if (isCurrent(version, scope)) loading.value = false
     }
   }
 
@@ -89,38 +130,6 @@ export function useMessageDetail(props: Readonly<{ id: string | null }>) {
   const retryRead = async (): Promise<void> => {
     if (detail.value)
       await syncRead(detail.value.id, generation, store.scopeKey)
-  }
-
-  /** 单条状态命令成功后重取详情，失败保留正文便于重试。 */
-  const change = async (type: NotificationMutation): Promise<void> => {
-    if (!detail.value || busy.value) return
-    const { id } = detail.value
-    const scope = store.scopeKey
-    busy.value = true
-    try {
-      await store.mutate(type, [id])
-      const updated = await store.loadDetail(id)
-      if (scope === store.scopeKey && id === props.id) detail.value = updated
-      message.success('消息状态已更新')
-    } catch (cause) {
-      message.error(cause instanceof Error ? cause.message : '更新失败，请重试')
-    } finally {
-      busy.value = false
-    }
-  }
-
-  /** 待办办理需要明确确认，避免仅阅读即完成。 */
-  const confirmComplete = (): void => {
-    dialog.warning({
-      title: '完成待办',
-      content:
-        store.mode === 'demo'
-          ? '确认完成此演示待办？将记录办理结果与审计记录。'
-          : '请确认相关业务已经办理完成。',
-      positiveText: '确认完成',
-      negativeText: '取消',
-      onPositiveClick: () => change('complete-task'),
-    })
   }
 
   /** 演示附件由本地生成，接口模式使用固定认证端点。 */
@@ -181,12 +190,14 @@ export function useMessageDetail(props: Readonly<{ id: string | null }>) {
       attachmentController.abort()
       attachmentController = new AbortController()
       downloadBusy.value = null
+      actions.resetActions()
       void load()
     },
     { immediate: true }
   )
   onBeforeUnmount(() => {
     generation++
+    actions.resetActions()
     attachmentController.abort()
   })
   return {
@@ -200,13 +211,25 @@ export function useMessageDetail(props: Readonly<{ id: string | null }>) {
     retryRead,
     downloadBusy,
     load,
-    change,
-    confirmComplete,
+    ...actions,
     downloadAttachment,
     CATEGORY_OPTIONS,
     formatMessageTime,
-    getMessageState,
     getOptionLabel,
     sanitizeNotificationHtml,
+    workflow,
+    isOverdue,
+    taskDescription,
+    historyLabels,
+    getNotificationIcon,
+    getNotificationTopic,
+    getNotificationTopicLabel,
+    getNotificationTaskLabel,
+    getNotificationTaskTone,
+    getNotificationWorkflowLabel,
+    getNotificationWorkflowTone,
+    getNotificationWorkflowRelationLabel,
+    getNotificationPriorityLabel,
+    getNotificationPriorityTone,
   }
 }

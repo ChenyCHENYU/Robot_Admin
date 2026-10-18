@@ -5,6 +5,7 @@
  * @Description: 企业消息可复现演示场景与独立状态快照
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { createNotificationWorkflowDemoRecords } from './notifications.demo.workflow'
 import type {
   NotificationAudit,
   NotificationDelivery,
@@ -16,6 +17,7 @@ import type {
 
 export interface NotificationDemoDocument {
   schema: 1
+  seedRevision?: number
   scopeKey: string
   revision: number
   items: NotificationRecord[]
@@ -28,9 +30,9 @@ export interface NotificationDemoDocument {
   results: Record<
     string,
     {
-      type: 'template' | 'dispatch'
+      type: 'template' | 'dispatch' | 'workflow'
       signature: string
-      entity: NotificationTemplate | NotificationDispatch
+      entity: NotificationTemplate | NotificationDispatch | NotificationRecord
     }
   >
 }
@@ -109,9 +111,10 @@ export const createNotificationDemoDocument = (
   const updatedAt = now.toISOString()
   return {
     schema: 1,
+    seedRevision: 2,
     scopeKey,
     revision: 1,
-    items,
+    items: [...items, ...createNotificationWorkflowDemoRecords(now)],
     dispatches: [],
     deliveries: [],
     audit: [],

@@ -19,6 +19,7 @@ import type {
   NotificationService,
   NotificationSnapshot,
 } from './notifications.contract'
+import { validateNotificationWorkflowCommand } from './notifications.workflow'
 import {
   requireNotificationRecord,
   requireNotificationSnapshot,
@@ -72,6 +73,7 @@ export const createNotificationRemoteService = (
     manage: false,
     realtime: false,
     preferences: false,
+    workflow: false,
   }
   let queryVersion = 0
   const config = (signal?: AbortSignal): EnhancedAxiosRequestConfig => ({
@@ -99,6 +101,7 @@ export const createNotificationRemoteService = (
       if (version === queryVersion) {
         capabilities.manage = snapshot.capabilities?.manage === true
         capabilities.preferences = snapshot.capabilities?.preferences === true
+        capabilities.workflow = snapshot.capabilities?.workflow === true
       }
       // 尚未约定可鉴权的事件补偿传输；远端目前采用可见时轮询，不能宣称已连接实时流。
       capabilities.realtime = false
@@ -115,6 +118,33 @@ export const createNotificationRemoteService = (
       requireData(
         await transport.post(`${base}/inbox/commands`, command, config(signal))
       )
+    },
+    /** 审批端点固定且使用已认证会话，关系、业务授权与幂等由服务端再次核验。 */
+    async workflowAction(command, signal) {
+      if (!capabilities.workflow)
+        throw new Error('当前消息服务未授权审批办理能力')
+      validateNotificationWorkflowCommand(command)
+      const result = requireNotificationRecord(
+        requireData(
+          await transport.post(
+            `${path('inbox', command.recordId)}/workflow-actions`,
+            {
+              action: command.action,
+              comment: command.comment,
+              expectedRevision: command.revision,
+              operationId: command.operationId,
+            },
+            config(signal)
+          )
+        )
+      )
+      if (
+        result.id !== command.recordId ||
+        !result.workflow ||
+        result.revision <= command.revision
+      )
+        throw new Error('审批服务返回了不匹配的记录或版本，请刷新核对状态')
+      return result
     },
     /** 发送明确截止版本的全部已读命令。 */
     async markAllRead(command, signal) {

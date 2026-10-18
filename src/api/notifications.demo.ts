@@ -7,6 +7,8 @@
  */
 import {
   notificationScopeKey,
+  type NotificationWorkflowCommand,
+  type NotificationMarkAllCommand,
   type NotificationCommand,
   type NotificationRecord,
   type NotificationScope,
@@ -26,7 +28,12 @@ import {
   saveDemoTemplate,
   validateNotificationPreferences,
 } from './notifications.demo.governance'
+import {
+  applyNotificationWorkflowAction,
+  resolveNotificationTopic,
+} from './notifications.workflow'
 import { queryNotificationDocument } from './notifications.demo.query'
+import { createNotificationWorkflowDemoRecords } from './notifications.demo.workflow'
 import type { NotificationDemoDocument } from './notifications.demo.seed'
 import { createAbortError, delayWithSignal } from '@/utils/abort'
 import {
@@ -62,12 +69,45 @@ const messageMutations: Record<
   unstar: item => {
     item.starred = false
   },
+  'start-task': item => {
+    item.taskStatus = 'in_progress'
+  },
+  'cancel-task': item => {
+    item.taskStatus = 'cancelled'
+  },
   'complete-task': (item, at) => {
     item.taskStatus = 'done'
     item.readAt ??= at
   },
 }
 
+const assertTaskMutation = (
+  items: NotificationRecord[],
+  type: NotificationCommand['type']
+) => {
+  if (!['start-task', 'complete-task', 'cancel-task'].includes(type)) return
+  if (items.some(item => item.kind !== 'task'))
+    throw new Error('只能办理待办消息')
+  if (items.some(item => resolveNotificationTopic(item) === 'workflow'))
+    throw new Error('审批事项必须使用专用审批操作')
+  const allowed =
+    type === 'start-task' ? ['pending'] : ['pending', 'in_progress']
+  if (
+    items.some(
+      item => !allowed.includes(item.taskStatus ?? '') || item.archivedAt
+    )
+  )
+    throw new Error('当前待办状态不允许此操作，请刷新后重试')
+}
+const matchesBulkCommand = (
+  item: NotificationRecord,
+  command: NotificationMarkAllCommand
+) => {
+  if ((item.receivedRevision ?? item.revision) > command.throughRevision)
+    return false
+  if (command.category && command.category !== item.category) return false
+  return !command.topic || command.topic === resolveNotificationTopic(item)
+}
 const applyMessageCommand = (
   document: NotificationDemoDocument,
   command: NotificationCommand,
@@ -78,11 +118,7 @@ const applyMessageCommand = (
   const items = document.items.filter(item => ids.has(item.id))
   if (items.length !== ids.size)
     throw new Error('部分消息已不存在，请刷新后重试')
-  if (
-    command.type === 'complete-task' &&
-    items.some(item => item.kind !== 'task')
-  )
-    throw new Error('只能办理待办消息')
+  assertTaskMutation(items, command.type)
   const at = now.toISOString()
   for (const item of items) {
     if (command.type !== 'delete') messageMutations[command.type](item, at)
@@ -134,6 +170,8 @@ export const createNotificationDemoService = (
       throw new Error(
         `演示：模拟${operation === 'query' ? '加载' : '操作'}失败，数据未修改，请重试`
       )
+    await storage.ensureUpgrade(() => assertActive(version, signal), signal)
+    assertActive(version, signal)
     return version
   }
   const command = async <T>(
@@ -207,13 +245,18 @@ export const createNotificationDemoService = (
   }
   const service: NotificationService = {
     mode: 'demo',
-    capabilities: { manage: true, realtime: true, preferences: true },
+    capabilities: {
+      manage: true,
+      realtime: true,
+      preferences: true,
+      workflow: true,
+    },
     /** 按筛选查询并返回独立的全量统计和预览。 */
     async query(query, signal) {
       const version = await check('query', signal)
       await dueSchedules(version, signal)
       assertActive(version, signal)
-      return queryNotificationDocument(storage.read(), query)
+      return queryNotificationDocument(storage.read(), query, now())
     },
     /** 读取当前身份作用域中的消息详情。 */
     async detail(id, signal) {
@@ -235,6 +278,50 @@ export const createNotificationDemoService = (
         signal
       )
     },
+    /** 审批按角色、当前节点及版本办理，并持久化响应以支持未知确认后的安全重试。 */
+    async workflowAction(input: NotificationWorkflowCommand, signal) {
+      const snapshot = structuredClone(input)
+      return command(
+        'workflow',
+        document => {
+          const signature = notificationOperationSignature('workflow', snapshot)
+          document.results ??= {}
+          const previous = document.results[snapshot.operationId]
+          if (previous) {
+            if (
+              previous.type !== 'workflow' ||
+              previous.signature !== signature
+            )
+              throw new Error('幂等标识与原始审批内容不一致')
+            return previous.entity as NotificationRecord
+          }
+          const item = document.items.find(
+            record => record.id === snapshot.recordId
+          )
+          if (!item) throw new Error('审批消息不存在或已删除')
+          const result = applyNotificationWorkflowAction(
+            item,
+            snapshot,
+            scope.userId,
+            now().toISOString(),
+            document.revision + 1
+          )
+          rememberResult(document, snapshot.operationId, {
+            type: 'workflow',
+            signature,
+            entity: result,
+          })
+          audit(
+            document,
+            `workflow-${snapshot.action}`,
+            item.id,
+            `${item.workflow!.businessNo}：${snapshot.comment.trim()}`
+          )
+          return result
+        },
+        signal
+      )
+    },
     /** 标记截止版本内消息，不影响后续到达的新消息。 */
     async markAllRead(input, signal) {
       const snapshot = structuredClone(input)
@@ -247,11 +334,8 @@ export const createNotificationDemoService = (
             if (
               item.archivedAt ||
               item.readAt ||
-              (item.receivedRevision ?? item.revision) >
-                snapshot.throughRevision
+              !matchesBulkCommand(item, snapshot)
             )
-              continue
-            if (snapshot.category && snapshot.category !== item.category)
               continue
             item.readAt = at
             item.updatedAt = at
@@ -275,11 +359,7 @@ export const createNotificationDemoService = (
         document => {
           if (deduplicate(document, snapshot.operationId)) return
           document.items = document.items.filter(
-            item =>
-              item.archivedAt ||
-              (item.receivedRevision ?? item.revision) >
-                snapshot.throughRevision ||
-              (snapshot.category && item.category !== snapshot.category)
+            item => item.archivedAt || !matchesBulkCommand(item, snapshot)
           )
           audit(
             document,
@@ -526,11 +606,45 @@ export const createNotificationDemoService = (
     setOnline(value) {
       online = value
     },
-    /** 主动产生一条明确标识的本地模拟消息或待办。 */
+    /** 主动产生独立的本地消息、普通待办或可办理审批，便于连续演示。 */
     async simulateIncoming(kind = 'notification') {
       await command('incoming', document => {
         const at = now().toISOString()
         const id = createNotificationId()
+        if (kind === 'workflow') {
+          const record = createNotificationWorkflowDemoRecords(
+            now(),
+            document.revision + 1
+          )[0]!
+          const businessNo = `DEMO-CG-${now().toISOString().slice(0, 10).replace(/-/g, '')}-${id.slice(-8)}`
+          document.items.unshift({
+            ...record,
+            id,
+            title: '新增采购申请待你审批（演示）',
+            createdAt: at,
+            updatedAt: at,
+            summary: `${businessNo} · 林晓发起 · 部门负责人审批`,
+            content: `【新增审批演示】采购申请\n业务单号：${businessNo}\n当前节点：部门负责人审批\n\n此流程仅在当前浏览器模拟，可继续验证同意、驳回和退回。`,
+            workflow: {
+              ...record.workflow!,
+              instanceId: `workflow-${id}`,
+              businessNo,
+              dueAt: new Date(now().getTime() + 24 * 60 * 60_000).toISOString(),
+              history: [
+                {
+                  id: createNotificationId(),
+                  action: 'submit',
+                  actor: '林晓',
+                  at,
+                  node: '发起申请',
+                  comment: '新增的本地审批演示',
+                },
+              ],
+            },
+          })
+          audit(document, 'simulate-workflow', id, businessNo)
+          return
+        }
         document.items.unshift({
           id,
           title:

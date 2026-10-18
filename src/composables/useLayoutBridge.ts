@@ -13,7 +13,12 @@
  * ```
  */
 
-import { provideLayout, type LayoutContext } from '@robot-admin/layout/naive'
+import {
+  createLayoutContext,
+  provideLayoutContext,
+  type LayoutContext,
+} from '@robot-admin/layout/naive'
+import { useMediaQuery } from '@vueuse/core'
 import { getAuthorizedLandingPath } from '@/router/d_routeIdentity'
 import { s_permissionStore } from '@/stores/permission'
 import { s_themeStore } from '@/stores/theme'
@@ -35,7 +40,7 @@ export function useLayoutBridge(): LayoutContext {
   const settingsStore = s_settingsStore()
 
   // 包负责桥接标准设置字段，宿主只提供业务数据和品牌能力。
-  return provideLayout({
+  const context = createLayoutContext({
     settings: settingsStore,
     menus: () => permissionStore.showMenuListGet,
     isDark: () => themeStore.isDark,
@@ -52,4 +57,19 @@ export function useLayoutBridge(): LayoutContext {
     },
     iconComponent: C_Icon,
   })
+  // 窄窗口折叠仅属于当前布局视图，不覆盖用户保存的桌面菜单偏好。
+  const compact = useMediaQuery('(max-width: 767px)')
+  const compactCollapsed = ref(true)
+  context.collapsed = computed({
+    get: () =>
+      compact.value ? compactCollapsed.value : settingsStore.collapsed,
+    set: value => {
+      if (compact.value) compactCollapsed.value = value
+      else settingsStore.collapsed = value
+    },
+  })
+  watch(compact, () => {
+    compactCollapsed.value = true
+  })
+  return provideLayoutContext(context)
 }

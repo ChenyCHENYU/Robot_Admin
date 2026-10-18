@@ -10,6 +10,7 @@ import {
   type NotificationDemoDocument,
 } from './notifications.demo.seed'
 import { createAbortError } from '@/utils/abort'
+import { upgradeNotificationDemoDocument } from './notifications.demo.workflow'
 import { isNotificationRecord } from './notifications.validation'
 import {
   requireNotificationDispatch,
@@ -62,13 +63,27 @@ const hasValidGovernance = (
       if (result.type === 'template') requireNotificationTemplate(result.entity)
       else if (result.type === 'dispatch')
         requireNotificationDispatch(result.entity)
-      else return false
+      else if (result.type === 'workflow') {
+        if (!isNotificationRecord(result.entity)) return false
+      } else return false
     }
     return true
   } catch {
     return false
   }
 }
+const hasDocumentIdentity = (
+  data: Partial<NotificationDemoDocument>,
+  scopeKey: string
+) =>
+  data.schema === 1 &&
+  data.scopeKey === scopeKey &&
+  Number.isInteger(data.revision) &&
+  Number(data.revision) >= 0 &&
+  (data.seedRevision === undefined ||
+    (Number.isInteger(data.seedRevision) &&
+      data.seedRevision >= 0 &&
+      data.seedRevision <= 2))
 const isDocument = (
   value: unknown,
   scopeKey: string
@@ -76,9 +91,7 @@ const isDocument = (
   if (!value || typeof value !== 'object') return false
   const data = value as Partial<NotificationDemoDocument>
   return (
-    data.schema === 1 &&
-    data.scopeKey === scopeKey &&
-    Number.isInteger(data.revision) &&
+    hasDocumentIdentity(data, scopeKey) &&
     hasDocumentCollections(data) &&
     hasDocumentPreferences(data) &&
     hasValidGovernance(data) &&
@@ -150,6 +163,17 @@ export const createNotificationDemoStorage = (
       if (queues.get(key) === pending) queues.delete(key)
     }
   }
+  /** 迁移与消息写入共用事务队列和跨标签页锁，不能覆盖同时提交的用户操作。 */
+  const ensureUpgrade = async (
+    assertActive: () => void,
+    signal?: AbortSignal
+  ) => {
+    if ((read().seedRevision ?? 0) >= 2) return
+    await transaction(document => {
+      assertActive()
+      upgradeNotificationDemoDocument(document, now())
+    }, signal)
+  }
   const subscribe = (listener: () => void) => {
     const bucket = listeners.get(key) ?? new Set<() => void>()
     bucket.add(listener)
@@ -199,5 +223,5 @@ export const createNotificationDemoStorage = (
       if (queues.get(key) === resetData) queues.delete(key)
     }
   }
-  return { read, transaction, subscribe, reset }
+  return { read, transaction, subscribe, reset, ensureUpgrade }
 }

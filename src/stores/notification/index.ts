@@ -26,6 +26,9 @@ import {
   type NotificationService,
   type NotificationTemplate,
   type NotificationTemplateDraft,
+  type NotificationWorkflowCommand,
+  type NotificationTopic,
+  type NotificationSnapshot,
 } from '@/api/notifications.contract'
 import { createAbortError, isAbortError } from '@/utils/abort'
 import { isMockDataMode } from '@/config/dataMode'
@@ -40,6 +43,15 @@ export const s_notificationStore = defineStore('notification', () => {
   const user = s_userStore()
   const items = ref<NotificationRecord[]>([])
   const previewItems = ref<NotificationRecord[]>([])
+  const previewQuery = ref<NotificationQuery>({
+    ...defaultNotificationQuery(),
+    pageSize: 20,
+  })
+  const previewLoading = ref(false)
+  const previewError = ref('')
+  const previewTotal = ref(0)
+  let previewGeneration = 0
+  let statsRevision = 0
   const stats = ref(emptyNotificationStats())
   const total = ref(0)
   const revision = ref(0)
@@ -111,7 +123,12 @@ export const s_notificationStore = defineStore('notification', () => {
   const clearData = () => {
     items.value = []
     previewItems.value = []
+    previewQuery.value = { ...defaultNotificationQuery(), pageSize: 20 }
+    previewLoading.value = false
+    previewError.value = ''
+    previewTotal.value = 0
     stats.value = emptyNotificationStats()
+    statsRevision = 0
     total.value = 0
     revision.value = 0
     query.value = defaultNotificationQuery()
@@ -130,6 +147,7 @@ export const s_notificationStore = defineStore('notification', () => {
   const teardown = () => {
     generation++
     queryGeneration++
+    previewGeneration++
     detailGeneration++
     governanceGeneration++
     preferencesGeneration++
@@ -167,6 +185,58 @@ export const s_notificationStore = defineStore('notification', () => {
     }
     capabilities.value = { ...next }
   }
+  const isLatestPreview = (version: number, requestId: number) =>
+    version === generation && requestId === previewGeneration
+  /** 顶栏预览拥有独立筛选、错误和请求代次，不影响主列表的筛选。 */
+  const refreshPreview = async (
+    nextQuery?: NotificationQuery
+  ): Promise<void> => {
+    const current = requireService()
+    const version = generation
+    const requestId = ++previewGeneration
+    const requested = structuredClone(toRaw(nextQuery ?? previewQuery.value))
+    previewLoading.value = true
+    try {
+      const snapshot = await current.query(requested, controller.signal)
+      assertCurrent(version)
+      if (requestId !== previewGeneration) return
+      previewQuery.value = requested
+      previewItems.value = snapshot.items
+      previewTotal.value = snapshot.total
+      previewError.value = ''
+      applyCapabilities(current.capabilities)
+      if (snapshot.revision >= statsRevision) {
+        stats.value = snapshot.stats
+        statsRevision = snapshot.revision
+      }
+    } catch (failure) {
+      if (isLatestPreview(version, requestId) && !isAbortError(failure))
+        previewError.value =
+          failure instanceof Error
+            ? failure.message
+            : '消息预览加载失败，请重试'
+      throw failure
+    } finally {
+      if (isLatestPreview(version, requestId)) previewLoading.value = false
+    }
+  }
+  const setPreviewQuery = async (patch: Partial<NotificationQuery>) => {
+    const requested = { ...previewQuery.value, ...patch, page: 1, pageSize: 20 }
+    // 即刻保存选择，使连续切换以最新用户意图为基准；列表提交仍由最新响应确认。
+    previewQuery.value = requested
+    previewItems.value = []
+    previewTotal.value = 0
+    await refreshPreview(requested)
+  }
+  const synchronizePreview = async (snapshot: NotificationSnapshot) => {
+    if (previewQuery.value.status !== 'all' || previewQuery.value.topic) {
+      await refreshPreview().catch(() => undefined)
+      return
+    }
+    if (previewLoading.value) return
+    previewItems.value = snapshot.previewItems
+    previewTotal.value = snapshot.stats.total
+  }
   const refresh = async (nextQuery?: NotificationQuery): Promise<void> => {
     if (refreshTimer) {
       clearTimeout(refreshTimer)
@@ -193,13 +263,17 @@ export const s_notificationStore = defineStore('notification', () => {
       }
       query.value = requested
       items.value = snapshot.items
-      previewItems.value = snapshot.previewItems
-      stats.value = snapshot.stats
+      if (snapshot.revision >= statsRevision) {
+        stats.value = snapshot.stats
+        statsRevision = snapshot.revision
+      }
       total.value = snapshot.total
       revision.value = snapshot.revision
       applyCapabilities(current.capabilities)
       error.value = ''
       connected.value = online
+      await synchronizePreview(snapshot)
+      assertCurrent(version)
     } catch (failure) {
       if (version === generation && requestId === queryGeneration) {
         recordError(failure)
@@ -354,11 +428,25 @@ export const s_notificationStore = defineStore('notification', () => {
       )
     )
   }
+  /** 审批操作保持稳定幂等键；未知确认后的重试不会重复推进流程。 */
+  const workflowAction = (
+    input: Omit<NotificationWorkflowCommand, 'operationId'>
+  ) => {
+    const payload = structuredClone(toRaw(input))
+    return execute((current, signal) => {
+      if (!current.capabilities.workflow || !current.workflowAction)
+        throw new Error('当前消息服务未授权审批办理能力')
+      return idempotent('workflow-action', payload, operationId =>
+        current.workflowAction!({ ...payload, operationId }, signal)
+      )
+    }, true)
+  }
   const markAllRead = (
     category?: NotificationCategory,
-    throughRevision = revision.value
+    throughRevision = revision.value,
+    topic?: NotificationTopic
   ) => {
-    const payload = { category, throughRevision }
+    const payload = { category, throughRevision, topic }
     return execute((current, signal) =>
       idempotent('mark-all-read', payload, operationId =>
         current.markAllRead({ ...payload, operationId }, signal)
@@ -367,9 +455,10 @@ export const s_notificationStore = defineStore('notification', () => {
   }
   const clearMessages = (
     category?: NotificationCategory,
-    throughRevision = revision.value
+    throughRevision = revision.value,
+    topic?: NotificationTopic
   ) => {
-    const payload = { category, throughRevision }
+    const payload = { category, throughRevision, topic }
     return execute((current, signal) =>
       idempotent('clear-messages', payload, operationId =>
         current.clearMessages({ ...payload, operationId }, signal)
@@ -499,7 +588,9 @@ export const s_notificationStore = defineStore('notification', () => {
       synchronizationFailure(failure, version)
     }
   }
-  const simulateIncoming = (kind: 'notification' | 'task' = 'notification') =>
+  const simulateIncoming = (
+    kind: 'notification' | 'task' | 'workflow' = 'notification'
+  ) =>
     execute(current => {
       if (!current.simulateIncoming) throw new Error('仅演示模式支持模拟消息')
       return current.simulateIncoming(kind)
@@ -514,6 +605,7 @@ export const s_notificationStore = defineStore('notification', () => {
     // 显式重置同时取消此前未完成的命令，避免旧详情或单项命令套到新场景。
     generation++
     queryGeneration++
+    previewGeneration++
     detailGeneration++
     governanceGeneration++
     preferencesGeneration++
@@ -522,6 +614,8 @@ export const s_notificationStore = defineStore('notification', () => {
     initialization = undefined
     pendingOperations.clear()
     operationFlights.clear()
+    previewLoading.value = false
+    previewError.value = ''
     detailLoading.value = false
     governanceLoading.value = false
     await execute(current => {
@@ -595,6 +689,12 @@ export const s_notificationStore = defineStore('notification', () => {
   return {
     items,
     previewItems,
+    previewQuery,
+    previewLoading,
+    previewError,
+    previewTotal,
+    refreshPreview,
+    setPreviewQuery,
     stats,
     total,
     revision,
@@ -618,6 +718,7 @@ export const s_notificationStore = defineStore('notification', () => {
     changePage,
     loadDetail,
     mutate,
+    workflowAction,
     markAllRead,
     clearMessages,
     refreshGovernance,
