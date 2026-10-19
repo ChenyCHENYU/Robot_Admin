@@ -60,7 +60,7 @@
         在线演示
       </h2>
       <p class="section-desc">
-        选择不同场景，体验视频播放器在各类业务场景中的表现。
+        选择业务场景或视频源，播放位置按视频独立保存。同源切换场景时保留播放状态与位置；答题记录仅为当前未变更的题目保留。
       </p>
 
       <!-- 场景选择卡片 -->
@@ -84,12 +84,39 @@
       </div>
     </div>
 
+    <div
+      class="video-source-controls"
+      aria-label="视频源控制"
+    >
+      <NSelect
+        :value="sourceChoice"
+        :options="VIDEO_SOURCE_OPTIONS"
+        aria-label="演示视频源"
+        @update:value="changeSource"
+      />
+      <NButton
+        size="small"
+        @click="toggleSource"
+        >{{ sourceCleared ? '恢复视频源' : '清空视频源' }}</NButton
+      >
+      <NButton
+        size="small"
+        :disabled="sourceCleared"
+        @click="restartPlayback"
+        >从头播放</NButton
+      >
+      <p
+        >公开源需要外网；内置 WebM
+        样例可离线播放。备用源仅演示播放，恢复场景源后可继续章节与测验。从头播放会保留答题和书签。</p
+      >
+    </div>
+
     <!-- ==================== 播放器实例 ==================== -->
     <div class="demo-section demo-section--player">
       <div class="player-wrapper">
         <C_VideoPlayer
-          :key="activeScene"
-          v-bind="DEMO_PLAYER_PROPS[activeScene]"
+          ref="playerRef"
+          v-bind="playerProps"
           @ready="onReady"
           @state-change="onStateChange"
           @time-update="onTimeUpdate"
@@ -101,6 +128,12 @@
           @bookmark-change="onBookmarkChange"
           @progress-update="onProgressUpdate"
         />
+        <div
+          v-if="sourceCleared"
+          class="player-empty"
+        >
+          <NEmpty description="视频源已清空，可恢复来源或选择其他示例视频" />
+        </div>
       </div>
     </div>
 
@@ -299,17 +332,9 @@
 </template>
 
 <script setup lang="ts">
-  defineOptions({ name: 'Demo37VideoPlayer' })
-  import type {
-    PlayerState,
-    QualityLevel,
-    Chapter,
-    Bookmark,
-    ProgressData,
-  } from '@robot-admin/naive-ui-components'
   import {
-    DEMO_PLAYER_PROPS,
     DEMO_SCENES,
+    VIDEO_SOURCE_OPTIONS,
     FEATURE_LIST,
     SHORTCUT_LIST,
     PROPS_COLUMNS,
@@ -318,144 +343,40 @@
     EVENTS_DATA,
     EXPOSE_COLUMNS,
     EXPOSE_DATA,
-    TAG_TYPE_MAP,
-    type DemoSceneKey,
   } from './data'
-
-  const message = useMessage()
-
-  /* ======================== 状态 ======================== */
-
-  const activeScene = ref<DemoSceneKey>('basic')
-  const playerState = ref<PlayerState>('idle')
-  const currentTime = ref(0)
-  const videoDuration = ref(0)
-  const completionPercent = ref(0)
-  const currentChapterTitle = ref('')
-
-  interface EventLog {
-    time: string
-    event: string
-    type: 'default' | 'success' | 'info' | 'warning' | 'error'
-    detail?: string
-  }
-  const eventLogs = ref<EventLog[]>([])
-
-  /* ======================== 计算属性 ======================== */
-
-  /** 播放进度百分比 */
-  const progressPercent = computed(() => {
-    if (
-      !Number.isFinite(videoDuration.value) ||
-      !Number.isFinite(currentTime.value) ||
-      videoDuration.value <= 0
-    )
-      return 0
-    return Math.min(
-      100,
-      Math.round((currentTime.value / videoDuration.value) * 100)
-    )
-  })
-
-  /** 状态标签类型 */
-  const stateTagType = computed(() => {
-    const map: Record<
-      string,
-      'default' | 'success' | 'info' | 'warning' | 'error'
-    > = {
-      idle: 'default',
-      loading: 'info',
-      ready: 'info',
-      playing: 'success',
-      paused: 'warning',
-      ended: 'default',
-      error: 'error',
-    }
-    return map[playerState.value] ?? 'default'
-  })
-
-  /* ======================== 工具函数 ======================== */
-
-  /** 格式化时间 mm:ss */
-  function formatTime(seconds: number): string {
-    if (!Number.isFinite(seconds) || seconds < 0) return '--:--'
-    const m = Math.floor(seconds / 60)
-    const s = Math.floor(seconds % 60)
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
-  }
-
-  /** 追加事件日志 */
-  function addLog(
-    event: string,
-    type: EventLog['type'] = 'default',
-    detail?: string
-  ) {
-    const now = new Date()
-    const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
-    eventLogs.value.push({ time, event, type, detail })
-    if (eventLogs.value.length > 100) eventLogs.value.shift()
-  }
-
-  /** 功能标签配色 */
-  const tagType = (tag: string) => TAG_TYPE_MAP[tag] ?? 'default'
-
-  /* ======================== 场景切换 ======================== */
-
-  /** 切换演示场景 */
-  function switchScene(key: DemoSceneKey) {
-    if (key === activeScene.value) return
-    activeScene.value = key
-    playerState.value = 'idle'
-    currentTime.value = 0
-    videoDuration.value = 0
-    completionPercent.value = 0
-    currentChapterTitle.value = ''
-    eventLogs.value = []
-    addLog('场景切换', 'info', DEMO_SCENES.find(s => s.key === key)?.title)
-  }
-
-  /* ======================== 播放器事件 ======================== */
-
-  const onReady = () => {
-    addLog('ready', 'success', '播放器初始化完成')
-    message.success('播放器就绪')
-  }
-  const onStateChange = (s: PlayerState) => {
-    playerState.value = s
-    addLog('stateChange', 'info', s)
-  }
-  const onTimeUpdate = (t: number, d: number) => {
-    currentTime.value = t
-    videoDuration.value = d
-  }
-  const onEnded = () => {
-    addLog('ended', 'warning', '视频播放完毕')
-    message.info('视频播放完毕')
-  }
-  const onError = (e: Error) => {
-    addLog('error', 'error', e.message)
-    message.error(`播放错误: ${e.message}`)
-  }
-  const onQualityChange = (q: QualityLevel) => {
-    addLog('qualityChange', 'info', q)
-    message.info(`已切换至 ${q}`)
-  }
-  const onChapterChange = (c: Chapter) => {
-    currentChapterTitle.value = c.title
-    addLog('chapterChange', 'info', c.title)
-  }
-  const onQuizAnswer = (id: string, ans: string | string[], ok: boolean) => {
-    addLog(
-      'quizAnswer',
-      ok ? 'success' : 'error',
-      `题目 ${id} — ${ok ? '✓ 正确' : '✗ 错误'} (${JSON.stringify(ans)})`
-    )
-  }
-  const onBookmarkChange = (b: Bookmark[]) =>
-    addLog('bookmarkChange', 'info', `共 ${b.length} 个书签`)
-  const onProgressUpdate = (d: ProgressData) => {
-    completionPercent.value = d.completionPercent
-  }
+  import { useVideoWorkspace } from './useVideoWorkspace'
+  defineOptions({ name: 'Demo37VideoPlayer' })
+  const {
+    activeScene,
+    sourceChoice,
+    sourceCleared,
+    playerRef,
+    playerProps,
+    playerState,
+    currentTime,
+    videoDuration,
+    completionPercent,
+    currentChapterTitle,
+    eventLogs,
+    progressPercent,
+    stateTagType,
+    formatTime,
+    tagType,
+    switchScene,
+    changeSource,
+    toggleSource,
+    restartPlayback,
+    onReady,
+    onStateChange,
+    onTimeUpdate,
+    onEnded,
+    onError,
+    onQualityChange,
+    onChapterChange,
+    onQuizAnswer,
+    onBookmarkChange,
+    onProgressUpdate,
+  } = useVideoWorkspace()
 </script>
 
 <style lang="scss" scoped>

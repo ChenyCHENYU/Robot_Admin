@@ -59,7 +59,19 @@
           ><span class="workspace-hint"
             >支持 PDF / DOCX / XLSX / XLS · 单个 ≤ 30 MB</span
           ></section
-        ></aside
+        ><section class="workspace-section workspace-actions">
+          <NButton
+            v-if="documents.length"
+            size="tiny"
+            @click="clearDocuments"
+            >清空文件库</NButton
+          >
+          <NButton
+            size="tiny"
+            @click="restoreSamples"
+            >恢复示例文件</NButton
+          >
+        </section></aside
       >
       <main class="workspace-panel document-main"
         ><header class="workspace-toolbar"
@@ -85,14 +97,11 @@
           ></header
         ><div class="document-preview"
           ><C_FilePreview
-            v-if="selected"
             inline
-            :key="`${selected.id}-${revision}`"
-            :file="selected.file"
-            :url="selected.url"
-            :file-name="selected.name" /><NEmpty
-            v-else
-            description="文件库为空，添加文件即可开始预览" /></div
+            :key="revision"
+            :file="selected?.file"
+            :url="selected?.url"
+            :file-name="selected?.name" /></div
         ><footer class="workspace-footer"
           ><span>{{ selected?.kind ?? '文档' }} 预览</span
           ><span>远程链接需允许跨域访问；PDF 使用浏览器阅读器</span></footer
@@ -152,6 +161,8 @@
     onFiles,
     addLink,
     removeSelected,
+    clearDocuments,
+    restoreSamples,
     download,
   } = useDocumentWorkspace()
 </script>

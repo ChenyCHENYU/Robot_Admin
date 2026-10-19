@@ -19,7 +19,7 @@ import type {
 
 /* ======================== 公开测试视频源 ======================== */
 
-/** MP4 测试源（Big Buck Bunny - 开源短片） */
+/** 公开演示源；网络不可用时可切换项目内置视频。 */
 export const DEMO_SOURCES = {
   mp4: 'https://vjs.zencdn.net/v/oceans.mp4',
   mp4Alt: 'https://media.w3.org/2010/05/sintel/trailer_hd.mp4',
@@ -175,6 +175,30 @@ export const DEMO_PLAYER_PROPS: Record<DemoSceneKey, VideoPlayerProps> = {
     antiCheat: DEMO_ANTI_CHEAT,
     playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
   },
+}
+
+/** 演示源切换不改变播放器身份；本地样例在无外网时仍可播放。 */
+export type VideoSourceChoice = 'scene' | 'alternate' | 'local'
+export const VIDEO_SOURCE_OPTIONS = [
+  { label: '当前场景源', value: 'scene' },
+  { label: '备用公开 MP4', value: 'alternate' },
+  { label: '项目内置视频（可离线）', value: 'local' },
+]
+
+/** 章节、测验和清晰度均属于原视频，切换备用源时不沿用其业务内容。 */
+export function resolveDemoPlayerProps(
+  scene: DemoSceneKey,
+  source: VideoSourceChoice
+): VideoPlayerProps {
+  const configured = DEMO_PLAYER_PROPS[scene]
+  if (source === 'scene') return configured
+  return {
+    ...BASE_PLAYER_PROPS,
+    url: source === 'local' ? '/menu-too-logo.webm' : DEMO_SOURCES.mp4Alt,
+    // WebM 交给浏览器原生媒体引擎按 MIME 解码，不强制标记为 MP4。
+    sourceType: source === 'local' ? undefined : 'mp4',
+    autoplayMuted: false,
+  }
 }
 
 /* ======================== 功能特性列表 ======================== */

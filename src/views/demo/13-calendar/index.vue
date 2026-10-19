@@ -38,7 +38,7 @@
       ><div
         ><strong>{{ stats.total }}</strong
         ><span>全部日程</span></div
-      ><p>点击日期查看安排 · 拖动事件调整日期 · 框选日期创建全天日程</p></div
+      ><p>点击日期查看安排 · 支持跨日与全天日程 · 框选多天创建全天安排</p></div
     >
     <div class="calendar-layout">
       <aside class="calendar-sidebar">

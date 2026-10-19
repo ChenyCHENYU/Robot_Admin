@@ -100,6 +100,7 @@
             :roles="roleList"
             :departments="deptList"
             :readonly="mode === 'preview'"
+            :allow-cycles="false"
             :theme="themeStore.isDark ? 'dark' : 'light'"
             @node-click="selectNode"
             @save="save" /></div

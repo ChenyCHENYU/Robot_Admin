@@ -70,7 +70,7 @@
     "@robot-admin/file-utils": "3.0.1",
     "@robot-admin/form-validate": "3.4.2",
     "@robot-admin/layout": "3.2.1",
-    "@robot-admin/naive-ui-components": "0.17.0",
+    "@robot-admin/naive-ui-components": "0.17.3",
     "@robot-admin/request-core": "0.6.1",
     "@robot-admin/theme": "0.6.1",
     "@splinetool/runtime": "^1.12.68",
@@ -173,9 +173,10 @@
     "flatted": "3.4.4",
     "follow-redirects": "1.16.0",
     "form-data": "4.0.6",
+    "handlebars": "4.7.10",
     "hono": "4.13.7",
-    "ip-address": "10.7.1",
     "immutable": "5.1.9",
+    "ip-address": "10.7.1",
     "js-yaml": "5.4.1",
     "lodash": "4.18.1",
     "lodash-es": "4.18.1",
@@ -191,7 +192,6 @@
     "vite-auto-i18n-plugin@1.1.16": "patches/vite-auto-i18n-plugin@1.1.16.patch",
     "auto-i18n-plugin-core@1.1.16": "patches/auto-i18n-plugin-core@1.1.16.patch",
     "@agile-team/mach-table@0.30.1": "patches/@agile-team%2Fmach-table@0.30.1.patch",
-    "@agile-team/mach-table-vue@0.30.1": "patches/@agile-team%2Fmach-table-vue@0.30.1.patch",
-    "@robot-admin/naive-ui-components@0.17.0": "patches/@robot-admin%2Fnaive-ui-components@0.17.0.patch"
+    "@agile-team/mach-table-vue@0.30.1": "patches/@agile-team%2Fmach-table-vue@0.30.1.patch"
   }
 }

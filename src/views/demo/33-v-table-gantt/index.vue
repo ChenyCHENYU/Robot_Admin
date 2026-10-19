@@ -107,13 +107,19 @@
             :theme="isDark ? 'dark' : 'light'"
             @task-click="onTaskClick"
             @task-change="onTaskChange"
+            @error="onGanttError"
+            @gantt-created="ganttError = ''"
           /><div
             v-else
             class="workspace-empty"
             >没有匹配的任务，清空搜索后恢复计划视图。</div
           ></div
         ><footer class="workspace-footer"
-          ><span>双击可编辑字段 · 拖动任务条调整排期</span
+          ><span>{{
+            ganttError
+              ? '加载失败，可在图内重试'
+              : '双击可编辑字段 · 拖动任务条调整排期'
+          }}</span
           ><span>日期、进度与详情使用同一份任务记录</span></footer
         ></main
       >
@@ -176,6 +182,7 @@
   const taskSearch = ref('')
   const timeScale = ref('week')
   const selectedTask = shallowRef<GanttTask | null>(null)
+  const ganttError = ref('')
   const themeStore = s_themeStore()
   const isDark = computed(() => themeStore.isDark)
   interface GanttHandle {
@@ -202,6 +209,10 @@
   // ==================== 组件引用管理 ====================
 
   const setGanttRef = (name: string, el: unknown) => {
+    if (!el) {
+      delete ganttRefs.value[name]
+      return
+    }
     if (el && typeof el === 'object' && 'ganttInstance' in el) {
       ganttRefs.value[name] = el as GanttHandle
     }
@@ -603,9 +614,11 @@
     if (Number.isFinite(date.getTime()))
       ganttRefs.value[activeTab.value]?.ganttInstance?.scrollToMarkLine(date)
   }
-  watch(activeTab, () => {
+  watch(activeTab, (_name, previousName) => {
+    delete ganttRefs.value[previousName]
     selectedTask.value = null
     taskSearch.value = ''
+    ganttError.value = ''
   })
 
   // ==================== 事件处理函数 ====================
@@ -707,6 +720,11 @@
 
   const onTaskClick = (task: GanttTask) => {
     selectedTask.value = task
+  }
+
+  /** 失败状态交给图内重试入口恢复，页面动作不再操作已释放实例。 */
+  const onGanttError = (error: Error) => {
+    ganttError.value = error.message
   }
 </script>
 

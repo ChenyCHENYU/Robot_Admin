@@ -10,6 +10,7 @@ import type {
   TableColumn,
   TableInstance,
   ParentChildLinkMode,
+  ComponentDensity,
 } from '@robot-admin/naive-ui-components/C_Table'
 import type {
   DemoEmployee as TestRecord,
@@ -24,6 +25,7 @@ export interface DemoConfig {
   enableSelection: boolean
   enableChildSelection: boolean
   parentChildLinkMode: ParentChildLinkMode
+  density: ComponentDensity
 }
 
 // ================= 配置相关 =================
@@ -31,6 +33,7 @@ export const defaultConfig: DemoConfig = {
   enableSelection: true,
   enableChildSelection: true,
   parentChildLinkMode: 'loose',
+  density: 'compact',
 }
 
 // ================= 子表格列配置 =================
@@ -45,7 +48,7 @@ export const childColumnsConfig = {
   // 项目子表列
   project: [
     childIndexColumn,
-    { key: 'project', title: '项目名称', width: 150 },
+    { key: 'project', title: '项目名称', minWidth: 150 },
     { key: 'progress', title: '进度', width: 100 },
     { key: 'status', title: '状态', width: 100 },
   ] satisfies DataTableColumns<ChildDataType>,
@@ -53,7 +56,7 @@ export const childColumnsConfig = {
   // 需求子表列
   requirement: [
     childIndexColumn,
-    { key: 'requirement', title: '需求名称', width: 150 },
+    { key: 'requirement', title: '需求名称', minWidth: 150 },
     { key: 'priority', title: '优先级', width: 100 },
     { key: 'status', title: '状态', width: 100 },
   ] satisfies DataTableColumns<ChildDataType>,
@@ -61,7 +64,7 @@ export const childColumnsConfig = {
   // 服务子表列
   service: [
     childIndexColumn,
-    { key: 'service', title: '服务名称', width: 150 },
+    { key: 'service', title: '服务名称', minWidth: 150 },
     { key: 'version', title: '版本', width: 100 },
     { key: 'status', title: '状态', width: 100 },
   ] satisfies DataTableColumns<ChildDataType>,
@@ -145,7 +148,6 @@ export const dataColumns: TableColumn<TestRecord>[] = [
   {
     type: 'index',
     title: '序号',
-    width: 50,
   },
   {
     key: 'name',
@@ -160,7 +162,7 @@ export const dataColumns: TableColumn<TestRecord>[] = [
   {
     key: 'role',
     title: '角色',
-    width: 150,
+    minWidth: 150,
   },
   {
     key: 'status',

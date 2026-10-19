@@ -57,40 +57,65 @@ export const occursOnDay = (event: ScheduleEvent, day: string): boolean => {
 /** 围绕打开页面的日期生成固定工作时段，避免示例时间落在午夜。 */
 export const createScheduleEvents = (now = new Date()): ScheduleEvent[] => {
   const entries: Array<
-    [string, number, number, number, ScheduleCategory, string]
+    [
+      string,
+      number,
+      number,
+      number,
+      ScheduleCategory,
+      string,
+      number?,
+      boolean?,
+    ]
   > = [
     ['产品迭代周会', 0, 9, 10, 'meeting', '线上会议'],
     ['设计方案评审', 0, 14, 15, 'meeting', '设计协作室'],
     ['无打扰 · 专注开发', 0, 16, 18, 'focus', ''],
     ['版本验收与发布', 1, 10, 12, 'delivery', '发布工作区'],
     ['客户需求沟通', 2, 14, 15, 'meeting', '线上会议'],
-    ['组件库维护', 3, 10, 12, 'focus', ''],
+    ['组件库维护（跨日）', 3, 10, 12, 'focus', '', 1],
     ['个人学习计划', 4, 17, 18, 'personal', ''],
-    ['下期里程碑确认', 6, 9, 10, 'delivery', '项目协作室'],
+    ['下期里程碑确认（全天）', 6, 0, 0, 'delivery', '项目协作室', 1, true],
     ['代码走查', -1, 14, 16, 'delivery', '线上会议'],
   ]
   return entries.map(
-    ([title, offset, start, end, category, location], index) => ({
-      id: `sample-${index + 1}`,
-      title,
-      category,
-      location,
-      description: '',
-      allDay: false,
-      start: new Date(
+    (
+      [
+        title,
+        offset,
+        start,
+        end,
+        category,
+        location,
+        endOffset = 0,
+        allDay = false,
+      ],
+      index
+    ) => {
+      const begin = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate() + offset,
         start
-      ).toISOString(),
-      end: new Date(
+      )
+      const finish = new Date(
         now.getFullYear(),
         now.getMonth(),
-        now.getDate() + offset,
+        now.getDate() + offset + endOffset,
         end
-      ).toISOString(),
-      color: CATEGORIES.find(item => item.value === category)!.color,
-    })
+      )
+      return {
+        id: `sample-${index + 1}`,
+        title,
+        category,
+        location,
+        description: '',
+        allDay,
+        start: allDay ? localDay(begin) : begin.toISOString(),
+        end: allDay ? localDay(finish) : finish.toISOString(),
+        color: CATEGORIES.find(item => item.value === category)!.color,
+      }
+    }
   )
 }
 /** 表单的时间单位为本地时间戳；全天模式隐藏时分输入。 */
@@ -193,7 +218,7 @@ export const buildScheduleEvent = (value: ScheduleDraft): ScheduleEvent => {
 /** 已有日程映射为表单时，全天结束日期恢复为用户可见的最后一天。 */
 export const editScheduleDraft = (event: ScheduleEvent): ScheduleDraft => {
   const end = eventDate(event.end ?? event.start)
-  if (event.allDay) end.setDate(end.getDate() - 1)
+  if (event.allDay && event.end) end.setDate(end.getDate() - 1)
   return {
     id: event.id,
     title: event.title,
@@ -268,11 +293,14 @@ export const mergeScheduleChanges = (
     if (!change) return event
     const start = eventDate(change.start)
     const end = eventDate(change.end ?? event.end ?? change.start)
+    const allDay =
+      typeof change.allDay === 'boolean' ? change.allDay : event.allDay
     return {
       ...event,
       ...change,
-      start: event.allDay ? localDay(start) : start.toISOString(),
-      end: event.allDay ? localDay(end) : end.toISOString(),
+      allDay,
+      start: allDay ? localDay(start) : start.toISOString(),
+      end: allDay ? localDay(end) : end.toISOString(),
     }
   })
 }

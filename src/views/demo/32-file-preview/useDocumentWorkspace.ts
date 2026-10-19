@@ -92,6 +92,16 @@ export function useDocumentWorkspace() {
     documents.value = documents.value.filter(item => item.id !== id)
     selectedId.value = documents.value[0]?.id ?? ''
   }
+  /** 保留预览组件实例，空源由组件负责取消任务并释放文档资源。 */
+  const clearDocuments = () => {
+    documents.value = []
+    selectedId.value = ''
+  }
+  /** 会话内恢复随项目提供的离线文件，无需刷新或重新进入页面。 */
+  const restoreSamples = () => {
+    documents.value = [...SAMPLE_DOCUMENTS]
+    selectedId.value = SAMPLE_DOCUMENTS[0]?.id ?? ''
+  }
   const download = () => {
     const item = selected.value
     if (!item) return
@@ -118,6 +128,8 @@ export function useDocumentWorkspace() {
     onFiles,
     addLink,
     removeSelected,
+    clearDocuments,
+    restoreSamples,
     download,
     addFiles,
   }

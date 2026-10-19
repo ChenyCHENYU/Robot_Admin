@@ -16,15 +16,17 @@
     <section class="sound-console">
       <div class="sound-artwork"
         ><img
-          :src="activeTrack.cover"
-          :alt="activeTrack.title"
+          :src="cover"
+          :alt="activeTrack?.title ?? '播放列表为空'"
           width="320"
           height="320"
         /><div class="sound-identity"
           ><span
-            >{{ String(activeIndex + 1).padStart(2, '0') }} /
-            {{ String(AUDIO_TRACKS.length).padStart(2, '0') }}</span
-          ><h2>{{ activeTrack.title }}</h2
+            >{{
+              String(tracks.length ? activeIndex + 1 : 0).padStart(2, '0')
+            }}
+            / {{ String(tracks.length).padStart(2, '0') }}</span
+          ><h2>{{ activeTrack?.title ?? '暂无曲目' }}</h2
           ><p>代码生成的合成音色</p></div
         ></div
       >
@@ -36,11 +38,13 @@
             :class="{ playing }"
             ><i />{{ playing ? '正在播放' : '等待播放' }}</span
           ></header
-        ><h2>按你的节奏，开始播放</h2><p>{{ activeTrack.extra?.description }}</p
+        ><h2>按你的节奏，开始播放</h2
+        ><p>{{
+          activeTrack?.extra?.description ?? '恢复示例曲目后，即可继续试听。'
+        }}</p
         ><div class="sound-player"
           ><C_AudioPlayer
-            :key="theme"
-            :tracks="AUDIO_TRACKS"
+            :tracks="tracks"
             :initial-index="activeIndex"
             :theme="theme"
             :show-cover="false"
@@ -67,6 +71,30 @@
               v-model:value="showPlaylist"
               :disabled="theme === 'minimal'"
               size="small" /></label></div
+        ><div class="sound-library-actions">
+          <NButton
+            size="small"
+            :disabled="!activeTrack"
+            @click="replaceSource"
+            >切换当前音源</NButton
+          >
+          <NButton
+            size="small"
+            :disabled="!activeTrack"
+            @click="removeCurrent"
+            >移除当前曲目</NButton
+          >
+          <NButton
+            size="small"
+            :disabled="!tracks.length"
+            @click="clearTracks"
+            >清空播放列表</NButton
+          >
+          <NButton
+            size="small"
+            @click="restoreTracks"
+            >恢复示例曲目</NButton
+          > </div
         ><div class="sound-event"
           ><span class="i-mdi:information-outline" />{{
             lastEvent || '默认不自动播放，点击播放按钮即可试听。'
@@ -85,6 +113,7 @@
         ><span class="eyebrow">LOCAL SOURCE</span><strong>可重建，可下载</strong
         ><p>由项目音频生成脚本制作</p
         ><a
+          v-if="activeTrack"
           :href="activeTrack.src"
           :download="`${activeTrack.id}.wav`"
           >下载当前样例 <span class="i-mdi:arrow-down" /></a></div
@@ -95,34 +124,24 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { AUDIO_TRACKS } from './data'
+  import { useAudioWorkspace } from './useAudioWorkspace'
   defineOptions({ name: 'Demo54AudioPlayer' })
-  const message = useMessage()
-  const activeIndex = ref(0)
-  const activeTrack = computed(() => AUDIO_TRACKS[activeIndex.value])
-  const theme = ref<'default' | 'minimal'>('default')
-  const showPlaylist = ref(true)
-  const playing = ref(false)
-  const lastEvent = ref('')
-  /** 只有浏览器实际成功播放后，才显示播放状态。 */
-  const handlePlay = (index: number) => {
-    activeIndex.value = index
-    playing.value = true
-    lastEvent.value = `正在播放：${AUDIO_TRACKS[index].title}`
-  }
-  /** 加载或播放失败时反馈真实错误状态。 */
-  const handleError = () => {
-    playing.value = false
-    lastEvent.value = '音频未能播放，请检查浏览器播放权限或重新尝试'
-    message.error(lastEvent.value)
-  }
-  watch(theme, () => {
-    playing.value = false
-    lastEvent.value = '界面已切换，点击播放继续试听'
-  })
-  onDeactivated(() => {
-    playing.value = false
-  })
+  const {
+    tracks,
+    activeIndex,
+    activeTrack,
+    cover,
+    theme,
+    showPlaylist,
+    playing,
+    lastEvent,
+    handlePlay,
+    handleError,
+    replaceSource,
+    removeCurrent,
+    clearTracks,
+    restoreTracks,
+  } = useAudioWorkspace()
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

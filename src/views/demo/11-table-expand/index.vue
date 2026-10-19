@@ -23,6 +23,14 @@
         size="small"
       >
         <NSpace class="mt-4">
+          <NRadioGroup
+            v-model:value="config.density"
+            name="expandTableDensity"
+          >
+            <NRadioButton value="compact">紧凑</NRadioButton>
+            <NRadioButton value="default">标准</NRadioButton>
+            <NRadioButton value="comfortable">舒适</NRadioButton>
+          </NRadioGroup>
           <NCheckbox v-model:checked="config.enableSelection">
             启用父表格选择
           </NCheckbox>
@@ -48,6 +56,7 @@
       >
         <C_ActionBar
           :actions="toolbarActions"
+          :config="{ size: controlSize }"
           class="mt-4"
         />
       </NCard>
@@ -71,10 +80,11 @@
   defineOptions({ name: 'Demo11TableExpand' })
   import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
   import type { VNodeChild } from 'vue'
-  import type {
-    ChildSelectionState,
-    TableConfig,
-    TableInstance,
+  import {
+    resolveComponentDensity,
+    type ChildSelectionState,
+    type TableConfig,
+    type TableInstance,
   } from '@robot-admin/naive-ui-components/C_Table'
   import { C_Loading } from '@robot-admin/naive-ui-components/C_Loading'
   import { C_ActionBar } from '@robot-admin/naive-ui-components/C_ActionBar'
@@ -94,6 +104,9 @@
   } from './data'
 
   const config = reactive<DemoConfig>({ ...defaultConfig })
+  const controlSize = computed(
+    () => resolveComponentDensity(config.density).size
+  )
   const tableRef = ref<TableInstance<TestRecord, ChildDataType> | null>(null)
   const expandErrors = reactive(new Map<DataTableRowKey, string>())
   const mainColumns = computed(() =>
@@ -105,6 +118,7 @@
     )
   )
   const tableConfig = computed<TableConfig<TestRecord>>(() => ({
+    density: config.density,
     expand: {
       enabled: true,
       onLoadData: loadChildData,
@@ -234,36 +248,44 @@
 
     const childSelection = selection as ChildSelectionState | undefined
     const childColumns: DataTableColumns<ChildDataType> = [
-      ...(config.enableChildSelection ? [{ type: 'selection' as const }] : []),
+      ...(config.enableChildSelection
+        ? [{ type: 'selection' as const, width: 40 }]
+        : []),
       ...getChildColumns(childRows[0]),
     ]
 
-    return h('div', { class: 'p-4' }, [
-      h(
-        'div',
-        { class: 'mb-2 text-sm text-gray-500' },
-        `${row.name} 的详细信息 (${childRows.length} 条)`
-      ),
-      h(NDataTable, {
-        data: childRows,
-        columns: childColumns,
-        rowKey: (child: ChildDataType) => child.id,
-        checkedRowKeys: childSelection?.selectedKeys ?? [],
-        scrollX: 400,
-        pagination: false,
-        onUpdateCheckedRowKeys: keys => {
-          if (!tableRef.value) return
-          syncChildSelection(
-            tableRef.value,
-            row,
-            childSelection?.selectedKeys ?? [],
-            keys,
-            childRows,
-            config
-          )
-        },
-      }),
-    ])
+    return h(
+      'section',
+      { class: 'nested-table-detail', 'aria-label': `${row.name} 的详细信息` },
+      [
+        h(
+          'div',
+          { class: 'nested-table-detail__heading' },
+          `${row.name} 的详细信息 (${childRows.length} 条)`
+        ),
+        h(NDataTable, {
+          data: childRows,
+          columns: childColumns,
+          rowKey: (child: ChildDataType) => child.id,
+          checkedRowKeys: childSelection?.selectedKeys ?? [],
+          scrollX: 400,
+          tableLayout: 'fixed',
+          pagination: false,
+          size: controlSize.value,
+          onUpdateCheckedRowKeys: keys => {
+            if (!tableRef.value) return
+            syncChildSelection(
+              tableRef.value,
+              row,
+              childSelection?.selectedKeys ?? [],
+              keys,
+              childRows,
+              config
+            )
+          },
+        }),
+      ]
+    )
   }
 
   /** 过滤异步展开返回值，阻止无主键记录进入子表格。 */

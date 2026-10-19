@@ -7,4 +7,21 @@
  */
 .table-expand-demo {
   padding: 20px;
+
+  :deep(.nested-table-detail) {
+    padding: 8px 12px;
+  }
+
+  // 功能列只收敛横向留白，确保三种密度下序号标题都保持单行。
+  :deep(.nested-table-detail [data-col-key='_index']) {
+    padding-inline: 6px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  :deep(.nested-table-detail__heading) {
+    margin-bottom: 8px;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
 }

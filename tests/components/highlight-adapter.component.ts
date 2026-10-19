@@ -6,8 +6,8 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { expect, test } from 'vitest'
-import { mount } from '@vue/test-utils'
-import { defineComponent, h, type App } from 'vue'
+import { mount, flushPromises } from '@vue/test-utils'
+import { defineComponent, h, reactive, type App } from 'vue'
 import { NCode } from 'naive-ui'
 import { C_Code } from '@robot-admin/naive-ui-components/C_Code'
 import {
@@ -22,18 +22,19 @@ function mountCodeApp() {
   let manager!: HighlightAPI
   let app!: App
   const hostHighlight = { owner: 'host' }
+  const source = reactive({ code: 'const value = 1', language: 'javascript' })
   const wrapper = mount(
     defineComponent({
       name: 'HighlightAdapterHarness',
       /** 控件与代码组件应共享当前应用管理器。 */
       setup() {
         manager = useHighlight()
-        return () =>
-          h(C_Code, { code: 'const value = 1', language: 'javascript' })
+        return () => h(C_Code, source)
       },
     }),
     {
       global: {
+        stubs: { C_Icon: true },
         plugins: [
           target => {
             app = target
@@ -44,7 +45,7 @@ function mountCodeApp() {
       },
     }
   )
-  return { wrapper, manager, app, hostHighlight }
+  return { wrapper, manager, app, hostHighlight, source }
 }
 
 test('页面控件和 C_Code 使用同一管理器，不同应用语言注册互不影响', async () => {
@@ -52,16 +53,45 @@ test('页面控件和 C_Code 使用同一管理器，不同应用语言注册互
   const left = mountCodeApp()
   const right = mountCodeApp()
 
-  expect(left.wrapper.findComponent(NCode).props('hljs')).toBe(
-    left.manager.getHljs()
+  const leftAdapter = left.wrapper.findComponent(NCode).props('hljs')!
+  const rightAdapter = right.wrapper.findComponent(NCode).props('hljs')!
+  // C_Code 传入可刷新身份的薄适配对象；通过注册表与真实渲染验证实际所属引擎。
+  expect(leftAdapter.getLanguage('javascript')).toBe(
+    left.manager.getHljs().getLanguage('javascript')
   )
-  expect(right.wrapper.findComponent(NCode).props('hljs')).toBe(
-    right.manager.getHljs()
+  expect(rightAdapter.getLanguage('javascript')).toBe(
+    right.manager.getHljs().getLanguage('javascript')
+  )
+  expect(left.wrapper.get('pre.__code__').element.innerHTML).toBe(
+    left.manager
+      .getHljs()
+      .highlight(left.source.code, { language: 'javascript' }).value
+  )
+  expect(right.wrapper.get('pre.__code__').element.innerHTML).toBe(
+    right.manager
+      .getHljs()
+      .highlight(right.source.code, { language: 'javascript' }).value
   )
   expect(left.manager.getHljs()).not.toBe(right.manager.getHljs())
   expect(await left.manager.loadLanguage('cpp')).toBe(true)
   expect(left.manager.getHljs().getLanguage('cpp')).toBeTruthy()
   expect(right.manager.getHljs().getLanguage('cpp')).toBeUndefined()
+  expect(leftAdapter.getLanguage('cpp')).toBe(
+    left.manager.getHljs().getLanguage('cpp')
+  )
+  expect(rightAdapter.getLanguage('cpp')).toBeUndefined()
+  left.source.code = 'int main() { return 0; }'
+  left.source.language = 'cpp'
+  await flushPromises()
+  expect(left.wrapper.get('pre.__code__').element.innerHTML).toBe(
+    left.manager.getHljs().highlight(left.source.code, { language: 'cpp' })
+      .value
+  )
+  expect(
+    left.wrapper.findAll('pre.__code__ [class^="hljs-"]').length
+  ).toBeGreaterThan(0)
+  expect(right.manager.getHljs().getLanguage('cpp')).toBeUndefined()
+  expect(right.wrapper.get('pre.__code__').text()).toBe('const value = 1')
   expect(Object.getOwnPropertyDescriptor(window, 'hljs')).toEqual(beforeWindow)
 
   left.wrapper.unmount()

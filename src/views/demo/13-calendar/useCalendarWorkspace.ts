@@ -167,6 +167,7 @@ export function useCalendarWorkspace() {
     showEditor.value = false
   }
   const formConfig: FormConfig<ScheduleDraft> = {
+    density: 'compact',
     labelPlacement: 'top',
     showActions: false,
     submitSuccessText: '日程已保存',

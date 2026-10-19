@@ -154,6 +154,13 @@
     }
   }
 }
+
+.sound-library-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
 .sound-event {
   display: flex;
   gap: 8px;

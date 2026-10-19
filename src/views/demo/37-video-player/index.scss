@@ -155,6 +155,34 @@
     }
   }
 
+  .video-source-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+
+    .n-select {
+      width: min(100%, 260px);
+    }
+    p {
+      flex-basis: 100%;
+      margin: 0;
+      color: var(--app-text-secondary);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+  }
+
+  .player-empty {
+    display: grid;
+    min-height: 280px;
+    place-items: center;
+    border: 1px solid var(--app-border-default);
+    border-radius: inherit;
+    background: var(--app-bg-content);
+  }
+
   /* ========== 播放器容器 ========== */
   .player-wrapper {
     max-width: 960px;
