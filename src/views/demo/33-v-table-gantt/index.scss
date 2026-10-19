@@ -1,135 +1,67 @@
-.gantt-demo-page {
-  padding: 24px;
-  min-height: 100vh;
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-19
+ * @Description: 项目计划的任务导航、时间线和固定详情布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../_shared/workspace' as workspace;
+@include workspace.layout;
+.gantt-layout {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr) 220px;
+  gap: 16px;
+  align-items: start;
 }
-
-.demo-header {
-  margin-bottom: 32px;
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-
-
-  .demo-description {
-    font-size: 18px;
-    margin: 0;
-    font-weight: 400;
-  }
+.gantt-task-list {
+  max-height: 490px;
+  overflow: auto;
+  margin-top: 12px;
 }
-
-.demo-content {
-  margin-bottom: 32px;
-  border-radius: 12px;
-  padding: 24px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+.workspace-toolbar .n-select {
+  width: 120px;
 }
-
-.demo-section {
-  .section-header {
-    margin-bottom: 24px;
-
-    h2 {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    p {
-      margin: 0 0 16px 0;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    .usage-tips {
-      border: 1px solid var(--info-color, #409eff);
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 16px;
-
-      strong {
-        display: block;
-        margin-bottom: 12px;
-        font-size: 16px;
-      }
-
-      ul {
-        margin: 0;
-        padding-left: 24px;
-
-        li {
-          margin-bottom: 8px;
-          line-height: 1.6;
-          font-size: 14px;
-
-          &:last-child {
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
-  }
-
-  .demo-controls {
-    margin-bottom: 20px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-}
-
-.config-docs {
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+.gantt-stage {
+  min-width: 0;
   overflow: hidden;
-
-  .config-list {
-    .config-item {
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border-color, #e1e4e8);
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      strong {
-        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-        padding: 4px 8px;
-        border-radius: 4px;
-        margin-right: 12px;
-        font-size: 13px;
-      }
-
-      .config-note {
-        font-size: 13px;
-        margin-top: 6px;
-        margin-left: 12px;
-        font-style: italic;
-        line-height: 1.5;
-      }
-    }
+}
+.gantt-actions {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--app-border-light);
+}
+.gantt-inspector h3 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.gantt-inspector dl {
+  font-size: 12px;
+  dt {
+    color: var(--app-text-tertiary);
+    font-size: 10px;
+    margin-top: 18px;
+  }
+  dd {
+    margin: 5px 0 0;
   }
 }
-
-@media (max-width: 768px) {
-  .gantt-demo-page {
-    padding: 16px;
+@container (max-width:1100px) {
+  .gantt-layout {
+    grid-template-columns: 200px minmax(0, 1fr);
   }
-
-  .demo-header {
-    padding: 24px 16px;
-
-    .demo-title {
-      font-size: 28px;
-    }
-
-    .demo-description {
-      font-size: 16px;
-    }
+  .gantt-inspector {
+    grid-column: 1/-1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
-
-  .demo-content {
-    padding: 16px;
+}
+@container (max-width:700px) {
+  .gantt-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .gantt-inspector {
+    grid-column: auto;
+    display: block;
+  }
+  .gantt-task-list {
+    max-height: 240px;
   }
 }

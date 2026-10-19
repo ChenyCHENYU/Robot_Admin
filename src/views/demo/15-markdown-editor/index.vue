@@ -1,732 +1,126 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-19
+ * @Description: Markdown 文档工作台，文档切换、阅读模式与本机保存
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
-  <div class="markdown-demo-page">
-    <c_vTitle
-      title="Markdown编辑器组件场景示例"
-      icon="mdi:language-markdown"
-      description="基于组件库 C_Markdown 封装，支持实时预览、语法高亮、图片上传、自动保存、字数统计等功能"
+  <div class="plugin-workspace markdown-demo-page"
+    ><header class="workspace-heading"
+      ><div
+        ><small>WRITING WORKSPACE</small><h1>Markdown 文档工作台</h1
+        ><p>从笔记到发布说明，让编辑、阅读和留存形成连续流程。</p></div
+      ><div class="workspace-actions"
+        ><NButton
+          size="small"
+          @click="fileRef?.click()"
+          >导入到当前文档</NButton
+        ><NButton
+          size="small"
+          :disabled="!content"
+          @click="exportFile"
+          >导出 Markdown</NButton
+        ><NButton
+          size="small"
+          type="primary"
+          @click="save(true)"
+          >保存到本机</NButton
+        ></div
+      ></header
+    >
+    <div class="workspace-grid"
+      ><aside class="workspace-panel"
+        ><section class="workspace-section"
+          ><h2>文档</h2
+          ><button
+            v-for="item in WORKSPACE_DOCUMENTS"
+            :key="item.id"
+            type="button"
+            class="workspace-choice"
+            :aria-pressed="selectedId === item.id"
+            @click="selectedId = item.id"
+            ><span class="workspace-badge">MD</span
+            ><span
+              ><strong>{{ item.name }}</strong
+              ><small>{{ drafts[item.id].length }} 字符</small></span
+            ></button
+          ></section
+        ><section class="workspace-section"
+          ><h2>草稿与留存</h2
+          ><NCheckbox v-model:checked="autoSave">自动保存到本机</NCheckbox
+          ><p
+            >每份文档单独保留修改。保存使用当前浏览器，跨设备分享请导出 Markdown
+            文件。</p
+          ><NButton
+            size="tiny"
+            @click="restore"
+            >恢复当前示例</NButton
+          ></section
+        ></aside
+      >
+      <main class="workspace-panel"
+        ><header class="workspace-toolbar"
+          ><div
+            ><h2>{{ current.name }}</h2
+            ><small
+              >{{ content.split('\n').length }} 行 ·
+              {{ content.length }} 字符</small
+            ></div
+          ><NRadioGroup
+            v-model:value="mode"
+            size="small"
+            ><NRadioButton value="edit">专注编辑</NRadioButton
+            ><NRadioButton value="editable">编辑与预览</NRadioButton
+            ><NRadioButton value="preview">阅读</NRadioButton></NRadioGroup
+          ></header
+        ><div class="markdown-stage"
+          ><C_Markdown
+            v-model="content"
+            editor-id="robot-document-workspace"
+            :mode="mode"
+            height="640px"
+            :is-dark="themeStore.isDark"
+            :auto-save="false"
+            :max-length="100000"
+            :show-word-count="true"
+            @save="() => save(true)" /></div
+        ><footer class="workspace-footer"
+          ><span>{{ dirty ? '有尚未保存的修改' : savedState }}</span
+          ><span>支持同步预览与全屏 · 文本不超过 100000 字符</span></footer
+        ></main
+      ></div
+    ><input
+      ref="fileRef"
+      type="file"
+      accept=".md,.markdown,.txt"
+      class="markdown-file"
+      aria-label="选择 Markdown 文件"
+      @change="importFile"
     />
-
-    <NTabs
-      v-model:value="activeTab"
-      type="segment"
-      animated
-    >
-      <!-- 基础用法 -->
-      <NTabPane
-        name="basic"
-        tab="🔧 基础用法"
-      >
-        <NCard
-          title="基础编辑器"
-          class="demo-card"
-        >
-          <template #header-extra>
-            <C_ActionBar
-              :actions="basicHeaderActions"
-              :config="{ size: 'small' }"
-            />
-          </template>
-
-          <C_Markdown
-            ref="basicEditorRef"
-            v-model="basicContent"
-            height="500px"
-            placeholder="请输入你的 Markdown 内容..."
-            :auto-save="true"
-            :auto-save-interval="10000"
-            @save="handleBasicSave"
-            @upload-image="handleUploadImage"
-            @auto-save="handleAutoSave"
-            @word-count-change="handleWordCountChange"
-          />
-
-          <div class="editor-info">
-            <NSpace>
-              <NTag
-                :bordered="false"
-                type="info"
-              >
-                字数: {{ wordCount }}
-              </NTag>
-              <NTag
-                :bordered="false"
-                type="success"
-                v-if="lastSaveTime"
-              >
-                最后保存: {{ lastSaveTime }}
-              </NTag>
-              <NTag
-                :bordered="false"
-                type="warning"
-                v-if="lastAutoSaveTime"
-              >
-                自动保存: {{ lastAutoSaveTime }}
-              </NTag>
-            </NSpace>
-          </div>
-        </NCard>
-      </NTabPane>
-
-      <!-- 表单集成 -->
-      <NTabPane
-        name="form"
-        tab="📋 表单集成"
-      >
-        <NCard
-          title="文章编辑表单"
-          class="demo-card"
-        >
-          <C_Form
-            ref="formRef"
-            :model-value="articleForm"
-            @update:model-value="Object.assign(articleForm, $event)"
-            :options="articleOptions"
-            :config="articleConfig"
-            :renderers="articleRenderers"
-          >
-            <template #markdownField="{ value, updateValue, disabled }">
-              <div class="form-markdown-wrapper">
-                <C_Markdown
-                  :model-value="value"
-                  @update:model-value="updateValue"
-                  :disabled="disabled"
-                  height="400px"
-                  placeholder="请输入文章内容..."
-                  :max-length="20000"
-                  class="form-markdown-editor"
-                  @max-length-exceeded="handleMaxLengthExceeded"
-                  @word-count-change="handleFormWordCountChange"
-                />
-                <div class="form-word-count">
-                  <NSpace>
-                    <NTag
-                      :bordered="false"
-                      type="info"
-                      size="small"
-                    >
-                      字数统计: {{ formWordCount }} / 20000
-                    </NTag>
-                    <NTag
-                      :bordered="false"
-                      :type="
-                        formWordCount > 19000
-                          ? 'error'
-                          : formWordCount > 18000
-                            ? 'warning'
-                            : 'success'
-                      "
-                      size="small"
-                    >
-                      {{
-                        formWordCount <= 19000
-                          ? '字数正常'
-                          : formWordCount <= 19500
-                            ? '接近上限'
-                            : '即将超出'
-                      }}
-                    </NTag>
-                  </NSpace>
-                </div>
-              </div>
-            </template>
-            <template #action>
-              <C_ActionBar
-                :actions="formActions"
-                :config="{ gap: 12 }"
-              />
-            </template>
-          </C_Form>
-        </NCard>
-      </NTabPane>
-
-      <!-- 不同模式 -->
-      <NTabPane
-        name="modes"
-        tab="🎨 不同模式"
-      >
-        <NSpace
-          vertical
-          :size="24"
-        >
-          <!-- 编辑模式 -->
-          <NCard
-            title="编辑模式 (edit)"
-            class="demo-card"
-          >
-            <C_Markdown
-              v-model="modeContent.edit"
-              mode="edit"
-              height="300px"
-              placeholder="编辑模式 - 可以编辑和预览"
-            />
-          </NCard>
-
-          <!-- 可编辑模式 -->
-          <NCard
-            title="可编辑模式 (editable)"
-            class="demo-card"
-          >
-            <C_Markdown
-              v-model="modeContent.editable"
-              mode="editable"
-              height="300px"
-              placeholder="可编辑模式 - 实时渲染"
-            />
-          </NCard>
-
-          <!-- 预览模式 -->
-          <NCard
-            title="预览模式 (preview)"
-            class="demo-card"
-          >
-            <C_Markdown
-              v-model="modeContent.preview"
-              mode="preview"
-              height="300px"
-              placeholder="预览模式 - 只读"
-            />
-          </NCard>
-        </NSpace>
-      </NTabPane>
-
-      <!-- 配置选项 -->
-      <NTabPane
-        name="config"
-        tab="⚙️ 配置选项"
-      >
-        <NSpace
-          vertical
-          :size="24"
-        >
-          <NCard
-            title="配置面板"
-            class="demo-card"
-          >
-            <NSpace vertical>
-              <NSpace align="center">
-                <NCheckbox v-model:checked="config.disabled">
-                  禁用编辑器
-                </NCheckbox>
-                <NCheckbox v-model:checked="config.autofocus">
-                  自动聚焦
-                </NCheckbox>
-                <NCheckbox v-model:checked="config.autoSave">
-                  启用自动保存
-                </NCheckbox>
-
-                <NDivider vertical />
-
-                <span>编辑器高度:</span>
-                <NSlider
-                  v-model:value="config.height"
-                  :min="200"
-                  :max="800"
-                  :step="50"
-                  style="width: 200px"
-                />
-                <span>{{ config.height }}px</span>
-              </NSpace>
-            </NSpace>
-          </NCard>
-
-          <NCard
-            title="配置演示"
-            class="demo-card"
-          >
-            <C_Markdown
-              v-model="configContent"
-              :height="`${config.height}px`"
-              :mode="config.disabled ? 'preview' : 'editable'"
-              :autofocus="config.autofocus"
-              :default-fullscreen="config.defaultFullscreen"
-              :autoSave="config.autoSave"
-              :autoSaveInterval="5000"
-              placeholder="根据左侧配置动态调整的编辑器"
-              @fullscreen-change="handleFullscreenChange"
-              @auto-save="handleConfigAutoSave"
-            />
-          </NCard>
-        </NSpace>
-      </NTabPane>
-
-      <!-- 数据回显 -->
-      <NTabPane
-        name="echo"
-        tab="🔄 数据回显"
-      >
-        <NSpace
-          vertical
-          :size="24"
-        >
-          <NCard
-            title="模拟数据源"
-            class="demo-card"
-          >
-            <C_ActionBar :actions="echoActions" />
-          </NCard>
-
-          <NCard
-            title="数据回显编辑器"
-            class="demo-card"
-          >
-            <template #header-extra>
-              <NSpace v-if="currentArticle">
-                <NTag type="info">{{ currentArticle.title }}</NTag>
-                <NTag type="success">{{ currentArticle.author }}</NTag>
-              </NSpace>
-            </template>
-
-            <C_Markdown
-              v-model="echoContent"
-              height="400px"
-              placeholder="点击上方按钮加载不同的文章内容"
-              @change="handleEchoChange"
-              @word-count-change="handleEchoWordCountChange"
-            />
-
-            <div
-              class="echo-info"
-              v-if="currentArticle"
-            >
-              <NSpace>
-                <span>
-                  <strong>创建时间:</strong>
-                  {{ currentArticle.createTime }}
-                </span>
-                <span>
-                  <strong>更新时间:</strong>
-                  {{ currentArticle.updateTime }}
-                </span>
-                <span><strong>字数:</strong> {{ echoWordCount }}</span>
-              </NSpace>
-            </div>
-          </NCard>
-        </NSpace>
-      </NTabPane>
-    </NTabs>
-
-    <!-- 预览弹窗 -->
-    <NModal
-      v-model:show="showPreviewModal"
-      preset="card"
-      style="width: 90%; max-width: 1200px"
-    >
-      <template #header>
-        <span>📖 文章预览</span>
-      </template>
-
-      <div class="article-preview">
-        <h1>{{ articleForm.title || '未命名文章' }}</h1>
-        <div class="article-meta">
-          <NSpace>
-            <NTag
-              v-if="articleForm.category"
-              type="primary"
-            >
-              {{
-                categoryOptions.find(opt => opt.value === articleForm.category)
-                  ?.label
-              }}
-            </NTag>
-            <NTag
-              v-for="tag in articleForm.tags"
-              :key="tag"
-              type="info"
-            >
-              {{ tag }}
-            </NTag>
-            <span class="create-time">{{ new Date().toLocaleString() }}</span>
-          </NSpace>
-        </div>
-        <div
-          class="article-summary"
-          v-if="articleForm.summary"
-        >
-          <p><strong>摘要:</strong> {{ articleForm.summary }}</p>
-        </div>
-        <div class="article-content">
-          <C_Markdown
-            :model-value="articleForm.content || '暂无内容'"
-            mode="preview"
-            height="auto"
-            :disabled="true"
-          />
-        </div>
-      </div>
-    </NModal>
   </div>
 </template>
-
 <script setup lang="ts">
+  import { s_themeStore } from '@/stores/theme'
+  import { useMarkdownWorkspace } from './useMarkdownWorkspace'
   defineOptions({ name: 'Demo15MarkdownEditor' })
-  // 导入数据和类型
-  import {
-    PRESET_RULES,
-    type FormInstance,
-    type FormOption,
-    type FormConfig,
-    type FormRenderer,
-  } from '@robot-admin/naive-ui-components/C_Form'
-  import { NDynamicTags } from 'naive-ui/es'
-  import { delayWithSignal } from '@/utils/abort'
-  import type { ActionItem } from '@robot-admin/naive-ui-components'
-  import {
-    type ArticleData,
-    type InsertImageFunction,
-    defaultBasicContent,
-    categoryOptions,
-    defaultModeContent,
-    defaultConfig,
-    defaultConfigContent,
-    insertTemplate,
-    mockArticles,
-  } from './data'
-
-  // 消息提示
-  const message = useMessage()
-  const dialog = useDialog()
-
-  // 当前激活的标签页
-  const activeTab = ref('basic')
-
-  // 基础用法相关
-  const basicContent = ref(defaultBasicContent)
-  const basicEditorRef = ref()
-  const wordCount = ref(0)
-  const lastSaveTime = ref('')
-  const lastAutoSaveTime = ref('')
-
-  // 表单相关
-  const formRef = ref<FormInstance<typeof articleForm> | null>(null)
-  const submitting = computed(() => formRef.value?.isSubmitting ?? false)
-  const savingDraft = ref(false)
-  const formWordCount = ref(0)
-
-  // 表单操作按钮配置
-  const formActions = computed<ActionItem[]>(() => [
-    {
-      key: 'submit',
-      label: '发布文章',
-      icon: 'mdi:send',
-      type: 'primary',
-      loading: submitting.value,
-      disabled: savingDraft.value,
-      onClick: async () => {
-        await formRef.value?.submit()
-      },
-    },
-    {
-      key: 'draft',
-      label: '保存草稿',
-      icon: 'mdi:content-save-outline',
-      loading: savingDraft.value,
-      disabled: submitting.value,
-      onClick: saveAsDraft,
-    },
-    {
-      key: 'preview',
-      label: '预览文章',
-      icon: 'mdi:eye-outline',
-      onClick: previewArticle,
-    },
-    {
-      key: 'reset',
-      label: '重置表单',
-      icon: 'mdi:lock-reset',
-      disabled: submitting.value || savingDraft.value,
-      onClick: resetForm,
-    },
-  ])
-
-  // 基础编辑器 header-extra 操作按钮
-  const basicHeaderActions = computed<ActionItem[]>(() => [
-    {
-      key: 'insert-template',
-      label: '插入模板',
-      type: 'primary',
-      onClick: insertTemplateContent,
-    },
-    {
-      key: 'clear',
-      label: '清空内容',
-      type: 'warning',
-      onClick: clearContent,
-    },
-  ])
-
-  // 数据回显操作按钮
-  const echoActions = computed<ActionItem[]>(() => [
-    {
-      key: 'load-article-1',
-      label: '加载文章 1',
-      type: 'primary',
-      onClick: () => loadArticleData(1),
-    },
-    {
-      key: 'load-article-2',
-      label: '加载文章 2',
-      type: 'primary',
-      onClick: () => loadArticleData(2),
-    },
-    {
-      key: 'load-article-3',
-      label: '加载文章 3',
-      type: 'primary',
-      onClick: () => loadArticleData(3),
-    },
-    {
-      key: 'clear-echo',
-      label: '清空内容',
-      type: 'warning',
-      onClick: clearEchoContent,
-    },
-  ])
-
-  const articleForm = reactive({
-    title: '',
-    summary: '',
-    category: '',
-    tags: [] as string[],
-    content: '',
-  })
-
-  const articleFields: FormOption<typeof articleForm>[] = [
-    {
-      prop: 'title',
-      label: '文章标题',
-      type: 'input',
-      placeholder: '请输入文章标题',
-      attrs: { maxlength: 100, showCount: true },
-      rules: [PRESET_RULES.required('文章标题')],
-    },
-    {
-      prop: 'summary',
-      label: '文章摘要',
-      type: 'textarea',
-      placeholder: '请输入文章摘要',
-      attrs: { rows: 3, maxlength: 200, showCount: true },
-      rules: [PRESET_RULES.required('文章摘要')],
-    },
-    {
-      prop: 'category',
-      label: '文章分类',
-      type: 'select',
-      placeholder: '请选择文章分类',
-      children: categoryOptions,
-      rules: [PRESET_RULES.required('文章分类', 'change')],
-    },
-    { prop: 'tags', label: '文章标签', type: 'tags' },
-    {
-      prop: 'content',
-      label: '文章内容',
-      type: 'markdown',
-      rules: [PRESET_RULES.required('文章内容')],
-    },
-  ]
-  // 输入锁放在字段级，避免把表单自身提交锁反馈为全表单不可提交状态。
-  const articleOptions = computed<FormOption<typeof articleForm>[]>(() =>
-    articleFields.map(field => ({ ...field, disabled: submitting.value }))
-  )
-  const articleConfig = computed<FormConfig<typeof articleForm>>(() => ({
-    disabled: savingDraft.value,
-    labelPlacement: 'top',
-    onSubmit: async (_payload, context) => {
-      await delayWithSignal(2000, context?.signal)
-      message.info('发布流程演示完成，文章未持久化')
-    },
-  }))
-  const articleRenderers: Record<string, FormRenderer> = {
-    tags: props => h(NDynamicTags, props),
-    markdown: (props, _item, _config, context) =>
-      h(
-        'div',
-        { class: 'w-full' },
-        context.slots?.markdownField?.({
-          value: props.value,
-          updateValue: props['onUpdate:value'],
-          disabled: props.disabled,
-        })
-      ),
-  }
-
-  // 不同模式演示
-  const modeContent = reactive({ ...defaultModeContent })
-
-  // 配置选项
-  const config = reactive({ ...defaultConfig })
-  const configContent = ref(defaultConfigContent)
-
-  // 数据回显
-  const echoContent = ref('')
-  const echoWordCount = ref(0)
-  const currentArticle = ref<ArticleData | null>(null)
-
-  // 预览弹窗
-  const showPreviewModal = ref(false)
-
-  /**
-   * 生命周期
-   */
-  const pendingActions = new Set<ReturnType<typeof setTimeout>>()
-  const scheduleDemoAction = (callback: () => void, delay: number) => {
-    const timer = setTimeout(() => {
-      pendingActions.delete(timer)
-      callback()
-    }, delay)
-    pendingActions.add(timer)
-  }
-
-  onUnmounted(() => {
-    pendingActions.forEach(clearTimeout)
-    pendingActions.clear()
-  })
-
-  /**
-   * 事件处理函数
-   */
-  const handleBasicSave = () => {
-    lastSaveTime.value = new Date().toLocaleString()
-    message.success('内容已保存!')
-  }
-
-  const handleUploadImage = (
-    _event: Event,
-    insertImage: InsertImageFunction,
-    files: FileList
-  ) => {
-    Array.from(files).forEach(file => {
-      const reader = new FileReader()
-      reader.onload = e => {
-        insertImage({
-          url: e.target?.result as string,
-          desc: file.name,
-          width: 'auto',
-          height: 'auto',
-        })
-      }
-      reader.readAsDataURL(file)
-    })
-    message.success(`上传 ${files.length} 张图片`)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleAutoSave = (_text: string) => {
-    lastAutoSaveTime.value = new Date().toLocaleString()
-    message.info('自动保存成功')
-  }
-
-  const handleWordCountChange = (count: number) => {
-    wordCount.value = count
-  }
-
-  const handleFormWordCountChange = (count: number) => {
-    formWordCount.value = count
-  }
-
-  const handleEchoWordCountChange = (count: number) => {
-    echoWordCount.value = count
-  }
-
-  const insertTemplateContent = () => {
-    basicContent.value += insertTemplate
-  }
-
-  const clearContent = () => {
-    dialog.warning({
-      title: '确认清空',
-      content: '确定要清空所有内容吗？此操作不可恢复。',
-      positiveText: '确认',
-      negativeText: '取消',
-      onPositiveClick: () => {
-        basicContent.value = ''
-        message.success('内容已清空')
-      },
-    })
-  }
-
-  const handleMaxLengthExceeded = (
-    currentLength: number,
-    maxLength: number
-  ) => {
-    message.error(
-      `内容长度超出限制！当前 ${currentLength} 字符，最大 ${maxLength} 字符`
-    )
-  }
-
-  const saveAsDraft = async () => {
-    savingDraft.value = true
-
-    scheduleDemoAction(() => {
-      savingDraft.value = false
-      message.info('草稿流程演示完成，内容未持久化')
-    }, 1000)
-  }
-
-  const previewArticle = () => {
-    if (!articleForm.content.trim()) {
-      message.warning('请先输入文章内容')
-      return
-    }
-    showPreviewModal.value = true
-  }
-
-  const resetForm = () => {
-    dialog.warning({
-      title: '确认重置',
-      content: '确定要重置表单吗？所有填写的内容将丢失。',
-      positiveText: '确认',
-      negativeText: '取消',
-      onPositiveClick: () => {
-        Object.assign(articleForm, {
-          title: '',
-          summary: '',
-          category: '',
-          tags: [],
-          content: '',
-        })
-        formRef.value?.clearValidation()
-        formWordCount.value = 0
-        message.success('表单已重置')
-      },
-    })
-  }
-
-  // 配置相关
-  const handleFullscreenChange = (isFullscreen: boolean) => {
-    message.info(`${isFullscreen ? '进入' : '退出'}全屏模式`)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleConfigAutoSave = (_text: string) => {
-    message.info('配置演示编辑器自动保存成功')
-  }
-
-  // 数据回显
-  const loadArticleData = (articleId: number) => {
-    const article = mockArticles.find(a => a.id === articleId)
-    if (article) {
-      currentArticle.value = article
-      echoContent.value = article.content
-      echoWordCount.value = article.content.length
-      message.success(`已加载文章: ${article.title}`)
-    }
-  }
-
-  const clearEchoContent = () => {
-    currentArticle.value = null
-    echoContent.value = ''
-    echoWordCount.value = 0
-    message.success('内容已清空')
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleEchoChange = (_text: string, _html: string) => {
-    if (currentArticle.value) {
-      currentArticle.value.updateTime = new Date().toLocaleString()
-    }
-  }
+  const themeStore = s_themeStore()
+  const {
+    WORKSPACE_DOCUMENTS,
+    drafts,
+    selectedId,
+    mode,
+    autoSave,
+    fileRef,
+    savedState,
+    current,
+    content,
+    dirty,
+    save,
+    exportFile,
+    importFile,
+    restore,
+  } = useMarkdownWorkspace()
 </script>
-
 <style lang="scss" scoped>
   @use './index.scss';
 </style>

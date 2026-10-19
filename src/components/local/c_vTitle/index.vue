@@ -11,8 +11,16 @@
 <template>
   <div class="v-title">
     <div class="v-title__content">
-      <div class="v-title__icon">
-        <Icon :icon="icon" />
+      <div
+        class="v-title__icon"
+        aria-hidden="true"
+      >
+        <Icon
+          :icon="
+            DEMO_TITLE_ICONS[icon] ||
+            DEMO_TITLE_ICONS['mdi:file-document-outline']
+          "
+        />
       </div>
       <div class="v-title__text">
         <NH1>{{ title }}</NH1>
@@ -25,14 +33,17 @@
         </NText>
       </div>
     </div>
-    <div class="v-title__decoration">
-      <span class="decoration-dot" />
-      <span class="decoration-line" />
-    </div>
+    <div
+      v-if="$slots.extra"
+      class="v-title__actions"
+      ><slot name="extra"
+    /></div>
   </div>
 </template>
 
 <script setup lang="ts">
+  import { Icon } from '@iconify/vue'
+  import { DEMO_TITLE_ICONS } from '@/utils/d_demoTitleIcons'
   defineOptions({ name: 'VerticalTitle' })
   withDefaults(
     defineProps<{

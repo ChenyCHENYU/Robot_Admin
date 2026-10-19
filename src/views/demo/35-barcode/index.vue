@@ -16,192 +16,183 @@
       description="支持 CODE128、EAN13 等多种格式，自定义尺寸颜色，适用于商品编码、物流追踪等场景"
     />
 
-    <!-- 示例展示 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:barcode"
-          class="title-icon"
-        />
-        条形码示例
-      </h2>
-      <p class="section-desc">
-        以下是常见的条形码格式示例，展示了不同应用场景下的条形码效果。CODE128是最通用的格式，支持所有ASCII字符；EAN13是商品条码的标准格式。
-      </p>
-      <div class="examples-grid">
-        <div
-          v-for="(example, index) in BARCODE_EXAMPLES"
-          :key="index"
-          class="example-card"
-        >
-          <h3 class="example-title">{{ example.title }}</h3>
-          <p class="example-desc">{{ example.description }}</p>
-          <div class="example-barcode">
-            <C_Barcode
-              :value="example.value"
-              :format="example.format"
-              :label="example.label"
-              :show-label="true"
-              :show-border="false"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 自定义配置 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:cog"
-          class="title-icon"
-        />
-        自定义配置
-      </h2>
-      <p class="section-desc">
-        通过以下配置选项，您可以自定义条形码的外观和行为。实时预览您的配置效果。
-      </p>
-      <div class="control-panel">
-        <div class="control-row">
-          <span class="control-label">条形码值:</span>
-          <div class="control-content">
-            <NInput
-              v-model:value="customValue"
-              placeholder="请输入条形码值"
-              style="width: 200px"
-            />
-            <NSelect
-              v-model:value="customFormat"
-              :options="BARCODE_FORMATS"
-              style="width: 150px"
-            />
-          </div>
-        </div>
-
-        <div class="control-row">
-          <span class="control-label">尺寸:</span>
-          <div class="control-content">
-            <NSlider
-              v-model:value="customWidth"
-              :min="CONFIG_OPTIONS.width.min"
-              :max="CONFIG_OPTIONS.width.max"
-              :step="CONFIG_OPTIONS.width.step"
-              style="width: 120px"
-            />
-            <span class="slider-label">宽: {{ customWidth }}</span>
-            <NSlider
-              v-model:value="customHeight"
-              :min="CONFIG_OPTIONS.height.min"
-              :max="CONFIG_OPTIONS.height.max"
-              :step="CONFIG_OPTIONS.height.step"
-              style="width: 120px"
-            />
-            <span class="slider-label">高: {{ customHeight }}</span>
-          </div>
-        </div>
-
-        <div class="control-row">
-          <span class="control-label">文本:</span>
-          <div class="control-content">
-            <NSlider
-              v-model:value="customFontSize"
-              :min="CONFIG_OPTIONS.fontSize.min"
-              :max="CONFIG_OPTIONS.fontSize.max"
-              :step="CONFIG_OPTIONS.fontSize.step"
-              style="width: 120px"
-            />
-            <span class="slider-label">字号: {{ customFontSize }}</span>
-            <NSelect
-              v-model:value="customTextPosition"
-              :options="TEXT_POSITIONS"
-              style="width: 100px"
-            />
-            <NCheckbox v-model:checked="customShowText">显示文本</NCheckbox>
-          </div>
-        </div>
-
-        <div class="control-row">
-          <span class="control-label">颜色:</span>
-          <div class="control-content">
-            <div class="color-presets">
-              <div
-                v-for="(preset, index) in COLOR_PRESETS"
-                :key="index"
-                class="color-preset"
-                :class="{ active: selectedColorIndex === index }"
-                :style="{
-                  backgroundColor: preset.background,
-                  border: `2px solid ${preset.value}`,
-                }"
-                @click="selectColorPreset(index)"
+    <nav
+      class="generator-presets"
+      aria-label="生成场景"
+      ><span>选择用途</span
+      ><button
+        v-for="example in BARCODE_EXAMPLES"
+        :key="example.title"
+        type="button"
+        :aria-pressed="customValue === example.value"
+        @click="applyExample(example)"
+        ><strong>{{ example.title }}</strong
+        ><small>{{ example.description }}</small></button
+      ></nav
+    >
+    <div class="generator-grid">
+      <!-- 自定义配置 -->
+      <div class="demo-section">
+        <h2 class="section-title">
+          <C_Icon
+            name="mdi:cog"
+            class="title-icon"
+          />
+          自定义配置
+        </h2>
+        <p class="section-desc">
+          通过以下配置选项，您可以自定义条形码的外观和行为。实时预览您的配置效果。
+        </p>
+        <div class="control-panel">
+          <div class="control-row">
+            <span class="control-label">条形码值:</span>
+            <div class="control-content">
+              <NInput
+                v-model:value="customValue"
+                placeholder="请输入条形码值"
+                style="width: 200px"
+              />
+              <NSelect
+                v-model:value="customFormat"
+                :options="BARCODE_FORMATS"
+                style="width: 150px"
               />
             </div>
-            <NColorPicker
-              v-model:value="customLineColor"
-              style="margin-left: 12px"
-            />
-            <span>线条</span>
-            <NColorPicker
-              v-model:value="customBackground"
-              style="margin-left: 8px"
-            />
-            <span>背景</span>
+          </div>
+
+          <div class="control-row">
+            <span class="control-label">尺寸:</span>
+            <div class="control-content">
+              <NSlider
+                v-model:value="customWidth"
+                :min="CONFIG_OPTIONS.width.min"
+                :max="CONFIG_OPTIONS.width.max"
+                :step="CONFIG_OPTIONS.width.step"
+                style="width: 120px"
+              />
+              <span class="slider-label">宽: {{ customWidth }}</span>
+              <NSlider
+                v-model:value="customHeight"
+                :min="CONFIG_OPTIONS.height.min"
+                :max="CONFIG_OPTIONS.height.max"
+                :step="CONFIG_OPTIONS.height.step"
+                style="width: 120px"
+              />
+              <span class="slider-label">高: {{ customHeight }}</span>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <span class="control-label">文本:</span>
+            <div class="control-content">
+              <NSlider
+                v-model:value="customFontSize"
+                :min="CONFIG_OPTIONS.fontSize.min"
+                :max="CONFIG_OPTIONS.fontSize.max"
+                :step="CONFIG_OPTIONS.fontSize.step"
+                style="width: 120px"
+              />
+              <span class="slider-label">字号: {{ customFontSize }}</span>
+              <NSelect
+                v-model:value="customTextPosition"
+                :options="TEXT_POSITIONS"
+                style="width: 100px"
+              />
+              <NCheckbox v-model:checked="customShowText">显示文本</NCheckbox>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <span class="control-label">颜色:</span>
+            <div class="control-content">
+              <div class="color-presets">
+                <div
+                  v-for="(preset, index) in COLOR_PRESETS"
+                  :key="index"
+                  class="color-preset"
+                  :class="{ active: selectedColorIndex === index }"
+                  :style="{
+                    backgroundColor: preset.background,
+                    border: `2px solid ${preset.value}`,
+                  }"
+                  @click="selectColorPreset(index)"
+                />
+              </div>
+              <NColorPicker
+                v-model:value="customLineColor"
+                style="margin-left: 12px"
+              />
+              <span>线条</span>
+              <NColorPicker
+                v-model:value="customBackground"
+                style="margin-left: 8px"
+              />
+              <span>背景</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 实时预览 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:eye"
-          class="title-icon"
-        />
-        实时预览
-      </h2>
-      <div class="preview-section">
-        <h3 class="preview-title">条形码预览效果</h3>
-        <div class="preview-barcode">
-          <C_Barcode
-            :value="customValue"
-            :format="customFormat"
-            :width="customWidth"
-            :height="customHeight"
-            :show-text="customShowText"
-            :font-size="customFontSize"
-            :text-position="customTextPosition"
-            :line-color="customLineColor"
-            :background="customBackground"
-            :show-border="false"
-            @error="handleBarcodeError"
+      <!-- 实时预览 -->
+      <div class="demo-section">
+        <h2 class="section-title">
+          <C_Icon
+            name="mdi:eye"
+            class="title-icon"
           />
+          实时预览
+        </h2>
+        <div class="preview-section">
+          <h3 class="preview-title">条形码预览效果</h3>
+          <NAlert
+            v-if="validationError"
+            type="warning"
+            :bordered="false"
+            >{{ validationError }}</NAlert
+          >
+          <div
+            ref="previewRef"
+            class="preview-barcode"
+          >
+            <C_Barcode
+              v-if="!validationError"
+              :value="customValue"
+              :format="customFormat"
+              :width="customWidth"
+              :height="customHeight"
+              :show-text="customShowText"
+              :font-size="customFontSize"
+              :text-position="customTextPosition"
+              :line-color="customLineColor"
+              :background="customBackground"
+              :show-border="false"
+              @error="handleBarcodeError"
+            />
+          </div>
+          <div class="preview-info">
+            <div class="info-item">
+              <span class="info-label">格式:</span>
+              <span class="info-value">{{ customFormat }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">值:</span>
+              <span class="info-value">{{ customValue || '空' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">尺寸:</span>
+              <span class="info-value"
+                >{{ customWidth }} × {{ customHeight }}</span
+              >
+            </div>
+          </div>
         </div>
-        <div class="preview-info">
-          <div class="info-item">
-            <span class="info-label">格式:</span>
-            <span class="info-value">{{ customFormat }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">值:</span>
-            <span class="info-value">{{ customValue || '空' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">尺寸:</span>
-            <span class="info-value"
-              >{{ customWidth }} × {{ customHeight }}</span
-            >
-          </div>
-        </div>
+        <C_ActionBar
+          :actions="actionButtons"
+          :config="{ align: 'center', gap: 12, wrap: true }"
+          class="action-buttons"
+        />
       </div>
     </div>
-
-    <!-- 操作按钮 -->
-    <C_ActionBar
-      :actions="actionButtons"
-      :config="{ align: 'center', gap: 12, wrap: true }"
-      class="action-buttons"
-    />
   </div>
 </template>
 
@@ -214,12 +205,15 @@
     CONFIG_OPTIONS,
     COLOR_PRESETS,
     TEXT_POSITIONS,
+    validateBarcodeValue,
     type BarcodeFormat,
     type TextPosition,
   } from './data'
 
   const message = useMessage()
 
+  const previewRef = ref<HTMLElement | null>(null)
+  const renderError = ref('')
   // 自定义配置
   const customValue = ref('DEMO-BARCODE-2025')
   const customFormat = ref<BarcodeFormat>('CODE128')
@@ -232,6 +226,20 @@
   const customBackground = ref('#FFFFFF')
   const selectedColorIndex = ref(0)
 
+  const validationError = computed(
+    () =>
+      renderError.value ||
+      validateBarcodeValue(customValue.value, customFormat.value)
+  )
+  watch([customValue, customFormat], () => {
+    renderError.value = ''
+  })
+
+  const applyExample = (example: (typeof BARCODE_EXAMPLES)[number]) => {
+    customValue.value = example.value
+    customFormat.value = example.format
+  }
+
   // 选择颜色预设
   const selectColorPreset = (index: number) => {
     selectedColorIndex.value = index
@@ -242,13 +250,31 @@
 
   // 条形码错误处理
   const handleBarcodeError = (error: Error) => {
-    message.error(`条形码生成失败: ${error.message}`)
+    renderError.value = error.message || '条形码无法生成，请检查内容与格式'
   }
 
-  // 导出条形码
+  // 下载当前真实绘制结果，空值和无效输入不能导出旧结果。
   const exportBarcode = () => {
-    // 这里可以实现导出功能
-    message.info('导出功能开发中...')
+    if (validationError.value) return
+    const svg = previewRef.value?.querySelector('svg')
+    const canvas = previewRef.value?.querySelector('canvas')
+    let url: string
+    if (svg)
+      url = URL.createObjectURL(
+        new Blob([new XMLSerializer().serializeToString(svg)], {
+          type: 'image/svg+xml',
+        })
+      )
+    else if (canvas) url = canvas.toDataURL('image/png')
+    else {
+      message.warning('条形码尚未生成')
+      return
+    }
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = `barcode-${customFormat.value}.${svg ? 'svg' : 'png'}`
+    anchor.click()
+    if (svg) setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
 
   // 复制条形码值
@@ -277,13 +303,14 @@
   }
 
   // ================= 操作按钮配置 =================
-  const actionButtons: ActionItem[] = [
+  const actionButtons = computed<ActionItem[]>(() => [
     {
       key: 'export',
       label: '导出图片',
       icon: 'mdi:download',
       type: 'primary',
       onClick: exportBarcode,
+      disabled: Boolean(validationError.value),
     },
     {
       key: 'copy',
@@ -297,7 +324,7 @@
       icon: 'mdi:refresh',
       onClick: resetConfig,
     },
-  ]
+  ])
 </script>
 
 <style lang="scss" scoped>

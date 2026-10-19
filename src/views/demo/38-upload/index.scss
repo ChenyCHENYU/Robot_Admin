@@ -1,144 +1,72 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-02-27 10:00:00
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-27 10:00:00
- * @FilePath: \Robot_Admin\src\views\demo\38-upload\index.scss
- * @Description: 上传组件演示页样式
+ * @Date: 2026-10-19
+ * @Description: 上传工作台与队列留白
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-
-.upload-demo-page {
+@use '../_shared/workspace' as workspace;
+@include workspace.layout;
+.workspace-choice:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
+.upload-entry {
   padding: 20px;
-
-  // 两栏网格布局
-  .demo-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-
-    @media (max-width: 1200px) {
-      grid-template-columns: 1fr;
-    }
+}
+.upload-list-heading {
+  padding: 0 20px 16px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  .n-select {
+    width: 150px;
+    max-width: 100%;
   }
-
-  // 卡片样式
-  .demo-card {
-    background: var(--app-bg-content);
-    border-radius: 12px;
-    transition: box-shadow var(--app-transition-base);
-
-    &:hover {
-      box-shadow: var(--app-shadow-md);
-    }
-
-    // 全宽卡片
-    &.full-width {
-      grid-column: 1 / -1;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 4px;
-
-      h3 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-        color: var(--app-text-primary);
-      }
-    }
-
-    .card-desc {
-      margin: 0;
-      font-size: 13px;
-      color: var(--app-text-secondary);
-      line-height: 1.5;
-    }
+}
+.upload-queue {
+  min-height: 240px;
+  padding: 0 20px 20px;
+}
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 0;
+  border-top: 1px solid var(--app-border-light);
+  flex-wrap: wrap;
+}
+.upload-file {
+  flex: 1;
+  min-width: 100px;
+  strong {
+    font-weight: 500;
+    font-size: 12px;
+    overflow-wrap: anywhere;
   }
-
-  // 配置栏
-  .config-bar {
+  > div {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
     gap: 12px;
-    margin-bottom: 16px;
-    padding: 12px 16px;
-    background: var(--app-bg-surface);
-    border-radius: 8px;
-    flex-wrap: wrap;
-
-    .config-label {
-      font-size: 13px;
-      color: var(--app-text-secondary);
-      white-space: nowrap;
-    }
+    margin: 8px 0;
   }
-
-  // 操作栏
-  .action-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 16px;
-    flex-wrap: wrap;
+  small,
+  b {
+    font-size: 10px;
+    color: var(--app-text-tertiary);
+    font-weight: 400;
   }
-
-  // API 按钮组
-  .api-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  p {
+    font-size: 11px;
+    color: var(--app-error);
   }
-
-  // 功能列表
-  .feature-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+}
+@container (max-width:360px) {
+  .upload-entry,
+  .upload-queue {
+    padding: 14px;
   }
-
-  .feature-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    background: var(--app-bg-surface);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--app-text-primary);
-    transition: background var(--app-transition-base);
-
-    &:hover {
-      background: var(--app-bg-deep);
-    }
-
-    .feature-icon {
-      font-size: 18px;
-      color: var(--primary-color);
-      flex-shrink: 0;
-    }
-  }
-
-  // 响应式
-  @media (max-width: 768px) {
-    padding: 16px;
-
-    .demo-grid {
-      gap: 16px;
-    }
-
-    .demo-card {
-      .card-header h3 {
-        font-size: 15px;
-      }
-    }
-
-    .config-bar {
-      padding: 10px 12px;
-      gap: 10px;
-    }
+  .upload-list-heading {
+    padding: 0 14px 14px;
   }
 }

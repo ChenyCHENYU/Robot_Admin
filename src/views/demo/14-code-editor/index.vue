@@ -1,172 +1,125 @@
 <!--
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2025-06-19 13:00:00
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-06-23 09:43:05
- * @FilePath: \Robot_Admin\src\views\demo\14-code-editor\index.vue
- * @Description: C_Code 组件演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ * @Date: 2026-10-19
+ * @Description: 可调整分区的代码文本与高亮工作台
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
-
 <template>
-  <div class="code-editor-demo">
-    <c_vTitle
-      title="Code编辑器组件场景示例"
-      icon="mdi:code-braces-box"
-      description="基于 NCode 封装，支持多语言语法高亮、代码复制、全屏查看、动态语言加载等功能"
-    />
-    <NSpace
-      vertical
-      size="large"
+  <div class="plugin-workspace code-editor-demo"
+    ><header class="workspace-heading"
+      ><div
+        ><small>CODE READING ROOM</small><h1>Code编辑器组件场景示例</h1
+        ><p>编辑文本、即时查看高亮，拖动分隔线调整阅读空间。</p></div
+      ><div class="workspace-actions"
+        ><NButton
+          size="small"
+          @click="reset"
+          >恢复当前示例</NButton
+        ><NButton
+          size="small"
+          type="primary"
+          :disabled="!code"
+          @click="download"
+          >下载当前文件</NButton
+        ></div
+      ></header
     >
-      <!-- 多语言支持展示 -->
-      <NCard title="多语言支持">
-        <NTabs
-          type="line"
-          animated
-        >
-          <NTabPane
-            v-for="(code, lang) in codeExamples"
-            :key="lang"
-            :name="lang"
-            :tab="getTabLabel(lang)"
-          >
-            <C_Code
-              :code="code"
-              :language="lang"
-              :title="`${getTabLabel(lang)} 示例`"
-              :max-height="lang === 'json' ? 300 : undefined"
-              @copy="handleCopy"
-            />
-          </NTabPane>
-        </NTabs>
-      </NCard>
-
-      <!-- 动态语言加载 -->
-      <NCard title="动态语言加载">
-        <NSpace vertical>
-          <NSpace>
-            <NSelect
-              v-model:value="selectedLanguage"
-              :disabled="loading"
-              :options="languageOptions"
-              placeholder="选择语言"
-              style="width: 200px"
-            />
-            <NButton
-              @click="loadLanguage"
-              :loading="loading"
-              type="primary"
-            >
-              加载并显示
-            </NButton>
-          </NSpace>
-
-          <C_Code
-            v-if="dynamicCode"
-            :code="dynamicCode"
-            :language="loadedLanguage"
-            :title="`${loadedLanguage.toUpperCase()} 示例`"
-            @copy="handleCopy"
-          />
-        </NSpace>
-      </NCard>
-
-      <!-- 功能演示 -->
-      <NCard title="功能演示">
-        <NSpace vertical>
-          <NDivider title-placement="left">悬浮复制（无标题栏）</NDivider>
-          <C_Code
-            :code="codeExamples.simple"
-            language="javascript"
-            :show-header="false"
-            @copy="handleCopy"
-          />
-
-          <NDivider title-placement="left">全屏查看</NDivider>
-          <C_Code
-            :code="codeExamples.fullscreen"
-            language="typescript"
-            title="全屏演示"
-            :show-fullscreen="true"
-            @copy="handleCopy"
-            @fullscreen="handleFullscreen"
-          />
-
-          <NDivider title-placement="left">限制高度</NDivider>
-          <C_Code
-            :code="codeExamples.long"
-            language="bash"
-            title="长代码示例"
-            :max-height="200"
-            @copy="handleCopy"
-          />
-        </NSpace>
-      </NCard>
-    </NSpace>
+    <div class="workspace-grid"
+      ><aside class="workspace-panel"
+        ><section class="workspace-section"
+          ><h2>示例文件</h2
+          ><button
+            v-for="file in CODE_FILES"
+            :key="file.language"
+            type="button"
+            class="workspace-choice"
+            :aria-pressed="language === file.language"
+            @click="language = file.language"
+            ><span
+              ><strong>{{ file.name }}</strong
+              ><small>{{ file.language }}</small></span
+            ></button
+          ></section
+        ><section class="workspace-section"
+          ><h2>阅读设置</h2
+          ><label class="workspace-label"
+            ><NCheckbox v-model:checked="lineNumbers"
+              >显示行号</NCheckbox
+            ></label
+          ><label class="workspace-label"
+            ><NCheckbox v-model:checked="wrap">自动换行</NCheckbox></label
+          ><p
+            >每份文件的修改在当前页面分别保留。此工作台只编辑与高亮文本，不执行代码。</p
+          ></section
+        ></aside
+      >
+      <main class="workspace-panel"
+        ><header class="workspace-toolbar"
+          ><div
+            ><h2>{{ current.name }}</h2
+            ><small
+              >{{ code.split('\n').length }} 行 · {{ code.length }} 字符</small
+            ></div
+          ><span class="workspace-hint">{{
+            loading ? '正在加载语法…' : status
+          }}</span></header
+        ><div class="code-split"
+          ><C_SplitPane
+            v-model:size="splitSize"
+            :direction="width < 1200 ? 'vertical' : 'horizontal'"
+            :min-size="25"
+            :max-size="75"
+            :min-first-size="180"
+            :min-second-size="180"
+            aria-label="代码编辑与高亮分区"
+            ><template #first
+              ><section class="code-pane"
+                ><h3>编辑文本</h3
+                ><NInput
+                  v-model:value="code"
+                  type="textarea"
+                  :input-props="{ 'aria-label': '代码文本', spellcheck: false }"
+                  :resizable="false" /></section></template
+            ><template #second
+              ><section class="code-pane"
+                ><h3>语法预览</h3
+                ><C_Code
+                  :code="code"
+                  :language="language"
+                  :title="current.name"
+                  :show-line-numbers="lineNumbers"
+                  :word-wrap="wrap"
+                  :max-height="600"
+                  :show-fullscreen="
+                    true
+                  " /></section></template></C_SplitPane></div
+        ><footer class="workspace-footer"
+          ><span>支持分隔线拖动与键盘方向键调整</span
+          ><span>复制和全屏操作位于高亮预览工具栏</span></footer
+        ></main
+      ></div
+    >
   </div>
 </template>
-
 <script setup lang="ts">
+  import { useWindowSize } from '@vueuse/core'
+  import { useCodeWorkspace } from './useCodeWorkspace'
   defineOptions({ name: 'Demo14CodeEditor' })
-  import { useHighlight } from '@/plugins/highlight'
-  import { languageOptions, codeExamples, sampleCodes } from './data'
-
-  const message = useMessage()
-  const highlight = useHighlight()
-
-  const selectedLanguage = ref('cpp')
-  const loading = ref(false)
-  const dynamicCode = ref('')
-  const loadedLanguage = ref('')
-  let disposed = false
-
-  const tabLabels: Record<string, string> = {
-    javascript: 'JavaScript',
-    typescript: 'TypeScript',
-    python: 'Python',
-    java: 'Java',
-    go: 'Go',
-    json: 'JSON',
-  }
-
-  const getTabLabel = (lang: string): string => {
-    if (['simple', 'fullscreen', 'long'].includes(lang)) return ''
-    return tabLabels[lang]
-  }
-
-  const handleCopy = (code: string) =>
-    message.success(`已复制 ${code.length} 个字符`)
-
-  const handleFullscreen = (isFullscreen: boolean) =>
-    message.info(isFullscreen ? '已进入全屏' : '已退出全屏')
-
-  const loadLanguage = async () => {
-    if (!selectedLanguage.value || loading.value) return
-    const language = selectedLanguage.value
-    loading.value = true
-    try {
-      const loaded = await highlight.loadLanguage(language)
-      if (disposed) return
-      if (!loaded) {
-        message.error(`${language} 语言包加载失败`)
-        return
-      }
-      dynamicCode.value = sampleCodes[language] || '// 示例代码'
-      loadedLanguage.value = language
-      message.success(`${language} 加载成功`)
-    } catch (error) {
-      if (!disposed) message.error(`加载失败: ${error}`)
-    } finally {
-      if (!disposed) loading.value = false
-    }
-  }
-
-  onBeforeUnmount(() => {
-    disposed = true
-  })
+  const { width } = useWindowSize()
+  const splitSize = ref(50)
+  const {
+    CODE_FILES,
+    language,
+    lineNumbers,
+    wrap,
+    loading,
+    status,
+    current,
+    code,
+    reset,
+    download,
+  } = useCodeWorkspace()
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
   @use './index.scss';
 </style>

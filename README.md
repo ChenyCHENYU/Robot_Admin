@@ -17,7 +17,7 @@
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml"><img src="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-8FB6FF?style=flat-square&amp;logo=bun&amp;logoColor=white" alt="Bun ≥1.4.2"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FB6FF?style=flat-square" alt="MIT License"></a>
-    <a href="#能力地图"><img src="https://img.shields.io/badge/demos-57-orange?style=flat-square" alt="57 个演示页面"></a>
+    <a href="#能力地图"><img src="https://img.shields.io/badge/demos-58-orange?style=flat-square" alt="58 个演示页面"></a>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin"><img src="https://img.shields.io/github/stars/ChenyCHENYU/Robot_Admin?style=flat-square&amp;label=Star" alt="GitHub Stars"></a>
   </p>
 </div>
@@ -32,7 +32,7 @@
 | ---------- | -------------------------------------------------------------------------- |
 | 架构选择   | SPA、Bun Workspaces、Module Federation、MicroApp 四种分支                  |
 | 组件与插件 | 55 个业务组件、11 个指令；7 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
-| 场景示例   | 57 个演示页面，覆盖数据录入、复杂表格、流程编辑、文件与媒体                |
+| 场景示例   | 58 个演示页面，覆盖数据录入、复杂表格、流程编辑、文件与媒体                |
 | 验证与溯源 | 双 Lint、类型、逻辑与组件测试、构建预算、浏览器绘制回归、构建身份卡        |
 
 ## 快速开始
@@ -84,7 +84,7 @@ bun run dev
 | 时间与展示 | 日期、城市、日程、时间线、甘特、图表、大屏模板                                    |
 | 全局体验   | 菜单、搜索、主题、语言、引导、空状态、错误页与路由加载反馈                        |
 
-演示目录包含 **57 个演示页 + 8 个表单布局（65 个 index.vue）**。组件库提供独立子路径与样式入口，重型编辑器、图表、流程和媒体能力按路由加载。查看 [组件库](https://github.com/ChenyCHENYU/naive-ui-components) 或在 [在线体验](https://robotadmin.cn) 中按场景浏览。
+演示目录包含 **58 个演示页 + 8 个表单布局（66 个 index.vue）**。组件库提供独立子路径与样式入口，重型编辑器、图表、流程和媒体能力按路由加载。查看 [组件库](https://github.com/ChenyCHENYU/naive-ui-components) 或在 [在线体验](https://robotadmin.cn) 中按场景浏览。
 
 > Cron 预览不创建后台任务，公式试算不修改业务数据。演示数据、前端数据范围配置与按钮控制需要真实接口和服务端授权配合，才能用于生产业务。
 

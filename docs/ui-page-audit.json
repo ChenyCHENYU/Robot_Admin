@@ -1,7 +1,7 @@
 {
   "date": "2026-10-19",
-  "scope": "79 个菜单入口导航与初始渲染，重点页面额外交互回归",
-  "routeCount": 79,
+  "scope": "80 个菜单入口的生产导航、初始渲染和资源复扫；重点工作台额外交互验收",
+  "routeCount": 80,
   "routes": [
     {
       "path": "/about/index",
@@ -79,7 +79,7 @@
       "path": "/demo/area-cascade",
       "title": "级联选择器",
       "source": "src/views/demo/02-area-cascade/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -88,7 +88,7 @@
       "path": "/demo/avatar-group",
       "title": "头像组",
       "source": "src/views/demo/53-avatar-group/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -97,7 +97,7 @@
       "path": "/demo/city",
       "title": "城市选择器",
       "source": "src/views/demo/06-city/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -106,7 +106,7 @@
       "path": "/demo/collapse-panel",
       "title": "折叠面板",
       "source": "src/views/demo/44-collapse-panel/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -115,7 +115,7 @@
       "path": "/demo/date",
       "title": "日期选择器",
       "source": "src/views/demo/05-date/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -151,7 +151,7 @@
       "path": "/demo/icon",
       "title": "图标选择器",
       "source": "src/views/demo/01-icon/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -169,7 +169,7 @@
       "path": "/demo/progress",
       "title": "进度条",
       "source": "src/views/demo/03-progress/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -178,7 +178,7 @@
       "path": "/demo/split-pane",
       "title": "分割面板",
       "source": "src/views/demo/43-split-pane/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -187,7 +187,7 @@
       "path": "/demo/steps",
       "title": "步骤条",
       "source": "src/views/demo/31-steps/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -232,7 +232,7 @@
       "path": "/demo/time",
       "title": "时间选择器",
       "source": "src/views/demo/04-time/index.vue",
-      "review": "P3 基础演示细化",
+      "review": "已统一标题、离线图标与操作区，保留基础演示",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -242,6 +242,15 @@
       "title": "穿梭框",
       "source": "src/views/demo/52-transfer/index.vue",
       "review": "保持主体结构，继续打磨细节",
+      "pageErrors": [],
+      "imageFailures": [],
+      "documentOverflow": 0
+    },
+    {
+      "path": "/demo/tree",
+      "title": "树工作台",
+      "source": "src/views/demo/41-tree/index.vue",
+      "review": "保留 0.17.0 树形工作台与既有交互",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -313,7 +322,7 @@
       "path": "/editor/antv-x6-editor",
       "title": "图编辑引擎",
       "source": "src/views/demo/29-antv-x6-editor/index.vue",
-      "review": "P1 重设计",
+      "review": "图模型、属性、场景隔离与导出已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -322,7 +331,7 @@
       "path": "/editor/code-editor",
       "title": "代码编辑器",
       "source": "src/views/demo/14-code-editor/index.vue",
-      "review": "P2 局部或场景重设计",
+      "review": "独立文件草稿、编辑预览与实际下载已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -349,7 +358,7 @@
       "path": "/editor/markdown-editor",
       "title": "Markdown编辑器",
       "source": "src/views/demo/15-markdown-editor/index.vue",
-      "review": "P2 局部或场景重设计",
+      "review": "独立文档、自动保存、恢复与导入导出已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -367,7 +376,7 @@
       "path": "/editor/work-flow-editor",
       "title": "工作流编辑器",
       "source": "src/views/demo/28-work-flow-editor/index.vue",
-      "review": "P1 重设计",
+      "review": "流程场景、属性、只读与本机草稿已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -510,8 +519,8 @@
     {
       "path": "/large-screen/xxx-xxx",
       "title": "绩效看板",
-      "source": "src/views/demo/34-production-cost/index.vue",
-      "review": "P1 入口与内容对应",
+      "source": "src/views/demo/58-performance/index.vue",
+      "review": "独立绩效看板及统一指标口径已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -529,7 +538,7 @@
       "path": "/plugins/barcode",
       "title": "条形码",
       "source": "src/views/demo/35-barcode/index.vue",
-      "review": "P2 局部或场景重设计",
+      "review": "有效值校验、单一结果与实际下载已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -565,7 +574,7 @@
       "path": "/plugins/dragable",
       "title": "拖拽组件",
       "source": "src/views/demo/20-dragable/index.vue",
-      "review": "P2 局部或场景重设计",
+      "review": "看板创建、跨列移动及紧凑布局已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -574,7 +583,7 @@
       "path": "/plugins/file-preview",
       "title": "文件预览",
       "source": "src/views/demo/32-file-preview/index.vue",
-      "review": "P1 重设计",
+      "review": "本地文档库与内嵌阅读已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -583,27 +592,16 @@
       "path": "/plugins/map",
       "title": "地图",
       "source": "src/views/demo/36-map/index.vue",
-      "review": "P1 标记资源与地图工作区",
+      "review": "地图标记、图层、视野与失败重试已修复",
       "pageErrors": [],
-      "imageFailures": [
-        "marker-shadow.png",
-        "marker-shadow.png",
-        "marker-icon.png",
-        "marker-icon.png",
-        "marker-shadow.png",
-        "marker-shadow.png",
-        "marker-icon.png",
-        "marker-icon.png",
-        "marker-shadow.png",
-        "marker-icon.png"
-      ],
+      "imageFailures": [],
       "documentOverflow": 0
     },
     {
       "path": "/plugins/orgchart",
       "title": "组织架构图",
       "source": "src/views/demo/56-orgchart/index.vue",
-      "review": "P1 重设计",
+      "review": "递归节点插槽、搜索下钻与适配视野已修复",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -612,7 +610,7 @@
       "path": "/plugins/qrcode",
       "title": "二维码",
       "source": "src/views/demo/39-qrcode/index.vue",
-      "review": "P2 局部或场景重设计",
+      "review": "单一结果、空值保护与 PNG 导出已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -621,7 +619,7 @@
       "path": "/plugins/signature",
       "title": "电子签名",
       "source": "src/views/demo/42-signature/index.vue",
-      "review": "P2 局部或场景重设计",
+      "review": "单画布、快照、结果过期与实际下载已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -648,7 +646,7 @@
       "path": "/plugins/upload",
       "title": "文件上传",
       "source": "src/views/demo/38-upload/index.vue",
-      "review": "P1 重设计",
+      "review": "单一队列、暂停、失败重试与真实状态已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -657,7 +655,7 @@
       "path": "/plugins/v-table-gantt",
       "title": "甘特图",
       "source": "src/views/demo/33-v-table-gantt/index.vue",
-      "review": "P2 局部或场景重设计",
+      "review": "计划导航、原生编辑及事件联动已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0
@@ -675,7 +673,7 @@
       "path": "/plugins/waterfall",
       "title": "瀑布流",
       "source": "src/views/demo/48-waterfall/index.vue",
-      "review": "P2 局部或场景重设计",
+      "review": "素材库与实际卡片列高修复已完成",
       "pageErrors": [],
       "imageFailures": [],
       "documentOverflow": 0

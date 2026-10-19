@@ -16,232 +16,207 @@
       description="支持自定义颜色尺寸、Logo 嵌入、多种纠错等级，适用于网址分享、电子名片等场景"
     />
 
-    <!-- 示例展示 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:qrcode"
-          class="title-icon"
-        />
-        二维码示例
-      </h2>
-      <p class="section-desc">
-        以下展示了常见的二维码应用场景。二维码可以编码网址、WiFi
-        信息、电子名片等多种数据格式，扫码即可快速获取信息。
-      </p>
-      <div class="examples-grid">
-        <div
-          v-for="(example, index) in QRCODE_EXAMPLES"
-          :key="index"
-          class="example-card"
-        >
-          <div class="example-header">
-            <C_Icon
-              :name="example.icon"
-              class="example-icon"
-            />
-            <h3 class="example-title">{{ example.title }}</h3>
-          </div>
-          <p class="example-desc">{{ example.description }}</p>
-          <div class="example-qrcode">
-            <C_QRCode
-              :value="example.value"
-              :size="160"
-              :show-border="false"
-              :margin="1"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 自定义配置 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:cog"
-          class="title-icon"
-        />
-        自定义配置
-      </h2>
-      <p class="section-desc">
-        通过以下配置选项，您可以自定义二维码的内容、颜色、尺寸、Logo
-        等属性，实时预览配置效果。
-      </p>
-      <div class="control-panel">
-        <!-- 内容 -->
-        <div class="control-row">
-          <span class="control-label">内容:</span>
-          <div class="control-content">
-            <NInput
-              v-model:value="customValue"
-              type="textarea"
-              placeholder="请输入二维码内容（文本或 URL）"
-              :autosize="{ minRows: 1, maxRows: 3 }"
-              style="flex: 1"
-            />
-          </div>
-        </div>
-
-        <!-- 渲染模式 & 纠错等级 -->
-        <div class="control-row">
-          <span class="control-label">模式:</span>
-          <div class="control-content">
-            <NRadioGroup
-              v-model:value="customMode"
-              name="render-mode"
-            >
-              <NRadioButton
-                v-for="mode in RENDER_MODES"
-                :key="mode.value"
-                :value="mode.value"
-                :label="mode.label"
-              />
-            </NRadioGroup>
-            <NSelect
-              v-model:value="customLevel"
-              :options="ERROR_LEVELS"
-              style="width: 130px"
-            />
-            <span class="hint-text">纠错等级</span>
-          </div>
-        </div>
-
-        <!-- 尺寸 & 边距 -->
-        <div class="control-row">
-          <span class="control-label">尺寸:</span>
-          <div class="control-content">
-            <NSlider
-              v-model:value="customSize"
-              :min="SIZE_OPTIONS.min"
-              :max="SIZE_OPTIONS.max"
-              :step="SIZE_OPTIONS.step"
-              style="width: 160px"
-            />
-            <span class="slider-label">{{ customSize }}px</span>
-            <NSlider
-              v-model:value="customMargin"
-              :min="MARGIN_OPTIONS.min"
-              :max="MARGIN_OPTIONS.max"
-              :step="MARGIN_OPTIONS.step"
-              style="width: 100px"
-            />
-            <span class="slider-label">边距: {{ customMargin }}</span>
-          </div>
-        </div>
-
-        <!-- 颜色 -->
-        <div class="control-row">
-          <span class="control-label">颜色:</span>
-          <div class="control-content">
-            <div class="color-presets">
-              <div
-                v-for="(preset, index) in COLOR_PRESETS"
-                :key="index"
-                class="color-preset"
-                :class="{ active: selectedColorIndex === index }"
-                :style="{
-                  backgroundColor: preset.bgColor,
-                  border: `2px solid ${preset.color}`,
-                }"
-                :title="preset.label"
-                @click="selectColorPreset(index)"
+    <nav
+      class="generator-presets"
+      aria-label="生成场景"
+      ><span>选择用途</span
+      ><button
+        v-for="example in QRCODE_EXAMPLES"
+        :key="example.title"
+        type="button"
+        :aria-pressed="customValue === example.value"
+        @click="customValue = example.value"
+        ><strong>{{ example.title }}</strong
+        ><small>{{ example.description }}</small></button
+      ></nav
+    >
+    <div class="generator-grid">
+      <!-- 自定义配置 -->
+      <div class="demo-section">
+        <h2 class="section-title">
+          <C_Icon
+            name="mdi:cog"
+            class="title-icon"
+          />
+          自定义配置
+        </h2>
+        <p class="section-desc">
+          通过以下配置选项，您可以自定义二维码的内容、颜色、尺寸、Logo
+          等属性，实时预览配置效果。
+        </p>
+        <div class="control-panel">
+          <!-- 内容 -->
+          <div class="control-row">
+            <span class="control-label">内容:</span>
+            <div class="control-content">
+              <NInput
+                v-model:value="customValue"
+                type="textarea"
+                placeholder="请输入二维码内容（文本或 URL）"
+                :autosize="{ minRows: 1, maxRows: 3 }"
+                style="flex: 1"
               />
             </div>
-            <NColorPicker
-              v-model:value="customColor"
-              style="margin-left: 12px"
-            />
-            <span class="hint-text">前景</span>
-            <NColorPicker
-              v-model:value="customBgColor"
-              style="margin-left: 8px"
-            />
-            <span class="hint-text">背景</span>
           </div>
-        </div>
 
-        <!-- Logo -->
-        <div class="control-row">
-          <span class="control-label">Logo:</span>
-          <div class="control-content">
-            <NCheckbox v-model:checked="enableLogo">启用 Logo</NCheckbox>
-            <template v-if="enableLogo">
-              <NInput
-                v-model:value="logoSrc"
-                placeholder="Logo 图片地址"
-                style="width: 200px"
+          <!-- 渲染模式 & 纠错等级 -->
+          <div class="control-row">
+            <span class="control-label">模式:</span>
+            <div class="control-content">
+              <NRadioGroup
+                v-model:value="customMode"
+                name="render-mode"
+              >
+                <NRadioButton
+                  v-for="mode in RENDER_MODES"
+                  :key="mode.value"
+                  :value="mode.value"
+                  :label="mode.label"
+                />
+              </NRadioGroup>
+              <NSelect
+                v-model:value="customLevel"
+                :options="ERROR_LEVELS"
+                style="width: 130px"
               />
+              <span class="hint-text">纠错等级</span>
+            </div>
+          </div>
+
+          <!-- 尺寸 & 边距 -->
+          <div class="control-row">
+            <span class="control-label">尺寸:</span>
+            <div class="control-content">
               <NSlider
-                v-model:value="logoSize"
-                :min="LOGO_SIZE_OPTIONS.min"
-                :max="LOGO_SIZE_OPTIONS.max"
-                :step="LOGO_SIZE_OPTIONS.step"
+                v-model:value="customSize"
+                :min="SIZE_OPTIONS.min"
+                :max="SIZE_OPTIONS.max"
+                :step="SIZE_OPTIONS.step"
+                style="width: 160px"
+              />
+              <span class="slider-label">{{ customSize }}px</span>
+              <NSlider
+                v-model:value="customMargin"
+                :min="MARGIN_OPTIONS.min"
+                :max="MARGIN_OPTIONS.max"
+                :step="MARGIN_OPTIONS.step"
                 style="width: 100px"
               />
-              <span class="slider-label"
-                >{{ Math.round(logoSize * 100) }}%</span
-              >
-            </template>
+              <span class="slider-label">边距: {{ customMargin }}</span>
+            </div>
+          </div>
+
+          <!-- 颜色 -->
+          <div class="control-row">
+            <span class="control-label">颜色:</span>
+            <div class="control-content">
+              <div class="color-presets">
+                <div
+                  v-for="(preset, index) in COLOR_PRESETS"
+                  :key="index"
+                  class="color-preset"
+                  :class="{ active: selectedColorIndex === index }"
+                  :style="{
+                    backgroundColor: preset.bgColor,
+                    border: `2px solid ${preset.color}`,
+                  }"
+                  :title="preset.label"
+                  @click="selectColorPreset(index)"
+                />
+              </div>
+              <NColorPicker
+                v-model:value="customColor"
+                style="margin-left: 12px"
+              />
+              <span class="hint-text">前景</span>
+              <NColorPicker
+                v-model:value="customBgColor"
+                style="margin-left: 8px"
+              />
+              <span class="hint-text">背景</span>
+            </div>
+          </div>
+
+          <!-- Logo -->
+          <div class="control-row">
+            <span class="control-label">Logo:</span>
+            <div class="control-content">
+              <NCheckbox v-model:checked="enableLogo">启用 Logo</NCheckbox>
+              <template v-if="enableLogo">
+                <NInput
+                  v-model:value="logoSrc"
+                  placeholder="Logo 图片地址"
+                  style="width: 200px"
+                />
+                <NSlider
+                  v-model:value="logoSize"
+                  :min="LOGO_SIZE_OPTIONS.min"
+                  :max="LOGO_SIZE_OPTIONS.max"
+                  :step="LOGO_SIZE_OPTIONS.step"
+                  style="width: 100px"
+                />
+                <span class="slider-label"
+                  >{{ Math.round(logoSize * 100) }}%</span
+                >
+              </template>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 实时预览 -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:eye"
-          class="title-icon"
-        />
-        实时预览
-      </h2>
-      <div class="preview-section">
-        <div class="preview-qrcode">
-          <C_QRCode
-            ref="qrRef"
-            :value="customValue"
-            :size="customSize"
-            :color="customColor"
-            :bg-color="customBgColor"
-            :error-correction-level="customLevel"
-            :margin="customMargin"
-            :mode="customMode"
-            :logo="logoOptions"
-            :show-border="true"
-            @error="handleError"
+      <!-- 实时预览 -->
+      <div class="demo-section">
+        <h2 class="section-title">
+          <C_Icon
+            name="mdi:eye"
+            class="title-icon"
           />
+          实时预览
+        </h2>
+        <div class="preview-section">
+          <div class="preview-qrcode">
+            <C_QRCode
+              ref="qrRef"
+              :value="customValue"
+              :size="customSize"
+              :color="customColor"
+              :bg-color="customBgColor"
+              :error-correction-level="customLevel"
+              :margin="customMargin"
+              :mode="customMode"
+              :logo="logoOptions"
+              :show-border="true"
+              @error="handleError"
+            />
+          </div>
+          <div class="preview-info">
+            <div class="info-item">
+              <span class="info-label">模式:</span>
+              <span class="info-value">{{
+                customMode === 'canvas' ? 'Canvas' : 'SVG'
+              }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">纠错:</span>
+              <span class="info-value">{{ customLevel }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">尺寸:</span>
+              <span class="info-value">{{ customSize }}px</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">内容长度:</span>
+              <span class="info-value">{{ customValue.length }} 字符</span>
+            </div>
+          </div>
         </div>
-        <div class="preview-info">
-          <div class="info-item">
-            <span class="info-label">模式:</span>
-            <span class="info-value">{{
-              customMode === 'canvas' ? 'Canvas' : 'SVG'
-            }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">纠错:</span>
-            <span class="info-value">{{ customLevel }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">尺寸:</span>
-            <span class="info-value">{{ customSize }}px</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">内容长度:</span>
-            <span class="info-value">{{ customValue.length }} 字符</span>
-          </div>
-        </div>
+        <C_ActionBar
+          :actions="actionButtons"
+          :config="{ align: 'center', gap: 12, wrap: true }"
+          class="action-buttons"
+        />
       </div>
     </div>
-
-    <!-- 操作按钮 -->
-    <C_ActionBar
-      :actions="actionButtons"
-      :config="{ align: 'center', gap: 12, wrap: true }"
-      class="action-buttons"
-    />
   </div>
 </template>
 
@@ -310,7 +285,8 @@
   // 下载二维码
   const downloadQRCode = async () => {
     try {
-      await qrRef.value?.download('qrcode', 'png')
+      if (!qrRef.value || !customValue.value.trim()) return
+      await qrRef.value.download('qrcode', 'png')
       message.success('二维码已下载')
     } catch {
       message.error('下载失败')
@@ -344,13 +320,14 @@
   }
 
   // ================= 操作按钮配置 =================
-  const actionButtons: ActionItem[] = [
+  const actionButtons = computed<ActionItem[]>(() => [
     {
       key: 'download',
       label: '下载图片',
       icon: 'mdi:download',
       type: 'primary',
       onClick: downloadQRCode,
+      disabled: !customValue.value.trim(),
     },
     {
       key: 'copy',
@@ -364,7 +341,7 @@
       icon: 'mdi:refresh',
       onClick: resetConfig,
     },
-  ]
+  ])
 </script>
 
 <style lang="scss" scoped>

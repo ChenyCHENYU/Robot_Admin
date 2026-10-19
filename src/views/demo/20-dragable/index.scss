@@ -1,7 +1,6 @@
- .draggable-demo {
-    padding: 24px;
-    min-height: 100vh;
-
+.draggable-demo {
+  padding: 24px;
+  min-height: 100vh;
 
   .kanban-card {
     margin-bottom: 24px;
@@ -336,5 +335,56 @@
     .bottom-section :deep(.n-grid-item) {
       grid-column: span 4;
     }
+  }
+}
+.draggable-demo {
+  padding: 8px 8px 24px;
+  min-height: 0;
+  container-type: inline-size;
+}
+.draggable-demo .kanban-column .column-header {
+  background: var(--app-bg-layout);
+  color: var(--app-text-primary);
+  text-align: left;
+  padding: 16px;
+  border-bottom: 1px solid var(--app-border-default);
+  border-top: 3px solid #5486e8;
+  h4 {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+  .task-date {
+    font-size: 10px;
+  }
+}
+.draggable-demo .kanban-column .progress-header {
+  border-top-color: #9a78dc;
+}
+.draggable-demo .kanban-column .review-header {
+  border-top-color: #c7954b;
+}
+.draggable-demo .kanban-column .done-header {
+  border-top-color: #2caa98;
+}
+.draggable-demo .kanban-board {
+  min-height: 0;
+}
+.task-move {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.task-priority-select {
+  margin-top: 16px;
+}
+@container (max-width:800px) {
+  .draggable-demo .kanban-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@container (max-width:500px) {
+  .draggable-demo .kanban-board {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

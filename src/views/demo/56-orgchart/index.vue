@@ -1,242 +1,181 @@
 <!--
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-03-06
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-03-11
- * @FilePath: \Robot_Admin\src\views\demo\56-orgchart\index.vue
- * @Description: C_OrgChart 组织架构图组件演示页面
+ * @Date: 2026-10-19
+ * @Description: 组织探索工作台，搜索、下钻和固定详情面板
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <div class="orgchart-demo">
-    <c_vTitle
-      title="组织架构图场景示例"
-      icon="mdi:sitemap-outline"
-      description="C_OrgChart 纯 CSS + Vue 实现的树形组织架构图，支持垂直 / 水平布局、缩放平移、节点折叠,适用于企业组织架构展示"
-    />
-
-    <div class="demo-grid">
-      <!-- ==================== 架构图主区域 ==================== -->
-      <NCard
-        class="demo-card chart-card"
-        :bordered="false"
+  <div class="plugin-workspace org-workspace">
+    <header class="workspace-heading"
+      ><div
+        ><small>PEOPLE & ORGANIZATION</small><h1>组织架构工作台</h1
+        ><p>从组织全景找到成员，再沿汇报关系查看团队。</p></div
+      ><div class="workspace-actions"
+        ><NTag
+          size="small"
+          :bordered="false"
+          >演示组织 · {{ entries.length }} 名成员</NTag
+        ><NButton
+          size="small"
+          @click="reset"
+          >返回组织全景</NButton
+        ></div
+      ></header
+    >
+    <div class="org-layout"
+      ><aside class="workspace-panel"
+        ><section class="workspace-section"
+          ><h2>查找成员与部门</h2
+          ><NInput
+            v-model:value="search"
+            size="small"
+            clearable
+            placeholder="姓名、职位或部门"
+            :input-props="{ 'aria-label': '搜索组织成员' }"
+          /><div class="org-search-results"
+            ><button
+              v-for="item in matches"
+              :key="item.node.id"
+              type="button"
+              class="workspace-choice"
+              :aria-pressed="selectedId === item.node.id"
+              @click="choose(item.node.id, true)"
+              ><span class="org-initial">{{ item.node.label.slice(0, 1) }}</span
+              ><span
+                ><strong>{{ item.node.label }}</strong
+                ><small
+                  >{{ item.department }} · {{ item.node.subtitle }}</small
+                ></span
+              ></button
+            ><p
+              v-if="!matches.length"
+              class="workspace-hint"
+              >没有匹配的成员</p
+            ></div
+          ></section
+        ></aside
       >
-        <template #header>
-          <div class="card-header">
-            <h3>组织架构</h3>
-            <NTag
-              type="success"
+      <main class="workspace-panel"
+        ><header class="workspace-toolbar"
+          ><div class="org-breadcrumb"
+            ><button
+              v-for="(node, index) in focused.path"
+              :key="node.id"
+              type="button"
+              @click="focusId = node.id"
+              >{{ node.label
+              }}<span v-if="index < focused.path.length - 1"> / </span></button
+            ></div
+          ><div class="workspace-actions"
+            ><NSelect
+              v-model:value="direction"
               size="small"
-              round
-            >
-              {{ nodeCount }} 人
-            </NTag>
-          </div>
-          <p class="card-desc"
-            >鼠标拖拽平移画布，滚轮缩放，点击节点查看详情，点击 +/-
-            折叠子树。</p
-          >
-        </template>
-
-        <div class="config-bar">
-          <span class="config-label">布局</span>
-          <NSelect
-            v-model:value="direction"
-            :options="DIRECTION_OPTIONS"
-            size="small"
-            style="width: 120px"
-          />
-          <span class="config-label">连线</span>
-          <NSelect
-            v-model:value="lineStyle"
-            :options="LINE_STYLE_OPTIONS"
-            size="small"
-            style="width: 120px"
-          />
-          <NCheckbox
-            :checked="collapsible"
-            @update:checked="collapsible = $event"
-          >
-            可折叠
-          </NCheckbox>
-          <NCheckbox
-            :checked="zoomable"
-            @update:checked="zoomable = $event"
-          >
-            可缩放
-          </NCheckbox>
-        </div>
-
-        <div class="chart-container">
-          <C_OrgChart
-            :data="orgData"
+              :options="DIRECTION_OPTIONS"
+              aria-label="组织布局"
+            /><NButton
+              size="tiny"
+              @click="chartRef?.fitView()"
+              >适配视野</NButton
+            ></div
+          ></header
+        >
+        <div class="org-canvas"
+          ><C_OrgChart
+            ref="chartRef"
+            :key="focusId"
+            :data="tree"
             :direction="direction"
             :line-style="lineStyle"
-            :collapsible="collapsible"
-            :zoomable="zoomable"
-            :node-spacing="28"
-            :level-spacing="56"
-            @node-click="handleNodeClick"
-          />
-        </div>
-      </NCard>
-
-      <!-- ==================== 右侧面板 ==================== -->
-      <div class="side-panel">
-        <!-- 选中节点详情 -->
-        <NCard
-          class="demo-card"
-          :bordered="false"
-        >
-          <template #header>
-            <div class="card-header">
-              <h3>{{ selectedNode ? '节点详情' : '点击节点查看' }}</h3>
-              <NTag
-                :type="selectedNode ? 'success' : 'default'"
-                size="small"
-                round
-              >
-                {{ selectedNode ? '已选中' : '未选择' }}
-              </NTag>
-            </div>
-          </template>
-
-          <template v-if="selectedNode">
-            <div class="node-detail">
-              <div class="node-detail__header">
-                <NAvatar
-                  v-if="selectedNode.avatar"
-                  :src="selectedNode.avatar"
-                  :size="48"
-                  round
-                />
-                <div class="node-detail__info">
-                  <strong>{{ selectedNode.label }}</strong>
-                  <span class="node-detail__subtitle">{{
-                    selectedNode.subtitle
-                  }}</span>
-                </div>
-              </div>
-              <NDescriptions
-                label-placement="left"
-                :column="1"
-                size="small"
-                class="mt-3"
-              >
-                <NDescriptionsItem label="ID">{{
-                  selectedNode.id
-                }}</NDescriptionsItem>
-                <NDescriptionsItem label="部门">{{
-                  selectedNode.data?.dept ?? '-'
-                }}</NDescriptionsItem>
-                <NDescriptionsItem label="邮箱">{{
-                  selectedNode.data?.email ?? '-'
-                }}</NDescriptionsItem>
-                <NDescriptionsItem label="直属下级">
-                  <NTag
-                    :type="
-                      (selectedNode.children?.length ?? 0) > 0
-                        ? 'info'
-                        : 'default'
-                    "
-                    size="small"
-                  >
-                    {{ selectedNode.children?.length ?? 0 }} 人
-                  </NTag>
-                </NDescriptionsItem>
-              </NDescriptions>
-            </div>
-          </template>
-          <template v-else>
-            <NEmpty description="点击架构图中的节点查看详细信息" />
-          </template>
-        </NCard>
-
-        <!-- 功能特性 -->
-        <NCard
-          class="demo-card"
-          :bordered="false"
-        >
-          <template #header>
-            <div class="card-header">
-              <h3>功能特性</h3>
-              <NTag
-                type="info"
-                size="small"
-                round
-              >
-                {{ FEATURES.length }} 项
-              </NTag>
-            </div>
-          </template>
-
-          <div class="feature-list">
-            <div
-              v-for="feat in FEATURES"
-              :key="feat.title"
-              class="feature-item"
-            >
-              <C_Icon
-                :name="feat.icon"
-                :size="18"
-                class="feature-icon"
-              />
-              <div>
-                <div class="feature-title">{{ feat.title }}</div>
-                <div class="feature-desc">{{ feat.desc }}</div>
-              </div>
-            </div>
-          </div>
-        </NCard>
-      </div>
+            :min-zoom="0.1"
+            :node-spacing="20"
+            :level-spacing="44"
+            fit-on-init
+            @node-click="node => choose(node.id)"
+            ><template #node="{ node }"
+              ><button
+                type="button"
+                class="org-person"
+                :class="{ 'is-selected': selectedId === node.id }"
+                :aria-label="`查看 ${node.label}`"
+                @click.stop="choose(node.id)"
+                ><span class="org-initial">{{ node.label.slice(0, 1) }}</span
+                ><span
+                  ><strong>{{ node.label }}</strong
+                  ><small>{{ node.subtitle }}</small></span
+                ><b v-if="node.children?.length">{{
+                  node.children.length
+                }}</b></button
+              ></template
+            ></C_OrgChart
+          ></div
+        ><footer class="workspace-footer"
+          ><span>拖动空白区域平移 · 滚轮缩放 · +/- 展开或折叠</span
+          ><span>点击成员查看右侧详情</span></footer
+        ></main
+      >
+      <aside class="workspace-panel org-detail"
+        ><section class="workspace-section"
+          ><h2>成员详情</h2
+          ><div class="org-person-heading"
+            ><span class="org-initial">{{
+              selected.node.label.slice(0, 1)
+            }}</span
+            ><div
+              ><h3>{{ selected.node.label }}</h3
+              ><p>{{ selected.node.subtitle }}</p></div
+            ></div
+          ><dl
+            ><dt>所属部门</dt><dd>{{ selected.department }}</dd
+            ><dt>汇报对象</dt
+            ><dd>{{ selected.path.at(-2)?.label ?? '组织负责人' }}</dd
+            ><dt>邮箱</dt><dd>{{ selected.node.data?.email ?? '未填写' }}</dd
+            ><dt>直属成员</dt
+            ><dd>{{ selected.node.children?.length ?? 0 }} 人</dd></dl
+          ><NButton
+            size="small"
+            block
+            :disabled="focusId === selectedId"
+            @click="focusId = selectedId"
+            >查看此成员的团队</NButton
+          ></section
+        ><section class="workspace-section"
+          ><h2>汇报路径</h2
+          ><ol class="org-path"
+            ><li
+              v-for="node in selected.path"
+              :key="node.id"
+              ><button
+                type="button"
+                @click="choose(node.id, true)"
+                >{{ node.label }}<small>{{ node.subtitle }}</small></button
+              ></li
+            ></ol
+          ></section
+        ></aside
+      >
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-  import {
-    orgData,
-    DIRECTION_OPTIONS,
-    LINE_STYLE_OPTIONS,
-    FEATURES,
-  } from './data'
-  import type {
-    OrgChartNode,
-    OrgChartDirection,
-    OrgChartLineStyle,
-  } from '@robot-admin/naive-ui-components'
-
+  import { DIRECTION_OPTIONS } from './data'
+  import { useOrgWorkspace } from './useOrgWorkspace'
   defineOptions({ name: 'Demo56OrgChart' })
-
-  const message = useMessage()
-
-  // ─── State ───
-  const direction = ref<OrgChartDirection>('vertical')
-  const lineStyle = ref<OrgChartLineStyle>('rounded')
-  const collapsible = ref(true)
-  const zoomable = ref(true)
-  const selectedNode = ref<OrgChartNode | null>(null)
-
-  // ─── Computed ───
-  /**
-   * * @description: 递归统计节点总数
-   */
-  const nodeCount = computed(() => {
-    const count = (node: OrgChartNode): number =>
-      1 + (node.children?.reduce((sum, child) => sum + count(child), 0) ?? 0)
-    return count(orgData)
-  })
-
-  // ─── Actions ───
-  /**
-   * * @description: 节点点击处理
-   */
-  const handleNodeClick = (node: OrgChartNode) => {
-    selectedNode.value = node
-    message.info(`选中：${node.label}（${node.subtitle ?? ''}）`)
-  }
+  const {
+    entries,
+    search,
+    focusId,
+    selectedId,
+    direction,
+    lineStyle,
+    chartRef,
+    focused,
+    selected,
+    matches,
+    tree,
+    choose,
+    reset,
+  } = useOrgWorkspace()
 </script>
-
 <style lang="scss" scoped>
   @use './index.scss';
 </style>

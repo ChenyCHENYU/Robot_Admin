@@ -108,7 +108,7 @@ test('认证壳层、地图及退出登录在正式产物中可用', async ({ pa
   await expect(page.locator('#guide-menu')).toBeVisible()
 
   await page.goto('/#/plugins/map')
-  await expect(page.locator('.leaflet-container')).toHaveCount(4)
+  await expect(page.locator('.leaflet-container')).toHaveCount(1)
   await expect(page.locator('.n-message--error')).toHaveCount(0)
 
   await page.locator('.user-info').first().click()

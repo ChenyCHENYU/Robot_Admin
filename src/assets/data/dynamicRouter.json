@@ -755,7 +755,7 @@
         {
           "path": "xxx-xxx",
           "name": "xxx-xxx",
-          "component": "/demo/34-production-cost/index",
+          "component": "/demo/58-performance/index",
           "meta": {
             "icon": "mdi:performance",
             "title": "绩效看板",

@@ -16,7 +16,7 @@ const demos = [
   ['/demo/table-manage/table', '表格组件场景示例'],
   ['/plugins/calendar', '日程工作台'],
   ['/demo/steps', '进度步骤条组件场景示例'],
-  ['/editor/work-flow-editor', '工作流设计器场景示例'],
+  ['/editor/work-flow-editor', '工作流设计工作台'],
   ['/hooks/excel-all', 'Excel All - [useExcel] 场景示例'],
   ['/plugins/v-table-gantt', '甘特图组件场景示例'],
   ['/plugins/waterfall', '瀑布流场景示例'],
@@ -104,9 +104,10 @@ test('甘特图自定义渲染无需向 window 注入第三方模块', async ({ 
   await installMockAdminSession(page)
 
   await page.goto('/#/plugins/v-table-gantt')
-  await page.locator('.n-tabs-tab').filter({ hasText: '自定义渲染' }).click()
+  await page.locator('.gantt-layout > aside .n-select').click()
+  await page.getByText('自定义渲染', { exact: true }).last().click()
   await expect(
-    page.getByRole('heading', { name: '自定义渲染甘特图' })
+    page.getByRole('heading', { name: '团队任务看板' })
   ).toBeVisible()
   await expect(page.locator('.gantt-demo-page canvas').first()).toBeVisible()
   expect(

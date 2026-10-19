@@ -74,15 +74,33 @@
                 </div>
                 <div class="task-bottom">
                   <div class="assignee">
-                    <NAvatar
-                      :size="24"
-                      :src="item.avatar"
-                    />
+                    <NAvatar :size="24">{{
+                      item.name?.slice(0, 1) ?? '人'
+                    }}</NAvatar>
                     <span>{{ item.name }}</span>
                   </div>
-                  <div class="handle">
-                    <div class="i-mdi-drag-vertical"></div>
-                  </div>
+                  <div class="task-move"
+                    ><NDropdown
+                      :options="
+                        kanbanColumnsConfig
+                          .filter(option => option.key !== column.key)
+                          .map(option => ({
+                            label: option.title,
+                            key: option.key,
+                          }))
+                      "
+                      @select="
+                        (key: string | number) =>
+                          moveTask(item.id, column.key, String(key))
+                      "
+                      ><NButton
+                        size="tiny"
+                        quaternary
+                        :aria-label="`移动任务 ${item.title}`"
+                        >移动</NButton
+                      ></NDropdown
+                    ><span class="i-mdi-drag-vertical"
+                  /></div>
                 </div>
               </div>
             </template>
@@ -97,92 +115,135 @@
       </div>
     </NCard>
 
-    <!-- 双栏布局 -->
-    <NGrid
-      :cols="4"
-      :x-gap="16"
-      class="bottom-section"
-    >
-      <!-- 技术栈展示 -->
-      <NGridItem :span="3">
-        <NCard
-          title="技术栈展示"
-          size="small"
+    <NCollapse
+      ><NCollapseItem
+        title="更多排序场景"
+        name="other"
+        display-directive="if"
+      >
+        <!-- 双栏布局 -->
+        <NGrid
+          :cols="4"
+          :x-gap="16"
+          class="bottom-section"
         >
-          <template #header-extra>
-            <NText depth="3">拖拽排序</NText>
-          </template>
-          <C_Draggable
-            v-model="techCards"
-            :animation="150"
-            handle=".tech-handle"
-            class="tech-list"
-          >
-            <template #default="{ item }">
-              <div class="tech-card">
-                <div class="tech-header">
-                  <div class="tech-info">
-                    <img
-                      :src="item.logo"
-                      class="tech-logo"
-                    />
-                    <span
-                      class="tech-name"
-                      @click="openLink(item.link)"
-                      >{{ item.name }}</span
-                    >
-                  </div>
-                  <NTooltip>
-                    <template #trigger>
-                      <div class="tech-handle">
-                        <div class="i-mdi-drag-vertical"></div>
-                      </div>
-                    </template>
-                    拖拽排序
-                  </NTooltip>
-                </div>
-                <div class="tech-desc">
-                  <p>{{ item.description }}</p>
-                </div>
-              </div>
-            </template>
-          </C_Draggable>
-        </NCard>
-      </NGridItem>
-
-      <!-- 活动列表 -->
-      <NGridItem :span="1">
-        <NCard
-          title="活动列表"
-          size="small"
-        >
-          <template #header-extra>
-            <NButton
-              @click="addActivity"
+          <!-- 技术栈展示 -->
+          <NGridItem :span="3">
+            <NCard
+              title="技术栈展示"
               size="small"
-              quaternary
             >
-              <template #icon><div class="i-mdi-plus"></div></template>
-            </NButton>
-          </template>
-          <C_Draggable
-            v-model="activities"
-            :animation="150"
-            class="activity-list"
-          >
-            <template #default="{ item, index }">
-              <div
-                class="activity-item"
-                :style="{ backgroundColor: getActivityColor(index) }"
+              <template #header-extra>
+                <NText depth="3">拖拽排序</NText>
+              </template>
+              <C_Draggable
+                v-model="techCards"
+                :animation="150"
+                handle=".tech-handle"
+                class="tech-list"
               >
-                <div class="activity-dot"></div>
-                <span class="activity-text">{{ item.task }}</span>
-              </div>
-            </template>
-          </C_Draggable>
-        </NCard>
-      </NGridItem>
-    </NGrid>
+                <template #default="{ item }">
+                  <div class="tech-card">
+                    <div class="tech-header">
+                      <div class="tech-info">
+                        <img
+                          :src="item.logo"
+                          class="tech-logo"
+                        />
+                        <span
+                          class="tech-name"
+                          @click="openLink(item.link)"
+                          >{{ item.name }}</span
+                        >
+                      </div>
+                      <NTooltip>
+                        <template #trigger>
+                          <div class="tech-handle">
+                            <div class="i-mdi-drag-vertical"></div>
+                          </div>
+                        </template>
+                        拖拽排序
+                      </NTooltip>
+                    </div>
+                    <div class="tech-desc">
+                      <p>{{ item.description }}</p>
+                    </div>
+                  </div>
+                </template>
+              </C_Draggable>
+            </NCard>
+          </NGridItem>
+
+          <!-- 活动列表 -->
+          <NGridItem :span="1">
+            <NCard
+              title="活动列表"
+              size="small"
+            >
+              <template #header-extra>
+                <NButton
+                  @click="addActivity"
+                  size="small"
+                  quaternary
+                >
+                  <template #icon><div class="i-mdi-plus"></div></template>
+                </NButton>
+              </template>
+              <C_Draggable
+                v-model="activities"
+                :animation="150"
+                class="activity-list"
+              >
+                <template #default="{ item, index }">
+                  <div
+                    class="activity-item"
+                    :style="{ backgroundColor: getActivityColor(index) }"
+                  >
+                    <div class="activity-dot"></div>
+                    <span class="activity-text">{{ item.task }}</span>
+                  </div>
+                </template>
+              </C_Draggable>
+            </NCard>
+          </NGridItem>
+        </NGrid>
+      </NCollapseItem></NCollapse
+    >
+    <NModal
+      v-model:show="showTaskEditor"
+      preset="card"
+      title="添加看板任务"
+      :style="{ width: 'min(460px,calc(100vw - 32px))' }"
+      ><NInput
+        v-model:value="newTaskTitle"
+        placeholder="输入任务标题"
+        :maxlength="100"
+        :input-props="{ 'aria-label': '看板任务标题' }"
+        @keyup.enter="confirmAddTask"
+      /><NSelect
+        v-model:value="newPriority"
+        class="task-priority-select"
+        :options="[
+          { label: '高优先级', value: 'high' },
+          { label: '中优先级', value: 'medium' },
+          { label: '低优先级', value: 'low' },
+        ]"
+      /><template #footer
+        ><NSpace justify="end"
+          ><NButton
+            size="small"
+            @click="showTaskEditor = false"
+            >取消</NButton
+          ><NButton
+            type="primary"
+            size="small"
+            :disabled="!newTaskTitle.trim()"
+            @click="confirmAddTask"
+            >添加到待办</NButton
+          ></NSpace
+        ></template
+      ></NModal
+    >
   </div>
 </template>
 
@@ -202,7 +263,25 @@
   const message = useMessage()
 
   // 统一的响应式数据管理
-  const kanbanTasks = ref(kanbanData)
+  const kanbanTasks = ref(
+    JSON.parse(JSON.stringify(kanbanData)) as typeof kanbanData
+  )
+  const showTaskEditor = ref(false)
+  const newTaskTitle = ref('')
+  const newPriority = ref<Priority>('medium')
+  let nextTaskId = Date.now()
+  const moveTask = (
+    id: string | number,
+    source: keyof typeof kanbanData,
+    target: string
+  ) => {
+    if (!(target in kanbanTasks.value) || source === target) return
+    const tasks = kanbanTasks.value[source]
+    const index = tasks.findIndex(task => String(task.id) === String(id))
+    if (index < 0) return
+    const [task] = tasks.splice(index, 1)
+    kanbanTasks.value[target as keyof typeof kanbanData].push(task)
+  }
   const techCards = ref(techCardsData)
   const activities = ref(activitiesData)
 
@@ -211,22 +290,29 @@
   const getPriorityText = (priority: Priority) => priorityConfig[priority].text
   const getActivityColor = (index: number) =>
     rainbowColors[index % rainbowColors.length]
-  const openLink = (url: string) => window.open(url, '_blank')
+  const openLink = (url: string) =>
+    window.open(url, '_blank', 'noopener,noreferrer')
 
   // 操作方法
   const addNewTask = () => {
+    showTaskEditor.value = true
+  }
+  const confirmAddTask = () => {
+    if (!newTaskTitle.value.trim()) return
     const newTask = {
-      id: Date.now(),
-      title: `新任务 ${kanbanTasks.value.todo.length + 1}`,
-      priority: 'medium' as Priority,
+      id: ++nextTaskId,
+      title: newTaskTitle.value.trim(),
+      priority: newPriority.value,
       date: new Date().toLocaleDateString(),
       tag: 'web',
       comments: 0,
-      avatar: 'https://07akioni.oss-cn-beijing.aliyuncs.com/demo1.JPG',
-      name: 'New User',
+      avatar: '',
+      name: '待分配',
     }
     kanbanTasks.value.todo.push(newTask)
-    message.success('新任务已添加')
+    showTaskEditor.value = false
+    newTaskTitle.value = ''
+    message.success('任务已添加到待办')
   }
 
   const addActivity = () => {

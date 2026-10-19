@@ -1,108 +1,160 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-19
+ * @Description: 项目计划工作台，任务查找、时间尺度和稳定详情
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
-  <div class="gantt-demo-page">
-    <c_vTitle
-      title="甘特图组件场景示例"
-      icon="mdi:chart-gantt"
-      description="支持任务时间线、进度跟踪、资源分配等特性，适用于项目管理、进度排程等场景"
-    />
-
-    <div class="demo-content">
-      <NTabs
-        v-model:value="activeTab"
-        type="line"
-        animated
-      >
-        <NTabPane
-          v-for="tab in demoTabs"
-          :key="tab.name"
-          :name="tab.name"
-          :tab="tab.label"
-        >
-          <div class="demo-section">
-            <div class="section-header">
-              <h2>{{ tab.title }}</h2>
-              <p>{{ tab.description }}</p>
-              <div
-                v-if="tab.tips"
-                class="usage-tips"
-              >
-                <strong>使用说明：</strong>
-                <ul>
-                  <li
-                    v-for="tip in tab.tips"
-                    :key="tip"
-                    >{{ tip }}</li
-                  >
-                </ul>
-              </div>
-            </div>
-
-            <div
-              v-if="tab.controls"
-              class="demo-controls"
-            >
-              <NButton
-                v-for="control in tab.controls"
-                :key="control.action"
-                :type="control.type || 'default'"
-                size="small"
-                @click="handleAction(control.action)"
-              >
-                <template #icon>
-                  <C_Icon
-                    :name="control.icon"
-                    :size="16"
-                    color="currentColor"
-                  />
-                </template>
-                {{
-                  typeof control.label === 'string'
-                    ? control.label
-                    : control.label.value
-                }}
-              </NButton>
-            </div>
-
-            <C_VtableGantt
-              :ref="(el: unknown) => setGanttRef(tab.name, el)"
-              :data="ganttData[tab.name]"
-              :preset="tab.preset"
-              :title="tab.ganttTitle"
-              :options="tab.options"
-              :height="tab.height || '600px'"
-              :theme="isDark ? 'dark' : 'light'"
-              @task-click="onTaskClick"
-            />
-          </div>
-        </NTabPane>
-      </NTabs>
-    </div>
-
-    <!-- 配置说明 -->
-    <div class="config-docs">
-      <NCard
-        title="预设配置说明"
+  <div class="plugin-workspace gantt-demo-page"
+    ><header class="workspace-heading"
+      ><div
+        ><small>PROJECT PLANNING</small><h1>甘特图组件场景示例</h1
+        ><p>在计划、时间线和里程碑之间切换，查找任务并查看实际排期。</p></div
+      ><NTag
         size="small"
+        :bordered="false"
+        >改动仅保留在当前页面</NTag
+      ></header
+    >
+    <div class="gantt-layout"
+      ><aside class="workspace-panel"
+        ><section class="workspace-section"
+          ><h2>计划视图</h2
+          ><NSelect
+            v-model:value="activeTab"
+            :options="
+              demoTabs.map(tab => ({ label: tab.label, value: tab.name }))
+            "
+            size="small" /></section
+        ><section class="workspace-section"
+          ><h2>任务目录 · {{ taskEntries.length }}</h2
+          ><NInput
+            v-model:value="taskSearch"
+            size="small"
+            clearable
+            placeholder="搜索任务名称"
+            :input-props="{ 'aria-label': '搜索计划任务' }"
+          /><div class="gantt-task-list"
+            ><button
+              v-for="task in taskEntries"
+              :key="task.id"
+              type="button"
+              class="workspace-choice"
+              :aria-pressed="selectedTask?.id === task.id"
+              @click="onTaskClick(task)"
+              ><span
+                ><strong>{{ task.title }}</strong
+                ><small>{{ taskDateLabel(task.start) }}</small></span
+              ></button
+            ><p
+              v-if="!taskEntries.length"
+              class="workspace-hint"
+              >没有匹配的任务</p
+            ></div
+          ></section
+        ></aside
       >
-        <div class="config-list">
-          <div
-            v-for="config in presetDescriptions"
-            :key="config.name"
-            class="config-item"
-          >
-            <strong>{{ config.name }}</strong> - {{ config.description }}
-            <div
-              v-if="config.note"
-              class="config-note"
-              >{{ config.note }}</div
-            >
-          </div>
-        </div>
-      </NCard>
-    </div>
+      <main class="workspace-panel"
+        ><header class="workspace-toolbar"
+          ><div
+            ><h2>{{ currentTab.ganttTitle }}</h2
+            ><small
+              >{{ taskEntries.length }} 个可见任务 ·
+              示例时间以任务明细为准</small
+            ></div
+          ><div class="workspace-actions"
+            ><NSelect
+              v-model:value="timeScale"
+              :disabled="activeTab === 'custom'"
+              size="small"
+              :options="[
+                { label: '按日查看', value: 'day' },
+                { label: '按周查看', value: 'week' },
+              ]"
+              aria-label="计划时间尺度"
+            /><NButton
+              size="tiny"
+              :disabled="!selectedTask || !ganttRefs[activeTab]?.ganttInstance"
+              @click="locateTask"
+              >定位选中任务</NButton
+            ></div
+          ></header
+        ><div
+          v-if="currentTab.controls"
+          class="gantt-actions workspace-actions"
+          ><NButton
+            v-for="control in currentTab.controls"
+            :key="control.action"
+            size="small"
+            :type="control.type || 'default'"
+            @click="handleAction(control.action)"
+            >{{
+              typeof control.label === 'string'
+                ? control.label
+                : control.label.value
+            }}</NButton
+          ></div
+        ><div class="gantt-stage"
+          ><C_VtableGantt
+            v-if="visibleData.length"
+            :key="activeTab"
+            :ref="(el: unknown) => setGanttRef(activeTab, el)"
+            :data="visibleData"
+            :preset="currentTab.preset"
+            :title="currentTab.ganttTitle"
+            :options="workspaceOptions"
+            height="540px"
+            :theme="isDark ? 'dark' : 'light'"
+            @task-click="onTaskClick"
+            @task-change="onTaskChange"
+          /><div
+            v-else
+            class="workspace-empty"
+            >没有匹配的任务，清空搜索后恢复计划视图。</div
+          ></div
+        ><footer class="workspace-footer"
+          ><span>双击可编辑字段 · 拖动任务条调整排期</span
+          ><span>日期、进度与详情使用同一份任务记录</span></footer
+        ></main
+      >
+      <aside class="workspace-panel gantt-inspector"
+        ><section class="workspace-section"
+          ><h2>任务详情</h2
+          ><template v-if="selectedTask"
+            ><h3>{{ selectedTask.title }}</h3
+            ><dl
+              ><dt>开始</dt><dd>{{ taskDateLabel(selectedTask.start) }}</dd
+              ><dt>结束</dt><dd>{{ taskDateLabel(selectedTask.end) }}</dd
+              ><dt>完成进度</dt><dd>{{ selectedTask.progress ?? 0 }}%</dd
+              ><dt>优先级</dt
+              ><dd>{{ selectedTask.priority ?? '未设置' }}</dd></dl
+            ></template
+          ><NEmpty
+            v-else
+            description="从任务目录或时间线选择一项" /></section
+        ><section class="workspace-section"
+          ><NCollapse
+            ><NCollapseItem
+              title="场景与操作说明"
+              name="guide"
+              ><p>{{ currentTab.description }}</p
+              ><p
+                v-for="tip in currentTab.tips"
+                :key="tip"
+                >{{ tip }}</p
+              ><p
+                v-for="config in presetDescriptions"
+                :key="config.name"
+                ><strong>{{ config.name }}</strong> ·
+                {{ config.description }}</p
+              ></NCollapseItem
+            ></NCollapse
+          ></section
+        ></aside
+      ></div
+    >
   </div>
 </template>
-
 <script setup lang="ts">
   defineOptions({ name: 'Demo33VTableGantt' })
   import type { GanttTask, GanttPreset } from '@robot-admin/naive-ui-components'
@@ -120,13 +172,21 @@
   import { s_themeStore } from '@/stores/theme'
 
   const message = useMessage()
-  const activeTab = ref('basic')
+  const activeTab = ref('project')
+  const taskSearch = ref('')
+  const timeScale = ref('week')
+  const selectedTask = shallowRef<GanttTask | null>(null)
   const themeStore = s_themeStore()
   const isDark = computed(() => themeStore.isDark)
   interface GanttHandle {
     ganttInstance?: {
       collapseAll?: () => void
       expandAll?: () => void
+      taskListTableInstance?: {
+        collapseAllTreeNode: () => void
+        expandAllTreeNode: () => void
+      }
+      scrollToMarkLine: (date: Date) => void
     }
   }
 
@@ -459,6 +519,95 @@
     },
   ]
 
+  const currentTab = computed(
+    () => demoTabs.find(tab => tab.name === activeTab.value) ?? demoTabs[0]
+  )
+  const taskEntries = computed(() => {
+    const result: GanttTask[] = []
+    const visit = (tasks: GanttTask[]) =>
+      tasks.forEach(task => {
+        result.push(task)
+        if (task.children) visit(task.children)
+      })
+    visit(ganttData.value[activeTab.value] ?? [])
+    return result.filter(task =>
+      task.title.toLowerCase().includes(taskSearch.value.trim().toLowerCase())
+    )
+  })
+  const filterTasks = (tasks: GanttTask[]): GanttTask[] =>
+    tasks.flatMap(task => {
+      if (
+        task.title.toLowerCase().includes(taskSearch.value.trim().toLowerCase())
+      )
+        return [task]
+      const children = task.children ? filterTasks(task.children) : []
+      return children.length ? [{ ...task, children }] : []
+    })
+  const visibleData = computed(() =>
+    filterTasks(ganttData.value[activeTab.value] ?? [])
+  )
+  const workspaceOptions = computed(() => {
+    const base = unref(currentTab.value.options) ?? {}
+    if (currentTab.value.name === 'custom') return base
+    return {
+      ...base,
+      taskListTable: {
+        ...base.taskListTable,
+        tableWidth: 400,
+        hierarchyExpandLevel: expandStates.project ? 99 : 1,
+        theme: {
+          headerStyle: { fontSize: 12, fontWeight: 'normal' },
+          bodyStyle: { fontSize: 12 },
+        },
+      },
+      taskBar: {
+        ...base.taskBar,
+        labelTextStyle: {
+          color: '#ffffff',
+          fontSize: 11,
+          textAlign: 'left',
+          textOverflow: 'ellipsis',
+        },
+        barStyle: {
+          width: 22,
+          barColor: '#9cb8ec',
+          completedBarColor: '#5686d4',
+          cornerRadius: 5,
+          borderLineWidth: 0,
+        },
+      },
+      timelineHeader: {
+        ...base.timelineHeader,
+        colWidth: timeScale.value === 'week' ? 90 : 52,
+        scales: [
+          {
+            unit: timeScale.value,
+            step: 1,
+            format: (date: { dateIndex: number }) =>
+              timeScale.value === 'week'
+                ? `第 ${date.dateIndex} 周`
+                : String(date.dateIndex),
+            style: { fontSize: 11, fontWeight: 'normal' },
+          },
+        ],
+      },
+    }
+  })
+  const taskDateLabel = (value: string | Date | undefined) =>
+    value instanceof Date
+      ? value.toLocaleDateString('zh-CN')
+      : (value ?? '未设置')
+  const locateTask = () => {
+    if (!selectedTask.value) return
+    const date = new Date(selectedTask.value.start)
+    if (Number.isFinite(date.getTime()))
+      ganttRefs.value[activeTab.value]?.ganttInstance?.scrollToMarkLine(date)
+  }
+  watch(activeTab, () => {
+    selectedTask.value = null
+    taskSearch.value = ''
+  })
+
   // ==================== 事件处理函数 ====================
 
   // 统一的动作处理器
@@ -528,7 +677,13 @@
     try {
       const gantt = ganttRef.ganttInstance
       const isExpanded = expandStates[type]
-      gantt[isExpanded ? 'collapseAll' : 'expandAll']?.()
+      const table = gantt.taskListTableInstance
+      if (!table) {
+        message.warning('任务表尚未就绪')
+        return
+      }
+      if (isExpanded) table.collapseAllTreeNode()
+      else table.expandAllTreeNode()
       expandStates[type] = !isExpanded
       message.success(`已${isExpanded ? '收起' : '展开'}所有任务`)
     } catch (error) {
@@ -537,10 +692,21 @@
     }
   }
 
+  const onTaskChange = (task: GanttTask, changes: Partial<GanttTask>) => {
+    const visit = (tasks: GanttTask[]) =>
+      tasks.forEach(item => {
+        if (String(item.id) === String(task.id)) Object.assign(item, changes)
+        if (item.children) visit(item.children)
+      })
+    visit(ganttData.value[activeTab.value] ?? [])
+    if (selectedTask.value?.id === task.id)
+      selectedTask.value = { ...task, ...changes }
+  }
+
   // ==================== 甘特图事件回调 ====================
 
   const onTaskClick = (task: GanttTask) => {
-    message.info(`点击了任务: ${task.title}`)
+    selectedTask.value = task
   }
 </script>
 

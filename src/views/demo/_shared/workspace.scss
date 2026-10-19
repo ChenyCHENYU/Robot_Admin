@@ -1,0 +1,197 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-19
+ * @Description: 场景工作台的间距、面板和响应式基础
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@mixin layout {
+  .plugin-workspace {
+    container-type: inline-size;
+    min-width: 0;
+    padding: 8px 8px 24px;
+    color: var(--app-text-primary);
+  }
+  .workspace-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 6px 0;
+    }
+    p {
+      color: var(--app-text-secondary);
+      margin: 0;
+      font-size: 12px;
+    }
+    small {
+      color: var(--app-primary);
+      letter-spacing: 0.15em;
+      font-size: 10px;
+    }
+  }
+  .workspace-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .workspace-grid {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .workspace-panel {
+    min-width: 0;
+    background: var(--app-bg-content);
+    border: 1px solid var(--app-border-default);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .workspace-section {
+    padding: 20px;
+    border-bottom: 1px solid var(--app-border-light);
+    &:last-child {
+      border-bottom: 0;
+    }
+    h2 {
+      font-size: 13px;
+      margin: 0 0 14px;
+      font-weight: 600;
+    }
+    p {
+      font-size: 12px;
+      color: var(--app-text-secondary);
+      line-height: 1.8;
+    }
+  }
+  .workspace-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--app-border-light);
+    h2 {
+      margin: 0;
+      font-size: 14px;
+    }
+    small {
+      display: block;
+      color: var(--app-text-tertiary);
+      margin-top: 4px;
+    }
+  }
+  .workspace-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    font-size: 11px;
+    color: var(--app-text-tertiary);
+    border-top: 1px solid var(--app-border-light);
+    flex-wrap: wrap;
+  }
+  .workspace-choice {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: inherit;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+    min-width: 0;
+    strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    small {
+      display: block;
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--app-text-tertiary);
+    }
+    &[aria-pressed='true'] {
+      background: color-mix(in srgb, var(--app-primary) 6%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--app-primary) 25%,
+        var(--app-border-light)
+      );
+    }
+    &:hover {
+      background: var(--app-bg-layout);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--app-primary);
+    }
+  }
+  .workspace-badge {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 38px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--app-primary) 10%, transparent);
+    color: var(--app-primary);
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .workspace-label {
+    display: grid;
+    gap: 8px;
+    margin: 16px 0;
+    min-width: 0;
+    > span {
+      font-size: 11px;
+      color: var(--app-text-secondary);
+    }
+  }
+  .workspace-hint {
+    color: var(--app-text-tertiary);
+    font-size: 11px;
+    line-height: 1.8;
+  }
+  .workspace-empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--app-text-tertiary);
+  }
+  @container (max-width:700px) {
+    .workspace-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .workspace-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .workspace-heading h1 {
+      font-size: 21px;
+    }
+  }
+  @container (max-width:360px) {
+    .workspace-toolbar,
+    .workspace-footer,
+    .workspace-section {
+      padding: 14px;
+    }
+    .workspace-choice {
+      padding: 8px;
+    }
+  }
+}

@@ -1,124 +1,80 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-02-27 10:00:00
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2026-02-27 10:00:00
- * @FilePath: \Robot_Admin\src\views\demo\38-upload\data.ts
- * @Description: 上传组件演示页数据
+ * @Date: 2026-10-19
+ * @Description: 上传工作台场景与可重复的本地传输演示
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-
 import type {
-  UploadFileItem,
-  UploadRequestOptions,
-} from '@robot-admin/naive-ui-components'
-
-/** 模拟已有文件列表（回显） */
-export const MOCK_EXISTING_FILES: UploadFileItem[] = [
+  CustomUploadRequest,
+  UploadFileStatus,
+} from '@robot-admin/naive-ui-components/C_Upload'
+export const UPLOAD_SCENES = [
   {
-    uid: 'existing-1',
-    name: '产品设计稿-v2.pdf',
-    size: 3_542_018,
-    type: 'application/pdf',
-    status: 'success',
-    percent: 100,
-    url: 'https://example.com/files/design-v2.pdf',
+    value: 'files',
+    label: '通用文件',
+    note: '拖放、多选与粘贴',
+    accept: '',
+    maxSize: 50 * 1024 * 1024,
   },
   {
-    uid: 'existing-2',
-    name: '团队合影.jpg',
-    size: 1_258_900,
-    type: 'image/jpeg',
-    status: 'success',
-    percent: 100,
-    url: 'https://picsum.photos/seed/team/800/600',
-    thumbUrl: 'https://picsum.photos/seed/team/200/150',
+    value: 'images',
+    label: '图片素材',
+    note: 'JPG、PNG 与 WebP',
+    accept: 'image/png,image/jpeg,image/webp',
+    maxSize: 10 * 1024 * 1024,
   },
-]
-
-/** 模拟上传延迟范围（ms） */
-export const MOCK_DELAY_RANGE: [number, number] = [800, 2500]
-
-/** 模拟上传成功率 */
-export const MOCK_SUCCESS_RATE = 0.85
-
-/** 文件类型选项 */
-export const FILE_TYPE_OPTIONS = [
-  { label: '全部文件', value: '' },
-  { label: '图片', value: 'image/*' },
-  { label: '文档', value: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx' },
-  { label: '视频', value: 'video/*' },
-  { label: '压缩包', value: '.zip,.rar,.7z,.tar,.gz' },
-]
-
-/** 分片大小选项 */
-export const CHUNK_SIZE_OPTIONS = [
-  { label: '1 MB', value: 1 * 1024 * 1024 },
-  { label: '2 MB', value: 2 * 1024 * 1024 },
-  { label: '5 MB', value: 5 * 1024 * 1024 },
-  { label: '10 MB', value: 10 * 1024 * 1024 },
-]
-
-/** 并发数选项 */
-export const CONCURRENCY_OPTIONS = [
-  { label: '1', value: 1 },
-  { label: '2', value: 2 },
-  { label: '3', value: 3 },
-  { label: '5', value: 5 },
-]
-
-// ─── 模拟上传函数 ───────────────────────────────
-
-/**
- * 模拟上传请求（Demo 用）
- *
- * 随机延迟后按 MOCK_SUCCESS_RATE 概率返回成功/失败，
- * 期间定时推送上传进度。
- */
-export function mockUploadRequest(options: UploadRequestOptions): {
-  abort: () => void
-} {
-  let timer: ReturnType<typeof setTimeout> | null = null
-  let progressTimer: ReturnType<typeof setInterval> | null = null
-  let aborted = false
-
-  const delay =
-    MOCK_DELAY_RANGE[0] +
-    Math.random() * (MOCK_DELAY_RANGE[1] - MOCK_DELAY_RANGE[0])
-  let currentPercent = 0
-
-  // 模拟进度推送
-  progressTimer = setInterval(() => {
-    if (aborted) return
-    currentPercent = Math.min(
-      currentPercent + Math.round(Math.random() * 20 + 5),
-      95
-    )
-    options.onProgress?.(currentPercent)
-  }, delay / 6)
-
-  timer = setTimeout(() => {
-    if (progressTimer) clearInterval(progressTimer)
-    if (aborted) return
-
-    if (Math.random() < MOCK_SUCCESS_RATE) {
-      options.onProgress?.(100)
-      options.onSuccess?.({
-        code: 200,
-        url: `https://example.com/uploads/${Date.now()}-${options.filename}`,
-        message: '上传成功（模拟）',
-      })
-    } else {
-      options.onError?.(new Error('模拟上传失败：服务器内部错误'))
-    }
-  }, delay)
-
-  return {
-    /** 中止上传 */
-    abort() {
-      aborted = true
-      if (timer) clearTimeout(timer)
-      if (progressTimer) clearInterval(progressTimer)
-    },
+  {
+    value: 'directory',
+    label: '文件夹',
+    note: '批量选择整个目录',
+    accept: '',
+    maxSize: 50 * 1024 * 1024,
+  },
+  {
+    value: 'chunked',
+    label: '大文件分片',
+    note: '2 MB 分片 · 并发 3',
+    accept: '',
+    maxSize: 500 * 1024 * 1024,
+  },
+] as const
+export const STATUS_LABELS: Record<UploadFileStatus, string> = {
+  pending: '待开始',
+  validating: '校验中',
+  hashing: '计算校验值',
+  uploading: '演示传输中',
+  success: '已完成（演示）',
+  instant: '已完成（演示）',
+  error: '失败，可重试',
+  paused: '已暂停',
+}
+export const fileSize = (bytes: number) =>
+  bytes >= 1024 * 1024
+    ? `${(bytes / 1024 / 1024).toFixed(1)} MB`
+    : `${(bytes / 1024).toFixed(1)} KB`
+/** 固定速度演示，按文件名确定首次失败；重试可恢复，不产生真实网络上传。 */
+export function createDemoUploadRequest(
+  failFirst: () => boolean
+): CustomUploadRequest {
+  const failures = new Set<string>()
+  return options => {
+    const failure = failFirst() && !failures.has(options.filename)
+    let percent = 0
+    const timer = setInterval(() => {
+      percent += 10
+      if (percent < 100) {
+        options.onProgress?.(percent)
+        return
+      }
+      clearInterval(timer)
+      if (failure) {
+        failures.add(options.filename)
+        options.onError?.(new Error('首次失败演示，请点击重试'))
+      } else {
+        options.onProgress?.(100)
+        options.onSuccess?.({ demo: true, filename: options.filename })
+      }
+    }, 180)
+    return { abort: () => clearInterval(timer) }
   }
 }

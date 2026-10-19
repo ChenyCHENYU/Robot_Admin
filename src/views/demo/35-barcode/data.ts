@@ -37,7 +37,7 @@ export const BARCODE_EXAMPLES = [
   {
     title: '商品条形码',
     description: '常见的商品EAN13条形码',
-    value: '690123456789012',
+    value: '6901234567892',
     format: 'EAN13' as BarcodeFormat,
     label: '商品编号',
   },
@@ -106,3 +106,53 @@ export const TEXT_POSITIONS: SelectOption[] = [
   { label: '底部', value: 'bottom' },
   { label: '顶部', value: 'top' },
 ]
+
+const validPharmacode = (value: string) =>
+  Number(value) >= 3 && Number(value) <= 131070
+    ? ''
+    : '药品码数值需在 3 至 131070 之间'
+const validAscii = (value: string) =>
+  Array.from(value).every(character => character.charCodeAt(0) <= 127)
+
+/** 验证常见条码格式，避免无效值保留上一次的图像却仍可下载。 */
+export const validateBarcodeValue = (
+  value: string,
+  format: BarcodeFormat
+): string => {
+  if (!value) return '请输入条形码内容'
+  if (format === 'CODE128')
+    return validAscii(value) ? '' : 'CODE128 仅支持 ASCII 字符'
+  if (format === 'CODE39')
+    return /^[0-9A-Z .\-$/+%]+$/.test(value)
+      ? ''
+      : 'CODE39 仅支持大写字母、数字与规定符号'
+  return validateNumericBarcode(value, format)
+}
+
+const validateNumericBarcode = (
+  value: string,
+  format: BarcodeFormat
+): string => {
+  if (!/^\d+$/.test(value)) return '当前格式仅支持数字'
+  const lengths: Partial<Record<BarcodeFormat, number>> = {
+    EAN13: 13,
+    EAN8: 8,
+    UPC: 12,
+    ITF14: 14,
+  }
+  const length = lengths[format]
+  if (length && value.length !== length) return `当前格式需要 ${length} 位数字`
+  if (format === 'pharmacode') return validPharmacode(value)
+  if (!length) return ''
+  const digits = value.split('').map(Number)
+  const sum = digits
+    .slice(0, -1)
+    .reverse()
+    .reduce(
+      (total, digit, index) => total + digit * (index % 2 === 0 ? 3 : 1),
+      0
+    )
+  return (10 - (sum % 10)) % 10 === digits.at(-1)
+    ? ''
+    : '校验位不正确，请检查条码内容'
+}

@@ -17,7 +17,7 @@
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml"><img src="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-8FB6FF?style=flat-square&amp;logo=bun&amp;logoColor=white" alt="Bun ≥1.4.2"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FB6FF?style=flat-square" alt="MIT License"></a>
-    <a href="#capability-map"><img src="https://img.shields.io/badge/demos-57-orange?style=flat-square" alt="57 demo pages"></a>
+    <a href="#capability-map"><img src="https://img.shields.io/badge/demos-58-orange?style=flat-square" alt="58 demo pages"></a>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin"><img src="https://img.shields.io/github/stars/ChenyCHENYU/Robot_Admin?style=flat-square&amp;label=Star" alt="GitHub Stars"></a>
   </p>
 </div>
@@ -32,7 +32,7 @@ The current SPA mainline, **v2.7.0**, includes company-context login, system man
 | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Architectures                 | SPA, Bun Workspaces, Module Federation and MicroApp branches                                             |
 | Components and packages       | 55 business components, 11 directives; 7 runtime `@robot-admin/*` packages and 1 Git tooling package     |
-| Examples                      | 57 demo pages covering data entry, complex grids, workflow editing, files and media                      |
+| Examples                      | 58 demo pages covering data entry, complex grids, workflow editing, files and media                      |
 | Verification and traceability | Dual lint, types, logic and component tests, bundle budgets, browser paint regression and build identity |
 
 ## Quick start
@@ -84,7 +84,7 @@ Company switches update the session and clear old permissions, dynamic routes an
 | Time and visualization | Date, city, calendars, timelines, Gantt, charts and large-screen templates                                                                             |
 | Application experience | Menus, search, theme, language, tours, empty states, error pages and route-loading feedback                                                            |
 
-The demo directory contains **57 demo pages + 8 form layouts (65 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
+The demo directory contains **58 demo pages + 8 form layouts (66 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
 
 > Cron previews do not schedule backend jobs; formula evaluation does not modify business data. Demo data, frontend data-scope configuration and button controls require real APIs and server authorization for production use.
 

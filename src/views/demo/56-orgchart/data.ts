@@ -15,7 +15,6 @@ export const orgData: OrgChartNode = {
   id: '1',
   label: '张总',
   subtitle: 'CEO · 首席执行官',
-  avatar: 'https://i.pravatar.cc/80?img=1',
   data: {
     email: 'zhangzong@company.com',
     phone: '138****8001',
@@ -26,33 +25,28 @@ export const orgData: OrgChartNode = {
       id: '2',
       label: '李副总',
       subtitle: '技术VP',
-      avatar: 'https://i.pravatar.cc/80?img=2',
       data: { email: 'lifuzong@company.com', dept: '技术中心' },
       children: [
         {
           id: '5',
           label: '王主管',
           subtitle: '前端主管',
-          avatar: 'https://i.pravatar.cc/80?img=5',
           data: { dept: '前端组', headcount: 3 },
           children: [
             {
               id: '9',
               label: '赵工',
               subtitle: '高级前端',
-              avatar: 'https://i.pravatar.cc/80?img=9',
             },
             {
               id: '10',
               label: '钱工',
               subtitle: '前端工程师',
-              avatar: 'https://i.pravatar.cc/80?img=10',
             },
             {
               id: '11',
               label: '孙工',
               subtitle: '前端工程师',
-              avatar: 'https://i.pravatar.cc/80?img=11',
             },
           ],
         },
@@ -60,20 +54,17 @@ export const orgData: OrgChartNode = {
           id: '6',
           label: '刘主管',
           subtitle: '后端主管',
-          avatar: 'https://i.pravatar.cc/80?img=6',
           data: { dept: '后端组', headcount: 2 },
           children: [
             {
               id: '12',
               label: '周工',
               subtitle: 'Java 高级',
-              avatar: 'https://i.pravatar.cc/80?img=12',
             },
             {
               id: '13',
               label: '吴工',
               subtitle: 'Go 工程师',
-              avatar: 'https://i.pravatar.cc/80?img=13',
             },
           ],
         },
@@ -83,21 +74,18 @@ export const orgData: OrgChartNode = {
       id: '3',
       label: '陈副总',
       subtitle: '产品VP',
-      avatar: 'https://i.pravatar.cc/80?img=3',
       data: { email: 'chenfuzong@company.com', dept: '产品中心' },
       children: [
         {
           id: '7',
           label: '郑经理',
           subtitle: '产品经理',
-          avatar: 'https://i.pravatar.cc/80?img=7',
           data: { dept: '产品设计组' },
           children: [
             {
               id: '14',
               label: '冯设计',
               subtitle: 'UI 设计师',
-              avatar: 'https://i.pravatar.cc/80?img=14',
             },
           ],
         },
@@ -107,14 +95,12 @@ export const orgData: OrgChartNode = {
       id: '4',
       label: '黄副总',
       subtitle: '运营VP',
-      avatar: 'https://i.pravatar.cc/80?img=4',
       data: { email: 'huangfuzong@company.com', dept: '运营中心' },
       children: [
         {
           id: '8',
           label: '许经理',
           subtitle: '运营总监',
-          avatar: 'https://i.pravatar.cc/80?img=8',
         },
       ],
     },

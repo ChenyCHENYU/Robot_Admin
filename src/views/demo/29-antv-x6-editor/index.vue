@@ -1,225 +1,176 @@
 <!--
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2025-07-03 09:23:53
- * @LastEditors: ChenYu ycyplus@gmail.com
- * @LastEditTime: 2025-07-04 18:52:07
- * @FilePath: \Robot_Admin\src\views\demo\29-antv-x6-editor\index.vue
- * @Description: 图编辑引擎演示页面
- * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+ * @Date: 2026-10-19
+ * @Description: 图编辑工作台，统一模型导航、画布和属性检查
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
-
 <template>
-  <div class="diagram-demo">
-    <c_vTitle
-      title="图编辑引擎示例"
-      icon="mdi:graph"
-      description="基于 AntV X6 封装的可视化图编辑引擎，支持 ER 图、BPMN 流程图、UML 类图等多种场景"
-    />
-    <NCard>
-      <template #header>
-        <NTabs
-          v-model:value="currentType"
-          type="line"
-          size="medium"
-          :bar-width="28"
-        >
-          <NTab
-            name="er"
-            tab="ER图"
-          />
-          <NTab
-            name="bpmn"
-            tab="BPMN图"
-          />
-          <NTab
-            name="uml"
-            tab="UML类图"
-          />
-        </NTabs>
-      </template>
-
-      <!-- 关键：给容器明确的高度 -->
-      <div class="chart-container">
-        <C_AntV
-          :type="currentType"
-          :data="currentData"
-          :width="'100%'"
-          :height="'100%'"
-          :readonly="false"
-          :show-toolbar="true"
-          :theme="isDark ? 'dark' : 'light'"
-          @ready="handleReady"
-          @data-change="handleDataChange"
-          ref="diagramRef"
-        />
-      </div>
-    </NCard>
-
-    <!-- 数据预览 -->
-    <NCard
-      title="数据预览"
-      style="margin-top: 16px"
+  <div class="plugin-workspace diagram-workspace"
+    ><header class="workspace-heading"
+      ><div
+        ><small>VISUAL MODEL STUDIO</small><h1>图编辑工作台</h1
+        ><p
+          >在业务流程、数据模型与类图之间切换，草稿在当前页面分别保留。</p
+        ></div
+      ><NButton
+        size="small"
+        type="primary"
+        @click="exportJson"
+        >导出当前图数据</NButton
+      ></header
     >
-      <C_Code
-        :code="JSON.stringify(graphData ?? currentData, null, 2)"
-        language="json"
-        title="当前图表数据（实时）"
-        :show-header="true"
-        :show-line-numbers="true"
-        :word-wrap="false"
-        :show-fullscreen="true"
-        max-height="400px"
-      />
-    </NCard>
+    <div class="diagram-layout"
+      ><aside class="workspace-panel"
+        ><section class="workspace-section"
+          ><h2>模型场景</h2
+          ><button
+            v-for="item in DIAGRAM_TYPES"
+            :key="item.value"
+            type="button"
+            class="workspace-choice"
+            :aria-pressed="type === item.value"
+            @click="type = item.value"
+            ><span
+              ><strong>{{ item.label }}</strong
+              ><small>{{ item.note }}</small></span
+            ></button
+          ></section
+        ><section class="workspace-section"
+          ><h2>模型目录 · {{ items.length }}</h2
+          ><button
+            v-for="node in items"
+            :key="node.id"
+            type="button"
+            class="workspace-choice"
+            :aria-pressed="selectedId === node.id"
+            @click="select(node.id)"
+            ><span
+              ><strong>{{ node.name }}</strong
+              ><small>{{ node.detail }}</small></span
+            ></button
+          ></section
+        ></aside
+      >
+      <main class="workspace-panel"
+        ><header class="workspace-toolbar"
+          ><div
+            ><h2>{{
+              DIAGRAM_TYPES.find(item => item.value === type)?.label
+            }}</h2
+            ><small
+              >{{ items.length }} 个节点 · {{ connections }} 条关系</small
+            ></div
+          ><div class="workspace-actions"
+            ><NRadioGroup
+              v-model:value="mode"
+              size="small"
+              ><NRadioButton value="edit">编辑</NRadioButton
+              ><NRadioButton value="preview"
+                >只读预览</NRadioButton
+              ></NRadioGroup
+            ><NButton
+              size="tiny"
+              @click="fit"
+              >适配视野</NButton
+            ><NButton
+              size="tiny"
+              :disabled="mode !== 'edit'"
+              @click="showReset = true"
+              >恢复示例</NButton
+            ></div
+          ></header
+        ><div class="diagram-canvas"
+          ><C_AntV
+            ref="diagramRef"
+            :key="`${type}-${revision}`"
+            :type="type"
+            :data="initialData"
+            width="100%"
+            height="100%"
+            :readonly="mode === 'preview'"
+            :show-toolbar="mode === 'edit'"
+            :theme="themeStore.isDark ? 'dark' : 'light'"
+            @ready="onReady"
+            @data-change="onChange" /></div
+        ><footer class="workspace-footer"
+          ><span>{{
+            mode === 'edit'
+              ? '拖动节点调整位置，双击节点编辑内容'
+              : '只读预览 · 已禁用节点编辑'
+          }}</span
+          ><span>导出为当前模型的 JSON 数据</span></footer
+        ></main
+      >
+      <aside class="workspace-panel"
+        ><section class="workspace-section"
+          ><h2>节点检查器</h2
+          ><template v-if="selectedNode"
+            ><span class="workspace-badge">{{ type.toUpperCase() }}</span
+            ><h3>{{ selectedNode.name }}</h3
+            ><p>{{ selectedNode.detail }}</p
+            ><dl
+              ><dt>标识</dt><dd>{{ selectedNode.id }}</dd
+              ><dt>坐标</dt
+              ><dd
+                >{{ Math.round(selectedNode.position.x) }},
+                {{ Math.round(selectedNode.position.y) }}</dd
+              ></dl
+            ><NButton
+              size="small"
+              block
+              :disabled="mode !== 'edit'"
+              @click="editSelected"
+              >编辑选中节点</NButton
+            ></template
+          ><NEmpty
+            v-else
+            description="选择一个节点" /></section
+        ><section class="workspace-section"
+          ><h2>当前模型</h2
+          ><p
+            >切换场景会保留本页草稿。刷新页面会恢复示例，需要留存请先导出。</p
+          ></section
+        ></aside
+      ></div
+    >
+    <NModal
+      v-model:show="showReset"
+      preset="dialog"
+      type="warning"
+      title="恢复当前模型示例"
+      content="当前模型的修改将被示例替换，其他场景草稿会保留。"
+      positive-text="恢复示例"
+      negative-text="保留修改"
+      @positive-click="reset"
+    />
   </div>
 </template>
-
 <script setup lang="ts">
-  defineOptions({ name: 'Demo29AntvX6Editor' })
-  import type {
-    DiagramType,
-    DiagramData,
-  } from '@robot-admin/naive-ui-components'
   import { s_themeStore } from '@/stores/theme'
-
+  import { DIAGRAM_TYPES } from './data'
+  import { useDiagramWorkspace } from './useDiagramWorkspace'
+  defineOptions({ name: 'Demo29AntvX6Editor' })
   const themeStore = s_themeStore()
-  const isDark = computed(() => themeStore.isDark)
-
-  const currentType = ref<DiagramType>('bpmn') // 直接显示BPMN
-  const diagramRef = ref()
-  const graphData = ref<DiagramData>()
-
-  // 根据类型提供初始数据 - 精简修复：只改返回类型和default
-  const currentData = computed((): DiagramData | undefined => {
-    switch (currentType.value) {
-      case 'er':
-        return {
-          tables: [
-            {
-              id: 'user_table',
-              name: '用户表',
-              comment: '系统用户信息',
-              fields: [
-                {
-                  name: 'id',
-                  type: 'BIGINT',
-                  isPrimaryKey: true,
-                  isRequired: true,
-                  isForeignKey: false,
-                },
-                {
-                  name: 'username',
-                  type: 'VARCHAR(50)',
-                  isPrimaryKey: false,
-                  isRequired: true,
-                  isForeignKey: false,
-                },
-                {
-                  name: 'email',
-                  type: 'VARCHAR(100)',
-                  isPrimaryKey: false,
-                  isRequired: true,
-                  isForeignKey: false,
-                },
-                {
-                  name: 'created_at',
-                  type: 'DATETIME',
-                  isPrimaryKey: false,
-                  isRequired: true,
-                  isForeignKey: false,
-                },
-              ],
-              position: { x: 100, y: 100 },
-            },
-          ],
-          relations: [],
-        }
-      case 'bpmn':
-        return {
-          nodes: [
-            {
-              id: 'start_1',
-              type: 'start' as const,
-              name: '开始',
-              position: { x: 100, y: 150 },
-              properties: {},
-            },
-            {
-              id: 'task_1',
-              type: 'task' as const,
-              name: '审核任务',
-              position: { x: 300, y: 150 },
-              properties: {
-                assignee: '审核员',
-                description: '审核用户提交的申请',
-              },
-            },
-            {
-              id: 'end_1',
-              type: 'end' as const,
-              name: '结束',
-              position: { x: 500, y: 150 },
-              properties: {},
-            },
-          ],
-          flows: [
-            {
-              id: 'flow_1',
-              source: 'start_1',
-              target: 'task_1',
-              name: '提交',
-            },
-            {
-              id: 'flow_2',
-              source: 'task_1',
-              target: 'end_1',
-              name: '完成',
-            },
-          ],
-        }
-      case 'uml':
-        return {
-          classes: [
-            {
-              id: 'user_class',
-              name: 'User',
-              attributes: [
-                { name: 'id', type: 'Long', visibility: 'private' },
-                { name: 'username', type: 'String', visibility: 'private' },
-                { name: 'email', type: 'String', visibility: 'private' },
-              ],
-              methods: [
-                { name: 'getId', returnType: 'Long', visibility: 'public' },
-                {
-                  name: 'getUsername',
-                  returnType: 'String',
-                  visibility: 'public',
-                },
-                {
-                  name: 'setUsername',
-                  returnType: 'void',
-                  visibility: 'public',
-                },
-              ],
-              position: { x: 100, y: 100 },
-            },
-          ],
-          relations: [],
-        }
-      default:
-        return undefined // 改为undefined而不是null
-    }
-  })
-
-  const handleReady = () => {
-    // graph ready
-  }
-
-  const handleDataChange = (data: DiagramData) => {
-    graphData.value = data
-  }
+  const showReset = ref(false)
+  const {
+    type,
+    mode,
+    revision,
+    diagramRef,
+    initialData,
+    items,
+    connections,
+    selectedId,
+    selectedNode,
+    select,
+    onReady,
+    onChange,
+    fit,
+    editSelected,
+    reset,
+    exportJson,
+  } = useDiagramWorkspace()
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
   @use './index.scss';
 </style>
