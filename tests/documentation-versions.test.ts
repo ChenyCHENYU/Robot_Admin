@@ -101,7 +101,10 @@ test('演示页计数区分顶层页面与内嵌布局，两版徽章和目录�
   const pageCount = pages.filter(entry =>
     indexFiles.includes(`${entry.name}/index.vue`)
   ).length
-  const nestedCount = indexFiles.length - pageCount
+  const nestedCount = indexFiles.filter(file =>
+    file.includes('/layouts/')
+  ).length
+  const embeddedCount = indexFiles.length - pageCount - nestedCount
   const names = ['README.md', 'README_EN.md']
   const texts = await Promise.all(
     names.map(name => Bun.file(new URL(`../${name}`, import.meta.url)).text())
@@ -116,8 +119,8 @@ test('演示页计数区分顶层页面与内嵌布局，两版徽章和目录�
     )
     expect(text).toContain(
       name === 'README.md'
-        ? `${pageCount} 个演示页 + ${nestedCount} 个表单布局（${indexFiles.length} 个 index.vue）`
-        : `${pageCount} demo pages + ${nestedCount} form layouts (${indexFiles.length} index.vue files)`
+        ? `${pageCount} 个演示页 + ${nestedCount} 个表单布局 + ${embeddedCount} 个页内组件（${indexFiles.length} 个 index.vue）`
+        : `${pageCount} demo pages + ${nestedCount} form layouts + ${embeddedCount} embedded component${embeddedCount === 1 ? '' : 's'} (${indexFiles.length} index.vue files)`
     )
   }
 })

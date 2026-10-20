@@ -21,6 +21,7 @@ import {
   createI18nPlugin,
 } from './src/config/vite/index.ts'
 import { validateViteEnv } from './src/config/vite/viteEnvConfig.ts'
+import { createPdfAssetsPlugin } from './src/config/vite/vitePdfAssetsPlugin.ts'
 import { createProjectInfoPlugin } from './src/config/vite/viteProjectInfoPlugin.ts'
 import { createBuildInfoPlugin } from './src/config/vite/viteBuildInfoPlugin.ts'
 import { createProjectMetricsPlugin } from './src/config/vite/viteProjectMetricsPlugin.ts'
@@ -100,6 +101,7 @@ export default defineConfig(
         createI18nPlugin(env),
         createBuildInfoPlugin(validatedEnv),
         createProjectInfoPlugin(),
+        createPdfAssetsPlugin(),
         createProjectMetricsPlugin(),
         createDependencyUpdatePlugin(),
         ...(process.env.ANALYZE
@@ -231,7 +233,10 @@ export default defineConfig(
         ],
       },
 
-      server: { ...serverConfig(env.API_PROXY_TARGET), port: validatedEnv.port },
+      server: {
+        ...serverConfig(env.API_PROXY_TARGET),
+        port: validatedEnv.port,
+      },
       build: buildConfig,
     }
   }

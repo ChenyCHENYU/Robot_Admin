@@ -77,11 +77,35 @@
           ><div
             ><h2>{{ MAP_EXAMPLES[cityIndex].title }}</h2
             ><small
-              >{{ mapType === 'osm' ? 'OpenStreetMap' : '高德地图' }} ·
-              {{ mapReady ? '地图已就绪' : '等待地图初始化' }}</small
+              >{{
+                mapType === 'osm'
+                  ? tileSource === 'carto'
+                    ? 'CARTO Voyager'
+                    : 'OpenStreetMap'
+                  : '高德地图'
+              }}
+              ·
+              {{
+                mapReady
+                  ? mapType === 'amap' || tilesLoaded
+                    ? '底图已就绪'
+                    : '正在连接底图'
+                  : '等待地图初始化'
+              }}</small
             ></div
           ><div class="workspace-actions"
-            ><NButton
+            ><NSelect
+              v-if="mapType === 'osm'"
+              :value="tileSource"
+              size="small"
+              class="map-basemap-select"
+              aria-label="选择底图"
+              :options="[
+                { label: '浅色街道 · CARTO', value: 'carto' },
+                { label: '标准街道 · OSM', value: 'osm' },
+              ]"
+              @update:value="changeTileSource"
+            /><NButton
               size="tiny"
               :disabled="!markers.length || !mapReady"
               @click="fit"
@@ -186,8 +210,8 @@
         ><p
           v-else
           class="workspace-hint"
-          >无需 Key。OpenStreetMap
-          瓦片由外部服务提供，加载失败时可在地图上方重试。</p
+          >默认使用 CARTO 街道底图，连接失败会尝试 OSM
+          备用源。可在地图上方切换，地标会保留。</p
         ><template #footer
           ><NButton
             size="small"
@@ -205,6 +229,9 @@
   import { useMapWorkspace } from './useMapWorkspace'
   defineOptions({ name: 'Demo36Map' })
   const {
+    tileSource,
+    tilesLoaded,
+    changeTileSource,
     providerDraft,
     keyDraft,
     securityDraft,

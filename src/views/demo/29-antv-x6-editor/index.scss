@@ -8,12 +8,12 @@
 @include workspace.layout;
 .diagram-layout {
   display: grid;
-  grid-template-columns: 190px minmax(0, 1fr) 220px;
+  grid-template-columns: minmax(0, 1fr) 260px;
   gap: 16px;
   align-items: start;
 }
 .diagram-canvas {
-  height: 580px;
+  height: clamp(560px, calc(100dvh - 340px), 760px);
   min-width: 0;
   overflow: hidden;
   :deep(.c-antv-container) {
@@ -38,12 +38,10 @@ dl {
 }
 @container (max-width:1100px) {
   .diagram-layout {
-    grid-template-columns: 190px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 240px;
   }
   .diagram-layout > aside:last-child {
-    grid-column: 1/-1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-column: auto;
   }
 }
 @container (max-width:700px) {
@@ -56,5 +54,64 @@ dl {
   }
   .diagram-canvas {
     height: 460px;
+  }
+}
+
+.diagram-scenarios {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+  button {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid var(--app-border-default);
+    border-radius: 12px;
+    background: var(--app-bg-content);
+    color: var(--app-text-secondary);
+    text-align: left;
+    cursor: pointer;
+    strong {
+      display: block;
+      font-size: 13px;
+      color: var(--app-text-primary);
+    }
+    small {
+      display: block;
+      margin-top: 5px;
+      font-size: 11px;
+    }
+    &[aria-pressed='true'] {
+      color: var(--app-primary);
+      border-color: var(--app-primary);
+      background: color-mix(
+        in srgb,
+        var(--app-primary) 6%,
+        var(--app-bg-content)
+      );
+    }
+  }
+}
+.diagram-canvas :deep(.bpmn-layout) {
+  padding: 0;
+}
+.diagram-canvas :deep(.left-panel) {
+  width: 110px;
+  min-width: 110px;
+  background: var(--app-bg-content);
+}
+.diagram-canvas :deep(.element-grid) {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.diagram-canvas :deep(.graph-wrapper) {
+  min-width: 0;
+  padding: 0;
+}
+@container (max-width: 700px) {
+  .diagram-scenarios {
+    grid-template-columns: 1fr;
   }
 }

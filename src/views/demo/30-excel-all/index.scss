@@ -1,11 +1,15 @@
-.excel-demo {
-  padding: 1.5rem;
-}
-
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-20
+ * @Description: 围绕导入、整理与导出的工作簿工作台
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../_shared/file-tools' as tools;
+@include tools.layout;
 //  "对于.demo-content下的所有直接子元素，从第二个子元素开始（即前面有兄弟元素的元素），都添加1.5rem的上边距"
 .demo-content {
   > * + * {
-    margin-top: 1.5rem;
+    margin-top: 20px;
   }
 }
 
@@ -23,7 +27,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2rem 0;
+    padding: 40px 20px;
+    border: 1px dashed
+      color-mix(in srgb, var(--app-primary) 35%, var(--app-border-default));
+    border-radius: 12px;
+    background: color-mix(
+      in srgb,
+      var(--app-primary) 3%,
+      var(--app-bg-content)
+    );
   }
 
   .upload-text {
@@ -38,6 +50,8 @@
 }
 
 .sheet-selector {
+  gap: 12px;
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
 }
@@ -123,4 +137,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.demo-card {
+  border-radius: 14px;
+  overflow: hidden;
+}
+.preview-table {
+  margin-top: 16px;
+}
+.demo-content > .n-card:last-child :deep(.c-table__pagination) {
+  padding: 16px 0 4px;
+}
+
+.upload-dragger :deep(.n-upload-trigger) {
+  display: block;
+  width: 100%;
+}
+.demo-content > .demo-card :deep(.n-card__content) {
+  padding-top: 20px;
 }

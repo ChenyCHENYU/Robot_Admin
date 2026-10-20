@@ -9,7 +9,7 @@
   <div class="conversation-workspace">
     <header class="conversation-heading"
       ><div
-        ><span class="eyebrow">COMMUNICATION / C_CHAT</span><h1>工程协作台</h1
+        ><span class="eyebrow">TEAM MESSAGES</span><h1>工程协作台</h1
         ><p>让讨论有上下文，让消息有回应。</p></div
       ><div class="conversation-mode"
         ><button
@@ -57,11 +57,14 @@
         /></div>
       </section>
       <aside class="conversation-context"
-        ><span class="eyebrow">CONVERSATION CONTEXT</span
+        ><span class="eyebrow">当前会话</span
+        ><div class="conversation-identity"
+          ><img
+            :src="mode === 'team' ? currentContact?.avatar : SELF_AVATAR"
+            alt="会话头像"
+          /><span>当前页面内的演示会话</span></div
         ><h2>{{ mode === 'team' ? currentContact?.name : '脚本助手' }}</h2
-        ><p
-          >这是可交互的消息组件预览。你可以发送消息、添加本地附件，观察不同会话的状态。</p
-        >
+        ><p>围绕一个主题交流，消息与附件按会话独立保留。</p>
         <dl
           ><div
             ><dt>当前消息</dt
@@ -78,7 +81,14 @@
             v-model:value="autoReply"
             size="small"
         /></label>
-        <div class="conversation-starters"
+        <NButton
+          class="conversation-attach"
+          size="small"
+          block
+          @click="fileInput?.click()"
+          ><template #icon><span class="i-mdi-paperclip" /></template
+          >添加本地附件</NButton
+        ><div class="conversation-starters"
           ><span class="eyebrow">试着聊一聊</span
           ><button
             v-for="starter in STARTERS"

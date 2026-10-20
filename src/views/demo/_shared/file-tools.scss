@@ -1,0 +1,180 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-20
+ * @Description: ZIP、下载与 Excel 工作台的共享场景导航和输出预览
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use './workspace' as workspace;
+@mixin layout {
+  @include workspace.layout;
+  .file-tool-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    button {
+      display: flex;
+      flex: 1 1 160px;
+      gap: 12px;
+      align-items: center;
+      padding: 15px 18px;
+      border: 1px solid var(--app-border-default);
+      border-radius: 12px;
+      background: var(--app-bg-content);
+      color: var(--app-text-secondary);
+      text-align: left;
+      cursor: pointer;
+      > span:first-child {
+        font-size: 22px;
+        color: var(--app-primary);
+      }
+      strong {
+        display: block;
+        color: var(--app-text-primary);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      small {
+        display: block;
+        font-size: 11px;
+        margin-top: 4px;
+      }
+      &[aria-pressed='true'] {
+        background: color-mix(
+          in srgb,
+          var(--app-primary) 6%,
+          var(--app-bg-content)
+        );
+        border-color: var(--app-primary);
+        box-shadow: 0 3px 12px
+          color-mix(in srgb, var(--app-primary) 8%, transparent);
+      }
+    }
+  }
+  .file-tool-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 20px;
+    align-items: start;
+  }
+  .file-tool-main {
+    min-width: 0;
+    > .n-card {
+      border-radius: 14px;
+    }
+  }
+  .file-tool-main > .n-card :deep(.n-card__content) {
+    padding-top: 20px;
+  }
+  .file-output {
+    padding: 22px;
+    border: 1px solid var(--app-border-default);
+    border-radius: 14px;
+    background: var(--app-bg-content);
+    h2 {
+      font-size: 13px;
+      margin: 0 0 18px;
+    }
+    h3 {
+      font-size: 16px;
+      overflow-wrap: anywhere;
+      margin: 10px 0 6px;
+    }
+    p,
+    small {
+      color: var(--app-text-tertiary);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+    li {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 12px;
+      border-bottom: 1px solid var(--app-border-light);
+      overflow-wrap: anywhere;
+      > span {
+        flex: none;
+        color: var(--app-primary);
+      }
+    }
+  }
+  .file-output__icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 58px;
+    border-radius: 14px;
+    color: var(--app-primary);
+    background: color-mix(in srgb, var(--app-primary) 9%, transparent);
+    font-size: 28px;
+  }
+  .file-tool-note {
+    font-size: 11px;
+    color: var(--app-text-tertiary);
+    line-height: 1.8;
+    margin: 16px 0 0;
+  }
+  .file-summary {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    border: 1px solid var(--app-border-default);
+    border-radius: 12px;
+    background: var(--app-bg-content);
+    > div {
+      flex: 1;
+    }
+    span {
+      display: block;
+      color: var(--app-text-tertiary);
+      font-size: 10px;
+    }
+    strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 18px;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+  }
+  .file-history {
+    margin-top: 20px;
+    border-radius: 14px;
+    :deep(.c-table__pagination) {
+      padding: 16px 0 4px;
+    }
+  }
+  @container (max-width: 850px) {
+    .file-tool-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .file-output {
+      display: none;
+    }
+  }
+  @container (max-width: 500px) {
+    .file-summary {
+      flex-wrap: wrap;
+      gap: 14px;
+      > div {
+        flex-basis: 40%;
+      }
+    }
+    .file-tool-tabs {
+      gap: 8px;
+      button {
+        flex-basis: 40%;
+        padding: 12px;
+      }
+    }
+  }
+}

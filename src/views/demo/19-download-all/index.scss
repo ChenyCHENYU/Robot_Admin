@@ -1,61 +1,76 @@
-.download-demo {
-  padding: 24px;
-  min-height: 100vh;
-
-  .demo-content {
-    display: grid;
-    gap: 24px;
-
-    .demo-card {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      border-radius: 12px;
-
-      :deep(.n-card-header) {
-        border-bottom: 1px solid var(--app-border-default);
-        padding: 20px 24px;
-
-        .n-card-header__main {
-          font-size: 18px;
-          font-weight: 600;
-        }
-      }
-    }
-
-      .demo-section {
-    margin-bottom: 24px;
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    }
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-20
+ * @Description: 以文件格式和交付目标组织下载操作
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../_shared/file-tools' as tools;
+@include tools.layout;
+.download-formats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+  article {
+    padding: 22px;
+    border: 1px solid var(--app-border-default);
+    border-radius: 14px;
+    background: var(--app-bg-content);
+    min-width: 0;
+    position: relative;
   }
+  small {
+    position: absolute;
+    top: 25px;
+    right: 20px;
+    color: var(--app-text-tertiary);
+    font-size: 10px;
+    letter-spacing: 0.08em;
   }
-
-  .batch-controls {
-    .checkbox-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-      padding: 16px;
-      border-radius: 8px;
-    }
+  h2 {
+    font-size: 14px;
+    margin: 18px 0 8px;
   }
-
-  // 响应式设计
-  @media (max-width: 768px) {
-    padding: 16px;
-
-    .checkbox-grid {
-      grid-template-columns: 1fr !important;
-    }
+  p {
+    min-height: 40px;
+    font-size: 11px;
+    line-height: 1.8;
+    color: var(--app-text-tertiary);
+    margin: 0 0 20px;
   }
 }
-
-// 图标样式
-span[class*="i-carbon"] {
-  width: 1.2em;
-  height: 1.2em;
+.download-format-icon {
   display: inline-block;
+  font-size: 30px;
+  color: var(--app-primary);
+}
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 12px 0 24px;
+}
+.batch-actions {
+  padding-top: 18px;
+  border-top: 1px solid var(--app-border-light);
+}
+@container (max-width: 850px) {
+  .download-formats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@container (max-width: 500px) {
+  .download-formats {
+    gap: 10px;
+    article {
+      padding: 16px;
+    }
+    small {
+      right: 14px;
+      top: 19px;
+    }
+  }
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
 }

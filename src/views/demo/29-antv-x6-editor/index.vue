@@ -9,9 +9,7 @@
     ><header class="workspace-heading"
       ><div
         ><small>VISUAL MODEL STUDIO</small><h1>图编辑工作台</h1
-        ><p
-          >在业务流程、数据模型与类图之间切换，草稿在当前页面分别保留。</p
-        ></div
+        ><p>围绕订单交付，读懂流程、数据与对象之间的关系。</p></div
       ><NButton
         size="small"
         type="primary"
@@ -19,38 +17,25 @@
         >导出当前图数据</NButton
       ></header
     >
-    <div class="diagram-layout"
-      ><aside class="workspace-panel"
-        ><section class="workspace-section"
-          ><h2>模型场景</h2
-          ><button
-            v-for="item in DIAGRAM_TYPES"
-            :key="item.value"
-            type="button"
-            class="workspace-choice"
-            :aria-pressed="type === item.value"
-            @click="type = item.value"
-            ><span
-              ><strong>{{ item.label }}</strong
-              ><small>{{ item.note }}</small></span
-            ></button
-          ></section
-        ><section class="workspace-section"
-          ><h2>模型目录 · {{ items.length }}</h2
-          ><button
-            v-for="node in items"
-            :key="node.id"
-            type="button"
-            class="workspace-choice"
-            :aria-pressed="selectedId === node.id"
-            @click="select(node.id)"
-            ><span
-              ><strong>{{ node.name }}</strong
-              ><small>{{ node.detail }}</small></span
-            ></button
-          ></section
-        ></aside
-      >
+    <nav
+      class="diagram-scenarios"
+      aria-label="图模型场景"
+      ><button
+        v-for="item in DIAGRAM_TYPES"
+        :key="item.value"
+        type="button"
+        :aria-pressed="type === item.value"
+        @click="type = item.value"
+        ><C_Icon
+          :name="item.icon"
+          :size="22"
+        /><span
+          ><strong>{{ item.label }}</strong
+          ><small>{{ item.note }}</small></span
+        ></button
+      ></nav
+    >
+    <div class="diagram-layout">
       <main class="workspace-panel"
         ><header class="workspace-toolbar"
           ><div
@@ -103,8 +88,14 @@
       >
       <aside class="workspace-panel"
         ><section class="workspace-section"
-          ><h2>节点检查器</h2
-          ><template v-if="selectedNode"
+          ><h2>节点检查器</h2>
+          <NSelect
+            :value="selectedId"
+            :options="items.map(item => ({ label: item.name, value: item.id }))"
+            size="small"
+            aria-label="选择图节点"
+            @update:value="select" />
+          <template v-if="selectedNode"
             ><span class="workspace-badge">{{ type.toUpperCase() }}</span
             ><h3>{{ selectedNode.name }}</h3
             ><p>{{ selectedNode.detail }}</p

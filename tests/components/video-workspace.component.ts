@@ -66,7 +66,7 @@ const selectScene = async (
   title: string
 ) => {
   await wrapper
-    .findAll('.scene-card')
+    .findAll('.video-scene')
     .find(button => button.text().includes(title))!
     .trigger('click')
   await flushPromises()
@@ -83,14 +83,14 @@ test('同 URL 场景切换保留进度与播放状态，HLS 切换才重置展�
   expect(player.props('url')).toBe(DEMO_SOURCES.mp4)
   expect(player.props('quizzes')).toHaveLength(2)
   expect(wrapper.getComponent(PlayerProbe).vm.$.uid).toBe(identity)
-  expect(wrapper.get('.status-grid').text()).toContain('playing')
-  expect(wrapper.get('.status-grid').text()).toContain('00:35')
+  expect(wrapper.get('.workspace-heading').text()).toContain('正在播放')
+  expect(wrapper.get('.video-progress').text()).toContain('00:35')
   await selectScene(wrapper, 'HLS')
   expect(player.props('url')).toBe(DEMO_SOURCES.hls)
   expect(player.props('sourceType')).toBe('hls')
   expect(wrapper.getComponent(PlayerProbe).vm.$.uid).toBe(identity)
-  expect(wrapper.get('.status-grid').text()).toContain('00:00')
-  expect(wrapper.get('.status-grid').text()).toContain('idle')
+  expect(wrapper.get('.video-progress').text()).toContain('00:00')
+  expect(wrapper.get('.workspace-heading').text()).toContain('等待播放')
 })
 
 test('清空与恢复保留 C_VideoPlayer 实例，备用和本地源不携带原视频的测验', async () => {
@@ -142,6 +142,6 @@ test('从头播放使用公开暂停与 seek 方法，保持同一个资源身�
   expect(pause).toHaveBeenCalledOnce()
   expect(seek).toHaveBeenCalledWith(0)
   expect(wrapper.getComponent(PlayerProbe).vm.$.uid).toBe(identity)
-  expect(wrapper.get('.status-grid').text()).toContain('00:00')
+  expect(wrapper.get('.video-progress').text()).toContain('00:00')
   expect(wrapper.get('.event-log-panel').text()).toContain('答题和书签记录保留')
 })

@@ -8,12 +8,12 @@
 @include workspace.layout;
 .flow-layout {
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr) 240px;
+  grid-template-columns: minmax(0, 1fr) 300px;
   gap: 16px;
   align-items: start;
 }
 .flow-canvas {
-  height: 620px;
+  height: clamp(580px, calc(100dvh - 320px), 800px);
   min-width: 0;
   :deep(.approval-workflow-container) {
     height: 100%;
@@ -27,15 +27,6 @@
     background: var(--app-bg-content);
     border: 1px solid var(--app-border-default);
     box-shadow: 0 4px 16px rgb(0 0 0 / 6%);
-  }
-  :deep(.node-header),
-  :deep(.approver-tag),
-  :deep(.copy-user-tag),
-  :deep(.condition-tag),
-  :deep(.placeholder) {
-    background: var(--app-bg-layout);
-    border-color: var(--app-border-default);
-    color: var(--app-text-primary);
   }
   :deep(.node-title),
   :deep(.approver-name) {
@@ -110,12 +101,10 @@
 }
 @container (max-width:1100px) {
   .flow-layout {
-    grid-template-columns: 190px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 280px;
   }
   .flow-inspector {
-    grid-column: 1/-1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-column: auto;
   }
 }
 @container (max-width:700px) {
@@ -129,4 +118,130 @@
   .flow-canvas {
     height: 500px;
   }
+}
+
+.flow-scenarios {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  button {
+    flex: 1 0 180px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--app-border-default);
+    border-radius: 12px;
+    background: var(--app-bg-content);
+    color: var(--app-text-secondary);
+    text-align: left;
+    cursor: pointer;
+    strong {
+      display: block;
+      font-size: 13px;
+      color: var(--app-text-primary);
+    }
+    small {
+      display: block;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+    &[aria-pressed='true'] {
+      border-color: var(--app-primary);
+      background: color-mix(
+        in srgb,
+        var(--app-primary) 6%,
+        var(--app-bg-content)
+      );
+      color: var(--app-primary);
+      box-shadow: 0 3px 12px
+        color-mix(in srgb, var(--app-primary) 10%, transparent);
+    }
+  }
+}
+.flow-inspector-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  h2 {
+    margin: 0;
+    flex: 1;
+  }
+  > span:first-child {
+    color: var(--app-primary);
+    font-size: 18px;
+  }
+}
+.flow-people {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 20px;
+}
+.flow-person {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: var(--app-bg-layout);
+  border-radius: 9px;
+  padding: 10px;
+  img {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+  }
+  strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  small {
+    display: block;
+    margin-top: 3px;
+    font-size: 10px;
+    color: var(--app-text-tertiary);
+  }
+}
+.flow-condition {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid var(--app-border-default);
+  border-radius: 10px;
+}
+.flow-inspector-note {
+  display: flex;
+  gap: 8px;
+  padding-top: 18px;
+  border-top: 1px solid var(--app-border-light);
+  font-size: 11px !important;
+}
+.flow-canvas :deep(.approval-node .node-header) {
+  background: color-mix(in srgb, #8d72d7 12%, var(--app-bg-content));
+  border-bottom: 1px solid color-mix(in srgb, #8d72d7 20%, transparent);
+}
+.flow-canvas :deep(.copy-node .node-header) {
+  background: color-mix(in srgb, #32a590 12%, var(--app-bg-content));
+}
+.flow-canvas :deep(.condition-node .node-header) {
+  background: color-mix(in srgb, #d39b4c 12%, var(--app-bg-content));
+}
+.flow-canvas :deep(.node-card) {
+  border-radius: 14px;
+}
+.flow-canvas :deep(.vue-flow__node.selected .node-card) {
+  border-color: var(--app-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-primary) 12%, transparent);
+}
+
+.flow-canvas :deep(.approver-tag),
+.flow-canvas :deep(.copy-user-tag) {
+  background: color-mix(in srgb, var(--app-primary) 6%, var(--app-bg-content));
+  border-color: color-mix(
+    in srgb,
+    var(--app-primary) 22%,
+    var(--app-border-default)
+  );
+  color: var(--app-text-primary);
 }

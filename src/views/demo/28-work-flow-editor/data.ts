@@ -9,6 +9,8 @@ import type {
   WorkflowNode,
 } from '@robot-admin/naive-ui-components/C_WorkFlow'
 
+import { createPersonAvatar } from '@/utils/d_avatar'
+
 // ============ 类型定义 ============
 export interface User {
   id: string
@@ -85,7 +87,7 @@ export const workflowScenarios: WorkflowScenario[] = [
         {
           id: 'approval-1',
           type: 'approval',
-          position: { x: 150, y: 280 },
+          position: { x: 150, y: 430 },
           data: {
             title: '直属领导审批',
             status: 'pending',
@@ -395,7 +397,7 @@ export const userList: User[] = [
   {
     id: '1',
     name: '张三',
-    avatar: 'https://avatars.githubusercontent.com/u/1?v=4',
+
     department: '技术部',
     role: '前端工程师',
     email: 'zhangsan@company.com',
@@ -404,7 +406,7 @@ export const userList: User[] = [
   {
     id: '2',
     name: '李四',
-    avatar: 'https://avatars.githubusercontent.com/u/2?v=4',
+
     department: '技术部',
     role: '后端工程师',
     email: 'lisi@company.com',
@@ -413,7 +415,7 @@ export const userList: User[] = [
   {
     id: '3',
     name: '王五',
-    avatar: 'https://avatars.githubusercontent.com/u/3?v=4',
+
     department: '产品部',
     role: '产品经理',
     email: 'wangwu@company.com',
@@ -422,7 +424,7 @@ export const userList: User[] = [
   {
     id: '4',
     name: '赵六',
-    avatar: 'https://avatars.githubusercontent.com/u/4?v=4',
+
     department: '技术部',
     role: '技术总监',
     email: 'zhaoliu@company.com',
@@ -431,7 +433,7 @@ export const userList: User[] = [
   {
     id: '5',
     name: '钱七',
-    avatar: 'https://avatars.githubusercontent.com/u/5?v=4',
+
     department: '人事部',
     role: 'HR经理',
     email: 'qianqi@company.com',
@@ -440,7 +442,7 @@ export const userList: User[] = [
   {
     id: '6',
     name: '孙八',
-    avatar: 'https://avatars.githubusercontent.com/u/6?v=4',
+
     department: '财务部',
     role: '财务经理',
     email: 'sunba@company.com',
@@ -449,7 +451,7 @@ export const userList: User[] = [
   {
     id: '7',
     name: '周九',
-    avatar: 'https://avatars.githubusercontent.com/u/7?v=4',
+
     department: '设计部',
     role: 'UI设计师',
     email: 'zhoujiu@company.com',
@@ -458,7 +460,7 @@ export const userList: User[] = [
   {
     id: '8',
     name: '吴十',
-    avatar: 'https://avatars.githubusercontent.com/u/8?v=4',
+
     department: '运营部',
     role: '运营专员',
     email: 'wushi@company.com',
@@ -467,7 +469,7 @@ export const userList: User[] = [
   {
     id: '9',
     name: '郑十一',
-    avatar: 'https://avatars.githubusercontent.com/u/9?v=4',
+
     department: '产品部',
     role: '产品总监',
     email: 'zhengshiyi@company.com',
@@ -476,13 +478,56 @@ export const userList: User[] = [
   {
     id: '10',
     name: '陈十二',
-    avatar: 'https://avatars.githubusercontent.com/u/10?v=4',
+
     department: '销售部',
     role: '销售经理',
     email: 'chenshier@company.com',
     phone: '13800138010',
   },
 ]
+
+// 模板只描述人员 ID，在展示前统一补全头像；恢复草稿同样经过此入口。
+userList.forEach(user => {
+  user.avatar = createPersonAvatar(user.name)
+})
+/** 补齐已知人员的头像，保留草稿中的实际人员信息。 */
+export function hydrateWorkflowPeople(data: WorkflowData): WorkflowData {
+  const people = (users: User[] = []) =>
+    users.map(user => ({
+      ...user,
+      avatar:
+        userList.find(item => item.id === user.id)?.avatar ??
+        createPersonAvatar(user.name),
+    }))
+  return {
+    ...data,
+    nodes: data.nodes.map(node => {
+      if (node.type === 'approval')
+        return {
+          ...node,
+          data: { ...node.data, approvers: people(node.data.approvers) },
+        }
+      if (node.type === 'copy')
+        return {
+          ...node,
+          data: { ...node.data, copyUsers: people(node.data.copyUsers) },
+        }
+      if (node.type === 'start')
+        return {
+          ...node,
+          data: { ...node.data, initiators: people(node.data.initiators) },
+        }
+      return node
+    }),
+  }
+}
+workflowScenarios.forEach(scenario => {
+  if (scenario.id !== 'default-designer') {
+    const start = scenario.template.nodes.find(node => node.type === 'start')
+    if (start) start.data.initiators = [userList[0]]
+  }
+  scenario.template = hydrateWorkflowPeople(scenario.template)
+})
 
 // ============ 角色数据 ============
 export const roleList: Role[] = [

@@ -21,7 +21,26 @@ import { shortcutsArr } from './src/utils/unocss/shortcuts-arr'
 export default defineConfig({
   presets: [
     presetWind3(),
-    presetAttributify(),
+    // SVG 展示属性必须由图形引擎控制，避免 font-size="12" 被当成 3rem 工具类。
+    presetAttributify({
+      ignoreAttributes: [
+        'placeholder',
+        'fill',
+        'opacity',
+        'stroke-opacity',
+        'font-size',
+        'font-family',
+        'font-weight',
+        'stroke-width',
+        'stroke-dasharray',
+        'stroke-linecap',
+        'stroke-linejoin',
+        'text-anchor',
+        'letter-spacing',
+        'width',
+        'height',
+      ],
+    }),
     presetIcons({
       scale: 1.2,
       warn: true,

@@ -16,11 +16,13 @@ test.beforeEach(async ({ page }) => {
 test('地图只保留一个主视图，内置标记真实解码，城市和标记管理生效', async ({
   page,
 }) => {
-  await page.route('**/*tile.openstreetmap.org/**', route =>
-    route.fulfill({
-      contentType: 'image/svg+xml',
-      body: '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#e9eef2"/></svg>',
-    })
+  await page.route(
+    /(?:tile\.openstreetmap\.org|basemaps\.cartocdn\.com)\//,
+    route =>
+      route.fulfill({
+        contentType: 'image/svg+xml',
+        body: '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#e9eef2"/></svg>',
+      })
   )
   await page.goto('/#/plugins/map')
   await expect(page.locator('.leaflet-container')).toHaveCount(1)
@@ -43,9 +45,12 @@ test('地图只保留一个主视图，内置标记真实解码，城市和标�
   await page.getByRole('button', { name: '适配全部标记', exact: true }).click()
 })
 test('地图底图失败可见且能重试，标记仍可操作', async ({ page }) => {
-  await page.route('**/*tile.openstreetmap.org/**', route => route.abort())
+  await page.route(
+    /(?:tile\.openstreetmap\.org|basemaps\.cartocdn\.com)\//,
+    route => route.abort()
+  )
   await page.goto('/#/plugins/map')
-  await expect(page.locator('.map-alert')).toContainText('底图部分资源加载失败')
+  await expect(page.locator('.map-alert')).toContainText('底图暂时无法连接')
   await expect(
     page.getByRole('button', { name: '添加标记', exact: true })
   ).toBeEnabled()
@@ -63,7 +68,10 @@ test('文件库默认直接阅读真实 Word，Excel 和 PDF 可切换，本地�
   await page.getByRole('button', { name: /迭代交付计划.xlsx/ }).click()
   await expect(page.locator('.document-preview')).toContainText('需求梳理')
   await page.getByRole('button', { name: /产品使用指南.pdf/ }).click()
-  await expect(page.locator('.document-preview iframe')).toBeVisible()
+  await expect(page.locator('.pdf-reader canvas')).toHaveAttribute(
+    'width',
+    /^[1-9]\d+$/
+  )
   await page
     .getByLabel('选择预览文件')
     .setInputFiles(ROOT + '/public/demo-files/project-brief.docx')
@@ -187,9 +195,9 @@ test('审批流节点属性、场景草稿和本机保存正确，只读模式�
 })
 test('图模型导出和场景切换准确，只读预览保留当前模型', async ({ page }) => {
   await page.goto('/#/editor/antv-x6-editor')
+  await expect(page.locator('.x6-node')).toHaveCount(6)
+  await page.getByRole('button', { name: /数据模型.*客户/ }).click()
   await expect(page.locator('.x6-node')).toHaveCount(3)
-  await page.getByRole('button', { name: /数据模型.*表结构/ }).click()
-  await expect(page.locator('.x6-node')).toHaveCount(1)
   await page.getByText('只读预览', { exact: true }).click()
   await expect(
     page.getByRole('button', { name: '编辑选中节点', exact: true })
@@ -201,7 +209,7 @@ test('图模型导出和场景切换准确，只读预览保留当前模型', as
   const data = JSON.parse(
     await readFile((await (await download).path())!, 'utf8')
   )
-  expect(data.tables[0].name).toBe('用户表')
+  expect(data.tables[0].name).toBe('客户')
   expect(data.nodes).toBeUndefined()
 })
 test('绩效入口显示独立内容，团队下钻和导出范围一致', async ({ page }) => {

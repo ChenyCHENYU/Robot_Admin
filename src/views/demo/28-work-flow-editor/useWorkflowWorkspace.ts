@@ -9,8 +9,15 @@ import type {
   WorkflowNode,
   ValidationError,
   WorkflowExpose,
+  ApprovalMode,
+  Condition,
 } from '@robot-admin/naive-ui-components/C_WorkFlow'
-import { workflowScenarios, userList, restoreWorkflowDrafts } from './data'
+import {
+  workflowScenarios,
+  userList,
+  restoreWorkflowDrafts,
+  hydrateWorkflowPeople,
+} from './data'
 const STORAGE_KEY = 'robot-admin:workflow-workspace:v1'
 const clone = (data: WorkflowData): WorkflowData =>
   JSON.parse(JSON.stringify(data))
@@ -48,6 +55,57 @@ export function useWorkflowWorkspace() {
       ? (selected.value.data.approvers?.map(item => item.id) ?? [])
       : []
   )
+  const selectedUsers = computed(() => {
+    const node = selected.value
+    if (!node) return []
+    return node.type === 'approval'
+      ? (node.data.approvers ?? [])
+      : node.type === 'copy'
+        ? (node.data.copyUsers ?? [])
+        : (node.data.initiators ?? [])
+  })
+  /** 修改选中节点的人员，发起、审批与抄送分别写入自己的契约字段。 */
+  const updateMembers = (ids: string[]) => {
+    if (mode.value !== 'edit') return
+    const members = userList.filter(user => ids.includes(user.id))
+    data.value = {
+      ...data.value,
+      nodes: data.value.nodes.map(node => {
+        if (node.id !== selectedId.value) return node
+        if (node.type === 'approval')
+          return { ...node, data: { ...node.data, approvers: members } }
+        if (node.type === 'copy')
+          return { ...node, data: { ...node.data, copyUsers: members } }
+        if (node.type === 'start')
+          return { ...node, data: { ...node.data, initiators: members } }
+        return node
+      }),
+    }
+  }
+  /** 会签、或签及顺序审批直接写回画布，预览不允许修改。 */
+  const updateApprovalMode = (approvalMode: ApprovalMode) => {
+    if (mode.value !== 'edit') return
+    data.value = {
+      ...data.value,
+      nodes: data.value.nodes.map(node =>
+        node.id === selectedId.value && node.type === 'approval'
+          ? { ...node, data: { ...node.data, approvalMode } }
+          : node
+      ),
+    }
+  }
+  /** 条件编辑与组件原生配置共用数据，校验结果随修改失效。 */
+  const setConditions = (conditions: Condition[]) => {
+    if (mode.value !== 'edit') return
+    data.value = {
+      ...data.value,
+      nodes: data.value.nodes.map(node =>
+        node.id === selectedId.value && node.type === 'condition'
+          ? { ...node, data: { ...node.data, conditions } }
+          : node
+      ),
+    }
+  }
   const save = () => {
     try {
       localStorage.setItem(
@@ -125,7 +183,15 @@ export function useWorkflowWorkspace() {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
       const restored = restoreWorkflowDrafts(raw)
-      drafts.value = { ...drafts.value, ...restored }
+      drafts.value = {
+        ...drafts.value,
+        ...Object.fromEntries(
+          Object.entries(restored).map(([id, value]) => [
+            id,
+            hydrateWorkflowPeople(value),
+          ])
+        ),
+      }
       saved.value = '已恢复'
     }
   } catch {
@@ -137,6 +203,10 @@ export function useWorkflowWorkspace() {
     validated.value = false
   })
   return {
+    selectedUsers,
+    updateMembers,
+    updateApprovalMode,
+    setConditions,
     currentScenario,
     mode,
     saved,

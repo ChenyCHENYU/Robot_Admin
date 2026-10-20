@@ -1,0 +1,73 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-20
+ * @Description: PDF 阅读工具栏与纸张画布
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.pdf-reader {
+  min-width: 0;
+  color: var(--app-text-primary);
+}
+.pdf-reader__toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--app-border-default);
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  span {
+    min-width: 42px;
+    text-align: center;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+.pdf-reader__viewport {
+  background: var(--app-bg-layout);
+  height: 540px;
+  overflow: auto;
+  padding: 24px;
+  :deep(.n-spin-content) {
+    display: grid;
+    justify-items: center;
+    min-height: 420px;
+  }
+  canvas {
+    display: block;
+    background: white;
+    box-shadow: 0 8px 28px rgb(0 0 0 / 12%);
+  }
+}
+.pdf-reader__note {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 11px;
+  color: var(--app-text-tertiary);
+}
+.pdf-reader__error {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  > span {
+    font-size: 36px;
+    color: var(--app-primary);
+  }
+  h3,
+  p {
+    margin: 0;
+  }
+  p {
+    font-size: 12px;
+    color: var(--app-text-secondary);
+  }
+}

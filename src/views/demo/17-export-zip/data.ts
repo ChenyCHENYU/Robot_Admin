@@ -67,7 +67,7 @@ export const frameworkOptions = [
 ]
 
 export const formatOptions = [
-  { label: 'Excel (.csv)', value: 'excel' as const },
+  { label: 'Excel (.xlsx)', value: 'excel' as const },
   { label: 'CSV (.csv)', value: 'csv' as const },
   { label: 'JSON (.json)', value: 'json' as const },
 ]
@@ -176,4 +176,59 @@ export const isValidUploadFile = (
   fileItem: UploadFileInfo
 ): fileItem is ValidUploadFile => {
   return fileItem.file instanceof File && typeof fileItem.name === 'string'
+}
+
+export const EXPORT_SCENARIOS = [
+  {
+    id: 'code',
+    name: '代码项目',
+    note: '源文件与项目说明',
+    icon: 'i-mdi-code-braces',
+  },
+  {
+    id: 'report',
+    name: '数据报表',
+    note: '表格、数据与摘要',
+    icon: 'i-mdi-table-arrow-down',
+  },
+  {
+    id: 'media',
+    name: '媒体资源',
+    note: '按类别整理本地文件',
+    icon: 'i-mdi-image-multiple-outline',
+  },
+  {
+    id: 'template',
+    name: '模板库',
+    note: '组合常用代码模板',
+    icon: 'i-mdi-package-variant-closed',
+  },
+] as const
+
+/** 不同技术栈使用真实入口扩展名；编辑内容只进入所选技术栈的源文件。 */
+export const CODE_ENTRIES: Record<
+  FrameworkType,
+  { file: string; entry?: string; entryContent?: string; sample: string }
+> = {
+  vue: {
+    file: 'App.vue',
+    entry: 'main.ts',
+    entryContent:
+      "import { createApp } from 'vue'\nimport App from './App.vue'\ncreateApp(App).mount('#app')",
+    sample: defaultCodeContent,
+  },
+  react: {
+    file: 'App.tsx',
+    sample:
+      'export default function App() {\n  return <h1>Hello React</h1>\n}\n',
+  },
+  nodejs: {
+    file: 'server.js',
+    sample:
+      "import express from 'express'\nconst app = express()\napp.get('/', (_request, response) => response.send('Hello Node.js'))\napp.listen(3000)\n",
+  },
+  vanilla: {
+    file: 'main.js',
+    sample: "document.querySelector('#app').textContent = 'Hello JavaScript'\n",
+  },
 }

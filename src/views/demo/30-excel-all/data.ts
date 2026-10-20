@@ -80,3 +80,30 @@ export const historyColumns: TableColumn<OperationHistoryItem>[] = [
     },
   },
 ]
+
+export const EXCEL_STEPS = [
+  {
+    id: 'import',
+    name: '导入与预览',
+    note: '工作表切换与内容检查',
+    icon: 'i-mdi-file-upload',
+  },
+  {
+    id: 'process',
+    name: '整理与检查',
+    note: '筛选空行、查看数据统计',
+    icon: 'i-mdi-filter-variant',
+  },
+  {
+    id: 'export',
+    name: '导出工作簿',
+    note: '单表与多表独立输出',
+    icon: 'i-mdi-table-arrow-down',
+  },
+  {
+    id: 'templates',
+    name: '模板库',
+    note: '规范字段、快速开始',
+    icon: 'i-mdi-file-document-multiple',
+  },
+] as const

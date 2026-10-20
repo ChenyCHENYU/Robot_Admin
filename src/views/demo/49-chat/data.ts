@@ -7,10 +7,8 @@
  */
 import type { ChatContact, ChatMessage } from '@robot-admin/naive-ui-components'
 
-/** 生成自带的矢量头像，避免演示依赖远程图片。 */
-export function createAvatar(label: string, color: string): string {
-  return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="20" fill="${color}"/><text x="32" y="39" text-anchor="middle" fill="white" font-family="sans-serif" font-size="24">${label}</text></svg>`)}`
-}
+import { createPersonAvatar } from '@/utils/d_avatar'
+export const createAvatar = createPersonAvatar
 export const SELF_AVATAR = createAvatar('我', '#5474d9')
 export const DEMO_CONTACTS: ChatContact[] = [
   {
@@ -54,6 +52,19 @@ export function createMessages(): Record<string, ChatMessage[]> {
           timestamp: Date.now(),
           username: contact.name,
           avatar: contact.avatar,
+        },
+        {
+          id: `${contact.id}-example`,
+          type: 'text',
+          sender: 'self',
+          content:
+            contact.id === 'ui'
+              ? '先把交互走通，再一起检查页面细节。'
+              : contact.id === 'release'
+                ? '我来核对构建和版本记录。'
+                : '把配置与实际效果放在一起看，会更直观。',
+          timestamp: Date.now(),
+          status: 'sent',
         },
       ],
     ])

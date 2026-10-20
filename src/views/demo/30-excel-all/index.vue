@@ -6,17 +6,58 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <div class="excel-demo">
-    <c_vTitle
-      title="Excel All - [useExcel] 场景示例"
-      icon="mdi:microsoft-excel"
-      description="专注于Excel文件的读取、导出和模板管理功能"
-    />
-
+  <div class="plugin-workspace excel-demo">
+    <header class="workspace-heading"
+      ><div
+        ><small>WORKBOOK STUDIO</small><h1>Excel 数据工作台</h1
+        ><p>从一份工作簿开始，完成预览、整理与导出。</p></div
+      ><div class="workspace-actions"
+        ><NButton
+          size="small"
+          :loading="loading"
+          @click="loadSample"
+          >载入示例工作簿</NButton
+        ><NButton
+          size="small"
+          @click="handleExportSample"
+          >下载示例数据</NButton
+        ></div
+      ></header
+    >
+    <div class="file-summary"
+      ><div
+        ><span>当前文件</span
+        ><strong>{{ fileList[0]?.name ?? '等待导入工作簿' }}</strong></div
+      ><div
+        ><span>工作表</span><strong>{{ sheets.length }} 张</strong></div
+      ><div
+        ><span>当前表记录</span
+        ><strong>{{ currentSheetData.length }} 行</strong></div
+      ><div
+        ><span>处理结果</span
+        ><strong>{{ processedData.length }} 行</strong></div
+      ></div
+    >
+    <nav
+      class="file-tool-tabs"
+      aria-label="工作簿操作"
+      ><button
+        v-for="item in EXCEL_STEPS"
+        :key="item.id"
+        type="button"
+        :aria-pressed="excelMode === item.id"
+        @click="excelMode = item.id"
+        ><span :class="item.icon" /><span
+          ><strong>{{ item.name }}</strong
+          ><small>{{ item.note }}</small></span
+        ></button
+      ></nav
+    >
     <div class="demo-content">
       <!-- 文件导入区域 -->
       <NCard
-        title="Excel 文件导入"
+        v-show="excelMode === 'import'"
+        title="导入与预览"
         class="demo-card demo-section"
       >
         <template #header-extra>
@@ -128,7 +169,11 @@
                   :config="{
                     toolbar: { show: false },
                     pagination: false,
-                    display: { size: 'small', striped: true, scrollX: 1200 },
+                    display: {
+                      size: 'small',
+                      striped: true,
+                      scrollX: Math.max(600, tableColumns.length * 120),
+                    },
                   }"
                 >
                   <template #loading>
@@ -143,7 +188,8 @@
 
       <!-- 导出功能区域 -->
       <NCard
-        title="导出功能"
+        v-show="excelMode === 'export'"
+        title="导出工作簿"
         class="demo-card demo-section"
       >
         <template #header-extra>
@@ -265,7 +311,8 @@
 
       <!-- 模板管理区域 -->
       <NCard
-        title="模板管理"
+        v-show="excelMode === 'templates'"
+        title="模板库"
         class="demo-card demo-section"
       >
         <template #header-extra>
@@ -322,7 +369,8 @@
 
       <!-- 数据处理演示 -->
       <NCard
-        title="数据处理演示"
+        v-show="excelMode === 'process'"
+        title="整理与检查"
         class="demo-card demo-section"
       >
         <template #header-extra>
@@ -337,7 +385,7 @@
             <template #icon>
               <span class="i-mdi-information"></span>
             </template>
-            这里演示如何在业务层处理导入的数据，比如筛选、验证等操作
+            先导入工作簿，再筛选空行、检查统计结果。原始数据保持可回看，处理结果单独导出。
           </NAlert>
 
           <div class="data-process-controls">
@@ -386,6 +434,7 @@
 
       <!-- 操作历史 -->
       <NCard
+        v-if="operationHistory.length"
         title="操作历史"
         class="demo-card demo-section"
       >
@@ -452,6 +501,7 @@
   } from '@robot-admin/file-utils'
 
   import {
+    EXCEL_STEPS,
     PREVIEW_ROWS,
     sampleData,
     historyColumns,
@@ -478,6 +528,7 @@
   } = useExcel()
 
   const message = useMessage()
+  const excelMode = ref('import')
 
   // 响应式状态
   const fileList = ref<UploadFileInfo[]>([])
@@ -650,6 +701,28 @@
         `导入失败：${err instanceof Error ? err.message : '未知错误'}`,
         'error'
       )
+    }
+  }
+
+  /** 随项目提供的示例工作簿通过相同导入链路读取，支持离线体验。 */
+  const loadSample = async () => {
+    try {
+      const response = await fetch('/demo-files/delivery-plan.xlsx')
+      if (!response.ok) throw new Error('示例文件不可用')
+      const file = new File([await response.blob()], '迭代交付计划.xlsx', {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })
+      await handleFileUpload({
+        file: {
+          id: crypto.randomUUID(),
+          name: file.name,
+          status: 'finished',
+          file,
+        },
+      })
+      excelMode.value = 'import'
+    } catch {
+      message.error('示例工作簿读取失败，请选择本地文件')
     }
   }
 

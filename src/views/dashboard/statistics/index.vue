@@ -94,22 +94,16 @@
       >
       <section class="obs-panel"
         ><div class="obs-panel__head"
-          ><div><h2>事件构成</h2><p>明确埋点的访问、认证与功能操作。</p></div
+          ><div
+            ><h2>事件分布</h2
+            ><p>横向比较访问、认证与功能操作的真实次数。</p></div
           ><span class="obs-chip">{{ eventTotal }} events</span></div
         ><div class="event-chart"
           ><ObservatoryChart
             :option="eventsOption"
             :empty="!eventTotal"
-            label="已采集事件的类型分布"
-          /><div
-            v-if="eventTotal"
-            class="event-center"
-            ><strong>{{ eventTotal }}</strong
-            ><span>真实事件</span></div
-          ></div
-        ></section
-      ></div
-    >
+            label="已采集事件的类型分布" /></div></section
+    ></div>
     <div class="obs-grid"
       ><section class="obs-panel"
         ><div class="obs-panel__head"

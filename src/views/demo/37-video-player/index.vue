@@ -9,343 +9,204 @@
 -->
 
 <template>
-  <div class="video-player-demo">
-    <c_vTitle
-      title="视频播放器场景示例"
-      icon="mdi:video-outline"
-      description="支持 MP4/HLS、字幕、画中画、倍速播放、教育防作弊等特性，适用于在线教育、视频平台等场景"
-    />
-
-    <!-- ==================== 功能特性网格 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:puzzle-outline"
-          class="title-icon"
-        />
-        功能特性
-      </h2>
-      <div class="feature-grid">
-        <div
-          v-for="feat in FEATURE_LIST"
-          :key="feat.title"
-          class="feature-card"
-        >
-          <div class="feature-card__icon">
-            <C_Icon :name="feat.icon" />
-          </div>
-          <div class="feature-card__body">
-            <span class="feature-card__title">{{ feat.title }}</span>
-            <span class="feature-card__desc">{{ feat.desc }}</span>
-          </div>
-          <NTag
-            :bordered="false"
-            size="small"
-            :type="tagType(feat.tag)"
-            class="feature-card__tag"
-          >
-            {{ feat.tag }}
-          </NTag>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== 场景切换 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:television-play"
-          class="title-icon"
-        />
-        在线演示
-      </h2>
-      <p class="section-desc">
-        选择业务场景或视频源，播放位置按视频独立保存。同源切换场景时保留播放状态与位置；答题记录仅为当前未变更的题目保留。
-      </p>
-
-      <!-- 场景选择卡片 -->
-      <div class="scene-switcher">
-        <button
-          v-for="scene in DEMO_SCENES"
-          :key="scene.key"
-          type="button"
-          class="scene-card"
-          :class="{ 'is-active': activeScene === scene.key }"
-          :aria-pressed="activeScene === scene.key"
-          @click="switchScene(scene.key)"
-        >
-          <C_Icon
-            :name="scene.icon"
-            class="scene-card__icon"
-          />
-          <span class="scene-card__title">{{ scene.title }}</span>
-          <span class="scene-card__desc">{{ scene.description }}</span>
-        </button>
-      </div>
-    </div>
-
-    <div
-      class="video-source-controls"
-      aria-label="视频源控制"
+  <div class="plugin-workspace video-player-demo">
+    <header class="workspace-heading"
+      ><div
+        ><small>MEDIA EXPERIENCE</small><h1>视频体验工作台</h1
+        ><p>先播放，再探索章节、字幕与学习交互。</p></div
+      ><NTag
+        size="small"
+        :type="stateTagType"
+        :bordered="false"
+        >{{ stateLabels[playerState] ?? playerState }}</NTag
+      ></header
     >
-      <NSelect
-        :value="sourceChoice"
-        :options="VIDEO_SOURCE_OPTIONS"
-        aria-label="演示视频源"
-        @update:value="changeSource"
-      />
-      <NButton
-        size="small"
-        @click="toggleSource"
-        >{{ sourceCleared ? '恢复视频源' : '清空视频源' }}</NButton
-      >
-      <NButton
-        size="small"
-        :disabled="sourceCleared"
-        @click="restartPlayback"
-        >从头播放</NButton
-      >
-      <p
-        >公开源需要外网；内置 WebM
-        样例可离线播放。备用源仅演示播放，恢复场景源后可继续章节与测验。从头播放会保留答题和书签。</p
-      >
-    </div>
-
-    <!-- ==================== 播放器实例 ==================== -->
-    <div class="demo-section demo-section--player">
-      <div class="player-wrapper">
-        <C_VideoPlayer
-          ref="playerRef"
-          v-bind="playerProps"
-          @ready="onReady"
-          @state-change="onStateChange"
-          @time-update="onTimeUpdate"
-          @ended="onEnded"
-          @error="onError"
-          @quality-change="onQualityChange"
-          @chapter-change="onChapterChange"
-          @quiz-answer="onQuizAnswer"
-          @bookmark-change="onBookmarkChange"
-          @progress-update="onProgressUpdate"
-        />
-        <div
-          v-if="sourceCleared"
-          class="player-empty"
-        >
-          <NEmpty description="视频源已清空，可恢复来源或选择其他示例视频" />
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== 实时状态面板 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:information-outline"
-          class="title-icon"
-        />
-        实时状态
-      </h2>
-      <div class="status-grid">
-        <div class="status-card">
-          <span class="status-card__label">播放状态</span>
-          <NTag
-            :type="stateTagType"
+    <div class="video-workbench">
+      <main class="workspace-panel video-main">
+        <header class="workspace-toolbar"
+          ><div
+            ><h2>{{
+              DEMO_SCENES.find(item => item.key === activeScene)?.title
+            }}</h2
+            ><small>{{
+              sourceChoice === 'local'
+                ? '本地 WebM · 无需外网'
+                : '公开演示视频 · 需要网络连接'
+            }}</small></div
+          ><NButton
             size="small"
-          >
-            {{ playerState }}
-          </NTag>
-        </div>
-        <div class="status-card">
-          <span class="status-card__label">当前时间</span>
-          <span class="status-card__value mono">{{
-            formatTime(currentTime)
-          }}</span>
-        </div>
-        <div class="status-card">
-          <span class="status-card__label">视频时长</span>
-          <span class="status-card__value mono">{{
-            formatTime(videoDuration)
-          }}</span>
-        </div>
-        <div class="status-card">
-          <span class="status-card__label">播放进度</span>
-          <NProgress
-            type="line"
-            :percentage="progressPercent"
-            :show-indicator="false"
-            style="width: 80px"
+            :disabled="sourceCleared"
+            @click="restartPlayback"
+            >从头播放</NButton
+          ></header
+        >
+        <div class="player-wrapper">
+          <C_VideoPlayer
+            ref="playerRef"
+            v-bind="playerProps"
+            @ready="onReady"
+            @state-change="onStateChange"
+            @time-update="onTimeUpdate"
+            @ended="onEnded"
+            @error="onError"
+            @quality-change="onQualityChange"
+            @chapter-change="onChapterChange"
+            @quiz-answer="onQuizAnswer"
+            @bookmark-change="onBookmarkChange"
+            @progress-update="onProgressUpdate"
           />
-          <span class="status-card__pct">{{ progressPercent }}%</span>
+          <div
+            v-if="sourceCleared"
+            class="player-empty"
+            ><span class="i-mdi-video-off-outline" /><h3>视频源已清空</h3
+            ><p>恢复上一个视频，或从右侧选择其他来源。</p
+            ><NButton
+              size="small"
+              type="primary"
+              @click="toggleSource"
+              >恢复视频源</NButton
+            ></div
+          >
         </div>
         <div
-          v-if="activeScene === 'education'"
-          class="status-card"
-        >
-          <span class="status-card__label">当前章节</span>
-          <span class="status-card__value">{{
-            currentChapterTitle || '—'
-          }}</span>
-        </div>
-        <div
-          v-if="activeScene === 'education'"
-          class="status-card"
-        >
-          <span class="status-card__label">完成率</span>
-          <span class="status-card__value mono">{{ completionPercent }}%</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== 事件日志 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:console"
-          class="title-icon"
-        />
-        事件日志
-        <NButton
-          quaternary
-          size="small"
-          style="margin-left: auto"
-          @click="eventLogs = []"
-        >
-          清空
-        </NButton>
-      </h2>
-      <div class="event-log-panel">
-        <div
-          v-for="(log, idx) in eventLogs.slice(-20)"
-          :key="idx"
-          class="event-log-item"
-        >
-          <span class="event-log-time">{{ log.time }}</span>
-          <NTag
-            :type="log.type"
+          v-if="playerState === 'error' && sourceChoice !== 'local'"
+          class="video-recovery"
+          role="status"
+          ><span>公开源暂时无法播放，可以先体验内置视频。</span
+          ><NButton
             size="small"
-            :bordered="false"
-          >
-            {{ log.event }}
-          </NTag>
-          <span
-            v-if="log.detail"
-            class="event-log-detail"
-            >{{ log.detail }}</span
-          >
-        </div>
-        <div
-          v-if="!eventLogs.length"
-          class="event-log-empty"
+            @click="changeSource('local')"
+            >切换内置视频</NButton
+          ></div
         >
-          播放视频后，事件将在此处实时显示...
-        </div>
-      </div>
+        <div class="video-progress"
+          ><div
+            ><span>当前时间</span
+            ><strong
+              >{{ formatTime(currentTime) }}
+              <small>/ {{ formatTime(videoDuration) }}</small></strong
+            ></div
+          ><div class="video-progress__track"
+            ><NProgress
+              type="line"
+              :percentage="progressPercent"
+              :show-indicator="false"
+            /><small>{{ progressPercent }}% 已播放</small></div
+          ><div v-if="activeScene === 'education'"
+            ><span>学习完成率</span><strong>{{ completionPercent }}%</strong
+            ><small>{{ currentChapterTitle || '等待进入章节' }}</small></div
+          ></div
+        >
+        <footer class="workspace-footer"
+          ><span>Space 播放 / 暂停 · ← → 快退 / 快进 · F 全屏</span
+          ><span>播放位置按视频独立保留</span></footer
+        >
+      </main>
+      <aside class="workspace-panel video-sidebar">
+        <section class="workspace-section"
+          ><h2>选择体验场景</h2
+          ><button
+            v-for="scene in DEMO_SCENES"
+            :key="scene.key"
+            type="button"
+            class="video-scene"
+            :aria-pressed="activeScene === scene.key"
+            @click="switchScene(scene.key)"
+            ><span class="video-scene__icon"
+              ><span :class="SCENE_ICONS[scene.key]" /></span
+            ><span
+              ><strong>{{ scene.title }}</strong
+              ><small>{{ scene.description }}</small></span
+            ></button
+          ></section
+        >
+        <section class="workspace-section"
+          ><h2>视频来源</h2
+          ><NSelect
+            :value="sourceChoice"
+            :options="VIDEO_SOURCE_OPTIONS"
+            aria-label="演示视频源"
+            @update:value="changeSource"
+          /><p
+            >外网不可用时，选择项目内置视频即可播放。章节与测验只跟随原场景视频。</p
+          ><NButton
+            size="small"
+            :disabled="sourceCleared"
+            @click="toggleSource"
+            >清空视频源</NButton
+          ></section
+        >
+        <section class="workspace-section video-guide"
+          ><h2>这样开始体验</h2
+          ><ol
+            ><li>选择场景，点击画面播放</li
+            ><li>在播放器中切换字幕与倍速</li
+            ><li>教育场景可体验章节与测验</li></ol
+          ></section
+        >
+      </aside>
     </div>
-
-    <!-- ==================== 快捷键说明 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:keyboard-outline"
-          class="title-icon"
-        />
-        快捷键
-      </h2>
-      <div class="shortcut-grid">
-        <div
-          v-for="sc in SHORTCUT_LIST"
-          :key="sc.key"
-          class="shortcut-item"
-        >
-          <kbd class="shortcut-key">{{ sc.key }}</kbd>
-          <span class="shortcut-desc">{{ sc.desc }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== API 参考 ==================== -->
-    <div class="demo-section">
-      <h2 class="section-title">
-        <C_Icon
-          name="mdi:api"
-          class="title-icon"
-        />
-        核心 API
-      </h2>
-      <p class="section-desc">
-        下方列出当前演示使用的核心 API；完整类型以组件库的 VideoPlayerProps
-        为准。
-      </p>
-      <NCollapse
-        arrow-placement="right"
-        default-expanded-names="props"
-      >
-        <NCollapseItem
-          title="Props 属性"
-          name="props"
-        >
-          <C_Table
-            :columns="PROPS_COLUMNS"
-            :data="PROPS_DATA"
-            row-key="name"
-            :config="{
-              toolbar: { show: false },
-              pagination: false,
-              display: { striped: false, bordered: false, size: 'small' },
-            }"
-          />
-        </NCollapseItem>
-        <NCollapseItem
-          title="Events 事件"
-          name="events"
-        >
-          <C_Table
-            :columns="EVENTS_COLUMNS"
-            :data="EVENTS_DATA"
-            row-key="name"
-            :config="{
-              toolbar: { show: false },
-              pagination: false,
-              display: { striped: false, bordered: false, size: 'small' },
-            }"
-          />
-        </NCollapseItem>
-        <NCollapseItem
-          title="Expose 方法（ref 调用）"
-          name="expose"
-        >
-          <C_Table
-            :columns="EXPOSE_COLUMNS"
-            :data="EXPOSE_DATA"
-            row-key="name"
-            :config="{
-              toolbar: { show: false },
-              pagination: false,
-              display: { striped: false, bordered: false, size: 'small' },
-            }"
-          />
-        </NCollapseItem>
-      </NCollapse>
-    </div>
+    <details class="video-details"
+      ><summary
+        >播放事件与快捷键 <span>{{ eventLogs.length }} 条事件</span></summary
+      ><div class="video-detail-grid"
+        ><section
+          ><div class="video-detail-title"
+            ><h2>最近播放事件</h2
+            ><NButton
+              text
+              size="small"
+              @click="eventLogs = []"
+              >清空</NButton
+            ></div
+          ><ul class="event-log-panel"
+            ><li
+              v-for="(log, index) in eventLogs.slice(-8).reverse()"
+              :key="index"
+              ><time>{{ log.time }}</time
+              ><NTag
+                :type="log.type"
+                size="small"
+                :bordered="false"
+                >{{ log.event }}</NTag
+              ><span>{{ log.detail }}</span></li
+            ><li v-if="!eventLogs.length"
+              >播放视频后，事件将在这里显示。</li
+            ></ul
+          ></section
+        ><section
+          ><h2>键盘快捷键</h2
+          ><div class="shortcut-grid"
+            ><div
+              v-for="item in SHORTCUT_LIST"
+              :key="item.key"
+              ><kbd>{{ item.key }}</kbd
+              ><span>{{ item.desc }}</span></div
+            ></div
+          ></section
+        ></div
+      ></details
+    >
   </div>
 </template>
-
 <script setup lang="ts">
-  import {
-    DEMO_SCENES,
-    VIDEO_SOURCE_OPTIONS,
-    FEATURE_LIST,
-    SHORTCUT_LIST,
-    PROPS_COLUMNS,
-    PROPS_DATA,
-    EVENTS_COLUMNS,
-    EVENTS_DATA,
-    EXPOSE_COLUMNS,
-    EXPOSE_DATA,
-  } from './data'
+  import { DEMO_SCENES, VIDEO_SOURCE_OPTIONS, SHORTCUT_LIST } from './data'
   import { useVideoWorkspace } from './useVideoWorkspace'
   defineOptions({ name: 'Demo37VideoPlayer' })
+  const SCENE_ICONS = {
+    basic: 'i-mdi-play-circle',
+    hls: 'i-mdi-ip-network-outline',
+    education: 'i-mdi-book-open-page-variant-outline',
+  }
+  const stateLabels = {
+    idle: '等待播放',
+    loading: '加载中',
+    ready: '准备就绪',
+    playing: '正在播放',
+    paused: '已暂停',
+    ended: '播放结束',
+    error: '加载失败',
+  }
   const {
     activeScene,
     sourceChoice,
@@ -361,7 +222,6 @@
     progressPercent,
     stateTagType,
     formatTime,
-    tagType,
     switchScene,
     changeSource,
     toggleSource,

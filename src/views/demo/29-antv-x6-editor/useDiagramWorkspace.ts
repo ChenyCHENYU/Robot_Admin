@@ -37,7 +37,13 @@ export function useDiagramWorkspace() {
       return data.nodes.map(node => ({
         id: node.id,
         name: node.name,
-        detail: node.type,
+        detail: {
+          start: '开始事件',
+          task: '业务任务',
+          gateway: '条件判断',
+          end: '结束事件',
+          event: '中间事件',
+        }[node.type],
         position: node.position,
       }))
     if ('tables' in data)

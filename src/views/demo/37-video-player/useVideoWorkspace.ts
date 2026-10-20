@@ -17,7 +17,6 @@ import {
   resolveDemoPlayerProps,
   DEMO_SCENES,
   VIDEO_SOURCE_OPTIONS,
-  TAG_TYPE_MAP,
   type DemoSceneKey,
   type VideoSourceChoice,
 } from './data'
@@ -108,9 +107,6 @@ export function useVideoWorkspace() {
     if (eventLogs.value.length > 100) eventLogs.value.shift()
   }
 
-  /** 功能标签配色 */
-  const tagType = (tag: string) => TAG_TYPE_MAP[tag] ?? 'default'
-
   /* ======================== 场景切换 ======================== */
 
   /** 只有资源身份变化才清空播放状态；同源切换保留位置，答题仅由组件保留未变更题目的记录。 */
@@ -174,7 +170,6 @@ export function useVideoWorkspace() {
       completionPercent.value = restored.completionPercent
     }
     addLog('ready', 'success', '播放器初始化完成')
-    message.success('播放器就绪')
   }
   const onStateChange = (s: PlayerState) => {
     playerState.value = s
@@ -227,7 +222,6 @@ export function useVideoWorkspace() {
     progressPercent,
     stateTagType,
     formatTime,
-    tagType,
     switchScene,
     changeSource,
     toggleSource,

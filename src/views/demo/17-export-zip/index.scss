@@ -1,107 +1,88 @@
-  .jszip-demo {
-    padding: 24px;
-    min-height: 100vh;
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-20
+ * @Description: 场景聚焦的压缩打包与清单预览
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../_shared/file-tools' as tools;
+@include tools.layout;
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  > .n-input,
+  > .n-base-selection,
+  > .n-select,
+  > .n-input-number,
+  > .n-date-picker {
+    flex: 1 1 170px;
+    min-width: 0;
   }
-
-  .progress-card {
-    margin-bottom: 24px;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--app-border-light);
+}
+.progress-card {
+  margin-bottom: 20px;
+}
+.template-selection {
+  margin-top: 24px;
+}
+.selection-header,
+.preview-header {
+  font-size: 12px;
+  color: var(--app-text-secondary);
+  margin-bottom: 12px;
+}
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.template-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  color: var(--app-text-primary);
+  border: 1px solid var(--app-border-default);
+  border-radius: 10px;
+  background: var(--app-bg-layout);
+  cursor: pointer;
+  text-align: left;
+  &.active {
+    border-color: var(--app-primary);
+    background: color-mix(in srgb, var(--app-primary) 6%, transparent);
   }
-
-  .section {
-    margin-bottom: 24px;
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    }
-  }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  .actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid var(--app-border-default);
-  }
-
-                                .data-preview {
-    border-radius: 8px;
-    padding: 16px;
-    margin: 16px 0;
-  }
-
-  .preview-header {
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-
-  .preview-grid {
-    display: grid;
-    gap: 8px;
-  }
-
-  .preview-row {
-    display: grid;
-    grid-template-columns: 60px 1fr 100px 120px;
-    gap: 16px;
-    padding: 8px;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-
-  .template-selection {
-    margin: 16px 0;
-  }
-
-  .selection-header {
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-
+}
+.data-preview {
+  margin-top: 24px;
+  padding: 18px;
+  background: var(--app-bg-layout);
+  border: 1px solid var(--app-border-light);
+  border-radius: 10px;
+}
+.preview-row {
+  display: grid;
+  grid-template-columns: 35px 1fr 1fr 100px;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid var(--app-border-light);
+  font-size: 12px;
+}
+@container (max-width: 500px) {
   .template-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
+    grid-template-columns: 1fr;
   }
-
-  .template-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-
-    &.active {
-      border-color: #1890ff;
+  .preview-row {
+    grid-template-columns: 24px 1fr 1fr;
+    > span:last-child {
+      grid-column: 2/-1;
     }
   }
-
-  @media (max-width: 768px) {
-    .jszip-demo {
-      padding: 16px;
-    }
-
-    .header {
-      padding: 24px;
-
-      h1 {
-        font-size: 2rem;
-      }
-    }
-
-    .form-row {
-      grid-template-columns: 1fr;
-    }
-  }
+}

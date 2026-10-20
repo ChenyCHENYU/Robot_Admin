@@ -84,7 +84,7 @@ Company switches update the session and clear old permissions, dynamic routes an
 | Time and visualization | Date, city, calendars, timelines, Gantt, charts and large-screen templates                                                                             |
 | Application experience | Menus, search, theme, language, tours, empty states, error pages and route-loading feedback                                                            |
 
-The demo directory contains **58 demo pages + 8 form layouts (66 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
+The demo directory contains **58 demo pages + 8 form layouts + 1 embedded component (67 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
 
 > Cron previews do not schedule backend jobs; formula evaluation does not modify business data. Demo data, frontend data-scope configuration and button controls require real APIs and server authorization for production use.
 

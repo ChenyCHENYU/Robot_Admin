@@ -91,29 +91,33 @@ export const createPagesOption = (
   ],
 })
 
-/** 环形图用于已记录的事件，不以本机样本推算全站访客。 */
+/** 横向事件谱直接比较计数，零值保留，不把行为分布误读成业务漏斗。 */
 export const createEventsOption = (
   summary: UsageSummary | null
 ): EChartsCoreOption => ({
-  legend: {
-    bottom: 0,
-    itemWidth: 8,
-    itemHeight: 8,
-    textStyle: { color: 'inherit', fontSize: 10 },
+  grid: { left: 76, right: 44, top: 12, bottom: 30 },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+  xAxis: { ...valueAxis, minInterval: 1 },
+  yAxis: {
+    ...categoryAxis,
+    inverse: true,
+    data: Object.values(eventLabels),
+    axisLabel: { color: 'inherit', fontSize: 11 },
   },
   series: [
     {
-      type: 'pie',
-      radius: ['43%', '68%'],
-      center: ['50%', '42%'],
-      padAngle: 3,
-      label: { show: false },
-      itemStyle: { borderRadius: 5 },
-      data:
-        summary?.events
-          .filter(item => item.count)
-          .map(item => ({ name: eventLabels[item.type], value: item.count })) ??
-        [],
+      type: 'bar',
+      barMaxWidth: 18,
+      showBackground: true,
+      backgroundStyle: { color: 'rgba(128,140,160,0.08)', borderRadius: 6 },
+      itemStyle: { borderRadius: [0, 6, 6, 0] },
+      label: { show: true, position: 'right', color: 'inherit', fontSize: 11 },
+      data: Object.keys(eventLabels).map((type, index) => ({
+        value: summary?.events.find(item => item.type === type)?.count ?? 0,
+        itemStyle: {
+          color: ['#5486e8', '#35a795', '#df9b53', '#9474d1', '#5fa3be'][index],
+        },
+      })),
     },
   ],
 })

@@ -96,7 +96,13 @@
             ></div
           ></header
         ><div class="document-preview"
-          ><C_FilePreview
+          ><DocumentPdfReader
+            v-if="selected?.kind === 'PDF'"
+            :key="`${selected.id}-${revision}`"
+            :file="selected.file"
+            :url="selected.url"
+            :name="selected.name" /><C_FilePreview
+            v-else
             inline
             :key="revision"
             :file="selected?.file"
@@ -104,7 +110,7 @@
             :file-name="selected?.name" /></div
         ><footer class="workspace-footer"
           ><span>{{ selected?.kind ?? '文档' }} 预览</span
-          ><span>远程链接需允许跨域访问；PDF 使用浏览器阅读器</span></footer
+          ><span>远程链接需允许跨域访问；PDF 在本机渲染</span></footer
         ></main
       >
     </div>
@@ -146,6 +152,9 @@
   </div>
 </template>
 <script setup lang="ts">
+  const DocumentPdfReader = defineAsyncComponent(
+    () => import('./c_pdfReader/index.vue')
+  )
   import { useDocumentWorkspace } from './useDocumentWorkspace'
   defineOptions({ name: 'Demo32FilePreview' })
   const {

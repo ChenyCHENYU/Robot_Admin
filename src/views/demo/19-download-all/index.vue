@@ -7,87 +7,154 @@
 -->
 
 <template>
-  <div class="download-demo">
-    <c_vTitle
-      title="下载 All - [useDownload] 场景示例"
-      icon="mdi:cloud-download"
-      description="展示支持多种文件类型的通用下载钉子函数使用方法"
-    />
+  <div class="plugin-workspace download-demo">
+    <header class="workspace-heading"
+      ><div
+        ><small>DOWNLOAD CENTER</small><h1>文件下载工作台</h1
+        ><p>选择合适的格式，让数据交付更简单。</p></div
+      ><NTag
+        size="small"
+        :bordered="false"
+        >{{ downloadHistory.length }} 条本次下载记录</NTag
+      ></header
+    >
+    <div class="download-formats"
+      ><article
+        v-for="(action, index) in quickDownloadActions"
+        :key="action.label"
+        ><C_Icon
+          class="download-format-icon"
+          :name="action.icon"
+          :size="30" /><small>{{ ['XLSX', 'CSV', 'PDF', 'JSON'][index] }}</small
+        ><h2>{{
+          ['用户数据报表', '订单统计', '商品清单', '结构化数据'][index]
+        }}</h2
+        ><p>{{
+          [
+            '可编辑工作簿，便于整理与协作',
+            '通用表格格式，适合交换数据',
+            '固定排版，适合阅读与分享',
+            '保留数据结构，便于程序处理',
+          ][index]
+        }}</p
+        ><NButton
+          size="small"
+          :loading="action.loading"
+          @click="action.onClick"
+          >{{ action.label
+          }}<template #icon
+            ><span class="i-mdi-download" /></template></NButton></article
+    ></div>
+    <nav
+      class="file-tool-tabs"
+      aria-label="下载方式"
+      ><button
+        type="button"
+        :aria-pressed="downloadMode === 'custom'"
+        @click="downloadMode = 'custom'"
+        ><span class="i-mdi-wrench-settings" /><span
+          ><strong>自定义下载</strong><small>名称、格式与附加参数</small></span
+        ></button
+      ><button
+        type="button"
+        :aria-pressed="downloadMode === 'batch'"
+        @click="downloadMode = 'batch'"
+        ><span class="i-mdi-download-multiple-outline" /><span
+          ><strong>批量下载</strong><small>一次准备多份交付文件</small></span
+        ></button
+      ></nav
+    >
     <div class="demo-content">
-      <!-- 快捷下载区域 -->
-      <NCard
-        title="快捷下载"
-        class="demo-card demo-section"
-      >
-        <template #header-extra>
-          <span class="i-mdi-flash-outline text-yellow-500"></span>
-        </template>
+      <div class="file-tool-layout"
+        ><div class="file-tool-main">
+          <!-- 自定义下载区域 -->
+          <NCard
+            v-show="downloadMode === 'custom'"
+            title="自定义下载"
+            class="demo-card demo-section"
+          >
+            <template #header-extra>
+              <span class="i-mdi-wrench-settings text-purple-500"></span>
+            </template>
 
-        <C_ActionBar :actions="quickDownloadActions" />
-      </NCard>
-
-      <!-- 自定义下载区域 -->
-      <NCard
-        title="自定义下载"
-        class="demo-card demo-section"
-      >
-        <template #header-extra>
-          <span class="i-mdi-wrench-settings text-purple-500"></span>
-        </template>
-
-        <C_Form
-          :model-value="customForm"
-          @update:model-value="Object.assign(customForm, $event)"
-          :options="customOptions"
-          :config="customConfig"
-        >
-          <template #action="{ submit, submitting }">
-            <NButton
-              type="primary"
-              :loading="submitting"
-              :disabled="!customForm.fileName || !customForm.fileType"
-              @click="submit"
+            <C_Form
+              :model-value="customForm"
+              @update:model-value="Object.assign(customForm, $event)"
+              :options="customOptions"
+              :config="customConfig"
             >
-              <template #icon
-                ><span class="i-mdi-cloud-download-outline"
-              /></template>
-              自定义下载
-            </NButton>
-          </template>
-        </C_Form>
-      </NCard>
+              <template #action="{ submit, submitting }">
+                <NButton
+                  type="primary"
+                  :loading="submitting"
+                  :disabled="!customForm.fileName || !customForm.fileType"
+                  @click="submit"
+                >
+                  <template #icon
+                    ><span class="i-mdi-cloud-download-outline"
+                  /></template>
+                  自定义下载
+                </NButton>
+              </template>
+            </C_Form>
+          </NCard>
 
-      <!-- 批量下载区域 -->
-      <NCard
-        title="批量下载"
-        class="demo-card demo-section"
-      >
-        <template #header-extra>
-          <span class="i-mdi-folder text-green-500"></span>
-        </template>
+          <!-- 批量下载区域 -->
+          <NCard
+            v-show="downloadMode === 'batch'"
+            title="批量下载"
+            class="demo-card demo-section"
+          >
+            <template #header-extra>
+              <span class="i-mdi-folder text-green-500"></span>
+            </template>
 
-        <div class="batch-controls">
-          <NCheckboxGroup v-model:value="selectedFiles">
-            <div class="checkbox-grid">
-              <NCheckbox
-                v-for="file in batchFiles"
-                :key="file.key"
-                :value="file.key"
-                :label="file.label"
-              />
+            <div class="batch-controls">
+              <NCheckboxGroup v-model:value="selectedFiles">
+                <div class="checkbox-grid">
+                  <NCheckbox
+                    v-for="file in batchFiles"
+                    :key="file.key"
+                    :value="file.key"
+                    :label="file.label"
+                  />
+                </div>
+              </NCheckboxGroup>
+
+              <div class="batch-actions">
+                <C_ActionBar :actions="batchActions" />
+              </div>
             </div>
-          </NCheckboxGroup>
-
-          <div class="batch-actions">
-            <C_ActionBar :actions="batchActions" />
-          </div>
-        </div>
-      </NCard>
-
+          </NCard> </div
+        ><aside class="file-output"
+          ><h2>下载说明</h2
+          ><span class="file-output__icon i-mdi-cloud-download-outline" /><h3>{{
+            downloadMode === 'custom'
+              ? customForm.fileName || '为文件起个名字'
+              : `已选择 ${selectedFiles.length} 份文件`
+          }}</h3
+          ><p>{{
+            downloadMode === 'custom'
+              ? '按选定格式生成文件，输入的参数用于本地演示。'
+              : '各文件会分别触发浏览器下载；请选择需要的内容后执行。'
+          }}</p
+          ><ul
+            ><li><span class="i-mdi-check-circle-outline" />真实文件下载</li
+            ><li
+              ><span
+                class="i-mdi-shield-check-outline"
+              />演示数据，不连接业务后台</li
+            ></ul
+          ><p
+            >下载完成后，可在浏览器下载列表查看。历史仅保留当前页面最近 10
+            次操作。</p
+          ></aside
+        ></div
+      >
       <!-- 下载历史 -->
       <NCard
         title="下载历史"
-        class="demo-card demo-section"
+        class="file-history"
       >
         <template #header-extra>
           <span class="i-mdi-clock-time-four-outline text-indigo-500"></span>
@@ -140,6 +207,7 @@
 
   setupFileUtils()
   const message = useMessage()
+  const downloadMode = ref('custom')
 
   // 加载状态
   const loading = reactive({
@@ -216,7 +284,7 @@
     },
   ])
   const customConfig: FormConfig<typeof customForm> = {
-    labelPlacement: 'left',
+    labelPlacement: 'top',
     labelWidth: 120,
     onSubmit: handleCustomDownload,
   }
