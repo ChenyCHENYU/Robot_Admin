@@ -422,9 +422,7 @@ export const detailConfig = {
  */
 export const createEmployeeTableConfig = (): UseTableCrudConfig<Employee> => {
   // 演示页使用独立内存源，进入页面即有数据，不依赖不存在的业务接口。
-  const source = createMemoryTableSource<Employee>(() =>
-    generateMockEmployees(36)
-  )
+  const source = createMemoryTableSource(() => generateMockEmployees(36))
   let nextId = Date.now()
 
   return {

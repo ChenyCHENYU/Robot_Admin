@@ -394,9 +394,7 @@
       icon: 'mdi:check',
       type: 'primary',
       loading: formSubmitting.value,
-      onClick: async () => {
-        await formRef.value?.submit()
-      },
+      onClick: () => formRef.value?.submit(),
     },
   ])
 

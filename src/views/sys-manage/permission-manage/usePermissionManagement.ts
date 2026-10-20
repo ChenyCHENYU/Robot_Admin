@@ -109,7 +109,7 @@ export function usePermissionManagement() {
       resources: [...permission.resources],
     }))
   )
-  const table = useNaiveTableCrud<PermissionData>({
+  const table = useNaiveTableCrud({
     source: mockMode
       ? {
           query: async ({ signal }) => {

@@ -174,9 +174,7 @@
       icon: 'mdi:task-auto',
       type: 'primary',
       size: 'small',
-      onClick: async () => {
-        await validateTab()
-      },
+      onClick: validateTab,
     },
   ]
 

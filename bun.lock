@@ -9,11 +9,11 @@
         "@antv/x6": "^2.19.2",
         "@iconify/vue": "^5.0.0",
         "@robot-admin/directives": "2.0.1",
-        "@robot-admin/file-utils": "3.0.1",
-        "@robot-admin/form-validate": "3.4.2",
-        "@robot-admin/layout": "3.2.1",
-        "@robot-admin/naive-ui-components": "0.18.0",
-        "@robot-admin/request-core": "0.6.3",
+        "@robot-admin/file-utils": "3.0.3",
+        "@robot-admin/form-validate": "3.4.4",
+        "@robot-admin/layout": "3.2.3",
+        "@robot-admin/naive-ui-components": "0.19.0",
+        "@robot-admin/request-core": "0.7.0",
         "@robot-admin/theme": "0.6.1",
         "@splinetool/runtime": "^1.12.68",
         "@vercel/analytics": "^1.6.1",
@@ -735,17 +735,17 @@
 
     "@robot-admin/directives": ["@robot-admin/directives@2.0.1", "", { "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-Q4zPlCLp/gPEwa5sB37pZNC2dk+/ARzgGzFXN4ug6XgpAJcmIQaqXRUQVjU+6bw3rJ11jcNdz3Hx+ogmmmdh6w=="],
 
-    "@robot-admin/file-utils": ["@robot-admin/file-utils@3.0.1", "", { "dependencies": { "jszip": "^3.10.1", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-a2ehFuxyFjD+9UzW6iCfYx7q1x4Fv5Y07iY122rGe1jZlbczTCXOIZmnX8WipQJGrwUIYMuPKbD16W9LcNienw=="],
+    "@robot-admin/file-utils": ["@robot-admin/file-utils@3.0.3", "", { "dependencies": { "jszip": "^3.10.1", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-fYtnAKuCcHtExooM0ats/7r7LAUIZHl4jSa8xXmQ8hLDwQ6bMlVb/2GGemXM8ua8NC1D4R673WcxKWIxGiOlxw=="],
 
-    "@robot-admin/form-validate": ["@robot-admin/form-validate@3.4.2", "", {}, "sha512-Lx29eO/rPtX9AUHFM4DU07KsEs4vv44zJtUaI71aVF93WvuVvDQW3rsT6WdwI6WnrUKumPuzSQWQvzhNH1IR0Q=="],
+    "@robot-admin/form-validate": ["@robot-admin/form-validate@3.4.4", "", {}, "sha512-zATW1C6supeOr4uMr+xOfTmNws7c4KiJkqcv777ime98SZ6Fgohx2hr8xQLdrH2I1CVXKjA7e1nPRFXYHOEQZQ=="],
 
     "@robot-admin/git-standards": ["@robot-admin/git-standards@1.0.5", "", { "dependencies": { "@commitlint/cli": "^19.6.0", "@commitlint/config-conventional": "^19.6.0", "@inquirer/prompts": "^7.3.2", "chalk": "^5.4.1", "commander": "^12.1.0", "commitizen": "^4.3.1", "cross-spawn": "^7.0.6", "cz-customizable": "^7.2.1", "execa": "^9.5.2", "husky": "^9.1.7", "lint-staged": "^15.2.10", "ora": "^8.1.1" }, "bin": { "robot-standards": "bin/robot-standards.js" } }, "sha512-31GaJF+m45JfojEkm89KqGnz3buuzw1eLBdOQ9r6fZQ0GXW4FlCZgIIgb0DwjWGKseNq0RDIQ2Lms7IQyFukHA=="],
 
-    "@robot-admin/layout": ["@robot-admin/layout@3.2.1", "", { "peerDependencies": { "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0", "vue-router": "^4.0.0" }, "optionalPeers": ["naive-ui"] }, "sha512-xp0FrfzdDBv0njNMJYons0tSz/VPD9/5hctxkM3OpFfZjZvGOco3dUlH9IsQT3Pnow2r4DLvFB2z6tIZ4FFY5g=="],
+    "@robot-admin/layout": ["@robot-admin/layout@3.2.3", "", { "peerDependencies": { "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0", "vue-router": "^4.0.0" }, "optionalPeers": ["naive-ui"] }, "sha512-RTngu+7uwliMFkYQ1XZlNShPKQ5DKn9K4Y0pT/lLTxQNUM19+pJ8V7HH9+CjX8ULkwexc9ym1L0m42DPUzUNxg=="],
 
-    "@robot-admin/naive-ui-components": ["@robot-admin/naive-ui-components@0.18.0", "", { "dependencies": { "@antv/x6": "^2.19.2", "@chenfengyuan/vue-barcode": "^2.0.2", "@fullcalendar/core": "^6.1.21", "@fullcalendar/daygrid": "^6.1.21", "@fullcalendar/interaction": "^6.1.21", "@fullcalendar/list": "^6.1.21", "@fullcalendar/vue3": "^6.1.21", "@iconify/vue": "^5.0.1", "@robot-admin/form-validate": "3.4.2", "@types/leaflet": "^1.9.22", "@visactor/vtable": "^1.26.7", "@visactor/vtable-editors": "^1.26.7", "@visactor/vtable-gantt": "^1.26.7", "@vue-flow/core": "^1.48.2", "@wangeditor-next/editor": "6.2.0", "@wangeditor-next/editor-for-vue": "6.2.0", "altcha": "3.2.2", "async-validator": "4.2.5", "dompurify": "^3.4.14", "driver.js": "^1.8.0", "highlight.js": "^11.12.0", "html2canvas": "^1.4.1", "leaflet": "^1.9.4", "mammoth": "^1.12.2", "md-editor-v3": "6.5.6", "print-js": "^1.6.0", "qrcode": "^1.5.4", "spark-md5": "^3.0.2", "vue-cropper": "^1.1.4", "vue-draggable-plus": "^0.6.1", "vue3-puzzle-vcode": "^1.1.7", "vueuc": "^0.4.66", "xgplayer": "3.0.26", "xgplayer-hls": "3.0.26", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "peerDependencies": { "naive-ui": "^2.35.0", "sortablejs": "^1.15.7", "vue": "^3.5.0", "vue-router": "^4.6.4" }, "optionalPeers": ["sortablejs", "vue-router"] }, "sha512-BNMuBYro3jhIW4oaswIPC0HVYhkzYSc9FpgoGRIsGyIwM/hbb20Wm5ny33smk4vn0Fiac4kR8/q1058RUPk1Mw=="],
+    "@robot-admin/naive-ui-components": ["@robot-admin/naive-ui-components@0.19.0", "", { "dependencies": { "@antv/x6": "^2.19.2", "@chenfengyuan/vue-barcode": "^2.0.2", "@fullcalendar/core": "^6.1.21", "@fullcalendar/daygrid": "^6.1.21", "@fullcalendar/interaction": "^6.1.21", "@fullcalendar/list": "^6.1.21", "@fullcalendar/vue3": "^6.1.21", "@iconify/vue": "^5.0.1", "@robot-admin/form-validate": "3.4.4", "@types/leaflet": "^1.9.22", "@visactor/vtable": "^1.26.7", "@visactor/vtable-editors": "^1.26.7", "@visactor/vtable-gantt": "^1.26.7", "@vue-flow/core": "^1.48.2", "@wangeditor-next/editor": "6.2.0", "@wangeditor-next/editor-for-vue": "6.2.0", "altcha": "3.2.2", "async-validator": "4.2.5", "dompurify": "^3.4.14", "driver.js": "^1.8.0", "highlight.js": "^11.12.0", "html2canvas": "^1.4.1", "leaflet": "^1.9.4", "mammoth": "^1.12.2", "md-editor-v3": "6.5.6", "print-js": "^1.6.0", "qrcode": "^1.5.4", "spark-md5": "^3.0.2", "vue-cropper": "^1.1.4", "vue-draggable-plus": "^0.6.1", "vue3-puzzle-vcode": "^1.1.7", "vueuc": "^0.4.66", "xgplayer": "3.0.26", "xgplayer-hls": "3.0.26", "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz" }, "peerDependencies": { "naive-ui": "^2.35.0", "sortablejs": "^1.15.7", "vue": "^3.5.0", "vue-router": "^4.6.4" }, "optionalPeers": ["sortablejs", "vue-router"] }, "sha512-czc5Ii3HefsdhXwiFL80IOHIjtYqmfYDSxEmaFxxjndgtHx8Yog/Yq6nXitU8NccPPYHVUAreZ9vzcsqyd44fw=="],
 
-    "@robot-admin/request-core": ["@robot-admin/request-core@0.6.3", "", { "peerDependencies": { "axios": "^1.7.0", "naive-ui": "^2.38.0", "vue": "^3.4.0" }, "optionalPeers": ["naive-ui", "vue"] }, "sha512-n7aLtP1URv/OCSDiYqikp6XyL8M/VKZuC2ydaFVq+wKBh7650GweOoyjeLRIpvy9MSKzTe7jFoplTMJVOUQGSA=="],
+    "@robot-admin/request-core": ["@robot-admin/request-core@0.7.0", "", { "peerDependencies": { "axios": "^1.7.0", "naive-ui": "^2.38.0", "vue": "^3.4.0" }, "optionalPeers": ["naive-ui", "vue"] }, "sha512-f9RMprbHOY7pkGYNf8IWrY1L/unsoWBzwih+RsENyxujt7ZVN32qr/74OFt5ztRSrqA6ykFQJdTpQrOy9LXBGA=="],
 
     "@robot-admin/theme": ["@robot-admin/theme@0.6.1", "", { "peerDependencies": { "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0" }, "optionalPeers": ["naive-ui", "pinia", "vue"] }, "sha512-PGMrjbLqHDb8W5zNHc5sEzvjpHDuSxQz1S/hH09inzF5onI3dKhkeQCNvtnpBH/+x6ltt1oHWOgY1PhkT4ucBw=="],
 

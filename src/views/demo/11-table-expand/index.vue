@@ -142,7 +142,7 @@
   }))
 
   // 表格数据管理
-  const table = useNaiveTableCrud<TestRecord>({
+  const table = useNaiveTableCrud({
     source: createDemoEmployeeSource('employees/expandList'),
     defaultPaginationEnabled: false,
     columns: dataColumns,
