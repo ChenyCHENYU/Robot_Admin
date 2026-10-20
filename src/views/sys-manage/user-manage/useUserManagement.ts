@@ -47,7 +47,7 @@ import {
   validateMockMemberships,
 } from '@/api/auth.mock-directory'
 
-import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
+import type { TreeExpose } from '@robot-admin/naive-ui-components/C_Tree'
 import '@robot-admin/naive-ui-components/C_Tree/style.css'
 import type { ActionItem } from '@robot-admin/naive-ui-components'
 import type { TableInstance } from '@robot-admin/naive-ui-components/C_Table'
@@ -121,7 +121,7 @@ export function useUserManagement() {
   const formRef = ref<FormInstance<UserFormData> | null>(null)
   const resetPasswordFormRef = ref<FormInstance<ResetPasswordForm> | null>(null)
   const userTableRef = ref<TableInstance<UserData> | null>(null)
-  const deptTreeRef = ref<InstanceType<typeof C_Tree> | null>(null)
+  const deptTreeRef = ref<TreeExpose<DeptData> | null>(null)
   const expandedDeptKeys = ref<string[]>([])
   const selectedDeptKeys = ref<string[]>([])
   const selectedUsers = ref<string[]>([])

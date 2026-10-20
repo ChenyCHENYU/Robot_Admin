@@ -9,23 +9,29 @@ import type {
   ComponentDensity,
   TreeExpose,
   TreeKey,
-  TreeNodeData,
   TreeNativeProps,
-  TreeOption,
   TreeUpdateMeta,
 } from '@robot-admin/naive-ui-components/C_Tree'
 
-interface Department extends TreeNodeData {
+interface Department {
+  type: 'department' | 'user'
+  inactive?: boolean
   code: string
   title: string
   items?: Department[]
+}
+interface ProjectNode {
+  id: string
+  name: string
+  isLeaf?: boolean
+  children?: ProjectNode[]
 }
 export const DENSITY_OPTIONS = [
   { label: '紧凑', value: 'compact' },
   { label: '标准', value: 'default' },
   { label: '舒适', value: 'comfortable' },
 ]
-export const CONTROLLED_TREE_PROPS: TreeNativeProps = {
+export const CONTROLLED_TREE_PROPS: TreeNativeProps<Department> = {
   keyField: 'code',
   labelField: 'title',
   childrenField: 'items',
@@ -75,7 +81,7 @@ const DEPARTMENTS: Department[] = [
   },
 ]
 /** 固定的大树样本，实际渲染行交由原生虚拟列表控制。 */
-const createLargeTree = (): TreeNodeData[] =>
+const createLargeTree = (): ProjectNode[] =>
   Array.from({ length: 100 }, (_, group) => ({
     id: `group-${group}`,
     name: `项目分组 ${String(group + 1).padStart(3, '0')}`,
@@ -102,7 +108,7 @@ const waitForDemo = (signal: AbortSignal) =>
 /** 树演示控制器：组件状态、原生聚合配置、失败重试与清理。 */
 export function useTreeDemo() {
   const density = ref<ComponentDensity>('compact')
-  const treeRef = ref<TreeExpose>()
+  const treeRef = ref<TreeExpose<Department>>()
   const selectedKeys = ref<TreeKey[]>([])
   const expandedKeys = ref<TreeKey[]>(['engineering', 'frontend', 'operations'])
   const checkedKeys = ref<TreeKey[]>([])
@@ -110,11 +116,9 @@ export function useTreeDemo() {
   const lastAction = ref('点击节点或勾选复选框，查看完整事件语义')
   const departments = ref<Department[]>(structuredClone(DEPARTMENTS))
   const largeTree = shallowRef(createLargeTree())
-  const largeExpandedKeys = ref<TreeKey[]>(
-    largeTree.value.map(node => node.id!)
-  )
+  const largeExpandedKeys = ref<TreeKey[]>(largeTree.value.map(node => node.id))
   const virtualSelectedKeys = ref<TreeKey[]>([])
-  const lazyData = ref<TreeNodeData[]>([
+  const lazyData = ref<ProjectNode[]>([
     { id: 'remote-root', name: '项目资料库 · 展开加载', isLeaf: false },
   ])
   const lazyExpandedKeys = ref<TreeKey[]>([])
@@ -129,22 +133,22 @@ export function useTreeDemo() {
   const selectedSummary = computed(() =>
     selectedKeys.value.length ? selectedKeys.value.join('、') : '未选择'
   )
-  const virtualTreeProps: TreeNativeProps = {
+  const virtualTreeProps: TreeNativeProps<ProjectNode> = {
     showIrrelevantNodes: false,
     virtualScroll: true,
     animated: false,
   }
   const handleChecked = (
     keys: TreeKey[],
-    _options: Array<TreeOption | null>,
-    meta: TreeUpdateMeta
+    _options: Array<Department | null>,
+    meta: TreeUpdateMeta<Department>
   ) => {
     lastAction.value = `${meta.action === 'check' ? '勾选' : '取消勾选'}：${keys.length} 个叶节点`
   }
   const handleSelected = (
     keys: TreeKey[],
-    _options: Array<TreeOption | null>,
-    meta: TreeUpdateMeta
+    _options: Array<Department | null>,
+    meta: TreeUpdateMeta<Department>
   ) => {
     lastAction.value = `${meta.action === 'select' ? '选择' : '取消选择'}：${String(meta.node?.title ?? keys[0] ?? '无')}`
   }
@@ -160,7 +164,7 @@ export function useTreeDemo() {
   const checkLoadedLeaves = () => {
     checkedKeys.value = ['web', 'design', 'backend', 'customers', 'delivery']
   }
-  const loadChildren = async (node: TreeOption) => {
+  const loadChildren = async (node: ProjectNode) => {
     const current = generation
     const { signal } = controller
     const shouldFail = failNext.value
@@ -182,7 +186,7 @@ export function useTreeDemo() {
         : item
     )
   }
-  const lazyTreeProps: TreeNativeProps = {
+  const lazyTreeProps: TreeNativeProps<ProjectNode> = {
     onLoad: loadChildren,
     animated: false,
   }

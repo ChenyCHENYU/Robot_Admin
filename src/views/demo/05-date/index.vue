@@ -35,7 +35,7 @@
           <p class="card-desc">选择单个日期，支持禁用今天之前的日期</p>
         </template>
         <C_Date
-          v-model:singleDate="singleDateResult"
+          v-model="singleDateResult"
           mode="date"
           placeholder="请选择日期"
           :disabled-before-today="true"
@@ -64,7 +64,7 @@
           <p class="card-desc">选择日期和时间，精确到秒</p>
         </template>
         <C_Date
-          v-model:singleDateTime="singleDateTimeResult"
+          v-model="singleDateTimeResult"
           mode="datetime"
           placeholder="请选择日期时间"
           value-format="yyyy-MM-dd HH:mm:ss"
@@ -92,7 +92,7 @@
           <p class="card-desc">选择日期范围，支持禁用今天之前的日期</p>
         </template>
         <C_Date
-          v-model:dateRange="dateRangeResult"
+          v-model="dateRangeResult"
           mode="daterange"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -122,7 +122,7 @@
           <p class="card-desc">选择日期时间范围，精确到秒</p>
         </template>
         <C_Date
-          v-model:dateTimeRange="dateTimeRangeResult"
+          v-model="dateTimeRangeResult"
           mode="datetimerange"
           start-placeholder="开始日期时间"
           end-placeholder="结束日期时间"
@@ -153,7 +153,7 @@
           >
         </template>
         <C_Date
-          v-model:smartRange="smartRangeResult"
+          v-model="smartRangeResult"
           mode="smart-range"
           start-placeholder="请选择开始日期"
           end-placeholder="请选择结束日期"
@@ -190,7 +190,7 @@
           <p class="card-desc">只能选择今天及以前的日期</p>
         </template>
         <C_Date
-          v-model:singleDate="pastDateResult"
+          v-model="pastDateResult"
           mode="date"
           placeholder="请选择日期（不能超过今天）"
           :disabled-after-today="true"
@@ -221,7 +221,7 @@
           <div class="format-item">
             <label>时间戳格式:</label>
             <C_Date
-              v-model:singleDate="timestampDateResult"
+              v-model="timestampDateResult"
               mode="date"
               placeholder="选择日期（时间戳）"
             />
@@ -231,7 +231,7 @@
           <div class="format-item">
             <label>中文格式:</label>
             <C_Date
-              v-model:singleDate="chineseDateResult"
+              v-model="chineseDateResult"
               mode="date"
               placeholder="选择日期（中文格式）"
               value-format="yyyy年MM月dd日"

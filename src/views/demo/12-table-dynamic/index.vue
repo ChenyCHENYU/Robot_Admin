@@ -108,7 +108,6 @@
   } from '@robot-admin/naive-ui-components/C_Table'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import { createDemoEmployeeSource } from '@/api/demo-employees'
-  import { toCrudTableColumns } from '@/utils/d_tableColumns'
   import { delayWithSignal } from '@/utils/abort'
   import {
     type DynamicEmployee,
@@ -148,7 +147,7 @@
     // 本页的增删编辑是本地草稿，仅复用查询；真实接口契约的数字 id 不被改写。
     source: 'query' in source ? { query: source.query } : source,
     defaultPaginationEnabled: false,
-    columns: toCrudTableColumns(dynamicTableColumns),
+    columns: dynamicTableColumns,
   })
 
   const { data: tableData, loading, refresh } = table

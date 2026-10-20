@@ -43,26 +43,41 @@
       </NSpace>
     </NCard>
 
-    <div
-      v-for="(example, type) in formConfigs"
-      :key="type"
-      class="demo-section"
-    >
-      <h3>{{ example.title }}</h3>
+    <div class="demo-section">
+      <h3>基础用法（3个字段）</h3>
       <C_FormSearch
-        v-model="example.params"
-        :form-item-list="example.config.items"
-        :config="{ ...example.searchConfig, density }"
-        :form-search-input-history-string="example.config.historyKey"
-        @reset="handleReset(type)"
+        v-model="basicParams"
+        :form-item-list="basicFields"
+        :config="{ density, foldThreshold: 8, onSearch: searchBasic }"
+        form-search-input-history-string="basic_search_history"
+        @reset="resetBasic"
       />
       <C_Table
-        v-if="type === 'basic'"
         class="search-result-table"
         :columns="previewColumns"
         :data="basicRows"
         row-key="id"
         :config="{ density, toolbar: { show: false }, pagination: false }"
+      />
+    </div>
+    <div class="demo-section">
+      <h3>高级用法（12个字段 - 默认显示8个，展开显示全部）</h3>
+      <C_FormSearch
+        v-model="advancedParams"
+        :form-item-list="advancedFields"
+        :config="{ density, foldThreshold: 8, onSearch: searchAdvanced }"
+        form-search-input-history-string="advanced_search_history"
+        @reset="resetResults"
+      />
+    </div>
+    <div class="demo-section">
+      <h3>超多字段测试（16个字段）</h3>
+      <C_FormSearch
+        v-model="megaParams"
+        :form-item-list="megaFields"
+        :config="{ density, foldThreshold: 8, onSearch: searchMega }"
+        form-search-input-history-string="mega_search_history"
+        @reset="resetResults"
       />
     </div>
 
@@ -103,14 +118,14 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo09FormSearch' })
-  import type {
-    SearchConfig,
-    SearchFormParams,
-    ComponentDensity,
-  } from '@robot-admin/naive-ui-components/C_FormSearch'
+  import type { ComponentDensity } from '@robot-admin/naive-ui-components/C_FormSearch'
   import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
   import {
     type SearchResult,
+    type BasicFormParams,
+    type AdvancedFormParams,
+    type MegaFormParams,
+    type SelectionSearchParams,
     basicFormConfig,
     advancedFormConfig,
     megaFormConfig,
@@ -145,71 +160,49 @@
     },
   ]
 
-  const selectionParams = ref<SearchFormParams>({
+  const selectionParams = ref<SelectionSearchParams>({
     statuses: [],
     enabled: false,
   })
-  const selectionSubmitted = ref<SearchFormParams>({
+  const selectionSubmitted = ref<SelectionSearchParams>({
     statuses: [],
     enabled: false,
   })
   const selectionRows = ref(filterSelectionPreview(selectionSubmitted.value))
   /** 列表只使用已提交条件，保留输入草稿与查询结果的边界。 */
-  const searchSelection = (params: SearchFormParams) => {
+  const searchSelection = (params: SelectionSearchParams) => {
     selectionSubmitted.value = structuredClone(toRaw(params))
     selectionRows.value = filterSelectionPreview(params)
   }
 
-  // onSearch 返回完整任务；search 事件只用于通知，避免同一查询执行两次。
-  const searchConfig = (type: 'basic' | 'advanced' | 'mega'): SearchConfig => ({
-    foldThreshold: 8,
-    onSearch: params => handleSearch(type, params),
-  })
+  const basicParams = ref({ ...basicFormConfig.params })
+  const advancedParams = ref({ ...advancedFormConfig.params })
+  const megaParams = ref({ ...megaFormConfig.params })
+  const basicFields = createSearchFields(basicFormConfig)
+  const advancedFields = createSearchFields(advancedFormConfig)
+  const megaFields = createSearchFields(megaFormConfig)
 
-  const formConfigs = reactive({
-    basic: {
-      title: '基础用法（3个字段）',
-      config: {
-        ...basicFormConfig,
-        items: createSearchFields(basicFormConfig),
-      },
-      params: { ...basicFormConfig.params },
-      searchConfig: searchConfig('basic'),
-    },
-    advanced: {
-      title: '高级用法（12个字段 - 默认显示8个，展开显示全部）',
-      config: {
-        ...advancedFormConfig,
-        items: createSearchFields(advancedFormConfig),
-      },
-      params: { ...advancedFormConfig.params },
-      searchConfig: searchConfig('advanced'),
-    },
-    mega: {
-      title: '超多字段测试（16个字段）',
-      config: { ...megaFormConfig, items: createSearchFields(megaFormConfig) },
-      params: { ...megaFormConfig.params },
-      searchConfig: searchConfig('mega'),
-    },
-  })
-
-  // 统一搜索处理
-  const handleSearch = (
-    type: keyof typeof formConfigs,
-    params: SearchFormParams
-  ) => {
+  /** 每个查询直接接收自己的业务模型，无需断言或宽联合类型适配。 */
+  const searchBasic = (params: BasicFormParams) => {
+    basicRows.value = filterSearchPreview(params)
+    searchResults.value = basicRows.value
     message.info('搜索条件已接收（演示结果）')
-    if (type === 'basic') {
-      basicRows.value = filterSearchPreview(params)
-      searchResults.value = basicRows.value
-    } else searchResults.value = generateMockResults(type, params)
   }
-
-  // 统一重置处理
-  const handleReset = (type: keyof typeof formConfigs) => {
-    if (type === 'basic') basicRows.value = [...SEARCH_PREVIEW_ROWS]
+  const searchAdvanced = (params: AdvancedFormParams) => {
+    searchResults.value = generateMockResults('advanced', params)
+    message.info('搜索条件已接收（演示结果）')
+  }
+  const searchMega = (params: MegaFormParams) => {
+    searchResults.value = generateMockResults('mega', params)
+    message.info('搜索条件已接收（演示结果）')
+  }
+  const resetResults = () => {
     searchResults.value = []
     message.info('表单已重置')
+  }
+  const resetBasic = () => {
+    basicRows.value = [...SEARCH_PREVIEW_ROWS]
+    resetResults()
   }
 </script>
 

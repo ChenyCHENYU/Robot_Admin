@@ -92,7 +92,6 @@
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
   import { createDemoEmployeeSource } from '@/api/demo-employees'
-  import { toCrudTableColumns } from '@/utils/d_tableColumns'
   import {
     defaultConfig,
     dataColumns,
@@ -117,7 +116,7 @@
         column.type !== 'selection'
     )
   )
-  const tableConfig = computed<TableConfig<TestRecord>>(() => ({
+  const tableConfig = computed<TableConfig<TestRecord, ChildDataType>>(() => ({
     density: config.density,
     expand: {
       enabled: true,
@@ -146,7 +145,7 @@
   const table = useNaiveTableCrud<TestRecord>({
     source: createDemoEmployeeSource('employees/expandList'),
     defaultPaginationEnabled: false,
-    columns: toCrudTableColumns(dataColumns),
+    columns: dataColumns,
   })
 
   // 工具栏按钮
@@ -211,9 +210,9 @@
   // 展开内容渲染
   const renderExpandContent = (
     row: TestRecord,
-    expandData: unknown[],
+    childRows: ChildDataType[],
     isLoading: boolean,
-    selection?: unknown
+    childSelection?: ChildSelectionState
   ): VNodeChild => {
     if (isLoading) {
       return h('div', { class: 'flex justify-center items-center py-4' }, [
@@ -237,16 +236,10 @@
       ])
     }
 
-    if (!expandData?.length) {
+    if (!childRows.length) {
       return h('div', { class: 'text-center py-4' }, '暂无数据')
     }
 
-    const childRows = expandData.filter(isChildDataType)
-    if (!childRows.length) {
-      return h('div', { class: 'text-center py-4' }, '暂无有效数据')
-    }
-
-    const childSelection = selection as ChildSelectionState | undefined
     const childColumns: DataTableColumns<ChildDataType> = [
       ...(config.enableChildSelection
         ? [{ type: 'selection' as const, width: 40 }]
@@ -286,12 +279,6 @@
         }),
       ]
     )
-  }
-
-  /** 过滤异步展开返回值，阻止无主键记录进入子表格。 */
-  function isChildDataType(value: unknown): value is ChildDataType {
-    if (typeof value !== 'object' || value === null) return false
-    return typeof Reflect.get(value, 'id') === 'number'
   }
 
   watch(

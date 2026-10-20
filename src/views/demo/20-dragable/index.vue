@@ -251,6 +251,7 @@
   defineOptions({ name: 'Demo20Dragable' })
   import {
     type Priority,
+    type KanbanColumn,
     priorityConfig,
     rainbowColors,
     kanbanData,
@@ -263,24 +264,21 @@
   const message = useMessage()
 
   // 统一的响应式数据管理
-  const kanbanTasks = ref(
-    JSON.parse(JSON.stringify(kanbanData)) as typeof kanbanData
-  )
+  const kanbanTasks = ref(structuredClone(kanbanData))
   const showTaskEditor = ref(false)
   const newTaskTitle = ref('')
   const newPriority = ref<Priority>('medium')
   let nextTaskId = Date.now()
-  const moveTask = (
-    id: string | number,
-    source: keyof typeof kanbanData,
-    target: string
-  ) => {
-    if (!(target in kanbanTasks.value) || source === target) return
+  const moveTask = (id: number, source: KanbanColumn, target: string) => {
+    const targetColumn = kanbanColumnsConfig.find(
+      column => column.key === target
+    )?.key
+    if (!targetColumn || source === targetColumn) return
     const tasks = kanbanTasks.value[source]
     const index = tasks.findIndex(task => String(task.id) === String(id))
     if (index < 0) return
     const [task] = tasks.splice(index, 1)
-    kanbanTasks.value[target as keyof typeof kanbanData].push(task)
+    kanbanTasks.value[targetColumn].push(task)
   }
   const techCards = ref(techCardsData)
   const activities = ref(activitiesData)

@@ -70,6 +70,7 @@
           :data="current.data"
           :titles="current.titles"
           :filterable="filterable"
+          :filter-method="filterAssignmentItems"
           :show-select-all="showSelectAll"
           :size="size"
           filter-placeholder="搜索名称或描述"
@@ -127,7 +128,11 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { TRANSFER_SCENES, type TransferScene } from './data'
+  import {
+    TRANSFER_SCENES,
+    filterAssignmentItems,
+    type TransferScene,
+  } from './data'
   defineOptions({ name: 'Demo52Transfer' })
   const activeScene = ref<TransferScene>('permission')
   const filterable = ref(true)
@@ -138,12 +143,12 @@
     { label: '舒适', value: 'medium' },
     { label: '宽松', value: 'large' },
   ]
-  const selectedMap = ref<Record<TransferScene, Array<string | number>>>({
+  const selectedMap = ref<Record<TransferScene, string[]>>({
     permission: [...TRANSFER_SCENES.permission.defaults],
     module: [...TRANSFER_SCENES.module.defaults],
     member: [...TRANSFER_SCENES.member.defaults],
   })
-  const confirmedMap = ref<Record<TransferScene, Array<string | number>>>(
+  const confirmedMap = ref<Record<TransferScene, string[]>>(
     structuredClone(toRaw(selectedMap.value))
   )
   const current = computed(() => TRANSFER_SCENES[activeScene.value])

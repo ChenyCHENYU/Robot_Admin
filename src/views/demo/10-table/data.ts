@@ -5,11 +5,13 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
-import type { DataRecord, EditMode } from '@robot-admin/naive-ui-components'
+import {
+  defineTableColumns,
+  type EditMode,
+} from '@robot-admin/naive-ui-components/C_Table'
 import type { AlertProps } from 'naive-ui'
 import {
   createMemoryTableSource,
-  type TableColumn,
   type UseTableCrudConfig,
 } from '@robot-admin/request-core/naive'
 import {
@@ -25,7 +27,7 @@ export const DENSITY_OPTIONS = [
 ] as const
 
 // ================= 业务类型定义 =================
-export interface Employee extends DataRecord {
+export interface Employee {
   id: number
   name: string
   age: number
@@ -97,30 +99,30 @@ export const MODE_CONFIG: Record<
 }
 
 // ================= 选项配置 =================
-export const DEPARTMENT_OPTIONS: OptionItem[] = [
+export const DEPARTMENT_OPTIONS = [
   { label: '技术部', value: 'tech' },
   { label: '人事部', value: 'hr' },
   { label: '市场部', value: 'market' },
   { label: '财务部', value: 'finance' },
-]
+] satisfies OptionItem[]
 
-export const STATUS_OPTIONS: OptionItem[] = [
+export const STATUS_OPTIONS = [
   { label: '在职', value: 'active' },
   { label: '离职', value: 'inactive' },
   { label: '试用期', value: 'probation' },
-]
+] satisfies OptionItem[]
 
-export const GENDER_OPTIONS: OptionItem[] = [
+export const GENDER_OPTIONS = [
   { label: '男', value: 'male' },
   { label: '女', value: 'female' },
-]
+] satisfies OptionItem[]
 
-export const LEVEL_OPTIONS: OptionItem[] = [
+export const LEVEL_OPTIONS = [
   { label: '初级', value: 'junior' },
   { label: '中级', value: 'mid' },
   { label: '高级', value: 'senior' },
   { label: '主管', value: 'lead' },
-]
+] satisfies OptionItem[]
 
 export const LEVEL_CONFIG: Record<
   string,
@@ -185,151 +187,152 @@ const formatDescription = (desc?: string) =>
   desc ? (desc.length > 30 ? desc.substring(0, 30) + '...' : desc) : '暂无描述'
 
 // ================= 表格列配置 =================
-export const getTableColumns = (): TableColumn<Employee>[] => [
-  { type: 'selection' },
-  { type: 'index' },
-  {
-    key: 'name',
-    title: '姓名',
-    width: 120,
-    editable: true,
-    required: true,
-    editType: 'input',
-    editProps: {
-      rules: [PRESET_RULES.length('姓名', 2, 20)],
-      placeholder: '请输入姓名',
+export const getTableColumns = () =>
+  defineTableColumns<Employee>([
+    { type: 'selection' },
+    { type: 'index' },
+    {
+      key: 'name',
+      title: '姓名',
+      width: 120,
+      editable: true,
+      required: true,
+      editType: 'input',
+      editProps: {
+        rules: [PRESET_RULES.length('姓名', 2, 20)],
+        placeholder: '请输入姓名',
+      },
     },
-  },
-  {
-    key: 'age',
-    title: '年龄',
-    width: 100,
-    editable: true,
-    required: true,
-    editType: 'number',
-    editProps: {
-      min: 18,
-      max: 65,
-      step: 1,
-      showButton: false,
-      placeholder: '请输入年龄',
+    {
+      key: 'age',
+      title: '年龄',
+      width: 100,
+      editable: true,
+      required: true,
+      editType: 'number',
+      editProps: {
+        min: 18,
+        max: 65,
+        step: 1,
+        showButton: false,
+        placeholder: '请输入年龄',
+      },
     },
-  },
-  {
-    key: 'gender',
-    title: '性别',
-    width: 100,
-    editable: true,
-    required: true,
-    editType: 'select',
-    editProps: {
-      options: GENDER_OPTIONS,
-      placeholder: '请选择性别',
+    {
+      key: 'gender',
+      title: '性别',
+      width: 100,
+      editable: true,
+      required: true,
+      editType: 'select',
+      editProps: {
+        options: GENDER_OPTIONS,
+        placeholder: '请选择性别',
+      },
+      render: (row: Employee) => formatGender(row.gender),
     },
-    render: (row: Employee) => formatGender(row.gender),
-  },
-  {
-    key: 'email',
-    title: '邮箱',
-    width: 200,
-    editable: true,
-    required: true,
-    editType: 'email',
-    editProps: {
-      rules: [PRESET_RULES.email('邮箱')],
-      placeholder: '请输入邮箱地址',
+    {
+      key: 'email',
+      title: '邮箱',
+      width: 200,
+      editable: true,
+      required: true,
+      editType: 'email',
+      editProps: {
+        rules: [PRESET_RULES.email('邮箱')],
+        placeholder: '请输入邮箱地址',
+      },
     },
-  },
-  {
-    key: 'department',
-    title: '部门',
-    width: 120,
-    editable: true,
-    required: true,
-    editType: 'select',
-    editProps: {
-      options: DEPARTMENT_OPTIONS,
-      placeholder: '请选择部门',
+    {
+      key: 'department',
+      title: '部门',
+      width: 120,
+      editable: true,
+      required: true,
+      editType: 'select',
+      editProps: {
+        options: DEPARTMENT_OPTIONS,
+        placeholder: '请选择部门',
+      },
+      render: (row: Employee) => formatDepartment(row.department),
     },
-    render: (row: Employee) => formatDepartment(row.department),
-  },
-  {
-    key: 'joinDate',
-    title: '入职日期',
-    width: 140,
-    editable: true,
-    required: true,
-    editType: 'date',
-    editProps: {
-      type: 'date',
-      format: 'yyyy-MM-dd',
-      valueFormat: 'timestamp',
-      placeholder: '请选择入职日期',
+    {
+      key: 'joinDate',
+      title: '入职日期',
+      width: 140,
+      editable: true,
+      required: true,
+      editType: 'date',
+      editProps: {
+        type: 'date',
+        format: 'yyyy-MM-dd',
+        valueFormat: 'timestamp',
+        placeholder: '请选择入职日期',
+      },
+      render: (row: Employee) => formatDate(row.joinDate),
     },
-    render: (row: Employee) => formatDate(row.joinDate),
-  },
-  {
-    key: 'status',
-    title: '状态',
-    width: 100,
-    editable: true,
-    required: false,
-    editType: 'select',
-    editProps: {
-      options: STATUS_OPTIONS,
-      placeholder: '请选择状态',
+    {
+      key: 'status',
+      title: '状态',
+      width: 100,
+      editable: true,
+      required: false,
+      editType: 'select',
+      editProps: {
+        options: STATUS_OPTIONS,
+        placeholder: '请选择状态',
+      },
+      render: (row: Employee) => formatStatus(row.status),
     },
-    render: (row: Employee) => formatStatus(row.status),
-  },
-  {
-    key: 'level',
-    title: '职级',
-    width: 100,
-    editable: true,
-    required: false,
-    editType: 'select',
-    editProps: {
-      options: LEVEL_OPTIONS,
-      placeholder: '请选择职级',
+    {
+      key: 'level',
+      title: '职级',
+      width: 100,
+      editable: true,
+      required: false,
+      editType: 'select',
+      editProps: {
+        options: LEVEL_OPTIONS,
+        placeholder: '请选择职级',
+      },
+      render: (row: Employee) => {
+        const cfg = LEVEL_CONFIG[row.level || 'junior']
+        return cfg?.text || row.level || '-'
+      },
     },
-    render: (row: Employee) => {
-      const cfg = LEVEL_CONFIG[row.level || 'junior']
-      return cfg?.text || row.level || '-'
+    {
+      key: 'salary',
+      title: '薪资',
+      width: 120,
+      editable: true,
+      required: false,
+      editType: 'number',
+      editProps: {
+        min: 3000,
+        max: 100000,
+        step: 500,
+        showButton: false,
+        placeholder: '请输入薪资',
+      },
+      render: (row: Employee) =>
+        row.salary ? `¥${row.salary.toLocaleString()}` : '-',
     },
-  },
-  {
-    key: 'salary',
-    title: '薪资',
-    width: 120,
-    editable: true,
-    required: false,
-    editType: 'number',
-    editProps: {
-      min: 3000,
-      max: 100000,
-      step: 500,
-      showButton: false,
-      placeholder: '请输入薪资',
+    {
+      key: 'description',
+      title: '描述',
+      width: 200,
+      editable: true,
+      required: false,
+      editType: 'textarea',
+      editProps: {
+        type: 'textarea',
+        rows: 3,
+        placeholder: '请输入员工描述信息',
+        rules: [PRESET_RULES.length('描述', 0, 200)],
+      },
+      render: (row: Employee) => formatDescription(row.description),
     },
-    render: (row: Employee) =>
-      row.salary ? `¥${row.salary.toLocaleString()}` : '-',
-  },
-  {
-    key: 'description',
-    title: '描述',
-    width: 200,
-    editable: true,
-    required: false,
-    editType: 'textarea',
-    editProps: {
-      type: 'textarea',
-      rows: 3,
-      placeholder: '请输入员工描述信息',
-      rules: [PRESET_RULES.length('描述', 0, 200)],
-    },
-    render: (row: Employee) => formatDescription(row.description),
-  },
-]
+  ])
 
 // ================= 工具函数 =================
 export const createNewEmployee = (): Employee => ({

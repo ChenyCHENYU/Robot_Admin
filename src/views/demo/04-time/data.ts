@@ -8,6 +8,8 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
+import type { TimeProps } from '@robot-admin/naive-ui-components/C_Time'
+
 // 公共配置属性
 export const commonAttrs = {
   small: { size: 'small', clearable: true },
@@ -23,7 +25,7 @@ export interface TimeSceneConfig {
   tagType: 'default' | 'info' | 'success' | 'warning' | 'error'
   description: string
   mode: 'single' | 'range'
-  props: Record<string, any>
+  props: TimeProps
 }
 
 // 时间场景配置

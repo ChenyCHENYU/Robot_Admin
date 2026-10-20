@@ -50,12 +50,14 @@ export interface Task {
 }
 
 // 看板数据结构 - 统一管理所有列
-export const kanbanData = {
+export type KanbanColumn = 'todo' | 'progress' | 'review' | 'done'
+
+export const kanbanData: Record<KanbanColumn, Task[]> = {
   todo: [
     {
       id: 1,
       title: 'Dashboard 页面重构',
-      priority: 'high' as Priority,
+      priority: 'high',
       date: '2024-01-19',
       tag: 'web',
       comments: 28,
@@ -65,7 +67,7 @@ export const kanbanData = {
     {
       id: 2,
       title: '用户角色页面重构',
-      priority: 'medium' as Priority,
+      priority: 'medium',
       date: '2024-01-18',
       tag: 'web',
       comments: 15,
@@ -77,7 +79,7 @@ export const kanbanData = {
     {
       id: 3,
       title: '看板功能重构',
-      priority: 'medium' as Priority,
+      priority: 'medium',
       date: '2024-01-18',
       tag: 'web',
       comments: 22,
@@ -87,7 +89,7 @@ export const kanbanData = {
     {
       id: 4,
       title: 'UI 界面修复',
-      priority: 'low' as Priority,
+      priority: 'low',
       date: '2024-01-19',
       tag: 'mobile',
       comments: 13,
@@ -99,7 +101,7 @@ export const kanbanData = {
     {
       id: 5,
       title: '首页重构',
-      priority: 'high' as Priority,
+      priority: 'high',
       date: '2024-01-19',
       tag: 'web',
       comments: 28,
@@ -109,7 +111,7 @@ export const kanbanData = {
     {
       id: 6,
       title: '分析页面重构',
-      priority: 'high' as Priority,
+      priority: 'high',
       date: '2024-01-19',
       tag: 'web',
       comments: 28,
@@ -121,7 +123,7 @@ export const kanbanData = {
     {
       id: 7,
       title: '拖拽组件开发',
-      priority: 'low' as Priority,
+      priority: 'low',
       date: '2024-01-15',
       tag: 'web',
       comments: 28,
@@ -134,34 +136,34 @@ export const kanbanData = {
 // 看板列配置
 export const kanbanColumnsConfig = [
   {
-    key: 'todo' as keyof typeof kanbanData,
+    key: 'todo',
     title: 'TODO',
     headerClass: 'todo-header',
     emptyIcon: 'i-mdi-clipboard-list-outline',
     emptyText: '暂无任务',
   },
   {
-    key: 'progress' as keyof typeof kanbanData,
+    key: 'progress',
     title: 'IN PROGRESS',
     headerClass: 'progress-header',
     emptyIcon: 'i-mdi-progress-clock',
     emptyText: '暂无进行中',
   },
   {
-    key: 'review' as keyof typeof kanbanData,
+    key: 'review',
     title: 'REVIEW',
     headerClass: 'review-header',
     emptyIcon: 'i-mdi-eye-check-outline',
     emptyText: '暂无待审核',
   },
   {
-    key: 'done' as keyof typeof kanbanData,
+    key: 'done',
     title: 'DONE',
     headerClass: 'done-header',
     emptyIcon: 'i-mdi-check-circle-outline',
     emptyText: '暂无已完成',
   },
-]
+] as const
 
 // 技术栈数据
 export const techCardsData = [

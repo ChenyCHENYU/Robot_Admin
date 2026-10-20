@@ -74,7 +74,7 @@
               aria-label="计划时间尺度"
             /><NButton
               size="tiny"
-              :disabled="!selectedTask || !ganttRefs[activeTab]?.ganttInstance"
+              :disabled="!selectedTask || !ganttRef?.ganttInstance"
               @click="locateTask"
               >定位选中任务</NButton
             ></div
@@ -98,7 +98,7 @@
           ><C_VtableGantt
             v-if="visibleData.length"
             :key="activeTab"
-            :ref="(el: unknown) => setGanttRef(activeTab, el)"
+            ref="ganttRef"
             :data="visibleData"
             :preset="currentTab.preset"
             :title="currentTab.ganttTitle"
@@ -163,10 +163,19 @@
 </template>
 <script setup lang="ts">
   defineOptions({ name: 'Demo33VTableGantt' })
-  import type { GanttTask, GanttPreset } from '@robot-admin/naive-ui-components'
+  import {
+    appendGanttGroup,
+    type GanttExpose,
+    type GanttOptions,
+    type GanttTaskChanges,
+    type GanttTaskCellLayout,
+    type GanttTaskBarLayout,
+    type GanttTimelineLayout,
+  } from '@robot-admin/naive-ui-components/C_VtableGantt'
   import { VRender } from '@visactor/vtable-gantt'
   import {
     type TabConfig,
+    type DemoGanttTask,
     PRESET_DESCRIPTIONS as presetDescriptions,
     createInitialData,
     createCustomOptions,
@@ -180,24 +189,12 @@
   const message = useMessage()
   const activeTab = ref('project')
   const taskSearch = ref('')
-  const timeScale = ref('week')
-  const selectedTask = shallowRef<GanttTask | null>(null)
+  const timeScale = ref<'week' | 'day'>('week')
+  const selectedTask = shallowRef<DemoGanttTask | null>(null)
   const ganttError = ref('')
   const themeStore = s_themeStore()
   const isDark = computed(() => themeStore.isDark)
-  interface GanttHandle {
-    ganttInstance?: {
-      collapseAll?: () => void
-      expandAll?: () => void
-      taskListTableInstance?: {
-        collapseAllTreeNode: () => void
-        expandAllTreeNode: () => void
-      }
-      scrollToMarkLine: (date: Date) => void
-    }
-  }
-
-  const ganttRefs = ref<Record<string, GanttHandle>>({})
+  const ganttRef = shallowRef<GanttExpose<DemoGanttTask> | null>(null)
   const expandStates = reactive<Record<string, boolean>>({
     basic: true,
     project: true,
@@ -206,71 +203,65 @@
   // 初始化甘特图数据 - 利用类型推导
   const ganttData = ref(createInitialData())
 
-  // ==================== 组件引用管理 ====================
-
-  const setGanttRef = (name: string, el: unknown) => {
-    if (!el) {
-      delete ganttRefs.value[name]
-      return
-    }
-    if (el && typeof el === 'object' && 'ganttInstance' in el) {
-      ganttRefs.value[name] = el as GanttHandle
-    }
-  }
-
-  // Visactor 的 Group.add 参数类型与其导出的 Group 类型不一致，集中适配一次。
-  const addGroup = (parent: VRender.Group, child: VRender.Group) =>
-    parent.add(child as unknown as Parameters<VRender.Group['add']>[0])
-
   // ==================== 自定义布局函数 ====================
 
   // 任务单元格自定义布局
-  const createTaskCellLayout = (barColors: string[]) => (args: any) => {
-    const { table, row, col, rect } = args
-    const taskRecord = table.getCellOriginRecord(col, row)
-    const { height, width } = rect ?? table.getCellRect(col, row)
-    const container = new VRender.Group({
-      y: 10,
-      x: 20,
-      height: height - 20,
-      width: width - 40,
-      fill: 'white',
-      display: 'flex',
-      flexDirection: 'column',
-      cornerRadius: 30,
-    })
-
-    container.add(
-      new VRender.Text({
-        text: taskRecord.developer,
-        fontSize: 16,
-        fontFamily: 'sans-serif',
-        fill: barColors[args.row % barColors.length],
-        fontWeight: 'bold',
-        maxLineWidth: width - 120,
-        boundsPadding: [10, 0, 0, 0],
-        alignSelf: 'center',
+  const createTaskCellLayout =
+    (barColors: string[]): GanttTaskCellLayout<DemoGanttTask> =>
+    args => {
+      const { table, row, col, rect } = args
+      const taskRecord = table.getCellOriginRecord(col, row)
+      const { height, width } = rect ?? table.getCellRect(col, row)
+      const container = new VRender.Group({
+        y: 10,
+        x: 20,
+        height: height - 20,
+        width: width - 40,
+        fill: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        cornerRadius: 30,
       })
-    )
 
-    container.add(
-      new VRender.Text({
-        text: `${new Date(taskRecord.start).toLocaleDateString()}-${new Date(taskRecord.end).toLocaleDateString()}`,
-        fontSize: 12,
-        fontFamily: 'sans-serif',
-        fontWeight: 'bold',
-        fill: 'black',
-        boundsPadding: [10, 0, 0, 0],
-        alignSelf: 'center',
-      })
-    )
+      if (!taskRecord) {
+        return { rootContainer: container, renderDefault: true }
+      }
 
-    return { rootContainer: container, expectedWidth: 160 }
-  }
+      container.add(
+        new VRender.Text({
+          text: taskRecord.developer,
+          fontSize: 16,
+          fontFamily: 'sans-serif',
+          fill: barColors[args.row % barColors.length],
+          fontWeight: 'bold',
+          maxLineWidth: width - 120,
+          boundsPadding: [10, 0, 0, 0],
+          alignSelf: 'center',
+        })
+      )
+
+      container.add(
+        new VRender.Text({
+          text: `${new Date(taskRecord.start).toLocaleDateString()}-${new Date(taskRecord.end ?? taskRecord.start).toLocaleDateString()}`,
+          fontSize: 12,
+          fontFamily: 'sans-serif',
+          fontWeight: 'bold',
+          fill: 'black',
+          boundsPadding: [10, 0, 0, 0],
+          alignSelf: 'center',
+        })
+      )
+
+      return { rootContainer: container, expectedWidth: 160 }
+    }
 
   // 任务条自定义布局
   const createTaskBarLayout =
-    (barColors0: string[], barColors: string[]) => (args: any) => {
+    (
+      barColors0: string[],
+      barColors: string[]
+    ): GanttTaskBarLayout<DemoGanttTask> =>
+    args => {
       const { width, height, index, taskDays, progress, taskRecord } = args
       const colorLength = barColors.length
       const container = new VRender.Group({
@@ -311,7 +302,7 @@
           cornerRadius: 25,
         })
       )
-      addGroup(container, containerLeft)
+      appendGanttGroup(container, containerLeft)
 
       // 中间信息
       const containerCenter = new VRender.Group({
@@ -342,7 +333,7 @@
           boundsPadding: [10, 0, 0, 0],
         })
       )
-      addGroup(container, containerCenter)
+      appendGanttGroup(container, containerCenter)
 
       // 右侧进度
       if (width >= 120) {
@@ -369,14 +360,14 @@
             boundsPadding: [0, 0, 0, 0],
           })
         )
-        addGroup(container, containerRight)
+        appendGanttGroup(container, containerRight)
       }
 
       return { rootContainer: container }
     }
 
   // 时间轴头部自定义布局
-  const createTimelineLayout = () => (args: any) => {
+  const createTimelineLayout = (): GanttTimelineLayout => args => {
     const { width, height, dateIndex } = args
     const container = new VRender.Group({
       width,
@@ -396,7 +387,7 @@
       justifyContent: 'space-around',
     })
     containerLeft.add(new VRender.Text({ text: '📅', fontSize: 16 }))
-    addGroup(container, containerLeft)
+    appendGanttGroup(container, containerLeft)
 
     const containerCenter = new VRender.Group({
       height,
@@ -416,7 +407,7 @@
         boundsPadding: [15, 0, 0, 0],
       })
     )
-    addGroup(container, containerCenter)
+    appendGanttGroup(container, containerCenter)
 
     return { rootContainer: container }
   }
@@ -429,7 +420,7 @@
       label: '基础甘特图',
       title: '基础甘特图 (preset="basic")',
       description: '简洁的基础配置，适用于简单的任务管理和项目概览。',
-      preset: 'basic' as GanttPreset,
+      preset: 'basic',
       ganttTitle: '基础项目管理',
       height: '580px',
       controls: [
@@ -452,7 +443,7 @@
       title: '项目管理甘特图 (preset="project")',
       description:
         '功能完整的项目管理配置，包含编辑器、优先级、行序号等专业功能。',
-      preset: 'project' as GanttPreset,
+      preset: 'project',
       ganttTitle: '软件开发项目',
       height: '680px',
       tips: [
@@ -489,7 +480,7 @@
       label: '时间线',
       title: '时间线甘特图 (preset="timeline")',
       description: '适用于事件时间线、历史记录展示和重要事件跟踪。',
-      preset: 'timeline' as GanttPreset,
+      preset: 'timeline',
       ganttTitle: '公司发展历程',
       height: '610px',
     },
@@ -498,7 +489,7 @@
       label: '里程碑',
       title: '里程碑甘特图 (preset="milestone")',
       description: '专门用于重要节点和里程碑的展示，突出关键时间点。',
-      preset: 'milestone' as GanttPreset,
+      preset: 'milestone',
       ganttTitle: '项目关键节点',
       height: '560px',
     },
@@ -507,7 +498,7 @@
       label: '官方示例',
       title: '官方示例甘特图 (preset="official")',
       description: '完全复刻官方演示的配置和数据，展示最真实的效果和完整功能。',
-      preset: 'official' as GanttPreset,
+      preset: 'official',
       ganttTitle: 'Official Demo',
       height: '750px',
     },
@@ -517,7 +508,6 @@
       title: '自定义渲染甘特图',
       description:
         '展示自定义渲染的强大功能，包含头像、进度、渐变色等高级视觉效果。',
-      preset: 'custom' as GanttPreset,
       ganttTitle: '团队任务看板',
       height: '710px',
       options: computed(() =>
@@ -534,8 +524,8 @@
     () => demoTabs.find(tab => tab.name === activeTab.value) ?? demoTabs[0]
   )
   const taskEntries = computed(() => {
-    const result: GanttTask[] = []
-    const visit = (tasks: GanttTask[]) =>
+    const result: DemoGanttTask[] = []
+    const visit = (tasks: DemoGanttTask[]) =>
       tasks.forEach(task => {
         result.push(task)
         if (task.children) visit(task.children)
@@ -545,7 +535,7 @@
       task.title.toLowerCase().includes(taskSearch.value.trim().toLowerCase())
     )
   })
-  const filterTasks = (tasks: GanttTask[]): GanttTask[] =>
+  const filterTasks = (tasks: DemoGanttTask[]): DemoGanttTask[] =>
     tasks.flatMap(task => {
       if (
         task.title.toLowerCase().includes(taskSearch.value.trim().toLowerCase())
@@ -557,7 +547,7 @@
   const visibleData = computed(() =>
     filterTasks(ganttData.value[activeTab.value] ?? [])
   )
-  const workspaceOptions = computed(() => {
+  const workspaceOptions = computed<GanttOptions<DemoGanttTask>>(() => {
     const base = unref(currentTab.value.options) ?? {}
     if (currentTab.value.name === 'custom') return base
     return {
@@ -594,7 +584,7 @@
           {
             unit: timeScale.value,
             step: 1,
-            format: (date: { dateIndex: number }) =>
+            format: date =>
               timeScale.value === 'week'
                 ? `第 ${date.dateIndex} 周`
                 : String(date.dateIndex),
@@ -612,10 +602,9 @@
     if (!selectedTask.value) return
     const date = new Date(selectedTask.value.start)
     if (Number.isFinite(date.getTime()))
-      ganttRefs.value[activeTab.value]?.ganttInstance?.scrollToMarkLine(date)
+      ganttRef.value?.ganttInstance?.scrollToMarkLine(date)
   }
-  watch(activeTab, (_name, previousName) => {
-    delete ganttRefs.value[previousName]
+  watch(activeTab, () => {
     selectedTask.value = null
     taskSearch.value = ''
     ganttError.value = ''
@@ -639,7 +628,7 @@
 
   // 添加任务
   const addTask = (type: 'basic' | 'project') => {
-    const newTask: GanttTask = {
+    const newTask: DemoGanttTask = {
       id: Date.now(),
       title: `新任务 ${Date.now()}`,
       start: type === 'basic' ? '2024-02-26' : '2024-08-16',
@@ -666,7 +655,7 @@
   const updateProgress = (type: 'basic' | 'project') => {
     const increment = type === 'basic' ? 15 : 10
 
-    const updateTaskProgress = (tasks: GanttTask[]): void => {
+    const updateTaskProgress = (tasks: DemoGanttTask[]): void => {
       tasks.forEach(task => {
         if (task.progress !== undefined && task.progress < 100) {
           task.progress = Math.min(100, task.progress + increment)
@@ -681,14 +670,13 @@
 
   // 切换展开/收起状态
   const toggleExpand = (type: 'basic' | 'project') => {
-    const ganttRef = ganttRefs.value[type]
-    if (!ganttRef?.ganttInstance) {
+    const gantt = ganttRef.value?.ganttInstance
+    if (!gantt || activeTab.value !== type) {
       message.warning('甘特图实例未找到')
       return
     }
 
     try {
-      const gantt = ganttRef.ganttInstance
       const isExpanded = expandStates[type]
       const table = gantt.taskListTableInstance
       if (!table) {
@@ -705,8 +693,11 @@
     }
   }
 
-  const onTaskChange = (task: GanttTask, changes: Partial<GanttTask>) => {
-    const visit = (tasks: GanttTask[]) =>
+  const onTaskChange = (
+    task: DemoGanttTask,
+    changes: GanttTaskChanges<DemoGanttTask>
+  ) => {
+    const visit = (tasks: DemoGanttTask[]) =>
       tasks.forEach(item => {
         if (String(item.id) === String(task.id)) Object.assign(item, changes)
         if (item.children) visit(item.children)
@@ -718,7 +709,7 @@
 
   // ==================== 甘特图事件回调 ====================
 
-  const onTaskClick = (task: GanttTask) => {
+  const onTaskClick = (task: DemoGanttTask) => {
     selectedTask.value = task
   }
 

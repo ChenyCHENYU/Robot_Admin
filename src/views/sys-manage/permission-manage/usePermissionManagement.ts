@@ -67,7 +67,6 @@ import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 import { isMockDataMode } from '@/config/dataMode'
 import { useLatestRequest } from '@/composables/useLatestRequest'
 import { delayWithSignal } from '@/utils/abort'
-import { toCrudTableColumns } from '@/utils/d_tableColumns'
 import { getRoleListApi } from '@/api/role-manage'
 import type { RoleData } from '@/api/role-manage.contract'
 import type { PermissionDraft } from '@/api/permission-manage.contract'
@@ -128,7 +127,7 @@ export function usePermissionManagement() {
             return { items: response.data, total: response.data.length }
           },
         },
-    columns: toCrudTableColumns(getTableColumns()),
+    columns: getTableColumns(),
     autoLoad: 'mounted',
   })
   const { data: tableData, loading, refresh } = table

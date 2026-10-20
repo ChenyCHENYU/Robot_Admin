@@ -7,6 +7,7 @@
 import type { Graph, Node } from '@antv/x6'
 import type {
   DiagramData,
+  DiagramExpose,
   DiagramType,
 } from '@robot-admin/naive-ui-components/C_AntV'
 import { createDiagramData } from './data'
@@ -16,10 +17,7 @@ export function useDiagramWorkspace() {
   const mode = ref('edit')
   const selectedId = ref('')
   const revision = ref(0)
-  const diagramRef = ref<{
-    getData: () => DiagramData
-    getGraph: () => Graph
-  } | null>(null)
+  const diagramRef = ref<DiagramExpose | null>(null)
   const snapshots: Partial<Record<DiagramType, DiagramData>> = {}
   const initialData = shallowRef(createDiagramData(type.value))
   const liveData = shallowRef(initialData.value)

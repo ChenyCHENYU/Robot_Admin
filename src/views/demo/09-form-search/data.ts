@@ -7,10 +7,10 @@
  */
 import type {
   SearchFormItem,
-  SearchFormParams,
+  SearchDateRangeValue,
 } from '@robot-admin/naive-ui-components'
 
-export interface BaseFormParams extends SearchFormParams {
+export interface BaseFormParams {
   pageNum: number
   pageSize: number
 }
@@ -18,7 +18,7 @@ export interface BaseFormParams extends SearchFormParams {
 export interface BasicFormParams extends BaseFormParams {
   name: string
   status: number | null
-  dateRange: string | null
+  dateRange: SearchDateRangeValue
 }
 
 export interface AdvancedFormParams extends BaseFormParams {
@@ -26,7 +26,7 @@ export interface AdvancedFormParams extends BaseFormParams {
   category: string | null
   level: string | null
   region: string
-  timeRange: string | null
+  timeRange: SearchDateRangeValue
   price: string
   tags: string
   department: string | null
@@ -37,30 +37,12 @@ export interface AdvancedFormParams extends BaseFormParams {
 }
 
 export interface MegaFormParams extends BaseFormParams {
-  [key: string]: string | number
-  field1: string
-  field2: string
-  field3: string
-  field4: string
-  field5: string
-  field6: string
-  field7: string
-  field8: string
-  field9: string
-  field10: string
-  field11: string
-  field12: string
-  field13: string
-  field14: string
-  field15: string
-  field16: string
+  [key: `field${number}`]: string
 }
-
-export type FormParams = BasicFormParams | AdvancedFormParams | MegaFormParams
 
 export interface FormConfig<T extends BaseFormParams> {
   params: T
-  items: SearchFormItem[]
+  items: SearchFormItem<T>[]
   historyKey: string
 }
 
@@ -106,20 +88,17 @@ export const SEARCH_PREVIEW_ROWS: SearchPreviewRow[] = [
 
 /** 根据已提交的条件筛选，输入草稿与列表查询分开。 */
 export function filterSearchPreview(
-  params: SearchFormParams
+  params: BasicFormParams
 ): SearchPreviewRow[] {
-  const name =
-    typeof params.name === 'string' ? params.name.trim().toLowerCase() : ''
-  const range = Array.isArray(params.dateRange) ? params.dateRange : []
+  const name = params.name.trim().toLowerCase()
+  const range = params.dateRange ?? []
   const timestamps = range.map(value =>
-    typeof value === 'number' ? value : new Date(String(value)).getTime()
+    typeof value === 'number' ? value : new Date(value).getTime()
   )
   return SEARCH_PREVIEW_ROWS.filter(
     row =>
       (!name || row.name.toLowerCase().includes(name)) &&
-      (params.status === null ||
-        params.status === undefined ||
-        row.status === params.status) &&
+      (params.status === null || row.status === params.status) &&
       (timestamps.length !== 2 ||
         !timestamps.every(Number.isFinite) ||
         (row.createdAt >= timestamps[0] && row.createdAt <= timestamps[1]))
@@ -182,9 +161,9 @@ export const advancedFormConfig: FormConfig<AdvancedFormParams> = {
       prop: 'category',
       placeholder: '请选择分类',
       list: [
-        { labelDefault: '科技' },
-        { labelDefault: '教育' },
-        { labelDefault: '娱乐' },
+        { labelDefault: '科技', value: '科技' },
+        { labelDefault: '教育', value: '教育' },
+        { labelDefault: '娱乐', value: '娱乐' },
       ],
     },
     {
@@ -192,9 +171,9 @@ export const advancedFormConfig: FormConfig<AdvancedFormParams> = {
       prop: 'level',
       placeholder: '请选择级别',
       list: [
-        { labelDefault: '初级' },
-        { labelDefault: '中级' },
-        { labelDefault: '高级' },
+        { labelDefault: '初级', value: '初级' },
+        { labelDefault: '中级', value: '中级' },
+        { labelDefault: '高级', value: '高级' },
       ],
     },
     { type: 'input', prop: 'region', placeholder: '请输入地区', hisList: [] },
@@ -206,9 +185,9 @@ export const advancedFormConfig: FormConfig<AdvancedFormParams> = {
       prop: 'department',
       placeholder: '请选择部门',
       list: [
-        { labelDefault: '技术部' },
-        { labelDefault: '产品部' },
-        { labelDefault: '运营部' },
+        { labelDefault: '技术部', value: '技术部' },
+        { labelDefault: '产品部', value: '产品部' },
+        { labelDefault: '运营部', value: '运营部' },
       ],
     },
     {
@@ -216,9 +195,9 @@ export const advancedFormConfig: FormConfig<AdvancedFormParams> = {
       prop: 'priority',
       placeholder: '请选择优先级',
       list: [
-        { labelDefault: '高' },
-        { labelDefault: '中' },
-        { labelDefault: '低' },
+        { labelDefault: '高', value: '高' },
+        { labelDefault: '中', value: '中' },
+        { labelDefault: '低', value: '低' },
       ],
     },
     {
@@ -254,13 +233,13 @@ function createMegaFormConfig(fieldCount = 16): FormConfig<MegaFormParams> {
     ...Object.fromEntries(
       Array.from({ length: fieldCount }, (_, i) => [`field${i + 1}`, ''])
     ),
-  } as MegaFormParams
+  }
 
-  const items: SearchFormItem[] = Array.from(
+  const items: SearchFormItem<MegaFormParams>[] = Array.from(
     { length: fieldCount },
     (_, i) => ({
       type: 'input' as const,
-      prop: `field${i + 1}`,
+      prop: `field${i + 1}` as const,
       placeholder: `请输入字段${i + 1}`,
       hisList: [],
     })
@@ -274,7 +253,7 @@ export const megaFormConfig = createMegaFormConfig()
 /** 将初始值交给搜索组件，输入和重置共用同一份字段契约。 */
 export function createSearchFields<T extends BaseFormParams>(
   config: FormConfig<T>
-): SearchFormItem[] {
+): SearchFormItem<T>[] {
   return config.items.map(item => ({
     ...item,
     defaultValue: config.params[item.prop],
@@ -283,31 +262,31 @@ export function createSearchFields<T extends BaseFormParams>(
 
 // 模拟数据生成器
 const mockDataGenerators = {
-  basic: (params: SearchFormParams) => [
+  basic: (params: Partial<BasicFormParams>) => [
     {
       id: 1,
-      name: (params as BasicFormParams).name || '用户1',
-      status: (params as BasicFormParams).status ?? '启用',
+      name: params.name || '用户1',
+      status: params.status ?? '启用',
     },
     {
       id: 2,
-      name: (params as BasicFormParams).name || '用户2',
-      status: (params as BasicFormParams).status ?? '禁用',
+      name: params.name || '用户2',
+      status: params.status ?? '禁用',
     },
   ],
-  advanced: (params: SearchFormParams) => [
+  advanced: (params: Partial<AdvancedFormParams>) => [
     {
       id: 1,
-      keyword: (params as AdvancedFormParams).keyword || '关键词1',
-      category: (params as AdvancedFormParams).category || '科技',
+      keyword: params.keyword || '关键词1',
+      category: params.category || '科技',
     },
     {
       id: 2,
-      keyword: (params as AdvancedFormParams).keyword || '关键词2',
-      category: (params as AdvancedFormParams).category || '教育',
+      keyword: params.keyword || '关键词2',
+      category: params.category || '教育',
     },
   ],
-  mega: (params: SearchFormParams) => [
+  mega: (params: object) => [
     { id: 1, type: '超多字段测试', fields: Object.keys(params).length },
   ],
 } as const
@@ -318,59 +297,52 @@ const mockDataGenerators = {
  */
 export function generateMockResults(
   type: keyof typeof mockDataGenerators,
-  params: SearchFormParams
+  params: Partial<BasicFormParams> & Partial<AdvancedFormParams>
 ): SearchResult[] {
   return mockDataGenerators[type]?.(params) || []
 }
 
-// 格式化参数用于日志
-/**
- *
- */
-export function formatParamsForLog(params: FormParams, type: string): string {
-  const filteredParams = Object.entries(params)
-    .filter(
-      ([, value]) => value !== '' && value !== null && value !== undefined
-    )
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
-  return `[${type}] 有效参数: ${JSON.stringify(filteredParams, null, 2)}`
+/** 选择条件直接保留业务模型，不继承组件库的开放索引。 */
+export interface SelectionSearchParams {
+  statuses: number[]
+  enabled: boolean | null
 }
 
 /** 使用组件原生字段契约；多选和布尔值无需页面自行编码。 */
-export const SELECTION_SEARCH_FIELDS: SearchFormItem[] = [
-  {
-    type: 'select',
-    prop: 'statuses',
-    placeholder: '可多选账号状态',
-    attrs: { multiple: true },
-    defaultValue: [],
-    list: [
-      { label: '启用', value: 1 },
-      { label: '禁用', value: 0 },
-      { label: '待审核', value: 2 },
-    ],
-  },
-  {
-    type: 'select',
-    prop: 'enabled',
-    placeholder: '是否可用',
-    defaultValue: false,
-    list: [
-      { label: '可用', value: true },
-      { label: '不可用', value: false },
-    ],
-  },
-]
+export const SELECTION_SEARCH_FIELDS: SearchFormItem<SelectionSearchParams>[] =
+  [
+    {
+      type: 'select',
+      prop: 'statuses',
+      placeholder: '可多选账号状态',
+      attrs: { multiple: true },
+      defaultValue: [],
+      list: [
+        { label: '启用', value: 1 },
+        { label: '禁用', value: 0 },
+        { label: '待审核', value: 2 },
+      ],
+    },
+    {
+      type: 'select',
+      prop: 'enabled',
+      placeholder: '是否可用',
+      defaultValue: false,
+      list: [
+        { label: '可用', value: true },
+        { label: '不可用', value: false },
+      ],
+    },
+  ]
 
 /** 两组条件取交集；空多选和清空布尔条件分别代表不限。 */
 export function filterSelectionPreview(
-  params: SearchFormParams
+  params: SelectionSearchParams
 ): SearchPreviewRow[] {
-  const statuses = Array.isArray(params.statuses) ? params.statuses : []
+  const { statuses } = params
   return SEARCH_PREVIEW_ROWS.filter(
     row =>
       (statuses.length === 0 || statuses.includes(row.status)) &&
-      (typeof params.enabled !== 'boolean' ||
-        (row.status === 1) === params.enabled)
+      (params.enabled === null || (row.status === 1) === params.enabled)
   )
 }

@@ -1,24 +1,41 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-20
+ * @Description: 甘特图演示业务任务与场景配置，组件类型统一从包内复用
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
 import type {
   GanttTask,
   GanttOptions,
   GanttPreset,
-} from '@robot-admin/naive-ui-components'
+  GanttTaskCellLayout,
+  GanttTaskBarLayout,
+  GanttTimelineLayout,
+} from '@robot-admin/naive-ui-components/C_VtableGantt'
 import type { ButtonProps } from 'naive-ui'
 import type { ComputedRef } from 'vue'
 
 // ==================== 基础类型定义 ====================
+
+/** 演示业务字段保留在页面；基础任务和布局契约由组件包提供。 */
+export interface DemoGanttTask extends GanttTask {
+  developer?: string
+  avatar?: string
+  children?: DemoGanttTask[]
+}
 
 export interface TabConfig {
   name: string
   label: string
   title: string
   description: string
-  preset: GanttPreset
+  preset?: GanttPreset
   ganttTitle: string
   height?: string
   tips?: string[]
   controls?: ControlConfig[]
-  options?: GanttOptions
+  options?:
+    GanttOptions<DemoGanttTask> | ComputedRef<GanttOptions<DemoGanttTask>>
 }
 
 export interface ControlConfig {
@@ -33,21 +50,6 @@ export interface PresetDescription {
   description: string
   note?: string
 }
-
-// 简化自定义布局类型 - 利用类型推导
-export type CustomLayoutFunction = (args: any) => {
-  rootContainer: any
-  expectedWidth?: number
-}
-
-export type CreateTaskCellLayoutFunction = (
-  colors: string[]
-) => CustomLayoutFunction
-export type CreateTaskBarLayoutFunction = (
-  colors0: string[],
-  colors: string[]
-) => CustomLayoutFunction
-export type CreateTimelineLayoutFunction = () => CustomLayoutFunction
 
 // ==================== 常量配置 ====================
 
@@ -162,9 +164,9 @@ const createTask = (config: {
   type?: 'milestone' | 'task'
   developer?: string
   avatar?: string
-  children?: GanttTask[]
-}): GanttTask => {
-  const task: GanttTask = {
+  children?: DemoGanttTask[]
+}): DemoGanttTask => {
+  const task: DemoGanttTask = {
     id: config.id,
     title: config.title,
     start: config.start,
@@ -173,10 +175,10 @@ const createTask = (config: {
   // 动态添加属性，让 TypeScript 自动推导
   if (config.end) task.end = config.end
   if (config.progress !== undefined) task.progress = config.progress
-  if (config.priority) (task as any).priority = config.priority
+  if (config.priority) task.priority = config.priority
   if (config.type) task.type = config.type
-  if (config.developer) (task as any).developer = config.developer
-  if (config.avatar) (task as any).avatar = config.avatar
+  if (config.developer) task.developer = config.developer
+  if (config.avatar) task.avatar = config.avatar
   if (config.children) task.children = config.children
 
   return task
@@ -187,7 +189,7 @@ const createTask = (config: {
 /**
  * 创建基础甘特图数据
  */
-export const createBasicData = (): GanttTask[] => {
+export const createBasicData = (): DemoGanttTask[] => {
   const baseDate = formatDate(DATE_CONSTANTS.BASE_YEAR, 1, 1)
 
   return [
@@ -232,7 +234,7 @@ export const createBasicData = (): GanttTask[] => {
 /**
  * 创建项目管理甘特图数据
  */
-export const createProjectData = (): GanttTask[] => [
+export const createProjectData = (): DemoGanttTask[] => [
   createTask({
     id: 1,
     title: '软件开发项目',
@@ -285,7 +287,7 @@ export const createProjectData = (): GanttTask[] => [
 /**
  * 创建时间线甘特图数据
  */
-export const createTimelineData = (): GanttTask[] => [
+export const createTimelineData = (): DemoGanttTask[] => [
   createTask({
     id: 1,
     title: '公司成立',
@@ -326,7 +328,7 @@ export const createTimelineData = (): GanttTask[] => [
 /**
  * 创建里程碑甘特图数据
  */
-export const createMilestoneData = (): GanttTask[] => {
+export const createMilestoneData = (): DemoGanttTask[] => {
   const milestones = [
     { title: '项目启动会', date: '2024-01-01', priority: '高' },
     { title: 'Alpha版本发布', date: '2024-02-15', priority: '高' },
@@ -349,7 +351,7 @@ export const createMilestoneData = (): GanttTask[] => {
 /**
  * 创建官方示例数据
  */
-export const createOfficialData = (): GanttTask[] => [
+export const createOfficialData = (): DemoGanttTask[] => [
   createTask({
     id: 1,
     title: 'Software Development',
@@ -495,7 +497,7 @@ export const createOfficialData = (): GanttTask[] => [
 /**
  * 创建自定义渲染数据
  */
-export const createCustomData = (): GanttTask[] => {
+export const createCustomData = (): DemoGanttTask[] => {
   const animalConfigs = [
     { name: 'bear', dev: 'bear.xiong', ext: 'jpg' },
     { name: 'wolf', dev: 'wolf.lang', ext: 'jpg' },
@@ -539,7 +541,7 @@ const dataCreators = {
  * 创建所有甘特图初始数据
  */
 export const createInitialData = () => {
-  const result: Record<string, GanttTask[]> = {}
+  const result: Record<string, DemoGanttTask[]> = {}
   Object.entries(dataCreators).forEach(([key, creator]) => {
     result[key] = creator()
   })
@@ -563,10 +565,15 @@ export const createDataByType = (type: keyof typeof dataCreators) => {
  * 创建自定义甘特图配置
  */
 export const createCustomOptions = (
-  createTaskCellLayout: CreateTaskCellLayoutFunction,
-  createTaskBarLayout: CreateTaskBarLayoutFunction,
-  createTimelineLayout: CreateTimelineLayoutFunction
-): GanttOptions => ({
+  createTaskCellLayout: (
+    colors: string[]
+  ) => GanttTaskCellLayout<DemoGanttTask>,
+  createTaskBarLayout: (
+    light: string[],
+    dark: string[]
+  ) => GanttTaskBarLayout<DemoGanttTask>,
+  createTimelineLayout: () => GanttTimelineLayout
+): GanttOptions<DemoGanttTask> => ({
   overscrollBehavior: 'none',
   headerRowHeight: LAYOUT_CONSTANTS.HEADER_ROW_HEIGHT,
   rowHeight: LAYOUT_CONSTANTS.ROW_HEIGHT,
@@ -630,16 +637,15 @@ export const createCustomOptions = (
       GANTT_COLORS.BAR_LIGHT,
       GANTT_COLORS.BAR_DARK
     ),
-    hoverBarStyle: { cornerRadius: 30 },
   },
   timelineHeader: {
     backgroundColor: GANTT_COLORS.BACKGROUND,
     colWidth: LAYOUT_CONSTANTS.TIMELINE_COL_WIDTH,
     scales: [
       {
-        unit: 'day' as const,
+        unit: 'day',
         step: 1,
-        format: (date: any) => date.dateIndex.toString(),
+        format: date => date.dateIndex.toString(),
         customLayout: createTimelineLayout(),
       },
     ],
@@ -668,7 +674,7 @@ export const createCustomOptions = (
 /**
  * 项目管理甘特图的额外配置
  */
-export const PROJECT_OPTIONS: GanttOptions = {
+export const PROJECT_OPTIONS: GanttOptions<DemoGanttTask> = {
   markLine: [
     {
       date: '2024-08-01',

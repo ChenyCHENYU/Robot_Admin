@@ -41,7 +41,12 @@ test('状态 0 独立查询一次，重置后提交使用已清空的最终条�
     .getByText('禁用', { exact: true })
     .click()
   await buttons.nth(0).click()
-  const results = page.locator('.demo-section pre')
+  const results = page
+    .locator('.demo-section')
+    .filter({
+      has: page.getByRole('heading', { name: '搜索结果', exact: true }),
+    })
+    .locator('pre')
   await expect(results).toContainText('"status": 0')
   expect(JSON.parse(await results.innerText())).toMatchObject([
     { id: 2, name: '李四', status: 0 },
@@ -227,69 +232,120 @@ test('操作栏清空真实复选框，Promise 刷新在同一事件轮次内只
   await expect(page.getByText('刷新完成', { exact: true })).toHaveCount(1)
 })
 
-test('动态 C++ 语法加载复用应用高亮器，选择下一语言前保留已显示内容', async ({
+test('动态 C++ 与 Rust 语法复用应用高亮器，切换文件保留各自草稿', async ({
   page,
 }) => {
   await page.goto('/#/editor/code-editor')
-  const dynamic = page.locator('.code-editor-demo .n-card').filter({
-    has: page.locator('.n-card-header__main', { hasText: /^动态语言加载$/ }),
+  const workspace = page.locator('.code-editor-demo')
+  const cppFile = workspace.getByRole('button', {
+    name: 'main.cpp cpp',
+    exact: true,
   })
-  const load = dynamic.getByRole('button', { name: '加载并显示', exact: true })
-  await load.click()
-  const title = dynamic.locator('.c-code-title')
-  const code = dynamic.locator('.n-code')
-  await expect(title).toHaveText('CPP 示例')
+  const rustFile = workspace.getByRole('button', {
+    name: 'main.rs rust',
+    exact: true,
+  })
+  const editor = workspace.getByLabel('代码文本', { exact: true })
+  const title = workspace.locator('.c-code-title')
+  const code = workspace.locator('.n-code')
+  await cppFile.click()
+  await expect(cppFile).toHaveAttribute('aria-pressed', 'true')
+  await expect(workspace.locator('.workspace-hint')).toHaveText(
+    '语法高亮已就绪'
+  )
+  await expect(title).toHaveText('main.cpp')
   await expect(code).toContainText('class NumberProcessor')
   await expect(code.locator('.hljs-keyword').first()).toBeVisible()
-  const previousCode = await code.innerText()
+  const cppDraft = (await editor.inputValue()) + '\n// C++ 迁移验收草稿'
+  await editor.fill(cppDraft)
+  await expect(code).toHaveText(cppDraft, { useInnerText: true })
   expect(await page.evaluate(() => Reflect.has(window, 'hljs'))).toBe(false)
 
-  await dynamic.locator('.n-select').click()
-  await page
-    .locator('.n-base-select-option')
-    .getByText('Rust', { exact: true })
-    .click()
-  await expect(title).toHaveText('CPP 示例')
-  await expect(code).toHaveText(previousCode, { useInnerText: true })
-  await expect(code.locator('.hljs-keyword').first()).toBeVisible()
-  await load.click()
-  await expect(title).toHaveText('RUST 示例')
+  await rustFile.click()
+  await expect(rustFile).toHaveAttribute('aria-pressed', 'true')
+  await expect(workspace.locator('.workspace-hint')).toHaveText(
+    '语法高亮已就绪'
+  )
+  await expect(title).toHaveText('main.rs')
   await expect(code).toContainText('struct Calculator')
+  await expect(code.locator('.hljs-keyword').first()).toBeVisible()
+  const rustDraft = (await editor.inputValue()) + '\n// Rust 迁移验收草稿'
+  await editor.fill(rustDraft)
+  await expect(code).toHaveText(rustDraft, { useInnerText: true })
+
+  await cppFile.click()
+  await expect(title).toHaveText('main.cpp')
+  await expect(editor).toHaveValue(cppDraft)
+  await expect(code).toHaveText(cppDraft, { useInnerText: true })
+  await expect(code.locator('.hljs-keyword').first()).toBeVisible()
+  await rustFile.click()
+  await expect(title).toHaveText('main.rs')
+  await expect(editor).toHaveValue(rustDraft)
+  await expect(code).toHaveText(rustDraft, { useInnerText: true })
   await expect(code.locator('.hljs-keyword').first()).toBeVisible()
   expect(await page.evaluate(() => Reflect.has(window, 'hljs'))).toBe(false)
 })
 
-test('Markdown 文章填写真实编辑器后完成发布流程并释放提交锁', async ({
+test('Markdown 真实编辑器输入后可连续手动保存，刷新恢复最终内容', async ({
   page,
 }) => {
   await page.goto('/#/editor/markdown-editor')
-  await page.locator('.n-tabs-tab').filter({ hasText: '表单集成' }).click()
-  const form = page.locator('.markdown-demo-page .n-form')
-  await form.getByPlaceholder('请输入文章标题').fill('组件包迁移回归文章')
-  await form
-    .getByPlaceholder('请输入文章摘要')
-    .fill('验证 Markdown 特殊字段和异步发布完成')
-  await form.locator('.n-select').click()
-  await page
-    .locator('.n-base-select-option')
-    .getByText('技术分享', { exact: true })
-    .click()
-  const content = form.locator(
-    '.form-markdown-editor .cm-content[contenteditable="true"]'
+  const workspace = page.locator('.markdown-demo-page')
+  await workspace
+    .getByRole('checkbox', { name: '自动保存到本机', exact: true })
+    .uncheck()
+  const editor = workspace.locator('.cm-content[contenteditable="true"]')
+  const save = workspace.getByRole('button', {
+    name: '保存到本机',
+    exact: true,
+  })
+  const storageKey = 'robot-admin:markdown-workspace:v1'
+  const firstDraft = '# 迁移验收\n\n真实编辑器输入后保存，保留文档内容。'
+  await expect(editor).toBeVisible()
+  await editor.click()
+  await editor.press('ControlOrMeta+A')
+  await page.keyboard.insertText(firstDraft)
+  await expect(workspace.locator('.workspace-footer')).toContainText(
+    '有尚未保存的修改'
   )
-  await expect(content).toBeVisible()
-  await content.fill('# 迁移验收\n\n真实编辑器输入后发布，保留表单内容。')
-  const publish = form.getByRole('button', { name: /发布文章$/ })
-  await publish.click()
-  await expect(publish).toBeDisabled()
+  expect(
+    await page.evaluate(key => localStorage.getItem(key), storageKey)
+  ).toBeNull()
+  await save.click()
   await expect(
-    page.getByText('发布流程演示完成，文章未持久化', { exact: true })
+    page.getByText('全部文档草稿已保存到本机', { exact: true })
   ).toHaveCount(1)
-  await expect(publish).toBeEnabled()
-  await expect(form.getByPlaceholder('请输入文章标题')).toHaveValue(
-    '组件包迁移回归文章'
+  await expect(save).toBeEnabled()
+  await expect(workspace.locator('.workspace-footer')).toContainText('已保存')
+  expect(
+    await page.evaluate(
+      key => JSON.parse(localStorage.getItem(key)!).drafts.notes,
+      storageKey
+    )
+  ).toBe(firstDraft)
+
+  const finalDraft = firstDraft + '\n\n第二次保存使用最终修改。'
+  await editor.click()
+  await editor.press('ControlOrMeta+A')
+  await page.keyboard.insertText(finalDraft)
+  await expect(workspace.locator('.workspace-footer')).toContainText(
+    '有尚未保存的修改'
   )
-  await expect(form.locator('.n-form-item-feedback--error')).toHaveCount(0)
+  await save.click()
+  await expect(save).toBeEnabled()
+  await expect(workspace.locator('.workspace-footer')).toContainText('已保存')
+  expect(
+    await page.evaluate(
+      key => JSON.parse(localStorage.getItem(key)!).drafts.notes,
+      storageKey
+    )
+  ).toBe(finalDraft)
+  await expect(editor).toHaveText(finalDraft, { useInnerText: true })
+  await page.reload()
+  await expect(workspace.locator('.workspace-footer')).toContainText(
+    '已恢复本机草稿'
+  )
+  await expect(editor).toHaveText(finalDraft, { useInnerText: true })
 })
 
 test('骨架屏结束加载后渲染真实表格按钮和头像组件，无组件解析告警', async ({

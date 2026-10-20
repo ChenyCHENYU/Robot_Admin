@@ -10,7 +10,7 @@ import type { TagProps } from 'naive-ui'
 
 import type { DemoEmployee } from '@/api/demo-employees.contract'
 
-// 接口返回数字 id，组件动态增行使用字符串 id；消费层兼容两种稳定主键。
+// 接口返回数字 id，本地演示工厂生成字符串临时 id；两种业务主键均由调用方提供。
 export interface DynamicEmployee extends Omit<DemoEmployee, 'id'> {
   id: number | string
 }

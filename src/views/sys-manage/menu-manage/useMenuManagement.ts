@@ -14,7 +14,7 @@ import type {
 } from '@robot-admin/naive-ui-components/C_Form'
 
 import type { FormItemRule, DialogReactive, DialogOptions } from 'naive-ui/es'
-import type { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
+import type { TreeExpose } from '@robot-admin/naive-ui-components/C_Tree'
 import type { ActionItem, DropInfo } from '@robot-admin/naive-ui-components'
 import { useLatestRequest } from '@/composables/useLatestRequest'
 import { clearExistingRoutes, initDynamicRouter } from '@/router/dynamicRouter'
@@ -105,7 +105,7 @@ export const useMenuManagement = () => {
   const showModal = ref(false)
   const modalMode = ref<'add' | 'edit'>('add')
   const formRef = ref<FormInstance<MenuFormData> | null>(null)
-  const treeRef = ref<InstanceType<typeof C_Tree> | null>(null)
+  const treeRef = ref<TreeExpose<MenuData> | null>(null)
   const menuList = ref<MenuData[]>([])
   const selectedId = ref<string | null>(null)
   const buttonPermissions = ref<ButtonPermission[]>([])
@@ -515,7 +515,11 @@ export const useMenuManagement = () => {
     if (action === 'delete') handleDeleteMenu(menu)
     if (action === 'add' && menu.type === 'directory') handleAddMenu(menu.id)
   }
-  const handleNodeDrop = async ({ node, dragNode, dropPosition }: DropInfo) => {
+  const handleNodeDrop = async ({
+    node,
+    dragNode,
+    dropPosition,
+  }: DropInfo<MenuData>) => {
     if (busy.value || searchPattern.value.trim()) return
     mutating.value = true
     try {

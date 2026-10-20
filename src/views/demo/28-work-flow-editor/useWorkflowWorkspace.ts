@@ -8,6 +8,7 @@ import type {
   WorkflowData,
   WorkflowNode,
   ValidationError,
+  WorkflowExpose,
 } from '@robot-admin/naive-ui-components/C_WorkFlow'
 import { workflowScenarios, userList, restoreWorkflowDrafts } from './data'
 const STORAGE_KEY = 'robot-admin:workflow-workspace:v1'
@@ -28,9 +29,7 @@ export function useWorkflowWorkspace() {
   const selectedId = ref('start-1')
   const errors = ref<ValidationError[]>([])
   const validated = ref(false)
-  const workflowRef = ref<{ validateWorkflow: () => ValidationError[] } | null>(
-    null
-  )
+  const workflowRef = ref<WorkflowExpose | null>(null)
   const current = computed(() =>
     workflowScenarios.find(item => item.id === currentScenario.value)!
   )
@@ -45,7 +44,7 @@ export function useWorkflowWorkspace() {
     data.value.nodes.find(item => item.id === selectedId.value)
   )
   const approvers = computed(() =>
-    selected.value && 'approvers' in selected.value.data
+    selected.value?.type === 'approval'
       ? (selected.value.data.approvers?.map(item => item.id) ?? [])
       : []
   )
@@ -71,11 +70,12 @@ export function useWorkflowWorkspace() {
     if (mode.value !== 'edit') return
     data.value = {
       ...data.value,
-      nodes: data.value.nodes.map(node =>
-        node.id === selectedId.value
-          ? { ...node, data: { ...node.data, title } }
-          : node
-      ),
+      nodes: data.value.nodes.map(node => {
+        if (node.id !== selectedId.value) return node
+        const updated = { ...node }
+        updated.data = { ...node.data, title }
+        return updated
+      }),
     }
   }
   const updateApprovers = (ids: string[]) => {

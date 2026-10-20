@@ -40,10 +40,7 @@
         <C_Time
           mode="range"
           :attrs="commonAttrs.medium"
-          @change-range="
-            (start: number | null, end: number | null) =>
-              handleRangeChange('basic', start, end)
-          "
+          @change="value => handleRangeChange('basic', value)"
         />
         <NAlert
           v-if="results.basic"
@@ -82,10 +79,7 @@
           :default-start-time="currentTime"
           :default-end-time="currentTime + 3600000"
           :attrs="commonAttrs.medium"
-          @change-range="
-            (start: number | null, end: number | null) =>
-              handleRangeChange('precise', start, end, true)
-          "
+          @change="value => handleRangeChange('precise', value, true)"
         />
         <NAlert
           v-if="results.precise"
@@ -118,7 +112,7 @@
           placeholder="请选择提醒时间"
           :default-single-time="reminderTime"
           :attrs="commonAttrs.medium"
-          @change-single="handleSingleTimeChange"
+          @change="handleSingleTimeChange"
         />
         <NAlert
           v-if="results.single"
@@ -156,10 +150,7 @@
           :minute-step="30"
           :enable-time-restriction="true"
           :attrs="commonAttrs.large"
-          @change-range="
-            (start: number | null, end: number | null) =>
-              handleRangeChange('workShift', start, end, false, true)
-          "
+          @change="value => handleRangeChange('workShift', value, false, true)"
         />
         <NAlert
           v-if="results.workShift"
@@ -196,13 +187,10 @@
         </template>
         <div class="custom-content">
           <C_Time
-            ref="customTimeRef"
+            v-model="customTime"
             mode="range"
             :attrs="commonAttrs.small"
-            @change-range="
-              (start: number | null, end: number | null) =>
-                handleRangeChange('custom', start, end)
-            "
+            @change="value => handleRangeChange('custom', value)"
           />
           <div class="action-bar">
             <C_ActionBar :actions="customTimeActions" />
@@ -222,7 +210,8 @@
 
 <script lang="ts" setup>
   defineOptions({ name: 'Demo04Time' })
-  import type { ActionItem } from '@robot-admin/naive-ui-components'
+  import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
+  import type { TimeRangeValue } from '@robot-admin/naive-ui-components/C_Time'
   import { commonAttrs } from './data'
 
   // 响应式数据
@@ -237,14 +226,14 @@
   // 时间相关数据
   const currentTime = ref(Date.now())
   const reminderTime = ref(new Date().setHours(9, 0, 0, 0))
-  const customTimeRef = ref()
+  const customTime = ref<TimeRangeValue | null>([null, null])
 
   // 格式化时间戳
   const formatTime = (
     timestamp: number | null,
     includeSeconds = false
   ): string => {
-    if (!timestamp) return '未选择'
+    if (timestamp === null) return '未选择'
     const date = new Date(timestamp)
     return date.toLocaleTimeString('zh-CN', {
       hour12: false,
@@ -271,12 +260,12 @@
   // 范围选择处理
   const handleRangeChange = (
     key: keyof typeof results,
-    startTime: number | null,
-    endTime: number | null,
+    range: TimeRangeValue | null,
     includeSeconds = false,
     showDuration = false
   ) => {
-    if (!startTime || !endTime) {
+    const [startTime, endTime] = range ?? [null, null]
+    if (startTime === null || endTime === null) {
       results[key] = ''
       return
     }
@@ -296,7 +285,7 @@
 
   // 单个时间选择处理
   const handleSingleTimeChange = (time: number | null) => {
-    results.single = time ? `提醒设置为: ${formatTimeHM(time)}` : ''
+    results.single = time === null ? '' : `提醒设置为: ${formatTimeHM(time)}`
   }
 
   // 自定义时间操作按钮
@@ -306,31 +295,21 @@
     { label: '获取值', type: 'info', onClick: getCurrentValues },
   ])
 
-  // 重置自定义时间
+  // 通过标准模型管理自定义时间，无需操作组件内部状态。
   const resetCustomTime = () => {
-    if (customTimeRef.value) {
-      customTimeRef.value.reset()
-      results.custom = '时间已重置'
-    }
+    customTime.value = [null, null]
+    results.custom = '时间已重置'
   }
 
-  // 设置为当前时间
   const setCurrentTime = () => {
-    if (customTimeRef.value) {
-      const now = Date.now()
-      customTimeRef.value.startTime = now
-      customTimeRef.value.endTime = now + 3600000
-      results.custom = '已设置为当前时间 + 1小时'
-    }
+    const now = Date.now()
+    customTime.value = [now, now + 3600000]
+    results.custom = '已设置为当前时间 + 1小时'
   }
 
-  // 获取当前值
   const getCurrentValues = () => {
-    if (customTimeRef.value) {
-      const start = customTimeRef.value.startTime
-      const end = customTimeRef.value.endTime
-      results.custom = `当前值: 开始=${formatTimeHM(start)}, 结束=${formatTimeHM(end)}`
-    }
+    const [start, end] = customTime.value ?? [null, null]
+    results.custom = `当前值: 开始=${formatTimeHM(start)}, 结束=${formatTimeHM(end)}`
   }
 
   // 生命周期

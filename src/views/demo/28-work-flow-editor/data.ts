@@ -541,14 +541,10 @@ export const NODE_MAPS = {
 
 // 验证规则
 export const VALIDATION_RULES = {
-  approval: (node: WorkflowNode) =>
-    !('approvers' in node.data) || !node.data.approvers?.length
-      ? '审批节点缺少审批人'
-      : null,
-  condition: (node: WorkflowNode) =>
-    !('conditions' in node.data) || !node.data.conditions?.length
-      ? '条件节点缺少分支条件'
-      : null,
+  approval: (node: WorkflowNode<'approval'>) =>
+    !node.data.approvers?.length ? '审批节点缺少审批人' : null,
+  condition: (node: WorkflowNode<'condition'>) =>
+    !node.data.conditions?.length ? '条件节点缺少分支条件' : null,
 } as const
 
 const validStoredPosition = (position: WorkflowNode['position'] | undefined) =>

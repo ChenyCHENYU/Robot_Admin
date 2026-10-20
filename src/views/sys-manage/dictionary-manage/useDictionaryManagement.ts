@@ -13,7 +13,7 @@ import type {
   SubmitEventPayload,
 } from '@robot-admin/naive-ui-components/C_Form'
 import type { DialogReactive, FormItemRule } from 'naive-ui/es'
-import type { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
+import type { TreeExpose } from '@robot-admin/naive-ui-components/C_Tree'
 import type { ActionItem } from '@robot-admin/naive-ui-components'
 import { useLatestRequest } from '@/composables/useLatestRequest'
 import { isMockDataMode } from '@/config/dataMode'
@@ -59,7 +59,7 @@ export const useDictionaryManagement = () => {
   const loadError = ref('')
   const searchPattern = ref('')
   const selectedId = ref<string | null>(null)
-  const treeRef = ref<InstanceType<typeof C_Tree> | null>(null)
+  const treeRef = ref<TreeExpose<DictData> | null>(null)
   const formRef = ref<FormInstance<DictFormData> | null>(null)
   const showModal = ref(false)
   const formData = reactive<DictFormData>({ ...DEFAULT_DICT_FORM_DATA })

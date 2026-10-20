@@ -5,7 +5,26 @@
  * @Description: 与项目模块对应的穿梭选择示例配置
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import type { TransferItem } from '@robot-admin/naive-ui-components'
+/** 分配范围由业务定义，组件从 data 推导记录和字符串键。 */
+export interface AssignmentItem {
+  key: string
+  label: string
+  description: string
+  icon: string
+  disabled?: boolean
+}
+
+/** 搜索名称和业务描述，保持页面提示与实际筛选行为一致。 */
+export const filterAssignmentItems = (
+  query: string,
+  item: AssignmentItem
+): boolean => {
+  const keyword = query.toLowerCase()
+  return (
+    item.label.toLowerCase().includes(keyword) ||
+    item.description.toLowerCase().includes(keyword)
+  )
+}
 
 export const TRANSFER_SCENES = {
   permission: {
@@ -60,7 +79,7 @@ export const TRANSFER_SCENES = {
         icon: 'mdi:text-box-search-outline',
         description: '行为追踪与审计',
       },
-    ] satisfies TransferItem[],
+    ] satisfies AssignmentItem[],
   },
   module: {
     label: '模块装配',
@@ -112,7 +131,7 @@ export const TRANSFER_SCENES = {
         description: '@robot-admin/file-utils',
         icon: 'mdi:folder-outline',
       },
-    ] satisfies TransferItem[],
+    ] satisfies AssignmentItem[],
   },
   member: {
     label: '团队成员',
@@ -152,7 +171,7 @@ export const TRANSFER_SCENES = {
         description: '构建与发布',
         icon: 'mdi:server-outline',
       },
-    ] satisfies TransferItem[],
+    ] satisfies AssignmentItem[],
   },
 }
 export type TransferScene = keyof typeof TRANSFER_SCENES
