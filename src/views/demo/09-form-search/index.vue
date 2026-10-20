@@ -66,6 +66,28 @@
       />
     </div>
 
+    <div class="demo-section selection-search-demo">
+      <h3>多选与布尔条件</h3>
+      <p
+        >账号状态可多选；是否可用支持清空。点击搜索更新列表，重置恢复「不可用」。</p
+      >
+      <C_FormSearch
+        v-model="selectionParams"
+        :form-item-list="SELECTION_SEARCH_FIELDS"
+        :config="{ density, requireValue: false, onSearch: searchSelection }"
+        @reset="searchSelection"
+      />
+      <C_Table
+        class="search-result-table"
+        :columns="previewColumns"
+        :data="selectionRows"
+        :config="{ density, toolbar: { show: false }, pagination: false }"
+      />
+      <pre data-testid="selection-submitted">{{
+        JSON.stringify(selectionSubmitted, null, 2)
+      }}</pre>
+    </div>
+
     <!-- 搜索结果 -->
     <div
       v-if="searchResults.length > 0"
@@ -98,6 +120,8 @@
     SEARCH_PREVIEW_ROWS,
     filterSearchPreview,
     type SearchPreviewRow,
+    SELECTION_SEARCH_FIELDS,
+    filterSelectionPreview,
   } from './data'
 
   const message = useMessage()
@@ -120,6 +144,21 @@
       render: row => new Date(row.createdAt).toLocaleString('zh-CN'),
     },
   ]
+
+  const selectionParams = ref<SearchFormParams>({
+    statuses: [],
+    enabled: false,
+  })
+  const selectionSubmitted = ref<SearchFormParams>({
+    statuses: [],
+    enabled: false,
+  })
+  const selectionRows = ref(filterSelectionPreview(selectionSubmitted.value))
+  /** 列表只使用已提交条件，保留输入草稿与查询结果的边界。 */
+  const searchSelection = (params: SearchFormParams) => {
+    selectionSubmitted.value = structuredClone(toRaw(params))
+    selectionRows.value = filterSelectionPreview(params)
+  }
 
   // onSearch 返回完整任务；search 事件只用于通知，避免同一查询执行两次。
   const searchConfig = (type: 'basic' | 'advanced' | 'mega'): SearchConfig => ({

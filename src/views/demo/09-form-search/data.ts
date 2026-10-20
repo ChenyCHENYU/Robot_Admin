@@ -8,25 +8,7 @@
 import type {
   SearchFormItem,
   SearchFormParams,
-  SearchOptionItem,
 } from '@robot-admin/naive-ui-components'
-
-// 类型定义
-export interface OptionItem extends SearchOptionItem {
-  labelDefault: string
-  value?: string | number
-  disabled?: boolean
-}
-
-export interface FormItem extends SearchFormItem {
-  type: 'input' | 'select' | 'date-range'
-  prop: string
-  placeholder?: string
-  list?: OptionItem[]
-  hisList?: string[]
-  isFocus?: boolean
-  show?: boolean
-}
 
 export interface BaseFormParams extends SearchFormParams {
   pageNum: number
@@ -352,4 +334,43 @@ export function formatParamsForLog(params: FormParams, type: string): string {
     )
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
   return `[${type}] 有效参数: ${JSON.stringify(filteredParams, null, 2)}`
+}
+
+/** 使用组件原生字段契约；多选和布尔值无需页面自行编码。 */
+export const SELECTION_SEARCH_FIELDS: SearchFormItem[] = [
+  {
+    type: 'select',
+    prop: 'statuses',
+    placeholder: '可多选账号状态',
+    attrs: { multiple: true },
+    defaultValue: [],
+    list: [
+      { label: '启用', value: 1 },
+      { label: '禁用', value: 0 },
+      { label: '待审核', value: 2 },
+    ],
+  },
+  {
+    type: 'select',
+    prop: 'enabled',
+    placeholder: '是否可用',
+    defaultValue: false,
+    list: [
+      { label: '可用', value: true },
+      { label: '不可用', value: false },
+    ],
+  },
+]
+
+/** 两组条件取交集；空多选和清空布尔条件分别代表不限。 */
+export function filterSelectionPreview(
+  params: SearchFormParams
+): SearchPreviewRow[] {
+  const statuses = Array.isArray(params.statuses) ? params.statuses : []
+  return SEARCH_PREVIEW_ROWS.filter(
+    row =>
+      (statuses.length === 0 || statuses.includes(row.status)) &&
+      (typeof params.enabled !== 'boolean' ||
+        (row.status === 1) === params.enabled)
+  )
 }

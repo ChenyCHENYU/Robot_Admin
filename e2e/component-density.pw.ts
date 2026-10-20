@@ -260,3 +260,60 @@ for (const mode of [
     })
   })
 }
+
+test('多选与布尔条件保留真实类型，提交、清空和重置同步结果', async ({
+  page,
+}) => {
+  await gotoReady(page, '/#/demo/form-manage/form-search')
+  const section = page.locator('.selection-search-demo')
+  const selects = section.locator('.n-select')
+  const rows = section.locator('tbody tr')
+  const submitted = section.getByTestId('selection-submitted')
+  await expect(selects.nth(1)).toContainText('不可用')
+  await expect(rows).toHaveCount(2)
+  await expect(submitted).toContainText('"enabled": false')
+
+  await selects.first().click()
+  await page
+    .locator('.n-base-select-option')
+    .getByText('禁用', { exact: true })
+    .click()
+  await page
+    .locator('.n-base-select-option')
+    .getByText('启用', { exact: true })
+    .click()
+  await section.getByRole('heading').click()
+  await expect(selects.first()).toContainText('禁用')
+  await expect(selects.first()).toContainText('启用')
+  await expect(rows).toHaveCount(2)
+  await section.getByRole('button', { name: '搜索', exact: true }).click()
+  await expect(rows).toHaveCount(1)
+  await expect(rows).toContainText('李四')
+  expect(JSON.parse((await submitted.textContent())!)).toEqual({
+    statuses: [0, 1],
+    enabled: false,
+  })
+
+  await selects.nth(1).click()
+  await page
+    .locator('.n-base-select-option')
+    .getByText('可用', { exact: true })
+    .click()
+  await section.getByRole('button', { name: '搜索', exact: true }).click()
+  await expect(rows).toContainText('张三')
+  expect(JSON.parse((await submitted.textContent())!).enabled).toBe(true)
+
+  await selects.nth(1).hover()
+  await selects.nth(1).locator('.n-base-clear').click()
+  await section.getByRole('button', { name: '搜索', exact: true }).click()
+  await expect(rows).toHaveCount(2)
+  expect(JSON.parse((await submitted.textContent())!).enabled).toBeNull()
+  await section.getByRole('button', { name: '重置', exact: true }).click()
+  await expect(rows).toHaveCount(2)
+  await expect(selects.first()).not.toContainText('禁用')
+  await expect(selects.nth(1)).toContainText('不可用')
+  expect(JSON.parse((await submitted.textContent())!)).toEqual({
+    statuses: [],
+    enabled: false,
+  })
+})

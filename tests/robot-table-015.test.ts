@@ -12,6 +12,7 @@ import {
   createSearchFields,
   generateMockResults,
   megaFormConfig,
+  filterSelectionPreview,
 } from '../src/views/demo/09-form-search/data'
 import {
   defaultConfig,
@@ -172,4 +173,28 @@ test('关闭父选择仍保留独立子选择；关闭子选择后不写入选�
     enableChildSelection: false,
   })
   expect([...children]).toEqual([11])
+})
+
+test('多选状态与布尔条件取交集，false、0、清空分别保留筛选语义', () => {
+  expect(
+    filterSelectionPreview({ statuses: [], enabled: false }).map(row => row.id)
+  ).toEqual([2, 3])
+  expect(
+    filterSelectionPreview({ statuses: [0, 1], enabled: false }).map(
+      row => row.id
+    )
+  ).toEqual([2])
+  expect(
+    filterSelectionPreview({ statuses: [0, 1], enabled: true }).map(
+      row => row.id
+    )
+  ).toEqual([1])
+  expect(
+    filterSelectionPreview({ statuses: [0, 1], enabled: null }).map(
+      row => row.id
+    )
+  ).toEqual([1, 2])
+  expect(filterSelectionPreview({ statuses: [], enabled: null })).toHaveLength(
+    3
+  )
 })
