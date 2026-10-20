@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { expect, test } from 'bun:test'
+import { getTableColumns } from '../src/views/demo/10-table/data'
 import {
   dataColumns,
   childColumnsConfig,
@@ -86,4 +87,18 @@ test('原生拖动切换全天标记后，合并依据最新标记规范日期',
   expect(timed.allDay).toBe(false)
   expect(new Date(timed.start).getHours()).toBe(9)
   expect(timed.end).toContain('T')
+})
+
+test('编辑表格使用组件默认功能列，校验规则只在业务列维护一份', () => {
+  const columns = getTableColumns()
+  expect(columns.slice(0, 2)).toEqual([
+    { type: 'selection' },
+    { type: 'index' },
+  ])
+  const name = columns.find(column => column.key === 'name')!
+  const email = columns.find(column => column.key === 'email')!
+  expect(name.required).toBe(true)
+  expect(name.editProps?.rules).toHaveLength(1)
+  expect(email.required).toBe(true)
+  expect(email.editProps?.rules).toHaveLength(1)
 })

@@ -186,6 +186,8 @@ const formatDescription = (desc?: string) =>
 
 // ================= 表格列配置 =================
 export const getTableColumns = (): TableColumn<Employee>[] => [
+  { type: 'selection' },
+  { type: 'index' },
   {
     key: 'name',
     title: '姓名',
