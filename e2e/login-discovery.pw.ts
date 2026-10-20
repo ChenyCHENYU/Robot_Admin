@@ -46,9 +46,6 @@ test('账号输入不发现公司；验证后清空密码并仅用票据激活�
   page.on('console', message => {
     if (message.type() === 'error') diagnostics.push(message.text())
   })
-  await page.addInitScript(() => {
-    Math.random = () => 0.5
-  })
   await page.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname
     const body =
@@ -82,10 +79,10 @@ test('账号输入不发现公司；验证后清空密码并仅用票据激活�
   )
   await solveDemoCaptcha(page)
   await page.locator('.c-login__submit-btn').click()
-  await expect(page.getByRole('button', { name: '确认工作公司' })).toBeEnabled()
-  await expect(page.getByPlaceholder('请输入密码').first()).toHaveValue('')
-  await page.locator('.login-workspace .n-base-selection').click()
-  await page.getByText('兼任公司', { exact: true }).last().click()
+  await expect(
+    page.getByRole('button', { name: '进入兼任公司', exact: true })
+  ).toBeEnabled()
+  await expect(page.getByPlaceholder('请输入密码')).toHaveCount(0)
   const stored = await page.evaluate(() =>
     JSON.stringify({
       local: { ...localStorage },
@@ -95,7 +92,7 @@ test('账号输入不发现公司；验证后清空密码并仅用票据激活�
   expect(stored).not.toContain('fixture-password')
   expect(stored).not.toContain('fixture-login-ticket')
   expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
-  await page.getByRole('button', { name: '确认工作公司' }).click()
+  await page.getByRole('button', { name: '进入兼任公司', exact: true }).click()
   await expect(page).toHaveURL(/#\/401$/)
   const login = requests.filter(request => request.path.endsWith('/auth/login'))
   expect(login).toHaveLength(1)
@@ -119,9 +116,6 @@ test('不同账号认证失败使用相同提示且不显示公司或原始错�
 }) => {
   test.setTimeout(60_000)
   let attempts = 0
-  await page.addInitScript(() => {
-    Math.random = () => 0.5
-  })
   await page.route('**/auth/login', route =>
     route.fulfill({
       json: {
@@ -146,9 +140,7 @@ test('不同账号认证失败使用相同提示且不显示公司或原始错�
   await expect(page.locator('.login-workspace')).toContainText(
     '账号或密码错误，请重新验证'
   )
-  await expect(page.getByRole('button', { name: '确认工作公司' })).toHaveCount(
-    0
-  )
+  await expect(page.locator('.company-entry')).toHaveCount(0)
   expect(attempts).toBe(2)
   expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
 })
@@ -157,23 +149,129 @@ test('账号改变立即作废已验证公司和票据，重新验证不复用�
   page,
 }) => {
   test.setTimeout(60_000)
-  await page.addInitScript(() => {
-    Math.random = () => 0.5
-  })
   await page.route('**/auth/login', route => route.fulfill({ json: pending }))
   await page.goto('/#/login')
   await page.getByPlaceholder('请输入用户名').fill('fixture-user')
   await page.getByPlaceholder('请输入密码').first().fill('fixture-password')
   await solveDemoCaptcha(page)
   await page.locator('.c-login__submit-btn').click()
-  await expect(page.getByRole('button', { name: '确认工作公司' })).toBeEnabled()
+  await expect(
+    page.getByRole('button', { name: '进入兼任公司', exact: true })
+  ).toBeEnabled()
   await page.getByRole('button', { name: '重新验证账号' }).click()
-  await expect(page.getByRole('button', { name: '确认工作公司' })).toHaveCount(
-    0
-  )
+  await expect(page.locator('.company-entry')).toHaveCount(0)
   await expect(page.getByPlaceholder('请输入密码').first()).toHaveValue('')
   await expect(page.locator('.login-workspace')).toContainText(
     '账号验证成功后才能选择工作公司'
   )
   expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull()
+})
+
+test('唯一公司票据自动进入，激活完成后才出现欢迎通知', async ({ page }) => {
+  let activationCount = 0
+  await page.route('**/api/**', async route => {
+    const path = new URL(route.request().url()).pathname
+    if (path.endsWith('/auth/login'))
+      return route.fulfill({
+        json: {
+          ...pending,
+          data: { ...pending.data, availableContexts: [contexts[0]] },
+        },
+      })
+    if (path.endsWith('/auth/context/activate')) {
+      activationCount++
+      expect(route.request().postDataJSON()).toEqual({
+        loginTicket: 'fixture-login-ticket',
+        contextId: 'company-primary',
+      })
+      return route.fulfill({
+        json: {
+          code: 0,
+          data: {
+            token: 'fixture-access',
+            refreshToken: 'fixture-refresh',
+            user: pending.data.user,
+            activeContext: contexts[0],
+            availableContexts: [contexts[0]],
+          },
+        },
+      })
+    }
+    return route.fulfill({ json: { code: 0, data: [] } })
+  })
+  await page.goto('/#/login')
+  await page.getByPlaceholder('请输入用户名').fill('fixture-user')
+  await page.getByPlaceholder('请输入密码').first().fill('fixture-password')
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
+  await expect(page).toHaveURL(/#\/401$/)
+  expect(activationCount).toBe(1)
+  await expect(page.getByRole('button', { name: '确认工作公司' })).toHaveCount(
+    0
+  )
+  await expect(
+    page
+      .locator('.n-notification')
+      .filter({ hasText: '欢迎回来，已进入「主公司」' })
+  ).toHaveCount(1)
+})
+
+test('公司激活失败保留选择并可直接重试，成功前不提前欢迎', async ({ page }) => {
+  let logins = 0
+  let activations = 0
+  await page.route('**/api/**', async route => {
+    const path = new URL(route.request().url()).pathname
+    if (path.endsWith('/auth/login')) {
+      logins++
+      return route.fulfill({ json: pending })
+    }
+    if (path.endsWith('/auth/context/activate')) {
+      if (++activations === 1)
+        return route.fulfill({
+          json: { code: 500, msg: '服务暂不可用', data: null },
+        })
+      return route.fulfill({
+        json: {
+          code: 0,
+          data: {
+            token: 'fixture-access',
+            refreshToken: 'fixture-refresh',
+            user: pending.data.user,
+            activeContext: contexts[1],
+            availableContexts: contexts,
+          },
+        },
+      })
+    }
+    return route.fulfill({ json: { code: 0, data: [] } })
+  })
+  await page.goto('/#/login')
+  await page.getByPlaceholder('请输入用户名').fill('fixture-user')
+  await page.getByPlaceholder('请输入密码').first().fill('fixture-password')
+  await solveDemoCaptcha(page)
+  await page.locator('.c-login__submit-btn').click()
+  await expect(
+    page.locator('.n-notification').filter({ hasText: '欢迎回来' })
+  ).toHaveCount(0)
+  const company = page.getByRole('button', {
+    name: '进入兼任公司',
+    exact: true,
+  })
+  await company.click()
+  await expect(page.locator('.company-entry')).toContainText(
+    '工作公司激活失败，请重试'
+  )
+  await expect(company).toBeEnabled()
+  await expect(
+    page.locator('.n-notification').filter({ hasText: '欢迎回来' })
+  ).toHaveCount(0)
+  await company.click()
+  await expect(page).toHaveURL(/#\/401$/)
+  expect(logins).toBe(1)
+  expect(activations).toBe(2)
+  await expect(
+    page
+      .locator('.n-notification')
+      .filter({ hasText: '欢迎回来，已进入「兼任公司」' })
+  ).toHaveCount(1)
 })

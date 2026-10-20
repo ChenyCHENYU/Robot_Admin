@@ -107,12 +107,14 @@ export const useLoginWorkspace = () => {
     if (companyError.value) return companyError.value
     if (!hasPendingActivation.value) return '账号验证成功后才能选择工作公司'
     return companies.value.length === 1
-      ? '身份已验证，确认唯一关联公司后进入'
-      : '身份已验证，默认选择主公司，也可选择其他已关联公司'
+      ? '账号验证通过，正在为你进入工作台…'
+      : '账号验证通过，选择一家公司即可进入'
   })
 
   /** 激活只发送短时一次性票据和本次已验证的公司选择，不再次发送密码。 */
-  const beginActivation = (): {
+  const beginActivation = (
+    contextId = selectedCompanyId.value
+  ): {
     requestId: number
     username: string
     request: ActivateAuthContextRequest
@@ -120,9 +122,11 @@ export const useLoginWorkspace = () => {
     if (
       !companyReady.value ||
       verifiedUsername !== username.value.trim() ||
-      !selectedCompanyId.value
+      !contextId ||
+      !companies.value.some(company => company.id === contextId)
     )
       throw new Error('请先验证账号并选择可用公司')
+    selectedCompanyId.value = contextId
     companyLoading.value = true
     companyError.value = ''
     return {
@@ -130,7 +134,7 @@ export const useLoginWorkspace = () => {
       username: verifiedUsername,
       request: {
         loginTicket: pendingTicket.value,
-        contextId: selectedCompanyId.value,
+        contextId,
       },
     }
   }

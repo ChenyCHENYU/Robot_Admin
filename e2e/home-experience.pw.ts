@@ -165,60 +165,30 @@ test('切换到审计公司后首页入口和页面统计随授权刷新', async
   expect(after).toBeLessThan(before)
 })
 
-test('登录公司下拉在悬停、选中和重新展开时保持柔和的深色高亮', async ({
+test('公司卡片在亮色系统主题下保持深色高亮，并可用键盘直接进入', async ({
   page,
 }) => {
   test.setTimeout(60_000)
   await page.emulateMedia({ colorScheme: 'light' })
-  await page.addInitScript(() => {
-    Math.random = () => 0.5
-  })
   await page.goto('/#/login')
-  await expect(page.locator('.login-workspace')).toContainText(
-    '账号验证成功后才能选择工作公司'
-  )
   await solveDemoCaptcha(page)
   await page.locator('.c-login__submit-btn').click()
-  await expect(page.getByRole('button', { name: '确认工作公司' })).toBeEnabled()
-  const selection = page.locator('.login-workspace .n-base-selection')
-  await expect(selection).toContainText('江苏金恒（南京）')
-  await selection.click()
-  const selected = page.locator('.n-base-select-option--selected')
-  await expect(selected).toBeVisible()
-  /** 按实际菜单背景混合伪元素高亮，避免亮色主题的白底再次覆盖深色菜单。 */
-  const readHighlight = () =>
-    selected.evaluate(element => {
-      const color = getComputedStyle(element, '::before')
-        .backgroundColor.match(/[\d.]+/g)!
-        .map(Number)
-      const menu = element.closest('.n-base-select-menu')!
-      const background = getComputedStyle(menu)
-        .backgroundColor.match(/[\d.]+/g)!
-        .map(Number)
-      const alpha = color[3] ?? 1
-      const average =
-        color
-          .slice(0, 3)
-          .reduce(
-            (total, channel, index) =>
-              total + channel * alpha + background[index] * (1 - alpha),
-            0
-          ) / 3
-      return { alpha, average }
-    })
-  await selected.hover()
-  const active = await readHighlight()
-  expect(active.alpha).toBeGreaterThan(0)
-  expect(active.average).toBeLessThan(100)
-  await page
-    .locator('.n-base-select-option')
-    .filter({ hasText: '江苏金恒（西安）' })
-    .hover()
-  expect((await readHighlight()).average).toBeLessThan(100)
-  await page.keyboard.press('Escape')
-  await expect(selected).not.toBeVisible()
-  await selection.click()
-  await expect(selected).toBeVisible()
-  await selected.hover()
-  await expect.poll(readHighlight).toEqual(active)
+  const company = page.getByRole('button', {
+    name: '进入江苏金恒（南京）',
+    exact: true,
+  })
+  await expect(company).toBeVisible()
+  await expect(page.locator('.c-login__submit-btn')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: '确认工作公司' })).toHaveCount(
+    0
+  )
+  await company.hover()
+  const background = await page
+    .locator('.company-entry')
+    .evaluate(element => getComputedStyle(element).backgroundImage)
+  expect(background).toContain('gradient')
+  await company.focus()
+  await expect(company).toBeFocused()
+  await company.press('Enter')
+  await expect(page).toHaveURL(/#\/home$/)
 })

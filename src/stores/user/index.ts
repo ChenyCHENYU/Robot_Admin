@@ -14,6 +14,7 @@ import { notification } from '@/plugins/discrete'
 import { s_permissionStore } from '@/stores/permission'
 import type { AuthContext } from '@/api/auth.contract'
 import { getSafeRequestDiagnostic } from '@/utils/d_request'
+import { notifyLogout } from '@/utils/d_authNotification'
 
 interface UserInfo {
   username?: string
@@ -203,6 +204,8 @@ export const s_userStore = defineStore('user', {
     },
 
     async logout(isExpired = false) {
+      const displayName =
+        this.userInfo.displayName || this.userInfo.username || ''
       try {
         // 1. 清除用户状态
         this.clearSession()
@@ -216,20 +219,11 @@ export const s_userStore = defineStore('user', {
         clearExistingRoutes()
 
         // 4. 跳转登录页
-        router.replace('/login')
+        await router.replace('/login')
+        if (this.token) return
 
         // 5. 根据退出原因显示不同提示
-        if (isExpired) {
-          notification.warning({
-            content: '登录已过期，请重新登录',
-            duration: 2500,
-          })
-        } else {
-          notification.success({
-            content: '已退出登录',
-            duration: 2000,
-          })
-        }
+        notifyLogout(displayName, isExpired)
       } catch (error) {
         console.error('退出登录请求未完成:', getSafeRequestDiagnostic(error))
         if (!this.token) router.replace('/login')

@@ -44,9 +44,7 @@ describe('UI regression contracts', () => {
     expect(loginSource).toContain(
       ':default-username="workspaceUsername || loginDefaults.username"'
     )
-    expect(loginSource).toContain(
-      ':default-password="hasPendingActivation ? \'\' : loginDefaults.password"'
-    )
+    expect(loginSource).toContain(':default-password="loginDefaults.password"')
     expect(loginSource).toContain('class="login-container"')
     expect(loginSource).toContain(':captcha-provider="LOGIN_CAPTCHA_PROVIDER"')
     expect(loginSource).toContain(':captcha-verifier="LOGIN_CAPTCHA_VERIFIER"')

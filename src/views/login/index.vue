@@ -100,14 +100,15 @@
     <div class="login-wrapper">
       <div class="enterprise-caption">企业工作台 <span>·</span> 安全访问</div>
       <C_Login
+        v-if="!hasPendingActivation"
         :key="loginFormGeneration"
         ref="loginRef"
         title="Robot Admin"
-        subtitle="先验证账号，再按授权选择工作公司"
+        subtitle="欢迎回来，登录后开启从容的一天"
         :features="loginFeatures"
         storage-key="robot-admin-enterprise-login"
         :loading="loading"
-        :submit-disabled="companyLoading || hasPendingActivation"
+        :submit-disabled="companyLoading"
         :captcha-provider="LOGIN_CAPTCHA_PROVIDER"
         :captcha-challenge-url="LOGIN_CAPTCHA_CHALLENGE_URL"
         :captcha-verifier="LOGIN_CAPTCHA_VERIFIER"
@@ -115,7 +116,7 @@
           LOGIN_REQUIRE_CAPTCHA_SERVER_VERIFICATION
         "
         :default-username="workspaceUsername || loginDefaults.username"
-        :default-password="hasPendingActivation ? '' : loginDefaults.password"
+        :default-password="loginDefaults.password"
         @submit="submitLogin"
         @username-change="workspaceUsername = $event"
         @captcha-visible-change="captchaVisible = $event"
@@ -126,38 +127,13 @@
             aria-live="polite"
             :aria-busy="companyLoading"
           >
-            <label
-              id="login-company-label"
-              class="login-workspace__label"
-              >工作公司</label
-            >
-            <NSelect
-              v-model:value="selectedCompanyId"
-              :options="companyOptions"
-              :loading="companyLoading"
-              :disabled="loading || companyLoading || companies.length < 2"
-              :placeholder="companyLoading ? '正在验证…' : '验证成功后选择公司'"
-              :theme-overrides="LOGIN_COMPANY_SELECT_THEME"
-              :status="companyError ? 'error' : undefined"
-              aria-labelledby="login-company-label"
-              filterable
-            />
             <p
               class="login-workspace__hint"
               :class="{ 'login-workspace__hint--error': companyError }"
               >{{ translateText(companyHint) }}</p
             >
-            <NButton
-              v-if="hasPendingActivation"
-              type="primary"
-              block
-              :disabled="!companyReady"
-              :loading="companyLoading"
-              @click="activatePendingCompany"
-              >确认工作公司</NButton
-            >
             <button
-              v-if="companyError || hasPendingActivation"
+              v-if="companyError"
               type="button"
               class="login-workspace__retry"
               :disabled="loading"
@@ -167,6 +143,79 @@
           </div>
         </template>
       </C_Login>
+      <section
+        v-else
+        class="company-entry login-workspace"
+        aria-labelledby="company-entry-title"
+        :aria-busy="companyLoading"
+      >
+        <header class="company-entry__header">
+          <span class="company-entry__verified"
+            ><span
+              class="i-mdi-shield-check-outline"
+              aria-hidden="true"
+            />账号已验证</span
+          >
+          <h1 id="company-entry-title">选择工作公司</h1>
+          <p
+            >{{
+              workspaceUsername
+            }}，欢迎回来。<br />选择您要进入的工作空间。</p
+          >
+        </header>
+        <div class="company-entry__list">
+          <button
+            v-for="company in companies"
+            :key="company.id"
+            type="button"
+            class="company-entry__item"
+            :class="{ 'is-primary': company.isPrimary }"
+            :disabled="companyLoading"
+            :aria-label="`进入${company.companyName}`"
+            @click="activatePendingCompany(company.id)"
+          >
+            <span
+              class="company-entry__mark"
+              aria-hidden="true"
+              >{{ company.companyName.slice(0, 1) }}</span
+            >
+            <span class="company-entry__detail"
+              ><strong>{{ company.companyName }}</strong
+              ><small>{{ company.tenantName }}</small></span
+            >
+            <span
+              v-if="company.isPrimary"
+              class="company-entry__badge"
+              >主公司</span
+            >
+            <NSpin
+              v-if="companyLoading && selectedCompanyId === company.id"
+              :size="16"
+            />
+            <span
+              v-else
+              class="i-mdi-arrow-right company-entry__arrow"
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+        <p
+          class="login-workspace__hint"
+          :class="{ 'login-workspace__hint--error': companyError }"
+          role="status"
+          >{{ translateText(companyHint) }}</p
+        >
+        <button
+          type="button"
+          class="company-entry__back login-workspace__retry"
+          :disabled="companyLoading"
+          @click="restartIdentityVerification"
+          ><span
+            class="i-mdi-arrow-left"
+            aria-hidden="true"
+          />重新验证账号</button
+        >
+      </section>
     </div>
   </div>
 </template>
@@ -187,13 +236,9 @@
   import { resolveLoginAuthContext } from '@/api/auth.contract'
   import { useLoginWorkspace } from '@/composables/useLoginWorkspace'
   import { applyAuthSession } from '@/utils/d_authSession'
+  import { notifyLoginSuccess } from '@/utils/d_authNotification'
   import { useLoginController } from '@/composables/useLoginController'
-  import {
-    createWelcomeConfig,
-    LOGIN_COMPANY_SELECT_THEME,
-    resolveLoginDefaults,
-    resolveLoginFeatures,
-  } from './data'
+  import { resolveLoginDefaults, resolveLoginFeatures } from './data'
   import {
     LOGIN_CAPTCHA_CHALLENGE_URL,
     LOGIN_CAPTCHA_PROVIDER,
@@ -217,7 +262,6 @@
     selectedCompanyId,
     companyLoading,
     companyError,
-    companyOptions,
     companyHint,
     companyReady,
     hasPendingActivation,
@@ -264,11 +308,10 @@
       loginRequestId = beginLogin(payload.username)
       return loginApi(payload)
     },
-    successMessage: '登录成功',
     errorMessage: '账号或密码错误',
     resolveErrorMessage: () => '账号或密码错误，请重新验证',
-    welcomeConfig: createWelcomeConfig(),
-    shouldNotifySuccess: response => Boolean(response.data.activeContext),
+    // 身份验证与公司激活共用最终会话入口，只在那里通知一次。
+    shouldNotifySuccess: () => false,
 
     onLoginSuccess: async (response, formData) => {
       if (!isCurrentLogin(loginRequestId, formData.username))
@@ -283,6 +326,8 @@
       acceptPendingLogin(response, formData.username, loginRequestId)
       // 通过公开key/default props更新实例，清除组件持有的旧密码，不读取私有表单。
       loginFormGeneration.value++
+      if (companies.value.length === 1)
+        await activatePendingCompany(companies.value[0].id)
     },
 
     onError: () => {
@@ -297,10 +342,10 @@
     loginFormGeneration.value++
   }
 
-  /** 已验证身份只用一次性票据确认公司，不再次提交明文密码。 */
-  const activatePendingCompany = async () => {
+  /** 点击公司即激活，只使用一次性票据，不再次提交密码或要求确认。 */
+  const activatePendingCompany = async (contextId: string) => {
     if (!companyReady.value) return
-    const activation = beginActivation()
+    const activation = beginActivation(contextId)
     try {
       const response = await requestActivatedSession(
         activation.request.loginTicket,
@@ -331,6 +376,13 @@
     await router.replace(
       getAuthorizedLandingPath(s_permissionStore().authMenuList)
     )
+    if (userStore.token === token)
+      notifyLoginSuccess(
+        userStore.userInfo.displayName ||
+          userStore.userInfo.username ||
+          fallbackUsername,
+        userStore.activeContext?.companyName
+      )
   }
 
   /** 激活响应必须包含完整的上下文，而不能回退到旧版单公司会话。 */

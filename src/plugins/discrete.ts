@@ -19,6 +19,8 @@ const { message, notification } = createDiscreteApi(
       max: 3,
       placement: 'top-right',
       keepAliveOnHover: true,
+      // 默认导航高 56px，下留 16px，通知悬停时也不遮挡头像与退出入口。
+      containerStyle: { top: 'var(--app-notification-top, 72px)' },
     },
   }
 )

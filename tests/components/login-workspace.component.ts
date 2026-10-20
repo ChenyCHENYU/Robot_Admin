@@ -82,6 +82,21 @@ const state = (wrapper: ReturnType<typeof mount>): Workspace =>
   wrapper.vm as unknown as Workspace
 
 describe('验证后的公司选择', () => {
+  test('点击授权公司可直接激活，未授权公司和重复请求不改变当前选择', () => {
+    const workspace = state(mount(Harness))
+    const requestId = workspace.beginLogin('A')
+    workspace.acceptPendingLogin(pending('A'), 'A', requestId)
+    expect(() => workspace.beginActivation('outside-company')).toThrow(
+      '可用公司'
+    )
+    expect(workspace.selectedCompanyId).toBe('A-primary')
+    expect(workspace.companyLoading).toBe(false)
+    expect(workspace.beginActivation('A-second').request.contextId).toBe(
+      'A-second'
+    )
+    expect(() => workspace.beginActivation('A-primary')).toThrow('请先验证')
+    expect(workspace.selectedCompanyId).toBe('A-second')
+  })
   test('只输入账号不会查询公司，验证成功后才允许选兼任公司并仅发送票据', async () => {
     const wrapper = mount(Harness)
     await wrapper.get('input').setValue(' A ')
