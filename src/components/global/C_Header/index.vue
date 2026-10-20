@@ -79,6 +79,7 @@
             class="flex-1 min-w-0 h-full flex items-center"
           >
             <C_Breadcrumb
+              :menus="permissionStore.showMenuListGet"
               :label-formatter="translateRouteTitle"
               :show-icon="settingsStore.showBreadcrumbIcon"
               @select="navigateTo"
@@ -106,6 +107,7 @@
 <script setup lang="ts">
   import { s_themeStore } from '@/stores/theme'
   import { s_settingsStore } from '@/stores/settings'
+  import { s_permissionStore } from '@/stores/permission'
   import { MENU_COLLAPSE_KEY } from '@robot-admin/layout/naive'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
@@ -115,6 +117,7 @@
 
   const themeStore = s_themeStore()
   const settingsStore = s_settingsStore()
+  const permissionStore = s_permissionStore()
   const router = useRouter()
 
   /** 面包屑事件不向 Vue 返回导航 Promise，避免把路由加载错误误报为组件错误。 */
