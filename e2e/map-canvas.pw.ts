@@ -6,7 +6,7 @@
  */
 import { expect, test } from '@playwright/test'
 import { installMockAdminSession } from './auth-fixture'
-import { expectRenderedMap } from './map-assertions'
+import { expectRenderedMap, placeMapMarker } from './map-assertions'
 
 test.beforeEach(async ({ page }) => {
   await installMockAdminSession(page)
@@ -57,7 +57,7 @@ for (const keepAlive of [false, true]) {
     await expectRenderedMap(page)
     await page.getByRole('button', { name: '收起菜单', exact: true }).click()
     await expectRenderedMap(page)
-    await page.getByRole('button', { name: '添加标记', exact: true }).click()
+    await placeMapMarker(page)
     await expect(page.locator('.leaflet-marker-icon')).toHaveCount(3)
     await page.evaluate(() => {
       location.hash = '#/plugins/video-player'

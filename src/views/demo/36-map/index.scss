@@ -16,6 +16,32 @@
   height: 100%;
   min-height: 0;
 }
+.map-canvas--picking :deep(.leaflet-container),
+.map-canvas--picking :deep(.amap-container) {
+  cursor: crosshair;
+}
+.map-picking-hint {
+  padding: 12px 20px;
+  color: var(--app-primary);
+  background: color-mix(in srgb, var(--app-primary) 6%, var(--app-bg-content));
+  font-size: 12px;
+}
+.map-coordinates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  background: var(--app-bg-layout);
+  border-radius: 8px;
+  dt {
+    font-size: 11px;
+    color: var(--app-text-tertiary);
+  }
+  dd {
+    margin: 4px 0 0;
+    font-variant-numeric: tabular-nums;
+  }
+}
 .map-marker-list {
   max-height: 300px;
   overflow: auto;

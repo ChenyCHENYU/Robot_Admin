@@ -6,6 +6,20 @@
  */
 import { expect, type Page } from '@playwright/test'
 
+/** 按真实用户流程选点并确认，避免回归继续依赖旧的自动偏移添加。 */
+export async function placeMapMarker(page: Page) {
+  await page.getByRole('button', { name: '添加标记', exact: true }).click()
+  const map = page.locator('.leaflet-container')
+  await map.scrollIntoViewIfNeeded()
+  await expect(map).not.toHaveClass(/leaflet-zoom-anim/)
+  const bounds = (await map.boundingBox())!
+  await map.click({
+    position: { x: bounds.width * 0.62, y: bounds.height * 0.4 },
+  })
+  await page.getByRole('button', { name: '确认添加', exact: true }).click()
+  await expect(page.locator('.map-marker-dialog')).toHaveCount(0)
+}
+
 /** 同时检查画布尺寸、可见瓦片、标记和缩放控件，不能仅判断资源加载成功。 */
 export async function expectRenderedMap(page: Page) {
   const canvas = page.locator('.map-canvas')

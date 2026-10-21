@@ -8,7 +8,7 @@ import { expect, test, type Page } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 import { useJSZip } from '@robot-admin/file-utils'
 import { installMockAdminSession } from './auth-fixture'
-import { expectRenderedMap } from './map-assertions'
+import { expectRenderedMap, placeMapMarker } from './map-assertions'
 import { readFileSync } from 'node:fs'
 import { PNG } from 'pngjs'
 const vercel = JSON.parse(
@@ -151,7 +151,7 @@ test('底图失败后可重试恢复，标记不丢失', async ({ page }) => {
   await expect(page.locator('.workspace-toolbar')).not.toContainText(
     '底图已就绪'
   )
-  await page.getByRole('button', { name: '添加标记', exact: true }).click()
+  await placeMapMarker(page)
   unavailable = false
   await page.getByRole('button', { name: '重试加载', exact: true }).click()
   await expect

@@ -8,6 +8,7 @@ import { expect, test } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { installMockAdminSession } from './auth-fixture'
+import { placeMapMarker } from './map-assertions'
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 test.beforeEach(async ({ page }) => {
   await installMockAdminSession(page)
@@ -37,7 +38,7 @@ test('地图只保留一个主视图，内置标记真实解码，城市和标�
     .toBe(true)
   await page.getByRole('button', { name: /上海外滩.*2 个内置/ }).click()
   await expect(page.locator('.map-detail')).toContainText('外滩观景台')
-  await page.getByRole('button', { name: '添加标记', exact: true }).click()
+  await placeMapMarker(page)
   await expect(icons).toHaveCount(3)
   await expect(page.locator('.map-detail')).toContainText('自定义标记 3')
   await page.getByRole('button', { name: '移除标记', exact: true }).click()

@@ -14,6 +14,7 @@ import type {
   MapTileConfig,
 } from '@robot-admin/naive-ui-components/C_Map'
 import { MAP_EXAMPLES } from './data'
+import { useMapPlacement } from './useMapPlacement'
 /** 单一地图主视图，资源失败与标记编辑分别保留明确状态。 */
 export function useMapWorkspace() {
   const message = useMessage()
@@ -59,6 +60,16 @@ export function useMapWorkspace() {
   )
   const selectedId = ref<string | number | undefined>(markers.value[0]?.id)
   const search = ref('')
+  const placement = useMapPlacement(marker => {
+    markers.value = [...markers.value, marker]
+    selectedId.value = marker.id
+    search.value = ''
+  })
+  const displayedMarkers = computed(() =>
+    placement.previewMarker.value
+      ? [...markers.value, placement.previewMarker.value]
+      : markers.value
+  )
   const showSettings = ref(false)
   const apiKey = ref(import.meta.env.VITE_AMAP_KEY || '')
   const securityCode = ref('')
@@ -113,6 +124,7 @@ export function useMapWorkspace() {
   }
   const onReady = (map: MapInstance) => {
     cleanup()
+    placement.bindMap(map)
     mapReady.value = true
     tilesLoaded.value = false
     error.value = ''
@@ -145,10 +157,12 @@ export function useMapWorkspace() {
     }
   }
   const onError = (value: Error) => {
+    placement.stopPlacement()
     mapReady.value = false
     error.value = value.message
   }
   const retry = () => {
+    placement.stopPlacement()
     cleanup()
     mapReady.value = false
     error.value = ''
@@ -157,6 +171,7 @@ export function useMapWorkspace() {
     revision.value++
   }
   const selectCity = (index: number) => {
+    placement.cancelPlacement()
     const city = MAP_EXAMPLES[index]
     cityIndex.value = index
     center.value = [...city.center]
@@ -178,18 +193,16 @@ export function useMapWorkspace() {
   }
   /** 地图内点击只同步选择，避免再次移动视野打断 SDK 弹窗。 */
   const onMarkerClick = (marker: MapMarker) => {
+    if (placement.isPicking.value) return
     selectedId.value = marker.id
   }
+  /** 添加按钮只进入选点状态，再次点击取消；坐标来自 SDK 点击事件。 */
   const addMarker = () => {
-    const offset = (markers.value.length + 1) * 0.004
-    const marker = {
-      id: crypto.randomUUID(),
-      lat: center.value[0] + offset,
-      lng: center.value[1] + offset,
-      popup: `自定义标记 ${markers.value.length + 1}`,
-    }
-    markers.value = [...markers.value, marker]
-    selectedId.value = marker.id
+    if (placement.isPicking.value) placement.cancelPlacement()
+    else if (
+      !placement.beginPlacement(`自定义标记 ${markers.value.length + 1}`)
+    )
+      message.warning('地图暂时无法选点，请重试加载')
   }
   const removeSelected = () => {
     markers.value = markers.value.filter(item => item.id !== selectedId.value)
@@ -205,13 +218,22 @@ export function useMapWorkspace() {
     tileWarning.value = ''
   })
   onMounted(observeCanvas)
-  onActivated(observeCanvas)
+  watch(showSettings, show => {
+    if (show) placement.cancelPlacement()
+  })
+  onActivated(() => {
+    observeCanvas()
+    const map = mapRef.value?.getMap()
+    if (map) placement.bindMap(map)
+  })
   onDeactivated(stopObserving)
   onBeforeUnmount(() => {
     stopObserving()
     cleanup()
   })
   return {
+    ...placement,
+    displayedMarkers,
     canvasRef,
     focusCanvas,
     tilesLoaded,
