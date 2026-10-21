@@ -77,13 +77,7 @@
           ><div
             ><h2>{{ MAP_EXAMPLES[cityIndex].title }}</h2
             ><small
-              >{{
-                mapType === 'osm'
-                  ? tileSource === 'carto'
-                    ? 'CARTO Voyager'
-                    : 'OpenStreetMap'
-                  : '高德地图'
-              }}
+              >{{ mapType === 'osm' ? 'OpenStreetMap' : '高德地图' }}
               ·
               {{
                 mapReady
@@ -94,18 +88,7 @@
               }}</small
             ></div
           ><div class="workspace-actions"
-            ><NSelect
-              v-if="mapType === 'osm'"
-              :value="tileSource"
-              size="small"
-              class="map-basemap-select"
-              aria-label="选择底图"
-              :options="[
-                { label: '浅色街道 · CARTO', value: 'carto' },
-                { label: '标准街道 · OSM', value: 'osm' },
-              ]"
-              @update:value="changeTileSource"
-            /><NButton
+            ><NButton
               size="tiny"
               :disabled="!markers.length || !mapReady"
               @click="fit"
@@ -130,10 +113,14 @@
             >重试加载</NButton
           ></NAlert
         >
-        <div class="map-canvas"
+        <div
+          ref="canvasRef"
+          class="map-canvas"
+          @mousedown.capture="focusCanvas"
           ><C_Map
             ref="mapRef"
             :key="revision"
+            class="map-view"
             height="100%"
             :center="center"
             :zoom="zoom"
@@ -146,7 +133,7 @@
             aria-label="城市地标地图"
             @ready="onReady"
             @error="onError"
-            @marker-click="selectMarker"
+            @marker-click="onMarkerClick"
         /></div>
         <section
           v-if="selected"
@@ -210,8 +197,8 @@
         ><p
           v-else
           class="workspace-hint"
-          >默认使用 CARTO 街道底图，连接失败会尝试 OSM
-          备用源。可在地图上方切换，地标会保留。</p
+          >默认使用 OpenStreetMap 街道底图，无需 API
+          Key。连接失败可重试，也可配置高德地图服务。</p
         ><template #footer
           ><NButton
             size="small"
@@ -229,13 +216,13 @@
   import { useMapWorkspace } from './useMapWorkspace'
   defineOptions({ name: 'Demo36Map' })
   const {
-    tileSource,
     tilesLoaded,
-    changeTileSource,
     providerDraft,
     keyDraft,
     securityDraft,
     applySettings,
+    canvasRef,
+    focusCanvas,
     mapRef,
     cityIndex,
     mapType,
@@ -259,6 +246,7 @@
     retry,
     selectCity,
     selectMarker,
+    onMarkerClick,
     addMarker,
     removeSelected,
     fit,

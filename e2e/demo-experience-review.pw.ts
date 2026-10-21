@@ -8,7 +8,9 @@ import { expect, test, type Page } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 import { useJSZip } from '@robot-admin/file-utils'
 import { installMockAdminSession } from './auth-fixture'
+import { expectRenderedMap } from './map-assertions'
 import { readFileSync } from 'node:fs'
+import { PNG } from 'pngjs'
 const vercel = JSON.parse(
   readFileSync(new URL('../vercel.json', import.meta.url), 'utf8')
 )
@@ -104,7 +106,12 @@ test('真实 CSP 下中文 PDF 有正文、翻页与缩放，损坏文件可重�
     reader.getByRole('button', { name: '重新加载 PDF' })
   ).toBeEnabled()
 })
-test('默认街道底图可真实加载，标记与署名可见', async ({ page }) => {
+test('默认街道底图可真实加载，标记与署名可见', async ({ page }, testInfo) => {
+  const tileResponse = page.waitForResponse(
+    response =>
+      response.url().startsWith('https://tile.openstreetmap.org/') &&
+      response.ok()
+  )
   await open(page, '/plugins/map', '.map-workspace')
   await expect
     .poll(() => page.locator('.leaflet-tile-loaded').count(), {
@@ -112,27 +119,46 @@ test('默认街道底图可真实加载，标记与署名可见', async ({ page 
     })
     .toBeGreaterThan(0)
   await expect(page.locator('.leaflet-control-attribution')).toContainText(
-    'CARTO'
-  )
-  await expect(page.locator('.leaflet-marker-icon')).toHaveCount(2)
-})
-test('首个底图失败自动切换备用源，标记不丢失', async ({ page }) => {
-  await page.route('**/basemaps.cartocdn.com/**', route => route.abort())
-  await page.route('**/tile.openstreetmap.org/**', route =>
-    route.fulfill({
-      contentType: 'image/svg+xml',
-      body: '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#eef3f8"/></svg>',
-    })
-  )
-  await open(page, '/plugins/map', '.map-workspace')
-  await expect(page.locator('.map-workspace .workspace-toolbar')).toContainText(
     'OpenStreetMap'
   )
+  await expect(page.locator('.leaflet-marker-icon')).toHaveCount(2)
+  await expectRenderedMap(page)
+  // 检查实际响应有地图配色，避免把 HTTP 200 的灰色鉴权占位图当成底图。
+  const tile = PNG.sync.read(await (await tileResponse).body())
+  let coloredPixels = 0
+  for (let i = 0; i < tile.data.length; i += 4) {
+    const [r, g, b] = tile.data.subarray(i, i + 3)
+    if (Math.max(r, g, b) - Math.min(r, g, b) > 15) coloredPixels++
+  }
+  expect(coloredPixels).toBeGreaterThan(1000)
+  await page.screenshot({
+    path: testInfo.outputPath('map-real-basemap.png'),
+    fullPage: true,
+  })
+})
+test('底图失败后可重试恢复，标记不丢失', async ({ page }) => {
+  let unavailable = true
+  await page.route('**/tile.openstreetmap.org/**', route =>
+    unavailable
+      ? route.abort()
+      : route.fulfill({
+          contentType: 'image/svg+xml',
+          body: '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#eef3f8"/></svg>',
+        })
+  )
+  await open(page, '/plugins/map', '.map-workspace')
+  await expect(page.locator('.map-alert')).toContainText('底图暂时无法连接')
+  await expect(page.locator('.workspace-toolbar')).not.toContainText(
+    '底图已就绪'
+  )
+  await page.getByRole('button', { name: '添加标记', exact: true }).click()
+  unavailable = false
+  await page.getByRole('button', { name: '重试加载', exact: true }).click()
   await expect
     .poll(() => page.locator('.leaflet-tile-loaded').count())
     .toBeGreaterThan(0)
   await expect(page.locator('.map-alert')).toHaveCount(0)
-  await page.getByRole('button', { name: '添加标记', exact: true }).click()
+  await expectRenderedMap(page)
   await expect(page.locator('.leaflet-marker-icon')).toHaveCount(3)
 })
 test('工作流头像离线显示，人员与审批方式修改同步画布', async ({ page }) => {
@@ -267,13 +293,14 @@ for (const theme of ['light', 'dark'])
           theme
         )
         await page.setViewportSize({ width, height: 1100 })
-        await page.route('**/basemaps.cartocdn.com/**', route =>
+        await page.route('**/tile.openstreetmap.org/**', route =>
           route.fulfill({
             contentType: 'image/svg+xml',
             body: '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#e9eef3"/></svg>',
           })
         )
         await open(page, route, root)
+        if (name === 'map') await expectRenderedMap(page)
         if (name === 'diagram')
           await expect(page.locator('.x6-node')).toHaveCount(6)
         if (name === 'workflow')

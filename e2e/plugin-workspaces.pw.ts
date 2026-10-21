@@ -17,7 +17,7 @@ test('地图只保留一个主视图，内置标记真实解码，城市和标�
   page,
 }) => {
   await page.route(
-    /(?:tile\.openstreetmap\.org|basemaps\.cartocdn\.com)\//,
+    /tile\.openstreetmap\.org\//,
     route =>
       route.fulfill({
         contentType: 'image/svg+xml',
@@ -46,7 +46,7 @@ test('地图只保留一个主视图，内置标记真实解码，城市和标�
 })
 test('地图底图失败可见且能重试，标记仍可操作', async ({ page }) => {
   await page.route(
-    /(?:tile\.openstreetmap\.org|basemaps\.cartocdn\.com)\//,
+    /tile\.openstreetmap\.org\//,
     route => route.abort()
   )
   await page.goto('/#/plugins/map')

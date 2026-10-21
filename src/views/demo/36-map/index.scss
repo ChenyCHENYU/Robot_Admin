@@ -11,6 +11,11 @@
   min-width: 0;
   isolation: isolate;
 }
+.map-view {
+  // 组件根节点也需要确定高度，内部百分比高度才能撑开 Leaflet 画布。
+  height: 100%;
+  min-height: 0;
+}
 .map-marker-list {
   max-height: 300px;
   overflow: auto;
@@ -51,8 +56,4 @@
   .map-canvas {
     height: 420px;
   }
-}
-
-.map-basemap-select {
-  width: 168px;
 }

@@ -18,6 +18,38 @@ import { MAP_EXAMPLES } from './data'
 export function useMapWorkspace() {
   const message = useMessage()
   const mapRef = ref<MapExpose | null>(null)
+  const canvasRef = ref<HTMLElement | null>(null)
+  let resizeObserver: ResizeObserver | undefined
+  let resizeFrame = 0
+  /** 容器布局完成后刷新 SDK 坐标，合并侧栏动画中的连续尺寸变化。 */
+  const refreshCanvas = () => {
+    cancelAnimationFrame(resizeFrame)
+    resizeFrame = requestAnimationFrame(() => {
+      const canvas = canvasRef.value
+      if (canvas?.isConnected && canvas.clientWidth && canvas.clientHeight)
+        mapRef.value?.refresh()
+    })
+  }
+  /** 首次进入和 KeepAlive 恢复时重新观察实际画布。 */
+  const observeCanvas = () => {
+    resizeObserver?.disconnect()
+    if (!canvasRef.value) return
+    resizeObserver = new ResizeObserver(refreshCanvas)
+    resizeObserver.observe(canvasRef.value)
+    refreshCanvas()
+  }
+  /** 缓存隐藏或销毁后停止观察，避免后台刷新。 */
+  const stopObserving = () => {
+    resizeObserver?.disconnect()
+    cancelAnimationFrame(resizeFrame)
+  }
+  /** 先无滚动聚焦地图，避免 Leaflet 默认聚焦使嵌套滚动区在按下与松开间跳动。 */
+  const focusCanvas = (event: MouseEvent) => {
+    if (event.button !== 0) return
+    const map = mapRef.value?.getMap()
+    if (map && 'getContainer' in map)
+      map.getContainer().focus({ preventScroll: true })
+  }
   const cityIndex = ref(0)
   const mapType = ref<MapType>('osm')
   const center = ref<MapCoordinate>([...MAP_EXAMPLES[0].center])
@@ -31,9 +63,7 @@ export function useMapWorkspace() {
   const apiKey = ref(import.meta.env.VITE_AMAP_KEY || '')
   const securityCode = ref('')
   const mapReady = ref(false)
-  const tileSource = ref<'carto' | 'osm'>('carto')
   const tilesLoaded = ref(false)
-  let hasFallback = false
   let tileTimer: ReturnType<typeof setTimeout> | undefined
   const error = ref('')
   const tileWarning = ref('')
@@ -67,36 +97,26 @@ export function useMapWorkspace() {
       ? { securityJsCode: securityCode.value.trim() }
       : undefined
   })
-  const tileConfig = computed<MapTileConfig>(() => ({
-    url:
-      tileSource.value === 'carto'
-        ? 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'
-        : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  const tileConfig: MapTileConfig = {
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
-      tileSource.value === 'carto'
-        ? '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>'
-        : '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     detectRetina: false,
     maxZoom: 19,
-  }))
+  }
   let cleanup = () => {}
-  /** 首个底图不可用时只切换一次备用源，保留当前视野和地标。 */
+  /** 连接失败保留标记编辑，明确提示重试或配置其他地图服务。 */
   const recoverTiles = () => {
     clearTimeout(tileTimer)
-    if (tileSource.value === 'carto' && !hasFallback) {
-      hasFallback = true
-      tileSource.value = 'osm'
-      tileWarning.value = '正在尝试备用底图…'
-      return
-    }
     tileWarning.value =
-      '底图暂时无法连接，请重试或选择其他底图。地标定位与编辑仍然可用。'
+      '底图暂时无法连接，请重试或在地图服务设置中切换服务。地标定位与编辑仍然可用。'
   }
   const onReady = (map: MapInstance) => {
     cleanup()
     mapReady.value = true
     tilesLoaded.value = false
     error.value = ''
+    refreshCanvas()
     if (!('eachLayer' in map)) return
     const off: Array<() => void> = []
     tileTimer = setTimeout(recoverTiles, 8000)
@@ -124,14 +144,6 @@ export function useMapWorkspace() {
       off.forEach(stop => stop())
     }
   }
-  /** 手动切换底图始终允许重新尝试，不丢失标记。 */
-  const changeTileSource = (value: 'carto' | 'osm') => {
-    cleanup()
-    tilesLoaded.value = false
-    tileWarning.value = ''
-    hasFallback = value === 'osm'
-    tileSource.value = value
-  }
   const onError = (value: Error) => {
     mapReady.value = false
     error.value = value.message
@@ -142,7 +154,6 @@ export function useMapWorkspace() {
     error.value = ''
     tileWarning.value = ''
     tilesLoaded.value = false
-    hasFallback = false
     revision.value++
   }
   const selectCity = (index: number) => {
@@ -164,6 +175,10 @@ export function useMapWorkspace() {
     if ('flyTo' in map)
       map.flyTo([marker.lat, marker.lng], Math.max(map.getZoom(), 13))
     else map.setCenter([marker.lng, marker.lat])
+  }
+  /** 地图内点击只同步选择，避免再次移动视野打断 SDK 弹窗。 */
+  const onMarkerClick = (marker: MapMarker) => {
+    selectedId.value = marker.id
   }
   const addMarker = () => {
     const offset = (markers.value.length + 1) * 0.004
@@ -189,11 +204,17 @@ export function useMapWorkspace() {
     error.value = ''
     tileWarning.value = ''
   })
-  onBeforeUnmount(() => cleanup())
+  onMounted(observeCanvas)
+  onActivated(observeCanvas)
+  onDeactivated(stopObserving)
+  onBeforeUnmount(() => {
+    stopObserving()
+    cleanup()
+  })
   return {
-    tileSource,
+    canvasRef,
+    focusCanvas,
     tilesLoaded,
-    changeTileSource,
     providerDraft,
     keyDraft,
     securityDraft,
@@ -222,6 +243,7 @@ export function useMapWorkspace() {
     retry,
     selectCity,
     selectMarker,
+    onMarkerClick,
     addMarker,
     removeSelected,
     fit,
