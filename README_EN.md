@@ -272,7 +272,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | ------------ | --------------------------------------------------------------------------------------- |
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
-| Build        | **Vite 8.2.2** · Bun · Sass · Auto-import and component Resolver                        |
+| Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
 | Data grid    | **MachTable 0.30.1** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 

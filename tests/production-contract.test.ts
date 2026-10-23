@@ -95,7 +95,10 @@ describe('production contracts', () => {
     expect(packageJson.scripts.verify).toContain('bun run check:bundle')
     expect(packageJson.scripts.verify).toContain('bun run build:application')
     expect(packageJson.scripts['test:e2e']).toBe('playwright test')
-    expect(packageJson.scripts['security:audit']).toBe('bun audit')
+    expect(packageJson.scripts['security:audit']).toBe(
+      'bun run scripts/check-dependency-security.js'
+    )
+    expect(packageJson.scripts['security:audit:raw']).toBe('bun audit --json')
     const ci = await Bun.file(
       new URL('../.github/workflows/ci.yml', import.meta.url)
     ).text()

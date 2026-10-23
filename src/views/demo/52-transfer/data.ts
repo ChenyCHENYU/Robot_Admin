@@ -32,7 +32,7 @@ export const TRANSFER_SCENES = {
     icon: 'mdi:shield-key-outline',
     subject: '运营角色',
     description: '选择角色可访问的模块，受保护的管理权限保持锁定。',
-    titles: ['可选权限', '角色权限'] as [string, string],
+    titles: ['可选权限', '角色权限'] as const,
     defaults: ['home', 'analysis'],
     data: [
       {
@@ -86,7 +86,7 @@ export const TRANSFER_SCENES = {
     icon: 'mdi:puzzle-outline',
     subject: '应用能力组合',
     description: '以 Robot Admin 生态包演示功能组合，选择结果仅用于预览。',
-    titles: ['生态能力', '已选能力'] as [string, string],
+    titles: ['生态能力', '已选能力'] as const,
     defaults: ['layout', 'theme', 'components'],
     data: [
       {
@@ -138,7 +138,7 @@ export const TRANSFER_SCENES = {
     icon: 'mdi:account-group-outline',
     subject: '示例项目组',
     description: '按职责分配示例成员，体验搜索、批量移动和结果回看。',
-    titles: ['候选成员', '项目成员'] as [string, string],
+    titles: ['候选成员', '项目成员'] as const,
     defaults: ['frontend', 'qa'],
     data: [
       {
