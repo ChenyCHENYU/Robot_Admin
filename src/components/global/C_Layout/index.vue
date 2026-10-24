@@ -42,7 +42,7 @@
               ></div>
               <C_Menu
                 :routes="group.items"
-                :value="route.path"
+                :model-value="route.path"
                 mode="vertical"
                 :collapsed="collapsed"
                 :inverted="isDarkMode"

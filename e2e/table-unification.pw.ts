@@ -7,7 +7,7 @@
  */
 import { test, expect, type Locator } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { utils, write, read } from 'xlsx'
+import { useExcel } from '@robot-admin/file-utils/excel'
 import { installMockAdminSession } from './auth-fixture'
 
 /** 检查真实渲染结果，避免只检查模板标签而漏掉列配置或样式覆盖。 */
@@ -193,15 +193,6 @@ test('角色用户弹窗与权限治理子页同样居中', async ({ page }) => 
 test('Excel 导入、处理预览与历史统一居中，导出数据不包含展示行键', async ({
   page,
 }) => {
-  const workbook = utils.book_new()
-  utils.book_append_sheet(
-    workbook,
-    utils.json_to_sheet([
-      { 姓名: '张三', 部门: '技术部', 薪资: 8000 },
-      { 姓名: '李四', 部门: '设计部', 薪资: 9000 },
-    ]),
-    '员工'
-  )
   await page.goto('/#/hooks/excel-all')
   await page
     .locator('input[type="file"]')
@@ -210,7 +201,12 @@ test('Excel 导入、处理预览与历史统一居中，导出数据不包含�
       name: 'table-verification.xlsx',
       mimeType:
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      buffer: write(workbook, { type: 'buffer', bookType: 'xlsx' }),
+      buffer: await readFile(
+        new URL(
+          './fixtures/spreadsheets/table-verification.xlsx',
+          import.meta.url
+        )
+      ),
     })
   await expect(page.locator('.preview-table tbody')).toContainText('张三')
   await page.getByRole('button', { name: '筛选非空行', exact: true }).click()
@@ -219,10 +215,12 @@ test('Excel 导入、处理预览与历史统一居中，导出数据不包含�
   await Promise.all((await tables.all()).map(expectCenteredTable))
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: '导出处理结果', exact: true }).click()
-  const exported = read(await readFile((await (await downloadPromise).path())!))
-  const rows = utils.sheet_to_json<Record<string, unknown>>(
-    exported.Sheets[exported.SheetNames[0]]
-  )
+  const savedPath = await (await downloadPromise).path()
+  if (!savedPath) throw new Error('未获得处理结果导出文件')
+  const bytes = await readFile(savedPath)
+  const excel = useExcel()
+  const exported = await excel.readFile(new Blob([new Uint8Array(bytes)]))
+  const rows = exported[excel.sheets.value[0]]
   expect(rows).toHaveLength(2)
   expect(rows.every(row => !Object.hasOwn(row, '__previewRowKey'))).toBe(true)
 })

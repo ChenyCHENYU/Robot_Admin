@@ -29,7 +29,12 @@
           >{{ item }}</button
         ></div
       ><div class="workspace-actions"
-        ><NInput
+        ><NSelect
+          v-model:value="collectionSize"
+          class="gallery-collection-select"
+          size="small"
+          :options="COLLECTION_OPTIONS"
+          aria-label="素材库规模" /><NInput
           v-model:value="search"
           size="small"
           clearable
@@ -63,7 +68,7 @@
       ><NButton
         size="small"
         :disabled="limit >= filteredItems.length"
-        @click="limit += 8"
+        @click="limit += pageSize"
         >查看更多素材</NButton
       ><span>内置设计示例 · 无需外部图片服务</span></footer
     >
@@ -96,12 +101,24 @@
     WaterFallExpose,
     WaterFallItem,
   } from '@robot-admin/naive-ui-components/C_WaterFall'
-  import { GALLERY_ITEMS, GALLERY_CATEGORIES } from './data'
+  import {
+    GALLERY_ITEMS,
+    GALLERY_CATEGORIES,
+    COLLECTION_OPTIONS,
+    createGalleryCollection,
+  } from './data'
   defineOptions({ name: 'Demo48Waterfall' })
   const galleryRef = ref<WaterFallExpose | null>(null)
   const category = ref('全部素材')
   const search = ref('')
   const columns = ref(0)
+  const collectionSize = ref(16)
+  const pageSize = computed(() => (collectionSize.value > 100 ? 200 : 8))
+  const collection = computed(() =>
+    collectionSize.value > 100
+      ? createGalleryCollection(collectionSize.value)
+      : GALLERY_ITEMS
+  )
   const limit = ref(8)
   const selected = shallowRef<WaterFallItem | null>(null)
   const showItem = ref(false)
@@ -112,7 +129,7 @@
     { label: '四列', value: 4 },
   ]
   const filteredItems = computed(() =>
-    GALLERY_ITEMS.filter(
+    collection.value.filter(
       item =>
         (category.value === '全部素材' || item.category === category.value) &&
         item.title!.includes(search.value.trim())
@@ -130,8 +147,8 @@
     anchor.download = `${selected.value.id}.svg`
     anchor.click()
   }
-  watch([category, search], () => {
-    limit.value = 8
+  watch([category, search, collectionSize], () => {
+    limit.value = pageSize.value
   })
 </script>
 <style lang="scss" scoped>

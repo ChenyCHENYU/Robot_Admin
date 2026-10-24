@@ -9,7 +9,6 @@
 import { expect, test, type Page } from '@playwright/test'
 import type { WorkflowData } from '@robot-admin/naive-ui-components/C_WorkFlow'
 import { readFile } from 'node:fs/promises'
-import { utils, write } from 'xlsx'
 import { installMockAdminSession } from './auth-fixture'
 
 test.setTimeout(60_000)
@@ -68,30 +67,14 @@ test('切换联系人保留各自草稿，发送只归属当前会话并清空�
 test('Excel 预览保留文本编号和金额格式，切换工作表不会混入上一表内容', async ({
   page,
 }) => {
-  const workbook = utils.book_new()
-  // 长编号从源文件开始就是文本，避免将 Excel 数值精度丢失误当成预览能力。
-  const settlement = utils.aoa_to_sheet([
-    ['业务编号', '证件编号', '结算金额', '完成率'],
-    ['000042', '12345678901234567890', 1234.5, 0.125],
-  ])
-  settlement.C2.z = '#,##0.00'
-  settlement.D2.z = '0.0%'
-  utils.book_append_sheet(workbook, settlement, '结算明细')
-  utils.book_append_sheet(
-    workbook,
-    utils.aoa_to_sheet([
-      ['工作项', '数量'],
-      ['跨表核对', 7],
-    ]),
-    '复核记录'
-  )
-
   await page.goto('/#/plugins/file-preview')
   await page.getByLabel('选择预览文件').setInputFiles({
     name: '编号与金额核验.xlsx',
     mimeType:
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    buffer: write(workbook, { type: 'buffer', bookType: 'xlsx' }),
+    buffer: await readFile(
+      new URL('./fixtures/spreadsheets/settlement-review.xlsx', import.meta.url)
+    ),
   })
   await expect(page.locator('.document-main .workspace-toolbar')).toContainText(
     '编号与金额核验.xlsx'

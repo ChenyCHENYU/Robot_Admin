@@ -7,7 +7,7 @@
  */
 import { test, expect, type Page } from '@playwright/test'
 import { installMockAdminSession } from './auth-fixture'
-import { utils, write } from 'xlsx'
+import { readFile } from 'node:fs/promises'
 
 for (const route of ['table-expand', 'table-dynamic']) {
   test(`${route} 的演示不依赖员工接口或第三方代理`, async ({ page }) => {
@@ -392,12 +392,6 @@ test('Excel 首次读取就显示 SVG，预览挂载后结束等待且不增加�
       return readBuffer.call(this)
     }
   })
-  const workbook = utils.book_new()
-  utils.book_append_sheet(
-    workbook,
-    utils.json_to_sheet([{ 姓名: '张三', 部门: '技术部' }]),
-    '员工'
-  )
   await page.clock.install()
   await page.clock.pauseAt(new Date(Date.now() + 100))
   await page
@@ -407,7 +401,9 @@ test('Excel 首次读取就显示 SVG，预览挂载后结束等待且不增加�
       name: 'loading-check.xlsx',
       mimeType:
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      buffer: write(workbook, { type: 'buffer', bookType: 'xlsx' }),
+      buffer: await readFile(
+        new URL('./fixtures/spreadsheets/loading-check.xlsx', import.meta.url)
+      ),
     })
   await page.clock.runFor(200)
   const loading = page

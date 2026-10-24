@@ -9,6 +9,35 @@ permissions:
   contents: read
 
 jobs:
+  runtime-browsers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.18.0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun ci
+      - run: bun run type-build:runtime
+      - run: bun run build:runtime
+      - run: bunx playwright install --with-deps ${{ matrix.browser }}
+      - run: bun run test:e2e:runtime --project ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-${{ matrix.browser }}
+          path: |
+            node_modules/.cache/runtime-regression-results.json
+            test-results/
+          retention-days: 7
+
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 30

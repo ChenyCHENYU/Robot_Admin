@@ -1,0 +1,3714 @@
+{
+  "measuredAt": "2026-10-24T04:13:57.316Z",
+  "componentVersion": "0.22.0",
+  "componentArtifactSha256": "ef0d26ba40ea6af0f9c96af21974363d304f9893fe36759f92202d8c8d82e6f2",
+  "sourceReportSha256": "dac33d1d027b5a0e27432dfe89850398f69d63603eea273f1400d0d9f14379fa",
+  "command": "bun run test:e2e:runtime",
+  "limitations": "Finite cycles; native layout/media; heap and live WeakRefs are observations, not a long-run heap leak proof. currentSrc is historical metadata; native media cleanup checks paused, src removal, readyState and networkState.",
+  "results": [
+    {
+      "browser": "chromium",
+      "scenario": "1,200 项窗口化保持 DOM 有界、原始索引与滚动边界，允许关闭",
+      "status": "passed",
+      "durationMs": 5034,
+      "runtime-measurements": {
+        "browser": "chromium",
+        "version": "153.0.8010.12",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "items": 1200,
+        "mounts": 24,
+        "topCount": 20,
+        "bottomCount": 18,
+        "mounted": {
+          "resizeTargets": 24,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 108,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "elapsedMs": 4894.288125,
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 37,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 37,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "chromium",
+      "scenario": "240 字段首尾值跨挂载保留，24 次挂载不累积节点或观察目标",
+      "status": "passed",
+      "durationMs": 5522,
+      "runtime-measurements": {
+        "browser": "chromium",
+        "version": "153.0.8010.12",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "fields": 240,
+        "mounts": 24,
+        "mounted": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 3657,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "cycleElapsedMs": [
+          292.2875839999997, 233.03212499999972, 232.45608300000004,
+          217.28362500000003, 233.13195799999994, 233.7718330000007,
+          233.15620799999942, 215.66612500000065, 234.46991699999944,
+          216.63945800000056, 217.02037500000006, 214.49662499999977,
+          216.97099999999955, 234.89383400000042, 216.53079100000105,
+          233.35970799999996, 215.95129199999974, 234.03787499999999,
+          215.21162500000173, 216.8769169999996, 215.99575000000004,
+          218.53283399999964, 250.02833299999838, 216.6088749999999
+        ],
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 57,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 57,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "chromium",
+      "scenario": "Markdown 与富文本各 12 次交替挂载释放编辑器，宿主按钮样式不变",
+      "status": "passed",
+      "durationMs": 3425,
+      "runtime-measurements": {
+        "browser": "chromium",
+        "version": "153.0.8010.12",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "mounts": 24,
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "samples": [
+          {
+            "scene": "Markdown",
+            "elapsedMs": 220.2354579999992,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 722,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 166.9880830000002,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 133.8402500000011,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 132.77870900000016,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 135.06674999999996,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 133.05904100000043,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 133.1708749999998,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 115.01687499999935,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 117.398333000001,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 268.08050000000003,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 114.82308399999965,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 118.28270900000098,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 132.99299999999857,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 116.34712500000023,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 132.57900000000154,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 134.15883399999984,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 134.23333400000047,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 116.75945800000045,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 132.74695799999972,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 133.94191599999976,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 132.6647920000014,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 134.39208300000064,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 132.30391600000075,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 133.0579170000001,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            }
+          }
+        ],
+        "hostStyleUnchanged": true,
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 58,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 58,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "chromium",
+      "scenario": "本地音视频各 12 次换源并卸载，媒体停止、src 清空且 Blob 所有权闭环",
+      "status": "passed",
+      "durationMs": 11445,
+      "runtime-measurements": {
+        "browser": "chromium",
+        "version": "153.0.8010.12",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "mounts": 24,
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "capabilities": {
+          "audio": "maybe",
+          "video": "probably"
+        },
+        "samples": [
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 567.6445000000003,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 97,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 1,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 450.0130419999987,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 2,
+              "programmaticMediaLive": 2,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 483.1146669999998,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 3,
+              "programmaticMediaLive": 3,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 449.78008299999965,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 4,
+              "programmaticMediaLive": 4,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 500.22249999999985,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 5,
+              "programmaticMediaLive": 5,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 450.00554199999897,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 6,
+              "programmaticMediaLive": 6,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 483.12412499999846,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 7,
+              "programmaticMediaLive": 7,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 449.83908299999894,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 8,
+              "programmaticMediaLive": 8,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 483.61345900000015,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 9,
+              "programmaticMediaLive": 9,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 449.9444999999978,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 10,
+              "programmaticMediaLive": 10,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 498.85791600000084,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 11,
+              "programmaticMediaLive": 11,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 450.74262499999895,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 12,
+              "programmaticMediaLive": 12,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 483.87291699999696,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 13,
+              "programmaticMediaLive": 13,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 449.74212500000067,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 14,
+              "programmaticMediaLive": 14,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 500.0231249999997,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 15,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 449.83287500000006,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 16,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 500.03570799999943,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 17,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 449.9853329999969,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 18,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 466.5146659999991,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 19,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 450.13258300000234,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 20,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 499.9843340000007,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 21,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 449.9008329999997,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 22,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 499.73812499999985,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 23,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 450.0972909999982,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 24,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": 10000000,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          }
+        ],
+        "decodingScope": "Only canPlayType-supported local PCM WAV and VP9 WebM; no remote streaming, DRM or broad codec claim.",
+        "mediaObservation": "DOM nodes and programmatic Audio instances are counted separately. Weak references do not force retention; temporary test handles verify explicit pause/source cleanup before disposal. Live-object counts are observations, not GC/leak assertions.",
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 50,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 24,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 50,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 24,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": 10000000,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "firefox",
+      "scenario": "1,200 项窗口化保持 DOM 有界、原始索引与滚动边界，允许关闭",
+      "status": "passed",
+      "durationMs": 6862,
+      "runtime-measurements": {
+        "browser": "firefox",
+        "version": "155.0",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "items": 1200,
+        "mounts": 24,
+        "topCount": 20,
+        "bottomCount": 18,
+        "mounted": {
+          "resizeTargets": 24,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 108,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "elapsedMs": 6382.773084,
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 37,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 37,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "firefox",
+      "scenario": "240 字段首尾值跨挂载保留，24 次挂载不累积节点或观察目标",
+      "status": "passed",
+      "durationMs": 9074,
+      "runtime-measurements": {
+        "browser": "firefox",
+        "version": "155.0",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "fields": 240,
+        "mounts": 24,
+        "mounted": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 3656,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "cycleElapsedMs": [
+          423.54675000000043, 386.72404200000074, 366.47791700000016,
+          466.79104200000074, 348.88524999999936, 401.41070799999943,
+          349.53283400000146, 349.938709, 351.1325420000012, 365.80854200000067,
+          349.7165420000001, 381.5193750000017, 347.68420799999876,
+          370.9069159999999, 332.972667, 404.52891699999964, 426.9548329999998,
+          353.5157080000008, 365.3302079999994, 351.05233299999963,
+          361.1617499999993, 354.49875000000065, 366.1869170000009,
+          350.26700000000164
+        ],
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 56,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 56,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "firefox",
+      "scenario": "Markdown 与富文本各 12 次交替挂载释放编辑器，宿主按钮样式不变",
+      "status": "passed",
+      "durationMs": 4207,
+      "runtime-measurements": {
+        "browser": "firefox",
+        "version": "155.0",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "mounts": 24,
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "samples": [
+          {
+            "scene": "Markdown",
+            "elapsedMs": 233.40912500000195,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 722,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 231.5109160000029,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 170.3714579999978,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 150.5728339999987,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 172.96208300000217,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 176.10908299999937,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 150.24820900000122,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 228.91754199999923,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 166.8997500000005,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 153.9411250000012,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 169.04220800000257,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 149.34858299999905,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 167.1047499999986,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 149.4828329999982,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 164.0449579999986,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 153.3155829999996,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 167.97391699999935,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 143.106749999999,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 167.2681249999987,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 151.3239999999969,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 164.17974999999933,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 154.5705420000013,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 167.9106670000001,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 150.7759159999987,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          }
+        ],
+        "hostStyleUnchanged": true,
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 58,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 58,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "firefox",
+      "scenario": "本地音视频各 12 次换源并卸载，媒体停止、src 清空且 Blob 所有权闭环",
+      "status": "passed",
+      "durationMs": 10591,
+      "runtime-measurements": {
+        "browser": "firefox",
+        "version": "155.0",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "mounts": 24,
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "capabilities": {
+          "audio": "maybe",
+          "video": "probably"
+        },
+        "samples": [
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 695.0922089999985,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 97,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 1,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 565.8890420000025,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 2,
+              "programmaticMediaLive": 2,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 466.7972919999993,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 3,
+              "programmaticMediaLive": 3,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 333.5011659999982,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 4,
+              "programmaticMediaLive": 4,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 483.1792920000007,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 5,
+              "programmaticMediaLive": 5,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 349.4406670000026,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 6,
+              "programmaticMediaLive": 6,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 483.88058399999863,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 7,
+              "programmaticMediaLive": 7,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 349.6268340000024,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 8,
+              "programmaticMediaLive": 8,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 484.00458300000173,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 9,
+              "programmaticMediaLive": 9,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 347.7410830000008,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 10,
+              "programmaticMediaLive": 10,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 467.67979200000264,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 11,
+              "programmaticMediaLive": 11,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 334.04895899999974,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 12,
+              "programmaticMediaLive": 12,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 517.3531660000008,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 13,
+              "programmaticMediaLive": 13,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 349.0190829999992,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 14,
+              "programmaticMediaLive": 14,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 463.37720799999806,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 15,
+              "programmaticMediaLive": 15,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 370.4290830000027,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 16,
+              "programmaticMediaLive": 16,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 480.31779200000165,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 17,
+              "programmaticMediaLive": 17,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 353.26145800000086,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 18,
+              "programmaticMediaLive": 18,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 498.24224999999933,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 19,
+              "programmaticMediaLive": 19,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 367.82587500000227,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 20,
+              "programmaticMediaLive": 20,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 500.94525000000067,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 21,
+              "programmaticMediaLive": 21,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 348.41541700000016,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 22,
+              "programmaticMediaLive": 22,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 468.24108400000114,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 23,
+              "programmaticMediaLive": 23,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 349.2817920000016,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 24,
+              "programmaticMediaLive": 24,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          }
+        ],
+        "decodingScope": "Only canPlayType-supported local PCM WAV and VP9 WebM; no remote streaming, DRM or broad codec claim.",
+        "mediaObservation": "DOM nodes and programmatic Audio instances are counted separately. Weak references do not force retention; temporary test handles verify explicit pause/source cleanup before disposal. Live-object counts are observations, not GC/leak assertions.",
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 50,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 24,
+          "programmaticMediaLive": 24,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 50,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 24,
+          "programmaticMediaLive": 24,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/a7c3f34b-cc85-4f97-bc54-eb014b7f551c",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/23c63bfa-c9bd-4956-98f6-20ad0cb4abd0",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/1d34c147-7a1b-4a69-b133-c021d12f6229",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/049c6be3-9c7e-4514-b99f-d4cd16c5191f",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/347d3c3f-c8f8-4df0-84e7-e8eb7b302a18",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/16af25fc-7d56-48da-a4fd-86b6c1058c42",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/a46daf30-3a40-41c0-8797-fdddf1e45290",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/ce7c3b83-b34f-45f5-8407-3b0927e1fdd7",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/485b2ebf-4839-4824-ac0c-305cc30ac474",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/a893f697-1a00-4f1c-92db-aad8beff4efb",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/0ebece7e-ae7d-4fff-98b4-2fbb8a6c16ab",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/ace293c6-da8c-4e55-85a1-06192772930a",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/122be1b2-47b9-483c-bb12-e47772a9013c",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/305fce7f-327a-46a6-88ee-f098c3c3248e",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/c971725e-4af0-4273-8490-1b245ee4edef",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/f101976f-1cdf-42dd-9925-aff0ce6bc3fd",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/8fdc5d89-8f8e-4075-bd1d-e469309625de",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/00153233-528b-4acd-9f41-c278b1f8113c",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/deca6c7d-addd-4023-b850-ca58fd567af8",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/8d8ffecb-cfd9-4040-a5ab-7e579bd7e4bd",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/c77879b6-3944-4d16-b447-e5122fa335a1",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/d9f91b5a-c9c2-4ff4-8ec7-813265a26ce7",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/959eadbb-ac35-481c-ad3b-fd8d2202584a",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/046b9e22-598a-468f-ae06-6d6a4a83dd82",
+            "readyState": 0,
+            "networkState": 0
+          }
+        ],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "webkit",
+      "scenario": "1,200 项窗口化保持 DOM 有界、原始索引与滚动边界，允许关闭",
+      "status": "passed",
+      "durationMs": 3899,
+      "runtime-measurements": {
+        "browser": "webkit",
+        "version": "26.6",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "items": 1200,
+        "mounts": 24,
+        "topCount": 20,
+        "bottomCount": 18,
+        "mounted": {
+          "resizeTargets": 24,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 108,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "elapsedMs": 3540.5266669999996,
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 37,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 37,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "webkit",
+      "scenario": "240 字段首尾值跨挂载保留，24 次挂载不累积节点或观察目标",
+      "status": "passed",
+      "durationMs": 9632,
+      "runtime-measurements": {
+        "browser": "webkit",
+        "version": "26.6",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "fields": 240,
+        "mounts": 24,
+        "mounted": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 3657,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "cycleElapsedMs": [
+          499.1336249999995, 374.2858329999999, 413.3270419999999,
+          367.2385000000004, 383.20258300000023, 417.50066700000025,
+          383.16470800000025, 371.2375839999995, 447.6095000000005,
+          395.3021669999998, 337.78099999999904, 447.6537499999995,
+          436.2186669999992, 405.1845000000012, 372.50929200000064,
+          384.9474169999994, 363.7442919999994, 388.6013750000002,
+          370.1182919999992, 425.86195899999984, 370.0397919999996,
+          382.0127080000002, 362.25545799999963, 390.88275000000067
+        ],
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 57,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 57,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "webkit",
+      "scenario": "Markdown 与富文本各 12 次交替挂载释放编辑器，宿主按钮样式不变",
+      "status": "passed",
+      "durationMs": 3402,
+      "runtime-measurements": {
+        "browser": "webkit",
+        "version": "26.6",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "mounts": 24,
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "samples": [
+          {
+            "scene": "Markdown",
+            "elapsedMs": 209.03466599999956,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 722,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 203.98804100000052,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 139.13941700000032,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 99.73041699999885,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 132.4595419999987,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 116.8882080000003,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 134.22195900000042,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 138.6676669999997,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 126.96191699999872,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 172.27645800000028,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 127.69329099999959,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 100.21158300000025,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 134.46362500000032,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 118.41254099999969,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 131.0283330000002,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 144.0708340000001,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 138.85566599999947,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 99.47295899999881,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 133.94625000000087,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 115.95595799999865,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 134.3507499999978,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 115.95008299999972,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "Markdown",
+            "elapsedMs": 135.0980419999978,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 2,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 726,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          },
+          {
+            "scene": "富文本",
+            "elapsedMs": 118.27666699999827,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 304,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 0,
+              "programmaticMediaLive": 0,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            }
+          }
+        ],
+        "hostStyleUnchanged": true,
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 58,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 58,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [],
+        "pageErrors": []
+      }
+    },
+    {
+      "browser": "webkit",
+      "scenario": "本地音视频各 12 次换源并卸载，媒体停止、src 清空且 Blob 所有权闭环",
+      "status": "passed",
+      "durationMs": 15089,
+      "runtime-measurements": {
+        "browser": "webkit",
+        "version": "26.6",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        },
+        "mounts": 24,
+        "baseline": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 33,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 0,
+          "programmaticMediaLive": 0,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "capabilities": {
+          "audio": "maybe",
+          "video": "probably"
+        },
+        "samples": [
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 1241.6528749999998,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 97,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 1,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 349.92616700000144,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 2,
+              "programmaticMediaLive": 2,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 1075.4333330000009,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 3,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 182.8675000000003,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 4,
+              "programmaticMediaLive": 2,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 1016.2622500000034,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 5,
+              "programmaticMediaLive": 3,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 183.367166,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 6,
+              "programmaticMediaLive": 4,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 1109.4857919999995,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 7,
+              "programmaticMediaLive": 3,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 190.63166600000113,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 8,
+              "programmaticMediaLive": 4,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 1084.7545839999984,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 9,
+              "programmaticMediaLive": 5,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 200.69008299999768,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 10,
+              "programmaticMediaLive": 6,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 1081.9167500000003,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 11,
+              "programmaticMediaLive": 7,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 182.63170799999716,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 12,
+              "programmaticMediaLive": 4,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 1093.453791,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 13,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 189.78945800000292,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 14,
+              "programmaticMediaLive": 2,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 933.8963330000006,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 15,
+              "programmaticMediaLive": 3,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 165.63991600000008,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 16,
+              "programmaticMediaLive": 4,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 1133.1472090000025,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 17,
+              "programmaticMediaLive": 5,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 213.12287500000093,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 18,
+              "programmaticMediaLive": 6,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 887.7172080000018,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 19,
+              "programmaticMediaLive": 1,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 214.15541700000176,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 20,
+              "programmaticMediaLive": 2,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 870.573124999999,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 21,
+              "programmaticMediaLive": 3,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 228.21837500000038,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 22,
+              "programmaticMediaLive": 4,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "音频",
+            "decoded": true,
+            "elapsedMs": 887.117209,
+            "mounted": {
+              "resizeTargets": 0,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 1,
+              "domNodes": 105,
+              "mediaNodes": 0,
+              "programmaticMediaCreated": 23,
+              "programmaticMediaLive": 5,
+              "programmaticMediaActive": 1,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          },
+          {
+            "scene": "视频",
+            "decoded": true,
+            "elapsedMs": 182.68829099999857,
+            "mounted": {
+              "resizeTargets": 1,
+              "intersectionTargets": 0,
+              "detachedTargets": 0,
+              "blobUrls": 0,
+              "domNodes": 179,
+              "mediaNodes": 1,
+              "programmaticMediaCreated": 24,
+              "programmaticMediaLive": 2,
+              "programmaticMediaActive": 0,
+              "heapBytes": null,
+              "gcAvailable": false
+            },
+            "replacedInstance": true
+          }
+        ],
+        "decodingScope": "Only canPlayType-supported local PCM WAV and VP9 WebM; no remote streaming, DRM or broad codec claim.",
+        "mediaObservation": "DOM nodes and programmatic Audio instances are counted separately. Weak references do not force retention; temporary test handles verify explicit pause/source cleanup before disposal. Live-object counts are observations, not GC/leak assertions.",
+        "final": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 50,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 24,
+          "programmaticMediaLive": 2,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "limits": "DOM/observer/URL ownership are asserted. Heap and elapsed time are observations; no forced GC or heap-leak proof."
+      },
+      "runtime-final-snapshot": {
+        "resources": {
+          "resizeTargets": 0,
+          "intersectionTargets": 0,
+          "detachedTargets": 0,
+          "blobUrls": 0,
+          "domNodes": 50,
+          "mediaNodes": 0,
+          "programmaticMediaCreated": 24,
+          "programmaticMediaLive": 2,
+          "programmaticMediaActive": 0,
+          "heapBytes": null,
+          "gcAvailable": false
+        },
+        "observers": [],
+        "media": [
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/94a50a51-4aa3-4bc5-89f5-41782f12f0f1",
+            "readyState": 0,
+            "networkState": 0
+          },
+          {
+            "kind": "audio",
+            "connected": false,
+            "paused": true,
+            "source": null,
+            "currentSource": "blob:http://127.0.0.1:4176/3809135f-022d-47c6-98a6-17a9b3eb7be7",
+            "readyState": 0,
+            "networkState": 0
+          }
+        ],
+        "pageErrors": []
+      }
+    }
+  ]
+}

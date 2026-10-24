@@ -1,0 +1,17 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node"],
+    "skipLibCheck": true
+  },
+  "include": [
+    "../e2e/fixtures/runtime/**/*.ts",
+    "../e2e/fixtures/runtime/**/*.vue",
+    "../e2e/runtime-*.ts",
+    "../playwright.runtime.config.ts",
+    "../vite.runtime-regression.config.ts"
+  ]
+}

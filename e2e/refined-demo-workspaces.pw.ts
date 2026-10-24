@@ -165,6 +165,18 @@ test('素材库使用可解码的本地素材，分类、预览、下载和加�
     .getByRole('button', { name: '下载 SVG 素材', exact: true })
     .click()
   expect((await download).suggestedFilename()).toBe('study-1.svg')
+  await page.keyboard.press('Escape')
+  await page.getByLabel('素材库规模').click()
+  await page.getByText('大型素材库 · 1,200 份', { exact: true }).click()
+  await expect(page.locator('.gallery-footer')).toContainText('200 / 1200')
+  await expect
+    .poll(() => page.locator('.gallery-content .waterfall__item').count())
+    .toBeLessThan(100)
+  await page.getByRole('button', { name: '查看更多素材', exact: true }).click()
+  await expect(page.locator('.gallery-footer')).toContainText('400 / 1200')
+  await expect
+    .poll(() => page.locator('.gallery-content .waterfall__item').count())
+    .toBeLessThan(100)
 })
 test('看板任务可创建，并通过明确菜单跨列移动', async ({ page }) => {
   await page.goto('/#/plugins/dragable')

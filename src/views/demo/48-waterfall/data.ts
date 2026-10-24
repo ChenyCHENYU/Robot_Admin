@@ -55,3 +55,20 @@ export const GALLERY_CATEGORIES = [
   '工程实践',
   '数据表达',
 ]
+
+/** 复用内置素材生成稳定大集合，不增加网络资源或图片服务依赖。 */
+export function createGalleryCollection(count: number): GalleryItem[] {
+  return Array.from({ length: count }, (_, index) => {
+    const source = GALLERY_ITEMS[index % GALLERY_ITEMS.length]
+    return {
+      ...source,
+      id: `collection-${index + 1}`,
+      title: `${source.title} · ${index + 1}`,
+    }
+  })
+}
+
+export const COLLECTION_OPTIONS = [
+  { label: '精选素材 · 16 份', value: 16 },
+  { label: '大型素材库 · 1,200 份', value: 1200 },
+]

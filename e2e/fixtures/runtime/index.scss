@@ -1,0 +1,26 @@
+/* @Author: ChenYu · 2026-10-24 · 实验夹具布局，不导入产品全局样式 */
+.runtime-fixture {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+#baseline-control {
+  margin: 0 12px 12px 0;
+}
+.gallery-scroll,
+.form-scroll {
+  height: 600px;
+  overflow: auto;
+}
+.fixture-card {
+  box-sizing: border-box;
+  height: 100%;
+  background: #e2e8f0;
+  border: 1px solid #94a3b8;
+  padding: 16px;
+}
