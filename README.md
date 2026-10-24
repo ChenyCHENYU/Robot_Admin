@@ -142,15 +142,17 @@ flowchart TB
 
 ### 数据网格与工程插件
 
-| 能力                 | 接入方式                                                                                       | 实际用途                                                        |
-| -------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| **MachTable 0.30.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、内容自适应、编辑与列状态持久化 |
-| 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                        |
-| 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译            |
-| 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                          |
-| 分支比对             | [`git-branch-check-diff-commits`](https://www.npmjs.com/package/git-branch-check-diff-commits) | `bun run check-branch` 查看分支提交差异                         |
+| 能力                 | 接入方式                                                                                       | 实际用途                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **MachTable 0.31.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
+| 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                      |
+| 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译          |
+| 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                        |
+| 分支比对             | [`git-branch-check-diff-commits`](https://www.npmjs.com/package/git-branch-check-diff-commits) | `bun run check-branch` 查看分支提交差异                       |
 
 MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。Robot Admin 当前只接入 Vue 适配，普通业务表格与高密度数据网格各有使用场景。
+
+在「表格管理 → MachTable → 顺序调整」（`/#/demo/table-manage/mach-table`）体验 30 条订单的行排序：拖动左侧手柄，边缘自动滚动，Esc 取消，也可聚焦手柄后使用 Alt + ↑ / ↓。移动后显示顺序预览与位置反馈，切换本页场景会保留调整；「恢复初始顺序」可重置。此演示使用本地数据，不写入订单接口；普通订单表的字段排序、分页与列偏好独立保留。0.31.1 已包含树节点、列宽反馈和场景重建时的 API 就绪修复，因此移除了旧版 MachTable 的两份本地补丁。
 
 ### 配置留在页面，通用行为留在包内
 
@@ -287,7 +289,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.30.1** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.31.1** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

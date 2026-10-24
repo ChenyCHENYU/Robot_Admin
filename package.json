@@ -67,7 +67,7 @@
     "test:e2e:runtime": "playwright test --config playwright.runtime.config.ts"
   },
   "dependencies": {
-    "@agile-team/mach-table-vue": "0.30.1",
+    "@agile-team/mach-table-vue": "0.31.1",
     "@antv/x6": "^2.19.2",
     "@iconify/vue": "^5.0.0",
     "@robot-admin/directives": "2.0.1",
@@ -197,8 +197,6 @@
   "patchedDependencies": {
     "vite-auto-i18n-plugin@1.1.16": "patches/vite-auto-i18n-plugin@1.1.16.patch",
     "auto-i18n-plugin-core@1.1.16": "patches/auto-i18n-plugin-core@1.1.16.patch",
-    "@agile-team/mach-table@0.30.1": "patches/@agile-team%2Fmach-table@0.30.1.patch",
-    "@agile-team/mach-table-vue@0.30.1": "patches/@agile-team%2Fmach-table-vue@0.30.1.patch",
     "braces@3.0.3": "patches/braces@3.0.3.patch"
   }
 }

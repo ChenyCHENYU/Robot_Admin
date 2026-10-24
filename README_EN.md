@@ -144,13 +144,15 @@ Sources: [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-component
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.30.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, content sizing, editing and column-state persistence         |
+| **MachTable 0.31.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
 | Branch comparison    | [`git-branch-check-diff-commits`](https://www.npmjs.com/package/git-branch-check-diff-commits) | Commit comparison through `bun run check-branch`                                                                 |
 
 MachTable is a separate data grid project. Core and Vue / React / XLSX adapters are documented in [MachTable](https://github.com/ChenyCHENYU/MachTable). Robot Admin currently integrates the Vue adapter; ordinary business tables and dense data grids serve different scenarios.
+
+Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders using the left drag handle. Edge scrolling, Escape cancellation and Alt + Up / Down keyboard moves are supported. The page shows the current sequence and move feedback, retains changes while switching scenarios, and offers a restore action. This demo uses local data without writing to the order API; the regular order table keeps its own sorting, pagination and column preferences. Version 0.31.1 includes the tree-node, column-resize feedback and keyed-remount API readiness fixes, replacing the two previous local MachTable patches.
 
 ### Page configuration, package-owned behavior
 
@@ -273,7 +275,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.30.1** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.31.1** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

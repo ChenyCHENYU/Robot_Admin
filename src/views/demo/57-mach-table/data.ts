@@ -22,6 +22,7 @@ import {
 import {
   defineVueTableConfig,
   defineVueColumns,
+  dragColumn,
   indexColumn,
   rowActionsColumn,
   selectionColumn,
@@ -560,6 +561,13 @@ export const MACH_SCENE_CAPABILITIES = [
       '树形场景演示本地三层数据；Core 同时支持可取消、去重和重试的远程子节点加载。',
   },
   {
+    key: 'reorder',
+    title: '行顺序调整',
+    state: '当前页面可体验',
+    description:
+      '顺序调整场景支持手柄拖拽、边缘滚动、Esc 取消和 Alt + 方向键移动。',
+  },
+  {
     key: 'detail',
     title: '主从详情',
     state: '需要详情渲染器',
@@ -654,6 +662,11 @@ export const TABLE_SCENARIOS = {
     label: '树形表格',
     editMode: 'none',
     tip: '区域 → 客户 → 订单三层展开；多选支持父子联动。真实业务还可配置异步子节点加载、取消与失败重试。',
+  },
+  reorder: {
+    label: '顺序调整',
+    editMode: 'none',
+    tip: '拖动左侧手柄调整订单顺序，靠近表格边缘可自动滚动；Esc 取消。聚焦手柄后，也可用 Alt + ↑ / ↓ 移动。此处演示 30 条订单，调整结果在本页场景切换时保留，可一键恢复。',
   },
 } as const
 
@@ -846,6 +859,20 @@ export const createOrderTreeColumns = () =>
     ...(ORDER_TABLE_FEATURES.selection ? [selectionColumn<OrderRow>()] : []),
     indexColumn<OrderRow>({ headerName: '序号' }),
     ...createOrderBusinessColumns(() => 'none', true),
+  ])
+
+/** 手动顺序与字段排序分开演示，避免初始倒序或历史视图覆盖拖拽结果。 */
+export const createOrderReorderColumns = () =>
+  defineVueColumns<OrderRow>([
+    dragColumn<OrderRow>(),
+    ...(ORDER_TABLE_FEATURES.selection ? [selectionColumn<OrderRow>()] : []),
+    indexColumn<OrderRow>({ headerName: '序号' }),
+    ...createOrderBusinessColumns(() => 'none').map(column => ({
+      ...column,
+      initialSort: undefined,
+      sortable: false,
+      filter: false as const,
+    })),
   ])
 
 /** 页面稳定配置；行数据、列、搜索、主题和事件仍由页面显式传入。 */

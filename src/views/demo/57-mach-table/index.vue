@@ -10,7 +10,7 @@
     <c_vTitle
       title="Mach Table 场景示例"
       icon="mdi:table-large"
-      description="框架无关 Core + Vue 适配层：标准 CRUD、按需行内编辑与企业级数据工作台"
+      description="框架无关 Core + Vue 适配层：CRUD、行内编辑、树形表格与拖拽顺序调整"
     />
 
     <div class="mach-overview">
@@ -85,15 +85,35 @@
         {{ scenarioTip }}
       </NAlert>
 
+      <div
+        v-if="isReorderScenario"
+        class="mach-reorder-status"
+      >
+        <div class="mach-reorder-status__preview">
+          <span>顺序预览</span>
+          <strong>{{ reorderPreview }}</strong>
+        </div>
+        <span
+          role="status"
+          aria-live="polite"
+        >
+          {{ reorderMessage }}
+        </span>
+      </div>
+
       <div class="mach-grid-shell">
         <MachTable
           v-bind="tableBindings"
+          :key="isReorderScenario ? 'reorder' : 'orders'"
           :ref="table.ref"
           class="mach-demo-grid"
           :column-defs="machTableColumns"
           :row-data="displayRows"
           :tree-data="isTreeScenario"
           :default-expand-all="isTreeScenario"
+          :persistence="isReorderScenario ? false : tableBindings.persistence"
+          :pagination="isReorderScenario ? false : tableBindings.pagination"
+          @row-drag-end="handleRowDragEnd"
         />
       </div>
     </NCard>
@@ -275,6 +295,7 @@
     type CellValueChangedEvent,
     type GridErrorEvent,
     type RowEditingStoppedEvent,
+    type RowDragEndEvent,
   } from '@agile-team/mach-table-vue'
   import { useMachTableController } from '@agile-team/mach-table-vue/workflows'
   import { defineActions } from '@robot-admin/naive-ui-components/C_ActionBar'
@@ -294,6 +315,8 @@
     TABLE_SCENARIO_TABS,
     TABLE_PREVIEW_OPTIONS,
     createOrderColumns,
+    createOrderReorderColumns,
+    createOrderRows,
     createOrderTreeColumns,
     createOrderTreeRows,
     exportOrderTable,
@@ -317,6 +340,17 @@
   const activeScenario = ref<TableScenario>('crud')
   const previewState = ref<TablePreviewState>('data')
   const treeRows = createOrderTreeRows()
+  const reorderRows = ref(createOrderRows(30))
+  const reorderMessage = ref('尚未调整顺序')
+  const reorderPreview = computed(() =>
+    reorderRows.value
+      .slice(0, 3)
+      .map(row => row.orderNo)
+      .join(' → ')
+  )
+  const orderChanged = computed(() =>
+    reorderRows.value.some((row, index) => row.id !== String(index + 1))
+  )
   const showFeatureDrawer = ref(false)
   const featureSettings = ref<MachFeatureSettings>({
     ...DEFAULT_MACH_FEATURE_SETTINGS,
@@ -340,6 +374,7 @@
   const inlineEditMode = computed(() => currentScenario.value.editMode)
   const scenarioTip = computed(() => currentScenario.value.tip)
   const isTreeScenario = computed(() => activeScenario.value === 'tree')
+  const isReorderScenario = computed(() => activeScenario.value === 'reorder')
   const countTreeRows = (items: OrderTreeRow[]): number =>
     items.reduce(
       (total, item) => total + 1 + countTreeRows(item.children ?? []),
@@ -347,10 +382,12 @@
     )
   const displayRows = computed(() => {
     if (previewState.value === 'empty') return []
+    if (isReorderScenario.value) return reorderRows.value
     return isTreeScenario.value ? treeRows : rows.value
   })
   const totalRows = computed(() => {
     if (previewState.value === 'empty') return 0
+    if (isReorderScenario.value) return reorderRows.value.length
     return isTreeScenario.value
       ? countTreeRows(treeRows)
       : orderCrud.total.value
@@ -409,8 +446,29 @@
 
   const handleScenarioChange = async (): Promise<void> => {
     previewState.value = 'data'
+    quickFilter.value = ''
     commands.clearSelection()
     await tableApi.value?.editing.stop({ cancel: true })
+  }
+
+  /** 接收包内已完成的移动，把完整顺序回写到页面，保留被搜索隐藏的订单。 */
+  const handleRowDragEnd = (event: RowDragEndEvent<OrderRow>): void => {
+    const record = event.rowNode.data
+    if (!isReorderScenario.value || !event.applied || !record) return
+    const orderedRows: OrderRow[] = []
+    event.api.rows.forEach(node => {
+      if (node.data) orderedRows.push(node.data)
+    })
+    reorderRows.value = orderedRows
+    reorderMessage.value = `${record.orderNo}：由第 ${event.fromIndex + 1} 项移至第 ${event.targetIndex + 1} 项${quickFilter.value ? '（当前搜索结果）' : ''}`
+  }
+
+  /** 重建演示数据，恢复最初的人工顺序，同时清除搜索以完整展示结果。 */
+  const restoreOrder = (): void => {
+    quickFilter.value = ''
+    commands.clearSelection()
+    reorderRows.value = createOrderRows(30)
+    reorderMessage.value = '已恢复初始顺序'
   }
 
   const handleGridError = (event: GridErrorEvent<OrderRow>): void => {
@@ -420,7 +478,9 @@
 
   const grid = useMachTableController({
     config: ORDER_TABLE_CONFIG,
-    loading: () => orderCrud.loading.value || previewState.value === 'loading',
+    loading: () =>
+      (!isReorderScenario.value && orderCrud.loading.value) ||
+      previewState.value === 'loading',
     theme: () => (themeStore.isDark ? 'dark' : 'light'),
     editMode: inlineEditMode,
     onCellValueChanged: handleCellValueChanged,
@@ -435,7 +495,10 @@
     const api = tableApi.value
     if (!api) return
     api.batch(currentApi => {
-      currentApi.updateOptions(toMachFeatureOptions(featureSettings.value))
+      currentApi.updateOptions({
+        ...toMachFeatureOptions(featureSettings.value),
+        ...(isReorderScenario.value ? { pagination: false as const } : {}),
+      })
       if (featureSettings.value.rowSelection === 'none') {
         currentApi.selection.clear()
       }
@@ -516,6 +579,14 @@
       onClick: () => undoEdit(),
     },
     {
+      key: 'restore-order',
+      label: '恢复初始顺序',
+      icon: 'mdi:sort-restore',
+      show: () => isReorderScenario.value,
+      disabled: () => !ready.value || !orderChanged.value,
+      onClick: restoreOrder,
+    },
+    {
       key: 'reset',
       label: '重置视图',
       disabled: () => !ready.value,
@@ -561,9 +632,11 @@
     ],
   })
   const treeColumns = createOrderTreeColumns()
-  const machTableColumns = computed(() =>
-    isTreeScenario.value ? treeColumns : orderColumns
-  )
+  const reorderColumns = createOrderReorderColumns()
+  const machTableColumns = computed(() => {
+    if (isReorderScenario.value) return reorderColumns
+    return isTreeScenario.value ? treeColumns : orderColumns
+  })
 
   const undoEdit = (): void => {
     if (!commands.undo()) message.info('当前没有可撤销的编辑')
@@ -580,7 +653,10 @@
   }
 
   const exportCsv = async (): Promise<void> => {
-    if (import.meta.env.VITE_DATA_MODE === 'remote') {
+    if (
+      import.meta.env.VITE_DATA_MODE === 'remote' &&
+      !isReorderScenario.value
+    ) {
       await exportOrderTable()
       return
     }
