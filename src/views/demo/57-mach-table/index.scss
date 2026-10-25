@@ -70,9 +70,23 @@
 
 .mach-demo-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+
+.mach-reorder-save-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--app-text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+
+  &__select {
+    width: 154px;
+  }
 }
 
 .mach-demo-toolbar__search {
@@ -140,6 +154,25 @@
       overflow-wrap: anywhere;
       font-variant-numeric: tabular-nums;
     }
+  }
+
+  &__details {
+    flex-basis: 100%;
+    color: var(--app-text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &[data-status='saving'] [role='status'] {
+    color: var(--app-primary);
+  }
+
+  &[data-status='saved'] [role='status'] {
+    color: var(--app-success-color);
+  }
+
+  &[data-status='error'] [role='status'],
+  &[data-status='conflict'] [role='status'] {
+    color: var(--c-error);
   }
 }
 

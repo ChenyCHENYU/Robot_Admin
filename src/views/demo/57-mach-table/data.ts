@@ -26,8 +26,16 @@ import {
   indexColumn,
   rowActionsColumn,
   selectionColumn,
+  type GridApi,
   type RowActionsConfig,
 } from '@agile-team/mach-table-vue'
+import {
+  createRowOrderController,
+  type RowOrderIntent,
+  type RowOrderSaveContext,
+  type RowOrderSaveResult,
+  type RowOrderState,
+} from '@agile-team/mach-table-vue/ordering'
 import { request, useAppTableCrud } from '@/plugins/request-core'
 
 export const ORDER_STATUS = {
@@ -112,6 +120,159 @@ export const createOrderRows = (count = 2000): OrderRow[] =>
       updatedAt: date.toISOString().slice(0, 10),
     }
   })
+
+export type OrderReorderSaveMode = 'success' | 'failure' | 'conflict'
+export const ORDER_REORDER_SAVE_OPTIONS: Array<{
+  label: string
+  value: OrderReorderSaveMode
+}> = [
+  { label: '保存成功', value: 'success' },
+  { label: '模拟保存失败', value: 'failure' },
+  { label: '模拟版本冲突', value: 'conflict' },
+]
+const ORDER_OPERATION_LABELS = { move: '调整', undo: '撤销', redo: '重做' }
+
+/** 仅模拟网络等待；每条退出路径都释放计时器与取消监听。 */
+function waitForReorderSave(signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const finish = (error?: DOMException): void => {
+      window.clearTimeout(timer)
+      signal.removeEventListener('abort', abort)
+      if (error) reject(error)
+      else resolve()
+    }
+    const abort = (): void =>
+      finish(new DOMException('模拟保存已取消', 'AbortError'))
+    const timer = window.setTimeout(() => finish(), 450)
+    if (signal.aborted) abort()
+    else signal.addEventListener('abort', abort, { once: true })
+  })
+}
+
+/** 本地模拟服务器与一次 ordering 绑定；不调用订单接口或保存用户偏好。 */
+export function useOrderReorderDemo(getApi: () => GridApi<OrderRow> | null) {
+  const orderRows = shallowRef(createOrderRows(30))
+  const saveMode = ref<OrderReorderSaveMode>('success')
+  const clientRevision = ref(1)
+  const serverRevision = ref(1)
+  const operation = ref<keyof typeof ORDER_OPERATION_LABELS>('move')
+  const notice = ref('尚未调整顺序')
+  const state = shallowRef<RowOrderState<OrderRow>>({
+    status: 'idle',
+    error: null,
+    revision: 1,
+    plan: null,
+    canUndo: false,
+    canRedo: false,
+  })
+  let serverRows: readonly OrderRow[] = orderRows.value
+
+  /** 同一个不可变数组同时交给宿主和 API，避免维护第二份业务顺序。 */
+  const applyRows = (next: readonly OrderRow[]): void => {
+    orderRows.value = [...next]
+    getApi()?.rows.setData(orderRows.value)
+  }
+
+  /** 模拟服务端以一次 CAS 原子安装 plan.after，撤销/重做走相同保存协议。 */
+  const save = async (
+    intent: RowOrderIntent,
+    context: RowOrderSaveContext<OrderRow>
+  ): Promise<RowOrderSaveResult> => {
+    operation.value = context.operation
+    const outcome = saveMode.value
+    await waitForReorderSave(context.signal)
+    if (intent.expectedRevision !== serverRevision.value) {
+      return { status: 'conflict', revision: serverRevision.value }
+    }
+    if (outcome === 'failure') throw new Error('模拟网络保存失败')
+    if (outcome === 'conflict') {
+      serverRows = [...serverRows.slice(1), ...serverRows.slice(0, 1)]
+      return {
+        status: 'conflict',
+        revision: ++serverRevision.value,
+        message: '模拟服务器顺序已变更',
+      }
+    }
+    serverRows = context.plan.after
+    return { revision: ++serverRevision.value }
+  }
+
+  /** 使用侧只提供数据安装与传输，拖拽判定、历史和失败补偿由包负责。 */
+  const createController = () =>
+    createRowOrderController<OrderRow>({
+      rowKey: 'id',
+      getRows: () => orderRows.value,
+      applyRows,
+      getRevision: () => clientRevision.value,
+      save,
+      onStateChange: next => {
+        notice.value = ''
+        state.value = next
+        if (next.status === 'saved' && typeof next.revision === 'number')
+          clientRevision.value = next.revision
+      },
+    })
+  const ordering = shallowRef(createController())
+  const busy = computed(() => state.value.status === 'saving')
+  const statusText = computed(() => {
+    if (notice.value) return notice.value
+    const label = ORDER_OPERATION_LABELS[operation.value]
+    const count = state.value.plan?.rowIds.length ?? 0
+    const messages = {
+      idle: '拖动已选项可批量调整顺序',
+      saving: `${label} ${count} 项顺序，正在模拟保存（450ms）…`,
+      saved: `已${label} ${count} 项顺序（模拟保存成功）`,
+      error: '模拟保存失败，已回滚至调整前顺序。切换“保存成功”后可重试。',
+      conflict:
+        '模拟版本冲突，本次调整已回滚；请重新加载服务器顺序，再切换“保存成功”。',
+    }
+    return messages[state.value.status]
+  })
+
+  /** 外部换数是新排序作用域，释放旧保存与历史，再安装确认过的数据。 */
+  const replaceRows = (
+    next: readonly OrderRow[],
+    revision: number,
+    feedback: string
+  ): void => {
+    ordering.value.dispose()
+    clientRevision.value = revision
+    ordering.value = createController()
+    applyRows(next)
+    state.value = ordering.value.state
+    notice.value = feedback
+  }
+  const reset = (): void => {
+    serverRows = createOrderRows(30)
+    serverRevision.value = 1
+    replaceRows(serverRows, 1, '已恢复初始顺序')
+  }
+  const reload = (): void =>
+    replaceRows(serverRows, serverRevision.value, '已重新加载模拟服务器顺序')
+  const cancelPending = (): void => {
+    if (!busy.value || !state.value.plan) return
+    replaceRows(
+      state.value.plan.before,
+      clientRevision.value,
+      '已取消未完成的模拟保存，保留上次确认顺序'
+    )
+  }
+  onDeactivated(cancelPending)
+  onScopeDispose(() => ordering.value.dispose())
+  return {
+    rows: orderRows,
+    ordering,
+    state,
+    busy,
+    saveMode,
+    clientRevision,
+    serverRevision,
+    statusText,
+    reset,
+    reload,
+    cancelPending,
+  }
+}
 
 /** 生成三层本地树数据，用同一列模型演示展开、层级选择与虚拟滚动。 */
 export const createOrderTreeRows = (): OrderTreeRow[] => {
@@ -565,7 +726,7 @@ export const MACH_SCENE_CAPABILITIES = [
     title: '行顺序调整',
     state: '当前页面可体验',
     description:
-      '顺序调整场景支持手柄拖拽、边缘滚动、Esc 取消和 Alt + 方向键移动。',
+      '顺序调整场景支持多行拖拽、撤销/重做，以及模拟保存失败回滚和版本冲突。',
   },
   {
     key: 'detail',
@@ -666,7 +827,7 @@ export const TABLE_SCENARIOS = {
   reorder: {
     label: '顺序调整',
     editMode: 'none',
-    tip: '拖动左侧手柄调整订单顺序，靠近表格边缘可自动滚动；Esc 取消。聚焦手柄后，也可用 Alt + ↑ / ↓ 移动。此处演示 30 条订单，调整结果在本页场景切换时保留，可一键恢复。',
+    tip: '勾选多行后，拖动其中一行手柄可批量调整，源顺序保持不变；Alt + ↑ / ↓ 同样可用。支持撤销/重做，保存中锁定顺序操作。450ms 保存、失败与版本冲突均为本地模拟，不写入订单接口。切换场景保留已确认顺序，并取消未完成的模拟保存。',
   },
 } as const
 

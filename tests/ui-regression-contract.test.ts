@@ -262,7 +262,9 @@ describe('UI regression contracts', () => {
     )
     const dataSource = await readText('../src/views/demo/57-mach-table/data.ts')
 
-    expect(viewSource).toContain('v-bind="tableBindings"')
+    expect(viewSource).toContain(
+      'v-bind="isReorderScenario ? reorderTableBindings : tableBindings"'
+    )
     expect(viewSource).toContain('config: ORDER_TABLE_CONFIG')
     expect(viewSource).toContain('bindings: tableBindings')
     expect(viewSource).not.toContain('const machTableConfig = computed')

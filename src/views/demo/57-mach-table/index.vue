@@ -70,6 +70,21 @@
           </template>
         </NInput>
 
+        <label
+          v-if="isReorderScenario"
+          class="mach-reorder-save-control"
+        >
+          <span>模拟保存</span>
+          <NSelect
+            v-model:value="reorderSaveMode"
+            class="mach-reorder-save-control__select"
+            :options="ORDER_REORDER_SAVE_OPTIONS"
+            :disabled="reorderBusy"
+            aria-label="模拟排序保存结果"
+            size="small"
+          />
+        </label>
+
         <C_ActionBar
           class="mach-demo-toolbar__actions"
           :actions="tableActions"
@@ -88,6 +103,8 @@
       <div
         v-if="isReorderScenario"
         class="mach-reorder-status"
+        :data-status="reorderState.status"
+        :aria-busy="reorderBusy"
       >
         <div class="mach-reorder-status__preview">
           <span>顺序预览</span>
@@ -99,11 +116,17 @@
         >
           {{ reorderMessage }}
         </span>
+        <small class="mach-reorder-status__details">
+          客户端 r{{ reorderClientRevision }} · 模拟服务器 r{{
+            reorderServerRevision
+          }}
+          · 仅本地模拟，不写业务接口
+        </small>
       </div>
 
       <div class="mach-grid-shell">
         <MachTable
-          v-bind="tableBindings"
+          v-bind="isReorderScenario ? reorderTableBindings : tableBindings"
           :key="isReorderScenario ? 'reorder' : 'orders'"
           :ref="table.ref"
           class="mach-demo-grid"
@@ -113,7 +136,6 @@
           :default-expand-all="isTreeScenario"
           :persistence="isReorderScenario ? false : tableBindings.persistence"
           :pagination="isReorderScenario ? false : tableBindings.pagination"
-          @row-drag-end="handleRowDragEnd"
         />
       </div>
     </NCard>
@@ -295,7 +317,6 @@
     type CellValueChangedEvent,
     type GridErrorEvent,
     type RowEditingStoppedEvent,
-    type RowDragEndEvent,
   } from '@agile-team/mach-table-vue'
   import { useMachTableController } from '@agile-team/mach-table-vue/workflows'
   import { defineActions } from '@robot-admin/naive-ui-components/C_ActionBar'
@@ -310,18 +331,19 @@
     MACH_SCENE_CAPABILITIES,
     ORDER_FORM_CONFIG,
     ORDER_FORM_OPTIONS,
+    ORDER_REORDER_SAVE_OPTIONS,
     ORDER_TABLE_CONFIG,
     TABLE_SCENARIOS,
     TABLE_SCENARIO_TABS,
     TABLE_PREVIEW_OPTIONS,
     createOrderColumns,
     createOrderReorderColumns,
-    createOrderRows,
     createOrderTreeColumns,
     createOrderTreeRows,
     exportOrderTable,
     toMachFeatureOptions,
     useOrderTable,
+    useOrderReorderDemo,
     type MachFeaturePreset,
     type MachFeatureSettings,
     type OrderRow,
@@ -340,8 +362,19 @@
   const activeScenario = ref<TableScenario>('crud')
   const previewState = ref<TablePreviewState>('data')
   const treeRows = createOrderTreeRows()
-  const reorderRows = ref(createOrderRows(30))
-  const reorderMessage = ref('尚未调整顺序')
+  const reorderDemo = useOrderReorderDemo(() =>
+    isReorderScenario.value ? tableApi.value : null
+  )
+  const {
+    rows: reorderRows,
+    ordering: rowOrdering,
+    state: reorderState,
+    busy: reorderBusy,
+    saveMode: reorderSaveMode,
+    clientRevision: reorderClientRevision,
+    serverRevision: reorderServerRevision,
+    statusText: reorderMessage,
+  } = reorderDemo
   const reorderPreview = computed(() =>
     reorderRows.value
       .slice(0, 3)
@@ -445,30 +478,18 @@
   }
 
   const handleScenarioChange = async (): Promise<void> => {
+    reorderDemo.cancelPending()
     previewState.value = 'data'
     quickFilter.value = ''
     commands.clearSelection()
     await tableApi.value?.editing.stop({ cancel: true })
   }
 
-  /** 接收包内已完成的移动，把完整顺序回写到页面，保留被搜索隐藏的订单。 */
-  const handleRowDragEnd = (event: RowDragEndEvent<OrderRow>): void => {
-    const record = event.rowNode.data
-    if (!isReorderScenario.value || !event.applied || !record) return
-    const orderedRows: OrderRow[] = []
-    event.api.rows.forEach(node => {
-      if (node.data) orderedRows.push(node.data)
-    })
-    reorderRows.value = orderedRows
-    reorderMessage.value = `${record.orderNo}：由第 ${event.fromIndex + 1} 项移至第 ${event.targetIndex + 1} 项${quickFilter.value ? '（当前搜索结果）' : ''}`
-  }
-
   /** 重建演示数据，恢复最初的人工顺序，同时清除搜索以完整展示结果。 */
   const restoreOrder = (): void => {
     quickFilter.value = ''
     commands.clearSelection()
-    reorderRows.value = createOrderRows(30)
-    reorderMessage.value = '已恢复初始顺序'
+    reorderDemo.reset()
   }
 
   const handleGridError = (event: GridErrorEvent<OrderRow>): void => {
@@ -490,6 +511,11 @@
   const { table, bindings: tableBindings, selectedCount, commands } = grid
   const { api: tableApi, ready } = table
   const quickFilter = grid.search
+  const reorderTableBindings = computed(() => ({
+    ...tableBindings.value,
+    ...rowOrdering.value.bindings,
+    rowSelection: 'multiple' as const,
+  }))
 
   const syncFeatureSettings = (): void => {
     const api = tableApi.value
@@ -497,9 +523,14 @@
     api.batch(currentApi => {
       currentApi.updateOptions({
         ...toMachFeatureOptions(featureSettings.value),
-        ...(isReorderScenario.value ? { pagination: false as const } : {}),
+        ...(isReorderScenario.value
+          ? { pagination: false as const, rowSelection: 'multiple' as const }
+          : {}),
       })
-      if (featureSettings.value.rowSelection === 'none') {
+      if (
+        !isReorderScenario.value &&
+        featureSettings.value.rowSelection === 'none'
+      ) {
         currentApi.selection.clear()
       }
     })
@@ -507,7 +538,10 @@
 
   watch(featureSettings, syncFeatureSettings, { deep: true, flush: 'post' })
   watch(ready, isReady => {
-    if (isReady) syncFeatureSettings()
+    if (isReady) {
+      syncFeatureSettings()
+      if (isReorderScenario.value) reorderState.value = rowOrdering.value.state
+    }
   })
 
   const applyFeaturePreset = (value: string | number | null): void => {
@@ -557,16 +591,22 @@
       key: 'select-all',
       label: '全选筛选结果',
       icon: 'mdi:select-all',
-      show: () => featureSettings.value.rowSelection === 'multiple',
-      disabled: () => !ready.value,
+      show: () =>
+        isReorderScenario.value ||
+        featureSettings.value.rowSelection === 'multiple',
+      disabled: () =>
+        !ready.value || (isReorderScenario.value && reorderBusy.value),
       onClick: () => commands.selectAll(),
     },
     {
       key: 'clear-selection',
       label: '清空选择',
       icon: 'mdi:selection-remove',
-      show: () => featureSettings.value.rowSelection !== 'none',
-      disabled: () => !selectedCount.value,
+      show: () =>
+        isReorderScenario.value ||
+        featureSettings.value.rowSelection !== 'none',
+      disabled: () =>
+        !selectedCount.value || (isReorderScenario.value && reorderBusy.value),
       onClick: () => commands.clearSelection(),
     },
     {
@@ -579,11 +619,48 @@
       onClick: () => undoEdit(),
     },
     {
+      key: 'select-order-sample',
+      label: '选中两项订单',
+      icon: 'mdi:checkbox-multiple-marked-outline',
+      show: () => isReorderScenario.value,
+      disabled: () => !ready.value || reorderBusy.value,
+      onClick: () => selectOrderSample(),
+    },
+    {
+      key: 'undo-order',
+      label: '撤销顺序',
+      icon: 'mdi:undo-variant',
+      show: () => isReorderScenario.value,
+      disabled: () =>
+        !ready.value || reorderBusy.value || !reorderState.value.canUndo,
+      onClick: () => restoreRowOrder('undo'),
+    },
+    {
+      key: 'redo-order',
+      label: '重做顺序',
+      icon: 'mdi:redo-variant',
+      show: () => isReorderScenario.value,
+      disabled: () =>
+        !ready.value || reorderBusy.value || !reorderState.value.canRedo,
+      onClick: () => restoreRowOrder('redo'),
+    },
+    {
+      key: 'reload-order',
+      label: '重新加载服务器顺序',
+      icon: 'mdi:reload',
+      show: () => isReorderScenario.value,
+      disabled: () =>
+        !ready.value ||
+        reorderBusy.value ||
+        reorderClientRevision.value === reorderServerRevision.value,
+      onClick: () => reorderDemo.reload(),
+    },
+    {
       key: 'restore-order',
       label: '恢复初始顺序',
       icon: 'mdi:sort-restore',
       show: () => isReorderScenario.value,
-      disabled: () => !ready.value || !orderChanged.value,
+      disabled: () => !ready.value || reorderBusy.value || !orderChanged.value,
       onClick: restoreOrder,
     },
     {
@@ -640,6 +717,25 @@
 
   const undoEdit = (): void => {
     if (!commands.undo()) message.info('当前没有可撤销的编辑')
+  }
+
+  /** 勾选不连续的两项，便于直接体验批量拖拽和内部相对顺序保持。 */
+  const selectOrderSample = (): void => {
+    const api = tableApi.value
+    if (!api) return
+    api.selection.clear()
+    for (const row of [reorderRows.value[0], reorderRows.value[2]]) {
+      if (row) api.selection.setById(row.id, true, false)
+    }
+  }
+
+  /** 排序撤销/重做由包保存；错误仍通过状态区和宿主消息明确展示。 */
+  const restoreRowOrder = async (operation: 'undo' | 'redo'): Promise<void> => {
+    try {
+      await rowOrdering.value[operation]()
+    } catch (error) {
+      message.warning(error instanceof Error ? error.message : '顺序操作未完成')
+    }
   }
 
   const openColumnWorkbench = (): void => {

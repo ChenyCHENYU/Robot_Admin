@@ -144,7 +144,7 @@ flowchart TB
 
 | 能力                 | 接入方式                                                                                       | 实际用途                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **MachTable 0.31.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
+| **MachTable 0.32.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
 | 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                      |
 | 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译          |
 | 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                        |
@@ -152,7 +152,9 @@ flowchart TB
 
 MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。Robot Admin 当前只接入 Vue 适配，普通业务表格与高密度数据网格各有使用场景。
 
-在「表格管理 → MachTable → 顺序调整」（`/#/demo/table-manage/mach-table`）体验 30 条订单的行排序：拖动左侧手柄，边缘自动滚动，Esc 取消，也可聚焦手柄后使用 Alt + ↑ / ↓。移动后显示顺序预览与位置反馈，切换本页场景会保留调整；「恢复初始顺序」可重置。此演示使用本地数据，不写入订单接口；普通订单表的字段排序、分页与列偏好独立保留。0.31.1 已包含树节点、列宽反馈和场景重建时的 API 就绪修复，因此移除了旧版 MachTable 的两份本地补丁。
+在「表格管理 → MachTable → 顺序调整」（`/#/demo/table-manage/mach-table`）体验 30 条订单的行排序。该场景按需使用 `/ordering`：勾选不连续的多项，拖动其中一项手柄可按原相对顺序一起移动；支持边缘滚动、Esc、Alt + ↑ / ↓ 和独立的顺序撤销/重做。搜索后的键盘移动以相邻可见订单为目标，隐藏订单仍保留在完整数据中。现有工具栏可选择 450ms 模拟保存、失败回滚或版本冲突；冲突后可重新加载模拟服务器顺序。状态区显示保存结果和双方版本，切换场景保留已确认顺序并取消未完成保存。所有传输均为本地模拟，不写订单接口。
+
+当前安装与锁文件已固定为官方 npm 发布的 **0.32.1**，Vue 适配和 Core 使用相同版本。顺序控制器直接从 Vue 包的 `/ordering` 入口按需导入；普通订单表的编辑、分页与列偏好继续使用原路径，无需本地 link 或依赖补丁。
 
 ### 配置留在页面，通用行为留在包内
 
@@ -289,7 +291,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.31.1** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.32.1** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

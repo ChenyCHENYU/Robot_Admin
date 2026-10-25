@@ -21,13 +21,24 @@ const visibleOrder = (page: Page) =>
         .map(row => row.dataset.id)
     )
 
-/** 从第一行手柄拖至第三行下半区，保持按下以验证移动反馈或取消。 */
-const beginMove = async (page: Page) => {
+/** Naive UI 的选项使用实际菜单节点，不声明原生 option role。 */
+const chooseSaveMode = async (page: Page, label: string): Promise<void> => {
+  await page.locator('.mach-reorder-save-control__select').click()
+  await page
+    .locator('.n-base-select-option:visible')
+    .getByText(label, { exact: true })
+    .click()
+}
+
+/** 从第一行手柄拖至指定行下半区，保持按下以验证移动反馈或取消。 */
+const beginMove = async (page: Page, targetId = '3') => {
   const handle = page.locator('.mach-row[data-id="1"] .mach-row-drag-handle')
   await handle.hover()
   const start = (await handle.boundingBox())!
   const target = (await page
-    .locator('.mach-row[data-id="3"] .mach-cell[data-col-id="orderNo"]')
+    .locator(
+      `.mach-row[data-id="${targetId}"] .mach-cell[data-col-id="orderNo"]`
+    )
     .boundingBox())!
   await page.mouse.move(start.x + start.width / 2, start.y + start.height / 2)
   await page.mouse.down()
@@ -68,7 +79,7 @@ test('真实拖拽同步顺序，切换场景保留结果并可恢复', async ({
     .poll(async () => (await visibleOrder(page)).slice(0, 3))
     .toEqual(['2', '3', '1'])
   await expect(page.locator('.mach-reorder-status [role="status"]')).toHaveText(
-    'MT-2026-00001：由第 1 项移至第 3 项'
+    '已调整 1 项顺序（模拟保存成功）'
   )
   await expect(page.locator('.mach-reorder-status__preview')).toContainText(
     'MT-2026-00002 → MT-2026-00003 → MT-2026-00001'
@@ -111,6 +122,10 @@ test('Esc 取消，搜索后键盘移动仍保留完整订单与顺序', async (
   await expect
     .poll(() => visibleOrder(page))
     .toEqual(['7', '1', '13', '19', '25'])
+  await expect(page.locator('.mach-reorder-status')).toHaveAttribute(
+    'data-status',
+    'saved'
+  )
   await search.fill('')
   await page.getByText('标准 CRUD', { exact: true }).click()
   await page.getByText('顺序调整', { exact: true }).click()
@@ -127,6 +142,123 @@ test('Esc 取消，搜索后键盘移动仍保留完整订单与顺序', async (
   for await (const chunk of stream!) chunks.push(Buffer.from(chunk))
   const csv = Buffer.concat(chunks).toString('utf8')
   expect(csv.match(/MT-2026-\d{5}/g)).toHaveLength(30)
+})
+
+test('不连续多行一起移动，并用相同模拟保存协议撤销和重做', async ({ page }) => {
+  await page.getByRole('button', { name: '选中两项订单', exact: true }).click()
+  await Promise.all(
+    ['1', '3'].map(id =>
+      expect(
+        page.locator(`.mach-row[data-id="${id}"] .mach-row-checkbox`)
+      ).toBeChecked()
+    )
+  )
+  await beginMove(page, '5')
+  await page.mouse.up()
+  await expect(page.locator('.mach-reorder-status')).toHaveAttribute(
+    'data-status',
+    'saving'
+  )
+  await expect(
+    page.getByRole('button', { name: '撤销顺序', exact: true })
+  ).toBeDisabled()
+  await expect(page.locator('.mach-row-drag-handle').first()).toBeDisabled()
+  await expect(page.locator('.mach-reorder-status')).toHaveAttribute(
+    'data-status',
+    'saved'
+  )
+  await expect
+    .poll(async () => (await visibleOrder(page)).slice(0, 6))
+    .toEqual(['2', '4', '5', '1', '3', '6'])
+  await expect(
+    page.locator('.mach-reorder-status [role="status"]')
+  ).toContainText('已调整 2 项')
+  await page.getByRole('button', { name: '撤销顺序', exact: true }).click()
+  await expect(
+    page.locator('.mach-reorder-status [role="status"]')
+  ).toContainText('已撤销 2 项')
+  await expect
+    .poll(async () => (await visibleOrder(page)).slice(0, 6))
+    .toEqual(['1', '2', '3', '4', '5', '6'])
+  await page.getByRole('button', { name: '重做顺序', exact: true }).click()
+  await expect(
+    page.locator('.mach-reorder-status [role="status"]')
+  ).toContainText('已重做 2 项')
+  await expect
+    .poll(async () => (await visibleOrder(page)).slice(0, 6))
+    .toEqual(['2', '4', '5', '1', '3', '6'])
+})
+
+test('模拟保存失败自动补偿，版本冲突须加载服务器顺序后再保存', async ({
+  page,
+}) => {
+  await chooseSaveMode(page, '模拟保存失败')
+  await beginMove(page)
+  await page.mouse.up()
+  await expect(page.locator('.mach-reorder-status')).toHaveAttribute(
+    'data-status',
+    'error'
+  )
+  await expect
+    .poll(async () => (await visibleOrder(page)).slice(0, 3))
+    .toEqual(['1', '2', '3'])
+  await expect(
+    page.getByRole('button', { name: '撤销顺序', exact: true })
+  ).toBeDisabled()
+  await chooseSaveMode(page, '模拟版本冲突')
+  await beginMove(page)
+  await page.mouse.up()
+  await expect(page.locator('.mach-reorder-status')).toHaveAttribute(
+    'data-status',
+    'conflict'
+  )
+  await expect
+    .poll(async () => (await visibleOrder(page)).slice(0, 3))
+    .toEqual(['1', '2', '3'])
+  await expect(page.locator('.mach-reorder-status')).toContainText(
+    '客户端 r1 · 模拟服务器 r2'
+  )
+  await page
+    .getByRole('button', { name: '重新加载服务器顺序', exact: true })
+    .click()
+  await expect
+    .poll(async () => (await visibleOrder(page)).slice(0, 3))
+    .toEqual(['2', '3', '4'])
+  await expect(page.locator('.mach-reorder-status')).toContainText(
+    '客户端 r2 · 模拟服务器 r2'
+  )
+  await chooseSaveMode(page, '保存成功')
+  const handle = page.locator('.mach-row[data-id="2"] .mach-row-drag-handle')
+  await handle.focus()
+  await page.keyboard.press('Alt+ArrowDown')
+  await expect(page.locator('.mach-reorder-status')).toHaveAttribute(
+    'data-status',
+    'saved'
+  )
+  await expect(page.locator('.mach-reorder-status')).toContainText(
+    '客户端 r3 · 模拟服务器 r3'
+  )
+})
+
+test('切换场景取消尚未确认的模拟保存，不污染 CRUD 数据', async ({ page }) => {
+  await beginMove(page)
+  await page.mouse.up()
+  await expect(page.locator('.mach-reorder-status')).toHaveAttribute(
+    'data-status',
+    'saving'
+  )
+  await page.getByText('标准 CRUD', { exact: true }).click()
+  await expect(page.locator('.mach-row-drag-handle')).toHaveCount(0)
+  await page.getByText('顺序调整', { exact: true }).click()
+  await expect
+    .poll(async () => (await visibleOrder(page)).slice(0, 3))
+    .toEqual(['1', '2', '3'])
+  await expect(
+    page.locator('.mach-reorder-status [role="status"]')
+  ).toContainText('已取消未完成')
+  await expect(
+    page.getByRole('button', { name: '撤销顺序', exact: true })
+  ).toBeDisabled()
 })
 
 test('深色主题的手柄与移动反馈正常显示', async ({ page }, testInfo) => {
