@@ -829,6 +829,16 @@ export const TABLE_SCENARIOS = {
     editMode: 'none',
     tip: '勾选多行后，拖动其中一行手柄可批量调整，源顺序保持不变；Alt + ↑ / ↓ 同样可用。支持撤销/重做，保存中锁定顺序操作。450ms 保存、失败与版本冲突均为本地模拟，不写入订单接口。切换场景保留已确认顺序，并取消未完成的模拟保存。',
   },
+  import: {
+    label: '导入校验',
+    editMode: 'none',
+    tip: '先预览规范化结果与校验问题，再原子确认导入；数量、日期、布尔值和长编号分别保留正确类型。仅本地模拟。',
+  },
+  large: {
+    label: '千万行视口',
+    editMode: 'none',
+    tip: '千万行逻辑数据按块生成，通过首行、中间、末行和指定行定位体验有限缓存与横向列虚拟化。仅本地模拟。',
+  },
 } as const
 
 export type TableScenario = keyof typeof TABLE_SCENARIOS

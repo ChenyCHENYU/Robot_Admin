@@ -84,7 +84,7 @@ Company switches update the session and clear old permissions, dynamic routes an
 | Time and visualization | Date, city, calendars, timelines, Gantt, charts and large-screen templates                                                                             |
 | Application experience | Menus, search, theme, language, tours, empty states, error pages and route-loading feedback                                                            |
 
-The demo directory contains **58 demo pages + 8 form layouts + 1 embedded component (67 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
+The demo directory contains **58 demo pages + 8 form layouts + 3 embedded components (69 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
 
 > Cron previews do not schedule backend jobs; formula evaluation does not modify business data. Demo data, frontend data-scope configuration and button controls require real APIs and server authorization for production use.
 
@@ -155,6 +155,13 @@ MachTable is a separate data grid project. Core and Vue / React / XLSX adapters 
 Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
 
 The installed dependency and lockfile are pinned to the official npm release **0.33.0**, with matching Vue adapter and Core versions. This release also includes typed matrix import/export, optional import preview and validation, and improvements to oversized scroll coordinates and lifecycle handling. The ordering controller is imported on demand from the Vue package's `/ordering` entry. Normal order editing, pagination and column preferences retain their existing path; local links and dependency patches are unnecessary.
+
+Two lazy-loaded tabs on the same page make these features interactive:
+
+- **导入校验 (Import validation)**: choose valid, invalid or duplicate-ID samples, or edit a JSON matrix of up to 20 rows. Select replace/append, preview normalized values and row issues, then confirm the import. Preview leaves existing data intact; changing input invalidates the previous preview. Inspect typed export to verify numbers, booleans, dates and long identifiers with leading zeros.
+- **千万行视口 (Ten-million-row viewport)**: jump to the first, middle, last or any specified row, scroll across 46 center columns and inspect pinned columns on both sides. Narrow screens pin only the order identifier and let other columns scroll, preserving a usable center viewport. The local source generates only 200 rows per request with at most eight cached blocks. The latest snapshot reports actual cache usage and physical scroll height; no ten-million-row array is created.
+
+Both scenarios simulate data locally without writing to business APIs. Switching tabs releases their import plans, pending operations and simulated transport. Real backend integration, touch devices and human screen-reader acceptance remain pending manual checks in the appropriate environment.
 
 ### Page configuration, package-owned behavior
 

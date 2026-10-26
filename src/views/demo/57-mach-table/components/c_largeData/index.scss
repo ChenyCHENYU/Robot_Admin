@@ -1,0 +1,94 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-27
+ * @FilePath: \Robot_Admin\src\views\demo\57-mach-table\components\c_largeData\index.scss
+ * @Description: 超大数据场景的主题布局与窄屏适配
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.mach-large-data {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  color: var(--app-text-primary);
+}
+
+.mach-large-data__overview,
+.mach-large-data__toolbar,
+.mach-large-data__snapshot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mach-large-data__overview,
+.mach-large-data__snapshot {
+  color: var(--app-text-secondary);
+
+  strong {
+    color: var(--app-text-primary);
+    font-weight: 600;
+  }
+}
+
+.mach-large-data__toolbar {
+  gap: 8px;
+}
+
+.mach-large-data__locator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+
+  .n-input-number {
+    width: 154px;
+  }
+}
+
+.mach-large-data__tip,
+.mach-large-data__status {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.mach-large-data__tip {
+  color: var(--app-text-secondary);
+}
+
+.mach-large-data__grid {
+  height: max(380px, calc(100vh - 500px));
+  max-height: 560px;
+  overflow: hidden;
+  border: 1px solid var(--app-border-default);
+  border-radius: var(--app-radius-medium);
+
+  :deep(.mach-vue-host),
+  :deep(.mach-root) {
+    height: 100%;
+  }
+
+  :deep(.mach-root) {
+    --mach-primary: var(--app-primary);
+    --mach-radius: 6px;
+  }
+}
+
+.mach-large-data__snapshot {
+  padding-top: 10px;
+  border-top: 1px solid var(--app-border-default);
+}
+
+@media (max-width: 640px) {
+  .mach-large-data__locator {
+    margin-left: 0;
+  }
+
+  .mach-large-data__grid {
+    height: 420px;
+  }
+}

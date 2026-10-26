@@ -1,0 +1,163 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-27
+ * @FilePath: \Robot_Admin\src\views\demo\57-mach-table\components\c_importValidation\index.scss
+ * @Description: 导入体验的主题适配、预览表与窄屏布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.mach-import-validation {
+  min-width: 0;
+  color: var(--app-text-primary);
+}
+.mach-import-heading,
+.mach-import-controls,
+.mach-import-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.mach-import-heading,
+.mach-import-controls {
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.mach-import-heading h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 650;
+}
+.mach-import-heading p,
+.mach-import-hint,
+.mach-import-export p {
+  margin: 0;
+  color: var(--app-text-secondary);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.mach-import-count {
+  padding: 8px 12px;
+  border: 1px solid var(--app-border-default);
+  border-radius: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.mach-import-count output {
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+}
+.mach-import-controls {
+  margin-top: 18px;
+}
+.mach-import-input-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 550;
+}
+.mach-import-input-label small {
+  display: block;
+  margin-top: 4px;
+  color: var(--app-text-secondary);
+  font-weight: 400;
+  line-height: 1.7;
+}
+.mach-import-hint {
+  margin: 8px 0 14px;
+}
+.mach-import-status {
+  margin: 14px 0;
+  line-height: 1.7;
+}
+.mach-import-issues {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--app-border-default);
+  border-radius: 8px;
+  background: var(--app-bg-surface);
+}
+.mach-import-issues ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  color: var(--app-text-secondary);
+  line-height: 1.8;
+}
+.mach-import-scroll {
+  overflow: auto;
+  max-height: 360px;
+  margin-bottom: 18px;
+}
+.mach-import-scroll h4,
+.mach-import-export h4 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+.mach-import-scroll table {
+  width: 100%;
+  min-width: 740px;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.mach-import-scroll th,
+.mach-import-scroll td {
+  padding: 9px 12px;
+  border: 1px solid var(--app-border-default);
+  text-align: left;
+  vertical-align: top;
+}
+.mach-import-scroll th {
+  background: var(--app-bg-surface);
+  font-weight: 550;
+}
+.mach-import-scroll td small {
+  display: block;
+  margin-top: 3px;
+  color: var(--app-text-tertiary);
+}
+.mach-import-grid {
+  height: 320px;
+  min-width: 0;
+  margin-top: 18px;
+}
+.mach-import-grid :deep(.mach-vue-host) {
+  height: 100%;
+}
+.mach-import-grid :deep(.mach-root) {
+  --mach-primary: var(--app-primary);
+  --mach-radius: 6px;
+}
+.mach-import-export {
+  margin-top: 18px;
+}
+.mach-import-type-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+.mach-import-export pre {
+  max-height: 320px;
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--app-border-default);
+  border-radius: 8px;
+  background: var(--app-bg-surface);
+  font-size: 12px;
+  line-height: 1.65;
+}
+@media (max-width: 640px) {
+  .mach-import-heading,
+  .mach-import-controls {
+    align-items: flex-start;
+  }
+
+  .mach-import-controls :deep(.n-radio-group) {
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .mach-import-controls :deep(.n-radio-button) {
+    padding-inline: 8px;
+  }
+}

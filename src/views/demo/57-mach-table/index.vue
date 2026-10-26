@@ -10,10 +10,13 @@
     <c_vTitle
       title="Mach Table 场景示例"
       icon="mdi:table-large"
-      description="框架无关 Core + Vue 适配层：CRUD、行内编辑、树形表格与拖拽顺序调整"
+      :description="`CRUD、行内编辑、树形与顺序调整，体验 v${machTableVersion} 的导入校验和千万行视口`"
     />
 
-    <div class="mach-overview">
+    <div
+      v-if="!isNewFeatureScenario"
+      class="mach-overview"
+    >
       <div class="mach-overview__item">
         <span>当前版本</span>
         <strong>v{{ machTableVersion }}</strong>
@@ -49,12 +52,16 @@
         />
 
         <C_ActionBar
+          v-if="!isNewFeatureScenario"
           :actions="featureActions"
           :config="{ size: 'tiny' }"
         />
       </div>
 
-      <div class="mach-demo-toolbar">
+      <div
+        v-if="!isNewFeatureScenario"
+        class="mach-demo-toolbar"
+      >
         <NInput
           v-model:value="quickFilter"
           class="mach-demo-toolbar__search"
@@ -93,6 +100,7 @@
       </div>
 
       <NAlert
+        v-if="!isNewFeatureScenario"
         class="mach-tip"
         type="info"
         :show-icon="false"
@@ -124,7 +132,18 @@
         </small>
       </div>
 
-      <div class="mach-grid-shell">
+      <ImportValidation
+        v-if="activeScenario === 'import'"
+        :theme="themeStore.isDark ? 'dark' : 'light'"
+      />
+      <LargeData
+        v-else-if="activeScenario === 'large'"
+        :theme="themeStore.isDark ? 'dark' : 'light'"
+      />
+      <div
+        v-else
+        class="mach-grid-shell"
+      >
         <MachTable
           v-bind="isReorderScenario ? reorderTableBindings : tableBindings"
           :key="isReorderScenario ? 'reorder' : 'orders'"
@@ -354,6 +373,12 @@
 
   defineOptions({ name: 'MachTableDemo' })
 
+  const ImportValidation = defineAsyncComponent(
+    () => import('./components/c_importValidation/index.vue')
+  )
+  const LargeData = defineAsyncComponent(
+    () => import('./components/c_largeData/index.vue')
+  )
   const message = useMessage()
   const dialog = useDialog()
   const themeStore = s_themeStore()
@@ -408,6 +433,9 @@
   const scenarioTip = computed(() => currentScenario.value.tip)
   const isTreeScenario = computed(() => activeScenario.value === 'tree')
   const isReorderScenario = computed(() => activeScenario.value === 'reorder')
+  const isNewFeatureScenario = computed(
+    () => activeScenario.value === 'import' || activeScenario.value === 'large'
+  )
   const countTreeRows = (items: OrderTreeRow[]): number =>
     items.reduce(
       (total, item) => total + 1 + countTreeRows(item.children ?? []),
@@ -477,8 +505,10 @@
     if (event.changes.length) await orderCrud.save({ ...event.data })
   }
 
+  /** 切换场景时关闭旧配置、取消保存，并结束旧表格的编辑事务。 */
   const handleScenarioChange = async (): Promise<void> => {
     reorderDemo.cancelPending()
+    showFeatureDrawer.value = false
     previewState.value = 'data'
     quickFilter.value = ''
     commands.clearSelection()
