@@ -379,6 +379,19 @@
             "affix": false,
             "keepAlive": false
           }
+        },
+        {
+          "path": "business-workbench",
+          "name": "demo-business-workbench",
+          "component": "/demo/59-business-workbench/index",
+          "meta": {
+            "icon": "mdi:view-dashboard-outline",
+            "title": "业务工作台",
+            "hidden": false,
+            "full": false,
+            "affix": false,
+            "keepAlive": true
+          }
         }
       ]
     },

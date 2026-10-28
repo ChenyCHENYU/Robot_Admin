@@ -17,7 +17,7 @@
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml"><img src="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-8FB6FF?style=flat-square&amp;logo=bun&amp;logoColor=white" alt="Bun ≥1.4.2"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FB6FF?style=flat-square" alt="MIT License"></a>
-    <a href="#能力地图"><img src="https://img.shields.io/badge/demos-58-orange?style=flat-square" alt="58 个演示页面"></a>
+    <a href="#能力地图"><img src="https://img.shields.io/badge/demos-59-orange?style=flat-square" alt="59 个演示页面"></a>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin"><img src="https://img.shields.io/github/stars/ChenyCHENYU/Robot_Admin?style=flat-square&amp;label=Star" alt="GitHub Stars"></a>
   </p>
 </div>
@@ -31,8 +31,8 @@
 | 工程视角   | 当前提供                                                                   |
 | ---------- | -------------------------------------------------------------------------- |
 | 架构选择   | SPA、Bun Workspaces、Module Federation、MicroApp 四种分支                  |
-| 组件与插件 | 55 个业务组件、11 个指令；7 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
-| 场景示例   | 58 个演示页面，覆盖数据录入、复杂表格、流程编辑、文件与媒体                |
+| 组件与插件 | 60 个业务组件、11 个指令；7 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
+| 场景示例   | 59 个演示页面，覆盖数据录入、复杂表格、流程编辑、文件与媒体                |
 | 验证与溯源 | 双 Lint、类型、逻辑与组件测试、构建预算、浏览器绘制回归、构建身份卡        |
 
 ## 快速开始
@@ -84,7 +84,7 @@ bun run dev
 | 时间与展示 | 日期、城市、日程、时间线、甘特、图表、大屏模板                                    |
 | 全局体验   | 菜单、搜索、主题、语言、引导、空状态、错误页与路由加载反馈                        |
 
-演示目录包含 **58 个演示页 + 8 个表单布局 + 3 个页内组件（69 个 index.vue）**。组件库提供独立子路径与样式入口，重型编辑器、图表、流程和媒体能力按路由加载。查看 [组件库](https://github.com/ChenyCHENYU/naive-ui-components) 或在 [在线体验](https://robotadmin.cn) 中按场景浏览。
+演示目录包含 **59 个演示页 + 8 个表单布局 + 3 个页内组件（70 个 index.vue）**。组件库提供独立子路径与样式入口，重型编辑器、图表、流程和媒体能力按路由加载。查看 [组件库](https://github.com/ChenyCHENYU/naive-ui-components) 或在 [在线体验](https://robotadmin.cn) 中按场景浏览。
 
 > Cron 预览不创建后台任务，公式试算不修改业务数据。演示数据、前端数据范围配置与按钮控制需要真实接口和服务端授权配合，才能用于生产业务。
 
@@ -129,7 +129,7 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.22.1` | 55 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.23.0` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.3`  | 6 种布局、框架无关设置协议、Vue Headless 与 Naive 入口     | 宿主提供菜单、路由和插槽，布局由包实现 |
@@ -146,7 +146,7 @@ flowchart TB
 
 | 能力                 | 接入方式                                                                                       | 实际用途                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **MachTable 0.33.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
+| **MachTable 0.34.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
 | 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                      |
 | 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译          |
 | 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                        |
@@ -156,7 +156,7 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 
 在「表格管理 → MachTable → 顺序调整」（`/#/demo/table-manage/mach-table`）体验 30 条订单的行排序。该场景按需使用 `/ordering`：勾选不连续的多项，拖动其中一项手柄可按原相对顺序一起移动；支持边缘滚动、Esc、Alt + ↑ / ↓ 和独立的顺序撤销/重做。搜索后的键盘移动以相邻可见订单为目标，隐藏订单仍保留在完整数据中。现有工具栏可选择 450ms 模拟保存、失败回滚或版本冲突；冲突后可重新加载模拟服务器顺序。状态区显示保存结果和双方版本，切换场景保留已确认顺序并取消未完成保存。所有传输均为本地模拟，不写订单接口。
 
-当前安装与锁文件已固定为官方 npm 发布的 **0.33.0**，Vue 适配和 Core 使用相同版本。本轮升级同时包含保留值类型的矩阵导入导出、按需导入预览与校验，以及超大滚动坐标和生命周期优化。顺序控制器直接从 Vue 包的 `/ordering` 入口按需导入；普通订单表的编辑、分页与列偏好继续使用原路径，无需本地 link 或依赖补丁。
+当前安装与锁文件已固定为官方 npm 发布的 **0.34.0**，Vue 适配和 Core 使用相同版本。本轮升级同时包含保留值类型的矩阵导入导出、按需导入预览与校验，以及超大滚动坐标和生命周期优化。顺序控制器直接从 Vue 包的 `/ordering` 入口按需导入；普通订单表的编辑、分页与列偏好继续使用原路径，无需本地 link 或依赖补丁。
 
 同一页面新增两个按需加载的体验页签：
 
@@ -164,6 +164,18 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 - **千万行视口**：定位首行、中间、末行或指定行号，横向滚动 46 个中间列，并观察左右固定列。窄屏仅固定订单编号，其他列可横向查看，保留可用的中间视口。10,000,000 行是逻辑规模，本地模拟源每次仅生成 200 行，缓存最多 8 块；最近快照展示实际缓存与物理滚动高度，不预先创建千万行数组。
 
 两个新场景均为本地模拟，不写业务接口；切换页签会释放各自的导入计划、等待任务和模拟传输。真实服务端接口、触屏及真人读屏仍需实际环境人工验收。
+
+### 密集业务工作台
+
+新增「业务工作台」菜单（`/#/demo/business-workbench`），免登录预览入口为 `/#/preview/business-workbench`。它通过正式包的公开入口组合主列表、商品明细和收款安排，集中演示：
+
+- 局部紧凑密度、容器搜索栅格、固定组织与成功查询快照，搜索草稿不会提前改变结果。
+- 同一字典服务表单、搜索与网格，原始编码、状态 0、空值和未知值分别保留。
+- 精确小数按原值计算，金额仅在展示时舍入；按币种和单位分组合计。
+- 跨表单与隐藏网格的错误摘要导航、远程实体选择取消/确认、未保存主记录切换保护。
+- keep/clear/set 批改预览、部分失败结果和仅失败项重试；成功项不会重复发送。
+
+示例数据、异步选择和提交结果均在本地模拟，便于复现交互；应用继续负责真实接口、权限、字典作用域和服务端事务。通用字典与数值方法从组件库 `/data` 或 `/config` 接入，多区域状态从 `/workflows` 接入，网格字典列与汇总从 MachTable `/business` 按需加载。
 
 ### 配置留在页面，通用行为留在包内
 
@@ -300,7 +312,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.33.0** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.34.0** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

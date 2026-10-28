@@ -21,6 +21,12 @@ export const previewRoutes: RouteRecordRaw = {
   redirect: '/preview/icon',
   meta: { title: '组件预览', hidden: true },
   children: [
+    {
+      path: 'business-workbench',
+      name: 'preview-business-workbench',
+      component: () => import('_views/demo/59-business-workbench/index.vue'),
+      meta: { title: '业务工作台' },
+    },
     // ==================== 基础组件 ====================
     {
       path: 'icon',

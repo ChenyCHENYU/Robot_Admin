@@ -325,7 +325,7 @@ test('千万行首中末与指定行精确定位，缓存和实际 DOM 始终有
   page,
 }, testInfo) => {
   const panel = await openLarge(page)
-  await expect(panel).toContainText('v0.33.0')
+  await expect(panel).toContainText('v0.34.0')
   await expect(panel).toContainText('10,000,000 行')
   await (
     [

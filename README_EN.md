@@ -17,7 +17,7 @@
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml"><img src="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-8FB6FF?style=flat-square&amp;logo=bun&amp;logoColor=white" alt="Bun ≥1.4.2"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FB6FF?style=flat-square" alt="MIT License"></a>
-    <a href="#capability-map"><img src="https://img.shields.io/badge/demos-58-orange?style=flat-square" alt="58 demo pages"></a>
+    <a href="#capability-map"><img src="https://img.shields.io/badge/demos-59-orange?style=flat-square" alt="59 demo pages"></a>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin"><img src="https://img.shields.io/github/stars/ChenyCHENYU/Robot_Admin?style=flat-square&amp;label=Star" alt="GitHub Stars"></a>
   </p>
 </div>
@@ -31,8 +31,8 @@ The current SPA mainline, **v2.7.0**, includes company-context login, system man
 | Perspective                   | Included today                                                                                           |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Architectures                 | SPA, Bun Workspaces, Module Federation and MicroApp branches                                             |
-| Components and packages       | 55 business components, 11 directives; 7 runtime `@robot-admin/*` packages and 1 Git tooling package     |
-| Examples                      | 58 demo pages covering data entry, complex grids, workflow editing, files and media                      |
+| Components and packages       | 60 business components, 11 directives; 7 runtime `@robot-admin/*` packages and 1 Git tooling package     |
+| Examples                      | 59 demo pages covering data entry, complex grids, workflow editing, files and media                      |
 | Verification and traceability | Dual lint, types, logic and component tests, bundle budgets, browser paint regression and build identity |
 
 ## Quick start
@@ -84,7 +84,7 @@ Company switches update the session and clear old permissions, dynamic routes an
 | Time and visualization | Date, city, calendars, timelines, Gantt, charts and large-screen templates                                                                             |
 | Application experience | Menus, search, theme, language, tours, empty states, error pages and route-loading feedback                                                            |
 
-The demo directory contains **58 demo pages + 8 form layouts + 3 embedded components (69 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
+The demo directory contains **59 demo pages + 8 form layouts + 3 embedded components (70 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
 
 > Cron previews do not schedule backend jobs; formula evaluation does not modify business data. Demo data, frontend data-scope configuration and button controls require real APIs and server authorization for production use.
 
@@ -129,7 +129,7 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.22.1`       | 55 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.23.0`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.3`        | 6 layouts, framework-independent settings protocol, Vue Headless and Naive entry points | Host-owned menus, routes and slots; package-owned layout behavior |
@@ -146,7 +146,7 @@ The application provides `compact` defaults for forms, search and editor modals.
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.33.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
+| **MachTable 0.34.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
@@ -156,7 +156,7 @@ MachTable is a separate data grid project. Core and Vue / React / XLSX adapters 
 
 Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
 
-The installed dependency and lockfile are pinned to the official npm release **0.33.0**, with matching Vue adapter and Core versions. This release also includes typed matrix import/export, optional import preview and validation, and improvements to oversized scroll coordinates and lifecycle handling. The ordering controller is imported on demand from the Vue package's `/ordering` entry. Normal order editing, pagination and column preferences retain their existing path; local links and dependency patches are unnecessary.
+The installed dependency and lockfile are pinned to the official npm release **0.34.0**, with matching Vue adapter and Core versions. This release also includes typed matrix import/export, optional import preview and validation, and improvements to oversized scroll coordinates and lifecycle handling. The ordering controller is imported on demand from the Vue package's `/ordering` entry. Normal order editing, pagination and column preferences retain their existing path; local links and dependency patches are unnecessary.
 
 Two lazy-loaded tabs on the same page make these features interactive:
 
@@ -164,6 +164,12 @@ Two lazy-loaded tabs on the same page make these features interactive:
 - **千万行视口 (Ten-million-row viewport)**: jump to the first, middle, last or any specified row, scroll across 46 center columns and inspect pinned columns on both sides. Narrow screens pin only the order identifier and let other columns scroll, preserving a usable center viewport. The local source generates only 200 rows per request with at most eight cached blocks. The latest snapshot reports actual cache usage and physical scroll height; no ten-million-row array is created.
 
 Both scenarios simulate data locally without writing to business APIs. Switching tabs releases their import plans, pending operations and simulated transport. Real backend integration, touch devices and human screen-reader acceptance remain pending manual checks in the appropriate environment.
+
+### Dense business workbench
+
+The new **Business workbench** menu (`/#/demo/business-workbench`) and public preview (`/#/preview/business-workbench`) combine a master list, editable order lines and payment schedules through public package entries. Try local density, applied search snapshots, shared dictionaries, exact decimals, grouped totals, cross-region error navigation, cancellable entity selection and partial batch failure retry. Unsaved edits are protected when changing the master record.
+
+Data, picker requests and submissions are local examples. Applications retain ownership of real APIs, permissions, dictionary scopes and server transactions. Pure value helpers use `/data` or `/config`, multi-region coordination uses `/workflows`, and grid helpers load from MachTable `/business`.
 
 ### Page configuration, package-owned behavior
 
@@ -286,7 +292,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.33.0** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.34.0** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

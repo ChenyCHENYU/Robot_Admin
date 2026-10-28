@@ -19,7 +19,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 | 仓库                     | 简称   | 用途                                     | npm 包名                           |
 | ------------------------ | ------ | ---------------------------------------- | ---------------------------------- |
 | **Robot_Admin**          | 主项目 | Vue 3 SPA 后台应用                       | —                                  |
-| **naive-ui-components**  | 组件库 | 55 个业务组件（基于 Naive UI）           | `@robot-admin/naive-ui-components` |
+| **naive-ui-components**  | 组件库 | 60 个业务组件（基于 Naive UI）           | `@robot-admin/naive-ui-components` |
 | **robot-admin-packages** | 包集合 | 7 个独立 npm 包（指令/请求/布局/主题等） | `@robot-admin/*`                   |
 | **AgileTeam_Doc**        | 文档库 | VitePress 2.0 团队文档站                 | —                                  |
 
@@ -54,7 +54,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 
 | 包名                               | 版本   | 功能                                  |
 | ---------------------------------- | ------ | ------------------------------------- |
-| `@robot-admin/naive-ui-components` | 0.22.1 | 55 个业务组件                         |
+| `@robot-admin/naive-ui-components` | 0.23.0 | 60 个业务组件                         |
 | `@robot-admin/layout`              | 3.2.3  | 6 种布局 + 精简适配 + 核心协议        |
 | `@robot-admin/request-core`        | 0.7.0  | 实例化请求编排 + 函数式 Headless CRUD |
 | `@robot-admin/theme`               | 0.6.1  | 分层核心 + Vue Store + Naive UI 适配  |

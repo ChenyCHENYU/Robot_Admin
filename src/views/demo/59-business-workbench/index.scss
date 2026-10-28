@@ -1,0 +1,228 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-28
+ * @FilePath: \Robot_Admin\src\views\demo\59-business-workbench\index.scss
+ * @Description: 面向密集单据的三表工作台，主题变量与局部全屏布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.business-workbench {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  color: var(--app-text-primary);
+}
+.workbench-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  small {
+    letter-spacing: 0.16em;
+    color: var(--app-primary-color);
+    font-size: 10px;
+    font-weight: 700;
+  }
+  h1 {
+    margin: 4px 0;
+    font-size: 24px;
+    font-weight: 650;
+  }
+  p {
+    margin: 4px 0 0;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+}
+.workbench-layout {
+  height: 640px;
+  min-width: 0;
+}
+.workbench-panel {
+  min-width: 0;
+  background: var(--app-bg-content);
+  border: 1px solid var(--app-border-default);
+  border-radius: var(--app-radius-medium);
+  overflow: hidden;
+  > header {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid var(--app-border-default);
+    h2 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 650;
+    }
+    span {
+      font-size: 11px;
+      color: var(--app-text-secondary);
+    }
+  }
+}
+.workbench-orders {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.workbench-master-grid {
+  min-height: 160px;
+  flex: 1;
+}
+.workbench-panel-note {
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 12px;
+  margin: 0;
+  color: var(--app-text-secondary);
+  border-top: 1px solid var(--app-border-default);
+}
+.workbench-document {
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: auto;
+}
+.workbench-header {
+  flex: 0 0 auto;
+  :deep(.c-form) {
+    padding: 12px;
+  }
+}
+.workbench-details {
+  flex: 1;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  > header {
+    padding-block: 4px;
+  }
+  :deep(.n-tabs) {
+    flex: 1;
+    min-width: 0;
+  }
+}
+.workbench-details--fullscreen {
+  position: fixed;
+  inset: 16px;
+  z-index: 1600;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 16%);
+  color: var(--app-text-primary);
+}
+.workbench-lines {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+.workbench-detail-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  span {
+    font-size: 11px;
+    color: var(--app-text-secondary);
+  }
+}
+.workbench-detail-grid,
+.workbench-payment-grid {
+  min-height: 180px;
+  flex: 1;
+}
+.workbench-totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 9px 12px;
+  font-size: 12px;
+  background: var(--app-bg-page);
+  border-top: 1px solid var(--app-border-default);
+  font-variant-numeric: tabular-nums;
+  b {
+    margin-inline: 6px;
+    color: var(--app-text-primary);
+  }
+}
+.workbench-batch-controls {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  label {
+    font-size: 12px;
+    min-width: 145px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  > :deep(.n-input) {
+    max-width: 280px;
+  }
+}
+.workbench-batch-preview {
+  padding: 0 12px 12px;
+  display: grid;
+  gap: 5px;
+  > div {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 5px 8px;
+    font-size: 12px;
+    background: var(--app-bg-page);
+    strong {
+      min-width: 115px;
+    }
+  }
+}
+.workbench-batch :deep(.c-batch-result) {
+  margin: 0 12px 12px;
+}
+.workbench-status {
+  margin: 0;
+  font-size: 12px;
+  color: var(--app-text-secondary);
+}
+.workbench-switch-dialog {
+  width: min(480px, calc(100vw - 24px));
+}
+:deep(.workbench-order-link) {
+  color: var(--app-primary-color);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  &:hover {
+    text-decoration: underline;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--app-primary-color);
+    outline-offset: 2px;
+  }
+}
+@media (max-width: 860px) {
+  .business-workbench {
+    padding: 12px;
+  }
+  .workbench-layout {
+    height: 830px;
+  }
+  .workbench-layout > :deep(.c-split-pane) {
+    min-width: 0;
+  }
+  .workbench-heading h1 {
+    font-size: 21px;
+  }
+}
