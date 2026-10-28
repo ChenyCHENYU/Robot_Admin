@@ -460,8 +460,9 @@ export const ORDER_FORM_OPTIONS = defineFormOptions<OrderRow>([
 
 /** 编辑弹窗稳定配置；页面只保留一个 C_Form 绑定。 */
 export const ORDER_FORM_CONFIG = defineFormConfig<OrderRow>({
+  density: 'compact',
   layout: 'grid',
-  grid: { cols: 24, gutter: 18 },
+  grid: { cols: 24, xGap: 18 },
   labelPlacement: 'top',
   validateOnChange: false,
 })

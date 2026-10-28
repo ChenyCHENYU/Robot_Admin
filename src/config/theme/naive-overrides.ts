@@ -86,6 +86,19 @@ const darkMenuConfig: GlobalThemeOverrides['Menu'] = {
   itemBorderRadius: '0',
 }
 
+/** 仅统一 Dialog 原生 small 操作按钮；普通按钮及显式 medium/large 不受影响。 */
+const dialogConfig: GlobalThemeOverrides['Dialog'] = {
+  iconSize: '22px',
+  peers: {
+    Button: {
+      heightSmall: '22px',
+      fontSizeSmall: '12px',
+      paddingSmall: '0 8px',
+      borderRadiusSmall: '6px',
+    },
+  },
+}
+
 /**
  * 亮色主题全局配置
  * 包含通用属性和各组件在亮色模式下的配置
@@ -103,6 +116,7 @@ export const lightThemeOverrides: GlobalThemeOverrides = {
     bodyColor: LIGHT_BACKGROUND.body,
   },
   Menu: lightMenuConfig,
+  Dialog: dialogConfig,
 
   // 扩展：Card 组件配置
   Card: {
@@ -137,6 +151,7 @@ const darkThemeOverridesConfig: GlobalThemeOverrides = {
     infoColorSuppl: PRIMARY_COLORS.suppl,
   },
   Menu: darkMenuConfig,
+  Dialog: dialogConfig,
 
   // 扩展：Card 组件配置
   Card: {

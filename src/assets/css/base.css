@@ -116,12 +116,6 @@ video {
   --n-max-width: 200px !important;
 }
 
-/* 弹出框 */
-.n-dialog__icon svg {
-  width: 22px !important;
-  margin-top: -5px !important;
-}
-
 /* --------- 响应式调整 --------- */
 @media (max-width: 768px) {
   html {

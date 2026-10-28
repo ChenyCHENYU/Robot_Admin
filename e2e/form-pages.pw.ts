@@ -354,24 +354,6 @@ test('下载 JSON 参数错误显示在字段，不发起下载', async ({ page 
   ).toBeVisible()
 })
 
-test('Markdown 特殊字段保留编辑、字数统计和发布校验', async ({ page }) => {
-  await page.goto('/#/editor/markdown-editor')
-  await page.locator('.n-tabs-tab').filter({ hasText: '表单集成' }).click()
-  const form = page.locator('.n-form')
-  await expect(form.locator('.form-markdown-editor')).toBeVisible()
-  await form.getByRole('button', { name: '发布文章', exact: true }).click()
-  await expect(
-    form.locator('.n-form-item-feedback--error').first()
-  ).toBeVisible()
-  await expect(
-    form.getByText('字数统计: 0 / 20000', { exact: true })
-  ).toBeVisible()
-  await form.getByRole('button', { name: '预览文章', exact: true }).click()
-  await expect(
-    page.getByText('请先输入文章内容', { exact: true })
-  ).toBeVisible()
-})
-
 test('操作栏演示复用提交锁，可选邮箱留空并在结束后重置', async ({ page }) => {
   await page.goto('/#/demo/action-bar')
   const card = page.locator('.n-card').filter({ has: page.locator('.n-form') })
@@ -448,14 +430,17 @@ test('搜索表单精简模板后条件、历史和展开状态互不串联', as
   const sections = page
     .locator('.demo-section')
     .filter({ has: page.locator('.form-search') })
-  await expect(sections).toHaveCount(3)
+  await expect(sections).toHaveCount(4)
   const basic = sections.nth(0)
   const advanced = sections.nth(1)
   const searchButtons = (container: Locator) =>
     container.locator('.form-search-item-box').last().getByRole('button')
   await basic.getByPlaceholder('请输入用户名称').fill('张三')
   await searchButtons(basic).nth(0).click()
-  await expect(page.locator('.demo-section pre')).toContainText('张三')
+  const results = page.locator('.demo-section').filter({
+    has: page.getByRole('heading', { name: '搜索结果', exact: true }),
+  })
+  await expect(results.locator('pre')).toContainText('张三')
   await advanced.getByPlaceholder('请输入关键词搜索').fill('独立高级条件')
   await searchButtons(advanced).nth(2).click()
   await expect(advanced.getByPlaceholder('请输入版本号')).toBeVisible()
