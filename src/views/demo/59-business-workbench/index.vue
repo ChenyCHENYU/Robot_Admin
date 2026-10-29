@@ -6,12 +6,13 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <C_Density density="compact">
-    <main
-      ref="container"
-      class="business-workbench"
-      data-testid="business-workbench"
-    >
+  <!-- 路由过渡需要真实元素作为根；无 DOM 的密度提供器只放在页面内部。 -->
+  <main
+    ref="container"
+    class="business-workbench"
+    data-testid="business-workbench"
+  >
+    <C_Density density="compact">
       <header class="workbench-heading">
         <div class="workbench-heading__identity">
           <span class="workbench-heading__icon"
@@ -106,9 +107,10 @@
                   :row-data="filteredOrders"
                   :column-defs="masterColumns"
                   row-key="id"
-                  :row-height="50"
+                  :row-height="46"
                   :header-height="36"
                   column-layout="fit"
+                  size="compact"
                   :striped-rows="true"
                   :show-cell-borders="true"
                   :row-style-rules="masterRowStyles"
@@ -195,7 +197,7 @@
                       ></NTabs
                     ><NButton
                       size="tiny"
-                      @click="fullscreen = !fullscreen"
+                      @click="toggleDetailFullscreen"
                       >{{ fullscreen ? '退出明细全屏' : '明细全屏' }}</NButton
                     ></header
                   >
@@ -238,9 +240,10 @@
                         :row-data="lines"
                         :column-defs="detailColumns"
                         row-key="id"
-                        :row-height="32"
+                        :row-height="30"
                         :header-height="36"
                         column-layout="fit"
+                        size="compact"
                         :striped-rows="true"
                         :show-cell-borders="true"
                         :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -281,9 +284,10 @@
                       :row-data="paymentRows"
                       :column-defs="paymentColumns"
                       row-key="id"
-                      :row-height="32"
+                      :row-height="30"
                       :header-height="36"
                       column-layout="fit"
+                      size="compact"
                       :striped-rows="true"
                       :show-cell-borders="true"
                       :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -406,8 +410,8 @@
           ></template
         >
       </NModal>
-    </main>
-  </C_Density>
+    </C_Density>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -438,6 +442,7 @@
     detailEditing,
     onDetailTabKeydown,
     fullscreen,
+    toggleDetailFullscreen,
     splitSize,
     pendingOrder,
     saving,

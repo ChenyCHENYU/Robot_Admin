@@ -7,24 +7,20 @@
  */
 .business-workbench,
 .workbench-details--fullscreen {
-  --workbench-radius: 12px;
+  --workbench-radius: 8px;
   --workbench-accent: var(--app-primary);
   --workbench-ink: color-mix(
     in srgb,
     var(--app-primary) 85%,
     var(--app-text-primary)
   );
-  --workbench-outline: color-mix(
-    in srgb,
-    var(--app-primary) 8%,
-    var(--app-border-default)
-  );
+  --workbench-outline: var(--app-border-default);
 }
 .business-workbench {
-  padding: 18px 20px;
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
   color: var(--app-text-primary);
 }
@@ -91,17 +87,13 @@
   border-radius: var(--workbench-radius);
   overflow: hidden;
   > header {
-    min-height: 54px;
-    padding: 10px 14px;
+    min-height: 48px;
+    padding: 8px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    background: color-mix(
-      in srgb,
-      var(--workbench-accent) 3%,
-      var(--app-bg-content)
-    );
+    background: var(--app-bg-content);
     border-bottom: 1px solid var(--workbench-outline);
     h2 {
       margin: 0;
@@ -214,29 +206,10 @@
   min-height: 150px;
   flex: 1;
 }
-// 只覆盖本页实例的公开令牌；明暗主题仍由表格自身管理，编辑/悬停/选择状态保留。
+// 与 Mach Table 场景页共用原生主题，只绑定品牌色；不另造表头/正文/边线配色。
 .business-workbench :deep(.mach-root),
 .workbench-details--fullscreen :deep(.mach-root) {
   --mach-primary: var(--workbench-accent);
-  --mach-header-bg: color-mix(
-    in srgb,
-    var(--workbench-accent) 7%,
-    var(--app-bg-content)
-  );
-  --mach-header-accent-color: color-mix(
-    in srgb,
-    var(--workbench-accent) 28%,
-    var(--app-border-default)
-  );
-  --mach-body-bg: var(--app-bg-content);
-  --mach-body-fg: var(--app-text-primary);
-  --mach-border-color: var(--workbench-outline);
-  --mach-zebra-bg: color-mix(
-    in srgb,
-    var(--workbench-accent) 2%,
-    var(--app-bg-content)
-  );
-  --mach-cell-focus-color: var(--workbench-accent);
   border: 0;
 }
 :deep(.workbench-order-cell) {
@@ -271,26 +244,18 @@
 :deep(.workbench-state) {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 7px;
-  border-radius: 5px;
-  color: var(--workbench-ink);
-  background: color-mix(in srgb, currentColor 10%, var(--app-bg-content));
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--mach-primary);
+  background: color-mix(in srgb, currentColor 10%, var(--mach-body-bg));
   font-size: 11px;
   line-height: 1.3;
   white-space: nowrap;
-  &::before {
-    content: '';
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: currentColor;
-  }
   &[data-status='1'] {
-    color: var(--c-warning, #d97706);
+    color: var(--mach-warning);
   }
   &[data-status='2'] {
-    color: var(--c-success, #18a058);
+    color: var(--mach-success);
   }
 }
 .workbench-totals {
@@ -300,11 +265,7 @@
   padding: 9px 12px;
   font-size: 12px;
   color: var(--app-text-secondary);
-  background: color-mix(
-    in srgb,
-    var(--workbench-accent) 4%,
-    var(--app-bg-content)
-  );
+  background: var(--app-bg-surface);
   border-top: 1px solid var(--workbench-outline);
   font-variant-numeric: tabular-nums;
   b {

@@ -361,6 +361,16 @@ export function useBusinessWorkbench() {
     stacked.value = entry.contentRect.width < 860
   })
   const fullscreen = ref(false)
+  /** Teleport 移动前释放按钮焦点，移动后恢复键盘入口且不拉动祖先滚动区。 */
+  const toggleDetailFullscreen = (event: MouseEvent): void => {
+    const trigger = event.currentTarget as HTMLElement
+    trigger.blur()
+    fullscreen.value = !fullscreen.value
+    void nextTick(() => {
+      if (trigger.isConnected && document.activeElement === document.body)
+        trigger.focus({ preventScroll: true })
+    })
+  }
   const splitSize = ref(28)
   const pendingOrder = ref<string | null>(null)
   const saving = ref(false)
@@ -525,7 +535,13 @@ export function useBusinessWorkbench() {
   // 规则只在当前订单变化时更新，保留稳定行身份；取消切单不误高亮另一个订单。
   const masterRowStyles = computed<readonly RowStyleRule<OrderHeader>[]>(() => {
     const id = activeId.value
-    return [{ when: ({ data }) => data.id === id, tone: 'info' }]
+    return [
+      {
+        when: ({ data }) => data.id === id,
+        tone: 'info',
+        backgroundColor: 'var(--mach-row-selected-bg)',
+      },
+    ]
   })
   const detailColumns = defineVueColumns<OrderLine>([
     selectionColumn(),
@@ -815,6 +831,7 @@ export function useBusinessWorkbench() {
     detailEditing,
     onDetailTabKeydown,
     fullscreen,
+    toggleDetailFullscreen,
     splitSize,
     pendingOrder,
     saving,
