@@ -17,7 +17,7 @@
     <a href="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml"><img src="https://github.com/ChenyCHENYU/Robot_Admin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
     <a href="./package.json"><img src="https://img.shields.io/badge/bun-%E2%89%A51.4.2-8FB6FF?style=flat-square&amp;logo=bun&amp;logoColor=white" alt="Bun ≥1.4.2"></a>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-8FB6FF?style=flat-square" alt="MIT License"></a>
-    <a href="#capability-map"><img src="https://img.shields.io/badge/demos-59-orange?style=flat-square" alt="59 demo pages"></a>
+    <a href="#capability-map"><img src="https://img.shields.io/badge/demos-58-orange?style=flat-square" alt="58 demo pages"></a>
     <a href="https://github.com/ChenyCHENYU/Robot_Admin"><img src="https://img.shields.io/github/stars/ChenyCHENYU/Robot_Admin?style=flat-square&amp;label=Star" alt="GitHub Stars"></a>
   </p>
 </div>
@@ -32,7 +32,7 @@ The current SPA mainline, **v2.7.0**, includes company-context login, system man
 | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Architectures                 | SPA, Bun Workspaces, Module Federation and MicroApp branches                                             |
 | Components and packages       | 60 business components, 11 directives; 7 runtime `@robot-admin/*` packages and 1 Git tooling package     |
-| Examples                      | 59 demo pages covering data entry, complex grids, workflow editing, files and media                      |
+| Examples                      | 58 demo pages covering data entry, complex grids, workflow editing, files and media                      |
 | Verification and traceability | Dual lint, types, logic and component tests, bundle budgets, browser paint regression and build identity |
 
 ## Quick start
@@ -84,7 +84,7 @@ Company switches update the session and clear old permissions, dynamic routes an
 | Time and visualization | Date, city, calendars, timelines, Gantt, charts and large-screen templates                                                                             |
 | Application experience | Menus, search, theme, language, tours, empty states, error pages and route-loading feedback                                                            |
 
-The demo directory contains **59 demo pages + 8 form layouts + 3 embedded components (70 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
+The demo directory contains **58 demo pages + 8 form layouts + 3 embedded components (69 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
 
 > Cron previews do not schedule backend jobs; formula evaluation does not modify business data. Demo data, frontend data-scope configuration and button controls require real APIs and server authorization for production use.
 
@@ -165,11 +165,20 @@ Two lazy-loaded tabs on the same page make these features interactive:
 
 Both scenarios simulate data locally without writing to business APIs. Switching tabs releases their import plans, pending operations and simulated transport. Real backend integration, touch devices and human screen-reader acceptance remain pending manual checks in the appropriate environment.
 
-### Dense business workbench
+### Production and sales workbenches
 
-The new **Business workbench** menu (`/#/demo/business-workbench`) and public preview (`/#/preview/business-workbench`) combine a master list, editable order lines and payment schedules through public package entries. All three grids reuse the Mach Table demo's native light/dark theme, compact density, cell borders and row stripes, with a selected-state highlight for the current order. Master fields fill equal-width tracks, and splitter dragging preserves page scroll. A real page root supports route transitions with the density provider inside; switching workspace tags preserves unsaved drafts and grid state. Try applied search snapshots, shared dictionaries, exact decimals, grouped totals, cross-region error navigation, cancellable entity selection and partial batch failure retry. Unsaved edits are protected when changing the master record.
+The **产销业务** menu maps to `src/views/production-sales/` with four distinct compositions:
 
-Data, picker requests and submissions are local examples. Applications retain ownership of real APIs, permissions, dictionary scopes and server transactions. Pure value helpers use `/data` or `/config`, multi-region coordination uses `/workflows`, and grid helpers load from MachTable `/business`.
+| Page                   | Route                                   | Composition                                                                                                                                              |
+| ---------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Production planning    | `/#/production-sales/production-plan`   | Resource tree, 18 plans, heat scheduling and capacity; submitted filters, release and constrained ordering                                               |
+| Heat actuals           | `/#/production-sales/production-actual` | Heat navigation, 23 dense numeric fields, section navigation, chemistry limits and process history; protected drafts and per-heat snapshots              |
+| Sales orders           | `/#/production-sales/sales-orders`      | 18-order ledger, fulfillment progress, resizable master/detail regions, header form, line/payment tabs, exact decimals and batch review                  |
+| Shipping collaboration | `/#/production-sales/shipping`          | Stage filters, C_Table task pool, MachTable inventory and vehicle form; integer-kilogram conservation, capacity checks and loading/departure transitions |
+
+Native grid themes, compact controls, subtle panels and headers remain consistent across layouts and light/dark modes. Naive empty-state icons use a soft blue theme token. The former `/#/demo/business-workbench` redirects to sales orders; `/#/preview/business-workbench` remains available, alongside `/#/preview/production-sales/<page>` for each page.
+
+All records and commands are explicitly local demos, without production or sales API writes. State belongs to each page instance; public component entries handle rendering and interaction. Real DOM route roots and tags navigation tests protect cached pages. Shared dictionary, numeric, query, validation and partial retry capabilities remain available in the sales workbench. Real APIs, authorization and transaction rules remain application responsibilities.
 
 ### Page configuration, package-owned behavior
 

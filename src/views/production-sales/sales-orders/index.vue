@@ -1,7 +1,7 @@
 <!--
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-28
- * @FilePath: \Robot_Admin\src\views\demo\59-business-workbench\index.vue
+ * @FilePath: \Robot_Admin\src\views\production-sales\sales-orders\index.vue
  * @Description: 订单与多明细协作工作台，使用正式公开组件入口
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
@@ -13,20 +13,11 @@
     data-testid="business-workbench"
   >
     <C_Density density="compact">
-      <header class="workbench-heading">
-        <div class="workbench-heading__identity">
-          <span class="workbench-heading__icon"
-            ><C_Icon
-              aria-hidden="true"
-              type="svg"
-              :svg-path="WORKBENCH_ICONS.workspace"
-              :size="24"
-          /></span>
-          <div
-            ><h1>业务工作台</h1
-            ><p>订单、商品与收款协同处理 <span>· 本地演示</span></p></div
-          >
-        </div>
+      <PageHeading
+        title="销售订单协同"
+        eyebrow="产销业务 / 销售中心"
+        description="订单履约、主档维护、商品明细与收款安排，在同一工作区闭环。"
+      >
         <NSpace
           :size="8"
           align="center"
@@ -61,7 +52,23 @@
             >保存整单</NButton
           ></NSpace
         >
-      </header>
+      </PageHeading>
+      <dl class="sales-metrics"
+        ><div
+          ><dt>订单台账</dt
+          ><dd>{{ filteredOrders.length }}<small>笔订单</small></dd></div
+        ><div
+          ><dt>当前合同</dt
+          ><dd class="sales-metrics__reference">{{
+            header.contractNo
+          }}</dd></div
+        ><div
+          ><dt>履约进度</dt><dd>{{ header.progress }}<small>%</small></dd></div
+        ><div
+          ><dt>交付窗口</dt
+          ><dd class="sales-metrics__reference">{{ header.delivery }}</dd></div
+        ></dl
+      >
 
       <C_FormSearch
         class="workbench-search"
@@ -77,9 +84,9 @@
       <div class="workbench-layout">
         <C_SplitPane
           v-model:size="splitSize"
-          :direction="stacked ? 'vertical' : 'horizontal'"
-          :min-first-size="stacked ? 240 : 260"
-          :min-second-size="stacked ? 450 : 480"
+          direction="vertical"
+          :min-first-size="240"
+          :min-second-size="370"
           aria-label="订单与单据详情"
         >
           <template #first>
@@ -107,7 +114,7 @@
                   :row-data="filteredOrders"
                   :column-defs="masterColumns"
                   row-key="id"
-                  :row-height="46"
+                  :row-height="30"
                   :header-height="36"
                   column-layout="fit"
                   size="compact"
@@ -126,6 +133,7 @@
           <template #second>
             <section
               class="workbench-document"
+              :class="{ 'workbench-document--stacked': stacked }"
               aria-label="当前订单"
             >
               <section
@@ -419,6 +427,7 @@
   // 自定义 renderer 通过 h() 使用 Picker，按路由显式引入其样式。
   import { MachTable } from '@agile-team/mach-table-vue'
   import { WORKBENCH_ICONS } from './icons'
+  import PageHeading from '../components/c_pageHeading/index.vue'
   import { s_themeStore } from '@/stores/theme'
   import {
     useBusinessWorkbench,
@@ -427,7 +436,7 @@
     FORM_CONFIG,
     BATCH_MODES,
   } from './data'
-  defineOptions({ name: 'BusinessWorkbench' })
+  defineOptions({ name: 'SalesOrderWorkbench' })
   const themeStore = s_themeStore()
   const {
     container,

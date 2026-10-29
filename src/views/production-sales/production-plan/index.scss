@@ -1,0 +1,113 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-29
+ * @FilePath: \Robot_Admin\src\views\production-sales\production-plan\index.scss
+ * @Description: 计划调度的资源侧栏与上下双表布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../shared/workspace';
+@include workspace.page;
+.plan-workspace {
+  display: grid;
+  grid-template-columns: 222px minmax(0, 1fr);
+  gap: 14px;
+}
+.plan-resources {
+  :deep(.c-tree) {
+    padding: 12px 10px;
+  }
+}
+.plan-main {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+.plan-main-grid {
+  height: 350px;
+}
+.plan-shift {
+  margin: 12px;
+  padding: 14px;
+  border: 1px solid var(--ps-border);
+  border-radius: 8px;
+  background: var(--ps-soft);
+  font-size: 12px;
+  p {
+    font-size: 10px;
+    color: var(--app-text-secondary);
+    margin: 8px 0 16px;
+  }
+  > div {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 9px;
+    font-size: 11px;
+    span {
+      color: var(--app-text-secondary);
+    }
+    b {
+      font-weight: 500;
+    }
+  }
+}
+.plan-live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 7px;
+  background: #18a058;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px #18a05818;
+}
+.plan-resource-notes {
+  margin: 18px 14px;
+  font-size: 11px;
+  color: var(--app-text-secondary);
+  > span {
+    color: var(--app-text-primary);
+    font-weight: 550;
+  }
+  p {
+    line-height: 1.8;
+  }
+}
+.plan-tabs {
+  padding-inline: 14px;
+}
+.plan-capacity {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  padding: 25px 20px;
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    span {
+      color: var(--app-text-secondary);
+      font-size: 11px;
+    }
+  }
+  p {
+    color: var(--app-text-tertiary);
+    font-size: 11px;
+    margin-top: 12px;
+  }
+}
+@media (max-width: 1000px) {
+  .plan-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .plan-shift,
+  .plan-resource-notes {
+    display: none;
+  }
+}
+@media (max-width: 680px) {
+  .plan-capacity {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

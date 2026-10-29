@@ -1,15 +1,13 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-29
- * @FilePath: \Robot_Admin\src\views\demo\59-business-workbench\icons.ts
+ * @FilePath: \Robot_Admin\src\views\production-sales\sales-orders\icons.ts
  * @Description: 工作台24×24几何图标，通过C_Icon原生SVG通道随路由加载
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
 /** 页内装饰资源，不注册全局图标，不增加首屏UnoCSS或网络请求。 */
 export const WORKBENCH_ICONS = {
-  workspace:
-    'M3 3h8v8H3V3m2 2v4h4V5H5m8-2h8v8h-8V3m2 2v4h4V5h-4M3 13h8v8H3v-8m2 2v4h4v-4H5m8-2h8v8h-8v-8m2 2v4h4v-4h-4Z',
   orders:
     'M3 5h2v2H3V5m5 0h13v2H8V5M3 11h2v2H3v-2m5 0h13v2H8v-2M3 17h2v2H3v-2m5 0h13v2H8v-2Z',
   document:

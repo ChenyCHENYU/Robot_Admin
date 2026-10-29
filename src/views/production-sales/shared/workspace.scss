@@ -1,0 +1,185 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-29
+ * @FilePath: \Robot_Admin\src\views\production-sales\shared\workspace.scss
+ * @Description: 产销页面局部布局语言；仅通过页面 scoped 样式消费
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@mixin page {
+  .ps-page {
+    --ps-accent: var(--app-primary);
+    --ps-border: color-mix(
+      in srgb,
+      var(--ps-accent) 12%,
+      var(--app-border-default)
+    );
+    --ps-soft: color-mix(in srgb, var(--ps-accent) 4%, var(--app-bg-content));
+    padding: 18px 20px 24px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: var(--app-text-primary);
+  }
+  .ps-panel {
+    min-width: 0;
+    overflow: hidden;
+    background: var(--app-bg-content);
+    border: 1px solid var(--ps-border);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px
+      color-mix(in srgb, var(--app-text-primary) 3%, transparent);
+  }
+  .ps-panel-heading {
+    min-height: 43px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--ps-soft);
+    border-bottom: 1px solid var(--ps-border);
+    h2 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      font-weight: 650;
+      &::before {
+        content: '';
+        width: 3px;
+        height: 14px;
+        border-radius: 2px;
+        background: var(--ps-accent);
+      }
+    }
+    > span {
+      font-size: 11px;
+      color: var(--app-text-secondary);
+    }
+  }
+  .ps-search {
+    border: 1px solid var(--ps-border);
+    border-radius: 10px;
+  }
+  .ps-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: linear-gradient(
+      115deg,
+      var(--ps-soft),
+      var(--app-bg-content) 70%
+    );
+    border: 1px solid var(--ps-border);
+    border-radius: 10px;
+    padding: 13px 0;
+    > div {
+      padding: 0 20px;
+      min-width: 0;
+      border-right: 1px solid var(--ps-border);
+      &:last-child {
+        border: 0;
+      }
+    }
+    dt {
+      color: var(--app-text-secondary);
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    dd {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      small {
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--app-text-secondary);
+        margin-left: 5px;
+        letter-spacing: 0;
+      }
+    }
+  }
+  .ps-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 9px 12px;
+    > span {
+      font-size: 11px;
+      color: var(--app-text-secondary);
+    }
+  }
+  .ps-grid {
+    height: 330px;
+    min-width: 0;
+  }
+  .ps-grid--small {
+    height: 208px;
+  }
+  .ps-page :deep(.mach-root) {
+    --mach-primary: var(--app-primary);
+    border: 0;
+  }
+  .ps-page :deep(.ps-record-link) {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--app-primary);
+    font: inherit;
+    font-weight: 550;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--app-primary);
+      outline-offset: 2px;
+    }
+  }
+  .ps-footnote {
+    margin: 0;
+    padding: 9px 12px;
+    border-top: 1px solid var(--ps-border);
+    background: var(--ps-soft);
+    font-size: 11px;
+    color: var(--app-text-secondary);
+  }
+  .ps-status-line {
+    margin: 0;
+    min-height: 20px;
+    font-size: 12px;
+    color: var(--app-text-secondary);
+  }
+  .ps-form {
+    padding: 14px;
+  }
+  .ps-two-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(300px, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 1000px) {
+    .ps-two-columns {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 680px) {
+    .ps-page {
+      padding: 12px;
+      gap: 10px;
+    }
+    .ps-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 0;
+      > div:nth-child(2) {
+        border: 0;
+      }
+    }
+  }
+}

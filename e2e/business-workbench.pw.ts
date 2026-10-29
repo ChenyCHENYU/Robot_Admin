@@ -8,7 +8,7 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
 import { installMockAdminSession } from './auth-fixture'
 
-const route = '/#/demo/business-workbench'
+const route = '/#/production-sales/sales-orders'
 const formField = (container: Locator, label: string): Locator =>
   container.locator('.n-form-item').filter({
     has: container
@@ -23,6 +23,7 @@ const lineCell = (page: Page, id: string, column: string): Locator =>
 const open = async (page: Page): Promise<void> => {
   await page.goto(route)
   await expect(page.getByTestId('business-workbench')).toBeVisible()
+  await expect(page.locator('.app-loading,.c-page-loading')).toHaveCount(0)
   await expect(lineCell(page, 'ORDER-1-L01', 'quantity')).toHaveText('0.000')
   await expect(page.getByTestId('draft-status')).toHaveText('已保存')
 }
@@ -85,7 +86,10 @@ test('拖动分割手柄保留页面滚动位置，标题与完整搜索区域�
     exact: true,
   })
   const handle = gutter.locator('.split-gutter__visual')
-  await handle.hover()
+  await expect(page.getByTestId('business-workbench')).not.toHaveClass(
+    /-enter-|-leave-/
+  )
+  await expect(handle).toBeInViewport()
   await expect(page.locator('.form-search-card')).toBeInViewport({ ratio: 1 })
   const before = await scrollPositions()
   const box = (await handle.boundingBox())!
@@ -95,14 +99,14 @@ test('拖动分割手柄保留页面滚动位置，标题与完整搜索区域�
   await expect(page.locator('.c-split-pane')).toHaveClass(
     /c-split-pane--dragging/
   )
-  await page.mouse.move(box.x + 110, box.y + box.height / 2, {
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2 + 55, {
     steps: 10,
   })
   await page.mouse.up()
   await expect(gutter).not.toHaveAttribute('aria-valuenow', originalSize!)
   await expect.poll(scrollPositions).toEqual(before)
   await expect(
-    page.getByRole('heading', { name: '业务工作台', exact: true })
+    page.getByRole('heading', { name: '销售订单协同', exact: true })
   ).toBeInViewport()
   await expect(page.locator('.form-search-card')).toBeInViewport({ ratio: 1 })
 })
@@ -128,11 +132,22 @@ test('主题网格、当前订单与状态标签可辨认，主档控件宽度�
     })
   )
   await expect(
-    page.locator('.workbench-orders .mach-row[data-id="ORDER-1"]')
+    page.locator(
+      '.workbench-orders .mach-pane--center .mach-row[data-id="ORDER-1"]'
+    )
   ).toHaveAttribute('data-row-tone', 'info')
-  await expect(page.locator('.workbench-orders .workbench-state')).toHaveCount(
-    3
+  await Promise.all(
+    ['0', '1', '2'].map(status =>
+      expect(
+        page
+          .locator(
+            `.workbench-orders .workbench-state[data-status="${status}"]`
+          )
+          .first()
+      ).toBeVisible()
+    )
   )
+
   const form = page.locator('.workbench-header')
   const controls = [
     formField(form, '订单编号').locator('.n-input'),
@@ -152,7 +167,9 @@ test('主题网格、当前订单与状态标签可辨认，主档控件宽度�
     .getByRole('button', { name: '打开SO-2026-002', exact: true })
     .click()
   await expect(
-    page.locator('.workbench-orders .mach-row[data-id="ORDER-2"]')
+    page.locator(
+      '.workbench-orders .mach-pane--center .mach-row[data-id="ORDER-2"]'
+    )
   ).toHaveAttribute('data-row-tone', 'info')
   await expect(lineCell(page, 'ORDER-2-L01', 'quantity')).toHaveText('0.000')
   await page.screenshot({
@@ -172,7 +189,7 @@ test('搜索草稿和已应用条件分离，固定组织保留，状态0与精�
   await expect(formField(search, '组织').getByRole('textbox')).toBeDisabled()
   await expect(
     page.getByRole('region', { name: '订单列表', exact: true })
-  ).toContainText('3 笔本地订单')
+  ).toContainText('18 笔本地订单')
   await expect(
     page.locator(
       '.workbench-orders .mach-row[data-id="ORDER-1"] .mach-cell[data-col-id="status"]'
@@ -187,7 +204,7 @@ test('搜索草稿和已应用条件分离，固定组织保留，状态0与精�
     formField(search, '计划状态').locator('.n-select'),
     '待下达'
   )
-  await expect(page.locator('.workbench-orders')).toContainText('3 笔本地订单')
+  await expect(page.locator('.workbench-orders')).toContainText('18 笔本地订单')
   await search.getByRole('button', { name: '搜索', exact: true }).click()
   await expect(page.locator('.workbench-orders')).toContainText('1 笔本地订单')
   await expect(
@@ -198,7 +215,7 @@ test('搜索草稿和已应用条件分离，固定组织保留，状态0与精�
     '001'
   )
   await search.getByRole('button', { name: '搜索', exact: true }).click()
-  await expect(page.locator('.workbench-orders')).toContainText('3 笔本地订单')
+  await expect(page.locator('.workbench-orders')).toContainText('18 笔本地订单')
   await page
     .getByTestId('business-workbench')
     .screenshot({ path: testInfo.outputPath('business-workbench-light.png') })

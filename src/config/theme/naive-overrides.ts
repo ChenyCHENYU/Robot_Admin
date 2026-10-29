@@ -14,6 +14,7 @@ import {
   LIGHT_BACKGROUND,
   LIGHT_MENU,
   DARK_MENU,
+  EMPTY_STATE_COLORS,
 } from './tokens'
 
 export type { GlobalThemeOverrides } from '@robot-admin/theme/naive'
@@ -117,6 +118,7 @@ export const lightThemeOverrides: GlobalThemeOverrides = {
   },
   Menu: lightMenuConfig,
   Dialog: dialogConfig,
+  Empty: { iconColor: EMPTY_STATE_COLORS.light },
 
   // 扩展：Card 组件配置
   Card: {
@@ -152,6 +154,7 @@ const darkThemeOverridesConfig: GlobalThemeOverrides = {
   },
   Menu: darkMenuConfig,
   Dialog: dialogConfig,
+  Empty: { iconColor: EMPTY_STATE_COLORS.dark },
 
   // 扩展：Card 组件配置
   Card: {

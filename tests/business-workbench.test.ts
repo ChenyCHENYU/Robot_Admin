@@ -13,7 +13,7 @@ import {
   moneyCodec,
   quantityCodec,
   summarizeBusinessLines,
-} from '../src/views/demo/59-business-workbench/data'
+} from '../src/views/production-sales/sales-orders/data'
 
 test('订单和明细拥有跨单据唯一的业务身份，零与空值保持不同', () => {
   const orders = createBusinessOrders()

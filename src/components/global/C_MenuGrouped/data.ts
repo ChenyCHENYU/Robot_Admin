@@ -22,6 +22,7 @@ export const DEFAULT_MENU_GROUPS: MenuGroupConfig[] = [
     label: '核心功能',
     paths: ['home', '/dashboard'],
   },
+  { label: '产销业务', paths: ['/production-sales'] },
   {
     label: '组件展示',
     paths: ['/demo', '/plugins', '/editor'],

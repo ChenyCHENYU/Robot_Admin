@@ -64,6 +64,68 @@
       ]
     },
     {
+      "path": "/production-sales",
+      "name": "production-sales",
+      "component": "layout",
+      "redirect": "/production-sales/production-plan",
+      "meta": {
+        "title": "产销业务",
+        "icon": "mdi:view-dashboard-outline",
+        "hidden": false,
+        "keepAlive": false
+      },
+      "children": [
+        {
+          "path": "production-plan",
+          "name": "production-sales-production-plan",
+          "component": "/production-sales/production-plan/index",
+          "meta": {
+            "title": "生产计划调度",
+            "icon": "mdi:table-large",
+            "hidden": false,
+            "keepAlive": true,
+            "full": false
+          }
+        },
+        {
+          "path": "production-actual",
+          "name": "production-sales-production-actual",
+          "component": "/production-sales/production-actual/index",
+          "meta": {
+            "title": "炉次实绩记录",
+            "icon": "mdi:file-document-outline",
+            "hidden": false,
+            "keepAlive": true,
+            "full": false
+          }
+        },
+        {
+          "path": "sales-orders",
+          "name": "production-sales-sales-orders",
+          "component": "/production-sales/sales-orders/index",
+          "meta": {
+            "title": "销售订单协同",
+            "icon": "mdi:table",
+            "hidden": false,
+            "keepAlive": true,
+            "full": false
+          }
+        },
+        {
+          "path": "shipping",
+          "name": "production-sales-shipping",
+          "component": "/production-sales/shipping/index",
+          "meta": {
+            "title": "发运协同指挥台",
+            "icon": "mdi:view-dashboard-outline",
+            "hidden": false,
+            "keepAlive": true,
+            "full": false
+          }
+        }
+      ]
+    },
+    {
       "path": "/demo",
       "name": "demo",
       "component": "layout",
@@ -383,14 +445,12 @@
         {
           "path": "business-workbench",
           "name": "demo-business-workbench",
-          "component": "/demo/59-business-workbench/index",
+          "redirect": "/production-sales/sales-orders",
           "meta": {
-            "icon": "mdi:view-dashboard-outline",
             "title": "业务工作台",
-            "hidden": false,
-            "full": false,
-            "affix": false,
-            "keepAlive": true
+            "icon": "mdi:view-dashboard-outline",
+            "hidden": true,
+            "keepAlive": false
           }
         }
       ]

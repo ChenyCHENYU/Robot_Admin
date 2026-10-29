@@ -1,0 +1,151 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-29
+ * @FilePath: \Robot_Admin\src\views\production-sales\shipping\index.scss
+ * @Description: 发运阶段导航、任务池、车辆安排与库存匹配组合布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../shared/workspace';
+@include workspace.page;
+.shipping-page {
+  --ps-accent: #6479d7;
+}
+.shipping-stages {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  > button {
+    position: relative;
+    padding: 16px 18px;
+    text-align: left;
+    color: var(--app-text-primary);
+    background: var(--app-bg-content);
+    border: 1px solid var(--ps-border);
+    border-radius: 10px;
+    cursor: pointer;
+    overflow: hidden;
+    > span {
+      color: var(--app-text-secondary);
+      font-size: 11px;
+    }
+    strong {
+      display: block;
+      font-size: 27px;
+      font-weight: 650;
+      margin-top: 7px;
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+    }
+    small {
+      margin-left: 8px;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--app-text-secondary);
+    }
+    p {
+      margin: 8px 0 0;
+      color: var(--app-text-tertiary);
+      font-size: 11px;
+    }
+    &:hover,
+    &.is-active {
+      border-color: color-mix(
+        in srgb,
+        var(--ps-accent) 55%,
+        var(--app-border-default)
+      );
+      background: linear-gradient(
+        110deg,
+        var(--ps-soft),
+        var(--app-bg-content)
+      );
+    }
+    &.is-active::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--ps-accent);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--ps-accent);
+      outline-offset: 2px;
+    }
+  }
+}
+.shipping-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 14px;
+  align-items: start;
+}
+.shipping-queue {
+  min-height: 430px;
+}
+.shipping-vehicle {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+.shipping-stock {
+  grid-column: 1;
+}
+.shipping-stock-grid {
+  height: 186px;
+}
+.shipping-current {
+  padding: 15px 14px 12px;
+  display: grid;
+  gap: 5px;
+  border-bottom: 1px solid var(--ps-border);
+  background: var(--ps-soft);
+  strong {
+    font-size: 14px;
+  }
+  > span {
+    color: var(--app-text-secondary);
+    font-size: 11px;
+  }
+  b {
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ps-accent);
+    margin-top: 8px;
+  }
+  small {
+    color: var(--app-text-secondary);
+    font-size: 11px;
+    font-weight: 400;
+  }
+}
+.shipping-vehicle-note {
+  margin: 2px 14px 16px;
+  padding: 9px 11px;
+  color: var(--app-text-secondary);
+  background: var(--ps-soft);
+  border-radius: 6px;
+  font-size: 11px;
+}
+.shipping-signal {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: var(--ps-accent);
+  border-radius: 50%;
+  margin-right: 6px;
+}
+@media (max-width: 1100px) {
+  .shipping-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .shipping-vehicle {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+@media (max-width: 680px) {
+  .shipping-stages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

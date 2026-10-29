@@ -225,6 +225,7 @@ Robot_Admin/
 │       ├── home/                  # 首页（按路由加载）
 │       ├── dashboard/             # 工程分析与统计（按路由加载）
 │       ├── login/                 # 登录页
+│       ├── production-sales/      # 生产计划、炉次实绩、销售订单、发运协同
 │       ├── demo/                  # 功能演示；数量以路由清单为准
 │       │   ├── 01-icon/
 │       │   ├── 07-form/

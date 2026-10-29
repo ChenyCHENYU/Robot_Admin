@@ -36,6 +36,12 @@ export const PRIMARY_COLORS = {
   suppl: '#4098fc',
 } as const
 
+/** 空态图标采用低饱和蓝色，保持占位信息安静，正文仍由主题管理。 */
+export const EMPTY_STATE_COLORS = {
+  light: '#a6c5eb',
+  dark: '#6889b2',
+} as const
+
 /* =================
    2. 背景色系定义
    ======================== */

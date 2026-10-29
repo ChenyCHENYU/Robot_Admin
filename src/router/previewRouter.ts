@@ -24,9 +24,36 @@ export const previewRoutes: RouteRecordRaw = {
     {
       path: 'business-workbench',
       name: 'preview-business-workbench',
-      component: () => import('_views/demo/59-business-workbench/index.vue'),
+      component: () => import('_views/production-sales/sales-orders/index.vue'),
       meta: { title: '业务工作台' },
     },
+    {
+      path: 'production-sales/production-plan',
+      name: 'preview-production-plan',
+      component: () =>
+        import('_views/production-sales/production-plan/index.vue'),
+      meta: { title: '生产计划调度' },
+    },
+    {
+      path: 'production-sales/production-actual',
+      name: 'preview-production-actual',
+      component: () =>
+        import('_views/production-sales/production-actual/index.vue'),
+      meta: { title: '炉次实绩记录' },
+    },
+    {
+      path: 'production-sales/sales-orders',
+      name: 'preview-sales-orders',
+      component: () => import('_views/production-sales/sales-orders/index.vue'),
+      meta: { title: '销售订单协同' },
+    },
+    {
+      path: 'production-sales/shipping',
+      name: 'preview-shipping',
+      component: () => import('_views/production-sales/shipping/index.vue'),
+      meta: { title: '发运协同指挥台' },
+    },
+
     // ==================== 基础组件 ====================
     {
       path: 'icon',

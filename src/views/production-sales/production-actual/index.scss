@@ -1,0 +1,218 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-29
+ * @FilePath: \Robot_Admin\src\views\production-sales\production-actual\index.scss
+ * @Description: 炉次导航与密集分区实绩布局
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../shared/workspace';
+@include workspace.page;
+.actual-page {
+  --ps-accent: #269c9a;
+}
+.actual-workspace {
+  display: grid;
+  grid-template-columns: 218px minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+}
+.actual-sidebar {
+  display: grid;
+  gap: 14px;
+}
+.actual-heat-list {
+  display: grid;
+  padding: 8px;
+  gap: 5px;
+  > button {
+    padding: 11px 12px;
+    color: var(--app-text-primary);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    text-align: left;
+    cursor: pointer;
+    > div {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    strong {
+      font-size: 12px;
+    }
+    > div > span {
+      color: var(--app-text-tertiary);
+      font-size: 10px;
+    }
+    p {
+      margin: 5px 0 7px;
+      font-size: 11px;
+      color: var(--app-text-secondary);
+    }
+    &:hover {
+      background: var(--ps-soft);
+    }
+    &.is-active {
+      background: color-mix(
+        in srgb,
+        var(--app-primary) 8%,
+        var(--app-bg-content)
+      );
+      border-color: color-mix(
+        in srgb,
+        var(--app-primary) 28%,
+        var(--app-border-default)
+      );
+    }
+    &:focus-visible {
+      outline: 2px solid var(--app-primary);
+    }
+  }
+}
+.actual-section-nav {
+  padding: 8px;
+}
+.actual-main {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.actual-context {
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  background: linear-gradient(
+    105deg,
+    var(--ps-soft),
+    var(--app-bg-content) 70%
+  );
+  &__label {
+    font-size: 10px;
+    color: var(--app-text-secondary);
+  }
+  h2 {
+    margin: 4px 0;
+    font-size: 23px;
+    letter-spacing: 0.02em;
+  }
+  p {
+    color: var(--app-text-secondary);
+    font-size: 11px;
+    margin: 0;
+  }
+  dl {
+    display: flex;
+    gap: 32px;
+    margin: 0;
+  }
+  dt {
+    color: var(--app-text-secondary);
+    font-size: 11px;
+  }
+  dd {
+    font-size: 21px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    margin: 5px 0 0;
+    small {
+      margin-left: 5px;
+      font-size: 10px;
+      color: var(--app-text-secondary);
+      font-weight: 400;
+    }
+  }
+  .is-warning {
+    color: #d97706;
+  }
+}
+.actual-form-section {
+  scroll-margin-top: 18px;
+}
+.actual-section-index {
+  font-size: 10px;
+  color: var(--ps-accent);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+.actual-chemistry-grid {
+  height: 214px;
+  border-top: 1px solid var(--ps-border);
+}
+.actual-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+  padding: 20px;
+  margin: 0;
+  gap: 20px;
+  li {
+    position: relative;
+    padding-left: 27px;
+    > span {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: grid;
+      place-items: center;
+      height: 19px;
+      width: 19px;
+      border-radius: 50%;
+      color: var(--ps-accent);
+      background: var(--ps-soft);
+      border: 1px solid var(--ps-border);
+      font-size: 10px;
+    }
+  }
+  strong,
+  time {
+    display: block;
+    font-size: 12px;
+  }
+  time {
+    color: var(--app-text-tertiary);
+    font-size: 11px;
+    margin-top: 5px;
+  }
+  p {
+    color: var(--app-text-secondary);
+    font-size: 11px;
+    margin-bottom: 0;
+  }
+}
+@media (max-width: 1000px) {
+  .actual-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .actual-sidebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .actual-heat-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-height: 180px;
+    overflow: auto;
+  }
+  .actual-section-nav {
+    :deep(.c-section-nav) {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+}
+@media (max-width: 680px) {
+  .actual-heat-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .actual-timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .actual-context dl {
+    gap: 18px;
+  }
+}
+
+.actual-heat-list :deep(.n-tag) {
+  width: max-content;
+}

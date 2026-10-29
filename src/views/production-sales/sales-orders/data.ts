@@ -1,7 +1,7 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-28
- * @FilePath: \Robot_Admin\src\views\demo\59-business-workbench\data.ts
+ * @FilePath: \Robot_Admin\src\views\production-sales\sales-orders\data.ts
  * @Description: 本地单据工作台：统一字段语义、主从资源、校验导航及可重试批改
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
@@ -34,6 +34,7 @@ import {
 } from '@robot-admin/naive-ui-components/workflows'
 import {
   defineVueColumns,
+  indexColumn,
   selectionColumn,
   useMachTable,
   type RowStyleRule,
@@ -56,6 +57,13 @@ export interface OrderHeader {
   status: number
   owner: string
   note: string | null
+  contractNo: string
+  grade: string
+  section: string
+  region: string
+  delivery: string
+  targetWeight: number
+  progress: number
 }
 export interface OrderLine {
   id: string
@@ -139,45 +147,58 @@ const clone = <T>(value: T): T => structuredClone(toRaw(value))
 
 /** 示例数据使用业务主键；零数量与未填写分别保留 '0' 和 null。 */
 export function createBusinessOrders(): BusinessOrder[] {
-  return CUSTOMERS.map((customer, index) => ({
-    header: {
-      id: `ORDER-${index + 1}`,
-      orderNo: `SO-2026-00${index + 1}`,
-      customer: customer.id,
-      status: index,
-      owner: '陈雨',
-      note: null,
-    },
-    lines: [
-      {
-        id: `ORDER-${index + 1}-L01`,
-        product: '精整卷材 A',
-        quantity: '0',
-        amount: '1.005',
-        currency: 'CNY',
-        unit: 't',
-        note: '零数量样例',
-      },
-      {
-        id: `ORDER-${index + 1}-L02`,
-        product: '冷轧板材 B',
-        quantity: '12.125',
-        amount: '12000.675',
-        currency: 'CNY',
-        unit: 't',
-        note: '交期确认中',
-      },
-      {
-        id: `ORDER-${index + 1}-L03`,
-        product: '边角料 C',
-        quantity: null,
-        amount: '25.33',
-        currency: 'CNY',
-        unit: 't',
+  return Array.from({ length: 18 }, (_, index) => {
+    const customer = CUSTOMERS[index % CUSTOMERS.length]
+    const status = index < 3 ? index : (index % 2) + 1
+    return {
+      header: {
+        id: `ORDER-${index + 1}`,
+        orderNo: `SO-2026-${String(index + 1).padStart(3, '0')}`,
+        customer: customer.id,
+        status,
+        owner: '陈雨',
         note: null,
+        contractNo: `HT-2610-${String(index + 101)}`,
+        grade: ['Q355B', 'Q235B', 'HRB400E'][index % 3],
+        section: ['10 × 1500 × 6000', '8 × 1500 × 6000', 'Φ 20 × 9000'][
+          index % 3
+        ],
+        region: ['华东', '华南', '华北'][index % 3],
+        delivery: `2026-11-${String((index % 12) + 1).padStart(2, '0')}`,
+        targetWeight: 128 + index * 12.5,
+        progress: status === 2 ? 100 : status === 0 ? 0 : 35 + (index % 5) * 10,
       },
-    ],
-  }))
+      lines: [
+        {
+          id: `ORDER-${index + 1}-L01`,
+          product: '精整卷材 A',
+          quantity: '0',
+          amount: '1.005',
+          currency: 'CNY',
+          unit: 't',
+          note: '零数量样例',
+        },
+        {
+          id: `ORDER-${index + 1}-L02`,
+          product: '冷轧板材 B',
+          quantity: '12.125',
+          amount: '12000.675',
+          currency: 'CNY',
+          unit: 't',
+          note: '交期确认中',
+        },
+        {
+          id: `ORDER-${index + 1}-L03`,
+          product: '边角料 C',
+          quantity: null,
+          amount: '25.33',
+          currency: 'CNY',
+          unit: 't',
+          note: null,
+        },
+      ],
+    }
+  })
 }
 
 /** 将示例的最多三位存储小数交给 BigInt 累加，不经过二进制浮点。 */
@@ -299,6 +320,8 @@ export const HEADER_FIELDS: FormOption<OrderHeader>[] = [
     label: '业务人员',
     rules: [{ required: true, message: '请输入业务人员' }],
   },
+  { type: 'input', prop: 'contractNo', label: '合同编号', readonly: true },
+  { type: 'input', prop: 'delivery', label: '交货日期', readonly: true },
   { type: 'input', prop: 'note', label: '订单备注' },
 ]
 export const FORM_CONFIG: FormConfig<OrderHeader> = {
@@ -306,7 +329,7 @@ export const FORM_CONFIG: FormConfig<OrderHeader> = {
   density: 'compact',
   labelPlacement: 'left',
   labelWidth: 88,
-  grid: { cols: 2, minItemWidth: 280, xGap: 20, yGap: 8 },
+  grid: { cols: 1, minItemWidth: 250, xGap: 16, yGap: 8 },
   showActions: false,
 }
 export const BATCH_MODES = [
@@ -371,7 +394,7 @@ export function useBusinessWorkbench() {
         trigger.focus({ preventScroll: true })
     })
   }
-  const splitSize = ref(28)
+  const splitSize = ref(44)
   const pendingOrder = ref<string | null>(null)
   const saving = ref(false)
   const batchBusy = ref(false)
@@ -484,36 +507,48 @@ export function useBusinessWorkbench() {
     else activate(id)
   }
   const masterColumns = defineVueColumns<OrderHeader>([
+    indexColumn({ headerName: '序号', width: 46 }),
     {
       field: 'orderNo',
-      headerName: '订单编号',
-      minWidth: 150,
-      flex: 1,
+      headerName: '销售订单号',
+      width: 170,
+      pinned: 'left',
+      filter: true,
       render: row =>
-        h('div', { class: 'workbench-order-cell' }, [
-          h(
-            'button',
-            {
-              type: 'button',
-              class: 'workbench-order-link',
-              onClick: () => chooseOrder(row.id),
-              'aria-label': `打开${row.orderNo}`,
-            },
-            row.orderNo
-          ),
-          h(
-            'span',
-            { class: 'workbench-order-cell__customer' },
-            customerLabels.get(row.customer ?? '') ??
-              row.customer ??
-              '未指定客户'
-          ),
-        ]),
+        h(
+          'button',
+          {
+            type: 'button',
+            class: 'workbench-order-link',
+            onClick: () => chooseOrder(row.id),
+            'aria-label': `打开${row.orderNo}`,
+          },
+          row.orderNo
+        ),
+    },
+    {
+      field: 'customer',
+      headerName: '客户名称',
+      width: 130,
+      filter: true,
+      valueFormatter: ({ value }) =>
+        customerLabels.get(String(value)) ?? String(value ?? '—'),
+    },
+    { field: 'contractNo', headerName: '合同编号', width: 130, filter: true },
+    { field: 'grade', headerName: '钢种', width: 100, filter: true },
+    { field: 'section', headerName: '规格 (mm)', minWidth: 160, flex: 1 },
+    { field: 'region', headerName: '区域', width: 80 },
+    {
+      field: 'targetWeight',
+      headerName: '合同量 (t)',
+      width: 110,
+      align: 'right',
+      valueFormatter: ({ value }) => quantityCodec.format(value),
     },
     {
       field: 'status',
       headerName: '状态',
-      width: 96,
+      width: 105,
       ...createDictionaryColumn<OrderHeader>(
         {
           get: value =>
@@ -531,6 +566,31 @@ export function useBusinessWorkbench() {
           statusLabels.get(row.status) ?? String(row.status)
         ),
     },
+    {
+      field: 'progress',
+      headerName: '履约进度',
+      width: 145,
+      render: row =>
+        h(
+          'div',
+          {
+            class: 'sales-progress',
+            role: 'progressbar',
+            'aria-valuenow': row.progress,
+            'aria-valuemin': 0,
+            'aria-valuemax': 100,
+            'aria-label': `${row.orderNo}履约进度`,
+          },
+          [
+            h('span', {
+              style: { width: `${row.progress}%` },
+              class: { 'is-complete': row.progress === 100 },
+            }),
+            h('small', `${row.progress}%`),
+          ]
+        ),
+    },
+    { field: 'delivery', headerName: '交货日期', width: 118 },
   ])
   // 规则只在当前订单变化时更新，保留稳定行身份；取消切单不误高亮另一个订单。
   const masterRowStyles = computed<readonly RowStyleRule<OrderHeader>[]>(() => {

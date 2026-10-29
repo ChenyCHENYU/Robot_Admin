@@ -11,7 +11,7 @@ import type { Router } from 'vue-router'
 import { installMockAdminSession } from './auth-fixture'
 
 const machPath = '/demo/table-manage/mach-table'
-const workbenchPath = '/demo/business-workbench'
+const workbenchPath = '/production-sales/sales-orders'
 
 /** 打开菜单目标建立标签；后续往返一律点击实际标签控件。 */
 const openRoute = (page: Page, path: string) =>
@@ -72,7 +72,7 @@ for (const mode of ['light', 'dark', 'reduced-motion'] as const) {
     )
     if (mode === 'reduced-motion')
       await page.emulateMedia({ reducedMotion: 'reduce' })
-    await page.setViewportSize({ width: 1720, height: 900 })
+    await page.setViewportSize({ width: 1720, height: 1280 })
     await page.goto('/#/home')
     await expect(page.locator('.project-homepage')).toBeVisible()
     await openRoute(page, machPath)
@@ -114,7 +114,7 @@ for (const mode of ['light', 'dark', 'reduced-motion'] as const) {
       await expect(note).toHaveValue('标签往返保留的未保存草稿')
       await expect(page.getByTestId('draft-status')).toHaveText('有未保存修改')
       await expect(
-        page.getByRole('heading', { name: '业务工作台', exact: true })
+        page.getByRole('heading', { name: '销售订单协同', exact: true })
       ).toBeInViewport()
       await expect(page.locator('.form-search-card')).toBeInViewport({
         ratio: 1,
@@ -172,7 +172,7 @@ for (const mode of ['light', 'dark', 'reduced-motion'] as const) {
     await page.locator(`.tags-track [data-path="${workbenchPath}"]`).click()
     await expect(note).toHaveValue('标签往返保留的未保存草稿')
     await expect(
-      page.getByRole('heading', { name: '业务工作台', exact: true })
+      page.getByRole('heading', { name: '销售订单协同', exact: true })
     ).toBeInViewport()
     await expect(page.locator('.form-search-card')).toBeInViewport({ ratio: 1 })
     await page.screenshot({
