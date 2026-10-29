@@ -24,17 +24,29 @@
           >{{ dirty ? '有未保存实绩' : '已保存' }}</NTag
         ><NButton
           size="small"
-          :disabled="saving"
+          :disabled="saving || locked"
           @click="restore"
           >恢复记录</NButton
         ><NButton
           type="primary"
           size="small"
           :loading="saving"
+          :disabled="locked"
           @click="save"
           >保存实绩</NButton
         >
       </PageHeading>
+      <div class="ps-panel ps-toolbar"
+        ><C_ActionBar
+          :actions="reviewActions"
+          :config="{ compact: true, size: 'small' }"
+        /><NButton
+          size="small"
+          :disabled="!previous"
+          @click="referenceVisible = true"
+          >上一炉参考</NButton
+        ></div
+      >
       <div class="actual-workspace">
         <aside class="actual-sidebar">
           <section class="ps-panel"
@@ -42,7 +54,7 @@
               ><h2>当班炉次</h2><span>{{ HEATS.length }} 炉</span></header
             ><div class="actual-heat-list"
               ><button
-                v-for="heat in HEATS"
+                v-for="heat in heatList"
                 :key="heat.id"
                 type="button"
                 :class="{ 'is-active': currentId === heat.id }"
@@ -115,7 +127,7 @@
               :ref="instance => setForm(index, instance)"
               v-model="model"
               :options="group.fields"
-              :config="ACTUAL_FORM_CONFIG"
+              :config="actualConfig"
             />
             <div
               v-if="group.key === 'chemistry'"
@@ -152,6 +164,82 @@
         class="ps-status-line"
         >{{ notice }}</p
       >
+      <C_FormModal
+        :editor="reviewEditor"
+        :options="REVIEW_FIELDS"
+        :config="BUSINESS_FORM"
+        :mask-closable="false"
+        create-text="提交复核"
+      />
+      <NDrawer
+        v-model:show="historyVisible"
+        width="min(620px, 100vw)"
+        ><NDrawerContent
+          title="炉次复核记录"
+          closable
+        >
+          <NDescriptions
+            :column="1"
+            bordered
+            size="small"
+            ><NDescriptionsItem label="炉号">{{ current.no }}</NDescriptionsItem
+            ><NDescriptionsItem label="当前状态">{{
+              stateOf(current.id, current.state)
+            }}</NDescriptionsItem
+            ><NDescriptionsItem
+              v-if="latest"
+              label="最近意见"
+              >{{ latest.note }}</NDescriptionsItem
+            ></NDescriptions
+          >
+          <NDivider>复核追溯</NDivider
+          ><C_Timeline
+            v-if="historyItems.length"
+            :items="historyItems"
+            size="small"
+          /><NEmpty
+            v-else
+            description="当前炉次暂无本地复核记录"
+          />
+          <template #footer
+            ><NButton
+              size="small"
+              @click="historyVisible = false"
+              >关闭记录</NButton
+            ></template
+          >
+        </NDrawerContent></NDrawer
+      >
+      <NDrawer
+        v-model:show="referenceVisible"
+        width="min(720px, 100vw)"
+        ><NDrawerContent
+          title="上一炉实绩参考"
+          closable
+        >
+          <NAlert
+            type="info"
+            :show-icon="false"
+            >参考
+            {{ previous?.no }}
+            的已保存值；核对后请录入当前炉次的真实测量。</NAlert
+          >
+          <div class="actual-reference-grid"
+            ><MachTable
+              v-bind="BUSINESS_GRID"
+              :row-data="referenceRows"
+              :column-defs="referenceColumns"
+              :theme="themeStore.isDark ? 'dark' : 'light'"
+          /></div>
+          <template #footer
+            ><NButton
+              size="small"
+              @click="referenceVisible = false"
+              >关闭参考</NButton
+            ></template
+          >
+        </NDrawerContent></NDrawer
+      >
     </C_Density>
   </main>
 </template>
@@ -160,12 +248,12 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
   import PageHeading from '../components/c_pageHeading/index.vue'
-  import { BUSINESS_GRID } from '../shared/presentation'
+  import { BUSINESS_GRID, BUSINESS_FORM } from '../shared/presentation'
+  import { REVIEW_FIELDS } from './operations'
   import {
     useProductionActual,
     HEATS,
     ACTUAL_GROUPS,
-    ACTUAL_FORM_CONFIG,
     PROCESS_STEPS,
   } from './data'
   defineOptions({ name: 'ProductionActualWorkbench' })
@@ -188,6 +276,19 @@
     chooseHeat,
     save,
     restore,
+    actualConfig,
+    heatList,
+    reviewEditor,
+    reviewActions,
+    historyVisible,
+    historyItems,
+    latest,
+    locked,
+    stateOf,
+    referenceVisible,
+    referenceRows,
+    referenceColumns,
+    previous,
   } = useProductionActual()
 </script>
 <style lang="scss" scoped>

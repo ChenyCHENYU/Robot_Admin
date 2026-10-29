@@ -11,6 +11,7 @@ import {
   releaseProductionPlans,
   filterProductionPlans,
   canReorderProductionPlan,
+  createHeatSchedule,
 } from '../src/views/production-sales/production-plan/data'
 import {
   createActualRecord,
@@ -22,6 +23,7 @@ import {
   validateLoad,
 } from '../src/views/production-sales/shipping/data'
 import { EMPTY_STATE_COLORS } from '../src/config/theme/tokens'
+import { isLineDecimal } from '../src/views/production-sales/sales-orders/operations'
 import {
   lightThemeOverrides,
   darkThemeOverrides,
@@ -119,4 +121,26 @@ test('Naive 空态使用主题声明的淡蓝图标，明暗配置独立', () =>
   expect(lightThemeOverrides.Empty?.iconColor).toBe(EMPTY_STATE_COLORS.light)
   expect(darkThemeOverrides.Empty?.iconColor).toBe(EMPTY_STATE_COLORS.dark)
   expect(EMPTY_STATE_COLORS.light).not.toBe(EMPTY_STATE_COLORS.dark)
+})
+
+test('自定义炉数的目标量精确守恒，跨计划炉号仍唯一', () => {
+  const plans = createProductionPlans()
+    .slice(0, 2)
+    .map(row => ({ ...row, heats: 20, weight: 120.001 }))
+  const heats = plans.flatMap(plan => {
+    const result = createHeatSchedule(plan)
+    expect(
+      result.reduce((sum, row) => sum + Math.round(row.target * 1000), 0)
+    ).toBe(120001)
+    return result
+  })
+  expect(new Set(heats.map(row => row.heatNo)).size).toBe(40)
+})
+
+test('商品明细录入保留零和原始三位金额，拒绝空值、负数与精度越界', () => {
+  expect(isLineDecimal('0')).toBe(true)
+  expect(isLineDecimal('1.005')).toBe(true)
+  expect(isLineDecimal('9999999999999999.125')).toBe(true)
+  for (const value of [null, '', ' 1 ', '-1', '1.2345', 'Infinity', '1e3', 0])
+    expect(isLineDecimal(value)).toBe(false)
 })

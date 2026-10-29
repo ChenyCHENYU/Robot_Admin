@@ -178,6 +178,10 @@ The **产销业务** menu maps to `src/views/production-sales/` with four distin
 
 Native grid themes, compact controls, subtle panels and headers remain consistent across layouts and light/dark modes. Naive empty-state icons use a soft blue theme token. The former `/#/demo/business-workbench` redirects to sales orders; `/#/preview/business-workbench` remains available, alongside `/#/preview/production-sales/<page>` for each page.
 
+Actions operate on local business records: planning supports create/edit/copy/delete and confirmed release/withdrawal; actuals support review, return for correction, locking and traceable withdrawal; orders and lines use modal editors connected to the existing whole-order draft; shipping supports task maintenance, inventory reselection after changes and confirmed departure. Detail drawers are read-only, and previous-heat references never overwrite current measurements. Custom heat counts preserve the plan weight exactly at 0.001-ton precision.
+
+The pages consume `C_FormModal`, `C_ActionBar` and the public editor contract from `@robot-admin/request-core/naive`. Queries and mutations use the existing page-local data, without another generic CRUD framework or any remote business writes.
+
 All records and commands are explicitly local demos, without production or sales API writes. State belongs to each page instance; public component entries handle rendering and interaction. Real DOM route roots and tags navigation tests protect cached pages. Shared dictionary, numeric, query, validation and partial retry capabilities remain available in the sales workbench. Real APIs, authorization and transaction rules remain application responsibilities.
 
 ### Page configuration, package-owned behavior

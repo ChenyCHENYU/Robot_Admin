@@ -63,6 +63,10 @@
           ><header class="ps-panel-heading"
             ><h2>当班发运任务池</h2
             ><span>{{ visibleRows.length }} 笔 · 点击单号安排配载</span></header
+          ><div class="ps-toolbar"
+            ><C_ActionBar
+              :actions="taskActions"
+              :config="{ compact: true, size: 'tiny' }" /></div
           ><C_Table
             :columns="columns"
             :data="visibleRows"
@@ -77,11 +81,18 @@
           aria-label="车辆安排"
           ><header class="ps-panel-heading"
             ><h2>车辆安排</h2
-            ><NTag
-              :type="SHIPMENT_STATES[current.status].type"
-              :bordered="false"
-              size="small"
-              >{{ SHIPMENT_STATES[current.status].label }}</NTag
+            ><NSpace :size="6"
+              ><NButton
+                size="tiny"
+                :disabled="current.status !== 'waiting' || busy"
+                @click="restoreVehicle"
+                >恢复车辆</NButton
+              ><NTag
+                :type="SHIPMENT_STATES[current.status].type"
+                :bordered="false"
+                size="small"
+                >{{ SHIPMENT_STATES[current.status].label }}</NTag
+              ></NSpace
             ></header
           ><div class="shipping-current"
             ><strong>{{ current.no }}</strong
@@ -138,6 +149,91 @@
         class="ps-status-line"
         >{{ notice }}</p
       >
+      <C_FormModal
+        :editor="taskEditor"
+        :options="SHIPMENT_EDIT_FIELDS"
+        :config="BUSINESS_FORM"
+        :mask-closable="false"
+        create-text="建立任务"
+      />
+      <NDrawer
+        v-model:show="detailVisible"
+        width="min(660px, 100vw)"
+        ><NDrawerContent
+          title="发运单详情"
+          closable
+        >
+          <NDescriptions
+            :column="2"
+            bordered
+            size="small"
+          >
+            <NDescriptionsItem label="发运单号">{{
+              current.no
+            }}</NDescriptionsItem
+            ><NDescriptionsItem label="状态">{{
+              SHIPMENT_STATES[current.status].label
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="客户">{{
+              current.customer
+            }}</NDescriptionsItem
+            ><NDescriptionsItem label="目的地">{{
+              current.destination
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="钢种">{{
+              current.grade
+            }}</NDescriptionsItem
+            ><NDescriptionsItem label="计划量"
+              >{{
+                weightCodec.format(current.weightKg / 1000)
+              }}
+              t</NDescriptionsItem
+            >
+            <NDescriptionsItem label="车辆">{{
+              current.plate || '待安排'
+            }}</NDescriptionsItem
+            ><NDescriptionsItem label="窗口">{{
+              current.window
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="驾驶员">{{
+              current.vehicle?.driver || '待安排'
+            }}</NDescriptionsItem
+            ><NDescriptionsItem label="装车货位">{{
+              current.vehicle?.gate || '待安排'
+            }}</NDescriptionsItem>
+          </NDescriptions>
+          <NDivider>交付进程</NDivider
+          ><C_Timeline
+            :items="[
+              { id: 'created', title: '发运任务已建立', status: 'success' },
+              {
+                id: 'loading',
+                title:
+                  current.status === 'waiting'
+                    ? '等待库存匹配与车辆配载'
+                    : '车辆已安排，装车单已建立',
+                status: current.status === 'waiting' ? 'default' : 'success',
+              },
+              {
+                id: 'departed',
+                title:
+                  current.status === 'departed'
+                    ? '车辆已确认出厂'
+                    : '等待装车及出厂校核',
+                status: current.status === 'departed' ? 'success' : 'default',
+              },
+            ]"
+            size="small"
+          />
+          <template #footer
+            ><NButton
+              size="small"
+              @click="detailVisible = false"
+              >关闭详情</NButton
+            ></template
+          >
+        </NDrawerContent></NDrawer
+      >
     </C_Density>
   </main>
 </template>
@@ -146,7 +242,12 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
   import PageHeading from '../components/c_pageHeading/index.vue'
-  import { BUSINESS_GRID, weightCodec } from '../shared/presentation'
+  import {
+    BUSINESS_GRID,
+    BUSINESS_FORM,
+    weightCodec,
+  } from '../shared/presentation'
+  import { SHIPMENT_EDIT_FIELDS } from './operations'
   import {
     useShippingWorkbench,
     SHIPMENT_STATES,
@@ -180,6 +281,10 @@
     recommend,
     assign,
     depart,
+    restoreVehicle,
+    taskEditor,
+    taskActions,
+    detailVisible,
   } = useShippingWorkbench()
 </script>
 <style lang="scss" scoped>

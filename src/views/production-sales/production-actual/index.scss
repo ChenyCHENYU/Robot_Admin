@@ -141,6 +141,10 @@
   height: 214px;
   border-top: 1px solid var(--ps-border);
 }
+.actual-reference-grid {
+  height: min(65vh, 620px);
+  margin-top: 14px;
+}
 .actual-timeline {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

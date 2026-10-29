@@ -44,6 +44,9 @@ import {
   summarizeRows,
   type SummaryNumericStrategy,
 } from '@agile-team/mach-table-vue/business'
+import { useSalesOperations } from './operations'
+import { CUSTOMERS } from './options'
+export { CUSTOMERS } from './options'
 
 export interface Customer {
   id: string
@@ -74,7 +77,7 @@ export interface OrderLine {
   unit: string
   note: string | null
 }
-interface BusinessOrder {
+export interface BusinessOrder {
   header: OrderHeader
   lines: OrderLine[]
 }
@@ -116,11 +119,6 @@ export function getBatchSubmission(
   return { keys, stale }
 }
 
-export const CUSTOMERS: Customer[] = [
-  { id: 'CU-001', code: '0001', name: '星海科技' },
-  { id: 'CU-002', code: '0002', name: '云帆智造' },
-  { id: 'CU-003', code: '0003', name: '远川能源' },
-]
 export const STATUS_OPTIONS = [
   { value: 0, label: '待下达' },
   { value: 1, label: '执行中' },
@@ -144,6 +142,9 @@ export const quantityCodec = createNumberCodec({
 })
 const exactCodec = createNumberCodec({ storage: 'decimal-string' })
 const clone = <T>(value: T): T => structuredClone(toRaw(value))
+/** 订单状态与履约进度保持一致，进行中的进度沿用已有值。 */
+const progressForStatus = (row: OrderHeader): number =>
+  row.status === 2 ? 100 : row.status === 0 ? 0 : row.progress || 35
 
 /** 示例数据使用业务主键；零数量与未填写分别保留 '0' 和 null。 */
 export function createBusinessOrders(): BusinessOrder[] {
@@ -639,6 +640,9 @@ export function useBusinessWorkbench() {
       editable: true,
     },
   ])
+  const readonlyDetailColumns = detailColumns
+    .slice(1)
+    .map(column => ({ ...column, editable: false }))
   const paymentColumns = defineVueColumns<{
     id: string
     stage: string
@@ -725,6 +729,7 @@ export function useBusinessWorkbench() {
         notice.value = '请点击校验摘要定位并补齐内容'
         return false
       }
+      header.value.progress = progressForStatus(header.value)
       selected.value.header = clone(header.value)
       selected.value.lines = clone(lines.value)
       detail.api.value?.editing.markSaved()
@@ -878,6 +883,30 @@ export function useBusinessWorkbench() {
     else void resource.reload()
   }
   return {
+    ...useSalesOperations({
+      orders,
+      header,
+      lines,
+      activeId,
+      notice,
+      dirty,
+      activate,
+      blocked: () => saving.value || batchBusy.value || resource.loading.value,
+      commitCell: commitDetailEdit,
+      selectedKeys: () => {
+        return selectedCount.value
+          ? (detail.api.value?.selection.getIds() ?? []).map(String)
+          : []
+      },
+      resetLineState: () => {
+        detail.api.value?.selection.clear()
+        selectedCount.value = 0
+        batchPlan = undefined
+        batchPreview.value = []
+        batchResults.value = []
+        scope.clear()
+      },
+    }),
     container,
     stacked,
     form,
@@ -913,6 +942,7 @@ export function useBusinessWorkbench() {
     masterColumns,
     masterRowStyles,
     detailColumns,
+    readonlyDetailColumns,
     paymentColumns,
     paymentRows,
     chooseOrder,

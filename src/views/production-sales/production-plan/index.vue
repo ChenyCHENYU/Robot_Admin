@@ -90,6 +90,11 @@
                 {{ selectedIds.length }} 项</span
               ></header
             >
+            <div class="ps-toolbar"
+              ><C_ActionBar
+                :actions="actions"
+                :config="{ compact: true, size: 'tiny' }"
+            /></div>
             <div class="ps-grid plan-main-grid"
               ><MachTable
                 v-bind="BUSINESS_GRID"
@@ -167,6 +172,64 @@
         class="ps-status-line"
         >{{ notice }}</p
       >
+      <C_FormModal
+        :editor="editor"
+        :options="PLAN_EDIT_FIELDS"
+        :config="BUSINESS_FORM"
+        :mask-closable="false"
+        create-text="保存计划"
+      />
+      <NDrawer
+        v-model:show="detailVisible"
+        width="min(680px, 100vw)"
+        placement="right"
+      >
+        <NDrawerContent
+          title="生产计划详情"
+          closable
+        >
+          <NDescriptions
+            :column="2"
+            bordered
+            size="small"
+          >
+            <NDescriptionsItem label="计划号">{{
+              current.planNo
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="状态">{{
+              PLAN_STATES[current.status].label
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="产线 / 浇次"
+              >{{ current.line }} / {{ current.cast }}</NDescriptionsItem
+            >
+            <NDescriptionsItem label="客户">{{
+              current.customer
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="钢种 / 断面"
+              >{{ current.grade }} / {{ current.section }}</NDescriptionsItem
+            >
+            <NDescriptionsItem label="计划量 / 炉数"
+              >{{ current.weight }} t /
+              {{ current.heats }} 炉</NDescriptionsItem
+            >
+          </NDescriptions>
+          <NDivider>炉次编排</NDivider>
+          <div class="ps-grid ps-grid--small"
+            ><MachTable
+              v-bind="BUSINESS_GRID"
+              :row-data="heatRows"
+              :column-defs="heatColumns"
+              :theme="themeStore.isDark ? 'dark' : 'light'"
+          /></div>
+          <template #footer
+            ><NButton
+              size="small"
+              @click="detailVisible = false"
+              >关闭详情</NButton
+            ></template
+          >
+        </NDrawerContent>
+      </NDrawer>
     </C_Density>
   </main>
 </template>
@@ -175,12 +238,14 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
   import PageHeading from '../components/c_pageHeading/index.vue'
-  import { BUSINESS_GRID } from '../shared/presentation'
+  import { BUSINESS_GRID, BUSINESS_FORM } from '../shared/presentation'
+  import { PLAN_EDIT_FIELDS } from './operations'
   import {
     useProductionPlan,
     PLAN_FIELDS,
     LINE_TREE,
     LINE_TREE_PROPS,
+    PLAN_STATES,
   } from './data'
   defineOptions({ name: 'ProductionPlanWorkbench' })
   const themeStore = s_themeStore()
@@ -208,6 +273,9 @@
     reorderEnabled,
     dragPolicy,
     onReorder,
+    editor,
+    actions,
+    detailVisible,
   } = useProductionPlan()
 </script>
 <style lang="scss" scoped>

@@ -108,6 +108,11 @@
                   ></div
                 ><span class="workbench-panel__badge">主表</span></header
               >
+              <div class="workbench-detail-actions"
+                ><C_ActionBar
+                  :actions="orderActions"
+                  :config="{ compact: true, size: 'tiny' }"
+              /></div>
               <div class="workbench-master-grid"
                 ><MachTable
                   :ref="master.ref"
@@ -229,7 +234,11 @@
                   >
                     <div class="workbench-detail-actions"
                       ><NSpace :size="6"
-                        ><NButton
+                        ><C_ActionBar
+                          :actions="lineActions"
+                          :config="{ compact: true, size: 'tiny' }"
+                        />
+                        <NButton
                           size="tiny"
                           @click="selectAllLines"
                           >全选明细</NButton
@@ -418,6 +427,79 @@
           ></template
         >
       </NModal>
+      <C_FormModal
+        :editor="orderEditor"
+        :options="ORDER_CREATE_FIELDS"
+        :config="BUSINESS_FORM"
+        :mask-closable="false"
+        create-text="建立订单"
+      />
+      <C_FormModal
+        :editor="lineEditor"
+        :options="ORDER_LINE_FIELDS"
+        :config="BUSINESS_FORM"
+        :mask-closable="false"
+        create-text="加入明细"
+      />
+      <NDrawer
+        v-model:show="detailVisible"
+        width="min(760px, 100vw)"
+        ><NDrawerContent
+          title="销售订单详情"
+          closable
+        >
+          <NAlert
+            v-if="dirty"
+            type="warning"
+            :show-icon="false"
+            >当前显示包含未保存草稿，请返回工作台保存整单。</NAlert
+          >
+          <NDescriptions
+            :column="2"
+            bordered
+            size="small"
+          >
+            <NDescriptionsItem label="订单号">{{
+              header.orderNo
+            }}</NDescriptionsItem
+            ><NDescriptionsItem label="合同号">{{
+              header.contractNo
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="客户">{{
+              CUSTOMERS.find(row => row.id === header.customer)?.name ||
+              '未选择'
+            }}</NDescriptionsItem
+            ><NDescriptionsItem label="业务人员">{{
+              header.owner
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="钢种 / 规格"
+              >{{ header.grade }} / {{ header.section }}</NDescriptionsItem
+            ><NDescriptionsItem label="交付日期">{{
+              header.delivery
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="合同量"
+              >{{ header.targetWeight }} t</NDescriptionsItem
+            ><NDescriptionsItem label="状态">{{
+              STATUS_OPTIONS.find(row => row.value === header.status)?.label
+            }}</NDescriptionsItem>
+          </NDescriptions>
+          <NDivider>商品明细 · {{ lines.length }} 条</NDivider>
+          <div class="workbench-drawer-grid"
+            ><MachTable
+              v-bind="BUSINESS_GRID"
+              :row-data="lines"
+              :column-defs="readonlyDetailColumns"
+              :theme="themeStore.isDark ? 'dark' : 'light'"
+          /></div>
+          <template #footer
+            ><NButton
+              size="small"
+              @click="detailVisible = false"
+              >关闭详情</NButton
+            ></template
+          >
+        </NDrawerContent></NDrawer
+      >
     </C_Density>
   </main>
 </template>
@@ -428,12 +510,16 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { WORKBENCH_ICONS } from './icons'
   import PageHeading from '../components/c_pageHeading/index.vue'
+  import { BUSINESS_FORM, BUSINESS_GRID } from '../shared/presentation'
+  import { ORDER_CREATE_FIELDS, ORDER_LINE_FIELDS } from './operations'
   import { s_themeStore } from '@/stores/theme'
   import {
     useBusinessWorkbench,
     SEARCH_FIELDS,
     HEADER_FIELDS,
     FORM_CONFIG,
+    CUSTOMERS,
+    STATUS_OPTIONS,
     BATCH_MODES,
   } from './data'
   defineOptions({ name: 'SalesOrderWorkbench' })
@@ -473,6 +559,12 @@
     masterColumns,
     masterRowStyles,
     detailColumns,
+    readonlyDetailColumns,
+    orderEditor,
+    lineEditor,
+    orderActions,
+    lineActions,
+    detailVisible,
     paymentColumns,
     paymentRows,
     save,

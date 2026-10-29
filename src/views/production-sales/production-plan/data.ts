@@ -21,6 +21,7 @@ import type {
 } from '@robot-admin/naive-ui-components/C_FormSearch'
 import type { TreeNativeProps } from '@robot-admin/naive-ui-components/C_Tree'
 import { recordLink, statusTag, weightCodec } from '../shared/presentation'
+import { usePlanOperations } from './operations'
 
 export interface ProductionPlan {
   id: string
@@ -112,6 +113,22 @@ export function createProductionPlans(): ProductionPlan[] {
     )[index % 6],
   }))
 }
+/** 炉次编号按计划预留 20 个位置，目标量按千分吨分摊并守恒。 */
+export function createHeatSchedule(plan: ProductionPlan) {
+  const total = Math.round(plan.weight * 1000)
+  const base = Math.floor(total / plan.heats)
+  return Array.from({ length: plan.heats }, (_, index) => ({
+    id: `${plan.id}-H${index}`,
+    heatNo: `L261029${String(Number(plan.id.slice(5)) * 20 + index).padStart(4, '0')}`,
+    sequence: index + 1,
+    furnace: `${(index % 2) + 1}# 转炉`,
+    grade: plan.grade,
+    target: (base + Number(index < total % plan.heats)) / 1000,
+    start: `${8 + index}:30`,
+    process: 'BOF → LF → CC',
+    status: index === 0 ? '就绪' : '待开炉',
+  }))
+}
 /** 批量下达只改变尚未下达的目标计划，重复执行不回退生产状态。 */
 export function releaseProductionPlans(
   rows: readonly ProductionPlan[],
@@ -155,6 +172,7 @@ export function filterProductionPlans(
 }
 /** 调度页组合现有树、查询和网格；发布操作只更新本地演示模型。 */
 export function useProductionPlan() {
+  const dialog = useDialog()
   const rows = ref(createProductionPlans())
   const query = ref<PlanQuery>({
     keyword: '',
@@ -249,19 +267,7 @@ export function useProductionPlan() {
       { when: ({ data }) => data.status === 'issued', tone: 'warning' },
     ]
   })
-  const heatRows = computed(() =>
-    Array.from({ length: current.value.heats }, (_, index) => ({
-      id: `${current.value.id}-H${index}`,
-      heatNo: `L261029${String(Number(current.value.id.slice(5)) * 4 + index).padStart(3, '0')}`,
-      sequence: index + 1,
-      furnace: `${(index % 2) + 1}# 转炉`,
-      grade: current.value.grade,
-      target: current.value.weight / current.value.heats,
-      start: `${8 + index}:30`,
-      process: 'BOF → LF → CC',
-      status: index === 0 ? '就绪' : '待开炉',
-    }))
-  )
+  const heatRows = computed(() => createHeatSchedule(current.value))
   const heatColumns = defineVueColumns<(typeof heatRows.value)[number]>([
     { field: 'sequence', headerName: '顺序', width: 60 },
     { field: 'heatNo', headerName: '炉号', minWidth: 140, flex: 1 },
@@ -297,8 +303,16 @@ export function useProductionPlan() {
       notice.value = '请先勾选待下达计划，已下达及执行中的计划不会重复处理。'
       return
     }
-    rows.value = releaseProductionPlans(rows.value, targets)
-    notice.value = `已下达 ${count} 项计划，炉次与产线安排保持不变（本地演示）。`
+    dialog.info({
+      title: '下达生产计划',
+      content: `确认下达 ${count} 项待下达计划？下达后锁定编制与顺序，执行前可撤销。`,
+      positiveText: '确认下达',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        rows.value = releaseProductionPlans(rows.value, targets)
+        notice.value = `已下达 ${count} 项计划，炉次与产线安排保持不变（本地演示）。`
+      },
+    })
   }
   const syncSelection = () => {
     selectedIds.value = (table.api.value?.selection.getIds() ?? []).map(String)
@@ -325,6 +339,7 @@ export function useProductionPlan() {
     notice.value = `已调整 ${event.rowNode.data?.planNo} 的本地排产顺序。`
   }
   return {
+    ...usePlanOperations({ rows, currentId, selectedIds, notice }),
     rows,
     query,
     searchConfig,

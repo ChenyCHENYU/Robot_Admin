@@ -135,6 +135,10 @@ test('计划提交快照、产线树、炉次联动与下达状态保持一致',
   ).toBeDisabled()
   await table.locator('.mach-row[data-id="PLAN-5"] .mach-row-checkbox').check()
   await page.getByRole('button', { name: '下达选中计划', exact: true }).click()
+  await page
+    .locator('.n-dialog')
+    .getByRole('button', { name: '确认下达', exact: true })
+    .click()
   await expect(
     table.locator('.mach-pane--center .mach-row[data-id="PLAN-5"]')
   ).toHaveAttribute('data-row-tone', 'warning')
@@ -229,6 +233,10 @@ test('发运库存守恒、超载阻止、装车和出厂状态流转，空态�
     page.getByRole('button', { name: '生成装车单', exact: true })
   ).toBeDisabled()
   await page.getByRole('button', { name: '确认出厂', exact: true }).click()
+  await page
+    .locator('.n-dialog')
+    .getByRole('button', { name: '确认出厂', exact: true })
+    .click()
   await expect(page.locator('.ps-status-line')).toContainText('已确认出厂')
   const search = page.locator('.ps-search')
   await field(search, '发运单 / 客户').getByRole('textbox').fill('无此发运单')

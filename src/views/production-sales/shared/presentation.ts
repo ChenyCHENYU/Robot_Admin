@@ -7,6 +7,16 @@
  */
 import { defineVueTableConfig } from '@agile-team/mach-table-vue'
 import { createNumberCodec } from '@robot-admin/naive-ui-components/data'
+import type { FormConfig } from '@robot-admin/naive-ui-components/C_Form'
+
+export const BUSINESS_FORM = {
+  density: 'compact',
+  layout: 'grid',
+  grid: { cols: 2, minItemWidth: 250, xGap: 20, yGap: 10 },
+  labelPlacement: 'left',
+  labelWidth: 100,
+  validateOnChange: true,
+} satisfies FormConfig
 
 export const BUSINESS_GRID = defineVueTableConfig({
   rowKey: 'id',

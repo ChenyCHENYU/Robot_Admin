@@ -24,6 +24,7 @@ import {
   useMachTable,
 } from '@agile-team/mach-table-vue'
 import { recordLink, statusTag, weightCodec } from '../shared/presentation'
+import { useShipmentOperations } from './operations'
 
 export interface Shipment {
   id: string
@@ -385,12 +386,29 @@ export function useShippingWorkbench() {
   const depart = () => {
     if (current.value.status !== 'loading' || busy.value) return
     const { id } = current.value
-    rows.value = rows.value.map(row =>
-      row.id === id ? { ...row, status: 'departed' } : row
-    )
-    notice.value = `${current.value.no} 已确认出厂（本地演示）。`
+    dialog.info({
+      title: '确认车辆出厂',
+      content: `${current.value.no} · ${current.value.plate}，请确认装车与出厂校核已完成。`,
+      positiveText: '确认出厂',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        rows.value = rows.value.map(row =>
+          row.id === id && row.status === 'loading'
+            ? { ...row, status: 'departed' }
+            : row
+        )
+        notice.value = '发运任务已确认出厂（本地演示）。'
+      },
+    })
   }
   return {
+    ...useShipmentOperations({
+      rows,
+      currentId,
+      notice,
+      activate,
+      vehicleDirty: () => form.value?.isDirty === true || busy.value,
+    }),
     rows,
     current,
     currentId,
@@ -415,6 +433,9 @@ export function useShippingWorkbench() {
     recommend,
     assign,
     depart,
+    restoreVehicle: () => {
+      if (!busy.value) activate(currentId.value)
+    },
   }
 }
 

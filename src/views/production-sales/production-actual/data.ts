@@ -13,6 +13,7 @@ import type {
 import type { SectionNavItem } from '@robot-admin/naive-ui-components/C_SectionNav'
 import { defineVueColumns, type RowStyleRule } from '@agile-team/mach-table-vue'
 import { statusTag } from '../shared/presentation'
+import { useActualReview } from './operations'
 
 const DEFAULT_ACTUAL = {
   received: 122.8,
@@ -185,6 +186,43 @@ export function useProductionActual() {
     () => JSON.stringify(model.value) !== JSON.stringify(saved.value)
   )
   const chemicalRows = computed(() => inspectChemistry(model.value))
+  const review = useActualReview({ current, dirty, notice, saving })
+  const heatList = computed(() =>
+    HEATS.map(heat => ({ ...heat, state: review.stateOf(heat.id, heat.state) }))
+  )
+  const actualConfig = computed(() => ({
+    ...ACTUAL_FORM_CONFIG,
+    disabled: review.locked.value,
+  }))
+  const referenceVisible = ref(false)
+  const previous = computed(
+    () => HEATS[HEATS.findIndex(heat => heat.id === currentId.value) - 1]
+  )
+  const referenceRows = computed(() => {
+    const prior = previous.value && savedRecords.get(previous.value.id)
+    return prior
+      ? ACTUAL_GROUPS.flatMap(group =>
+          group.fields.map(field => ({
+            id: String(field.prop),
+            name: String(field.label),
+            previous: prior[field.prop as keyof ActualModel],
+            current: model.value[field.prop as keyof ActualModel],
+          }))
+        )
+      : []
+  })
+  const referenceColumns = defineVueColumns<
+    (typeof referenceRows.value)[number]
+  >([
+    { field: 'name', headerName: '实绩项目', minWidth: 160, flex: 1 },
+    {
+      field: 'previous',
+      headerName: '上一炉已保存值',
+      width: 160,
+      align: 'right',
+    },
+    { field: 'current', headerName: '当前炉次值', width: 150, align: 'right' },
+  ])
   const sections: SectionNavItem[] = ACTUAL_GROUPS.map(group => ({
     key: group.key,
     label: group.title,
@@ -222,6 +260,7 @@ export function useProductionActual() {
     })
   }
   const restore = () => {
+    if (review.locked.value || saving.value) return
     model.value = { ...saved.value }
     forms.forEach(form => form?.clearValidation())
     notice.value = '已恢复当前炉次最近一次保存的记录。'
@@ -237,7 +276,7 @@ export function useProductionActual() {
     }
   }
   const save = async () => {
-    if (saving.value) return
+    if (saving.value || review.locked.value) return
     saving.value = true
     try {
       const results = await Promise.all(
@@ -290,6 +329,13 @@ export function useProductionActual() {
     (typeof chemicalRows.value)[number]
   >[] = [{ when: ({ data }) => data.failed, tone: 'danger' }]
   return {
+    ...review,
+    heatList,
+    actualConfig,
+    referenceVisible,
+    referenceRows,
+    referenceColumns,
+    previous,
     container,
     model,
     current,
