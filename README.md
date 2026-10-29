@@ -129,7 +129,7 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.23.0` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.23.1` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.3`  | 6 种布局、框架无关设置协议、Vue Headless 与 Naive 入口     | 宿主提供菜单、路由和插槽，布局由包实现 |
@@ -167,7 +167,7 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 
 ### 密集业务工作台
 
-新增「业务工作台」菜单（`/#/demo/business-workbench`），免登录预览入口为 `/#/preview/business-workbench`。它通过正式包的公开入口组合主列表、商品明细和收款安排，集中演示：
+新增「业务工作台」菜单（`/#/demo/business-workbench`），免登录预览入口为 `/#/preview/business-workbench`。它通过正式包的公开入口组合主列表、商品明细和收款安排，三表统一接入主题表头、边线、斑马纹与当前订单标识，主档控件按列等宽，拖动分割手柄保留页面滚动位置。集中演示：
 
 - 局部紧凑密度、容器搜索栅格、固定组织与成功查询快照，搜索草稿不会提前改变结果。
 - 同一字典服务表单、搜索与网格，原始编码、状态 0、空值和未知值分别保留。

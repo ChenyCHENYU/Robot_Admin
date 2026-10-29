@@ -13,11 +13,22 @@
       data-testid="business-workbench"
     >
       <header class="workbench-heading">
-        <div
-          ><small>BUSINESS WORKSPACE</small><h1>业务工作台</h1
-          ><p>本地示例数据 · 订单、主档与明细共用同一份业务语义</p></div
-        >
-        <NSpace :size="8"
+        <div class="workbench-heading__identity">
+          <span class="workbench-heading__icon"
+            ><C_Icon
+              aria-hidden="true"
+              type="svg"
+              :svg-path="WORKBENCH_ICONS.workspace"
+              :size="24"
+          /></span>
+          <div
+            ><h1>业务工作台</h1
+            ><p>订单、商品与收款协同处理 <span>· 本地演示</span></p></div
+          >
+        </div>
+        <NSpace
+          :size="8"
+          align="center"
           ><NTag
             :type="dirty ? 'warning' : 'success'"
             size="small"
@@ -27,6 +38,12 @@
             size="small"
             :disabled="saving || batchBusy"
             @click="restore"
+            ><template #icon
+              ><C_Icon
+                aria-hidden="true"
+                type="svg"
+                :svg-path="WORKBENCH_ICONS.restore"
+                :size="15" /></template
             >恢复当前单据</NButton
           ><NButton
             type="primary"
@@ -34,12 +51,19 @@
             :loading="saving"
             :disabled="resource.loading.value || batchBusy"
             @click="save"
+            ><template #icon
+              ><C_Icon
+                aria-hidden="true"
+                type="svg"
+                :svg-path="WORKBENCH_ICONS.save"
+                :size="15" /></template
             >保存整单</NButton
           ></NSpace
         >
       </header>
 
       <C_FormSearch
+        class="workbench-search"
         v-model="query"
         :form-item-list="SEARCH_FIELDS"
         :config="searchConfig"
@@ -53,7 +77,7 @@
         <C_SplitPane
           v-model:size="splitSize"
           :direction="stacked ? 'vertical' : 'horizontal'"
-          :min-first-size="stacked ? 240 : 220"
+          :min-first-size="stacked ? 240 : 260"
           :min-second-size="stacked ? 450 : 480"
           aria-label="订单与单据详情"
         >
@@ -63,10 +87,18 @@
               aria-label="订单列表"
             >
               <header
-                ><div
-                  ><h2>订单列表</h2
-                  ><span>{{ filteredOrders.length }} 笔本地订单</span></div
-                ></header
+                ><div class="workbench-panel__title"
+                  ><span class="workbench-panel__icon"
+                    ><C_Icon
+                      aria-hidden="true"
+                      type="svg"
+                      :svg-path="WORKBENCH_ICONS.orders"
+                      :size="18" /></span
+                  ><div
+                    ><h2>订单列表</h2
+                    ><span>{{ filteredOrders.length }} 笔本地订单</span></div
+                  ></div
+                ><span class="workbench-panel__badge">主表</span></header
               >
               <div class="workbench-master-grid"
                 ><MachTable
@@ -74,8 +106,12 @@
                   :row-data="filteredOrders"
                   :column-defs="masterColumns"
                   row-key="id"
-                  :row-height="30"
-                  :header-height="34"
+                  :row-height="50"
+                  :header-height="36"
+                  column-layout="fit"
+                  :striped-rows="true"
+                  :show-cell-borders="true"
+                  :row-style-rules="masterRowStyles"
                   :theme="themeStore.isDark ? 'dark' : 'light'"
                   :pagination="false"
                   :enable-column-resize="true"
@@ -95,9 +131,17 @@
                 aria-label="订单主档"
               >
                 <header
-                  ><div
-                    ><h2 data-testid="active-order">{{ header.orderNo }}</h2
-                    ><span>订单主档</span></div
+                  ><div class="workbench-panel__title"
+                    ><span class="workbench-panel__icon"
+                      ><C_Icon
+                        aria-hidden="true"
+                        type="svg"
+                        :svg-path="WORKBENCH_ICONS.document"
+                        :size="18" /></span
+                    ><div
+                      ><h2 data-testid="active-order">{{ header.orderNo }}</h2
+                      ><span>订单主档</span></div
+                    ></div
                   ><NButton
                     size="tiny"
                     @click="fillMissingExample"
@@ -194,8 +238,11 @@
                         :row-data="lines"
                         :column-defs="detailColumns"
                         row-key="id"
-                        :row-height="30"
-                        :header-height="34"
+                        :row-height="32"
+                        :header-height="36"
+                        column-layout="fit"
+                        :striped-rows="true"
+                        :show-cell-borders="true"
                         :theme="themeStore.isDark ? 'dark' : 'light'"
                         row-selection="multiple"
                         :pagination="false"
@@ -234,8 +281,11 @@
                       :row-data="paymentRows"
                       :column-defs="paymentColumns"
                       row-key="id"
-                      :row-height="30"
-                      :header-height="34"
+                      :row-height="32"
+                      :header-height="36"
+                      column-layout="fit"
+                      :striped-rows="true"
+                      :show-cell-borders="true"
                       :theme="themeStore.isDark ? 'dark' : 'light'"
                       :pagination="false"
                   /></div>
@@ -251,10 +301,18 @@
         aria-label="明细批改"
       >
         <header
-          ><div
-            ><h2>明细批改</h2
-            ><span
-              >只作用于当前已选明细；失败项保留草稿，重试不再提交成功项</span
+          ><div class="workbench-panel__title"
+            ><span class="workbench-panel__icon"
+              ><C_Icon
+                aria-hidden="true"
+                type="svg"
+                :svg-path="WORKBENCH_ICONS.batch"
+                :size="19" /></span
+            ><div
+              ><h2>明细批改</h2
+              ><span
+                >只作用于当前已选明细；失败项保留草稿，重试不再提交成功项</span
+              ></div
             ></div
           ></header
         >
@@ -356,6 +414,7 @@
   import '@agile-team/mach-table-vue/styles.css'
   // 自定义 renderer 通过 h() 使用 Picker，按路由显式引入其样式。
   import { MachTable } from '@agile-team/mach-table-vue'
+  import { WORKBENCH_ICONS } from './icons'
   import { s_themeStore } from '@/stores/theme'
   import {
     useBusinessWorkbench,
@@ -398,6 +457,7 @@
     dirty,
     scope,
     masterColumns,
+    masterRowStyles,
     detailColumns,
     paymentColumns,
     paymentRows,

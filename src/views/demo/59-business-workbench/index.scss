@@ -1,12 +1,27 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
- * @Date: 2026-10-28
+ * @Date: 2026-10-29
  * @FilePath: \Robot_Admin\src\views\demo\59-business-workbench\index.scss
- * @Description: 面向密集单据的三表工作台，主题变量与局部全屏布局
+ * @Description: 工作台局部主题与密集布局，表格复用 MachTable 主题变量和原生交互
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+.business-workbench,
+.workbench-details--fullscreen {
+  --workbench-radius: 12px;
+  --workbench-accent: var(--app-primary);
+  --workbench-ink: color-mix(
+    in srgb,
+    var(--app-primary) 85%,
+    var(--app-text-primary)
+  );
+  --workbench-outline: color-mix(
+    in srgb,
+    var(--app-primary) 8%,
+    var(--app-border-default)
+  );
+}
 .business-workbench {
-  padding: 20px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -19,49 +34,108 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  small {
-    letter-spacing: 0.16em;
-    color: var(--app-primary-color);
-    font-size: 10px;
-    font-weight: 700;
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    border-radius: 13px;
+    color: var(--workbench-accent);
+    background: color-mix(
+      in srgb,
+      var(--workbench-accent) 10%,
+      var(--app-bg-content)
+    );
+    border: 1px solid
+      color-mix(in srgb, var(--workbench-accent) 16%, var(--app-border-default));
   }
   h1 {
-    margin: 4px 0;
-    font-size: 24px;
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.5;
     font-weight: 650;
+    letter-spacing: 0.01em;
   }
   p {
-    margin: 4px 0 0;
+    margin: 2px 0 0;
     color: var(--app-text-secondary);
     font-size: 12px;
+    line-height: 1.6;
+  }
+  p span {
+    color: var(--app-text-tertiary);
   }
 }
+.workbench-search {
+  flex: 0 0 auto;
+  border: 1px solid var(--workbench-outline);
+  border-radius: var(--workbench-radius);
+  box-shadow: var(--app-shadow-sm);
+}
 .workbench-layout {
-  height: 640px;
+  // 工作区随实际视口收敛高度，查询区和后续批改区保留正常文档流。
+  height: clamp(440px, calc(100dvh - 330px), 620px);
   min-width: 0;
 }
 .workbench-panel {
   min-width: 0;
   background: var(--app-bg-content);
-  border: 1px solid var(--app-border-default);
-  border-radius: var(--app-radius-medium);
+  border: 1px solid var(--workbench-outline);
+  border-radius: var(--workbench-radius);
   overflow: hidden;
   > header {
-    padding: 12px 14px;
+    min-height: 54px;
+    padding: 10px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    border-bottom: 1px solid var(--app-border-default);
+    background: color-mix(
+      in srgb,
+      var(--workbench-accent) 3%,
+      var(--app-bg-content)
+    );
+    border-bottom: 1px solid var(--workbench-outline);
     h2 {
       margin: 0;
       font-size: 14px;
+      line-height: 1.6;
       font-weight: 650;
     }
-    span {
+    span:not(.c-icon):not(.workbench-panel__icon):not(.workbench-panel__badge) {
       font-size: 11px;
       color: var(--app-text-secondary);
     }
+  }
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+  }
+  &__icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    color: var(--workbench-accent);
+  }
+  &__badge {
+    padding: 2px 8px;
+    border-radius: 5px;
+    color: var(--workbench-accent);
+    font-size: 11px;
+    background: color-mix(
+      in srgb,
+      var(--workbench-accent) 9%,
+      var(--app-bg-content)
+    );
   }
 }
 .workbench-orders {
@@ -74,11 +148,11 @@
   flex: 1;
 }
 .workbench-panel-note {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.7;
-  padding: 12px;
+  padding: 10px 12px;
   margin: 0;
-  color: var(--app-text-secondary);
+  color: var(--app-text-tertiary);
   border-top: 1px solid var(--app-border-default);
 }
 .workbench-document {
@@ -92,7 +166,7 @@
 .workbench-header {
   flex: 0 0 auto;
   :deep(.c-form) {
-    padding: 12px;
+    padding: 12px 14px;
   }
 }
 .workbench-details {
@@ -101,6 +175,7 @@
   display: flex;
   flex-direction: column;
   > header {
+    min-height: 42px;
     padding-block: 4px;
   }
   :deep(.n-tabs) {
@@ -112,7 +187,7 @@
   position: fixed;
   inset: 16px;
   z-index: 1600;
-  box-shadow: 0 8px 32px rgb(0 0 0 / 16%);
+  box-shadow: var(--app-shadow-lg);
   color: var(--app-text-primary);
 }
 .workbench-lines {
@@ -128,6 +203,7 @@
   flex-wrap: wrap;
   gap: 6px;
   padding: 8px 12px;
+  border-bottom: 1px solid var(--workbench-outline);
   span {
     font-size: 11px;
     color: var(--app-text-secondary);
@@ -135,8 +211,87 @@
 }
 .workbench-detail-grid,
 .workbench-payment-grid {
-  min-height: 180px;
+  min-height: 150px;
   flex: 1;
+}
+// 只覆盖本页实例的公开令牌；明暗主题仍由表格自身管理，编辑/悬停/选择状态保留。
+.business-workbench :deep(.mach-root),
+.workbench-details--fullscreen :deep(.mach-root) {
+  --mach-primary: var(--workbench-accent);
+  --mach-header-bg: color-mix(
+    in srgb,
+    var(--workbench-accent) 7%,
+    var(--app-bg-content)
+  );
+  --mach-header-accent-color: color-mix(
+    in srgb,
+    var(--workbench-accent) 28%,
+    var(--app-border-default)
+  );
+  --mach-body-bg: var(--app-bg-content);
+  --mach-body-fg: var(--app-text-primary);
+  --mach-border-color: var(--workbench-outline);
+  --mach-zebra-bg: color-mix(
+    in srgb,
+    var(--workbench-accent) 2%,
+    var(--app-bg-content)
+  );
+  --mach-cell-focus-color: var(--workbench-accent);
+  border: 0;
+}
+:deep(.workbench-order-cell) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  line-height: 1.3;
+}
+:deep(.workbench-order-cell__customer) {
+  color: var(--app-text-tertiary);
+  font-size: 11px;
+}
+:deep(.workbench-order-link) {
+  color: var(--workbench-ink);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  &:hover {
+    text-decoration: underline;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--workbench-accent);
+    outline-offset: 2px;
+  }
+}
+:deep(.workbench-state) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  color: var(--workbench-ink);
+  background: color-mix(in srgb, currentColor 10%, var(--app-bg-content));
+  font-size: 11px;
+  line-height: 1.3;
+  white-space: nowrap;
+  &::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  &[data-status='1'] {
+    color: var(--c-warning, #d97706);
+  }
+  &[data-status='2'] {
+    color: var(--c-success, #18a058);
+  }
 }
 .workbench-totals {
   display: flex;
@@ -144,12 +299,18 @@
   gap: 8px;
   padding: 9px 12px;
   font-size: 12px;
-  background: var(--app-bg-page);
-  border-top: 1px solid var(--app-border-default);
+  color: var(--app-text-secondary);
+  background: color-mix(
+    in srgb,
+    var(--workbench-accent) 4%,
+    var(--app-bg-content)
+  );
+  border-top: 1px solid var(--workbench-outline);
   font-variant-numeric: tabular-nums;
   b {
     margin-inline: 6px;
     color: var(--app-text-primary);
+    font-weight: 650;
   }
 }
 .workbench-batch-controls {
@@ -157,20 +318,21 @@
   align-items: end;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 12px;
+  padding: 12px 14px;
   label {
     font-size: 12px;
     min-width: 145px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
+    color: var(--app-text-secondary);
   }
   > :deep(.n-input) {
     max-width: 280px;
   }
 }
 .workbench-batch-preview {
-  padding: 0 12px 12px;
+  padding: 0 14px 12px;
   display: grid;
   gap: 5px;
   > div {
@@ -178,16 +340,17 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    padding: 5px 8px;
+    padding: 6px 9px;
+    border-radius: 5px;
     font-size: 12px;
-    background: var(--app-bg-page);
+    background: var(--app-bg-surface);
     strong {
       min-width: 115px;
     }
   }
 }
 .workbench-batch :deep(.c-batch-result) {
-  margin: 0 12px 12px;
+  margin: 0 14px 12px;
 }
 .workbench-status {
   margin: 0;
@@ -197,21 +360,6 @@
 .workbench-switch-dialog {
   width: min(480px, calc(100vw - 24px));
 }
-:deep(.workbench-order-link) {
-  color: var(--app-primary-color);
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  font: inherit;
-  &:hover {
-    text-decoration: underline;
-  }
-  &:focus-visible {
-    outline: 2px solid var(--app-primary-color);
-    outline-offset: 2px;
-  }
-}
 @media (max-width: 860px) {
   .business-workbench {
     padding: 12px;
@@ -219,10 +367,7 @@
   .workbench-layout {
     height: 830px;
   }
-  .workbench-layout > :deep(.c-split-pane) {
-    min-width: 0;
-  }
   .workbench-heading h1 {
-    font-size: 21px;
+    font-size: 20px;
   }
 }

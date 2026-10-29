@@ -36,6 +36,7 @@ import {
   defineVueColumns,
   selectionColumn,
   useMachTable,
+  type RowStyleRule,
 } from '@agile-team/mach-table-vue'
 import {
   createDictionaryColumn,
@@ -305,7 +306,7 @@ export const FORM_CONFIG: FormConfig<OrderHeader> = {
   density: 'compact',
   labelPlacement: 'left',
   labelWidth: 88,
-  grid: { cols: 2, minItemWidth: 210, xGap: 16, yGap: 8 },
+  grid: { cols: 2, minItemWidth: 280, xGap: 20, yGap: 8 },
   showActions: false,
 }
 export const BATCH_MODES = [
@@ -423,7 +424,7 @@ export function useBusinessWorkbench() {
     density: 'compact',
     layout: 'grid',
     columns: 4,
-    fieldMinWidth: 180,
+    fieldMinWidth: 250,
     labelPlacement: 'left',
     labelWidth: 96,
     foldThreshold: 3,
@@ -476,23 +477,33 @@ export function useBusinessWorkbench() {
     {
       field: 'orderNo',
       headerName: '订单编号',
-      width: 156,
+      minWidth: 150,
+      flex: 1,
       render: row =>
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'workbench-order-link',
-            onClick: () => chooseOrder(row.id),
-            'aria-label': `打开${row.orderNo}`,
-          },
-          row.orderNo
-        ),
+        h('div', { class: 'workbench-order-cell' }, [
+          h(
+            'button',
+            {
+              type: 'button',
+              class: 'workbench-order-link',
+              onClick: () => chooseOrder(row.id),
+              'aria-label': `打开${row.orderNo}`,
+            },
+            row.orderNo
+          ),
+          h(
+            'span',
+            { class: 'workbench-order-cell__customer' },
+            customerLabels.get(row.customer ?? '') ??
+              row.customer ??
+              '未指定客户'
+          ),
+        ]),
     },
     {
       field: 'status',
       headerName: '状态',
-      width: 95,
+      width: 96,
       ...createDictionaryColumn<OrderHeader>(
         {
           get: value =>
@@ -503,8 +514,19 @@ export function useBusinessWorkbench() {
           output: { clipboard: 'label', csv: 'label' },
         }
       ),
+      render: row =>
+        h(
+          'span',
+          { class: 'workbench-state', 'data-status': row.status },
+          statusLabels.get(row.status) ?? String(row.status)
+        ),
     },
   ])
+  // 规则只在当前订单变化时更新，保留稳定行身份；取消切单不误高亮另一个订单。
+  const masterRowStyles = computed<readonly RowStyleRule<OrderHeader>[]>(() => {
+    const id = activeId.value
+    return [{ when: ({ data }) => data.id === id, tone: 'info' }]
+  })
   const detailColumns = defineVueColumns<OrderLine>([
     selectionColumn(),
     { field: 'id', headerName: '明细编号', width: 145, pinned: 'left' },
@@ -513,6 +535,8 @@ export function useBusinessWorkbench() {
       field: 'quantity',
       headerName: '数量 (t)',
       width: 130,
+      align: 'right',
+      headerAlign: 'right',
       editable: true,
       valueParser: ({ value }) => {
         const parsed = quantityCodec.parse(value)
@@ -526,10 +550,18 @@ export function useBusinessWorkbench() {
       field: 'amount',
       headerName: '金额 (CNY)',
       width: 155,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: ({ value }) => moneyCodec.format(value),
       valueSerializer: ({ value }) => value,
     },
-    { field: 'note', headerName: '备注', width: 180, editable: true },
+    {
+      field: 'note',
+      headerName: '备注',
+      minWidth: 160,
+      flex: 1,
+      editable: true,
+    },
   ])
   const paymentColumns = defineVueColumns<{
     id: string
@@ -541,6 +573,8 @@ export function useBusinessWorkbench() {
       field: 'amount',
       headerName: '金额 (CNY)',
       width: 160,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: ({ value }) => moneyCodec.format(value),
     },
   ])
@@ -800,6 +834,7 @@ export function useBusinessWorkbench() {
     dirty,
     scope,
     masterColumns,
+    masterRowStyles,
     detailColumns,
     paymentColumns,
     paymentRows,

@@ -55,6 +55,111 @@ test.beforeEach(async ({ page }) => {
   await page.setViewportSize({ width: 1657, height: 1080 })
 })
 
+test('拖动分割手柄保留页面滚动位置，标题与完整搜索区域不被头部遮挡', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1720, height: 840 })
+  await open(page)
+  const workbench = page.getByTestId('business-workbench')
+  await workbench.evaluate(element => {
+    for (
+      let parent = element.parentElement;
+      parent;
+      parent = parent.parentElement
+    )
+      parent.scrollTop = 0
+  })
+  const scrollPositions = () =>
+    workbench.evaluate(element => {
+      const positions: number[] = []
+      for (
+        let parent = element.parentElement;
+        parent;
+        parent = parent.parentElement
+      )
+        positions.push(parent.scrollTop)
+      return positions
+    })
+  const gutter = page.getByRole('separator', {
+    name: '订单与单据详情',
+    exact: true,
+  })
+  const handle = gutter.locator('.split-gutter__visual')
+  await handle.hover()
+  await expect(page.locator('.form-search-card')).toBeInViewport({ ratio: 1 })
+  const before = await scrollPositions()
+  const box = (await handle.boundingBox())!
+  const originalSize = await gutter.getAttribute('aria-valuenow')
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+  await page.mouse.down()
+  await expect(page.locator('.c-split-pane')).toHaveClass(
+    /c-split-pane--dragging/
+  )
+  await page.mouse.move(box.x + 110, box.y + box.height / 2, {
+    steps: 10,
+  })
+  await page.mouse.up()
+  await expect(gutter).not.toHaveAttribute('aria-valuenow', originalSize!)
+  await expect.poll(scrollPositions).toEqual(before)
+  await expect(
+    page.getByRole('heading', { name: '业务工作台', exact: true })
+  ).toBeInViewport()
+  await expect(page.locator('.form-search-card')).toBeInViewport({ ratio: 1 })
+})
+
+test('主题网格、当前订单与状态标签可辨认，主档控件宽度一致', async ({
+  page,
+}, testInfo) => {
+  await open(page)
+  const grids = page.locator('.business-workbench .mach-root:visible')
+  await expect(grids).toHaveCount(2)
+  await Promise.all(
+    (await grids.all()).map(async grid => {
+      await expect(grid).toHaveClass(/mach-striped/)
+      await expect(grid).toHaveClass(/mach-cell-borders/)
+      const colors = await grid.evaluate(element => ({
+        primary: getComputedStyle(element)
+          .getPropertyValue('--mach-primary')
+          .trim(),
+        app: getComputedStyle(element).getPropertyValue('--app-primary').trim(),
+      }))
+      expect(colors.primary).toBe(colors.app)
+      expect(colors.primary).not.toBe('')
+    })
+  )
+  await expect(
+    page.locator('.workbench-orders .mach-row[data-id="ORDER-1"]')
+  ).toHaveAttribute('data-row-tone', 'info')
+  await expect(page.locator('.workbench-orders .workbench-state')).toHaveCount(
+    3
+  )
+  const form = page.locator('.workbench-header')
+  const controls = [
+    formField(form, '订单编号').locator('.n-input'),
+    formField(form, '订货客户').locator('.c-data-picker'),
+    formField(form, '计划状态').locator('.n-select'),
+    formField(form, '业务人员').locator('.n-input'),
+  ]
+  await expect
+    .poll(async () => {
+      const widths = await Promise.all(
+        controls.map(async control => (await control.boundingBox())!.width)
+      )
+      return Math.max(...widths) - Math.min(...widths)
+    })
+    .toBeLessThanOrEqual(2)
+  await page
+    .getByRole('button', { name: '打开SO-2026-002', exact: true })
+    .click()
+  await expect(
+    page.locator('.workbench-orders .mach-row[data-id="ORDER-2"]')
+  ).toHaveAttribute('data-row-tone', 'info')
+  await expect(lineCell(page, 'ORDER-2-L01', 'quantity')).toHaveText('0.000')
+  await page.screenshot({
+    path: testInfo.outputPath('workbench-polished-light.png'),
+  })
+})
+
 test('搜索草稿和已应用条件分离，固定组织保留，状态0与精确小数正确显示', async ({
   page,
 }, testInfo) => {
@@ -119,8 +224,20 @@ test('主记录切换保护草稿，隐藏Tab和局部全屏不改变稳定行�
   await expect(page.getByTestId('payment-panel')).toBeVisible()
   await expect(page.getByTestId('line-panel')).not.toBeVisible()
   await page.getByRole('tab', { name: '商品明细', exact: true }).click()
+  const readGridTheme = () =>
+    page
+      .getByTestId('line-panel')
+      .locator('.mach-root')
+      .evaluate(element => {
+        const style = getComputedStyle(element)
+        return ['--mach-primary', '--mach-header-bg', '--mach-body-bg'].map(
+          name => style.getPropertyValue(name).trim()
+        )
+      })
+  const inlineTheme = await readGridTheme()
   await page.getByRole('button', { name: '明细全屏', exact: true }).click()
   await expect(page.locator('.workbench-details--fullscreen')).toBeVisible()
+  await expect.poll(readGridTheme).toEqual(inlineTheme)
   await expect(lineCell(page, 'ORDER-1-L01', 'quantity')).toHaveText('2.125')
   await page.getByRole('button', { name: '退出明细全屏', exact: true }).click()
   await expect(page.locator('.workbench-details--fullscreen')).toHaveCount(0)
@@ -260,7 +377,15 @@ test('本地空列表不回退旧数据，暗色窄容器可堆叠且页面没�
         .evaluate(element => element.scrollWidth - element.clientWidth)
     )
     .toBeLessThanOrEqual(1)
-  await page.getByTestId('business-workbench').screenshot({
+  await page.getByTestId('business-workbench').evaluate(element => {
+    for (
+      let parent = element.parentElement;
+      parent;
+      parent = parent.parentElement
+    )
+      parent.scrollTop = 0
+  })
+  await page.screenshot({
     path: testInfo.outputPath('business-workbench-dark-narrow.png'),
   })
 })
