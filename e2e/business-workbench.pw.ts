@@ -137,12 +137,11 @@ test('主题网格、当前订单与状态标签可辨认，主档控件宽度�
     )
   ).toHaveAttribute('data-row-tone', 'info')
   await Promise.all(
-    ['0', '1', '2'].map(status =>
+    ['待下达', '执行中', '已完成'].map(status =>
       expect(
         page
-          .locator(
-            `.workbench-orders .workbench-state[data-status="${status}"]`
-          )
+          .locator('.workbench-orders .mach-tag')
+          .filter({ hasText: status })
           .first()
       ).toBeVisible()
     )

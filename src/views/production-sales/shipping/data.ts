@@ -315,8 +315,8 @@ export function useShippingWorkbench() {
       fixed: 'left',
       render: row => recordLink(row.no, () => operations.openDetail(row)),
     },
-    { key: 'customer', title: '客户名称', width: 112 },
-    { key: 'grade', title: '钢种', width: 96 },
+    { key: 'customer', title: '客户名称', resizable: true },
+    { key: 'grade', title: '钢种' },
     {
       key: 'weightKg',
       title: '计划量 (t)',
@@ -324,8 +324,8 @@ export function useShippingWorkbench() {
       align: 'right',
       render: row => weightCodec.format(row.weightKg / 1000),
     },
-    { key: 'destination', title: '目的地', width: 92 },
-    { key: 'window', title: '装车窗口', width: 130 },
+    { key: 'destination', title: '目的地' },
+    { key: 'window', title: '装车窗口', resizable: true },
     {
       key: 'plate',
       title: '车辆',
@@ -335,12 +335,12 @@ export function useShippingWorkbench() {
     {
       key: 'status',
       title: '状态',
-      width: 100,
-      render: row =>
-        statusTag(
-          SHIPMENT_STATES[row.status].label,
-          SHIPMENT_STATES[row.status].type
-        ),
+      status: Object.fromEntries(
+        Object.entries(SHIPMENT_STATES).map(([code, state]) => [
+          code,
+          { label: state.label, color: state.type },
+        ])
+      ),
     },
     {
       key: 'id',

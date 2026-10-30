@@ -22,7 +22,7 @@ import type {
   SearchFormItem,
 } from '@robot-admin/naive-ui-components/C_FormSearch'
 import type { TreeNativeProps } from '@robot-admin/naive-ui-components/C_Tree'
-import { recordLink, statusTag, weightCodec } from '../shared/presentation'
+import { recordLink, weightCodec } from '../shared/presentation'
 import { usePlanOperations } from './operations'
 
 export interface ProductionPlan {
@@ -245,10 +245,10 @@ export function useProductionPlan() {
       pinned: 'left',
       render: row => recordLink(row.planNo, () => operations.openDetail(row)),
     },
-    { field: 'line', headerName: '产线', width: 104 },
-    { field: 'cast', headerName: '浇次', width: 104 },
-    { field: 'grade', headerName: '钢种', width: 110 },
-    { field: 'section', headerName: '断面 (mm)', width: 150 },
+    { field: 'line', headerName: '产线' },
+    { field: 'cast', headerName: '浇次' },
+    { field: 'grade', headerName: '钢种' },
+    { field: 'section', headerName: '断面 (mm)' },
     { field: 'customer', headerName: '客户', minWidth: 130, flex: 1 },
     {
       field: 'weight',
@@ -257,14 +257,20 @@ export function useProductionPlan() {
       align: 'right',
       valueFormatter: ({ value }) => weightCodec.format(value),
     },
-    { field: 'heats', headerName: '炉数', width: 104 },
-    { field: 'delivery', headerName: '交付日期', width: 128 },
+    { field: 'heats', headerName: '炉数' },
+    { field: 'delivery', headerName: '交付日期' },
     {
       field: 'status',
       headerName: '状态',
-      width: 110,
-      render: row =>
-        statusTag(PLAN_STATES[row.status].label, PLAN_STATES[row.status].type),
+      status: Object.fromEntries(
+        Object.entries(PLAN_STATES).map(([code, state]) => [
+          code,
+          {
+            label: state.label,
+            color: state.type === 'default' ? 'neutral' : state.type,
+          },
+        ])
+      ),
     },
     actionsColumn<ProductionPlan>({
       width: 88,

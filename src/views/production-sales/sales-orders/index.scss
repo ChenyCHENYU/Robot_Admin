@@ -203,23 +203,6 @@
     outline-offset: 2px;
   }
 }
-:deep(.workbench-state) {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 8px;
-  border-radius: 999px;
-  color: var(--mach-primary);
-  background: color-mix(in srgb, currentColor 10%, var(--mach-body-bg));
-  font-size: 11px;
-  line-height: 1.3;
-  white-space: nowrap;
-  &[data-status='1'] {
-    color: var(--mach-warning);
-  }
-  &[data-status='2'] {
-    color: var(--mach-success);
-  }
-}
 .workbench-totals {
   display: flex;
   flex-wrap: wrap;

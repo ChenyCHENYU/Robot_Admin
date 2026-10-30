@@ -566,8 +566,8 @@ export function useBusinessWorkbench() {
       valueFormatter: ({ value }) =>
         customerLabels.get(String(value)) ?? String(value ?? '—'),
     },
-    { field: 'contractNo', headerName: '合同编号', width: 130, filter: true },
-    { field: 'grade', headerName: '钢种', width: 100, filter: true },
+    { field: 'contractNo', headerName: '合同编号', filter: true },
+    { field: 'grade', headerName: '钢种', filter: true },
     { field: 'section', headerName: '规格 (mm)', minWidth: 160, flex: 1 },
     { field: 'region', headerName: '区域', width: 80 },
     {
@@ -591,12 +591,7 @@ export function useBusinessWorkbench() {
           output: { clipboard: 'label', csv: 'label' },
         }
       ),
-      render: row =>
-        h(
-          'span',
-          { class: 'workbench-state', 'data-status': row.status },
-          statusLabels.get(row.status) ?? String(row.status)
-        ),
+      status: true,
     },
     {
       field: 'progress',
