@@ -118,6 +118,9 @@
   .ps-grid {
     height: 330px;
     min-width: 0;
+    :deep(.mach-vue-host) {
+      height: 100%;
+    }
   }
   .ps-grid--small {
     height: 208px;

@@ -162,8 +162,18 @@
 }
 .workbench-detail-grid,
 .workbench-payment-grid {
-  min-height: 150px;
+  // 窄屏也为表头、空态插画与两级文案保留完整正文高度。
+  min-height: 220px;
   flex: 1;
+}
+// 网格宿主显式继承已分配高度，避免内部 100% 高度回退到最小高度。
+.workbench-master-grid,
+.workbench-detail-grid,
+.workbench-payment-grid,
+.workbench-drawer-grid {
+  :deep(.mach-vue-host) {
+    height: 100%;
+  }
 }
 .workbench-drawer-grid {
   height: 280px;
