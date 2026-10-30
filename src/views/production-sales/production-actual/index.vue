@@ -173,75 +173,85 @@
         :mask-closable="false"
         create-text="提交复核"
       />
-      <NDrawer
+      <NModal
         v-model:show="historyVisible"
-        width="min(620px, 100vw)"
-        ><NDrawerContent
-          title="炉次复核记录"
-          closable
-        >
-          <NDescriptions
-            :column="1"
-            bordered
-            size="small"
-            ><NDescriptionsItem label="炉号">{{ current.no }}</NDescriptionsItem
-            ><NDescriptionsItem label="当前状态">{{
-              stateOf(current.id, current.state)
-            }}</NDescriptionsItem
-            ><NDescriptionsItem
-              v-if="latest"
-              label="最近意见"
-              >{{ latest.note }}</NDescriptionsItem
-            ></NDescriptions
-          >
-          <NDivider>复核追溯</NDivider
-          ><C_Timeline
-            v-if="historyItems.length"
-            :items="historyItems"
-            size="small"
-          /><NEmpty
-            v-else
-            description="当前炉次暂无本地复核记录"
-          />
-          <template #footer
-            ><NButton
-              size="small"
-              @click="historyVisible = false"
-              >关闭记录</NButton
-            ></template
-          >
-        </NDrawerContent></NDrawer
+        preset="card"
+        title="炉次复核记录"
+        size="small"
+        :bordered="false"
+        :style="{
+          width: 'min(720px, calc(100vw - 32px))',
+          maxHeight: 'calc(100dvh - 48px)',
+        }"
+        content-style="min-height: 0; overflow: auto"
+        class="ps-detail-modal"
       >
-      <NDrawer
+        <NDescriptions
+          :column="1"
+          bordered
+          size="small"
+          ><NDescriptionsItem label="炉号">{{ current.no }}</NDescriptionsItem
+          ><NDescriptionsItem label="当前状态">{{
+            stateOf(current.id, current.state)
+          }}</NDescriptionsItem
+          ><NDescriptionsItem
+            v-if="latest"
+            label="最近意见"
+            >{{ latest.note }}</NDescriptionsItem
+          ></NDescriptions
+        >
+        <NDivider>复核追溯</NDivider
+        ><C_Timeline
+          v-if="historyItems.length"
+          :items="historyItems"
+          size="small"
+        /><NEmpty
+          v-else
+          description="当前炉次暂无本地复核记录"
+        />
+        <template #footer
+          ><NButton
+            size="small"
+            @click="historyVisible = false"
+            >关闭记录</NButton
+          ></template
+        >
+      </NModal>
+      <NModal
         v-model:show="referenceVisible"
-        width="min(720px, 100vw)"
-        ><NDrawerContent
-          title="上一炉实绩参考"
-          closable
-        >
-          <NAlert
-            type="info"
-            :show-icon="false"
-            >参考
-            {{ previous?.no }}
-            的已保存值；核对后请录入当前炉次的真实测量。</NAlert
-          >
-          <div class="actual-reference-grid"
-            ><MachTable
-              v-bind="BUSINESS_GRID"
-              :row-data="referenceRows"
-              :column-defs="referenceColumns"
-              :theme="themeStore.isDark ? 'dark' : 'light'"
-          /></div>
-          <template #footer
-            ><NButton
-              size="small"
-              @click="referenceVisible = false"
-              >关闭参考</NButton
-            ></template
-          >
-        </NDrawerContent></NDrawer
+        preset="card"
+        title="上一炉实绩参考"
+        size="small"
+        :bordered="false"
+        :style="{
+          width: 'min(900px, calc(100vw - 32px))',
+          maxHeight: 'calc(100dvh - 48px)',
+        }"
+        content-style="min-height: 0; overflow: auto"
+        class="ps-detail-modal"
       >
+        <NAlert
+          type="info"
+          :show-icon="false"
+          >参考
+          {{ previous?.no }}
+          的已保存值；核对后请录入当前炉次的真实测量。</NAlert
+        >
+        <div class="actual-reference-grid"
+          ><MachTable
+            v-bind="BUSINESS_GRID"
+            :row-data="referenceRows"
+            :column-defs="referenceColumns"
+            :theme="themeStore.isDark ? 'dark' : 'light'"
+        /></div>
+        <template #footer
+          ><NButton
+            size="small"
+            @click="referenceVisible = false"
+            >关闭参考</NButton
+          ></template
+        >
+      </NModal>
     </C_Density>
   </main>
 </template>

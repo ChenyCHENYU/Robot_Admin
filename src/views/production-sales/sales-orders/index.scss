@@ -170,12 +170,12 @@
 .workbench-master-grid,
 .workbench-detail-grid,
 .workbench-payment-grid,
-.workbench-drawer-grid {
+.workbench-detail-grid {
   :deep(.mach-vue-host) {
     height: 100%;
   }
 }
-.workbench-drawer-grid {
+.workbench-detail-grid {
   height: 280px;
   min-width: 0;
 }

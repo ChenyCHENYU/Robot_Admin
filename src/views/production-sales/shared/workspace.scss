@@ -115,6 +115,9 @@
       color: var(--app-text-secondary);
     }
   }
+  .ps-detail-modal :deep(.mach-root) {
+    --mach-primary: var(--app-primary);
+  }
   .ps-grid {
     height: 330px;
     min-width: 0;

@@ -5,14 +5,14 @@
     "": {
       "name": "robot-admin",
       "dependencies": {
-        "@agile-team/mach-table-vue": "0.35.0",
+        "@agile-team/mach-table-vue": "0.35.2",
         "@antv/x6": "^2.19.2",
         "@iconify/vue": "^5.0.0",
         "@robot-admin/directives": "2.0.1",
         "@robot-admin/file-utils": "3.0.4",
         "@robot-admin/form-validate": "3.4.4",
         "@robot-admin/layout": "3.2.3",
-        "@robot-admin/naive-ui-components": "0.24.0",
+        "@robot-admin/naive-ui-components": "0.24.1",
         "@robot-admin/request-core": "0.7.0",
         "@robot-admin/theme": "0.6.1",
         "@splinetool/runtime": "^1.12.68",
@@ -122,9 +122,9 @@
     "zod": "4.6.6",
   },
   "packages": {
-    "@agile-team/mach-table": ["@agile-team/mach-table@0.35.0", "", {}, "sha512-AVtm8OHQnt3A5v3QC3RmJM6Yq31S9Lzabv4j5qXT8aen9+2KDM9K5JpQxo0hh1bcNOzhvUohbfqBamJRH9hn9Q=="],
+    "@agile-team/mach-table": ["@agile-team/mach-table@0.35.2", "", {}, "sha512-BUxgu+tXOGTreONuue6z7HVoVhaxxZlmn0ZYZItfPJ0cUlFp5sAlnhkpvNYZr4QvXX3zapIpxaSN8+RgkKDDnQ=="],
 
-    "@agile-team/mach-table-vue": ["@agile-team/mach-table-vue@0.35.0", "", { "dependencies": { "@agile-team/mach-table": "0.35.0" }, "peerDependencies": { "vue": ">=3.2.0" } }, "sha512-q+CIL5URJpnJiqmkhxHO9NJafhsMrxauJhx/L1cmlUIRajGccvdDtcnrLOh2WItwC2DIJGAg8VVhhvb5LmFd6g=="],
+    "@agile-team/mach-table-vue": ["@agile-team/mach-table-vue@0.35.2", "", { "dependencies": { "@agile-team/mach-table": "0.35.2" }, "peerDependencies": { "vue": ">=3.2.0" } }, "sha512-qXJyzbS+IdPCxNu3Z+LxK4BFefZ4+9xGiwM7PNRqDyRn4S8N2a1jsBHIRm6vJJQxhjyWNRzwzgvUlPdMRAvJfg=="],
 
     "@antfu/install-pkg": ["@antfu/install-pkg@1.1.0", "", { "dependencies": { "package-manager-detector": "^1.3.0", "tinyexec": "^1.0.1" } }, "sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ=="],
 
@@ -764,7 +764,7 @@
 
     "@robot-admin/layout": ["@robot-admin/layout@3.2.3", "", { "peerDependencies": { "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0", "vue-router": "^4.0.0" }, "optionalPeers": ["naive-ui"] }, "sha512-RTngu+7uwliMFkYQ1XZlNShPKQ5DKn9K4Y0pT/lLTxQNUM19+pJ8V7HH9+CjX8ULkwexc9ym1L0m42DPUzUNxg=="],
 
-    "@robot-admin/naive-ui-components": ["@robot-admin/naive-ui-components@0.24.0", "", { "dependencies": { "@antv/x6": "^2.19.2", "@chenfengyuan/vue-barcode": "^2.0.2", "@fullcalendar/core": "^6.1.21", "@fullcalendar/daygrid": "^6.1.21", "@fullcalendar/interaction": "^6.1.21", "@fullcalendar/list": "^6.1.21", "@fullcalendar/vue3": "^6.1.21", "@iconify/vue": "^5.0.1", "@robot-admin/form-validate": "3.4.4", "@types/leaflet": "^1.9.22", "@visactor/vtable": "^1.26.7", "@visactor/vtable-editors": "^1.26.7", "@visactor/vtable-gantt": "^1.26.7", "@vue-flow/core": "^1.48.2", "@wangeditor-next/editor": "6.2.0", "@wangeditor-next/editor-for-vue": "6.2.0", "altcha": "3.2.2", "async-validator": "4.2.5", "dompurify": "^3.4.17", "driver.js": "^1.8.0", "highlight.js": "^11.12.0", "html2canvas": "^1.4.1", "leaflet": "^1.9.4", "mammoth": "^1.12.2", "md-editor-v3": "6.5.6", "print-js": "^1.6.0", "qrcode": "^1.5.4", "spark-md5": "^3.0.2", "vue-cropper": "^1.1.4", "vue-draggable-plus": "^0.6.1", "vue3-puzzle-vcode": "^1.1.7", "vueuc": "^0.4.66", "xgplayer": "3.0.26", "xgplayer-hls": "3.0.26" }, "peerDependencies": { "naive-ui": "^2.35.0", "sortablejs": "^1.15.7", "vue": "^3.5.3", "vue-router": "^4.6.4 || ^5.3.1" }, "optionalPeers": ["sortablejs", "vue-router"] }, "sha512-qOXy9tHtTK2qvckOsauuT8i4+bunMaibYZRlWkb4mwWFRoYVVOYWO9WAJ143QhXEIDDlQXUt1pkcaEnF6qFn2Q=="],
+    "@robot-admin/naive-ui-components": ["@robot-admin/naive-ui-components@0.24.1", "", { "dependencies": { "@antv/x6": "^2.19.2", "@chenfengyuan/vue-barcode": "^2.0.2", "@fullcalendar/core": "^6.1.21", "@fullcalendar/daygrid": "^6.1.21", "@fullcalendar/interaction": "^6.1.21", "@fullcalendar/list": "^6.1.21", "@fullcalendar/vue3": "^6.1.21", "@iconify/vue": "^5.0.1", "@robot-admin/form-validate": "3.4.4", "@types/leaflet": "^1.9.22", "@visactor/vtable": "^1.26.7", "@visactor/vtable-editors": "^1.26.7", "@visactor/vtable-gantt": "^1.26.7", "@vue-flow/core": "^1.48.2", "@wangeditor-next/editor": "6.2.0", "@wangeditor-next/editor-for-vue": "6.2.0", "altcha": "3.2.2", "async-validator": "4.2.5", "dompurify": "^3.4.17", "driver.js": "^1.8.0", "highlight.js": "^11.12.0", "html2canvas": "^1.4.1", "leaflet": "^1.9.4", "mammoth": "^1.12.2", "md-editor-v3": "6.5.6", "print-js": "^1.6.0", "qrcode": "^1.5.4", "spark-md5": "^3.0.2", "vue-cropper": "^1.1.4", "vue-draggable-plus": "^0.6.1", "vue3-puzzle-vcode": "^1.1.7", "vueuc": "^0.4.66", "xgplayer": "3.0.26", "xgplayer-hls": "3.0.26" }, "peerDependencies": { "naive-ui": "^2.35.0", "sortablejs": "^1.15.7", "vue": "^3.5.3", "vue-router": "^4.6.4 || ^5.3.1" }, "optionalPeers": ["sortablejs", "vue-router"] }, "sha512-8s3Uhned43t+odjfG61eKOIb33rcfmY9mEXOd5chpmyXGfVQ+dlvJpfp0BwetLex4JiioBb4cMyhgkWfjSyCBg=="],
 
     "@robot-admin/request-core": ["@robot-admin/request-core@0.7.0", "", { "peerDependencies": { "axios": "^1.7.0", "naive-ui": "^2.38.0", "vue": "^3.4.0" }, "optionalPeers": ["naive-ui", "vue"] }, "sha512-f9RMprbHOY7pkGYNf8IWrY1L/unsoWBzwih+RsENyxujt7ZVN32qr/74OFt5ztRSrqA6ykFQJdTpQrOy9LXBGA=="],
 

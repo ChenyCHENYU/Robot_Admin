@@ -16,7 +16,9 @@ test.beforeEach(async ({ page }) => {
 test('生产计划和销售订单复用包内状态列，完整展示业务字典文字', async ({
   page,
 }) => {
-  await page.goto('/#/production-sales/production-plan')
+  await page.goto('/#/production-sales/production-plan', {
+    waitUntil: 'domcontentloaded',
+  })
   await expect(page.getByTestId('production-plan')).toBeVisible({
     timeout: 15000,
   })
@@ -29,7 +31,9 @@ test('生产计划和销售订单复用包内状态列，完整展示业务字�
       ).toBeVisible()
     )
   )
-  await page.goto('/#/production-sales/sales-orders')
+  await page.goto('/#/production-sales/sales-orders', {
+    waitUntil: 'domcontentloaded',
+  })
   await expect(page.getByTestId('business-workbench')).toBeVisible({
     timeout: 15000,
   })
@@ -49,7 +53,9 @@ test('生产计划和销售订单复用包内状态列，完整展示业务字�
 test('C_Table 可以实际调宽，缩到下限仍完整容纳四字列头', async ({
   page,
 }, info) => {
-  await page.goto('/#/production-sales/shipping')
+  await page.goto('/#/production-sales/shipping', {
+    waitUntil: 'domcontentloaded',
+  })
   await expect(page.getByTestId('shipping-workbench')).toBeVisible({
     timeout: 15000,
   })
@@ -100,4 +106,86 @@ test('C_Table 可以实际调宽，缩到下限仍完整容纳四字列头', asy
   await table.screenshot({
     path: info.outputPath('native-header-min-width.png'),
   })
+})
+
+test('详情居中弹窗完整展示列头，窄屏只在表格内部滚动', async ({
+  page,
+}, info) => {
+  await page.goto('/#/production-sales/production-plan', {
+    waitUntil: 'domcontentloaded',
+  })
+  await expect(page.getByTestId('production-plan')).toBeVisible({
+    timeout: 15000,
+  })
+  await expect(page.locator('.app-loading,.c-page-loading')).toHaveCount(0)
+  const trigger = page.getByRole('button', {
+    name: 'PP-20261029-006',
+    exact: true,
+  })
+  // 用键盘打开后验证焦点恢复，避免依赖 Safari 的鼠标点击聚焦偏好。
+  await trigger.focus()
+  await trigger.press('Enter')
+  const detail = page.locator('.ps-detail-modal')
+  await expect(detail).toBeVisible()
+  await expect(detail).toContainText('生产计划详情')
+  await expect(page.locator('.n-drawer')).toHaveCount(0)
+  const verifyViewport = async (viewport: {
+    width: number
+    height: number
+  }) => {
+    await page.setViewportSize(viewport)
+    await expect
+      .poll(async () =>
+        detail.locator('.mach-header-cell--leaf').evaluateAll(cells =>
+          cells.flatMap(cell => {
+            const label = cell.querySelector('.mach-header-label')!
+            if (!label.textContent) return []
+            const range = document.createRange()
+            range.selectNodeContents(label)
+            const text = range.getBoundingClientRect()
+            const bounds = cell.getBoundingClientRect()
+            return text.left < bounds.left ||
+              text.right > bounds.right ||
+              getComputedStyle(label).textOverflow === 'ellipsis'
+              ? [label.textContent]
+              : []
+          })
+        )
+      )
+      .toEqual([])
+    await detail.screenshot({
+      path: info.outputPath(`plan-detail-${viewport.width}.png`),
+    })
+    const box = (await detail.boundingBox())!
+    expect(Math.abs(box.x + box.width / 2 - viewport.width / 2)).toBeLessThan(2)
+    expect(box.y).toBeGreaterThanOrEqual(0)
+    expect(box.y + box.height).toBeLessThanOrEqual(viewport.height)
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth
+      )
+    ).toBe(true)
+    if (viewport.width === 760) {
+      const scroll = detail.locator('.mach-body-viewport--scroll')
+      expect(await scroll.evaluate(el => el.scrollWidth > el.clientWidth)).toBe(
+        true
+      )
+      await scroll.evaluate(el => {
+        el.scrollLeft = el.scrollWidth
+      })
+      await expect(
+        detail.getByRole('columnheader').filter({ hasText: '工艺路线' })
+      ).toBeVisible()
+    }
+  }
+  await verifyViewport({ width: 1440, height: 1000 })
+  await verifyViewport({ width: 760, height: 650 })
+  await detail.screenshot({
+    path: info.outputPath('plan-detail-full-headers.png'),
+  })
+  await page.keyboard.press('Escape')
+  await expect(detail).toBeHidden()
+  await expect(
+    page.getByRole('button', { name: 'PP-20261029-006', exact: true })
+  ).toBeFocused()
 })

@@ -180,59 +180,62 @@
         :mask-closable="false"
         create-text="保存计划"
       />
-      <NDrawer
+      <NModal
         v-model:show="detailVisible"
-        width="min(680px, 100vw)"
-        placement="right"
+        v-if="detailPlan"
+        preset="card"
+        title="生产计划详情"
+        size="small"
+        :bordered="false"
+        :style="{
+          width: 'min(1060px, calc(100vw - 32px))',
+          maxHeight: 'calc(100dvh - 48px)',
+        }"
+        content-style="min-height: 0; overflow: auto"
+        class="ps-detail-modal"
       >
-        <NDrawerContent
-          v-if="detailPlan"
-          title="生产计划详情"
-          closable
+        <NDescriptions
+          :column="2"
+          bordered
+          size="small"
         >
-          <NDescriptions
-            :column="2"
-            bordered
+          <NDescriptionsItem label="计划号">{{
+            detailPlan.planNo
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="状态">{{
+            PLAN_STATES[detailPlan.status].label
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="产线 / 浇次"
+            >{{ detailPlan.line }} / {{ detailPlan.cast }}</NDescriptionsItem
+          >
+          <NDescriptionsItem label="客户">{{
+            detailPlan.customer
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="钢种 / 断面"
+            >{{ detailPlan.grade }} /
+            {{ detailPlan.section }}</NDescriptionsItem
+          >
+          <NDescriptionsItem label="计划量 / 炉数"
+            >{{ detailPlan.weight }} t /
+            {{ detailPlan.heats }} 炉</NDescriptionsItem
+          >
+        </NDescriptions>
+        <NDivider>炉次编排</NDivider>
+        <div class="ps-grid ps-grid--small"
+          ><MachTable
+            v-bind="BUSINESS_GRID"
+            :row-data="detailHeatRows"
+            :column-defs="heatColumns"
+            :theme="themeStore.isDark ? 'dark' : 'light'"
+        /></div>
+        <template #footer
+          ><NButton
             size="small"
-          >
-            <NDescriptionsItem label="计划号">{{
-              detailPlan.planNo
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="状态">{{
-              PLAN_STATES[detailPlan.status].label
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="产线 / 浇次"
-              >{{ detailPlan.line }} / {{ detailPlan.cast }}</NDescriptionsItem
-            >
-            <NDescriptionsItem label="客户">{{
-              detailPlan.customer
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="钢种 / 断面"
-              >{{ detailPlan.grade }} /
-              {{ detailPlan.section }}</NDescriptionsItem
-            >
-            <NDescriptionsItem label="计划量 / 炉数"
-              >{{ detailPlan.weight }} t /
-              {{ detailPlan.heats }} 炉</NDescriptionsItem
-            >
-          </NDescriptions>
-          <NDivider>炉次编排</NDivider>
-          <div class="ps-grid ps-grid--small"
-            ><MachTable
-              v-bind="BUSINESS_GRID"
-              :row-data="detailHeatRows"
-              :column-defs="heatColumns"
-              :theme="themeStore.isDark ? 'dark' : 'light'"
-          /></div>
-          <template #footer
-            ><NButton
-              size="small"
-              @click="detailVisible = false"
-              >关闭详情</NButton
-            ></template
-          >
-        </NDrawerContent>
-      </NDrawer>
+            @click="detailVisible = false"
+            >关闭详情</NButton
+          ></template
+        >
+      </NModal>
     </C_Density>
   </main>
 </template>

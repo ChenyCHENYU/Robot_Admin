@@ -64,7 +64,9 @@ test('计划序号和行操作：无需预选，编辑删除对应点击行，�
   await table
     .getByRole('button', { name: 'PP-20261029-002', exact: true })
     .click()
-  await expect(page.locator('.n-drawer')).toContainText('PP-20261029-002')
+  await expect(page.locator('.ps-detail-modal')).toContainText(
+    'PP-20261029-002'
+  )
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
   await expect(action(table, 'PLAN-2', '编辑计划')).toBeDisabled()
   await action(table, 'PLAN-6', '删除计划').click()
@@ -112,8 +114,8 @@ test('销售订单和明细：蓝色编号只读查看，行编辑删除无需�
   await table
     .getByRole('button', { name: '查看SO-2026-002详情', exact: true })
     .click()
-  await expect(page.locator('.n-drawer')).toContainText('SO-2026-002')
-  await expect(page.locator('.n-drawer .n-alert')).toHaveCount(0)
+  await expect(page.locator('.ps-detail-modal')).toContainText('SO-2026-002')
+  await expect(page.locator('.ps-detail-modal .n-alert')).toHaveCount(0)
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
   await expect(page.getByTestId('active-order')).toHaveText('SO-2026-001')
   await expect(note).toHaveValue('保留当前订单草稿')
@@ -128,8 +130,8 @@ test('销售订单和明细：蓝色编号只读查看，行编辑删除无需�
     )
   ).toHaveText('1.005')
   await lines.getByRole('button', { name: 'ORDER-1-L02', exact: true }).click()
-  await expect(page.locator('.n-drawer')).toContainText('商品明细详情')
-  await expect(page.locator('.n-drawer')).toContainText('1.005')
+  await expect(page.locator('.ps-detail-modal')).toContainText('商品明细详情')
+  await expect(page.locator('.ps-detail-modal')).toContainText('1.005')
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
   await action(lines, 'ORDER-1-L02', '删除明细').click()
   await expect(page.locator('.n-dialog')).toContainText('ORDER-1-L02')
@@ -172,7 +174,7 @@ test('发运原生表格：序号与行操作固定，详情保留车辆草稿�
   await row('SHIP-1')
     .getByRole('button', { name: 'DN-261029-001', exact: true })
     .click()
-  await expect(page.locator('.n-drawer')).toContainText('DN-261029-001')
+  await expect(page.locator('.ps-detail-modal')).toContainText('DN-261029-001')
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
   await expect(driver).toHaveValue('尚未保存的驾驶员')
   await expect(page.locator('.shipping-current')).toContainText('DN-261029-002')

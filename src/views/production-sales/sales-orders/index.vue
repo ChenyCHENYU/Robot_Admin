@@ -442,111 +442,119 @@
         :mask-closable="false"
         create-text="加入明细"
       />
-      <NDrawer
+      <NModal
         v-model:show="detailVisible"
-        width="min(760px, 100vw)"
-        ><NDrawerContent
-          v-if="detailOrder"
-          title="销售订单详情"
-          closable
-        >
-          <NAlert
-            v-if="dirty && detailOrder.header.id === header.id"
-            type="warning"
-            :show-icon="false"
-            >当前显示包含未保存草稿，请返回工作台保存整单。</NAlert
-          >
-          <NDescriptions
-            :column="2"
-            bordered
-            size="small"
-          >
-            <NDescriptionsItem label="订单号">{{
-              detailOrder.header.orderNo
-            }}</NDescriptionsItem
-            ><NDescriptionsItem label="合同号">{{
-              detailOrder.header.contractNo
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="客户">{{
-              CUSTOMERS.find(row => row.id === detailOrder?.header.customer)
-                ?.name || '未选择'
-            }}</NDescriptionsItem
-            ><NDescriptionsItem label="业务人员">{{
-              detailOrder.header.owner
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="钢种 / 规格"
-              >{{ detailOrder.header.grade }} /
-              {{ detailOrder.header.section }}</NDescriptionsItem
-            ><NDescriptionsItem label="交付日期">{{
-              detailOrder.header.delivery
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="合同量"
-              >{{ detailOrder.header.targetWeight }} t</NDescriptionsItem
-            ><NDescriptionsItem label="状态">{{
-              STATUS_OPTIONS.find(
-                row => row.value === detailOrder?.header.status
-              )?.label
-            }}</NDescriptionsItem>
-          </NDescriptions>
-          <NDivider>商品明细 · {{ detailOrder.lines.length }} 条</NDivider>
-          <div class="workbench-drawer-grid"
-            ><MachTable
-              v-bind="BUSINESS_GRID"
-              :row-data="detailOrder.lines"
-              :column-defs="readonlyDetailColumns"
-              :theme="themeStore.isDark ? 'dark' : 'light'"
-          /></div>
-          <template #footer
-            ><NButton
-              size="small"
-              @click="detailVisible = false"
-              >关闭详情</NButton
-            ></template
-          >
-        </NDrawerContent></NDrawer
+        v-if="detailOrder"
+        preset="card"
+        title="销售订单详情"
+        size="small"
+        :bordered="false"
+        :style="{
+          width: 'min(1120px, calc(100vw - 32px))',
+          maxHeight: 'calc(100dvh - 48px)',
+        }"
+        content-style="min-height: 0; overflow: auto"
+        class="ps-detail-modal"
       >
-      <NDrawer
+        <NAlert
+          v-if="dirty && detailOrder.header.id === header.id"
+          type="warning"
+          :show-icon="false"
+          >当前显示包含未保存草稿，请返回工作台保存整单。</NAlert
+        >
+        <NDescriptions
+          :column="2"
+          bordered
+          size="small"
+        >
+          <NDescriptionsItem label="订单号">{{
+            detailOrder.header.orderNo
+          }}</NDescriptionsItem
+          ><NDescriptionsItem label="合同号">{{
+            detailOrder.header.contractNo
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="客户">{{
+            CUSTOMERS.find(row => row.id === detailOrder?.header.customer)
+              ?.name || '未选择'
+          }}</NDescriptionsItem
+          ><NDescriptionsItem label="业务人员">{{
+            detailOrder.header.owner
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="钢种 / 规格"
+            >{{ detailOrder.header.grade }} /
+            {{ detailOrder.header.section }}</NDescriptionsItem
+          ><NDescriptionsItem label="交付日期">{{
+            detailOrder.header.delivery
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="合同量"
+            >{{ detailOrder.header.targetWeight }} t</NDescriptionsItem
+          ><NDescriptionsItem label="状态">{{
+            STATUS_OPTIONS.find(row => row.value === detailOrder?.header.status)
+              ?.label
+          }}</NDescriptionsItem>
+        </NDescriptions>
+        <NDivider>商品明细 · {{ detailOrder.lines.length }} 条</NDivider>
+        <div class="workbench-detail-grid"
+          ><MachTable
+            v-bind="BUSINESS_GRID"
+            :row-data="detailOrder.lines"
+            :column-defs="readonlyDetailColumns"
+            :theme="themeStore.isDark ? 'dark' : 'light'"
+        /></div>
+        <template #footer
+          ><NButton
+            size="small"
+            @click="detailVisible = false"
+            >关闭详情</NButton
+          ></template
+        >
+      </NModal>
+      <NModal
         :show="!!lineDetail"
-        width="min(540px, 100vw)"
         @update:show="!$event && (lineDetail = null)"
+        v-if="lineDetail"
+        preset="card"
+        title="商品明细详情"
+        size="small"
+        :bordered="false"
+        :style="{
+          width: 'min(600px, calc(100vw - 32px))',
+          maxHeight: 'calc(100dvh - 48px)',
+        }"
+        content-style="min-height: 0; overflow: auto"
+        class="ps-detail-modal"
       >
-        <NDrawerContent
-          v-if="lineDetail"
-          title="商品明细详情"
-          closable
+        <NDescriptions
+          :column="1"
+          bordered
+          size="small"
         >
-          <NDescriptions
-            :column="1"
-            bordered
+          <NDescriptionsItem label="明细编号">{{
+            lineDetail.id
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="商品">{{
+            lineDetail.product
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="数量"
+            >{{ lineDetail.quantity ?? '—' }}
+            {{ lineDetail.unit }}</NDescriptionsItem
+          >
+          <NDescriptionsItem label="金额"
+            >{{ lineDetail.amount ?? '—' }}
+            {{ lineDetail.currency }}</NDescriptionsItem
+          >
+          <NDescriptionsItem label="备注">{{
+            lineDetail.note ?? '—'
+          }}</NDescriptionsItem>
+        </NDescriptions>
+        <template #footer
+          ><NButton
             size="small"
-          >
-            <NDescriptionsItem label="明细编号">{{
-              lineDetail.id
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="商品">{{
-              lineDetail.product
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="数量"
-              >{{ lineDetail.quantity ?? '—' }}
-              {{ lineDetail.unit }}</NDescriptionsItem
-            >
-            <NDescriptionsItem label="金额"
-              >{{ lineDetail.amount ?? '—' }}
-              {{ lineDetail.currency }}</NDescriptionsItem
-            >
-            <NDescriptionsItem label="备注">{{
-              lineDetail.note ?? '—'
-            }}</NDescriptionsItem>
-          </NDescriptions>
-          <template #footer
-            ><NButton
-              size="small"
-              @click="lineDetail = null"
-              >关闭详情</NButton
-            ></template
-          >
-        </NDrawerContent>
-      </NDrawer>
+            @click="lineDetail = null"
+            >关闭详情</NButton
+          ></template
+        >
+      </NModal>
     </C_Density>
   </main>
 </template>

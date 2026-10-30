@@ -157,87 +157,92 @@
         :mask-closable="false"
         create-text="建立任务"
       />
-      <NDrawer
+      <NModal
         v-model:show="detailVisible"
-        width="min(660px, 100vw)"
-        ><NDrawerContent
-          v-if="detailShipment"
-          title="发运单详情"
-          closable
-        >
-          <NDescriptions
-            :column="2"
-            bordered
-            size="small"
-          >
-            <NDescriptionsItem label="发运单号">{{
-              detailShipment.no
-            }}</NDescriptionsItem
-            ><NDescriptionsItem label="状态">{{
-              SHIPMENT_STATES[detailShipment.status].label
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="客户">{{
-              detailShipment.customer
-            }}</NDescriptionsItem
-            ><NDescriptionsItem label="目的地">{{
-              detailShipment.destination
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="钢种">{{
-              detailShipment.grade
-            }}</NDescriptionsItem
-            ><NDescriptionsItem label="计划量"
-              >{{
-                weightCodec.format(detailShipment.weightKg / 1000)
-              }}
-              t</NDescriptionsItem
-            >
-            <NDescriptionsItem label="车辆">{{
-              detailShipment.plate || '待安排'
-            }}</NDescriptionsItem
-            ><NDescriptionsItem label="窗口">{{
-              detailShipment.window
-            }}</NDescriptionsItem>
-            <NDescriptionsItem label="驾驶员">{{
-              detailShipment.vehicle?.driver || '待安排'
-            }}</NDescriptionsItem
-            ><NDescriptionsItem label="装车货位">{{
-              detailShipment.vehicle?.gate || '待安排'
-            }}</NDescriptionsItem>
-          </NDescriptions>
-          <NDivider>交付进程</NDivider
-          ><C_Timeline
-            :items="[
-              { id: 'created', title: '发运任务已建立', status: 'success' },
-              {
-                id: 'loading',
-                title:
-                  detailShipment.status === 'waiting'
-                    ? '等待库存匹配与车辆配载'
-                    : '车辆已安排，装车单已建立',
-                status:
-                  detailShipment.status === 'waiting' ? 'default' : 'success',
-              },
-              {
-                id: 'departed',
-                title:
-                  detailShipment.status === 'departed'
-                    ? '车辆已确认出厂'
-                    : '等待装车及出厂校核',
-                status:
-                  detailShipment.status === 'departed' ? 'success' : 'default',
-              },
-            ]"
-            size="small"
-          />
-          <template #footer
-            ><NButton
-              size="small"
-              @click="detailVisible = false"
-              >关闭详情</NButton
-            ></template
-          >
-        </NDrawerContent></NDrawer
+        v-if="detailShipment"
+        preset="card"
+        title="发运单详情"
+        size="small"
+        :bordered="false"
+        :style="{
+          width: 'min(800px, calc(100vw - 32px))',
+          maxHeight: 'calc(100dvh - 48px)',
+        }"
+        content-style="min-height: 0; overflow: auto"
+        class="ps-detail-modal"
       >
+        <NDescriptions
+          :column="2"
+          bordered
+          size="small"
+        >
+          <NDescriptionsItem label="发运单号">{{
+            detailShipment.no
+          }}</NDescriptionsItem
+          ><NDescriptionsItem label="状态">{{
+            SHIPMENT_STATES[detailShipment.status].label
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="客户">{{
+            detailShipment.customer
+          }}</NDescriptionsItem
+          ><NDescriptionsItem label="目的地">{{
+            detailShipment.destination
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="钢种">{{
+            detailShipment.grade
+          }}</NDescriptionsItem
+          ><NDescriptionsItem label="计划量"
+            >{{
+              weightCodec.format(detailShipment.weightKg / 1000)
+            }}
+            t</NDescriptionsItem
+          >
+          <NDescriptionsItem label="车辆">{{
+            detailShipment.plate || '待安排'
+          }}</NDescriptionsItem
+          ><NDescriptionsItem label="窗口">{{
+            detailShipment.window
+          }}</NDescriptionsItem>
+          <NDescriptionsItem label="驾驶员">{{
+            detailShipment.vehicle?.driver || '待安排'
+          }}</NDescriptionsItem
+          ><NDescriptionsItem label="装车货位">{{
+            detailShipment.vehicle?.gate || '待安排'
+          }}</NDescriptionsItem>
+        </NDescriptions>
+        <NDivider>交付进程</NDivider
+        ><C_Timeline
+          :items="[
+            { id: 'created', title: '发运任务已建立', status: 'success' },
+            {
+              id: 'loading',
+              title:
+                detailShipment.status === 'waiting'
+                  ? '等待库存匹配与车辆配载'
+                  : '车辆已安排，装车单已建立',
+              status:
+                detailShipment.status === 'waiting' ? 'default' : 'success',
+            },
+            {
+              id: 'departed',
+              title:
+                detailShipment.status === 'departed'
+                  ? '车辆已确认出厂'
+                  : '等待装车及出厂校核',
+              status:
+                detailShipment.status === 'departed' ? 'success' : 'default',
+            },
+          ]"
+          size="small"
+        />
+        <template #footer
+          ><NButton
+            size="small"
+            @click="detailVisible = false"
+            >关闭详情</NButton
+          ></template
+        >
+      </NModal>
     </C_Density>
   </main>
 </template>

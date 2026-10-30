@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-29
  * @FilePath: \Robot_Admin\e2e\production-sales-actions.pw.ts
- * @Description: 真实操作栏、表单弹窗、确认取消、状态锁定与详情抽屉回归
+ * @Description: 真实操作栏、表单弹窗、确认取消、状态锁定与详情弹窗回归
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { test, expect, type Page, type Locator } from '@playwright/test'
@@ -150,7 +150,9 @@ test('计划编制弹窗真实增改复制，确认取消和状态约束保持�
   await table
     .getByRole('button', { name: 'PP-20261029-001', exact: true })
     .click()
-  await expect(page.locator('.n-drawer')).toContainText('PP-20261029-001')
+  await expect(page.locator('.ps-detail-modal')).toContainText(
+    'PP-20261029-001'
+  )
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
 })
 
@@ -220,12 +222,12 @@ test('订单与明细弹窗连接整单草稿，精确金额、详情只读和�
   await page
     .getByRole('button', { name: '查看SO-2026-019详情', exact: true })
     .click()
-  const drawer = page.locator('.n-drawer')
-  await expect(drawer).toContainText('新经办')
-  await drawer
+  const detail = page.locator('.ps-detail-modal')
+  await expect(detail).toContainText('新经办')
+  await detail
     .locator('.mach-row[data-id] .mach-cell[data-col-id="quantity"]')
     .dblclick()
-  await expect(drawer.locator('.mach-editor-input')).toHaveCount(0)
+  await expect(detail.locator('.mach-editor-input')).toHaveCount(0)
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
   await rowAction(
     page.locator('.workbench-master-grid'),
@@ -305,12 +307,12 @@ test('实绩退回、复核锁定和撤回形成闭环，历史意见按文本�
     page.getByRole('button', { name: '保存实绩', exact: true })
   ).toBeDisabled()
   await page.getByRole('button', { name: '复核记录', exact: true }).click()
-  await expect(page.locator('.n-drawer')).toContainText(
+  await expect(page.locator('.ps-detail-modal')).toContainText(
     '<b>实验室复核可放行</b>'
   )
-  await expect(page.locator('.n-drawer b')).toHaveCount(0)
-  await expect(page.locator('.n-drawer')).toContainText('实绩退回补录')
-  await page.locator('.n-drawer').screenshot({
+  await expect(page.locator('.ps-detail-modal b')).toHaveCount(0)
+  await expect(page.locator('.ps-detail-modal')).toContainText('实绩退回补录')
+  await page.locator('.ps-detail-modal').screenshot({
     path: info.outputPath('actual-review-history.png'),
     animations: 'disabled',
   })
@@ -380,8 +382,8 @@ test('发运编制与配载连接，取消不改计划，装车后锁定且出�
   await shipmentRow(page, 'SHIP-13')
     .getByRole('button', { name: 'DN-261029-013', exact: true })
     .click()
-  await expect(page.locator('.n-drawer')).toContainText('刘强')
-  await expect(page.locator('.n-drawer')).toContainText('装车单已建立')
+  await expect(page.locator('.ps-detail-modal')).toContainText('刘强')
+  await expect(page.locator('.ps-detail-modal')).toContainText('装车单已建立')
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
   await page.getByRole('button', { name: '确认出厂', exact: true }).click()
   await dialog(page).getByRole('button', { name: '取消', exact: true }).click()
