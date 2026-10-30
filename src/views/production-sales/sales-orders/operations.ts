@@ -135,6 +135,7 @@ export function useSalesOperations(context: {
   dirty: Readonly<Ref<boolean>>
   blocked: () => boolean
   activate: (id: string) => void
+  requestOrder: (id: string, after?: () => void) => Promise<void>
   commitCell: () => Promise<boolean>
   selectedKeys: () => string[]
   resetLineState: () => void
@@ -148,12 +149,32 @@ export function useSalesOperations(context: {
     dirty,
     blocked,
     activate,
+    requestOrder,
     commitCell,
     selectedKeys,
     resetLineState,
   } = context
   const dialog = useDialog()
   const detailVisible = ref(false)
+  const detailOrder = shallowRef<BusinessOrder | null>(null)
+  const lineDetail = shallowRef<OrderLine | null>(null)
+  const openDetail = async (row: OrderHeader) => {
+    if (row.id === activeId.value && !(await commitCell())) return
+    const source = orders.value.find(order => order.header.id === row.id)
+    if (!source) return
+    detailOrder.value = {
+      header: { ...(row.id === activeId.value ? header.value : source.header) },
+      lines: (row.id === activeId.value ? lines.value : source.lines).map(
+        line => ({ ...line })
+      ),
+    }
+    detailVisible.value = true
+  }
+  const openLineDetail = async (row: OrderLine) => {
+    if (!(await commitCell())) return
+    const target = lines.value.find(line => line.id === row.id)
+    if (target) lineDetail.value = { ...target }
+  }
   const persistedStatus = computed(
     () =>
       orders.value.find(row => row.header.id === activeId.value)?.header.status
@@ -218,28 +239,38 @@ export function useSalesOperations(context: {
       },
     },
   })
-  const openOrder = async (copy = false) => {
+  const openOrder = async (sourceRow?: OrderHeader) => {
     if (blocked() || !(await commitCell())) return
     if (dirty.value) {
       notice.value = '请先保存或恢复当前订单，再新增或复制订单。'
       return
     }
-    copiedLines = copy ? lines.value.map(row => ({ ...row })) : []
+    const source =
+      sourceRow && orders.value.find(order => order.header.id === sourceRow.id)
+    copiedLines = source
+      ? (sourceRow.id === activeId.value ? lines.value : source.lines).map(
+          row => ({ ...row })
+        )
+      : []
     orderEditor.openCreate()
-    if (copy) {
+    if (source) {
       const identity = orderEditor.model.value!
       orderEditor.setModel({
-        ...header.value,
+        ...(sourceRow.id === activeId.value ? header.value : source.header),
         id: identity.id,
         orderNo: identity.orderNo,
         status: 0,
         progress: 0,
       })
-      orderEditor.title.value = `复制订单 · ${header.value.orderNo}`
+      orderEditor.title.value = `复制订单 · ${source.header.orderNo}`
     }
   }
-  const removeOrder = () => {
-    const target = orders.value.find(row => row.header.id === activeId.value)
+  const editOrder = async (row: OrderHeader) => {
+    if (row.status !== 0 || blocked()) return
+    await requestOrder(row.id, () => orderEditor.openEdit(header.value))
+  }
+  const removeOrder = (row: OrderHeader) => {
+    const target = orders.value.find(item => item.header.id === row.id)
     if (!target || target.header.status !== 0 || blocked()) return
     dialog.warning({
       title: '删除草稿订单',
@@ -247,11 +278,17 @@ export function useSalesOperations(context: {
       positiveText: '确认删除',
       negativeText: '取消',
       onPositiveClick: () => {
-        if (target.header.status !== 0 || blocked()) return
+        if (
+          orders.value.find(item => item.header.id === target.header.id)?.header
+            .status !== 0 ||
+          blocked()
+        )
+          return
         orders.value = orders.value.filter(
           row => row.header.id !== target.header.id
         )
-        activate(orders.value[0].header.id)
+        if (activeId.value === target.header.id)
+          activate(orders.value[0].header.id)
         notice.value = `${target.header.orderNo} 已删除（本地示例）。`
       },
     })
@@ -289,25 +326,25 @@ export function useSalesOperations(context: {
       update: async row => persistLine(row, false),
     },
   })
-  const openLine = async (edit = false) => {
+  const openLine = async (target?: OrderLine) => {
     if (blocked() || !(await commitCell())) return
     lineOwner = activeId.value
-    if (!edit) lineEditor.openCreate()
+    if (!target) lineEditor.openCreate()
     else {
-      const ids = selectedKeys()
-      const row = lines.value.find(item => item.id === ids[0])
-      if (ids.length === 1 && row) lineEditor.openEdit(row)
-      else notice.value = '请只勾选一条需要编辑的商品明细。'
+      const row = lines.value.find(item => item.id === target.id)
+      if (row) lineEditor.openEdit(row)
     }
   }
-  const removeLines = async () => {
+  const removeLines = async (targetIds?: string[]) => {
     if (blocked() || !(await commitCell())) return
     const owner = activeId.value
-    const ids = selectedKeys()
+    const ids = targetIds ?? selectedKeys()
     if (!ids.length) return
     dialog.warning({
-      title: '删除选中明细',
-      content: `将从当前草稿移除 ${ids.length} 条明细，保存整单后生效。`,
+      title: targetIds ? '删除商品明细' : '删除选中明细',
+      content: targetIds
+        ? `确认删除 ${ids[0]} · ${lines.value.find(row => row.id === ids[0])?.product ?? ''}？保存整单后生效。`
+        : `将从当前草稿移除 ${ids.length} 条明细，保存整单后生效。`,
       positiveText: '删除明细',
       negativeText: '取消',
       onPositiveClick: () => {
@@ -325,34 +362,6 @@ export function useSalesOperations(context: {
       disabled: blocked(),
       onClick: () => openOrder(),
     },
-    {
-      key: 'edit',
-      label: '编辑订单',
-      disabled: blocked() || persistedStatus.value !== 0,
-      onClick: async () => {
-        if (!blocked() && (await commitCell()))
-          orderEditor.openEdit(header.value)
-      },
-    },
-    {
-      key: 'copy',
-      label: '复制当前订单',
-      disabled: blocked(),
-      onClick: () => openOrder(true),
-    },
-    {
-      key: 'detail',
-      label: '订单详情',
-      onClick: async () => {
-        if (await commitCell()) detailVisible.value = true
-      },
-    },
-    {
-      key: 'delete',
-      label: '删除草稿订单',
-      disabled: persistedStatus.value !== 0 || blocked(),
-      onClick: removeOrder,
-    },
   ])
   const lineActions = computed<ActionItem[]>(() => [
     {
@@ -362,17 +371,26 @@ export function useSalesOperations(context: {
       onClick: () => openLine(),
     },
     {
-      key: 'edit',
-      label: '编辑明细',
-      disabled: blocked() || selectedKeys().length !== 1,
-      onClick: () => openLine(true),
-    },
-    {
       key: 'delete',
       label: '删除选中明细',
       disabled: blocked() || !selectedKeys().length,
-      onClick: removeLines,
+      onClick: () => removeLines(),
     },
   ])
-  return { orderEditor, lineEditor, orderActions, lineActions, detailVisible }
+  return {
+    orderEditor,
+    lineEditor,
+    orderActions,
+    lineActions,
+    detailVisible,
+    detailOrder,
+    lineDetail,
+    openDetail,
+    openLineDetail,
+    editOrder,
+    copyOrder: openOrder,
+    removeOrder,
+    editLine: openLine,
+    removeLine: (row: OrderLine) => removeLines([row.id]),
+  }
 }

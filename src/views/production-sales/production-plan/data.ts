@@ -10,6 +10,8 @@ import {
   selectionColumn,
   indexColumn,
   dragColumn,
+  actionsColumn,
+  type RowClickEvent,
   useMachTable,
   type RowStyleRule,
   type RowDragEndEvent,
@@ -198,6 +200,14 @@ export function useProductionPlan() {
       String(selectedLines.value[0] ?? 'all')
     )
   )
+  watch([currentId, () => visibleRows.value.length], () => {
+    void nextTick(() => {
+      const index = visibleRows.value.findIndex(
+        row => row.id === currentId.value
+      )
+      if (index >= 0) table.api.value?.view.scrollToRow(index, 'nearest')
+    })
+  })
   const pending = computed(
     () => rows.value.filter(row => row.status === 'draft').length
   )
@@ -220,6 +230,10 @@ export function useProductionPlan() {
       table.api.value?.selection.clear()
     },
   }
+  const operations = usePlanOperations({ rows, currentId, selectedIds, notice })
+  const selectPlan = (event: RowClickEvent<ProductionPlan>) => {
+    if (event.rowNode.data) currentId.value = event.rowNode.data.id
+  }
   const columns = defineVueColumns<ProductionPlan>([
     dragColumn(),
     selectionColumn(),
@@ -229,10 +243,7 @@ export function useProductionPlan() {
       headerName: '生产计划号',
       width: 174,
       pinned: 'left',
-      render: row =>
-        recordLink(row.planNo, () => {
-          currentId.value = row.id
-        }),
+      render: row => recordLink(row.planNo, () => operations.openDetail(row)),
     },
     { field: 'line', headerName: '产线', width: 104 },
     { field: 'cast', headerName: '浇次', width: 104 },
@@ -252,10 +263,33 @@ export function useProductionPlan() {
       field: 'status',
       headerName: '状态',
       width: 110,
-      pinned: 'right',
       render: row =>
         statusTag(PLAN_STATES[row.status].label, PLAN_STATES[row.status].type),
     },
+    actionsColumn<ProductionPlan>({
+      width: 88,
+      actions: [
+        {
+          icon: 'edit',
+          label: '编辑计划',
+          variant: 'warning',
+          disabled: ({ data }) => data?.status !== 'draft',
+          onClick: ({ data }) => data && operations.editPlan(data),
+        },
+        {
+          icon: 'delete',
+          label: '删除计划',
+          variant: 'danger',
+          disabled: ({ data }) => data?.status !== 'draft',
+          onClick: ({ data }) => data && operations.removePlan(data),
+        },
+        {
+          icon: 'copy',
+          label: '复制编制',
+          onClick: ({ data }) => data && operations.copyPlan(data),
+        },
+      ],
+    }),
   ])
   const rowStyles = computed<readonly RowStyleRule<ProductionPlan>[]>(() => {
     const id = currentId.value
@@ -268,8 +302,13 @@ export function useProductionPlan() {
     ]
   })
   const heatRows = computed(() => createHeatSchedule(current.value))
+  const detailHeatRows = computed(() =>
+    operations.detailPlan.value
+      ? createHeatSchedule(operations.detailPlan.value)
+      : []
+  )
   const heatColumns = defineVueColumns<(typeof heatRows.value)[number]>([
-    { field: 'sequence', headerName: '顺序', width: 60 },
+    indexColumn({ headerName: '序号', width: 46 }),
     { field: 'heatNo', headerName: '炉号', minWidth: 140, flex: 1 },
     { field: 'furnace', headerName: '设备', width: 105 },
     { field: 'grade', headerName: '钢种', width: 100 },
@@ -339,7 +378,9 @@ export function useProductionPlan() {
     notice.value = `已调整 ${event.rowNode.data?.planNo} 的本地排产顺序。`
   }
   return {
-    ...usePlanOperations({ rows, currentId, selectedIds, notice }),
+    ...operations,
+    selectPlan,
+    detailHeatRows,
     rows,
     query,
     searchConfig,

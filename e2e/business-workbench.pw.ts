@@ -164,7 +164,9 @@ test('主题网格、当前订单与状态标签可辨认，主档控件宽度�
     })
     .toBeLessThanOrEqual(2)
   await page
-    .getByRole('button', { name: '打开SO-2026-002', exact: true })
+    .locator(
+      '.workbench-master-grid .mach-row[data-id="ORDER-2"] .mach-cell[data-col-id="customer"]'
+    )
     .click()
   await expect(
     page.locator(
@@ -208,7 +210,9 @@ test('搜索草稿和已应用条件分离，固定组织保留，状态0与精�
   await search.getByRole('button', { name: '搜索', exact: true }).click()
   await expect(page.locator('.workbench-orders')).toContainText('1 笔本地订单')
   await expect(
-    page.getByRole('button', { name: '打开SO-2026-001', exact: true })
+    page.locator(
+      '.workbench-master-grid .mach-row[data-id="ORDER-1"] .mach-cell[data-col-id="customer"]'
+    )
   ).toBeVisible()
   await search.getByRole('button', { name: '重置', exact: true }).click()
   await expect(formField(search, '组织').getByRole('textbox')).toHaveValue(
@@ -259,7 +263,9 @@ test('主记录切换保护草稿，隐藏Tab和局部全屏不改变稳定行�
   await page.getByRole('button', { name: '退出明细全屏', exact: true }).click()
   await expect(page.locator('.workbench-details--fullscreen')).toHaveCount(0)
   await page
-    .getByRole('button', { name: '打开SO-2026-002', exact: true })
+    .locator(
+      '.workbench-master-grid .mach-row[data-id="ORDER-2"] .mach-cell[data-col-id="customer"]'
+    )
     .click()
   const guard = page.locator('.workbench-switch-dialog')
   await expect(guard).toBeVisible()
@@ -267,14 +273,18 @@ test('主记录切换保护草稿，隐藏Tab和局部全屏不改变稳定行�
   await expect(page.getByTestId('active-order')).toHaveText('SO-2026-001')
   await expect(lineCell(page, 'ORDER-1-L01', 'quantity')).toHaveText('2.125')
   await page
-    .getByRole('button', { name: '打开SO-2026-002', exact: true })
+    .locator(
+      '.workbench-master-grid .mach-row[data-id="ORDER-2"] .mach-cell[data-col-id="customer"]'
+    )
     .click()
   await guard.getByRole('button', { name: '放弃并切换', exact: true }).click()
   await expect(page.getByTestId('active-order')).toHaveText('SO-2026-002')
   await expect(lineCell(page, 'ORDER-2-L01', 'quantity')).toHaveText('0.000')
   await expect(page.getByTestId('draft-status')).toHaveText('已保存')
   await page
-    .getByRole('button', { name: '打开SO-2026-001', exact: true })
+    .locator(
+      '.workbench-master-grid .mach-row[data-id="ORDER-1"] .mach-cell[data-col-id="customer"]'
+    )
     .click()
   await expect(lineCell(page, 'ORDER-1-L01', 'quantity')).toHaveText('0.000')
 })

@@ -146,7 +146,7 @@ The application provides `compact` defaults for forms, search and editor modals.
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.34.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
+| **MachTable 0.34.2** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
@@ -156,7 +156,7 @@ MachTable is a separate data grid project. Core and Vue / React / XLSX adapters 
 
 Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
 
-The installed dependency and lockfile are pinned to the official npm release **0.34.1**, with matching Vue adapter and Core versions. This patch refines the default MachTable empty state with a soft-blue table/search illustration and two-level text for light and dark themes. C_Table retains the native Naive UI empty state and the application’s pale-blue icon. Typed matrix I/O, import preview and validation, oversized scrolling and lifecycle improvements remain available. The ordering controller is imported on demand from the Vue package's `/ordering` entry. Normal order editing, pagination and column preferences retain their existing path; local links and dependency patches are unnecessary.
+The installed dependency and lockfile are pinned to the official npm release **0.34.2**, with matching Vue adapter and Core versions. This patch prevents focus restoration from scrolling pinned panes independently, keeping row numbers, links, data and actions aligned. The default empty state retains a soft-blue table/search illustration and two-level text for light and dark themes. C_Table retains the native Naive UI empty state and the application’s pale-blue icon. Typed matrix I/O, import preview and validation, oversized scrolling and lifecycle improvements remain available. The ordering controller is imported on demand from the Vue package's `/ordering` entry. Normal order editing, pagination and column preferences retain their existing path; local links and dependency patches are unnecessary.
 
 Two lazy-loaded tabs on the same page make these features interactive:
 
@@ -177,6 +177,8 @@ The **产销业务** menu maps to `src/views/production-sales/` with four distin
 | Shipping collaboration | `/#/production-sales/shipping`          | Stage filters, C_Table task pool, MachTable inventory and vehicle form; integer-kilogram conservation, capacity checks and loading/departure transitions |
 
 Native grid themes, compact controls, subtle panels and headers remain consistent across layouts and light/dark modes. Naive empty-state icons use a soft blue theme token. The former `/#/demo/business-workbench` redirects to sales orders; `/#/preview/business-workbench` remains available, alongside `/#/preview/production-sales/<page>` for each page.
+
+Business lists include row numbers and pinned edit/delete actions. Blue record links open read-only details; clicking a row selects the working record. Toolbars retain create and bulk actions. Viewing another record preserves the current draft, while editing another order uses the existing save/discard/cancel guard.
 
 Actions operate on local business records: planning supports create/edit/copy/delete and confirmed release/withdrawal; actuals support review, return for correction, locking and traceable withdrawal; orders and lines use modal editors connected to the existing whole-order draft; shipping supports task maintenance, inventory reselection after changes and confirmed departure. Detail drawers are read-only, and previous-heat references never overwrite current measurements. Custom heat counts preserve the plan weight exactly at 0.001-ton precision.
 
@@ -305,7 +307,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.34.1** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.34.2** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

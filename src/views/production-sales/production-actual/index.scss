@@ -220,3 +220,14 @@
 .actual-heat-list :deep(.n-tag) {
   width: max-content;
 }
+
+.actual-heat-index {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  margin-right: 6px;
+  border-radius: 4px;
+  color: var(--app-primary);
+  background: var(--ps-soft);
+  font-size: 10px;
+}

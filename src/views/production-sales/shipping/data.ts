@@ -5,6 +5,7 @@
  * @Description: 发运协同的任务池、库存匹配、车辆校验与本地状态流转
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { C_ActionBar } from '@robot-admin/naive-ui-components/C_ActionBar'
 import {
   defineTableColumns,
   defineTableConfig,
@@ -21,6 +22,7 @@ import type {
 import {
   defineVueColumns,
   selectionColumn,
+  indexColumn,
   useMachTable,
 } from '@agile-team/mach-table-vue'
 import { recordLink, statusTag, weightCodec } from '../shared/presentation'
@@ -282,13 +284,36 @@ export function useShippingWorkbench() {
     query.value.status = status
     applied.value = { ...query.value }
   }
+  const operations = useShipmentOperations({
+    rows,
+    currentId,
+    notice,
+    activate,
+    vehicleDirty: () => form.value?.isDirty === true || busy.value,
+  })
+  const rowProps = (row: Shipment) => ({
+    'aria-selected': row.id === currentId.value,
+    'data-shipment-id': row.id,
+    tabindex: 0,
+    onKeydown: (event: KeyboardEvent) => {
+      if (
+        event.target !== event.currentTarget ||
+        !['Enter', ' '].includes(event.key)
+      )
+        return
+      event.preventDefault()
+      choose(row.id)
+    },
+    onClick: () => choose(row.id),
+  })
   const columns = defineTableColumns<Shipment>([
+    { type: 'index', title: '序号', width: 48, fixed: 'left' },
     {
       key: 'no',
       title: '发运单号',
       width: 166,
       fixed: 'left',
-      render: row => recordLink(row.no, () => choose(row.id)),
+      render: row => recordLink(row.no, () => operations.openDetail(row)),
     },
     { key: 'customer', title: '客户名称', width: 112 },
     { key: 'grade', title: '钢种', width: 96 },
@@ -317,9 +342,51 @@ export function useShippingWorkbench() {
           SHIPMENT_STATES[row.status].type
         ),
     },
+    {
+      key: 'id',
+      title: '操作',
+      width: 124,
+      fixed: 'right',
+      align: 'center',
+      render: row =>
+        h(C_ActionBar, {
+          config: {
+            inline: true,
+            compact: true,
+            size: 'tiny',
+            gap: 8,
+            wrap: false,
+          },
+          onClick: (event: MouseEvent) => event.stopPropagation(),
+          actions: [
+            {
+              key: 'edit',
+              label: '编辑',
+              type: 'warning',
+              disabled: () =>
+                row.status !== 'waiting' ||
+                form.value?.isDirty === true ||
+                busy.value,
+              buttonProps: { text: true },
+              onClick: () => operations.editShipment(row),
+            },
+            {
+              key: 'delete',
+              label: '删除',
+              disabled: () =>
+                row.status !== 'waiting' ||
+                form.value?.isDirty === true ||
+                busy.value,
+              buttonProps: { text: true },
+              onClick: () => operations.removeShipment(row),
+            },
+          ],
+        }),
+    },
   ])
   const lotColumns = defineVueColumns<(typeof lots.value)[number]>([
     selectionColumn(),
+    indexColumn({ headerName: '序号', width: 46 }),
     { field: 'batch', headerName: '库存批号', width: 145 },
     { field: 'location', headerName: '库位', width: 90 },
     { field: 'grade', headerName: '钢种', width: 100 },
@@ -402,13 +469,8 @@ export function useShippingWorkbench() {
     })
   }
   return {
-    ...useShipmentOperations({
-      rows,
-      currentId,
-      notice,
-      activate,
-      vehicleDirty: () => form.value?.isDirty === true || busy.value,
-    }),
+    ...operations,
+    rowProps,
     rows,
     current,
     currentId,

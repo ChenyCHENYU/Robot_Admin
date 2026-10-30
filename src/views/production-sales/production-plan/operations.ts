@@ -102,10 +102,16 @@ export function usePlanOperations(context: {
   const { rows, currentId, selectedIds, notice } = context
   const dialog = useDialog()
   let sequence = rows.value.length
-  const current = computed(
-    () => rows.value.find(row => row.id === currentId.value) ?? rows.value[0]
-  )
   const detailVisible = ref(false)
+  const detailPlan = shallowRef<ProductionPlan | null>(null)
+  const openDetail = (row: ProductionPlan) => {
+    detailPlan.value = { ...row }
+    detailVisible.value = true
+  }
+  const editPlan = (row: ProductionPlan) => {
+    const target = rows.value.find(item => item.id === row.id)
+    if (target?.status === 'draft') editor.openEdit(target)
+  }
   const { editor } = useNaiveTableCrud<ProductionPlan>({
     query: async () => ({ items: rows.value, total: rows.value.length }),
     autoLoad: false,
@@ -146,8 +152,8 @@ export function usePlanOperations(context: {
       },
     },
   })
-  const copy = () => {
-    const source = { ...current.value }
+  const copy = (row: ProductionPlan) => {
+    const source = { ...row }
     editor.openCreate()
     const identity = editor.model.value!
     editor.setModel({
@@ -158,8 +164,7 @@ export function usePlanOperations(context: {
     })
     editor.title.value = `复制编制 · ${source.planNo}`
   }
-  const remove = () => {
-    const target = current.value
+  const remove = (target: ProductionPlan) => {
     if (target.status !== 'draft') return
     dialog.warning({
       title: '删除待下达计划',
@@ -171,7 +176,7 @@ export function usePlanOperations(context: {
           return
         rows.value = rows.value.filter(row => row.id !== target.id)
         selectedIds.value = selectedIds.value.filter(id => id !== target.id)
-        currentId.value = rows.value[0].id
+        if (currentId.value === target.id) currentId.value = rows.value[0].id
         notice.value = `${target.planNo} 已删除（本地演示）。`
       },
     })
@@ -202,31 +207,20 @@ export function usePlanOperations(context: {
   const actions = computed<ActionItem[]>(() => [
     { key: 'create', label: '新增计划', onClick: editor.openCreate },
     {
-      key: 'edit',
-      label: '编辑当前计划',
-      disabled: current.value.status !== 'draft',
-      onClick: () => editor.openEdit(current.value),
-    },
-    { key: 'copy', label: '复制编制', onClick: copy },
-    {
-      key: 'detail',
-      label: '计划详情',
-      onClick: () => {
-        detailVisible.value = true
-      },
-    },
-    {
       key: 'withdraw',
       label: '撤销下达',
       disabled: !selectedIds.value.length,
       onClick: withdraw,
     },
-    {
-      key: 'delete',
-      label: '删除当前计划',
-      disabled: current.value.status !== 'draft',
-      onClick: remove,
-    },
   ])
-  return { editor, actions, detailVisible }
+  return {
+    editor,
+    actions,
+    detailVisible,
+    detailPlan,
+    openDetail,
+    editPlan,
+    copyPlan: copy,
+    removePlan: remove,
+  }
 }

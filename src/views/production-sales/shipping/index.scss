@@ -149,3 +149,15 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.shipping-queue :deep(tr[aria-selected='true'] td) {
+  background: var(--ps-soft);
+}
+.shipping-queue :deep(tbody tr) {
+  cursor: pointer;
+}
+
+.shipping-queue :deep(tbody tr:focus-visible) {
+  outline: 2px solid var(--app-primary);
+  outline-offset: -2px;
+}

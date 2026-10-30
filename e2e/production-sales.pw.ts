@@ -151,7 +151,7 @@ test('计划提交快照、产线树、炉次联动与下达状态保持一致',
   await search.getByRole('button', { name: '搜索', exact: true }).click()
   await expect(table).toContainText('1 项')
   await table
-    .getByRole('button', { name: 'PP-20261029-005', exact: true })
+    .locator('.mach-row[data-id="PLAN-5"] .mach-cell[data-col-id="line"]')
     .click()
   await expect(
     page.getByRole('heading', { name: 'PP-20261029-005 · 计划协同' })
@@ -174,7 +174,9 @@ test('实绩保留成分偏差、跨炉次保存快照和未保存切换保护',
   await carbon.fill('0.6')
   await carbon.press('Tab')
   await expect(
-    page.locator('.actual-chemistry-grid .mach-row[data-id="carbon"]')
+    page.locator(
+      '.actual-chemistry-grid .mach-pane--center .mach-row[data-id="carbon"]'
+    )
   ).toHaveAttribute('data-row-tone', 'danger')
   await page.getByRole('button', { name: '保存实绩', exact: true }).click()
   await expect(page.locator('.ps-status-line')).toContainText(

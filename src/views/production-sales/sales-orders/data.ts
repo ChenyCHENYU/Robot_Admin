@@ -35,6 +35,8 @@ import {
 import {
   defineVueColumns,
   indexColumn,
+  actionsColumn,
+  type RowClickEvent,
   selectionColumn,
   useMachTable,
   type RowStyleRule,
@@ -397,6 +399,11 @@ export function useBusinessWorkbench() {
   }
   const splitSize = ref(44)
   const pendingOrder = ref<string | null>(null)
+  let afterOrderSwitch: (() => void) | undefined
+  const cancelSwitch = () => {
+    pendingOrder.value = null
+    afterOrderSwitch = undefined
+  }
   const saving = ref(false)
   const batchBusy = ref(false)
   const batchMode = ref<BatchMode>('keep')
@@ -431,6 +438,13 @@ export function useBusinessWorkbench() {
   watch(resource.data, value => {
     lines.value = value === undefined ? [] : clone(value)
   })
+  // 原生 DOM 渲染的操作列按状态刷新，不重建数据列或正在使用的编辑器。
+  watch([saving, batchBusy, resource.loading], () => {
+    void nextTick(() => {
+      master.api.value?.view.refreshCells({ columns: ['op'], force: true })
+      detail.api.value?.view.refreshCells({ columns: ['op'], force: true })
+    })
+  })
   const dirty = computed(
     () =>
       resource.data.value !== undefined &&
@@ -454,6 +468,14 @@ export function useBusinessWorkbench() {
         )
       })
   )
+  watch([activeId, () => filteredOrders.value.length], () => {
+    void nextTick(() => {
+      const index = filteredOrders.value.findIndex(
+        row => row.id === activeId.value
+      )
+      if (index >= 0) master.api.value?.view.scrollToRow(index, 'nearest')
+    })
+  })
   const searchConfig: SearchConfig<WorkbenchQuery> = {
     density: 'compact',
     layout: 'grid',
@@ -483,7 +505,7 @@ export function useBusinessWorkbench() {
   const activate = (id: string) => {
     scope.clear()
     localEmpty.value = null
-    pendingOrder.value = null
+    cancelSwitch()
     activeId.value = id
     header.value = clone(selected.value.header)
     selectedCount.value = 0
@@ -494,18 +516,24 @@ export function useBusinessWorkbench() {
       form.value?.clearValidation()
     })
   }
-  const chooseOrder = async (id: string) => {
-    if (
-      id === activeId.value ||
-      saving.value ||
-      batchBusy.value ||
-      resource.loading.value
-    )
-      return
-    // 先提交活动编辑器，切换判断同时覆盖尚未失焦的单元格草稿。
+  // 行编辑复用切单保护；保存或放弃后继续打开原先点击的那一行。
+  const chooseOrder = async (id: string, after?: () => void) => {
+    if (saving.value || batchBusy.value || resource.loading.value) return
     if (!(await commitDetailEdit())) return
-    if (dirty.value) pendingOrder.value = id
-    else activate(id)
+    if (id === activeId.value) {
+      after?.()
+      return
+    }
+    if (dirty.value) {
+      pendingOrder.value = id
+      afterOrderSwitch = after
+    } else {
+      activate(id)
+      after?.()
+    }
+  }
+  const selectOrder = (event: RowClickEvent<OrderHeader>) => {
+    if (event.rowNode.data) void chooseOrder(event.rowNode.data.id)
   }
   const masterColumns = defineVueColumns<OrderHeader>([
     indexColumn({ headerName: '序号', width: 46 }),
@@ -521,8 +549,11 @@ export function useBusinessWorkbench() {
           {
             type: 'button',
             class: 'workbench-order-link',
-            onClick: () => chooseOrder(row.id),
-            'aria-label': `打开${row.orderNo}`,
+            onClick: (event: MouseEvent) => {
+              event.stopPropagation()
+              void operations.openDetail(row)
+            },
+            'aria-label': `查看${row.orderNo}详情`,
           },
           row.orderNo
         ),
@@ -592,6 +623,40 @@ export function useBusinessWorkbench() {
         ),
     },
     { field: 'delivery', headerName: '交货日期', width: 118 },
+    actionsColumn<OrderHeader>({
+      width: 88,
+      actions: [
+        {
+          icon: 'edit',
+          label: '编辑订单',
+          variant: 'warning',
+          disabled: ({ data }) =>
+            data?.status !== 0 ||
+            saving.value ||
+            batchBusy.value ||
+            resource.loading.value,
+          onClick: ({ data }) => data && operations.editOrder(data),
+        },
+        {
+          icon: 'delete',
+          label: '删除订单',
+          variant: 'danger',
+          disabled: ({ data }) =>
+            data?.status !== 0 ||
+            saving.value ||
+            batchBusy.value ||
+            resource.loading.value,
+          onClick: ({ data }) => data && operations.removeOrder(data),
+        },
+        {
+          icon: 'copy',
+          label: '复制订单',
+          disabled: () =>
+            saving.value || batchBusy.value || resource.loading.value,
+          onClick: ({ data }) => data && operations.copyOrder(data),
+        },
+      ],
+    }),
   ])
   // 规则只在当前订单变化时更新，保留稳定行身份；取消切单不误高亮另一个订单。
   const masterRowStyles = computed<readonly RowStyleRule<OrderHeader>[]>(() => {
@@ -604,8 +669,7 @@ export function useBusinessWorkbench() {
       },
     ]
   })
-  const detailColumns = defineVueColumns<OrderLine>([
-    selectionColumn(),
+  const lineColumns = defineVueColumns<OrderLine>([
     { field: 'id', headerName: '明细编号', width: 145, pinned: 'left' },
     { field: 'product', headerName: '商品', width: 150 },
     {
@@ -640,14 +704,61 @@ export function useBusinessWorkbench() {
       editable: true,
     },
   ])
-  const readonlyDetailColumns = detailColumns
-    .slice(1)
-    .map(column => ({ ...column, editable: false }))
+  const detailColumns = defineVueColumns<OrderLine>([
+    selectionColumn(),
+    indexColumn({ headerName: '序号', width: 46 }),
+    ...lineColumns.map(column =>
+      'field' in column && column.field === 'id'
+        ? {
+            ...column,
+            render: (row: OrderLine) =>
+              h(
+                'button',
+                {
+                  type: 'button',
+                  class: 'workbench-order-link',
+                  onClick: (event: MouseEvent) => {
+                    event.stopPropagation()
+                    void operations.openLineDetail(row)
+                  },
+                },
+                row.id
+              ),
+          }
+        : column
+    ),
+    actionsColumn<OrderLine>({
+      width: 72,
+      actions: [
+        {
+          icon: 'edit',
+          label: '编辑明细',
+          variant: 'warning',
+          disabled: () =>
+            saving.value || batchBusy.value || resource.loading.value,
+          onClick: ({ data }) => data && operations.editLine(data),
+        },
+        {
+          icon: 'delete',
+          label: '删除明细',
+          variant: 'danger',
+          disabled: () =>
+            saving.value || batchBusy.value || resource.loading.value,
+          onClick: ({ data }) => data && operations.removeLine(data),
+        },
+      ],
+    }),
+  ])
+  const readonlyDetailColumns = [
+    indexColumn({ headerName: '序号', width: 46 }),
+    ...lineColumns.map(column => ({ ...column, editable: false })),
+  ]
   const paymentColumns = defineVueColumns<{
     id: string
     stage: string
     amount: string
   }>([
+    indexColumn({ headerName: '序号', width: 46 }),
     { field: 'stage', headerName: '收款阶段', flex: 1 },
     {
       field: 'amount',
@@ -744,11 +855,18 @@ export function useBusinessWorkbench() {
   const saveAndSwitch = async () => {
     const target = pendingOrder.value
     if (!target) return
-    if (await save()) activate(target)
-    else pendingOrder.value = null
+    const after = afterOrderSwitch
+    if (await save()) {
+      activate(target)
+      after?.()
+    } else cancelSwitch()
   }
   const discardAndSwitch = () => {
-    if (pendingOrder.value) activate(pendingOrder.value)
+    const after = afterOrderSwitch
+    if (pendingOrder.value) {
+      activate(pendingOrder.value)
+      after?.()
+    }
   }
   const fillMissingExample = () => {
     header.value.customer = null
@@ -882,31 +1000,35 @@ export function useBusinessWorkbench() {
     if (localEmpty.value === activeId.value) localEmpty.value = null
     else void resource.reload()
   }
+  const operations = useSalesOperations({
+    orders,
+    header,
+    lines,
+    activeId,
+    notice,
+    dirty,
+    activate,
+    requestOrder: chooseOrder,
+    blocked: () => saving.value || batchBusy.value || resource.loading.value,
+    commitCell: commitDetailEdit,
+    selectedKeys: () => {
+      return selectedCount.value
+        ? (detail.api.value?.selection.getIds() ?? []).map(String)
+        : []
+    },
+    resetLineState: () => {
+      detail.api.value?.selection.clear()
+      selectedCount.value = 0
+      batchPlan = undefined
+      batchPreview.value = []
+      batchResults.value = []
+      scope.clear()
+    },
+  })
   return {
-    ...useSalesOperations({
-      orders,
-      header,
-      lines,
-      activeId,
-      notice,
-      dirty,
-      activate,
-      blocked: () => saving.value || batchBusy.value || resource.loading.value,
-      commitCell: commitDetailEdit,
-      selectedKeys: () => {
-        return selectedCount.value
-          ? (detail.api.value?.selection.getIds() ?? []).map(String)
-          : []
-      },
-      resetLineState: () => {
-        detail.api.value?.selection.clear()
-        selectedCount.value = 0
-        batchPlan = undefined
-        batchPreview.value = []
-        batchResults.value = []
-        scope.clear()
-      },
-    }),
+    ...operations,
+    selectOrder,
+    cancelSwitch,
     container,
     stacked,
     form,

@@ -16,6 +16,13 @@ const field = (container: Locator, label: string) =>
       .locator('.n-form-item-label')
       .filter({ hasText: label }),
   })
+/** 每个动作绑定可见业务行，禁止依赖上一次选中项。 */
+const rowAction = (scope: Locator, id: string, name: string) =>
+  scope
+    .locator(`.mach-row[data-id="${id}"] .mach-cell[data-col-id="op"]`)
+    .getByRole('button', { name, exact: true })
+const shipmentRow = (page: Page, id: string) =>
+  page.locator(`.shipping-queue tr[data-shipment-id="${id}"]`)
 const modal = (page: Page) => page.locator('.c-form-modal:visible')
 const dialog = (page: Page) => page.locator('.n-dialog:visible')
 /** 首次加载完成后才操作，后续交互保持默认断言时限。 */
@@ -97,17 +104,17 @@ test('计划编制弹窗真实增改复制，确认取消和状态约束保持�
   await expect(table).toContainText('19 项')
   const detail = page.locator('[aria-label="计划协同详情"]')
   await expect(detail).toContainText('PP-20261029-019')
-  await page.getByRole('button', { name: '编辑当前计划', exact: true }).click()
+  await rowAction(table, 'PLAN-19', '编辑计划').click()
   await field(modal(page), '客户').locator('input').fill('取消的修改')
   await modal(page).getByRole('button', { name: '取消', exact: true }).click()
-  await page.getByRole('button', { name: '编辑当前计划', exact: true }).click()
+  await rowAction(table, 'PLAN-19', '编辑计划').click()
   await expect(field(modal(page), '客户').locator('input')).toHaveValue(
     '华东新材'
   )
   await field(modal(page), '客户').locator('input').fill('华东新材二厂')
   await modal(page).getByRole('button', { name: '保存', exact: true }).click()
   await expect(modal(page)).toHaveCount(0)
-  await page.getByRole('button', { name: '复制编制', exact: true }).click()
+  await rowAction(table, 'PLAN-19', '复制编制').click()
   await expect(field(modal(page), '客户').locator('input')).toHaveValue(
     '华东新材二厂'
   )
@@ -115,35 +122,34 @@ test('计划编制弹窗真实增改复制，确认取消和状态约束保持�
     .getByRole('button', { name: '保存计划', exact: true })
     .click()
   await expect(table).toContainText('20 项')
-  await page.getByRole('button', { name: '删除当前计划', exact: true }).click()
+  await rowAction(table, 'PLAN-20', '删除计划').click()
   await dialog(page).getByRole('button', { name: '取消', exact: true }).click()
   await expect(table).toContainText('20 项')
-  await page.getByRole('button', { name: '删除当前计划', exact: true }).click()
+  await rowAction(table, 'PLAN-20', '删除计划').click()
   await dialog(page)
     .getByRole('button', { name: '确认删除', exact: true })
     .click()
   await expect(table).toContainText('19 项')
+  await table.locator('.mach-body-viewport--scroll').evaluate(element => {
+    element.scrollTop = 0
+  })
   await table.locator('.mach-row[data-id="PLAN-1"] .mach-row-checkbox').check()
   await page.getByRole('button', { name: '下达选中计划', exact: true }).click()
   await dialog(page).getByRole('button', { name: '取消', exact: true }).click()
-  await expect(
-    page.getByRole('button', { name: '编辑当前计划', exact: true })
-  ).toBeEnabled()
+  await expect(rowAction(table, 'PLAN-1', '编辑计划')).toBeEnabled()
   await page.getByRole('button', { name: '下达选中计划', exact: true }).click()
   await dialog(page)
     .getByRole('button', { name: '确认下达', exact: true })
     .click()
-  await expect(
-    page.getByRole('button', { name: '编辑当前计划', exact: true })
-  ).toBeDisabled()
+  await expect(rowAction(table, 'PLAN-1', '编辑计划')).toBeDisabled()
   await page.getByRole('button', { name: '撤销下达', exact: true }).click()
   await dialog(page)
     .getByRole('button', { name: '确认撤销', exact: true })
     .click()
-  await expect(
-    page.getByRole('button', { name: '编辑当前计划', exact: true })
-  ).toBeEnabled()
-  await page.getByRole('button', { name: '计划详情', exact: true }).click()
+  await expect(rowAction(table, 'PLAN-1', '编辑计划')).toBeEnabled()
+  await table
+    .getByRole('button', { name: 'PP-20261029-001', exact: true })
+    .click()
   await expect(page.locator('.n-drawer')).toContainText('PP-20261029-001')
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
 })
@@ -195,19 +201,25 @@ test('订单与明细弹窗连接整单草稿，精确金额、详情只读和�
   ).toHaveText('0.000')
   await expect(page.getByTestId('draft-status')).toHaveText('有未保存修改')
   await line.locator('.mach-row-checkbox').first().check()
-  await page.getByRole('button', { name: '编辑明细', exact: true }).click()
+  await rowAction(line, 'ORDER-19-LINE-1', '编辑明细').click()
   await expect(field(modal(page), '金额').locator('input')).toHaveValue('1.005')
   await field(modal(page), '金额').locator('input').fill('2.005')
   await modal(page).getByRole('button', { name: '保存', exact: true }).click()
   await page.getByRole('button', { name: '保存整单', exact: true }).click()
   await expect(page.getByTestId('draft-status')).toHaveText('已保存')
-  await page.getByRole('button', { name: '编辑订单', exact: true }).click()
+  await rowAction(
+    page.locator('.workbench-master-grid'),
+    'ORDER-19',
+    '编辑订单'
+  ).click()
   await field(modal(page), '业务人员').locator('input').fill('新经办')
   await modal(page).getByRole('button', { name: '保存', exact: true }).click()
   await expect(page.getByTestId('draft-status')).toHaveText('有未保存修改')
   await page.getByRole('button', { name: '保存整单', exact: true }).click()
   await expect(page.getByTestId('draft-status')).toHaveText('已保存')
-  await page.getByRole('button', { name: '订单详情', exact: true }).click()
+  await page
+    .getByRole('button', { name: '查看SO-2026-019详情', exact: true })
+    .click()
   const drawer = page.locator('.n-drawer')
   await expect(drawer).toContainText('新经办')
   await drawer
@@ -215,7 +227,11 @@ test('订单与明细弹窗连接整单草稿，精确金额、详情只读和�
     .dblclick()
   await expect(drawer.locator('.mach-editor-input')).toHaveCount(0)
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
-  await page.getByRole('button', { name: '复制当前订单', exact: true }).click()
+  await rowAction(
+    page.locator('.workbench-master-grid'),
+    'ORDER-19',
+    '复制订单'
+  ).click()
   await modal(page)
     .getByRole('button', { name: '建立订单', exact: true })
     .click()
@@ -330,11 +346,15 @@ test('发运编制与配载连接，取消不改计划，装车后锁定且出�
     .click()
   await expect(page.locator('.shipping-current')).toContainText('DN-261029-013')
   await expect(page.locator('.shipping-current')).toContainText('25.001')
-  await page.getByRole('button', { name: '编辑当前任务', exact: true }).click()
+  await shipmentRow(page, 'SHIP-13')
+    .getByRole('button', { name: '编辑', exact: true })
+    .click()
   await field(modal(page), '计划量').locator('input').fill('24000')
   await modal(page).getByRole('button', { name: '取消', exact: true }).click()
   await expect(page.locator('.shipping-current')).toContainText('25.001')
-  await page.getByRole('button', { name: '编辑当前任务', exact: true }).click()
+  await shipmentRow(page, 'SHIP-13')
+    .getByRole('button', { name: '编辑', exact: true })
+    .click()
   await field(modal(page), '计划量').locator('input').fill('25002')
   await modal(page).getByRole('button', { name: '保存', exact: true }).click()
   await page.getByRole('button', { name: '推荐配载', exact: true }).click()
@@ -346,12 +366,20 @@ test('发运编制与配载连接，取消不改计划，装车后锁定且出�
     .fill('刘强')
   await page.getByRole('button', { name: '生成装车单', exact: true }).click()
   await expect(
-    page.getByRole('button', { name: '编辑当前任务', exact: true })
+    shipmentRow(page, 'SHIP-13').getByRole('button', {
+      name: '编辑',
+      exact: true,
+    })
   ).toBeDisabled()
   await expect(
-    page.getByRole('button', { name: '删除当前任务', exact: true })
+    shipmentRow(page, 'SHIP-13').getByRole('button', {
+      name: '删除',
+      exact: true,
+    })
   ).toBeDisabled()
-  await page.getByRole('button', { name: '发运单详情', exact: true }).click()
+  await shipmentRow(page, 'SHIP-13')
+    .getByRole('button', { name: 'DN-261029-013', exact: true })
+    .click()
   await expect(page.locator('.n-drawer')).toContainText('刘强')
   await expect(page.locator('.n-drawer')).toContainText('装车单已建立')
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()

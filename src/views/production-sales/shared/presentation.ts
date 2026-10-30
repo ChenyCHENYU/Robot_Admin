@@ -44,7 +44,19 @@ export const statusTag = (
 
 /** 业务主键按钮同时提供清晰的键盘入口。 */
 export const recordLink = (label: string, onClick: () => void) =>
-  h('button', { class: 'ps-record-link', type: 'button', onClick }, label)
+  h(
+    'button',
+    {
+      class: 'ps-record-link',
+      type: 'button',
+      title: '查看详情',
+      onClick: (event: MouseEvent) => {
+        event.stopPropagation()
+        onClick()
+      },
+    },
+    label
+  )
 
 export const PAGE_ICON =
   'M3 3h7v7H3V3m2 2v3h3V5H5m9-2h7v7h-7V3m2 2v3h3V5h-3M3 14h7v7H3v-7m2 2v3h3v-3H5m9-2h7v7h-7v-7m2 2v3h3v-3h-3Z'

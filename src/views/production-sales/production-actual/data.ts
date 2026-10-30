@@ -11,7 +11,11 @@ import type {
   FormInstance,
 } from '@robot-admin/naive-ui-components/C_Form'
 import type { SectionNavItem } from '@robot-admin/naive-ui-components/C_SectionNav'
-import { defineVueColumns, type RowStyleRule } from '@agile-team/mach-table-vue'
+import {
+  defineVueColumns,
+  indexColumn,
+  type RowStyleRule,
+} from '@agile-team/mach-table-vue'
 import { statusTag } from '../shared/presentation'
 import { useActualReview } from './operations'
 
@@ -214,6 +218,7 @@ export function useProductionActual() {
   const referenceColumns = defineVueColumns<
     (typeof referenceRows.value)[number]
   >([
+    indexColumn({ headerName: '序号', width: 46 }),
     { field: 'name', headerName: '实绩项目', minWidth: 160, flex: 1 },
     {
       field: 'previous',
@@ -299,6 +304,7 @@ export function useProductionActual() {
   }
   const chemicalColumns = defineVueColumns<(typeof chemicalRows.value)[number]>(
     [
+      indexColumn({ headerName: '序号', width: 46 }),
       { field: 'name', headerName: '检测项目', flex: 1 },
       { field: 'unit', headerName: '单位', width: 80 },
       { field: 'min', headerName: '内控下限', width: 130, align: 'right' },

@@ -54,14 +54,16 @@
               ><h2>当班炉次</h2><span>{{ HEATS.length }} 炉</span></header
             ><div class="actual-heat-list"
               ><button
-                v-for="heat in heatList"
+                v-for="(heat, index) in heatList"
                 :key="heat.id"
                 type="button"
                 :class="{ 'is-active': currentId === heat.id }"
                 :aria-pressed="currentId === heat.id"
                 @click="chooseHeat(heat.id)"
                 ><div
-                  ><strong>{{ heat.no }}</strong
+                  ><strong
+                    ><span class="actual-heat-index">{{ index + 1 }}</span
+                    >{{ heat.no }}</strong
                   ><span>{{ heat.time }}</span></div
                 ><p>{{ heat.furnace }} · {{ heat.grade }}</p
                 ><NTag

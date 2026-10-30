@@ -118,6 +118,7 @@
                   :ref="master.ref"
                   :row-data="filteredOrders"
                   :column-defs="masterColumns"
+                  @row-clicked="selectOrder"
                   row-key="id"
                   :row-height="30"
                   :header-height="36"
@@ -131,7 +132,7 @@
                   :enable-column-resize="true"
               /></div>
               <p class="workbench-panel-note"
-                >点击订单编号联动主档与明细。未保存时可保存、放弃或取消切换。</p
+                >点击行联动主档与明细，蓝色单号查看详情。未保存时可保存、放弃或取消切换。</p
               >
             </section>
           </template>
@@ -402,7 +403,7 @@
         title="有未保存的修改"
         class="workbench-switch-dialog"
         :mask-closable="false"
-        @update:show="!$event && (pendingOrder = null)"
+        @update:show="!$event && cancelSwitch()"
       >
         <p>当前单据有未保存内容，请选择如何切换订单。</p>
         <template #action
@@ -411,7 +412,7 @@
             :size="8"
             ><NButton
               size="small"
-              @click="pendingOrder = null"
+              @click="cancelSwitch"
               >取消切换</NButton
             ><NButton
               size="small"
@@ -445,11 +446,12 @@
         v-model:show="detailVisible"
         width="min(760px, 100vw)"
         ><NDrawerContent
+          v-if="detailOrder"
           title="销售订单详情"
           closable
         >
           <NAlert
-            v-if="dirty"
+            v-if="dirty && detailOrder.header.id === header.id"
             type="warning"
             :show-icon="false"
             >当前显示包含未保存草稿，请返回工作台保存整单。</NAlert
@@ -460,34 +462,37 @@
             size="small"
           >
             <NDescriptionsItem label="订单号">{{
-              header.orderNo
+              detailOrder.header.orderNo
             }}</NDescriptionsItem
             ><NDescriptionsItem label="合同号">{{
-              header.contractNo
+              detailOrder.header.contractNo
             }}</NDescriptionsItem>
             <NDescriptionsItem label="客户">{{
-              CUSTOMERS.find(row => row.id === header.customer)?.name ||
-              '未选择'
+              CUSTOMERS.find(row => row.id === detailOrder?.header.customer)
+                ?.name || '未选择'
             }}</NDescriptionsItem
             ><NDescriptionsItem label="业务人员">{{
-              header.owner
+              detailOrder.header.owner
             }}</NDescriptionsItem>
             <NDescriptionsItem label="钢种 / 规格"
-              >{{ header.grade }} / {{ header.section }}</NDescriptionsItem
+              >{{ detailOrder.header.grade }} /
+              {{ detailOrder.header.section }}</NDescriptionsItem
             ><NDescriptionsItem label="交付日期">{{
-              header.delivery
+              detailOrder.header.delivery
             }}</NDescriptionsItem>
             <NDescriptionsItem label="合同量"
-              >{{ header.targetWeight }} t</NDescriptionsItem
+              >{{ detailOrder.header.targetWeight }} t</NDescriptionsItem
             ><NDescriptionsItem label="状态">{{
-              STATUS_OPTIONS.find(row => row.value === header.status)?.label
+              STATUS_OPTIONS.find(
+                row => row.value === detailOrder?.header.status
+              )?.label
             }}</NDescriptionsItem>
           </NDescriptions>
-          <NDivider>商品明细 · {{ lines.length }} 条</NDivider>
+          <NDivider>商品明细 · {{ detailOrder.lines.length }} 条</NDivider>
           <div class="workbench-drawer-grid"
             ><MachTable
               v-bind="BUSINESS_GRID"
-              :row-data="lines"
+              :row-data="detailOrder.lines"
               :column-defs="readonlyDetailColumns"
               :theme="themeStore.isDark ? 'dark' : 'light'"
           /></div>
@@ -500,6 +505,48 @@
           >
         </NDrawerContent></NDrawer
       >
+      <NDrawer
+        :show="!!lineDetail"
+        width="min(540px, 100vw)"
+        @update:show="!$event && (lineDetail = null)"
+      >
+        <NDrawerContent
+          v-if="lineDetail"
+          title="商品明细详情"
+          closable
+        >
+          <NDescriptions
+            :column="1"
+            bordered
+            size="small"
+          >
+            <NDescriptionsItem label="明细编号">{{
+              lineDetail.id
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="商品">{{
+              lineDetail.product
+            }}</NDescriptionsItem>
+            <NDescriptionsItem label="数量"
+              >{{ lineDetail.quantity ?? '—' }}
+              {{ lineDetail.unit }}</NDescriptionsItem
+            >
+            <NDescriptionsItem label="金额"
+              >{{ lineDetail.amount ?? '—' }}
+              {{ lineDetail.currency }}</NDescriptionsItem
+            >
+            <NDescriptionsItem label="备注">{{
+              lineDetail.note ?? '—'
+            }}</NDescriptionsItem>
+          </NDescriptions>
+          <template #footer
+            ><NButton
+              size="small"
+              @click="lineDetail = null"
+              >关闭详情</NButton
+            ></template
+          >
+        </NDrawerContent>
+      </NDrawer>
     </C_Density>
   </main>
 </template>
@@ -557,6 +604,10 @@
     dirty,
     scope,
     masterColumns,
+    selectOrder,
+    cancelSwitch,
+    detailOrder,
+    lineDetail,
     masterRowStyles,
     detailColumns,
     readonlyDetailColumns,

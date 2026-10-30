@@ -73,9 +73,14 @@ export function useShipmentOperations(context: {
   const { rows, currentId, notice, activate, vehicleDirty } = context
   const dialog = useDialog()
   const detailVisible = ref(false)
-  const current = computed(
-    () => rows.value.find(row => row.id === currentId.value) ?? rows.value[0]
-  )
+  const detailShipment = shallowRef<Shipment | null>(null)
+  const openDetail = (row: Shipment) => {
+    detailShipment.value = {
+      ...row,
+      vehicle: row.vehicle && { ...row.vehicle },
+    }
+    detailVisible.value = true
+  }
   let sequence = rows.value.length
   const { editor } = useNaiveTableCrud<Shipment>({
     query: async () => ({ items: rows.value, total: rows.value.length }),
@@ -116,16 +121,18 @@ export function useShipmentOperations(context: {
       },
     },
   })
-  const open = (mode: 'create' | 'edit') => {
+  const open = (row?: Shipment) => {
     if (vehicleDirty()) {
       notice.value = '当前车辆安排有未保存修改，请先生成装车单或恢复车辆安排。'
       return
     }
-    if (mode === 'create') editor.openCreate()
-    else if (current.value.status === 'waiting') editor.openEdit(current.value)
+    if (!row) editor.openCreate()
+    else {
+      const target = rows.value.find(item => item.id === row.id)
+      if (target?.status === 'waiting') editor.openEdit(target)
+    }
   }
-  const remove = () => {
-    const target = current.value
+  const remove = (target: Shipment) => {
     if (target.status !== 'waiting' || vehicleDirty()) return
     dialog.warning({
       title: '删除待配载任务',
@@ -136,32 +143,21 @@ export function useShipmentOperations(context: {
         if (rows.value.find(row => row.id === target.id)?.status !== 'waiting')
           return
         rows.value = rows.value.filter(row => row.id !== target.id)
-        activate(rows.value[0].id)
+        if (currentId.value === target.id) activate(rows.value[0].id)
         notice.value = `${target.no} 已删除（本地演示）。`
       },
     })
   }
   const actions = computed<ActionItem[]>(() => [
-    { key: 'create', label: '新增发运任务', onClick: () => open('create') },
-    {
-      key: 'edit',
-      label: '编辑当前任务',
-      disabled: current.value.status !== 'waiting',
-      onClick: () => open('edit'),
-    },
-    {
-      key: 'detail',
-      label: '发运单详情',
-      onClick: () => {
-        detailVisible.value = true
-      },
-    },
-    {
-      key: 'delete',
-      label: '删除当前任务',
-      disabled: current.value.status !== 'waiting' || vehicleDirty(),
-      onClick: remove,
-    },
+    { key: 'create', label: '新增发运任务', onClick: () => open() },
   ])
-  return { taskEditor: editor, taskActions: actions, detailVisible }
+  return {
+    taskEditor: editor,
+    taskActions: actions,
+    detailVisible,
+    detailShipment,
+    openDetail,
+    editShipment: open,
+    removeShipment: remove,
+  }
 }

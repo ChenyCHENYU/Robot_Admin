@@ -62,7 +62,7 @@
           aria-label="发运任务池"
           ><header class="ps-panel-heading"
             ><h2>当班发运任务池</h2
-            ><span>{{ visibleRows.length }} 笔 · 点击单号安排配载</span></header
+            ><span>{{ visibleRows.length }} 笔 · 点击行安排配载</span></header
           ><div class="ps-toolbar"
             ><C_ActionBar
               :actions="taskActions"
@@ -70,10 +70,11 @@
           ><C_Table
             :columns="columns"
             :data="visibleRows"
+            :row-props="rowProps"
             row-key="id"
             :config="SHIPMENT_TABLE_CONFIG"
           /><p class="ps-footnote"
-            >点击发运单号查看库存与车辆安排；已出厂任务保留记录，便于交付追溯。</p
+            >点击行安排配载，蓝色单号查看详情；已出厂任务保留记录，便于交付追溯。</p
           ></section
         >
         <section
@@ -160,6 +161,7 @@
         v-model:show="detailVisible"
         width="min(660px, 100vw)"
         ><NDrawerContent
+          v-if="detailShipment"
           title="发运单详情"
           closable
         >
@@ -169,37 +171,37 @@
             size="small"
           >
             <NDescriptionsItem label="发运单号">{{
-              current.no
+              detailShipment.no
             }}</NDescriptionsItem
             ><NDescriptionsItem label="状态">{{
-              SHIPMENT_STATES[current.status].label
+              SHIPMENT_STATES[detailShipment.status].label
             }}</NDescriptionsItem>
             <NDescriptionsItem label="客户">{{
-              current.customer
+              detailShipment.customer
             }}</NDescriptionsItem
             ><NDescriptionsItem label="目的地">{{
-              current.destination
+              detailShipment.destination
             }}</NDescriptionsItem>
             <NDescriptionsItem label="钢种">{{
-              current.grade
+              detailShipment.grade
             }}</NDescriptionsItem
             ><NDescriptionsItem label="计划量"
               >{{
-                weightCodec.format(current.weightKg / 1000)
+                weightCodec.format(detailShipment.weightKg / 1000)
               }}
               t</NDescriptionsItem
             >
             <NDescriptionsItem label="车辆">{{
-              current.plate || '待安排'
+              detailShipment.plate || '待安排'
             }}</NDescriptionsItem
             ><NDescriptionsItem label="窗口">{{
-              current.window
+              detailShipment.window
             }}</NDescriptionsItem>
             <NDescriptionsItem label="驾驶员">{{
-              current.vehicle?.driver || '待安排'
+              detailShipment.vehicle?.driver || '待安排'
             }}</NDescriptionsItem
             ><NDescriptionsItem label="装车货位">{{
-              current.vehicle?.gate || '待安排'
+              detailShipment.vehicle?.gate || '待安排'
             }}</NDescriptionsItem>
           </NDescriptions>
           <NDivider>交付进程</NDivider
@@ -209,18 +211,20 @@
               {
                 id: 'loading',
                 title:
-                  current.status === 'waiting'
+                  detailShipment.status === 'waiting'
                     ? '等待库存匹配与车辆配载'
                     : '车辆已安排，装车单已建立',
-                status: current.status === 'waiting' ? 'default' : 'success',
+                status:
+                  detailShipment.status === 'waiting' ? 'default' : 'success',
               },
               {
                 id: 'departed',
                 title:
-                  current.status === 'departed'
+                  detailShipment.status === 'departed'
                     ? '车辆已确认出厂'
                     : '等待装车及出厂校核',
-                status: current.status === 'departed' ? 'success' : 'default',
+                status:
+                  detailShipment.status === 'departed' ? 'success' : 'default',
               },
             ]"
             size="small"
@@ -273,6 +277,8 @@
     selectedLots,
     selectedKg,
     columns,
+    rowProps,
+    detailShipment,
     lotColumns,
     busy,
     notice,

@@ -102,6 +102,7 @@
                 column-layout="normal"
                 :row-data="visibleRows"
                 :column-defs="columns"
+                @row-clicked="selectPlan"
                 :row-style-rules="rowStyles"
                 row-selection="multiple"
                 :row-drag="reorderEnabled"
@@ -111,7 +112,7 @@
                 @row-drag-end="onReorder"
             /></div>
             <p class="ps-footnote"
-              >点击计划号联动炉次。淡黄色表示已下达；未筛选时可拖动待下达计划的顺序。</p
+              >点击行联动炉次，蓝色计划号查看详情。淡黄色表示已下达；未筛选时可拖动待下达计划的顺序。</p
             >
           </section>
           <section
@@ -185,6 +186,7 @@
         placement="right"
       >
         <NDrawerContent
+          v-if="detailPlan"
           title="生产计划详情"
           closable
         >
@@ -194,30 +196,31 @@
             size="small"
           >
             <NDescriptionsItem label="计划号">{{
-              current.planNo
+              detailPlan.planNo
             }}</NDescriptionsItem>
             <NDescriptionsItem label="状态">{{
-              PLAN_STATES[current.status].label
+              PLAN_STATES[detailPlan.status].label
             }}</NDescriptionsItem>
             <NDescriptionsItem label="产线 / 浇次"
-              >{{ current.line }} / {{ current.cast }}</NDescriptionsItem
+              >{{ detailPlan.line }} / {{ detailPlan.cast }}</NDescriptionsItem
             >
             <NDescriptionsItem label="客户">{{
-              current.customer
+              detailPlan.customer
             }}</NDescriptionsItem>
             <NDescriptionsItem label="钢种 / 断面"
-              >{{ current.grade }} / {{ current.section }}</NDescriptionsItem
+              >{{ detailPlan.grade }} /
+              {{ detailPlan.section }}</NDescriptionsItem
             >
             <NDescriptionsItem label="计划量 / 炉数"
-              >{{ current.weight }} t /
-              {{ current.heats }} 炉</NDescriptionsItem
+              >{{ detailPlan.weight }} t /
+              {{ detailPlan.heats }} 炉</NDescriptionsItem
             >
           </NDescriptions>
           <NDivider>炉次编排</NDivider>
           <div class="ps-grid ps-grid--small"
             ><MachTable
               v-bind="BUSINESS_GRID"
-              :row-data="heatRows"
+              :row-data="detailHeatRows"
               :column-defs="heatColumns"
               :theme="themeStore.isDark ? 'dark' : 'light'"
           /></div>
@@ -261,6 +264,9 @@
     totalWeight,
     selectedIds,
     columns,
+    selectPlan,
+    detailPlan,
+    detailHeatRows,
     table,
     rowStyles,
     heatRows,
