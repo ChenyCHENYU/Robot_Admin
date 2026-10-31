@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type { Ref } from 'vue'
+import type { DialogReactive } from 'naive-ui'
 import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
 import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
@@ -101,6 +102,13 @@ export function usePlanOperations(context: {
 }) {
   const { rows, currentId, selectedIds, notice } = context
   const dialog = useDialog()
+  let copyDialog: DialogReactive | null = null
+  let alive = true
+  onScopeDispose(() => {
+    alive = false
+    copyDialog?.destroy()
+    copyDialog = null
+  })
   let sequence = rows.value.length
   const detailVisible = ref(false)
   const detailPlan = shallowRef<ProductionPlan | null>(null)
@@ -112,15 +120,24 @@ export function usePlanOperations(context: {
     const target = rows.value.find(item => item.id === row.id)
     if (target?.status === 'draft') editor.openEdit(target)
   }
-  const { editor } = useNaiveTableCrud<ProductionPlan>({
+  const { editor, create, createDraft } = useNaiveTableCrud<ProductionPlan>({
     query: async () => ({ items: rows.value, total: rows.value.length }),
     autoLoad: false,
     refreshAfterMutation: false,
     createNewRow: () => {
-      const number = ++sequence
+      let number: number
+      let planNo: string
+      do {
+        number = ++sequence
+        planNo = `PP-20261029-${String(number).padStart(3, '0')}`
+      } while (
+        rows.value.some(
+          row => row.id === `PLAN-${number}` || row.planNo === planNo
+        )
+      )
       return {
         id: `PLAN-${number}`,
-        planNo: `PP-20261029-${String(number).padStart(3, '0')}`,
+        planNo,
         line: 'CC1',
         cast: '',
         grade: 'Q355B',
@@ -152,17 +169,51 @@ export function usePlanOperations(context: {
       },
     },
   })
+  /** 复制是新增命令，不打开编辑器；确认时才分配身份并读取当前源记录。 */
   const copy = (row: ProductionPlan) => {
-    const source = { ...row }
-    editor.openCreate()
-    const identity = editor.model.value!
-    editor.setModel({
-      ...source,
-      id: identity.id,
-      planNo: identity.planNo,
-      status: 'draft',
+    if (!alive || copyDialog || editor.visible.value) return
+    const source = rows.value.find(item => item.id === row.id)
+    if (!source) return
+    const clearCopy = () => {
+      if (copyDialog === confirm) copyDialog = null
+    }
+    const confirm = dialog.info({
+      title: '复制生产计划',
+      content: `将 ${source.planNo} 的编制信息复制为一份新的待下达计划，自动生成新计划号。原计划保持不变，需要调整时可编辑新计划。`,
+      positiveText: '确认复制',
+      negativeText: '取消',
+      onPositiveClick: async () => {
+        if (!alive || copyDialog !== confirm || confirm.loading) return false
+        const latest = rows.value.find(item => item.id === source.id)
+        if (!latest) {
+          notice.value = '原计划已不存在，无法复制。'
+          clearCopy()
+          return
+        }
+        confirm.loading = true
+        try {
+          const identity = createDraft()
+          await create({
+            ...latest,
+            id: identity.id,
+            planNo: identity.planNo,
+            status: 'draft',
+          })
+          if (alive)
+            notice.value = `已将 ${latest.planNo} 复制为 ${identity.planNo}，新计划为待下达状态（本地演示）。`
+        } catch {
+          // 请求层已提供失败反馈，保留确认框供重试。
+          confirm.loading = false
+          return false
+        }
+      },
+      onNegativeClick: clearCopy,
+      onClose: clearCopy,
+      onEsc: clearCopy,
+      onMaskClick: clearCopy,
+      onAfterLeave: clearCopy,
     })
-    editor.title.value = `复制编制 · ${source.planNo}`
+    copyDialog = confirm
   }
   const remove = (target: ProductionPlan) => {
     if (target.status !== 'draft') return

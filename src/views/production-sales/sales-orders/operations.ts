@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type { Ref } from 'vue'
+import type { DialogReactive } from 'naive-ui'
 import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
 import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
@@ -155,6 +156,13 @@ export function useSalesOperations(context: {
     resetLineState,
   } = context
   const dialog = useDialog()
+  let copyDialog: DialogReactive | null = null
+  let alive = true
+  onScopeDispose(() => {
+    alive = false
+    copyDialog?.destroy()
+    copyDialog = null
+  })
   const detailVisible = ref(false)
   const detailOrder = shallowRef<BusinessOrder | null>(null)
   const lineDetail = shallowRef<OrderLine | null>(null)
@@ -182,8 +190,25 @@ export function useSalesOperations(context: {
   let sequence = orders.value.length
   let lineSequence = 0
   let lineOwner = ''
-  let copiedLines: OrderLine[] = []
-  const { editor: orderEditor } = useNaiveTableCrud<OrderHeader>({
+  /** 新增与复制共用持久化边界，明细仅作为当前命令参数，不存跨弹窗共享草稿。 */
+  const appendNewOrder = (
+    row: OrderHeader,
+    sourceLines: readonly OrderLine[] = []
+  ) => {
+    orders.value = [
+      ...orders.value,
+      {
+        header: { ...row, status: 0, progress: 0 },
+        lines: sourceLines.map((line, index) => ({
+          ...line,
+          id: `${row.id}-L${String(index + 1).padStart(2, '0')}`,
+        })),
+      },
+    ]
+    activate(row.id)
+    notice.value = `${row.orderNo} 已建立，请完善商品明细后保存整单。`
+  }
+  const { editor: orderEditor, createDraft } = useNaiveTableCrud<OrderHeader>({
     query: async () => ({
       items: orders.value.map(row => row.header),
       total: orders.value.length,
@@ -195,10 +220,21 @@ export function useSalesOperations(context: {
       editTitle: row => `编辑订单 · ${row.orderNo}`,
     },
     createNewRow: () => {
-      const number = ++sequence
+      let number: number
+      let orderNo: string
+      do {
+        number = ++sequence
+        orderNo = `SO-2026-${String(number).padStart(3, '0')}`
+      } while (
+        orders.value.some(
+          order =>
+            order.header.id === `ORDER-${number}` ||
+            order.header.orderNo === orderNo
+        )
+      )
       return {
         id: `ORDER-${number}`,
-        orderNo: `SO-2026-${String(number).padStart(3, '0')}`,
+        orderNo,
         customer: null,
         status: 0,
         owner: '陈雨',
@@ -224,46 +260,69 @@ export function useSalesOperations(context: {
         notice.value = '订单主档已更新到草稿，请保存整单。'
       },
       create: async row => {
-        orders.value = [
-          ...orders.value,
-          {
-            header: { ...row, status: 0, progress: 0 },
-            lines: copiedLines.map((line, index) => ({
-              ...line,
-              id: `${row.id}-L${String(index + 1).padStart(2, '0')}`,
-            })),
-          },
-        ]
-        activate(row.id)
-        notice.value = `${row.orderNo} 已建立，请完善商品明细后保存整单。`
+        appendNewOrder(row)
       },
     },
   })
-  const openOrder = async (sourceRow?: OrderHeader) => {
+  const openOrder = async () => {
     if (blocked() || !(await commitCell())) return
     if (dirty.value) {
       notice.value = '请先保存或恢复当前订单，再新增或复制订单。'
       return
     }
-    const source =
-      sourceRow && orders.value.find(order => order.header.id === sourceRow.id)
-    copiedLines = source
-      ? (sourceRow.id === activeId.value ? lines.value : source.lines).map(
-          row => ({ ...row })
-        )
-      : []
     orderEditor.openCreate()
-    if (source) {
-      const identity = orderEditor.model.value!
-      orderEditor.setModel({
-        ...(sourceRow.id === activeId.value ? header.value : source.header),
-        id: identity.id,
-        orderNo: identity.orderNo,
-        status: 0,
-        progress: 0,
-      })
-      orderEditor.title.value = `复制订单 · ${source.header.orderNo}`
+  }
+  const canStartCopy = () =>
+    alive && !copyDialog && !blocked() && !orderEditor.visible.value
+  /** 确认后直接新增整单副本，明细重建身份，状态与履约进度重新开始。 */
+  const copyOrder = async (row: OrderHeader) => {
+    if (!canStartCopy() || !(await commitCell())) return
+    // 单元格提交期间可能切换上下文或收到第二次点击，入口条件必须重新确认。
+    if (!canStartCopy()) return
+    if (dirty.value) {
+      notice.value = '请先保存或恢复当前订单，再新增或复制订单。'
+      return
     }
+    const source = orders.value.find(order => order.header.id === row.id)
+    if (!source) return
+    const clearCopy = () => {
+      if (copyDialog === confirm) copyDialog = null
+    }
+    const confirm = dialog.info({
+      title: '复制销售订单',
+      content: `将 ${source.header.orderNo} 及商品明细复制为一份新的草稿订单，自动生成新订单号。原订单保持不变，履约进度归零，需要调整时可编辑新订单。`,
+      positiveText: '确认复制',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        if (!alive || copyDialog !== confirm || confirm.loading) return false
+        if (blocked() || dirty.value || orderEditor.visible.value) {
+          notice.value = '请先保存或恢复当前订单，再新增或复制订单。'
+          clearCopy()
+          return
+        }
+        const latest = orders.value.find(
+          order => order.header.id === source.header.id
+        )
+        if (!latest) {
+          notice.value = '原订单已不存在，无法复制。'
+          clearCopy()
+          return
+        }
+        confirm.loading = true
+        const identity = createDraft()
+        appendNewOrder(
+          { ...latest.header, id: identity.id, orderNo: identity.orderNo },
+          latest.lines
+        )
+        notice.value = `已将 ${latest.header.orderNo} 复制为 ${identity.orderNo}，新订单为草稿状态，履约进度归零（本地演示）。`
+      },
+      onNegativeClick: clearCopy,
+      onClose: clearCopy,
+      onEsc: clearCopy,
+      onMaskClick: clearCopy,
+      onAfterLeave: clearCopy,
+    })
+    copyDialog = confirm
   }
   const editOrder = async (row: OrderHeader) => {
     if (row.status !== 0 || blocked()) return
@@ -388,7 +447,7 @@ export function useSalesOperations(context: {
     openDetail,
     openLineDetail,
     editOrder,
-    copyOrder: openOrder,
+    copyOrder,
     removeOrder,
     editLine: openLine,
     removeLine: (row: OrderLine) => removeLines([row.id]),

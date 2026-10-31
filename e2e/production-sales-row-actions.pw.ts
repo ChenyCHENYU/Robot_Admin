@@ -200,17 +200,39 @@ test('跨行编辑保留切单保护，取消不遗留动作，放弃后继续�
   const table = page.locator('.workbench-master-grid')
   await expect(action(table, 'ORDER-1', '复制订单')).toBeEnabled()
   await action(table, 'ORDER-1', '复制订单').click()
-  await modal(page)
-    .getByRole('button', { name: '建立订单', exact: true })
-    .click()
-  await expect(page.getByTestId('active-order')).toHaveText('SO-2026-019')
+  const confirmation = page.locator('.n-dialog:visible')
+  await expect(modal(page)).toHaveCount(0)
+  await expect(confirmation).toContainText('复制销售订单')
+  await expect(confirmation).toContainText('SO-2026-001')
+  await confirmation.getByRole('button', { name: '取消', exact: true }).click()
+  await expect(confirmation).toHaveCount(0)
+  await expect(page.getByTestId('active-order')).toHaveText('SO-2026-001')
   await expect(
-    page
-      .getByTestId('line-panel')
-      .locator(
-        '.mach-row[data-id="ORDER-19-L01"] .mach-cell[data-col-id="quantity"]'
-      )
+    table.getByRole('button', { name: '查看SO-2026-019详情', exact: true })
+  ).toHaveCount(0)
+  await action(table, 'ORDER-1', '复制订单').click()
+  await expect(modal(page)).toHaveCount(0)
+  await expect(confirmation).toContainText('复制销售订单')
+  await confirmation
+    .getByRole('button', { name: '确认复制', exact: true })
+    .click()
+  await expect(confirmation).toHaveCount(0)
+  await expect(modal(page)).toHaveCount(0)
+  await expect(page.getByTestId('active-order')).toHaveText('SO-2026-019')
+  const lines = page.getByTestId('line-panel')
+  await expect(
+    lines.locator(
+      '.mach-row[data-id="ORDER-19-L01"] .mach-cell[data-col-id="quantity"]'
+    )
   ).toHaveText('0.000')
+  await expect(
+    lines.locator(
+      '.mach-row[data-id="ORDER-19-L01"] .mach-cell[data-col-id="amount"]'
+    )
+  ).toHaveText('1.01')
+  await action(lines, 'ORDER-19-L01', '编辑明细').click()
+  await expect(field(modal(page), '金额')).toHaveValue('1.005')
+  await modal(page).getByRole('button', { name: '取消', exact: true }).click()
   const note = field(page.locator('.workbench-header'), '订单备注')
   await note.fill('第 19 笔尚未保存')
   await table.locator('.mach-body-viewport--scroll').evaluate(element => {

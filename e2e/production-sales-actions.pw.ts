@@ -205,13 +205,45 @@ test('计划编制弹窗真实增改复制，确认取消和状态约束保持�
   await modal(page).getByRole('button', { name: '保存', exact: true }).click()
   await expect(modal(page)).toHaveCount(0)
   await rowAction(table, 'PLAN-19', '复制编制').click()
+  await expect(modal(page)).toHaveCount(0)
+  await expect(dialog(page)).toContainText('复制生产计划')
+  await expect(dialog(page)).toContainText('PP-20261029-019')
+  await dialog(page).getByRole('button', { name: '取消', exact: true }).click()
+  await expect(dialog(page)).toHaveCount(0)
+  await expect(table).toContainText('19 项')
+  await expect(detail).toContainText('PP-20261029-019')
+  await rowAction(table, 'PLAN-19', '复制编制').click()
+  await expect(modal(page)).toHaveCount(0)
+  await expect(dialog(page)).toContainText('复制生产计划')
+  await dialog(page).screenshot({
+    path: info.outputPath('plan-copy-confirmation.png'),
+    animations: 'disabled',
+  })
+  await dialog(page)
+    .getByRole('button', { name: '确认复制', exact: true })
+    .click()
+  await expect(dialog(page)).toHaveCount(0)
+  await expect(modal(page)).toHaveCount(0)
+  await expect(table).toContainText('20 项')
+  await expect(detail).toContainText('PP-20261029-020')
+  await expect(rowAction(table, 'PLAN-20', '编辑计划')).toBeEnabled()
+  await rowAction(table, 'PLAN-20', '编辑计划').click()
+  await expect(field(modal(page), '生产计划号').locator('input')).toHaveValue(
+    'PP-20261029-020'
+  )
   await expect(field(modal(page), '客户').locator('input')).toHaveValue(
     '华东新材二厂'
   )
-  await modal(page)
-    .getByRole('button', { name: '保存计划', exact: true })
-    .click()
-  await expect(table).toContainText('20 项')
+  await field(modal(page), '客户').locator('input').fill('副本独立客户')
+  await modal(page).getByRole('button', { name: '保存', exact: true }).click()
+  await rowAction(table, 'PLAN-19', '编辑计划').click()
+  await expect(field(modal(page), '生产计划号').locator('input')).toHaveValue(
+    'PP-20261029-019'
+  )
+  await expect(field(modal(page), '客户').locator('input')).toHaveValue(
+    '华东新材二厂'
+  )
+  await modal(page).getByRole('button', { name: '取消', exact: true }).click()
   await rowAction(table, 'PLAN-20', '删除计划').click()
   await dialog(page).getByRole('button', { name: '取消', exact: true }).click()
   await expect(table).toContainText('20 项')
@@ -324,16 +356,62 @@ test('订单与明细弹窗连接整单草稿，精确金额、详情只读和�
     'ORDER-19',
     '复制订单'
   ).click()
-  await modal(page)
-    .getByRole('button', { name: '建立订单', exact: true })
+  await expect(modal(page)).toHaveCount(0)
+  await expect(dialog(page)).toContainText('复制销售订单')
+  await expect(dialog(page)).toContainText('SO-2026-019')
+  await dialog(page).getByRole('button', { name: '取消', exact: true }).click()
+  await expect(dialog(page)).toHaveCount(0)
+  await expect(page.getByTestId('active-order')).toHaveText('SO-2026-019')
+  await expect(
+    page.getByRole('button', { name: '查看SO-2026-020详情', exact: true })
+  ).toHaveCount(0)
+  await rowAction(
+    page.locator('.workbench-master-grid'),
+    'ORDER-19',
+    '复制订单'
+  ).click()
+  await expect(modal(page)).toHaveCount(0)
+  await dialog(page).screenshot({
+    path: info.outputPath('sales-copy-confirmation.png'),
+    animations: 'disabled',
+  })
+  await dialog(page)
+    .getByRole('button', { name: '确认复制', exact: true })
     .click()
+  await expect(dialog(page)).toHaveCount(0)
+  await expect(modal(page)).toHaveCount(0)
   await expect(page.getByTestId('active-order')).toHaveText('SO-2026-020')
   await expect(
     line.locator('.mach-cell[data-col-id="amount"]').first()
   ).toHaveText('2.01')
   await expect(
+    line.locator('.mach-cell[data-col-id="quantity"]').first()
+  ).toHaveText('0.000')
+  await expect(
     line.locator('.mach-pane--center .mach-row[data-id="ORDER-20-L01"]')
   ).toHaveCount(1)
+  await rowAction(
+    page.locator('.workbench-master-grid'),
+    'ORDER-20',
+    '编辑订单'
+  ).click()
+  await expect(field(modal(page), '订单编号').locator('input')).toHaveValue(
+    'SO-2026-020'
+  )
+  await expect(field(modal(page), '业务人员').locator('input')).toHaveValue(
+    '新经办'
+  )
+  await modal(page).getByRole('button', { name: '取消', exact: true }).click()
+  await page
+    .getByRole('button', { name: '查看SO-2026-019详情', exact: true })
+    .click()
+  await expect(detail).toContainText('SO-2026-019')
+  await expect(detail).toContainText('新经办')
+  await expect(
+    detail.locator('.mach-pane--center .mach-row[data-id="ORDER-19-LINE-1"]')
+  ).toHaveCount(1)
+  await page.getByRole('button', { name: '关闭详情', exact: true }).click()
+  await expect(page.getByTestId('active-order')).toHaveText('SO-2026-020')
   await line.locator('.mach-row-checkbox').first().check()
   await page.getByRole('button', { name: '删除选中明细', exact: true }).click()
   await dialog(page).getByRole('button', { name: '取消', exact: true }).click()
