@@ -473,7 +473,11 @@ export function useBusinessWorkbench() {
       const index = filteredOrders.value.findIndex(
         row => row.id === activeId.value
       )
-      if (index >= 0) master.api.value?.view.scrollToRow(index, 'nearest')
+      const api = master.api.value
+      if (index < 0 || !api) return
+      const pageSize = api.pagination.getPageSize()
+      api.pagination.setPage(Math.floor(index / pageSize) + 1)
+      api.view.scrollToRow(index % pageSize, 'nearest')
     })
   })
   const searchConfig: SearchConfig<WorkbenchQuery> = {
@@ -487,6 +491,7 @@ export function useBusinessWorkbench() {
     requireValue: false,
     onSearch: async params => {
       appliedQuery.value = clone(params)
+      master.api.value?.pagination.setPage(1)
       await nextTick()
     },
   }

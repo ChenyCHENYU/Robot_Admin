@@ -179,6 +179,10 @@
   height: 280px;
   min-width: 0;
 }
+.workbench-content-grid {
+  min-width: 0;
+  padding-bottom: 8px;
+}
 // 与 Mach Table 场景页共用原生主题，只绑定品牌色；不另造表头/正文/边线配色。
 .business-workbench :deep(.mach-root),
 .workbench-details--fullscreen :deep(.mach-root) {

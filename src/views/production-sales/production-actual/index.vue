@@ -135,7 +135,7 @@
               v-if="group.key === 'chemistry'"
               class="ps-grid actual-chemistry-grid"
               ><MachTable
-                v-bind="BUSINESS_GRID"
+                v-bind="contentGridOptions(chemicalRows.length)"
                 :row-data="chemicalRows"
                 :column-defs="chemicalColumns"
                 :row-style-rules="chemicalStyles"
@@ -238,7 +238,7 @@
         >
         <div class="actual-reference-grid"
           ><MachTable
-            v-bind="BUSINESS_GRID"
+            v-bind="contentGridOptions(referenceRows.length)"
             :row-data="referenceRows"
             :column-defs="referenceColumns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -260,7 +260,7 @@
   import { s_themeStore } from '@/stores/theme'
   import PageHeading from '../components/c_pageHeading/index.vue'
   import {
-    BUSINESS_GRID,
+    contentGridOptions,
     BUSINESS_FORM,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,

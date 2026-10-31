@@ -128,7 +128,7 @@ export const VEHICLE_CONFIG: FormConfig<VehicleForm> = {
 }
 export const SHIPMENT_TABLE_CONFIG = defineTableConfig<Shipment>({
   density: 'compact',
-  pagination: false,
+  pagination: { pageSize: 10 },
   toolbar: { show: false },
   display: {
     size: 'small',
@@ -187,6 +187,15 @@ export function useShippingWorkbench() {
   const dialog = useDialog()
   const rows = ref(createShipments())
   const currentId = ref('SHIP-1')
+  const pagination = reactive({ page: 1, pageSize: 10 })
+  const taskTableConfig = computed(() => ({
+    ...SHIPMENT_TABLE_CONFIG,
+    pagination: { page: pagination.page, pageSize: pagination.pageSize },
+  }))
+  /** 分页状态留在页面，新增或切换任务时可以定位到对应页。 */
+  const syncTaskPagination = (page: number, pageSize: number) => {
+    Object.assign(pagination, { page, pageSize })
+  }
   const query = ref<ShippingQuery>({
     keyword: '',
     destination: null,
@@ -227,6 +236,11 @@ export function useShippingWorkbench() {
         (!applied.value.status || row.status === applied.value.status)
     )
   )
+  watch([currentId, () => visibleRows.value.length], () => {
+    const index = visibleRows.value.findIndex(row => row.id === currentId.value)
+    if (index >= 0)
+      pagination.page = Math.floor(index / pagination.pageSize) + 1
+  })
   const stages = computed(() =>
     Object.entries(SHIPMENT_STATES).map(([key, item]) => ({
       key,
@@ -243,6 +257,7 @@ export function useShippingWorkbench() {
     labelWidth: 94,
     onSearch: values => {
       applied.value = { ...values }
+      pagination.page = 1
     },
   }
   const activate = (id: string) => {
@@ -283,6 +298,7 @@ export function useShippingWorkbench() {
   const filterStage = (status: string | null) => {
     query.value.status = status
     applied.value = { ...query.value }
+    pagination.page = 1
   }
   const operations = useShipmentOperations({
     rows,
@@ -477,6 +493,8 @@ export function useShippingWorkbench() {
     query,
     searchConfig,
     visibleRows,
+    taskTableConfig,
+    syncTaskPagination,
     stages,
     form,
     vehicle,

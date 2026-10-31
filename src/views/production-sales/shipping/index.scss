@@ -81,8 +81,8 @@
   gap: 14px;
   align-items: start;
 }
-.shipping-queue {
-  min-height: 430px;
+.shipping-queue :deep(.pagination-wrapper) {
+  padding: 0 12px 8px;
 }
 .shipping-vehicle {
   grid-column: 2;
@@ -90,9 +90,6 @@
 }
 .shipping-stock {
   grid-column: 1;
-}
-.shipping-stock-grid {
-  height: 186px;
 }
 .shipping-current {
   padding: 15px 14px 12px;

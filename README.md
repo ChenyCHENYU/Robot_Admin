@@ -146,7 +146,7 @@ flowchart TB
 
 | 能力                 | 接入方式                                                                                       | 实际用途                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **MachTable 0.35.2** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
+| **MachTable 0.35.3** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
 | 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                      |
 | 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译          |
 | 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                        |
@@ -156,7 +156,7 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 
 在「表格管理 → MachTable → 顺序调整」（`/#/demo/table-manage/mach-table`）体验 30 条订单的行排序。该场景按需使用 `/ordering`：勾选不连续的多项，拖动其中一项手柄可按原相对顺序一起移动；支持边缘滚动、Esc、Alt + ↑ / ↓ 和独立的顺序撤销/重做。搜索后的键盘移动以相邻可见订单为目标，隐藏订单仍保留在完整数据中。现有工具栏可选择 450ms 模拟保存、失败回滚或版本冲突；冲突后可重新加载模拟服务器顺序。状态区显示保存结果和双方版本，切换场景保留已确认顺序并取消未完成保存。所有传输均为本地模拟，不写订单接口。
 
-当前安装与锁文件固定为官方 npm **0.35.2**，Vue 适配与 Core 版本一致。本轮补齐未声明列宽时的有界内容测宽、所有布局入口的完整列头保护，以及 `status` 精简状态列配置；生产计划、销售订单和发运任务池可直接体验。固定列焦点、行号与操作列对齐、主题空态、矩阵输入和按需排序控制器继续保留。
+当前安装与锁文件固定为官方 npm **0.35.3**，Vue 适配与 Core 版本一致。本轮修复自动高度空态并接入原生分页，保留有界内容测宽、完整列头保护和 `status` 精简状态列配置；生产计划、销售订单和发运任务池可直接体验。固定列焦点、行号与操作列对齐、主题空态、矩阵输入和按需排序控制器继续保留。
 
 同一页面新增两个按需加载的体验页签：
 
@@ -179,6 +179,8 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 四页分别采用资源侧栏、分区表单、上下主从表和任务池加侧栏的布局，共用原生表格主题、局部紧凑密度、主题面板与标题。Naive 空态图标由主题配置统一为淡蓝色。原工作台入口 `/#/demo/business-workbench` 自动转到销售页；免登录预览保留 `/#/preview/business-workbench`，四页也可通过 `/#/preview/production-sales/<页面路径>` 访问。
 
 产销详情统一使用居中自适应弹窗，窄屏内容在弹窗内滚动。蓝色单号支持 Enter／空格打开详情，Escape 关闭后返回原按钮。MachTable 与 C_Table 默认完整显示表头，列宽不足时内部横向滚动，正文单元格可独立省略。
+
+分页直接复用各自现成组件：MachTable 主列表使用内置分页条，C_Table 使用 Naive UI 分页；页面不再另造分页按钮。炉次、成分、库存及弹窗明细在 100 行以内按内容高度收起，底部留 8px；超过该范围恢复 330px 虚拟视口。有明确工作区高度的主列表继续内部滚动。C_Table 通过 `display.maxHeight` 限制最大高度，少量数据自然收起。
 
 业务列表统一提供序号，编辑／删除放在固定的行操作列；蓝色单号打开只读详情，点击行联动工作区。顶部保留新增与批量操作。查看其他记录不会切换或覆盖当前未保存草稿，跨行编辑继续经过保存／放弃／取消保护。
 
@@ -336,7 +338,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.35.2** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.35.3** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

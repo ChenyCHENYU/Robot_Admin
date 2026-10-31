@@ -98,6 +98,7 @@
             <div class="ps-grid plan-main-grid"
               ><MachTable
                 v-bind="BUSINESS_GRID"
+                :pagination="BUSINESS_PAGINATION"
                 :ref="table.ref"
                 column-layout="normal"
                 :row-data="visibleRows"
@@ -134,9 +135,9 @@
             >
             <div
               v-if="tab === 'heats'"
-              class="ps-grid ps-grid--small"
+              class="ps-grid"
               ><MachTable
-                v-bind="BUSINESS_GRID"
+                v-bind="contentGridOptions(heatRows.length)"
                 :row-data="heatRows"
                 :column-defs="heatColumns"
                 :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -220,9 +221,9 @@
           >
         </NDescriptions>
         <NDivider :style="{ margin: '12px 0' }">炉次编排</NDivider>
-        <div class="ps-grid ps-grid--small"
+        <div class="ps-grid"
           ><MachTable
-            v-bind="BUSINESS_GRID"
+            v-bind="contentGridOptions(detailHeatRows.length)"
             :row-data="detailHeatRows"
             :column-defs="heatColumns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -245,6 +246,8 @@
   import PageHeading from '../components/c_pageHeading/index.vue'
   import {
     BUSINESS_GRID,
+    BUSINESS_PAGINATION,
+    contentGridOptions,
     BUSINESS_FORM,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,

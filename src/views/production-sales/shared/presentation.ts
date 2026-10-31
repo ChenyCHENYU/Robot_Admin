@@ -47,6 +47,19 @@ export const BUSINESS_GRID = defineVueTableConfig({
   pagination: false,
   defaultColDef: { minWidth: 88, filter: true, headerAlign: 'center' },
 })
+
+/** 主列表复用 MachTable 自带分页，保留完整行模型供跨页选择、排序和拖拽使用。 */
+export const BUSINESS_PAGINATION = {
+  pageSize: 10,
+  pageSizeOptions: [10, 20, 50],
+}
+
+/** 小明细自然收起；超过 100 行时回到有界虚拟视口，避免自动高度渲染大批 DOM。 */
+export const contentGridOptions = (rowCount: number) => ({
+  ...BUSINESS_GRID,
+  domLayout: rowCount <= 100 ? ('autoHeight' as const) : ('normal' as const),
+  style: { height: rowCount <= 100 ? 'auto' : '330px' },
+})
 export const weightCodec = createNumberCodec({
   storage: 'number',
   fractionDigits: 3,

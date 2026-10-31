@@ -119,14 +119,12 @@
     --mach-primary: var(--app-primary);
   }
   .ps-grid {
-    height: 330px;
     min-width: 0;
+    padding-bottom: 8px;
+    box-sizing: border-box;
     :deep(.mach-vue-host) {
       height: 100%;
     }
-  }
-  .ps-grid--small {
-    height: 208px;
   }
   .ps-page :deep(.mach-root) {
     --mach-primary: var(--app-primary);

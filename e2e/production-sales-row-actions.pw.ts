@@ -235,6 +235,8 @@ test('跨行编辑保留切单保护，取消不遗留动作，放弃后继续�
   await modal(page).getByRole('button', { name: '取消', exact: true }).click()
   const note = field(page.locator('.workbench-header'), '订单备注')
   await note.fill('第 19 笔尚未保存')
+  // 新复制记录位于末页；通过真实分页条回到第一笔订单，草稿继续保留。
+  await table.locator('.mach-pagination-first').click()
   await table.locator('.mach-body-viewport--scroll').evaluate(element => {
     element.scrollTop = 0
   })

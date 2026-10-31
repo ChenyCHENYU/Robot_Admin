@@ -72,7 +72,8 @@
             :data="visibleRows"
             :row-props="rowProps"
             row-key="id"
-            :config="SHIPMENT_TABLE_CONFIG"
+            :config="taskTableConfig"
+            @pagination-change="syncTaskPagination"
           /><p class="ps-footnote"
             >点击行安排配载，蓝色单号查看详情；已出厂任务保留记录，便于交付追溯。</p
           ></section
@@ -133,7 +134,7 @@
             ></div
           ><div class="ps-grid shipping-stock-grid"
             ><MachTable
-              v-bind="BUSINESS_GRID"
+              v-bind="contentGridOptions(lots.length)"
               :ref="stock.ref"
               :row-data="lots"
               :column-defs="lotColumns"
@@ -253,7 +254,7 @@
   import {
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
-    BUSINESS_GRID,
+    contentGridOptions,
     BUSINESS_FORM,
     weightCodec,
   } from '../shared/presentation'
@@ -263,7 +264,6 @@
     SHIPMENT_STATES,
     SHIPPING_FIELDS,
     VEHICLE_FIELDS,
-    SHIPMENT_TABLE_CONFIG,
     STAGE_NOTES,
   } from './data'
   defineOptions({ name: 'ShippingCollaborationWorkbench' })
@@ -274,6 +274,8 @@
     query,
     searchConfig,
     visibleRows,
+    taskTableConfig,
+    syncTaskPagination,
     stages,
     form,
     vehicle,

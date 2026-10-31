@@ -205,7 +205,11 @@ export function useProductionPlan() {
       const index = visibleRows.value.findIndex(
         row => row.id === currentId.value
       )
-      if (index >= 0) table.api.value?.view.scrollToRow(index, 'nearest')
+      const api = table.api.value
+      if (index < 0 || !api) return
+      const pageSize = api.pagination.getPageSize()
+      api.pagination.setPage(Math.floor(index / pageSize) + 1)
+      api.view.scrollToRow(index % pageSize, 'nearest')
     })
   })
   const pending = computed(
@@ -227,6 +231,7 @@ export function useProductionPlan() {
     onSearch: values => {
       applied.value = { ...values }
       selectedIds.value = []
+      table.api.value?.pagination.setPage(1)
       table.api.value?.selection.clear()
     },
   }

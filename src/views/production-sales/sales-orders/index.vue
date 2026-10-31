@@ -3,10 +3,10 @@
  * @Date: 2026-10-28
  * @FilePath: \Robot_Admin\src\views\production-sales\sales-orders\index.vue
  * @Description: 订单与多明细协作工作台，使用正式公开组件入口
+ * 路由模板只保留一个元素根，避免开发态根注释参与 Fragment 与过渡缓存。
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <!-- 路由过渡需要真实元素作为根；无 DOM 的密度提供器只放在页面内部。 -->
   <main
     ref="container"
     class="business-workbench"
@@ -128,7 +128,7 @@
                   :show-cell-borders="true"
                   :row-style-rules="masterRowStyles"
                   :theme="themeStore.isDark ? 'dark' : 'light'"
-                  :pagination="false"
+                  :pagination="BUSINESS_PAGINATION"
                   :enable-column-resize="true"
               /></div>
               <p class="workbench-panel-note"
@@ -495,9 +495,9 @@
         <NDivider :style="{ margin: '12px 0' }"
           >商品明细 · {{ detailOrder.lines.length }} 条</NDivider
         >
-        <div class="workbench-detail-grid"
+        <div class="workbench-content-grid"
           ><MachTable
-            v-bind="BUSINESS_GRID"
+            v-bind="contentGridOptions(detailOrder.lines.length)"
             :row-data="detailOrder.lines"
             :column-defs="readonlyDetailColumns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -567,7 +567,8 @@
   import PageHeading from '../components/c_pageHeading/index.vue'
   import {
     BUSINESS_FORM,
-    BUSINESS_GRID,
+    BUSINESS_PAGINATION,
+    contentGridOptions,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
   } from '../shared/presentation'
