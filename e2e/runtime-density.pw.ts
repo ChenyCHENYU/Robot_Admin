@@ -10,6 +10,7 @@ import { expect, test } from '@playwright/test'
 test('400 字段保留完整多行校验、固定页脚及按需更新', async ({ page }, info) => {
   await page.goto('/dense.html', { waitUntil: 'domcontentloaded' })
   const modal = page.locator('.c-form-modal')
+  await expect(modal).toHaveAccessibleName('400 字段密集录入')
   await expect(modal.locator('input')).toHaveCount(400)
   await expect
     .poll(() =>
@@ -27,6 +28,15 @@ test('400 字段保留完整多行校验、固定页脚及按需更新', async (
     'none'
   )
   await expect(modal.locator('.n-grid')).toHaveCSS('row-gap', '4px')
+  const firstRowGap = await modal.evaluate(element => {
+    const header = element.querySelector('.n-card-header')!
+    const first = element.querySelector('.n-form-item-blank')!
+    return (
+      first.getBoundingClientRect().top - header.getBoundingClientRect().bottom
+    )
+  })
+  expect(firstRowGap).toBeGreaterThanOrEqual(8)
+  expect(firstRowGap).toBeLessThanOrEqual(18)
   await modal.getByRole('button', { name: '保存验证', exact: true }).click()
   const error = modal.locator('.n-form-item-feedback--error').first()
   await expect(error).toBeVisible()
@@ -41,7 +51,7 @@ test('400 字段保留完整多行校验、固定页脚及按需更新', async (
       .map(item => item.getBoundingClientRect())
       .find(box => box.top > first.top + 1)!
     const footer = element
-      .querySelector('.n-card__action')!
+      .querySelector('.c-form-modal__footer')!
       .getBoundingClientRect()
     return {
       feedbackHeight: feedback.clientHeight,

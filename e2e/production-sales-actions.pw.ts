@@ -39,6 +39,93 @@ const choose = async (page: Page, control: Locator, label: string) => {
     .click()
 }
 
+/** 测量实际控件与弹窗壳的距离，避免仅检查紧凑类名却遗漏贴边或遮挡。 */
+const expectCompactModalGeometry = async (
+  scope: Locator,
+  columns: 1 | 2
+): Promise<void> => {
+  await expect(scope.locator('.c-form')).toHaveClass(/c-form--compact/)
+  await expect(scope).toHaveAccessibleName(
+    (await scope.locator('.n-card-header__main').textContent())!.trim()
+  )
+  await expect(scope).toHaveCSS('transform', 'none')
+  await expect
+    .poll(
+      async () => {
+        const geometry = await scope.evaluate(element => {
+          const bounds = element.getBoundingClientRect()
+          const headerElement = element.querySelector('.n-card-header')!
+          const header = headerElement.getBoundingClientRect()
+          const footer = element
+            .querySelector('.c-form-modal__footer')!
+            .getBoundingClientRect()
+          const form = element.querySelector('.c-form')!.getBoundingClientRect()
+          const fields = Array.from(
+            element.querySelectorAll('.c-form .c-form-field')
+          ).map(item => ({
+            item: item.getBoundingClientRect(),
+            control: item
+              .querySelector('.n-form-item-blank')!
+              .getBoundingClientRect(),
+          }))
+          const firstTop = Math.min(...fields.map(field => field.item.top))
+          const firstRow = fields.filter(
+            field => Math.abs(field.item.top - firstTop) <= 1
+          )
+          const controlTops = firstRow.map(field => field.control.top)
+          const controlWidths = firstRow.map(field => field.control.width)
+          return {
+            headerHeight: header.height,
+            headerInset: parseFloat(
+              getComputedStyle(headerElement).paddingLeft
+            ),
+            topGap: Math.min(...controlTops) - header.bottom,
+            leftInset: form.left - bounds.left,
+            rightInset: bounds.right - form.right,
+            bottomGap:
+              footer.top -
+              Math.max(...fields.map(field => field.control.bottom)),
+            firstRowCount: firstRow.length,
+            rowTopDifference:
+              Math.max(...controlTops) - Math.min(...controlTops),
+            rowWidthDifference:
+              Math.max(...controlWidths) - Math.min(...controlWidths),
+            insideViewport:
+              bounds.left >= 0 &&
+              bounds.top >= 0 &&
+              bounds.right <= innerWidth + 1 &&
+              bounds.bottom <= innerHeight + 1,
+            horizontalOverflow: element.scrollWidth - element.clientWidth,
+          }
+        })
+        return Object.entries({
+          标题高度适中:
+            geometry.headerHeight >= 36 && geometry.headerHeight <= 48,
+          首行与标题保持小间距: geometry.topGap >= 8 && geometry.topGap <= 18,
+          左右留白紧凑对称:
+            geometry.leftInset >= 8 &&
+            geometry.leftInset <= 24 &&
+            geometry.rightInset >= 8 &&
+            geometry.rightInset <= 24 &&
+            Math.abs(geometry.leftInset - geometry.rightInset) <= 2,
+          标题与内容留白一致:
+            Math.abs(geometry.headerInset - geometry.leftInset) <= 2,
+          末行与操作区保持间距:
+            geometry.bottomGap >= 6 && geometry.bottomGap <= 24,
+          响应式列数正确: geometry.firstRowCount === columns,
+          同排控件对齐:
+            geometry.rowTopDifference <= 2 && geometry.rowWidthDifference <= 2,
+          弹窗完整落在视口内: geometry.insideViewport,
+          弹窗没有横向溢出: geometry.horizontalOverflow <= 1,
+        })
+          .filter(([, passed]) => !passed)
+          .map(([label]) => label)
+      },
+      { message: '公共紧凑表单弹窗应保持合理间距、对齐和视口边界' }
+    )
+    .toEqual([])
+}
+
 test.beforeEach(async ({ page }) => {
   await installMockAdminSession(page)
   await page.setViewportSize({ width: 1720, height: 1280 })
@@ -50,29 +137,31 @@ for (const item of [
   { path: 'sales-orders', root: 'business-workbench', action: '新增订单' },
   { path: 'shipping', root: 'shipping-workbench', action: '新增发运任务' },
 ]) {
-  test(`暗色窄屏 ${item.action}：弹窗保留紧凑主题并完整落在视口内`, async ({
-    page,
-  }, info) => {
-    await page.addInitScript(() => localStorage.setItem('theme-mode', 'dark'))
-    await page.setViewportSize({ width: 540, height: 1100 })
-    await open(page, item.path, item.root)
-    const action = page.getByRole('button', { name: item.action, exact: true })
-    await expect(action).toBeEnabled()
-    await action.click()
-    await expect(modal(page)).toBeVisible()
-    const box = (await modal(page).boundingBox())!
-    expect(box.x).toBeGreaterThanOrEqual(0)
-    expect(box.x + box.width).toBeLessThanOrEqual(541)
-    expect(box.y).toBeGreaterThanOrEqual(0)
-    expect(box.y + box.height).toBeLessThanOrEqual(1101)
-    await expect(modal(page).locator('.c-form')).toHaveClass(/c-form--compact/)
-    await modal(page).screenshot({
-      path: info.outputPath(`${item.path}-dark-narrow-modal.png`),
-      animations: 'disabled',
+  for (const width of [390, 540]) {
+    test(`暗色 ${width}px ${item.action}：弹窗保留紧凑主题并完整落在视口内`, async ({
+      page,
+    }, info) => {
+      await page.addInitScript(() => localStorage.setItem('theme-mode', 'dark'))
+      await page.setViewportSize({ width, height: 1100 })
+      await open(page, item.path, item.root)
+      const action = page.getByRole('button', {
+        name: item.action,
+        exact: true,
+      })
+      await expect(action).toBeEnabled()
+      await action.click()
+      await expect(modal(page)).toBeVisible()
+      await expectCompactModalGeometry(modal(page), 1)
+      await modal(page).screenshot({
+        path: info.outputPath(`${item.path}-${width}-dark-narrow-modal.png`),
+        animations: 'disabled',
+      })
+      await modal(page)
+        .getByRole('button', { name: '取消', exact: true })
+        .click()
+      await expect(modal(page)).toHaveCount(0)
     })
-    await modal(page).getByRole('button', { name: '取消', exact: true }).click()
-    await expect(modal(page)).toHaveCount(0)
-  })
+  }
 }
 
 test('计划编制弹窗真实增改复制，确认取消和状态约束保持台账一致', async ({
@@ -81,6 +170,7 @@ test('计划编制弹窗真实增改复制，确认取消和状态约束保持�
   await open(page, 'production-plan', 'production-plan')
   const table = page.locator('[aria-label="排产计划台账"]')
   await page.getByRole('button', { name: '新增计划', exact: true }).click()
+  await expectCompactModalGeometry(modal(page), 2)
   await modal(page)
     .getByRole('button', { name: '保存计划', exact: true })
     .click()

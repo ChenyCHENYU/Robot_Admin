@@ -76,7 +76,8 @@
     border-bottom: 1px solid rgba(200, 200, 200, 0.2) !important;
     border-radius: 12px 12px 0 0;
     margin-bottom: 0 !important;
-    padding: 14px 20px !important;
+    // 允许弹窗等组件通过原生 headerStyle 按密度设置留白。
+    padding: 14px 20px;
   }
 }
 
