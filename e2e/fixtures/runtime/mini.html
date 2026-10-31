@@ -1,0 +1,49 @@
+<!doctype html>
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-10-31
+ * @FilePath: \Robot_Admin\e2e\fixtures\runtime\mini.html
+ * @Description: 本地视频小窗滚动回归入口，不进入产品路由与构建
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>视频小窗生命周期回归</title>
+    <style>
+      body {
+        margin: 0;
+        background: #f3f6fa;
+        color: #22334b;
+        font-family: sans-serif;
+      }
+      main {
+        padding: 84px 32px 0;
+      }
+      .mini-toolbar {
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 16px 32px;
+        background: #fff;
+        border-bottom: 1px solid #dce4ef;
+      }
+      #player-host {
+        max-width: calc(100vw - 64px);
+      }
+      .mini-scroll-space {
+        height: 2200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script
+      type="module"
+      src="./mini.ts"
+    ></script>
+  </body>
+</html>
