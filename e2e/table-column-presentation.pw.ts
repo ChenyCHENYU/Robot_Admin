@@ -128,6 +128,10 @@ test('详情居中弹窗完整展示列头，窄屏只在表格内部滚动', as
   const detail = page.locator('.ps-detail-modal')
   await expect(detail).toBeVisible()
   await expect(detail).toContainText('生产计划详情')
+  await expect(detail.locator('.n-descriptions-table-row')).toHaveCount(3)
+  expect(
+    (await detail.locator('.n-descriptions').boundingBox())!.height
+  ).toBeLessThan(130)
   await expect(page.locator('.n-drawer')).toHaveCount(0)
   const verifyViewport = async (viewport: {
     width: number

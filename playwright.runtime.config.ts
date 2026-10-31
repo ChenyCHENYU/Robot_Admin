@@ -12,7 +12,7 @@ const viewport = { width: 1440, height: 960 }
 export default defineConfig({
   globalSetup: './e2e/runtime-browser-setup.ts',
   testDir: './e2e',
-  testMatch: 'runtime-regression.pw.ts',
+  testMatch: 'runtime-*.pw.ts',
   workers: 1,
   retries: 0,
   timeout: 120_000,

@@ -453,7 +453,7 @@
           width: 'min(1120px, calc(100vw - 32px))',
           maxHeight: 'calc(100dvh - 48px)',
         }"
-        content-style="min-height: 0; overflow: auto"
+        v-bind="BUSINESS_DETAIL_DIALOG"
         class="ps-detail-modal"
       >
         <NAlert
@@ -463,9 +463,8 @@
           >当前显示包含未保存草稿，请返回工作台保存整单。</NAlert
         >
         <NDescriptions
+          v-bind="BUSINESS_DETAIL"
           :column="2"
-          bordered
-          size="small"
         >
           <NDescriptionsItem label="订单号">{{
             detailOrder.header.orderNo
@@ -493,7 +492,9 @@
               ?.label
           }}</NDescriptionsItem>
         </NDescriptions>
-        <NDivider>商品明细 · {{ detailOrder.lines.length }} 条</NDivider>
+        <NDivider :style="{ margin: '12px 0' }"
+          >商品明细 · {{ detailOrder.lines.length }} 条</NDivider
+        >
         <div class="workbench-detail-grid"
           ><MachTable
             v-bind="BUSINESS_GRID"
@@ -521,13 +522,12 @@
           width: 'min(600px, calc(100vw - 32px))',
           maxHeight: 'calc(100dvh - 48px)',
         }"
-        content-style="min-height: 0; overflow: auto"
+        v-bind="BUSINESS_DETAIL_DIALOG"
         class="ps-detail-modal"
       >
         <NDescriptions
+          v-bind="BUSINESS_DETAIL"
           :column="1"
-          bordered
-          size="small"
         >
           <NDescriptionsItem label="明细编号">{{
             lineDetail.id
@@ -565,7 +565,12 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { WORKBENCH_ICONS } from './icons'
   import PageHeading from '../components/c_pageHeading/index.vue'
-  import { BUSINESS_FORM, BUSINESS_GRID } from '../shared/presentation'
+  import {
+    BUSINESS_FORM,
+    BUSINESS_GRID,
+    BUSINESS_DETAIL,
+    BUSINESS_DETAIL_DIALOG,
+  } from '../shared/presentation'
   import { ORDER_CREATE_FIELDS, ORDER_LINE_FIELDS } from './operations'
   import { s_themeStore } from '@/stores/theme'
   import {

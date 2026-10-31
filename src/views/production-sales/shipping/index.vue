@@ -168,13 +168,12 @@
           width: 'min(800px, calc(100vw - 32px))',
           maxHeight: 'calc(100dvh - 48px)',
         }"
-        content-style="min-height: 0; overflow: auto"
+        v-bind="BUSINESS_DETAIL_DIALOG"
         class="ps-detail-modal"
       >
         <NDescriptions
+          v-bind="BUSINESS_DETAIL"
           :column="2"
-          bordered
-          size="small"
         >
           <NDescriptionsItem label="发运单号">{{
             detailShipment.no
@@ -210,7 +209,7 @@
             detailShipment.vehicle?.gate || '待安排'
           }}</NDescriptionsItem>
         </NDescriptions>
-        <NDivider>交付进程</NDivider
+        <NDivider :style="{ margin: '12px 0' }">交付进程</NDivider
         ><C_Timeline
           :items="[
             { id: 'created', title: '发运任务已建立', status: 'success' },
@@ -252,6 +251,8 @@
   import { s_themeStore } from '@/stores/theme'
   import PageHeading from '../components/c_pageHeading/index.vue'
   import {
+    BUSINESS_DETAIL,
+    BUSINESS_DETAIL_DIALOG,
     BUSINESS_GRID,
     BUSINESS_FORM,
     weightCodec,

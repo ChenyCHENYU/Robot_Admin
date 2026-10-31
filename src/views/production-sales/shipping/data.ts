@@ -121,7 +121,7 @@ export const VEHICLE_FIELDS: FormOption<VehicleForm>[] = [
 export const VEHICLE_CONFIG: FormConfig<VehicleForm> = {
   density: 'compact',
   layout: 'grid',
-  grid: { cols: 1, yGap: 8 },
+  grid: { cols: 1 },
   labelWidth: 114,
   labelPlacement: 'left',
   showActions: false,

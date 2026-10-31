@@ -332,7 +332,7 @@ export const FORM_CONFIG: FormConfig<OrderHeader> = {
   density: 'compact',
   labelPlacement: 'left',
   labelWidth: 88,
-  grid: { cols: 1, minItemWidth: 250, xGap: 16, yGap: 8 },
+  grid: { cols: 1, minItemWidth: 250, xGap: 16 },
   showActions: false,
 }
 export const BATCH_MODES = [

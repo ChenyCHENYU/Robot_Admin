@@ -183,13 +183,12 @@
           width: 'min(720px, calc(100vw - 32px))',
           maxHeight: 'calc(100dvh - 48px)',
         }"
-        content-style="min-height: 0; overflow: auto"
+        v-bind="BUSINESS_DETAIL_DIALOG"
         class="ps-detail-modal"
       >
         <NDescriptions
+          v-bind="BUSINESS_DETAIL"
           :column="1"
-          bordered
-          size="small"
           ><NDescriptionsItem label="炉号">{{ current.no }}</NDescriptionsItem
           ><NDescriptionsItem label="当前状态">{{
             stateOf(current.id, current.state)
@@ -200,7 +199,7 @@
             >{{ latest.note }}</NDescriptionsItem
           ></NDescriptions
         >
-        <NDivider>复核追溯</NDivider
+        <NDivider :style="{ margin: '12px 0' }">复核追溯</NDivider
         ><C_Timeline
           v-if="historyItems.length"
           :items="historyItems"
@@ -227,7 +226,7 @@
           width: 'min(900px, calc(100vw - 32px))',
           maxHeight: 'calc(100dvh - 48px)',
         }"
-        content-style="min-height: 0; overflow: auto"
+        v-bind="BUSINESS_DETAIL_DIALOG"
         class="ps-detail-modal"
       >
         <NAlert
@@ -260,7 +259,12 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
   import PageHeading from '../components/c_pageHeading/index.vue'
-  import { BUSINESS_GRID, BUSINESS_FORM } from '../shared/presentation'
+  import {
+    BUSINESS_GRID,
+    BUSINESS_FORM,
+    BUSINESS_DETAIL,
+    BUSINESS_DETAIL_DIALOG,
+  } from '../shared/presentation'
   import { REVIEW_FIELDS } from './operations'
   import {
     useProductionActual,

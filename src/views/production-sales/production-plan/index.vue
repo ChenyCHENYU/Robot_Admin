@@ -191,13 +191,12 @@
           width: 'min(1060px, calc(100vw - 32px))',
           maxHeight: 'calc(100dvh - 48px)',
         }"
-        content-style="min-height: 0; overflow: auto"
+        v-bind="BUSINESS_DETAIL_DIALOG"
         class="ps-detail-modal"
       >
         <NDescriptions
+          v-bind="BUSINESS_DETAIL"
           :column="2"
-          bordered
-          size="small"
         >
           <NDescriptionsItem label="计划号">{{
             detailPlan.planNo
@@ -220,7 +219,7 @@
             {{ detailPlan.heats }} 炉</NDescriptionsItem
           >
         </NDescriptions>
-        <NDivider>炉次编排</NDivider>
+        <NDivider :style="{ margin: '12px 0' }">炉次编排</NDivider>
         <div class="ps-grid ps-grid--small"
           ><MachTable
             v-bind="BUSINESS_GRID"
@@ -244,7 +243,12 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
   import PageHeading from '../components/c_pageHeading/index.vue'
-  import { BUSINESS_GRID, BUSINESS_FORM } from '../shared/presentation'
+  import {
+    BUSINESS_GRID,
+    BUSINESS_FORM,
+    BUSINESS_DETAIL,
+    BUSINESS_DETAIL_DIALOG,
+  } from '../shared/presentation'
   import { PLAN_EDIT_FIELDS } from './operations'
   import {
     useProductionPlan,

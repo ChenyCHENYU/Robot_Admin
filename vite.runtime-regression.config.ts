@@ -17,5 +17,11 @@ export default defineConfig({
   build: {
     outDir: resolve('node_modules/.cache/runtime-regression'),
     emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        index: resolve('e2e/fixtures/runtime/index.html'),
+        dense: resolve('e2e/fixtures/runtime/dense.html'),
+      },
+    },
   },
 })

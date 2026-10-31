@@ -140,7 +140,7 @@ export const ACTUAL_FORM_CONFIG: FormConfig<ActualModel> = {
   layout: 'grid',
   labelPlacement: 'left',
   labelWidth: 128,
-  grid: { cols: 12, minItemWidth: 270, xGap: 22, yGap: 10 },
+  grid: { cols: 12, minItemWidth: 270, xGap: 16 },
   showActions: false,
 }
 const CHEMICAL_LIMITS = [

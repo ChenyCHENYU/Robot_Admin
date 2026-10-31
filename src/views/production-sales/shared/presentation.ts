@@ -12,11 +12,27 @@ import type { FormConfig } from '@robot-admin/naive-ui-components/C_Form'
 export const BUSINESS_FORM = {
   density: 'compact',
   layout: 'grid',
-  grid: { cols: 2, minItemWidth: 250, xGap: 20, yGap: 10 },
+  grid: { cols: 2, minItemWidth: 250, xGap: 16 },
   labelPlacement: 'left',
   labelWidth: 100,
   validateOnChange: true,
 } satisfies FormConfig
+
+/** 只读详情与紧凑表单共用信息密度，标签和值同排；长内容仍可自然换行。 */
+export const BUSINESS_DETAIL = {
+  labelPlacement: 'left',
+  bordered: true,
+  size: 'small',
+  labelStyle: { width: '96px', padding: '6px 10px', whiteSpace: 'nowrap' },
+  contentStyle: { padding: '6px 10px', overflowWrap: 'anywhere' },
+} as const
+
+/** 弹层通过原生 Card props 设置留白，避免依赖页面 scoped 样式穿透 Teleport。 */
+export const BUSINESS_DETAIL_DIALOG = {
+  headerStyle: { padding: '10px 14px' },
+  contentStyle: { padding: '10px 14px', minHeight: '0', overflow: 'auto' },
+  footerStyle: { padding: '8px 14px' },
+} as const
 
 export const BUSINESS_GRID = defineVueTableConfig({
   rowKey: 'id',

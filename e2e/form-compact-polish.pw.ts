@@ -87,7 +87,7 @@ const expectCompactModal = async (
         .locator('.n-grid')
         .evaluate(element => getComputedStyle(element).rowGap)
     )
-    .toBe('8px')
+    .toBe('4px')
   const columnGap = () =>
     modal
       .locator('.n-grid')
@@ -98,7 +98,7 @@ const expectCompactModal = async (
   } else await expect.poll(columnGap).toBe(18)
   await expectHeight(
     field(modal, '客户名称').locator('.n-form-item-feedback-wrapper'),
-    4
+    2
   )
   await expectHeight(field(modal, '客户名称').locator('.n-input'), 28)
   await expect
