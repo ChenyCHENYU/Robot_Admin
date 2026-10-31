@@ -51,54 +51,65 @@ const libraryComponentNames: readonly string[] = (() => {
 /** 已迁移到组件库的组件集合 — fallback resolver 必须跳过 */
 const libraryComponents = new Set<string>(libraryComponentNames)
 
-export default Components({
-  dts: 'src/types/components.d.ts', // 生成类型声明文件
-  dirs: ['src/components/local'], // 仅扫描本地组件（C_ 全局组件通过 resolver 解析）
-  extensions: ['vue'], // 扩展名
-  resolvers: [
-    NaiveUiResolver(),
-    // dev:local: 用目录扫描的全量组件名构建 resolver（不受 npm 版本滞后影响）
-    // 正式模式: 使用已发布的 RobotNaiveUiResolver
-    isLocalMode
-      ? (name: string) =>
-          libraryComponents.has(name)
-            ? {
-                name,
-                from: `${PKG}/${name}`,
-                // 源码 SFC 已包含组件自身样式；C_Map 还依赖发布包聚合的
-                // Leaflet CSS 与图片资源，本地模式也必须显式加载该入口。
-                sideEffects:
-                  name === 'C_Map' ? `${PKG}/C_Map/style.css` : undefined,
-              }
-            : undefined
-      : RobotNaiveUiResolver({ importStyle: 'base' }),
-    componentName => {
-      // 已迁移到组件库的 → 由上方 resolver 处理，此处跳过
-      if (libraryComponents.has(componentName)) return null
-      // 未迁移的 C_ 组件（布局/业务组件）→ 继续从本地解析
-      if (componentName.startsWith('C_')) {
-        return {
-          name: 'default',
-          from: `@/components/global/${componentName}/index.vue`,
-        }
-      }
-      if (componentName.startsWith('c_')) {
-        return {
-          name: 'default',
-          from: `@/components/local/${componentName}/index.vue`,
-        }
-      }
-      return null
-    },
-    // 项目历史模板仍使用 <Icon icon="..." />；直接解析到已安装的
-    // @iconify/vue，不恢复 unplugin-icons，也不增加新的转换或依赖成本。
-    componentName =>
-      componentName === 'Icon'
-        ? {
-            name: 'Icon',
-            from: '@iconify/vue',
+/** 类型不依赖某次构建实际加载了哪些路由，测试也可输出到独立临时目录。 */
+export const createComponentsConfig = (
+  dts: string | false = 'src/types/components.d.ts'
+) =>
+  Components({
+    dts,
+    // overwrite 是构建默认行为；固定已安装库的公开类型，窄入口也不会裁掉业务组件。
+    types: libraryComponentNames.map(name => ({
+      from: `${PKG}/${name}`,
+      names: [name],
+    })),
+    dirs: ['src/components/local'], // 仅扫描本地组件（C_ 全局组件通过 resolver 解析）
+    extensions: ['vue'], // 扩展名
+    resolvers: [
+      NaiveUiResolver(),
+      // dev:local: 用目录扫描的全量组件名构建 resolver（不受 npm 版本滞后影响）
+      // 正式模式: 使用已发布的 RobotNaiveUiResolver
+      isLocalMode
+        ? (name: string) =>
+            libraryComponents.has(name)
+              ? {
+                  name,
+                  from: `${PKG}/${name}`,
+                  // 源码 SFC 已包含组件自身样式；C_Map 还依赖发布包聚合的
+                  // Leaflet CSS 与图片资源，本地模式也必须显式加载该入口。
+                  sideEffects:
+                    name === 'C_Map' ? `${PKG}/C_Map/style.css` : undefined,
+                }
+              : undefined
+        : RobotNaiveUiResolver({ importStyle: 'base' }),
+      componentName => {
+        // 已迁移到组件库的 → 由上方 resolver 处理，此处跳过
+        if (libraryComponents.has(componentName)) return null
+        // 未迁移的 C_ 组件（布局/业务组件）→ 继续从本地解析
+        if (componentName.startsWith('C_')) {
+          return {
+            name: 'default',
+            from: `@/components/global/${componentName}/index.vue`,
           }
-        : undefined,
-  ],
-  directives: true, // 自动导入指令，默认目录为 src/directives
-})
+        }
+        if (componentName.startsWith('c_')) {
+          return {
+            name: 'default',
+            from: `@/components/local/${componentName}/index.vue`,
+          }
+        }
+        return null
+      },
+      // 项目历史模板仍使用 <Icon icon="..." />；直接解析到已安装的
+      // @iconify/vue，不恢复 unplugin-icons，也不增加新的转换或依赖成本。
+      componentName =>
+        componentName === 'Icon'
+          ? {
+              name: 'Icon',
+              from: '@iconify/vue',
+            }
+          : undefined,
+    ],
+    directives: true, // 自动导入指令，默认目录为 src/directives
+  })
+
+export default createComponentsConfig()

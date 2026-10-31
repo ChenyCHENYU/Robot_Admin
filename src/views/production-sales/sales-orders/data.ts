@@ -21,12 +21,13 @@ import {
   type SearchConfig,
   type SearchFormItem,
 } from '@robot-admin/naive-ui-components/C_FormSearch'
-import { DICTIONARY_PROVIDER_KEY } from '@robot-admin/naive-ui-components/config'
+import { useDictionaryRefresh } from '@robot-admin/dictionary/vue'
+import { ORDER_STATUS_OPTIONS } from '@/config/dictionaries'
+import { useAppDictionaries } from '@/utils/d_dictionaryContext'
 import {
   createBatchPatch,
   createNumberCodec,
   type BatchOperationResult,
-  type DictionarySource,
 } from '@robot-admin/naive-ui-components/data'
 import {
   useDataResource,
@@ -121,15 +122,7 @@ export function getBatchSubmission(
   return { keys, stale }
 }
 
-export const STATUS_OPTIONS = [
-  { value: 0, label: '待下达' },
-  { value: 1, label: '执行中' },
-  { value: 2, label: '已完成' },
-]
-const statusSource: DictionarySource = { getOptions: () => STATUS_OPTIONS }
-const statusLabels = new Map(
-  STATUS_OPTIONS.map(option => [option.value, option.label])
-)
+export const STATUS_OPTIONS = ORDER_STATUS_OPTIONS
 const customerLabels = new Map(
   CUSTOMERS.map(customer => [customer.id, customer.name])
 )
@@ -343,16 +336,16 @@ export const BATCH_MODES = [
 
 /** 单据工作台只组合公开协议；保存与模拟部分失败仍属于本地业务数据源。 */
 export function useBusinessWorkbench() {
-  provide(DICTIONARY_PROVIDER_KEY, {
-    getDictionary: (name: string) =>
-      name === 'order-status' ? statusSource : undefined,
-  })
+  const statusSource = useAppDictionaries().getDictionary('order-status')
   const orders = ref(createBusinessOrders())
   const activeId = ref('ORDER-1')
   const header = ref(clone(orders.value[0].header))
   const lines = shallowRef<OrderLine[]>([])
   const form = ref<FormInstance<OrderHeader> | null>(null)
   const master = useMachTable<BusinessOrder['header']>()
+  useDictionaryRefresh([statusSource], () =>
+    master.api.value?.view.refreshCells()
+  )
   const detail = useMachTable<OrderLine>()
   const payments = useMachTable<{ id: string; stage: string; amount: string }>()
   const activeTab = ref<'lines' | 'payments'>('lines')
@@ -586,16 +579,10 @@ export function useBusinessWorkbench() {
       field: 'status',
       headerName: '状态',
       width: 105,
-      ...createDictionaryColumn<OrderHeader>(
-        {
-          get: value =>
-            typeof value === 'number' ? statusLabels.get(value) : undefined,
-        },
-        {
-          options: STATUS_OPTIONS,
-          output: { clipboard: 'label', csv: 'label' },
-        }
-      ),
+      ...createDictionaryColumn<OrderHeader>(statusSource, {
+        options: statusSource.getOptions,
+        output: { clipboard: 'label', csv: 'label' },
+      }),
       status: true,
     },
     {
@@ -1026,6 +1013,7 @@ export function useBusinessWorkbench() {
     },
   })
   return {
+    statusLabel: statusSource.label,
     ...operations,
     selectOrder,
     cancelSwitch,

@@ -1,0 +1,56 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-11-01
+ * @FilePath: \Robot_Admin\src\views\production-sales\components\c_dictionaryExperience\index.scss
+ * @Description: 字典体验弹窗使用既有主题与组件样式，保持紧凑且局部隔离
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.dictionary-experience__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  > span:last-child {
+    margin-left: auto;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+}
+.dictionary-experience__hint {
+  margin: 10px 0;
+  color: var(--app-text-secondary);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.dictionary-experience__notice {
+  margin-bottom: 12px;
+}
+.dictionary-experience__form {
+  padding: 12px 12px 8px;
+  border: 1px solid var(--app-border-default);
+  border-radius: 8px;
+}
+.dictionary-experience__selection {
+  padding: 10px 0;
+  color: var(--app-text-primary);
+  font-size: 12px;
+}
+.dictionary-experience__tables {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  > section {
+    min-width: 0;
+    border: 1px solid var(--app-border-default);
+    border-radius: 8px;
+    overflow: hidden;
+    padding-bottom: 8px;
+  }
+  h3 {
+    margin: 0;
+    padding: 9px 12px;
+    font-size: 12px;
+    background: var(--app-bg-surface);
+    border-bottom: 1px solid var(--app-border-default);
+  }
+}

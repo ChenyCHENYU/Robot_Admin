@@ -21,6 +21,10 @@
         <NSpace
           :size="8"
           align="center"
+          ><NButton
+            size="small"
+            @click="dictionaryVisible = true"
+            >字典联动体验</NButton
           ><NTag
             :type="dirty ? 'warning' : 'success'"
             size="small"
@@ -488,8 +492,7 @@
           <NDescriptionsItem label="合同量"
             >{{ detailOrder.header.targetWeight }} t</NDescriptionsItem
           ><NDescriptionsItem label="状态">{{
-            STATUS_OPTIONS.find(row => row.value === detailOrder?.header.status)
-              ?.label
+            statusLabel(detailOrder.header.status)
           }}</NDescriptionsItem>
         </NDescriptions>
         <NDivider :style="{ margin: '12px 0' }"
@@ -555,6 +558,10 @@
           ></template
         >
       </NModal>
+      <DictionaryExperience
+        v-if="dictionaryVisible"
+        @close="dictionaryVisible = false"
+      />
     </C_Density>
   </main>
 </template>
@@ -580,12 +587,20 @@
     HEADER_FIELDS,
     FORM_CONFIG,
     CUSTOMERS,
-    STATUS_OPTIONS,
     BATCH_MODES,
   } from './data'
   defineOptions({ name: 'SalesOrderWorkbench' })
+  const DictionaryExperience = defineAsyncComponent(
+    () => import('../components/c_dictionaryExperience/index.vue')
+  )
   const themeStore = s_themeStore()
+  const dictionaryVisible = ref(false)
+  // KeepAlive 失活仍保留组件，主动卸载体验弹窗以归还 Teleport 和局部订阅。
+  onDeactivated(() => {
+    dictionaryVisible.value = false
+  })
   const {
+    statusLabel,
     container,
     stacked,
     form,

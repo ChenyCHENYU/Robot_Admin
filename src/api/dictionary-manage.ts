@@ -40,10 +40,14 @@ const validateMockDraft = (draft: DictFormData): void => {
 
 /** 读取字典树，保留调用方取消信号。 */
 export const getDictListApi = async (
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  options: { silent?: boolean } = {}
 ): Promise<ApiResponse<DictData[]>> => {
   if (!isMockDataMode()) {
-    return getData<ApiResponse<DictData[]>>('/sys/dictionaries', { signal })
+    return getData<ApiResponse<DictData[]>>('/sys/dictionaries', {
+      signal,
+      silent: options.silent,
+    })
   }
   await delayWithSignal(300, signal)
   return { code: '0', data: cloneDicts(MOCK_DICT_DATA), msg: '成功' }

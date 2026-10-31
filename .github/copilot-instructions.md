@@ -4,7 +4,7 @@
 
 > **本文件面向 AI 编程助手**（Copilot / Cursor / Claude 等）。
 > 在对本项目生态进行任何代码生成、修改或建议之前，**必须完整阅读本指南**。
-> 最后更新：2026-10-08
+> 最后更新：2026-11-01
 
 ## 目录
 
@@ -16,12 +16,12 @@
 
 Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓库组成：
 
-| 仓库                     | 简称   | 用途                                     | npm 包名                           |
-| ------------------------ | ------ | ---------------------------------------- | ---------------------------------- |
-| **Robot_Admin**          | 主项目 | Vue 3 SPA 后台应用                       | —                                  |
-| **naive-ui-components**  | 组件库 | 60 个业务组件（基于 Naive UI）           | `@robot-admin/naive-ui-components` |
-| **robot-admin-packages** | 包集合 | 7 个独立 npm 包（指令/请求/布局/主题等） | `@robot-admin/*`                   |
-| **AgileTeam_Doc**        | 文档库 | VitePress 2.0 团队文档站                 | —                                  |
+| 仓库                     | 简称   | 用途                                          | npm 包名                           |
+| ------------------------ | ------ | --------------------------------------------- | ---------------------------------- |
+| **Robot_Admin**          | 主项目 | Vue 3 SPA 后台应用                            | —                                  |
+| **naive-ui-components**  | 组件库 | 60 个业务组件（基于 Naive UI）                | `@robot-admin/naive-ui-components` |
+| **robot-admin-packages** | 包集合 | 8 个独立 npm 包（字典/指令/请求/布局/主题等） | `@robot-admin/*`                   |
+| **AgileTeam_Doc**        | 文档库 | VitePress 2.0 团队文档站                      | —                                  |
 
 ### 核心信息
 
@@ -54,8 +54,9 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 
 | 包名                               | 版本   | 功能                                  |
 | ---------------------------------- | ------ | ------------------------------------- |
-| `@robot-admin/naive-ui-components` | 0.24.6 | 60 个业务组件                         |
+| `@robot-admin/naive-ui-components` | 0.25.0 | 60 个业务组件                         |
 | `@robot-admin/layout`              | 3.2.3  | 6 种布局 + 精简适配 + 核心协议        |
+| `@robot-admin/dictionary`          | 0.1.0  | 枚举、远程字典与隔离加载状态          |
 | `@robot-admin/request-core`        | 0.7.0  | 实例化请求编排 + 函数式 Headless CRUD |
 | `@robot-admin/theme`               | 0.6.1  | 分层核心 + Vue Store + Naive UI 适配  |
 | `@robot-admin/directives`          | 2.0.1  | 11 个 Vue 指令                        |
@@ -1594,3 +1595,5 @@ convention-audit → 规范审计报告
 
 > **使用方式**：直接用自然语言描述需求即可，AI 会自动匹配并执行对应技能。
 > mock-codegen 为**可选技能**，在完整流程结束时由 AI 询问是否需要，也可单独触发。
+
+字典消费统一使用 `@robot-admin/dictionary`。全局实例由 `setupDictionaries()` 创建，字段只声明 `dictionary`；不要在单元格发请求或重复建立缓存。远程 loader 保留 signal 并使用静默请求，由字段/表格就地显示失败与重试。详细接口、scope、失效和静态枚举边界见 `docs/dictionaries.md`。

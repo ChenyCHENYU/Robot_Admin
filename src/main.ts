@@ -31,6 +31,7 @@ import { PassiveScrollPlugin } from '@/plugins/passive-scroll'
 import { setupAnalytics } from '@/plugins/analytics'
 import { setupObservability } from '@/plugins/observability'
 import { setupRequestCore } from '@/plugins/request-core'
+import { setupDictionaries } from '@/plugins/dictionary'
 import { setupLayoutSystem } from '@/plugins/layout'
 import { setupThemeSystem } from '@/plugins/theme'
 import { setupRoutePrefetch } from '@/router/routePrefetch'
@@ -62,6 +63,7 @@ async function bootstrap() {
   setupStore(app) // 配置 Pinia（包含持久化插件）
   // Pinia 与请求核心必须先于 Router，避免初始导航守卫访问未初始化依赖
   setupRequestCore(app) // 配置 Request Core（axios + 拦截器）
+  setupDictionaries(app) // 字典只读消费按需加载，与身份和公司隔离
   setupObservability(router)
   app.use(router)
   setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）

@@ -31,7 +31,7 @@ The current SPA mainline, **v2.7.0**, includes company-context login, system man
 | Perspective                   | Included today                                                                                           |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Architectures                 | SPA, Bun Workspaces, Module Federation and MicroApp branches                                             |
-| Components and packages       | 60 business components, 11 directives; 7 runtime `@robot-admin/*` packages and 1 Git tooling package     |
+| Components and packages       | 60 business components, 11 directives; 8 runtime `@robot-admin/*` packages and 1 Git tooling package     |
 | Examples                      | 58 demo pages covering data entry, complex grids, workflow editing, files and media                      |
 | Verification and traceability | Dual lint, types, logic and component tests, bundle budgets, browser paint regression and build identity |
 
@@ -127,16 +127,17 @@ flowchart TB
 
 Versions below are **the versions pinned by this application**. Upgrades follow package release notes, public contracts and application verification.
 
-| Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
-| ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.24.4`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
-| [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
-| [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
-| [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.3`        | 6 layouts, framework-independent settings protocol, Vue Headless and Naive entry points | Host-owned menus, routes and slots; package-owned layout behavior |
-| [`@robot-admin/theme`](https://www.npmjs.com/package/@robot-admin/theme)                             | `0.6.1`        | Theme core, Vue state, Naive UI adapter, light / dark / system                          | Shared component appearance and theme state                       |
-| [`@robot-admin/directives`](https://www.npmjs.com/package/@robot-admin/directives)                   | `2.0.1`        | 11 directives for permissions, copy, drag, debounce, throttle and more                  | Declarative interactions with unmount cleanup                     |
-| [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.0.4`        | Isolated instances, Excel / CSV / ZIP, cancellable chunks and file processing           | Reusable file scenarios with heavy dependencies loaded on demand  |
-| [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`        | Configuration protection and Git engineering standards                                  | Development-time commit conventions and initialization            |
+| Package                                                                                              | Pinned version | Core capabilities                                                                        | Application responsibility                                        |
+| ---------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.25.0`       | 60 business components, subpath imports, auto-import Resolver and independent styles     | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.1.0`        | Static enums, resilient remote dictionaries, scoped cache and optional Vue subscriptions | Shared translation for forms, search, details and both grids      |
+| [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD      | Typed APIs, session consistency, list and editor state            |
+| [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters              | Integrated into `C_Form`; configure rules directly                |
+| [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.3`        | 6 layouts, framework-independent settings protocol, Vue Headless and Naive entry points  | Host-owned menus, routes and slots; package-owned layout behavior |
+| [`@robot-admin/theme`](https://www.npmjs.com/package/@robot-admin/theme)                             | `0.6.1`        | Theme core, Vue state, Naive UI adapter, light / dark / system                           | Shared component appearance and theme state                       |
+| [`@robot-admin/directives`](https://www.npmjs.com/package/@robot-admin/directives)                   | `2.0.1`        | 11 directives for permissions, copy, drag, debounce, throttle and more                   | Declarative interactions with unmount cleanup                     |
+| [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.0.4`        | Isolated instances, Excel / CSV / ZIP, cancellable chunks and file processing            | Reusable file scenarios with heavy dependencies loaded on demand  |
+| [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`        | Configuration protection and Git engineering standards                                   | Development-time commit conventions and initialization            |
 
 Sources: [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages).
 
@@ -146,7 +147,7 @@ The application provides `compact` defaults for forms, search and editor modals.
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.35.3** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
+| **MachTable 0.36.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
@@ -156,7 +157,7 @@ MachTable is a separate data grid project. Core and Vue / React / XLSX adapters 
 
 Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
 
-The dependency and lockfile pin official npm **0.35.3**, with matching Vue and Core versions. This patch fixes auto-height overlays and integrates native pagers while preserving bounded content sizing, complete headers across layout and resizing, and concise `status` column configuration. Production plans, sales orders and shipping demonstrate the capabilities. Pinned-pane focus alignment, row actions, themed empty states, matrix I/O and optional ordering remain available.
+The dependency and lockfile pin official npm **0.36.0**, with matching Vue and Core versions. This release integrates shared dictionaries with boolean and array values while preserving content height, native pagers, bounded sizing, complete headers and concise `status` configuration. Production plans, sales orders and shipping demonstrate the capabilities. Pinned-pane focus alignment, row actions, themed empty states, matrix I/O and optional ordering remain available.
 
 Two lazy-loaded tabs on the same page make these features interactive:
 
@@ -311,7 +312,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.35.3** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.36.0** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text
@@ -391,3 +392,5 @@ Production/sales pages use built-in content sizing and status tags: MachTable fo
 Production and sales detail dialogs use compact label/value rows. Forms and searches share tighter row spacing while validation messages expand naturally. An isolated browser fixture covers 400 fields and multiline feedback.
 
 Component library 0.24.4 adds async ownership and resource lifecycle fixes. Isolated regression fixtures cover real fixed/fluid video mini-player scrolling, runtime toggles, return-to-position and unmount cleanup without entering the product build.
+
+Shared dictionary integration uses `@robot-admin/dictionary`. Register a source once, reference its name in form/search/table fields, and connect MachTable with the public dictionary column strategy and coalesced refresh. Open **字典联动体验** on the sales page to inspect shared loading, retries, empty dictionaries, scope changes, boolean values and multiple selections. See [dictionary integration](./docs/dictionaries.md).

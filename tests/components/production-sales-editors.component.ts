@@ -17,9 +17,15 @@ import { useProductionPlan } from '@/views/production-sales/production-plan/data
 import { useProductionActual } from '@/views/production-sales/production-actual/data'
 import { useBusinessWorkbench } from '@/views/production-sales/sales-orders/data'
 import { useShippingWorkbench } from '@/views/production-sales/shipping/data'
+import {
+  APP_DICTIONARY_KEY,
+  createAppDictionaries,
+} from '@/utils/d_dictionaryContext'
+import { DICTIONARY_PROVIDER_KEY } from '@robot-admin/naive-ui-components/config'
 
 /** 保留真实包运行时校验，不 mock 掉编辑器必需的数据源契约。 */
 function mountController<T>(create: () => T) {
+  const dictionaries = createAppDictionaries()
   let controller!: T
   let dialogs!: ReturnType<typeof useDialogReactiveList>
   const Child = defineComponent({
@@ -41,7 +47,15 @@ function mountController<T>(create: () => T) {
         ),
     }),
     // 确认框依赖离场钩子释放会话；保留真实 Transition，避免默认 stub 吞掉 afterLeave。
-    { global: { stubs: { transition: false } } }
+    {
+      global: {
+        stubs: { transition: false },
+        provide: {
+          [APP_DICTIONARY_KEY as symbol]: dictionaries,
+          [DICTIONARY_PROVIDER_KEY as symbol]: dictionaries,
+        },
+      },
+    }
   )
   return { controller, wrapper, dialogs }
 }
