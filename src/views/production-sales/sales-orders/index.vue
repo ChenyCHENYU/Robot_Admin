@@ -492,7 +492,7 @@
           <NDescriptionsItem label="合同量"
             >{{ detailOrder.header.targetWeight }} t</NDescriptionsItem
           ><NDescriptionsItem label="状态">{{
-            statusLabel(detailOrder.header.status)
+            detailLabels.status
           }}</NDescriptionsItem>
         </NDescriptions>
         <NDivider :style="{ margin: '12px 0' }"
@@ -600,7 +600,7 @@
     dictionaryVisible.value = false
   })
   const {
-    statusLabel,
+    detailLabels,
     container,
     stacked,
     form,

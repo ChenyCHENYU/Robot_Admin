@@ -97,7 +97,8 @@
       <div
         class="dictionary-experience__selection"
         data-testid="dictionary-selection"
-        >{{ selectionText }}</div
+        >{{ labels.warehouse }} / {{ labels.delivery }} /
+        {{ labels.urgent }}</div
       >
       <C_FormSearch
         v-model="query"
@@ -163,7 +164,7 @@
     requests,
     organization,
     searchConfig,
-    selectionText,
+    labels,
     modelText,
     reload,
     simulate,

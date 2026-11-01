@@ -2,14 +2,15 @@
 
 `@robot-admin/dictionary` 管理数据与加载生命周期；Naive UI Components 和 MachTable 只负责各自的呈现。根入口无框架和请求库依赖，Vue 能力从 `/vue` 按需导入。
 
-| 场景                   | 归属                                                      |
-| ---------------------- | --------------------------------------------------------- |
-| 稳定业务枚举           | `defineEnum([{ value, label }])`，同步可用，不请求接口    |
-| 可维护的小字典         | 注册 `load({ signal, scope })`，共享整份不可变选项        |
-| 搜索、表单、C_Table    | 字段配置 `dictionary: 'name'`，消费已有 Provider          |
-| 详情、提示、导出前准备 | `source.label(value)`、`source.load()`，不改原码          |
-| MachTable              | 可选 `/business` 字典列 + Vue 合并刷新，保持默认原码输出  |
-| 大型客户、物料、组织树 | 既有 DataPicker、分页查询或按码批量解析，不全量拉入小字典 |
+| 场景                   | 归属                                                                |
+| ---------------------- | ------------------------------------------------------------------- |
+| 稳定业务枚举           | `defineEnum([{ value, label }])`，同步可用，不请求接口              |
+| 可维护的小字典         | 注册 `load({ signal, scope })`，共享整份不可变选项                  |
+| 搜索、表单、C_Table    | 字段配置 `dictionary: 'name'`，消费已有 Provider                    |
+| 详情记录               | `useDictLabels(record, { field: 'name' })`，直接读取 `labels.field` |
+| 提示、导出前准备       | `source.label(value)`、`source.load()`，不改原码                    |
+| MachTable              | 可选 `/business` 字典列 + Vue 合并刷新，保持默认原码输出            |
+| 大型客户、物料、组织树 | 既有 DataPicker、分页查询或按码批量解析，不全量拉入小字典           |
 
 ## 应用只注册一次
 
@@ -35,6 +36,25 @@ NUI 字段只声明：
 { prop: 'status', label: '计划状态', type: 'select', dictionary: 'planStatus' }
 // C_Table 使用 key/title，dictionary 保持相同写法。
 ```
+
+## 详情直接读取标签字段
+
+```ts
+// RobotAdmin 的 composable 自动导入，应用实例已全局注册。
+const { labels, loading, error, reload } = useDictLabels(order, {
+  status: 'order-status',
+})
+```
+
+```vue
+<NDescriptionsItem label="计划状态">{{ labels.status }}</NDescriptionsItem>
+```
+
+`order` 使用原始记录的 ref、reactive 对象，或 `() => detailOrder.value?.header`。记录、原码或异步字典变化时自动更新，不手写 `1` 这样的状态码，不逐字段获取 Source，也不在模板调用翻译函数。提交仍读取原始 `order`。
+
+同名字典只订阅一次；空记录显示 `—`，未知编码保留原码。远程错误通过 `error` 就地呈现，`reload()` 返回每个字典的重试结果，不额外弹全局错误。标签只跟随选项快照及绑定字段，loading/error 变化不重算整组文字。
+
+其他 Vue 系统或局部 Store 直接使用包的 `useDictionaryLabels(dictionaries, order, fields)`；RobotAdmin 的 `useDictLabels` 只负责取得应用实例，包负责全部响应式、加载和清理逻辑。字段绑定用于详情，表格仍使用各自列策略。
 
 MachTable 沿用自己的公开入口：
 

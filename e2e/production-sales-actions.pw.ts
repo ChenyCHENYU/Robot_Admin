@@ -346,6 +346,7 @@ test('订单与明细弹窗连接整单草稿，精确金额、详情只读和�
     .click()
   const detail = page.locator('.ps-detail-modal')
   await expect(detail).toContainText('新经办')
+  await expect(detail.getByText('待下达', { exact: true })).toBeVisible()
   await detail
     .locator('.mach-row[data-id] .mach-cell[data-col-id="quantity"]')
     .dblclick()

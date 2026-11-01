@@ -162,12 +162,18 @@ test('字典跨表单、搜索、详情与两种表格共享一次请求，保�
     '加急交付'
   )
   await expect.poll(async () => (await readModel(panel)).urgent).toBe(true)
+  await expect(panel.getByTestId('dictionary-selection')).toContainText(
+    '加急交付'
+  )
   await choose(
     page,
     field(form, '加急要求').locator('.n-base-selection'),
     '普通交付'
   )
   await expect.poll(async () => (await readModel(panel)).urgent).toBe(false)
+  await expect(panel.getByTestId('dictionary-selection')).toContainText(
+    '普通交付'
+  )
   await choose(
     page,
     field(form, '运输方式').locator('.n-base-selection'),
@@ -177,6 +183,9 @@ test('字典跨表单、搜索、详情与两种表格共享一次请求，保�
   await expect
     .poll(async () => (await readModel(panel)).delivery)
     .toEqual(['ROAD', 'RAIL', 'SEA'])
+  await expect(panel.getByTestId('dictionary-selection')).toContainText(
+    '公路、铁路、水运'
+  )
   const model = await readModel(panel)
   await expectRequests(panel, 1)
 

@@ -99,6 +99,21 @@ test('四类页面使用真实已发布编辑器可启动，无需配置远端�
     instance.wrapper.unmount()
 })
 
+test('详情字段绑定随查看记录切换自动翻译，保留原始订单编码', async () => {
+  const { controller: sales, wrapper } = mountController(useBusinessWorkbench)
+  expect(sales.detailLabels.value.status).toBe('—')
+  const pending = sales.filteredOrders.value.find(row => row.status === 0)!
+  const running = sales.filteredOrders.value.find(row => row.status === 1)!
+  await sales.openDetail(pending)
+  expect(sales.detailLabels.value.status).toBe('待下达')
+  await sales.openDetail(running)
+  expect(sales.detailLabels.value.status).toBe('执行中')
+  expect(sales.detailOrder.value?.header.status).toBe(1)
+  expect(pending.status).toBe(0)
+  expect(running.status).toBe(1)
+  wrapper.unmount()
+})
+
 test('计划编辑副本取消不污染源记录，状态在弹窗打开后变化仍拒绝提交', async () => {
   const { controller: plan } = mountController(useProductionPlan)
   const source = { ...plan.rows.value[0] }

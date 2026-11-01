@@ -1012,8 +1012,12 @@ export function useBusinessWorkbench() {
       scope.clear()
     },
   })
+  const { labels: detailLabels } = useDictLabels(
+    () => operations.detailOrder.value?.header,
+    { status: 'order-status' }
+  )
   return {
-    statusLabel: statusSource.label,
+    detailLabels,
     ...operations,
     selectOrder,
     cancelSwitch,

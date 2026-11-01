@@ -8,6 +8,7 @@
 import { createDictionaryStore, defineEnum } from '@robot-admin/dictionary'
 import {
   useDictionary,
+  useDictionaryLabels,
   useDictionaryRefresh,
 } from '@robot-admin/dictionary/vue'
 import { DICTIONARY_PROVIDER_KEY } from '@robot-admin/naive-ui-components/config'
@@ -156,6 +157,11 @@ export function useDictionaryExperience() {
     urgent: false,
     account: '0',
   })
+  const { labels } = useDictionaryLabels(dictionaries, form, {
+    warehouse: 'example-warehouse',
+    delivery: 'example-delivery',
+    urgent: 'example-urgent',
+  })
   const query = ref<ExampleQuery>({ warehouse: null })
   const applied = ref<ExampleQuery>({ warehouse: null })
   const rows: ExampleRow[] = [
@@ -221,10 +227,7 @@ export function useDictionaryExperience() {
         applied.value = { ...values }
       },
     },
-    selectionText: computed(
-      () =>
-        `${state.label(form.value.warehouse)} / ${delivery.label(form.value.delivery)} / ${urgent.label(form.value.urgent)}`
-    ),
+    labels,
     modelText: computed(() => JSON.stringify(form.value)),
     reload,
     simulate,
