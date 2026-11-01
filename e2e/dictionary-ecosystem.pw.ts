@@ -140,6 +140,7 @@ test('字典跨表单、搜索、详情与两种表格共享一次请求，保�
     )
   ).toHaveText('UNKNOWN')
   await expect(field(form, '账户状态')).toContainText('禁用')
+  await expect(panel.getByTestId('dictionary-selection')).toContainText('禁用')
   await expect
     .poll(() => readModel(panel))
     .toEqual({

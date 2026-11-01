@@ -78,6 +78,7 @@ test('接口字典失败局部可见且无重复消息，重试恢复并跨弹�
   })
   await page.goto('/#/production-sales/sales-orders')
   await expect(page.getByTestId('business-workbench')).toBeVisible()
+  expect(requests).toBe(0)
   await page.getByRole('button', { name: '字典联动体验', exact: true }).click()
   const experience = page.getByTestId('dictionary-experience')
   await expect(experience).toContainText('选项加载失败')
@@ -90,6 +91,9 @@ test('接口字典失败局部可见且无重复消息，重试恢复并跨弹�
     '停用 HTTP'
   )
   await expect(experience).not.toContainText('选项加载失败')
+  await expect(experience.getByTestId('dictionary-selection')).toContainText(
+    '停用 HTTP'
+  )
   expect(requests).toBe(2)
   await page.getByRole('button', { name: '关闭体验', exact: true }).click()
   await expect(experience).toHaveCount(0)

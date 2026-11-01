@@ -71,7 +71,7 @@
     "@agile-team/mach-table-vue": "0.36.0",
     "@antv/x6": "^2.19.2",
     "@iconify/vue": "^5.0.0",
-    "@robot-admin/dictionary": "0.2.0",
+    "@robot-admin/dictionary": "0.3.0",
     "@robot-admin/directives": "2.0.1",
     "@robot-admin/file-utils": "3.0.4",
     "@robot-admin/form-validate": "3.4.4",

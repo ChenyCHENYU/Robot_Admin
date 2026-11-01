@@ -5,10 +5,13 @@
  * @Description: 字典共享与恢复体验，局部模拟不修改应用公司或真实业务数据
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import { createDictionaryStore, defineEnum } from '@robot-admin/dictionary'
+import {
+  createDictionaryStore,
+  createDictionaryProvider,
+  defineEnum,
+} from '@robot-admin/dictionary'
 import {
   useDictionary,
-  useDictionaryLabels,
   useDictionaryRefresh,
 } from '@robot-admin/dictionary/vue'
 import { DICTIONARY_PROVIDER_KEY } from '@robot-admin/naive-ui-components/config'
@@ -142,10 +145,8 @@ export function useDictionaryExperience() {
     },
     { scope: organization.value }
   )
-  provide(DICTIONARY_PROVIDER_KEY, {
-    getDictionary: (name: string) =>
-      dictionaries.getDictionary(name) ?? app.getDictionary(name),
-  })
+  const provider = createDictionaryProvider(dictionaries, app)
+  provide(DICTIONARY_PROVIDER_KEY, provider)
   onScopeDispose(() => dictionaries.destroy())
   const warehouse = dictionaries.getDictionary('example-warehouse')
   const delivery = dictionaries.getDictionary('example-delivery')
@@ -157,11 +158,7 @@ export function useDictionaryExperience() {
     urgent: false,
     account: '0',
   })
-  const { labels } = useDictionaryLabels(dictionaries, form, {
-    warehouse: 'example-warehouse',
-    delivery: 'example-delivery',
-    urgent: 'example-urgent',
-  })
+  const { labels } = useDictLabels(form, FORM_FIELDS, { provider })
   const query = ref<ExampleQuery>({ warehouse: null })
   const applied = ref<ExampleQuery>({ warehouse: null })
   const rows: ExampleRow[] = [

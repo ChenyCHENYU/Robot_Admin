@@ -1014,7 +1014,8 @@ export function useBusinessWorkbench() {
   })
   const { labels: detailLabels } = useDictLabels(
     () => operations.detailOrder.value?.header,
-    { status: 'order-status' }
+    HEADER_FIELDS,
+    { enabled: operations.detailVisible }
   )
   return {
     detailLabels,

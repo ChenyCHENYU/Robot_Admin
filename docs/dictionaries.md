@@ -2,15 +2,15 @@
 
 `@robot-admin/dictionary` 管理数据与加载生命周期；Naive UI Components 和 MachTable 只负责各自的呈现。根入口无框架和请求库依赖，Vue 能力从 `/vue` 按需导入。
 
-| 场景                   | 归属                                                                |
-| ---------------------- | ------------------------------------------------------------------- |
-| 稳定业务枚举           | `defineEnum([{ value, label }])`，同步可用，不请求接口              |
-| 可维护的小字典         | 注册 `load({ signal, scope })`，共享整份不可变选项                  |
-| 搜索、表单、C_Table    | 字段配置 `dictionary: 'name'`，消费已有 Provider                    |
-| 详情记录               | `useDictLabels(record, { field: 'name' })`，直接读取 `labels.field` |
-| 提示、导出前准备       | `source.label(value)`、`source.load()`，不改原码                    |
-| MachTable              | 可选 `/business` 字典列 + Vue 合并刷新，保持默认原码输出            |
-| 大型客户、物料、组织树 | 既有 DataPicker、分页查询或按码批量解析，不全量拉入小字典           |
+| 场景                   | 归属                                                                       |
+| ---------------------- | -------------------------------------------------------------------------- |
+| 稳定业务枚举           | `defineEnum([{ value, label }])`，同步可用，不请求接口                     |
+| 可维护的小字典         | 注册 `load({ signal, scope })`，共享整份不可变选项                         |
+| 搜索、表单、C_Table    | 字段配置 `dictionary: 'name'`，消费已有 Provider                           |
+| 详情记录               | `useDictLabels(record, fields)`，复用既有字段配置，直接读取 `labels.field` |
+| 提示、导出前准备       | `source.label(value)`、`source.load()`，不改原码                           |
+| MachTable              | 可选 `/business` 字典列 + Vue 合并刷新，保持默认原码输出                   |
+| 大型客户、物料、组织树 | 既有 DataPicker、分页查询或按码批量解析，不全量拉入小字典                  |
 
 ## 应用只注册一次
 
@@ -41,20 +41,36 @@ NUI 字段只声明：
 
 ```ts
 // RobotAdmin 的 composable 自动导入，应用实例已全局注册。
-const { labels, loading, error, reload } = useDictLabels(order, {
-  status: 'order-status',
-})
+const { labels, loading, error, reload } = useDictLabels(order, HEADER_FIELDS)
+// 弹窗按可见状态启用：useDictLabels(order, HEADER_FIELDS, { enabled: visible })
 ```
 
 ```vue
 <NDescriptionsItem label="计划状态">{{ labels.status }}</NDescriptionsItem>
 ```
 
-`order` 使用原始记录的 ref、reactive 对象，或 `() => detailOrder.value?.header`。记录、原码或异步字典变化时自动更新，不手写 `1` 这样的状态码，不逐字段获取 Source，也不在模板调用翻译函数。提交仍读取原始 `order`。
+直接复用表单/搜索的 `prop`、表格的 `key/field` 与 `dictionary` 元数据，非字典字段忽略，不重复维护映射；独立详情仍支持 `{ status: 'order-status' }`，也可直接指定选项源。配置在 setup 解析一次，字段的矛盾配置明确报告错误。只复用字典声明，不解释组件自己的 formatter、renderer、校验或显式下拉选项优先级。
+
+`order` 使用原始记录的 ref、reactive 对象，或 `() => detailOrder.value?.header`。记录尚未到达时不解析、订阅、加载远程源；`enabled` 接受 boolean/ref/getter，关闭时归还当前订阅并取消等待，保留最后显示的快照供弹窗离场，重新打开读取当前作用域数据。字段原码、记录或字典变化后自动更新，提交仍读取原始 `order`。
 
 同名字典只订阅一次；空记录显示 `—`，未知编码保留原码。远程错误通过 `error` 就地呈现，`reload()` 返回每个字典的重试结果，不额外弹全局错误。标签只跟随选项快照及绑定字段，loading/error 变化不重算整组文字。
 
-其他 Vue 系统或局部 Store 直接使用包的 `useDictionaryLabels(dictionaries, order, fields)`；RobotAdmin 的 `useDictLabels` 只负责取得应用实例，包负责全部响应式、加载和清理逻辑。字段绑定用于详情，表格仍使用各自列策略。
+其他 Vue 系统直接使用包的 `useDictionaryLabels(provider, order, fields)`；RobotAdmin 的 `useDictLabels` 只负责选择当前 Provider，包负责响应式、读取适配、加载和清理。既有轻量 `getOptions/load/subscribe/getState` 源继续支持，不另建缓存。字段绑定用于详情，表格仍使用各自列策略。
+
+## 页面覆盖只组合一次
+
+```ts
+const provider = createDictionaryProvider(
+  pageDictionaries,
+  useAppDictionaries()
+)
+provide(DICTIONARY_PROVIDER_KEY, provider)
+// Vue 的 inject 读取祖先；与 provide 同层的详情控制器显式复用这一个实例。
+const { labels } = useDictLabels(order, HEADER_FIELDS, { provider })
+// 子组件直接 useDictLabels(order, HEADER_FIELDS)，自动读取最近 Provider。
+```
+
+`createDictionaryProvider` 来自 `@robot-admin/dictionary`。所有表单、搜索、C_Table 与详情读取同一个组合器：页面名称缺失时兜底应用，已找到源的接口错误保持局部可见，不能用全局标签遮盖失败。不要在各个消费者中另写一条兜底链。组合器只有只读查找，不创建请求或缓存。
 
 MachTable 沿用自己的公开入口：
 

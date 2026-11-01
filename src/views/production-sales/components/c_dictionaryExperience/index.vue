@@ -97,8 +97,8 @@
       <div
         class="dictionary-experience__selection"
         data-testid="dictionary-selection"
-        >{{ labels.warehouse }} / {{ labels.delivery }} /
-        {{ labels.urgent }}</div
+        >{{ labels.warehouse }} / {{ labels.delivery }} / {{ labels.urgent }} /
+        {{ labels.account }}</div
       >
       <C_FormSearch
         v-model="query"
