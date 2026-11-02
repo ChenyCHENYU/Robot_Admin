@@ -5,7 +5,10 @@
  * @Description: 已有字典接口的只读消费适配，保留停用历史标签并区分失败与合法空字典
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import type { DictionaryOption } from '@robot-admin/dictionary'
+import type {
+  DictionaryOption,
+  DictionaryLoadContext,
+} from '@robot-admin/dictionary'
 import { getDictListApi } from './dictionary-manage'
 import type { DictData } from './dictionary-manage.contract'
 
@@ -42,7 +45,7 @@ export const toDictionaryOptions = (
 /** 使用统一请求的静默模式，由使用位置呈现错误与重试，不重复弹全局消息。 */
 export const getDictionaryOptionsApi = async (
   typeCode: string,
-  signal: AbortSignal
+  { signal }: DictionaryLoadContext
 ): Promise<readonly DictionaryOption[]> => {
   const response = await getDictListApi(signal, { silent: true })
   if (!['0', '200'].includes(String(response.code)))

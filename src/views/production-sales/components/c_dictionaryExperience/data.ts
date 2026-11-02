@@ -72,7 +72,7 @@ export const FORM_FIELDS: FormOption<ExampleForm>[] = [
     prop: 'account',
     label: '账户状态',
     type: 'select',
-    dictionary: 'user-status',
+    dictionary: 'user_status',
     attrs: { 'aria-label': '账户状态' },
   },
 ]

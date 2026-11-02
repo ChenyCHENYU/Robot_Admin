@@ -7,19 +7,23 @@
  */
 import type { InjectionKey } from 'vue'
 import { createDictionaryStore } from '@robot-admin/dictionary'
-import { APP_DICTIONARIES } from '@/config/dictionaries'
+import { getDictionaryOptionsApi } from '@/api/dictionary-options'
+import { ORDER_STATUS_OPTIONS } from '@/config/enums'
 
 /** 由宿主提供认证判断，工厂不读取隐式的全局 Pinia 或路由实例。 */
 export const createAppDictionaries = (canLoadRemote = () => true) =>
-  createDictionaryStore({
-    ...APP_DICTIONARIES,
-    'user-status': {
-      load: (context: { signal: AbortSignal }) =>
-        canLoadRemote()
-          ? APP_DICTIONARIES['user-status'].load(context)
-          : Promise.resolve([]),
+  createDictionaryStore(
+    {
+      'order-status': ORDER_STATUS_OPTIONS,
     },
-  })
+    {
+      // 接口统一接一次；远程字段直接写后端原码，不再维护前端别名清单。
+      load: (name, context) =>
+        canLoadRemote()
+          ? getDictionaryOptionsApi(name, context)
+          : Promise.resolve([]),
+    }
+  )
 type AppDictionaries = ReturnType<typeof createAppDictionaries>
 export const APP_DICTIONARY_KEY: InjectionKey<AppDictionaries> =
   Symbol('app-dictionaries')

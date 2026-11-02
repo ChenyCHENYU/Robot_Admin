@@ -8,7 +8,7 @@
         "@agile-team/mach-table-vue": "0.36.0",
         "@antv/x6": "^2.19.2",
         "@iconify/vue": "^5.0.0",
-        "@robot-admin/dictionary": "0.3.1",
+        "@robot-admin/dictionary": "0.4.0",
         "@robot-admin/directives": "2.0.1",
         "@robot-admin/file-utils": "3.0.4",
         "@robot-admin/form-validate": "3.4.4",
@@ -755,7 +755,7 @@
 
     "@resvg/resvg-js-win32-x64-msvc": ["@resvg/resvg-js-win32-x64-msvc@2.4.1", "", { "os": "win32", "cpu": "x64" }, "sha512-vY4kTLH2S3bP+puU5x7hlAxHv+ulFgcK6Zn3efKSr0M0KnZ9A3qeAjZteIpkowEFfUeMPNg2dvvoFRJA9zqxSw=="],
 
-    "@robot-admin/dictionary": ["@robot-admin/dictionary@0.3.1", "", { "peerDependencies": { "vue": "^3.4.0" }, "optionalPeers": ["vue"] }, "sha512-s2qVaDIRd/t5udA+QXmBobpGX4yVQrw9ftHSu/zx8GUfE++qF0z/hH4HhEr4uMr8DKiYxzKnjPAN7JUC1YtM0w=="],
+    "@robot-admin/dictionary": ["@robot-admin/dictionary@0.4.0", "", { "peerDependencies": { "vue": "^3.4.0" }, "optionalPeers": ["vue"] }, "sha512-QTLS8vETP58ADXnHByNIQ7G00P4hEf1l3O8sh8mQmIGxGMdF4tyeUS+9z7aRWzFUQAQupX+IUnhOMQZwzataug=="],
 
     "@robot-admin/directives": ["@robot-admin/directives@2.0.1", "", { "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-Q4zPlCLp/gPEwa5sB37pZNC2dk+/ARzgGzFXN4ug6XgpAJcmIQaqXRUQVjU+6bw3rJ11jcNdz3Hx+ogmmmdh6w=="],
 

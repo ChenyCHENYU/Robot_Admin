@@ -5,7 +5,7 @@
 | 场景                   | 归属                                                                       |
 | ---------------------- | -------------------------------------------------------------------------- |
 | 稳定业务枚举           | `defineEnum([{ value, label }])`，同步可用，不请求接口                     |
-| 可维护的小字典         | 注册 `load({ signal, scope })`，共享整份不可变选项                         |
+| 可维护的小字典         | 应用接一次通用 loader，字段直接写后台字典码                                |
 | 搜索、表单、C_Table    | 字段配置 `dictionary: 'name'`，消费已有 Provider                           |
 | 详情记录               | `useDictLabels(record, fields)`，复用既有字段配置，直接读取 `labels.field` |
 | 提示、导出前准备       | `source.label(value)`、`source.load()`，不改原码                           |
@@ -14,26 +14,18 @@
 
 ## 应用只注册一次
 
-入口的 `setupDictionaries()` 在 Pinia、请求客户端之后安装；每个应用实例独立创建 Store。`src/config/dictionaries.ts` 声明静态枚举和远程 loader。接口解包、类型转换只在 `src/api/dictionary-options.ts` 适配一次，不分散到页面 formatter。
+入口的 `setupDictionaries()` 在 Pinia、请求客户端之后安装；每个应用实例独立创建 Store。远程字典无需 `dictionaries.ts` 或逐项注册，接口解包、类型转换只在 `src/api/dictionary-options.ts` 适配一次。
 
 ```ts
-const dictionaries = createDictionaryStore({
-  planStatus: defineEnum([
-    { value: 0, label: '待下达' },
-    { value: 1, label: '执行中' },
-  ]),
-  warehouse: {
-    load: ({ signal, scope }) => warehouseApi({ signal, scope, silent: true }),
-  },
-})
+const dictionaries = createDictionaryStore(getDictionaryOptionsApi)
 ```
 
-`warehouseApi` 是应用自己的接口适配函数，返回标准 `{value,label,disabled?}[]`。实际后端路径、响应解包和编码类型由应用确定，库不假定某套后端字段，也不创建隐式 HTTP 客户端。当前用户状态复用已有 `/sys/dictionaries` 树接口；未来增加多个类型时，优先接后端按类型或批量查询接口，不复制多份全目录缓存。
+`getDictionaryOptionsApi(code, { signal, scope })` 是应用接口适配，返回标准 `{value,label,disabled?}[]`。页面直接使用后台原码 `user_status`，不再添加 `user-status` 别名。应用工厂中的 `order-status` 是演示用静态枚举，显式定义优先；只有静态枚举或专属接口才需要额外声明。实际后端路径、响应解包和编码类型由应用确定，库不创建 HTTP 客户端。当前用户状态复用已有 `/sys/dictionaries` 树接口；多类型场景应接后端按类型或批量查询接口，不复制多份全目录缓存。
 
 NUI 字段只声明：
 
 ```ts
-{ prop: 'status', label: '计划状态', type: 'select', dictionary: 'planStatus' }
+{ prop: 'account', label: '账户状态', type: 'select', dictionary: 'user_status' }
 // C_Table 使用 key/title，dictionary 保持相同写法。
 ```
 

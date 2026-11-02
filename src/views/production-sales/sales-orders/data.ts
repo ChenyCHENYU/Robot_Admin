@@ -22,7 +22,7 @@ import {
   type SearchFormItem,
 } from '@robot-admin/naive-ui-components/C_FormSearch'
 import { useDictionaryRefresh } from '@robot-admin/dictionary/vue'
-import { ORDER_STATUS_OPTIONS } from '@/config/dictionaries'
+import { ORDER_STATUS_OPTIONS } from '@/config/enums'
 import { useAppDictionaries } from '@/utils/d_dictionaryContext'
 import {
   createBatchPatch,
