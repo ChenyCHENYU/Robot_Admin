@@ -19,7 +19,7 @@ import { useLatestRequest } from '@/composables/useLatestRequest'
 import { isMockDataMode } from '@/config/dataMode'
 import { s_userStore } from '@/stores/user'
 import { s_permissionStore } from '@/stores/permission'
-import { APP_DICTIONARY_KEY } from '@/utils/d_dictionaryContext'
+import { useDictionaries } from '@robot-admin/dictionary/vue'
 import {
   filterDictionaries,
   getDictionaryState,
@@ -50,9 +50,9 @@ const sortDictionaries = (dicts: DictData[]): DictData[] =>
     }))
 
 export const useDictionaryManagement = () => {
-  const dictionaries = inject(APP_DICTIONARY_KEY, undefined)
+  const dictionaries = useDictionaries()
   /** 服务端确认成功后，使正在消费的远程字典按需刷新。 */
-  const invalidateDictionaries = () => dictionaries?.invalidate()
+  const invalidateDictionaries = () => dictionaries.invalidate()
   const message = useMessage()
   const dialog = useDialog()
   const userStore = s_userStore()

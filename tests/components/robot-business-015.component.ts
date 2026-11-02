@@ -29,6 +29,8 @@ import type { RoleFormData } from '@/api/role-manage.contract'
 import type { UserData } from '@/api/user-manage.contract'
 import { getUserListApi, updateUserStatusApi } from '@/api/user-manage'
 import { deferred } from './d_deferred'
+import { createDictionaryPlugin } from '@robot-admin/dictionary/vue'
+import dictionaryConfig from '@/config/dictionary'
 
 vi.mock('@/config/dataMode', () => ({ isMockDataMode: () => true }))
 vi.mock('@/stores/user', () => ({
@@ -144,7 +146,8 @@ function mountController<T>(
         h(NMessageProvider, null, () =>
           h(NDialogProvider, null, () => h(child))
         ),
-    })
+    }),
+    { global: { plugins: [createDictionaryPlugin(dictionaryConfig)] } }
   )
   return { controller, wrapper }
 }

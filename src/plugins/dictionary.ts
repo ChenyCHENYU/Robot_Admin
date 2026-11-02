@@ -6,35 +6,28 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type { App } from 'vue'
-import { DICTIONARY_PROVIDER_KEY } from '@robot-admin/naive-ui-components/config'
-import {
-  APP_DICTIONARY_KEY,
-  createAppDictionaries,
-} from '@/utils/d_dictionaryContext'
+import { createDictionaryPlugin } from '@robot-admin/dictionary/vue'
+import dictionaryConfig from '@/config/dictionary'
 import { s_userStore } from '@/stores/user'
 import { s_languageStore } from '@/stores/language'
 
-/** 全局注册只负责提供实例，不预加载未使用的字典。 */
+/** 宿主只提供业务上下文；插件负责实例、惰性消费、暂停和卸载。 */
 export const setupDictionaries = (app: App): void => {
   const user = s_userStore()
-  const dictionaries = createAppDictionaries(() => Boolean(user.token))
   const language = s_languageStore()
-  const stop = watch(
-    () =>
-      JSON.stringify([
-        user.userInfo.id ?? user.userInfo.username ?? '',
-        user.activeContext?.tenantId ?? '',
-        user.activeContext?.companyId ?? '',
-        language.currentLang,
-        Boolean(user.token),
-      ]),
-    scope => dictionaries.setScope(scope),
-    { immediate: true, flush: 'sync' }
+  app.use(
+    createDictionaryPlugin({
+      ...dictionaryConfig,
+      enabled: () => Boolean(user.token),
+      // 先捕获所属应用的 Store，响应式回调不再读取全局 active Pinia。
+      scope: () =>
+        JSON.stringify([
+          user.userInfo.id ?? user.userInfo.username ?? '',
+          user.activeContext?.tenantId ?? '',
+          user.activeContext?.companyId ?? '',
+          language.currentLang,
+          Boolean(user.token),
+        ]),
+    })
   )
-  app.provide(APP_DICTIONARY_KEY, dictionaries)
-  app.provide(DICTIONARY_PROVIDER_KEY, dictionaries)
-  app.onUnmount(() => {
-    stop()
-    dictionaries.destroy()
-  })
 }

@@ -21,9 +21,11 @@ import {
   type SearchConfig,
   type SearchFormItem,
 } from '@robot-admin/naive-ui-components/C_FormSearch'
-import { useDictionaryRefresh } from '@robot-admin/dictionary/vue'
+import {
+  useDictionaries,
+  useDictionaryRefresh,
+} from '@robot-admin/dictionary/vue'
 import { ORDER_STATUS_OPTIONS } from '@/config/enums'
-import { useAppDictionaries } from '@/utils/d_dictionaryContext'
 import {
   createBatchPatch,
   createNumberCodec,
@@ -336,7 +338,8 @@ export const BATCH_MODES = [
 
 /** 单据工作台只组合公开协议；保存与模拟部分失败仍属于本地业务数据源。 */
 export function useBusinessWorkbench() {
-  const statusSource = useAppDictionaries().getDictionary('order-status')
+  const statusSource = useDictionaries().getDictionary('order-status')
+  if (!statusSource) throw new Error('订单状态字典未配置')
   const orders = ref(createBusinessOrders())
   const activeId = ref('ORDER-1')
   const header = ref(clone(orders.value[0].header))

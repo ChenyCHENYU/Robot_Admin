@@ -12,27 +12,61 @@ RobotAdmin 已接入 `@robot-admin/dictionary`。页面只声明后台字典码�
 
 ## 一、项目已经接好了什么
 
-**新增远程字典不改这些文件，也不建立逐项注册清单。** 字段直接使用后台类型码，例如 `user_status`；不要再添加 `user-status` 前端别名。
+应用通过字典包自己的 Vue 插件接入，不导入组件库的 key。通用接口与默认差异集中在一个配置文件：
 
-| 文件                                                          | 职责                                        | 什么时候才改                 |
-| ------------------------------------------------------------- | ------------------------------------------- | ---------------------------- |
-| [dictionary-options.ts](../src/api/dictionary-options.ts)     | 通用 API 适配，检查业务码、解包并返回选项   | 接真实后台、后台响应格式变化 |
-| [d_dictionaryContext.ts](../src/utils/d_dictionaryContext.ts) | 创建应用 Store、提供 `useAppDictionaries`   | 应用加载策略需要调整         |
-| [dictionary.ts](../src/plugins/dictionary.ts)                 | 启动提供实例，绑定用户/租户/公司/语言及销毁 | 应用上下文维度变化           |
-| [enums.ts](../src/config/enums.ts)                            | 稳定的业务静态枚举                          | 确有静态枚举变化             |
-| [useDictLabels.ts](../src/composables/useDictLabels.ts)       | 详情读取当前 Provider 的精简封装            | 通常不用改                   |
+```ts
+// src/config/dictionary.ts
+import { getDictionaryOptionsApi } from '@/api/dictionary-options'
+import { ORDER_STATUS_OPTIONS } from './enums'
 
-启动顺序已在 `src/main.ts` 完成：Pinia → Request Core → `setupDictionaries(app)` → Router。页面不再调用 `setupDictionaries` 或创建应用 Store。
+export default {
+  load: getDictionaryOptionsApi,
+  dictionaries: { 'order-status': ORDER_STATUS_OPTIONS },
+}
+```
 
-接入的核心是 `createDictionaryStore(getDictionaryOptionsApi)`。本项目还声明了演示用静态 `order-status` 并加认证判断，未显式声明的远程码自动交给通用 API。
+普通新项目在已有启动逻辑中只需：
 
-接口函数接收 `(code, { signal, scope })`，返回 `{ value, label, disabled? }[]`。当前 `user_status` 复用已有 `/sys/dictionaries` 树接口；真实后台若提供按类型或批量接口，只改 API 适配，不改页面字段。不要每个字典都拉全目录、再另外建立目录缓存。
+```ts
+import { createDictionaryPlugin } from '@robot-admin/dictionary/vue'
+import dictionaryConfig from '@/config/dictionary'
 
-其他项目的从零接入见 [SDK 接入指南](https://github.com/ChenyCHENYU/robot-admin-packages/blob/main/packages/dictionary/docs/guide.md#一接入只做一次)。`useDictLabels` 是项目自动导入封装，不是 SDK 导出。
+app.use(createDictionaryPlugin(dictionaryConfig))
+```
+
+RobotAdmin 的 `setupDictionaries(app)` 还捕获所属应用的用户、公司和语言，作为 `scope/enabled` 的响应式配置；字典插件负责实例、暂停恢复、清理和作用域隔离。
+
+| 文件                                                      | 职责                                  | 什么时候才改               |
+| --------------------------------------------------------- | ------------------------------------- | -------------------------- |
+| [dictionary.ts 配置](../src/config/dictionary.ts)         | 通用 loader、静态枚举及默认策略覆盖   | 默认策略或静态枚举确有差异 |
+| [dictionary-options.ts](../src/api/dictionary-options.ts) | 一次适配真实接口、业务码及选项字段    | 后台接口或响应格式变化     |
+| [dictionary.ts 插件](../src/plugins/dictionary.ts)        | app.use 字典插件，闭包绑定本应用身份  | 应用身份维度变化           |
+| [enums.ts](../src/config/enums.ts)                        | 复用稳定业务枚举                      | 确有静态枚举变化           |
+| [useDictLabels.ts](../src/composables/useDictLabels.ts)   | 纯 re-export SDK hook，供自动导入发现 | 通常不用改                 |
+
+应用已按 Pinia → Request Core → 字典插件 → Router 初始化。**新增远程字典不改配置文件**，页面只写后台码，例如 `user_status`；不要再建逐项注册、别名映射、私有 key 或页面 Store。
+
+默认成功缓存 5 分钟、失败冷却 5 秒、超时 15 秒；配置文件只覆盖需要调整的项。没有 `load` 时可只用静态字典，插件不会猜测后台地址。认证 `enabled: false` 是暂停：不请求、保持 idle，不缓存成合法 empty。
+
+当前接口复用 `/sys/dictionaries` 树；真实后台有按类型/批量接口时只改 API 适配，不改页面。不要每个字典都拉全目录后再叠目录缓存。
+
+SDK 接入与默认配置详见[独立插件指南](https://github.com/ChenyCHENYU/robot-admin-packages/blob/main/packages/dictionary/docs/guide.md#一插件与配置接入一次)。NUI ≥0.26 自动消费只读协议；字典插件本身不依赖 NUI 或 MachTable。
 
 ## 二、页面怎么用
 
 各段放在页面 `data.ts` / 组合函数的 setup 调用链中，模板放 `index.vue`。已有字段只补 `dictionary`；以下给出独立场景的完整字段定义，按需选用，不要求全部复制。
+
+### 独立取选项或标签
+
+无需从配置文件或组件库取实例，SDK 自己提供 hook：
+
+```ts
+import { useDictionary } from '@robot-admin/dictionary/vue'
+
+const { options, label, loading, error, reload } = useDictionary('user_status')
+```
+
+`options` 可以绑定原生/其他下拉；`label(value)` 同步读取标签；`reload()` 的失败通过 `error` 呈现，由事件处理器捕获拒绝。C_Form/Search/Table 的字段声明通常不需要额外调用这个 hook。
 
 ### 1. 表单下拉
 
@@ -149,8 +183,8 @@ const showDetail = (user: { account: string }) => {
 MachTable 使用自己的公开列策略，不直接读取 C_Table 的 `dictionary` 属性。下面的组合函数可在页面 setup 调用并解构其返回值：
 
 ```ts
-import { useAppDictionaries } from '@/utils/d_dictionaryContext'
 import {
+  useDictionaries,
   useDictionary,
   useDictionaryRefresh,
 } from '@robot-admin/dictionary/vue'
@@ -160,7 +194,7 @@ import { createDictionaryColumn } from '@agile-team/mach-table-vue/business'
 export function useAccountGrid() {
   const table = useMachTable<{ id: string; account: string }>()
   const rows = ref([{ id: 'U-1', account: '1' }])
-  const source = useAppDictionaries().getDictionary('user_status')
+  const source = useDictionaries().getDictionary('user_status')
   if (!source) throw new Error('字典实例不可用')
   const state = useDictionary(source)
   const columns = defineVueColumns<{ id: string; account: string }>([
@@ -215,13 +249,14 @@ import {
   createDictionaryStore,
   createDictionaryProvider,
 } from '@robot-admin/dictionary'
-import { DICTIONARY_PROVIDER_KEY } from '@robot-admin/naive-ui-components/config'
-import { useAppDictionaries } from '@/utils/d_dictionaryContext'
+import { DICTIONARY_PROVIDER_KEY } from '@robot-admin/dictionary/vue'
 
 const local = createDictionaryStore({
   user_status: [{ value: '1', label: '本页正常' }],
 })
-const provider = createDictionaryProvider(local, useAppDictionaries())
+const parent = inject(DICTIONARY_PROVIDER_KEY)
+if (!parent) throw new Error('请先安装字典插件')
+const provider = createDictionaryProvider(local, parent)
 provide(DICTIONARY_PROVIDER_KEY, provider)
 onScopeDispose(() => local.destroy())
 const { labels } = useDictLabels(record, fields, { provider })
@@ -245,7 +280,7 @@ Form/Search/C_Table 已接管字典状态；独立详情和 MachTable 必须保�
 
 `useDictLabels().reload()` 返回组结果；`source.load()` 和 `useDictionary().reload()` 失败会拒绝，需要操作层捕获。默认缓存 5 分钟、失败冷却 5 秒、超时 15 秒；手动重试绕过缓存/冷却，但复用正在进行的请求。
 
-**字典维护成功后刷新**：在 setup 期间取得实例，保存成功且会话仍有效时调用 `dictionaries.invalidate('user_status')`。活跃源重新加载，其他源继续惰性；无参调用失效全部远程源。不要在 await 后才调用依赖 inject 的 `useAppDictionaries()`。
+**字典维护成功后刷新**：在 setup 期间通过 SDK `useDictionaries()` 取得实例，保存成功且会话仍有效时调用 `dictionaries.invalidate('user_status')`。活跃源重新加载，其他源继续惰性；无参调用失效全部远程源。不要在 await 后才调用依赖 inject 的 `useDictionaries()`。
 
 **脚本/提示翻译**：取得源后 `await source.load()`，再同步 `source.label(value)`；失败交给该操作反馈。多码预热用 `preload([...])` 并检查每项结果，不能假定每项都成功。
 

@@ -13,8 +13,9 @@ import {
 import {
   useDictionary,
   useDictionaryRefresh,
+  useDictionaries,
+  DICTIONARY_PROVIDER_KEY,
 } from '@robot-admin/dictionary/vue'
-import { DICTIONARY_PROVIDER_KEY } from '@robot-admin/naive-ui-components/config'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
 import type { SearchFormItem } from '@robot-admin/naive-ui-components/C_FormSearch'
 import {
@@ -27,7 +28,6 @@ import {
   useMachTable,
 } from '@agile-team/mach-table-vue'
 import { createDictionaryColumn } from '@agile-team/mach-table-vue/business'
-import { useAppDictionaries } from '@/utils/d_dictionaryContext'
 import { delayWithSignal } from '@/utils/abort'
 
 interface ExampleRow {
@@ -106,7 +106,7 @@ export const TABLE_COLUMNS = defineTableColumns<ExampleRow>([
 
 /** 同一选项源供表单、搜索、详情、两种表格消费，所有按钮仅操作本次体验实例。 */
 export function useDictionaryExperience() {
-  const app = useAppDictionaries()
+  const app = useDictionaries()
   const organization = ref('南京工厂')
   const requests = ref(0)
   let nextResult: 'error' | 'empty' | undefined
