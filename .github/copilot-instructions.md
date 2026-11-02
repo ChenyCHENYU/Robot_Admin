@@ -4,7 +4,7 @@
 
 > **本文件面向 AI 编程助手**（Copilot / Cursor / Claude 等）。
 > 在对本项目生态进行任何代码生成、修改或建议之前，**必须完整阅读本指南**。
-> 最后更新：2026-11-01
+> 最后更新：2026-11-02
 
 ## 目录
 
@@ -56,7 +56,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 | ---------------------------------- | ------ | -------------------------------------- |
 | `@robot-admin/naive-ui-components` | 0.27.0 | 60 个业务组件                          |
 | `@robot-admin/layout`              | 3.2.3  | 6 种布局 + 精简适配 + 核心协议         |
-| `@robot-admin/dictionary`          | 0.6.0  | 枚举、远程字典、详情字段绑定与隔离状态 |
+| `@robot-admin/dictionary`          | 0.6.1  | 枚举、远程字典、详情字段绑定与隔离状态 |
 | `@robot-admin/request-core`        | 0.7.0  | 实例化请求编排 + 函数式 Headless CRUD  |
 | `@robot-admin/theme`               | 0.6.1  | 分层核心 + Vue Store + Naive UI 适配   |
 | `@robot-admin/directives`          | 2.0.1  | 11 个 Vue 指令                         |
