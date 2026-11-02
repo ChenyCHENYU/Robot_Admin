@@ -14,7 +14,6 @@ import {
   useDictionary,
   useDictionaryRefresh,
   useDictionaries,
-  DICTIONARY_PROVIDER_KEY,
 } from '@robot-admin/dictionary/vue'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
 import type { SearchFormItem } from '@robot-admin/naive-ui-components/C_FormSearch'
@@ -27,7 +26,6 @@ import {
   indexColumn,
   useMachTable,
 } from '@agile-team/mach-table-vue'
-import { createDictionaryColumn } from '@agile-team/mach-table-vue/business'
 import { delayWithSignal } from '@/utils/abort'
 
 interface ExampleRow {
@@ -45,34 +43,36 @@ interface ExampleForm {
 interface ExampleQuery {
   warehouse: string | null
 }
+export const FIELD_DICTIONARIES = {
+  warehouse: 'example-warehouse',
+  delivery: 'example-delivery',
+  urgent: 'example-urgent',
+  account: 'user_status',
+} as const
 
 export const FORM_FIELDS: FormOption<ExampleForm>[] = [
   {
     prop: 'warehouse',
     label: '交付仓库',
     type: 'select',
-    dictionary: 'example-warehouse',
     attrs: { 'aria-label': '表单交付仓库' },
   },
   {
     prop: 'delivery',
     label: '运输方式',
     type: 'select',
-    dictionary: 'example-delivery',
     attrs: { multiple: true, 'aria-label': '运输方式' },
   },
   {
     prop: 'urgent',
     label: '加急要求',
     type: 'select',
-    dictionary: 'example-urgent',
     attrs: { 'aria-label': '加急要求', clearable: false },
   },
   {
     prop: 'account',
     label: '账户状态',
     type: 'select',
-    dictionary: 'user_status',
     attrs: { 'aria-label': '账户状态' },
   },
 ]
@@ -81,7 +81,6 @@ export const SEARCH_FIELDS: SearchFormItem<ExampleQuery>[] = [
     prop: 'warehouse',
     label: '交付仓库',
     type: 'select',
-    dictionary: 'example-warehouse',
     attrs: { 'aria-label': '搜索交付仓库' },
   },
 ]
@@ -99,9 +98,9 @@ export const TABLE_CONFIG = defineTableConfig<ExampleRow>({
 })
 export const TABLE_COLUMNS = defineTableColumns<ExampleRow>([
   { type: 'index', title: '序号', width: 48 },
-  { key: 'warehouse', title: '交付仓库', dictionary: 'example-warehouse' },
-  { key: 'delivery', title: '运输方式', dictionary: 'example-delivery' },
-  { key: 'urgent', title: '加急要求', dictionary: 'example-urgent' },
+  { key: 'warehouse', title: '交付仓库' },
+  { key: 'delivery', title: '运输方式' },
+  { key: 'urgent', title: '加急要求' },
 ])
 
 /** 同一选项源供表单、搜索、详情、两种表格消费，所有按钮仅操作本次体验实例。 */
@@ -146,7 +145,6 @@ export function useDictionaryExperience() {
     { scope: organization.value }
   )
   const provider = createDictionaryProvider(dictionaries, app)
-  provide(DICTIONARY_PROVIDER_KEY, provider)
   onScopeDispose(() => dictionaries.destroy())
   const warehouse = dictionaries.getDictionary('example-warehouse')
   const delivery = dictionaries.getDictionary('example-delivery')
@@ -158,7 +156,11 @@ export function useDictionaryExperience() {
     urgent: false,
     account: '0',
   })
-  const { labels } = useDictLabels(form, FORM_FIELDS, { provider })
+  const fields = useFieldDictionaries(FIELD_DICTIONARIES, { provider })
+  const formFields = fields.form(FORM_FIELDS)
+  const searchFields = fields.search(SEARCH_FIELDS)
+  const tableColumns = fields.table(TABLE_COLUMNS)
+  const { labels } = useDictLabels(form, FIELD_DICTIONARIES, { provider })
   const query = ref<ExampleQuery>({ warehouse: null })
   const applied = ref<ExampleQuery>({ warehouse: null })
   const rows: ExampleRow[] = [
@@ -181,17 +183,20 @@ export function useDictionaryExperience() {
     {
       field: 'warehouse',
       headerName: '交付仓库',
-      ...createDictionaryColumn(warehouse, { options: warehouse.getOptions }),
+      valueFormatter: ({ value }) => fields.label('warehouse', value),
+      valueParser: ({ value }) => fields.parse('warehouse', value),
     },
     {
       field: 'delivery',
       headerName: '运输方式',
-      ...createDictionaryColumn(delivery, { options: delivery.getOptions }),
+      valueFormatter: ({ value }) => fields.label('delivery', value),
+      valueParser: ({ value }) => fields.parse('delivery', value),
     },
     {
       field: 'urgent',
       headerName: '加急要求',
-      ...createDictionaryColumn(urgent, { options: urgent.getOptions }),
+      valueFormatter: ({ value }) => fields.label('urgent', value),
+      valueParser: ({ value }) => fields.parse('urgent', value),
     },
   ])
   const reload = () => {
@@ -209,6 +214,9 @@ export function useDictionaryExperience() {
   }
   return {
     state,
+    formFields,
+    searchFields,
+    tableColumns,
     form,
     query,
     visibleRows,

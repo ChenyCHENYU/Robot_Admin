@@ -54,9 +54,9 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓�
 
 | 包名                               | 版本   | 功能                                   |
 | ---------------------------------- | ------ | -------------------------------------- |
-| `@robot-admin/naive-ui-components` | 0.26.0 | 60 个业务组件                          |
+| `@robot-admin/naive-ui-components` | 0.27.0 | 60 个业务组件                          |
 | `@robot-admin/layout`              | 3.2.3  | 6 种布局 + 精简适配 + 核心协议         |
-| `@robot-admin/dictionary`          | 0.5.0  | 枚举、远程字典、详情字段绑定与隔离状态 |
+| `@robot-admin/dictionary`          | 0.6.0  | 枚举、远程字典、详情字段绑定与隔离状态 |
 | `@robot-admin/request-core`        | 0.7.0  | 实例化请求编排 + 函数式 Headless CRUD  |
 | `@robot-admin/theme`               | 0.6.1  | 分层核心 + Vue Store + Naive UI 适配   |
 | `@robot-admin/directives`          | 2.0.1  | 11 个 Vue 指令                         |
@@ -1596,4 +1596,4 @@ convention-audit → 规范审计报告
 > **使用方式**：直接用自然语言描述需求即可，AI 会自动匹配并执行对应技能。
 > mock-codegen 为**可选技能**，在完整流程结束时由 AI 询问是否需要，也可单独触发。
 
-字典消费统一使用 `@robot-admin/dictionary`。全局实例由 `setupDictionaries()` 创建，字段只声明 `dictionary`；详情用 `useDictLabels(record, fields)` 一次绑定后直接读取 `labels.field`，不手写编码或逐字段拼接翻译逻辑。不要在单元格发请求或重复建立缓存。远程 loader 保留 signal 并使用静默请求，由字段/表格就地显示失败与重试。详细接口、scope、失效和静态枚举边界见 `docs/dictionaries.md`。
+字典插件只在项目安装，配置位于src/config/dictionary.ts。业务字段映射与项目useFieldDictionaries组合普通children/list/optionsState/formatter，组件包不得识别字典码、Provider或注入协议。详情用useDictLabels(record, mapping)，不传组件fields；MachTable只用通用valueFormatter/valueParser/valueSerializer与刷新调用。不要在单元格发请求或重复缓存；loader保留signal并静默请求，错误由项目局部反馈。详见docs/dictionaries.md。

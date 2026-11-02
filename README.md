@@ -129,8 +129,8 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.26.0` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
-| [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.5.0`  | 静态枚举、远程字典、隔离缓存及详情字段绑定                 | 表单、搜索、详情与两种表格共享翻译     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.27.0` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.0`  | 静态枚举、远程字典、隔离缓存及详情字段绑定                 | 表单、搜索、详情与两种表格共享翻译     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.3`  | 6 种布局、框架无关设置协议、Vue Headless 与 Naive 入口     | 宿主提供菜单、路由和插槽，布局由包实现 |
@@ -147,7 +147,7 @@ flowchart TB
 
 | 能力                 | 接入方式                                                                                       | 实际用途                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **MachTable 0.36.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
+| **MachTable 0.37.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
 | 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                      |
 | 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译          |
 | 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                        |
@@ -157,7 +157,7 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 
 在「表格管理 → MachTable → 顺序调整」（`/#/demo/table-manage/mach-table`）体验 30 条订单的行排序。该场景按需使用 `/ordering`：勾选不连续的多项，拖动其中一项手柄可按原相对顺序一起移动；支持边缘滚动、Esc、Alt + ↑ / ↓ 和独立的顺序撤销/重做。搜索后的键盘移动以相邻可见订单为目标，隐藏订单仍保留在完整数据中。现有工具栏可选择 450ms 模拟保存、失败回滚或版本冲突；冲突后可重新加载模拟服务器顺序。状态区显示保存结果和双方版本，切换场景保留已确认顺序并取消未完成保存。所有传输均为本地模拟，不写订单接口。
 
-当前安装与锁文件固定为官方 npm **0.36.0**，Vue 适配与 Core 版本一致。本轮接入共享字典与布尔、多值翻译，保留自然高度、原生分页、有界测宽、完整列头保护和 `status` 精简配置；生产计划、销售订单和发运任务池可直接体验。固定列焦点、行号与操作列对齐、主题空态、矩阵输入和按需排序控制器继续保留。
+当前安装与锁文件固定为官方 npm **0.37.0**，Vue适配与Core版本一致。字典等数据插件只在项目组合，表格保留通用值回调、原生分页、有界测宽、完整表头、主题空态与状态配色。生产计划、销售订单和发运任务池可直接体验。
 
 同一页面新增两个按需加载的体验页签：
 
@@ -339,7 +339,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.36.0** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.37.0** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text
@@ -428,4 +428,4 @@ Robot_Admin/
 
 超级表格编辑表单同时保留普通下拉选项，性别、部门、状态、职级显示中文标签，修改后仍保存对应原始编码。
 
-共享字典通过 `createDictionaryPlugin(dictionaryConfig)` 插件接入，配置集中在 `src/config/dictionary.ts`，页面字段直接声明后台字典码；详情通过 `useDictLabels(record, HEADER_FIELDS)` 绑定后直接读取 `labels.status`，不手写状态码或逐字段调用翻译函数；MachTable 使用公开字典列策略和按快照合并的刷新。销售订单页的「字典联动体验」可检查四处共享、失败重试、空字典、工厂切换、布尔与多选原值。接口适配、缓存失效和隔离约定见[字典接入](./docs/dictionaries.md)。
+独立字典通过 `createDictionaryPlugin(dictionaryConfig)` 插件接入，接口与默认策略集中在 `src/config/dictionary.ts`。字段与字典码的业务关系只放项目映射，项目组合函数把普通选项和受控状态传给表单/搜索，把普通formatter传给两种表格；组件包不识别字典实例、字段或注入协议。详情使用 `useDictLabels(record, FIELD_DICTIONARIES)` 读取标签。销售订单页的「字典联动体验」可检查共享请求、失败重试、空数据、工厂切换、布尔与多选原值；见[项目接入](./docs/dictionaries.md)。

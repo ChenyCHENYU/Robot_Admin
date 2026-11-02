@@ -77,7 +77,7 @@
       <C_FormSearch
         class="workbench-search"
         v-model="query"
-        :form-item-list="SEARCH_FIELDS"
+        :form-item-list="searchFields"
         :config="searchConfig"
       />
       <C_ErrorSummary
@@ -171,7 +171,7 @@
                 <C_Form
                   ref="form"
                   v-model="header"
-                  :options="HEADER_FIELDS"
+                  :options="headerFields"
                   :config="FORM_CONFIG"
                   :renderers="renderers"
                 />
@@ -583,8 +583,6 @@
   import { s_themeStore } from '@/stores/theme'
   import {
     useBusinessWorkbench,
-    SEARCH_FIELDS,
-    HEADER_FIELDS,
     FORM_CONFIG,
     CUSTOMERS,
     BATCH_MODES,
@@ -600,6 +598,8 @@
     dictionaryVisible.value = false
   })
   const {
+    searchFields,
+    headerFields,
     detailLabels,
     container,
     stacked,

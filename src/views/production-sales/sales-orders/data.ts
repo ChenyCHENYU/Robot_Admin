@@ -45,7 +45,6 @@ import {
   type RowStyleRule,
 } from '@agile-team/mach-table-vue'
 import {
-  createDictionaryColumn,
   summarizeRows,
   type SummaryNumericStrategy,
 } from '@agile-team/mach-table-vue/business'
@@ -284,6 +283,7 @@ export const CUSTOMER_COLUMNS = [
   { key: 'code', title: '客户编号', width: 130 },
   { key: 'name', title: '客户名称', minWidth: 180 },
 ]
+export const FIELD_DICTIONARIES = { status: 'order-status' } as const
 export const SEARCH_FIELDS: SearchFormItem<WorkbenchQuery>[] = [
   { type: 'input', prop: 'organization', label: '组织', fixed: true },
   { type: 'input', prop: 'keyword', label: '订单 / 客户' },
@@ -291,7 +291,6 @@ export const SEARCH_FIELDS: SearchFormItem<WorkbenchQuery>[] = [
     type: 'select',
     prop: 'status',
     label: '计划状态',
-    dictionary: 'order-status',
   },
   { type: 'select', prop: 'enabled', label: '归档', show: false, fixed: true },
 ]
@@ -309,7 +308,6 @@ export const HEADER_FIELDS: FormOption<OrderHeader>[] = [
     type: 'select',
     prop: 'status',
     label: '计划状态',
-    dictionary: 'order-status',
     required: true,
   },
   {
@@ -338,7 +336,12 @@ export const BATCH_MODES = [
 
 /** 单据工作台只组合公开协议；保存与模拟部分失败仍属于本地业务数据源。 */
 export function useBusinessWorkbench() {
-  const statusSource = useDictionaries().getDictionary('order-status')
+  const fieldDictionaries = useFieldDictionaries(FIELD_DICTIONARIES)
+  const searchFields = fieldDictionaries.search(SEARCH_FIELDS)
+  const headerFields = fieldDictionaries.form(HEADER_FIELDS)
+  const statusSource = useDictionaries().getDictionary(
+    FIELD_DICTIONARIES.status
+  )
   if (!statusSource) throw new Error('订单状态字典未配置')
   const orders = ref(createBusinessOrders())
   const activeId = ref('ORDER-1')
@@ -582,10 +585,12 @@ export function useBusinessWorkbench() {
       field: 'status',
       headerName: '状态',
       width: 105,
-      ...createDictionaryColumn<OrderHeader>(statusSource, {
-        options: statusSource.getOptions,
-        output: { clipboard: 'label', csv: 'label' },
-      }),
+      valueFormatter: ({ value }) => fieldDictionaries.label('status', value),
+      valueParser: ({ value }) => fieldDictionaries.parse('status', value),
+      valueSerializer: ({ value, target }) =>
+        target === 'clipboard' || target === 'csv'
+          ? fieldDictionaries.label('status', value)
+          : value,
       status: true,
     },
     {
@@ -1017,11 +1022,13 @@ export function useBusinessWorkbench() {
   })
   const { labels: detailLabels } = useDictLabels(
     () => operations.detailOrder.value?.header,
-    HEADER_FIELDS,
+    FIELD_DICTIONARIES,
     { enabled: operations.detailVisible }
   )
   return {
     detailLabels,
+    searchFields,
+    headerFields,
     ...operations,
     selectOrder,
     cancelSwitch,

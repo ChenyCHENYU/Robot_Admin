@@ -12,7 +12,6 @@ import {
   h,
   ref,
   reactive,
-  provide,
   type Component,
   type Plugin,
 } from 'vue'
@@ -24,10 +23,10 @@ import {
 import { createDictionaryProvider } from '@robot-admin/dictionary'
 import {
   createDictionaryPlugin,
-  DICTIONARY_PROVIDER_KEY,
   useDictionaries,
 } from '@robot-admin/dictionary/vue'
 import { useDictLabels } from '@/composables/useDictLabels'
+import { useFieldDictionaries } from '@/composables/useFieldDictionaries'
 import { getDictionaryOptionsApi } from '@/api/dictionary-options'
 import dictionaryConfig from '@/config/dictionary'
 import { setupDictionaries } from '@/plugins/dictionary'
@@ -58,18 +57,20 @@ interface RecordModel {
   status: number
   account: string
 }
+const fieldDictionaries = {
+  status: 'order-status',
+  account: 'user_status',
+} as const
 const fields: FormOption<RecordModel>[] = [
   {
     prop: 'status',
     label: '订单状态',
     type: 'select',
-    dictionary: 'order-status',
   },
   {
     prop: 'account',
     label: '账户状态',
     type: 'select',
-    dictionary: 'user_status',
   },
 ]
 
@@ -91,7 +92,6 @@ test('应用只安装字典插件，未登记原码在表单与详情共享一�
       prop: 'status',
       label: '后台状态',
       type: 'select',
-      dictionary: 'backend_only',
     },
   ]
   let dictionaries!: ReturnType<typeof useDictionaries>
@@ -100,12 +100,14 @@ test('应用只安装字典插件，未登记原码在表单与详情共享一�
     /** 由独立 SDK 取应用 Store，表单和详情读取同一个插件来源。 */
     setup() {
       dictionaries = useDictionaries()
-      const { labels } = useDictLabels(model, options)
+      const bindings = { status: 'backend_only' } as const
+      const formOptions = useFieldDictionaries(bindings).form(options)
+      const { labels } = useDictLabels(model, bindings)
       return () =>
         h('section', [
           h(C_Form<{ status: string }>, {
             modelValue: model.value,
-            options,
+            options: formOptions.value,
             config: { showActions: false },
           }),
           h('p', { 'data-testid': 'remote-label' }, labels.value.status),
@@ -137,71 +139,75 @@ test('应用只安装字典插件，未登记原码在表单与详情共享一�
   await expect(source.load()).rejects.toThrow('销毁')
 })
 
-test.each([false, true])(
-  '复用字段、页面覆盖和全局兜底与真实表单一致（同层提供器：%s）',
-  async sameLevel => {
-    const local = {
-      getDictionary: (name: string) =>
-        name === 'user_status'
-          ? { getOptions: () => [{ value: '1', label: '本页启用' }] }
-          : undefined,
-    }
-    const model = ref<RecordModel>({ status: 0, account: '1' })
-    let provider!: ReturnType<typeof createDictionaryProvider>
-    const Child = defineComponent({
-      name: 'DictionaryLabelsHarness',
-      /** 同层显式传来源，子组件自然继承祖先；Vue 不读取本层新 provide。 */
-      setup() {
-        if (sameLevel) provide(DICTIONARY_PROVIDER_KEY, provider)
-        const { labels } = useDictLabels(
-          model,
-          fields,
-          sameLevel ? { provider } : {}
-        )
-        return () =>
-          h('section', [
-            h(C_Form<RecordModel>, {
-              modelValue: model.value,
-              options: fields,
-              config: { showActions: false },
-            }),
-            h(
-              'p',
-              { 'data-testid': 'translated' },
-              `${labels.value.status} / ${labels.value.account}`
-            ),
-          ])
-      },
-    })
-    const Page = defineComponent({
-      name: 'DictionaryPageProviderHarness',
-      /** 组合一次局部和应用来源，所有控件共用。 */
-      setup() {
-        provider = createDictionaryProvider(local, useDictionaries())
-        if (!sameLevel) provide(DICTIONARY_PROVIDER_KEY, provider)
-        return () => h(Child)
-      },
-    })
-    const wrapper = mountWithDictionary(
-      Page,
-      createDictionaryPlugin(dictionaryConfig)
-    )
-    await flushPromises()
-    expect(wrapper.get('[data-testid="translated"]').text()).toBe(
-      '待下达 / 本页启用'
-    )
-    expect(
-      wrapper.findAll('.n-base-selection-label').map(element => element.text())
-    ).toEqual(['待下达', '本页启用'])
-    expect(getDictionaryOptionsApi).not.toHaveBeenCalled()
-    model.value = { status: 1, account: '1' }
-    await wrapper.vm.$nextTick()
-    expect(wrapper.get('[data-testid="translated"]').text()).toBe(
-      '执行中 / 本页启用'
-    )
-    expect(model.value).toEqual({ status: 1, account: '1' })
+test('项目一次组合局部与全局字典，表单仅接普通选项，详情仅接字段映射', async () => {
+  const local = {
+    getDictionary: (name: string) =>
+      name === 'user_status'
+        ? { getOptions: () => [{ value: '1', label: '本页启用' }] }
+        : undefined,
   }
-)
+  const model = ref<RecordModel>({ status: 0, account: '1' })
+  const Page = defineComponent({
+    name: 'ProjectDictionaryCompositionHarness',
+    /** 项目组合数据源，两包间不做任何provide或token交换。 */
+    setup() {
+      const provider = createDictionaryProvider(local, useDictionaries())
+      const formOptions = useFieldDictionaries(fieldDictionaries, {
+        provider,
+      }).form(fields)
+      const { labels } = useDictLabels(model, fieldDictionaries, { provider })
+      return () =>
+        h('section', [
+          h(C_Form<RecordModel>, {
+            modelValue: model.value,
+            options: formOptions.value,
+            config: { showActions: false },
+          }),
+          h(
+            'p',
+            { 'data-testid': 'translated' },
+            `${labels.value.status} / ${labels.value.account}`
+          ),
+        ])
+    },
+  })
+  const wrapper = mountWithDictionary(
+    Page,
+    createDictionaryPlugin(dictionaryConfig)
+  )
+  await flushPromises()
+  expect(wrapper.get('[data-testid="translated"]').text()).toBe(
+    '待下达 / 本页启用'
+  )
+  expect(
+    wrapper.findAll('.n-base-selection-label').map(element => element.text())
+  ).toEqual(['待下达', '本页启用'])
+  expect(getDictionaryOptionsApi).not.toHaveBeenCalled()
+  model.value = { status: 1, account: '1' }
+  await wrapper.vm.$nextTick()
+  expect(wrapper.get('[data-testid="translated"]').text()).toBe(
+    '执行中 / 本页启用'
+  )
+  expect(model.value).toEqual({ status: 1, account: '1' })
+})
+
+test('仅安装SDK插件不改变未组合的组件行为，也不因组件字段触发字典请求', async () => {
+  const load = vi.fn(async () => [{ value: '0', label: '不应自动出现' }])
+  const Page = defineComponent({
+    name: 'UnawareFormHarness',
+    setup: () => () =>
+      h(C_Form<{ status: string }>, {
+        modelValue: { status: '0' },
+        options: [{ prop: 'status', label: '状态', type: 'select' }],
+        config: { showActions: false },
+      }),
+  })
+  const wrapper = mountWithDictionary(Page, createDictionaryPlugin({ load }))
+  await flushPromises()
+  expect(load).not.toHaveBeenCalled()
+  expect(wrapper.text()).not.toContain('不应自动出现')
+  wrapper.unmount()
+})
 
 test('真实应用插件暂停未认证消费，恢复后加载当前公司且不伪装成功空字典', async () => {
   const user = reactive<SessionUser>({
@@ -218,7 +224,6 @@ test('真实应用插件暂停未认证消费，恢复后加载当前公司且�
       prop: 'account',
       label: '账户状态',
       type: 'select',
-      dictionary: 'user_status',
     },
   ]
   let dictionaries!: ReturnType<typeof useDictionaries>
@@ -227,12 +232,14 @@ test('真实应用插件暂停未认证消费，恢复后加载当前公司且�
     /** 与应用页面相同的表单和精简详情绑定。 */
     setup() {
       dictionaries = useDictionaries()
-      const details = useDictLabels(model, options)
+      const bindings = { account: 'user_status' } as const
+      const formOptions = useFieldDictionaries(bindings).form(options)
+      const details = useDictLabels(model, bindings)
       return () =>
         h('section', [
           h(C_Form<{ account: string }>, {
             modelValue: model.value,
-            options,
+            options: formOptions.value,
             config: { showActions: false },
           }),
           h(

@@ -129,8 +129,8 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.26.0`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
-| [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.5.0`        | Static enums, resilient remote dictionaries, scoped cache and detail field bindings     | Shared translation for forms, search, details and both grids      |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.27.0`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.0`        | Static enums, resilient remote dictionaries, scoped cache and detail field bindings     | Shared translation for forms, search, details and both grids      |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.2.3`        | 6 layouts, framework-independent settings protocol, Vue Headless and Naive entry points | Host-owned menus, routes and slots; package-owned layout behavior |
@@ -147,7 +147,7 @@ The application provides `compact` defaults for forms, search and editor modals.
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.36.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
+| **MachTable 0.37.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
@@ -157,7 +157,7 @@ MachTable is a separate data grid project. Core and Vue / React / XLSX adapters 
 
 Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
 
-The dependency and lockfile pin official npm **0.36.0**, with matching Vue and Core versions. This release integrates shared dictionaries with boolean and array values while preserving content height, native pagers, bounded sizing, complete headers and concise `status` configuration. Production plans, sales orders and shipping demonstrate the capabilities. Pinned-pane focus alignment, row actions, themed empty states, matrix I/O and optional ordering remain available.
+The dependency and lockfile pin official npm **0.37.0**, with matching Vue and Core versions. Data plugins are composed only by the application; the grid retains generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
 
 Two lazy-loaded tabs on the same page make these features interactive:
 
@@ -312,7 +312,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.36.0** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.37.0** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text
@@ -393,4 +393,4 @@ Production and sales detail dialogs use compact label/value rows. Forms and sear
 
 Component library 0.24.4 adds async ownership and resource lifecycle fixes. Isolated regression fixtures cover real fixed/fluid video mini-player scrolling, runtime toggles, return-to-position and unmount cleanup without entering the product build.
 
-Shared dictionary integration uses `@robot-admin/dictionary`. Install the dictionary plugin once with the shared config, reference backend codes in form/search/table fields, and connect MachTable with the public dictionary column strategy and coalesced refresh. Detail records bind once with `useDictLabels(record, HEADER_FIELDS)` and render `labels.status` directly, preserving raw codes and reacting to record and dictionary updates. Open **字典联动体验** on the sales page to inspect shared loading, retries, empty dictionaries, scope changes, boolean values and multiple selections. See [dictionary integration](./docs/dictionaries.md).
+The independent dictionary plugin is installed once with application config. A project-owned field map and composition hook supply ordinary options, controlled loading states and formatters; component and grid packages do not recognize dictionary instances, fields or injection protocols. Details use `useDictLabels(record, FIELD_DICTIONARIES)`. Open **字典联动体验** on the sales page to inspect shared requests, retries, empty results, scope changes and typed values. See [project integration](./docs/dictionaries.md).

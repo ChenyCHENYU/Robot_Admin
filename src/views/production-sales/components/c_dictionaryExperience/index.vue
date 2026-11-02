@@ -83,7 +83,7 @@
       >
         <C_Form
           v-model="form"
-          :options="FORM_FIELDS"
+          :options="formFields"
           :config="{
             layout: 'grid',
             density: 'compact',
@@ -102,7 +102,7 @@
       >
       <C_FormSearch
         v-model="query"
-        :form-item-list="SEARCH_FIELDS"
+        :form-item-list="searchFields"
         :config="searchConfig"
         data-testid="dictionary-search"
       />
@@ -111,7 +111,7 @@
           ><h3>C_Table · 普通枚举文字</h3
           ><C_Table
             :data="visibleRows"
-            :columns="TABLE_COLUMNS"
+            :columns="tableColumns"
             :config="TABLE_CONFIG"
             row-key="id"
         /></section>
@@ -144,18 +144,15 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
   import { contentGridOptions } from '../../shared/presentation'
-  import {
-    FORM_FIELDS,
-    SEARCH_FIELDS,
-    TABLE_COLUMNS,
-    TABLE_CONFIG,
-    useDictionaryExperience,
-  } from './data'
+  import { TABLE_CONFIG, useDictionaryExperience } from './data'
   defineOptions({ name: 'DictionaryExperience' })
   const emit = defineEmits<{ close: [] }>()
   const themeStore = s_themeStore()
   const {
     state,
+    formFields,
+    searchFields,
+    tableColumns,
     form,
     query,
     visibleRows,
