@@ -141,6 +141,7 @@ export function useLargeData() {
     datasourceRetryCount: 0,
     columnLayout: 'normal',
     defaultColDef: { sortable: false, filter: false, editable: false },
+    rowNumber: false,
     pagination: false,
     persistence: false,
     rowSelection: 'none',

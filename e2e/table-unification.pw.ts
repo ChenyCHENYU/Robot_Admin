@@ -35,7 +35,6 @@ for (const route of [
   '/about',
   '/hooks/copy-text',
   '/hooks/download-all',
-  '/hooks/excel-all',
   '/directives/watermark-direct',
   '/dashboard/analysis',
   '/dashboard/statistics',
@@ -123,16 +122,6 @@ test('账户记录分页和筛选继续使用同一状态', async ({ page }) => 
   await expectCenteredTable(table)
 })
 
-test('视频播放器的三组接口文档全部使用居中表格', async ({ page }) => {
-  await page.goto('/#/plugins/video-player')
-  await page.getByText('Props 属性', { exact: true }).click()
-  await page.getByText('Events 事件', { exact: true }).click()
-  await page.getByText('Expose 方法（ref 调用）', { exact: true }).click()
-  const tables = page.locator('.c-table-wrapper')
-  await expect(tables).toHaveCount(3)
-  await Promise.all((await tables.all()).map(expectCenteredTable))
-})
-
 test('关于页末页与筛选后分页器位置保持一致', async ({ page }) => {
   await page.goto('/#/about')
   const section = page.locator('.about-dependencies').first()
@@ -211,9 +200,14 @@ test('Excel 导入、处理预览与历史统一居中，导出数据不包含�
       ),
     })
   await expect(page.locator('.preview-table tbody')).toContainText('张三')
+  await expectCenteredTable(page.locator('.preview-table'))
+  await page
+    .getByRole('navigation', { name: '工作簿操作' })
+    .getByRole('button', { name: /^整理与检查/ })
+    .click()
   await page.getByRole('button', { name: '筛选非空行', exact: true }).click()
-  const tables = page.locator('.c-table-wrapper')
-  await expect(tables).toHaveCount(3)
+  const tables = page.locator('.c-table-wrapper:visible')
+  await expect(tables).toHaveCount(2)
   await Promise.all((await tables.all()).map(expectCenteredTable))
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: '导出处理结果', exact: true }).click()

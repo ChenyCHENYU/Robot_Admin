@@ -62,6 +62,9 @@ test('固定列只扣一次，宽屏填满、短内容列受限，窄屏保留�
   await expect(header(page, 'idx')).toHaveCount(1)
   await expect(header(page, 'idx')).toContainText('序号')
   await expect(
+    page.locator('.mach-header-cell').filter({ hasText: /^序号$/ })
+  ).toHaveCount(1)
+  await expect(
     page.locator('.mach-cell[data-col-id="quantity"]').first()
   ).toHaveCSS('justify-content', 'center')
   await expect(

@@ -998,7 +998,6 @@ export const createOrderColumns = (
 ) =>
   defineVueColumns<OrderRow>([
     ...(ORDER_TABLE_FEATURES.selection ? [selectionColumn<OrderRow>()] : []),
-    indexColumn<OrderRow>({ headerName: '序号' }),
     ...createOrderBusinessColumns(editMode),
     rowActionsColumn<OrderRow>({
       width: 126,

@@ -328,6 +328,12 @@ test('千万行首中末与指定行精确定位，缓存和实际 DOM 始终有
   const panel = await openLarge(page)
   await expect(panel).toContainText(`v${version}`)
   await expect(panel).toContainText('10,000,000 行')
+  await expect(
+    panel.locator('.mach-header-cell[data-col-id="sequence"]')
+  ).toBeVisible()
+  await expect(
+    panel.locator('.mach-header-cell[data-col-id="idx"]')
+  ).toHaveCount(0)
   await (
     [
       ['定位首行', 1],
