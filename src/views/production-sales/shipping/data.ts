@@ -375,40 +375,29 @@ export function useShippingWorkbench() {
       width: 124,
       fixed: 'right',
       align: 'center',
-      render: row =>
-        h(C_ActionBar, {
-          config: {
-            inline: true,
-            compact: true,
-            size: 'tiny',
-            gap: 8,
-            wrap: false,
-          },
+      render: row => {
+        const disabled = () =>
+          row.status !== 'waiting' || form.value?.isDirty === true || busy.value
+        return h(C_ActionBar, {
+          config: { gap: 8 },
           onClick: (event: MouseEvent) => event.stopPropagation(),
           actions: [
             {
               key: 'edit',
-              label: '编辑',
               type: 'warning',
-              disabled: () =>
-                row.status !== 'waiting' ||
-                form.value?.isDirty === true ||
-                busy.value,
+              disabled,
               buttonProps: { text: true, renderIcon: editIcon },
               onClick: () => operations.editShipment(row),
             },
             {
               key: 'delete',
-              label: '删除',
-              disabled: () =>
-                row.status !== 'waiting' ||
-                form.value?.isDirty === true ||
-                busy.value,
+              disabled,
               buttonProps: { text: true, renderIcon: deleteIcon },
               onClick: () => operations.removeShipment(row),
             },
           ],
-        }),
+        })
+      },
     },
   ])
   const lotColumns = defineVueColumns<(typeof lots.value)[number]>([

@@ -22,7 +22,7 @@ import type {
   SearchConfig,
   SearchFormItem,
 } from '@robot-admin/naive-ui-components/C_FormSearch'
-import type { DataPickerSource } from '@robot-admin/naive-ui-components/C_DataPicker'
+import type { DataPickerSourceInput } from '@robot-admin/naive-ui-components/C_DataPicker'
 import type { TreeNativeProps } from '@robot-admin/naive-ui-components/C_Tree'
 import { recordLink, statusTag, weightCodec } from '../shared/presentation'
 import { usePlanOperations } from './operations'
@@ -298,9 +298,11 @@ export function useProductionPlan() {
     grade: null,
     status: null,
   }))
-  const planPickerSource: DataPickerSource<ProductionPlan, PlanPickerQuery> = {
+  const planPickerSource: DataPickerSourceInput<
+    ProductionPlan,
+    PlanPickerQuery
+  > = {
     rowKey: 'id',
-    value: row => row.id,
     label: row => row.planNo,
     request: async ({
       filters = planPickerInitial.value,

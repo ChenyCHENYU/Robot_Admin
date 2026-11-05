@@ -9,7 +9,7 @@ import '@robot-admin/naive-ui-components/C_DataPicker/style.css'
 import { useResizeObserver } from '@vueuse/core'
 import {
   C_DataPicker,
-  type DataPickerSource,
+  type DataPickerSourceInput,
 } from '@robot-admin/naive-ui-components/C_DataPicker'
 import {
   type FormConfig,
@@ -265,9 +265,8 @@ const waitForExample = (
     if (signal.aborted) abort()
     else signal.addEventListener('abort', abort, { once: true })
   })
-export const customerSource: DataPickerSource<Customer> = {
+export const customerSource: DataPickerSourceInput<Customer> = {
   rowKey: 'id',
-  value: row => row.id,
   label: row => row.name,
   request: async ({ page, pageSize, search, signal }) => {
     await waitForExample(signal)

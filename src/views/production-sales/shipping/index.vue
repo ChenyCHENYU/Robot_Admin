@@ -74,15 +74,11 @@
           ><header class="ps-panel-heading"
             ><h2>当班发运任务池</h2
             ><span>{{ visibleRows.length }} 笔 · 点击行安排配载</span></header
-          ><div class="ps-toolbar"
-            ><C_ActionBar
-              :actions="taskActions"
-              :config="{ compact: true, size: 'tiny' }" /></div
+          ><div class="ps-toolbar"><C_ActionBar :actions="taskActions" /></div
           ><C_Table
             :columns="columns"
             :data="visibleRows"
             :row-props="rowProps"
-            row-key="id"
             :config="taskTableConfig"
             @pagination-change="syncTaskPagination"
           /><p class="ps-footnote"

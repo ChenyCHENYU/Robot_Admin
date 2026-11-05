@@ -126,11 +126,7 @@
                 {{ selectedIds.length }} 项</span
               ></header
             >
-            <div class="ps-toolbar"
-              ><C_ActionBar
-                :actions="actions"
-                :config="{ compact: true, size: 'tiny' }"
-            /></div>
+            <div class="ps-toolbar"><C_ActionBar :actions="actions" /></div>
             <div class="ps-grid plan-main-grid"
               ><MachTable
                 v-bind="BUSINESS_GRID"

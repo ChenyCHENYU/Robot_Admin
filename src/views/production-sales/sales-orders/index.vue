@@ -227,9 +227,7 @@
                 ><span class="workbench-panel__badge">主表</span></header
               >
               <div class="workbench-detail-actions"
-                ><C_ActionBar
-                  :actions="orderActions"
-                  :config="{ compact: true, size: 'tiny' }"
+                ><C_ActionBar :actions="orderActions"
               /></div>
               <div class="workbench-master-grid"
                 ><MachTable
@@ -374,10 +372,7 @@
                   >
                     <div class="workbench-detail-actions"
                       ><NSpace :size="6"
-                        ><C_ActionBar
-                          :actions="lineActions"
-                          :config="{ compact: true, size: 'tiny' }"
-                        />
+                        ><C_ActionBar :actions="lineActions" />
                         <NButton
                           size="tiny"
                           @click="selectAllLines"

@@ -222,10 +222,7 @@ export const advancedFormConfig: FormConfig<AdvancedFormParams> = {
   historyKey: 'advanced_search_history',
 }
 
-// 创建超多字段表单配置
-/**
- *
- */
+/** 生成同名的空白查询字段和初始模型，用于演示折叠后的大量字段。 */
 function createMegaFormConfig(fieldCount = 16): FormConfig<MegaFormParams> {
   const params: MegaFormParams = {
     pageNum: 1,
@@ -235,11 +232,11 @@ function createMegaFormConfig(fieldCount = 16): FormConfig<MegaFormParams> {
     ),
   }
 
-  const items: SearchFormItem<MegaFormParams>[] = Array.from(
+  const items = Array.from(
     { length: fieldCount },
-    (_, i) => ({
-      type: 'input' as const,
-      prop: `field${i + 1}` as const,
+    (_, i): SearchFormItem<MegaFormParams> => ({
+      type: 'input',
+      prop: `field${i + 1}`,
       placeholder: `请输入字段${i + 1}`,
       hisList: [],
     })
@@ -249,16 +246,6 @@ function createMegaFormConfig(fieldCount = 16): FormConfig<MegaFormParams> {
 }
 
 export const megaFormConfig = createMegaFormConfig()
-
-/** 将初始值交给搜索组件，输入和重置共用同一份字段契约。 */
-export function createSearchFields<T extends BaseFormParams>(
-  config: FormConfig<T>
-): SearchFormItem<T>[] {
-  return config.items.map(item => ({
-    ...item,
-    defaultValue: config.params[item.prop],
-  }))
-}
 
 // 模拟数据生成器
 const mockDataGenerators = {
@@ -316,7 +303,6 @@ export const SELECTION_SEARCH_FIELDS: SearchFormItem<SelectionSearchParams>[] =
       prop: 'statuses',
       placeholder: '可多选账号状态',
       attrs: { multiple: true },
-      defaultValue: [],
       list: [
         { label: '启用', value: 1 },
         { label: '禁用', value: 0 },
@@ -327,6 +313,7 @@ export const SELECTION_SEARCH_FIELDS: SearchFormItem<SelectionSearchParams>[] =
       type: 'select',
       prop: 'enabled',
       placeholder: '是否可用',
+      // 清空代表不限；重置恢复页面默认的「不可用」。
       defaultValue: false,
       list: [
         { label: '可用', value: true },

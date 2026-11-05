@@ -30,7 +30,8 @@ import type {
 } from '@robot-admin/naive-ui-components/C_Form'
 import { useLatestRequest } from '@/composables/useLatestRequest'
 import '@robot-admin/naive-ui-components/C_Icon/style.css'
-import type { ActionItem, TableColumn } from '@robot-admin/naive-ui-components'
+import { defineActions } from '@robot-admin/naive-ui-components/C_ActionBar'
+import type { TableColumn } from '@robot-admin/naive-ui-components'
 import {
   type RoleData,
   type RoleFormData,
@@ -45,7 +46,6 @@ import {
   DEFAULT_ROLE_FORM_DATA,
   UI_CONFIG,
   PERMISSION_TEMPLATES,
-  ICONS,
   STATUS_CONFIG,
   ROLE_TYPE_CONFIG,
   findPermissionById,
@@ -335,12 +335,10 @@ export function useRoleManagement() {
   ]
 
   // ==================== 工具栏按钮配置 ====================
-  const toolbarActions = computed<ActionItem[]>(() => [
+  const toolbarActions = defineActions([
     {
       key: 'add',
       label: '新增角色',
-      icon: ICONS.plus,
-      type: 'primary',
       onClick: () => openRoleModal(),
     },
     {
@@ -355,12 +353,7 @@ export function useRoleManagement() {
         showCompareModal.value = true
       },
     },
-    {
-      key: 'refresh',
-      label: '刷新',
-      icon: ICONS.refresh,
-      onClick: refreshData,
-    },
+    { key: 'refresh', onClick: () => refreshData() },
   ])
 
   // ==================== 工具函数 ====================

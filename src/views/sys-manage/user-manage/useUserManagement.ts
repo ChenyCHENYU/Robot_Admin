@@ -162,13 +162,11 @@ export function useUserManagement() {
     modalMode.value === 'add' ? '新增用户' : '编辑用户'
   )
 
-  // 工具栏按钮配置
+  // 展开按钮的文案由部门树状态决定；通用操作沿用语义预设。
   const toolbarActions = computed<ActionItem[]>(() => [
     {
       key: 'add',
       label: '新增用户',
-      icon: COMPONENT_CONFIG.icons.plus,
-      type: 'primary',
       onClick: () => handleAddUserModal(),
     },
     {
@@ -177,12 +175,7 @@ export function useUserManagement() {
       icon: COMPONENT_CONFIG.icons.tree,
       onClick: expandAll,
     },
-    {
-      key: 'refresh',
-      label: '刷新',
-      icon: COMPONENT_CONFIG.icons.refresh,
-      onClick: refreshData,
-    },
+    { key: 'refresh', onClick: refreshData },
   ])
 
   // 批量操作按钮配置
@@ -198,7 +191,6 @@ export function useUserManagement() {
       key: 'delete',
       label: '批量删除',
       icon: COMPONENT_CONFIG.icons.delete,
-      type: 'error',
       onClick: () => handleBatchOperation('delete', batchDeleteUsers),
     },
   ])

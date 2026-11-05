@@ -6,13 +6,19 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { expect, spyOn, test } from 'bun:test'
+import { createSSRApp } from 'vue'
+import { renderToString } from 'vue/server-renderer'
+import {
+  useSearchState,
+  type SearchFormItem,
+} from '@robot-admin/naive-ui-components/C_FormSearch'
 import {
   advancedFormConfig,
   basicFormConfig,
-  createSearchFields,
   generateMockResults,
   megaFormConfig,
   filterSelectionPreview,
+  SELECTION_SEARCH_FIELDS,
 } from '../src/views/demo/09-form-search/data'
 import {
   defaultConfig,
@@ -25,16 +31,57 @@ import {
 } from '../src/views/demo/12-table-dynamic/data'
 import type { DataTableRowKey } from 'naive-ui'
 
-test('三个搜索场景把初始字段值交给组件重置，不把空字符串误改成 null', () => {
-  for (const config of [basicFormConfig, advancedFormConfig, megaFormConfig]) {
-    const fields = createSearchFields(config)
-    expect(fields).not.toBe(config.items)
-    for (const field of fields) {
-      expect(field.defaultValue).toEqual(config.params[field.prop])
-    }
-  }
-  expect(createSearchFields(basicFormConfig)).toContainEqual(
-    expect.objectContaining({ prop: 'name', defaultValue: '' })
+/** 用已安装组件包的搜索状态验证页面传入的字段契约。 */
+async function expectSearchReset<T extends object>(
+  formItemList: SearchFormItem<T>[],
+  formParams: T,
+  expected: T
+): Promise<void> {
+  let resetParams: T | undefined
+  await renderToString(
+    createSSRApp({
+      /** 在 Vue 实例中运行搜索状态，保留组件的生命周期。 */
+      setup() {
+        const { resetFn } = useSearchState(
+          (event, params) => {
+            if (event === 'reset') resetParams = params
+          },
+          { formItemList, formParams }
+        )
+        resetFn()
+        return () => null
+      },
+    })
+  )
+  expect(resetParams).toEqual(expected)
+}
+
+test('搜索重置保留分页并恢复各控件空值与显式业务默认值', async () => {
+  await expectSearchReset(
+    basicFormConfig.items,
+    {
+      ...basicFormConfig.params,
+      name: '李',
+      status: 0,
+      dateRange: [1, 2],
+      pageNum: 2,
+    },
+    { ...basicFormConfig.params, pageNum: 2 }
+  )
+  await expectSearchReset(
+    advancedFormConfig.items,
+    { ...advancedFormConfig.params, keyword: '生产', category: '科技' },
+    advancedFormConfig.params
+  )
+  await expectSearchReset(
+    megaFormConfig.items,
+    { ...megaFormConfig.params, field16: '折叠的条件' },
+    megaFormConfig.params
+  )
+  await expectSearchReset(
+    SELECTION_SEARCH_FIELDS,
+    { statuses: [0, 1], enabled: true },
+    { statuses: [], enabled: false }
   )
 })
 

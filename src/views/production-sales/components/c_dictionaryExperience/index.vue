@@ -118,7 +118,6 @@
             :data="visibleRows"
             :columns="tableColumns"
             :config="TABLE_CONFIG"
-            row-key="id"
         /></section>
         <section data-testid="dictionary-mach-table"
           ><h3>MachTable · 同源异步翻译</h3

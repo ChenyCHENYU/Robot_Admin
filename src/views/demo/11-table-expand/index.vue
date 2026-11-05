@@ -67,7 +67,6 @@
           ref="tableRef"
           :columns="mainColumns"
           :data="table.data"
-          :row-key="getRowKey"
           :loading="table.loading"
           :config="tableConfig"
         />
@@ -196,7 +195,6 @@
   ])
 
   // 工具函数
-  const getRowKey = (row: TestRecord): DataTableRowKey => row.id
   const isRowExpandable = (row: TestRecord): boolean => row.hasChildren === true
   const isRowCheckable = (row: TestRecord): boolean => row.status === '在职'
 

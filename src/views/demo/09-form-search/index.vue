@@ -47,9 +47,9 @@
       <h3>基础用法（3个字段）</h3>
       <C_FormSearch
         v-model="basicParams"
-        :form-item-list="basicFields"
+        :form-item-list="basicFormConfig.items"
         :config="{ density, foldThreshold: 8, onSearch: searchBasic }"
-        form-search-input-history-string="basic_search_history"
+        :form-search-input-history-string="basicFormConfig.historyKey"
         @reset="resetBasic"
       />
       <C_Table
@@ -64,9 +64,9 @@
       <h3>高级用法（12个字段 - 默认显示8个，展开显示全部）</h3>
       <C_FormSearch
         v-model="advancedParams"
-        :form-item-list="advancedFields"
+        :form-item-list="advancedFormConfig.items"
         :config="{ density, foldThreshold: 8, onSearch: searchAdvanced }"
-        form-search-input-history-string="advanced_search_history"
+        :form-search-input-history-string="advancedFormConfig.historyKey"
         @reset="resetResults"
       />
     </div>
@@ -74,9 +74,9 @@
       <h3>超多字段测试（16个字段）</h3>
       <C_FormSearch
         v-model="megaParams"
-        :form-item-list="megaFields"
+        :form-item-list="megaFormConfig.items"
         :config="{ density, foldThreshold: 8, onSearch: searchMega }"
-        form-search-input-history-string="mega_search_history"
+        :form-search-input-history-string="megaFormConfig.historyKey"
         @reset="resetResults"
       />
     </div>
@@ -130,7 +130,6 @@
     advancedFormConfig,
     megaFormConfig,
     generateMockResults,
-    createSearchFields,
     DENSITY_OPTIONS,
     SEARCH_PREVIEW_ROWS,
     filterSearchPreview,
@@ -175,12 +174,10 @@
     selectionRows.value = filterSelectionPreview(params)
   }
 
+  /** 草稿从配置初始化，重置时由 C_FormSearch 为各控件恢复空值。 */
   const basicParams = ref({ ...basicFormConfig.params })
   const advancedParams = ref({ ...advancedFormConfig.params })
   const megaParams = ref({ ...megaFormConfig.params })
-  const basicFields = createSearchFields(basicFormConfig)
-  const advancedFields = createSearchFields(advancedFormConfig)
-  const megaFields = createSearchFields(megaFormConfig)
 
   /** 每个查询直接接收自己的业务模型，无需断言或宽联合类型适配。 */
   const searchBasic = (params: BasicFormParams) => {

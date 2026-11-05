@@ -15,7 +15,11 @@ import type {
 
 import type { FormItemRule, DialogReactive, DialogOptions } from 'naive-ui/es'
 import type { TreeExpose } from '@robot-admin/naive-ui-components/C_Tree'
-import type { ActionItem, DropInfo } from '@robot-admin/naive-ui-components'
+import {
+  defineActions,
+  type ActionItem,
+} from '@robot-admin/naive-ui-components/C_ActionBar'
+import type { DropInfo } from '@robot-admin/naive-ui-components'
 import { useLatestRequest } from '@/composables/useLatestRequest'
 import { clearExistingRoutes, initDynamicRouter } from '@/router/dynamicRouter'
 import { getAuthMenuListApi, type AuthMenuResponse } from '@/api/auth'
@@ -570,44 +574,36 @@ export const useMenuManagement = () => {
       syncing.value = false
     }
   }
-  const toolbarActions = computed<ActionItem[]>(() => [
+  // 菜单加载失败时仍可重试；新增依赖已加载的菜单树。
+  const toolbarActions = defineActions([
     {
       key: 'refresh',
-      label: '刷新',
-      icon: 'mdi:refresh',
-      disabled: busy.value || loading.value,
+      disabled: () => busy.value || loading.value,
       onClick: refreshMenus,
     },
     {
       key: 'sync',
       label: '同步导航',
       icon: 'mdi:sync',
-      disabled: busy.value || loading.value,
+      disabled: () => busy.value || loading.value,
       onClick: syncNavigation,
     },
     {
       key: 'add',
       label: '新增菜单',
-      icon: 'mdi:plus',
-      type: 'primary',
-      disabled: busy.value || loading.value || !!loadError.value,
-      onClick: () => handleAddMenu(),
+      disabled: () => busy.value || loading.value || !!loadError.value,
+      onClick: handleAddMenu,
     },
   ])
   const getPermissionActions = (permission: ButtonPermission): ActionItem[] => [
     {
       key: 'edit',
-      label: '编辑',
-      icon: 'mdi:pencil-outline',
-      disabled: busy.value,
+      disabled: busy,
       onClick: () => handleEditPermission(permission),
     },
     {
       key: 'delete',
-      label: '删除',
-      icon: 'mdi:delete-outline',
-      type: 'error',
-      disabled: busy.value,
+      disabled: busy,
       onClick: () => handleDeletePermission(permission),
     },
   ]

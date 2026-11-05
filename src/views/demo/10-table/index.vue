@@ -163,7 +163,6 @@
             <C_Table
               :columns="treeColumns"
               :data="TREE_TABLE_DATA"
-              :row-key="(row: Employee) => row.id"
               :config="{
                 density,
                 toolbar: { show: false },
