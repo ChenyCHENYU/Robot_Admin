@@ -1,0 +1,68 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-11-05
+ * @FilePath: \Robot_Admin\src\views\production-sales\shipping\c_report\index.scss
+ * @Description: 发运汇总弹窗的紧凑布局与主题适配
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.shipping-report {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+
+  &__scope {
+    margin: 0;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+
+  &__totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr));
+    gap: 8px;
+    margin: 0;
+
+    > div {
+      padding: 8px 12px;
+      border: 1px solid var(--app-border-default);
+      border-radius: 8px;
+      background: color-mix(
+        in srgb,
+        var(--app-primary) 5%,
+        var(--app-bg-content)
+      );
+    }
+
+    dt {
+      color: var(--app-text-secondary);
+      font-size: 12px;
+    }
+
+    dd {
+      margin: 2px 0 0;
+      font-size: 18px;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__filters,
+  &__drill {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    min-width: 0;
+  }
+
+  &__hint {
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

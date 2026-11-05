@@ -17,6 +17,10 @@
         description="从发运任务到库存匹配、车辆配载与出厂，围绕交付组织每一步。"
         ><NButton
           size="small"
+          @click="reportVisible = true"
+          >发运汇总</NButton
+        ><NButton
+          size="small"
           :disabled="current.status !== 'loading'"
           @click="depart"
           >确认出厂</NButton
@@ -151,6 +155,10 @@
         class="ps-status-line"
         >{{ notice }}</p
       >
+      <ShippingReport
+        v-model:show="reportVisible"
+        :rows="visibleRows"
+      />
       <C_FormModal
         :editor="taskEditor"
         :options="SHIPMENT_EDIT_FIELDS"
@@ -251,6 +259,7 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
   import PageHeading from '../components/c_pageHeading/index.vue'
+  import ShippingReport from './c_report/index.vue'
   import {
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
@@ -268,6 +277,7 @@
   } from './data'
   defineOptions({ name: 'ShippingCollaborationWorkbench' })
   const themeStore = s_themeStore()
+  const reportVisible = ref(false)
   const {
     rows,
     current,

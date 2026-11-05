@@ -129,7 +129,7 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.29.0`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.29.1`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`        | Static enums, resilient remote dictionaries, scoped cache and detail field bindings     | Shared translation for forms, search, details and both grids      |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
@@ -161,8 +161,6 @@ The dependency and lockfile pin official npm **0.38.0**, with matching Vue and C
 
 The Super Table demo and the MachTable order list use their own default row numbers and pagination. Text and numeric columns are centered by default. Both grids accept `:pagination="false"` to hide pagination and `:row-number="false"` to hide automatic row numbers. For dynamic reports, pass the API's columns and rows to `C_Table` through `columns/data` or to MachTable through `column-defs/row-data`.
 
-In Production Scheduling, expand the search bar to filter by shift. Use Advanced Search to find a plan on the current line and open its heat details while keeping the ledger filters. In Sales Order Collaboration, search and select the customer within the create/edit dialog. Cancel keeps the order draft intact. Both demos use local data.
-
 Two lazy-loaded tabs on the same page make these features interactive:
 
 - **导入校验 (Import validation)**: choose valid, invalid or duplicate-ID samples, or edit a JSON matrix of up to 20 rows. Select replace/append, preview normalized values and row issues, then confirm the import. Preview leaves existing data intact; changing input invalidates the previous preview. Inspect typed export to verify numbers, booleans, dates and long identifiers with leading zeros.
@@ -182,6 +180,13 @@ The **产销业务** menu maps to `src/views/production-sales/` with four distin
 | Shipping collaboration | `/#/production-sales/shipping`          | Stage filters, C_Table task pool, MachTable inventory and vehicle form; integer-kilogram conservation, capacity checks and loading/departure transitions |
 
 Native grid themes, compact controls, subtle panels and headers remain consistent across layouts and light/dark modes. Naive empty-state icons use a soft blue theme token. The former `/#/demo/business-workbench` redirects to sales orders; `/#/preview/business-workbench` remains available, alongside `/#/preview/production-sales/<page>` for each page.
+
+- **Production planning → 进阶查询 (Advanced search)** searches within the current production line. The result count and selection sit on the left, with paging on the right. Confirming a result opens the plan and heat details while keeping the ledger filters.
+- **Heat actuals → 工序追踪 (Process trace)** shows the current heat's timings and exceptions. Jump from an event to the relevant measurement fields and continue editing the current draft.
+- **Sales orders → 比对合同 (Compare contract)** compares a sample amendment for the first pending order. Apply selected fields to the order draft, then save the order. Customer lookup and selection are available within the create/edit dialog.
+- **Shipping collaboration → 发运汇总 (Shipping summary)** groups all filtered tasks by destination, status, grade or customer. View totals and drill into a group.
+
+These workflows use local sample data.
 
 Business lists include row numbers and pinned edit/delete actions. Blue record links open read-only details; clicking a row selects the working record. Toolbars retain create and bulk actions. Viewing another record preserves the current draft, while editing another order uses the existing save/discard/cancel guard.
 

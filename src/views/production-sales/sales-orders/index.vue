@@ -86,6 +86,111 @@
         @navigate="scope.reveal"
       />
 
+      <section
+        v-if="contractReviewVisible"
+        id="contract-review"
+        class="workbench-panel workbench-contract"
+        aria-labelledby="contract-review-title"
+        @keydown.esc.stop="dismissContractReview"
+      >
+        <header>
+          <div>
+            <h2
+              id="contract-review-title"
+              ref="contractReviewHeading"
+              tabindex="-1"
+              >合同版本比对</h2
+            >
+            <span v-if="contractReview"
+              >{{ contractReview.source.contractNo }} ·
+              {{ contractReview.source.revision }} · 本地合同样例</span
+            >
+          </div>
+          <NButton
+            size="tiny"
+            @click="dismissContractReview"
+            >关闭比对</NButton
+          >
+        </header>
+        <template v-if="contractReview">
+          <div class="workbench-contract__table">
+            <NTable
+              size="small"
+              :bordered="false"
+              :bottom-bordered="false"
+              striped
+            >
+              <thead>
+                <tr>
+                  <th scope="col">字段</th>
+                  <th scope="col">当前草稿</th>
+                  <th scope="col">合同参考值</th>
+                  <th scope="col">差异</th>
+                  <th scope="col">采纳</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="row in contractReview.rows"
+                  :key="row.key"
+                >
+                  <th scope="row">{{ row.label }}</th>
+                  <td>{{ formatContractValue(row.current) }}</td>
+                  <td>{{ formatContractValue(row.reference) }}</td>
+                  <td
+                    ><NTag
+                      size="small"
+                      :bordered="false"
+                      :type="CONTRACT_FIELD_STATUS[row.status].type"
+                      >{{ CONTRACT_FIELD_STATUS[row.status].label }}</NTag
+                    ></td
+                  >
+                  <td
+                    ><NCheckbox
+                      v-if="row.status !== 'same'"
+                      :aria-label="`采纳${row.label}`"
+                      :checked="contractFields.includes(row.key)"
+                      :disabled="!canAdoptContractFields"
+                      @update:checked="selectContractField(row.key, $event)"
+                    /><span v-else>—</span></td
+                  >
+                </tr>
+              </tbody>
+            </NTable>
+          </div>
+          <div class="workbench-contract__footer">
+            <span v-if="!canEditContract">仅待下达订单可采纳字段。</span>
+            <span v-else
+              >已选 {{ contractFields.length }} 项 · 采纳后请保存整单。</span
+            >
+            <NButton
+              v-if="contractReviewError"
+              size="small"
+              @click="openContractReview"
+              >刷新比对</NButton
+            >
+            <NButton
+              size="small"
+              type="primary"
+              :disabled="!canAdoptContractFields || !contractFields.length"
+              @click="confirmContractReview"
+              >采纳所选字段</NButton
+            >
+          </div>
+          <p
+            v-if="contractReviewError"
+            class="workbench-contract__notice"
+            role="alert"
+            >{{ contractReviewError }}</p
+          >
+        </template>
+        <p
+          v-else
+          class="workbench-contract__notice"
+          >当前订单暂无可比对的合同版本。</p
+        >
+      </section>
+
       <div class="workbench-layout">
         <C_SplitPane
           v-model:size="splitSize"
@@ -163,11 +268,22 @@
                       ><h2 data-testid="active-order">{{ header.orderNo }}</h2
                       ><span>订单主档</span></div
                     ></div
-                  ><NButton
-                    size="tiny"
-                    @click="fillMissingExample"
-                    >填入缺失样例</NButton
-                  ></header
+                  ><NSpace :size="6">
+                    <span ref="contractReviewTrigger">
+                      <NButton
+                        size="tiny"
+                        :aria-expanded="contractReviewVisible"
+                        aria-controls="contract-review"
+                        @click="showContractReview"
+                        >比对合同</NButton
+                      >
+                    </span>
+                    <NButton
+                      size="tiny"
+                      @click="fillMissingExample"
+                      >填入缺失样例</NButton
+                    >
+                  </NSpace></header
                 >
                 <C_Form
                   ref="form"
@@ -582,6 +698,7 @@
     BUSINESS_DETAIL_DIALOG,
   } from '../shared/presentation'
   import { ORDER_CREATE_FIELDS, ORDER_LINE_FIELDS } from './operations'
+  import { CONTRACT_FIELD_STATUS, formatContractValue } from './contractReview'
   import { s_themeStore } from '@/stores/theme'
   import {
     useBusinessWorkbench,
@@ -624,6 +741,16 @@
     batchValue,
     batchPreview,
     batchResults,
+    contractReviewVisible,
+    contractReview,
+    contractFields,
+    contractReviewError,
+    canEditContract,
+    canAdoptContractFields,
+    openContractReview,
+    closeContractReview,
+    selectContractField,
+    adoptContractFields,
     query,
     searchConfig,
     applyOrderQuery,
@@ -661,6 +788,29 @@
     restore,
     syncLineEdit,
   } = useBusinessWorkbench()
+
+  const contractReviewHeading = ref<HTMLElement | null>(null)
+  const contractReviewTrigger = ref<HTMLElement | null>(null)
+  /** 打开内联预览后把焦点移到标题，方便键盘与读屏用户继续操作。 */
+  const showContractReview = async () => {
+    if (!contractReviewVisible.value) openContractReview()
+    await nextTick()
+    contractReviewHeading.value?.focus()
+  }
+  /** 内联预览退出时回到原入口。 */
+  const focusContractReviewTrigger = async () => {
+    await nextTick()
+    contractReviewTrigger.value?.querySelector('button')?.focus()
+  }
+  /** 主动关闭预览后归还焦点。 */
+  const dismissContractReview = () => {
+    closeContractReview()
+    void focusContractReviewTrigger()
+  }
+  /** 采纳成功后回到工作台，草稿冲突则留在预览面板。 */
+  const confirmContractReview = () => {
+    if (adoptContractFields()) void focusContractReviewTrigger()
+  }
 </script>
 
 <style lang="scss" scoped>

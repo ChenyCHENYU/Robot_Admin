@@ -143,47 +143,6 @@
 .actual-reference-grid {
   margin-top: 14px;
 }
-.actual-timeline {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  list-style: none;
-  padding: 20px;
-  margin: 0;
-  gap: 20px;
-  li {
-    position: relative;
-    padding-left: 27px;
-    > span {
-      position: absolute;
-      left: 0;
-      top: 0;
-      display: grid;
-      place-items: center;
-      height: 19px;
-      width: 19px;
-      border-radius: 50%;
-      color: var(--ps-accent);
-      background: var(--ps-soft);
-      border: 1px solid var(--ps-border);
-      font-size: 10px;
-    }
-  }
-  strong,
-  time {
-    display: block;
-    font-size: 12px;
-  }
-  time {
-    color: var(--app-text-tertiary);
-    font-size: 11px;
-    margin-top: 5px;
-  }
-  p {
-    color: var(--app-text-secondary);
-    font-size: 11px;
-    margin-bottom: 0;
-  }
-}
 @media (max-width: 1000px) {
   .actual-workspace {
     grid-template-columns: minmax(0, 1fr);
@@ -205,9 +164,6 @@
 }
 @media (max-width: 680px) {
   .actual-heat-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .actual-timeline {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .actual-context dl {

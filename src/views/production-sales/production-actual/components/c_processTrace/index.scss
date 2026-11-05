@@ -1,0 +1,171 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-11-05
+ * @FilePath: \Robot_Admin\src\views\production-sales\production-actual\components\c_processTrace\index.scss
+ * @Description: 炉次工序时间轴的对齐、状态和窄屏样式
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+.trace-body {
+  padding: 12px 16px 16px;
+  --trace-amber: var(--app-warning, #c47618);
+}
+.trace-toolbar,
+.trace-detail-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.trace-toolbar {
+  justify-content: space-between;
+  margin-bottom: 10px;
+  p {
+    margin: 0;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+}
+.trace-chart {
+  --trace-label-width: clamp(72px, 16%, 112px);
+  border: 1px solid var(--ps-border);
+  border-radius: 7px;
+}
+.trace-axis,
+.trace-step {
+  display: grid;
+  grid-template-columns: var(--trace-label-width) minmax(0, 1fr);
+  align-items: center;
+  padding-inline: 10px;
+}
+.trace-axis {
+  min-height: 30px;
+  border-radius: 7px 7px 0 0;
+  background: var(--ps-soft);
+  color: var(--app-text-secondary);
+  font-size: 11px;
+}
+.trace-ticks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) 0;
+  font-variant-numeric: tabular-nums;
+  span {
+    justify-self: start;
+    transform: translateX(-50%);
+  }
+  span:first-child {
+    transform: none;
+  }
+  span:last-child {
+    transform: translateX(-100%);
+  }
+}
+.trace-step {
+  width: 100%;
+  min-height: 34px;
+  border: 0;
+  border-top: 1px solid var(--ps-border);
+  background: transparent;
+  color: var(--app-text-primary);
+  text-align: start;
+  cursor: pointer;
+  &:last-child {
+    border-radius: 0 0 7px 7px;
+  }
+  &:hover,
+  &[aria-pressed='true'] {
+    background: var(--ps-soft);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--app-primary);
+    outline-offset: -2px;
+  }
+  &[aria-pressed='true'] {
+    box-shadow: inset 2px 0 var(--app-primary);
+    .trace-step-label {
+      font-weight: 600;
+    }
+  }
+  &.is-exception .trace-bar {
+    --trace-bar-color: var(--trace-amber);
+  }
+}
+.trace-step-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+.trace-marker {
+  color: var(--app-text-primary);
+  background: color-mix(in srgb, var(--trace-amber) 18%, transparent);
+  border-radius: 4px;
+  padding: 0 3px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.trace-track {
+  position: relative;
+  min-height: 20px;
+  border-inline-end: 1px solid var(--ps-border);
+  background-image: linear-gradient(
+    to right,
+    var(--ps-border) 1px,
+    transparent 1px
+  );
+  background-size: 25% 100%;
+}
+.trace-bar {
+  --trace-bar-color: var(--app-primary);
+  position: absolute;
+  top: 4px;
+  height: 12px;
+  border: 1px solid color-mix(in srgb, var(--trace-bar-color) 64%, transparent);
+  border-radius: 3px;
+  background: color-mix(
+    in srgb,
+    var(--trace-bar-color) 27%,
+    var(--app-bg-content)
+  );
+}
+.trace-details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding-top: 12px;
+  h3 {
+    margin: 0;
+    font-size: 13px;
+  }
+  dl {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 8px 0 4px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  dl > div {
+    display: flex;
+    gap: 6px;
+  }
+  dt,
+  p {
+    color: var(--app-text-secondary);
+  }
+  dd,
+  p {
+    margin: 0;
+  }
+  p {
+    font-size: 12px;
+  }
+}
+.trace-empty {
+  padding-block: 22px;
+}
+@media (max-width: 560px) {
+  .trace-ticks span:nth-child(even) {
+    visibility: hidden;
+  }
+}

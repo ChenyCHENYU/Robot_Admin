@@ -23,7 +23,7 @@ import type {
 } from '@robot-admin/naive-ui-components/C_FormSearch'
 import type { DataPickerSource } from '@robot-admin/naive-ui-components/C_DataPicker'
 import type { TreeNativeProps } from '@robot-admin/naive-ui-components/C_Tree'
-import { recordLink, weightCodec } from '../shared/presentation'
+import { recordLink, statusTag, weightCodec } from '../shared/presentation'
 import { usePlanOperations } from './operations'
 
 export interface ProductionPlan {
@@ -139,7 +139,10 @@ export const PLAN_PICKER_COLUMNS = [
     key: 'status',
     title: '计划状态',
     width: 94,
-    render: (row: ProductionPlan) => PLAN_STATES[row.status].label,
+    render: (row: ProductionPlan) => {
+      const { label, type } = PLAN_STATES[row.status]
+      return statusTag(label, type)
+    },
   },
 ]
 export const PLAN_PICKER_SEARCH = {

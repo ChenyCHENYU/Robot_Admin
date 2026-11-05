@@ -53,6 +53,7 @@ export const HEATS = Array.from({ length: 7 }, (_, index) => ({
   time: `${8 + index}:35`,
   state: index < 2 ? '待复核' : '已归档',
 }))
+export type ActualHeat = (typeof HEATS)[number]
 type FieldSpec = readonly [keyof ActualModel, string, string]
 /** 标签带单位，数值键盘与步进规则交给统一表单渲染器。 */
 const numberFields = (
@@ -179,6 +180,7 @@ export function useProductionActual() {
   const currentId = ref(HEATS[0].id)
   const model = ref<ActualModel>(createActualRecord())
   const saved = ref<ActualModel>({ ...model.value })
+  const traceVisible = ref(false)
   const activeSection = ref('charge')
   const forms: Array<FormInstance<ActualModel> | null> = []
   const notice = ref('录入原始实绩并保存；成分偏差会保留并提示复核。')
@@ -236,10 +238,16 @@ export function useProductionActual() {
   }
   const navigate = (key: string) => {
     if (!ACTUAL_GROUPS.some(group => group.key === key)) return
+    const comingFromTrace = traceVisible.value
+    traceVisible.value = false
     activeSection.value = key
-    container.value
-      ?.querySelector(`[data-section="${key}"]`)
-      ?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+    void nextTick(() => {
+      const section = container.value?.querySelector<HTMLElement>(
+        `[data-section="${key}"]`
+      )
+      if (comingFromTrace) section?.focus({ preventScroll: true })
+      section?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+    })
   }
   const activate = (id: string) => {
     const index = HEATS.findIndex(heat => heat.id === id)
@@ -336,6 +344,7 @@ export function useProductionActual() {
     ...review,
     heatList,
     actualConfig,
+    traceVisible,
     referenceVisible,
     referenceRows,
     referenceColumns,
@@ -360,13 +369,83 @@ export function useProductionActual() {
   }
 }
 
-export const PROCESS_STEPS = [
+const TAP_START = 25
+const TAP_DURATION = 7
+const PROCESS_STEPS = [
   {
+    key: 'charge',
     title: '加料与兑铁',
-    time: '08:05 — 08:12',
-    note: '原料校核完成 · 铁水到位',
+    start: 0,
+    duration: 7,
+    team: '加料班',
+    section: 'charge',
+    note: '原料与铁水已校核，确认后转入吹炼。',
   },
-  { title: '吹炼', time: '08:12 — 08:30', note: '顶底复吹 · 过程参数已记录' },
-  { title: '出钢', time: '08:30 — 08:37', note: '钢包 73 号 · 转入精炼' },
-  { title: '成分复核', time: '08:42', note: '送检与内控范围核对' },
+  {
+    key: 'blow',
+    title: '吹炼',
+    start: 7,
+    duration: 18,
+    team: '炼钢班',
+    section: 'process',
+    note: '顶底复吹完成，底吹流量与压力已记录。',
+  },
+  {
+    key: 'tap',
+    title: '出钢',
+    start: TAP_START,
+    duration: TAP_DURATION,
+    team: '出钢班',
+    section: 'charge',
+    note: '出钢完成，记录钢包号、重量和温度。',
+  },
+  {
+    key: 'chemistry',
+    title: '成分核对',
+    start: 37,
+    duration: 5,
+    team: '质检班',
+    section: 'chemistry',
+    note: '送检样本已登记，结果录入成分与判定分区。',
+  },
 ] as const
+
+const TRACE_WINDOW = 48
+
+/** 轨迹跨过零点时继续使用车间的 24 小时读法。 */
+function formatProcessTime(minutes: number): string {
+  const minutesPerDay = 24 * 60
+  const timeInDay = (minutes + minutesPerDay) % minutesPerDay
+  const hour = String(Math.floor(timeInDay / 60)).padStart(2, '0')
+  const minute = String(timeInDay % 60).padStart(2, '0')
+  return `${hour}:${minute}`
+}
+
+/** 本地示例按炉次排时。过程异常独立于当前实绩草稿和化验偏差。 */
+export function createActualProcessTrace(heat: ActualHeat) {
+  const [hour, minute] = heat.time.split(':').map(Number)
+  const blowDelay = heat.id === HEATS[0].id ? 3 : 0
+  // 侧栏炉次时间是出钢时间。按工序记录倒推起点，异常顺延后续工序。
+  const origin = hour * 60 + minute - TAP_START - TAP_DURATION - blowDelay
+  const ticks = [0, 12, 24, 36, TRACE_WINDOW].map(offset =>
+    formatProcessTime(origin + offset)
+  )
+  const steps = PROCESS_STEPS.map(step => {
+    const delay = step.key === 'blow' ? blowDelay : 0
+    const start = step.start + (step.start >= TAP_START ? blowDelay : 0)
+    const duration = step.duration + delay
+    return {
+      ...step,
+      duration,
+      startTime: formatProcessTime(origin + start),
+      endTime: formatProcessTime(origin + start + duration),
+      left: `${(start / TRACE_WINDOW) * 100}%`,
+      width: `${(duration / TRACE_WINDOW) * 100}%`,
+      equipment: step.key === 'chemistry' ? '炉前化验站' : heat.furnace,
+      exception: delay
+        ? `底吹压力短时波动，吹炼延长 ${delay} 分钟。参数恢复后转入下一工序。`
+        : null,
+    }
+  })
+  return { ticks, steps }
+}

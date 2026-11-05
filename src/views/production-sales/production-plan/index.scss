@@ -7,6 +7,10 @@
  */
 @use '../shared/workspace';
 @include workspace.page;
+.plan-picker-query {
+  margin-block: 8px;
+  box-shadow: none;
+}
 .plan-workspace {
   display: grid;
   grid-template-columns: 222px minmax(0, 1fr);

@@ -48,6 +48,11 @@ import {
   summarizeRows,
   type SummaryNumericStrategy,
 } from '@agile-team/mach-table-vue/business'
+import {
+  previewContractReview,
+  resolveContractReview,
+  type ContractField,
+} from './contractReview'
 import { useSalesOperations } from './operations'
 import { CUSTOMERS } from './options'
 export { CUSTOMERS } from './options'
@@ -451,6 +456,63 @@ export function useBusinessWorkbench() {
         JSON.stringify(selected.value)
   )
   const notice = ref('本地示例 · 所有改动仅保留在当前页面')
+  const contractReviewVisible = ref(false)
+  const contractReview =
+    shallowRef<ReturnType<typeof previewContractReview>>(null)
+  const contractFields = ref<ContractField[]>([])
+  const contractReviewError = ref('')
+  const canEditContract = computed(
+    () => selected.value.header.status === 0 && header.value.status === 0
+  )
+  const canAdoptContractFields = computed(
+    () =>
+      canEditContract.value &&
+      !saving.value &&
+      !batchBusy.value &&
+      !resource.loading.value &&
+      pendingOrder.value === null
+  )
+  /** 始终从当前订单草稿重新预览，不覆盖用户已填写的内容。 */
+  const openContractReview = () => {
+    contractReview.value = previewContractReview(header.value)
+    contractFields.value = []
+    contractReviewError.value = ''
+    contractReviewVisible.value = true
+  }
+  /** 切单、恢复或取消时释放仅属于当前草稿的预览。 */
+  const closeContractReview = () => {
+    contractReviewVisible.value = false
+    contractReview.value = null
+    contractFields.value = []
+    contractReviewError.value = ''
+  }
+  /** 仅允许勾选存在差异的字段。 */
+  const selectContractField = (key: ContractField, checked: boolean) => {
+    if (!canAdoptContractFields.value) return
+    const row = contractReview.value?.rows.find(item => item.key === key)
+    if (!row || row.status === 'same') return
+    if (checked && !contractFields.value.includes(key))
+      contractFields.value.push(key)
+    if (!checked)
+      contractFields.value = contractFields.value.filter(item => item !== key)
+  }
+  /** 冲突时保留整份草稿，成功后仍由现有的整单保存提交。 */
+  const adoptContractFields = () => {
+    if (!canAdoptContractFields.value || !contractReview.value) return false
+    const patch = resolveContractReview(
+      header.value,
+      contractReview.value,
+      contractFields.value
+    )
+    if (!patch) {
+      contractReviewError.value = '草稿已变更，请刷新比对后重新选择字段。'
+      return false
+    }
+    header.value = { ...header.value, ...patch }
+    notice.value = `已采纳 ${contractFields.value.length} 个字段到订单草稿，请保存整单。`
+    closeContractReview()
+    return true
+  }
   const selectedCount = ref(0)
   const totals = computed(() => summarizeBusinessLines(lines.value))
   const filteredOrders = computed(() =>
@@ -512,6 +574,7 @@ export function useBusinessWorkbench() {
     scope.clear()
     localEmpty.value = null
     cancelSwitch()
+    closeContractReview()
     activeId.value = id
     header.value = clone(selected.value.header)
     selectedCount.value = 0
@@ -982,6 +1045,7 @@ export function useBusinessWorkbench() {
   }
   const restore = () => {
     scope.clear()
+    closeContractReview()
     batchPlan = undefined
     batchPreview.value = []
     batchResults.value = []
@@ -1049,6 +1113,16 @@ export function useBusinessWorkbench() {
     batchValue,
     batchPreview,
     batchResults,
+    contractReviewVisible,
+    contractReview,
+    contractFields,
+    contractReviewError,
+    canEditContract,
+    canAdoptContractFields,
+    openContractReview,
+    closeContractReview,
+    selectContractField,
+    adoptContractFields,
     query,
     searchConfig,
     applyOrderQuery,

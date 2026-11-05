@@ -219,6 +219,48 @@ test('生产搜索三项展开为四项，右侧操作不移位，进阶查询�
   await expect(ledger).toContainText('6 项')
 })
 
+for (const width of [1440, 390]) {
+  test(`进阶查询分页在候选区右侧（${width}px）`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: 900 })
+    await openPage(
+      page,
+      '/#/production-sales/production-plan',
+      'production-plan'
+    )
+    await page.getByRole('button', { name: '进阶查询' }).click()
+    const picker = page.getByRole('dialog', { name: '进阶查询 · 定位计划' })
+    const resultBar = picker.locator('.c-data-picker__result-bar')
+    const pager = picker.getByRole('navigation', { name: '候选数据分页' })
+    const confirm = picker.getByRole('button', { name: '确定', exact: true })
+    await expect(resultBar).toContainText('共 18 条')
+    await expect(confirm).toBeDisabled()
+    await expect(pager).toBeVisible()
+    await expect
+      .poll(async () => {
+        const bar = await resultBar.boundingBox()
+        const box = await pager.boundingBox()
+        return bar && box
+          ? Math.abs(box.x + box.width - bar.x - bar.width)
+          : Infinity
+      })
+      .toBeLessThan(2)
+    await pager.getByText('2', { exact: true }).click()
+    const row = picker.getByRole('row', { name: /PP-20261029-007/ })
+    await row.locator('.n-radio').click()
+    await expect(resultBar).toContainText('已选 1 项')
+    await expect(row.locator('.n-radio')).toHaveClass(/n-radio--checked/)
+    if (width === 1440)
+      await page.screenshot({
+        path: testInfo.outputPath('plan-advanced.png'),
+        animations: 'disabled',
+      })
+    await confirm.click()
+    await expect(
+      page.getByRole('heading', { name: 'PP-20261029-007 · 计划协同' })
+    ).toBeVisible()
+  })
+}
+
 test('实绩保留成分偏差、跨炉次保存快照和未保存切换保护', async ({ page }) => {
   await page.setViewportSize({ width: 1720, height: 1200 })
   await openPage(

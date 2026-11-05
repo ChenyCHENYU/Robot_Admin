@@ -86,6 +86,59 @@
     );
   }
 }
+.workbench-contract {
+  &__table {
+    overflow: auto;
+
+    :deep(.n-table) {
+      min-width: 430px;
+    }
+
+    :deep(th),
+    :deep(td) {
+      padding: 5px 12px;
+      font-size: 12px;
+    }
+
+    :deep(thead th),
+    :deep(tbody th),
+    :deep(td:nth-last-child(-n + 2)) {
+      white-space: nowrap;
+    }
+
+    :deep(tbody th) {
+      width: 18%;
+      text-align: start;
+      font-weight: 550;
+    }
+
+    :deep(td:nth-child(2)),
+    :deep(td:nth-child(3)) {
+      width: 31%;
+      overflow-wrap: anywhere;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+    border-top: 1px solid var(--workbench-outline);
+  }
+
+  &__notice {
+    margin: 0;
+    padding: 10px 12px;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+}
 .workbench-orders {
   height: 100%;
   display: flex;

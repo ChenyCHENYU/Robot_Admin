@@ -23,11 +23,13 @@
           :bordered="false"
           >{{ dirty ? '有未保存实绩' : '已保存' }}</NTag
         ><NButton
+          v-if="!traceVisible"
           size="small"
           :disabled="saving || locked"
           @click="restore"
           >恢复记录</NButton
         ><NButton
+          v-if="!traceVisible"
           type="primary"
           size="small"
           :loading="saving"
@@ -40,12 +42,20 @@
         ><C_ActionBar
           :actions="reviewActions"
           :config="{ compact: true, size: 'small' }"
-        /><NButton
-          size="small"
-          :disabled="!previous"
-          @click="referenceVisible = true"
-          >上一炉参考</NButton
-        ></div
+        /><NSpace :size="8">
+          <NButton
+            size="small"
+            :type="traceVisible ? 'primary' : 'default'"
+            :aria-pressed="traceVisible"
+            @click="traceVisible = !traceVisible"
+            >工序追踪</NButton
+          ><NButton
+            size="small"
+            :disabled="!previous"
+            @click="referenceVisible = true"
+            >上一炉参考</NButton
+          >
+        </NSpace></div
       >
       <div class="actual-workspace">
         <aside class="actual-sidebar">
@@ -76,7 +86,9 @@
               ></div
             ></section
           >
-          <div class="ps-panel actual-section-nav"
+          <div
+            v-show="!traceVisible"
+            class="ps-panel actual-section-nav"
             ><C_SectionNav
               :items="sections"
               v-model="activeSection"
@@ -113,10 +125,12 @@
           >
           <section
             v-for="(group, index) in ACTUAL_GROUPS"
+            v-show="!traceVisible"
             :key="group.key"
             :data-section="group.key"
             class="ps-panel actual-form-section"
             :aria-label="group.title"
+            tabindex="-1"
           >
             <header class="ps-panel-heading"
               ><h2
@@ -143,22 +157,17 @@
             /></div>
           </section>
           <section
+            v-if="traceVisible"
             class="ps-panel"
             aria-label="工序轨迹"
             ><header class="ps-panel-heading"
-              ><h2>工序轨迹</h2><span>当班过程记录</span></header
-            ><ol class="actual-timeline"
-              ><li
-                v-for="(step, index) in PROCESS_STEPS"
-                :key="step.title"
-                ><span>0{{ index + 1 }}</span
-                ><div
-                  ><strong>{{ step.title }}</strong
-                  ><time>{{ step.time }}</time></div
-                ><p>{{ step.note }}</p></li
-              ></ol
-            ></section
-          >
+              ><h2>工序轨迹</h2
+              ><span>本地过程记录 · {{ current.no }}</span></header
+            ><ProcessTrace
+              :heat="current"
+              @navigate="navigate"
+            />
+          </section>
         </div>
       </div>
       <p
@@ -259,6 +268,7 @@
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
   import PageHeading from '../components/c_pageHeading/index.vue'
+  import ProcessTrace from './components/c_processTrace/index.vue'
   import {
     contentGridOptions,
     BUSINESS_FORM,
@@ -266,12 +276,7 @@
     BUSINESS_DETAIL_DIALOG,
   } from '../shared/presentation'
   import { REVIEW_FIELDS } from './operations'
-  import {
-    useProductionActual,
-    HEATS,
-    ACTUAL_GROUPS,
-    PROCESS_STEPS,
-  } from './data'
+  import { useProductionActual, HEATS, ACTUAL_GROUPS } from './data'
   defineOptions({ name: 'ProductionActualWorkbench' })
   const themeStore = s_themeStore()
   const {
@@ -281,6 +286,7 @@
     currentId,
     dirty,
     activeSection,
+    traceVisible,
     sections,
     chemicalRows,
     chemicalColumns,

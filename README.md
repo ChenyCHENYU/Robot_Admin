@@ -129,7 +129,7 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.29.0` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.29.1` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`  | 静态枚举、远程字典、隔离缓存及详情字段绑定                 | 表单、搜索、详情与两种表格共享翻译     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
@@ -161,8 +161,6 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 
 「超级表格」和 MachTable 的订单列表均使用各自默认的序号和分页，普通列和数值列均默认居中。两者都可用 `:pagination="false"` 关闭分页，用 `:row-number="false"` 关闭自动序号。动态报表由接口层提供列和行，再分别传给 `C_Table` 的 `columns/data` 或 MachTable 的 `column-defs/row-data`。
 
-「产销业务 → 生产计划调度」的搜索区默认显示三项条件，展开后可查班次。右侧「进阶查询」按当前产线定位计划并联动炉次，台账继续使用原查询。「销售订单协同」的新增和编辑弹窗可在订货客户字段内查找候选，确认后回填，取消保留当前订单草稿。两个示例均使用本地数据。
-
 同一页面新增两个按需加载的体验页签：
 
 - **导入校验**：选择正常、错误或重复编号样例，也可编辑最多 20 行的 JSON 矩阵；切换替换/追加，点击「校验预览」检查规范值和逐行问题，再「确认导入」。预览不修改现有数据，修改输入会使旧预览失效；「查看类型化导出」可检查 number、boolean、Date 以及保留前导零的长编号。
@@ -182,6 +180,13 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 | 发运协同指挥台 | `/#/production-sales/shipping`          | 发运阶段筛选、C_Table 任务池、MachTable 库存匹配及车辆表单；公斤原值守恒、超载拦截、装车与出厂状态流转 |
 
 四页分别采用资源侧栏、分区表单、上下主从表和任务池加侧栏的布局，共用原生表格主题、局部紧凑密度、主题面板与标题。Naive 空态图标由主题配置统一为淡蓝色。原工作台入口 `/#/demo/business-workbench` 自动转到销售页；免登录预览保留 `/#/preview/business-workbench`，四页也可通过 `/#/preview/production-sales/<页面路径>` 访问。
+
+- **生产计划调度 → 进阶查询** 按当前产线查询，底部左侧显示候选总数和已选项，右侧分页。确认后定位计划与炉次，保留台账的原查询。
+- **炉次实绩记录 → 工序追踪** 查看当前炉次的工序时间和异常，从记录跳到对应的实绩字段，继续编辑当前草稿。
+- **销售订单协同 → 比对合同** 在首笔待下达订单中查看本地补充协议样例，勾选需要采纳的字段，写入当前订单草稿后再保存。订货客户可直接在新增或编辑弹窗内查询、选择和回填。
+- **发运协同指挥台 → 发运汇总** 对当前筛选下的任务按目的地、状态、钢种或客户组合分组，查看重量合计和分组明细。
+
+上述操作使用本地样例数据。
 
 产销详情统一使用居中自适应弹窗，窄屏内容在弹窗内滚动。蓝色单号支持 Enter／空格打开详情，Escape 关闭后返回原按钮。MachTable 与 C_Table 默认完整显示表头，列宽不足时内部横向滚动，正文单元格可独立省略。
 

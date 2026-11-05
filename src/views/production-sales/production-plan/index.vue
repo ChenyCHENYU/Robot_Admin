@@ -51,6 +51,7 @@
             :columns="PLAN_PICKER_COLUMNS"
             :initial-values="planPickerInitial"
             :page-size="6"
+            require-selection
             title="进阶查询 · 定位计划"
             @select="locatePlan"
           >
@@ -64,9 +65,11 @@
             </template>
             <template #query="{ initialValues, submit }">
               <C_FormSearch
+                class="plan-picker-query"
                 :model-value="initialValues ?? planPickerInitial"
                 :form-item-list="PLAN_PICKER_FIELDS"
                 :config="PLAN_PICKER_SEARCH"
+                :bordered="false"
                 @search="submit"
                 @reset="submit"
               />
