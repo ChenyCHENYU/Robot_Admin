@@ -176,6 +176,12 @@ test('表格简写模式切换清理旧编辑状态，弹窗和行内控件继�
   const table = page.locator('.table-demo-page .c-table-wrapper').first()
   const row = table.locator('tbody tr').first()
   await expect(row).toBeVisible()
+  await expect(table.locator('thead th[data-col-key="_index"]')).toHaveCount(1)
+  await expect(row.locator('td[data-col-key="_index"]')).toHaveText('1')
+  await expect(row.locator('td[data-col-key="age"]')).toHaveCSS(
+    'text-align',
+    'center'
+  )
   await clickRadio(page, '舒适')
   await row.getByTitle('编辑', { exact: true }).click()
   const modal = page.locator('.n-modal').filter({ hasText: '编辑员工信息' })

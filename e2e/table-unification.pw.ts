@@ -102,17 +102,19 @@ test('账户记录分页和筛选继续使用同一状态', async ({ page }) => 
   await expect(table.locator('tbody tr')).toHaveCount(10)
   await table.locator('.n-pagination-item').filter({ hasText: /^2$/ }).click()
   await expect(table.locator('.n-pagination-item--active')).toHaveText('2')
+  await expect(
+    table.locator('tbody tr').first().locator('td[data-col-key="_index"]')
+  ).toHaveText('11')
   const latestTime = await table
     .locator('tbody tr')
     .last()
-    .locator('td')
-    .first()
+    .locator('td[data-col-key="time"]')
     .innerText()
   await table.locator('.n-pagination-item').filter({ hasText: /^1$/ }).click()
   await table.getByRole('columnheader', { name: '时间', exact: true }).click()
   await table.getByRole('columnheader', { name: '时间', exact: true }).click()
   await expect(
-    table.locator('tbody tr').first().locator('td').first()
+    table.locator('tbody tr').first().locator('td[data-col-key="time"]')
   ).toHaveText(latestTime)
   await page.getByPlaceholder('搜索操作描述、模块名称...').fill('用户登录系统')
   await page.getByRole('button', { name: '查询', exact: true }).click()

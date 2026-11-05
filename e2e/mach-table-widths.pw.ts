@@ -59,6 +59,18 @@ test.beforeEach(async ({ page }) => {
 test('固定列只扣一次，宽屏填满、短内容列受限，窄屏保留最小宽度', async ({
   page,
 }) => {
+  await expect(header(page, 'idx')).toHaveCount(1)
+  await expect(header(page, 'idx')).toContainText('序号')
+  await expect(
+    page.locator('.mach-cell[data-col-id="quantity"]').first()
+  ).toHaveCSS('justify-content', 'center')
+  await expect(
+    page.locator('.mach-cell[data-col-id="amount"]').first()
+  ).toHaveCSS('justify-content', 'center')
+  await expectFilled(page)
+  const indexWidth = (await layout(page)).widths.idx!
+  expect(indexWidth).toBeGreaterThanOrEqual(52)
+  expect(indexWidth).toBeLessThanOrEqual(60)
   // 连续缩放验证同一表格实例，等待前一次布局完成。
   await [1920, 2560, 3440, 1920].reduce(async (previous, width) => {
     await previous
@@ -66,9 +78,9 @@ test('固定列只扣一次，宽屏填满、短内容列受限，窄屏保留�
     await expectFilled(page)
     const state = await layout(page)
     expect(state.widths.sel).toBe(40)
-    expect(state.widths.idx).toBe(52)
+    expect(state.widths.idx).toBe(indexWidth)
     expect(state.widths.op).toBe(126)
-    expect(state.widths.quantity).toBeLessThanOrEqual(120.1)
+    expect(state.widths.quantity).toBeLessThanOrEqual(128.1)
     expect(state.widths.status).toBeLessThanOrEqual(160.1)
   }, Promise.resolve())
   await page.setViewportSize({ width: 1200, height: 900 })

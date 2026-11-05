@@ -337,7 +337,6 @@ export function useShippingWorkbench() {
       key: 'weightKg',
       title: '计划量 (t)',
       width: 100,
-      align: 'right',
       render: row => weightCodec.format(row.weightKg / 1000),
     },
     { key: 'destination', title: '目的地' },
@@ -411,7 +410,6 @@ export function useShippingWorkbench() {
       field: 'weightKg',
       headerName: '可配重量 (t)',
       width: 130,
-      align: 'right',
       valueFormatter: ({ value }) => weightCodec.format(Number(value) / 1000),
     },
     {

@@ -132,7 +132,6 @@ export const IMPORT_COLUMNS = defineVueColumns<ImportDemoRow>([
     field: 'quantity',
     headerName: '数量',
     width: 90,
-    align: 'right',
     valueParser: ({ value }) => parseNumber(value),
     validate: value =>
       (Number.isInteger(value) && value > 0) || '数量必须为正整数',
@@ -141,7 +140,6 @@ export const IMPORT_COLUMNS = defineVueColumns<ImportDemoRow>([
     field: 'amount',
     headerName: '金额',
     width: 135,
-    align: 'right',
     valueParser: ({ value }) => parseNumber(value),
     validate: value => value >= 0 || '金额不能为负数',
     valueFormatter: ({ value }) => `¥ ${Number(value).toFixed(2)}`,

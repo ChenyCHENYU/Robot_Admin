@@ -190,7 +190,6 @@ const formatDescription = (desc?: string) =>
 export const getTableColumns = () =>
   defineTableColumns<Employee>([
     { type: 'selection' },
-    { type: 'index' },
     {
       key: 'name',
       title: '姓名',

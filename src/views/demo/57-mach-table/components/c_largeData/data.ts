@@ -126,7 +126,6 @@ export const LARGE_COLUMNS: ColDef<LargeDataRow>[] = [
     colId: `metric-${index + 1}`,
     headerName: `指标 ${String(index + 1).padStart(2, '0')}`,
     width: 128,
-    align: 'right',
     valueGetter: ({ data }) =>
       data ? (data.sequence * (index + 3)) % 100_000 : '',
   })),

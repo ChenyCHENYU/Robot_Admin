@@ -91,10 +91,8 @@ test('原生拖动切换全天标记后，合并依据最新标记规范日期',
 
 test('编辑表格使用组件默认功能列，校验规则只在业务列维护一份', () => {
   const columns = getTableColumns()
-  expect(columns.slice(0, 2)).toEqual([
-    { type: 'selection' },
-    { type: 'index' },
-  ])
+  expect(columns[0]).toEqual({ type: 'selection' })
+  expect(columns.some(column => column.type === 'index')).toBe(false)
   const name = columns.find(column => column.key === 'name')!
   const email = columns.find(column => column.key === 'email')!
   expect(name.required).toBe(true)

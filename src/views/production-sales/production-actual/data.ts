@@ -224,9 +224,8 @@ export function useProductionActual() {
       field: 'previous',
       headerName: '上一炉已保存值',
       width: 160,
-      align: 'right',
     },
-    { field: 'current', headerName: '当前炉次值', width: 150, align: 'right' },
+    { field: 'current', headerName: '当前炉次值', width: 150 },
   ])
   const sections: SectionNavItem[] = ACTUAL_GROUPS.map(group => ({
     key: group.key,
@@ -307,13 +306,12 @@ export function useProductionActual() {
       indexColumn({ headerName: '序号', width: 46 }),
       { field: 'name', headerName: '检测项目', flex: 1 },
       { field: 'unit', headerName: '单位', width: 80 },
-      { field: 'min', headerName: '内控下限', width: 130, align: 'right' },
-      { field: 'max', headerName: '内控上限', width: 130, align: 'right' },
+      { field: 'min', headerName: '内控下限', width: 130 },
+      { field: 'max', headerName: '内控上限', width: 130 },
       {
         field: 'value',
         headerName: '实测值',
         width: 130,
-        align: 'right',
         valueFormatter: ({ value }) =>
           value === null ? '—' : Number(value).toFixed(3),
       },

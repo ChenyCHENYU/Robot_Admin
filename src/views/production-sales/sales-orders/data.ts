@@ -578,7 +578,6 @@ export function useBusinessWorkbench() {
       field: 'targetWeight',
       headerName: '合同量 (t)',
       width: 110,
-      align: 'right',
       valueFormatter: ({ value }) => quantityCodec.format(value),
     },
     {
@@ -671,8 +670,6 @@ export function useBusinessWorkbench() {
       field: 'quantity',
       headerName: '数量 (t)',
       width: 130,
-      align: 'right',
-      headerAlign: 'right',
       editable: true,
       valueParser: ({ value }) => {
         const parsed = quantityCodec.parse(value)
@@ -686,8 +683,6 @@ export function useBusinessWorkbench() {
       field: 'amount',
       headerName: '金额 (CNY)',
       width: 155,
-      align: 'right',
-      headerAlign: 'right',
       valueFormatter: ({ value }) => moneyCodec.format(value),
       valueSerializer: ({ value }) => value,
     },
@@ -759,8 +754,6 @@ export function useBusinessWorkbench() {
       field: 'amount',
       headerName: '金额 (CNY)',
       width: 160,
-      align: 'right',
-      headerAlign: 'right',
       valueFormatter: ({ value }) => moneyCodec.format(value),
     },
   ])
