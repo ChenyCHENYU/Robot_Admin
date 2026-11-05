@@ -27,6 +27,7 @@
           size="small"
           :disabled="saving || locked"
           @click="restore"
+          :render-icon="actionIcons.restore"
           >恢复记录</NButton
         ><NButton
           v-if="!traceVisible"
@@ -35,6 +36,7 @@
           :loading="saving"
           :disabled="locked"
           @click="save"
+          :render-icon="actionIcons.contentSaveOutline"
           >保存实绩</NButton
         >
       </PageHeading>
@@ -48,11 +50,13 @@
             :type="traceVisible ? 'primary' : 'default'"
             :aria-pressed="traceVisible"
             @click="traceVisible = !traceVisible"
+            :render-icon="actionIcons.chartTimelineVariant"
             >工序追踪</NButton
           ><NButton
             size="small"
             :disabled="!previous"
             @click="referenceVisible = true"
+            :render-icon="actionIcons.history"
             >上一炉参考</NButton
           >
         </NSpace></div
@@ -221,6 +225,7 @@
           ><NButton
             size="small"
             @click="historyVisible = false"
+            :render-icon="actionIcons.close"
             >关闭记录</NButton
           ></template
         >
@@ -256,6 +261,7 @@
           ><NButton
             size="small"
             @click="referenceVisible = false"
+            :render-icon="actionIcons.close"
             >关闭参考</NButton
           ></template
         >
@@ -264,6 +270,7 @@
   </main>
 </template>
 <script setup lang="ts">
+  import { actionIcons } from '../shared/actionIcons'
   import '@agile-team/mach-table-vue/styles.css'
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'

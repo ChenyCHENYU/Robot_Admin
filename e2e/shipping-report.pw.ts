@@ -30,6 +30,9 @@ test('发运汇总重算维度并下钻，不影响车辆草稿或任务池范�
   })
   await openReport.click()
   const report = page.getByTestId('shipping-report')
+  await expect(
+    openReport.locator('.n-button__icon svg[aria-hidden="true"] path')
+  ).toBeVisible()
   await expect(report).toContainText('共 12 笔')
   await expect(report).toContainText('329.700')
   await expect(report).toContainText('93.900')

@@ -57,7 +57,7 @@
       line-height: 1.6;
       font-weight: 650;
     }
-    span:not(.c-icon):not(.workbench-panel__icon):not(.workbench-panel__badge) {
+    .workbench-panel__subtitle {
       font-size: 11px;
       color: var(--app-text-secondary);
     }
@@ -208,7 +208,7 @@
   gap: 6px;
   padding: 8px 12px;
   border-bottom: 1px solid var(--workbench-outline);
-  span {
+  > span {
     font-size: 11px;
     color: var(--app-text-secondary);
   }

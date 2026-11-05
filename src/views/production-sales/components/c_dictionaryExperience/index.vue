@@ -27,24 +27,28 @@
         <NButton
           size="small"
           @click="switchOrganization"
+          :render-icon="actionIcons.swapHorizontal"
           >切换体验工厂</NButton
         >
         <NButton
           size="small"
           :disabled="state.loading.value"
           @click="simulate('error')"
+          :render-icon="actionIcons.alertCircleOutline"
           >模拟加载失败</NButton
         >
         <NButton
           size="small"
           :disabled="state.loading.value"
           @click="simulate('empty')"
+          :render-icon="actionIcons.inboxOutline"
           >体验空字典</NButton
         >
         <NButton
           size="small"
           :loading="state.loading.value"
           @click="reload"
+          :render-icon="actionIcons.refresh"
           >重新加载字典</NButton
         >
         <span data-testid="dictionary-requests"
@@ -66,6 +70,7 @@
           type="primary"
           size="small"
           @click="reload"
+          :render-icon="actionIcons.refresh"
           >重试仓库字典</NButton
         >
       </NAlert>
@@ -135,12 +140,14 @@
       ><NButton
         size="small"
         @click="emit('close')"
+        :render-icon="actionIcons.close"
         >关闭体验</NButton
       ></template
     >
   </NModal>
 </template>
 <script setup lang="ts">
+  import { actionIcons } from '../../shared/actionIcons'
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
   import { contentGridOptions } from '../../shared/presentation'

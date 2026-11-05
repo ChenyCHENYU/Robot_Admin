@@ -19,11 +19,13 @@
         <NButton
           size="small"
           @click="tab = 'capacity'"
+          :render-icon="actionIcons.chartBar"
           >查看产能负荷</NButton
         ><NButton
           type="primary"
           size="small"
           @click="release"
+          :render-icon="actionIcons.sendOutline"
           >下达选中计划</NButton
         >
       </PageHeading>
@@ -60,6 +62,7 @@
                 size="small"
                 :disabled="disabled"
                 @click="open"
+                :render-icon="actionIcons.filterOutline"
                 >进阶查询</NButton
               >
             </template>
@@ -265,6 +268,7 @@
           ><NButton
             size="small"
             @click="detailVisible = false"
+            :render-icon="actionIcons.close"
             >关闭详情</NButton
           ></template
         >
@@ -273,6 +277,7 @@
   </main>
 </template>
 <script setup lang="ts">
+  import { actionIcons } from '../shared/actionIcons'
   import '@agile-team/mach-table-vue/styles.css'
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'

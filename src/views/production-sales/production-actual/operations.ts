@@ -5,6 +5,7 @@
  * @Description: 炉次实绩复核、退回补录、撤回复核和本地追溯
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { actionIcons, BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
 import type { Ref } from 'vue'
 import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
@@ -125,6 +126,7 @@ export function useActualReview(context: {
     const record = latest.value
     if (record?.result !== 'pass') return
     dialog.warning({
+      ...BUSINESS_DIALOG_BUTTONS,
       title: '撤回实绩复核',
       content: `${record.heatNo} 将恢复可编辑，原复核记录保留。`,
       positiveText: '确认撤回',
@@ -169,18 +171,21 @@ export function useActualReview(context: {
     {
       key: 'review',
       label: '实绩复核',
+      buttonProps: { renderIcon: actionIcons.clipboardCheckOutline },
       disabled: locked.value || saving.value,
       onClick: openReview,
     },
     {
       key: 'withdraw',
       label: '撤回复核',
+      buttonProps: { renderIcon: actionIcons.undoVariant },
       disabled: latest.value?.result !== 'pass' || saving.value,
       onClick: withdraw,
     },
     {
       key: 'detail',
       label: '复核记录',
+      buttonProps: { renderIcon: actionIcons.history },
       onClick: () => {
         historyVisible.value = true
       },

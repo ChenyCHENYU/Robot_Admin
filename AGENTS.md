@@ -68,6 +68,10 @@ C_*:     C_Table · C_Form · C_ActionBar · C_Icon · C_Tree … (60 个，用 
 
 ---
 
+## 业务操作按钮
+
+业务操作按钮统一使用语义图标，覆盖工具栏、行操作和弹窗的确认、取消、关闭。优先使用 `C_ActionBar` 的预设。直接使用 `NButton` 时用 `#icon` 或 `renderIcon` 提供图标，保留文字标签。仅图标按钮提供 `aria-label`，装饰图标标记 `aria-hidden="true"`。页面专用图标随路由按需加载。
+
 ## 项目生态包（优先使用，禁止引入功能重复的第三方包）
 
 | 包                                 | 用途                                                   |

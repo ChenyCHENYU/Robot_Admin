@@ -5,6 +5,7 @@
  * @Description: 发运协同的任务池、库存匹配、车辆校验与本地状态流转
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { actionIcons, BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
 import { C_ActionBar } from '@robot-admin/naive-ui-components/C_ActionBar'
 import {
   defineTableColumns,
@@ -54,9 +55,17 @@ interface VehicleForm {
   note: string
 }
 export const SHIPMENT_STATES = {
-  waiting: { label: '待配载', type: 'warning' },
-  loading: { label: '装车中', type: 'info' },
-  departed: { label: '已出厂', type: 'success' },
+  waiting: {
+    label: '待配载',
+    type: 'warning',
+    icon: actionIcons.packageVariantClosed,
+  },
+  loading: { label: '装车中', type: 'info', icon: actionIcons.truckOutline },
+  departed: {
+    label: '已出厂',
+    type: 'success',
+    icon: actionIcons.truckCheckOutline,
+  },
 } as const
 export const SHIPPING_FIELDS: SearchFormItem<ShippingQuery>[] = [
   { prop: 'keyword', label: '发运单 / 客户', type: 'input' },
@@ -283,6 +292,7 @@ export function useShippingWorkbench() {
     if (id === currentId.value || busy.value) return
     if (form.value?.isDirty) {
       dialog.warning({
+        ...BUSINESS_DIALOG_BUTTONS,
         title: '车辆安排有未保存修改',
         content: '切换任务将放弃当前尚未生成装车单的车辆修改。',
         positiveText: '放弃并切换',
@@ -322,6 +332,8 @@ export function useShippingWorkbench() {
     },
     onClick: () => choose(row.id),
   })
+  const editIcon = actionIcons.pencilOutline
+  const deleteIcon = actionIcons.deleteOutline
   const columns = defineTableColumns<Shipment>([
     { type: 'index', title: '序号', width: 48, fixed: 'left' },
     {
@@ -382,7 +394,7 @@ export function useShippingWorkbench() {
                 row.status !== 'waiting' ||
                 form.value?.isDirty === true ||
                 busy.value,
-              buttonProps: { text: true },
+              buttonProps: { text: true, renderIcon: editIcon },
               onClick: () => operations.editShipment(row),
             },
             {
@@ -392,7 +404,7 @@ export function useShippingWorkbench() {
                 row.status !== 'waiting' ||
                 form.value?.isDirty === true ||
                 busy.value,
-              buttonProps: { text: true },
+              buttonProps: { text: true, renderIcon: deleteIcon },
               onClick: () => operations.removeShipment(row),
             },
           ],
@@ -468,6 +480,7 @@ export function useShippingWorkbench() {
     if (current.value.status !== 'loading' || busy.value) return
     const { id } = current.value
     dialog.info({
+      ...BUSINESS_DIALOG_BUTTONS,
       title: '确认车辆出厂',
       content: `${current.value.no} · ${current.value.plate}，请确认装车与出厂校核已完成。`,
       positiveText: '确认出厂',

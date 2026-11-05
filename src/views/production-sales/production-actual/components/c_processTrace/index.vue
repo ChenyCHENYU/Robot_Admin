@@ -14,6 +14,7 @@
         :type="exceptionOnly ? 'warning' : 'default'"
         :aria-pressed="exceptionOnly"
         @click="exceptionOnly = !exceptionOnly"
+        :render-icon="actionIcons.filterOutline"
         >仅看异常</NButton
       >
     </div>
@@ -104,6 +105,7 @@
         <NButton
           size="small"
           @click="emit('navigate', currentStep.section)"
+          :render-icon="actionIcons.clipboardTextSearchOutline"
         >
           查看对应实绩
         </NButton>
@@ -119,6 +121,7 @@
 </template>
 
 <script setup lang="ts">
+  import { actionIcons } from '../../../shared/actionIcons'
   import { createActualProcessTrace, type ActualHeat } from '../../data'
 
   defineOptions({ name: 'ProductionActualProcessTrace' })

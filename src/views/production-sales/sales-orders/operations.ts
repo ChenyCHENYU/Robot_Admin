@@ -5,11 +5,13 @@
  * @Description: 销售订单编制与明细弹窗，沿用现有整单草稿和提交边界
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { actionIcons, BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
 import type { Ref } from 'vue'
 import type { DialogReactive } from 'naive-ui'
 import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
 import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
+
 import type { BusinessOrder, OrderHeader, OrderLine } from './data'
 
 const required = (message: string) => [{ required: true, message }]
@@ -290,6 +292,8 @@ export function useSalesOperations(context: {
       if (copyDialog === confirm) copyDialog = null
     }
     const confirm = dialog.info({
+      ...BUSINESS_DIALOG_BUTTONS,
+      positiveButtonProps: { renderIcon: actionIcons.contentCopy },
       title: '复制销售订单',
       content: `将 ${source.header.orderNo} 及商品明细复制为一份新的草稿订单，自动生成新订单号。原订单保持不变，履约进度归零，需要调整时可编辑新订单。`,
       positiveText: '确认复制',
@@ -333,6 +337,8 @@ export function useSalesOperations(context: {
     const target = orders.value.find(item => item.header.id === row.id)
     if (!target || target.header.status !== 0 || blocked()) return
     dialog.warning({
+      ...BUSINESS_DIALOG_BUTTONS,
+      positiveButtonProps: { renderIcon: actionIcons.deleteOutline },
       title: '删除草稿订单',
       content: `确认删除 ${target.header.orderNo} 及其商品明细？未保存修改会一起放弃。执行中和已完成的订单不能删除。`,
       positiveText: '确认删除',
@@ -401,6 +407,8 @@ export function useSalesOperations(context: {
     const ids = targetIds ?? selectedKeys()
     if (!ids.length) return
     dialog.warning({
+      ...BUSINESS_DIALOG_BUTTONS,
+      positiveButtonProps: { renderIcon: actionIcons.deleteOutline },
       title: targetIds ? '删除商品明细' : '删除选中明细',
       content: targetIds
         ? `确认删除 ${ids[0]} · ${lines.value.find(row => row.id === ids[0])?.product ?? ''}？保存整单后生效。`
@@ -419,6 +427,7 @@ export function useSalesOperations(context: {
     {
       key: 'create',
       label: '新增订单',
+      buttonProps: { renderIcon: actionIcons.plus },
       disabled: blocked(),
       onClick: () => openOrder(),
     },
@@ -427,12 +436,14 @@ export function useSalesOperations(context: {
     {
       key: 'create',
       label: '新增明细',
+      buttonProps: { renderIcon: actionIcons.plus },
       disabled: blocked(),
       onClick: () => openLine(),
     },
     {
       key: 'delete',
       label: '删除选中明细',
+      buttonProps: { renderIcon: actionIcons.deleteOutline },
       disabled: blocked() || !selectedKeys().length,
       onClick: () => removeLines(),
     },

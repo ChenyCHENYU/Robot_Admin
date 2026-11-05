@@ -5,10 +5,12 @@
  * @Description: 发运任务编制弹窗与按状态开放的操作栏
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { actionIcons, BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
 import type { Ref } from 'vue'
 import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
 import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
+
 import type { Shipment } from './data'
 
 export const SHIPMENT_EDIT_FIELDS: FormOption<Shipment>[] = [
@@ -135,6 +137,11 @@ export function useShipmentOperations(context: {
   const remove = (target: Shipment) => {
     if (target.status !== 'waiting' || vehicleDirty()) return
     dialog.warning({
+      ...BUSINESS_DIALOG_BUTTONS,
+      positiveButtonProps: {
+        ...BUSINESS_DIALOG_BUTTONS.positiveButtonProps,
+        renderIcon: actionIcons.deleteOutline,
+      },
       title: '删除待配载任务',
       content: `确认删除 ${target.no}？已开始装车和已出厂任务保留追溯记录。`,
       positiveText: '确认删除',
@@ -149,7 +156,12 @@ export function useShipmentOperations(context: {
     })
   }
   const actions = computed<ActionItem[]>(() => [
-    { key: 'create', label: '新增发运任务', onClick: () => open() },
+    {
+      key: 'create',
+      label: '新增发运任务',
+      buttonProps: { renderIcon: actionIcons.plus },
+      onClick: () => open(),
+    },
   ])
   return {
     taskEditor: editor,

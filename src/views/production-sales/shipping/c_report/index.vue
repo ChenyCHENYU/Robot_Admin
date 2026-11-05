@@ -65,6 +65,7 @@
           <NButton
             size="tiny"
             @click="activeKey = null"
+            :render-icon="actionIcons.arrowLeft"
             >返回分组汇总</NButton
           >
           <strong>{{ activeLabel }} · {{ activeGroup.count }} 笔任务</strong>
@@ -96,6 +97,7 @@
         <NButton
           size="small"
           @click="visible = false"
+          :render-icon="actionIcons.close"
           >关闭汇总</NButton
         >
       </div>
@@ -103,6 +105,7 @@
   </NModal>
 </template>
 <script setup lang="ts">
+  import { actionIcons } from '../../shared/actionIcons'
   import {
     defineTableColumns,
     defineTableConfig,
@@ -155,6 +158,7 @@
         .join(' / ') || '全部任务'
   )
   const formatWeight = (kg: number) => weightCodec.format(kg / 1000)
+  const viewIcon = actionIcons.eyeOutline
   const renderStatus = (value: Shipment['status']) => {
     const { label, type } = SHIPMENT_STATES[value]
     return statusTag(label, type)
@@ -208,6 +212,7 @@
             text: true,
             type: 'primary',
             size: 'small',
+            renderIcon: viewIcon,
             onClick: () => {
               activeKey.value = group.key
             },

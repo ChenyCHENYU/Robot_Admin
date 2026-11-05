@@ -18,11 +18,13 @@
         ><NButton
           size="small"
           @click="reportVisible = true"
+          :render-icon="actionIcons.chartBoxOutline"
           >发运汇总</NButton
         ><NButton
           size="small"
           :disabled="current.status !== 'loading'"
           @click="depart"
+          :render-icon="actionIcons.truckCheckOutline"
           >确认出厂</NButton
         ><NButton
           type="primary"
@@ -30,6 +32,7 @@
           :loading="busy"
           :disabled="current.status !== 'waiting'"
           @click="assign"
+          :render-icon="actionIcons.clipboardTextOutline"
           >生成装车单</NButton
         ></PageHeading
       >
@@ -40,7 +43,9 @@
           type="button"
           :class="{ 'is-active': query.status === null }"
           @click="filterStage(null)"
-          ><span>01 · 全部任务</span
+          ><span
+            ><component :is="actionIcons.clipboardListOutline" />01 ·
+            全部任务</span
           ><strong>{{ rows.length }}<small>笔发运任务</small></strong
           ><p>围绕当班装车窗口推进交付</p></button
         ><button
@@ -49,7 +54,9 @@
           type="button"
           :class="{ 'is-active': query.status === stage.key }"
           @click="filterStage(stage.key)"
-          ><span>0{{ index + 2 }} · {{ stage.label }}</span
+          ><span
+            ><component :is="stage.icon" />0{{ index + 2 }} ·
+            {{ stage.label }}</span
           ><strong>{{ stage.count }}<small>笔</small></strong
           ><p>{{ STAGE_NOTES[stage.key] }}</p></button
         ></div
@@ -92,6 +99,7 @@
                 size="tiny"
                 :disabled="current.status !== 'waiting' || busy"
                 @click="restoreVehicle"
+                :render-icon="actionIcons.restore"
                 >恢复车辆</NButton
               ><NTag
                 :type="SHIPMENT_STATES[current.status].type"
@@ -130,6 +138,7 @@
             ><NButton
               size="tiny"
               @click="recommend"
+              :render-icon="actionIcons.playlistCheck"
               >推荐配载</NButton
             ><span
               >已选 {{ selectedLots.length }} 批 ·
@@ -247,6 +256,7 @@
           ><NButton
             size="small"
             @click="detailVisible = false"
+            :render-icon="actionIcons.close"
             >关闭详情</NButton
           ></template
         >
@@ -255,6 +265,7 @@
   </main>
 </template>
 <script setup lang="ts">
+  import { actionIcons } from '../shared/actionIcons'
   import '@agile-team/mach-table-vue/styles.css'
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'

@@ -208,6 +208,15 @@ test('计划编制弹窗真实增改复制，确认取消和状态约束保持�
   await expect(modal(page)).toHaveCount(0)
   await expect(dialog(page)).toContainText('复制生产计划')
   await expect(dialog(page)).toContainText('PP-20261029-019')
+  await Promise.all(
+    ['取消', '确认复制'].map(label =>
+      expect(
+        dialog(page)
+          .getByRole('button', { name: label, exact: true })
+          .locator('.n-button__icon svg[aria-hidden="true"] path')
+      ).toBeVisible()
+    )
+  )
   await dialog(page).getByRole('button', { name: '取消', exact: true }).click()
   await expect(dialog(page)).toHaveCount(0)
   await expect(table).toContainText('19 项')

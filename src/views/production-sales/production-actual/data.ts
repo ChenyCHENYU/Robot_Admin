@@ -5,6 +5,7 @@
  * @Description: 炉次实绩记录、多区域校验与成分上下限核对
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
 import type {
   FormOption,
   FormConfig,
@@ -264,6 +265,7 @@ export function useProductionActual() {
       return
     }
     dialog.warning({
+      ...BUSINESS_DIALOG_BUTTONS,
       title: '当前炉次有未保存实绩',
       content: '切换后将放弃当前未保存修改。',
       positiveText: '放弃并切换',

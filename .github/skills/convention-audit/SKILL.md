@@ -78,6 +78,7 @@ description: 'Use when: reviewing code for compliance with Robot Admin project c
 
 **违规检测项：**
 
+- [ ] 业务操作按钮缺少语义图标，或仅图标按钮缺少可访问名称
 - [ ] 缺少 `defineOptions({ name: '...' })` → 影响 DevTools 和 KeepAlive
 - [ ] Props 使用对象语法 `defineProps({ ... })` → 应使用 interface + withDefaults
 - [ ] 样式未使用 `@use './index.scss'` → 应使用 `@use` 而非内联样式或 `@import`

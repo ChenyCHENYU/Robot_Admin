@@ -27,6 +27,9 @@ test('工序追踪按炉次筛选异常，窄屏时间轴可操作并保留实�
   const process = root.getByRole('region', { name: '炉况参数' })
 
   await traceButton.click()
+  await expect(
+    exceptions.locator('.n-button__icon svg[aria-hidden="true"] path')
+  ).toBeVisible()
   await expect(process).toBeHidden()
   await expect(trace).toContainText('4 道工序 · 1 项异常')
   const blow = chart.getByRole('button', { name: /吹炼，08:07 至 08:28，异常/ })

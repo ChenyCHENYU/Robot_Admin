@@ -5,6 +5,7 @@
  * @Description: 生产计划调度的本地数据、受控查询及状态操作
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { actionIcons, BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
 import {
   defineVueColumns,
   selectionColumn,
@@ -446,6 +447,8 @@ export function useProductionPlan() {
       return
     }
     dialog.info({
+      ...BUSINESS_DIALOG_BUTTONS,
+      positiveButtonProps: { renderIcon: actionIcons.sendOutline },
       title: '下达生产计划',
       content: `确认下达 ${count} 项待下达计划？下达后锁定编制与顺序，执行前可撤销。`,
       positiveText: '确认下达',

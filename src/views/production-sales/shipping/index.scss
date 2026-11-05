@@ -25,8 +25,17 @@
     cursor: pointer;
     overflow: hidden;
     > span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
       color: var(--app-text-secondary);
       font-size: 11px;
+
+      > svg {
+        flex: none;
+        color: var(--ps-accent);
+        font-size: 14px;
+      }
     }
     strong {
       display: block;

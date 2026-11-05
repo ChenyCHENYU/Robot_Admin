@@ -24,6 +24,7 @@
           ><NButton
             size="small"
             @click="dictionaryVisible = true"
+            :render-icon="actionIcons.bookOpenVariantOutline"
             >字典联动体验</NButton
           ><NTag
             :type="dirty ? 'warning' : 'success'"
@@ -101,7 +102,9 @@
               tabindex="-1"
               >合同版本比对</h2
             >
-            <span v-if="contractReview"
+            <span
+              v-if="contractReview"
+              class="workbench-panel__subtitle"
               >{{ contractReview.source.contractNo }} ·
               {{ contractReview.source.revision }} · 本地合同样例</span
             >
@@ -109,6 +112,7 @@
           <NButton
             size="tiny"
             @click="dismissContractReview"
+            :render-icon="actionIcons.close"
             >关闭比对</NButton
           >
         </header>
@@ -167,6 +171,7 @@
               v-if="contractReviewError"
               size="small"
               @click="openContractReview"
+              :render-icon="actionIcons.refresh"
               >刷新比对</NButton
             >
             <NButton
@@ -174,6 +179,7 @@
               type="primary"
               :disabled="!canAdoptContractFields || !contractFields.length"
               @click="confirmContractReview"
+              :render-icon="actionIcons.check"
               >采纳所选字段</NButton
             >
           </div>
@@ -214,7 +220,9 @@
                       :size="18" /></span
                   ><div
                     ><h2>订单列表</h2
-                    ><span>{{ filteredOrders.length }} 笔本地订单</span></div
+                    ><span class="workbench-panel__subtitle"
+                      >{{ filteredOrders.length }} 笔本地订单</span
+                    ></div
                   ></div
                 ><span class="workbench-panel__badge">主表</span></header
               >
@@ -266,7 +274,9 @@
                         :size="18" /></span
                     ><div
                       ><h2 data-testid="active-order">{{ header.orderNo }}</h2
-                      ><span>订单主档</span></div
+                      ><span class="workbench-panel__subtitle"
+                        >订单主档</span
+                      ></div
                     ></div
                   ><NSpace :size="6">
                     <span ref="contractReviewTrigger">
@@ -275,12 +285,14 @@
                         :aria-expanded="contractReviewVisible"
                         aria-controls="contract-review"
                         @click="showContractReview"
+                        :render-icon="actionIcons.compareHorizontal"
                         >比对合同</NButton
                       >
                     </span>
                     <NButton
                       size="tiny"
                       @click="fillMissingExample"
+                      :render-icon="actionIcons.fileDocumentEditOutline"
                       >填入缺失样例</NButton
                     >
                   </NSpace></header
@@ -333,6 +345,11 @@
                     ><NButton
                       size="tiny"
                       @click="toggleDetailFullscreen"
+                      :render-icon="
+                        fullscreen
+                          ? actionIcons.fullscreenExit
+                          : actionIcons.fullscreen
+                      "
                       >{{ fullscreen ? '退出明细全屏' : '明细全屏' }}</NButton
                     ></header
                   >
@@ -343,6 +360,7 @@
                     ><NButton
                       text
                       @click="resource.reload"
+                      :render-icon="actionIcons.refresh"
                       >重试当前订单</NButton
                     ></NAlert
                   >
@@ -363,10 +381,14 @@
                         <NButton
                           size="tiny"
                           @click="selectAllLines"
+                          :render-icon="
+                            actionIcons.checkboxMultipleMarkedOutline
+                          "
                           >全选明细</NButton
                         ><NButton
                           size="tiny"
                           @click="emptyLocalLines"
+                          :render-icon="actionIcons.inboxOutline"
                           >体验空明细</NButton
                         ></NSpace
                       ><span
@@ -453,7 +475,7 @@
                 :size="19" /></span
             ><div
               ><h2>明细批改</h2
-              ><span
+              ><span class="workbench-panel__subtitle"
                 >只作用于当前已选明细；失败项保留草稿，重试不再提交成功项</span
               ></div
             ></div
@@ -476,6 +498,7 @@
             size="small"
             :disabled="batchBusy"
             @click="previewBatch"
+            :render-icon="actionIcons.eyeOutline"
             >预览批改</NButton
           ><NButton
             size="small"
@@ -483,6 +506,7 @@
             :disabled="!batchPreview.length || batchBusy"
             :loading="batchBusy"
             @click="executeBatch()"
+            :render-icon="actionIcons.check"
             >确认执行批改</NButton
           ></div
         >
@@ -534,16 +558,19 @@
             ><NButton
               size="small"
               @click="cancelSwitch"
+              :render-icon="actionIcons.close"
               >取消切换</NButton
             ><NButton
               size="small"
               @click="discardAndSwitch"
+              :render-icon="actionIcons.arrowRight"
               >放弃并切换</NButton
             ><NButton
               size="small"
               type="primary"
               :loading="saving"
               @click="saveAndSwitch"
+              :render-icon="actionIcons.contentSaveOutline"
               >保存并切换</NButton
             ></NSpace
           ></template
@@ -627,6 +654,7 @@
           ><NButton
             size="small"
             @click="detailVisible = false"
+            :render-icon="actionIcons.close"
             >关闭详情</NButton
           ></template
         >
@@ -672,6 +700,7 @@
           ><NButton
             size="small"
             @click="lineDetail = null"
+            :render-icon="actionIcons.close"
             >关闭详情</NButton
           ></template
         >
@@ -685,6 +714,7 @@
 </template>
 
 <script setup lang="ts">
+  import { actionIcons } from '../shared/actionIcons'
   import '@agile-team/mach-table-vue/styles.css'
   // 自定义 renderer 通过 h() 使用 Picker，按路由显式引入其样式。
   import { MachTable } from '@agile-team/mach-table-vue'

@@ -227,11 +227,23 @@ for (const width of [1440, 390]) {
       '/#/production-sales/production-plan',
       'production-plan'
     )
-    await page.getByRole('button', { name: '进阶查询' }).click()
+    const openPicker = page.getByRole('button', { name: '进阶查询' })
+    await expect(
+      openPicker.locator('.n-button__icon svg[aria-hidden="true"] path')
+    ).toBeVisible()
+    await openPicker.click()
     const picker = page.getByRole('dialog', { name: '进阶查询 · 定位计划' })
     const resultBar = picker.locator('.c-data-picker__result-bar')
     const pager = picker.getByRole('navigation', { name: '候选数据分页' })
     const confirm = picker.getByRole('button', { name: '确定', exact: true })
+    await Promise.all(
+      [confirm, picker.getByRole('button', { name: '取消', exact: true })].map(
+        action =>
+          expect(
+            action.locator('.n-button__icon [aria-hidden="true"]')
+          ).toHaveCSS('mask-image', /url\(/)
+      )
+    )
     await expect(resultBar).toContainText('共 18 条')
     await expect(confirm).toBeDisabled()
     await expect(pager).toBeVisible()
@@ -249,11 +261,17 @@ for (const width of [1440, 390]) {
     await row.locator('.n-radio').click()
     await expect(resultBar).toContainText('已选 1 项')
     await expect(row.locator('.n-radio')).toHaveClass(/n-radio--checked/)
-    if (width === 1440)
+    if (width === 1440) {
       await page.screenshot({
         path: testInfo.outputPath('plan-advanced.png'),
         animations: 'disabled',
       })
+      await picker.screenshot({
+        path: testInfo.outputPath('plan-advanced-detail.jpg'),
+        quality: 82,
+        animations: 'disabled',
+      })
+    }
     await confirm.click()
     await expect(
       page.getByRole('heading', { name: 'PP-20261029-007 · 计划协同' })

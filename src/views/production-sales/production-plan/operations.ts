@@ -5,11 +5,13 @@
  * @Description: 计划编制、复制、删除及下达撤销的本地操作
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { actionIcons, BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
 import type { Ref } from 'vue'
 import type { DialogReactive } from 'naive-ui'
 import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
 import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
+
 import type { ProductionPlan } from './data'
 
 export const PLAN_EDIT_FIELDS: FormOption<ProductionPlan>[] = [
@@ -178,6 +180,8 @@ export function usePlanOperations(context: {
       if (copyDialog === confirm) copyDialog = null
     }
     const confirm = dialog.info({
+      ...BUSINESS_DIALOG_BUTTONS,
+      positiveButtonProps: { renderIcon: actionIcons.contentCopy },
       title: '复制生产计划',
       content: `将 ${source.planNo} 的编制信息复制为一份新的待下达计划，自动生成新计划号。原计划保持不变，需要调整时可编辑新计划。`,
       positiveText: '确认复制',
@@ -218,6 +222,8 @@ export function usePlanOperations(context: {
   const remove = (target: ProductionPlan) => {
     if (target.status !== 'draft') return
     dialog.warning({
+      ...BUSINESS_DIALOG_BUTTONS,
+      positiveButtonProps: { renderIcon: actionIcons.deleteOutline },
       title: '删除待下达计划',
       content: `确认删除 ${target.planNo}？已下达及执行中的计划不能删除。`,
       positiveText: '确认删除',
@@ -241,6 +247,8 @@ export function usePlanOperations(context: {
       return
     }
     dialog.warning({
+      ...BUSINESS_DIALOG_BUTTONS,
+      positiveButtonProps: { renderIcon: actionIcons.undoVariant },
       title: '撤销计划下达',
       content: `将 ${ids.length} 项尚未执行的计划退回待下达。执行中的计划保持原状态。`,
       positiveText: '确认撤销',
@@ -256,10 +264,16 @@ export function usePlanOperations(context: {
     })
   }
   const actions = computed<ActionItem[]>(() => [
-    { key: 'create', label: '新增计划', onClick: editor.openCreate },
+    {
+      key: 'create',
+      label: '新增计划',
+      buttonProps: { renderIcon: actionIcons.plus },
+      onClick: editor.openCreate,
+    },
     {
       key: 'withdraw',
       label: '撤销下达',
+      buttonProps: { renderIcon: actionIcons.undoVariant },
       disabled: !selectedIds.value.length,
       onClick: withdraw,
     },

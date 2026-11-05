@@ -28,6 +28,9 @@ test('合同字段在工作台内选择性采纳，旧预览不能覆盖新草�
   ).toBeVisible()
   const adopt = review.getByRole('button', { name: '采纳所选字段' })
   await expect(adopt).toBeDisabled()
+  await expect(
+    adopt.locator('.n-button__icon svg[aria-hidden="true"] path')
+  ).toBeVisible()
   const delivery = review.getByRole('checkbox', { name: '采纳交货日期' })
   await delivery.check()
   await review.getByRole('checkbox', { name: '采纳订单备注' }).check()
