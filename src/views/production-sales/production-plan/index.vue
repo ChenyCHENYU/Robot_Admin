@@ -43,7 +43,37 @@
         v-model="query"
         :form-item-list="PLAN_FIELDS"
         :config="searchConfig"
-      />
+        @reset="applyPlanQuery"
+      >
+        <template #actions>
+          <C_DataPicker
+            :source="planPickerSource"
+            :columns="PLAN_PICKER_COLUMNS"
+            :initial-values="planPickerInitial"
+            :page-size="6"
+            title="进阶查询 · 定位计划"
+            @select="locatePlan"
+          >
+            <template #trigger="{ open, disabled }">
+              <NButton
+                size="small"
+                :disabled="disabled"
+                @click="open"
+                >进阶查询</NButton
+              >
+            </template>
+            <template #query="{ initialValues, submit }">
+              <C_FormSearch
+                :model-value="initialValues ?? planPickerInitial"
+                :form-item-list="PLAN_PICKER_FIELDS"
+                :config="PLAN_PICKER_SEARCH"
+                @search="submit"
+                @reset="submit"
+              />
+            </template>
+          </C_DataPicker>
+        </template>
+      </C_FormSearch>
       <div class="plan-workspace">
         <aside
           class="ps-panel plan-resources"
@@ -253,9 +283,13 @@
     BUSINESS_DETAIL_DIALOG,
   } from '../shared/presentation'
   import { PLAN_EDIT_FIELDS } from './operations'
+  import '@robot-admin/naive-ui-components/C_DataPicker/style.css'
   import {
     useProductionPlan,
     PLAN_FIELDS,
+    PLAN_PICKER_COLUMNS,
+    PLAN_PICKER_FIELDS,
+    PLAN_PICKER_SEARCH,
     LINE_TREE,
     LINE_TREE_PROPS,
     PLAN_STATES,
@@ -266,6 +300,10 @@
     rows,
     query,
     searchConfig,
+    applyPlanQuery,
+    planPickerInitial,
+    planPickerSource,
+    locatePlan,
     selectedLines,
     expandedLines,
     visibleRows,

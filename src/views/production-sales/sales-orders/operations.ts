@@ -11,7 +11,6 @@ import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
 import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
 import type { BusinessOrder, OrderHeader, OrderLine } from './data'
-import { CUSTOMERS } from './options'
 
 const required = (message: string) => [{ required: true, message }]
 /** 明细保持最多三位的精确十进制字符串；零值有效，不经 Number 转换。 */
@@ -22,8 +21,10 @@ export const ORDER_CREATE_FIELDS: FormOption<OrderHeader>[] = [
   {
     prop: 'customer',
     label: '订货客户',
-    type: 'select',
-    children: CUSTOMERS.map(row => ({ value: row.id, label: row.name })),
+    type: 'customer',
+    attrs: { presentation: 'inline' },
+    layout: { span: 2 },
+    focusTarget: ({ element }) => element?.querySelector('button') ?? null,
     rules: required('请选择客户'),
   },
   {

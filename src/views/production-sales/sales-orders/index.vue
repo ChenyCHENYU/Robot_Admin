@@ -79,6 +79,7 @@
         v-model="query"
         :form-item-list="searchFields"
         :config="searchConfig"
+        @reset="applyOrderQuery"
       />
       <C_ErrorSummary
         :issues="scope.issues.value"
@@ -436,6 +437,7 @@
         :editor="orderEditor"
         :options="ORDER_CREATE_FIELDS"
         :config="BUSINESS_FORM"
+        :renderers="renderers"
         :mask-closable="false"
         create-text="建立订单"
       />
@@ -624,6 +626,7 @@
     batchResults,
     query,
     searchConfig,
+    applyOrderQuery,
     renderers,
     resource,
     notice,

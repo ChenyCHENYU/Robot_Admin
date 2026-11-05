@@ -160,6 +160,65 @@ test('计划提交快照、产线树、炉次联动与下达状态保持一致',
   await expect(page.locator('.plan-capacity')).toContainText('2 号连铸机')
 })
 
+test('生产搜索三项展开为四项，右侧操作不移位，进阶查询定位而不改写台账条件', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1720, height: 1100 })
+  await openPage(page, '/#/production-sales/production-plan', 'production-plan')
+  const search = page.locator('.ps-search')
+  const searchButton = search.getByRole('button', { name: '搜索', exact: true })
+  await expect(field(search, '班次')).toBeHidden()
+  const collapsed = await searchButton.boundingBox()
+  await search.getByRole('button', { name: '展开搜索条件' }).click()
+  await expect(field(search, '班次')).toBeVisible()
+  await expect
+    .poll(async () => {
+      const expanded = await searchButton.boundingBox()
+      return Math.abs((expanded?.x ?? 0) - (collapsed?.x ?? 0))
+    })
+    .toBeLessThan(2)
+  await page
+    .locator('.plan-resources')
+    .getByText('2# 连铸 · 板坯', { exact: true })
+    .click()
+  await field(search, '计划 / 客户')
+    .getByRole('textbox')
+    .fill('PP-20261029-007')
+  await searchButton.click()
+  const ledger = page.getByRole('region', { name: '排产计划台账' })
+  await expect(ledger).toContainText('1 项')
+
+  await search.getByRole('button', { name: '进阶查询' }).click()
+  const picker = page.locator('.c-data-picker__modal:visible')
+  await expect(picker).toContainText('进阶查询 · 定位计划')
+  await expect(field(picker, '当前产线')).toContainText('2# 连铸 · 板坯')
+  await expect(
+    picker.getByRole('row', { name: /PP-20261029-001/ })
+  ).toHaveCount(0)
+  await field(picker, '计划 / 客户')
+    .getByRole('textbox')
+    .fill('PP-20261029-008')
+  await field(picker, '浇次').getByRole('textbox').fill('J1030')
+  await picker.getByRole('button', { name: '搜索', exact: true }).click()
+  const result = picker.getByRole('row', { name: /PP-20261029-008/ })
+  await expect(picker.locator('tbody tr')).toHaveCount(1)
+  await result.locator('.n-radio').click()
+  await picker.getByRole('button', { name: '确定', exact: true }).click()
+  await expect(picker).toHaveCount(0)
+  await expect(
+    page.getByRole('heading', { name: 'PP-20261029-008 · 计划协同' })
+  ).toBeVisible()
+  await expect(page.locator('.ps-status-line')).toContainText(
+    '当前台账筛选隐藏了该计划'
+  )
+  await expect(field(search, '计划 / 客户').getByRole('textbox')).toHaveValue(
+    'PP-20261029-007'
+  )
+  await expect(ledger).toContainText('1 项')
+  await search.getByRole('button', { name: '重置', exact: true }).click()
+  await expect(ledger).toContainText('6 项')
+})
+
 test('实绩保留成分偏差、跨炉次保存快照和未保存切换保护', async ({ page }) => {
   await page.setViewportSize({ width: 1720, height: 1200 })
   await openPage(

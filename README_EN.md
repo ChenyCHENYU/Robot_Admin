@@ -129,7 +129,7 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.28.1`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.29.0`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`        | Static enums, resilient remote dictionaries, scoped cache and detail field bindings     | Shared translation for forms, search, details and both grids      |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
@@ -160,6 +160,8 @@ Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/
 The dependency and lockfile pin official npm **0.38.0**, with matching Vue and Core versions. Data plugins are composed only by the application; the grid retains generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
 
 The Super Table demo and the MachTable order list use their own default row numbers and pagination. Text and numeric columns are centered by default. Both grids accept `:pagination="false"` to hide pagination and `:row-number="false"` to hide automatic row numbers. For dynamic reports, pass the API's columns and rows to `C_Table` through `columns/data` or to MachTable through `column-defs/row-data`.
+
+In Production Scheduling, expand the search bar to filter by shift. Use Advanced Search to find a plan on the current line and open its heat details while keeping the ledger filters. In Sales Order Collaboration, search and select the customer within the create/edit dialog. Cancel keeps the order draft intact. Both demos use local data.
 
 Two lazy-loaded tabs on the same page make these features interactive:
 

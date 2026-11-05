@@ -129,7 +129,7 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.28.1` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.29.0` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`  | 静态枚举、远程字典、隔离缓存及详情字段绑定                 | 表单、搜索、详情与两种表格共享翻译     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
@@ -160,6 +160,8 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 当前安装与锁文件固定为官方 npm **0.38.0**，Vue适配与Core版本一致。字典等数据插件只在项目组合，表格保留通用值回调、原生分页、有界测宽、完整表头、主题空态与状态配色。生产计划、销售订单和发运任务池可直接体验。
 
 「超级表格」和 MachTable 的订单列表均使用各自默认的序号和分页，普通列和数值列均默认居中。两者都可用 `:pagination="false"` 关闭分页，用 `:row-number="false"` 关闭自动序号。动态报表由接口层提供列和行，再分别传给 `C_Table` 的 `columns/data` 或 MachTable 的 `column-defs/row-data`。
+
+「产销业务 → 生产计划调度」的搜索区默认显示三项条件，展开后可查班次。右侧「进阶查询」按当前产线定位计划并联动炉次，台账继续使用原查询。「销售订单协同」的新增和编辑弹窗可在订货客户字段内查找候选，确认后回填，取消保留当前订单草稿。两个示例均使用本地数据。
 
 同一页面新增两个按需加载的体验页签：
 

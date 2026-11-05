@@ -278,6 +278,31 @@ test('计划编制弹窗真实增改复制，确认取消和状态约束保持�
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
 })
 
+test('窄屏编辑弹窗的客户选择保持同窗宽度，Escape 只关闭候选区', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await open(page, 'sales-orders', 'business-workbench')
+  await page.getByRole('button', { name: '新增订单', exact: true }).click()
+  const editor = modal(page)
+  const customer = field(editor, '订货客户').locator('.c-data-picker__open')
+  await customer.click()
+  const picker = editor.getByRole('region', { name: '选择订货客户' })
+  await expect(picker).toBeVisible()
+  await expect
+    .poll(() =>
+      picker.evaluate(element => {
+        const { left, right } = element.getBoundingClientRect()
+        return left >= 0 && right <= window.innerWidth + 1
+      })
+    )
+    .toBe(true)
+  await picker.getByRole('textbox', { name: '搜索候选数据' }).press('Escape')
+  await expect(picker).toHaveCount(0)
+  await expect(editor).toBeVisible()
+  await expect(customer).toBeFocused()
+})
+
 test('订单与明细弹窗连接整单草稿，精确金额、详情只读和复制身份独立', async ({
   page,
 }, info) => {
@@ -290,12 +315,35 @@ test('订单与明细弹窗连接整单草稿，精确金额、详情只读和�
     .getByRole('button', { name: '建立订单', exact: true })
     .click()
   await expect(modal(page)).toContainText('请选择客户')
-  await choose(
-    page,
-    field(modal(page), '订货客户').locator('.n-select'),
-    '云帆智造'
-  )
   await field(modal(page), '合同编号').locator('input').fill('HT-TEST-019')
+  const customerTrigger = field(modal(page), '订货客户').locator(
+    '.c-data-picker__open'
+  )
+  await customerTrigger.click()
+  const picker = modal(page).getByRole('region', { name: '选择订货客户' })
+  await expect(picker).toBeVisible()
+  await expect(page.locator('.c-data-picker__modal:visible')).toHaveCount(0)
+  const customerQuery = picker.getByRole('textbox', { name: '搜索候选数据' })
+  await customerQuery.fill('0002')
+  await customerQuery.press('Enter')
+  await expect(picker.getByRole('row', { name: /星海科技/ })).toHaveCount(0)
+  await picker
+    .getByRole('row', { name: /云帆智造/ })
+    .locator('.n-radio')
+    .click()
+  await picker.getByRole('button', { name: '取消', exact: true }).click()
+  await expect(customerTrigger).toBeFocused()
+  await expect(customerTrigger).toHaveText('请选择')
+  await expect(field(modal(page), '合同编号').locator('input')).toHaveValue(
+    'HT-TEST-019'
+  )
+  await customerTrigger.click()
+  await picker
+    .getByRole('row', { name: /云帆智造/ })
+    .locator('.n-radio')
+    .click()
+  await picker.getByRole('button', { name: '确定', exact: true }).click()
+  await expect(customerTrigger).toHaveText('云帆智造')
   await field(modal(page), '规格').locator('input').fill('8 × 1500 × 6000')
   await expect(modal(page)).not.toContainText('请选择客户')
   await modal(page).screenshot({

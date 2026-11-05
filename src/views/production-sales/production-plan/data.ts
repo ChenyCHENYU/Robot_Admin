@@ -21,6 +21,7 @@ import type {
   SearchConfig,
   SearchFormItem,
 } from '@robot-admin/naive-ui-components/C_FormSearch'
+import type { DataPickerSource } from '@robot-admin/naive-ui-components/C_DataPicker'
 import type { TreeNativeProps } from '@robot-admin/naive-ui-components/C_Tree'
 import { recordLink, weightCodec } from '../shared/presentation'
 import { usePlanOperations } from './operations'
@@ -44,6 +45,7 @@ interface PlanQuery {
   status: string | null
   shift: string | null
 }
+type PlanPickerQuery = Omit<PlanQuery, 'shift'> & { line: string; cast: string }
 export const PLAN_STATES = {
   draft: { label: '待下达', type: 'default' },
   issued: { label: '已下达', type: 'warning' },
@@ -67,25 +69,25 @@ export const LINE_TREE_PROPS: TreeNativeProps = {
   childrenField: 'children',
   animated: false,
 }
+const PLAN_GRADE_OPTIONS = ['Q235B', 'Q355B', 'HRB400E', 'S304L'].map(
+  value => ({ label: value, value })
+)
+const PLAN_STATUS_OPTIONS = Object.entries(PLAN_STATES).map(
+  ([value, item]) => ({ value, label: item.label })
+)
 export const PLAN_FIELDS: SearchFormItem<PlanQuery>[] = [
   { prop: 'keyword', label: '计划 / 客户', type: 'input' },
   {
     prop: 'grade',
     label: '钢种',
     type: 'select',
-    list: ['Q235B', 'Q355B', 'HRB400E', 'S304L'].map(value => ({
-      label: value,
-      value,
-    })),
+    list: PLAN_GRADE_OPTIONS,
   },
   {
     prop: 'status',
     label: '计划状态',
     type: 'select',
-    list: Object.entries(PLAN_STATES).map(([value, item]) => ({
-      value,
-      label: item.label,
-    })),
+    list: PLAN_STATUS_OPTIONS,
   },
   {
     prop: 'shift',
@@ -97,6 +99,57 @@ export const PLAN_FIELDS: SearchFormItem<PlanQuery>[] = [
     ],
   },
 ]
+export const PLAN_PICKER_FIELDS: SearchFormItem<PlanPickerQuery>[] = [
+  {
+    prop: 'line',
+    label: '当前产线',
+    type: 'select',
+    fixed: true,
+    attrs: { clearable: false },
+    defaultValue: 'all',
+    list: [
+      { value: 'all', label: '全部产线' },
+      ...LINE_TREE[0].children.map(item => ({
+        value: item.id,
+        label: item.name,
+      })),
+    ],
+  },
+  { prop: 'keyword', label: '计划 / 客户', type: 'input' },
+  { prop: 'cast', label: '浇次', type: 'input' },
+  {
+    prop: 'grade',
+    label: '钢种',
+    type: 'select',
+    list: PLAN_GRADE_OPTIONS,
+  },
+  {
+    prop: 'status',
+    label: '计划状态',
+    type: 'select',
+    list: PLAN_STATUS_OPTIONS,
+  },
+]
+export const PLAN_PICKER_COLUMNS = [
+  { key: 'planNo', title: '生产计划号', width: 164 },
+  { key: 'cast', title: '浇次', width: 76 },
+  { key: 'grade', title: '钢种', width: 85 },
+  { key: 'customer', title: '客户', minWidth: 110 },
+  {
+    key: 'status',
+    title: '计划状态',
+    width: 94,
+    render: (row: ProductionPlan) => PLAN_STATES[row.status].label,
+  },
+]
+export const PLAN_PICKER_SEARCH = {
+  layout: 'grid',
+  columns: 3,
+  labelPlacement: 'left',
+  labelWidth: 88,
+  fieldMinWidth: 204,
+  requireValue: false,
+} satisfies SearchConfig<PlanPickerQuery>
 /** 每个页面实例拥有独立计划，原始顺序不依赖模块级可变变量。 */
 export function createProductionPlans(): ProductionPlan[] {
   return Array.from({ length: 18 }, (_, index) => ({
@@ -190,15 +243,12 @@ export function useProductionPlan() {
   const tab = ref('heats')
   const notice = ref('先选择计划查看炉次；待下达计划可勾选后批量下达。')
   const table = useMachTable<ProductionPlan>()
+  const line = computed(() => String(selectedLines.value[0] ?? 'all'))
   const current = computed(
     () => rows.value.find(row => row.id === currentId.value) ?? rows.value[0]
   )
   const visibleRows = computed(() =>
-    filterProductionPlans(
-      rows.value,
-      applied.value,
-      String(selectedLines.value[0] ?? 'all')
-    )
+    filterProductionPlans(rows.value, applied.value, line.value)
   )
   watch([currentId, () => visibleRows.value.length], () => {
     void nextTick(() => {
@@ -221,19 +271,60 @@ export function useProductionPlan() {
         1000
     )
   )
+  const applyPlanQuery = (values: PlanQuery): void => {
+    applied.value = { ...values }
+    selectedIds.value = []
+    table.api.value?.pagination.setPage(1)
+    table.api.value?.selection.clear()
+  }
   const searchConfig: SearchConfig<PlanQuery> = {
     density: 'compact',
     layout: 'grid',
-    columns: 5,
+    columns: 4,
+    foldThreshold: 3,
     labelPlacement: 'left',
     fieldMinWidth: 230,
     labelWidth: 94,
-    onSearch: values => {
-      applied.value = { ...values }
-      selectedIds.value = []
-      table.api.value?.pagination.setPage(1)
-      table.api.value?.selection.clear()
+    onSearch: applyPlanQuery,
+  }
+  const planPickerInitial = computed<PlanPickerQuery>(() => ({
+    line: line.value,
+    keyword: '',
+    cast: '',
+    grade: null,
+    status: null,
+  }))
+  const planPickerSource: DataPickerSource<ProductionPlan, PlanPickerQuery> = {
+    rowKey: 'id',
+    value: row => row.id,
+    label: row => row.planNo,
+    request: async ({
+      filters = planPickerInitial.value,
+      page,
+      pageSize,
+      signal,
+    }) => {
+      signal.throwIfAborted()
+      const candidates = filterProductionPlans(
+        rows.value,
+        { ...filters, shift: null },
+        filters.line
+      ).filter(row => row.cast.includes(filters.cast.trim()))
+      return {
+        rows: candidates.slice((page - 1) * pageSize, page * pageSize),
+        total: candidates.length,
+      }
     },
+  }
+  const locatePlan = ([plan]: ProductionPlan[]): void => {
+    if (!plan) return
+    currentId.value = plan.id
+    tab.value = 'heats'
+    selectedIds.value = []
+    table.api.value?.selection.clear()
+    notice.value = visibleRows.value.some(row => row.id === plan.id)
+      ? `已定位 ${plan.planNo}，可在下方查看炉次。`
+      : `已打开 ${plan.planNo} 的炉次。当前台账筛选隐藏了该计划。`
   }
   const operations = usePlanOperations({ rows, currentId, selectedIds, notice })
   const selectPlan = (event: RowClickEvent<ProductionPlan>) => {
@@ -393,6 +484,10 @@ export function useProductionPlan() {
     rows,
     query,
     searchConfig,
+    applyPlanQuery,
+    planPickerInitial,
+    planPickerSource,
+    locatePlan,
     selectedLines,
     expandedLines,
     visibleRows,

@@ -479,20 +479,21 @@ export function useBusinessWorkbench() {
       api.view.scrollToRow(index % pageSize, 'nearest')
     })
   })
+  const applyOrderQuery = async (params: WorkbenchQuery): Promise<void> => {
+    appliedQuery.value = clone(params)
+    master.api.value?.pagination.setPage(1)
+    await nextTick()
+  }
   const searchConfig: SearchConfig<WorkbenchQuery> = {
     density: 'compact',
     layout: 'grid',
-    columns: 4,
+    columns: 3,
     fieldMinWidth: 250,
     labelPlacement: 'left',
     labelWidth: 96,
     foldThreshold: 3,
     requireValue: false,
-    onSearch: async params => {
-      appliedQuery.value = clone(params)
-      master.api.value?.pagination.setPage(1)
-      await nextTick()
-    },
+    onSearch: applyOrderQuery,
   }
   const renderers: Record<string, FormRenderer> = {
     customer: props =>
@@ -500,6 +501,7 @@ export function useBusinessWorkbench() {
         source: customerSource,
         columns: CUSTOMER_COLUMNS,
         title: '选择订货客户',
+        presentation: props.presentation === 'inline' ? 'inline' : 'modal',
         modelValue: typeof props.value === 'string' ? props.value : null,
         disabled: props.disabled === true,
         readonly: props.readonly === true,
@@ -1049,6 +1051,7 @@ export function useBusinessWorkbench() {
     batchResults,
     query,
     searchConfig,
+    applyOrderQuery,
     renderers,
     resource,
     notice,
