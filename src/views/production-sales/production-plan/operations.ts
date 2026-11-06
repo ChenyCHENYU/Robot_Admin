@@ -6,7 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { actionIcons, BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
-import type { Ref } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
 import type { DialogReactive } from 'naive-ui'
 import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
@@ -101,8 +101,9 @@ export function usePlanOperations(context: {
   currentId: Ref<string>
   selectedIds: Ref<string[]>
   notice: Ref<string>
+  line: ComputedRef<string>
 }) {
-  const { rows, currentId, selectedIds, notice } = context
+  const { rows, currentId, selectedIds, notice, line } = context
   const dialog = useDialog()
   let copyDialog: DialogReactive | null = null
   let alive = true
@@ -140,7 +141,7 @@ export function usePlanOperations(context: {
       return {
         id: `PLAN-${number}`,
         planNo,
-        line: 'CC1',
+        line: line.value === 'all' ? 'CC1' : line.value,
         cast: '',
         grade: 'Q355B',
         section: '',
@@ -233,7 +234,8 @@ export function usePlanOperations(context: {
           return
         rows.value = rows.value.filter(row => row.id !== target.id)
         selectedIds.value = selectedIds.value.filter(id => id !== target.id)
-        if (currentId.value === target.id) currentId.value = rows.value[0].id
+        if (currentId.value === target.id)
+          currentId.value = rows.value[0]?.id ?? ''
         notice.value = `${target.planNo} 已删除（本地演示）。`
       },
     })

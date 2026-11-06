@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 .business-workbench,
+.workbench-batch,
 .workbench-details--fullscreen {
   --workbench-radius: 8px;
   --workbench-accent: var(--app-primary);
@@ -73,17 +74,6 @@
     place-items: center;
     flex: 0 0 auto;
     color: var(--workbench-accent);
-  }
-  &__badge {
-    padding: 2px 8px;
-    border-radius: 5px;
-    color: var(--workbench-accent);
-    font-size: 11px;
-    background: color-mix(
-      in srgb,
-      var(--workbench-accent) 9%,
-      var(--app-bg-content)
-    );
   }
 }
 .workbench-contract {
@@ -194,11 +184,17 @@
   box-shadow: var(--app-shadow-lg);
   color: var(--app-text-primary);
 }
-.workbench-lines {
+.workbench-lines,
+.workbench-payment {
   display: flex;
   flex-direction: column;
   min-height: 0;
   flex: 1;
+}
+.workbench-payment > .workbench-panel-note {
+  border-top: 0;
+  border-bottom: 1px solid var(--workbench-outline);
+  padding-block: 6px;
 }
 .workbench-detail-actions {
   display: flex;
@@ -222,8 +218,7 @@
 // 网格宿主显式继承已分配高度，避免内部 100% 高度回退到最小高度。
 .workbench-master-grid,
 .workbench-detail-grid,
-.workbench-payment-grid,
-.workbench-detail-grid {
+.workbench-payment-grid {
   :deep(.mach-vue-host) {
     height: 100%;
   }
@@ -281,7 +276,7 @@
   align-items: end;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 12px 14px;
+  padding-block: 12px;
   label {
     font-size: 12px;
     min-width: 145px;
@@ -294,26 +289,41 @@
     max-width: 280px;
   }
 }
+.workbench-batch {
+  width: min(660px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+
+  :deep(.n-card__content) {
+    overflow: auto;
+  }
+}
+.workbench-batch-context {
+  margin: 0;
+  font-size: 12px;
+  color: var(--app-text-secondary);
+}
 .workbench-batch-preview {
-  padding: 0 14px 12px;
-  display: grid;
-  gap: 5px;
-  > div {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 6px 9px;
-    border-radius: 5px;
+  margin-bottom: 12px;
+  overflow: auto;
+  border: 1px solid var(--workbench-outline);
+  border-radius: 6px;
+
+  :deep(.n-table) {
+    min-width: 340px;
     font-size: 12px;
-    background: var(--app-bg-surface);
-    strong {
-      min-width: 115px;
-    }
+  }
+  :deep(th),
+  :deep(td) {
+    overflow-wrap: anywhere;
+    text-align: start;
+  }
+  small {
+    display: block;
+    color: var(--app-text-secondary);
   }
 }
 .workbench-batch :deep(.c-batch-result) {
-  margin: 0 14px 12px;
+  margin-bottom: 12px;
 }
 .workbench-status {
   margin: 0;

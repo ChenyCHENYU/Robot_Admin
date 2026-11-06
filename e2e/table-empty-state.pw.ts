@@ -16,8 +16,12 @@ const open = async (page: Page, route: string, root: string) => {
 
 const assertIllustration = async (empty: Locator, prefix: string) => {
   await expect(empty).toBeVisible()
-  await expect(empty.locator(`.${prefix}__title`)).toHaveText('没有可显示的行')
-  await expect(empty.locator(`.${prefix}__hint`)).toContainText('调整查询条件')
+  await expect(empty.locator(`.${prefix}__title`)).toHaveText(
+    '当前订单还没有商品明细'
+  )
+  await expect(empty.locator(`.${prefix}__hint`)).toContainText(
+    '新增明细后即可核对数量和金额'
+  )
   await expect(empty.locator('svg')).toHaveAttribute('aria-hidden', 'true')
   await expect(empty.locator('svg')).toHaveAttribute('viewBox', '0 0 96 84')
   await expect(empty.locator('svg [id],img')).toHaveCount(0)
@@ -96,7 +100,17 @@ for (const mode of ['light', 'dark'] as const) {
 
     await page.setViewportSize({ width: 1720, height: 1200 })
     await open(page, 'sales-orders', 'business-workbench')
-    await page.getByRole('button', { name: '体验空明细', exact: true }).click()
+    await expect(
+      page.getByTestId('line-panel').locator('.mach-row[data-id]').first()
+    ).toBeVisible()
+    await page.getByRole('button', { name: '全选明细', exact: true }).click()
+    await page
+      .getByRole('button', { name: '删除选中明细', exact: true })
+      .click()
+    await page
+      .locator('.n-dialog')
+      .getByRole('button', { name: '删除明细', exact: true })
+      .click()
     const panel = page.getByTestId('line-panel')
     const machEmpty = panel.locator('.mach-empty')
     await assertIllustration(machEmpty, 'mach-empty')

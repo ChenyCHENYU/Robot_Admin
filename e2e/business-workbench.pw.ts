@@ -190,7 +190,7 @@ test('搜索草稿和已应用条件分离，固定组织保留，状态0与精�
   await expect(formField(search, '组织').getByRole('textbox')).toBeDisabled()
   await expect(
     page.getByRole('region', { name: '订单列表', exact: true })
-  ).toContainText('18 笔本地订单')
+  ).toContainText('18 笔订单')
   await expect(
     page.locator(
       '.workbench-orders .mach-row[data-id="ORDER-1"] .mach-cell[data-col-id="status"]'
@@ -205,9 +205,9 @@ test('搜索草稿和已应用条件分离，固定组织保留，状态0与精�
     formField(search, '计划状态').locator('.n-select'),
     '待下达'
   )
-  await expect(page.locator('.workbench-orders')).toContainText('18 笔本地订单')
+  await expect(page.locator('.workbench-orders')).toContainText('18 笔订单')
   await search.getByRole('button', { name: '搜索', exact: true }).click()
-  await expect(page.locator('.workbench-orders')).toContainText('1 笔本地订单')
+  await expect(page.locator('.workbench-orders')).toContainText('1 笔订单')
   await expect(
     page.locator(
       '.workbench-master-grid .mach-row[data-id="ORDER-1"] .mach-cell[data-col-id="customer"]'
@@ -218,7 +218,7 @@ test('搜索草稿和已应用条件分离，固定组织保留，状态0与精�
     '001'
   )
   await search.getByRole('button', { name: '搜索', exact: true }).click()
-  await expect(page.locator('.workbench-orders')).toContainText('18 笔本地订单')
+  await expect(page.locator('.workbench-orders')).toContainText('18 笔订单')
   await page
     .getByTestId('business-workbench')
     .screenshot({ path: testInfo.outputPath('business-workbench-light.png') })
@@ -292,12 +292,13 @@ test('跨表单和隐藏网格定位校验错误，远程Picker取消不写入�
   page,
 }) => {
   await open(page)
-  await page.getByRole('button', { name: '填入缺失样例', exact: true }).click()
+  await page.locator('.workbench-header .c-data-picker__clear').click()
+  await page.getByRole('tab', { name: '收款安排', exact: true }).click()
   await expect(page.getByTestId('payment-panel')).toBeVisible()
   await page.getByRole('button', { name: '保存整单', exact: true }).click()
   const summary = page.locator('.c-error-summary')
   await expect(summary).toContainText('请选择订货客户')
-  await expect(summary).toContainText('ORDER-1-L01')
+  await expect(summary).toContainText('ORDER-1-L03')
   await summary
     .getByRole('button', { name: '请选择订货客户', exact: true })
     .click()
@@ -326,13 +327,12 @@ test('跨表单和隐藏网格定位校验错误，远程Picker取消不写入�
   await picker.getByRole('button', { name: '确定', exact: true }).click()
   await expect(picker).not.toBeVisible()
   await expect(pickerOpen).toContainText('云帆智造')
-  await summary.getByRole('button', { name: /ORDER-1-L01/ }).click()
+  await summary.getByRole('button', { name: /ORDER-1-L03/ }).click()
   await expect(page.getByTestId('line-panel')).toBeVisible()
   const editor = page.getByTestId('line-panel').locator('.mach-editor-input')
   await expect(editor).toBeFocused()
   await editor.fill('0')
   await editor.press('Enter')
-  await editQuantity(page, 'ORDER-1-L03', '0')
   await page.getByRole('button', { name: '保存整单', exact: true }).click()
   await expect(summary).toHaveCount(0)
   await expect(page.getByTestId('draft-status')).toHaveText('已保存')
@@ -346,6 +346,7 @@ test('批改明确区分不修改、清空和赋值，部分失败重试成功�
 }) => {
   await open(page)
   await page.getByRole('button', { name: '全选明细', exact: true }).click()
+  await page.getByRole('button', { name: '批改备注', exact: true }).click()
   await page.getByRole('button', { name: '预览批改', exact: true }).click()
   await expect(page.getByTestId('batch-preview')).toContainText('零数量样例')
   await page.getByRole('button', { name: '确认执行批改', exact: true }).click()
@@ -354,6 +355,9 @@ test('批改明确区分不修改、清空和赋值，部分失败重试成功�
   )
   await expect(page.getByTestId('draft-status')).toHaveText('已保存')
   await selectOption(page, page.getByLabel('批改备注操作'), '清空备注')
+  await expect(
+    page.getByRole('button', { name: '确认执行批改', exact: true })
+  ).toBeDisabled()
   await page.getByRole('button', { name: '预览批改', exact: true }).click()
   await expect(
     page.getByTestId('batch-preview').getByText('清空为未填写', { exact: true })
@@ -382,17 +386,44 @@ test('批改明确区分不修改、清空和赋值，部分失败重试成功�
   await expect(page.getByTestId('draft-status')).toHaveText('已保存')
 })
 
-test('本地空列表不回退旧数据，暗色窄容器可堆叠且页面没有横向溢出', async ({
+test('无匹配订单和空明细分别恢复，暗色窄容器可堆叠且页面没有横向溢出', async ({
   page,
 }, testInfo) => {
   await page.addInitScript(() => localStorage.setItem('theme-mode', 'dark'))
   await page.setViewportSize({ width: 720, height: 1080 })
   await open(page)
-  await page.getByRole('button', { name: '体验空明细', exact: true }).click()
+  const search = page.locator('.workbench-search')
+  await formField(search, '订单 / 客户')
+    .getByRole('textbox')
+    .fill('无此销售订单')
+  await search.getByRole('button', { name: '搜索', exact: true }).click()
+  await expect(
+    page.locator('.workbench-master-grid .mach-empty')
+  ).toContainText('没有匹配的销售订单')
+  await expect(page.getByTestId('active-order')).toHaveText('SO-2026-001')
+  await expect(lineCell(page, 'ORDER-1-L01', 'quantity')).toHaveText('0.000')
+  await page.getByRole('button', { name: '清除订单筛选', exact: true }).click()
+  await expect(page.locator('.workbench-master-grid .mach-empty')).toHaveCount(
+    0
+  )
+  await page.getByRole('button', { name: '全选明细', exact: true }).click()
+  await page.getByRole('button', { name: '删除选中明细', exact: true }).click()
+  await page
+    .locator('.n-dialog')
+    .getByRole('button', { name: '删除明细', exact: true })
+    .click()
   await expect(page.getByTestId('line-totals')).toContainText('暂无明细')
   await expect(
     page.getByTestId('line-panel').locator('.mach-row[data-id]')
   ).toHaveCount(0)
+  await expect(
+    page.getByTestId('line-panel').locator('.mach-empty')
+  ).toContainText('当前订单还没有商品明细')
+  await page.getByRole('tab', { name: '收款安排', exact: true }).click()
+  await expect(
+    page.getByTestId('payment-panel').locator('.mach-empty')
+  ).toContainText('暂无可测算的收款金额')
+  await page.getByRole('tab', { name: '商品明细', exact: true }).click()
   await page.getByRole('button', { name: '恢复当前单据', exact: true }).click()
   await expect(lineCell(page, 'ORDER-1-L01', 'quantity')).toHaveText('0.000')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')

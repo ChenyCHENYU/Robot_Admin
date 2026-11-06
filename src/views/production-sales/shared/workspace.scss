@@ -14,11 +14,11 @@
       var(--app-border-default)
     );
     --ps-soft: color-mix(in srgb, var(--ps-accent) 4%, var(--app-bg-content));
-    padding: 18px 20px 24px;
+    padding: 16px 20px 24px;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
     color: var(--app-text-primary);
   }
   .ps-panel {
@@ -26,13 +26,13 @@
     overflow: hidden;
     background: var(--app-bg-content);
     border: 1px solid var(--ps-border);
-    border-radius: 10px;
+    border-radius: 9px;
     box-shadow: 0 2px 8px
       color-mix(in srgb, var(--app-text-primary) 3%, transparent);
   }
   .ps-panel-heading {
-    min-height: 43px;
-    padding: 8px 14px;
+    min-height: 40px;
+    padding: 7px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -44,15 +44,8 @@
       display: flex;
       align-items: center;
       gap: 9px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 650;
-      &::before {
-        content: '';
-        width: 3px;
-        height: 14px;
-        border-radius: 2px;
-        background: var(--ps-accent);
-      }
     }
     > span {
       font-size: 11px;
@@ -109,7 +102,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 8px;
-    padding: 9px 12px;
+    padding: 7px 12px;
     > span {
       font-size: 11px;
       color: var(--app-text-secondary);
@@ -153,6 +146,9 @@
     background: var(--ps-soft);
     font-size: 11px;
     color: var(--app-text-secondary);
+    &:empty {
+      display: none;
+    }
   }
   .ps-status-line {
     margin: 0;

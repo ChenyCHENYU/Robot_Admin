@@ -150,7 +150,7 @@ export function useShipmentOperations(context: {
         if (rows.value.find(row => row.id === target.id)?.status !== 'waiting')
           return
         rows.value = rows.value.filter(row => row.id !== target.id)
-        if (currentId.value === target.id) activate(rows.value[0].id)
+        if (currentId.value === target.id) activate(rows.value[0]?.id ?? '')
         notice.value = `${target.no} 已删除（本地演示）。`
       },
     })

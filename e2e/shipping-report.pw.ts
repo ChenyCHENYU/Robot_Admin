@@ -81,3 +81,51 @@ test('发运汇总重算维度并下钻，不影响车辆草稿或任务池范�
   await openReport.click()
   await expect(report).toContainText('当前筛选暂无发运任务')
 })
+
+test('库存缺口和无放行库存有明确状态，清除筛选恢复任务池', async ({
+  page,
+}, info) => {
+  await installMockAdminSession(page)
+  await page.setViewportSize({ width: 1600, height: 1050 })
+  await page.goto('/#/production-sales/shipping')
+  const workbench = page.getByTestId('shipping-workbench')
+  await expect(workbench).toBeVisible({ timeout: 15_000 })
+  await expect(page.locator('.app-loading,.c-page-loading')).toHaveCount(0)
+
+  const queue = workbench.getByRole('region', { name: '发运任务池' })
+  const stock = workbench.getByRole('region', { name: '库存匹配' })
+  const assign = workbench.getByRole('button', {
+    name: '生成装车单',
+    exact: true,
+  })
+  const recommend = stock.getByRole('button', { name: '推荐配载' })
+  await queue.locator('[data-shipment-id="SHIP-5"]').click()
+  await expect(workbench.getByTestId('shipping-stock-gap')).toContainText(
+    '7.600 t'
+  )
+  await recommend.click()
+  await expect(stock).toContainText('18.600 t / 计划 26.200 t')
+  await expect(assign).toBeDisabled()
+
+  await queue.locator('[data-shipment-id="SHIP-6"]').click()
+  await expect(stock.getByTestId('shipping-no-stock')).toBeVisible()
+  await expect(stock.locator('.mach-empty')).toBeVisible()
+  await expect(recommend).toBeDisabled()
+  await expect(assign).toBeDisabled()
+  await stock.scrollIntoViewIfNeeded()
+  await page.screenshot({
+    path: info.outputPath('shipping-no-stock.png'),
+    animations: 'disabled',
+  })
+
+  const search = workbench.locator('.ps-search')
+  await search.getByRole('textbox').fill('不存在的发运单')
+  await search.getByRole('button', { name: '搜索', exact: true }).click()
+  await expect(queue).toContainText('未找到匹配的发运任务')
+  await expect(
+    workbench.getByRole('region', { name: '车辆安排' })
+  ).toContainText('当前任务不在筛选结果中')
+  await queue.getByRole('button', { name: '清除任务筛选' }).click()
+  await expect(queue.locator('[data-shipment-id="SHIP-6"]')).toBeVisible()
+  await expect(search.getByRole('textbox')).toHaveValue('')
+})

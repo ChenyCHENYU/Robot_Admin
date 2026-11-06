@@ -29,7 +29,11 @@
         ><p>{{ description }}</p></div
       >
     </div>
-    <div class="business-page-heading__actions"><slot /></div>
+    <div
+      v-if="$slots.default"
+      class="business-page-heading__actions"
+      ><slot
+    /></div>
   </header>
 </template>
 <script setup lang="ts">
@@ -41,7 +45,7 @@
     badge?: string
   }
   defineOptions({ name: 'ProductionSalesPageHeading' })
-  withDefaults(defineProps<Props>(), { badge: '本地业务演示' })
+  withDefaults(defineProps<Props>(), { badge: '本地数据' })
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

@@ -13,6 +13,7 @@ import type {
 } from '@robot-admin/naive-ui-components/C_Form'
 import type { SectionNavItem } from '@robot-admin/naive-ui-components/C_SectionNav'
 import {
+  actionsColumn,
   defineVueColumns,
   indexColumn,
   type RowStyleRule,
@@ -193,6 +194,28 @@ export function useProductionActual() {
     () => JSON.stringify(model.value) !== JSON.stringify(saved.value)
   )
   const chemicalRows = computed(() => inspectChemistry(model.value))
+  const onlyChemistryDeviations = ref(false)
+  const chemistryDeviations = computed(() =>
+    chemicalRows.value.filter(row => row.failed)
+  )
+  const chemistryPendingCount = computed(
+    () => chemicalRows.value.filter(row => row.value === null).length
+  )
+  const visibleChemistryRows = computed(() =>
+    onlyChemistryDeviations.value
+      ? chemistryDeviations.value
+      : chemicalRows.value
+  )
+  // 核对表固定五项。筛选结果的行身份变化时重建小表，避免自动高度视口保留上一范围的行。
+  const chemistryGridKey = computed(() =>
+    onlyChemistryDeviations.value
+      ? `deviations:${visibleChemistryRows.value.map(row => row.id).join(',')}`
+      : 'all'
+  )
+  const chemistryLocale = {
+    emptyRows: '当前炉次无超限实测项',
+    emptyRowsHint: '可切回全部项目，继续核对实测值与待检测项',
+  }
   const review = useActualReview({ current, dirty, notice, saving })
   const heatList = computed(() =>
     HEATS.map(heat => ({ ...heat, state: review.stateOf(heat.id, heat.state) }))
@@ -249,6 +272,13 @@ export function useProductionActual() {
       if (comingFromTrace) section?.focus({ preventScroll: true })
       section?.scrollIntoView({ block: 'start', behavior: 'smooth' })
     })
+  }
+  const chemistryIndex = ACTUAL_GROUPS.findIndex(
+    group => group.key === 'chemistry'
+  )
+  const focusChemistryMeasurement = async (field: string) => {
+    activeSection.value = 'chemistry'
+    await forms[chemistryIndex]?.revealField(field)
   }
   const activate = (id: string) => {
     const index = HEATS.findIndex(heat => heat.id === id)
@@ -337,6 +367,18 @@ export function useProductionActual() {
                 row.failed ? 'error' : 'success'
               ),
       },
+      actionsColumn<(typeof chemicalRows.value)[number]>({
+        width: 66,
+        actions: [
+          {
+            icon: 'edit',
+            label: '定位实测录入',
+            disabled: () => review.locked.value,
+            onClick: ({ data }) =>
+              data && void focusChemistryMeasurement(data.id),
+          },
+        ],
+      }),
     ]
   )
   const chemicalStyles: readonly RowStyleRule<
@@ -359,6 +401,12 @@ export function useProductionActual() {
     activeSection,
     sections,
     chemicalRows,
+    onlyChemistryDeviations,
+    chemistryDeviations,
+    chemistryPendingCount,
+    visibleChemistryRows,
+    chemistryGridKey,
+    chemistryLocale,
     chemicalColumns,
     chemicalStyles,
     saving,

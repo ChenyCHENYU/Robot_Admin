@@ -181,7 +181,7 @@ test('复制计划仅确认后新增独立待下达记录，取消不占号且�
   expect(copy).not.toBe(source)
   expect(plan.rows.value.find(row => row.id === source.id)).toEqual(original)
   expect(plan.editor.visible.value).toBe(false)
-  expect(plan.current.value.id).toBe(copy.id)
+  expect(plan.current.value?.id).toBe(copy.id)
 
   plan.editPlan(copy)
   expect(await plan.editor.submit({ ...copy, customer: '副本客户' })).toBe(true)

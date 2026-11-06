@@ -14,7 +14,7 @@
       <PageHeading
         title="生产计划调度"
         eyebrow="产销业务 / 生产中心"
-        description="以浇次组织计划，让产能、炉次与交付节奏在同一工作区协同。"
+        description="按产线编排炉次，核对班次负荷后批量下达。"
       >
         <NButton
           size="small"
@@ -24,6 +24,7 @@
         ><NButton
           type="primary"
           size="small"
+          :disabled="releaseReadyCount === 0"
           @click="release"
           :render-icon="actionIcons.sendOutline"
           >下达选中计划</NButton
@@ -37,7 +38,7 @@
         ><div
           ><dt>待下达</dt><dd>{{ pending }}<small>项待办</small></dd></div
         ><div
-          ><dt>生产资源</dt><dd>3<small>条连铸产线 · 白班</small></dd></div
+          ><dt>当班炉次</dt><dd>{{ totalHeats }}<small>炉</small></dd></div
         ></dl
       >
       <C_FormSearch
@@ -102,16 +103,6 @@
             ><div><span>调度员</span><b>陈雨</b></div
             ><div><span>计划窗口</span><b>未来 24 小时</b></div></div
           >
-          <div class="plan-resource-notes"
-            ><span>资源提示</span
-            ><p>2 号连铸机负荷较高，关注后续浇次的开浇间隔。</p
-            ><NTag
-              size="small"
-              type="warning"
-              :bordered="false"
-              >负荷 88%</NTag
-            ></div
-          >
         </aside>
         <div class="plan-main">
           <section
@@ -120,20 +111,41 @@
             ><header class="ps-panel-heading"
               ><h2>排产计划台账</h2
               ><span
-                >{{ visibleRows.length }} 项 · 已选
+                >{{ displayedPlans }} 项 · 已选
                 {{ selectedIds.length }} 项</span
               ></header
             >
-            <div class="ps-toolbar"><C_ActionBar :actions="actions" /></div>
-            <div class="ps-grid plan-main-grid"
+            <div class="ps-toolbar plan-ledger-toolbar">
+              <C_ActionBar :actions="actions" />
+              <span class="plan-scope">
+                {{ lineLabel }}
+                <template v-if="releaseReadyCount">
+                  · {{ releaseReadyCount }} 项可下达</template
+                >
+              </span>
+            </div>
+            <div
+              class="ps-grid plan-main-grid"
+              :class="{
+                'plan-main-grid--short':
+                  displayedPlans > 0 && displayedPlans <= 3,
+                'plan-main-grid--empty': gridEmpty,
+              }"
               ><MachTable
                 v-bind="BUSINESS_GRID"
                 :pagination="BUSINESS_PAGINATION"
                 :ref="table.ref"
                 column-layout="normal"
+                :dom-layout="
+                  displayedPlans > 0 && displayedPlans <= 3
+                    ? 'autoHeight'
+                    : 'normal'
+                "
                 :row-data="visibleRows"
                 :column-defs="columns"
+                :locale="ledgerLocale"
                 @row-clicked="selectPlan"
+                @model-updated="onLedgerModelUpdated"
                 :row-style-rules="rowStyles"
                 row-selection="multiple"
                 :row-drag="reorderEnabled"
@@ -142,7 +154,21 @@
                 @selection-changed="syncSelection"
                 @row-drag-end="onReorder"
             /></div>
-            <p class="ps-footnote"
+            <div
+              v-if="gridEmpty && lineHasPlans"
+              class="plan-empty-action"
+            >
+              <NButton
+                size="small"
+                secondary
+                :render-icon="actionIcons.restore"
+                @click="clearLedgerFilters"
+                >清除台账筛选</NButton
+              >
+            </div>
+            <p
+              v-if="!gridEmpty"
+              class="ps-footnote"
               >点击行联动炉次，蓝色计划号查看详情。淡黄色表示已下达；未筛选时可拖动待下达计划的顺序。</p
             >
           </section>
@@ -150,8 +176,10 @@
             class="ps-panel"
             aria-label="计划协同详情"
             ><header class="ps-panel-heading"
-              ><h2>{{ current.planNo }} · 计划协同</h2
-              ><span
+              ><h2>{{
+                current ? `${current.planNo} · 计划协同` : '计划协同'
+              }}</h2
+              ><span v-if="current"
                 >{{ current.grade }} / {{ current.section }} mm</span
               ></header
             >
@@ -164,7 +192,39 @@
               ><NTab name="capacity">产能负荷</NTab></NTabs
             >
             <div
-              v-if="tab === 'heats'"
+              v-if="tab === 'heats' && current"
+              class="plan-heat-context"
+            >
+              <div class="plan-heat-meta">
+                <NTag
+                  size="small"
+                  :bordered="false"
+                  :type="PLAN_STATES[current.status].type"
+                >
+                  {{ PLAN_STATES[current.status].label }}
+                </NTag>
+                <span>{{ current.cast }} 浇次</span>
+                <span>{{ current.customer }}</span>
+                <span
+                  >{{ current.heats }} 炉 /
+                  {{ formatWeight(current.weight) }} t</span
+                >
+                <span
+                  v-if="locatedOutsideLedger"
+                  class="plan-located"
+                  >已定位 · 台账未显示</span
+                >
+              </div>
+              <NButton
+                size="small"
+                text
+                :render-icon="actionIcons.eyeOutline"
+                @click="openDetail(current)"
+                >查看计划详情</NButton
+              >
+            </div>
+            <div
+              v-if="tab === 'heats' && current"
               class="ps-grid"
               ><MachTable
                 v-bind="contentGridOptions(heatRows.length)"
@@ -172,6 +232,12 @@
                 :column-defs="heatColumns"
                 :theme="themeStore.isDark ? 'dark' : 'light'"
             /></div>
+            <NEmpty
+              v-else-if="tab === 'heats'"
+              class="plan-detail-empty"
+              size="small"
+              description="暂无可关联的炉次编排"
+            />
             <div
               v-else
               class="plan-capacity"
@@ -180,21 +246,43 @@
                 :key="load.line"
                 ><header
                   ><strong>{{ load.label }}</strong
-                  ><span
-                    >{{ load.weight.toFixed(1) }} t · {{ load.rate }}%</span
-                  ></header
+                  ><span>{{ load.plans }} 项计划</span></header
                 ><NProgress
                   type="line"
-                  :percentage="load.rate"
+                  :percentage="Math.min(load.rate, 100)"
                   :show-indicator="false"
                   :height="8"
-                  :color="load.rate > 85 ? '#e6a23c' : undefined"
-                /><p>{{
-                  load.rate > 85
-                    ? '关注开浇间隔，保留设备换型时间'
-                    : '产能处于合理区间，可承接后续计划'
-                }}</p></div
-              ></div
+                  :status="
+                    load.rate > 100
+                      ? 'error'
+                      : load.rate > 85
+                        ? 'warning'
+                        : 'default'
+                  "
+                /><div class="plan-capacity-amount">
+                  <span
+                    >{{ formatWeight(load.weight) }} /
+                    {{ formatWeight(load.capacity) }} t</span
+                  >
+                  <strong>{{ load.rate }}%</strong>
+                </div>
+                <footer>
+                  <span>{{
+                    load.rate > 100
+                      ? '已超班次产能'
+                      : load.rate > 85
+                        ? '接近班次产能'
+                        : '仍有排产余量'
+                  }}</span>
+                  <NButton
+                    size="small"
+                    text
+                    :render-icon="actionIcons.arrowRight"
+                    @click="focusLine(load.line)"
+                    >查看产线计划</NButton
+                  >
+                </footer>
+              </div></div
             >
           </section>
         </div>
@@ -283,6 +371,7 @@
     BUSINESS_FORM,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
+    weightCodec,
   } from '../shared/presentation'
   import { PLAN_EDIT_FIELDS } from './operations'
   import '@robot-admin/naive-ui-components/C_DataPicker/style.css'
@@ -298,6 +387,7 @@
   } from './data'
   defineOptions({ name: 'ProductionPlanWorkbench' })
   const themeStore = s_themeStore()
+  const formatWeight = weightCodec.format
   const {
     rows,
     query,
@@ -306,21 +396,33 @@
     planPickerSource,
     locatePlan,
     selectedLines,
+    lineLabel,
     expandedLines,
     visibleRows,
     current,
+    locatedOutsideLedger,
+    displayedPlans,
+    gridEmpty,
+    lineHasPlans,
+    ledgerLocale,
+    clearLedgerFilters,
+    onLedgerModelUpdated,
     pending,
     totalWeight,
+    totalHeats,
     selectedIds,
     columns,
     selectPlan,
     detailPlan,
+    openDetail,
     detailHeatRows,
     table,
     rowStyles,
     heatRows,
     heatColumns,
     loads,
+    focusLine,
+    releaseReadyCount,
     tab,
     notice,
     release,

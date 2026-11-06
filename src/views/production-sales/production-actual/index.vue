@@ -15,7 +15,7 @@
       <PageHeading
         title="炉次实绩记录"
         eyebrow="产销业务 / 生产中心"
-        description="围绕一炉钢，集中记录原料、能源、炉况与成分实测。"
+        description="按炉次录入实绩，核对成分偏差并完成复核追溯。"
       >
         <NTag
           :type="dirty ? 'warning' : 'success'"
@@ -119,10 +119,9 @@
                 ><dt>成分偏差</dt
                 ><dd
                   :class="{
-                    'is-warning': chemicalRows.some(row => row.failed),
+                    'is-warning': chemistryDeviations.length > 0,
                   }"
-                  >{{ chemicalRows.filter(row => row.failed).length
-                  }}<small>项待复核</small></dd
+                  >{{ chemistryDeviations.length }}<small>项待复核</small></dd
                 ></div
               ></dl
             ></section
@@ -149,16 +148,43 @@
               :options="group.fields"
               :config="actualConfig"
             />
-            <div
-              v-if="group.key === 'chemistry'"
-              class="ps-grid actual-chemistry-grid"
-              ><MachTable
-                v-bind="contentGridOptions(chemicalRows.length)"
-                :row-data="chemicalRows"
-                :column-defs="chemicalColumns"
-                :row-style-rules="chemicalStyles"
-                :theme="themeStore.isDark ? 'dark' : 'light'"
-            /></div>
+            <template v-if="group.key === 'chemistry'">
+              <div class="actual-chemistry-toolbar">
+                <div>
+                  <h3>内控标准核对</h3>
+                  <p
+                    >已检测 {{ chemicalRows.length - chemistryPendingCount }} /
+                    {{ chemicalRows.length }} 项 ·
+                    {{ chemistryDeviations.length }} 项偏差</p
+                  >
+                </div>
+                <NButton
+                  size="small"
+                  :type="onlyChemistryDeviations ? 'primary' : 'default'"
+                  :aria-pressed="onlyChemistryDeviations"
+                  :render-icon="
+                    onlyChemistryDeviations
+                      ? actionIcons.restore
+                      : actionIcons.filterOutline
+                  "
+                  @click="onlyChemistryDeviations = !onlyChemistryDeviations"
+                  >{{
+                    onlyChemistryDeviations ? '显示全部项目' : '仅看成分偏差'
+                  }}</NButton
+                >
+              </div>
+              <div class="ps-grid actual-chemistry-grid">
+                <MachTable
+                  :key="chemistryGridKey"
+                  v-bind="contentGridOptions(visibleChemistryRows.length)"
+                  :row-data="visibleChemistryRows"
+                  :locale="chemistryLocale"
+                  :column-defs="chemicalColumns"
+                  :row-style-rules="chemicalStyles"
+                  :theme="themeStore.isDark ? 'dark' : 'light'"
+                />
+              </div>
+            </template>
           </section>
           <section
             v-if="traceVisible"
@@ -296,6 +322,12 @@
     traceVisible,
     sections,
     chemicalRows,
+    onlyChemistryDeviations,
+    chemistryDeviations,
+    chemistryPendingCount,
+    visibleChemistryRows,
+    chemistryGridKey,
+    chemistryLocale,
     chemicalColumns,
     chemicalStyles,
     saving,

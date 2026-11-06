@@ -93,7 +93,7 @@ interface WorkbenchQuery {
   organization: string
   keyword: string
   status: number | null
-  enabled: boolean | null
+  deliveryRange: [string, string] | null
 }
 type BatchMode = 'keep' | 'set' | 'clear'
 interface BatchPlan {
@@ -295,7 +295,17 @@ export const SEARCH_FIELDS: SearchFormItem<WorkbenchQuery>[] = [
     prop: 'status',
     label: '计划状态',
   },
-  { type: 'select', prop: 'enabled', label: '归档', show: false, fixed: true },
+  {
+    type: 'date-range',
+    prop: 'deliveryRange',
+    label: '交货区间',
+    valueMode: 'formatted',
+    attrs: {
+      type: 'daterange',
+      format: 'yyyy-MM-dd',
+      valueFormat: 'yyyy-MM-dd',
+    },
+  },
 ]
 export const HEADER_FIELDS: FormOption<OrderHeader>[] = [
   { type: 'input', prop: 'orderNo', label: '订单编号', readonly: true },
@@ -336,6 +346,23 @@ export const BATCH_MODES = [
   { label: '清空备注', value: 'clear' },
   { label: '统一赋值', value: 'set' },
 ]
+
+export const ORDER_LIST_LOCALE = {
+  emptyRows: '没有匹配的销售订单',
+  emptyRowsHint: '可清除筛选后查看完整台账',
+}
+export const ORDER_LINES_LOCALE = {
+  emptyRows: '当前订单还没有商品明细',
+  emptyRowsHint: '新增明细后即可核对数量和金额',
+}
+export const ORDER_DETAIL_LOCALE = {
+  emptyRows: '当前订单还没有商品明细',
+  emptyRowsHint: '请在销售订单工作台维护明细',
+}
+export const PAYMENT_LOCALE = {
+  emptyRows: '暂无可测算的收款金额',
+  emptyRowsHint: '填写商品明细金额后按币种汇总',
+}
 
 /** 单据工作台只组合公开协议；保存与模拟部分失败仍属于本地业务数据源。 */
 export function useBusinessWorkbench() {
@@ -408,28 +435,32 @@ export function useBusinessWorkbench() {
   }
   const saving = ref(false)
   const batchBusy = ref(false)
+  const batchVisible = ref(false)
   const batchMode = ref<BatchMode>('keep')
   const batchValue = ref('统一交期备注')
   const batchPreview = shallowRef<
-    Array<{ key: string; before: string | null; after: string | null }>
+    Array<{
+      key: string
+      product: string
+      before: string | null
+      after: string | null
+    }>
   >([])
   const batchResults = shallowRef<BatchOperationResult[]>([])
-  const query = ref<WorkbenchQuery>({
+  const initialQuery: WorkbenchQuery = {
     organization: '001',
     keyword: '',
     status: null,
-    enabled: false,
-  })
+    deliveryRange: null,
+  }
+  const query = ref(clone(initialQuery))
   const appliedQuery = ref(clone(query.value))
-  const localEmpty = shallowRef<string | null>(null)
   const selected = computed(() =>
     orders.value.find(order => order.header.id === activeId.value)!
   )
   const scope = useValidationScope()
   const resource = useDataResource({
     key: activeId,
-    source: () =>
-      localEmpty.value === activeId.value ? ([] as OrderLine[]) : undefined,
     load: async ({ key, signal }) => {
       await waitForExample(signal)
       return clone(
@@ -513,14 +544,20 @@ export function useBusinessWorkbench() {
   }
   const selectedCount = ref(0)
   const totals = computed(() => summarizeBusinessLines(lines.value))
+  const orderCount = computed(() => orders.value.length)
+  const currentStatus = computed(() =>
+    fieldDictionaries.label('status', header.value.status)
+  )
   const filteredOrders = computed(() =>
     orders.value
       .map(order => order.header)
       .filter(row => {
         const customer = customerLabels.get(row.customer ?? '') ?? ''
+        const range = appliedQuery.value.deliveryRange
         return (
           (appliedQuery.value.status === null ||
             row.status === appliedQuery.value.status) &&
+          (!range || (row.delivery >= range[0] && row.delivery <= range[1])) &&
           `${row.orderNo} ${customer}`.includes(
             appliedQuery.value.keyword.trim()
           )
@@ -544,6 +581,14 @@ export function useBusinessWorkbench() {
     master.api.value?.pagination.setPage(1)
     await nextTick()
   }
+  const clearOrderFilters = () => {
+    query.value = clone(initialQuery)
+    master.api.value?.filtering.setModel(null)
+    void applyOrderQuery(query.value)
+  }
+  const activeOutsideQuery = computed(
+    () => !filteredOrders.value.some(row => row.id === activeId.value)
+  )
   const searchConfig: SearchConfig<WorkbenchQuery> = {
     density: 'compact',
     layout: 'grid',
@@ -561,18 +606,18 @@ export function useBusinessWorkbench() {
       source: customerSource,
       columns: CUSTOMER_COLUMNS,
       title: '选择订货客户',
+      clearable: true,
     }),
   }
   const activate = (id: string) => {
     scope.clear()
-    localEmpty.value = null
     cancelSwitch()
     closeContractReview()
     activeId.value = id
     header.value = clone(selected.value.header)
     selectedCount.value = 0
-    batchPreview.value = []
-    batchResults.value = []
+    batchVisible.value = false
+    resetBatch()
     void nextTick(() => {
       form.value?.markAsClean()
       form.value?.clearValidation()
@@ -807,18 +852,29 @@ export function useBusinessWorkbench() {
     amount: string
   }>([
     indexColumn({ headerName: '序号', width: 46 }),
-    { field: 'stage', headerName: '收款阶段', flex: 1 },
+    { field: 'stage', headerName: '币种', flex: 1 },
     {
       field: 'amount',
-      headerName: '金额 (CNY)',
+      headerName: '测算金额',
       width: 160,
       valueFormatter: ({ value }) => moneyCodec.format(value),
     },
   ])
-  const paymentRows = computed(() => [
-    { id: `${activeId.value}-P1`, stage: '预付款', amount: '0' },
-    { id: `${activeId.value}-P2`, stage: '到货付款', amount: '12027.01' },
-  ])
+  const paymentRows = computed(() => {
+    const amounts = new Map<string, bigint>()
+    for (const row of lines.value) {
+      if (row.amount === null) continue
+      amounts.set(
+        row.currency,
+        (amounts.get(row.currency) ?? 0n) + decimalMillis(row.amount)
+      )
+    }
+    return [...amounts].map(([currency, amount]) => ({
+      id: `${activeId.value}-${currency}`,
+      stage: currency,
+      amount: decimalFromMillis(amount),
+    }))
+  })
   const refreshDetailLayout = () => {
     void nextTick(() => {
       detail.api.value?.view.refreshLayout()
@@ -914,18 +970,29 @@ export function useBusinessWorkbench() {
       after?.()
     }
   }
-  const fillMissingExample = () => {
-    header.value.customer = null
-    lines.value = lines.value.map((row, index) =>
-      index === 0 ? { ...row, quantity: null } : row
-    )
-    activeTab.value = 'payments'
-  }
   const selectAllLines = () => {
     detail.api.value?.selection.selectAll()
     selectedCount.value = detail.api.value?.selection.getIds().length ?? 0
   }
   let batchPlan: BatchPlan | undefined
+  const resetBatch = () => {
+    batchPlan = undefined
+    batchPreview.value = []
+    batchResults.value = []
+  }
+  const openBatch = () => {
+    if (!selectedCount.value || saving.value || batchBusy.value) return
+    if (batchPlan) {
+      const keys = new Set(detail.api.value?.selection.getIds() ?? [])
+      if (
+        keys.size !== batchPlan.keys.length ||
+        batchPlan.keys.some(key => !keys.has(key))
+      )
+        resetBatch()
+    }
+    batchVisible.value = true
+  }
+  watch([batchMode, batchValue], resetBatch)
   const attempts = new Map<string, number>()
   let alive = true
   let batchController: AbortController | undefined
@@ -957,6 +1024,7 @@ export function useBusinessWorkbench() {
       .filter(row => keys.includes(row.id))
       .map(row => ({
         key: row.id,
+        product: row.product,
         before: row.note,
         after: 'note' in patch ? (patch.note ?? null) : row.note,
       }))
@@ -1032,20 +1100,13 @@ export function useBusinessWorkbench() {
       if (alive) batchBusy.value = false
     }
   }
-  const emptyLocalLines = () => {
-    localEmpty.value = activeId.value
-    notice.value = '当前明细由本地空列表拥有，不回退旧远程结果'
-  }
   const restore = () => {
     scope.clear()
     closeContractReview()
-    batchPlan = undefined
-    batchPreview.value = []
-    batchResults.value = []
+    resetBatch()
     header.value = clone(selected.value.header)
     form.value?.clearValidation()
-    if (localEmpty.value === activeId.value) localEmpty.value = null
-    else void resource.reload()
+    void resource.reload()
   }
   const operations = useSalesOperations({
     orders,
@@ -1066,9 +1127,7 @@ export function useBusinessWorkbench() {
     resetLineState: () => {
       detail.api.value?.selection.clear()
       selectedCount.value = 0
-      batchPlan = undefined
-      batchPreview.value = []
-      batchResults.value = []
+      resetBatch()
       scope.clear()
     },
   })
@@ -1102,6 +1161,8 @@ export function useBusinessWorkbench() {
     pendingOrder,
     saving,
     batchBusy,
+    batchVisible,
+    openBatch,
     batchMode,
     batchValue,
     batchPreview,
@@ -1124,6 +1185,10 @@ export function useBusinessWorkbench() {
     selectedCount,
     totals,
     filteredOrders,
+    orderCount,
+    currentStatus,
+    activeOutsideQuery,
+    clearOrderFilters,
     dirty,
     scope,
     masterColumns,
@@ -1136,11 +1201,9 @@ export function useBusinessWorkbench() {
     save,
     saveAndSwitch,
     discardAndSwitch,
-    fillMissingExample,
     selectAllLines,
     previewBatch,
     executeBatch,
-    emptyLocalLines,
     restore,
     syncLineEdit,
     refreshDetailLayout,

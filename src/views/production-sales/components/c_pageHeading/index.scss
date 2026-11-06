@@ -10,8 +10,8 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 2px 0 4px;
+  gap: 10px 16px;
+  padding: 0 0 2px;
   &__identity {
     display: flex;
     align-items: center;
@@ -20,26 +20,24 @@
   }
   &__icon {
     flex: none;
-    width: 46px;
-    height: 46px;
+    width: 42px;
+    height: 42px;
     display: grid;
     place-items: center;
     color: var(--app-primary);
-    border-radius: 13px;
-    background: linear-gradient(
-      140deg,
-      color-mix(in srgb, var(--app-primary) 14%, var(--app-bg-content)),
+    border-radius: 10px;
+    background: color-mix(
+      in srgb,
+      var(--app-primary) 8%,
       var(--app-bg-content)
     );
     border: 1px solid
-      color-mix(in srgb, var(--app-primary) 22%, var(--app-border-default));
-    box-shadow: inset 0 1px color-mix(in srgb, white 60%, transparent);
+      color-mix(in srgb, var(--app-primary) 16%, var(--app-border-default));
   }
   &__eyebrow {
-    color: var(--app-text-tertiary);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    margin-bottom: 2px;
+    color: var(--app-text-secondary);
+    font-size: 11px;
+    margin-bottom: 1px;
   }
   &__title {
     display: flex;
@@ -54,7 +52,7 @@
     font-weight: 650;
   }
   p {
-    margin: 4px 0 0;
+    margin: 2px 0 0;
     color: var(--app-text-secondary);
     font-size: 12px;
   }
@@ -63,5 +61,18 @@
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
+  }
+
+  @media (max-width: 680px) {
+    &__identity {
+      align-items: start;
+    }
+    &__icon {
+      width: 36px;
+      height: 36px;
+    }
+    h1 {
+      font-size: 18px;
+    }
   }
 }

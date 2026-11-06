@@ -16,7 +16,7 @@
       <PageHeading
         title="销售订单协同"
         eyebrow="产销业务 / 销售中心"
-        description="订单履约、主档维护、商品明细与收款安排，在同一工作区闭环。"
+        description="筛选订单、核对合同差异、维护商品明细，并按币种查看收款测算。"
       >
         <NSpace
           :size="8"
@@ -60,15 +60,20 @@
       </PageHeading>
       <dl class="sales-metrics"
         ><div
-          ><dt>订单台账</dt
-          ><dd>{{ filteredOrders.length }}<small>笔订单</small></dd></div
+          ><dt>当前查询</dt>
+          <dd
+            >{{ filteredOrders.length }}<small>/ {{ orderCount }} 笔</small></dd
+          ></div
         ><div
           ><dt>当前合同</dt
           ><dd class="sales-metrics__reference">{{
             header.contractNo
           }}</dd></div
         ><div
-          ><dt>履约进度</dt><dd>{{ header.progress }}<small>%</small></dd></div
+          ><dt>当前履约</dt
+          ><dd
+            >{{ header.progress }}<small>% · {{ currentStatus }}</small></dd
+          ></div
         ><div
           ><dt>交付窗口</dt
           ><dd class="sales-metrics__reference">{{ header.delivery }}</dd></div
@@ -220,14 +225,21 @@
                   ><div
                     ><h2>订单列表</h2
                     ><span class="workbench-panel__subtitle"
-                      >{{ filteredOrders.length }} 笔本地订单</span
+                      >{{ filteredOrders.length }} 笔订单</span
                     ></div
                   ></div
-                ><span class="workbench-panel__badge">主表</span></header
+                ></header
               >
               <div class="workbench-detail-actions"
-                ><C_ActionBar :actions="orderActions"
-              /></div>
+                ><C_ActionBar :actions="orderActions" />
+                <NButton
+                  v-if="!filteredOrders.length"
+                  size="small"
+                  :render-icon="actionIcons.restore"
+                  @click="clearOrderFilters"
+                  >清除订单筛选</NButton
+                >
+              </div>
               <div class="workbench-master-grid"
                 ><MachTable
                   :ref="master.ref"
@@ -244,10 +256,12 @@
                   :row-style-rules="masterRowStyles"
                   :theme="themeStore.isDark ? 'dark' : 'light'"
                   :pagination="BUSINESS_PAGINATION"
+                  :locale="ORDER_LIST_LOCALE"
+                  aria-label="销售订单台账"
                   :enable-column-resize="true"
               /></div>
               <p class="workbench-panel-note"
-                >点击行联动主档与明细，蓝色单号查看详情。未保存时可保存、放弃或取消切换。</p
+                >选择订单行切换主档，点击单号查看详情。</p
               >
             </section>
           </template>
@@ -271,9 +285,11 @@
                         :size="18" /></span
                     ><div
                       ><h2 data-testid="active-order">{{ header.orderNo }}</h2
-                      ><span class="workbench-panel__subtitle"
-                        >订单主档</span
-                      ></div
+                      ><span class="workbench-panel__subtitle">{{
+                        activeOutsideQuery
+                          ? '当前单据不在查询结果内'
+                          : '订单主档'
+                      }}</span></div
                     ></div
                   ><NSpace :size="6">
                     <span ref="contractReviewTrigger">
@@ -286,12 +302,6 @@
                         >比对合同</NButton
                       >
                     </span>
-                    <NButton
-                      size="tiny"
-                      @click="fillMissingExample"
-                      :render-icon="actionIcons.fileDocumentEditOutline"
-                      >填入缺失样例</NButton
-                    >
                   </NSpace></header
                 >
                 <C_Form
@@ -374,6 +384,12 @@
                         ><C_ActionBar :actions="lineActions" />
                         <NButton
                           size="tiny"
+                          :disabled="
+                            !lines.length ||
+                            resource.loading.value ||
+                            saving ||
+                            batchBusy
+                          "
                           @click="selectAllLines"
                           :render-icon="
                             actionIcons.checkboxMultipleMarkedOutline
@@ -381,13 +397,21 @@
                           >全选明细</NButton
                         ><NButton
                           size="tiny"
-                          @click="emptyLocalLines"
-                          :render-icon="actionIcons.inboxOutline"
-                          >体验空明细</NButton
+                          :disabled="
+                            !selectedCount ||
+                            resource.loading.value ||
+                            saving ||
+                            batchBusy
+                          "
+                          @click="openBatch"
+                          :render-icon="actionIcons.fileDocumentEditOutline"
+                          >批改备注</NButton
                         ></NSpace
-                      ><span
-                        >已选 {{ selectedCount }} 项 · 双击数量或备注编辑</span
-                      ></div
+                      ><span>{{
+                        selectedCount
+                          ? `已选 ${selectedCount} 条`
+                          : `${lines.length} 条明细`
+                      }}</span></div
                     >
                     <div class="workbench-detail-grid"
                       ><MachTable
@@ -405,6 +429,10 @@
                         row-selection="multiple"
                         :pagination="false"
                         :enable-column-resize="true"
+                        :locale="ORDER_LINES_LOCALE"
+                        :loading="resource.loading.value"
+                        :suppress-no-rows-overlay="resource.error.value != null"
+                        aria-label="当前订单商品明细"
                         @cell-value-changed="syncLineEdit"
                         @cell-editing-started="detailEditing = true"
                         @cell-editing-stopped="detailEditing = false"
@@ -419,12 +447,14 @@
                       ><span
                         v-for="total in totals"
                         :key="total.key"
-                        >当前明细 · {{ total.key }}
+                        >{{ total.key }} · {{ total.count }} 条
                         <b>{{ total.quantity }}</b> 数量
                         <b>{{ total.amount }}</b> 金额</span
-                      ><span v-if="!lines.length"
-                        >暂无明细，空列表不会回退旧订单数据</span
-                      ></div
+                      ><span v-if="resource.loading.value">正在读取明细</span>
+                      <span v-else-if="resource.error.value"
+                        >明细未读取成功</span
+                      >
+                      <span v-else-if="!lines.length">暂无明细</span></div
                     >
                   </div>
                   <div
@@ -432,22 +462,31 @@
                     id="workbench-payments-panel"
                     role="tabpanel"
                     aria-labelledby="workbench-tab-payments"
-                    class="workbench-payment-grid"
+                    class="workbench-payment"
                     data-testid="payment-panel"
-                    ><MachTable
-                      :ref="payments.ref"
-                      :row-data="paymentRows"
-                      :column-defs="paymentColumns"
-                      row-key="id"
-                      :row-height="30"
-                      :header-height="36"
-                      column-layout="fit"
-                      size="compact"
-                      :striped-rows="true"
-                      :show-cell-borders="true"
-                      :theme="themeStore.isDark ? 'dark' : 'light'"
-                      :pagination="false"
-                  /></div>
+                  >
+                    <p class="workbench-panel-note"
+                      >按当前商品明细汇总，仅供收款核对。</p
+                    >
+                    <div class="workbench-payment-grid"
+                      ><MachTable
+                        :ref="payments.ref"
+                        :row-data="paymentRows"
+                        :column-defs="paymentColumns"
+                        row-key="id"
+                        :row-height="30"
+                        :header-height="36"
+                        column-layout="fit"
+                        size="compact"
+                        :striped-rows="true"
+                        :show-cell-borders="true"
+                        :theme="themeStore.isDark ? 'dark' : 'light'"
+                        :pagination="false"
+                        :locale="PAYMENT_LOCALE"
+                        :loading="resource.loading.value"
+                        :suppress-no-rows-overlay="resource.error.value != null"
+                        aria-label="当前订单收款测算" /></div
+                  ></div>
                 </section>
               </Teleport>
             </section>
@@ -455,36 +494,31 @@
         </C_SplitPane>
       </div>
 
-      <section
+      <NModal
+        v-model:show="batchVisible"
+        preset="card"
+        title="批改商品备注"
+        size="small"
         class="workbench-panel workbench-batch"
         aria-label="明细批改"
+        :mask-closable="false"
+        :close-on-esc="!batchBusy"
+        :closable="!batchBusy"
       >
-        <header
-          ><div class="workbench-panel__title"
-            ><span class="workbench-panel__icon"
-              ><C_Icon
-                aria-hidden="true"
-                type="svg"
-                :svg-path="WORKBENCH_ICONS.batch"
-                :size="19" /></span
-            ><div
-              ><h2>明细批改</h2
-              ><span class="workbench-panel__subtitle"
-                >只作用于当前已选明细；失败项保留草稿，重试不再提交成功项</span
-              ></div
-            ></div
-          ></header
+        <p class="workbench-batch-context"
+          >{{ header.orderNo }} · 已选 {{ selectedCount }} 条明细</p
         >
         <div class="workbench-batch-controls"
           ><label
             >备注处理<NSelect
               v-model:value="batchMode"
               :options="BATCH_MODES"
+              :disabled="batchBusy"
               size="small"
               aria-label="批改备注操作" /></label
           ><NInput
             v-model:value="batchValue"
-            :disabled="batchMode !== 'set'"
+            :disabled="batchMode !== 'set' || batchBusy"
             size="small"
             placeholder="统一备注内容"
             aria-label="统一备注内容"
@@ -508,27 +542,51 @@
           v-if="batchPreview.length"
           class="workbench-batch-preview"
           data-testid="batch-preview"
-          ><div
-            v-for="item in batchPreview"
-            :key="item.key"
-            ><strong>{{ item.key }}</strong
-            ><span>{{ item.before ?? '未填写' }}</span
-            ><span aria-label="变更为">→</span
-            ><span>{{
-              item.after === null
-                ? '清空为未填写'
-                : item.after === ''
-                  ? '空文本'
-                  : item.after
-            }}</span></div
-          ></div
         >
+          <NTable
+            size="small"
+            striped
+            :bordered="false"
+            aria-label="备注变更预览"
+          >
+            <thead
+              ><tr
+                ><th scope="col">商品明细</th><th scope="col">原备注</th
+                ><th scope="col">批改后</th></tr
+              ></thead
+            >
+            <tbody>
+              <tr
+                v-for="item in batchPreview"
+                :key="item.key"
+              >
+                <th scope="row"
+                  ><strong>{{ item.product }}</strong
+                  ><small>{{ item.key }}</small></th
+                >
+                <td>{{ item.before ?? '未填写' }}</td>
+                <td>{{
+                  item.after === null
+                    ? '清空为未填写'
+                    : item.after === ''
+                      ? '空文本'
+                      : item.after
+                }}</td>
+              </tr>
+            </tbody>
+          </NTable>
+        </div>
         <C_BatchResult
           :results="batchResults"
           title="本次批改结果"
           @retry="executeBatch"
         />
-      </section>
+        <p
+          class="workbench-batch-context"
+          role="status"
+          >{{ notice }}</p
+        >
+      </NModal>
       <p
         class="workbench-status"
         role="status"
@@ -642,6 +700,7 @@
             v-bind="contentGridOptions(detailOrder.lines.length)"
             :row-data="detailOrder.lines"
             :column-defs="readonlyDetailColumns"
+            :locale="ORDER_DETAIL_LOCALE"
             :theme="themeStore.isDark ? 'dark' : 'light'"
         /></div>
         <template #footer
@@ -729,6 +788,10 @@
     FORM_CONFIG,
     CUSTOMERS,
     BATCH_MODES,
+    ORDER_LIST_LOCALE,
+    ORDER_LINES_LOCALE,
+    ORDER_DETAIL_LOCALE,
+    PAYMENT_LOCALE,
   } from './data'
   defineOptions({ name: 'SalesOrderWorkbench' })
   const DictionaryExperience = defineAsyncComponent(
@@ -761,6 +824,8 @@
     pendingOrder,
     saving,
     batchBusy,
+    batchVisible,
+    openBatch,
     batchMode,
     batchValue,
     batchPreview,
@@ -783,6 +848,10 @@
     selectedCount,
     totals,
     filteredOrders,
+    orderCount,
+    currentStatus,
+    activeOutsideQuery,
+    clearOrderFilters,
     dirty,
     scope,
     masterColumns,
@@ -803,11 +872,9 @@
     save,
     saveAndSwitch,
     discardAndSwitch,
-    fillMissingExample,
     selectAllLines,
     previewBatch,
     executeBatch,
-    emptyLocalLines,
     restore,
     syncLineEdit,
   } = useBusinessWorkbench()

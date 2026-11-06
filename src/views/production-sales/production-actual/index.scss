@@ -140,6 +140,26 @@
 .actual-chemistry-grid {
   border-top: 1px solid var(--ps-border);
 }
+.actual-chemistry-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+  padding: 8px 14px;
+  border-top: 1px solid var(--ps-border);
+  h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  p {
+    margin: 3px 0 0;
+    color: var(--app-text-secondary);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+}
 .actual-reference-grid {
   margin-top: 14px;
 }

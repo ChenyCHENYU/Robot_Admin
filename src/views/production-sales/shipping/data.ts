@@ -45,6 +45,17 @@ interface ShippingQuery {
   destination: string | null
   status: string | null
 }
+const INITIAL_QUERY: ShippingQuery = {
+  keyword: '',
+  destination: null,
+  status: null,
+}
+
+// 两个演示任务来自独立的库存快照，覆盖部分放行与整批待放行。
+const STOCK_LIMITS = new Map([
+  ['SHIP-5', 18600],
+  ['SHIP-6', 0],
+])
 interface VehicleForm {
   plate: string
   driver: string
@@ -161,16 +172,18 @@ export function createShipments(): Shipment[] {
     status: index < 6 ? 'waiting' : index < 9 ? 'loading' : 'departed',
   }))
 }
-/** 将计划重量分成三个可追溯批次，整数余数只分配一次。 */
-export function createCargoLots(row: Shipment) {
-  const base = Math.floor(row.weightKg / 3)
-  return Array.from({ length: 3 }, (_, index) => ({
+/** 将质量放行的可配重量分成可追溯批次，整数余数只分配一次。 */
+export function createCargoLots(row: Shipment, availableKg = row.weightKg) {
+  if (availableKg <= 0) return []
+  const count = Math.min(3, availableKg)
+  const base = Math.floor(availableKg / count)
+  return Array.from({ length: count }, (_, index) => ({
     id: `${row.id}-LOT-${index + 1}`,
     batch: `B261029-${String(Number(row.id.slice(5)) * 3 + index).padStart(3, '0')}`,
     location: `A-${String(index + 1).padStart(2, '0')}`,
     grade: row.grade,
     specification: index === 1 ? '8 × 1500 × 6000' : '10 × 1500 × 6000',
-    weightKg: base + (index === 0 ? row.weightKg % 3 : 0),
+    weightKg: base + (index === 0 ? availableKg % count : 0),
     quality: '合格放行',
   }))
 }
@@ -200,11 +213,7 @@ export function useShippingWorkbench() {
   const syncTaskPagination = (page: number, pageSize: number) => {
     Object.assign(pagination, { page, pageSize })
   }
-  const query = ref<ShippingQuery>({
-    keyword: '',
-    destination: null,
-    status: null,
-  })
+  const query = ref<ShippingQuery>({ ...INITIAL_QUERY })
   const applied = ref<ShippingQuery>({ ...query.value })
   const form = ref<FormInstance<VehicleForm> | null>(null)
   const vehicle = ref<VehicleForm>({
@@ -222,7 +231,13 @@ export function useShippingWorkbench() {
   const current = computed(
     () => rows.value.find(row => row.id === currentId.value) ?? rows.value[0]
   )
-  const lots = computed(() => createCargoLots(current.value))
+  const lots = computed(() => {
+    const task = current.value
+    return task ? createCargoLots(task, STOCK_LIMITS.get(task.id)) : []
+  })
+  const availableKg = computed(() =>
+    lots.value.reduce((sum, lot) => sum + lot.weightKg, 0)
+  )
   const selectedKg = computed(() =>
     lots.value
       .filter(row => selectedLots.value.includes(row.id))
@@ -239,6 +254,25 @@ export function useShippingWorkbench() {
           row.destination === applied.value.destination) &&
         (!applied.value.status || row.status === applied.value.status)
     )
+  )
+  const currentOutsideFilter = computed(
+    () =>
+      current.value &&
+      !visibleRows.value.some(row => row.id === current.value.id)
+  )
+  const missingStockKg = computed(() =>
+    Math.max(0, (current.value?.weightKg ?? 0) - availableKg.value)
+  )
+  const unallocatedKg = computed(() =>
+    Math.max(0, (current.value?.weightKg ?? 0) - selectedKg.value)
+  )
+  const excessAllocationKg = computed(() =>
+    Math.max(0, selectedKg.value - (current.value?.weightKg ?? 0))
+  )
+  const overloaded = computed(
+    () =>
+      vehicle.value.capacity !== null &&
+      Math.round(vehicle.value.capacity * 1000) < selectedKg.value
   )
   watch([currentId, () => visibleRows.value.length], () => {
     const index = visibleRows.value.findIndex(row => row.id === currentId.value)
@@ -259,10 +293,16 @@ export function useShippingWorkbench() {
     labelPlacement: 'left',
     fieldMinWidth: 230,
     labelWidth: 94,
+    searchOnReset: true,
     onSearch: values => {
       applied.value = { ...values }
       pagination.page = 1
     },
+  }
+  const clearTaskFilters = () => {
+    query.value = { ...INITIAL_QUERY }
+    applied.value = { ...INITIAL_QUERY }
+    pagination.page = 1
   }
   const activate = (id: string) => {
     const row = rows.value.find(item => item.id === id)
@@ -298,7 +338,7 @@ export function useShippingWorkbench() {
   }
   const vehicleConfig = computed(() => ({
     ...VEHICLE_CONFIG,
-    disabled: current.value.status !== 'waiting',
+    disabled: current.value?.status !== 'waiting',
   }))
   const filterStage = (status: string | null) => {
     query.value.status = status
@@ -409,12 +449,21 @@ export function useShippingWorkbench() {
     selectedLots.value = (stock.api.value?.selection.getIds() ?? []).map(String)
   }
   const recommend = () => {
+    if (!lots.value.length || current.value?.status !== 'waiting') return
     stock.api.value?.selection.selectAll()
     syncLots()
-    notice.value = `已匹配 ${lots.value.length} 个可追溯批次，共 ${weightCodec.format(selectedKg.value / 1000)} t。`
+    const total = weightCodec.format(selectedKg.value / 1000)
+    notice.value = missingStockKg.value
+      ? `已选全部可用库存 ${total} t，仍缺 ${weightCodec.format(missingStockKg.value / 1000)} t。`
+      : `已匹配 ${lots.value.length} 个可追溯批次，共 ${total} t。`
   }
   const assign = async () => {
-    if (busy.value || current.value.status !== 'waiting') return
+    if (
+      busy.value ||
+      current.value?.status !== 'waiting' ||
+      missingStockKg.value
+    )
+      return
     busy.value = true
     try {
       if (!form.value) return
@@ -451,7 +500,7 @@ export function useShippingWorkbench() {
     }
   }
   const depart = () => {
-    if (current.value.status !== 'loading' || busy.value) return
+    if (current.value?.status !== 'loading' || busy.value) return
     const { id } = current.value
     dialog.info({
       ...BUSINESS_DIALOG_BUTTONS,
@@ -476,8 +525,11 @@ export function useShippingWorkbench() {
     current,
     currentId,
     query,
+    appliedStage: computed(() => applied.value.status),
     searchConfig,
+    clearTaskFilters,
     visibleRows,
+    currentOutsideFilter,
     taskTableConfig,
     syncTaskPagination,
     stages,
@@ -486,6 +538,11 @@ export function useShippingWorkbench() {
     vehicleConfig,
     stock,
     lots,
+    availableKg,
+    missingStockKg,
+    unallocatedKg,
+    excessAllocationKg,
+    overloaded,
     selectedLots,
     selectedKg,
     columns,
@@ -508,4 +565,8 @@ export const STAGE_NOTES: Record<string, string> = {
   waiting: '核对库存与车辆，生成装车单',
   loading: '关注装车进度与车辆额定载重',
   departed: '已完成当班出厂确认',
+}
+export const STOCK_LOCALE = {
+  emptyRows: '当前钢种暂无放行库存',
+  emptyRowsHint: '请在库存质检放行后再安排配载。',
 }
