@@ -24,6 +24,10 @@ export default defineConfig({
   },
   test: {
     environment: 'happy-dom',
+    // 在组件测试中交由 Vite 解析 vueuc 的导入，兼容 Node 22 的 CJS 行为。
+    server: {
+      deps: { inline: ['naive-ui', '@robot-admin/naive-ui-components'] },
+    },
     include: ['tests/components/**/*.component.ts'],
     setupFiles: ['tests/components/setup.ts'],
     clearMocks: true,
