@@ -228,7 +228,7 @@
             ></div
           ><div class="ps-grid shipping-stock-grid"
             ><MachTable
-              v-bind="contentGridOptions(lots.length)"
+              v-bind="BUSINESS_CONTENT_GRID"
               :ref="stock.ref"
               :row-data="lots"
               :column-defs="lotColumns"
@@ -358,7 +358,7 @@
   import {
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
-    contentGridOptions,
+    BUSINESS_CONTENT_GRID,
     BUSINESS_FORM,
     weightCodec,
   } from '../shared/presentation'

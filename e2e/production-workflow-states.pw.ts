@@ -74,11 +74,13 @@ test('成分核对从超限记录定位录入，修正后显示明确空态并�
 }, info) => {
   const root = await openProduction(page, 'production-actual')
   const chemistry = root.getByRole('region', { name: '成分与判定' })
+  const grid = chemistry.locator('.actual-chemistry-grid')
+  const gridRoot = grid.locator('.mach-root')
+  const initialGrid = await gridRoot.elementHandle()
   const carbon = inputFor(chemistry, '碳 C')
   await carbon.fill('0.600')
   await carbon.press('Tab')
   await chemistry.getByRole('button', { name: '仅看成分偏差' }).click()
-  const grid = chemistry.locator('.actual-chemistry-grid')
   const rows = grid.locator('.mach-pane--center .mach-row[data-id]')
   await expect(rows).toHaveCount(1)
   await expect(rows.first()).toHaveAttribute('data-id', 'carbon')
@@ -95,5 +97,11 @@ test('成分核对从超限记录定位录入，修正后显示明确空态并�
   await chemistry.getByRole('button', { name: '显示全部项目' }).click()
   await expect(rows).toHaveCount(5)
   await expect(empty).toHaveCount(0)
+  expect(
+    await gridRoot.evaluate(
+      (element, initial) => element === initial,
+      initialGrid
+    )
+  ).toBe(true)
   await expect(carbon).toHaveValue('0.180')
 })

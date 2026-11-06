@@ -206,12 +206,6 @@ export function useProductionActual() {
       ? chemistryDeviations.value
       : chemicalRows.value
   )
-  // 核对表固定五项。筛选结果的行身份变化时重建小表，避免自动高度视口保留上一范围的行。
-  const chemistryGridKey = computed(() =>
-    onlyChemistryDeviations.value
-      ? `deviations:${visibleChemistryRows.value.map(row => row.id).join(',')}`
-      : 'all'
-  )
   const chemistryLocale = {
     emptyRows: '当前炉次无超限实测项',
     emptyRowsHint: '可切回全部项目，继续核对实测值与待检测项',
@@ -405,7 +399,6 @@ export function useProductionActual() {
     chemistryDeviations,
     chemistryPendingCount,
     visibleChemistryRows,
-    chemistryGridKey,
     chemistryLocale,
     chemicalColumns,
     chemicalStyles,

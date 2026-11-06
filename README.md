@@ -147,7 +147,7 @@ flowchart TB
 
 | 能力                 | 接入方式                                                                                       | 实际用途                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **MachTable 0.38.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
+| **MachTable 0.39.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
 | 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                      |
 | 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译          |
 | 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                        |
@@ -192,7 +192,7 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 
 产销详情统一使用居中自适应弹窗，窄屏内容在弹窗内滚动。蓝色单号支持 Enter／空格打开详情，Escape 关闭后返回原按钮。MachTable 与 C_Table 默认完整显示表头，列宽不足时内部横向滚动，正文单元格可独立省略。
 
-分页直接复用各自现成组件：MachTable 主列表使用内置分页条，C_Table 使用 Naive UI 分页；页面不再另造分页按钮。炉次、成分、库存及弹窗明细在 100 行以内按内容高度收起，底部留 8px；超过该范围恢复 330px 虚拟视口。有明确工作区高度的主列表继续内部滚动。C_Table 通过 `display.maxHeight` 限制最大高度，少量数据自然收起。
+MachTable 主列表使用内置分页条，C_Table 使用 Naive UI 分页。炉次、成分、库存及弹窗明细共用 `domLayout: "autoHeight"` 和 `maxBodyHeight: 330`。短表随内容收起，底部留 8px。表体超过 330px 时在同一实例内虚拟滚动。主列表按工作区高度内部滚动，C_Table 短表通过 `display.maxHeight` 限制最大高度。
 
 业务列表统一提供序号，编辑／删除放在固定的行操作列；蓝色单号打开只读详情，点击行联动工作区。顶部保留新增与批量操作。查看其他记录不会切换或覆盖当前未保存草稿，跨行编辑继续经过保存／放弃／取消保护。
 
@@ -350,7 +350,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.38.0** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.39.0** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

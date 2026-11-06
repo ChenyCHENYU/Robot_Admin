@@ -175,8 +175,7 @@
               </div>
               <div class="ps-grid actual-chemistry-grid">
                 <MachTable
-                  :key="chemistryGridKey"
-                  v-bind="contentGridOptions(visibleChemistryRows.length)"
+                  v-bind="BUSINESS_CONTENT_GRID"
                   :row-data="visibleChemistryRows"
                   :locale="chemistryLocale"
                   :column-defs="chemicalColumns"
@@ -278,7 +277,7 @@
         >
         <div class="actual-reference-grid"
           ><MachTable
-            v-bind="contentGridOptions(referenceRows.length)"
+            v-bind="BUSINESS_CONTENT_GRID"
             :row-data="referenceRows"
             :column-defs="referenceColumns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -303,7 +302,7 @@
   import PageHeading from '../components/c_pageHeading/index.vue'
   import ProcessTrace from './components/c_processTrace/index.vue'
   import {
-    contentGridOptions,
+    BUSINESS_CONTENT_GRID,
     BUSINESS_FORM,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
@@ -326,7 +325,6 @@
     chemistryDeviations,
     chemistryPendingCount,
     visibleChemistryRows,
-    chemistryGridKey,
     chemistryLocale,
     chemicalColumns,
     chemicalStyles,

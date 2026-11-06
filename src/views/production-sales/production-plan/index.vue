@@ -227,7 +227,7 @@
               v-if="tab === 'heats' && current"
               class="ps-grid"
               ><MachTable
-                v-bind="contentGridOptions(heatRows.length)"
+                v-bind="BUSINESS_CONTENT_GRID"
                 :row-data="heatRows"
                 :column-defs="heatColumns"
                 :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -341,7 +341,7 @@
         <NDivider :style="{ margin: '12px 0' }">炉次编排</NDivider>
         <div class="ps-grid"
           ><MachTable
-            v-bind="contentGridOptions(detailHeatRows.length)"
+            v-bind="BUSINESS_CONTENT_GRID"
             :row-data="detailHeatRows"
             :column-defs="heatColumns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -367,7 +367,7 @@
   import {
     BUSINESS_GRID,
     BUSINESS_PAGINATION,
-    contentGridOptions,
+    BUSINESS_CONTENT_GRID,
     BUSINESS_FORM,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,

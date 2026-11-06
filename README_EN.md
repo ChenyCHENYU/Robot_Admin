@@ -147,7 +147,7 @@ The application provides `compact` defaults for forms, search and editor modals.
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.38.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
+| **MachTable 0.39.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
@@ -194,7 +194,7 @@ Business lists include row numbers and pinned edit/delete actions. Blue record l
 
 Detail dialogs are centered and adapt to the viewport, with internal scrolling on smaller screens. Both tables preserve complete header text independently of cell ellipsis.
 
-Each table retains its existing pager: MachTable uses its built-in pagination bar and C_Table uses Naive UI pagination. Small heat, chemistry, inventory and dialog grids follow content height with 8px of bottom spacing. Above 100 rows they use a bounded 330px virtual viewport. Explicitly sized main workspaces retain internal scrolling; C_Table uses `display.maxHeight` as a ceiling while short lists shrink naturally.
+MachTable main lists use built-in pagination, and C_Table uses Naive UI pagination. Heat, chemistry, inventory and dialog detail grids share `domLayout: "autoHeight"` and `maxBodyHeight: 330`. They fit short results with 8px of bottom spacing and scroll virtually in the same grid when the body exceeds 330px. Main workspaces scroll within their own height. Short C_Table lists shrink to fit within `display.maxHeight`.
 
 Actions operate on local business records: planning supports create/edit/copy/delete and confirmed release/withdrawal; actuals support review, return for correction, locking and traceable withdrawal; orders and lines use modal editors connected to the existing whole-order draft; shipping supports task maintenance, inventory reselection after changes and confirmed departure. Centered detail dialogs are read-only, and previous-heat references never overwrite current measurements. Custom heat counts preserve the plan weight exactly at 0.001-ton precision.
 
@@ -323,7 +323,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.38.0** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.39.0** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

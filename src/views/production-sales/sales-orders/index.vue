@@ -697,7 +697,7 @@
         >
         <div class="workbench-content-grid"
           ><MachTable
-            v-bind="contentGridOptions(detailOrder.lines.length)"
+            v-bind="BUSINESS_CONTENT_GRID"
             :row-data="detailOrder.lines"
             :column-defs="readonlyDetailColumns"
             :locale="ORDER_DETAIL_LOCALE"
@@ -776,7 +776,7 @@
   import {
     BUSINESS_FORM,
     BUSINESS_PAGINATION,
-    contentGridOptions,
+    BUSINESS_CONTENT_GRID,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
   } from '../shared/presentation'

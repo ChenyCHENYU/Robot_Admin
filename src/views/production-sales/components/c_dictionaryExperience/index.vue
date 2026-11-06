@@ -139,7 +139,7 @@
           ><h3>MachTable · 同源异步翻译</h3
           ><MachTable
             :ref="table.ref"
-            v-bind="contentGridOptions(visibleRows.length)"
+            v-bind="BUSINESS_CONTENT_GRID"
             :row-data="visibleRows"
             :column-defs="columns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -165,7 +165,7 @@
   import { actionIcons } from '../../shared/actionIcons'
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
-  import { contentGridOptions } from '../../shared/presentation'
+  import { BUSINESS_CONTENT_GRID } from '../../shared/presentation'
   import { TABLE_CONFIG, useDictionaryExperience } from './data'
   defineOptions({ name: 'DictionaryExperience' })
   const emit = defineEmits<{ close: [] }>()

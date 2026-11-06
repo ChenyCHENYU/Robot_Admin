@@ -1,14 +1,14 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-11-01
- * @Description: 原生分页与内容高度回归，覆盖少量数据、空态、横向滚动和大数据退回虚拟视口
+ * @Description: 原生分页与有界内容高度回归，覆盖空态、短表和万行虚拟滚动
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { expect, test, type Locator } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { installMockAdminSession } from './auth-fixture'
-import { contentGridOptions } from '../src/views/production-sales/shared/presentation'
+import { BUSINESS_CONTENT_GRID } from '../src/views/production-sales/shared/presentation'
 
 /** 读取实际布局，检查正文、滚动条和表格容器之间的边界。 */
 const geometry = (scope: Locator) =>
@@ -146,12 +146,8 @@ test('自动高度空态可见且恢复一行后释放高度，大数据继续�
     core.resolve('@agile-team/mach-table').replace(/\.cjs$/, '.js'),
     'utf8'
   )
-  const scenarios = [0, 1, 10_000].map(rowCount => ({
-    rowCount,
-    options: contentGridOptions(rowCount),
-  }))
   const layouts = await page.evaluate(
-    async ({ source, scenarios }) => {
+    async ({ source, options }) => {
       const url = URL.createObjectURL(
         new Blob([source], { type: 'text/javascript' })
       )
@@ -163,16 +159,11 @@ test('自动高度空态可见且恢复一行后释放高度，大数据继续�
       host.style.width = '800px'
       document.body.append(host)
       const api = createGrid(host, {
+        ...options,
         columnDefs: [{ field: 'heatNo', headerName: '炉号' }],
-        rowKey: 'id',
-        pagination: false,
-        domLayout: 'autoHeight',
-        rowData: [],
       })
       const layouts = []
-      for (const { rowCount, options } of scenarios) {
-        host.style.height = options.style.height
-        api.updateOptions({ domLayout: options.domLayout })
+      for (const rowCount of [0, 1, 10_000, 1]) {
         api.rows.setData(
           Array.from({ length: rowCount }, (_, index) => ({
             id: `test-${index}`,
@@ -188,7 +179,8 @@ test('自动高度空态可见且恢复一行后释放高度，大数据继续�
         layouts.push({
           height: grid.getBoundingClientRect().height,
           empty: !!grid.querySelector('.mach-empty'),
-          autoHeight: grid.classList.contains('mach-dom-layout--auto-height'),
+          bodyHeight: grid.querySelector('.mach-body')!.getBoundingClientRect()
+            .height,
           rows: grid.querySelectorAll(
             '.mach-pane--center .mach-row[data-index]'
           ).length,
@@ -198,13 +190,13 @@ test('自动高度空态可见且恢复一行后释放高度，大数据继续�
       host.remove()
       return layouts
     },
-    { source, scenarios }
+    { source, options: BUSINESS_CONTENT_GRID }
   )
   expect(layouts[0].empty).toBe(true)
   expect(layouts[0].height).toBeGreaterThanOrEqual(180)
   expect(layouts[1].height).toBeLessThan(100)
-  expect(layouts[2].autoHeight).toBe(false)
-  expect(layouts[2].height).toBeLessThanOrEqual(331)
+  expect(layouts[2].bodyHeight).toBe(BUSINESS_CONTENT_GRID.maxBodyHeight)
   expect(layouts[2].rows).toBeGreaterThan(0)
   expect(layouts[2].rows).toBeLessThan(50)
+  expect(layouts[3]).toEqual(layouts[1])
 })

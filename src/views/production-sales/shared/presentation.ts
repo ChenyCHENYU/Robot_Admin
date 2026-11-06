@@ -54,11 +54,11 @@ export const BUSINESS_PAGINATION = {
   pageSizeOptions: [10, 20, 50],
 }
 
-/** 小明细自然收起；超过 100 行时回到有界虚拟视口，避免自动高度渲染大批 DOM。 */
-export const contentGridOptions = (rowCount: number) => ({
+/** 明细随内容收起，表体达到 330px 后在同一实例内虚拟滚动。 */
+export const BUSINESS_CONTENT_GRID = defineVueTableConfig({
   ...BUSINESS_GRID,
-  domLayout: rowCount <= 100 ? ('autoHeight' as const) : ('normal' as const),
-  style: { height: rowCount <= 100 ? 'auto' : '330px' },
+  domLayout: 'autoHeight',
+  maxBodyHeight: 330,
 })
 export const weightCodec = createNumberCodec({
   storage: 'number',
