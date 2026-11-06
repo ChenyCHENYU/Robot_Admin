@@ -42,6 +42,27 @@ async function expectCenteredSwitchers(tree: Locator) {
   expect(Math.max(...differences)).toBeLessThanOrEqual(1)
 }
 
+test('字典节点重复点击和筛选重挂载时保持目录与详情一致', async ({ page }) => {
+  await installMockAdminSession(page)
+  await page.goto(`/#${dictionaryPath}`)
+  const details = page.locator('.dictionary-details h2')
+  const tree = page.locator('.dictionary-tree')
+  const selected = tree.locator('.n-tree-node--selected')
+  await expect(details).toContainText('用户状态')
+  await expect(selected).toContainText('用户状态')
+
+  await selected.locator('.n-tree-node-content').click()
+  await expect(selected).toContainText('用户状态')
+  await expect(details).toContainText('用户状态')
+
+  const search = page.getByRole('textbox', { name: '搜索字典', exact: true })
+  await search.fill('没有这个字典类型_e2e')
+  await expect(tree).toHaveCount(0)
+  await expect(details).toContainText('用户状态')
+  await search.clear()
+  await expect(selected).toContainText('用户状态')
+})
+
 test('空类型可添加首项，标签编辑保留编码，重复值和删除都有保护', async ({
   page,
 }) => {

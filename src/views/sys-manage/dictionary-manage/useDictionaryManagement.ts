@@ -161,7 +161,6 @@ export const useDictionaryManagement = () => {
   const selectDict = async (id: string) => {
     selectedId.value = id
     await nextTick()
-    treeRef.value?.selectNode(id)
     const parentId = findDictionary(dictList.value, id)?.parentId
     if (parentId && treeRef.value)
       treeRef.value.expandedKeys = [

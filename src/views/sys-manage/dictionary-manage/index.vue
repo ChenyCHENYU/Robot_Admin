@@ -123,6 +123,8 @@
             class="dictionary-tree"
             mode="custom"
             :data="filteredDictList"
+            :selected-keys="selectedId === null ? [] : [selectedId]"
+            :tree-props="{ cancelable: false }"
             :searchable="false"
             :show-toolbar="false"
             :actions="treeActions"
