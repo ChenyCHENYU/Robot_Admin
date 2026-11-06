@@ -73,9 +73,7 @@
         <C_Time
           mode="range"
           format="HH:mm:ss"
-          :use-seconds="true"
           :minute-step="1"
-          :second-step="1"
           :default-start-time="currentTime"
           :default-end-time="currentTime + 3600000"
           :attrs="commonAttrs.medium"
