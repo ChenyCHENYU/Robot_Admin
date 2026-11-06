@@ -49,6 +49,12 @@ export const FIELD_DICTIONARIES = {
   urgent: 'example-urgent',
   account: 'user_status',
 } as const
+const DELIVERY_OPTIONS = defineEnum([
+  { value: 'ROAD', label: '公路' },
+  { value: 'RAIL', label: '铁路' },
+  { value: 'SEA', label: '水运' },
+  { value: 'COLD', label: '冷链专线 · 跨区域定时配送与到货签收' },
+])
 
 export const FORM_FIELDS: FormOption<ExampleForm>[] = [
   {
@@ -111,11 +117,7 @@ export function useDictionaryExperience() {
   let nextResult: 'error' | 'empty' | undefined
   const dictionaries = createDictionaryStore(
     {
-      'example-delivery': defineEnum([
-        { value: 'ROAD', label: '公路' },
-        { value: 'RAIL', label: '铁路' },
-        { value: 'SEA', label: '水运' },
-      ]),
+      'example-delivery': DELIVERY_OPTIONS,
       'example-urgent': defineEnum([
         { value: false, label: '普通交付' },
         { value: true, label: '加急交付' },
@@ -217,6 +219,7 @@ export function useDictionaryExperience() {
     formFields,
     searchFields,
     tableColumns,
+    deliveryOptions: DELIVERY_OPTIONS,
     form,
     query,
     visibleRows,

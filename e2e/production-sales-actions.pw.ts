@@ -354,6 +354,10 @@ test('订单与明细弹窗连接整单草稿，精确金额、详情只读和�
   await picker.getByRole('button', { name: '确定', exact: true }).click()
   await expect(customerTrigger).toHaveText('云帆智造')
   await field(modal(page), '规格').locator('input').fill('8 × 1500 × 6000')
+  const delivery = field(modal(page), '交货日期').locator('input')
+  await expect(delivery).toHaveValue('2026-11-01')
+  await delivery.fill('2026-11-14')
+  await delivery.press('Tab')
   await expect(modal(page)).not.toContainText('请选择客户')
   await modal(page).screenshot({
     path: info.outputPath('sales-create-modal.png'),
@@ -363,6 +367,7 @@ test('订单与明细弹窗连接整单草稿，精确金额、详情只读和�
     .getByRole('button', { name: '建立订单', exact: true })
     .click()
   await expect(page.getByTestId('active-order')).toHaveText('SO-2026-019')
+  await expect(page.locator('.sales-metrics')).toContainText('2026-11-14')
   await expect(
     page.getByTestId('line-panel').locator('.mach-empty')
   ).toBeVisible()

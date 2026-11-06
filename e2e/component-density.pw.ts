@@ -290,7 +290,7 @@ test('多选与布尔条件保留真实类型，提交、清空和重置同步�
     .click()
   await section.getByRole('heading').click()
   await expect(selects.first()).toContainText('禁用')
-  await expect(selects.first()).toContainText('启用')
+  await expect(selects.first()).toContainText('+1')
   await expect(rows).toHaveCount(2)
   await section.getByRole('button', { name: '搜索', exact: true }).click()
   await expect(rows).toHaveCount(1)

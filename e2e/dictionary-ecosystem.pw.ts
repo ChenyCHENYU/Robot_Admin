@@ -260,6 +260,63 @@ test('合法空字典提供独立提示且能重新加载，关闭重开会重�
   await expectNoGlobalError(page)
 })
 
+test('窄屏独立多选与表单共享值，长标签和数量摘要留在控件内', async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await openSales(page)
+  const panel = await openExperience(page)
+  const standalone = panel
+    .getByTestId('dictionary-standalone-select')
+    .locator('.n-base-selection')
+  const form = field(panel.getByTestId('dictionary-form'), '运输方式')
+  const longLabel = '冷链专线 · 跨区域定时配送与到货签收'
+  const options = page.locator('.n-base-select-option:visible')
+  await standalone.click()
+  await options.getByText('公路', { exact: true }).click()
+  await options.getByText('铁路', { exact: true }).click()
+  await options.getByText(longLabel, { exact: true }).click()
+  await options.getByText('水运', { exact: true }).click()
+  await panel.getByTestId('dictionary-selection').click()
+  await expect
+    .poll(async () => (await readModel(panel)).delivery)
+    .toEqual(['COLD', 'SEA'])
+  await expect(form).toContainText(longLabel)
+  await expect(form.getByText('+1', { exact: true })).toBeVisible()
+  await expect(standalone.getByText('+1', { exact: true })).toBeVisible()
+  await expect
+    .poll(() =>
+      standalone.evaluate(element => {
+        const control = element.getBoundingClientRect()
+        const tags = element.querySelectorAll('.n-base-selection-tag-wrapper')
+        return (
+          control.left >= 0 &&
+          control.right <= window.innerWidth + 1 &&
+          tags.length === 2 &&
+          Array.from(tags).every(tag => {
+            const box = tag.getBoundingClientRect()
+            return box.left >= control.left && box.right <= control.right + 1
+          })
+        )
+      })
+    )
+    .toBe(true)
+  await standalone.scrollIntoViewIfNeeded()
+  await expect(options).toHaveCount(0)
+  await page.screenshot({
+    path: info.outputPath('dictionary-tags-narrow.png'),
+    animations: 'disabled',
+  })
+
+  await choose(page, form.locator('.n-base-selection'), longLabel)
+  await panel.getByTestId('dictionary-selection').click()
+  await expect
+    .poll(async () => (await readModel(panel)).delivery)
+    .toEqual(['SEA'])
+  await expect(standalone).toContainText('水运')
+  await expect(standalone.getByText('+1', { exact: true })).toHaveCount(0)
+})
+
 test('通过真实侧栏进入销售页后打开体验，后退和 tags 返回不会残留弹窗或白屏', async ({
   page,
 }) => {

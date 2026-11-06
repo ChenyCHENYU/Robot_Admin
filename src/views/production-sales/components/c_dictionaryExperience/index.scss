@@ -30,6 +30,14 @@
   border: 1px solid var(--app-border-default);
   border-radius: 8px;
 }
+.dictionary-experience__standalone {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  align-items: center;
+  max-width: 460px;
+  margin: 8px 0 2px;
+  font-size: 12px;
+}
 .dictionary-experience__selection {
   padding: 10px 0;
   color: var(--app-text-primary);

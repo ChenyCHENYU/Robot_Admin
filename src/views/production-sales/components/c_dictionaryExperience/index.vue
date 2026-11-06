@@ -98,6 +98,22 @@
             showActions: false,
           }"
         />
+        <div
+          class="dictionary-experience__standalone"
+          data-testid="dictionary-standalone-select"
+        >
+          <span>独立选择</span>
+          <C_Select
+            v-model="form.delivery"
+            :options="deliveryOptions"
+            size="small"
+            multiple
+            filterable
+            clearable
+            placeholder="请选择运输方式"
+            :input-props="{ 'aria-label': '独立选择运输方式' }"
+          />
+        </div>
       </div>
       <div
         class="dictionary-experience__selection"
@@ -159,6 +175,7 @@
     formFields,
     searchFields,
     tableColumns,
+    deliveryOptions,
     form,
     query,
     visibleRows,

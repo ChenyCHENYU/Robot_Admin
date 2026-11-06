@@ -61,7 +61,7 @@ Pinia:   defineStore · storeToRefs
 VueUse:  useLocalStorage · useClipboard · useDebounceFn
 NaiveUI: NCard · NButton · NSpace · NInput · NSelect · NTag · NModal · NDrawer
          NGrid · NGi · NTabs · NTabPane · useMessage · useDialog · useNotification
-C_*:     C_Table · C_Form · C_ActionBar · C_Icon · C_Tree … (60 个，用 MCP 查询)
+C_*:     C_Table · C_Form · C_ActionBar · C_Icon · C_Tree … (61 个，用 MCP 查询)
 ```
 
 领域 Store 和页面控制器显式导入；只自动扫描 `src/composables/`。
@@ -76,7 +76,7 @@ C_*:     C_Table · C_Form · C_ActionBar · C_Icon · C_Tree … (60 个，用 
 
 | 包                                 | 用途                                                   |
 | ---------------------------------- | ------------------------------------------------------ |
-| `@robot-admin/naive-ui-components` | 60 业务组件（C_Form / C_Table / C_ActionBar…）         |
+| `@robot-admin/naive-ui-components` | 61 业务组件（C_Form / C_Table / C_ActionBar…）         |
 | `@robot-admin/request-core`        | HTTP 请求（getData / postData / useTableCrud）         |
 | `@robot-admin/form-validate`       | 表单验证（Naive / Element 双框架，48+ 规则）           |
 | `@robot-admin/directives`          | 11 个 Vue 指令（v-copy / v-permission / v-watermark…） |

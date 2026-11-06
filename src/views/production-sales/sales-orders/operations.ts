@@ -81,8 +81,9 @@ export const ORDER_CREATE_FIELDS: FormOption<OrderHeader>[] = [
   {
     prop: 'delivery',
     label: '交货日期',
-    type: 'input',
-    placeholder: 'YYYY-MM-DD',
+    type: 'datePicker',
+    valueMode: 'formatted',
+    attrs: { format: 'yyyy-MM-dd', valueFormat: 'yyyy-MM-dd' },
     rules: [
       {
         required: true,

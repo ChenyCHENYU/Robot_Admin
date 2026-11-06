@@ -31,7 +31,7 @@
 | 工程视角   | 当前提供                                                                   |
 | ---------- | -------------------------------------------------------------------------- |
 | 架构选择   | SPA、Bun Workspaces、Module Federation、MicroApp 四种分支                  |
-| 组件与插件 | 60 个业务组件、11 个指令；8 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
+| 组件与插件 | 61 个业务组件、11 个指令；8 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
 | 场景示例   | 58 个演示页面，覆盖数据录入、复杂表格、流程编辑、文件与媒体                |
 | 验证与溯源 | 双 Lint、类型、逻辑与组件测试、构建预算、浏览器绘制回归、构建身份卡        |
 
@@ -129,7 +129,7 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.30.1` | 60 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.31.0` | 61 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`  | 静态枚举、远程字典、隔离缓存及详情字段绑定                 | 表单、搜索、详情与两种表格共享翻译     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |

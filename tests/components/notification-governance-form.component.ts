@@ -158,7 +158,8 @@ test('编辑模板按真实 C_Form 回填既有字段，修改后携带正确实
     '已有模板正文'
   )
   expect(getEditor().text()).toContain('系统通知')
-  expect(getEditor().text()).toContain('邮件')
+  expect(fieldFor('投递通道').text()).toContain('站内信')
+  expect(fieldFor('投递通道').text()).toContain('+1')
   await inputFor('消息标题').setValue('更新后的模板标题')
   await inputFor('消息正文').setValue('更新后的模板正文。')
   await fieldFor('启用模板').get('[role="switch"]').trigger('click')

@@ -31,7 +31,7 @@ The current SPA mainline, **v2.7.0**, includes company-context login, system man
 | Perspective                   | Included today                                                                                           |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Architectures                 | SPA, Bun Workspaces, Module Federation and MicroApp branches                                             |
-| Components and packages       | 60 business components, 11 directives; 8 runtime `@robot-admin/*` packages and 1 Git tooling package     |
+| Components and packages       | 61 business components, 11 directives; 8 runtime `@robot-admin/*` packages and 1 Git tooling package     |
 | Examples                      | 58 demo pages covering data entry, complex grids, workflow editing, files and media                      |
 | Verification and traceability | Dual lint, types, logic and component tests, bundle budgets, browser paint regression and build identity |
 
@@ -129,7 +129,7 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.30.1`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.31.0`       | 61 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`        | Static enums, resilient remote dictionaries, scoped cache and detail field bindings     | Shared translation for forms, search, details and both grids      |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
