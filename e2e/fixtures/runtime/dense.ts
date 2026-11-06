@@ -15,6 +15,7 @@ import type {
 import '@robot-admin/naive-ui-components/C_FormModal/style.css'
 
 performance.mark('dense-form-mount-start')
+const linked = new URLSearchParams(location.search).has('linked')
 const model = ref<FormRecord>(
   Object.fromEntries(
     Array.from({ length: 400 }, (_, i) => [`f${i}`, i ? '已填' : ''])
@@ -36,6 +37,30 @@ const options: FormOption[] = Array.from({ length: 400 }, (_, i) => ({
         ],
       }),
 }))
+if (linked) {
+  model.value.f3 = null
+  model.value.f4 = ''
+  options[2] = {
+    ...options[2],
+    valueWhen: values => `派生：${String(values.f1)}`,
+  }
+  options[3] = {
+    ...options[3],
+    type: 'select',
+    dependsOn: 'f2',
+    asyncOptions: async values => {
+      const label = String(values.f2)
+      return [{ label, value: label }]
+    },
+  }
+  options[4] = {
+    ...options[4],
+    rulesWhen: values =>
+      String(values.f2).startsWith('派生：测量')
+        ? [{ required: true, message: '联动后必填' }]
+        : [],
+  }
+}
 const editor = {
   model,
   visible: ref(true),

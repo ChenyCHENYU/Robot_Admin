@@ -21,6 +21,7 @@ export default defineConfig({
       input: {
         index: resolve('e2e/fixtures/runtime/index.html'),
         dense: resolve('e2e/fixtures/runtime/dense.html'),
+        picker: resolve('e2e/fixtures/runtime/picker.html'),
         mini: resolve('e2e/fixtures/runtime/mini.html'),
       },
     },
