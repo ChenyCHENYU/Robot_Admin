@@ -6,7 +6,6 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { actionIcons, BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
-import { C_ActionBar } from '@robot-admin/naive-ui-components/C_ActionBar'
 import {
   defineTableColumns,
   defineTableConfig,
@@ -197,10 +196,6 @@ export function useShippingWorkbench() {
   const rows = ref(createShipments())
   const currentId = ref('SHIP-1')
   const pagination = reactive({ page: 1, pageSize: 10 })
-  const taskTableConfig = computed(() => ({
-    ...SHIPMENT_TABLE_CONFIG,
-    pagination: { page: pagination.page, pageSize: pagination.pageSize },
-  }))
   /** 分页状态留在页面，新增或切换任务时可以定位到对应页。 */
   const syncTaskPagination = (page: number, pageSize: number) => {
     Object.assign(pagination, { page, pageSize })
@@ -332,8 +327,27 @@ export function useShippingWorkbench() {
     },
     onClick: () => choose(row.id),
   })
-  const editIcon = actionIcons.pencilOutline
-  const deleteIcon = actionIcons.deleteOutline
+  const isRowActionDisabled = (row: Shipment) =>
+    row.status !== 'waiting' || form.value?.isDirty === true || busy.value
+  const taskTableConfig = computed(() => ({
+    ...SHIPMENT_TABLE_CONFIG,
+    pagination: { page: pagination.page, pageSize: pagination.pageSize },
+    actions: {
+      inline: [
+        {
+          key: 'edit',
+          type: 'warning' as const,
+          disabled: isRowActionDisabled,
+          onClick: operations.editShipment,
+        },
+        {
+          key: 'delete',
+          disabled: isRowActionDisabled,
+          onClick: operations.removeShipment,
+        },
+      ],
+    },
+  }))
   const columns = defineTableColumns<Shipment>([
     { type: 'index', title: '序号', width: 48, fixed: 'left' },
     {
@@ -369,36 +383,7 @@ export function useShippingWorkbench() {
         ])
       ),
     },
-    {
-      key: 'id',
-      title: '操作',
-      width: 124,
-      fixed: 'right',
-      align: 'center',
-      render: row => {
-        const disabled = () =>
-          row.status !== 'waiting' || form.value?.isDirty === true || busy.value
-        return h(C_ActionBar, {
-          config: { gap: 8 },
-          onClick: (event: MouseEvent) => event.stopPropagation(),
-          actions: [
-            {
-              key: 'edit',
-              type: 'warning',
-              disabled,
-              buttonProps: { text: true, renderIcon: editIcon },
-              onClick: () => operations.editShipment(row),
-            },
-            {
-              key: 'delete',
-              disabled,
-              buttonProps: { text: true, renderIcon: deleteIcon },
-              onClick: () => operations.removeShipment(row),
-            },
-          ],
-        })
-      },
-    },
+    { key: '_actions', title: '操作', width: 124, fixed: 'right' },
   ])
   const lotColumns = defineVueColumns<(typeof lots.value)[number]>([
     selectionColumn(),

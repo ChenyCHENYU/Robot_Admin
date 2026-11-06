@@ -8,14 +8,13 @@
 import '@robot-admin/naive-ui-components/C_DataPicker/style.css'
 import { useResizeObserver } from '@vueuse/core'
 import {
-  C_DataPicker,
+  createDataPickerField,
   type DataPickerSourceInput,
 } from '@robot-admin/naive-ui-components/C_DataPicker'
 import {
   type FormConfig,
   type FormInstance,
   type FormOption,
-  type FormRenderer,
 } from '@robot-admin/naive-ui-components/C_Form'
 import {
   type SearchConfig,
@@ -554,20 +553,15 @@ export function useBusinessWorkbench() {
     labelWidth: 96,
     foldThreshold: 3,
     requireValue: false,
+    searchOnReset: true,
     onSearch: applyOrderQuery,
   }
-  const renderers: Record<string, FormRenderer> = {
-    customer: props =>
-      h(C_DataPicker<Customer>, {
-        source: customerSource,
-        columns: CUSTOMER_COLUMNS,
-        title: '选择订货客户',
-        presentation: props.presentation === 'inline' ? 'inline' : 'modal',
-        modelValue: typeof props.value === 'string' ? props.value : null,
-        disabled: props.disabled === true,
-        readonly: props.readonly === true,
-        'onUpdate:modelValue': value => props['onUpdate:value']?.(value),
-      }),
+  const renderers = {
+    customer: createDataPickerField({
+      source: customerSource,
+      columns: CUSTOMER_COLUMNS,
+      title: '选择订货客户',
+    }),
   }
   const activate = (id: string) => {
     scope.clear()
@@ -1124,7 +1118,6 @@ export function useBusinessWorkbench() {
     adoptContractFields,
     query,
     searchConfig,
-    applyOrderQuery,
     renderers,
     resource,
     notice,

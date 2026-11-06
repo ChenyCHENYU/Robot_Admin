@@ -161,7 +161,9 @@ test('发运原生表格：序号与行操作固定，详情保留车辆草稿�
   await expect(
     table.locator('.ps-toolbar').getByRole('button', { name: /编辑|删除|详情/ })
   ).toHaveCount(0)
-  await row('SHIP-2').getByRole('button', { name: '编辑', exact: true }).click()
+  const edit = row('SHIP-2').getByRole('button', { name: '编辑', exact: true })
+  await expect(edit.locator('svg[aria-hidden="true"] path')).toBeVisible()
+  await edit.click()
   await expect(field(modal(page), '发运单号')).toHaveValue('DN-261029-002')
   await field(modal(page), '计划量').fill('33001')
   await modal(page).getByRole('button', { name: '保存', exact: true }).click()

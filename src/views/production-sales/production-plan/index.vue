@@ -45,7 +45,6 @@
         v-model="query"
         :form-item-list="PLAN_FIELDS"
         :config="searchConfig"
-        @reset="applyPlanQuery"
       >
         <template #actions>
           <C_DataPicker
@@ -74,7 +73,6 @@
                 :config="PLAN_PICKER_SEARCH"
                 :bordered="false"
                 @search="submit"
-                @reset="submit"
               />
             </template>
           </C_DataPicker>
@@ -304,7 +302,6 @@
     rows,
     query,
     searchConfig,
-    applyPlanQuery,
     planPickerInitial,
     planPickerSource,
     locatePlan,

@@ -129,7 +129,7 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.29.2`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.30.0`       | 60 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`        | Static enums, resilient remote dictionaries, scoped cache and detail field bindings     | Shared translation for forms, search, details and both grids      |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
@@ -187,6 +187,8 @@ Native grid themes, compact controls, subtle panels and headers remain consisten
 - **Shipping collaboration → 发运汇总 (Shipping summary)** groups all filtered tasks by destination, status, grade or customer. View totals and drill into a group.
 
 These workflows use local sample data.
+
+Production plans and sales orders use one callback for search and reset. Sales orders connect customer lookup to the form with `createDataPickerField`. The shipping queue declares edit, delete, and their row guards through `config.actions.inline`.
 
 Business lists include row numbers and pinned edit/delete actions. Blue record links open read-only details; clicking a row selects the working record. Toolbars retain create and bulk actions. Viewing another record preserves the current draft, while editing another order uses the existing save/discard/cancel guard.
 

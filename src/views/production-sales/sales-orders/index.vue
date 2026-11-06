@@ -80,7 +80,6 @@
         v-model="query"
         :form-item-list="searchFields"
         :config="searchConfig"
-        @reset="applyOrderQuery"
       />
       <C_ErrorSummary
         :issues="scope.issues.value"
@@ -778,7 +777,6 @@
     adoptContractFields,
     query,
     searchConfig,
-    applyOrderQuery,
     renderers,
     resource,
     notice,

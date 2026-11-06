@@ -153,6 +153,7 @@ export const PLAN_PICKER_SEARCH = {
   labelWidth: 88,
   fieldMinWidth: 204,
   requireValue: false,
+  searchOnReset: true,
 } satisfies SearchConfig<PlanPickerQuery>
 /** 每个页面实例拥有独立计划，原始顺序不依赖模块级可变变量。 */
 export function createProductionPlans(): ProductionPlan[] {
@@ -289,6 +290,7 @@ export function useProductionPlan() {
     labelPlacement: 'left',
     fieldMinWidth: 230,
     labelWidth: 94,
+    searchOnReset: true,
     onSearch: applyPlanQuery,
   }
   const planPickerInitial = computed<PlanPickerQuery>(() => ({
@@ -492,7 +494,6 @@ export function useProductionPlan() {
     rows,
     query,
     searchConfig,
-    applyPlanQuery,
     planPickerInitial,
     planPickerSource,
     locatePlan,
