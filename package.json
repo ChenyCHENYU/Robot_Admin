@@ -68,7 +68,7 @@
     "test:e2e:runtime": "playwright test --config playwright.runtime.config.ts"
   },
   "dependencies": {
-    "@agile-team/mach-table-vue": "0.39.1",
+    "@agile-team/mach-table-vue": "0.39.2",
     "@antv/x6": "^2.19.2",
     "@iconify/vue": "^5.0.0",
     "@robot-admin/dictionary": "0.6.1",
