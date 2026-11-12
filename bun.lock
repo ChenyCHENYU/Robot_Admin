@@ -5,7 +5,7 @@
     "": {
       "name": "robot-admin",
       "dependencies": {
-        "@agile-team/mach-table-vue": "0.39.0",
+        "@agile-team/mach-table-vue": "0.39.1",
         "@antv/x6": "^2.19.2",
         "@iconify/vue": "^5.0.0",
         "@robot-admin/dictionary": "0.6.1",
@@ -129,9 +129,9 @@
     "zod": "4.6.6",
   },
   "packages": {
-    "@agile-team/mach-table": ["@agile-team/mach-table@0.39.0", "", {}, "sha512-o48yozfcDYKcI80AJ7f7bloOZH0fAR61W3j3B/JIPHUj2u2NKoX6U02//ynAn3NK3cYHU0J12lnhL/6JEHqYOg=="],
+    "@agile-team/mach-table": ["@agile-team/mach-table@0.39.1", "", {}, "sha512-D+ESXXPVPiHaF1X9sZePSB5I4W+0wlxrewJZPHS1JzIt79yfDiQH+HWVfyC5LzFsTLhXYM6eIphH3BnXztWW8w=="],
 
-    "@agile-team/mach-table-vue": ["@agile-team/mach-table-vue@0.39.0", "", { "dependencies": { "@agile-team/mach-table": "0.39.0" }, "peerDependencies": { "vue": ">=3.2.0" } }, "sha512-z5AhOJfSoA2cGvNlvtApweKsY3ubtM7GD4rAJimVDl8v/1Aw29rUZ/sBtjskcaHmwFBtcKW6YWoKrJCYGiy04w=="],
+    "@agile-team/mach-table-vue": ["@agile-team/mach-table-vue@0.39.1", "", { "dependencies": { "@agile-team/mach-table": "0.39.1" }, "peerDependencies": { "vue": ">=3.2.0" } }, "sha512-UD18UFVcE3/i2dxlcVx63FXuKwVKa74zlunYZrIkPMwSh2tTGMk3nxLT4/zQ1v/lkalL3MAgEYAAFYUpZK56uw=="],
 
     "@antfu/install-pkg": ["@antfu/install-pkg@1.1.0", "", { "dependencies": { "package-manager-detector": "^1.3.0", "tinyexec": "^1.0.1" } }, "sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ=="],
 

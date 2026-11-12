@@ -147,7 +147,7 @@ flowchart TB
 
 | 能力                 | 接入方式                                                                                       | 实际用途                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **MachTable 0.39.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
+| **MachTable 0.39.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
 | 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                      |
 | 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译          |
 | 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                        |
@@ -157,7 +157,7 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 
 在「表格管理 → MachTable → 顺序调整」（`/#/demo/table-manage/mach-table`）体验 30 条订单的行排序。该场景按需使用 `/ordering`：勾选不连续的多项，拖动其中一项手柄可按原相对顺序一起移动；支持边缘滚动、Esc、Alt + ↑ / ↓ 和独立的顺序撤销/重做。搜索后的键盘移动以相邻可见订单为目标，隐藏订单仍保留在完整数据中。现有工具栏可选择 450ms 模拟保存、失败回滚或版本冲突；冲突后可重新加载模拟服务器顺序。状态区显示保存结果和双方版本，切换场景保留已确认顺序并取消未完成保存。所有传输均为本地模拟，不写订单接口。
 
-当前安装与锁文件固定为官方 npm **0.39.0**，Vue 适配与 Core 版本一致。字典等数据插件只在项目组合，表格保留通用值回调、原生分页、有界测宽、完整表头、主题空态与状态配色。生产计划、销售订单和发运任务池可直接体验。
+当前安装与锁文件固定为官方 npm **0.39.1**，Vue 适配与 Core 版本一致。字典等数据插件只在项目组合，表格保留通用值回调、原生分页、有界测宽、完整表头、主题空态与状态配色。生产计划、销售订单和发运任务池可直接体验。
 
 「超级表格」和 MachTable 的订单列表均使用各自默认的序号和分页，普通列和数值列均默认居中。两者都可用 `:pagination="false"` 关闭分页，用 `:row-number="false"` 关闭自动序号。动态报表由接口层提供列和行，再分别传给 `C_Table` 的 `columns/data` 或 MachTable 的 `column-defs/row-data`。
 
@@ -193,6 +193,8 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 产销详情统一使用居中自适应弹窗，窄屏内容在弹窗内滚动。蓝色单号支持 Enter／空格打开详情，Escape 关闭后返回原按钮。MachTable 与 C_Table 默认完整显示表头，列宽不足时内部横向滚动，正文单元格可独立省略。
 
 MachTable 主列表使用内置分页条，C_Table 使用 Naive UI 分页。炉次、成分、库存及弹窗明细共用 `domLayout: "autoHeight"` 和 `maxBodyHeight: 330`。短表随内容收起，底部留 8px。表体超过 330px 时在同一实例内虚拟滚动。主列表按工作区高度内部滚动，C_Table 短表通过 `display.maxHeight` 限制最大高度。
+
+MachTable 0.39.1 补齐滚动后的列表缩短、换行测高和异步编辑定位边界；同一实例在空态、短表与大数据间切换时恢复正确视口。程序化勾选遵循 `rowSelection`，发运库存与销售明细的批量操作均已显式启用多选。
 
 业务列表统一提供序号，编辑／删除放在固定的行操作列；蓝色单号打开只读详情，点击行联动工作区。顶部保留新增与批量操作。查看其他记录不会切换或覆盖当前未保存草稿，跨行编辑继续经过保存／放弃／取消保护。
 
@@ -350,7 +352,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.39.0** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.39.1** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

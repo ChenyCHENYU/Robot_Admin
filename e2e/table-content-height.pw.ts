@@ -163,7 +163,7 @@ test('自动高度空态可见且恢复一行后释放高度，大数据继续�
         columnDefs: [{ field: 'heatNo', headerName: '炉号' }],
       })
       const layouts = []
-      for (const rowCount of [0, 1, 10_000, 1]) {
+      for (const rowCount of [0, 1, 10_000, 1, 0, 1]) {
         api.rows.setData(
           Array.from({ length: rowCount }, (_, index) => ({
             id: `test-${index}`,
@@ -175,15 +175,28 @@ test('自动高度空态可见且恢复一行后释放高度，大数据继续�
         await new Promise<void>(done =>
           requestAnimationFrame(() => requestAnimationFrame(() => done()))
         )
+        if (rowCount === 10_000) {
+          api.view.scrollToRow(rowCount - 1, 'bottom')
+          // eslint-disable-next-line no-await-in-loop
+          await new Promise<void>(done =>
+            requestAnimationFrame(() => requestAnimationFrame(() => done()))
+          )
+        }
         const grid = host.querySelector('.mach-root')!
+        const rows = [
+          ...grid.querySelectorAll('.mach-pane--center .mach-row[data-index]'),
+        ]
+        const indices = rows.map(row => Number(row.getAttribute('data-index')))
         layouts.push({
           height: grid.getBoundingClientRect().height,
           empty: !!grid.querySelector('.mach-empty'),
           bodyHeight: grid.querySelector('.mach-body')!.getBoundingClientRect()
             .height,
-          rows: grid.querySelectorAll(
-            '.mach-pane--center .mach-row[data-index]'
-          ).length,
+          rows: rows.length,
+          firstIndex: indices.length ? Math.min(...indices) : null,
+          lastIndex: indices.length ? Math.max(...indices) : null,
+          scrollTop: grid.querySelector('.mach-body-viewport--scroll')!
+            .scrollTop,
         })
       }
       api.destroy()
@@ -198,5 +211,12 @@ test('自动高度空态可见且恢复一行后释放高度，大数据继续�
   expect(layouts[2].bodyHeight).toBe(BUSINESS_CONTENT_GRID.maxBodyHeight)
   expect(layouts[2].rows).toBeGreaterThan(0)
   expect(layouts[2].rows).toBeLessThan(50)
+  expect(layouts[2].lastIndex).toBe(9_999)
+  expect(layouts[2].scrollTop).toBeGreaterThan(0)
   expect(layouts[3]).toEqual(layouts[1])
+  expect(layouts[3].firstIndex).toBe(0)
+  expect(layouts[3].lastIndex).toBe(0)
+  expect(layouts[3].scrollTop).toBe(0)
+  expect(layouts[4]).toEqual(layouts[0])
+  expect(layouts[5]).toEqual(layouts[1])
 })

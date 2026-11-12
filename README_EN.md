@@ -147,7 +147,7 @@ The application provides `compact` defaults for forms, search and editor modals.
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.39.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
+| **MachTable 0.39.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
@@ -157,7 +157,7 @@ MachTable is a separate data grid project. Core and Vue / React / XLSX adapters 
 
 Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
 
-The dependency and lockfile pin official npm **0.39.0**, with matching Vue and Core versions. The application composes data plugins. The grid provides generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
+The dependency and lockfile pin official npm **0.39.1**, with matching Vue and Core versions. The application composes data plugins. The grid provides generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
 
 The Super Table demo and the MachTable order list use their own default row numbers and pagination. Text and numeric columns are centered by default. Both grids accept `:pagination="false"` to hide pagination and `:row-number="false"` to hide automatic row numbers. For dynamic reports, pass the API's columns and rows to `C_Table` through `columns/data` or to MachTable through `column-defs/row-data`.
 
@@ -195,6 +195,8 @@ Business lists include row numbers and pinned edit/delete actions. Blue record l
 Detail dialogs are centered and adapt to the viewport, with internal scrolling on smaller screens. Both tables preserve complete header text independently of cell ellipsis.
 
 MachTable main lists use built-in pagination, and C_Table uses Naive UI pagination. Heat, chemistry, inventory and dialog detail grids share `domLayout: "autoHeight"` and `maxBodyHeight: 330`. They fit short results with 8px of bottom spacing and scroll virtually in the same grid when the body exceeds 330px. Main workspaces scroll within their own height. Short C_Table lists shrink to fit within `display.maxHeight`.
+
+MachTable 0.39.1 handles shorter results after scrolling, wrapped-content measurement and asynchronous edit targets. The same grid restores its viewport when switching between empty, short and large datasets. Programmatic selection respects `rowSelection`; shipping inventory and sales lines explicitly enable multiple selection for their bulk actions.
 
 Actions operate on local business records: planning supports create/edit/copy/delete and confirmed release/withdrawal; actuals support review, return for correction, locking and traceable withdrawal; orders and lines use modal editors connected to the existing whole-order draft; shipping supports task maintenance, inventory reselection after changes and confirmed departure. Centered detail dialogs are read-only, and previous-heat references never overwrite current measurements. Custom heat counts preserve the plan weight exactly at 0.001-ton precision.
 
@@ -323,7 +325,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.39.0** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.39.1** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text
