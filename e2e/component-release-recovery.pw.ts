@@ -17,18 +17,30 @@ test('展开表功能列保持紧凑，全部展开、子表清空和密度切�
   page,
 }, info) => {
   await page.goto('/#/demo/table-manage/table-expand')
+  await expect(page.locator('.app-loading,.c-page-loading')).toHaveCount(0)
   const table = page.locator('.table-expand-demo .c-table-wrapper')
   await expect(table).toHaveClass(/c-table-wrapper--compact/)
   await expect(table.locator('tbody tr').first()).toBeVisible()
-  const widths = await table
-    .locator('thead')
-    .first()
-    .locator('th')
-    .evaluateAll(cells =>
-      cells.slice(0, 3).map(cell => cell.getBoundingClientRect().width)
+  // 行存在时异步样式仍可能未完成布局，按实际列宽就绪后继续交互。
+  await expect
+    .poll(() =>
+      table
+        .locator('thead')
+        .first()
+        .locator('th')
+        .evaluateAll(
+          (cells, expected) => {
+            if (cells.length < expected.length) return Infinity
+            return Math.max(
+              ...expected.map((width, index) =>
+                Math.abs(cells[index].getBoundingClientRect().width - width)
+              )
+            )
+          },
+          [40, 40, 50]
+        )
     )
-  for (const [index, expected] of [40, 40, 50].entries())
-    expect(Math.abs(widths[index] - expected)).toBeLessThanOrEqual(1)
+    .toBeLessThanOrEqual(1)
   await page.getByRole('button', { name: '全部展开', exact: true }).click()
   const details = table.locator('.nested-table-detail')
   await expect.poll(() => details.count()).toBeGreaterThan(0)

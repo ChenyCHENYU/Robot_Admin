@@ -137,6 +137,62 @@
   font-variant-numeric: tabular-nums;
   font-weight: 500;
 }
+.actual-comparison-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 9px 14px 7px;
+  border-top: 1px solid var(--ps-border);
+  h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  p {
+    margin: 0;
+    color: var(--app-text-secondary);
+    font-size: 11px;
+  }
+}
+.actual-comparisons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  align-items: start;
+  gap: 12px;
+  padding: 0 14px 12px;
+}
+.actual-comparison-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--ps-border);
+  border-radius: 7px;
+  > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--ps-border);
+    background: var(--ps-soft);
+    h4 {
+      margin: 0;
+      color: var(--app-text-primary);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    > span {
+      color: var(--app-text-secondary);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}
+.actual-comparison-table {
+  min-width: 0;
+  padding-bottom: 8px;
+}
 .actual-chemistry-grid {
   border-top: 1px solid var(--ps-border);
 }

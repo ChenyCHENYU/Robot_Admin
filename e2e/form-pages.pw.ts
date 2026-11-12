@@ -100,10 +100,7 @@ test('角色表单校验、重复编码保护和编辑回填正常', async ({ pa
     .locator('tbody tr')
     .filter({ hasText: 'form_regression_role' })
   await expect(row).toContainText('表单回归角色')
-  await row
-    .locator('button')
-    .filter({ has: page.locator('[title="编辑"]') })
-    .click()
+  await row.getByRole('button', { name: '编辑', exact: true }).click()
   await expect(field(modal, '角色编码').getByRole('textbox')).toBeDisabled()
   await field(modal, '角色名称').getByRole('textbox').fill('更新回归角色')
   await modal.getByRole('button', { name: '确认修改', exact: true }).click()
@@ -144,27 +141,18 @@ test('用户创建保留公司归属，表格详情编辑和重置密码按钮�
     .locator('tbody tr')
     .filter({ hasText: 'form_regression_user' })
   await expect(row).toContainText('表单回归用户')
-  await row
-    .locator('button')
-    .filter({ has: page.locator('[title="详情"]') })
-    .click()
+  await row.getByRole('button', { name: '详情', exact: true }).click()
   await expect(page.locator('.n-drawer')).toContainText('表单回归用户')
   await page
     .locator('.n-drawer')
     .getByRole('button', { name: '关闭', exact: true })
     .click()
-  await row
-    .locator('button')
-    .filter({ has: page.locator('[title="编辑"]') })
-    .click()
+  await row.getByRole('button', { name: '编辑', exact: true }).click()
   await expect(field(modal, '用户名').getByRole('textbox')).toBeDisabled()
   await expect(field(modal, '初始密码')).toHaveCount(0)
   await expect(modal.locator('.membership-editor__row')).toHaveCount(1)
   await modal.getByRole('button', { name: '取消', exact: true }).click()
-  await row
-    .locator('button')
-    .filter({ has: page.locator('[title="更多操作"]') })
-    .hover()
+  await row.getByRole('button', { name: '更多操作', exact: true }).hover()
   await page.getByText('重置密码', { exact: true }).last().click()
   const password = page.locator('.n-dialog').filter({ hasText: '确认重置' })
   await password
@@ -279,10 +267,7 @@ test('权限编码生成、校验、增删改和刷新沿用业务流程', async
     .locator('tbody tr')
     .filter({ hasText: 'system:form_regression' })
   await expect(row).toContainText('表单回归权限')
-  await row
-    .locator('button')
-    .filter({ has: page.locator('[title="更多操作"]') })
-    .hover()
+  await row.getByRole('button', { name: '更多操作', exact: true }).hover()
   await page
     .locator('.n-dropdown-menu:visible')
     .getByText('禁用', { exact: true })
@@ -291,10 +276,7 @@ test('权限编码生成、校验、增删改和刷新沿用业务流程', async
   await refresh.click()
   await expect(table).toHaveAttribute('aria-busy', 'false')
   await expect(row.locator('.permission-status')).toHaveText('禁用')
-  await row
-    .locator('button')
-    .filter({ has: page.locator('[title="删除"]') })
-    .click()
+  await row.getByRole('button', { name: '删除', exact: true }).click()
   await page
     .getByRole('dialog')
     .getByRole('button', { name: '确定', exact: true })

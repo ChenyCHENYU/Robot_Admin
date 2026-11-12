@@ -243,31 +243,44 @@ test('按需加载编辑器和地图不改变宿主同名类的样式', async ({
       `${path}: 第三方 CSS 必须留在自己的组件范围`
     ).toEqual(baseline)
     if (path === '/editor/markdown-editor') {
+      // 当前工作台没有上传处理器，真实图片入口直接插入 Markdown 语法。
       await page
         .locator('.md-editor')
         .first()
         .getByRole('button', { name: '图片', exact: true })
-        .hover()
-      await page.getByText('裁剪上传', { exact: true }).click()
-      const modal = page.locator('.md-editor-modal').filter({ visible: true })
-      await expect(modal).toBeVisible()
-      expect(
-        await modal.evaluate(
-          element =>
-            element.closest('.md-editor-modal-container')?.parentElement ===
-            document.body
-        )
-      ).toBe(true)
-      await page.waitForTimeout(200)
-      expect(
-        await paintedTextPixels(page, modal.locator('.md-editor-modal-header'))
-      ).toBeGreaterThan(8)
-      await modal.locator('.md-editor-modal-close').click()
-      await expect(modal).toHaveCount(0)
+        .click()
+      await expect(
+        page.locator('.md-editor-input-wrapper').getByRole('textbox')
+      ).toContainText('![]()')
       expect(await readProbe()).toEqual(baseline)
     }
   }
   /* eslint-enable no-await-in-loop */
+  // Portal 和文字绘制使用实际提供弹窗入口的裁剪工作台，保留真实 body 挂载覆盖。
+  await page.evaluate(() => {
+    location.hash = '/demo/image-cropper'
+  })
+  await expect(page.locator('.crop-workspace')).toBeVisible()
+  await page.getByRole('button', { name: '弹窗编辑', exact: true }).click()
+  const modal = page.locator('.n-modal').filter({ hasText: '放大编辑图片' })
+  await expect(modal).toBeVisible()
+  expect(
+    await modal.evaluate(
+      element =>
+        element.closest('.n-modal-container')?.parentElement === document.body
+    )
+  ).toBe(true)
+  await expect
+    .poll(() =>
+      paintedTextPixels(
+        page,
+        modal.getByRole('heading', { name: '放大编辑图片', exact: true })
+      )
+    )
+    .toBeGreaterThan(8)
+  await modal.getByRole('button', { name: '取消', exact: true }).click()
+  await expect(modal).toHaveCount(0)
+  expect(await readProbe()).toEqual(baseline)
   await page.evaluate(() => {
     document.querySelector('#vendor-style-probe')?.remove()
     location.hash = '/demo/steps'

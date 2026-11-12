@@ -34,18 +34,13 @@ export const BUSINESS_DETAIL_DIALOG = {
   footerStyle: { padding: '8px 14px' },
 } as const
 
+/** 仅保留产销台账差异；公共外观与 list 表头能力由应用配置和包内场景继承。 */
 export const BUSINESS_GRID = defineVueTableConfig({
   rowKey: 'id',
-  size: 'compact',
   rowHeight: 30,
   headerHeight: 36,
-  columnLayout: 'fit',
-  stripedRows: true,
-  showCellBorders: true,
-  enableColumnResize: true,
-  columnMenu: true,
   pagination: false,
-  defaultColDef: { minWidth: 88, filter: true, headerAlign: 'center' },
+  defaultColDef: { minWidth: 88 },
 })
 
 /** 主列表复用 MachTable 自带分页，保留完整行模型供跨页选择、排序和拖拽使用。 */

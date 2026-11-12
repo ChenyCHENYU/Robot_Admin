@@ -20,6 +20,7 @@ test('两组依赖行真实绘制，末页、搜索与空结果保持分页器�
 }) => {
   await installMockAdminSession(page)
   await page.goto('/#/about')
+  await expect(page.locator('.app-loading,.c-page-loading')).toHaveCount(0)
   const sections = page.locator('.about-dependencies')
   const inspect = async (
     index: number,
@@ -33,8 +34,10 @@ test('两组依赖行真实绘制，末页、搜索与空结果保持分页器�
     const body = section.locator('.n-data-table-base-table-body')
     await body.scrollIntoViewIfNeeded()
     // DOM 有行、toBeVisible 为真也不能证明内容未被零高祖先裁掉。
-    const rect = (await body.boundingBox())!
-    expect(rect.height).toBeGreaterThan(350)
+    // 首屏数据先于加载遮罩和容器尺寸就绪，等待真实布局达到十行展示空间。
+    await expect
+      .poll(async () => (await body.boundingBox())?.height ?? 0)
+      .toBeGreaterThan(350)
     const row = section.locator('tbody tr').first()
     await expect(row).toBeInViewport()
     const cell = row.locator('td').first()

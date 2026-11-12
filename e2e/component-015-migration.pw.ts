@@ -166,10 +166,19 @@ test('没有 randomUUID 的环境下，动态表格仍能连续新增、复制�
 test('行与单元格保存更新选中摘要，操作列删除同步外部数据', async ({ page }) => {
   await page.goto('/#/demo/table-manage/table-dynamic')
   const demo = page.locator('.table-dynamic-demo')
-  const rows = tableRows(demo.locator('.n-data-table'))
+  const table = demo.locator('.n-data-table')
+  const rows = tableRows(table)
   await expect(rows).toHaveCount(5)
   const first = rows.first()
-  const nameCell = first.locator('td').nth(1)
+  const nameColumnIndex = await table
+    .getByRole('columnheader', { name: '姓名', exact: true })
+    .evaluate(header => {
+      if (!(header instanceof HTMLTableCellElement)) {
+        throw new TypeError('姓名表头不是表格单元格')
+      }
+      return header.cellIndex
+    })
+  const nameCell = first.locator('td').nth(nameColumnIndex)
   const summary = demo.locator('.n-alert').filter({ hasText: '已选中' })
   await first.getByRole('radio').check()
   await expect(summary).toContainText('张三')

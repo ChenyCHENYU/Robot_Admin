@@ -47,6 +47,19 @@ const DEFAULT_ACTUAL = {
   sulfur: 0.015,
 }
 export type ActualModel = { [K in keyof typeof DEFAULT_ACTUAL]: number | null }
+
+export interface ActualComparisonRow {
+  readonly id: string
+  readonly name: string
+  readonly previous: number | null
+  readonly current: number | null
+}
+
+export interface ActualComparisonGroup {
+  readonly key: string
+  readonly title: string
+  readonly rows: ActualComparisonRow[]
+}
 export const HEATS = Array.from({ length: 7 }, (_, index) => ({
   id: `HEAT-${index + 1}`,
   no: `L261029${String(101 + index)}`,
@@ -146,6 +159,45 @@ export const ACTUAL_FORM_CONFIG: FormConfig<ActualModel> = {
   grid: { cols: 12, minItemWidth: 270, xGap: 16 },
   showActions: false,
 }
+
+/** 对照表只派生展示值；沿用上一炉已保存的参考快照，不建立第二份可编辑状态。 */
+export function createActualComparisonGroups(
+  model: Readonly<ActualModel>,
+  references: readonly ActualComparisonRow[]
+): ActualComparisonGroup[] {
+  const previousByField = new Map(references.map(row => [row.id, row.previous]))
+  return ACTUAL_GROUPS.filter(group => group.key !== 'chemistry').map(
+    group => ({
+      key: group.key,
+      title: group.title,
+      rows: group.fields.map(field => ({
+        id: String(field.prop),
+        name: String(field.label),
+        current: model[field.prop as keyof ActualModel],
+        previous: previousByField.get(String(field.prop)) ?? null,
+      })),
+    })
+  )
+}
+
+/** 三张小表共用业务列；表头、密度和布局由内置 detail 场景提供。 */
+export const ACTUAL_COMPARISON_COLUMNS = defineVueColumns<ActualComparisonRow>([
+  { field: 'name', headerName: '实绩项目', minWidth: 88, flex: 1 },
+  {
+    field: 'current',
+    headerName: '当前值',
+    width: 88,
+    minWidth: 64,
+    valueFormatter: ({ value }) => (value === null ? '—' : String(value)),
+  },
+  {
+    field: 'previous',
+    headerName: '上炉值',
+    width: 88,
+    minWidth: 64,
+    valueFormatter: ({ value }) => (value === null ? '—' : String(value)),
+  },
+])
 const CHEMICAL_LIMITS = [
   { key: 'carbon', name: '碳 C', min: 0.12, max: 0.22 },
   { key: 'silicon', name: '硅 Si', min: 0.15, max: 0.4 },
@@ -222,7 +274,7 @@ export function useProductionActual() {
   const previous = computed(
     () => HEATS[HEATS.findIndex(heat => heat.id === currentId.value) - 1]
   )
-  const referenceRows = computed(() => {
+  const referenceRows = computed<ActualComparisonRow[]>(() => {
     const prior = previous.value && savedRecords.get(previous.value.id)
     return prior
       ? ACTUAL_GROUPS.flatMap(group =>
@@ -235,6 +287,14 @@ export function useProductionActual() {
         )
       : []
   })
+  const comparisonGroups = computed(() =>
+    createActualComparisonGroups(model.value, referenceRows.value)
+  )
+  const comparisonCaption = computed(() =>
+    previous.value
+      ? `当前录入 / ${previous.value.no} 已保存值 · 只读联动`
+      : '当前录入只读联动 · 首炉暂无上一炉快照'
+  )
   const referenceColumns = defineVueColumns<
     (typeof referenceRows.value)[number]
   >([
@@ -385,6 +445,8 @@ export function useProductionActual() {
     traceVisible,
     referenceVisible,
     referenceRows,
+    comparisonGroups,
+    comparisonCaption,
     referenceColumns,
     previous,
     container,

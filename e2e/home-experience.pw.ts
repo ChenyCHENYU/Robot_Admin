@@ -37,7 +37,7 @@ for (const mode of ['light', 'dark']) {
       const probe = document.createElement('span')
       probe.style.color = 'var(--error-color, var(--c-error))'
       element.append(probe)
-      const color = getComputedStyle(probe).color
+      const { color } = getComputedStyle(probe)
       probe.remove()
       return color
     })
@@ -115,7 +115,11 @@ test('390px 首页收为单列，展开或收起侧栏都无内容横向溢出',
   expect(
     await home.evaluate(element => element.scrollWidth > element.clientWidth)
   ).toBe(false)
-  await page.locator('#guide-menu-collapse').click()
+  const menuToggle = page.locator('#guide-menu-collapse')
+  if ((await menuToggle.getAttribute('aria-expanded')) === 'true') {
+    await menuToggle.click()
+  }
+  await expect(menuToggle).toHaveAttribute('aria-expanded', 'false')
   await expect
     .poll(() => home.evaluate(element => element.clientWidth))
     .toBeGreaterThan(250)
@@ -136,6 +140,13 @@ test('390px 首页收为单列，展开或收起侧栏都无内容横向溢出',
   })
   expect(bounds.verticalGap).toBeGreaterThan(0)
   expect(Math.abs(bounds.horizontalOffset)).toBeLessThan(1)
+  await menuToggle.click()
+  await expect(menuToggle).toHaveAttribute('aria-expanded', 'true')
+  await expect
+    .poll(() =>
+      home.evaluate(element => element.scrollWidth > element.clientWidth)
+    )
+    .toBe(false)
 })
 
 test('切换到审计公司后首页入口和页面统计随授权刷新', async ({ page }) => {

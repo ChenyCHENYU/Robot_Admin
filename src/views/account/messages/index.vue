@@ -318,6 +318,7 @@
           :data="store.items"
           :loading="store.loading"
           row-key="id"
+          :row-number="false"
           :config="{
             toolbar: { show: false },
             selection: { enabled: true },

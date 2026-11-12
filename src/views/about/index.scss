@@ -294,8 +294,9 @@
   border-radius: 12px;
   padding: 16px;
   background: var(--app-bg-content);
-  &__table {
-    // 保留十行数据的展示空间，末页和搜索结果变少时分页器仍固定在底部。
+  > .about-dependencies__table {
+    // 本页固定十行展示空间，局部约束优先于组件 flex-height 的默认 100% 高度。
+    // 末页和搜索结果变少时分页器仍固定在底部。
     height: 480px;
     // 分页作为容器的一部分预留底部空间，避免 flex-height 将其压到边框。
     padding-bottom: 14px;

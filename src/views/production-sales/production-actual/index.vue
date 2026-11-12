@@ -149,6 +149,33 @@
               :config="actualConfig"
             />
             <template v-if="group.key === 'chemistry'">
+              <div class="actual-comparison-heading">
+                <h3>关联实绩对照</h3>
+                <p>{{ comparisonCaption }}</p>
+              </div>
+              <div class="actual-comparisons">
+                <article
+                  v-for="comparison in comparisonGroups"
+                  :key="comparison.key"
+                  class="actual-comparison-card"
+                  :data-comparison="comparison.key"
+                  :aria-label="`${comparison.title}实绩对照`"
+                >
+                  <header>
+                    <h4>{{ comparison.title }}</h4>
+                    <span>{{ comparison.rows.length }} 项</span>
+                  </header>
+                  <div class="actual-comparison-table">
+                    <MachTable
+                      preset="detail"
+                      row-key="id"
+                      :row-data="comparison.rows"
+                      :column-defs="ACTUAL_COMPARISON_COLUMNS"
+                      :theme="themeStore.isDark ? 'dark' : 'light'"
+                    />
+                  </div>
+                </article>
+              </div>
               <div class="actual-chemistry-toolbar">
                 <div>
                   <h3>内控标准核对</h3>
@@ -175,7 +202,10 @@
               </div>
               <div class="ps-grid actual-chemistry-grid">
                 <MachTable
-                  v-bind="BUSINESS_CONTENT_GRID"
+                  row-key="id"
+                  dom-layout="autoHeight"
+                  :max-body-height="330"
+                  :pagination="false"
                   :row-data="visibleChemistryRows"
                   :locale="chemistryLocale"
                   :column-defs="chemicalColumns"
@@ -277,7 +307,8 @@
         >
         <div class="actual-reference-grid"
           ><MachTable
-            v-bind="BUSINESS_CONTENT_GRID"
+            preset="detail"
+            row-key="id"
             :row-data="referenceRows"
             :column-defs="referenceColumns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -302,13 +333,17 @@
   import PageHeading from '../components/c_pageHeading/index.vue'
   import ProcessTrace from './components/c_processTrace/index.vue'
   import {
-    BUSINESS_CONTENT_GRID,
     BUSINESS_FORM,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
   } from '../shared/presentation'
   import { REVIEW_FIELDS } from './operations'
-  import { useProductionActual, HEATS, ACTUAL_GROUPS } from './data'
+  import {
+    useProductionActual,
+    HEATS,
+    ACTUAL_GROUPS,
+    ACTUAL_COMPARISON_COLUMNS,
+  } from './data'
   defineOptions({ name: 'ProductionActualWorkbench' })
   const themeStore = s_themeStore()
   const {
@@ -346,6 +381,8 @@
     stateOf,
     referenceVisible,
     referenceRows,
+    comparisonGroups,
+    comparisonCaption,
     referenceColumns,
     previous,
   } = useProductionActual()

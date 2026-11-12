@@ -15,23 +15,28 @@ test.beforeEach(async ({ page }) => {
 
 test('关于页两组分页器保留底部留白，搜索后仍能稳定分页', async ({ page }) => {
   await page.goto('/#/about')
+  await expect(page.locator('.app-loading,.c-page-loading')).toHaveCount(0)
   await expect(page.locator('.about-dependencies')).toHaveCount(2)
-  const gaps = await page.locator('.about-dependencies').evaluateAll(sections =>
-    sections.map(section => {
-      const bounds = section.getBoundingClientRect()
-      const footer = section
-        .querySelector('.n-pagination')!
-        .getBoundingClientRect()
-      return {
-        bottom: bounds.bottom - footer.bottom,
-        right: bounds.right - footer.right,
-      }
-    })
-  )
-  gaps.forEach(gap => {
-    expect(gap.bottom).toBeGreaterThanOrEqual(24)
-    expect(gap.right).toBeGreaterThanOrEqual(12)
-  })
+  const gaps = () =>
+    page.locator('.about-dependencies').evaluateAll(sections =>
+      sections.map(section => {
+        const bounds = section.getBoundingClientRect()
+        const footer = section
+          .querySelector('.n-pagination')!
+          .getBoundingClientRect()
+        return {
+          bottom: bounds.bottom - footer.bottom,
+          right: bounds.right - footer.right,
+        }
+      })
+    )
+  // 首屏数据节点可早于容器布局就绪，按两组分页器的真实最小留白等待。
+  await expect
+    .poll(async () => Math.min(...(await gaps()).map(gap => gap.bottom)))
+    .toBeGreaterThanOrEqual(24)
+  await expect
+    .poll(async () => Math.min(...(await gaps()).map(gap => gap.right)))
+    .toBeGreaterThanOrEqual(12)
 })
 
 test('结构图统计来自真实清单，节点可切换且明细不产生横向溢出', async ({

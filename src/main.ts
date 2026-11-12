@@ -32,6 +32,7 @@ import { setupAnalytics } from '@/plugins/analytics'
 import { setupObservability } from '@/plugins/observability'
 import { setupRequestCore } from '@/plugins/request-core'
 import { setupDictionaries } from '@/plugins/dictionary'
+import { setupMachTable } from '@/plugins/mach-table'
 import { setupLayoutSystem } from '@/plugins/layout'
 import { setupThemeSystem } from '@/plugins/theme'
 import { setupRoutePrefetch } from '@/router/routePrefetch'
@@ -69,6 +70,7 @@ async function bootstrap() {
   setupLayoutSystem(app) // 🆕 配置布局系统（设置管理 + 主题同步）
   setupThemeSystem(app) // 初始化主题 Store、DOM 属性和生命周期
   setupNaiveUI(app)
+  setupMachTable(app)
   setupHighlight(app)
   app.use(
     createDirectives({
