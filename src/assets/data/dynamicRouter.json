@@ -122,6 +122,32 @@
             "keepAlive": true,
             "full": false
           }
+        },
+        {
+          "path": "remote-workbench",
+          "name": "production-sales-remote-workbench",
+          "component": "/production-sales/remote-workbench/index",
+          "meta": {
+            "icon": "mdi:cloud-sync-outline",
+            "title": "远程订单协同",
+            "hidden": false,
+            "affix": false,
+            "keepAlive": true,
+            "full": false
+          }
+        },
+        {
+          "path": "production-matrix",
+          "name": "production-sales-production-matrix",
+          "component": "/production-sales/production-matrix/index",
+          "meta": {
+            "icon": "mdi:table-large",
+            "title": "生产检测矩阵",
+            "hidden": false,
+            "affix": false,
+            "keepAlive": true,
+            "full": false
+          }
         }
       ]
     },

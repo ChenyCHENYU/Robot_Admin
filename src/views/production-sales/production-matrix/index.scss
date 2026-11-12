@@ -1,0 +1,150 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-11-12
+ * @FilePath: \Robot_Admin\src\views\production-sales\production-matrix\index.scss
+ * @Description: 检测矩阵的紧凑蓝灰工作区，样式仅限本页
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../shared/workspace';
+@include workspace.page;
+.matrix-metrics {
+  margin: 0;
+  .has-warning dd {
+    color: var(--app-warning, #c38724);
+  }
+}
+.matrix-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  flex-wrap: wrap;
+}
+.matrix-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.matrix-period {
+  width: 132px;
+}
+.matrix-field-label {
+  color: var(--app-text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.matrix-grid {
+  height: min(630px, calc(100dvh - 350px));
+  min-height: 360px;
+  border-top: 1px solid var(--ps-border);
+}
+.matrix-help {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  color: var(--app-text-tertiary);
+  font-size: 11px;
+  border-top: 1px solid var(--ps-border);
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+}
+.matrix-legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--app-primary);
+  margin-left: 9px;
+  &.is-warning {
+    background: #cd922b;
+  }
+  &.is-empty {
+    background: #b9c7d9;
+  }
+}
+.matrix-grid :deep(.matrix-reading) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  width: 100%;
+  height: 100%;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  strong {
+    font-size: 12px;
+    font-weight: 550;
+  }
+  small {
+    font-size: 10px;
+    color: var(--app-text-tertiary);
+  }
+  &.is-warning {
+    strong {
+      color: #b47a16;
+      background: color-mix(in srgb, #e8af44 13%, transparent);
+      border-radius: 4px;
+      padding: 0 8px;
+    }
+  }
+  &.is-empty {
+    strong,
+    small {
+      color: var(--app-text-tertiary);
+    }
+  }
+}
+.matrix-grid :deep(.matrix-reading-editor) {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+  padding: 3px 4px;
+  input {
+    width: 100%;
+    min-width: 0;
+    height: 21px;
+    box-sizing: border-box;
+    border: 1px solid var(--ps-border);
+    border-radius: 3px;
+    color: var(--app-text-primary);
+    background: var(--app-bg-content);
+    text-align: center;
+    font: inherit;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    outline: none;
+    &:focus {
+      border-color: var(--app-primary);
+      box-shadow: 0 0 0 1px
+        color-mix(in srgb, var(--app-primary) 16%, transparent);
+    }
+  }
+}
+.matrix-report-context {
+  margin: 2px 0 12px;
+  color: var(--app-text-secondary);
+  font-size: 12px;
+}
+.matrix-report-grid {
+  height: 420px;
+  max-height: calc(100dvh - 240px);
+  min-height: 180px;
+}
+@media (max-width: 900px) {
+  .matrix-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 0;
+  }
+  .matrix-help > span {
+    line-height: 1.6;
+  }
+}

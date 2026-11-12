@@ -54,6 +54,21 @@ export const previewRoutes: RouteRecordRaw = {
       meta: { title: '发运协同指挥台' },
     },
 
+    {
+      path: 'production-sales/remote-workbench',
+      name: 'preview-remote-workbench',
+      component: () =>
+        import('_views/production-sales/remote-workbench/index.vue'),
+      meta: { title: '远程订单协同' },
+    },
+    {
+      path: 'production-sales/production-matrix',
+      name: 'preview-production-matrix',
+      component: () =>
+        import('_views/production-sales/production-matrix/index.vue'),
+      meta: { title: '生产检测矩阵' },
+    },
+
     // ==================== 基础组件 ====================
     {
       path: 'icon',

@@ -19,6 +19,16 @@ const pages = [
   },
   { path: 'sales-orders', title: '销售订单协同', root: 'business-workbench' },
   { path: 'shipping', title: '发运协同指挥台', root: 'shipping-workbench' },
+  {
+    path: 'remote-workbench',
+    title: '远程订单协同',
+    root: 'remote-workbench',
+  },
+  {
+    path: 'production-matrix',
+    title: '酸洗检测矩阵',
+    root: 'production-matrix',
+  },
 ] as const
 
 /** 使用真实表单标签定位控件，不依赖字段渲染顺序。 */
@@ -73,7 +83,19 @@ for (const mode of ['light', 'dark'] as const) {
         page.getByRole('heading', { name: item.title, exact: true })
       ).toBeVisible()
       await expect(root.locator('.mach-root').first()).toBeVisible()
+      // 冷路由必须加载表格样式，只有节点可见不足以证明实际网格排版正确。
+      await expect
+        .poll(() =>
+          root
+            .locator('.mach-header')
+            .first()
+            .evaluate(element => getComputedStyle(element).display)
+        )
+        .toBe('flex')
       await expect(root).not.toHaveClass(/-enter-|-leave-/)
+      if (item.path === 'remote-workbench') {
+        await expect(root.locator('.remote-dictionary')).toHaveCount(0)
+      }
       await page.screenshot({
         path: info.outputPath(`${item.path}-${mode}-wide.png`),
         animations: 'disabled',
@@ -376,7 +398,7 @@ test('发运库存守恒、超载阻止、装车和出厂状态流转，空态�
   })
 })
 
-test('旧工作台入口转到产销模块，四个业务页经 tags 往返不白屏', async ({
+test('旧工作台入口转到产销模块，六个业务页经 tags 往返不白屏', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1720, height: 1200 })

@@ -1,0 +1,119 @@
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-11-12
+ * @FilePath: \Robot_Admin\src\views\production-sales\remote-workbench\index.scss
+ * @Description: 远程订单协同的局部蓝灰布局，沿用产销主题
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+ */
+@use '../shared/workspace';
+@include workspace.page;
+
+.remote-workspace {
+  display: grid;
+  grid-template-columns: minmax(390px, 0.9fr) minmax(0, 1.4fr);
+  align-items: start;
+  gap: 12px;
+}
+.remote-detail-stack {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.remote-order-grid {
+  height: 338px;
+}
+.remote-detail-grid {
+  height: 280px;
+}
+.remote-list-note {
+  margin: 0;
+  padding: 9px 12px;
+  font-size: 11px;
+  line-height: 1.65;
+  color: var(--app-text-secondary);
+  border-top: 1px solid var(--ps-border);
+  background: var(--ps-soft);
+}
+.remote-document-context {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 10px 14px 4px;
+  font-size: 11px;
+  color: var(--app-text-secondary);
+  strong {
+    font-size: 13px;
+    font-weight: 550;
+    color: var(--app-text-primary);
+  }
+}
+.remote-form {
+  padding: 9px 14px 0;
+}
+.remote-document-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 14px 12px;
+}
+.remote-detail-toolbar {
+  flex-wrap: nowrap;
+  .n-select {
+    width: 148px;
+    flex: 0 0 148px;
+  }
+  > span {
+    flex: 1;
+  }
+}
+.remote-dictionary {
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  color: var(--app-text-secondary);
+  font-size: 11px;
+  min-height: 22px;
+}
+.remote-await {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--app-text-secondary);
+}
+.remote-current-note {
+  margin: 0;
+  padding: 8px 14px 0;
+  color: var(--app-text-secondary);
+  font-size: 11px;
+}
+.remote-order-modal :deep(.n-card__footer) {
+  display: flex;
+  justify-content: flex-end;
+}
+.remote-exercises {
+  display: grid;
+  gap: 8px;
+  p {
+    margin: 0 0 4px;
+    font-size: 12px;
+    color: var(--app-text-secondary);
+  }
+}
+@media (max-width: 1200px) {
+  .remote-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .remote-order-grid {
+    height: 304px;
+  }
+}
+@media (max-width: 640px) {
+  .remote-page {
+    padding: 12px;
+  }
+  .remote-detail-toolbar {
+    flex-wrap: wrap;
+  }
+}

@@ -147,7 +147,7 @@ The application provides `compact` defaults for forms, search and editor modals.
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.40.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
+| **MachTable 0.40.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
@@ -157,7 +157,7 @@ MachTable is a separate data grid project. Core and Vue / React / XLSX adapters 
 
 Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
 
-The dependency and lockfile pin official npm **0.40.0**, with matching Vue and Core versions. The application composes data plugins. The grid provides generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
+The dependency and lockfile pin official npm **0.40.1**, with matching Vue and Core versions. The application composes data plugins. The grid provides generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
 
 The Super Table demo and the MachTable order list use their own default row numbers and pagination. Text and numeric columns are centered by default. Both grids accept `:pagination="false"` to hide pagination and `:row-number="false"` to hide automatic row numbers. For dynamic reports, pass the API's columns and rows to `C_Table` through `columns/data` or to MachTable through `column-defs/row-data`.
 
@@ -170,14 +170,16 @@ Both scenarios simulate data locally without writing to business APIs. Switching
 
 ### Production and sales workbenches
 
-The **产销业务** menu maps to `src/views/production-sales/` with four distinct compositions:
+The **产销业务** menu maps to `src/views/production-sales/` with six distinct compositions:
 
-| Page                   | Route                                   | Composition                                                                                                                                              |
-| ---------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Production planning    | `/#/production-sales/production-plan`   | Resource tree, 18 plans, heat scheduling and capacity; submitted filters, release and constrained ordering                                               |
-| Heat actuals           | `/#/production-sales/production-actual` | Heat navigation, 23 dense numeric fields, section navigation, chemistry limits and process history; protected drafts and per-heat snapshots              |
-| Sales orders           | `/#/production-sales/sales-orders`      | 18-order ledger, fulfillment progress, resizable master/detail regions, header form, line/payment tabs, exact decimals and batch review                  |
-| Shipping collaboration | `/#/production-sales/shipping`          | Stage filters, C_Table task pool, MachTable inventory and vehicle form; integer-kilogram conservation, capacity checks and loading/departure transitions |
+| Page                         | Route                                   | Composition                                                                                                                                              |
+| ---------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Production planning          | `/#/production-sales/production-plan`   | Resource tree, 18 plans, heat scheduling and capacity; submitted filters, release and constrained ordering                                               |
+| Heat actuals                 | `/#/production-sales/production-actual` | Heat navigation, 23 dense numeric fields, section navigation, chemistry limits and process history; protected drafts and per-heat snapshots              |
+| Sales orders                 | `/#/production-sales/sales-orders`      | 18-order ledger, fulfillment progress, resizable master/detail regions, header form, line/payment tabs, exact decimals and batch review                  |
+| Shipping collaboration       | `/#/production-sales/shipping`          | Stage filters, C_Table task pool, MachTable inventory and vehicle form; integer-kilogram conservation, capacity checks and loading/departure transitions |
+| Remote order collaboration   | `/#/production-sales/remote-workbench`  | Independently paged async master/detail grids, atomic delivery/quality columns, late dictionaries, draft guards and local retry                          |
+| Production inspection matrix | `/#/production-sales/production-matrix` | Date/shift groups, fixed tank identifiers, atomic reading/time edits, paste/undo and one report snapshot for CSV, XLSX and print                         |
 
 Native grid themes, compact controls, subtle panels and headers remain consistent across layouts and light/dark modes. Naive empty-state icons use a soft blue theme token. The former `/#/demo/business-workbench` redirects to sales orders; `/#/preview/business-workbench` remains available, alongside `/#/preview/production-sales/<page>` for each page.
 
@@ -187,6 +189,10 @@ Native grid themes, compact controls, subtle panels and headers remain consisten
 - **Shipping collaboration → 发运汇总 (Shipping summary)** groups all filtered tasks by destination, status, grade or customer. View totals and drill into a group.
 
 These workflows use local sample data.
+
+Remote collaboration uses the existing query workflow. The project validates and adapts the response once; only accepted responses update dynamic columns. The optional failure exercises cover slow or failed detail requests, empty results and dictionary retry. Dictionaries refresh cell labels without requerying business data; 0 and false retain their types. Delete the only pending order on the last page to experience automatic page recovery.
+
+The inspection matrix commits reading and sampling time as one value. Switching seven/twenty-eight days changes column visibility and preserves hidden-date edits and undo history. Report preview, CSV, typed XLSX and full printing use the same snapshot. Its three-row spans fit the default eight-row buffer; larger spans must follow MachTable's documented virtual-window constraints. Both new pages have login-free preview routes under `/#/preview/production-sales/`.
 
 Production plans and sales orders use one callback for search and reset. Sales orders connect customer lookup to the form with `createDataPickerField`. The shipping queue declares edit, delete, and their row guards through `config.actions.inline`.
 
@@ -199,6 +205,8 @@ Omitting `preset` selects built-in `list`, with row numbers, pagination and head
 MachTable main lists use built-in pagination, and C_Table uses Naive UI pagination. Heat, chemistry, inventory and dialog detail grids share `domLayout: "autoHeight"` and `maxBodyHeight: 330`. They fit short results with 8px of bottom spacing and scroll virtually in the same grid when the body exceeds 330px. Main workspaces scroll within their own height. Short C_Table lists shrink to fit within `display.maxHeight`.
 
 The same MachTable grid restores its viewport when switching between empty, short and large datasets, with wrapped-content measurement and asynchronous edit targets. Programmatic selection respects `rowSelection`; shipping inventory and sales lines explicitly enable multiple selection for their bulk actions.
+
+Version 0.40.1 fixes last-page recovery, stale manual-query results and merged-cell painting beneath later rows.
 
 Version 0.40.0 adds built-in scenes and reactive fallback. Read-only headers hide sort controls while preserving business sort state. Version 0.39.2 protects IME composition during row editing, remeasures sizes after fonts load, and rejects invalid tree input and duplicate response row keys. Cancelling a remote query ends its wait promptly; Worker disposal and reuse isolate old requests. Existing application APIs remain compatible without extra configuration.
 
@@ -329,7 +337,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.40.0** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.40.1** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text
