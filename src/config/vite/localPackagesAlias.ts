@@ -60,8 +60,7 @@ const COMPONENT_VENDOR_STYLE_ENTRIES: Record<string, string> = {
 /** MachTable 独立仓库联调；可单独启用，也会纳入 `dev:local` 全量联调。 */
 const MACH_TABLE_LOCAL = {
   enabled: process.env.USE_LOCAL_MACH_TABLE === 'true',
-  root:
-    process.env.MACH_TABLE_LOCAL_ROOT || '../../../office-project/wl/MachTable',
+  root: process.env.MACH_TABLE_LOCAL_ROOT || '../MachTable',
 } as const
 
 /**

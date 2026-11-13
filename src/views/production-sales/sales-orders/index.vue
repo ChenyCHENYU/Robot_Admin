@@ -10,6 +10,10 @@
   <main
     ref="container"
     class="business-workbench"
+    :class="{
+      'business-workbench--stacked': stacked,
+      'business-workbench--preview': isPreview,
+    }"
     data-testid="business-workbench"
   >
     <C_Density density="compact">
@@ -205,8 +209,8 @@
         <C_SplitPane
           v-model:size="splitSize"
           direction="vertical"
-          :min-first-size="240"
-          :min-second-size="370"
+          :min-first-size="210"
+          :min-second-size="260"
           aria-label="订单与单据详情"
         >
           <template #first>
@@ -260,9 +264,6 @@
                   aria-label="销售订单台账"
                   :enable-column-resize="true"
               /></div>
-              <p class="workbench-panel-note"
-                >选择订单行切换主档，点击单号查看详情。</p
-              >
             </section>
           </template>
           <template #second>
@@ -319,7 +320,11 @@
               >
                 <section
                   class="workbench-panel workbench-details"
-                  :class="{ 'workbench-details--fullscreen': fullscreen }"
+                  :class="{
+                    'workbench-details--fullscreen': fullscreen,
+                    'workbench-details--content':
+                      activeTab === 'lines' ? shortLines : shortPayments,
+                  }"
                   aria-label="订单明细"
                   :aria-busy="resource.loading.value"
                 >
@@ -413,7 +418,9 @@
                           : `${lines.length} 条明细`
                       }}</span></div
                     >
-                    <div class="workbench-detail-grid"
+                    <div
+                      class="workbench-detail-grid"
+                      :class="{ 'workbench-grid--content': shortLines }"
                       ><MachTable
                         :ref="detail.ref"
                         :row-data="lines"
@@ -421,6 +428,8 @@
                         row-key="id"
                         :row-height="30"
                         :header-height="36"
+                        :dom-layout="shortLines ? 'autoHeight' : 'normal'"
+                        :max-body-height="330"
                         column-layout="fit"
                         size="compact"
                         :striped-rows="true"
@@ -468,7 +477,9 @@
                     <p class="workbench-panel-note"
                       >按当前商品明细汇总，仅供收款核对。</p
                     >
-                    <div class="workbench-payment-grid"
+                    <div
+                      class="workbench-payment-grid"
+                      :class="{ 'workbench-grid--content': shortPayments }"
                       ><MachTable
                         :ref="payments.ref"
                         :row-data="paymentRows"
@@ -476,6 +487,8 @@
                         row-key="id"
                         :row-height="30"
                         :header-height="36"
+                        :dom-layout="shortPayments ? 'autoHeight' : 'normal'"
+                        :max-body-height="330"
                         column-layout="fit"
                         size="compact"
                         :striped-rows="true"
@@ -589,6 +602,7 @@
       </NModal>
       <p
         class="workbench-status"
+        :class="{ 'workbench-status--hint': isDefaultNotice }"
         role="status"
         data-testid="workbench-status"
         >{{ notice }}</p
@@ -804,11 +818,15 @@
     dictionaryVisible.value = false
   })
   const {
+    isDefaultNotice,
+    isPreview,
     searchFields,
     headerFields,
     detailLabels,
     container,
     stacked,
+    shortLines,
+    shortPayments,
     form,
     master,
     detail,

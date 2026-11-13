@@ -25,28 +25,36 @@ const assertIllustration = async (empty: Locator, prefix: string) => {
   await expect(empty.locator('svg')).toHaveAttribute('aria-hidden', 'true')
   await expect(empty.locator('svg')).toHaveAttribute('viewBox', '0 0 96 84')
   await expect(empty.locator('svg [id],img')).toHaveCount(0)
-  // 不能仅验证 DOM 存在：插画和两级文案都必须完整落在网格正文内。
+  // 覆盖层直属网格根；autoHeight 空数据的 body 高度为零，按实际裁切根及命中验收。
   await expect
     .poll(() =>
       empty.evaluate(element => {
-        const body = element
-          .closest('.mach-root')!
-          .querySelector('.mach-body')!
-          .getBoundingClientRect()
+        const root = element.closest('.mach-root')!
+        const bounds = root.getBoundingClientRect()
         return [...element.children].every(child => {
           const rect = child.getBoundingClientRect()
+          const hit = root.ownerDocument.elementFromPoint(
+            rect.left + rect.width / 2,
+            rect.top + rect.height / 2
+          )
           return (
-            rect.top >= body.top - 1 &&
-            rect.bottom <= body.bottom + 1 &&
-            rect.left >= body.left - 1 &&
-            rect.right <= body.right + 1
+            rect.width > 0 &&
+            rect.height > 0 &&
+            rect.top >= bounds.top - 1 &&
+            rect.bottom <= bounds.bottom + 1 &&
+            rect.left >= bounds.left - 1 &&
+            rect.right <= bounds.right + 1 &&
+            (hit === child || child.contains(hit))
           )
         })
       })
     )
     .toBe(true)
   await expect(empty.locator('svg')).toHaveCSS('width', '96px')
-  await expect(empty.locator('svg')).toHaveCSS('height', '84px')
+  // 窄分栏优先保留文案，插画可在84px以内自适应缩小。
+  const illustration = (await empty.locator('svg').boundingBox())!
+  expect(illustration.height).toBeGreaterThan(0)
+  expect(illustration.height).toBeLessThanOrEqual(84)
 }
 
 for (const mode of ['light', 'dark'] as const) {

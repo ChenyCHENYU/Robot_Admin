@@ -10,7 +10,6 @@ import type { MachTableRuntimeConfig } from '@agile-team/mach-table-vue'
 export default {
   defaults: {
     size: 'compact',
-    columnLayout: 'fit',
     stripedRows: true,
     showCellBorders: true,
   },

@@ -10,11 +10,10 @@ import { createApp } from 'vue'
 import { setupMachTable } from '../src/plugins/mach-table'
 import machTableConfig from '../src/config/mach-table'
 
-test('全局只统一网格外观，不重配内置场景或混入选择分页行为', () => {
+test('全局只统一密度条纹与边框，保留按内容测宽及内置场景行为', () => {
   expect(machTableConfig).toEqual({
     defaults: {
       size: 'compact',
-      columnLayout: 'fit',
       stripedRows: true,
       showCellBorders: true,
     },

@@ -8,31 +8,55 @@
 @use '../shared/workspace';
 @include workspace.page;
 
+.remote-page {
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  > .business-page-heading,
+  > .ps-search,
+  > .remote-dictionary {
+    flex: 0 0 auto;
+  }
+}
+// 免登录预览宿主只有 min-height；为本页建立确定高度，不改变其他预览页。
+.remote-page--preview {
+  height: calc(100dvh - 48px);
+}
 .remote-workspace {
-  display: grid;
-  grid-template-columns: minmax(390px, 0.9fr) minmax(0, 1.4fr);
-  align-items: start;
-  gap: 12px;
-}
-.remote-detail-stack {
-  display: grid;
-  gap: 12px;
+  flex: 1 1 0;
   min-width: 0;
+  min-height: 0;
 }
-.remote-order-grid {
-  height: 338px;
+.remote-main-split,
+.remote-detail-stack {
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
 }
+.remote-orders,
+.remote-document,
+.remote-lines {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  > .ps-panel-heading,
+  > .ps-toolbar,
+  > .remote-document-actions {
+    flex: 0 0 auto;
+  }
+}
+.remote-order-grid,
 .remote-detail-grid {
-  height: 280px;
+  flex: 1 1 0;
+  min-height: 0;
 }
-.remote-list-note {
-  margin: 0;
-  padding: 9px 12px;
-  font-size: 11px;
-  line-height: 1.65;
-  color: var(--app-text-secondary);
-  border-top: 1px solid var(--ps-border);
-  background: var(--ps-soft);
+.remote-document-body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
 }
 .remote-document-context {
   display: flex;
@@ -55,7 +79,9 @@
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  padding: 0 14px 12px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--ps-border);
+  background: var(--ps-soft);
 }
 .remote-detail-toolbar {
   flex-wrap: nowrap;
@@ -101,12 +127,28 @@
     color: var(--app-text-secondary);
   }
 }
-@media (max-width: 1200px) {
+.remote-page--stacked,
+.remote-page--preview.remote-page--stacked {
+  height: auto;
+  min-height: 100%;
   .remote-workspace {
-    grid-template-columns: minmax(0, 1fr);
+    flex: none;
+    height: max(56rem, 90dvh);
   }
-  .remote-order-grid {
-    height: 304px;
+}
+@media (max-height: 760px) {
+  .remote-page,
+  .remote-page--preview {
+    height: auto;
+    min-height: 100%;
+    .remote-workspace {
+      flex: none;
+      height: max(520px, 75dvh);
+    }
+  }
+  .remote-page--stacked .remote-workspace,
+  .remote-page--preview.remote-page--stacked .remote-workspace {
+    height: max(56rem, 90dvh);
   }
 }
 @media (max-width: 640px) {

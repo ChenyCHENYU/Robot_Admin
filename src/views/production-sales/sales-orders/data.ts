@@ -7,6 +7,7 @@
  */
 import '@robot-admin/naive-ui-components/C_DataPicker/style.css'
 import { useResizeObserver } from '@vueuse/core'
+import { routeLocationKey } from 'vue-router'
 import {
   createDataPickerField,
   type DataPickerSourceInput,
@@ -338,7 +339,7 @@ export const FORM_CONFIG: FormConfig<OrderHeader> = {
   density: 'compact',
   labelPlacement: 'left',
   labelWidth: 88,
-  grid: { cols: 1, minItemWidth: 250, xGap: 16 },
+  grid: { cols: 1, minItemWidth: 250, xGap: 16, yGap: 2 },
   showActions: false,
 }
 export const BATCH_MODES = [
@@ -366,6 +367,8 @@ export const PAYMENT_LOCALE = {
 
 /** 单据工作台只组合公开协议；保存与模拟部分失败仍属于本地业务数据源。 */
 export function useBusinessWorkbench() {
+  const route = inject(routeLocationKey, undefined)
+  const isPreview = computed(() => route?.path.startsWith('/preview/') ?? false)
   const fieldDictionaries = useFieldDictionaries(FIELD_DICTIONARIES)
   const searchFields = fieldDictionaries.search(SEARCH_FIELDS)
   const headerFields = fieldDictionaries.form(HEADER_FIELDS)
@@ -413,7 +416,9 @@ export function useBusinessWorkbench() {
   const container = ref<HTMLElement | null>(null)
   const stacked = ref(false)
   useResizeObserver(container, ([entry]) => {
-    stacked.value = entry.contentRect.width < 860
+    if (entry)
+      stacked.value =
+        entry.contentRect.width > 0 && entry.contentRect.width < 860
   })
   const fullscreen = ref(false)
   /** Teleport 移动前释放按钮焦点，移动后恢复键盘入口且不拉动祖先滚动区。 */
@@ -426,7 +431,13 @@ export function useBusinessWorkbench() {
         trigger.focus({ preventScroll: true })
     })
   }
-  const splitSize = ref(44)
+  // 首次进入矮窗口时保留两侧可拖余量；后续尺寸变化仍尊重用户已调整的比例。
+  const splitSize = ref(
+    typeof window !== 'undefined' &&
+      window.matchMedia('(max-height: 900px)').matches
+      ? 45
+      : 52
+  )
   const pendingOrder = ref<string | null>(null)
   let afterOrderSwitch: (() => void) | undefined
   const cancelSwitch = () => {
@@ -484,7 +495,9 @@ export function useBusinessWorkbench() {
       JSON.stringify({ header: header.value, lines: lines.value }) !==
         JSON.stringify(selected.value)
   )
-  const notice = ref('本地示例 · 所有改动仅保留在当前页面')
+  const localDemoNotice = '本地示例 · 所有改动仅保留在当前页面'
+  const notice = ref(localDemoNotice)
+  const isDefaultNotice = computed(() => notice.value === localDemoNotice)
   const contractReviewVisible = ref(false)
   const contractReview =
     shallowRef<ReturnType<typeof previewContractReview>>(null)
@@ -875,6 +888,23 @@ export function useBusinessWorkbench() {
       amount: decimalFromMillis(amount),
     }))
   })
+  // 内容少时释放表格高度；加载、错误、空态与局部全屏保留分配的可用视口。
+  const shortLines = computed(
+    () =>
+      !fullscreen.value &&
+      !resource.loading.value &&
+      resource.error.value === null &&
+      lines.value.length > 0 &&
+      lines.value.length <= 3
+  )
+  const shortPayments = computed(
+    () =>
+      !fullscreen.value &&
+      !resource.loading.value &&
+      resource.error.value === null &&
+      paymentRows.value.length > 0 &&
+      paymentRows.value.length <= 3
+  )
   const refreshDetailLayout = () => {
     void nextTick(() => {
       detail.api.value?.view.refreshLayout()
@@ -1137,6 +1167,8 @@ export function useBusinessWorkbench() {
     { enabled: operations.detailVisible }
   )
   return {
+    isDefaultNotice,
+    isPreview,
     detailLabels,
     searchFields,
     headerFields,
@@ -1145,6 +1177,8 @@ export function useBusinessWorkbench() {
     cancelSwitch,
     container,
     stacked,
+    shortLines,
+    shortPayments,
     form,
     master,
     detail,

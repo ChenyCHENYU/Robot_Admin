@@ -30,15 +30,16 @@
 
 普通 `dev`、构建与类型检查使用已安装的线上包。只有修改生态包本身时才启用源码联调：
 
-| 命令                                          | 范围                                  |
-| --------------------------------------------- | ------------------------------------- |
-| `bun run dev:components`                      | 本地 `naive-ui-components`            |
-| `bun run dev:table`                           | 本地组件库、MachTable 与 request-core |
-| `bun run dev:local`                           | 本地全部生态包、组件库与 MachTable    |
-| `bun run type-build:local`                    | 显式读取本地联调类型配置              |
-| `bun run type-build` / `type-build:installed` | 按正式安装包检查应用与配置类型        |
+| 命令                                          | 范围                                       |
+| --------------------------------------------- | ------------------------------------------ |
+| `bun run dev:components`                      | 本地 `naive-ui-components`                 |
+| `USE_LOCAL_MACH_TABLE=true bun run dev`       | 仅本地 `MachTable`，其他包仍用正式安装版本 |
+| `bun run dev:table`                           | 本地组件库、MachTable 与 request-core      |
+| `bun run dev:local`                           | 本地全部生态包、组件库与 MachTable         |
+| `bun run type-build:local`                    | 显式读取本地联调类型配置                   |
+| `bun run type-build` / `type-build:installed` | 按正式安装包检查应用与配置类型             |
 
-本地目录与精确子入口规则见 [localPackagesAlias.ts](../src/config/vite/localPackagesAlias.ts)，类型配置见 [tsconfig.local.json](../tsconfig/tsconfig.local.json)。按实际仓库位置配置路径；MachTable 可通过 `MACH_TABLE_LOCAL_ROOT` 指定。不存在的兄弟仓库不会成为普通开发的依赖。
+本地目录与精确子入口规则见 [localPackagesAlias.ts](../src/config/vite/localPackagesAlias.ts)，类型配置见 [tsconfig.local.json](../tsconfig/tsconfig.local.json)。默认 MachTable 仓库为同级 `../MachTable`；可通过 `MACH_TABLE_LOCAL_ROOT` 指定。不存在的兄弟仓库不会成为普通开发的依赖。
 
 联调通过 Vite alias 读取源码并使用隔离缓存，不修改 `package.json` 和 `bun.lock`。TypeScript 联调配置读取包的公开声明；公开 API 变化后先在包仓库构建声明。正式发布时安装真实 npm 版本，并运行普通开发、类型与构建验证。生产构建拒绝本地 alias 标志。
 

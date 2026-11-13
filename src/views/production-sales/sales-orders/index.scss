@@ -23,7 +23,16 @@
   flex-direction: column;
   gap: 12px;
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+  box-sizing: border-box;
   color: var(--app-text-primary);
+  > :not(.workbench-layout) {
+    flex: 0 0 auto;
+  }
+}
+.business-workbench--preview {
+  height: calc(100dvh - 48px);
 }
 
 .workbench-search {
@@ -33,8 +42,9 @@
   box-shadow: var(--app-shadow-sm);
 }
 .workbench-layout {
-  // 工作区随实际视口收敛高度，查询区和后续批改区保留正常文档流。
-  height: 780px;
+  // 桌面分配剩余空间；容不下两个最小窗格时由页面滚动，不再固定超长表高。
+  flex: 1 1 0;
+  min-height: 500px;
   min-width: 0;
 }
 .workbench-panel {
@@ -131,11 +141,28 @@
 }
 .workbench-orders {
   height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  > header,
+  > .workbench-detail-actions {
+    flex: 0 0 auto;
+  }
+}
+.workbench-orders > header,
+.workbench-header > header {
+  min-height: 48px;
+  padding-block: 6px;
+  h2 {
+    line-height: 1.4;
+  }
+  .workbench-panel__subtitle {
+    display: block;
+    line-height: 1.35;
+  }
 }
 .workbench-master-grid {
-  min-height: 160px;
+  min-height: 0;
   flex: 1;
 }
 .workbench-panel-note {
@@ -149,33 +176,55 @@
 .workbench-document {
   height: 100%;
   min-width: 0;
+  min-height: 0;
   display: grid;
   grid-template-columns: 340px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   gap: 12px;
-  overflow: auto;
+  overflow: hidden;
   &--stacked {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(240px, auto) minmax(260px, auto);
+    overflow: auto;
   }
 }
 .workbench-header {
-  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  > header {
+    flex: 0 0 auto;
+  }
   :deep(.c-form) {
-    padding: 12px 14px;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: auto;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+    padding: 8px 14px;
   }
 }
 .workbench-details {
   flex: 1;
-  min-height: 250px;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   > header {
+    flex: 0 0 auto;
     min-height: 42px;
     padding-block: 4px;
+  }
+  > .n-alert {
+    flex: 0 0 auto;
   }
   :deep(.n-tabs) {
     flex: 1;
     min-width: 0;
   }
+}
+.workbench-details--content {
+  align-self: start;
+  flex: none;
 }
 .workbench-details--fullscreen {
   position: fixed;
@@ -190,6 +239,11 @@
   flex-direction: column;
   min-height: 0;
   flex: 1;
+  > .workbench-detail-actions,
+  > .workbench-totals,
+  > .workbench-panel-note {
+    flex: 0 0 auto;
+  }
 }
 .workbench-payment > .workbench-panel-note {
   border-top: 0;
@@ -202,7 +256,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 6px;
-  padding: 8px 12px;
+  padding: 6px 12px;
   border-bottom: 1px solid var(--workbench-outline);
   > span {
     font-size: 11px;
@@ -211,8 +265,7 @@
 }
 .workbench-detail-grid,
 .workbench-payment-grid {
-  // 窄屏也为表头、空态插画与两级文案保留完整正文高度。
-  min-height: 220px;
+  min-height: 0;
   flex: 1;
 }
 // 网格宿主显式继承已分配高度，避免内部 100% 高度回退到最小高度。
@@ -224,8 +277,14 @@
   }
 }
 .workbench-detail-grid {
-  height: 280px;
   min-width: 0;
+}
+.workbench-grid--content {
+  flex: none;
+  height: auto;
+  :deep(.mach-vue-host) {
+    height: auto;
+  }
 }
 .workbench-content-grid {
   min-width: 0;
@@ -333,12 +392,55 @@
 .workbench-switch-dialog {
   width: min(480px, calc(100vw - 24px));
 }
+@media (max-height: 900px) {
+  .business-workbench {
+    padding-block: 4px;
+    gap: 4px;
+  }
+  .business-workbench :deep(.business-page-heading) {
+    padding-bottom: 0;
+  }
+  .business-workbench :deep(.business-page-heading__icon) {
+    width: 32px;
+    height: 32px;
+  }
+  .workbench-layout {
+    min-height: 554px;
+  }
+  .business-workbench .sales-metrics,
+  .business-workbench .workbench-status--hint,
+  .business-workbench :deep(.business-page-heading__eyebrow),
+  .business-workbench :deep(.business-page-heading__identity p) {
+    display: none;
+  }
+}
+.business-workbench--stacked,
+.business-workbench--preview.business-workbench--stacked {
+  height: auto;
+  min-height: 100%;
+  .workbench-layout {
+    flex: none;
+    height: max(56rem, 90dvh);
+  }
+}
+@media (max-height: 760px) {
+  .business-workbench,
+  .business-workbench--preview {
+    height: auto;
+    min-height: 100%;
+    .workbench-layout {
+      flex: none;
+      height: max(500px, 70dvh);
+    }
+  }
+  .business-workbench--stacked .workbench-layout,
+  .business-workbench--preview.business-workbench--stacked .workbench-layout {
+    height: max(56rem, 90dvh);
+  }
+}
 @media (max-width: 860px) {
   .business-workbench {
     padding: 12px;
-  }
-  .workbench-layout {
-    height: 1160px;
   }
 }
 

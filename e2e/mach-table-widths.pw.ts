@@ -96,7 +96,7 @@ test('固定列只扣一次，宽屏填满、短内容列受限，窄屏保留�
   expect(narrow.widths.amount).toBeGreaterThanOrEqual(138)
 })
 
-test('内容自适应以后继续填满，刷新和手动拖拽保留各自列宽语义', async ({
+test('自适应和容器缩放填满，手动拖拽只改变当前列并保留偏好', async ({
   page,
 }) => {
   await header(page, 'customer').locator('.mach-menu-btn').click()
@@ -131,6 +131,7 @@ test('内容自适应以后继续填满，刷新和手动拖拽保留各自列�
   // 等待启动遮罩退场及手柄可交互，避免原始鼠标事件点中遮罩。
   await resize.hover()
   const before = (await customer.boundingBox())!
+  const beforeDrag = await layout(page)
   const handle = (await resize.boundingBox())!
   await page.mouse.move(
     handle.x + handle.width / 2,
@@ -147,10 +148,16 @@ test('内容自适应以后继续填满，刷新和手动拖拽保留各自列�
   await expect(page.locator('.mach-root')).not.toHaveClass(
     /mach-root--resizing/
   )
-  await expectFilled(page)
   await expect
     .poll(async () => (await customer.boundingBox())?.width)
     .toBeCloseTo(before.width + 50, 0)
+  const afterDrag = await layout(page)
+  for (const [id, width] of Object.entries(beforeDrag.widths)) {
+    if (id !== 'customer') expect(afterDrag.widths[id]).toBeCloseTo(width, 1)
+  }
+  // 单列手动加宽保留其他列的当前宽度；真实容器变宽后再按自动模式重新分配。
+  expect(afterDrag.filled).toBeCloseTo(beforeDrag.filled + 50, 0)
+  expect(afterDrag.scrollWidth).toBeGreaterThan(afterDrag.available)
   await page.setViewportSize({ width: 3440, height: 1080 })
   await expectFilled(page)
   await expect

@@ -7,7 +7,12 @@
 -->
 <template>
   <main
+    ref="container"
     class="ps-page remote-page"
+    :class="{
+      'remote-page--stacked': stacked,
+      'remote-page--preview': isPreview,
+    }"
     data-testid="remote-workbench"
   >
     <PageHeading
@@ -99,142 +104,171 @@
       >
     </div>
     <div class="remote-workspace">
-      <section
-        class="ps-panel remote-orders"
-        aria-label="远程订单列表"
+      <C_SplitPane
+        class="remote-main-split"
+        :direction="stacked ? 'vertical' : 'horizontal'"
+        :default-size="40"
+        :min-first-size="stacked ? 240 : 360"
+        :min-second-size="stacked ? 500 : 520"
+        :gutter-size="10"
+        aria-label="订单列表与单据协同分栏"
       >
-        <header class="ps-panel-heading"
-          ><h2>订单台账</h2><span>{{ orders.total.value }} 笔订单</span></header
-        >
-        <div class="ps-toolbar"
-          ><span>点击行联动明细，点击蓝色单号查看详情</span
-          ><NButton
-            size="small"
-            :render-icon="actionIcons.refresh"
-            :loading="orders.loading.value"
-            @click="orders.retry"
-            >{{ orders.error.value ? '重试订单' : '刷新订单' }}</NButton
-          ></div
-        >
-        <div class="ps-grid remote-order-grid">
-          <MachTable
-            :ref="masterGrid.ref"
-            v-bind="{ ...GRID_CONFIG, ...orders.bindings.value }"
-            :column-defs="orderColumns"
-            :row-style-rules="rowStyles"
-            @row-clicked="onOrderClicked"
-          />
-        </div>
-        <footer class="remote-list-note"
-          >订单与明细分别分页、加载及重试。末页的最后一笔订单尚无商品明细。</footer
-        >
-      </section>
-      <div class="remote-detail-stack">
-        <section
-          class="ps-panel remote-document"
-          aria-label="当前订单草稿"
-        >
-          <header class="ps-panel-heading"
-            ><h2 data-testid="remote-active-order">{{
-              activeOrder?.orderNo ?? '选择一笔订单'
-            }}</h2
-            ><NTag
-              v-if="activeOrder"
-              :type="dirty ? 'warning' : 'success'"
-              size="small"
-              :bordered="false"
-              >{{ dirty ? '未保存' : '已保存' }}</NTag
-            ></header
+        <template #first>
+          <section
+            class="ps-panel remote-orders"
+            aria-label="远程订单列表"
           >
-          <template v-if="activeOrder">
-            <p
-              v-if="currentOutsidePage"
-              class="remote-current-note"
-              role="status"
-              >当前单据不在本页查询结果中，仍保留右侧协同与草稿。</p
+            <header class="ps-panel-heading"
+              ><h2>订单台账</h2
+              ><span>{{ orders.total.value }} 笔订单</span></header
             >
-            <div class="remote-document-context"
-              ><strong>{{ activeOrder.customer }}</strong
-              ><span>交付日期 {{ activeOrder.delivery }}</span
-              ><span>订货量 {{ activeOrder.weight.toFixed(3) }} t</span></div
-            >
-            <div class="remote-form"
-              ><C_Form
-                ref="form"
-                v-model="draft"
-                :options="formFields"
-                :config="formConfig"
-            /></div>
-            <div class="remote-document-actions"
+            <div class="ps-toolbar"
+              ><span>点击行联动明细，点击蓝色单号查看详情</span
               ><NButton
                 size="small"
-                :render-icon="actionIcons.restore"
-                :disabled="!dirty || busy"
-                @click="restoreDraft"
-                >恢复草稿</NButton
-              ><NButton
-                size="small"
-                type="primary"
-                :render-icon="actionIcons.contentSaveOutline"
-                :disabled="!dirty || busy"
-                :loading="saving"
-                @click="saveDraft"
-                >保存当前订单</NButton
+                :render-icon="actionIcons.refresh"
+                :loading="orders.loading.value"
+                @click="orders.retry"
+                >{{ orders.error.value ? '重试订单' : '刷新订单' }}</NButton
               ></div
             >
-          </template>
-          <div
-            v-else
-            class="remote-await"
-            >{{
-              orders.loading.value
-                ? '正在查询订单…'
-                : '从左侧订单台账选择一笔订单'
-            }}</div
+            <div class="ps-grid remote-order-grid">
+              <MachTable
+                :ref="masterGrid.ref"
+                v-bind="{ ...GRID_CONFIG, ...orders.bindings.value }"
+                :column-defs="orderColumns"
+                :row-style-rules="rowStyles"
+                @row-clicked="onOrderClicked"
+              />
+            </div>
+          </section>
+        </template>
+        <template #second>
+          <C_SplitPane
+            class="remote-detail-stack"
+            direction="vertical"
+            :default-size="36"
+            :min-first-size="220"
+            :min-second-size="260"
+            :gutter-size="10"
+            aria-label="订单主档与商品明细分栏"
           >
-        </section>
-        <section
-          class="ps-panel"
-          aria-label="远程商品明细"
-        >
-          <header class="ps-panel-heading"
-            ><h2>商品明细</h2
-            ><span
-              >{{ details.total.value }} 项 · 已选
-              {{ details.selectedKeys.value.length }} 项</span
-            ></header
-          >
-          <div class="ps-toolbar remote-detail-toolbar"
-            ><NSelect
-              v-model:value="variant"
-              :options="VARIANTS"
-              size="small"
-              :disabled="!activeOrder"
-              aria-label="明细字段方案"
-            /><span>{{
-              acceptedVariant === 'quality' ? '质量追溯字段' : '交付明细字段'
-            }}</span
-            ><NButton
-              size="small"
-              :render-icon="actionIcons.refresh"
-              :loading="details.loading.value"
-              :disabled="!activeOrder"
-              @click="details.retry"
-              >{{ details.error.value ? '重试明细' : '刷新明细' }}</NButton
-            ></div
-          >
-          <div class="ps-grid remote-detail-grid"
-            ><MachTable
-              :ref="detailGrid.ref"
-              v-bind="{ ...GRID_CONFIG, ...details.bindings.value }"
-              :column-defs="detailColumns"
-              row-selection="multiple"
-          /></div>
-          <footer class="remote-list-note"
-            >切换字段方案与单据时同步获取列和数据；交付明细中的零重量、普通交付均为有效值。</footer
-          >
-        </section>
-      </div>
+            <template #first>
+              <section
+                class="ps-panel remote-document"
+                aria-label="当前订单草稿"
+              >
+                <header class="ps-panel-heading"
+                  ><h2 data-testid="remote-active-order">{{
+                    activeOrder?.orderNo ?? '选择一笔订单'
+                  }}</h2
+                  ><NTag
+                    v-if="activeOrder"
+                    :type="dirty ? 'warning' : 'success'"
+                    size="small"
+                    :bordered="false"
+                    >{{ dirty ? '未保存' : '已保存' }}</NTag
+                  ></header
+                >
+                <template v-if="activeOrder">
+                  <div class="remote-document-body">
+                    <p
+                      v-if="currentOutsidePage"
+                      class="remote-current-note"
+                      role="status"
+                      >当前单据不在本页查询结果中，仍保留右侧协同与草稿。</p
+                    >
+                    <div class="remote-document-context"
+                      ><strong>{{ activeOrder.customer }}</strong
+                      ><span>交付日期 {{ activeOrder.delivery }}</span
+                      ><span
+                        >订货量 {{ activeOrder.weight.toFixed(3) }} t</span
+                      ></div
+                    >
+                    <div class="remote-form"
+                      ><C_Form
+                        ref="form"
+                        v-model="draft"
+                        :options="formFields"
+                        :config="formConfig"
+                    /></div>
+                  </div>
+                  <div class="remote-document-actions"
+                    ><NButton
+                      size="small"
+                      :render-icon="actionIcons.restore"
+                      :disabled="!dirty || busy"
+                      @click="restoreDraft"
+                      >恢复草稿</NButton
+                    ><NButton
+                      size="small"
+                      type="primary"
+                      :render-icon="actionIcons.contentSaveOutline"
+                      :disabled="!dirty || busy"
+                      :loading="saving"
+                      @click="saveDraft"
+                      >保存当前订单</NButton
+                    ></div
+                  >
+                </template>
+                <div
+                  v-else
+                  class="remote-document-body remote-await"
+                  >{{
+                    orders.loading.value
+                      ? '正在查询订单…'
+                      : '从左侧订单台账选择一笔订单'
+                  }}</div
+                >
+              </section>
+            </template>
+            <template #second>
+              <section
+                class="ps-panel remote-lines"
+                aria-label="远程商品明细"
+              >
+                <header class="ps-panel-heading"
+                  ><h2>商品明细</h2
+                  ><span
+                    >{{ details.total.value }} 项 · 已选
+                    {{ details.selectedKeys.value.length }} 项</span
+                  ></header
+                >
+                <div class="ps-toolbar remote-detail-toolbar"
+                  ><NSelect
+                    v-model:value="variant"
+                    :options="VARIANTS"
+                    size="small"
+                    :disabled="!activeOrder"
+                    aria-label="明细字段方案"
+                  /><span>{{
+                    acceptedVariant === 'quality'
+                      ? '质量追溯字段'
+                      : '交付明细字段'
+                  }}</span
+                  ><NButton
+                    size="small"
+                    :render-icon="actionIcons.refresh"
+                    :loading="details.loading.value"
+                    :disabled="!activeOrder"
+                    @click="details.retry"
+                    >{{
+                      details.error.value ? '重试明细' : '刷新明细'
+                    }}</NButton
+                  ></div
+                >
+                <div class="ps-grid remote-detail-grid"
+                  ><MachTable
+                    :ref="detailGrid.ref"
+                    v-bind="{ ...GRID_CONFIG, ...details.bindings.value }"
+                    :column-defs="detailColumns"
+                    row-selection="multiple"
+                /></div>
+              </section>
+            </template>
+          </C_SplitPane>
+        </template>
+      </C_SplitPane>
     </div>
     <NModal
       v-model:show="detailVisible"
@@ -298,6 +332,9 @@
   } from './data'
   defineOptions({ name: 'RemoteOrderWorkbench' })
   const {
+    isPreview,
+    container,
+    stacked,
     query,
     orders,
     details,

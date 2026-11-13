@@ -7,6 +7,30 @@
  */
 @use '../shared/workspace';
 @include workspace.page;
+.matrix-page {
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  > .business-page-heading,
+  > .matrix-metrics {
+    flex: 0 0 auto;
+  }
+}
+// 预览宿主只有 min-height；本页独立建立高度链，不改动其他预览页面。
+.matrix-page--preview {
+  height: calc(100dvh - 48px);
+}
+.matrix-panel {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  > .ps-panel-heading,
+  > .matrix-toolbar,
+  > .matrix-help {
+    flex: 0 0 auto;
+  }
+}
 .matrix-metrics {
   margin: 0;
   .has-warning dd {
@@ -35,9 +59,13 @@
   white-space: nowrap;
 }
 .matrix-grid {
-  height: min(630px, calc(100dvh - 350px));
-  min-height: 360px;
+  flex: 1 1 0;
+  min-height: 0;
   border-top: 1px solid var(--ps-border);
+  :deep(.mach-vue-host) {
+    height: 100%;
+    min-height: 0;
+  }
 }
 .matrix-help {
   display: flex;
@@ -146,5 +174,20 @@
   }
   .matrix-help > span {
     line-height: 1.6;
+  }
+}
+// 窄屏和矮屏保留可操作的表内区域，外层文档滚动承接标题、工具栏与说明。
+@media (max-width: 900px), (max-height: 760px) {
+  .matrix-page,
+  .matrix-page--preview {
+    height: auto;
+    min-height: 100%;
+    .matrix-panel {
+      flex: none;
+    }
+    .matrix-grid {
+      flex: none;
+      height: max(300px, 50dvh);
+    }
   }
 }

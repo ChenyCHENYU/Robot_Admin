@@ -16,6 +16,8 @@ import {
 } from '@agile-team/mach-table-vue'
 import { useMachTableQuery } from '@agile-team/mach-table-vue/workflows'
 import type { DialogReactive } from 'naive-ui'
+import { useResizeObserver } from '@vueuse/core'
+import { routeLocationKey } from 'vue-router'
 import { createDictionaryStore } from '@robot-admin/dictionary'
 import {
   useDictionary,
@@ -60,7 +62,7 @@ export { actionIcons } from '../shared/actionIcons'
 export const GRID_CONFIG = {
   ...BUSINESS_GRID,
   multiSort: true,
-  defaultColDef: { minWidth: 88, sortable: true, filter: false },
+  defaultColDef: { sortable: true, filter: false },
 }
 export const VARIANTS = [
   { value: 'delivery', label: '交付明细' },
@@ -90,6 +92,14 @@ const DRAFT_FIELDS: FormOption<OrderDraft>[] = [
 
 /** 远程主从只组合公开 query bindings；独立字典通过普通格式化函数消费。 */
 export function useRemoteWorkbench() {
+  const route = inject(routeLocationKey, undefined)
+  const isPreview = computed(() => route?.path.startsWith('/preview/') ?? false)
+  const container = ref<HTMLElement | null>(null)
+  const stacked = ref(false)
+  useResizeObserver(container, entries => {
+    const width = entries[0]?.contentRect.width ?? 0
+    stacked.value = width > 0 && width < 1040
+  })
   const message = useMessage()
   const dialog = useDialog()
   const faults = reactive({ ...DEFAULT_FAULTS })
@@ -366,6 +376,7 @@ export function useRemoteWorkbench() {
         valueFormatter: ({ value }: { value: unknown }) => urgent.label(value),
       }),
       ...(field.kind === 'status' && {
+        valueFormatter: ({ value }: { value: unknown }) => status.label(value),
         render: (row: RemoteLine) => statusCell(row[field.key]),
       }),
     }
@@ -376,14 +387,13 @@ export function useRemoteWorkbench() {
     {
       field: 'orderNo',
       headerName: '订单编号',
-      minWidth: 176,
       render: row => recordLink(row.orderNo, () => openDetail(row)),
     },
-    { field: 'customer', headerName: '订货客户', minWidth: 112 },
+    { field: 'customer', headerName: '订货客户', flex: 1 },
     {
       field: 'status',
       headerName: '计划状态',
-      minWidth: 100,
+      valueFormatter: ({ value }) => status.label(value),
       render: row => statusCell(row.status),
     },
     {
@@ -391,9 +401,9 @@ export function useRemoteWorkbench() {
       headerName: '订货量 (t)',
       valueFormatter: ({ value }) => weightCodec.format(value),
     },
-    { field: 'delivery', headerName: '交付日期', minWidth: 112 },
+    { field: 'delivery', headerName: '交付日期' },
     actionsColumn<RemoteOrder>({
-      width: 70,
+      width: 64,
       actions: [
         {
           icon: 'delete',
@@ -521,6 +531,9 @@ export function useRemoteWorkbench() {
     if (event.rowNode.data) chooseOrder(event.rowNode.data)
   }
   return {
+    isPreview,
+    container,
+    stacked,
     api,
     faults,
     query,

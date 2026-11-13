@@ -7,6 +7,7 @@
  */
 import { expect, test, type Page } from '@playwright/test'
 import { installMockAdminSession } from './auth-fixture'
+import { expectFirstPagerUsable } from './d_paginationGeometry'
 
 /** 用实际页面与正式组件验收，接口仅使用本页隔离的异步演示。 */
 async function open(page: Page) {
@@ -31,6 +32,82 @@ async function exercise(page: Page, name: string) {
 test.beforeEach(async ({ page }) => {
   await installMockAdminSession(page)
   await page.setViewportSize({ width: 1720, height: 1100 })
+})
+
+test('左右工作区等高，右侧上下可拖动；调整尺寸保留搜索位置和草稿，窄屏堆叠', async ({
+  page,
+}, info) => {
+  await open(page)
+  const root = page.getByTestId('remote-workbench')
+  const orders = root.locator('[aria-label="远程订单列表"]')
+  const document = root.locator('[aria-label="当前订单草稿"]')
+  const details = root.locator('[aria-label="远程商品明细"]')
+  const outer = root.getByRole('separator', {
+    name: '订单列表与单据协同分栏',
+    exact: true,
+  })
+  const inner = root.getByRole('separator', {
+    name: '订单主档与商品明细分栏',
+    exact: true,
+  })
+  await expect(outer).toHaveAttribute('aria-orientation', 'vertical')
+  await expect(inner).toHaveAttribute('aria-orientation', 'horizontal')
+  const boxes = await Promise.all(
+    [orders, document, details].map(item => item.boundingBox())
+  )
+  expect(Math.abs(boxes[0]!.y - boxes[1]!.y)).toBeLessThanOrEqual(1)
+  expect(
+    Math.abs(boxes[0]!.y + boxes[0]!.height - boxes[2]!.y - boxes[2]!.height)
+  ).toBeLessThanOrEqual(1)
+  await expect(root.locator('.ps-search')).toBeInViewport({ ratio: 1 })
+  await expectFirstPagerUsable(details.locator('.mach-pagination'))
+  await page
+    .getByRole('textbox', { name: '订单备注', exact: true })
+    .fill('调整尺寸时保留此草稿')
+  const searchBefore = await root.locator('.ps-search').boundingBox()
+  await outer.focus()
+  await outer.press('ArrowRight')
+  const valueBefore = await inner.getAttribute('aria-valuenow')
+  const handle = await inner.locator('.split-gutter__visual').boundingBox()
+  await page.mouse.move(
+    handle!.x + handle!.width / 2,
+    handle!.y + handle!.height / 2
+  )
+  await page.mouse.down()
+  await page.mouse.move(
+    handle!.x + handle!.width / 2,
+    handle!.y + handle!.height / 2 + 35,
+    { steps: 4 }
+  )
+  await page.mouse.up()
+  await expect(inner).not.toHaveAttribute('aria-valuenow', valueBefore!)
+  const searchAfter = await root.locator('.ps-search').boundingBox()
+  expect(Math.abs(searchBefore!.y - searchAfter!.y)).toBeLessThanOrEqual(1)
+  await expect(
+    page.getByRole('textbox', { name: '订单备注', exact: true })
+  ).toHaveValue('调整尺寸时保留此草稿')
+  await expectFirstPagerUsable(details.locator('.mach-pagination'))
+  await expect(
+    page.getByRole('button', { name: '保存当前订单', exact: true })
+  ).toBeInViewport({ ratio: 1 })
+  await page.screenshot({
+    path: info.outputPath('remote-resizable-workspace.png'),
+    fullPage: true,
+  })
+  await page.setViewportSize({ width: 980, height: 800 })
+  await expect(root).toHaveClass(/remote-page--stacked/)
+  await expect(outer).toHaveAttribute('aria-orientation', 'horizontal')
+  await expect(
+    page.getByRole('textbox', { name: '订单备注', exact: true })
+  ).toHaveValue('调整尺寸时保留此草稿')
+  await expect(
+    details.locator('.mach-pane--center .mach-row[data-id="RO-1-L1"]')
+  ).toHaveCount(1)
+  expect(
+    await root.evaluate(
+      element => element.scrollWidth <= element.clientWidth + 1
+    )
+  ).toBe(true)
 })
 
 test('主从各自分页，切单清选择回首页；草稿先确认，编号只打开详情', async ({
@@ -87,6 +164,7 @@ test('主从各自分页，切单清选择回首页；草稿先确认，编号�
     'SO-20261112-002'
   )
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
+  await expect(page.locator('.remote-order-modal')).toBeHidden()
   await page.screenshot({
     path: info.outputPath('remote-orders.png'),
     fullPage: true,

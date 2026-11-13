@@ -147,7 +147,7 @@ The application provides `compact` defaults for forms, search and editor modals.
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.40.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
+| **MachTable 0.40.2** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
@@ -157,7 +157,7 @@ MachTable is a separate data grid project. Core and Vue / React / XLSX adapters 
 
 Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
 
-The dependency and lockfile pin official npm **0.40.1**, with matching Vue and Core versions. The application composes data plugins. The grid provides generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
+The dependency and lockfile pin official npm **0.40.2**, with matching Vue and Core versions. The application composes data plugins. The grid provides generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
 
 The Super Table demo and the MachTable order list use their own default row numbers and pagination. Text and numeric columns are centered by default. Both grids accept `:pagination="false"` to hide pagination and `:row-number="false"` to hide automatic row numbers. For dynamic reports, pass the API's columns and rows to `C_Table` through `columns/data` or to MachTable through `column-defs/row-data`.
 
@@ -188,6 +188,8 @@ Native grid themes, compact controls, subtle panels and headers remain consisten
 - **Sales orders → 比对合同 (Compare contract)** compares a sample amendment for the first pending order. Apply selected fields to the order draft, then save the order. Customer lookup and selection are available within the create/edit dialog.
 - **Shipping collaboration → 发运汇总 (Shipping summary)** groups all filtered tasks by destination, status, grade or customer. View totals and drill into a group.
 
+Sales, remote collaboration and inspection workspaces use the remaining desktop height, with stacked or document scrolling layouts on narrow and short screens. Remote collaboration supports horizontal and vertical split handles. Columns use bounded content sizing, with optional flex for descriptive fields. Resizing affects only the target column and preserves complete headers. Matrix inputs retain the full value and time width, with a separate toolbar that avoids grid edges. Loading follows the theme and reduced-motion preference; short empty grids scale the illustration while preserving readable text.
+
 These workflows use local sample data.
 
 Remote collaboration uses the existing query workflow. The project validates and adapts the response once; only accepted responses update dynamic columns. The optional failure exercises cover slow or failed detail requests, empty results and dictionary retry. Dictionaries refresh cell labels without requerying business data; 0 and false retain their types. Delete the only pending order on the last page to experience automatic page recovery.
@@ -200,11 +202,13 @@ Business lists include row numbers and pinned edit/delete actions. Blue record l
 
 Detail dialogs are centered and adapt to the viewport, with internal scrolling on smaller screens. Both tables preserve complete header text independently of cell ellipsis.
 
-Omitting `preset` selects built-in `list`, with row numbers, pagination and header filtering, menu and resizing. `preset="detail"` selects plain headers, read-only columns and bounded content height without pagination or header tools. Explicit props take precedence. Compact density, fit layout, stripes and borders are shared once in `src/config/mach-table.ts` through the official async plugin. Heat actuals show three compact comparison grids beside the full chemistry grid; narrow screens stack the cards.
+Omitting `preset` selects built-in `list`, with row numbers, pagination and header filtering, menu and resizing. `preset="detail"` selects plain headers, read-only columns and bounded content height without pagination or header tools. Explicit props take precedence. Compact density, stripes and borders are shared once in `src/config/mach-table.ts` through the official async plugin. Heat actuals show three compact comparison grids beside the full chemistry grid; narrow screens stack the cards.
 
 MachTable main lists use built-in pagination, and C_Table uses Naive UI pagination. Heat, chemistry, inventory and dialog detail grids share `domLayout: "autoHeight"` and `maxBodyHeight: 330`. They fit short results with 8px of bottom spacing and scroll virtually in the same grid when the body exceeds 330px. Main workspaces scroll within their own height. Short C_Table lists shrink to fit within `display.maxHeight`.
 
 The same MachTable grid restores its viewport when switching between empty, short and large datasets, with wrapped-content measurement and asynchronous edit targets. Programmatic selection respects `rowSelection`; shipping inventory and sales lines explicitly enable multiple selection for their bulk actions.
+
+Version 0.40.2 isolates manual column resizing, restores canceled widths and gives compact editors the full input width with an edge-aware action toolbar. Short empty grids adapt the illustration to the available height.
 
 Version 0.40.1 fixes last-page recovery, stale manual-query results and merged-cell painting beneath later rows.
 
@@ -337,7 +341,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.40.1** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.40.2** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

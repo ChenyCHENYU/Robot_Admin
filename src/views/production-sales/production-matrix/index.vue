@@ -8,6 +8,7 @@
 <template>
   <main
     class="ps-page matrix-page"
+    :class="{ 'matrix-page--preview': isPreview }"
     data-testid="production-matrix"
   >
     <C_Density density="compact">
@@ -210,6 +211,8 @@
     useProductionMatrix,
   } from './data'
   defineOptions({ name: 'ProductionMatrixWorkbench' })
+  const route = useRoute()
+  const isPreview = computed(() => route.path.startsWith('/preview/'))
   const themeStore = s_themeStore()
   const {
     rows,
