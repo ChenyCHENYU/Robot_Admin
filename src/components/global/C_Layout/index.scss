@@ -57,13 +57,54 @@
   opacity: 0.65;
 }
 
-.menu-scroll-container.menu-signature {
-  // 只在整个导航区域铺一层品牌底色，分组内的菜单表面保持透明。
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--app-primary) 5%, var(--app-menu-bg)) 0,
-    var(--app-menu-bg) 240px
-  );
+.menu-signature {
+  // 一层稳定的品牌材质承托整个导航，行表面只通过透光强度区分状态。
+  background:
+    radial-gradient(
+      ellipse 240px 420px at 0 0,
+      color-mix(in srgb, var(--app-primary) 10%, transparent),
+      transparent
+    ),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 65%),
+    var(--app-menu-bg);
+
+  :deep([data-ra-sidebar-menu] .n-menu-item-content) {
+    --_ra-menu-light: rgba(255, 255, 255, 0.025);
+    --_ra-menu-rim: rgba(255, 255, 255, 0.04);
+    --_ra-menu-shadow: 0 0 transparent;
+
+    // 色块内收，保留原生文字缩进和完整点击区域；不为每行建立模糊滤镜层。
+    &::before {
+      inset-inline: 14px;
+      border-radius: 10px;
+      background-image: linear-gradient(
+        145deg,
+        var(--_ra-menu-light),
+        rgba(255, 255, 255, 0.005) 70%
+      );
+      box-shadow:
+        inset 0 1px 0 var(--_ra-menu-rim),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.015),
+        var(--_ra-menu-shadow);
+      transition-property: background-color, box-shadow;
+    }
+
+    &:where(:not(.n-menu-item-content--disabled)):hover {
+      --_ra-menu-light: rgba(255, 255, 255, 0.075);
+      --_ra-menu-rim: rgba(255, 255, 255, 0.12);
+    }
+
+    // Naive 仍管理主色底与悬停底色，选中项只加强同一材质的高光与近距离阴影。
+    &.n-menu-item-content--selected {
+      --_ra-menu-light: rgba(255, 255, 255, 0.1);
+      --_ra-menu-rim: rgba(255, 255, 255, 0.2);
+      --_ra-menu-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+      &::after {
+        inset-inline-start: 14px;
+      }
+    }
+  }
 }
 
 .workspace-tags-target {

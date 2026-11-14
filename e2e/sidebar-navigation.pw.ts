@@ -83,8 +83,15 @@ for (const variant of [
     })
     const selected = menuItem(navigation, '发运协同指挥台')
     await expect(selected).toHaveClass(/--selected/)
-    await menuItem(navigation, '示范组件').click()
-    await menuItem(navigation, '表格模块').click()
+    const demos = menuItem(navigation, '示范组件')
+    await demos.click()
+    await expect(demos).not.toHaveClass(/--collapsed/)
+    // 父级展开完成后再点击子级，避免 WebKit 在展开过渡中使用尚未稳定的点击坐标。
+    await settleNavigation(page)
+    const tables = menuItem(navigation, '表格模块')
+    await tables.click()
+    await expect(tables).not.toHaveClass(/--collapsed/)
+    await expect(menuItem(navigation, '超级表格')).toBeVisible()
     await page.mouse.move(1000, 10)
     await settleNavigation(page)
 
@@ -94,6 +101,7 @@ for (const variant of [
         menuItem(navigation, title).evaluate(element => {
           const rect = element.getBoundingClientRect()
           const style = getComputedStyle(element)
+          const surface = getComputedStyle(element, '::before')
           return {
             height: rect.height,
             outerHeight: element.parentElement!.getBoundingClientRect().height,
@@ -102,6 +110,9 @@ for (const variant of [
             padding: Number.parseFloat(style.paddingLeft),
             shadow: style.boxShadow,
             filter: style.backdropFilter,
+            surface: surface.backgroundImage,
+            surfaceLeft: Number.parseFloat(surface.left),
+            surfaceRight: Number.parseFloat(surface.right),
           }
         })
       )
@@ -113,29 +124,24 @@ for (const variant of [
       expect(row.right).toBeCloseTo(geometry[0]!.right, 1)
       expect(row.shadow).toBe('none')
       expect(row.filter).toBe('none')
+      expect(row.surfaceLeft).toBe(variant.menu === 'signature' ? 14 : 8)
+      expect(row.surfaceRight).toBe(variant.menu === 'signature' ? 14 : 8)
+      if (variant.menu === 'signature') {
+        expect(row.surface).toContain('linear-gradient(')
+      } else {
+        expect(row.surface).toBe('none')
+      }
     }
     expect(geometry.map(row => row.padding)).toEqual([20, 36, 52])
-    const guide = navigation
-      .locator('[data-ra-sidebar-menu] > .n-submenu > .n-submenu-children')
-      .filter({ has: page.getByText('发运协同指挥台', { exact: true }) })
-    const rail = await guide.evaluate(element => {
-      const style = getComputedStyle(element)
-      return {
-        image: style.backgroundImage,
-        size: style.backgroundSize,
-        repeat: style.backgroundRepeat,
-        x: Number.parseFloat(style.backgroundPositionX),
-        font: Number.parseFloat(style.fontSize),
-      }
-    })
-    expect(rail.image).toContain('linear-gradient(')
-    expect(rail.size).toMatch(/^1px\s/)
-    expect(rail.repeat).toBe('no-repeat')
-    expect(rail.x).toBe(rail.font * 2)
-    const nested = navigation.locator(
-      '[data-ra-sidebar-menu] > .n-submenu > .n-submenu-children .n-submenu-children'
+    const groups = navigation.locator(
+      '[data-ra-sidebar-menu] .n-submenu-children'
     )
-    await expect(nested.first()).toHaveCSS('background-image', 'none')
+    await expect(groups.first()).toBeVisible()
+    await Promise.all(
+      (await groups.all()).map(group =>
+        expect(group).toHaveCSS('background-image', 'none')
+      )
+    )
     await expect(selected.locator('svg').first()).toBeVisible()
     expect((await selected.locator('svg').first().boundingBox())!.width).toBe(
       18
@@ -149,18 +155,49 @@ for (const variant of [
         parent: getComputedStyle(parent, '::before').backgroundColor,
         marker: getComputedStyle(element, '::after').width,
         markerColor: getComputedStyle(element, '::after').backgroundColor,
+        surface: getComputedStyle(element, '::before').backgroundImage,
+        shadow: getComputedStyle(element, '::before').boxShadow,
+        parentShadow: getComputedStyle(parent, '::before').boxShadow,
+        parentSurface: getComputedStyle(parent, '::before').backgroundImage,
+        duration: getComputedStyle(element, '::before').transitionDuration,
       }
     })
     expect(states.active).not.toBe('rgba(0, 0, 0, 0)')
     expect(states.parent).toBe('rgba(0, 0, 0, 0)')
     expect(states.marker).toBe('2px')
     expect(states.markerColor).not.toBe('rgba(0, 0, 0, 0)')
+    expect(states.duration).toBe('0s')
+    if (variant.menu === 'signature') {
+      expect(states.surface).toContain('linear-gradient(')
+      expect(states.parentSurface).toContain('linear-gradient(')
+      expect(states.surface).not.toBe(states.parentSurface)
+      expect(states.shadow).not.toBe('none')
+    } else {
+      expect(states.surface).toBe('none')
+      expect(states.shadow).toBe('none')
+      expect(states.parentShadow).toBe('none')
+      expect(states.parentSurface).toBe('none')
+    }
     await expect(page.locator('html')).toHaveCSS(
       '--app-primary',
       variant.primary
     )
+    const ordinary = menuItem(navigation, '生产计划调度')
+    await ordinary.hover()
+    await expect(ordinary).toHaveCSS('transform', 'none')
+    if (variant.menu === 'signature') {
+      const hoverSurface = await ordinary.evaluate(
+        element => getComputedStyle(element, '::before').backgroundImage
+      )
+      expect(hoverSurface).not.toBe(geometry[1]!.surface)
+    }
     await selected.hover()
     await expect(selected).toHaveCSS('transform', 'none')
+    expect(
+      await selected.evaluate(
+        element => getComputedStyle(element, '::before').backgroundImage
+      )
+    ).toBe(states.surface)
     await page.mouse.move(1000, 10)
     await settleNavigation(page)
     const logoTop = (await page.locator('.menu-top').boundingBox())!.y

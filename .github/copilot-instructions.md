@@ -56,7 +56,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 5 个关联仓�
 | 包名                               | 版本   | 功能                                   |
 | ---------------------------------- | ------ | -------------------------------------- |
 | `@robot-admin/naive-ui-components` | 0.40.1 | 63 个业务组件                          |
-| `@robot-admin/layout`              | 3.3.2  | 6 种布局 + 精简适配 + 核心协议         |
+| `@robot-admin/layout`              | 3.3.3  | 6 种布局 + 精简适配 + 核心协议         |
 | `@robot-admin/dictionary`          | 0.6.1  | 枚举、远程字典、详情字段绑定与隔离状态 |
 | `@robot-admin/request-core`        | 0.7.0  | 实例化请求编排 + 函数式 Headless CRUD  |
 | `@robot-admin/theme`               | 0.6.1  | 分层核心 + Vue Store + Naive UI 适配   |
