@@ -129,7 +129,7 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.31.5` | 61 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.35.0` | 61 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`  | 静态枚举、远程字典、隔离缓存及详情字段绑定                 | 表单、搜索、详情与两种表格共享翻译     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
@@ -147,7 +147,7 @@ flowchart TB
 
 | 能力                 | 接入方式                                                                                       | 实际用途                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **MachTable 0.40.2** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
+| **MachTable 0.41.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
 | 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                      |
 | 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译          |
 | 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                        |
@@ -157,7 +157,7 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 
 在「表格管理 → MachTable → 顺序调整」（`/#/demo/table-manage/mach-table`）体验 30 条订单的行排序。该场景按需使用 `/ordering`：勾选不连续的多项，拖动其中一项手柄可按原相对顺序一起移动；支持边缘滚动、Esc、Alt + ↑ / ↓ 和独立的顺序撤销/重做。搜索后的键盘移动以相邻可见订单为目标，隐藏订单仍保留在完整数据中。现有工具栏可选择 450ms 模拟保存、失败回滚或版本冲突；冲突后可重新加载模拟服务器顺序。状态区显示保存结果和双方版本，切换场景保留已确认顺序并取消未完成保存。所有传输均为本地模拟，不写订单接口。
 
-当前安装与锁文件固定为官方 npm **0.40.2**，Vue 适配与 Core 版本一致。字典等数据插件只在项目组合，表格保留通用值回调、原生分页、有界测宽、完整表头、主题空态与状态配色。生产计划、销售订单和发运任务池可直接体验。
+当前安装与锁文件固定为官方 npm **0.41.0**，Vue 适配与 Core 版本一致。字典等数据插件只在项目组合，表格保留通用值回调、原生分页、有界测宽、完整表头、主题空态与状态配色。生产计划、销售订单和发运任务池可直接体验。
 
 「超级表格」和 MachTable 的订单列表均使用各自默认的序号和分页，普通列和数值列均默认居中。两者都可用 `:pagination="false"` 关闭分页，用 `:row-number="false"` 关闭自动序号。动态报表由接口层提供列和行，再分别传给 `C_Table` 的 `columns/data` 或 MachTable 的 `column-defs/row-data`。
 
@@ -190,7 +190,11 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 - **远程订单协同 → 交付明细 / 质量追溯** 由同一个接口响应提交列与数据；旧响应迟到不能覆盖新表头。两张表独立分页、加载和重试，字典只刷新显示，不重查业务数据。顶部「异常演练」可验证慢响应、失败和空明细。列头筛选在此示例明确关闭，搜索与多列排序在本地接口真实执行。
 - **生产检测矩阵 → 检测记录** 将当前日期范围投影为完整明细快照；预览、CSV、XLSX 与打印共用此快照，不截取屏幕虚拟行。XLSX 保留数值类型，缺测与零值分开。七天/二十八天切换只改变列可见性，隐藏日期的修改继续参与保存、撤销与恢复。
 
-销售、远程协同与检测矩阵在桌面按剩余可用高度组织工作区，窄屏或矮屏自然滚动；远程协同可拖动左右和右侧上下分栏。普通列默认按显示内容有界测宽，仅描述列按需设置 `flex` 吸收余量；手动调宽只影响目标列，完整表头不能被压窄。矩阵编辑时数值和时间独占输入宽度，确认/取消工具条自动避让表格边界。加载使用主题数据条动效，尊重减少动画设置。
+销售、远程协同与检测矩阵在桌面按剩余可用高度组织工作区，窄屏或矮屏自然滚动；远程协同可拖动左右和右侧上下分栏。
+
+MachTable 与 C_Table 的自动业务列默认按表头与显示内容的测量基准比例铺满可用余量，无需页面指定某列填充。序号、多选和操作等结构列保持紧凑，默认不参与调宽；显式列宽继续生效。列多或空间不足时保留合理基准，在表格内水平滚动。拖动只改变目标列，不重新挤压其他列；完整表头与列头控件共同构成最小宽度，不能拖到文字被遮挡。
+
+矩阵编辑时数值和时间独占输入宽度，确认/取消工具条自动避让表格边界。加载使用主题数据条动效，尊重减少动画设置。
 
 上述操作使用本地样例数据。
 
@@ -368,7 +372,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.40.2** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.41.0** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

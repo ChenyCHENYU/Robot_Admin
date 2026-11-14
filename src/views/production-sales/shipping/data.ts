@@ -154,7 +154,6 @@ export const SHIPMENT_TABLE_CONFIG = defineTableConfig<Shipment>({
     striped: true,
     bordered: true,
     singleLine: false,
-    scrollX: 1050,
     maxHeight: 330,
   },
 })
@@ -393,7 +392,6 @@ export function useShippingWorkbench() {
     {
       key: 'no',
       title: '发运单号',
-      width: 166,
       fixed: 'left',
       render: row => recordLink(row.no, () => operations.openDetail(row)),
     },
@@ -402,7 +400,6 @@ export function useShippingWorkbench() {
     {
       key: 'weightKg',
       title: '计划量 (t)',
-      width: 100,
       render: row => weightCodec.format(row.weightKg / 1000),
     },
     { key: 'destination', title: '目的地' },
@@ -410,7 +407,6 @@ export function useShippingWorkbench() {
     {
       key: 'plate',
       title: '车辆',
-      width: 112,
       render: row => row.plate || '待安排',
     },
     {
@@ -423,19 +419,18 @@ export function useShippingWorkbench() {
         ])
       ),
     },
-    { key: '_actions', title: '操作', width: 124, fixed: 'right' },
+    { key: '_actions', title: '操作', fixed: 'right' },
   ])
   const lotColumns = defineVueColumns<(typeof lots.value)[number]>([
     selectionColumn(),
     indexColumn({ headerName: '序号', width: 46 }),
-    { field: 'batch', headerName: '库存批号', width: 145 },
-    { field: 'location', headerName: '库位', width: 90 },
-    { field: 'grade', headerName: '钢种', width: 100 },
-    { field: 'specification', headerName: '规格 (mm)', minWidth: 170, flex: 1 },
+    { field: 'batch', headerName: '库存批号' },
+    { field: 'location', headerName: '库位' },
+    { field: 'grade', headerName: '钢种' },
+    { field: 'specification', headerName: '规格 (mm)', minWidth: 170 },
     {
       field: 'weightKg',
       headerName: '可配重量 (t)',
-      width: 130,
       valueFormatter: ({ value }) => weightCodec.format(Number(value) / 1000),
     },
     {

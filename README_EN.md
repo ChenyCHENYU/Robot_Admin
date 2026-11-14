@@ -129,7 +129,7 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.31.5`       | 61 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.35.0`       | 61 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`        | Static enums, resilient remote dictionaries, scoped cache and detail field bindings     | Shared translation for forms, search, details and both grids      |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
@@ -147,7 +147,7 @@ The application provides `compact` defaults for forms, search and editor modals.
 
 | Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.40.2** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
+| **MachTable 0.41.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
 | Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
 | Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
 | Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
@@ -157,7 +157,7 @@ MachTable is a separate data grid project. Core and Vue / React / XLSX adapters 
 
 Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
 
-The dependency and lockfile pin official npm **0.40.2**, with matching Vue and Core versions. The application composes data plugins. The grid provides generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
+The dependency and lockfile pin official npm **0.41.0**, with matching Vue and Core versions. The application composes data plugins. The grid provides generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
 
 The Super Table demo and the MachTable order list use their own default row numbers and pagination. Text and numeric columns are centered by default. Both grids accept `:pagination="false"` to hide pagination and `:row-number="false"` to hide automatic row numbers. For dynamic reports, pass the API's columns and rows to `C_Table` through `columns/data` or to MachTable through `column-defs/row-data`.
 
@@ -188,7 +188,11 @@ Native grid themes, compact controls, subtle panels and headers remain consisten
 - **Sales orders → 比对合同 (Compare contract)** compares a sample amendment for the first pending order. Apply selected fields to the order draft, then save the order. Customer lookup and selection are available within the create/edit dialog.
 - **Shipping collaboration → 发运汇总 (Shipping summary)** groups all filtered tasks by destination, status, grade or customer. View totals and drill into a group.
 
-Sales, remote collaboration and inspection workspaces use the remaining desktop height, with stacked or document scrolling layouts on narrow and short screens. Remote collaboration supports horizontal and vertical split handles. Columns use bounded content sizing, with optional flex for descriptive fields. Resizing affects only the target column and preserves complete headers. Matrix inputs retain the full value and time width, with a separate toolbar that avoids grid edges. Loading follows the theme and reduced-motion preference; short empty grids scale the illustration while preserving readable text.
+Sales, remote collaboration and inspection workspaces use the remaining desktop height, with stacked or document scrolling layouts on narrow and short screens. Remote collaboration supports horizontal and vertical split handles.
+
+MachTable and C_Table distribute spare space proportionally among automatic business columns, using measured headers and displayed content as their bases. Pages do not need to nominate a filler column. Row-number, selection and action columns stay compact and are not resizable by default; explicit widths remain effective. Crowded tables retain reasonable base widths and scroll horizontally within the grid. Dragging changes only the target column, preserving its peers. The complete header and its controls establish the minimum width, so resizing cannot hide the title.
+
+Matrix inputs retain the full value and time width, with a separate toolbar that avoids grid edges. Loading follows the theme and reduced-motion preference; short empty grids scale the illustration while preserving readable text.
 
 These workflows use local sample data.
 
@@ -341,7 +345,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.40.2** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.41.0** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

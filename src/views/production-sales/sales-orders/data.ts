@@ -688,7 +688,7 @@ export function useBusinessWorkbench() {
     },
     { field: 'contractNo', headerName: '合同编号', filter: true },
     { field: 'grade', headerName: '钢种', filter: true },
-    { field: 'section', headerName: '规格 (mm)', minWidth: 160, flex: 1 },
+    { field: 'section', headerName: '规格 (mm)', minWidth: 160 },
     { field: 'region', headerName: '区域', width: 80 },
     {
       field: 'targetWeight',
@@ -806,7 +806,6 @@ export function useBusinessWorkbench() {
       field: 'note',
       headerName: '备注',
       minWidth: 160,
-      flex: 1,
       editable: true,
     },
   ])
@@ -865,7 +864,7 @@ export function useBusinessWorkbench() {
     amount: string
   }>([
     indexColumn({ headerName: '序号', width: 46 }),
-    { field: 'stage', headerName: '币种', flex: 1 },
+    { field: 'stage', headerName: '币种' },
     {
       field: 'amount',
       headerName: '测算金额',

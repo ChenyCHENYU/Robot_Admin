@@ -389,7 +389,7 @@ export function useRemoteWorkbench() {
       headerName: '订单编号',
       render: row => recordLink(row.orderNo, () => openDetail(row)),
     },
-    { field: 'customer', headerName: '订货客户', flex: 1 },
+    { field: 'customer', headerName: '订货客户' },
     {
       field: 'status',
       headerName: '计划状态',

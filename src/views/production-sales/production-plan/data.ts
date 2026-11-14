@@ -448,7 +448,7 @@ export function useProductionPlan() {
     { field: 'cast', headerName: '浇次' },
     { field: 'grade', headerName: '钢种' },
     { field: 'section', headerName: '断面 (mm)' },
-    { field: 'customer', headerName: '客户', minWidth: 130, flex: 1 },
+    { field: 'customer', headerName: '客户', minWidth: 130 },
     {
       field: 'weight',
       headerName: '计划量 (t)',
@@ -515,7 +515,7 @@ export function useProductionPlan() {
   )
   const heatColumns = defineVueColumns<(typeof heatRows.value)[number]>([
     indexColumn({ headerName: '序号', width: 46 }),
-    { field: 'heatNo', headerName: '炉号', minWidth: 140, flex: 1 },
+    { field: 'heatNo', headerName: '炉号', minWidth: 140 },
     { field: 'furnace', headerName: '设备', width: 105 },
     { field: 'grade', headerName: '钢种', width: 100 },
     {
@@ -525,7 +525,7 @@ export function useProductionPlan() {
       valueFormatter: ({ value }) => weightCodec.format(value),
     },
     { field: 'start', headerName: '计划开炉', width: 100 },
-    { field: 'process', headerName: '工艺路线', minWidth: 160, flex: 1 },
+    { field: 'process', headerName: '工艺路线', minWidth: 160 },
     { field: 'status', headerName: '准备状态', width: 100 },
   ])
   const loads = computed(() =>

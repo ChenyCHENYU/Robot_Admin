@@ -182,7 +182,7 @@ export function createActualComparisonGroups(
 
 /** 三张小表共用业务列；表头、密度和布局由内置 detail 场景提供。 */
 export const ACTUAL_COMPARISON_COLUMNS = defineVueColumns<ActualComparisonRow>([
-  { field: 'name', headerName: '实绩项目', minWidth: 88, flex: 1 },
+  { field: 'name', headerName: '实绩项目', minWidth: 88 },
   {
     field: 'current',
     headerName: '当前值',
@@ -299,7 +299,7 @@ export function useProductionActual() {
     (typeof referenceRows.value)[number]
   >([
     indexColumn({ headerName: '序号', width: 46 }),
-    { field: 'name', headerName: '实绩项目', minWidth: 160, flex: 1 },
+    { field: 'name', headerName: '实绩项目', minWidth: 160 },
     {
       field: 'previous',
       headerName: '上一炉已保存值',
@@ -398,7 +398,7 @@ export function useProductionActual() {
   const chemicalColumns = defineVueColumns<(typeof chemicalRows.value)[number]>(
     [
       indexColumn({ headerName: '序号', width: 46 }),
-      { field: 'name', headerName: '检测项目', flex: 1 },
+      { field: 'name', headerName: '检测项目' },
       { field: 'unit', headerName: '单位', width: 80 },
       { field: 'min', headerName: '内控下限', width: 130 },
       { field: 'max', headerName: '内控上限', width: 130 },
