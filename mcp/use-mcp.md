@@ -34,7 +34,7 @@ AI：好的，根据类型定义，C_Form 的 Props 是 options + config，
 
 | 工具名               | 查询内容                                       | 推荐使用时机                      |
 | -------------------- | ---------------------------------------------- | --------------------------------- |
-| `list_components`    | 列出全部 51+ 个 C\_ 组件名                     | 不确定某个组件是否存在时          |
+| `list_components`    | 列出当前安装包公开的 C\_ 组件名                | 不确定某个组件是否存在时          |
 | `get_component_api`  | 获取指定组件的 Props/Emits/类型定义            | **每次使用 C\_ 组件前必查**       |
 | `list_routes`        | 列出所有已注册路由的 path/name/title           | 注册路由或做 `router.push` 跳转前 |
 | `list_api_endpoints` | 列出 `src/api/` 所有已有 API 函数              | 写接口前确认函数名是否已存在      |

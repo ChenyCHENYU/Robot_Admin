@@ -4,7 +4,7 @@
 
 > **本文件面向 AI 编程助手**（Copilot / Cursor / Claude 等）。
 > 在对本项目生态进行任何代码生成、修改或建议之前，**必须完整阅读本指南**。
-> 最后更新：2026-11-02
+> 最后更新：2026-11-14
 
 ## 目录
 
@@ -14,14 +14,15 @@
 
 ## 一、项目全景
 
-Robot Admin 是一个**企业级后台管理系统**生态，由 4 个关联仓库组成：
+Robot Admin 是一个**企业级后台管理系统**生态，由 5 个关联仓库组成：
 
-| 仓库                     | 简称   | 用途                                          | npm 包名                           |
-| ------------------------ | ------ | --------------------------------------------- | ---------------------------------- |
-| **Robot_Admin**          | 主项目 | Vue 3 SPA 后台应用                            | —                                  |
-| **naive-ui-components**  | 组件库 | 63 个业务组件（基于 Naive UI）                | `@robot-admin/naive-ui-components` |
-| **robot-admin-packages** | 包集合 | 8 个独立 npm 包（字典/指令/请求/布局/主题等） | `@robot-admin/*`                   |
-| **AgileTeam_Doc**        | 文档库 | VitePress 2.0 团队文档站                      | —                                  |
+| 仓库                     | 简称     | 用途                                          | npm 包名                           |
+| ------------------------ | -------- | --------------------------------------------- | ---------------------------------- |
+| **Robot_Admin**          | 主项目   | Vue 3 SPA 后台应用                            | —                                  |
+| **naive-ui-components**  | 组件库   | 63 个业务组件（基于 Naive UI）                | `@robot-admin/naive-ui-components` |
+| **robot-admin-packages** | 包集合   | 8 个独立 npm 包（字典/指令/请求/布局/主题等） | `@robot-admin/*`                   |
+| **MachTable**            | 网格引擎 | 独立 Core 与 Vue / React / XLSX 适配          | `@agile-team/mach-table` 等        |
+| **AgileTeam_Doc**        | 文档库   | VitePress 2.0 团队文档站                      | —                                  |
 
 ### 核心信息
 
@@ -877,16 +878,13 @@ const rules = {
 
 ### 动态路由加载策略
 
-```typescript
-// 高频页面：eager 预加载（打包到主 bundle）
-const EAGER_MODULES = import.meta.glob('@/views/home/**/*.vue', { eager: true })
-const EAGER_DASHBOARD = import.meta.glob('@/views/dashboard/**/*.vue', {
-  eager: true,
-})
+`src/router/dynamicRouter.ts` 对所有页面使用按需导入，包括首页和仪表盘：
 
-// 其他页面：lazy 按需加载
-const LAZY_MODULES = import.meta.glob('@/views/**/!(home|dashboard)*.vue')
+```typescript
+const LAZY_MODULES = import.meta.glob('@/views/**/*.vue')
 ```
+
+意图与空闲预取由 `src/router/routePrefetch.ts` 统一处理，遵循网络、设备和重页面策略。不要将首页/仪表盘恢复为 eager 导入，也不要为演示页单独引入第二套预加载状态。
 
 ### 路由守卫流程
 
@@ -1179,52 +1177,19 @@ src/types/components.d.ts
 
 ### Vite 构建优化
 
-#### 手动分包策略
+#### 生产分包与压缩
 
-```typescript
-// viteBuildConfig.ts
-manualChunks: {
-  'vue-vendor':      ['vue', 'vue-router', 'pinia'],
-  'ui-vendor':       ['naive-ui'],
-  // 编辑器跟随各自动态路由拆分，避免不同编辑器互相捆绑加载
-  'office-vendor':   ['xlsx', 'mammoth'],
-  'calendar-vendor': ['FullCalendar 全家桶'],
-  'spline-vendor':   ['@splinetool/runtime'],
-  'graph-vendor':    ['@antv/x6', '@vue-flow/core'],
-  'viz-vendor':      ['@visactor/vtable-gantt'],
-}
-```
+当前配置集中在 `src/config/vite/viteBuildConfig.ts`。Vite 8 使用 `rolldownOptions.output.codeSplitting`，Naive 主题、Vue、Office、日历与图表沿用现有分组；小型纯辅助函数聚合以减少首屏碎片。编辑器及 Spline 等能力保留动态入口。
 
-#### 依赖预构建
+压缩使用 `rolldownOptions.output.minify.compress.dropConsole/dropDebugger`，不要复制旧的对象式 `manualChunks` 或 `esbuild.drop` 示例。分组变更需核对实际初始依赖图与 `bun run check:bundle`，不能仅移动脚本位置或放宽预算。
 
-```typescript
-// vite.config.ts
-optimizeDeps: {
-  include: ['naive-ui', 'pinia', '@vueuse/core', 'echarts', ...],
-  exclude: ['vue', 'vue-router', 'vue-demi'], // Vue 排除预构建
-}
-```
+#### 开发依赖预构建
 
-> ⚠️ **关键**：Vue 全家桶必须排除预构建，因为 esbuild 拆包会导致 RefImpl 符号断裂。
+`vite.config.ts` 维护当前 `optimizeDeps.include/exclude` 与按依赖来源隔离的缓存。Vue 运行时、本地源码联调、编辑器及仅动态启用的 SDK 按已有规则处理，不复制过期的包名单；安装清单变化由依赖监听插件触发开发服务重启。
 
-#### 重页面预加载
+#### 页面预取
 
-```typescript
-const HEAVY_PAGE_ROUTES = [
-  '/demo/13-calendar', // FullCalendar
-  '/demo/16-text-editor', // WangEditor
-  '/demo/29-antv-x6-editor', // 流程图编辑器
-]
-```
-
-#### 生产环境优化
-
-```typescript
-// esbuild 移除 console/debugger
-esbuild: {
-  drop: ['console', 'debugger'],
-}
-```
+重页面清单在 `src/config/heavyPages.ts`，预取逻辑在 `src/router/routePrefetch.ts`。更新页面后同步检查实际路由；预取不能把未使用的编辑器、网格或媒体运行时带入首屏。
 
 ### 产物结构
 

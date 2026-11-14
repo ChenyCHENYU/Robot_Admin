@@ -9,6 +9,7 @@
     <a href="https://robotadmin.cn">Live demo</a> ·
     <a href="https://www.tzagileteam.com">Component docs</a> ·
     <a href="#quick-start">Quick start</a> ·
+    <a href="#scene-experiences">Scenarios</a> ·
     <a href="#architecture-options">Architectures</a> ·
     <a href="#package-ecosystem">Packages</a> ·
     <a href="./README.md">中文</a>
@@ -24,16 +25,16 @@
 
 ## Project scope
 
-**Robot Admin** is a Vue 3 enterprise admin template and the PC Web entry in the Robot ecosystem. Identity, permissions, layouts, forms, tables, editors and engineering checks are organized as composable capabilities. The application owns business configuration; independently published packages own reusable implementations.
+**Robot Admin** is a Vue 3 foundation for enterprise PC web applications and a working integration of independent components and plugins. Pages define business models, fields, APIs and permissions; packages implement rendering, validation, loading, cancellation and interaction.
 
-The current SPA mainline, **v2.7.0**, includes company-context login, system management, project analysis and usage statistics. Monorepo, Module Federation and MicroApp have separate architecture branches. Start with a single admin application or choose a structure that matches your collaboration and deployment needs.
+The SPA mainline **v2.7.0** includes company-context authentication, system governance, project analysis, usage statistics and complex production, sales and shipping workspaces. SPA, Monorepo, Module Federation and MicroApp are maintained in separate branches.
 
-| Perspective                   | Included today                                                                                           |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Architectures                 | SPA, Bun Workspaces, Module Federation and MicroApp branches                                             |
-| Components and packages       | 63 business components, 11 directives; 8 runtime `@robot-admin/*` packages and 1 Git tooling package     |
-| Examples                      | 58 demo pages covering data entry, complex grids, workflow editing, files and media                      |
-| Verification and traceability | Dual lint, types, logic and component tests, bundle budgets, browser paint regression and build identity |
+| Area               | Available today                                                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Business scenarios | 6 production/sales workspaces with master/detail grids, dense forms, dynamic reports, grouped summaries and a measurement matrix |
+| Ecosystem          | 63 business components, 11 directives; 8 runtime `@robot-admin/*` packages and 1 Git tooling package                             |
+| Examples           | 58 demo pages covering forms, search, selection, grids, trees, workflows, files and media                                        |
+| Engineering        | Types, dual lint, logic/component tests, bundle budgets, browser regression and build identity                                   |
 
 ## Quick start
 
@@ -48,53 +49,122 @@ bun run dev
 
 Open **http://localhost:1988/**. A code mirror is available on [Gitee](https://gitee.com/ycyplus163/Robot_Admin).
 
-| Local experience     | Details                                                                                                                    |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Administrator        | `CHENY / 123456`; complete the verification shown on the login page                                                        |
-| Company selection    | Look up company memberships after entering the account, select one before login, and switch context inside the application |
-| Permission scenarios | `STAFF` demonstrates one company; `NOACCESS` demonstrates no authorized company. Mock accepts any nonempty password        |
-| Network access       | `bun run dev` uses localhost; `bun run dev:ip` displays local and LAN addresses automatically                              |
+| Local experience     | Details                                                                                                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Administrator        | `CHENY / 123456`; complete the verification shown on the login page                                                                                         |
+| Company selection    | Verify credentials first; activate an authorized company using the short-lived ticket. Single-company accounts enter directly; switch companies after login |
+| Permission scenarios | `STAFF` demonstrates one company; `NOACCESS` demonstrates no authorized company. Mock accepts any nonempty password                                         |
+| Network access       | `bun run dev` uses localhost; `bun run dev:ip` displays local and LAN addresses automatically                                                               |
 
 Development enables Mock by default. The public demo uses an explicit `demo` deployment profile. Real applications use `application + remote` and a backend, as described in [Business integration](#business-integration).
 
 ## Capability map
 
-### Identity and workspace
+### Components and data interaction
 
-| Domain                     | Current implementation                                                                                          | Practical value                                                                     |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Company and identity       | Company selection before login, primary and additional memberships, company roles, context switching            | Login and the workspace use the same company context                                |
-| Permissions and governance | Users, roles, permissions, menus, dictionaries, dynamic routes, button permissions and data-scope configuration | A complete frontend flow from account authorization to navigation and actions       |
-| Workspace                  | 6 layouts, theme settings, tabs, menu-configured page caching and feature tours                                 | Consistent navigation and feedback at different information densities               |
-| Project analysis           | Source and dependency distribution, build artifacts, browser loading timeline and real repository counts        | Charts grounded in the current project and its engineering state                    |
-| Usage statistics           | Successful-navigation PV, login and company-switch events, feature actions and route-duration percentiles       | Local browser samples by default; API integration for site-wide summaries           |
-| Enterprise notifications   | Shared inbox, independent todos, templates, dispatches, delivery records, audit and preferences                 | [Backend-free demo and remote adapter contract](./docs/enterprise-notifications.md) |
-| Data workbenches           | Shared form/search/table density, controlled virtual trees and nested three-table layouts                       | [0.17 integration and demos (Chinese)](./docs/core-components-0.17.md)              |
+| Capability              | Implemented behavior                                                                                                                                                         | Start here                                                                      |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Forms and dialogs       | Dynamic fields/rules, dependencies, grid/step/dynamic layouts; async validation, submission locks, cancellation and draft protection; compact density with complete feedback | [Form configuration](./docs/form-configuration.md)                              |
+| Search                  | Configurable 3/4-column tracks, container adaptation, expand/collapse, history, field settings, fixed conditions and a shared search/reset query callback                    | [Search and selection](./docs/core-components.md#搜索与选择) (Chinese)          |
+| Dates and options       | Dates, times, ranges, dependent constraints, remote options and free-text suggestions; multiple tags, long-label overflow and explicit clearing                              | [Demo entries](#component-and-grid-entries)                                     |
+| Entity selection        | Paged search, selected-value display and confirm/cancel; select a customer inside the current edit form                                                                      | [Sales implementation](./src/views/production-sales/sales-orders/operations.ts) |
+| Business tables         | `C_Table`: configured columns, CRUD editors, tree/expanded rows, native paging, row numbers, status tags, content sizing and row actions                                     | [Choosing a grid](#choosing-a-grid)                                             |
+| Dense data grids        | MachTable: virtualization, pinning, editing, merges, selection, paste, row ordering, import validation and complete snapshot output                                          | [MachTable scenarios](./docs/core-components.md#machtable-场景) (Chinese)       |
+| Dictionaries and enums  | Remote loading, deduplicated cache, typed values, distinct empty/error states and local retries; shared labels across forms, search, tables and details                      | [Dictionary integration](./docs/dictionaries.md)                                |
+| Business composition    | Linked master/detail regions, independent pagination, resizable panes, precise totals, cross-region validation, batch preview and failed-item retries                        | [Production and sales](#production-and-sales)                                   |
+| Editing and workflows   | Code, Markdown, rich text, Cron previews, formula evaluation, diagrams and configurable workflow nodes                                                                       | [Workflow example](./src/views/demo/28-work-flow-editor/index.vue)              |
+| Files and visualization | Excel/CSV/ZIP, upload/download, previews, printing, signatures, crop, audio/video, calendars, timelines, Gantt and charts                                                    | [Live demo](https://robotadmin.cn)                                              |
 
-Company switches update the session and clear old permissions, dynamic routes and tabs. Route registration and request responses use identity generations to reject stale results. See the [enterprise authentication contract](./docs/enterprise-auth.md) for backend context activation and isolation, and [observability](./docs/observability.md) for metric definitions.
+### Identity, workspace and observability
 
-### Business components and specialist workspaces
+| Domain                     | Current implementation                                                                                                                                      |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Company sessions           | Activate an authorized company after verifying credentials; primary/additional memberships, company roles and company switching                             |
+| Permissions and governance | Users, roles, menus, dictionaries, dynamic routes, button permissions and temporary role grants; writes follow backend capability and revision checks       |
+| Workspace                  | 6 layouts, light/dark/system mode, tabs, page caching, theme settings and feature tours                                                                     |
+| Notifications              | Shared inbox, todos, templates, dispatches, audit and preferences; [local demo and remote contract](./docs/enterprise-notifications.md)                     |
+| Engineering and usage      | Current repository/build analysis, loading timeline, navigation PV, feature actions and duration percentiles; [metric definitions](./docs/observability.md) |
 
-| Component domain       | Representative capabilities                                                                                                                            |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Forms                  | Configured fields, dynamic and cross-field rules, async submission, step and grid layouts                                                              |
-| Tables                 | `C_Table` provides consistent loading, alignment and pagination; MachTable adds virtualization, editing, selection, column state and responsive widths |
-| Editors and workflows  | Cron expressions and execution previews, formula keyboard and evaluation, code / Markdown / rich text, workflows and diagrams                          |
-| Files and media        | Excel, CSV, ZIP, upload and download, signature and crop, audio and video, preview and print scenarios                                                 |
-| Time and visualization | Date, city, calendars, timelines, Gantt, charts and large-screen templates                                                                             |
-| Application experience | Menus, search, theme, language, tours, empty states, error pages and route-loading feedback                                                            |
+Company switching clears old permissions, routes, tabs and cached pages. Identity generations reject stale requests. Remote governance writes follow the capability API; a frontend field-permission or data-scope demonstration does not establish backend write support. See [authentication](./docs/enterprise-auth.md) and [production integration](./docs/production-readiness.md).
 
-The demo directory contains **58 demo pages + 8 form layouts + 3 embedded components (69 index.vue files)**. Independent component and style entry points keep heavy editors, charts, workflows and media loaded by route. Explore the [component library](https://github.com/ChenyCHENYU/naive-ui-components) or the [live demo](https://robotadmin.cn).
+## Scene experiences
 
-> Cron previews do not schedule backend jobs; formula evaluation does not modify business data. Demo data, frontend data-scope configuration and button controls require real APIs and server authorization for production use.
+### Production and sales
+
+The production/sales menu corresponds to [src/views/production-sales](./src/views/production-sales/). These six pages work locally without a business backend.
+
+| Page / route                                                                                                               | Interactive behavior                                                                                                                                                                                     |
+| -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Production planning](./src/views/production-sales/production-plan/index.vue) · `/#/production-sales/production-plan`      | Production-line tree, plan/heat master-detail grids, advanced queries and capacity; create/edit/confirmed copy/delete, release/revoke and ordering within one line/cast                                  |
+| [Production actuals](./src/views/production-sales/production-actual/index.vue) · `/#/production-sales/production-actual`   | Dense numeric entry, composition limits and process trace; draft protection on heat changes, save/review/return, read-only previous-heat reference and adjacent small tables                             |
+| [Sales coordination](./src/views/production-sales/sales-orders/index.vue) · `/#/production-sales/sales-orders`             | Resizable vertical workspace, order header and product/payment details, contract comparison and inline customer selection; precise totals, whole-order validation, batch changes and failed-item retries |
+| [Shipping coordination](./src/views/production-sales/shipping/index.vue) · `/#/production-sales/shipping`                  | C_Table task queue, MachTable stock matching, vehicle form and grouped reports; weight conservation, overload checks, loading locks and confirmed departure                                              |
+| [Remote order workbench](./src/views/production-sales/remote-workbench/index.vue) · `/#/production-sales/remote-workbench` | Async master/detail regions with independent paging/loading/retry; delivery/quality schemas return columns and rows together; slow/error/empty-detail and late-dictionary scenarios                      |
+| [Measurement matrix](./src/views/production-sales/production-matrix/index.vue) · `/#/production-sales/production-matrix`   | Date/shift groups, fixed metrics, compound value/time editors, batch paste and undo; hidden-date edits retained, full snapshot preview/CSV/XLSX/print                                                    |
+
+Business lists show row numbers, pinned edit/delete actions and blue identifiers opening read-only detail dialogs. Row clicks update the workspace. Copy creates independent records only after confirmation; cancellation consumes no ID. Switching records and cross-row edits retain save/discard/cancel protection. Business actions use semantic icons.
+
+Desktop panes resize, narrow layouts stack, and short viewports scroll. Grids retain internal scrolling, reachable paging and horizontal rails. Short order, heat and stock details shrink to content; larger bodies scroll within their limit.
+
+These pages use explicitly labeled local sources. “Remote order workbench” demonstrates an asynchronous API contract, not a connected production order service. Real integration supplies column descriptions, stable row keys, accurate `total` and cancellation signals at the API boundary. The old `/#/demo/business-workbench` redirects to sales; public previews use `/#/preview/production-sales/<page-path>`.
+
+### Component and grid entries
+
+| Scenario               | Route                                                          | What to inspect                                                                                                       |
+| ---------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Forms / search         | `/#/demo/form-manage/form` · `/#/demo/form-manage/form-search` | Layouts, density, dynamic rules, folding, history, multiple selections and boolean values                             |
+| Dates / times          | `/#/demo/date` · `/#/demo/time`                                | Single/range/formatted values, constraints and standalone/composed use                                                |
+| Trees / panes          | `/#/demo/tree` · `/#/demo/split-pane`                          | Controlled selection, virtual tree, retryable local lazy loading, nested grids and independent scroll                 |
+| Super Table            | `/#/demo/table-manage/table`                                   | Modal/row/cell/mixed editing, density, paging, row numbers and enum labels                                            |
+| MachTable              | `/#/demo/table-manage/mach-table`                              | CRUD, cell/row editing, data workbench, tree rows, ordering, import validation and a logical ten-million-row viewport |
+| Dictionary composition | Sales coordination → “字典联动体验”                            | Shared requests, empty dictionaries, retries, scope switching, `0/false/"0"/"001"` and multiple values                |
+| Workflow               | `/#/editor/work-flow-editor`                                   | Nodes, approval modes, conditions, read-only preview, local drafts and export                                         |
+
+The demo directory contains **58 demo pages + 8 form layouts + 3 embedded components (69 index.vue files)**, counted separately from the six production/sales pages. See the [current integration guide](./docs/core-components.md) (Chinese) for further entries and composition examples.
+
+MachTable ordering supports multi-item drag, keyboard movement, undo/redo and simulated save failure/version conflicts. Import validation previews normalized values and row problems before committing. The large-data viewport generates logical data in blocks of 200 rows and caches at most 8 blocks; it does not allocate a ten-million-row array.
 
 ### Page previews
+
+[![Sales coordination: search, linked tables, compact header form and resizable panes](docs/assets/production-sales-workspace.png)](docs/assets/production-sales-workspace.png)
+
+<details>
+<summary>Home and dark engineering analysis</summary>
 
 |                                         Workspace · light                                          |                                       Engineering analysis · dark                                        |
 | :------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: |
 | [![Robot Admin light workspace](docs/assets/workspace-light.png)](docs/assets/workspace-light.png) | [![Robot Admin dark engineering analysis](docs/assets/analysis-dark.png)](docs/assets/analysis-dark.png) |
 
-Captured from the current SPA mainline running locally. Engineering metrics come from the current build and browser; company and account contexts are Mock fixtures.
+</details>
+
+Screenshots use the current mainline's local Mock data. The online site's functionality follows its deployed version.
+
+## Choosing a grid
+
+| Use case                                    | Entry                                    | Page-owned inputs                                                                   |
+| ------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------- |
+| Business lists, CRUD, tree/expanded rows    | `C_Table`                                | `columns` + `data`, with optional `config` or `crud`                                |
+| Large data, wide tables and dense editors   | MachTable; omitted `preset` means `list` | `column-defs` + `row-data` or a public data source                                  |
+| Details and multiple small read-only tables | MachTable `preset="detail"`              | Columns and rows; plain headers and bounded auto-height without repeated tool flags |
+
+```vue
+<C_Table :columns="columns" :data="rows" />
+<MachTable :column-defs="columnDefs" :row-data="rows" />
+<MachTable
+  preset="detail"
+  :column-defs="detailColumns"
+  :row-data="detailRows"
+/>
+```
+
+These fragments use the project's installed auto-imports and asynchronous grid plugin. Each grid keeps its own column protocol and pager. Row numbers and centered text/numbers are defaults; `pagination` and `row-number` can be disabled explicitly. The `detail` preset already provides its own defaults.
+
+- **Sizing:** automatic business columns measure complete headers and bounded display values, then share spare width proportionally. Utility columns stay compact. A resize changes only its target and protects header text/controls; body overflow remains independently readable. Saving a width preserves the original presentation policy.
+- **Height and appearance:** full lists scroll within the workspace; short details shrink to content and larger bodies scroll within their limit. Each grid retains its own themes and empty state. Status tags, ordinary enums and important numeric values have separate configurable presentation.
+- **Dynamic data:** the API boundary maps each grid's public column definition. The remote example commits columns and rows as one result and rejects stale responses; dictionary changes refresh display without refetching business data.
+- **Personal preferences:** grids with `persistKey/persistence` enabled are scoped by tenant, company, user and table. Incomplete identity disables storage. C_Table receives one application scope getter; MachTable captures its key during setup, with identity changes rebuilding the layout owner. B starts with defaults if it has no settings; A's queued writes and restored preferences remain A's. Current examples are the shipping queue and MachTable demo.
+
+Shared appearance lives in [MachTable config](./src/config/mach-table.ts) and the [component plugin](./src/plugins/naive-ui-plugin.ts). See [composition examples](./docs/core-components.md) (Chinese) for forms, search, dictionaries and tables.
 
 ## Architecture options
 
@@ -111,21 +181,19 @@ Versions and capabilities follow each branch's manifests. Switching architecture
 
 ## Package ecosystem
 
-### Independently published, composed by responsibility
-
-Business components, framework adapters and core engines are maintained separately. Robot Admin consumes public APIs and composes them through page configuration. The packages can also be integrated into other applications according to their own documentation.
+Independent packages expose public APIs; the application composes them through configuration and domain controllers. Dictionaries provide ordinary options and formatters to the application. Forms and grids do not recognize dictionary instances or business dictionary codes.
 
 ```mermaid
 flowchart TB
     App[Robot Admin · Pages and domain controllers]
-    App --> UI[Business UI · Forms / Tables / Editors / Tours]
-    App --> Runtime[Runtime · Requests / Layout / Theme / Directives / Files]
-    UI --> Validation[Validation · Core rules and framework adapters]
-    App --> Grid[MachTable · Virtualized grid and Vue adapter]
-    App --> Engineering[Tooling · Build / i18n / Types / Git]
+    App --> UI[Business UI · Forms / Search / Selection / Editors]
+    App --> Grid[MachTable · Grid and Vue adapter]
+    App --> Dictionary[Independent dictionaries · Enums / Loading / Cache / Labels]
+    App --> Runtime[Requests / Layout / Theme / Directives / Files]
+    UI --> Validation[Validation core and framework adapters]
 ```
 
-Versions below are **the versions pinned by this application**. Upgrades follow package release notes, public contracts and application verification.
+These are **the versions pinned by this application**. Full APIs and upstream capabilities follow each package's documentation.
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -139,209 +207,68 @@ Versions below are **the versions pinned by this application**. Upgrades follow 
 | [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.0.4`        | Isolated instances, Excel / CSV / ZIP, cancellable chunks and file processing           | Reusable file scenarios with heavy dependencies loaded on demand  |
 | [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`        | Configuration protection and Git engineering standards                                  | Development-time commit conventions and initialization            |
 
-Sources: [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages).
-
-The application provides `compact` defaults for forms, search and editor modals. Empty validation feedback reserves 4px while real errors expand naturally; compact search fields default to 208px. Numeric fields retain Naive UI precision, limits and keyboard stepping, with step buttons hidden by default and available through `attrs.showButton`. Modal footer and confirmation buttons use a consistent 22px height. Local density, field sizes and explicit layout gaps remain configurable. See [form configuration](./docs/form-configuration.md).
-
-### Data grid and engineering plugins
-
-| Capability           | Integration                                                                                    | Actual purpose                                                                                                   |
-| -------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **MachTable 0.41.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue adapter; virtualization, pinned columns, editing, row reordering and configurable row colors          |
-| Startup information  | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | Development banner with application version, Git information and access URLs                                     |
-| Internationalization | `vite-auto-i18n-plugin` + repository `patches/`                                                | Chinese source scanning, offline compilation, language-specific dictionaries and explicit translation generation |
-| Type maintenance     | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | Type-usage analysis through `bun run check-types`                                                                |
-| Branch comparison    | [`git-branch-check-diff-commits`](https://www.npmjs.com/package/git-branch-check-diff-commits) | Commit comparison through `bun run check-branch`                                                                 |
-
-MachTable is a separate data grid project. Core and Vue / React / XLSX adapters are documented in [MachTable](https://github.com/ChenyCHENYU/MachTable). Robot Admin currently integrates the Vue adapter; ordinary business tables and dense data grids serve different scenarios.
-
-Open **Table Management → MachTable → 顺序调整** (`/#/demo/table-manage/mach-table`) to reorder 30 demo orders. The demo imports optional `/ordering` on demand: select nonadjacent items and drag one selected handle to move them in their original relative order. Edge scrolling, Escape, Alt + Up / Down and separate ordering undo/redo are supported. Keyboard moves target adjacent visible orders in search results, while hidden orders remain in the full dataset. The existing toolbar offers a 450ms simulated save, failure rollback and version conflict; reload the simulated server order after a conflict. Status text shows the save result and both revisions. Switching scenarios preserves confirmed order and cancels an unfinished save. All transport is local simulation and never writes to the order API.
-
-The dependency and lockfile pin official npm **0.41.1**, with matching Vue and Core versions. The application composes data plugins. The grid provides generic value callbacks, native paging, bounded sizing, full headers, themed empty states and status colors. Production plans, sales orders and shipping demonstrate these capabilities.
-
-The Super Table demo and the MachTable order list use their own default row numbers and pagination. Text and numeric columns are centered by default. Both grids accept `:pagination="false"` to hide pagination and `:row-number="false"` to hide automatic row numbers. For dynamic reports, pass the API's columns and rows to `C_Table` through `columns/data` or to MachTable through `column-defs/row-data`.
-
-The application scopes table preferences by tenant, company and user ID. Persistence is disabled when signed out or identity is incomplete. Tokens and display names never enter the key; legacy unscoped keys are neither read nor migrated.
-
-- **C_Table 0.37.2**: the [Naive UI plugin](./src/plugins/naive-ui-plugin.ts) provides one `persistPrefix` getter. Pages declare only a logical `persistKey`, such as `production-sales:shipping:tasks:v1`.
-- **MachTable 0.41.1**: call `useScopedMachTableConfig(ORDER_TABLE_CONFIG)` during setup to capture a stable persistence key while preserving `sections/debounceMs/store`. The [layout](./src/components/global/C_Layout/index.vue) rebuilds the KeepAlive owner when identity or permission generation changes. Debounced and queued writes retain their original account key, so A → B → A restores each account's preferences independently.
-
-Two lazy-loaded tabs on the same page make these features interactive:
-
-- **导入校验 (Import validation)**: choose valid, invalid or duplicate-ID samples, or edit a JSON matrix of up to 20 rows. Select replace/append, preview normalized values and row issues, then confirm the import. Preview leaves existing data intact; changing input invalidates the previous preview. Inspect typed export to verify numbers, booleans, dates and long identifiers with leading zeros.
-- **千万行视口 (Ten-million-row viewport)**: jump to the first, middle, last or any specified row, scroll across 46 center columns and inspect pinned columns on both sides. Narrow screens pin only the order identifier and let other columns scroll, preserving a usable center viewport. The local source generates only 200 rows per request with at most eight cached blocks. The latest snapshot reports actual cache usage and physical scroll height; no ten-million-row array is created.
-
-Both scenarios simulate data locally without writing to business APIs. Switching tabs releases their import plans, pending operations and simulated transport. Real backend integration, touch devices and human screen-reader acceptance remain pending manual checks in the appropriate environment.
-
-### Production and sales workbenches
-
-The **产销业务** menu maps to `src/views/production-sales/` with six distinct compositions:
-
-| Page                         | Route                                   | Composition                                                                                                                                              |
-| ---------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Production planning          | `/#/production-sales/production-plan`   | Resource tree, 18 plans, heat scheduling and capacity; submitted filters, release and constrained ordering                                               |
-| Heat actuals                 | `/#/production-sales/production-actual` | Heat navigation, 23 dense numeric fields, section navigation, chemistry limits and process history; protected drafts and per-heat snapshots              |
-| Sales orders                 | `/#/production-sales/sales-orders`      | 18-order ledger, fulfillment progress, resizable master/detail regions, header form, line/payment tabs, exact decimals and batch review                  |
-| Shipping collaboration       | `/#/production-sales/shipping`          | Stage filters, C_Table task pool, MachTable inventory and vehicle form; integer-kilogram conservation, capacity checks and loading/departure transitions |
-| Remote order collaboration   | `/#/production-sales/remote-workbench`  | Independently paged async master/detail grids, atomic delivery/quality columns, late dictionaries, draft guards and local retry                          |
-| Production inspection matrix | `/#/production-sales/production-matrix` | Date/shift groups, fixed tank identifiers, atomic reading/time edits, paste/undo and one report snapshot for CSV, XLSX and print                         |
-
-Native grid themes, compact controls, subtle panels and headers remain consistent across layouts and light/dark modes. Naive empty-state icons use a soft blue theme token. The former `/#/demo/business-workbench` redirects to sales orders; `/#/preview/business-workbench` remains available, alongside `/#/preview/production-sales/<page>` for each page.
-
-- **Production planning → 进阶查询 (Advanced search)** searches within the current production line. The result count and selection sit on the left, with paging on the right. Confirming a result opens the plan and heat details while keeping the ledger filters.
-- **Heat actuals → 工序追踪 (Process trace)** shows the current heat's timings and exceptions. Jump from an event to the relevant measurement fields and continue editing the current draft.
-- **Sales orders → 比对合同 (Compare contract)** compares a sample amendment for the first pending order. Apply selected fields to the order draft, then save the order. Customer lookup and selection are available within the create/edit dialog.
-- **Shipping collaboration → 发运汇总 (Shipping summary)** groups all filtered tasks by destination, status, grade or customer. View totals and drill into a group.
-
-Sales, remote collaboration and inspection workspaces use the remaining desktop height, with stacked or document scrolling layouts on narrow and short screens. Remote collaboration supports horizontal and vertical split handles.
-
-MachTable and C_Table distribute spare space proportionally among automatic business columns, using measured headers and displayed content as their bases. Pages do not need to nominate a filler column. Row-number, selection and action columns stay compact and are not resizable by default; explicit widths remain effective. Crowded tables retain reasonable base widths and scroll horizontally within the grid. Dragging changes only the target column, preserving its peers. The complete header and its controls establish the minimum width, so resizing cannot hide the title. Saving a width preserves the original ellipsis and full tooltip. The action area stays at the viewport’s right edge while the internal canvas absorbs spare space.
-
-Matrix inputs retain the full value and time width, with a separate toolbar that avoids grid edges. Loading follows the theme and reduced-motion preference; short empty grids scale the illustration while preserving readable text.
-
-These workflows use local sample data.
-
-Remote collaboration uses the existing query workflow. The project validates and adapts the response once; only accepted responses update dynamic columns. The optional failure exercises cover slow or failed detail requests, empty results and dictionary retry. Dictionaries refresh cell labels without requerying business data; 0 and false retain their types. Delete the only pending order on the last page to experience automatic page recovery.
-
-The inspection matrix commits reading and sampling time as one value. Switching seven/twenty-eight days changes column visibility and preserves hidden-date edits and undo history. Report preview, CSV, typed XLSX and full printing use the same snapshot. Its three-row spans fit the default eight-row buffer; larger spans must follow MachTable's documented virtual-window constraints. Both new pages have login-free preview routes under `/#/preview/production-sales/`.
-
-Production plans and sales orders use one callback for search and reset. Sales orders connect customer lookup to the form with `createDataPickerField`. The shipping queue declares edit, delete, and their row guards through `config.actions.inline`.
-
-Business lists include row numbers and pinned edit/delete actions. Blue record links open read-only details; clicking a row selects the working record. Toolbars retain create and bulk actions. Viewing another record preserves the current draft, while editing another order uses the existing save/discard/cancel guard.
-
-Detail dialogs are centered and adapt to the viewport, with internal scrolling on smaller screens. Both tables preserve complete header text independently of cell ellipsis.
-
-Omitting `preset` selects built-in `list`, with row numbers, pagination and header filtering, menu and resizing. `preset="detail"` selects plain headers, read-only columns and bounded content height without pagination or header tools. Explicit props take precedence. Compact density, stripes and borders are shared once in `src/config/mach-table.ts` through the official async plugin. Heat actuals show three compact comparison grids beside the full chemistry grid; narrow screens stack the cards.
-
-MachTable main lists use built-in pagination, and C_Table uses Naive UI pagination. Heat, chemistry, inventory and dialog detail grids share `domLayout: "autoHeight"` and `maxBodyHeight: 330`. They fit short results with 8px of bottom spacing and scroll virtually in the same grid when the body exceeds 330px. Main workspaces scroll within their own height. Short C_Table lists shrink to fit within `display.maxHeight`.
-
-The same MachTable grid restores its viewport when switching between empty, short and large datasets, with wrapped-content measurement and asynchronous edit targets. Programmatic selection respects `rowSelection`; shipping inventory and sales lines explicitly enable multiple selection for their bulk actions.
-
-Version 0.41.1 fixes the center-row background and trailing ellipsis after shrinking. Components 0.37.2 preserves presentation after width persistence, anchors right actions to the viewport and gives native text buttons correct ellipsis with a full tooltip.
-
-Version 0.40.2 isolates manual column resizing, restores canceled widths and gives compact editors the full input width with an edge-aware action toolbar. Short empty grids adapt the illustration to the available height.
-
-Version 0.40.1 fixes last-page recovery, stale manual-query results and merged-cell painting beneath later rows.
-
-Version 0.40.0 adds built-in scenes and reactive fallback. Read-only headers hide sort controls while preserving business sort state. Version 0.39.2 protects IME composition during row editing, remeasures sizes after fonts load, and rejects invalid tree input and duplicate response row keys. Cancelling a remote query ends its wait promptly; Worker disposal and reuse isolate old requests. Existing application APIs remain compatible without extra configuration.
-
-Actions operate on local business records: planning supports create/edit/copy/delete and confirmed release/withdrawal; actuals support review, return for correction, locking and traceable withdrawal; orders and lines use modal editors connected to the existing whole-order draft; shipping supports task maintenance, inventory reselection after changes and confirmed departure. Centered detail dialogs are read-only, and previous-heat references never overwrite current measurements. Custom heat counts preserve the plan weight exactly at 0.001-ton precision.
-
-The pages consume `C_FormModal`, `C_ActionBar` and the public editor contract from `@robot-admin/request-core/naive`. Queries and mutations use the existing page-local data, without another generic CRUD framework or any remote business writes.
-
-All records and commands are explicitly local demos, without production or sales API writes. State belongs to each page instance; public component entries handle rendering and interaction. Real DOM route roots and tags navigation tests protect cached pages. Shared dictionary, numeric, query, validation and partial retry capabilities remain available in the sales workbench. Real APIs, authorization and transaction rules remain application responsibilities.
-
-### Page configuration, package-owned behavior
-
-A form uses `options` for fields and `config` for validation and asynchronous saving. The component handles validation, duplicate-submission locking, loading feedback and unmount cleanup.
-
-```vue
-<script setup lang="ts">
-  import {
-    defineFormConfig,
-    defineFormOptions,
-    PRESET_RULES,
-  } from '@robot-admin/naive-ui-components/C_Form'
-
-  defineOptions({ name: 'ContactForm' })
-  interface Contact {
-    name: string
-    email: string
-  }
-  const model = ref<Contact>({ name: '', email: '' })
-  const options = defineFormOptions<Contact>([
-    { type: 'input', prop: 'name', label: 'Name', required: true },
-    {
-      type: 'input',
-      prop: 'email',
-      label: 'Email',
-      rules: [PRESET_RULES.email('Email')],
-    },
-  ])
-  const config = defineFormConfig<Contact>({ submitText: 'Validate' })
-</script>
-
-<template>
-  <C_Form
-    v-model="model"
-    :options="options"
-    :config="config"
-  />
-</template>
-```
-
-This example uses the application's auto-import environment and validates locally. For persistence, configure `config.onSubmit` and return its Promise; see [form configuration](./docs/form-configuration.md). Cron, formulas and tours similarly use a model or step data plus configuration, reusing package-owned previews, validation and interactions.
+The grid integration uses **MachTable 0.41.1** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue). Robot Admin currently integrates Vue. See [MachTable](https://github.com/ChenyCHENYU/MachTable) for Core, React, XLSX and other optional capabilities; [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages) host the component and runtime sources.
 
 ## Engineering and verification
 
-### Inspectable releases
-
-| Mechanism                       | Implementation                                                                                                                   | Verification entry                                                        |
-| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Configuration validation        | Validate environment, deployment profile and proxy URL at startup; reject Mock and local-source aliases for application releases | [Environment validation](./src/config/vite/viteEnvConfig.ts)              |
-| On-demand loading               | Route splitting, component subpaths, network/device-aware intent and idle prefetch                                               | [Build configuration](./src/config/vite/viteBuildConfig.ts)               |
-| Bundle budgets                  | Entry, preloaded JS, CSS, initial total, preload count and largest async chunk                                                   | `bun run check:bundle`                                                    |
-| Style boundaries                | Compile Vue SFCs to audit local/global CSS; check actual text painting and themes across routes                                  | `bun run check:styles` · [paint regression](./e2e/render-integrity.pw.ts) |
-| State correctness               | Logic and contract tests, actual Vue mounting, browser interactions against production artifacts                                 | `bun run test` · `test:components` · `test:e2e`                           |
-| Build traceability              | `/build-info.json` records version, environment, deployment profile, commit and build time                                       | [Build identity](./docs/build-identity.md)                                |
-| Development dependency recovery | Restart on manifest/lock fingerprints and isolate caches between modes                                                           | [Dependency watcher](./src/config/vite/viteDependencyUpdatePlugin.ts)     |
+| Mechanism                         | Check and scope                                                                                                                          |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Environment/deployment validation | Validate environment, proxy and deployment purpose; application builds reject Mock and source-package aliases                            |
+| Loading and caches                | Route splitting, component subpaths, network/device-aware prefetch and development restarts on dependency changes                        |
+| Bundle budgets                    | Entry, preload, CSS, initial total, request count and largest async chunk; `bun run check:bundle`                                        |
+| Types and behavior                | Dual lint, style boundaries, type checks, Bun logic tests and mounted Vue components                                                     |
+| Browser regression                | Published-package builds, grid interaction, light/dark, narrow/short screens, tag navigation, account/company switching and actual paint |
+| Build identity                    | `/build-info.json` records version, environment, deployment profile, commit and build time; [traceability](./docs/build-identity.md)     |
 
 ```bash
-bun run verify             # Dual lint, styles, types, logic/component tests, two build modes and bundle budgets
+bun run verify                   # Lint, styles, types, logic/components, both build modes, budgets
 bunx playwright install chromium  # First browser installation
-bun run test:e2e           # Browser regression against production artifacts
+bun run test:e2e                  # Page regression against built artifacts
 ```
 
-[CI](./.github/workflows/ci.yml) runs installation, verification, dependency audit, browser regression and high-DPI paint checks. Build resource sizes and browser measurements have explicit definitions in [observability](./docs/observability.md); fixed startup times or traffic numbers are not performance guarantees.
+The [CI configuration](./.github/workflows/ci.yml) includes verification, dependency audit, browser and high-DPI paint checks. Counts and measurements correspond to a specific commit and environment, rather than permanent performance promises. See [observability](./docs/observability.md).
 
-### Project facts for AI collaboration
-
-[AGENTS.md](./AGENTS.md) and the [coding guide](./.github/copilot-instructions.md) define naming, structure, imports, styles and commits. Seven project Skills cover page generation, API contracts, prototype analysis, route sync, convention audits, branch sync and Mock. The [MCP Server](./mcp/server.ts) exposes component APIs, routes, endpoints and validation presets for integrations based on real contracts.
-
-```bash
-bun run mcp
-```
+[AGENTS.md](./AGENTS.md) and the [coding guide](./.github/copilot-instructions.md) define naming, layout, imports, styles and commits. Seven project Skills cover development workflows. Run `bun run mcp` to query component APIs, routes, endpoints and validation presets through the [MCP server](./mcp/server.ts).
 
 ## Business integration
 
-### 1. Set the environment and data source
+### 1. Select deployment and data modes
 
-Configure the untracked `envs/.env.local` for local overrides or the target deployment environment:
+Configure the untracked `envs/.env.local` or the deployment environment:
 
 ```dotenv
 VITE_DEPLOYMENT_PROFILE=application
 VITE_AUTH_MODE=remote
 VITE_DATA_MODE=remote
 VITE_API_BASE=/api
-# Local development proxy only; deployment gateways provide same-origin /api.
+# Local proxy only; use a same-origin /api gateway after deployment.
 API_PROXY_TARGET=https://your-api.example.com
 ```
 
-`bun run build` defaults to the public demo in `dist/`. `bun run build:application` creates the application staging acceptance artifact in `dist/application/`. Production business deployment requires target environment, remote APIs and gateway configuration following the [production baseline](./docs/production-readiness.md).
+`bun run build` generates the public demo in `dist/`; `bun run build:application` creates application staging acceptance artifacts in `dist/application/`. Remote failures do not fall back to demo data. Configure real APIs and the gateway using the [production baseline](./docs/production-readiness.md).
 
-### 2. Align identity and domain contracts
+### 2. Align session, resource and write contracts
 
-- Implement company lookup, authentication, context activation/switching and token rotation according to the [enterprise contract](./docs/enterprise-auth.md). The backend determines authorization and data isolation.
-- Use `@robot-admin/request-core` and explicit resource contracts. Mock and Remote implementations are separate; remote failure does not silently substitute demo data.
-- System management pages use domain controllers, column factories and configuration; templates assemble the views. Async form saves return their result through `config.onSubmit`.
-- Match `defineOptions({ name })` to route component names, configure menu `keepAlive` where needed, and clear old pages at company-session boundaries.
+| Area                    | Current Remote contract                                                                                                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Multi-company login     | Credentials first; single-company accounts establish a session directly, while multi-company activation uses a short-lived, one-time ticket held only in page memory                  |
+| Menus and authorization | Stable `robot-menu:${menuId}` route identity; accounts without home enter their first permitted page, and empty menus show no access. The backend enforces button and data scope      |
+| Concurrent writes       | Preserve read-model `revision`; submit `revision/expectedRevision` per resource. Re-read conflicts without silently replacing the expected revision                                   |
+| Temporary roles         | Create/revoke by role, window and reason; UTC transport and local display, with revision-aware revocation                                                                             |
+| Governance boundary     | Capability-driven writes; data-scope summaries, constraints and audit are currently read-only. Field permissions are not integrated; capability errors keep writes disabled           |
+| Personal account        | Remote saves nickname/email/mobile, with explicit `null` clearing contacts. Avatar/bio and security toggles follow current read-only boundaries; password changes use a dedicated API |
 
-### 3. Connect observability and hosting
+See [authentication](./docs/enterprise-auth.md) for membership/company activation and `src/api/*contract.ts` for resource fields. When integrating [Robot Cloud](https://github.com/ChenyCHENYU/Robot_Cloud), retain both build identities and gateway responses, and verify conflicts, revoked access, disabled membership and temporary-grant boundaries.
 
-Usage statistics default to anonymous local browser samples. Same-origin collection and summary APIs enable site-wide data; see [observability](./docs/observability.md). Vercel Analytics / Speed Insights require an explicit production opt-in; their service consoles provide cross-visitor reports.
+### 3. Add telemetry and deployment
 
-[vercel.json](./vercel.json) provides route fallback and security headers. Other static hosts need equivalent configuration and verified API, iframe allowlists and caching policies. Server authorization, real human verification and an HttpOnly Cookie authentication upgrade require backend cooperation, documented in the production baseline.
+Usage statistics default to local browser samples. Site-wide aggregation requires same-origin collection/query APIs. Vercel Analytics / Speed Insights load only in production when explicitly enabled. [vercel.json](./vercel.json) supplies route fallback and security headers; other platforms follow the [production guide](./docs/production-readiness.md).
 
 ## Internationalization and design
 
-| Topic               | Configuration and behavior                                                                                                                         |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Shared design       | CSS variables and Naive UI overrides; light / dark / system modes; 6 layouts sharing state and tokens                                              |
-| Languages           | `zh-cn / en / ja / ko`; namespace and persistence key `robot_admin`                                                                                |
-| Runtime translation | Chinese source fallback; load only the selected foreign-language dictionary; no translation API calls in ordinary development or production builds |
-| New translations    | Configure build-side Youdao credentials, explicitly run `bun run i18n:generate`, then review dictionary changes                                    |
+CSS variables and Naive UI providers share light/dark/system state across six layouts. Languages are `zh-cn / en / ja / ko`; Chinese is the source and only the selected external dictionary loads. Ordinary development and production builds do not call translation services.
 
-Language switching currently refreshes once to synchronize static labels, menus and tabs, so save pending input first. `VITE_I18N_ENABLED=false` disables online generation only; existing dictionaries still work. Patch maintenance, dictionary paths and generation are documented in [internationalization](./docs/internationalization.md); themes and animation are in the [design system](./docs/design-system/README.md).
+Generate new terms explicitly with `bun run i18n:generate`, review the language files and commit them. Language switching retains one refresh to synchronize static labels, menus and tabs. See [i18n maintenance](./docs/internationalization.md) and the [design system](./docs/design-system/README.md).
 
 ## Technology and structure
 
@@ -412,25 +339,17 @@ The cover uses Robot H5's blue-violet R / robot mark, navy grid and typography. 
 
 ## Documentation and contribution
 
-| Topic                               | Entry                                                                                                      |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Integration and maintenance         | [Documentation index](./docs/README.md)                                                                    |
-| Production requirements             | [Production baseline](./docs/production-readiness.md) · [Environment configuration](./envs/README.md)      |
-| Login and company sessions          | [Enterprise authentication](./docs/enterprise-auth.md)                                                     |
-| Forms and validation                | [Form configuration](./docs/form-configuration.md)                                                         |
-| Data sources and metric definitions | [Observability](./docs/observability.md)                                                                   |
-| Styles, themes and layouts          | [Design system](./docs/design-system/README.md) · [Style isolation audit](./docs/style-isolation-audit.md) |
-| Contributing                        | [Contribution guide](./CONTRIBUTING.md) · [Agent guide](./AGENTS.md)                                       |
-| Release history                     | [CHANGELOG](./CHANGELOG.md) · [Releases](https://github.com/ChenyCHENYU/Robot_Admin/releases)              |
+| Topic                                  | Entry                                                                                                                                      |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Current capabilities and composition   | [Components, search, grids and business scenarios](./docs/core-components.md) (Chinese)                                                    |
+| Dictionaries, enums and detail labels  | [Dictionary integration](./docs/dictionaries.md)                                                                                           |
+| Forms, validation and async submission | [Form configuration](./docs/form-configuration.md)                                                                                         |
+| Development and maintenance            | [Development](./docs/development.md) · [Documentation index](./docs/README.md)                                                             |
+| Production integration                 | [Baseline](./docs/production-readiness.md) · [Authentication](./docs/enterprise-auth.md) · [Environment](./envs/README.md)                 |
+| Metrics, builds and regression         | [Observability](./docs/observability.md) · [Build identity](./docs/build-identity.md) · [Runtime regression](./docs/runtime-regression.md) |
+| Design and collaboration               | [Design system](./docs/design-system/README.md) · [Contributing](./CONTRIBUTING.md) · [Agent guide](./AGENTS.md)                           |
+| History                                | [CHANGELOG](./CHANGELOG.md) · [Releases](https://github.com/ChenyCHENYU/Robot_Admin/releases)                                              |
 
-Report issues with the route, reproduction steps, browser version and build identity through [GitHub Issues](https://github.com/ChenyCHENYU/Robot_Admin/issues). Author: [CHENY](https://github.com/ChenyCHENYU) · [ycyplus@gmail.com](mailto:ycyplus@gmail.com).
+Include the route, reproduction steps, browser version and build identity when reporting [GitHub Issues](https://github.com/ChenyCHENYU/Robot_Admin/issues). Author: [CHENY](https://github.com/ChenyCHENYU) · [ycyplus@gmail.com](mailto:ycyplus@gmail.com).
 
-**MIT License**. Commercial use and modification are permitted while retaining license and copyright notices. Dependencies follow their own licenses. Thanks to the maintainers of Vue, Vite, Naive UI, UnoCSS, Bun and all ecosystem dependencies.
-
-Production/sales pages use built-in content sizing and status tags: MachTable for production plans and sales orders, C_Table for shipping. Undeclared widths use bounded content sampling with configurable minWidth/maxWidth. Resizing protects header text and controls. Use status: true or a status mapping instead of page-specific tag renderers.
-
-Production and sales detail dialogs use compact label/value rows. Forms and searches share tighter row spacing while validation messages expand naturally. An isolated browser fixture covers 400 fields and multiline feedback.
-
-Component library 0.24.4 adds async ownership and resource lifecycle fixes. Isolated regression fixtures cover real fixed/fluid video mini-player scrolling, runtime toggles, return-to-position and unmount cleanup without entering the product build.
-
-The independent dictionary plugin is installed once with application config. A project-owned field map and composition hook supply ordinary options, controlled loading states and formatters; component and grid packages do not recognize dictionary instances, fields or injection protocols. Details use `useDictLabels(record, FIELD_DICTIONARIES)`. Open **字典联动体验** on the sales page to inspect shared requests, retries, empty results, scope changes and typed values. See [project integration](./docs/dictionaries.md).
+**MIT License**. Commercial use and modification are permitted while retaining license and copyright notices. Dependencies follow their own licenses. Thanks to Vue, Vite, Naive UI, UnoCSS, Bun and ecosystem maintainers.

@@ -1,6 +1,8 @@
 # 核心组件 0.17 接入与演示
 
-Robot_Admin 使用正式的 `@robot-admin/naive-ui-components@0.17.0`，运行时从组件子路径按需导入。旧版 ActionBar 补丁已由上游正式实现替代。
+> 本文保留 0.17 阶段的接入快照。当前主线的版本、组合方式与体验入口见[组件与业务工作区接入](./core-components.md)。
+
+该阶段 Robot_Admin 接入正式的 `@robot-admin/naive-ui-components@0.17.0`，运行时从组件子路径按需导入。旧版 ActionBar 补丁已由上游正式实现替代。
 
 ## 验证入口
 
