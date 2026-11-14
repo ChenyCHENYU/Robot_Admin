@@ -115,6 +115,27 @@ for (const variant of [
       expect(row.filter).toBe('none')
     }
     expect(geometry.map(row => row.padding)).toEqual([20, 36, 52])
+    const guide = navigation
+      .locator('[data-ra-sidebar-menu] > .n-submenu > .n-submenu-children')
+      .filter({ has: page.getByText('发运协同指挥台', { exact: true }) })
+    const rail = await guide.evaluate(element => {
+      const style = getComputedStyle(element)
+      return {
+        image: style.backgroundImage,
+        size: style.backgroundSize,
+        repeat: style.backgroundRepeat,
+        x: Number.parseFloat(style.backgroundPositionX),
+        font: Number.parseFloat(style.fontSize),
+      }
+    })
+    expect(rail.image).toContain('linear-gradient(')
+    expect(rail.size).toMatch(/^1px\s/)
+    expect(rail.repeat).toBe('no-repeat')
+    expect(rail.x).toBe(rail.font * 2)
+    const nested = navigation.locator(
+      '[data-ra-sidebar-menu] > .n-submenu > .n-submenu-children .n-submenu-children'
+    )
+    await expect(nested.first()).toHaveCSS('background-image', 'none')
     await expect(selected.locator('svg').first()).toBeVisible()
     expect((await selected.locator('svg').first().boundingBox())!.width).toBe(
       18
@@ -177,6 +198,9 @@ test('自定义收起宽度保持图标和品牌同心，展开后可正常导�
   const sider = page.locator('.layout-sider')
   const menu = page.locator('[data-ra-sidebar-menu]').first()
   await expect(menu).toHaveClass(/n-menu--collapsed/)
+  await expect(
+    page.locator('[data-ra-sidebar-menu] .n-submenu-children')
+  ).toHaveCount(0)
   await settleNavigation(page)
   const centers = await sider.evaluate(element => {
     const rect = element.getBoundingClientRect()

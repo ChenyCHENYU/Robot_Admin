@@ -266,16 +266,6 @@ html[data-menu-theme='standard'] .layout-container .n-menu {
     background: var(--n-border-color, #e5e7eb) !important;
   }
 
-  // 加载态继续覆盖普通项的透明底，不移除原有 shimmer 动画。
-  .n-menu-item.n-menu-item--loading#{$legacy-menu-target}::before {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(32, 128, 240, 0.1),
-      transparent
-    ) !important;
-  }
-
   &.n-menu--collapsed .n-menu-item-content__icon#{$legacy-menu-target} {
     color: var(--n-item-icon-color, currentColor) !important;
   }
