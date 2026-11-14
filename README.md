@@ -161,8 +161,12 @@ MachTable 的「顺序调整」提供多项拖动、键盘移动、撤销/重做
 
 - **适宽与调宽**：未显式定宽的业务列按完整表头与有界显示内容测宽，余量按基准比例分配；序号/选择/操作列保持紧凑。拖动只改变目标列，表头文字和控件构成下限；正文独立省略并可查看完整值。保存手动宽度不改变列的原始展示规则。
 - **高度与主题**：完整列表在工作区内部滚动；短明细随内容收起，超过上限后滚动。保留两种表格各自主题与空态，不由页面重复绘制。状态标签、普通枚举和关键数值分别配置，可覆盖语义色与显示规则。
+- **紧凑默认值**：MachTable 的 `size: 'compact'` 默认正文 30px、表头 34px，显式 `rowHeight/headerHeight` 优先。`C_Table` 注入 `density: 'compact'`，行高依按钮、编辑器和内容展开，局部密度及控件尺寸可覆盖。主按钮文字/图标与 Checkbox 勾在明暗主题中默认白色；局部 `NConfigProvider` 可用 `createComponentTheme({ onSolid })` 覆盖实色背景上的前景。
 - **动态数据**：接口层映射到各自公开列定义；远程示例将列与行作为同一查询结果提交，旧响应不会覆盖新方案。字典更新仅刷新显示，不必重查业务数据。
+- **跨页选择**：MachTable 查询全选后，`selectedRows` 只保留最近成功页面的选中行快照；跨页批量操作使用查询与 `selectionState`，排除 ID 跨页保留。
 - **个人偏好**：启用 `persistKey/persistence` 的表格按租户、公司、用户与表格隔离；身份未就绪时暂停存储。C_Table 全局范围只配置一次，MachTable 在 setup 捕获范围并由布局在身份切换时重建实例。B 首次使用显示默认值，切回 A 恢复 A；A 的延迟保存仍归属 A。现有体验入口为发运任务池和 MachTable 演示。
+
+动态报表把稳定报表/列方案 ID 纳入偏好键；owner/key 管理偏好读写归属，选择属于查询与行身份，dirty 属于编辑草稿。切换偏好键不会自动清空后两者，页面仍需按业务边界处理选择重置及未保存保护。
 
 公共外观在 [MachTable 配置](./src/config/mach-table.ts) 与 [组件插件](./src/plugins/naive-ui-plugin.ts) 集中提供；表单/搜索、字典和表格的组合见[接入指南](./docs/core-components.md)。
 
@@ -197,7 +201,7 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.38.0` | 63 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.39.0` | 63 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`  | 静态枚举、远程字典、隔离缓存及详情字段绑定                 | 表单、搜索、详情与两种表格共享翻译     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
@@ -207,7 +211,7 @@ flowchart TB
 | [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.0.4`  | 隔离实例、Excel / CSV / ZIP、可取消分片与文件处理          | 文件场景复用，按需加载重型依赖         |
 | [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`  | 配置保护与 Git 工程标准                                    | 开发期提交规范与初始化工具             |
 
-数据网格使用 **MachTable 0.41.1** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)。Robot Admin 目前接入 Vue；Core、React、XLSX 及其他可选能力见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。组件源码见 [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components)，其余运行时包见 [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages)。
+数据网格使用 **MachTable 0.42.0** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)。Robot Admin 目前接入 Vue；Core、React、XLSX 及其他可选能力见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。组件源码见 [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components)，其余运行时包见 [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages)。
 
 ## 工程机制与质量保障
 
@@ -279,7 +283,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.41.1** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.42.0** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

@@ -8,7 +8,7 @@
 import { expect, test } from 'vitest'
 import { createApp, defineComponent, h, nextTick, ref } from 'vue'
 import { createPinia, disposePinia } from 'pinia'
-import { NConfigProvider, NInput } from 'naive-ui'
+import { NButton, NCheckbox, NConfigProvider, NInput } from 'naive-ui'
 import { C_Skeleton } from '@robot-admin/naive-ui-components/C_Skeleton'
 import { createComponentTheme } from '@robot-admin/naive-ui-components/config'
 import { setupThemeSystem } from '@/plugins/theme'
@@ -25,10 +25,12 @@ test('原生与自绘主题响应设置，嵌套 Provider 保留独立颜色和�
   )
   const pinia = createPinia()
   const draft = ref('保留未提交草稿')
-  const nested = createComponentTheme({
+  const nestedColors = {
+    primary: '#ffff00',
+    onSolid: '#112233',
     bgCard: '#fffabc',
     skeletonBg: '#abc123',
-  })
+  }
   const app = createApp(
     defineComponent({
       name: 'ComponentThemeAppTest',
@@ -46,9 +48,37 @@ test('原生与自绘主题响应设置，嵌套 Provider 保留独立颜色和�
               default: () => [
                 h(NInput, { class: 'theme-input', value: draft.value }),
                 h(C_Skeleton, { class: 'theme-skeleton', animation: false }),
-                h(NConfigProvider, nested, {
-                  default: () => h(C_Skeleton, { class: 'nested-skeleton' }),
-                }),
+                h(
+                  NConfigProvider,
+                  createComponentTheme({
+                    ...nestedColors,
+                    mode: theme.isDark ? 'dark' : 'light',
+                  }),
+                  {
+                    default: () => [
+                      h(C_Skeleton, { class: 'nested-skeleton' }),
+                      h(
+                        NButton,
+                        { class: 'nested-brand', type: 'primary' },
+                        {
+                          default: () => '局部保存',
+                          icon: () =>
+                            h(
+                              'svg',
+                              { viewBox: '0 0 24 24', 'aria-hidden': 'true' },
+                              [
+                                h('path', {
+                                  fill: 'currentColor',
+                                  d: 'M4 4h16v16H4z',
+                                }),
+                              ]
+                            ),
+                        }
+                      ),
+                      h(NCheckbox, { class: 'nested-checked', checked: true }),
+                    ],
+                  }
+                ),
               ],
             }
           )
@@ -74,6 +104,19 @@ test('原生与自绘主题响应设置，嵌套 Provider 保留独立颜色和�
     expect(nestedSkeleton.style.getPropertyValue('--c-theme-bg-card')).toBe(
       '#fffabc'
     )
+    const nestedBrand = container.querySelector<HTMLElement>('.nested-brand')!
+    const nestedChecked =
+      container.querySelector<HTMLElement>('.nested-checked')!
+    expect(nestedBrand.style.getPropertyValue('--n-text-color')).toBe('#112233')
+    expect(nestedChecked.style.getPropertyValue('--n-check-mark-color')).toBe(
+      '#112233'
+    )
+    expect(
+      getComputedStyle(nestedBrand.querySelector('.n-button__icon')!).color
+    ).toBe('#112233')
+    expect(
+      getComputedStyle(nestedChecked.querySelector('.check-icon')!).fill
+    ).toBe('#112233')
     settings.primaryColor = '#ffff00'
     await theme.setMode('dark')
     await nextTick()
@@ -90,6 +133,13 @@ test('原生与自绘主题响应设置，嵌套 Provider 保留独立颜色和�
     expect(nestedSkeleton.style.getPropertyValue('--c-theme-bg-card')).toBe(
       '#fffabc'
     )
+    expect(nestedBrand.style.getPropertyValue('--n-text-color')).toBe('#112233')
+    expect(nestedChecked.style.getPropertyValue('--n-check-mark-color')).toBe(
+      '#112233'
+    )
+    expect(
+      getComputedStyle(nestedChecked.querySelector('.check-icon')!).fill
+    ).toBe('#112233')
     expect(container.querySelector('.theme-input input')).toBe(field)
     expect(field.value).toBe('保留未提交草稿')
     expect(document.documentElement.style.getPropertyValue('--c-primary')).toBe(

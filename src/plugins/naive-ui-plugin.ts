@@ -33,6 +33,7 @@ export function setupNaiveUI(app: App) {
   app.provide(FORM_GLOBAL_CONFIG_KEY, { density: 'compact' })
   const user = s_userStore()
   app.provide(TABLE_GLOBAL_CONFIG_KEY, {
+    defaults: { density: 'compact' },
     /** 表格包只接收通用命名空间；身份信息和登录生命周期由应用管理。 */
     get persistPrefix() {
       if (!user.token) return undefined

@@ -10,6 +10,7 @@ import { mount, flushPromises } from '@vue/test-utils'
 import {
   defineComponent,
   h,
+  inject,
   KeepAlive,
   nextTick,
   onBeforeUnmount,
@@ -17,6 +18,12 @@ import {
   reactive,
   ref,
 } from 'vue'
+import { NConfigProvider, NDataTable, NMessageProvider } from 'naive-ui'
+import { C_Table } from '@robot-admin/naive-ui-components/C_Table'
+import {
+  TABLE_GLOBAL_CONFIG_KEY,
+  type TableGlobalConfig,
+} from '@robot-admin/naive-ui-components/config'
 import {
   createGrid,
   type GridApi,
@@ -28,6 +35,7 @@ import {
   getCurrentTablePreferenceScope,
   useScopedMachTableConfig,
 } from '@/composables/useScopedMachTableConfig'
+import { setupNaiveUI } from '@/plugins/naive-ui-plugin'
 import { deferred } from './d_deferred'
 
 const user = reactive({
@@ -36,6 +44,10 @@ const user = reactive({
   activeContext: { tenantId: 'tenant', companyId: 'company' },
 })
 vi.mock('@/stores/user', () => ({ s_userStore: () => user }))
+vi.mock('@/stores/language', () => ({
+  s_languageStore: () => ({ currentLang: 'zh-cn' }),
+}))
+vi.mock('@/plugins/discrete', () => ({ notification: {} }))
 
 interface Row {
   id: string
@@ -109,6 +121,49 @@ beforeEach(() => {
   user.activeContext.tenantId = 'tenant'
   user.activeContext.companyId = 'company'
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
+})
+
+test('应用插件注入 compact 默认密度，普通表和显式尺寸均消费正式组件协议', async () => {
+  let injected: TableGlobalConfig | undefined
+  const TableOwner = defineComponent({
+    name: 'GlobalTableDensityOwner',
+    /** 读取正式注入协议，并挂载未声明密度与显式覆盖的表格。 */
+    setup() {
+      injected = inject(TABLE_GLOBAL_CONFIG_KEY)
+      const props = {
+        columns: [{ key: 'name' as const, title: '名称' }],
+        data: [{ id: 'one', name: '紧凑表格' }],
+        rowKey: 'id' as const,
+      }
+      return () => [
+        h(C_Table<Row>, { ...props, config: { pagination: false } }),
+        h(C_Table<Row>, {
+          ...props,
+          config: { pagination: false, display: { size: 'large' } },
+        }),
+      ]
+    },
+  })
+  const wrapper = mount(
+    defineComponent({
+      name: 'ApplicationTableDensityHarness',
+      setup: () => () =>
+        h(NConfigProvider, null, {
+          default: () =>
+            h(NMessageProvider, null, { default: () => h(TableOwner) }),
+        }),
+    }),
+    {
+      global: { plugins: [{ install: setupNaiveUI }], stubs: { C_Icon: true } },
+    }
+  )
+  await flushPromises()
+  expect(injected?.defaults?.density).toBe('compact')
+  expect(wrapper.findAll('.c-table-wrapper--compact')).toHaveLength(2)
+  const tables = wrapper.findAllComponents(NDataTable)
+  expect(tables).toHaveLength(2)
+  expect(tables[0]!.props('size')).toBe('small')
+  expect(tables[1]!.props('size')).toBe('large')
 })
 
 test('配置捕获一次，保留 store、sections 与 debounce，身份变化不重定向旧配置', () => {

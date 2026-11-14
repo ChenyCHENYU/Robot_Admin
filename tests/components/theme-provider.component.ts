@@ -12,6 +12,7 @@ import { createPinia, disposePinia, setActivePinia } from 'pinia'
 import { defineComponent, h } from 'vue'
 import {
   NButton,
+  NCheckbox,
   NConfigProvider,
   NDataTable,
   NDialog,
@@ -86,7 +87,21 @@ test('单一 Provider 接入项目配色；设置和明暗原地生效，Dialog 
               options: [{ label: '组织', value: 'organization' }],
               defaultValue: 'organization',
             }),
-            h(NButton, { class: 'brand', type: 'primary' }, () => '保存'),
+            h(
+              NButton,
+              { class: 'brand', type: 'primary' },
+              {
+                default: () => '保存',
+                icon: () =>
+                  h('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true' }, [
+                    h('path', {
+                      fill: 'currentColor',
+                      d: 'M4 4h16v16H4z',
+                    }),
+                  ]),
+              }
+            ),
+            h(NCheckbox, { class: 'checked', checked: true }),
             h(NDataTable, {
               columns: [{ key: 'name', title: '项目' }],
               data: [{ key: 1, name: '组件主题' }],
@@ -116,7 +131,17 @@ test('单一 Provider 接入项目配色；设置和明暗原地生效，Dialog 
     variable(wrapper.element, '.selection .n-base-selection', '--n-border')
   ).toBe('1px solid #c3ab8c')
   expect(variable(wrapper.element, '.brand', '--n-color')).toBe('#ffff00')
-  expect(variable(wrapper.element, '.brand', '--n-text-color')).toBe('#000000')
+  expect(variable(wrapper.element, '.brand', '--n-text-color')).toBe('#ffffff')
+  expect(
+    getComputedStyle(wrapper.get('.brand .n-button__icon').element).color
+  ).toBe('#ffffff')
+  expect(wrapper.get('.brand svg path').attributes('fill')).toBe('currentColor')
+  expect(variable(wrapper.element, '.checked', '--n-check-mark-color')).toBe(
+    '#ffffff'
+  )
+  expect(
+    getComputedStyle(wrapper.get('.checked .check-icon').element).fill
+  ).toBe('#ffffff')
   expect(variable(wrapper.element, '.brand', '--n-border-radius')).toBe('8px')
   expect(variable(wrapper.element, '.n-data-table', '--n-th-color')).toBe(
     'rgba(235, 225, 210, 1)'
@@ -153,6 +178,15 @@ test('单一 Provider 接入项目配色；设置和明暗原地生效，Dialog 
   ).toBe('1px solid #8c7355')
   expect(variable(wrapper.element, '.brand', '--n-color')).toBe('#7c3aed')
   expect(variable(wrapper.element, '.brand', '--n-text-color')).toBe('#ffffff')
+  expect(
+    getComputedStyle(wrapper.get('.brand .n-button__icon').element).color
+  ).toBe('#ffffff')
+  expect(variable(wrapper.element, '.checked', '--n-check-mark-color')).toBe(
+    '#ffffff'
+  )
+  expect(
+    getComputedStyle(wrapper.get('.checked .check-icon').element).fill
+  ).toBe('#ffffff')
   expect(variable(wrapper.element, '.brand', '--n-border-radius')).toBe('4px')
   expect(variable(wrapper.element, '.n-data-table', '--n-th-color')).toBe(
     'rgba(68, 53, 38, 1)'

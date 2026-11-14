@@ -91,10 +91,6 @@
 .shipping-queue :deep(.pagination-wrapper) {
   padding: 0 12px 8px;
 }
-.shipping-queue :deep(.n-data-table-td) {
-  padding-block: 6px;
-  font-size: 13px;
-}
 .shipping-vehicle {
   grid-column: 2;
   grid-row: 1 / span 2;

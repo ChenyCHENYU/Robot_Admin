@@ -161,8 +161,12 @@ These fragments use the project's installed auto-imports and asynchronous grid p
 
 - **Sizing:** automatic business columns measure complete headers and bounded display values, then share spare width proportionally. Utility columns stay compact. A resize changes only its target and protects header text/controls; body overflow remains independently readable. Saving a width preserves the original presentation policy.
 - **Height and appearance:** full lists scroll within the workspace; short details shrink to content and larger bodies scroll within their limit. Each grid retains its own themes and empty state. Status tags, ordinary enums and important numeric values have separate configurable presentation.
+- **Compact defaults:** MachTable `size: 'compact'` uses 30px body rows and a 34px header; explicit `rowHeight/headerHeight` take precedence. `C_Table` receives `density: 'compact'`, with row height expanding for buttons, editors and content; local density and control sizes remain configurable. Primary button text/icons and checked Checkbox marks default to white in light and dark themes. A nested `NConfigProvider` can override the foreground on solid fills with `createComponentTheme({ onSolid })`.
 - **Dynamic data:** the API boundary maps each grid's public column definition. The remote example commits columns and rows as one result and rejects stale responses; dictionary changes refresh display without refetching business data.
+- **Cross-page selection:** after selecting all matching query results, MachTable `selectedRows` contains selected row snapshots from only the last accepted page. Send the query and `selectionState` for cross-page batch actions; excluded IDs remain effective across pages.
 - **Personal preferences:** grids with `persistKey/persistence` enabled are scoped by tenant, company, user and table. Incomplete identity disables storage. C_Table receives one application scope getter; MachTable captures its key during setup, with identity changes rebuilding the layout owner. B starts with defaults if it has no settings; A's queued writes and restored preferences remain A's. Current examples are the shipping queue and MachTable demo.
+
+Dynamic reports include a stable report/column-scheme ID in the preference key. The owner/key controls preference storage; selection belongs to the query and row identity, while dirty state belongs to the edit draft. Changing a preference key does not automatically clear selection or unsaved edits. Pages still own selection resets and draft protection at their business boundaries.
 
 Shared appearance lives in [MachTable config](./src/config/mach-table.ts) and the [component plugin](./src/plugins/naive-ui-plugin.ts). See [composition examples](./docs/core-components.md) (Chinese) for forms, search, dictionaries and tables.
 
@@ -197,7 +201,7 @@ These are **the versions pinned by this application**. Full APIs and upstream ca
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.38.0`       | 63 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.39.0`       | 63 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`        | Static enums, resilient remote dictionaries, scoped cache and detail field bindings     | Shared translation for forms, search, details and both grids      |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
@@ -207,7 +211,7 @@ These are **the versions pinned by this application**. Full APIs and upstream ca
 | [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.0.4`        | Isolated instances, Excel / CSV / ZIP, cancellable chunks and file processing           | Reusable file scenarios with heavy dependencies loaded on demand  |
 | [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`        | Configuration protection and Git engineering standards                                  | Development-time commit conventions and initialization            |
 
-The grid integration uses **MachTable 0.41.1** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue). Robot Admin currently integrates Vue. See [MachTable](https://github.com/ChenyCHENYU/MachTable) for Core, React, XLSX and other optional capabilities; [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages) host the component and runtime sources.
+The grid integration uses **MachTable 0.42.0** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue). Robot Admin currently integrates Vue. See [MachTable](https://github.com/ChenyCHENYU/MachTable) for Core, React, XLSX and other optional capabilities; [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages) host the component and runtime sources.
 
 ## Engineering and verification
 
@@ -279,7 +283,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.41.1** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.42.0** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text
