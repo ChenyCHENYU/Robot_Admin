@@ -11,11 +11,16 @@
   <div>
     <C_LayoutContainer :key="layoutInstanceKey">
       <!-- Side 布局的垂直菜单 -->
-      <template #menu="{ collapsed }">
-        <C_MenuTop id="guide-menu-top" />
+      <template #menu="{ collapsed, collapsedWidth }">
+        <C_MenuTop
+          id="guide-menu-top"
+          :collapsed="collapsed"
+        />
         <div
           id="guide-menu"
           data-guide="navigation"
+          role="navigation"
+          aria-label="主导航"
           class="menu-scroll-container"
           :class="{
             'menu-light': isMenuLight,
@@ -41,11 +46,17 @@
                 :style="{ background: getGroupColor(gIdx) }"
               ></div>
               <C_Menu
+                data-ra-sidebar-menu
                 :routes="group.items"
                 :model-value="route.path"
                 mode="vertical"
                 :collapsed="collapsed"
-                :inverted="isDarkMode"
+                :collapsed-width="collapsedWidth"
+                :icon-size="18"
+                :collapsed-icon-size="18"
+                :root-indent="20"
+                :indent="16"
+                :theme-overrides="sidebarMenuTheme"
                 :label-formatter="translateRouteTitle"
                 @intent="prefetchRoute"
                 @select="navigateTo"
@@ -109,6 +120,7 @@
   import { s_settingsStore } from '@/stores/settings'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import { prefetchRoute } from '@/router/routePrefetch'
+  import { createSidebarMenuTheme } from '@/config/theme/sidebar-menu'
   import { buildGroupedMenuData, getMenuGroupColor } from './data'
   import { SETTINGS_DRAWER_KEY } from './d_context'
   import C_Settings from '@/components/global/C_Settings/index.vue'
@@ -138,7 +150,6 @@
     void router.push(path).catch(() => undefined)
   }
 
-  const isDarkMode = computed(() => themeStore.isDark)
   const menuExpandMode = computed<'inline' | 'panel'>(
     () => settingsStore.menuExpandMode
   )
@@ -147,6 +158,10 @@
    * 菜单是否为亮色背景（决定 inverted 和文本配色方案）
    */
   const isMenuLight = computed(() => themeStore.isMenuLight)
+  // 侧栏独立消费同一主色；显式实例配色避免深色品牌背景依赖页面明暗模式。
+  const sidebarMenuTheme = computed(() =>
+    createSidebarMenuTheme(isMenuLight.value, settingsStore.primaryColor)
+  )
 
   /**
    * 最终菜单数据：响应式 + 分组模式下自动包装 type:'group'

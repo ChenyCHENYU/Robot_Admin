@@ -51,9 +51,7 @@ const MENU_COLOR_VARIABLES = [
   '--app-menu-border',
 ] as const
 const STANDARD_MENU_OVERRIDES: NonNullable<GlobalThemeOverrides['Menu']> = {
-  itemPadding: '0 16px',
   itemHeight: '44px',
-  itemBorderRadius: '6px',
 }
 
 /** 判断未知值是否为支持的菜单风格。 */

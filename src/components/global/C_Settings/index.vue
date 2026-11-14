@@ -87,9 +87,9 @@
       type: 'signature',
       name: '个性',
       icon: '✨',
-      description: '深邃星空 · 玻璃质感',
+      description: '深蓝品牌 · 清晰层级',
       sidebarBg: '#0d1425',
-      activeBg: 'rgba(100, 108, 255, 0.8)',
+      activeBg: 'rgba(32, 128, 240, 0.18)',
     },
     {
       type: 'standard',

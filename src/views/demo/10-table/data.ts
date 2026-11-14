@@ -80,6 +80,12 @@ export const MODE_CONFIG: Record<
       '鼠标悬停在单元格上会显示编辑图标，点击编辑图标进入编辑状态。适合快速修改单个字段。',
     alertType: 'info',
   },
+  inline: {
+    title: '常显录入模式',
+    description:
+      '输入控件常显并即时更新受控草稿，由业务统一校验和提交；当前 CRUD 示例继续使用上方提供的保存模式。',
+    alertType: 'info',
+  },
   both: {
     title: '混合编辑模式',
     description: '同时支持行编辑和单元格编辑两种方式。提供最大的编辑灵活性。',

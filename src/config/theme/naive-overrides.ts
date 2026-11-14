@@ -44,9 +44,7 @@ const lightMenuConfig: GlobalThemeOverrides['Menu'] = {
   itemColorActiveCollapsed: LIGHT_MENU.itemBgActive,
   itemColorHover: LIGHT_MENU.itemBgHover,
 
-  itemPadding: '0 16px',
   itemHeight: '44px',
-  itemBorderRadius: '0',
 }
 
 /**
@@ -76,9 +74,7 @@ const darkMenuConfig: GlobalThemeOverrides['Menu'] = {
   itemColorActiveCollapsed: DARK_MENU.itemBgActive,
   itemColorHover: DARK_MENU.itemBgHover,
 
-  itemPadding: '0 16px',
   itemHeight: '44px',
-  itemBorderRadius: '0',
 }
 
 /** 仅统一 Dialog 原生 small 操作按钮；普通按钮及显式 medium/large 不受影响。 */

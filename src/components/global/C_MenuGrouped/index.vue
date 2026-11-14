@@ -53,6 +53,7 @@
       >
         <C_Icon
           v-if="menu.meta?.icon"
+          aria-hidden="true"
           :name="menu.meta.icon"
           :size="collapsed ? 20 : 17"
           class="mg__icon"
@@ -61,6 +62,7 @@
           <span class="mg__label">{{ fmtLabel(menu) }}</span>
           <C_Icon
             v-if="menu.children?.length"
+            aria-hidden="true"
             name="mdi:chevron-right"
             :size="14"
             class="mg__arrow"
@@ -88,6 +90,7 @@
           <span class="mg-panel__icon">
             <C_Icon
               v-if="expandedMenu.meta?.icon"
+              aria-hidden="true"
               :name="expandedMenu.meta.icon"
               :size="18"
             />
@@ -108,6 +111,7 @@
           >
             <C_Icon
               name="mdi:close"
+              aria-hidden="true"
               :size="16"
             />
           </button>
@@ -139,6 +143,7 @@
               >
                 <C_Icon
                   v-if="item.meta?.icon"
+                  aria-hidden="true"
                   :name="item.meta.icon"
                   :size="18"
                   class="mg-panel__cell-icon"
@@ -155,6 +160,7 @@
               <div class="mg-panel__cat-label">
                 <C_Icon
                   v-if="cat.icon"
+                  aria-hidden="true"
                   :name="cat.icon"
                   :size="14"
                 />
@@ -178,6 +184,7 @@
                 >
                   <C_Icon
                     v-if="leaf.meta?.icon"
+                    aria-hidden="true"
                     :name="leaf.meta.icon"
                     :size="18"
                     class="mg-panel__cell-icon"
@@ -209,6 +216,7 @@
             >
               <C_Icon
                 v-if="child.meta?.icon"
+                aria-hidden="true"
                 :name="child.meta.icon"
                 :size="18"
                 class="mg-panel__cell-icon"
