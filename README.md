@@ -31,7 +31,7 @@
 | 工程视角   | 当前提供                                                                   |
 | ---------- | -------------------------------------------------------------------------- |
 | 架构选择   | SPA、Bun Workspaces、Module Federation、MicroApp 四种分支                  |
-| 组件与插件 | 61 个业务组件、11 个指令；8 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
+| 组件与插件 | 63 个业务组件、11 个指令；8 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
 | 场景示例   | 58 个演示页面，覆盖数据录入、复杂表格、流程编辑、文件与媒体                |
 | 验证与溯源 | 双 Lint、类型、逻辑与组件测试、构建预算、浏览器绘制回归、构建身份卡        |
 
@@ -129,7 +129,7 @@ flowchart TB
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.35.0` | 61 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.37.2` | 63 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`  | 静态枚举、远程字典、隔离缓存及详情字段绑定                 | 表单、搜索、详情与两种表格共享翻译     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
@@ -147,7 +147,7 @@ flowchart TB
 
 | 能力                 | 接入方式                                                                                       | 实际用途                                                      |
 | -------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| **MachTable 0.41.0** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
+| **MachTable 0.41.1** | [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)       | Core + Vue 适配；虚拟化、固定列、编辑、行拖拽与可配置整行着色 |
 | 启动信息             | [`vite-console-plugin`](https://www.npmjs.com/package/vite-console-plugin)                     | 开发横幅中的应用版本、Git 信息与访问地址                      |
 | 国际化               | `vite-auto-i18n-plugin` + 本仓库 `patches/`                                                    | 中文源码扫描、离线编译、按语言加载词典、显式生成翻译          |
 | 类型维护             | [`ts-type-cleaner`](https://www.npmjs.com/package/ts-type-cleaner)                             | `bun run check-types` 提供类型使用分析                        |
@@ -157,9 +157,14 @@ MachTable 是独立数据网格项目，源码与 Vue / React / XLSX 适配见 [
 
 在「表格管理 → MachTable → 顺序调整」（`/#/demo/table-manage/mach-table`）体验 30 条订单的行排序。该场景按需使用 `/ordering`：勾选不连续的多项，拖动其中一项手柄可按原相对顺序一起移动；支持边缘滚动、Esc、Alt + ↑ / ↓ 和独立的顺序撤销/重做。搜索后的键盘移动以相邻可见订单为目标，隐藏订单仍保留在完整数据中。现有工具栏可选择 450ms 模拟保存、失败回滚或版本冲突；冲突后可重新加载模拟服务器顺序。状态区显示保存结果和双方版本，切换场景保留已确认顺序并取消未完成保存。所有传输均为本地模拟，不写订单接口。
 
-当前安装与锁文件固定为官方 npm **0.41.0**，Vue 适配与 Core 版本一致。字典等数据插件只在项目组合，表格保留通用值回调、原生分页、有界测宽、完整表头、主题空态与状态配色。生产计划、销售订单和发运任务池可直接体验。
+当前安装与锁文件固定为官方 npm **0.41.1**，Vue 适配与 Core 版本一致。字典等数据插件只在项目组合，表格保留通用值回调、原生分页、有界测宽、完整表头、主题空态与状态配色。生产计划、销售订单和发运任务池可直接体验。
 
 「超级表格」和 MachTable 的订单列表均使用各自默认的序号和分页，普通列和数值列均默认居中。两者都可用 `:pagination="false"` 关闭分页，用 `:row-number="false"` 关闭自动序号。动态报表由接口层提供列和行，再分别传给 `C_Table` 的 `columns/data` 或 MachTable 的 `column-defs/row-data`。
+
+表格偏好由应用按租户、公司、用户 ID 隔离；未登录或身份不完整时不持久化。令牌和显示名不参与键，历史无范围键不读取、不迁移。
+
+- **C_Table 0.37.2**：在 [Naive UI 插件](./src/plugins/naive-ui-plugin.ts) 一次提供 `persistPrefix` getter，页面只声明逻辑 `persistKey`，例如 `production-sales:shipping:tasks:v1`。
+- **MachTable 0.41.1**：在 setup 用 `useScopedMachTableConfig(ORDER_TABLE_CONFIG)` 捕获固定保存键，保留原 `sections/debounceMs/store`。[布局](./src/components/global/C_Layout/index.vue) 随身份及权限代次重建 KeepAlive 所有者，旧账号的延迟、排队保存仍归属旧键，A → B → A 分别恢复自己的偏好。
 
 同一页面新增两个按需加载的体验页签：
 
@@ -209,6 +214,8 @@ MachTable 不传 `preset` 即为内置 `list`，包含序号、分页及列头�
 MachTable 主列表使用内置分页条，C_Table 使用 Naive UI 分页。炉次、成分、库存及弹窗明细共用 `domLayout: "autoHeight"` 和 `maxBodyHeight: 330`。短表随内容收起，底部留 8px。表体超过 330px 时在同一实例内虚拟滚动。主列表按工作区高度内部滚动，C_Table 短表通过 `display.maxHeight` 限制最大高度。
 
 同一 MachTable 实例在空态、短表与大数据间切换时恢复正确视口，支持换行测高和异步编辑定位。程序化勾选遵循 `rowSelection`，发运库存与销售明细的批量操作均已显式启用多选。
+
+0.41.1 补齐缩列后的中心行背景与纯文本尾省略。组件库 0.37.2 保留宽度保存后的展示策略、固定右侧操作区，并让原生文本按钮提供正确省略和完整提示。
 
 0.40.2 修复单列调宽联动和取消恢复；紧凑编辑器独占输入宽度，操作条自动避让，短表空态按可用高度收敛插画。
 
@@ -372,7 +379,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.41.0** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.41.1** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

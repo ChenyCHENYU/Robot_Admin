@@ -338,6 +338,7 @@
     type RowEditingStoppedEvent,
   } from '@agile-team/mach-table-vue'
   import { useMachTableController } from '@agile-team/mach-table-vue/workflows'
+  import { useScopedMachTableConfig } from '@/composables/useScopedMachTableConfig'
   import { defineActions } from '@robot-admin/naive-ui-components/C_ActionBar'
   import '@agile-team/mach-table-vue/styles.css'
   import { s_themeStore } from '@/stores/theme'
@@ -528,7 +529,7 @@
   }
 
   const grid = useMachTableController({
-    config: ORDER_TABLE_CONFIG,
+    config: useScopedMachTableConfig(ORDER_TABLE_CONFIG),
     loading: () =>
       (!isReorderScenario.value && orderCrud.loading.value) ||
       previewState.value === 'loading',

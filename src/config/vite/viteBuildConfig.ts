@@ -15,6 +15,17 @@ const buildConfig: BuildOptions = {
        */
       codeSplitting: {
         groups: [
+          // 仅聚合无依赖的纯辅助函数，避免百字节共享块各发一次请求；不移动业务初始化。
+          {
+            name: 'shared-helpers',
+            test: id =>
+              id.endsWith('plugin-vue:export-helper') ||
+              /[\\/]src[\\/]utils[\\/]d_tablePreferences\.ts$/.test(id) ||
+              /[\\/]@robot-admin[\\/]naive-ui-components[\\/]dist[\\/]export-helper\.js$/.test(
+                id
+              ),
+            includeDependenciesRecursively: false,
+          },
           // 合并 Naive UI 的细小主题模块，避免语言初始化后出现过多首屏请求。
           {
             name: 'naive-ui-themes',

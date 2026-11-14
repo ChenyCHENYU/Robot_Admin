@@ -147,6 +147,7 @@ export const VEHICLE_CONFIG: FormConfig<VehicleForm> = {
 }
 export const SHIPMENT_TABLE_CONFIG = defineTableConfig<Shipment>({
   density: 'compact',
+  persistKey: 'production-sales:shipping:tasks:v1',
   pagination: { pageSize: 10 },
   toolbar: { show: false },
   display: {

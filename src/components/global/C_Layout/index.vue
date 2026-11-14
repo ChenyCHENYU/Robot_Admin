@@ -9,7 +9,7 @@
 -->
 <template>
   <div>
-    <C_LayoutContainer :key="permissionStore.requestGeneration">
+    <C_LayoutContainer :key="layoutInstanceKey">
       <!-- Side 布局的垂直菜单 -->
       <template #menu="{ collapsed }">
         <C_MenuTop id="guide-menu-top" />
@@ -105,6 +105,7 @@
   import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import { s_themeStore } from '@/stores/theme'
   import { s_permissionStore } from '@/stores/permission'
+  import { getCurrentTablePreferenceScope } from '@/composables/useScopedMachTableConfig'
   import { s_settingsStore } from '@/stores/settings'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
   import { prefetchRoute } from '@/router/routePrefetch'
@@ -120,6 +121,13 @@
   useLayoutBridge()
 
   const permissionStore = s_permissionStore()
+  /** 连同 KeepAlive 所有者重建，避免新账号复用旧实例内存中的表格偏好。 */
+  const layoutInstanceKey = computed(() =>
+    JSON.stringify([
+      permissionStore.requestGeneration,
+      getCurrentTablePreferenceScope(),
+    ])
+  )
   const themeStore = s_themeStore()
   const settingsStore = s_settingsStore()
   const route = useRoute()

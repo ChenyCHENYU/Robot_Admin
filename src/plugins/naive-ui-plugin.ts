@@ -11,9 +11,12 @@ import type { App, InjectionKey } from 'vue'
 import {
   COMPONENT_LOCALE_KEY,
   FORM_GLOBAL_CONFIG_KEY,
+  TABLE_GLOBAL_CONFIG_KEY,
 } from '@robot-admin/naive-ui-components/config'
 import { notification } from '@/plugins/discrete'
 import { s_languageStore } from '@/stores/language'
+import { s_userStore } from '@/stores/user'
+import { buildTablePreferenceScope } from '@/utils/d_tablePreferences'
 
 export { notification }
 export const NOTIFICATION_KEY: InjectionKey<typeof notification> =
@@ -28,6 +31,18 @@ export function setupNaiveUI(app: App) {
   app.provide(NOTIFICATION_KEY, notification)
   // 表单、搜索与编辑弹窗共享默认密度；页面和字段的明确配置继续优先。
   app.provide(FORM_GLOBAL_CONFIG_KEY, { density: 'compact' })
+  const user = s_userStore()
+  app.provide(TABLE_GLOBAL_CONFIG_KEY, {
+    /** 表格包只接收通用命名空间；身份信息和登录生命周期由应用管理。 */
+    get persistPrefix() {
+      if (!user.token) return undefined
+      return buildTablePreferenceScope({
+        userId: user.userInfo.id,
+        tenantId: user.activeContext?.tenantId,
+        companyId: user.activeContext?.companyId,
+      })
+    },
+  })
   const language = s_languageStore()
   app.provide(COMPONENT_LOCALE_KEY, {
     /** 组件内置中英文；其他宿主语言先使用英文，业务翻译仍由宿主管理。 */

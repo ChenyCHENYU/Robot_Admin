@@ -7,8 +7,18 @@
  */
 import { expect, test, type Page } from '@playwright/test'
 import { installMockAdminSession } from './auth-fixture'
+import { buildTablePreferenceScope } from '../src/utils/d_tablePreferences'
 
 const route = '/#/demo/table-manage/mach-table'
+const preferenceScope = buildTablePreferenceScope({
+  userId: 'mock-user:cheny',
+  tenantId: 'jiangsu-jinheng',
+  companyId: 'nanjing',
+})!
+const preferenceKey = `mach-table:grid-state:${JSON.stringify([
+  preferenceScope,
+  'robot-admin:demo:mach-table:orders:v3',
+])}`
 const header = (page: Page, id: string) =>
   page.locator(`.mach-header-cell[data-col-id="${id}"]`)
 
@@ -110,15 +120,13 @@ test('自适应和容器缩放填满，手动拖拽只改变当前列并保留�
   expect(wide.widths.op).toBe(126)
   await expect
     .poll(() =>
-      page.evaluate(() => {
-        const value = localStorage.getItem(
-          'mach-table:grid-state:robot-admin:demo:mach-table:orders:v3'
-        )
+      page.evaluate(key => {
+        const value = localStorage.getItem(key)
         const state = value ? JSON.parse(value).state : null
         return state?.columns.find(
           (column: { colId: string }) => column.colId === 'customer'
         )?.contentWidth
-      })
+      }, preferenceKey)
     )
     .toBeGreaterThan(0)
   await page.reload()

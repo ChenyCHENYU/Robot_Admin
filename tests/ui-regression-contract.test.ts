@@ -265,7 +265,9 @@ describe('UI regression contracts', () => {
     expect(viewSource).toContain(
       'v-bind="isReorderScenario ? reorderTableBindings : tableBindings"'
     )
-    expect(viewSource).toContain('config: ORDER_TABLE_CONFIG')
+    expect(viewSource).toContain(
+      'config: useScopedMachTableConfig(ORDER_TABLE_CONFIG)'
+    )
     expect(viewSource).toContain('bindings: tableBindings')
     expect(viewSource).not.toContain('const machTableConfig = computed')
     expect(viewSource).toContain('<C_Form')

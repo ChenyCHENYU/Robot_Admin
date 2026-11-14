@@ -206,10 +206,11 @@
       </section>
 
       <div class="workbench-layout">
+        <!-- 订单区下限：标题 48 + 工具栏 41 + 表格 120 + 上下边框 2。 -->
         <C_SplitPane
           v-model:size="splitSize"
           direction="vertical"
-          :min-first-size="210"
+          :min-first-size="211"
           :min-second-size="260"
           aria-label="订单与单据详情"
         >
