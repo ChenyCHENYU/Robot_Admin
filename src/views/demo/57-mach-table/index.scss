@@ -27,7 +27,7 @@
   color: var(--app-text-secondary);
   background: var(--app-bg-content);
   border: 1px solid var(--app-border-default);
-  border-radius: var(--app-radius-medium);
+  border-radius: var(--app-radius, 6px);
 
   strong {
     color: var(--app-text-primary);
@@ -37,15 +37,15 @@
   }
 
   .is-ready {
-    color: var(--app-success-color);
+    color: var(--app-success);
   }
 }
 
 .mach-card {
   background: var(--app-bg-content);
   border: 1px solid var(--app-border-default);
-  border-radius: var(--app-radius-large);
-  box-shadow: var(--app-shadow-card);
+  border-radius: calc(var(--app-radius, 6px) + 6px);
+  box-shadow: var(--app-shadow-sm);
 
   :deep(.n-card__content) {
     padding: 18px;
@@ -140,7 +140,7 @@
   font-size: 12px;
   background: var(--app-bg-surface);
   border: 1px solid var(--app-border-default);
-  border-radius: var(--app-radius-medium);
+  border-radius: var(--app-radius, 6px);
 
   &__preview {
     display: flex;
@@ -167,12 +167,12 @@
   }
 
   &[data-status='saved'] [role='status'] {
-    color: var(--app-success-color);
+    color: var(--app-success);
   }
 
   &[data-status='error'] [role='status'],
   &[data-status='conflict'] [role='status'] {
-    color: var(--c-error);
+    color: var(--app-error);
   }
 }
 
@@ -273,7 +273,7 @@
   &::before {
     width: 6px;
     height: 6px;
-    background: var(--app-success-color, var(--app-primary));
+    background: var(--app-success);
     border-radius: 50%;
     content: '';
   }

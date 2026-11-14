@@ -1,5 +1,3 @@
-
-
 // ================= 主容器样式 =================
 .tabs-demo {
   padding: 24px;
@@ -36,7 +34,7 @@
 .tab-header {
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--n-border-color);
+  border-bottom: 1px solid var(--app-border-default);
 }
 
 .tab-description {
@@ -53,7 +51,7 @@
 .tabs-actions {
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid var(--n-border-color);
+  border-top: 1px solid var(--app-border-default);
 }
 
 // ================= 响应式设计 =================

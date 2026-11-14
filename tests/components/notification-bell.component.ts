@@ -6,7 +6,8 @@
  */
 import { beforeEach, expect, test, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
-import { defineComponent, h, reactive } from 'vue'
+import { defineComponent, h, reactive, ref } from 'vue'
+import { NConfigProvider, type GlobalThemeOverrides } from 'naive-ui'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { useNotificationBell } from '@/components/global/C_NotificationBell/data'
 import NotificationBell from '@/components/global/C_NotificationBell/index.vue'
@@ -302,6 +303,55 @@ test('预览错误可重试，Escape与外部点击关闭弹层，进入详情�
     status: 'all',
   })
   expect(store.mutate).not.toHaveBeenCalled()
+})
+
+test('通知入口与真实 Teleport 预览同步当前 Provider 的状态色及圆角', async () => {
+  const overrides = ref<GlobalThemeOverrides>({
+    common: {
+      errorColor: '#bc2468',
+      warningColor: '#aa7700',
+      successColor: '#168658',
+      borderRadius: '9px',
+    },
+  })
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [{ path: '/', component: {} }],
+  })
+  const wrapper = mount(
+    defineComponent({
+      name: 'NotificationThemeHarness',
+      /** 保留真实 Provider 和 body 弹层，验证主题切换。 */
+      setup: () => () =>
+        h(NConfigProvider, { themeOverrides: overrides.value }, () =>
+          h(NotificationBell)
+        ),
+    }),
+    { attachTo: document.body, global: { plugins: [router] } }
+  )
+  await wrapper.get('button[aria-haspopup="dialog"]').trigger('click')
+  await flushPromises()
+  const entrance = wrapper.get('.notification-bell').element as HTMLElement
+  const preview = document.querySelector<HTMLElement>(
+    '[data-testid="notification-preview"]'
+  )!
+  expect(wrapper.element.contains(preview)).toBe(false)
+  for (const element of [entrance, preview]) {
+    expect(element.style.getPropertyValue('--notification-error')).toBe(
+      '#bc2468'
+    )
+    expect(element.style.getPropertyValue('--notification-radius')).toBe('9px')
+  }
+  overrides.value = {
+    common: { errorColor: '#a94312', borderRadius: '4px' },
+  }
+  await flushPromises()
+  for (const element of [entrance, preview]) {
+    expect(element.style.getPropertyValue('--notification-error')).toBe(
+      '#a94312'
+    )
+    expect(element.style.getPropertyValue('--notification-radius')).toBe('4px')
+  }
 })
 
 test('窗口尺寸或页面滚动变化关闭预览，内部列表滚动仍可继续浏览', async () => {

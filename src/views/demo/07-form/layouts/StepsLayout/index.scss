@@ -1,39 +1,38 @@
+.steps-demo {
+  padding: 24px;
+}
+
+.size-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.size-label {
+  font-size: 14px;
+  color: var(--app-text-primary);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--app-border-default);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
   .steps-demo {
-
-    padding: 24px;
-  }
-
-  .size-selector {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .size-label {
-    font-size: 14px;
-    color: var(--n-text-color-base);
+    padding: 16px;
   }
 
   .action-buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--n-border-color);
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  /* 响应式 */
-  @media (max-width: 768px) {
-    .steps-demo {
-      padding: 16px;
-    }
-
-    .action-buttons {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .action-buttons .n-button {
-      justify-content: center;
-    }
+  .action-buttons .n-button {
+    justify-content: center;
   }
+}

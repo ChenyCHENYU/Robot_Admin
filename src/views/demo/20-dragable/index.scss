@@ -23,7 +23,7 @@
 
   .kanban-column {
     border-radius: 8px;
-    border: 1px solid var(--n-border-color);
+    border: 1px solid var(--app-border-default);
     overflow: hidden;
 
     .column-header {
@@ -63,7 +63,7 @@
   }
 
   .task-card {
-    border: 1px solid var(--n-border-color);
+    border: 1px solid var(--app-border-default);
     border-radius: 8px;
     padding: 16px;
     cursor: grab;
@@ -141,7 +141,7 @@
 
         &:hover {
           opacity: 1;
-          background: var(--n-close-icon-color-hover);
+          background: var(--app-bg-surface-hover);
         }
 
         div {
@@ -182,7 +182,7 @@
   }
 
   .tech-card {
-    border: 1px solid var(--n-border-color);
+    border: 1px solid var(--app-border-default);
     border-radius: 8px;
     padding: 16px;
     cursor: grab;
@@ -190,7 +190,7 @@
 
     &:hover {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border-color: var(--n-primary-color);
+      border-color: var(--app-primary);
       transform: translateY(-2px);
     }
 
@@ -225,7 +225,7 @@
           transition: color 0.2s ease;
 
           &:hover {
-            color: var(--n-primary-color);
+            color: var(--app-primary);
           }
         }
       }
@@ -240,7 +240,7 @@
 
         &:hover {
           opacity: 1;
-          background: var(--n-close-icon-color-hover);
+          background: var(--app-bg-surface-hover);
         }
 
         div {

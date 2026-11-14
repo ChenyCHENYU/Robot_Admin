@@ -86,6 +86,9 @@ export const SEARCH_PREVIEW_ROWS: SearchPreviewRow[] = [
   },
 ]
 
+/** 独立建议输入复用本地业务样例，不依赖后台搜索服务。 */
+export const SEARCH_NAME_SUGGESTIONS = SEARCH_PREVIEW_ROWS.map(row => row.name)
+
 /** 根据已提交的条件筛选，输入草稿与列表查询分开。 */
 export function filterSearchPreview(
   params: BasicFormParams

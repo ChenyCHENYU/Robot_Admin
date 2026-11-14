@@ -12,10 +12,10 @@
   flex-direction: column;
   gap: 16px;
   min-width: 0;
-  color: var(--c-text-1);
+  color: var(--app-text-primary);
 
   .dictionary-header {
-    border: 1px solid var(--c-border);
+    border: 1px solid var(--app-border-default);
   }
   .workspace-heading,
   .workspace-title,
@@ -49,10 +49,10 @@
     flex-shrink: 0;
     width: 46px;
     height: 46px;
-    border: 1px solid color-mix(in srgb, var(--c-primary) 18%, transparent);
+    border: 1px solid color-mix(in srgb, var(--app-primary) 18%, transparent);
     border-radius: 12px;
-    color: var(--c-primary);
-    background: color-mix(in srgb, var(--c-primary) 8%, transparent);
+    color: var(--app-primary);
+    background: color-mix(in srgb, var(--app-primary) 8%, transparent);
   }
   h1 {
     margin: 0;
@@ -61,19 +61,19 @@
   }
   .workspace-title p {
     margin: 4px 0 0;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 13px;
   }
   .workspace-summary {
     gap: 24px;
     margin-top: 18px;
     flex-wrap: wrap;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
   }
   .workspace-summary strong {
     margin-right: 4px;
-    color: var(--c-text-1);
+    color: var(--app-text-primary);
     font-size: 17px;
     font-variant-numeric: tabular-nums;
   }
@@ -92,7 +92,7 @@
   }
   .panel-hint {
     margin: 8px 0 16px;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
     line-height: 1.7;
   }
@@ -113,14 +113,14 @@
   }
   .detail-heading {
     padding-bottom: 20px;
-    border-bottom: 1px solid var(--c-border);
+    border-bottom: 1px solid var(--app-border-default);
   }
   .type-title {
     min-width: 0;
   }
   .eyebrow {
     font-size: 12px;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
   }
   h2 {
     display: flex;
@@ -137,13 +137,13 @@
     overflow-wrap: anywhere;
   }
   .type-title code {
-    color: var(--c-text-2);
+    color: var(--app-text-secondary);
   }
   .type-notice {
     margin-top: 16px;
   }
   .type-remark {
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     line-height: 1.7;
     font-size: 13px;
     margin: 16px 0 0;
@@ -163,13 +163,13 @@
     margin-left: 8px;
     font-size: 12px;
     font-weight: 400;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
   }
   .items-heading p {
     margin: 6px 0 0;
     font-size: 12px;
     line-height: 1.7;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
   }
   .dictionary-items {
     min-width: 0;
@@ -180,24 +180,24 @@
     gap: 4px;
   }
   .dictionary-items :deep(.dictionary-status-note) {
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 11px;
     line-height: 1.6;
     white-space: normal;
   }
   .dictionary-items :deep(.selected-dictionary-item .n-data-table-td) {
-    background: color-mix(in srgb, var(--c-primary) 8%, var(--c-bg-card));
+    background: color-mix(in srgb, var(--app-primary) 8%, var(--app-bg-content));
   }
   .items-empty {
     padding: 48px 12px;
-    border: 1px dashed var(--c-border);
+    border: 1px dashed var(--app-border-default);
     border-radius: 10px;
   }
   .source-hint {
     margin: 18px 0 0;
     font-size: 12px;
     line-height: 1.7;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
   }
   @media (min-width: 1800px) {
     .dictionary-workspace {
@@ -240,7 +240,7 @@
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
   }
   .dictionary-editor-form {
@@ -255,7 +255,7 @@
   }
   .field-hint {
     margin: -6px 0 20px;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
     line-height: 1.7;
   }

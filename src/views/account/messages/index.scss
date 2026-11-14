@@ -53,10 +53,10 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--warning-color, #d69e2e);
+      background: var(--app-warning, #d69e2e);
     }
     &.is-online i {
-      background: var(--success-color, #18a058);
+      background: var(--app-success, #18a058);
     }
   }
   .message-stats {
@@ -112,16 +112,12 @@
     background: var(--app-hover-bg);
   }
   .message-stat--todo .stat-symbol {
-    color: var(--warning-color, #b97d18);
-    background: color-mix(
-      in srgb,
-      var(--warning-color, #b97d18) 9%,
-      transparent
-    );
+    color: var(--app-warning, #b97d18);
+    background: color-mix(in srgb, var(--app-warning, #b97d18) 9%, transparent);
   }
   .message-stat--workflow .stat-symbol {
-    color: var(--info-color, #6366cf);
-    background: color-mix(in srgb, var(--info-color, #6366cf) 9%, transparent);
+    color: var(--app-info, #6366cf);
+    background: color-mix(in srgb, var(--app-info, #6366cf) 9%, transparent);
   }
   .stat-arrow {
     position: absolute;
@@ -230,7 +226,7 @@
     gap: 7px;
     font-size: 11px;
     padding: 14px 10px 0;
-    color: var(--warning-color, #b97d18);
+    color: var(--app-warning, #b97d18);
   }
   .message-inbox {
     min-width: 0;

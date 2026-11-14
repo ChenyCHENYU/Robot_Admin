@@ -7,12 +7,12 @@
  */
 .user-panel {
   width: 240px;
-  background: var(--c-bg-surface);
+  background: var(--user-panel-bg-surface);
   border-radius: 10px;
-  box-shadow: var(--c-shadow-lg);
+  box-shadow: var(--user-panel-shadow-lg);
   overflow: hidden;
   font-size: 13px;
-  color: var(--c-text-1);
+  color: var(--user-panel-text-1);
   animation: user-panel-enter 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 
   // ---------- 用户卡片头部 ----------
@@ -21,7 +21,11 @@
     align-items: center;
     gap: 10px;
     padding: 12px 14px;
-    background: color-mix(in srgb, var(--c-primary) 12%, var(--c-bg-surface));
+    background: color-mix(
+      in srgb,
+      var(--user-panel-primary) 12%,
+      var(--user-panel-bg-surface)
+    );
     position: relative;
   }
 
@@ -36,7 +40,7 @@
   &__name {
     font-size: 13.5px;
     font-weight: 600;
-    color: var(--c-text-1);
+    color: var(--user-panel-text-1);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -45,7 +49,7 @@
   &__role,
   &__email {
     font-size: 11px;
-    color: var(--c-primary);
+    color: var(--user-panel-primary);
     display: flex;
     align-items: center;
     gap: 3px;
@@ -55,7 +59,7 @@
   }
 
   &__email {
-    color: var(--c-text-2);
+    color: var(--user-panel-text-2);
   }
 
   &__status {
@@ -68,11 +72,11 @@
     display: grid;
     gap: 3px;
     padding: 10px 14px;
-    color: var(--c-text-2);
+    color: var(--user-panel-text-2);
     font-size: 11px;
 
     strong {
-      color: var(--c-text-1);
+      color: var(--user-panel-text-1);
       font-size: 12px;
       font-weight: 650;
     }
@@ -86,7 +90,7 @@
       padding: 0;
       border: 0;
       background: transparent;
-      color: var(--c-primary);
+      color: var(--user-panel-primary);
       cursor: pointer;
       font-size: 11px;
       font-weight: 650;
@@ -94,7 +98,7 @@
   }
 
   &__context-label {
-    color: var(--c-text-3);
+    color: var(--user-panel-text-3);
     font-size: 10px;
     letter-spacing: 0.06em;
   }
@@ -111,16 +115,20 @@
     padding: 7px 8px;
     border-radius: 6px;
     cursor: pointer;
-    color: var(--c-text-2);
+    color: var(--user-panel-text-2);
     transition: all 0.18s ease;
     user-select: none;
 
     &:hover {
-      background: color-mix(in srgb, var(--c-primary) 10%, var(--c-bg-surface));
-      color: var(--c-primary);
+      background: color-mix(
+        in srgb,
+        var(--user-panel-primary) 10%,
+        var(--user-panel-bg-surface)
+      );
+      color: var(--user-panel-primary);
 
       .user-panel__item-icon {
-        color: var(--c-primary);
+        color: var(--user-panel-primary);
       }
 
       .user-panel__item-arrow {
@@ -135,22 +143,22 @@
 
     // 危险操作（退出登录）
     &--danger {
-      color: var(--error-color, var(--c-error));
+      color: var(--navbar-error);
 
       .user-panel__item-icon {
-        color: var(--error-color, var(--c-error));
+        color: var(--navbar-error);
       }
 
       &:hover {
         background: color-mix(
           in srgb,
-          var(--error-color, var(--c-error)) 10%,
-          var(--c-bg-surface)
+          var(--navbar-error) 10%,
+          var(--user-panel-bg-surface)
         );
-        color: var(--error-color, var(--c-error));
+        color: var(--navbar-error);
 
         .user-panel__item-icon {
-          color: var(--error-color, var(--c-error));
+          color: var(--navbar-error);
         }
       }
     }
@@ -158,7 +166,7 @@
 
   &__item-icon {
     font-size: 15px;
-    color: var(--c-text-3);
+    color: var(--user-panel-text-3);
     flex-shrink: 0;
     transition: color 0.18s ease;
   }
@@ -171,7 +179,7 @@
 
   &__item-arrow {
     font-size: 14px;
-    color: var(--c-text-4);
+    color: var(--user-panel-text-4);
     flex-shrink: 0;
     opacity: 0;
     transition: all 0.18s ease;
@@ -182,9 +190,9 @@
     font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
     padding: 1px 5px;
     border-radius: 3px;
-    background: var(--c-bg-body);
-    color: var(--c-text-3);
-    border: 1px solid var(--c-border);
+    background: var(--user-panel-bg-body);
+    color: var(--user-panel-text-3);
+    border: 1px solid var(--user-panel-border);
     line-height: 1;
   }
 
@@ -193,9 +201,9 @@
     padding: 6px 14px;
     text-align: center;
     font-size: 10px;
-    color: var(--c-text-3);
-    background: var(--c-bg-body);
-    border-top: 1px solid var(--c-border);
+    color: var(--user-panel-text-3);
+    background: var(--user-panel-bg-body);
+    border-top: 1px solid var(--user-panel-border);
     letter-spacing: 0.3px;
 
     a {
@@ -204,7 +212,7 @@
 
       &:hover,
       &:focus-visible {
-        color: var(--c-primary);
+        color: var(--user-panel-primary);
       }
     }
   }

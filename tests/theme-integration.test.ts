@@ -175,7 +175,7 @@ describe('theme integration', () => {
     await nextTick()
     expect(themeStore.isDark).toBe(true)
     expect(settingsStore.themeMode).toBe('dark')
-    expect(themeStore.themeOverrides.common?.bodyColor).toBeUndefined()
+    expect(themeStore.themeOverrides.common?.bodyColor).toBe('#1c1c1c')
 
     themeStore.setMenuTheme('standard')
     expect(environment.attributes.get('data-menu-theme')).toBe('standard')

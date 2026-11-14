@@ -12,9 +12,10 @@
  * 主题系统导出
  *
  * 架构说明：
- * 1. tokens.ts - 设计 Token，所有颜色和样式常量的单一数据源
- * 2. naive-overrides.ts - Naive UI 主题覆盖配置，基于 Token 构建
- * 3. index.ts (本文件) - 统一导出，便于外部引用
+ * 1. tokens.ts - 布局与领域样式的既有 Token
+ * 2. component-colors.ts - 项目可选的扁平组件配色
+ * 3. naive-overrides.ts - 菜单、Dialog 等应用细节，不重复生成通用主题
+ * 4. index.ts (本文件) - 统一导出，由主题 Store 组合给现有 Provider
  *
  * 使用示例：
  * import { THEME_TOKENS, lightThemeOverrides, darkThemeOverrides } from '@/config/theme'
@@ -22,6 +23,7 @@
 
 // 导出所有 Token
 export * from './tokens'
+export { PROJECT_COMPONENT_COLORS } from './component-colors'
 
 // 导出 Naive UI 覆盖配置
 export {

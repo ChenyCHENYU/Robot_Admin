@@ -11,6 +11,7 @@ import { defineConfig, devices } from '@playwright/test'
 const baseURL = 'http://127.0.0.1:4173'
 
 export default defineConfig({
+  globalSetup: './e2e/runtime-browser-setup.ts',
   testDir: './e2e',
   testMatch: '**/*.pw.ts',
   testIgnore: ['**/*.local.pw.ts', '**/runtime-*.pw.ts'],

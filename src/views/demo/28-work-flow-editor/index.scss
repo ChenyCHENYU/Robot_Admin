@@ -36,11 +36,6 @@
   :deep(.approver-role) {
     color: var(--app-text-secondary);
   }
-  :deep(.start-node .node-content),
-  :deep(.add-node-btn) {
-    background: #426ed0;
-    box-shadow: 0 4px 12px rgb(36 70 130 / 16%);
-  }
   :deep(.floating-toolbar) {
     top: 16px;
     left: 16px;

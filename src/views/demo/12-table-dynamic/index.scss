@@ -19,12 +19,12 @@
   gap: 12px;
   padding: 8px;
   border-radius: 4px;
-  background: var(--n-color-modal);
+  background: var(--app-bg-surface);
 }
 .log-message {
   flex: 1;
 }
 .log-time {
   font-size: 12px;
-  color: var(--n-text-color-3);
+  color: var(--app-text-tertiary);
 }

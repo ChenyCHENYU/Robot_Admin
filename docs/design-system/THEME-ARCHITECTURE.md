@@ -1,6 +1,7 @@
 # Robot Admin 主题架构与接入
 
 本文档描述 Robot Admin 当前生产实现。主题包版本为 `@robot-admin/theme@0.6.1`。
+业务组件使用 `@robot-admin/naive-ui-components@0.38.0`，两者复用同一个 `NConfigProvider`。
 
 ## 分层职责
 
@@ -29,8 +30,10 @@ setupThemeSystem(app)
   -> 初始化主题、菜单 DOM 状态和监听器
 App.vue
   -> 把 currentTheme / themeOverrides 交给 NConfigProvider
-app unmount / HMR dispose
-  -> destroy() 释放媒体查询、storage 和菜单监听器
+setupThemeSystem(app) 中的响应式投影
+  -> 从最终 common 同步 --app-*，供应用页面消费
+app unmount
+  -> 停止投影并恢复原值，destroy() 释放媒体查询、storage 和菜单监听器
 ```
 
 全量主题样式只需一条入口：
@@ -51,6 +54,22 @@ themeStore.setMenuTheme('standard')
 ```
 
 不要在业务模块再次调用 `init()`，生命周期由 `setupThemeSystem()` 集中管理。
+HMR 模块替换不等于应用卸载，不能提前清理仍被页面使用的主题。
+
+## 项目配色与组件边界
+
+项目只在 `src/config/theme/component-colors.ts` 维护亮暗两组配置；每组直接填写需要改变的颜色角色，其余沿用组件包标准。例如：
+
+```typescript
+export const PROJECT_COMPONENT_COLORS = {
+  light: { bgBody: '#faf7f1', bgCard: '#fffdf8', border: '#ddcfb9' },
+  dark: { bgBody: '#181511', bgCard: '#26211b', border: '#66543c' },
+}
+```
+
+颜色接受 `#RGB` / `#RRGGBB`。主色和圆角继续由现有设置 Store 提供；无需页面重复传色、增加 Provider 或转换组件类型。`createComponentTheme()` 生成通用角色与衍生色，原有 Menu、Dialog、Empty 等项目配置继续通过公开合并函数保留。
+
+原生控件、自绘组件、自有弹层消费 Provider；应用自己的样式消费从最终结果单向映射的 `--app-*`。全局样式不再声明组件包公共 `--c-*` 默认值，样式门禁会阻止重新引入这层覆盖。组件局部特殊样式仍可直接传入公开 `--c-*`；业务图色、文档和媒体画面保留领域语义。
 
 ## 持久化所有权
 
@@ -83,6 +102,7 @@ themeStore.setMenuTheme('standard')
 
 - `tests/theme-bootstrap.test.ts`：首屏恢复、存储/系统偏好异常和受限风格归一化。
 - `tests/theme-integration.test.ts`：包与应用 Store 的状态同步、覆盖合并、旧缓存和副作用清理。
+- `tests/components/component-theme-app.component.ts`：正式 Provider、应用变量、嵌套组件、草稿保留及卸载恢复。
 - `bun run type-build`：应用及公开类型接入。
 - `bun run build`：Vite 生产构建与 CSS 聚合入口。
 - `bun run check:bundle`：产物体积门禁。

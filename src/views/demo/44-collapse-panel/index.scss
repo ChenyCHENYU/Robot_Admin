@@ -137,7 +137,7 @@
     height: 120px;
     border-radius: 8px;
     background: var(--app-bg-surface);
-      border: 1px dashed var(--app-border-default);
+    border: 1px dashed var(--app-border-default);
 
     .placeholder-icon {
       font-size: 32px;
@@ -172,54 +172,12 @@
     color: var(--app-text-secondary);
   }
 
-    // ─── 暗色主题适配（组件内部深层样式） ─────────────────────────────
+  // 页面卡片悬停阴影；折叠面板自身外观由组件主题维护。
   [data-theme='dark'] & {
     .demo-card {
       &:hover {
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       }
-    }
-
-    // C_CollapsePanel 组件内部暗色适配
-    :deep(.c-collapse-panel--card .collapse-item) {
-      background: var(--c-bg-card, #1e1e1e);
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    :deep(.c-collapse-panel--card .collapse-item--active) {
-      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
-    }
-
-    :deep(.c-collapse-panel--card .collapse-item:hover:not(.collapse-item--disabled)) {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-    }
-
-    :deep(.c-collapse-panel--default .collapse-item) {
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    :deep(.c-collapse-panel--bordered) {
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    :deep(.collapse-item__header) {
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    :deep(.collapse-item__header-text) {
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    :deep(.collapse-item__header-icon) {
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    :deep(.collapse-item__content) {
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    :deep(.c-collapse-panel--ghost .collapse-item__header:hover) {
-      background: rgba(255, 255, 255, 0.06);
     }
   }
 }

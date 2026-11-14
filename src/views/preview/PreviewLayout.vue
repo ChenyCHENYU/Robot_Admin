@@ -105,13 +105,13 @@
   .preview-error h2 {
     margin: 0 0 8px;
     font-size: 20px;
-    color: var(--text-color-1, #333);
+    color: var(--app-text-primary, #333);
   }
 
   .preview-error p {
     margin: 0 0 24px;
     font-size: 14px;
-    color: var(--text-color-3, #999);
+    color: var(--app-text-tertiary, #999);
     max-width: 400px;
     word-break: break-all;
   }

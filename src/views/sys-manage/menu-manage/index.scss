@@ -13,10 +13,10 @@
   gap: 16px;
   min-width: 0;
   padding-bottom: 8px;
-  color: var(--c-text-1);
+  color: var(--app-text-primary);
 
   .workspace-header {
-    border: 1px solid var(--c-border);
+    border: 1px solid var(--app-border-default);
   }
   .workspace-heading,
   .workspace-title,
@@ -50,10 +50,10 @@
     place-items: center;
     width: 46px;
     height: 46px;
-    border: 1px solid color-mix(in srgb, var(--c-primary) 18%, transparent);
+    border: 1px solid color-mix(in srgb, var(--app-primary) 18%, transparent);
     border-radius: 12px;
-    background: color-mix(in srgb, var(--c-primary) 8%, transparent);
-    color: var(--c-primary);
+    background: color-mix(in srgb, var(--app-primary) 8%, transparent);
+    color: var(--app-primary);
   }
   h1 {
     margin: 0;
@@ -62,19 +62,19 @@
   }
   .workspace-title p {
     margin: 4px 0 0;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 13px;
   }
   .workspace-summary {
     margin-top: 18px;
     gap: 24px;
     flex-wrap: wrap;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
   }
   .workspace-summary strong {
     margin-right: 4px;
-    color: var(--c-text-1);
+    color: var(--app-text-primary);
     font-size: 17px;
     font-variant-numeric: tabular-nums;
   }
@@ -96,7 +96,7 @@
   }
   .panel-hint {
     margin: 0 0 16px;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
     line-height: 1.7;
   }
@@ -120,14 +120,14 @@
   }
   .detail-heading {
     padding-bottom: 20px;
-    border-bottom: 1px solid var(--c-border);
+    border-bottom: 1px solid var(--app-border-default);
   }
   .detail-heading-text {
     min-width: 0;
   }
   .menu-breadcrumb {
     margin: 0 0 8px;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
     overflow-wrap: anywhere;
   }
@@ -142,7 +142,7 @@
   }
   .detail-section {
     padding: 22px 0;
-    border-bottom: 1px solid var(--c-border);
+    border-bottom: 1px solid var(--app-border-default);
   }
   h3 {
     margin: 0;
@@ -168,7 +168,7 @@
   }
   dt {
     margin-bottom: 6px;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
   }
   dd {
@@ -187,11 +187,11 @@
     gap: 12px;
     padding: 16px;
     border-radius: 10px;
-    background: color-mix(in srgb, var(--c-primary) 5%, var(--c-bg-card));
+    background: color-mix(in srgb, var(--app-primary) 5%, var(--app-bg-content));
   }
   .cache-description > :first-child {
     flex-shrink: 0;
-    color: var(--c-primary);
+    color: var(--app-primary);
   }
   .cache-description strong {
     font-weight: 500;
@@ -200,7 +200,7 @@
   .cache-description p,
   .remark-section p {
     margin: 6px 0 0;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     line-height: 1.7;
     font-size: 12px;
   }
@@ -213,14 +213,14 @@
     align-items: center;
     gap: 12px;
     padding: 14px 0;
-    border-bottom: 1px solid var(--c-border);
+    border-bottom: 1px solid var(--app-border-default);
   }
   .permission-row:last-child {
     border-bottom: 0;
     padding-bottom: 0;
   }
   .permission-row > :first-child {
-    color: var(--c-primary);
+    color: var(--app-primary);
     flex-shrink: 0;
   }
   .permission-copy {
@@ -236,12 +236,12 @@
     font-weight: 500;
   }
   .permission-copy code {
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     margin-top: 3px;
   }
   .permission-copy p {
     margin: 4px 0 0;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
   }
   .permission-empty {
@@ -340,7 +340,7 @@
   .cache-editor p {
     margin: 0;
     line-height: 1.7;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     font-size: 12px;
   }
   @media (max-width: 600px) {

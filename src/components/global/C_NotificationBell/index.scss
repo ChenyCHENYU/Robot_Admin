@@ -18,7 +18,7 @@
     height: 34px;
     padding: 0;
     border: 1px solid transparent;
-    border-radius: var(--c-radius, 6px);
+    border-radius: var(--notification-radius, 6px);
     background: transparent;
     color: var(--app-text-secondary);
     cursor: pointer;
@@ -57,8 +57,8 @@
   padding: 0 4px;
   border: 2px solid var(--app-bg-content);
   border-radius: 10px;
-  background: var(--c-error, #d03050);
-  color: var(--c-text-on-primary, #fff);
+  background: var(--notification-error);
+  color: #fff;
   font-size: 10px;
   font-weight: 600;
   line-height: 1;
@@ -173,7 +173,7 @@
     }
 
     &.is-todo {
-      color: var(--c-warning, #f0a020);
+      color: var(--notification-warning);
     }
   }
 
@@ -338,7 +338,7 @@
     font-size: 17px;
 
     &.is-workflow {
-      color: var(--c-success, #18a058);
+      color: var(--notification-success);
     }
   }
 

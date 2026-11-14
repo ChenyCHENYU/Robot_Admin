@@ -23,7 +23,7 @@
   margin: 24px 0;
 }
 .delivery-error {
-  color: var(--error-color, #d03050);
+  color: var(--app-error, #d03050);
 }
 .message-editor-modal.n-card {
   width: min(680px, calc(100vw - 32px));

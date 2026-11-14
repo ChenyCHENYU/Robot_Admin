@@ -159,17 +159,20 @@
         {{ currentLayoutInfo.content }}
       </div>
 
-      <component
-        :is="currentComponent"
-        ref="layoutRef"
-        v-model="formData"
-        :label-placement="labelPlacement"
-        :validate-on-change="validateOnChange"
-        @submit="handleSubmit"
-        @validate-success="errorCount = 0"
-        @validate-error="handleValidateError"
-        @fields-change="handleFieldsChange"
-      />
+      <!-- 同一密度上下文同时作用于八种表单布局及其操作栏。 -->
+      <C_Density :density="density">
+        <component
+          :is="currentComponent"
+          ref="layoutRef"
+          v-model="formData"
+          :label-placement="labelPlacement"
+          :validate-on-change="validateOnChange"
+          @submit="handleSubmit"
+          @validate-success="errorCount = 0"
+          @validate-error="handleValidateError"
+          @fields-change="handleFieldsChange"
+        />
+      </C_Density>
     </NCard>
 
     <!-- 预览模态框 -->
@@ -324,10 +327,7 @@
 
 <script setup lang="ts">
   import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
-  import {
-    FORM_GLOBAL_CONFIG_KEY,
-    type ComponentDensity,
-  } from '@robot-admin/naive-ui-components/C_Form'
+  import type { ComponentDensity } from '@robot-admin/naive-ui-components/C_Density'
   interface PreviewRow {
     key: string
     value: unknown
@@ -397,8 +397,6 @@
 
   const message = useMessage()
   const density = ref<ComponentDensity>('compact')
-  // 限定在此演示页的后代组件，不修改其他页面或全局注册表。
-  provide(FORM_GLOBAL_CONFIG_KEY, reactive({ density }))
 
   // ========================================
   // 静态配置常量

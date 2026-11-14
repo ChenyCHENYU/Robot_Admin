@@ -60,6 +60,34 @@
         :config="{ density, toolbar: { show: false }, pagination: false }"
       />
     </div>
+    <section
+      class="demo-section suggestion-search-demo"
+      aria-labelledby="name-suggestion-title"
+    >
+      <h3 id="name-suggestion-title">姓名建议搜索</h3>
+      <p
+        >从本地姓名建议中选择，也可以自由输入；列表即时筛选，清空后恢复全部记录。</p
+      >
+      <C_AutoComplete
+        v-model="suggestedName"
+        :options="SEARCH_NAME_SUGGESTIONS"
+        :density="density"
+        placeholder="输入姓名，支持建议补全或自由输入"
+        :input-props="{ 'aria-label': '姓名建议搜索' }"
+      />
+      <p
+        class="suggestion-result-count"
+        aria-live="polite"
+      >
+        当前匹配 {{ suggestedRows.length }} 条记录
+      </p>
+      <C_Table
+        class="search-result-table"
+        :columns="previewColumns"
+        :data="suggestedRows"
+        :config="{ density, toolbar: { show: false }, pagination: false }"
+      />
+    </section>
     <div class="demo-section">
       <h3>高级用法（12个字段 - 默认显示8个，展开显示全部）</h3>
       <C_FormSearch
@@ -132,6 +160,7 @@
     generateMockResults,
     DENSITY_OPTIONS,
     SEARCH_PREVIEW_ROWS,
+    SEARCH_NAME_SUGGESTIONS,
     filterSearchPreview,
     type SearchPreviewRow,
     SELECTION_SEARCH_FIELDS,
@@ -142,6 +171,13 @@
   const searchResults = ref<SearchResult[]>([])
   const density = ref<ComponentDensity>('compact')
   const basicRows = ref<SearchPreviewRow[]>([...SEARCH_PREVIEW_ROWS])
+  const suggestedName = ref('')
+  const suggestedRows = computed(() =>
+    filterSearchPreview({
+      ...basicFormConfig.params,
+      name: suggestedName.value,
+    })
+  )
   const previewColumns: TableColumn<SearchPreviewRow>[] = [
     { type: 'index', title: '序号', width: 64 },
     { key: 'name', title: '姓名', minWidth: 120 },

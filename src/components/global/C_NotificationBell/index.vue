@@ -7,6 +7,7 @@
 <template>
   <div
     class="notification-bell"
+    :style="notificationThemeStyle"
     data-testid="notification-bell"
     @keydown.esc.stop.prevent="closePreview"
   >
@@ -46,6 +47,7 @@
       <section
         :id="panelId"
         class="notification-preview"
+        :style="notificationThemeStyle"
         role="dialog"
         tabindex="-1"
         aria-label="消息中心预览"
@@ -337,9 +339,18 @@
 </template>
 
 <script setup lang="ts">
+  import { useThemeVars } from 'naive-ui'
   import { useNotificationBell } from './data'
 
   defineOptions({ name: 'NotificationBell' })
+  const themeVars = useThemeVars()
+  // 预览 Teleport 到 body，状态色和徽标前景随当前 Provider 一起传递。
+  const notificationThemeStyle = computed(() => ({
+    '--notification-radius': themeVars.value.borderRadius,
+    '--notification-error': themeVars.value.errorColor,
+    '--notification-warning': themeVars.value.warningColor,
+    '--notification-success': themeVars.value.successColor,
+  }))
   const {
     store,
     panelId,

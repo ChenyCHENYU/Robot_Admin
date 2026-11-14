@@ -35,7 +35,7 @@ for (const mode of ['light', 'dark']) {
     await expect(item).toBeVisible()
     const expected = await item.evaluate(element => {
       const probe = document.createElement('span')
-      probe.style.color = 'var(--error-color, var(--c-error))'
+      probe.style.color = 'var(--app-error)'
       element.append(probe)
       const { color } = getComputedStyle(probe)
       probe.remove()
@@ -93,11 +93,11 @@ for (const width of [1440, 3440]) {
     expect(Math.abs(bounds.rightGap)).toBeLessThan(1)
     expect(Math.abs(bounds.leftGap)).toBeLessThan(1)
     const panel = page.locator('.home-panel').first()
-    await expect(panel).toHaveCSS('background-color', 'rgb(28, 28, 28)')
+    await expect(panel).toHaveCSS('background-color', 'rgb(31, 41, 55)')
     await page.locator('[data-guide="theme"] button').click()
     await expect(panel).toHaveCSS('background-color', 'rgb(255, 255, 255)')
     await page.locator('[data-guide="theme"] button').click()
-    await expect(panel).toHaveCSS('background-color', 'rgb(28, 28, 28)')
+    await expect(panel).toHaveCSS('background-color', 'rgb(31, 41, 55)')
     await page
       .locator('.home-entry')
       .filter({ hasText: '维护用户与公司成员关系' })

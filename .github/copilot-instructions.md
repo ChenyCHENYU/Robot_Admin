@@ -55,7 +55,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 5 个关联仓�
 
 | 包名                               | 版本   | 功能                                   |
 | ---------------------------------- | ------ | -------------------------------------- |
-| `@robot-admin/naive-ui-components` | 0.37.2 | 63 个业务组件                          |
+| `@robot-admin/naive-ui-components` | 0.38.0 | 63 个业务组件                          |
 | `@robot-admin/layout`              | 3.2.3  | 6 种布局 + 精简适配 + 核心协议         |
 | `@robot-admin/dictionary`          | 0.6.1  | 枚举、远程字典、详情字段绑定与隔离状态 |
 | `@robot-admin/request-core`        | 0.7.0  | 实例化请求编排 + 函数式 Headless CRUD  |
@@ -578,19 +578,9 @@ bun run build
 }
 ```
 
-全局 CSS 变量回退到 Naive UI：
+颜色由项目 `src/config/theme/component-colors.ts` 的扁平角色配置集中维护，最终交给现有 `NConfigProvider`。普通页面消费从同一结果派生的 `--app-*`；组件库通过包内主题桥接消费 Provider。不要在全局 `:root` 或 `.global-config-provider` 再声明 `--c-*` 默认值，否则会压过组件及弹层的实例主题。
 
-```scss
-:root {
-  --c-primary: var(--primary-color, #2080f0);
-  --c-success: var(--success-color, #18a058);
-  --c-error: var(--error-color, #d03050);
-  --c-bg-body: var(--body-color, #ffffff);
-  --c-text-1: var(--text-color-1, #262626);
-  --c-border: var(--border-color, #e5e7eb);
-  --c-radius: var(--border-radius, 6px);
-}
-```
+项目有局部特殊需要时，可直接在对应组件 `style` 中覆盖公开 `--c-*`；不依赖内部 `--c-theme-*`。业务图色、媒体遮罩和二维码等保留领域语义。
 
 ---
 

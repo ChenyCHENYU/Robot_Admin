@@ -438,6 +438,7 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo44CollapsePanel' })
+  import type { CollapsePanelExpose } from '@robot-admin/naive-ui-components/C_CollapsePanel'
   import {
     basicItems,
     cardItems,
@@ -450,7 +451,7 @@
   } from './data'
 
   const message = useMessage()
-  const programRef = ref()
+  const programRef = ref<CollapsePanelExpose | null>(null)
 
   const handleAction = (action: string) => message.info(`操作: ${action}`)
   const handleEvent = (msg: string) => message.success(msg)

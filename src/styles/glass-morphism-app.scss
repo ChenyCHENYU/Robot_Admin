@@ -144,18 +144,3 @@
     }
   }
 }
-
-/* ===========================================
- * Layer 5: 组件库 C_* 组件桥接
- * =========================================== */
-
-[data-design-style='glass-morphism'] .global-config-provider {
-  --c-bg-card: var(--app-bg-content, #fff);
-  --c-shadow-sm: var(--dt-card-shadow, 0 8px 32px rgba(0, 0, 0, 0.06));
-}
-
-[data-design-style='glass-morphism'][data-theme='dark']
-  .global-config-provider {
-  --c-bg-card: var(--app-bg-content, #1c1c1c);
-  --c-shadow-sm: var(--dt-card-shadow, 0 8px 32px rgba(0, 0, 0, 0.25));
-}

@@ -15,6 +15,7 @@
       'px-20px flex flex-col items-center top-0 left-0 right-0 z-1000',
     ]"
     :style="{
+      '--header-control-radius': themeVars.borderRadius,
       height: `${settingsStore.headerHeight + (settingsStore.showTagsView ? settingsStore.tagsViewHeight : 0)}px`,
     }"
   >
@@ -105,6 +106,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useThemeVars } from 'naive-ui'
   import { s_themeStore } from '@/stores/theme'
   import { s_settingsStore } from '@/stores/settings'
   import { s_permissionStore } from '@/stores/permission'
@@ -119,6 +121,7 @@
   const settingsStore = s_settingsStore()
   const permissionStore = s_permissionStore()
   const router = useRouter()
+  const themeVars = useThemeVars()
 
   /** 面包屑事件不向 Vue 返回导航 Promise，避免把路由加载错误误报为组件错误。 */
   const navigateTo = (path: string): void => {

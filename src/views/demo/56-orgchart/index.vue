@@ -11,6 +11,28 @@
         ><small>PEOPLE & ORGANIZATION</small><h1>组织架构工作台</h1
         ><p>从组织全景找到成员，再沿汇报关系查看团队。</p></div
       ><div class="workspace-actions"
+        ><C_UserPicker
+          v-model="collaboratorIds"
+          :source="memberSource"
+          :organization="memberOrganization"
+          :fields="memberFields"
+          multiple
+          :max-selection="5"
+          title="选择协作成员"
+          @select="confirmCollaborators"
+          @cancel="cancelCollaborators"
+          ><template #trigger="{ open }"
+            ><NButton
+              size="small"
+              type="primary"
+              @click="open"
+              ><template #icon
+                ><span
+                  class="i-mdi-account-multiple-plus-outline"
+                  aria-hidden="true" /></template
+              >选择协作成员</NButton
+            ></template
+          ></C_UserPicker
         ><NTag
           size="small"
           :bordered="false"
@@ -22,6 +44,29 @@
         ></div
       ></header
     >
+    <section
+      class="org-collaborators"
+      aria-label="协作成员"
+      aria-live="polite"
+    >
+      <div>
+        <strong>{{ selectionFeedback }}</strong>
+        <p
+          >按组织筛选，可跨部门选取最多 5
+          人；确认空选可清空，取消保留原结果。</p
+        >
+      </div>
+      <div class="org-collaborators__members">
+        <NTag
+          v-for="member in collaborators"
+          :key="member.id"
+          size="small"
+          :bordered="false"
+        >
+          {{ member.name }} · {{ member.department }}
+        </NTag>
+      </div>
+    </section>
     <div class="org-layout"
       ><aside class="workspace-panel"
         ><section class="workspace-section"
@@ -161,6 +206,14 @@
   import { useOrgWorkspace } from './useOrgWorkspace'
   defineOptions({ name: 'Demo56OrgChart' })
   const {
+    memberSource,
+    memberOrganization,
+    memberFields,
+    collaboratorIds,
+    collaborators,
+    selectionFeedback,
+    confirmCollaborators,
+    cancelCollaborators,
     entries,
     search,
     focusId,

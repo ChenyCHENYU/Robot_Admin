@@ -23,20 +23,25 @@
     margin-top: 12px;
   }
 
+  .suggestion-result-count {
+    color: var(--app-text-secondary);
+    font-size: 12px;
+  }
+
   .demo-section {
     margin-bottom: 32px;
 
     h3 {
-      color: var(--n-text-color);
+      color: var(--app-text-primary);
       margin-bottom: 16px;
       padding-bottom: 8px;
-      border-bottom: 2px solid var(--n-primary-color);
+      border-bottom: 2px solid var(--app-primary);
       font-size: 16px;
     }
   }
 
   pre {
-    background: var(--n-code-color);
+    background: var(--app-bg-surface);
     padding: 16px;
     border-radius: 6px;
     font-size: 12px;

@@ -6,6 +6,32 @@
  */
 @use '../_shared/workspace' as workspace;
 @include workspace.layout;
+.org-collaborators {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border: 1px solid var(--app-border-default);
+  border-radius: 12px;
+  background: var(--app-bg-content);
+  strong {
+    color: var(--app-text-primary);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  p {
+    margin: 5px 0 0;
+    color: var(--app-text-tertiary);
+    font-size: 11px;
+  }
+  &__members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
 .org-layout {
   display: grid;
   grid-template-columns: 210px minmax(0, 1fr) 230px;

@@ -31,7 +31,7 @@
   height: 34px;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: var(--c-radius);
+  border-radius: var(--header-control-radius, 6px);
   background: transparent;
   color: var(--app-text-secondary);
   cursor: pointer;

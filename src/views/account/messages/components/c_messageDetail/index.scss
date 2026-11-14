@@ -5,9 +5,9 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 .message-detail {
-  --detail-border: var(--border-color, rgba(128, 128, 128, 0.18));
+  --detail-border: var(--app-border-default, rgba(128, 128, 128, 0.18));
   --detail-surface: color-mix(in srgb, currentColor 3%, transparent);
-  --detail-muted: var(--text-color-3, #89909b);
+  --detail-muted: var(--app-text-tertiary, #89909b);
   .detail-heading {
     display: flex;
     align-items: flex-start;
@@ -19,7 +19,7 @@
     margin-top: 5px;
     width: 30px;
     height: 30px;
-    color: var(--primary-color, #2080f0);
+    color: var(--app-primary, #2080f0);
   }
   .detail-heading-copy {
     min-width: 0;
@@ -109,7 +109,7 @@
       overflow-wrap: anywhere;
     }
     dd.is-overdue {
-      color: var(--error-color, #d03050);
+      color: var(--app-error, #d03050);
     }
   }
   .workflow-business-no {
@@ -165,17 +165,17 @@
     left: -5px;
     top: 6px;
     border-radius: 50%;
-    background: var(--primary-color, #2080f0);
-    box-shadow: 0 0 0 4px var(--card-color, var(--app-bg-card, #fff));
+    background: var(--app-primary, #2080f0);
+    box-shadow: 0 0 0 4px var(--app-bg-content, #fff);
   }
   .workflow-event--approve .workflow-timeline-dot {
-    background: var(--success-color, #18a058);
+    background: var(--app-success, #18a058);
   }
   .workflow-event--reject .workflow-timeline-dot {
-    background: var(--error-color, #d03050);
+    background: var(--app-error, #d03050);
   }
   .workflow-event--return .workflow-timeline-dot {
-    background: var(--warning-color, #f0a020);
+    background: var(--app-warning, #f0a020);
   }
   .workflow-event-heading {
     display: flex;
@@ -287,7 +287,7 @@
     padding: 8px 12px;
   }
   :deep(.message-body blockquote) {
-    border-left: 3px solid var(--primary-color, #2080f0);
+    border-left: 3px solid var(--app-primary, #2080f0);
     margin: 16px 0;
     padding-left: 16px;
     opacity: 0.8;

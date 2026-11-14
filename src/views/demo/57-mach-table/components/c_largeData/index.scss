@@ -65,7 +65,7 @@
   max-height: 560px;
   overflow: hidden;
   border: 1px solid var(--app-border-default);
-  border-radius: var(--app-radius-medium);
+  border-radius: var(--app-radius, 6px);
 
   :deep(.mach-vue-host),
   :deep(.mach-root) {

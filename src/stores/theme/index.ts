@@ -9,15 +9,17 @@
 import { computed, ref, watch, type WatchStopHandle } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
 import {
+  mergeNaiveThemeOverrides,
   useNaiveTheme,
   useThemeStore as useBaseThemeStore,
   type DesignStyle,
   type ThemeMode,
 } from '@robot-admin/theme/naive'
-import { adjustColor } from '@robot-admin/layout/naive'
+import { createComponentTheme } from '@robot-admin/naive-ui-components/config'
 import {
   darkThemeOverrides,
   lightThemeOverrides,
+  PROJECT_COMPONENT_COLORS,
   type GlobalThemeOverrides,
 } from '../../config/theme'
 import { s_settingsStore } from '../settings'
@@ -108,24 +110,23 @@ export const s_themeStore = defineStore('theme-extended', () => {
     () => menuTheme.value === 'standard' && !isDark.value
   )
 
-  /** 设置项直接派生为增量覆盖，避免维护第二份持久化主题状态。 */
+  /** 由同一模式和设置派生组件主题，不维护另一份状态或持久化覆盖。 */
   const settingsOverrides = computed<GlobalThemeOverrides>(() => {
     const { primaryColor, borderRadiusValue: borderRadius } = settingsStore
-    return {
-      common: {
-        primaryColor,
-        primaryColorHover: adjustColor(primaryColor, 10),
-        primaryColorPressed: adjustColor(primaryColor, -10),
-        primaryColorSuppl: primaryColor,
-        borderRadius,
-        borderRadiusSmall: borderRadius,
-        borderRadiusMedium: borderRadius,
-        borderRadiusLarge: borderRadius,
-      },
+    const colorMode = isDark.value ? 'dark' : 'light'
+    const componentTheme = createComponentTheme({
+      ...PROJECT_COMPONENT_COLORS[colorMode],
+      // 设置抽屉是主色和圆角的唯一来源，优先于静态项目色板。
+      mode: colorMode,
+      primary: primaryColor,
+      radius: Number.parseFloat(borderRadius),
+    })
+    return mergeNaiveThemeOverrides(componentTheme.themeOverrides, {
+      // Radio 的按钮圆角不是 common 字段，保留设置抽屉的原有控制能力。
       Radio: {
         buttonBorderRadius: borderRadius,
       },
-    }
+    })
   })
 
   const lightOverrides = computed(() =>

@@ -69,7 +69,24 @@ for (const filename of files) {
 
 // 全局入口也必须检查：SFC scoped 无法覆盖全局设计风格增强中的背景采样。
 const globalStyles = await compileAsync(resolve('src/styles/index.scss'))
-postcss.parse(globalStyles.css).walkRules(rule => {
+const globalRoot = postcss.parse(globalStyles.css)
+// 组件包的公共覆盖钩子应由具体实例使用，全局默认会遮蔽嵌套 Provider 与弹层。
+globalRoot.walkDecls(declaration => {
+  if (declaration.prop.startsWith('--c-')) {
+    violations.push(
+      `全局入口: ${declaration.prop} 不得重建组件主题默认值；请使用项目配色配置或局部样式`
+    )
+  }
+})
+globalRoot.walkAtRules(rule => {
+  if (
+    rule.name.toLowerCase() === 'property' &&
+    rule.params.trim().startsWith('--c-')
+  ) {
+    violations.push(`全局入口: @property ${rule.params} 不得注册组件主题默认值`)
+  }
+})
+globalRoot.walkRules(rule => {
   const samplesBackground = rule.nodes.some(
     node =>
       node.type === 'decl' &&

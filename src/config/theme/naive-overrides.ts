@@ -9,13 +9,7 @@
  */
 
 import type { GlobalThemeOverrides } from '@robot-admin/theme/naive'
-import {
-  PRIMARY_COLORS,
-  LIGHT_BACKGROUND,
-  LIGHT_MENU,
-  DARK_MENU,
-  EMPTY_STATE_COLORS,
-} from './tokens'
+import { LIGHT_MENU, DARK_MENU, EMPTY_STATE_COLORS } from './tokens'
 
 export type { GlobalThemeOverrides } from '@robot-admin/theme/naive'
 
@@ -105,17 +99,7 @@ const dialogConfig: GlobalThemeOverrides['Dialog'] = {
  * 包含通用属性和各组件在亮色模式下的配置
  */
 export const lightThemeOverrides: GlobalThemeOverrides = {
-  common: {
-    primaryColor: PRIMARY_COLORS.default,
-    primaryColorHover: PRIMARY_COLORS.hover,
-    primaryColorPressed: PRIMARY_COLORS.pressed,
-    primaryColorSuppl: PRIMARY_COLORS.suppl,
-    infoColor: PRIMARY_COLORS.default,
-    infoColorHover: PRIMARY_COLORS.hover,
-    infoColorPressed: PRIMARY_COLORS.pressed,
-    infoColorSuppl: PRIMARY_COLORS.suppl,
-    bodyColor: LIGHT_BACKGROUND.body,
-  },
+  // 通用颜色与控件圆角由组件主题工厂统一生成；这里只保留应用特有细节。
   Menu: lightMenuConfig,
   Dialog: dialogConfig,
   Empty: { iconColor: EMPTY_STATE_COLORS.light },
@@ -125,16 +109,6 @@ export const lightThemeOverrides: GlobalThemeOverrides = {
     borderRadius: '8px',
     paddingMedium: '16px',
   },
-
-  // 扩展：Button 组件配置
-  Button: {
-    borderRadiusMedium: '6px',
-  },
-
-  // 扩展：Input 组件配置
-  Input: {
-    borderRadius: '6px',
-  },
 }
 
 /**
@@ -142,16 +116,6 @@ export const lightThemeOverrides: GlobalThemeOverrides = {
  * 包含通用属性和各组件在暗色模式下的配置
  */
 const darkThemeOverridesConfig: GlobalThemeOverrides = {
-  common: {
-    primaryColor: PRIMARY_COLORS.default,
-    primaryColorHover: PRIMARY_COLORS.hover,
-    primaryColorPressed: PRIMARY_COLORS.pressed,
-    primaryColorSuppl: PRIMARY_COLORS.suppl,
-    infoColor: PRIMARY_COLORS.default,
-    infoColorHover: PRIMARY_COLORS.hover,
-    infoColorPressed: PRIMARY_COLORS.pressed,
-    infoColorSuppl: PRIMARY_COLORS.suppl,
-  },
   Menu: darkMenuConfig,
   Dialog: dialogConfig,
   Empty: { iconColor: EMPTY_STATE_COLORS.dark },
@@ -160,16 +124,6 @@ const darkThemeOverridesConfig: GlobalThemeOverrides = {
   Card: {
     borderRadius: '8px',
     paddingMedium: '16px',
-  },
-
-  // 扩展：Button 组件配置
-  Button: {
-    borderRadiusMedium: '6px',
-  },
-
-  // 扩展：Input 组件配置
-  Input: {
-    borderRadius: '6px',
   },
 }
 

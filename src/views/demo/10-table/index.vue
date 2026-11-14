@@ -209,15 +209,19 @@
               :size="controlSize"
               :disabled="submitting"
               @click="showAddModal = false"
-              >取消</NButton
             >
+              <template #icon><C_Icon name="mdi:close" /></template>
+              取消
+            </NButton>
             <NButton
               type="primary"
               :size="controlSize"
               :loading="submitting"
               @click="submit"
-              >保存</NButton
             >
+              <template #icon><C_Icon name="mdi:content-save" /></template>
+              保存
+            </NButton>
           </NSpace>
         </template>
       </C_Form>

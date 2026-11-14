@@ -12,10 +12,10 @@
 // 基础样式变量
 @use 'sass:color';
 
-$primary: #2080f0;
-$success: #18a058;
-$warning: #f0a020;
-$info: #0ea5e9;
+$primary: var(--app-primary);
+$success: var(--app-success);
+$warning: var(--app-warning);
+$info: var(--app-info);
 
 // 主容器
 .form-demo {
@@ -23,7 +23,7 @@ $info: #0ea5e9;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   :deep(.n-card) {
-    border: 1px solid rgba(229, 231, 235, 0.8) !important;
+    border: 1px solid var(--app-border-default) !important;
     border-radius: 8px !important;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
   }
@@ -75,7 +75,7 @@ $info: #0ea5e9;
 
     .layout-btn {
       padding: 8px 4px;
-      border: 1px solid rgba(229, 231, 235, 0.8);
+      border: 1px solid var(--app-border-default);
       border-radius: 6px;
       font-size: 12px;
       cursor: pointer;
@@ -86,14 +86,19 @@ $info: #0ea5e9;
       &:hover {
         border-color: $primary;
         color: $primary;
-        background: rgba(32, 128, 240, 0.05);
+        background: color-mix(in srgb, var(--app-primary) 5%, transparent);
       }
 
       &.active {
-        background: $primary;
-        color: white;
+        background: color-mix(
+          in srgb,
+          var(--app-primary) 12%,
+          var(--app-bg-content)
+        );
+        color: var(--app-text-primary);
         border-color: $primary;
-        box-shadow: 0 2px 8px rgba(32, 128, 240, 0.3);
+        box-shadow: 0 2px 8px
+          color-mix(in srgb, var(--app-primary) 30%, transparent);
       }
     }
   }
@@ -104,7 +109,7 @@ $info: #0ea5e9;
     align-items: flex-start;
     gap: 6px;
     padding: 10px 12px;
-    background: rgba(14, 165, 233, 0.08);
+    background: color-mix(in srgb, var(--app-info) 8%, transparent);
     border-radius: 6px;
     font-size: 12px;
     color: var(--app-text-secondary);
@@ -164,7 +169,7 @@ $info: #0ea5e9;
     align-items: center;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid var(--app-border-light);
 
     h3 {
       margin: 0;
@@ -176,14 +181,18 @@ $info: #0ea5e9;
       padding: 4px 12px;
       border-radius: 12px;
       font-size: 12px;
-      background: $primary;
-      color: white;
+      background: color-mix(
+        in srgb,
+        var(--app-primary) 12%,
+        var(--app-bg-content)
+      );
+      color: var(--app-text-primary);
     }
   }
 
   .layout-info {
-    background: rgba(14, 165, 233, 0.08);
-    border: 1px solid rgba(14, 165, 233, 0.2);
+    background: color-mix(in srgb, var(--app-info) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--app-info) 20%, transparent);
     border-radius: 6px;
     padding: 12px 16px;
     margin-bottom: 16px;
@@ -226,7 +235,7 @@ $info: #0ea5e9;
       justify-content: space-between;
       align-items: center;
       padding: 16px 20px;
-      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+      border-bottom: 1px solid var(--app-border-default);
 
       h3 {
         margin: 0;
@@ -240,7 +249,7 @@ $info: #0ea5e9;
 
         .modal-btn {
           padding: 6px 14px;
-          border: 1px solid rgba(229, 231, 235, 0.8);
+          border: 1px solid var(--app-border-default);
           border-radius: 6px;
           font-size: 12px;
           cursor: pointer;
@@ -253,14 +262,22 @@ $info: #0ea5e9;
           }
 
           &.copy {
-            background: $success;
-            color: white;
+            background: color-mix(
+              in srgb,
+              var(--app-success) 12%,
+              var(--app-bg-content)
+            );
+            color: var(--app-text-primary);
             border: none;
           }
 
           &.download {
-            background: $info;
-            color: white;
+            background: color-mix(
+              in srgb,
+              var(--app-info) 12%,
+              var(--app-bg-content)
+            );
+            color: var(--app-text-primary);
             border: none;
           }
 
@@ -279,7 +296,7 @@ $info: #0ea5e9;
         gap: 8px;
         margin-bottom: 16px;
         padding-bottom: 12px;
-        border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+        border-bottom: 1px solid var(--app-border-default);
 
         .mode-tab {
           padding: 6px 14px;
@@ -291,13 +308,21 @@ $info: #0ea5e9;
           transition: all 0.2s ease;
 
           &:hover {
-            background: rgba(32, 128, 240, 0.1);
-            border-color: rgba(32, 128, 240, 0.2);
+            background: color-mix(in srgb, var(--app-primary) 10%, transparent);
+            border-color: color-mix(
+              in srgb,
+              var(--app-primary) 20%,
+              transparent
+            );
           }
 
           &.active {
-            background: $primary;
-            color: white;
+            background: color-mix(
+              in srgb,
+              var(--app-primary) 12%,
+              var(--app-bg-content)
+            );
+            color: var(--app-text-primary);
           }
         }
       }
@@ -319,7 +344,7 @@ $info: #0ea5e9;
         .pair-count,
         .code-type {
           padding: 2px 10px;
-          background: rgba(32, 128, 240, 0.1);
+          background: color-mix(in srgb, var(--app-primary) 10%, transparent);
           color: $primary;
           border-radius: 12px;
           font-size: 11px;
@@ -328,21 +353,21 @@ $info: #0ea5e9;
 
       .json-display,
       .code-display {
-        border: 1px solid rgba(229, 231, 235, 0.8);
+        border: 1px solid var(--app-border-default);
         border-radius: 6px;
         padding: 12px;
         font-family: 'Courier New', monospace;
         font-size: 12px;
         overflow: auto;
         max-height: 400px;
-        background: rgba(0, 0, 0, 0.02);
+        background: var(--app-bg-surface);
         white-space: pre-wrap;
       }
 
       .table-container {
         max-height: 400px;
         overflow: auto;
-        border: 1px solid rgba(229, 231, 235, 0.8);
+        border: 1px solid var(--app-border-default);
         border-radius: 6px;
       }
 
@@ -360,7 +385,7 @@ $info: #0ea5e9;
           border-radius: 6px;
 
           &.filled {
-            background: rgba(24, 160, 88, 0.05);
+            background: color-mix(in srgb, var(--app-success) 5%, transparent);
             border-left: 3px solid $success;
           }
 
@@ -399,13 +424,21 @@ $info: #0ea5e9;
               font-weight: 600;
 
               &.filled {
-                background: $success;
-                color: white;
+                background: color-mix(
+                  in srgb,
+                  var(--app-success) 12%,
+                  var(--app-bg-content)
+                );
+                color: var(--app-text-primary);
               }
 
               &.empty {
-                background: $warning;
-                color: white;
+                background: color-mix(
+                  in srgb,
+                  var(--app-warning) 12%,
+                  var(--app-bg-content)
+                );
+                color: var(--app-text-primary);
               }
             }
           }

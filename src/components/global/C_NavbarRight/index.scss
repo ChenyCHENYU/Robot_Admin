@@ -39,7 +39,7 @@
   width: 34px;
   height: 34px;
   padding: 0;
-  border-radius: var(--c-radius);
+  border-radius: var(--navbar-radius);
   color: var(--app-text-secondary);
   font-size: 18px;
   line-height: 1;
@@ -130,13 +130,13 @@
   border: 2px solid var(--app-bg-content);
 
   &.status-online {
-    background-color: var(--c-success);
+    background-color: var(--navbar-success);
   }
   &.status-away {
-    background-color: var(--c-warning);
+    background-color: var(--navbar-warning);
   }
   &.status-busy {
-    background-color: var(--c-error);
+    background-color: var(--navbar-error);
   }
   &.status-offline {
     background-color: var(--app-text-tertiary);
@@ -150,7 +150,7 @@
   border-radius: 50%;
 
   &.status-online {
-    background-color: var(--c-success);
+    background-color: var(--navbar-success);
   }
 }
 

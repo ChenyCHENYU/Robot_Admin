@@ -12,7 +12,7 @@
 
         .header-icon {
           font-size: 18px;
-          color: #2080f0;
+          color: var(--app-primary);
         }
       }
 
@@ -36,7 +36,7 @@
 
             .config-value {
               font-weight: 500;
-              color: #2080f0;
+              color: var(--app-primary);
               margin-left: 4px;
             }
           }

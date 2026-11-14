@@ -15,13 +15,14 @@ const buildConfig: BuildOptions = {
        */
       codeSplitting: {
         groups: [
-          // 仅聚合无依赖的纯辅助函数，避免百字节共享块各发一次请求；不移动业务初始化。
+          // 仅聚合无依赖的纯辅助函数与组件色板计算，避免细小共享块各发一次请求。
+          // 不移动业务初始化或主题适配器；theme.js 是已审查的无供应商依赖纯模块。
           {
             name: 'shared-helpers',
             test: id =>
               id.endsWith('plugin-vue:export-helper') ||
               /[\\/]src[\\/]utils[\\/]d_tablePreferences\.ts$/.test(id) ||
-              /[\\/]@robot-admin[\\/]naive-ui-components[\\/]dist[\\/]export-helper\.js$/.test(
+              /[\\/]@robot-admin[\\/]naive-ui-components[\\/]dist[\\/](?:export-helper|theme)\.js$/.test(
                 id
               ),
             includeDependenciesRecursively: false,

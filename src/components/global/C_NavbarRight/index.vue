@@ -8,7 +8,10 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <div class="navbar-right">
+  <div
+    class="navbar-right"
+    :style="navbarThemeStyle"
+  >
     <!-- 全局搜索 -->
     <div data-guide="search">
       <C_GlobalSearch :options="searchOptions" />
@@ -142,7 +145,10 @@
       </template>
 
       <!-- 用户面板 -->
-      <div class="user-panel">
+      <div
+        class="user-panel"
+        :style="userPanelThemeStyle"
+      >
         <!-- 用户卡片区 -->
         <div class="user-panel__header">
           <NAvatar
@@ -203,10 +209,7 @@
           </button>
         </div>
 
-        <NDivider
-          style="margin: 5px 0"
-          :theme-overrides="{ color: 'var(--c-border)' }"
-        />
+        <NDivider style="margin: 5px 0" />
 
         <!-- 功能区 -->
         <div class="user-panel__section">
@@ -225,10 +228,7 @@
           </div>
         </div>
 
-        <NDivider
-          style="margin: 5px 0"
-          :theme-overrides="{ color: 'var(--c-border)' }"
-        />
+        <NDivider style="margin: 5px 0" />
 
         <!-- 辅助区 -->
         <div class="user-panel__section">
@@ -251,10 +251,7 @@
           </div>
         </div>
 
-        <NDivider
-          style="margin: 5px 0"
-          :theme-overrides="{ color: 'var(--c-border)' }"
-        />
+        <NDivider style="margin: 5px 0" />
 
         <!-- 退出区 -->
         <div class="user-panel__section">
@@ -301,6 +298,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useThemeVars } from 'naive-ui'
   import { s_userStore } from '@/stores/user'
   import { s_themeStore } from '@/stores/theme'
   import { s_languageStore } from '@/stores/language'
@@ -345,6 +343,26 @@
   const route = useRoute()
   const dialog = useDialog()
   const message = useMessage()
+  const themeVars = useThemeVars()
+  const navbarThemeStyle = computed(() => ({
+    '--navbar-radius': themeVars.value.borderRadius,
+    '--navbar-success': themeVars.value.successColor,
+    '--navbar-warning': themeVars.value.warningColor,
+    '--navbar-error': themeVars.value.errorColor,
+  }))
+  // 用户面板挂载到 body；本实例直接携带当前 Provider 的变量，避免依赖祖先 CSS。
+  const userPanelThemeStyle = computed(() => ({
+    ...navbarThemeStyle.value,
+    '--user-panel-primary': themeVars.value.primaryColor,
+    '--user-panel-bg-surface': themeVars.value.popoverColor,
+    '--user-panel-bg-body': themeVars.value.bodyColor,
+    '--user-panel-border': themeVars.value.borderColor,
+    '--user-panel-text-1': themeVars.value.textColor1,
+    '--user-panel-text-2': themeVars.value.textColor2,
+    '--user-panel-text-3': themeVars.value.textColor3,
+    '--user-panel-text-4': themeVars.value.textColorDisabled,
+    '--user-panel-shadow-lg': themeVars.value.boxShadow3,
+  }))
   const contextModalVisible = ref(false)
   const switchingContextId = ref('')
   const guideRef = ref<GuideExpose>()

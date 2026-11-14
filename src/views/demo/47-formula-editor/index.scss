@@ -1,7 +1,7 @@
 /* 规则实验室：场景入口与工作区分离，结果保持在编辑视线内。 */
 .formula-demo-page {
   padding: 24px;
-  color: var(--c-text-2);
+  color: var(--app-text-secondary);
   &__intro {
     display: flex;
     align-items: center;
@@ -11,7 +11,7 @@
     padding: 6px 0 24px;
     h1 {
       margin: 12px 0 8px;
-      color: var(--c-text-1);
+      color: var(--app-text-primary);
       font-size: clamp(22px, 2vw, 30px);
       font-weight: 650;
       letter-spacing: -1px;
@@ -27,7 +27,7 @@
       600 10px ui-monospace,
       monospace;
     letter-spacing: 2px;
-    color: var(--c-primary);
+    color: var(--app-primary);
   }
   &__scenarios {
     display: grid;
@@ -42,33 +42,33 @@
       flex-direction: column;
       gap: 6px;
       padding: 16px 42px 16px 18px;
-      border: 1px solid var(--c-border);
+      border: 1px solid var(--app-border-default);
       border-radius: 12px;
-      background: var(--c-bg-card);
+      background: var(--app-bg-content);
       font: inherit;
-      color: var(--c-text-2);
+      color: var(--app-text-secondary);
       cursor: pointer;
       strong {
         font-size: 13px;
-        color: var(--c-text-1);
+        color: var(--app-text-primary);
       }
       span {
         font-size: 11px;
-        color: var(--c-text-3);
+        color: var(--app-text-tertiary);
       }
       > :last-child {
         position: absolute;
         right: 16px;
         top: 18px;
-        color: var(--c-primary);
+        color: var(--app-primary);
       }
       &[aria-pressed='true'],
       &:hover {
-        border-color: var(--c-primary);
-        background: color-mix(in srgb, var(--c-primary) 6%, var(--c-bg-card));
+        border-color: var(--app-primary);
+        background: color-mix(in srgb, var(--app-primary) 6%, var(--app-bg-content));
       }
       &:focus-visible {
-        outline: 2px solid var(--c-primary);
+        outline: 2px solid var(--app-primary);
         outline-offset: 2px;
       }
     }
@@ -80,19 +80,19 @@
     margin-top: 20px;
     font-size: 12px;
     line-height: 1.8;
-    color: var(--c-text-3);
+    color: var(--app-text-tertiary);
     p {
       margin: 0;
     }
     summary {
       cursor: pointer;
-      color: var(--c-text-1);
+      color: var(--app-text-primary);
     }
     code {
       display: block;
       margin: 10px 0;
       overflow-wrap: anywhere;
-      color: var(--c-primary);
+      color: var(--app-primary);
     }
   }
 }
