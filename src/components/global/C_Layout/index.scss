@@ -5,6 +5,16 @@
  * @Description: 应用侧栏品牌与分组；菜单几何和交互样式由 layout 包维护
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+.sidebar-menu-surface {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  // Logo 和滚动导航共享一个表面，避免各自绘制背景产生接缝。
+  background: var(--app-menu-bg);
+}
+
 .menu-scroll-container {
   padding-block: 2px 16px;
   color: var(--app-menu-text, #bbc8dd);

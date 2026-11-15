@@ -12,66 +12,70 @@
     <C_LayoutContainer :key="layoutInstanceKey">
       <!-- Side 布局的垂直菜单 -->
       <template #menu="{ collapsed, collapsedWidth }">
-        <C_MenuTop
-          id="guide-menu-top"
-          :collapsed="collapsed"
-        />
         <div
-          id="guide-menu"
-          data-guide="navigation"
-          role="navigation"
-          aria-label="主导航"
-          class="menu-scroll-container"
-          :class="{
-            'menu-light': isMenuLight,
-            'menu-signature': themeStore.menuTheme === 'signature',
-          }"
+          class="sidebar-menu-surface"
+          :class="{ 'menu-signature': themeStore.menuTheme === 'signature' }"
         >
-          <template v-if="menuExpandMode === 'inline'">
-            <div
-              v-for="(group, gIdx) in groupedMenuData"
-              :key="group.label"
-              class="menu-group"
-            >
-              <div
-                v-if="!collapsed"
-                class="menu-group-title"
-                :style="{ '--group-dot-color': getGroupColor(gIdx) }"
-              >
-                {{ group.label }}
-              </div>
-              <div
-                v-else
-                class="menu-group-dot"
-                :style="{ background: getGroupColor(gIdx) }"
-              ></div>
-              <C_Menu
-                data-ra-sidebar-menu
-                :routes="group.items"
-                :model-value="route.path"
-                mode="vertical"
-                :collapsed="collapsed"
-                :collapsed-width="collapsedWidth"
-                :icon-size="18"
-                :collapsed-icon-size="18"
-                :root-indent="20"
-                :indent="16"
-                :theme-overrides="sidebarMenuTheme"
-                :label-formatter="translateRouteTitle"
-                @intent="prefetchRoute"
-                @select="navigateTo"
-              />
-            </div>
-          </template>
-          <C_MenuGrouped
-            v-else
-            :routes="menuData"
+          <C_MenuTop
+            id="guide-menu-top"
             :collapsed="collapsed"
-            :inverted="!isMenuLight"
-            :menu-theme="themeStore.menuTheme"
-            :label-formatter="translateRouteTitle"
-            @select="navigateTo"
           />
+          <div
+            id="guide-menu"
+            data-guide="navigation"
+            role="navigation"
+            aria-label="主导航"
+            class="menu-scroll-container"
+            :class="{
+              'menu-light': isMenuLight,
+            }"
+          >
+            <template v-if="menuExpandMode === 'inline'">
+              <div
+                v-for="(group, gIdx) in groupedMenuData"
+                :key="group.label"
+                class="menu-group"
+              >
+                <div
+                  v-if="!collapsed"
+                  class="menu-group-title"
+                  :style="{ '--group-dot-color': getGroupColor(gIdx) }"
+                >
+                  {{ group.label }}
+                </div>
+                <div
+                  v-else
+                  class="menu-group-dot"
+                  :style="{ background: getGroupColor(gIdx) }"
+                ></div>
+                <C_Menu
+                  data-ra-sidebar-menu
+                  :routes="group.items"
+                  :model-value="route.path"
+                  mode="vertical"
+                  :collapsed="collapsed"
+                  :collapsed-width="collapsedWidth"
+                  :icon-size="18"
+                  :collapsed-icon-size="18"
+                  :root-indent="20"
+                  :indent="16"
+                  :theme-overrides="sidebarMenuTheme"
+                  :label-formatter="translateRouteTitle"
+                  @intent="prefetchRoute"
+                  @select="navigateTo"
+                />
+              </div>
+            </template>
+            <C_MenuGrouped
+              v-else
+              :routes="menuData"
+              :collapsed="collapsed"
+              :inverted="!isMenuLight"
+              :menu-theme="themeStore.menuTheme"
+              :label-formatter="translateRouteTitle"
+              @select="navigateTo"
+            />
+          </div>
         </div>
       </template>
 

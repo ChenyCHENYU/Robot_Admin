@@ -83,6 +83,43 @@ for (const variant of [
     })
     const selected = menuItem(navigation, '发运协同指挥台')
     await expect(selected).toHaveClass(/--selected/)
+    const sidebar = await navigation.evaluate(element => {
+      const logo = document.querySelector('.menu-top')!
+      const surface = element.parentElement!
+      const navigationStyle = getComputedStyle(element)
+      const logoStyle = getComputedStyle(logo)
+      return {
+        sharedSurface: logo.parentElement === surface,
+        surface: getComputedStyle(surface).backgroundImage,
+        logoBackground: logoStyle.backgroundColor,
+        logoImage: logoStyle.backgroundImage,
+        menuBackground: navigationStyle.backgroundColor,
+        menuImage: navigationStyle.backgroundImage,
+        scrollbars: [element, element.closest('.ra-sidebar-navigation')!].map(
+          target => ({
+            overflow: getComputedStyle(target).overflowY,
+            hidden:
+              getComputedStyle(target).scrollbarWidth === 'none' ||
+              getComputedStyle(target, '::-webkit-scrollbar').display ===
+                'none',
+          })
+        ),
+      }
+    })
+    expect(sidebar.sharedSurface).toBe(true)
+    expect(sidebar.logoBackground).toBe('rgba(0, 0, 0, 0)')
+    expect(sidebar.menuBackground).toBe('rgba(0, 0, 0, 0)')
+    expect(sidebar.logoImage).toBe('none')
+    expect(sidebar.menuImage).toBe('none')
+    if (variant.menu === 'signature') {
+      expect(sidebar.surface).toContain('gradient(')
+    } else {
+      expect(sidebar.surface).toBe('none')
+    }
+    for (const scrollbar of sidebar.scrollbars) {
+      expect(scrollbar.overflow).toBe('auto')
+      expect(scrollbar.hidden).toBe(true)
+    }
     const demos = menuItem(navigation, '示范组件')
     await demos.click()
     await expect(demos).not.toHaveClass(/--collapsed/)
@@ -201,6 +238,14 @@ for (const variant of [
     await page.mouse.move(1000, 10)
     await settleNavigation(page)
     const logoTop = (await page.locator('.menu-top').boundingBox())!.y
+    await navigation.evaluate(element => {
+      element.scrollTop = 0
+    })
+    await navigation.hover()
+    await page.mouse.wheel(0, 600)
+    await expect
+      .poll(() => navigation.evaluate(element => element.scrollTop))
+      .toBeGreaterThan(0)
     await menuItem(navigation, '关于').scrollIntoViewIfNeeded()
     expect((await page.locator('.menu-top').boundingBox())!.y).toBe(logoTop)
     await navigation.evaluate(element => {
@@ -211,6 +256,8 @@ for (const variant of [
         parent = parent.parentElement
       }
     })
+    await page.mouse.move(1000, 10)
+    await settleNavigation(page)
     await page.locator('.layout-sider').screenshot({
       path: info.outputPath(`sidebar-${variant.menu}-${variant.mode}.png`),
     })
