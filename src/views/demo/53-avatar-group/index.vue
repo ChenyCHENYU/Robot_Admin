@@ -154,7 +154,6 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo53AvatarGroup' })
-  import { computed, ref } from 'vue'
   import type { AvatarItem } from '@robot-admin/naive-ui-components'
   import {
     CONTRIBUTORS,

@@ -4,8 +4,16 @@
  * @Description: 无外部资源依赖的设计灵感素材集
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import type { WaterFallItem } from '@robot-admin/naive-ui-components/C_WaterFall'
-export interface GalleryItem extends WaterFallItem {
+import type { WaterFallExpose } from '@robot-admin/naive-ui-components/C_WaterFall'
+
+/** 素材是业务模型，组件从 items 推导事件字段，无需继承组件内部类型。 */
+export interface GalleryItem {
+  id: string
+  src: string
+  width: number
+  height: number
+  title: string
+  description: string
   category: string
 }
 const studies = [
@@ -72,3 +80,68 @@ export const COLLECTION_OPTIONS = [
   { label: '精选素材 · 16 份', value: 16 },
   { label: '大型素材库 · 1,200 份', value: 1200 },
 ]
+
+/** 页面只维护素材筛选、预览和手动分页；布局与可见区计算交给组件。 */
+export function useGalleryWorkspace() {
+  const galleryRef = ref<WaterFallExpose | null>(null)
+  const category = ref('全部素材')
+  const search = ref('')
+  const columns = ref(0)
+  const collectionSize = ref(16)
+  const pageSize = computed(() => (collectionSize.value > 100 ? 200 : 8))
+  const collection = computed(() =>
+    collectionSize.value > 100
+      ? createGalleryCollection(collectionSize.value)
+      : GALLERY_ITEMS
+  )
+  const limit = ref(8)
+  const selected = shallowRef<GalleryItem | null>(null)
+  const showItem = ref(false)
+  const COLUMN_OPTIONS = [
+    { label: '自动列数', value: 0 },
+    { label: '两列', value: 2 },
+    { label: '三列', value: 3 },
+    { label: '四列', value: 4 },
+  ]
+  const filteredItems = computed(() =>
+    collection.value.filter(
+      item =>
+        (category.value === '全部素材' || item.category === category.value) &&
+        item.title.includes(search.value.trim())
+    )
+  )
+  const visibleItems = computed(() => filteredItems.value.slice(0, limit.value))
+  const openItem = (item: GalleryItem) => {
+    selected.value = item
+    showItem.value = true
+  }
+  const loadMore = () => {
+    limit.value += pageSize.value
+  }
+  const download = () => {
+    if (!selected.value) return
+    const anchor = document.createElement('a')
+    anchor.href = selected.value.src
+    anchor.download = `${selected.value.id}.svg`
+    anchor.click()
+  }
+  watch([category, search, collectionSize], () => {
+    limit.value = pageSize.value
+  })
+  return {
+    galleryRef,
+    category,
+    search,
+    columns,
+    collectionSize,
+    limit,
+    selected,
+    showItem,
+    COLUMN_OPTIONS,
+    filteredItems,
+    visibleItems,
+    openItem,
+    download,
+    loadMore,
+  }
+}

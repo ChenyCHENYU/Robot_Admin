@@ -50,14 +50,13 @@
             :data="config.data"
             v-model="config.selected"
             :placeholders="config.placeholders"
-            :type="config.type"
           />
 
           <!-- 操作按钮和结果展示 -->
           <NSpace>
             <NButton
               type="primary"
-              @click="() => resetSelected(config)"
+              @click="resetCascadeSelection(config)"
             >
               重置选择
             </NButton>
@@ -115,15 +114,10 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo02AreaCascade' })
-  import { createCascadeConfigs, type CascadeConfig } from './data'
+  import { createCascadeConfigs, resetCascadeSelection } from './data'
 
   // 级联选择器配置
   const cascadeConfigs = reactive(createCascadeConfigs())
-
-  // 重置选择
-  const resetSelected = (config: CascadeConfig) => {
-    config.selected = {}
-  }
 </script>
 
 <style scoped lang="scss">

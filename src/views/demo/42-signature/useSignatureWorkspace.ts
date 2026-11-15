@@ -15,6 +15,7 @@ export function useSignatureWorkspace() {
   const signatureRef = ref<SignatureExpose | null>(null)
   const penColor = ref('#25364f')
   const penWidth = ref(3)
+  const eraserSize = ref(20)
   const watermark = ref(false)
   const readonly = ref(false)
   const format = ref<'png' | 'jpeg' | 'svg'>('png')
@@ -28,16 +29,12 @@ export function useSignatureWorkspace() {
     if (result.value) stale.value = true
   }
   const save = () => {
-    saved.value = JSON.parse(
-      JSON.stringify(signatureRef.value?.getSignatureData() ?? [])
-    )
+    // 组件返回独立快照，恢复时也会隔离输入，无需再次序列化笔迹。
+    saved.value = signatureRef.value?.getSignatureData() ?? []
     message.success('笔迹快照已保留在当前页面')
   }
   const restore = () => {
-    if (saved.value)
-      signatureRef.value?.loadSignatureData(
-        JSON.parse(JSON.stringify(saved.value))
-      )
+    if (saved.value) signatureRef.value?.loadSignatureData(saved.value)
   }
   const clear = () =>
     dialog.warning({
@@ -81,6 +78,7 @@ export function useSignatureWorkspace() {
     signatureRef,
     penColor,
     penWidth,
+    eraserSize,
     watermark,
     readonly,
     format,

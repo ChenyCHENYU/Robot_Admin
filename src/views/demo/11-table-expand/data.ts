@@ -97,44 +97,24 @@ export const getChildColumns = (
 
 type NestedSelectionController = Pick<
   TableInstance<TestRecord, ChildDataType>,
-  'selectChildRow' | 'unselectChildRow' | 'selectRow' | 'unselectRow'
+  'selectChildRow' | 'unselectChildRow'
 >
 
-const matchesParentSelection = (
-  mode: ParentChildLinkMode,
-  count: number,
-  total: number
-) => (mode === 'strict' ? total > 0 && count === total : count > 0)
-
-/** 自定义子表复用父实例的选择状态；公开逐行方法需要由消费方同步联动。 */
+/** 仅桥接自定义子表的差异键；资格校验、父子联动与选择事件由组件包统一处理。 */
 export function syncChildSelection(
   table: NestedSelectionController,
-  parent: TestRecord,
+  parentKey: DataTableRowKey,
   previousKeys: DataTableRowKey[],
-  nextKeys: DataTableRowKey[],
-  children: ChildDataType[],
-  config: DemoConfig
+  nextKeys: DataTableRowKey[]
 ): void {
-  if (!config.enableChildSelection) return
-  const available = new Set<DataTableRowKey>(children.map(child => child.id))
-  const next = new Set(nextKeys.filter(key => available.has(key)))
   const previous = new Set(previousKeys)
+  const next = new Set(nextKeys)
   for (const key of previous) {
-    if (!next.has(key)) table.unselectChildRow(parent.id, key)
+    if (!next.has(key)) table.unselectChildRow(parentKey, key)
   }
   for (const key of next) {
-    if (!previous.has(key)) table.selectChildRow(parent.id, key)
+    if (!previous.has(key)) table.selectChildRow(parentKey, key)
   }
-  if (!config.enableSelection) return
-  const shouldSelect =
-    parent.status === '在职' &&
-    matchesParentSelection(
-      config.parentChildLinkMode,
-      next.size,
-      children.length
-    )
-  if (shouldSelect) table.selectRow(parent.id)
-  else table.unselectRow(parent.id)
 }
 
 // ================= 主表格列配置 =================

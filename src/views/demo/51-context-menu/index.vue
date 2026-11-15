@@ -125,7 +125,10 @@
 </template>
 <script setup lang="ts">
   import { FILE_MENU, WORKSPACE_FILES, type WorkspaceFile } from './data'
-  import type { ContextMenuItem } from '@robot-admin/naive-ui-components'
+  import type {
+    C_ContextMenu,
+    ContextMenuItem,
+  } from '@robot-admin/naive-ui-components/C_ContextMenu'
   defineOptions({ name: 'Demo51ContextMenu' })
   const message = useMessage()
   const files = ref(WORKSPACE_FILES.map(file => ({ ...file })))
@@ -133,10 +136,7 @@
   const query = ref('')
   const removed = ref<{ file: WorkspaceFile; index: number } | null>(null)
   const activities = ref<string[]>([])
-  const menu = ref<{
-    open: (x: number, y: number) => void
-    close: () => void
-  }>()
+  const menu = ref<InstanceType<typeof C_ContextMenu>>()
   const selectedFile = computed(() =>
     files.value.find(file => file.id === selectedId.value)
   )

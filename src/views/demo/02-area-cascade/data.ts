@@ -1,28 +1,22 @@
-/**
+/*
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-11-16
+ * @FilePath: \Robot_Admin\src\views\demo\02-area-cascade\data.ts
  * @Description: 区域级联选择器演示页 - 数据配置与类型定义
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import type { CascadeItem } from '@robot-admin/naive-ui-components'
+import type {
+  CascadeItem,
+  CascadeProps,
+  CascadeValue,
+} from '@robot-admin/naive-ui-components/C_Cascade'
 import pcaCode from '@/assets/data/pca-code.json'
 
 // ================= 类型定义 =================
-export interface CascadeOption {
-  label: string
-  value: string | number
-}
-
-export interface CascadeSelected {
-  primary?: CascadeOption | null
-  secondary?: CascadeOption | null
-  tertiary?: CascadeOption | null
-}
-
-export interface CascadeConfig {
+export interface CascadeConfig extends CascadeProps {
   id: string
   title: string
-  data: CascadeItem[]
-  selected: CascadeSelected
-  placeholders: string[]
-  type?: string
+  selected: CascadeValue
   tagType?: 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error'
   description?: string
   labels: {
@@ -202,6 +196,7 @@ export const orgData: CascadeItem[] = [
 ]
 
 // ================= 级联配置 =================
+/** 每次创建独立的选择模型，配置约束复用组件公开 Props。 */
 export const createCascadeConfigs = (): CascadeConfig[] => [
   {
     id: 'city',
@@ -223,7 +218,6 @@ export const createCascadeConfigs = (): CascadeConfig[] => [
     data: techData,
     selected: {},
     placeholders: ['请选择技术方向', '请选择技术框架', '请选择具体版本'],
-    type: 'primary',
     tagType: 'warning',
     description: '用于选择技术栈，包含前端、后端和数据库等技术分类',
     labels: {
@@ -247,3 +241,8 @@ export const createCascadeConfigs = (): CascadeConfig[] => [
     },
   },
 ]
+
+/** 重置当前场景的受控值，其余级联场景保持不变。 */
+export const resetCascadeSelection = (config: CascadeConfig): void => {
+  config.selected = {}
+}

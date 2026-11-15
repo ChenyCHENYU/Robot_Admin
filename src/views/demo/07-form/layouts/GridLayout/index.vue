@@ -204,6 +204,7 @@
     grid: {
       cols: gridCols.value,
       gutter: gridGutter.value,
+      responsive: responsive.value,
     },
     validateOnChange: validateOnChange.value,
     labelPlacement: labelPlacement.value,

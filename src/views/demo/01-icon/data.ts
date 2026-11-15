@@ -8,7 +8,7 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-import { defineComponent, h, type Ref } from 'vue'
+import type { Ref } from 'vue'
 import type { IconProps } from '@robot-admin/naive-ui-components/C_Icon'
 
 /**
@@ -161,9 +161,9 @@ import { DemoIconHeart, DemoIconStar } from './data'
   :component-props="{ color: 'gold', width: 32, height: 32 }"
 />`,
 
-  image: `<!-- 本地图片 - 自动使用 useImage -->
-<C_Icon type="image" name="avatar" size="32" />
-<C_Icon type="image" name="icons/home" size="32" />
+  image: `<!-- 图片路径由应用提供，支持 public 路径或导入后的资源 URL -->
+<C_Icon type="image" name="/robot-avatar.png" size="32" />
+<C_Icon type="image" name="/robot-logo.png" size="32" />
 
 <!-- 远程图片 - 直接使用 URL -->
 <C_Icon
@@ -172,11 +172,10 @@ import { DemoIconHeart, DemoIconStar } from './data'
   size="32"
 />
 
-<!-- 手动控制本地处理 -->
+<!-- 加载失败时使用离线图标回退 -->
 <C_Icon
   type="image"
   name="logo"
-  :use-local-image="true"
   fallback-icon="mdi:image"
 />`,
 
@@ -417,21 +416,21 @@ export const createDemoSections = (
         key: 'avatar',
         props: {
           type: 'image',
-          name: 'avatar',
+          name: '/robot-avatar.png',
           size: '32',
           alt: '头像',
         },
-        label: '本地: avatar',
+        label: '本地: robot-avatar.png',
       },
       {
         key: 'home-icon',
         props: {
           type: 'image',
-          name: 'icons/home',
+          name: '/robot-logo.png',
           size: '32',
           alt: '首页图标',
         },
-        label: '本地: icons/home',
+        label: '本地: robot-logo.png',
       },
       {
         key: 'vue-cdn',
@@ -447,15 +446,15 @@ export const createDemoSections = (
         key: 'logo-local',
         props: {
           type: 'image',
-          name: 'robot',
+          name: '/robot-logo.png',
           size: '32',
           fallbackIcon: 'mdi:image',
         },
-        label: '本地: robot',
+        label: '本地: robot-logo.png',
       },
     ],
     code: codeExamples.image,
-    note: '<strong>图片处理说明：</strong><br>• 本地图片：自动使用 useImage hook 处理<br>• 远程图片：HTTP/HTTPS URL 直接使用<br>• 手动控制：use-local-image 属性强制指定处理方式',
+    note: '<strong>图片处理说明：</strong><br>• 图片路径由应用提供，可使用 public 路径或导入后的资源 URL<br>• 远程图片：HTTP/HTTPS URL 直接使用<br>• 加载失败：通过 fallback-icon 指定回退图标',
   },
   {
     id: 'interactive',

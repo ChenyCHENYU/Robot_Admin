@@ -83,12 +83,13 @@
             :key="currentScenario"
             v-model="data"
             :users="userList"
-            :roles="roleList"
             :departments="deptList"
+            :condition-fields="CONDITION_FIELDS"
             :readonly="mode === 'preview'"
             :allow-cycles="false"
             :theme="themeStore.isDark ? 'dark' : 'light'"
             @node-click="selectNode"
+            @edge-click="selectEdge"
             @save="save" /></div
         ><footer class="workspace-footer"
           ><span>{{
@@ -100,6 +101,21 @@
         ></main
       >
       <aside class="workspace-panel flow-inspector">
+        <section
+          v-if="selectedEdge"
+          class="workspace-section"
+          aria-label="选中连线"
+        >
+          <h2>连线详情</h2>
+          <p
+            >{{ nodeTitle(selectedEdge.source) }} →
+            {{ nodeTitle(selectedEdge.target) }}</p
+          >
+          <p class="workspace-hint">{{
+            selectedEdge.label || '未设置连线标签'
+          }}</p>
+          <small>{{ selectedEdge.id }}</small>
+        </section>
         <section class="workspace-section">
           <div class="flow-inspector-heading"
             ><span class="i-mdi-tune-variant" /><h2>节点属性</h2
@@ -202,11 +218,17 @@
                     )
                   "
                 />
-                <p
-                  >{{ condition.field }} {{ condition.operator }}
-                  {{ condition.value }}</p
+                <p>{{
+                  condition.isDefault
+                    ? '默认分支 · 其他条件均未命中时使用'
+                    : `${condition.field} ${condition.operator} ${condition.value}`
+                }}</p
                 ><span class="workspace-hint"
-                  >点击画布中的条件节点，可编辑判断字段与条件值。</span
+                  >去向：{{
+                    condition.targetNodeId
+                      ? nodeTitle(condition.targetNodeId)
+                      : '尚未绑定'
+                  }}。点击条件节点可编辑规则与去向。</span
                 >
               </div>
             </template>
@@ -250,20 +272,17 @@
   import '@vue-flow/core/dist/style.css'
   import '@vue-flow/core/dist/theme-default.css'
   import { s_themeStore } from '@/stores/theme'
-  import { workflowScenarios, userList, roleList, deptList } from './data'
+  import {
+    workflowScenarios,
+    userList,
+    deptList,
+    CONDITION_FIELDS,
+    NODE_LABELS,
+    USER_OPTIONS,
+  } from './data'
   import { useWorkflowWorkspace } from './useWorkflowWorkspace'
   defineOptions({ name: 'Demo28WorkFlowEditor' })
   const themeStore = s_themeStore()
-  const NODE_LABELS = {
-    start: '发起',
-    approval: '审批',
-    copy: '抄送',
-    condition: '条件分支',
-  }
-  const USER_OPTIONS = userList.map(user => ({
-    label: user.name,
-    value: user.id,
-  }))
   const {
     selectedUsers,
     updateMembers,
@@ -279,8 +298,11 @@
     current,
     data,
     selected,
+    selectedEdge,
+    nodeTitle,
     save,
     selectNode,
+    selectEdge,
     updateTitle,
     validate,
     restore,

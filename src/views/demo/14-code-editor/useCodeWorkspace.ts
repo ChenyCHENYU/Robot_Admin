@@ -5,7 +5,6 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { codeExamples, sampleCodes } from './data'
-import { useHighlight } from '@/plugins/highlight'
 const CODE_FILES = [
   { language: 'javascript', name: 'utils.js' },
   { language: 'typescript', name: 'models.ts' },
@@ -22,15 +21,13 @@ export function useCodeWorkspace() {
   const language = ref('javascript')
   const lineNumbers = ref(true)
   const wrap = ref(true)
-  const loading = ref(false)
-  const status = ref('')
-  const highlighter = useHighlight()
-  const drafts = ref<Record<string, string>>({
+  const initialCodes: Record<string, string> = {
     javascript: codeExamples.javascript,
     typescript: codeExamples.typescript,
     json: codeExamples.json,
     ...sampleCodes,
-  })
+  }
+  const drafts = ref({ ...initialCodes })
   const current = computed(() =>
     CODE_FILES.find(file => file.language === language.value)!
   )
@@ -41,10 +38,7 @@ export function useCodeWorkspace() {
     },
   })
   const reset = () => {
-    drafts.value[language.value] =
-      language.value in sampleCodes
-        ? sampleCodes[language.value]
-        : codeExamples[language.value as 'javascript' | 'typescript' | 'json']
+    drafts.value[language.value] = initialCodes[language.value] ?? ''
   }
   const download = () => {
     const url = URL.createObjectURL(
@@ -56,24 +50,11 @@ export function useCodeWorkspace() {
     anchor.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
-  watch(
-    language,
-    async value => {
-      loading.value = true
-      const ready = await highlighter.loadLanguage(value)
-      if (language.value !== value) return
-      status.value = ready ? '语法高亮已就绪' : '当前使用纯文本预览'
-      loading.value = false
-    },
-    { immediate: true }
-  )
   return {
     CODE_FILES,
     language,
     lineNumbers,
     wrap,
-    loading,
-    status,
     current,
     code,
     reset,

@@ -41,8 +41,10 @@
 ### 搜索布局与查询
 
 ```ts
-const searchConfig = {
-  layout: 'grid' as const,
+import type { SearchConfig } from '@robot-admin/naive-ui-components/C_FormSearch'
+
+const searchConfig: SearchConfig = {
+  layout: 'grid',
   columns: 3,
   foldThreshold: 3,
   searchOnReset: true,
@@ -99,6 +101,12 @@ const searchConfig = {
 - 应用为 MachTable 提供 `size: 'compact'`，默认正文行高 30px、表头高 34px；页面可用 `rowHeight/headerHeight` 明确覆盖。`C_Table` 通过应用注入 `density: 'compact'`，收紧单元格留白并使用紧凑控件；实际行高仍随按钮、输入、标签及换行内容展开，不承诺统一 30px。局部密度及显式控件尺寸继续优先。
 
 外观仅在 [MachTable 配置](../src/config/mach-table.ts)和[组件插件](../src/plugins/naive-ui-plugin.ts)统一配置。页面只声明场景及业务差异；显式属性继续优先。
+
+### 自定义展开内容
+
+`C_Table` 的自定义子表仍复用主表实例的选择状态。通过 `selection.parentChildLink: { enabled: true, mode: 'strict' }` 配置全选联动，`mode: 'loose'` 则有一个子项选中即联动；页面仅将子表变化的键传给公开 `selectChildRow / unselectChildRow`，不再自行计算父行是否选中。行资格、联动开关、去重和清空由组件统一处理。
+
+入口：`/#/demo/table-manage/table-expand`，可切换父／子选择、严格／宽松模式和三档密度。自定义子表的业务列、详情加载与重试仍由页面声明。
 
 主按钮的文字及继承 `currentColor` 的图标、已选 Checkbox 的勾在明暗主题中默认使用白色前景，由同一个 `NConfigProvider` 配色结果驱动。项目角色配置放在 [component-colors.ts](../src/config/theme/component-colors.ts)；局部区域需要不同前景时，用 `createComponentTheme({ primary: '#ffff00', onSolid: '#112233' })` 的结果配置嵌套 `NConfigProvider`，不会改写外层主题或页面草稿。
 

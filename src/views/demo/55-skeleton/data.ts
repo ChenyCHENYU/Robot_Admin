@@ -88,7 +88,7 @@ export const LOADED_CONTENT = {
   text: {
     title: 'Robot Admin 框架介绍',
     content:
-      'Robot Admin 是一个企业级后台管理系统生态，基于 Vue 3 + TypeScript + Naive UI 构建，提供 49 个业务组件和 7 个独立 npm 包。',
+      'Robot Admin 是一个企业级后台管理系统生态，基于 Vue 3 + TypeScript + Naive UI 构建，提供业务组件和独立生态包。',
   },
   avatar: {
     name: 'ChenYu',

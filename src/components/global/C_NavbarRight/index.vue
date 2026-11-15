@@ -56,7 +56,6 @@
       >
         <C_Language
           :model-value="languageStore.currentLang"
-          tooltip="语言切换"
           @change="languageStore.setLanguage"
         />
       </div>
@@ -504,7 +503,6 @@
   const searchItems = computed(() => flattenMenuItems(searchMenuOptions.value))
   const searchOptions: GlobalSearchOptions = {
     menuItems: () => searchItems.value,
-    isDark: () => themeStore.isDark,
     /** 选中菜单项后跳转路由 */
     onSelect(key: string, hasChildren: boolean) {
       if (hasChildren) {

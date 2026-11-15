@@ -232,6 +232,17 @@
                 />
               </div>
               <div class="action-bar-config__row">
+                <span class="config-label">分隔方向</span>
+                <NRadioGroup
+                  v-model:value="customConfig.dividerType"
+                  :disabled="!customConfig.showDivider"
+                  size="small"
+                >
+                  <NRadio value="vertical">竖线</NRadio>
+                  <NRadio value="horizontal">短横线</NRadio>
+                </NRadioGroup>
+              </div>
+              <div class="action-bar-config__row">
                 <span class="config-label">布局选项</span>
                 <NSpace :size="12">
                   <NCheckbox v-model:checked="customConfig.showDivider"

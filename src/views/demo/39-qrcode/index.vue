@@ -222,6 +222,7 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo39Qrcode' })
+  import type { QRCodeExpose } from '@robot-admin/naive-ui-components/C_QRCode'
   import type {
     ActionItem,
     ErrorCorrectionLevel,
@@ -241,7 +242,7 @@
   const message = useMessage()
 
   // 二维码组件 ref
-  const qrRef = ref()
+  const qrRef = ref<QRCodeExpose | null>(null)
 
   // 自定义配置
   const customValue = ref('https://vuejs.org')

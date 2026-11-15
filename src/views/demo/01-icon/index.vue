@@ -49,7 +49,10 @@
             "
             @click.stop="icon.handler?.()"
           >
-            <C_Icon v-bind="icon.props" />
+            <C_Icon
+              v-bind="icon.props"
+              @click.stop="icon.handler?.()"
+            />
           </div>
           <span
             v-if="demo.icons.length > 4"
@@ -92,7 +95,10 @@
             class="showcase-item"
             @click="icon.handler?.()"
           >
-            <C_Icon v-bind="icon.props" />
+            <C_Icon
+              v-bind="icon.props"
+              @click.stop="icon.handler?.()"
+            />
             <code>{{
               typeof icon.label === 'function' ? icon.label() : icon.label
             }}</code>

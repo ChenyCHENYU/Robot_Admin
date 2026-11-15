@@ -36,6 +36,17 @@
               :step="1"
               :disabled="readonly" /></label
           ><label class="workspace-label"
+            ><span>橡皮尺寸 · {{ eraserSize }} px</span
+            ><NSlider
+              v-model:value="eraserSize"
+              :min="10"
+              :max="80"
+              :step="5"
+              :disabled="readonly || exporting"
+              aria-label="橡皮尺寸" /></label
+          ><p class="workspace-hint"
+            >选择工具栏中的橡皮擦使用；调整尺寸不会改变已经擦除的笔迹。</p
+          ><label class="workspace-label"
             ><NCheckbox v-model:checked="watermark"
               >添加演示水印</NCheckbox
             ></label
@@ -51,7 +62,8 @@
             :options="SIGNATURE_FORMATS"
             size="small"
           /><p
-            >PNG 适合清晰留存，JPEG 便于通用分享，SVG 保留矢量笔迹。</p
+            >PNG 适合清晰留存，JPEG 便于通用分享；SVG
+            嵌入当前画布图片，保留橡皮擦与水印效果。</p
           ></section
         ></aside
       >
@@ -89,6 +101,7 @@
             :readonly="readonly"
             :disabled="exporting"
             :pen-config="{ color: penColor, width: penWidth }"
+            :eraser-config="{ size: eraserSize }"
             :watermark="{ show: watermark, text: 'Robot Admin · 演示签名' }"
             background-color="#ffffff"
             @change="changed"
@@ -148,6 +161,7 @@
     signatureRef,
     penColor,
     penWidth,
+    eraserSize,
     watermark,
     readonly,
     format,

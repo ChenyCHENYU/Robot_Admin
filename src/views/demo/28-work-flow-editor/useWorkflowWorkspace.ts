@@ -7,6 +7,7 @@
 import type {
   WorkflowData,
   WorkflowNode,
+  WorkflowEdge,
   ValidationError,
   WorkflowExpose,
   ApprovalMode,
@@ -34,6 +35,7 @@ export function useWorkflowWorkspace() {
   )
   const saved = ref('')
   const selectedId = ref('start-1')
+  const selectedEdgeId = ref('')
   const errors = ref<ValidationError[]>([])
   const validated = ref(false)
   const workflowRef = ref<WorkflowExpose | null>(null)
@@ -50,11 +52,12 @@ export function useWorkflowWorkspace() {
   const selected = computed(() =>
     data.value.nodes.find(item => item.id === selectedId.value)
   )
-  const approvers = computed(() =>
-    selected.value?.type === 'approval'
-      ? (selected.value.data.approvers?.map(item => item.id) ?? [])
-      : []
+  const selectedEdge = computed(() =>
+    data.value.edges.find(edge => edge.id === selectedEdgeId.value)
   )
+  /** 详情始终读取当前模型名称，避免沿用点击时的旧节点快照。 */
+  const nodeTitle = (id: string) =>
+    data.value.nodes.find(node => node.id === id)?.data.title ?? id
   const selectedUsers = computed(() => {
     const node = selected.value
     if (!node) return []
@@ -67,7 +70,10 @@ export function useWorkflowWorkspace() {
   /** 修改选中节点的人员，发起、审批与抄送分别写入自己的契约字段。 */
   const updateMembers = (ids: string[]) => {
     if (mode.value !== 'edit') return
-    const members = userList.filter(user => ids.includes(user.id))
+    // 顺序审批沿用用户的选择顺序，不能按目录顺序重新排列。
+    const members = ids.flatMap(
+      id => userList.find(user => user.id === id) ?? []
+    )
     data.value = {
       ...data.value,
       nodes: data.value.nodes.map(node => {
@@ -123,6 +129,11 @@ export function useWorkflowWorkspace() {
   }
   const selectNode = (node: WorkflowNode) => {
     selectedId.value = node.id
+    selectedEdgeId.value = ''
+  }
+  /** 连线点击只接收组件公开快照，详情跟随当前流程数据更新。 */
+  const selectEdge = (edge: WorkflowEdge) => {
+    selectedEdgeId.value = edge.id
   }
   const updateTitle = (title: string) => {
     if (mode.value !== 'edit') return
@@ -134,23 +145,6 @@ export function useWorkflowWorkspace() {
         updated.data = { ...node.data, title }
         return updated
       }),
-    }
-  }
-  const updateApprovers = (ids: string[]) => {
-    if (mode.value !== 'edit') return
-    data.value = {
-      ...data.value,
-      nodes: data.value.nodes.map(node =>
-        node.id === selectedId.value && node.type === 'approval'
-          ? {
-              ...node,
-              data: {
-                ...node.data,
-                approvers: userList.filter(user => ids.includes(user.id)),
-              },
-            }
-          : node
-      ),
     }
   }
   const validate = () => {
@@ -199,6 +193,7 @@ export function useWorkflowWorkspace() {
   }
   watch(currentScenario, () => {
     selectedId.value = data.value.nodes[0]?.id ?? ''
+    selectedEdgeId.value = ''
     errors.value = []
     validated.value = false
   })
@@ -217,11 +212,12 @@ export function useWorkflowWorkspace() {
     current,
     data,
     selected,
-    approvers,
+    selectedEdge,
+    nodeTitle,
     save,
     selectNode,
+    selectEdge,
     updateTitle,
-    updateApprovers,
     validate,
     restore,
     exportJson,

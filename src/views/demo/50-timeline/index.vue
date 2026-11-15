@@ -98,6 +98,7 @@
   </div>
 </template>
 <script setup lang="ts">
+  import type { C_Timeline } from '@robot-admin/naive-ui-components/C_Timeline'
   import {
     RELEASES,
     RELEASE_TIMELINE,
@@ -109,7 +110,7 @@
   const latestFirst = ref(true)
   const visibleCount = ref(8)
   const expanded = ref(false)
-  const timeline = ref<{ expandAll: () => void; collapseAll: () => void }>()
+  const timeline = ref<InstanceType<typeof C_Timeline>>()
   const items = computed(() =>
     scene.value === 'release'
       ? RELEASE_TIMELINE.slice(0, visibleCount.value)

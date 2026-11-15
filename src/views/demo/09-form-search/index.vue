@@ -117,8 +117,12 @@
       <C_FormSearch
         v-model="selectionParams"
         :form-item-list="SELECTION_SEARCH_FIELDS"
-        :config="{ density, requireValue: false, onSearch: searchSelection }"
-        @reset="searchSelection"
+        :config="{
+          density,
+          requireValue: false,
+          searchOnReset: true,
+          onSearch: searchSelection,
+        }"
       />
       <C_Table
         class="search-result-table"

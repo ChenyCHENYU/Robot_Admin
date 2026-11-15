@@ -6,7 +6,10 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
-import type { ActionDropdownItem } from '@robot-admin/naive-ui-components/C_ActionBar'
+import type {
+  ActionDropdownItem,
+  ActionBarConfig,
+} from '@robot-admin/naive-ui-components/C_ActionBar'
 
 // 表格列定义
 export const columns: TableColumn<EmployeeRow>[] = [
@@ -59,10 +62,11 @@ export interface LogItem {
 }
 
 // 自定义配置初始值
-export const DEFAULT_CUSTOM_CONFIG = {
-  align: 'left' as 'left' | 'center' | 'right' | 'space-between',
-  size: 'tiny' as 'tiny' | 'small' | 'medium' | 'large',
+export const DEFAULT_CUSTOM_CONFIG: ActionBarConfig = {
+  align: 'left',
+  size: 'tiny',
   showDivider: false,
+  dividerType: 'vertical',
   compact: false,
   wrap: false,
   inline: false,

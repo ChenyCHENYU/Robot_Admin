@@ -79,7 +79,6 @@
             editor-id="robot-document-workspace"
             :mode="mode"
             height="640px"
-            :is-dark="themeStore.isDark"
             :auto-save="false"
             :max-length="100000"
             :show-word-count="true"
@@ -100,10 +99,8 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { s_themeStore } from '@/stores/theme'
   import { useMarkdownWorkspace } from './useMarkdownWorkspace'
   defineOptions({ name: 'Demo15MarkdownEditor' })
-  const themeStore = s_themeStore()
   const {
     WORKSPACE_DOCUMENTS,
     drafts,

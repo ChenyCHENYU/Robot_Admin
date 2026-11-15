@@ -51,10 +51,6 @@
         :items="visibleItems"
         :columns="columns || undefined"
         :gap="20"
-        :lazy="true"
-        :infinite="false"
-        :loading="false"
-        :no-more="visibleItems.length >= filteredItems.length"
         @item-click="openItem"
       /><div
         v-if="!visibleItems.length"
@@ -68,7 +64,7 @@
       ><NButton
         size="small"
         :disabled="limit >= filteredItems.length"
-        @click="limit += pageSize"
+        @click="loadMore"
         >查看更多素材</NButton
       ><span>内置设计示例 · 无需外部图片服务</span></footer
     >
@@ -97,59 +93,28 @@
   </div>
 </template>
 <script setup lang="ts">
-  import type {
-    WaterFallExpose,
-    WaterFallItem,
-  } from '@robot-admin/naive-ui-components/C_WaterFall'
   import {
-    GALLERY_ITEMS,
     GALLERY_CATEGORIES,
     COLLECTION_OPTIONS,
-    createGalleryCollection,
+    useGalleryWorkspace,
   } from './data'
   defineOptions({ name: 'Demo48Waterfall' })
-  const galleryRef = ref<WaterFallExpose | null>(null)
-  const category = ref('全部素材')
-  const search = ref('')
-  const columns = ref(0)
-  const collectionSize = ref(16)
-  const pageSize = computed(() => (collectionSize.value > 100 ? 200 : 8))
-  const collection = computed(() =>
-    collectionSize.value > 100
-      ? createGalleryCollection(collectionSize.value)
-      : GALLERY_ITEMS
-  )
-  const limit = ref(8)
-  const selected = shallowRef<WaterFallItem | null>(null)
-  const showItem = ref(false)
-  const COLUMN_OPTIONS = [
-    { label: '自动列数', value: 0 },
-    { label: '两列', value: 2 },
-    { label: '三列', value: 3 },
-    { label: '四列', value: 4 },
-  ]
-  const filteredItems = computed(() =>
-    collection.value.filter(
-      item =>
-        (category.value === '全部素材' || item.category === category.value) &&
-        item.title!.includes(search.value.trim())
-    )
-  )
-  const visibleItems = computed(() => filteredItems.value.slice(0, limit.value))
-  const openItem = (item: WaterFallItem) => {
-    selected.value = item
-    showItem.value = true
-  }
-  const download = () => {
-    if (!selected.value) return
-    const anchor = document.createElement('a')
-    anchor.href = selected.value.src
-    anchor.download = `${selected.value.id}.svg`
-    anchor.click()
-  }
-  watch([category, search, collectionSize], () => {
-    limit.value = pageSize.value
-  })
+  const {
+    galleryRef,
+    category,
+    search,
+    columns,
+    collectionSize,
+    limit,
+    selected,
+    showItem,
+    COLUMN_OPTIONS,
+    filteredItems,
+    visibleItems,
+    openItem,
+    download,
+    loadMore,
+  } = useGalleryWorkspace()
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

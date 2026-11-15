@@ -124,11 +124,7 @@ export function useDiagramWorkspace() {
     selectedId.value = ''
     revision.value++
   })
-  watch(mode, () => {
-    initialData.value = capture()
-    liveData.value = initialData.value
-    revision.value++
-  })
+  // 只读切换交给组件原位更新权限，保留视口、选中节点与当前编辑数据。
   onBeforeUnmount(() => {
     active = false
     cleanup()

@@ -7,5 +7,5 @@
 export const SIGNATURE_FORMATS = [
   { label: 'PNG · 无损图片', value: 'png' },
   { label: 'JPEG · 通用图片', value: 'jpeg' },
-  { label: 'SVG · 矢量笔迹', value: 'svg' },
+  { label: 'SVG · 嵌入签名图片', value: 'svg' },
 ]

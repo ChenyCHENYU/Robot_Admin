@@ -146,8 +146,8 @@
       enabled: config.enableSelection,
       rowCheckable: isRowCheckable,
       childSelection: { enabled: config.enableChildSelection },
-      // 自定义子表通过公开实例方法桥接，父表仍是唯一的选择状态持有者。
-      parentChildLink: { enabled: false },
+      // 自定义子表同样使用包内联动规则，页面不再复制严格/宽松选择算法。
+      parentChildLink: { enabled: true, mode: config.parentChildLinkMode },
     },
     pagination: false,
     display: { scrollX: 600 },
@@ -240,6 +240,7 @@
             {
               key: `retry-${row.id}`,
               label: '重试',
+              icon: 'mdi:reload',
               onClick: () => tableRef.value?.retryExpand(row.id),
             },
           ],
@@ -281,11 +282,9 @@
             if (!tableRef.value) return
             syncChildSelection(
               tableRef.value,
-              row,
+              row.id,
               childSelection?.selectedKeys ?? [],
-              keys,
-              childRows,
-              config
+              keys
             )
           },
         }),

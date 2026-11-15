@@ -166,61 +166,16 @@
 </template>
 
 <script lang="ts" setup>
+  import { useProgressDemo } from './data'
   defineOptions({ name: 'Demo03Progress' })
-  import type { CSSProperties } from 'vue'
-  import { useThemeVars } from 'naive-ui/es'
-  import { changeColor } from 'seemly'
-
-  const themeVars = useThemeVars()
-
-  // 卡片内容区居中样式（直接内联，绕过 Naive UI CSS 变量覆盖问题）
-  const cardContentStyle: CSSProperties = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '260px',
-    padding: '32px 24px',
-  }
-
-  const linearCardContentStyle: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    minHeight: '120px',
-    padding: '32px 24px',
-  }
-
-  // 动态进度数据
-  const circlePercentages = ref([0, 0, 0])
-  const doublePercentages = ref([30, 60])
-
-  // 定时器
-  let raceTimer: ReturnType<typeof setInterval> | null = null
-  let doubleTimer: ReturnType<typeof setInterval> | null = null
-
-  const updateRace = () => {
-    circlePercentages.value = circlePercentages.value.map(
-      p => (p + Math.random() * 2 + 1) % 100
-    )
-  }
-
-  const updateDouble = () => {
-    doublePercentages.value = doublePercentages.value.map((p, i) => {
-      const speed =
-        i === 0 ? Math.random() * 1.5 + 0.5 : Math.random() * 1 + 0.3
-      return (p + speed) % 100
-    })
-  }
-
-  onMounted(() => {
-    raceTimer = setInterval(updateRace, 100)
-    doubleTimer = setInterval(updateDouble, 150)
-  })
-
-  onBeforeUnmount(() => {
-    if (raceTimer) clearInterval(raceTimer)
-    if (doubleTimer) clearInterval(doubleTimer)
-  })
+  const {
+    themeVars,
+    circlePercentages,
+    doublePercentages,
+    cardContentStyle,
+    linearCardContentStyle,
+    changeColor,
+  } = useProgressDemo()
 </script>
 
 <style lang="scss" scoped>

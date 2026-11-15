@@ -115,7 +115,6 @@
     C_LayoutContainer,
     normalizeLayoutMenus,
     type LayoutMenuItem,
-    type MenuOptions,
   } from '@robot-admin/layout/naive'
   import { useLayoutBridge } from '@/composables/useLayoutBridge'
   import { s_themeStore } from '@/stores/theme'
@@ -171,7 +170,7 @@
    * 最终菜单数据：响应式 + 分组模式下自动包装 type:'group'
    */
   const menuData = computed<LayoutMenuItem[]>(() =>
-    normalizeLayoutMenus(permissionStore.showMenuListGet as MenuOptions[])
+    normalizeLayoutMenus(permissionStore.showMenuListGet)
   )
 
   const groupedMenuData = computed(() => buildGroupedMenuData(menuData.value))

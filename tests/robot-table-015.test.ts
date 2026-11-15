@@ -2,7 +2,7 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-18
  * @FilePath: \Robot_Admin\tests\robot-table-015.test.ts
- * @Description: 组件库 0.15 消费端搜索默认值、动态主键与自定义子表选择回归
+ * @Description: 正式组件消费端搜索默认值、动态主键与自定义子表键桥接回归
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { expect, spyOn, test } from 'bun:test'
@@ -20,11 +20,7 @@ import {
   filterSelectionPreview,
   SELECTION_SEARCH_FIELDS,
 } from '../src/views/demo/09-form-search/data'
-import {
-  defaultConfig,
-  syncChildSelection,
-  type TestRecord,
-} from '../src/views/demo/11-table-expand/data'
+import { syncChildSelection } from '../src/views/demo/11-table-expand/data'
 import {
   createDefaultEmployee,
   generateRandomEmployee,
@@ -134,92 +130,30 @@ test('HTTP 环境没有 randomUUID 且时间不变时，两工厂共用的行键
   expect(Date.now).toBe(originalNow)
 })
 
-const parent: TestRecord = {
-  id: 1,
-  name: '员工',
-  age: 28,
-  email: 'user@example.com',
-  department: '技术部',
-  role: '工程师',
-  salary: 10000,
-  status: '在职',
-  hasChildren: true,
-  childData: [
-    { id: 11, project: '项目 A', status: '进行中' },
-    { id: 12, project: '项目 B', status: '进行中' },
-  ],
-}
-
-const createSelection = () => {
-  const parents = new Set<DataTableRowKey>()
-  const children = new Set<DataTableRowKey>()
+test('自定义子表仅提交差异键，重复键和已有键不会重复调用包实例', () => {
+  const calls: Array<[string, DataTableRowKey, DataTableRowKey]> = []
   const table = {
-    selectChildRow: (_parent: DataTableRowKey, child: DataTableRowKey) => {
-      children.add(child)
+    /** 记录组件收到的选择请求，不在消费侧模拟父子联动。 */
+    selectChildRow: (parent: DataTableRowKey, child: DataTableRowKey) => {
+      calls.push(['select', parent, child])
     },
-    unselectChildRow: (_parent: DataTableRowKey, child: DataTableRowKey) => {
-      children.delete(child)
-    },
-    selectRow: (key: DataTableRowKey) => {
-      parents.add(key)
-    },
-    unselectRow: (key: DataTableRowKey) => {
-      parents.delete(key)
+    /** 记录取消请求。 */
+    unselectChildRow: (parent: DataTableRowKey, child: DataTableRowKey) => {
+      calls.push(['unselect', parent, child])
     },
   }
-  return { parents, children, table }
-}
-
-test('自定义子表严格模式仅全选时选中父行，清空同步父实例而无第二套状态', () => {
-  const { parents, children, table } = createSelection()
-  const config = { ...defaultConfig, parentChildLinkMode: 'strict' as const }
-  syncChildSelection(table, parent, [], [11], parent.childData, config)
-  expect([...children]).toEqual([11])
-  expect([...parents]).toEqual([])
-  syncChildSelection(table, parent, [11], [11, 12], parent.childData, config)
-  expect([...parents]).toEqual([1])
-  syncChildSelection(table, parent, [11, 12], [], parent.childData, config)
-  expect([...children]).toEqual([])
-  expect([...parents]).toEqual([])
-})
-
-test('宽松模式支持部分选中并忽略失效主键，离职父行仍不能选中', () => {
-  const { parents, children, table } = createSelection()
-  syncChildSelection(
-    table,
-    parent,
-    [],
-    [11, 999, '12'],
-    parent.childData,
-    defaultConfig
-  )
-  expect([...children]).toEqual([11])
-  expect([...parents]).toEqual([1])
-  syncChildSelection(
-    table,
-    { ...parent, status: '离职' },
-    [11],
-    [12],
-    parent.childData,
-    defaultConfig
-  )
-  expect([...children]).toEqual([12])
-  expect([...parents]).toEqual([])
-})
-
-test('关闭父选择仍保留独立子选择；关闭子选择后不写入选择状态', () => {
-  const { parents, children, table } = createSelection()
-  syncChildSelection(table, parent, [], [11], parent.childData, {
-    ...defaultConfig,
-    enableSelection: false,
-  })
-  expect([...parents]).toEqual([])
-  expect([...children]).toEqual([11])
-  syncChildSelection(table, parent, [11], [12], parent.childData, {
-    ...defaultConfig,
-    enableChildSelection: false,
-  })
-  expect([...children]).toEqual([11])
+  const previous = [11, 11, 12]
+  const next = [12, 13, 13]
+  syncChildSelection(table, 1, previous, next)
+  expect(calls).toEqual([
+    ['unselect', 1, 11],
+    ['select', 1, 13],
+  ])
+  expect(previous).toEqual([11, 11, 12])
+  expect(next).toEqual([12, 13, 13])
+  calls.length = 0
+  syncChildSelection(table, 1, [12, 13], [13, 12])
+  expect(calls).toEqual([])
 })
 
 test('多选状态与布尔条件取交集，false、0、清空分别保留筛选语义', () => {

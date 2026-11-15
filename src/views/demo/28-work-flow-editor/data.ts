@@ -7,49 +7,20 @@
 import type {
   WorkflowData,
   WorkflowNode,
+  User,
+  Department,
+  WorkflowConditionField,
 } from '@robot-admin/naive-ui-components/C_WorkFlow'
 
 import { createPersonAvatar } from '@/utils/d_avatar'
 
 // ============ 类型定义 ============
-export interface User {
-  id: string
-  name: string
-  avatar?: string
-  department: string
-  role: string
-  email?: string
-  phone?: string
-}
-
-export interface Role {
-  id: string
-  name: string
-  description?: string
-  level?: number
-}
-
-export interface Department {
-  id: string
-  name: string
-  parentId?: string
-  manager?: string
-}
-
 export interface WorkflowScenario {
   id: string
   name: string
   description: string
   icon: string
   template: WorkflowData
-}
-
-export interface ValidationError {
-  nodeId: string
-  nodeName: string
-  field: string
-  message: string
-  type: 'required' | 'warning' | 'error'
 }
 
 // ============ 工作流场景模板数据 ============
@@ -209,17 +180,22 @@ export const workflowScenarios: WorkflowScenario[] = [
             conditions: [
               {
                 id: 'cond-1',
-                name: '小额',
+                name: '小额 · 直属领导',
                 field: 'amount',
                 operator: 'less_than',
                 value: '1000',
+                targetNodeId: 'approval-1',
+                priority: 0,
               },
               {
                 id: 'cond-2',
-                name: '大额',
+                name: '其他金额 · 财务与总监',
                 field: 'amount',
                 operator: 'greater_than',
                 value: '1000',
+                targetNodeId: 'approval-2',
+                isDefault: true,
+                priority: 1,
               },
             ],
           },
@@ -529,20 +505,6 @@ workflowScenarios.forEach(scenario => {
   scenario.template = hydrateWorkflowPeople(scenario.template)
 })
 
-// ============ 角色数据 ============
-export const roleList: Role[] = [
-  { id: '1', name: '实习生', description: '公司实习生', level: 1 },
-  { id: '2', name: '初级工程师', description: '1-2年工作经验', level: 2 },
-  { id: '3', name: '中级工程师', description: '2-5年工作经验', level: 3 },
-  { id: '4', name: '高级工程师', description: '5-8年工作经验', level: 4 },
-  { id: '5', name: '技术专家', description: '8年以上工作经验', level: 5 },
-  { id: '6', name: '项目经理', description: '负责项目管理', level: 4 },
-  { id: '7', name: '产品经理', description: '负责产品规划', level: 4 },
-  { id: '8', name: '部门经理', description: '部门管理者', level: 5 },
-  { id: '9', name: '技术总监', description: '技术部门负责人', level: 6 },
-  { id: '10', name: '产品总监', description: '产品部门负责人', level: 6 },
-]
-
 // ============ 部门数据 ============
 export const deptList: Department[] = [
   { id: '1', name: '技术部', manager: '赵六' },
@@ -557,40 +519,25 @@ export const deptList: Department[] = [
   { id: '10', name: '测试组', parentId: '1' },
 ]
 
-// ============ 配置常量 ============
-
-// 节点描述生成器
-export const NODE_DESCRIPTION_GENERATORS = {
-  initiators: (count: number) => `${count}个发起人`,
-  approvers: (count: number) => `${count}个审批人`,
-  copyUsers: (count: number) => `${count}个抄送人`,
-  conditions: (count: number) => `${count}个条件`,
-} as const
-
-// 节点类型映射
-export const NODE_MAPS = {
-  typeClass: {
-    start: 'node-start',
-    approval: 'node-approval',
-    copy: 'node-copy',
-    condition: 'node-condition',
-  } as const,
-
-  icon: {
-    start: 'i-mdi-play-circle',
-    approval: 'i-mdi-account-check',
-    copy: 'i-mdi-email-outline',
-    condition: 'i-mdi-source-branch',
-  } as const,
+/** 条件配置使用组件公开字段协议，不在应用重复实现分支求值。 */
+export const CONDITION_FIELDS: WorkflowConditionField[] = [
+  {
+    key: 'amount',
+    label: '报销金额（元）',
+    type: 'number',
+    operators: ['less_than', 'greater_than', 'equals'],
+  },
+]
+export const NODE_LABELS = {
+  start: '发起',
+  approval: '审批',
+  copy: '抄送',
+  condition: '条件分支',
 }
-
-// 验证规则
-export const VALIDATION_RULES = {
-  approval: (node: WorkflowNode<'approval'>) =>
-    !node.data.approvers?.length ? '审批节点缺少审批人' : null,
-  condition: (node: WorkflowNode<'condition'>) =>
-    !node.data.conditions?.length ? '条件节点缺少分支条件' : null,
-} as const
+export const USER_OPTIONS = userList.map(user => ({
+  label: user.name,
+  value: user.id,
+}))
 
 const validStoredPosition = (position: WorkflowNode['position'] | undefined) =>
   Number.isFinite(position?.x) && Number.isFinite(position?.y)

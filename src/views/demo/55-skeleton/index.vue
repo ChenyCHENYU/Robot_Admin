@@ -228,9 +228,9 @@
   )
 
   const animationValue = computed<SkeletonAnimation>(() =>
-    currentAnimation.value === 'none'
-      ? false
-      : (currentAnimation.value as 'wave' | 'pulse')
+    currentAnimation.value === 'wave' || currentAnimation.value === 'pulse'
+      ? currentAnimation.value
+      : false
   )
 
   /**

@@ -65,7 +65,7 @@ export function createWorkspaceGuideSteps(
         title: '管理已打开页面',
         illustration: 'tabs',
         description:
-          '点击标签切换页面；右键标签可关闭其他页面、关闭右侧页面或刷新当前页面。',
+          '点击标签切换页面；右键标签可关闭其他页面、关闭左侧页面或关闭右侧页面。',
         side: 'bottom',
       },
     },

@@ -9,16 +9,10 @@
  */
 
 import type { SelectOption } from 'naive-ui'
+import type { BarcodeProps } from '@robot-admin/naive-ui-components/C_Barcode'
 
-export type BarcodeFormat =
-  | 'CODE128'
-  | 'CODE39'
-  | 'EAN13'
-  | 'EAN8'
-  | 'UPC'
-  | 'ITF14'
-  | 'MSI'
-  | 'pharmacode'
+// 控件协议以组件包为准，页面只维护格式说明和示例数据。
+export type BarcodeFormat = NonNullable<BarcodeProps['format']>
 
 // 条形码格式选项
 export const BARCODE_FORMATS: SelectOption[] = [
@@ -38,31 +32,31 @@ export const BARCODE_EXAMPLES = [
     title: '商品条形码',
     description: '常见的商品EAN13条形码',
     value: '6901234567892',
-    format: 'EAN13' as BarcodeFormat,
+    format: 'EAN13',
     label: '商品编号',
   },
   {
     title: '物流条形码',
     description: 'CODE128格式，支持更多字符',
     value: 'LOGISTICS-2025-001',
-    format: 'CODE128' as BarcodeFormat,
+    format: 'CODE128',
     label: '物流单号',
   },
   {
     title: '库存条形码',
     description: 'CODE39格式，常用在库存管理',
     value: 'INV-2025-0001',
-    format: 'CODE39' as BarcodeFormat,
+    format: 'CODE39',
     label: '库存编号',
   },
   {
     title: '药品条形码',
     description: '药品专用条形码格式',
     value: '123456',
-    format: 'pharmacode' as BarcodeFormat,
+    format: 'pharmacode',
     label: '药品编号',
   },
-]
+] as const
 
 // 配置选项
 export const CONFIG_OPTIONS = {
@@ -100,7 +94,7 @@ export const COLOR_PRESETS = [
 ]
 
 // 文本位置选项
-export type TextPosition = 'bottom' | 'top'
+export type TextPosition = NonNullable<BarcodeProps['textPosition']>
 
 export const TEXT_POSITIONS: SelectOption[] = [
   { label: '底部', value: 'bottom' },

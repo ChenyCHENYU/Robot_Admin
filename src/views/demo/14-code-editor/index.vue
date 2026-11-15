@@ -60,9 +60,7 @@
             ><small
               >{{ code.split('\n').length }} 行 · {{ code.length }} 字符</small
             ></div
-          ><span class="workspace-hint">{{
-            loading ? '正在加载语法…' : status
-          }}</span></header
+          ></header
         ><div class="code-split"
           ><C_SplitPane
             v-model:size="splitSize"
@@ -112,8 +110,6 @@
     language,
     lineNumbers,
     wrap,
-    loading,
-    status,
     current,
     code,
     reset,
