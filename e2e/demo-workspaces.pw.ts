@@ -48,10 +48,14 @@ test('连续切页与返回不改变侧栏可见性和正文颜色', async ({ pa
   await page.goto('/#/home')
   const sidebar = page.locator('.menu-scroll-container')
   await expect(sidebar).toBeVisible()
-  const color = await page
+  // 首页会从选中强调色切回普通色；取本链始终未选中的同一项判断样式污染。
+  const unchangedMenu = page
     .locator('.n-menu-item-content-header')
+    .filter({ hasText: /^仪表盘$/ })
     .first()
-    .evaluate(element => getComputedStyle(element).color)
+  const color = await unchangedMenu.evaluate(
+    element => getComputedStyle(element).color
+  )
   const pages = [
     ['/demo/steps', '.steps-demo'],
     ['/demo/date', '.date-demo'],
@@ -71,10 +75,7 @@ test('连续切页与返回不改变侧栏可见性和正文颜色', async ({ pa
     await expect(page.locator(root)).toBeVisible()
     await expect(sidebar).toBeVisible()
     expect(
-      await page
-        .locator('.n-menu-item-content-header')
-        .first()
-        .evaluate(element => getComputedStyle(element).color)
+      await unchangedMenu.evaluate(element => getComputedStyle(element).color)
     ).toBe(color)
     await expect(page.locator('.driver-overlay,.n-modal-mask')).toHaveCount(0)
   }, Promise.resolve())

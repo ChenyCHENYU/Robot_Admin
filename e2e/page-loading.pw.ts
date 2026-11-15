@@ -64,7 +64,7 @@ for (const dark of [false, true]) {
       ).toBe('none')
       const colors = await overlay.evaluate(el => {
         const probe = document.createElement('span')
-        probe.style.color = 'var(--c-primary)'
+        probe.style.color = 'var(--app-primary)'
         document.querySelector('.role-management')!.append(probe)
         const primary = getComputedStyle(probe).color
         probe.remove()

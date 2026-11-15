@@ -68,9 +68,31 @@ test('展开表功能列保持紧凑，全部展开、子表清空和密度切�
       .evaluate(element => getComputedStyle(element).paddingTop)
   )
   const firstCheck = child.locator('tbody').getByRole('checkbox').first()
+  expect(
+    await firstCheck.evaluate(
+      element => getComputedStyle(element.closest('td')!).padding
+    )
+  ).toBe('0px')
   await firstCheck.click()
   await expect(firstCheck).toBeChecked()
   await page.getByRole('button', { name: '清空所有选择', exact: true }).click()
+  await expect(firstCheck).not.toBeChecked()
+  await page
+    .locator('label.n-radio-button')
+    .filter({ has: page.getByRole('radio', { name: '标准', exact: true }) })
+    .click()
+  await expect(table).toHaveClass(/c-table-wrapper--default/)
+  const defaultPadding = await child
+    .locator('tbody td[data-col-key="project"]')
+    .first()
+    .evaluate(element => getComputedStyle(element).paddingTop)
+  expect(parseFloat(defaultPadding)).toBeGreaterThan(parseFloat(compactPadding))
+  expect(defaultPadding).toBe(
+    await table
+      .locator('tbody td[data-col-key="name"]')
+      .first()
+      .evaluate(element => getComputedStyle(element).paddingTop)
+  )
   await expect(firstCheck).not.toBeChecked()
   await page
     .locator('label.n-radio-button')

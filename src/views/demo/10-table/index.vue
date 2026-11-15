@@ -67,7 +67,10 @@
                       :value="mode.value"
                     >
                       <template #icon>
-                        <C_Icon :name="mode.icon" />
+                        <C_Icon
+                          :name="mode.icon"
+                          aria-hidden="true"
+                        />
                       </template>
                       {{ mode.label }}
                     </NRadioButton>
@@ -84,7 +87,10 @@
                   :size="controlSize"
                 >
                   <template #icon>
-                    <C_Icon name="mdi:plus-circle" />
+                    <C_Icon
+                      name="mdi:plus-circle"
+                      aria-hidden="true"
+                    />
                   </template>
                   新增员工
                 </NButton>
@@ -111,7 +117,10 @@
                   :loading="tableCrud.loading.value"
                 >
                   <template #icon>
-                    <C_Icon name="mdi:refresh" />
+                    <C_Icon
+                      name="mdi:refresh"
+                      aria-hidden="true"
+                    />
                   </template>
                   刷新数据
                 </NButton>
@@ -210,7 +219,11 @@
               :disabled="submitting"
               @click="showAddModal = false"
             >
-              <template #icon><C_Icon name="mdi:close" /></template>
+              <template #icon
+                ><C_Icon
+                  name="mdi:close"
+                  aria-hidden="true"
+              /></template>
               取消
             </NButton>
             <NButton
@@ -219,7 +232,11 @@
               :loading="submitting"
               @click="submit"
             >
-              <template #icon><C_Icon name="mdi:content-save" /></template>
+              <template #icon
+                ><C_Icon
+                  name="mdi:content-save"
+                  aria-hidden="true"
+              /></template>
               保存
             </NButton>
           </NSpace>

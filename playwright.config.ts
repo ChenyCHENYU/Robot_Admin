@@ -22,6 +22,8 @@ export default defineConfig({
   use: {
     ...devices['Desktop Chrome'],
     baseURL,
+    // Headless 默认隐藏原生滚动轨；几何与拖动验收必须保留桌面真实轨道。
+    launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] },
     trace: 'retain-on-failure',
   },
   webServer: [

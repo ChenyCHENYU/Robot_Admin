@@ -72,7 +72,7 @@ test('表格刷新展示 SVG 状态、保留数据，完成后卸载动画', asy
     const indicator = document.querySelector('.role-management .c-loading')!
     const root = document.querySelector('.role-management')!
     const probe = document.createElement('span')
-    probe.style.color = 'var(--c-primary)'
+    probe.style.color = 'var(--app-primary)'
     root.append(probe)
     const primary = getComputedStyle(probe).color
     probe.remove()
@@ -115,7 +115,7 @@ test('暗色加载态跟随主色，并遵循减少动态效果设置', async ({
   )
   const themeColor = await page.locator('.role-management').evaluate(el => {
     const probe = document.createElement('span')
-    probe.style.color = 'var(--c-primary)'
+    probe.style.color = 'var(--app-primary)'
     el.append(probe)
     const { color } = getComputedStyle(probe)
     probe.remove()

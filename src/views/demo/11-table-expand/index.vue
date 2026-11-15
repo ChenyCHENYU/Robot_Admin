@@ -77,7 +77,11 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo11TableExpand' })
-  import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
+  import type {
+    DataTableColumns,
+    DataTableProps,
+    DataTableRowKey,
+  } from 'naive-ui'
   import type { VNodeChild } from 'vue'
   import {
     resolveComponentDensity,
@@ -105,6 +109,15 @@
   const controlSize = computed(
     () => resolveComponentDensity(config.density).size
   )
+  // 原生 Naive small 与生态 compact 留白不同；仅此子表通过公开主题配置继承父表实际几何。
+  const childTableThemeOverrides: DataTableProps['themeOverrides'] = {
+    thPaddingSmall: 'inherit',
+    thPaddingMedium: 'inherit',
+    thPaddingLarge: 'inherit',
+    tdPaddingSmall: 'inherit',
+    tdPaddingMedium: 'inherit',
+    tdPaddingLarge: 'inherit',
+  }
   const tableRef = ref<TableInstance<TestRecord, ChildDataType> | null>(null)
   const expandErrors = reactive(new Map<DataTableRowKey, string>())
   const mainColumns = computed(() =>
@@ -263,6 +276,7 @@
           tableLayout: 'fixed',
           pagination: false,
           size: controlSize.value,
+          themeOverrides: childTableThemeOverrides,
           onUpdateCheckedRowKeys: keys => {
             if (!tableRef.value) return
             syncChildSelection(

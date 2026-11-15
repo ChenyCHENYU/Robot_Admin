@@ -29,7 +29,14 @@ export default defineConfig({
   ],
   use: { baseURL, viewport, trace: 'retain-on-failure' },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport } },
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport,
+        launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] },
+      },
+    },
     { name: 'firefox', use: { ...devices['Desktop Firefox'], viewport } },
     { name: 'webkit', use: { ...devices['Desktop Safari'], viewport } },
   ],

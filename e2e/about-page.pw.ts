@@ -109,6 +109,26 @@ test('关于页展示安装版本，跨页面加载样式后卡片与主题保�
   ).toBeVisible()
   await expect(page.getByText('Robot UI', { exact: true })).toHaveCount(0)
   const firstCard = page.locator('.about-tech').first()
+  /** 对照最终 Provider 投影，既验证主题一致性，也拒绝缺失变量后的透明回退。 */
+  const expectCardBackground = async () => {
+    await expect
+      .poll(() =>
+        firstCard.evaluate(element => {
+          const probe = document.createElement('span')
+          probe.style.backgroundColor = 'var(--app-bg-content)'
+          element.append(probe)
+          const expected = getComputedStyle(probe).backgroundColor
+          probe.remove()
+          const actual = getComputedStyle(element).backgroundColor
+          return {
+            actual,
+            expected,
+            matches: actual === expected && expected !== 'rgba(0, 0, 0, 0)',
+          }
+        })
+      )
+      .toMatchObject({ matches: true })
+  }
   const before = await firstCard.evaluate(element => ({
     display: getComputedStyle(element).display,
     width: element.getBoundingClientRect().width,
@@ -129,21 +149,13 @@ test('关于页展示安装版本，跨页面加载样式后卡片与主题保�
   expect(after.height).toBeCloseTo(before.height, 1)
   await page.locator('[data-guide="theme"] button').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
-  await expect
-    .poll(() =>
-      firstCard.evaluate(element => getComputedStyle(element).backgroundColor)
-    )
-    .toBe('rgb(255, 255, 255)')
+  await expectCardBackground()
   const light = await firstCard.evaluate(
     element => getComputedStyle(element).backgroundColor
   )
   await page.locator('[data-guide="theme"] button').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await expect
-    .poll(() =>
-      firstCard.evaluate(element => getComputedStyle(element).backgroundColor)
-    )
-    .toBe('rgb(28, 28, 28)')
+  await expectCardBackground()
   const dark = await firstCard.evaluate(
     element => getComputedStyle(element).backgroundColor
   )

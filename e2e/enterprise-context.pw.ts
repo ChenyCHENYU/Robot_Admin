@@ -231,6 +231,8 @@ for (const layout of [
   test(`${layout.width}px ${layout.mode} 公司卡片和欢迎告别布局完整`, async ({
     page,
   }, testInfo) => {
+    // 真实拼图、两次截图及进入/退出构成冷启动长链，单步骤仍沿用原有 5 秒断言。
+    test.setTimeout(90_000)
     await page.setViewportSize({ width: layout.width, height: 1000 })
     await page.addInitScript(mode => {
       localStorage.setItem('theme-mode', mode)

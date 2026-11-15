@@ -147,6 +147,9 @@ const field = (form: Locator, label: string) =>
     .locator('input')
     .first()
 
+// 此连续链验收左右分栏中的真实横向溢出，小屏由独立布局用例覆盖。
+test.use({ viewport: { width: 1720, height: 1200 } })
+
 test.beforeEach(async ({ page }) => {
   await installMockAdminSession(page)
 })
