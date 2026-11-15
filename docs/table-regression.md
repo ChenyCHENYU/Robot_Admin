@@ -79,3 +79,26 @@ bun run test:e2e:tables
 最终完整 548 项执行前后，HEAD、完整源树、工作区状态、package.json、锁文件、三个目标包的 manifest/全部 dist 内容及完整构建产物摘要一致。此前另一并行任务在旧失败集合运行中同步 0.40.3，已检测并单独归档；其 21/1 过程结果不作为新版本验收。本轮随后重新冻结并完整执行全部检查。
 
 全部原始结果、首轮失败、过程复验、最终摘要、trace、截图及摘要对照保留在本地工作区 `output/machtable-release-audit-20261115/business/`。真实业务后端、多业务 UAT 和 Windows 真人读屏仍按既定记录待验收；GitHub 远端任务状态另看真实 CI，不能将未启动的任务记作通过。
+
+## 2026-11-16：正式 MachTable 0.42.1 接入
+
+本轮基于应用 `1ad418d` 及本次依赖、文档接入补丁，精确安装官方 npm **MachTable Vue/Core 0.42.1**，保留 **naive-ui-components 0.40.5**。Bun 仅更新 MachTable Vue 直接依赖及同版 Core 的锁定记录，没有新增 Core 直接依赖或更改其他包版本。
+
+官方 registry 的 tarball SHA-512 与锁文件一致；实际安装的 Core **56** 份、Vue **84** 份 dist 文件与官方归档逐字节一致。Vue 仍支持 `vue >=3.2.0`，项目 Vue 3.5.42 与 Node 22+ 满足本次包要求。
+
+| 验证                  | 实际结果                                                                                                                                           |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 完整 `bun run verify` | **exit 0，81.0 秒**；316 项 Bun 测试、189 项组件挂载测试、应用/Node/组件类型、样式边界、双模式构建及原有体积门禁通过                               |
+| 表格严格类型          | `bun run type-build:tables` **exit 0，0.5 秒**                                                                                                     |
+| 正式包生产回归        | Chromium、Firefox、WebKit 各 **14/14**，合计 **42/42**；**exit 0，290.1 秒**，0 失败/重试/跳过/flaky                                               |
+| 冻结核对              | 前后 **603** 份源码、**125** 份测试/构建输入、**1,829** 份构建文件均无增删改；包清单、锁文件、目标包 manifest/全部 dist 与两份 build-info 摘要一致 |
+
+本组关闭所有本地包 alias，使用正式安装包及生产预览 4197，不把此前源码接入的 42 项记录当成正式安装包通过。独立配置复用现有三浏览器设置，覆盖以下六份既有文件；仓库常规 `test:e2e:tables` 与 CI 的五条链路/内核入口保持原样，未把本地扩展矩阵冒充远端 CI 已执行：
+
+- `table-composite.pw.ts`、`table-preference-isolation.pw.ts`：真实业务链、tags 草稿恢复及账号/公司偏好隔离。
+- `mach-table-widths.pw.ts`、`table-selection-theme.pw.ts`：独立拖宽、固定操作、最小宽度及亮暗紧凑选择样式。
+- `table-content-height.pw.ts`、`table-empty-compact.pw.ts`：自然内容高度、有界虚拟视口及矮屏空态。
+
+运行时源码未修改。保留原有 10 条非阻断复杂度警告及第三方 xgplayer CSS 的 charset 提示，没有扩大本轮范围升级无关依赖。构建信息按实际记录 `1ad418d` 与本次接入工作区改动，不将未提交补丁描述成当时的干净提交。
+
+正式配置、阶段退出码/耗时、官方字节回执、原始 JSON、截图、trace 与前后摘要保留在工作区 `output/machtable-editor-geometry-20261115/robot-formal-0421-*`。其中 `robot-formal-0421-verification.json` 汇总正式验收，`robot-0421-official-installed.json` 是官方字节核验回执；与 pre-lifecycle/pre-setter/最终源码 alias 记录分别保存。真实业务接口、UAT、真人读屏及远端 CI 的结果边界保持上文约定。
