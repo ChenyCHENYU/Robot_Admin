@@ -41,7 +41,9 @@ export const DEFAULT_BUNDLE_BUDGETS: BundleBudgets = {
   preloadBytes: 650 * KIB,
   stylesheetBytes: 300 * KIB,
   initialBytes: 1_450 * KIB,
-  preloadCount: 90,
+  // 组件库 0.40.3 将已有词表抽成共享块，实测首屏仅净增约 0.70 KiB。
+  // 仅记录这一处分块变化；所有字节限额保持不变，不匹配组件私有文件名。
+  preloadCount: 91,
   largestChunkBytes: 5_000 * KIB,
 }
 
