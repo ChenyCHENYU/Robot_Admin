@@ -351,6 +351,7 @@ Robot_Admin/
 | 开发、源码联调与维护 | [开发环境](./docs/development.md) · [文档索引](./docs/README.md)                                                    |
 | 真实业务接入         | [生产基线](./docs/production-readiness.md) · [认证](./docs/enterprise-auth.md) · [环境](./envs/README.md)           |
 | 观测、构建与回归     | [观测](./docs/observability.md) · [构建身份](./docs/build-identity.md) · [运行时回归](./docs/runtime-regression.md) |
+| 表格业务验证         | [三浏览器复合表格回归](./docs/table-regression.md)：动态列、独立调宽、弹窗校验、tags 恢复及账号/公司偏好隔离        |
 | 设计与协作           | [设计系统](./docs/design-system/README.md) · [贡献指南](./CONTRIBUTING.md) · [Agent 指南](./AGENTS.md)              |
 | 历史变化             | [CHANGELOG](./CHANGELOG.md) · [Releases](https://github.com/ChenyCHENYU/Robot_Admin/releases)                       |
 

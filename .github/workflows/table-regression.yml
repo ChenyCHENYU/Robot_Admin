@@ -1,0 +1,64 @@
+name: Table business regression
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/views/production-sales/**'
+      - 'src/views/demo/10-table/**'
+      - 'src/views/demo/57-mach-table/**'
+      - 'src/components/global/C_Layout/**'
+      - 'src/plugins/mach-table.ts'
+      - 'src/plugins/naive-ui-plugin.ts'
+      - 'src/composables/useScopedMachTableConfig.ts'
+      - 'src/config/mach-table.ts'
+      - 'src/config/theme/**'
+      - 'src/styles/**'
+      - 'src/assets/css/**'
+      - 'src/utils/d_tablePreferences.ts'
+      - 'src/utils/d_authSession.ts'
+      - 'src/stores/user/**'
+      - 'src/router/**'
+      - 'e2e/table-*.ts'
+      - 'e2e/auth-fixture.ts'
+      - 'e2e/d_login.ts'
+      - 'e2e/d_documentIdentity.ts'
+      - 'e2e/runtime-browser-setup.ts'
+      - 'playwright.table.config.ts'
+      - 'tsconfig/tsconfig.table.json'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/table-regression.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: table-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tables:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.18.0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun ci
+      - run: bun run type-build:tables
+      - run: bun run build
+      - run: bunx playwright install --with-deps chromium firefox webkit
+      - run: bun run test:e2e:tables
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: table-business-regression
+          path: |
+            node_modules/.cache/table-regression-results.json
+            node_modules/.cache/table-regression/
+          retention-days: 7

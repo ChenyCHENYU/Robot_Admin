@@ -15,6 +15,7 @@
 | 当前组件、搜索、表格与产销组合 | [组件与业务工作区](./core-components.md)          |
 | 独立字典、枚举与字段翻译       | [字典接入](./dictionaries.md)                     |
 | 运行时浏览器回归与边界         | [运行时回归](./runtime-regression.md)             |
+| 表格复合操作与账号/公司隔离    | [三浏览器表格回归](./table-regression.md)         |
 | 开发命令、源码联调与排查       | [开发环境](./development.md)                      |
 | 语言词典、离线编译与生成       | [国际化维护](./internationalization.md)           |
 | 生产配置、接口与未闭环风险     | [生产接入基线](./production-readiness.md)         |

@@ -1,0 +1,18 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "skipLibCheck": true
+  },
+  "include": [
+    "../playwright.table.config.ts",
+    "../e2e/table-composite.pw.ts",
+    "../e2e/table-preference-isolation.pw.ts",
+    "../e2e/auth-fixture.ts",
+    "../e2e/d_login.ts",
+    "../e2e/runtime-browser-setup.ts"
+  ]
+}

@@ -7,6 +7,7 @@
  */
 import { expect, test, type Page } from '@playwright/test'
 import { solveDemoCaptcha } from './d_login'
+import { expectSameDocument } from './d_documentIdentity'
 import assertBrowserLaunchEnvironment from './runtime-browser-setup'
 
 test.beforeAll(assertBrowserLaunchEnvironment)
@@ -248,7 +249,7 @@ test('同一浏览器真实退出登录后，两种表格的A/B偏好分别恢�
 }, info) => {
   test.setTimeout(180000)
   await page.goto('/#/login')
-  const documentOrigin = await page.evaluate(() => performance.timeOrigin)
+  const originalDocument = await page.evaluateHandle(() => document)
   await login(page, 'CHENY')
   const defaults = await checkWidths(page)
   const a = {
@@ -293,7 +294,7 @@ test('同一浏览器真实退出登录后，两种表格的A/B偏好分别恢�
     contentType: 'application/json',
   })
   await page.screenshot({ path: info.outputPath('account-admin-restored.png') })
-  expect(await page.evaluate(() => performance.timeOrigin)).toBe(documentOrigin)
+  await expectSameDocument(page, originalDocument)
 })
 
 test('同一账号通过公司选择器切换后，两表公司偏好独立且返回原公司恢复', async ({
@@ -301,7 +302,7 @@ test('同一账号通过公司选择器切换后，两表公司偏好独立且�
 }, info) => {
   test.setTimeout(180000)
   await page.goto('/#/login')
-  const documentOrigin = await page.evaluate(() => performance.timeOrigin)
+  const originalDocument = await page.evaluateHandle(() => document)
   await login(page, 'CHENY')
   const defaults = await checkWidths(page)
   const nanjing = {
@@ -340,7 +341,7 @@ test('同一账号通过公司选择器切换后，两表公司偏好独立且�
     contentType: 'application/json',
   })
   await page.screenshot({ path: info.outputPath('account-xian-restored.png') })
-  expect(await page.evaluate(() => performance.timeOrigin)).toBe(documentOrigin)
+  await expectSameDocument(page, originalDocument)
 })
 
 test('无身份范围的旧偏好键不被新会话读取、迁移或覆写', async ({
@@ -380,7 +381,7 @@ test('无身份范围的旧偏好键不被新会话读取、迁移或覆写', as
     { legacy, values }
   )
   await page.goto('/#/login')
-  const documentOrigin = await page.evaluate(() => performance.timeOrigin)
+  const originalDocument = await page.evaluateHandle(() => document)
   await login(page, 'CHENY')
   const widths = await checkWidths(page)
   soft(widths.native).not.toBeCloseTo(777, 0)
@@ -402,5 +403,5 @@ test('无身份范围的旧偏好键不被新会话读取、迁移或覆写', as
     contentType: 'application/json',
   })
   await page.screenshot({ path: info.outputPath('account-legacy-ignored.png') })
-  expect(await page.evaluate(() => performance.timeOrigin)).toBe(documentOrigin)
+  await expectSameDocument(page, originalDocument)
 })

@@ -343,16 +343,17 @@ The cover uses Robot H5's blue-violet R / robot mark, navy grid and typography. 
 
 ## Documentation and contribution
 
-| Topic                                  | Entry                                                                                                                                      |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Current capabilities and composition   | [Components, search, grids and business scenarios](./docs/core-components.md) (Chinese)                                                    |
-| Dictionaries, enums and detail labels  | [Dictionary integration](./docs/dictionaries.md)                                                                                           |
-| Forms, validation and async submission | [Form configuration](./docs/form-configuration.md)                                                                                         |
-| Development and maintenance            | [Development](./docs/development.md) · [Documentation index](./docs/README.md)                                                             |
-| Production integration                 | [Baseline](./docs/production-readiness.md) · [Authentication](./docs/enterprise-auth.md) · [Environment](./envs/README.md)                 |
-| Metrics, builds and regression         | [Observability](./docs/observability.md) · [Build identity](./docs/build-identity.md) · [Runtime regression](./docs/runtime-regression.md) |
-| Design and collaboration               | [Design system](./docs/design-system/README.md) · [Contributing](./CONTRIBUTING.md) · [Agent guide](./AGENTS.md)                           |
-| History                                | [CHANGELOG](./CHANGELOG.md) · [Releases](https://github.com/ChenyCHENYU/Robot_Admin/releases)                                              |
+| Topic                                  | Entry                                                                                                                                                                                |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Current capabilities and composition   | [Components, search, grids and business scenarios](./docs/core-components.md) (Chinese)                                                                                              |
+| Dictionaries, enums and detail labels  | [Dictionary integration](./docs/dictionaries.md)                                                                                                                                     |
+| Forms, validation and async submission | [Form configuration](./docs/form-configuration.md)                                                                                                                                   |
+| Development and maintenance            | [Development](./docs/development.md) · [Documentation index](./docs/README.md)                                                                                                       |
+| Production integration                 | [Baseline](./docs/production-readiness.md) · [Authentication](./docs/enterprise-auth.md) · [Environment](./envs/README.md)                                                           |
+| Metrics, builds and regression         | [Observability](./docs/observability.md) · [Build identity](./docs/build-identity.md) · [Runtime regression](./docs/runtime-regression.md)                                           |
+| Grid business validation               | [Composite grid regression](./docs/table-regression.md) (Chinese): three browser engines, dynamic columns, resizing, modal validation, tags and account/company preference isolation |
+| Design and collaboration               | [Design system](./docs/design-system/README.md) · [Contributing](./CONTRIBUTING.md) · [Agent guide](./AGENTS.md)                                                                     |
+| History                                | [CHANGELOG](./CHANGELOG.md) · [Releases](https://github.com/ChenyCHENYU/Robot_Admin/releases)                                                                                        |
 
 Include the route, reproduction steps, browser version and build identity when reporting [GitHub Issues](https://github.com/ChenyCHENYU/Robot_Admin/issues). Author: [CHENY](https://github.com/ChenyCHENYU) · [ycyplus@gmail.com](mailto:ycyplus@gmail.com).
 
