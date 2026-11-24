@@ -100,6 +100,13 @@ export const SVG_PATHS = {
 }
 
 // 代码示例配置
+const unoIcons = {
+  home: 'i-mdi-home-assistant',
+  settings: 'i-mdi-account-multiple-check-outline',
+  user: 'i-mdi-user-group',
+  heart: 'i-mdi-ev-plug-chademo',
+} as const
+
 export const codeExamples = {
   iconify: `<!-- 基础用法 -->
 <C_Icon name="mdi:home" />
@@ -112,12 +119,12 @@ export const codeExamples = {
 <C_Icon name="lucide:star" clickable @click="handleClick" />`,
 
   unocss: `<!-- UnoCSS 图标需要指定 type -->
-<C_Icon type="unocss" name="i-mdi-home" />
-<C_Icon type="unocss" name="i-mdi-settings" size="24" />
-<C_Icon type="unocss" name="i-mdi-user" color="#42b883" size="32" />
+<C_Icon type="unocss" name="${unoIcons.home}" />
+<C_Icon type="unocss" name="${unoIcons.settings}" size="24" />
+<C_Icon type="unocss" name="${unoIcons.user}" color="#42b883" size="32" />
 
 <!-- 支持交互 -->
-<C_Icon type="unocss" name="i-mdi-heart" clickable @click="handleClick" />`,
+<C_Icon type="unocss" name="${unoIcons.heart}" clickable @click="handleClick" />`,
 
   svg: `<!-- SVG 路径图标 - 成功 -->
 <C_Icon
@@ -309,14 +316,14 @@ export const createDemoSections = (
     icons: [
       {
         key: 'home',
-        props: { type: 'unocss', name: 'i-mdi-home-assistant' },
-        label: 'i-mdi-home',
+        props: { type: 'unocss', name: unoIcons.home },
+        label: unoIcons.home,
       },
       {
         key: 'settings',
         props: {
           type: 'unocss',
-          name: 'i-mdi-account-multiple-check-outline',
+          name: unoIcons.settings,
           size: '24',
         },
         label: 'size="24"',
@@ -325,7 +332,7 @@ export const createDemoSections = (
         key: 'user',
         props: {
           type: 'unocss',
-          name: 'i-mdi-user-group',
+          name: unoIcons.user,
           color: '#42b883',
           size: '32',
         },
@@ -335,7 +342,7 @@ export const createDemoSections = (
         key: 'heart',
         props: {
           type: 'unocss',
-          name: 'i-mdi-ev-plug-chademo',
+          name: unoIcons.heart,
           clickable: true,
         },
         label: '可点击',

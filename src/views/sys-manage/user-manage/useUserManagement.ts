@@ -178,13 +178,13 @@ export function useUserManagement() {
       label: '批量操作',
       icon: COMPONENT_CONFIG.icons.toggle,
       type: 'warning',
-      onClick: () => handleBatchOperation('toggle', batchToggleUsers),
+      onClick: () => handleBatchOperation('toggle'),
     },
     {
       key: 'delete',
       label: '批量删除',
       icon: COMPONENT_CONFIG.icons.delete,
-      onClick: () => handleBatchOperation('delete', batchDeleteUsers),
+      onClick: () => handleBatchOperation('delete'),
     },
   ])
 
@@ -461,69 +461,80 @@ export function useUserManagement() {
     if (typeChanged) handleUserTypeChange(model.userType)
   }
 
-  /** 统一确认批量变更，变更成功后重新加载服务端或演示列表。 */
-  const handleBatchOperation = (
-    operation: 'delete' | 'toggle',
-    actionFn: (ids: string[]) => Promise<void>
-  ) => {
-    if (!selectedUsers.value.length) {
+  let batchRunning = false
+  /** 确认框使用当前公司及选中行的快照，整批结束后读取实际结果。 */
+  const handleBatchOperation = (operation: 'delete' | 'toggle') => {
+    if (batchRunning) return
+    const ids = new Set(selectedUsers.value)
+    if (!ids.size) {
       message.warning('请先选择用户')
       return
     }
-    const ids = [...selectedUsers.value]
+    const targets = userList
+      .filter(row => ids.has(row.id))
+      .map(({ id, status, membershipRevision }) => ({
+        id,
+        status,
+        membershipRevision,
+      }))
+    if (targets.length !== ids.size) {
+      message.warning('选中的用户已不在当前列表，请重新选择')
+      return
+    }
+    const contextId = userStore.activeContext?.id
+    const { token } = userStore
+    const isCurrent = () =>
+      userStore.activeContext?.id === contextId && userStore.token === token
+    const deleting = operation === 'delete'
     const config = COMPONENT_CONFIG.batchConfig[operation]
     dialog[config.type]({
       title: config.title,
       content: config.content.replace(
         '选中的用户',
-        `选中的 ${ids.length} 个用户`
+        `选中的 ${targets.length} 个用户`
       ),
       positiveText: '确认',
       negativeText: '取消',
       onPositiveClick: async () => {
+        if (batchRunning) return false
+        if (!isCurrent()) return
+        batchRunning = true
         try {
-          await actionFn(ids)
-          message.success(`批量${operation === 'delete' ? '删除' : '操作'}成功`)
-          userTableRef.value?.clearSelection()
-          selectedUsers.value = []
-          await loadUsers()
-        } catch (error) {
-          message.error(
-            error instanceof Error
-              ? error.message
-              : `批量${operation === 'delete' ? '删除' : '操作'}失败`
+          const results = await Promise.allSettled(
+            targets.map(async row =>
+              deleting
+                ? deleteUserApi(row.id, row.membershipRevision, contextId)
+                : updateUserStatusApi(
+                    row.id,
+                    row.status === 1 ? 0 : 1,
+                    row.membershipRevision,
+                    contextId
+                  )
+            )
           )
-          return false
+          if (!isCurrent()) return
+          const failed = results.filter(result => result.status === 'rejected')
+          if (failed.length !== results.length) {
+            userTableRef.value?.clearSelection()
+            selectedUsers.value = []
+          }
+          if (failed.length) {
+            const [{ reason }] = failed
+            const summary = `批量${deleting ? '删除' : '操作'}成功 ${results.length - failed.length} 项，失败 ${failed.length} 项`
+            message.error(
+              reason instanceof Error
+                ? `${summary}，${reason.message}`
+                : summary
+            )
+          } else {
+            message.success(`批量${deleting ? '删除' : '操作'}成功`)
+          }
+          await loadUsers()
+        } finally {
+          batchRunning = false
         }
       },
     })
-  }
-  const batchDeleteUsers = async (ids: string[]) => {
-    await Promise.all(
-      ids.map(id => {
-        const row = userList.find(user => user.id === id)
-        if (!row) throw new Error('选中的用户已不在当前列表，请重新选择')
-        return deleteUserApi(
-          id,
-          row.membershipRevision,
-          userStore.activeContext?.id
-        )
-      })
-    )
-  }
-  const batchToggleUsers = async (ids: string[]) => {
-    await Promise.all(
-      ids.map(async id => {
-        const row = userList.find(user => user.id === id)
-        if (!row) throw new Error('选中的用户已不在当前列表，请重新选择')
-        await updateUserStatusApi(
-          id,
-          row.status === 1 ? 0 : 1,
-          row.membershipRevision,
-          userStore.activeContext?.id
-        )
-      })
-    )
   }
   const handleAddUserData = async (draft: UserFormData) => {
     await createUserApi({ ...draft, contextId: userStore.activeContext?.id })

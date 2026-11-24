@@ -8,8 +8,8 @@ import type {
   UploadExpose,
   UploadFileItem,
 } from '@robot-admin/naive-ui-components/C_Upload'
-import { UPLOAD_SCENES, createDemoUploadRequest } from './data'
-/** 各场景共用一个队列，操作始终作用于当前可见的文件集合。 */
+import { MAX_QUEUE_FILES, UPLOAD_SCENES, createDemoUploadRequest } from './data'
+/** 各场景共用一个队列，筛选仅影响列表展示。 */
 export function useUploadWorkspace() {
   const message = useMessage()
   const dialog = useDialog()
@@ -25,15 +25,13 @@ export function useUploadWorkspace() {
   )
   const isBusy = (file: UploadFileItem) =>
     ['pending', 'validating', 'hashing', 'uploading'].includes(file.status)
+  const isCompleted = (file: UploadFileItem) =>
+    file.status === 'success' || file.status === 'instant'
   const busy = computed(() => files.value.some(isBusy))
   const paused = computed(() =>
     files.value.some(file => file.status === 'paused')
   )
-  const successful = computed(
-    () =>
-      files.value.filter(file => ['success', 'instant'].includes(file.status))
-        .length
-  )
+  const successful = computed(() => files.value.filter(isCompleted).length)
   const errors = computed(
     () => files.value.filter(file => file.status === 'error').length
   )
@@ -42,7 +40,7 @@ export function useUploadWorkspace() {
       file =>
         filter.value === 'all' ||
         (filter.value === 'done'
-          ? ['success', 'instant'].includes(file.status)
+          ? isCompleted(file)
           : file.status === filter.value)
     )
   )
@@ -56,7 +54,7 @@ export function useUploadWorkspace() {
       .forEach(file => uploadRef.value?.retryFile(file.uid))
   const clearCompleted = () =>
     files.value
-      .filter(file => ['success', 'instant'].includes(file.status))
+      .filter(isCompleted)
       .forEach(file => uploadRef.value?.removeFile(file.uid))
   const clearQueue = () => {
     if (!files.value.length) return
@@ -73,7 +71,7 @@ export function useUploadWorkspace() {
     })
   }
   const onExceed = () =>
-    message.warning('队列最多 20 个文件，请先清理已完成项目')
+    message.warning(`队列最多 ${MAX_QUEUE_FILES} 个文件，请先清理已完成项目`)
   return {
     uploadRef,
     scene,

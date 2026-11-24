@@ -9,6 +9,7 @@
  */
 
 import type { UploadFileInfo } from 'naive-ui/es/upload'
+import { sanitizeZipPath, type TemplateConfig } from '@robot-admin/file-utils'
 
 // ==================== 类型定义 ====================
 
@@ -131,9 +132,7 @@ const handleClick = () => {
  * ? @param templateId - 模板ID
  * ! @return 模板文件对象
  */
-export const getTemplateFiles = (
-  templateId: TemplateId
-): Record<string, string> => {
+const getTemplateFiles = (templateId: TemplateId): Record<string, string> => {
   const templates: TemplateFiles = {
     'vue-component': {
       'Component.vue': '<template>\n  <div>{{ message }}</div>\n</template>',
@@ -153,6 +152,42 @@ export const getTemplateFiles = (
     },
   }
   return templates[templateId] || {}
+}
+
+/** 复用文件工具的路径规范，让预览与即将写入的条目完全相同。 */
+export function createTemplateArchiveEntries(
+  config: Pick<
+    TemplateConfig,
+    'libraryName' | 'bundleMode' | 'includeDocumentation'
+  >,
+  selected: readonly TemplateId[]
+) {
+  const templates = availableTemplates.filter(item =>
+    selected.includes(item.id)
+  )
+  const entries = new Map<string, string>()
+  const add = (path: string, content: string) => {
+    const safePath = sanitizeZipPath(path)
+    if (entries.has(safePath)) {
+      throw new Error(`ZIP 内存在重复文件路径：${safePath}`)
+    }
+    entries.set(safePath, content)
+  }
+  for (const template of templates) {
+    for (const [path, content] of Object.entries(
+      getTemplateFiles(template.id)
+    )) {
+      add(
+        config.bundleMode === 'combined' ? path : `${template.name}/${path}`,
+        content
+      )
+    }
+  }
+  if (config.includeDocumentation) {
+    const names = templates.map(template => `- ${template.name}`).join('\n')
+    add('README.md', `# ${config.libraryName}\n\n## 模板\n\n${names}\n`)
+  }
+  return entries
 }
 
 /**

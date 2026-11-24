@@ -100,6 +100,15 @@ const stringifyValue = (value: unknown, space?: number): string => {
   }
 }
 
+const stringifyCompactJson = (value: unknown): string => {
+  if (typeof value !== 'string') return stringifyValue(value)
+  try {
+    return JSON.stringify(JSON.parse(value))
+  } catch {
+    return value
+  }
+}
+
 const toError = (error: unknown, fallback: string): Error =>
   error instanceof Error ? error : new Error(fallback)
 
@@ -417,7 +426,9 @@ export function useCopy(defaultOptions: CopyOptions = {}) {
   ): Promise<CopyResult> => {
     return copy(data, {
       dataType: 'json',
-      formatData: formatted,
+      formatter:
+        defaultOptions.formatter ??
+        (formatted ? dataFormatters.json : stringifyCompactJson),
       successTip: 'JSON 数据复制成功',
     })
   }

@@ -408,25 +408,28 @@
   const permissionStore = s_permissionStore()
   const { completedIds } = useComponentDemoProgress()
   const demoGuide = ref<GuideExpose>()
+  const demoGuideEntries = [
+    {
+      id: 'query',
+      path: '/demo/form-manage/form-search',
+      link: '打开搜索表单',
+      title: '完成一次订单查询',
+      description:
+        '打开搜索表单，在「多列客户选择与共享查询」中选择客户并提交查询。回到首页可查看完成状态。',
+    },
+    {
+      id: 'edit',
+      path: '/demo/form-manage/form-modal',
+      link: '打开多模态表单',
+      title: '保存一条表单记录',
+      description:
+        '打开多模态表单，在「模态框表单」中编辑并保存一条记录。回到首页可继续下一项。',
+    },
+  ]
   const demoLinks = computed(() =>
-    [
-      {
-        id: 'query',
-        path: '/demo/form-manage/form-search',
-        link: '打开搜索表单',
-        title: '完成一次订单查询',
-        description:
-          '打开搜索表单，在「多列客户选择与共享查询」中选择客户并提交查询。回到首页可查看完成状态。',
-      },
-      {
-        id: 'edit',
-        path: '/demo/form-manage/form-modal',
-        link: '打开多模态表单',
-        title: '保存一条表单记录',
-        description:
-          '打开多模态表单，在「模态框表单」中编辑并保存一条记录。回到首页可继续下一项。',
-      },
-    ].filter(link => permissionStore.hasRoutePermission(link.path))
+    demoGuideEntries.filter(link =>
+      permissionStore.hasRoutePermission(link.path)
+    )
   )
   const demoGuideSteps = computed<GuideStep[]>(() =>
     demoLinks.value.map(link => ({

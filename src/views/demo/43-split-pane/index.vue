@@ -189,7 +189,6 @@
       <div class="section-content">
         <div class="demo-container">
           <C_SplitPane
-            ref="basicRef"
             :default-size="50"
             :gutter-size="6"
             @resize="
@@ -546,16 +545,15 @@
   import {
     SECTIONS,
     PANELS,
-    useSplitWorkbench,
     WORKBENCH_TABLE_CONFIG,
     WORK_ORDER_COLUMNS,
     WORK_DETAIL_COLUMNS,
   } from './data'
+  import { useSplitWorkbench } from './useSplitWorkbench'
 
   const { workbenchRef, workbenchSplitRef, workbench } = useSplitWorkbench()
 
   const message = useMessage()
-  const basicRef = ref()
   const collapseRef = ref()
   const basicInfo = ref('')
 

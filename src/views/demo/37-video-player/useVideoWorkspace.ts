@@ -5,6 +5,7 @@
  * @Description: 同一播放器实例中的场景、视频源与演示状态管理
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { proxyRefs } from 'vue'
 import type {
   PlayerState,
   QualityLevel,
@@ -43,6 +44,13 @@ export function useVideoWorkspace() {
   const videoDuration = ref(0)
   const completionPercent = ref(0)
   const currentChapterTitle = ref('')
+  const canRestart = computed(
+    () =>
+      Boolean(playerProps.value.url && playerRef.value) &&
+      playerState.value !== 'idle' &&
+      playerState.value !== 'loading' &&
+      playerState.value !== 'error'
+  )
 
   interface EventLog {
     time: string
@@ -111,15 +119,14 @@ export function useVideoWorkspace() {
 
   /** 只有资源身份变化才清空播放状态；同源切换保留位置，答题仅由组件保留未变更题目的记录。 */
   watch(
-    () => JSON.stringify([playerProps.value.url, playerProps.value.sourceType]),
+    [() => playerProps.value.url, () => playerProps.value.sourceType],
     () => {
       playerState.value = 'idle'
       currentTime.value = 0
       videoDuration.value = 0
       completionPercent.value = 0
       currentChapterTitle.value = ''
-    },
-    { flush: 'sync' }
+    }
   )
 
   /** 场景仅切换能力配置，播放器生命周期由组件根据资源身份管理。 */
@@ -152,11 +159,10 @@ export function useVideoWorkspace() {
   }
   /** 回到开头保留答题和书签，不使用重新挂载来隐藏资源切换行为。 */
   const restartPlayback = () => {
-    if (!playerProps.value.url) return
+    if (!canRestart.value) return
     playerRef.value?.pause()
     playerRef.value?.seek(0)
     currentTime.value = 0
-    playerState.value = 'paused'
     addLog('从头播放', 'info', '已回到开头，答题和书签记录保留')
   }
 
@@ -208,33 +214,40 @@ export function useVideoWorkspace() {
     if (playerProps.value.url) completionPercent.value = d.completionPercent
   }
   return {
-    activeScene,
-    sourceChoice,
-    sourceCleared,
     playerRef,
-    playerProps,
-    playerState,
-    currentTime,
-    videoDuration,
-    completionPercent,
-    currentChapterTitle,
     eventLogs,
-    progressPercent,
-    stateTagType,
-    formatTime,
-    switchScene,
-    changeSource,
-    toggleSource,
-    restartPlayback,
-    onReady,
-    onStateChange,
-    onTimeUpdate,
-    onEnded,
-    onError,
-    onQualityChange,
-    onChapterChange,
-    onQuizAnswer,
-    onBookmarkChange,
-    onProgressUpdate,
+    source: proxyRefs({
+      activeScene,
+      sourceChoice,
+      sourceCleared,
+      playerProps,
+      switchScene,
+      changeSource,
+      toggleSource,
+      canRestart,
+      restartPlayback,
+    }),
+    playback: proxyRefs({
+      playerState,
+      currentTime,
+      videoDuration,
+      completionPercent,
+      currentChapterTitle,
+      progressPercent,
+      stateTagType,
+      formatTime,
+    }),
+    events: {
+      onReady,
+      onStateChange,
+      onTimeUpdate,
+      onEnded,
+      onError,
+      onQualityChange,
+      onChapterChange,
+      onQuizAnswer,
+      onBookmarkChange,
+      onProgressUpdate,
+    },
   }
 }

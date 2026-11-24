@@ -37,7 +37,18 @@ const WorkflowProbe = defineComponent({
   },
   emits: ['update:modelValue', 'nodeClick', 'edgeClick'],
   /** 保留实际页面的模型与公共事件绑定。 */
-  setup: () => () => h('div', { class: 'workflow-probe' }),
+  setup(props, { expose }) {
+    expose({
+      validateWorkflow: () => [
+        {
+          nodeId: props.modelValue.nodes[1].id,
+          nodeName: '审批',
+          message: '请重新检查审批人',
+        },
+      ],
+    })
+    return () => h('div', { class: 'workflow-probe' })
+  },
 })
 const savedStrokes: SignatureStroke[] = [
   {
@@ -151,6 +162,23 @@ test('流程直接消费连线快照，人员按选择顺序写回且场景切�
     workflowScenarios.find(scenario => scenario.id === 'expense-approval')
       ?.template.edges
   ).toHaveLength(3)
+})
+
+test('流程通过检查项选择节点后清理连线，模型更新使旧检查结果失效', async () => {
+  const wrapper = mountPage(WorkflowPage)
+  const workflow = wrapper.getComponent(WorkflowProbe)
+  const model = workflow.props('modelValue')
+  workflow.vm.$emit('edgeClick', model.edges[0])
+  await wrapper
+    .findAll('button')
+    .find(button => button.text() === '检查流程')!
+    .trigger('click')
+  await wrapper.get('button.flow-issue').trigger('click')
+  expect(wrapper.find('[aria-label="选中连线"]').exists()).toBe(false)
+  workflow.vm.$emit('update:modelValue', { ...model, edges: [] })
+  await flushPromises()
+  expect(wrapper.find('button.flow-issue').exists()).toBe(false)
+  expect(wrapper.text()).toContain('点击“检查流程”')
 })
 
 test('签名尺寸传给公开橡皮配置，快照直接存取且不误称 SVG 为矢量', async () => {

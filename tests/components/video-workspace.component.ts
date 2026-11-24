@@ -134,7 +134,9 @@ test('从头播放使用公开暂停与 seek 方法，保持同一个资源身�
   const wrapper = mountPage()
   const player = wrapper.getComponent(PlayerProbe)
   const identity = player.vm.$.uid
+  player.vm.$emit('stateChange', 'playing')
   player.vm.$emit('timeUpdate', 35, 100)
+  await flushPromises()
   await wrapper
     .findAll('button')
     .find(button => button.text() === '从头播放')!
@@ -144,4 +146,17 @@ test('从头播放使用公开暂停与 seek 方法，保持同一个资源身�
   expect(wrapper.getComponent(PlayerProbe).vm.$.uid).toBe(identity)
   expect(wrapper.get('.video-progress').text()).toContain('00:00')
   expect(wrapper.get('.event-log-panel').text()).toContain('答题和书签记录保留')
+})
+
+test('视频出错后从头播放不可用，保留切换至内置视频的恢复入口', async () => {
+  const wrapper = mountPage()
+  wrapper.getComponent(PlayerProbe).vm.$emit('stateChange', 'error')
+  await flushPromises()
+  expect(
+    wrapper
+      .findAll('button')
+      .find(button => button.text() === '从头播放')!
+      .attributes('disabled')
+  ).toBeDefined()
+  expect(wrapper.get('.video-recovery').text()).toContain('内置视频')
 })

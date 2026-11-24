@@ -106,7 +106,6 @@ export const useUsageStats = () => {
     source,
     days,
     mode,
-    records,
     samples,
     summary,
     endpointConfigured,

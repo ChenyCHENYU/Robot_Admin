@@ -91,7 +91,7 @@
                       "
                       @select="
                         (key: string | number) =>
-                          moveTask(item.id, column.key, String(key))
+                          moveTask(item.id, column.key, key)
                       "
                       ><NButton
                         size="tiny"
@@ -183,10 +183,15 @@
               <template #header-extra>
                 <NButton
                   @click="addActivity"
+                  aria-label="添加活动"
                   size="small"
                   quaternary
                 >
-                  <template #icon><div class="i-mdi-plus"></div></template>
+                  <template #icon
+                    ><span
+                      class="i-mdi-plus"
+                      aria-hidden="true"
+                  /></template>
                 </NButton>
               </template>
               <C_Draggable
@@ -269,19 +274,23 @@
   const newTaskTitle = ref('')
   const newPriority = ref<Priority>('medium')
   let nextTaskId = Date.now()
-  const moveTask = (id: number, source: KanbanColumn, target: string) => {
+  const moveTask = (
+    id: number,
+    source: KanbanColumn,
+    target: string | number
+  ) => {
     const targetColumn = kanbanColumnsConfig.find(
       column => column.key === target
     )?.key
     if (!targetColumn || source === targetColumn) return
     const tasks = kanbanTasks.value[source]
-    const index = tasks.findIndex(task => String(task.id) === String(id))
+    const index = tasks.findIndex(task => task.id === id)
     if (index < 0) return
     const [task] = tasks.splice(index, 1)
     kanbanTasks.value[targetColumn].push(task)
   }
-  const techCards = ref(techCardsData)
-  const activities = ref(activitiesData)
+  const techCards = ref(structuredClone(techCardsData))
+  const activities = ref(structuredClone(activitiesData))
 
   // 工具函数
   const getPriorityType = (priority: Priority) => priorityConfig[priority].type

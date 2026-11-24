@@ -599,19 +599,8 @@ export default formData;`
     message.success('已接收表单数据（演示，不会持久化）')
   }
 
-  const handleFieldsChange = (fields: unknown): void => {
-    currentFields.value = Array.isArray(fields)
-      ? fields.filter(isFormOption).map(field => field.prop)
-      : []
-  }
-
-  /** 仅接收包含合法字段名与组件类型的表单配置。 */
-  function isFormOption(value: unknown): value is FormOption {
-    if (typeof value !== 'object' || value === null) return false
-    return (
-      typeof Reflect.get(value, 'prop') === 'string' &&
-      typeof Reflect.get(value, 'type') === 'string'
-    )
+  const handleFieldsChange = (fields: readonly Pick<FormOption, 'prop'>[]) => {
+    currentFields.value = fields.map(field => field.prop)
   }
 </script>
 

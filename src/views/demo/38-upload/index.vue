@@ -96,12 +96,12 @@
             :chunked="page.scene === 'chunked'"
             :chunk-size="2 * 1024 * 1024"
             :concurrency="3"
-            :max-count="20"
+            :max-count="MAX_QUEUE_FILES"
             :max-size="page.currentScene.maxSize"
             :custom-request="page.customRequest"
             :show-file-list="false"
             :show-thumbnail="false"
-            :tip="`单个文件不超过 ${fileSize(page.currentScene.maxSize)}，队列最多 20 项`"
+            :tip="`单个文件不超过 ${fileSize(page.currentScene.maxSize)}，队列最多 ${MAX_QUEUE_FILES} 项`"
             @change="page.updateFiles"
             @exceed="page.onExceed"
         /></div>
@@ -182,7 +182,12 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { UPLOAD_SCENES, STATUS_LABELS, fileSize } from './data'
+  import {
+    MAX_QUEUE_FILES,
+    UPLOAD_SCENES,
+    STATUS_LABELS,
+    fileSize,
+  } from './data'
   import { useUploadWorkspace } from './useUploadWorkspace'
   defineOptions({ name: 'Demo38Upload' })
   const controller = useUploadWorkspace()

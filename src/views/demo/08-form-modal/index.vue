@@ -24,7 +24,7 @@
         class="demo-card"
         :bordered="false"
         hoverable
-        @click="openContainer(card.key)"
+        @click="containerActions[card.key]()"
       >
         <template #header>
           <div class="card-header">
@@ -271,6 +271,7 @@
     popoverConfig,
     wizardOptions,
     wizardConfig,
+    type ContainerKey,
   } from './data'
   import { useUserModalDemo } from './useUserModalDemo'
 
@@ -307,23 +308,20 @@
   const popoverData = ref({})
   const wizardData = ref({})
 
-  /**
-   * * @description: 打开对应容器
-   * ? @param {string} key 容器标识
-   */
-  const openContainer = (key: string) => {
-    const map: Record<string, Ref<boolean>> = {
-      drawer: showDrawer,
-      popover: showPopover,
-      wizard: showWizard,
-    }
-    if (key === 'modal') {
-      openUserModal()
-    } else if (key === 'sidebar') {
+  const containerActions: Record<ContainerKey, () => void> = {
+    modal: openUserModal,
+    drawer: () => {
+      showDrawer.value = true
+    },
+    sidebar: () => {
       showSidebar.value = !showSidebar.value
-    } else if (map[key]) {
-      map[key].value = true
-    }
+    },
+    popover: () => {
+      showPopover.value = true
+    },
+    wizard: () => {
+      showWizard.value = true
+    },
   }
 </script>
 

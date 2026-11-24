@@ -103,29 +103,19 @@
       <section class="performance-panel performance-quality"
         ><h2>本周质量与节奏</h2
         ><div
-          v-for="team in scope"
+          v-for="team in currentTeams"
           :key="team.id"
           class="performance-quality-row"
           ><strong>{{ team.name }}</strong
-          ><span
-            >{{
-              (
-                (team.weeks[week].accepted / team.weeks[week].checked) *
-                100
-              ).toFixed(1)
-            }}% 验收通过</span
+          ><span>{{ team.quality.toFixed(1) }}% 验收通过</span
           ><div
             ><i
               :style="{
-                width: `${(team.weeks[week].accepted / team.weeks[week].checked) * 100}%`,
+                width: `${team.quality}%`,
               }" /></div
           ><small
             >平均周期
-            {{
-              (team.weeks[week].cycleDays / team.weeks[week].delivered).toFixed(
-                1
-              )
-            }}
+            {{ team.cycle.toFixed(1) }}
             天 / 项</small
           ></div
         ></section
@@ -144,33 +134,14 @@
             ></thead
           ><tbody
             ><tr
-              v-for="team in scope"
+              v-for="team in currentTeams"
               :key="team.id"
               ><th>{{ team.name }}</th
-              ><td>{{ team.weeks[week].planned }}</td
-              ><td>{{ team.weeks[week].delivered }}</td
-              ><td
-                >{{
-                  (
-                    (team.weeks[week].delivered / team.weeks[week].planned) *
-                    100
-                  ).toFixed(1)
-                }}%</td
-              ><td
-                >{{
-                  (
-                    (team.weeks[week].accepted / team.weeks[week].checked) *
-                    100
-                  ).toFixed(1)
-                }}%</td
-              ><td
-                >{{
-                  (
-                    team.weeks[week].cycleDays / team.weeks[week].delivered
-                  ).toFixed(1)
-                }}
-                天</td
-              ></tr
+              ><td>{{ team.planned }}</td
+              ><td>{{ team.delivered }}</td
+              ><td>{{ team.delivery.toFixed(1) }}%</td
+              ><td>{{ team.quality.toFixed(1) }}%</td
+              ><td>{{ team.cycle.toFixed(1) }} 天</td></tr
             ></tbody
           ></table
         ></div
@@ -186,6 +157,7 @@
   import {
     PERFORMANCE_TEAMS,
     PERFORMANCE_WEEKS,
+    performanceMetrics,
     summarizePerformance,
   } from './data'
   defineOptions({ name: 'Demo58Performance' })
@@ -196,6 +168,17 @@
     PERFORMANCE_TEAMS.filter(
       team => selectedTeam.value === 'all' || team.id === selectedTeam.value
     )
+  )
+  const currentTeams = computed(() =>
+    scope.value.map(({ id, name, weeks }) => {
+      const item = weeks[week.value]
+      return {
+        id,
+        name,
+        ...item,
+        ...performanceMetrics(item),
+      }
+    })
   )
   const summary = computed(() => summarizePerformance(scope.value, week.value))
   const trend = computed(() =>
@@ -217,18 +200,15 @@
         '通过任务',
         '累计耗时（天）',
       ],
-      ...scope.value.map(team => {
-        const item = team.weeks[week.value]
-        return [
-          team.name,
-          week.value + 1,
-          item.planned,
-          item.delivered,
-          item.checked,
-          item.accepted,
-          item.cycleDays,
-        ]
-      }),
+      ...currentTeams.value.map(team => [
+        team.name,
+        week.value + 1,
+        team.planned,
+        team.delivered,
+        team.checked,
+        team.accepted,
+        team.cycleDays,
+      ]),
     ]
     const text =
       '\ufeff' +

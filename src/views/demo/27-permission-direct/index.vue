@@ -34,12 +34,12 @@
           >
             <NSpace vertical>
               <NRadioGroup
-                v-model:value="state.currentUserId.value"
-                @update:value="handleUserChange"
+                :value="currentUserId"
+                @update:value="switchUser"
               >
                 <NSpace vertical>
                   <NRadio
-                    v-for="user in state.userProfiles"
+                    v-for="user in USER_PROFILES"
                     :key="user.id"
                     :value="user.id"
                     :label="user.name"
@@ -62,7 +62,7 @@
                 <NText strong>当前用户权限:</NText>
                 <div class="permission-list">
                   <NTag
-                    v-for="(value, key) in state.currentPermissions.value"
+                    v-for="(value, key) in currentPermissions"
                     :key="key"
                     :type="value ? 'success' : 'error'"
                     size="small"
@@ -70,9 +70,7 @@
                     {{ key }}: {{ value ? '✓' : '✗' }}
                   </NTag>
                   <NTag
-                    v-if="
-                      Object.keys(state.currentPermissions.value).length === 0
-                    "
+                    v-if="Object.keys(currentPermissions).length === 0"
                     type="warning"
                     size="small"
                   >
@@ -97,122 +95,41 @@
               </NText>
 
               <div class="demo-section">
-                <div class="demo-row">
+                <div
+                  v-for="example in basicExamples"
+                  :key="example.operation"
+                  class="demo-row"
+                >
                   <div class="button-container">
                     <NButton
                       v-permission="{
-                        permissions: 'user:view',
-                        authData: state.currentPermissions.value,
-                        fallback: 'hide',
+                        permissions: example.permissions,
+                        authData: currentPermissions,
+                        mode: example.mode,
+                        fallback: example.fallback,
                       }"
-                      type="primary"
+                      :type="example.type"
                       @click="
-                        () =>
-                          handlers.performSecureOperation(
-                            'user:view',
-                            '查看用户'
-                          )
+                        perform(
+                          example.permissions,
+                          example.operation,
+                          example.mode
+                        )
                       "
                     >
-                      👁️ 查看用户
+                      {{ example.label }}
                     </NButton>
                     <div class="permission-hint">
-                      <NTag size="tiny">需要: user:view</NTag>
+                      <NTag size="tiny">{{ example.hint }}</NTag>
                     </div>
                   </div>
                   <div class="status-indicator">
-                    <span :class="getPermissionStatus('user:view')">
-                      {{ getPermissionText('user:view') }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="demo-row">
-                  <div class="button-container">
-                    <NButton
-                      v-permission="{
-                        permissions: 'user:edit',
-                        authData: state.currentPermissions.value,
-                        fallback: 'show',
-                      }"
-                      type="success"
-                      @click="
-                        () =>
-                          handlers.performSecureOperation(
-                            'user:edit',
-                            '编辑用户'
-                          )
+                    <span
+                      :class="
+                        example.allowed ? 'status-granted' : 'status-denied'
                       "
                     >
-                      ✏️ 编辑用户
-                    </NButton>
-                    <div class="permission-hint">
-                      <NTag size="tiny">需要: user:edit (点击体验提示)</NTag>
-                    </div>
-                  </div>
-                  <div class="status-indicator">
-                    <span :class="getPermissionStatus('user:edit')">
-                      {{ getPermissionText('user:edit') }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="demo-row">
-                  <div class="button-container">
-                    <NButton
-                      v-permission="{
-                        permissions: 'user:delete',
-                        authData: state.currentPermissions.value,
-                        fallback: 'show',
-                      }"
-                      type="error"
-                      @click="
-                        () =>
-                          handlers.performSecureOperation(
-                            'user:delete',
-                            '删除用户'
-                          )
-                      "
-                    >
-                      🗑️ 删除用户
-                    </NButton>
-                    <div class="permission-hint">
-                      <NTag size="tiny">需要: user:delete (点击体验提示)</NTag>
-                    </div>
-                  </div>
-                  <div class="status-indicator">
-                    <span :class="getPermissionStatus('user:delete')">
-                      {{ getPermissionText('user:delete') }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="demo-row">
-                  <div class="button-container">
-                    <NButton
-                      v-permission="{
-                        permissions: 'system:admin',
-                        authData: state.currentPermissions.value,
-                        fallback: 'hide',
-                      }"
-                      type="warning"
-                      @click="
-                        () =>
-                          handlers.performSecureOperation(
-                            'system:admin',
-                            '系统管理'
-                          )
-                      "
-                    >
-                      ⚙️ 系统管理
-                    </NButton>
-                    <div class="permission-hint">
-                      <NTag size="tiny">需要: system:admin (隐藏模式)</NTag>
-                    </div>
-                  </div>
-                  <div class="status-indicator">
-                    <span :class="getPermissionStatus('system:admin')">
-                      {{ getPermissionText('system:admin') }}
+                      {{ example.allowed ? '✅ 有权限' : '❌ 无权限' }}
                     </span>
                   </div>
                 </div>
@@ -239,7 +156,7 @@
                   <NButton
                     v-permission="{
                       permissions: 'admin:secret',
-                      authData: state.currentPermissions.value,
+                      authData: currentPermissions,
                       fallback: 'hide',
                     }"
                     type="error"
@@ -258,17 +175,11 @@
                   <NButton
                     v-permission="{
                       permissions: 'admin:secret',
-                      authData: state.currentPermissions.value,
+                      authData: currentPermissions,
                       fallback: 'disable',
                     }"
                     type="warning"
-                    @click="
-                      () =>
-                        handlers.performSecureOperation(
-                          'admin:secret',
-                          '管理员操作'
-                        )
-                    "
+                    @click="perform('admin:secret', '管理员操作')"
                   >
                     🚫 禁用按钮
                   </NButton>
@@ -284,17 +195,11 @@
                   <NButton
                     v-permission="{
                       permissions: 'admin:secret',
-                      authData: state.currentPermissions.value,
+                      authData: currentPermissions,
                       fallback: 'show',
                     }"
                     type="info"
-                    @click="
-                      () =>
-                        handlers.performSecureOperation(
-                          'admin:secret',
-                          '管理员操作'
-                        )
-                    "
+                    @click="perform('admin:secret', '管理员操作')"
                   >
                     👻 半透明按钮
                   </NButton>
@@ -315,117 +220,41 @@
           >
             <NSpace vertical>
               <div class="demo-section">
-                <div class="demo-row">
+                <div
+                  v-for="example in advancedExamples"
+                  :key="example.operation"
+                  class="demo-row"
+                >
                   <div class="button-container">
                     <NButton
                       v-permission="{
-                        permissions: ['user:edit', 'user:delete'],
-                        authData: state.currentPermissions.value,
-                        mode: 'OR',
-                        fallback: 'show',
+                        permissions: example.permissions,
+                        authData: currentPermissions,
+                        mode: example.mode,
+                        fallback: example.fallback,
                       }"
-                      type="primary"
+                      :type="example.type"
                       @click="
-                        () =>
-                          handlers.performMultiSecureOperation(
-                            ['user:edit', 'user:delete'],
-                            '编辑或删除',
-                            'OR'
-                          )
+                        perform(
+                          example.permissions,
+                          example.operation,
+                          example.mode
+                        )
                       "
                     >
-                      📝 编辑或删除 (OR模式)
+                      {{ example.label }}
                     </NButton>
                     <div class="permission-hint">
-                      <NTag size="tiny">需要: user:edit 或 user:delete</NTag>
+                      <NTag size="tiny">{{ example.hint }}</NTag>
                     </div>
                   </div>
                   <div class="status-indicator">
                     <span
                       :class="
-                        getMultiPermissionStatus(
-                          ['user:edit', 'user:delete'],
-                          'OR'
-                        )
+                        example.allowed ? 'status-granted' : 'status-denied'
                       "
                     >
-                      {{
-                        getMultiPermissionText(
-                          ['user:edit', 'user:delete'],
-                          'OR'
-                        )
-                      }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="demo-row">
-                  <div class="button-container">
-                    <NButton
-                      v-permission="{
-                        permissions: ['user:edit', 'user:delete'],
-                        authData: state.currentPermissions.value,
-                        mode: 'AND',
-                        fallback: 'show',
-                      }"
-                      type="warning"
-                      @click="
-                        () =>
-                          handlers.performMultiSecureOperation(
-                            ['user:edit', 'user:delete'],
-                            '编辑且删除',
-                            'AND'
-                          )
-                      "
-                    >
-                      🔒 编辑且删除 (AND模式)
-                    </NButton>
-                    <div class="permission-hint">
-                      <NTag size="tiny">需要: user:edit 且 user:delete</NTag>
-                    </div>
-                  </div>
-                  <div class="status-indicator">
-                    <span
-                      :class="
-                        getMultiPermissionStatus(
-                          ['user:edit', 'user:delete'],
-                          'AND'
-                        )
-                      "
-                    >
-                      {{
-                        getMultiPermissionText(
-                          ['user:edit', 'user:delete'],
-                          'AND'
-                        )
-                      }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="demo-row">
-                  <div class="button-container">
-                    <NButton
-                      v-permission="{
-                        permissions: 'user:*',
-                        authData: state.currentPermissions.value,
-                        fallback: 'show',
-                      }"
-                      type="success"
-                      @click="
-                        () =>
-                          handlers.performSecureOperation('user:*', '用户管理')
-                      "
-                    >
-                      🌟 通配符权限 (user:*)
-                    </NButton>
-                    <div class="permission-hint">
-                      <NTag size="tiny">需要: user:* 通配符权限</NTag>
-                    </div>
-                  </div>
-                  <div class="status-indicator">
-                    <span :class="getPermissionStatus('user:*')">
-                      {{ getPermissionText('user:*') }}
+                      {{ example.allowed ? '✅ 有权限' : '❌ 无权限' }}
                     </span>
                   </div>
                 </div>
@@ -442,7 +271,7 @@
               <div
                 v-permission="{
                   permissions: 'system:admin',
-                  authData: state.currentPermissions.value,
+                  authData: currentPermissions,
                   fallback: 'hide',
                 }"
                 class="admin-panel"
@@ -458,7 +287,7 @@
               <div
                 v-permission="{
                   permissions: 'user:view',
-                  authData: state.currentPermissions.value,
+                  authData: currentPermissions,
                   fallback: 'show',
                 }"
                 class="user-panel"
@@ -489,7 +318,7 @@
           size="small"
         >
           <NTabs
-            v-model:value="state.activeTab.value"
+            v-model:value="activeTab"
             type="line"
             size="small"
           >
@@ -530,69 +359,58 @@
 <script setup lang="ts">
   defineOptions({ name: 'Demo27PermissionDirect' })
   import {
-    createPermissionDemoState,
-    createPermissionDemoHandlers,
+    hasPermission,
+    type PermissionMode,
+  } from '@robot-admin/directives/permission'
+  import {
+    ADVANCED_PERMISSIONS,
+    BASIC_PERMISSIONS,
+    MOCK_PERMISSIONS,
     PERMISSION_CODE_EXAMPLES,
+    USER_PROFILES,
+    type PermissionExample,
   } from './data'
 
-  // 创建状态和处理函数
-  const state = createPermissionDemoState()
-  const handlers = createPermissionDemoHandlers(state)
+  const message = useMessage()
+  const currentUserId = ref(USER_PROFILES[0].id)
+  const activeTab = ref('basic')
+  const currentPermissions = computed(
+    () => MOCK_PERMISSIONS[currentUserId.value] ?? {}
+  )
 
-  /**
-   * * @description 获取权限状态CSS类
-   * ? @param permission - 权限名称
-   * ! @return CSS类名
-   */
-  const getPermissionStatus = (permission: string) => {
-    return handlers.allows(permission) ? 'status-granted' : 'status-denied'
+  const withStatus = (examples: PermissionExample[]) =>
+    examples.map(example => ({
+      ...example,
+      allowed: hasPermission(
+        example.permissions,
+        currentPermissions.value,
+        example.mode
+      ),
+    }))
+  const basicExamples = computed(() => withStatus(BASIC_PERMISSIONS))
+  const advancedExamples = computed(() => withStatus(ADVANCED_PERMISSIONS))
+
+  const switchUser = (userId: number) => {
+    const user = USER_PROFILES.find(item => item.id === userId)
+    if (!user) return
+    currentUserId.value = user.id
+    message.info('用户已切换: ' + user.name)
   }
 
-  /**
-   * * @description 获取权限状态文本
-   * ? @param permission - 权限名称
-   * ! @return 状态文本
-   */
-  const getPermissionText = (permission: string) => {
-    return handlers.allows(permission) ? '✅ 有权限' : '❌ 无权限'
-  }
-
-  /**
-   * * @description 获取多权限状态CSS类
-   * ? @param permissions - 权限列表
-   * ? @param mode - 检查模式
-   * ! @return CSS类名
-   */
-  const getMultiPermissionStatus = (
-    permissions: string[],
-    mode: 'AND' | 'OR'
+  const perform = (
+    permissions: string | readonly string[],
+    operation: string,
+    mode: PermissionMode = 'OR'
   ) => {
-    return handlers.allows(permissions, mode)
-      ? 'status-granted'
-      : 'status-denied'
-  }
-
-  /**
-   * * @description 获取多权限状态文本
-   * ? @param permissions - 权限列表
-   * ? @param mode - 检查模式
-   * ! @return 状态文本
-   */
-  const getMultiPermissionText = (
-    permissions: string[],
-    mode: 'AND' | 'OR'
-  ) => {
-    return handlers.allows(permissions, mode) ? '✅ 有权限' : '❌ 无权限'
-  }
-
-  /**
-   * * @description 处理用户切换
-   * ? @param userId - 用户ID
-   * ! @return void
-   */
-  const handleUserChange = async (userId: number) => {
-    await handlers.switchUser(userId)
-    await nextTick()
+    if (hasPermission(permissions, currentPermissions.value, mode)) {
+      message.success('执行操作: ' + operation)
+      return
+    }
+    const requirement =
+      typeof permissions === 'string'
+        ? permissions
+        : permissions.join(mode === 'AND' ? ' 且 ' : ' 或 ')
+    message.warning('权限不足，执行「' + operation + '」需要 ' + requirement)
   }
 </script>
 

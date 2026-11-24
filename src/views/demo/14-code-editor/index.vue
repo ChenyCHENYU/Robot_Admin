@@ -30,7 +30,7 @@
           ><h2>示例文件</h2
           ><button
             v-for="file in CODE_FILES"
-            :key="file.language"
+            :key="file.name"
             type="button"
             class="workspace-choice"
             :aria-pressed="view.current === file"

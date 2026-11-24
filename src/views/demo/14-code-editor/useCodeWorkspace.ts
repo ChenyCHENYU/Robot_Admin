@@ -12,15 +12,15 @@ export function useCodeWorkspace() {
   const current = shallowRef<CodeFile>(CODE_FILES[0])
   const lineNumbers = ref(true)
   const wrap = ref(true)
-  const drafts = reactive<Partial<Record<CodeFile['language'], string>>>({})
+  const drafts = reactive<Partial<Record<CodeFile['name'], string>>>({})
   const code = computed({
-    get: () => drafts[current.value.language] ?? current.value.content,
+    get: () => drafts[current.value.name] ?? current.value.content,
     set: value => {
-      drafts[current.value.language] = value
+      drafts[current.value.name] = value
     },
   })
   const reset = () => {
-    delete drafts[current.value.language]
+    delete drafts[current.value.name]
   }
   const download = () => {
     const url = URL.createObjectURL(

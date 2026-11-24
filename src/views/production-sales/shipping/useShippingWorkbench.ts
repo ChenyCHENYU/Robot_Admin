@@ -110,6 +110,10 @@ export function useShippingWorkbench() {
       count: rows.value.filter(row => row.status === key).length,
     }))
   )
+  const applyTaskFilters = (values: ShippingQuery) => {
+    applied.value = { ...values }
+    pagination.page = 1
+  }
   const searchConfig: SearchConfig<ShippingQuery> = {
     density: 'compact',
     layout: 'grid',
@@ -118,15 +122,11 @@ export function useShippingWorkbench() {
     fieldMinWidth: 230,
     labelWidth: 94,
     searchOnReset: true,
-    onSearch: values => {
-      applied.value = { ...values }
-      pagination.page = 1
-    },
+    onSearch: applyTaskFilters,
   }
   const clearTaskFilters = () => {
     query.value = { ...INITIAL_QUERY }
-    applied.value = { ...INITIAL_QUERY }
-    pagination.page = 1
+    applyTaskFilters(query.value)
   }
   const activate = (id: string) => {
     const row = rows.value.find(item => item.id === id)
@@ -149,8 +149,7 @@ export function useShippingWorkbench() {
   }
   const filterStage = (status: string | null) => {
     query.value.status = status
-    applied.value = { ...query.value }
-    pagination.page = 1
+    applyTaskFilters(query.value)
   }
   const operations = useShipmentOperations({
     rows,

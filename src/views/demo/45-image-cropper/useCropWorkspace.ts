@@ -9,7 +9,7 @@ import type {
   CropResult,
   ImageCropperExpose,
 } from '@robot-admin/naive-ui-components/C_ImageCropper'
-import { CROP_PRESETS, SAMPLE_IMAGES, formatFileSize } from './data'
+import { CROP_PRESETS, SAMPLE_IMAGES } from './data'
 
 const imageLoadErrorMessage = (error: unknown) =>
   error instanceof Error && error.message.includes('像素')
@@ -42,6 +42,7 @@ export function useCropWorkspace() {
   let currentFileUrl: string | undefined
   let sourceSequence = 0
   let fileSequence = 0
+  let modalSourceSequence: number | undefined
   let active = true
   const markStale = () => {
     if (result.value) stale.value = true
@@ -154,16 +155,18 @@ export function useCropWorkspace() {
     markStale()
   }
   const exportCrop = async () => {
-    if (!ready.value || !cropperRef.value || exporting.value) return
+    const cropper = cropperRef.value
+    if (!ready.value || !cropper || exporting.value) return
+    const request = sourceSequence
     exporting.value = true
     try {
-      const next = await cropperRef.value.getCropResult()
-      if (!active) return
+      const next = await cropper.getCropResult()
+      if (!active || request !== sourceSequence) return
       result.value = next
       stale.value = false
       message.success('裁剪结果已生成')
     } catch (error) {
-      if (active)
+      if (active && request === sourceSequence)
         message.error(
           error instanceof Error ? error.message : '导出失败，请重试'
         )
@@ -180,7 +183,13 @@ export function useCropWorkspace() {
     anchor.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
+  const openModal = () => {
+    if (!ready.value || !modalRef.value || exporting.value) return
+    modalSourceSequence = sourceSequence
+    modalRef.value.open(src.value)
+  }
   const acceptModalResult = (value: CropResult) => {
+    if (!active || modalSourceSequence !== sourceSequence) return
     result.value = value
     stale.value = false
     message.success('已应用弹窗裁剪结果')
@@ -205,33 +214,39 @@ export function useCropWorkspace() {
   return {
     cropperRef,
     modalRef,
-    acceptModalResult,
     fileRef,
-    src,
-    sourceFile,
-    fileName,
-    sourceInfo,
-    preset,
-    ratio,
-    format,
-    quality,
-    maxWidth,
-    ready,
-    exporting,
-    result,
-    circular,
-    stale,
-    dropping,
-    markStale,
-    selectSample,
-    onFileChange,
-    onDrop,
-    applyPreset,
-    transform,
-    exportCrop,
-    download,
-    onReady,
-    onError,
-    formatFileSize,
+    image: proxyRefs({
+      src,
+      sourceFile,
+      fileName,
+      sourceInfo,
+      dropping,
+      selectSample,
+      onFileChange,
+      onDrop,
+    }),
+    editor: proxyRefs({
+      preset,
+      ratio,
+      circular,
+      ready,
+      markStale,
+      openModal,
+      applyPreset,
+      transform,
+      onReady,
+      onError,
+    }),
+    output: proxyRefs({
+      format,
+      quality,
+      maxWidth,
+      exporting,
+      result,
+      stale,
+      exportCrop,
+      download,
+      acceptModalResult,
+    }),
   }
 }

@@ -5,6 +5,7 @@
  * @Description: 树组件场景、受控状态与可取消的本地加载演示
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import { proxyRefs } from 'vue'
 import type {
   ComponentDensity,
   TreeExpose,
@@ -90,6 +91,12 @@ const createLargeTree = (): ProjectNode[] =>
       name: `项目 ${String(group * 20 + item + 1).padStart(4, '0')}`,
     })),
   }))
+const DEMO_ROOT: ProjectNode = {
+  id: 'remote-root',
+  name: '项目资料库 · 展开加载',
+  isLeaf: false,
+}
+
 /** 本地延迟同样接受取消信号，离开页面后不再提交旧数据。 */
 const waitForDemo = (signal: AbortSignal) =>
   new Promise<boolean>(resolve => {
@@ -118,9 +125,7 @@ export function useTreeDemo() {
   const largeTree = shallowRef(createLargeTree())
   const largeExpandedKeys = ref<TreeKey[]>(largeTree.value.map(node => node.id))
   const virtualSelectedKeys = ref<TreeKey[]>([])
-  const lazyData = ref<ProjectNode[]>([
-    { id: 'remote-root', name: '项目资料库 · 展开加载', isLeaf: false },
-  ])
+  const lazyData = ref<ProjectNode[]>([{ ...DEMO_ROOT }])
   const lazyExpandedKeys = ref<TreeKey[]>([])
   const lazyFailure = ref('')
   const failNext = ref(true)
@@ -194,9 +199,10 @@ export function useTreeDemo() {
     lazyFailure.value = error instanceof Error ? error.message : '加载失败'
   }
   const retryLoad = async () => {
+    const current = generation
     lazyExpandedKeys.value = []
     await nextTick()
-    lazyExpandedKeys.value = ['remote-root']
+    if (current === generation) lazyExpandedKeys.value = [DEMO_ROOT.id]
   }
   const resetLazy = () => {
     generation++
@@ -206,9 +212,7 @@ export function useTreeDemo() {
     lazyFailure.value = ''
     failNext.value = true
     loadCount.value = 0
-    lazyData.value = [
-      { id: 'remote-root', name: '项目资料库 · 展开加载', isLeaf: false },
-    ]
+    lazyData.value = [{ ...DEMO_ROOT }]
   }
   onBeforeUnmount(() => {
     generation++
@@ -217,30 +221,36 @@ export function useTreeDemo() {
   return {
     density,
     treeRef,
-    selectedKeys,
-    expandedKeys,
-    checkedKeys,
-    keyword,
-    lastAction,
-    departments,
-    largeTree,
-    largeExpandedKeys,
-    virtualSelectedKeys,
-    virtualTreeProps,
-    lazyData,
-    lazyExpandedKeys,
-    lazyFailure,
-    loadCount,
-    lazyTreeProps,
-    checkedSummary,
-    selectedSummary,
-    handleChecked,
-    handleSelected,
-    clearState,
-    pickFrontend,
-    checkLoadedLeaves,
-    handleLoadError,
-    retryLoad,
-    resetLazy,
+    controlled: proxyRefs({
+      selectedKeys,
+      expandedKeys,
+      checkedKeys,
+      keyword,
+      lastAction,
+      departments,
+      checkedSummary,
+      selectedSummary,
+      handleChecked,
+      handleSelected,
+      clearState,
+      pickFrontend,
+      checkLoadedLeaves,
+    }),
+    virtual: proxyRefs({
+      data: largeTree,
+      expandedKeys: largeExpandedKeys,
+      selectedKeys: virtualSelectedKeys,
+      props: virtualTreeProps,
+    }),
+    lazy: proxyRefs({
+      data: lazyData,
+      expandedKeys: lazyExpandedKeys,
+      error: lazyFailure,
+      loadCount,
+      props: lazyTreeProps,
+      handleLoadError,
+      retryLoad,
+      resetLazy,
+    }),
   }
 }
