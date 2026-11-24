@@ -62,7 +62,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 5 个关联仓�
 | `@robot-admin/theme`               | 0.6.1  | 分层核心 + Vue Store + Naive UI 适配   |
 | `@robot-admin/directives`          | 2.1.0  | 11 个 Vue 指令                         |
 | `@robot-admin/form-validate`       | 3.4.4  | 双框架验证、组合与批量校验             |
-| `@robot-admin/file-utils`          | 3.1.0  | 文件处理（Excel/ZIP/CSV/分片）         |
+| `@robot-admin/file-utils`          | 3.1.1  | 文件处理（Excel/ZIP/CSV/分片）         |
 | `@robot-admin/git-standards`       | 1.0.5  | Git 工程化标准                         |
 
 ### 开发工具链
