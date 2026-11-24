@@ -11,6 +11,25 @@
   margin-block: 8px;
   box-shadow: none;
 }
+.plan-picker-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 12px;
+
+  > :first-child {
+    flex: 0 1 260px;
+    min-width: 0;
+  }
+
+  .ps-footnote {
+    flex: 1 1 260px;
+    min-width: 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
 .plan-workspace {
   display: grid;
   grid-template-columns: 222px minmax(0, 1fr);

@@ -5,7 +5,11 @@
  * @Description: 工程协作会话的本地示例，不接入外部 IM 或 AI 服务
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import type { ChatContact, ChatMessage } from '@robot-admin/naive-ui-components'
+import type {
+  ChatContact,
+  ChatMessage,
+  ChatSource,
+} from '@robot-admin/naive-ui-components/C_Chat'
 
 import { createPersonAvatar } from '@/utils/d_avatar'
 export const createAvatar = createPersonAvatar
@@ -75,6 +79,26 @@ export const STARTERS = [
   '组件包如何按需引入？',
   '发布之前需要检查什么？',
 ]
+
+export const ASSISTANT_SOURCE: ChatSource = {
+  id: 'robot-validation',
+  label: 'Robot Admin 验收清单',
+  description: '本地示例 · 构建与交互验证',
+}
+export const ASSISTANT_CHECKS = [
+  '切换浅色与深色主题，检查正文、弹层和状态色。',
+  '核对组件独立入口与对应样式，再运行正式依赖构建。',
+  '操作筛选、分页和导出，确认实际结果与页面状态一致。',
+]
+
+/** 脚本助手公开可见的操作记录和本地参考资料。 */
+export const ASSISTANT_DETAILS = {
+  activities: [
+    { id: 'parse', title: '识别问题类别', status: 'succeeded' },
+    { id: 'lookup', title: '查阅本地演示资料', status: 'succeeded' },
+  ],
+  sources: [ASSISTANT_SOURCE],
+} satisfies Pick<ChatMessage, 'activities' | 'sources'>
 
 /** 确定性的脚本回复，用于演示消息交互，不冒充真实 AI。 */
 export function getDemoReply(content: string): string {

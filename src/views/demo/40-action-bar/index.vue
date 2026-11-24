@@ -19,19 +19,18 @@
       class="mb-6"
     >
       <template #header-extra>
-        <NText depth="3">新增/删除/刷新 + 中间显示选中数</NText>
+        <NText depth="3">本地员工记录 · 新增、删除和刷新</NText>
       </template>
 
       <div class="action-bar-demo-table-example">
         <C_ActionBar
           class="action-bar-demo-toolbar"
-          :actions="tableActions"
+          :actions="table.actions"
           :config="{ size: 'tiny', wrap: true }"
-          @action-click="handleActionClick"
         >
           <template #center>
             <NSpace
-              v-if="selectedCount > 0"
+              v-if="table.selectionCount > 0"
               align="center"
             >
               <NText depth="3">已选择:</NText>
@@ -39,12 +38,12 @@
                 type="primary"
                 :bordered="false"
               >
-                {{ selectedCount }} 条
+                {{ table.selectionCount }} 条
               </NTag>
               <NButton
                 text
                 size="small"
-                @click="tableRef?.clearSelection()"
+                @click="table.clearSelection()"
               >
                 清空
               </NButton>
@@ -55,13 +54,40 @@
         <C_Table
           ref="tableRef"
           wrapper-class="action-bar-demo-table"
-          :data="tableData"
+          :data="table.rows"
           :columns="columns"
-          :loading="loading"
+          :loading="table.loading"
           row-key="id"
           :config="{ selection: { enabled: true }, pagination: false }"
-          @selection-change="handleSelectionChange"
+          @selection-change="table.updateSelection"
         />
+      </div>
+    </NCard>
+
+    <NCard
+      title="工具栏空间变化"
+      class="mb-6"
+    >
+      <div
+        class="action-bar-responsive"
+        data-testid="action-overflow-demo"
+      >
+        <NCheckbox v-model:checked="narrowToolbar">模拟窄容器</NCheckbox>
+        <div
+          class="action-bar-responsive__frame"
+          :class="{ 'is-narrow': narrowToolbar }"
+        >
+          <C_ActionBar
+            :actions="overflowActions"
+            :config="{ size: 'small', wrap: true, overflowAt: 480 }"
+          />
+        </div>
+        <output
+          class="hint-text"
+          aria-live="polite"
+        >
+          {{ overflowResult || '缩窄后，导出和归档移到「更多」中。' }}
+        </output>
       </div>
     </NCard>
 
@@ -83,14 +109,13 @@
           <div class="card-content">
             <C_Form
               ref="formRef"
-              v-model="formData"
-              :options="formOptions"
-              :config="formConfig"
+              v-model="form.model"
+              :options="FORM_FIELDS"
+              :config="form.config"
             />
             <C_ActionBar
-              :actions="formActions"
+              :actions="form.actions"
               :config="{ align: 'center' }"
-              @action-click="handleActionClick"
             />
           </div>
         </NCard>
@@ -117,9 +142,9 @@
             </NDescriptions>
             <C_ActionBar
               :actions="detailActions"
+              @action-click="announceAction"
               :config="{ showDivider: true }"
               class="mt-14"
-              @action-click="handleActionClick"
             />
           </div>
         </NCard>
@@ -146,7 +171,6 @@
             <C_ActionBar
               :actions="stepActions"
               class="mt-4"
-              @action-click="handleActionClick"
             />
           </div>
         </NCard>
@@ -168,10 +192,7 @@
               >
               <NCheckbox v-model:checked="states.isEditing">编辑模式</NCheckbox>
             </NSpace>
-            <C_ActionBar
-              :actions="reactiveActionsSimple"
-              @action-click="handleActionClick"
-            />
+            <C_ActionBar :actions="reactiveActions" />
           </div>
         </NCard>
       </NGridItem>
@@ -190,9 +211,9 @@
               点击下方按钮的「更多」或「设置」查看下拉菜单
             </p>
             <C_ActionBar
-              :actions="dropdownActionsSimple"
+              :actions="dropdownActions"
+              @dropdown-click="announceDropdown"
               class="mt-4"
-              @action-click="handleActionClick"
             />
           </div>
         </NCard>
@@ -266,9 +287,9 @@
             </div>
             <div class="action-bar-config__preview">
               <C_ActionBar
-                :actions="basicActions"
+                :actions="layoutActions"
+                @action-click="announceAction"
                 :config="customConfig"
-                @action-click="handleActionClick"
               />
             </div>
             <p class="action-bar-config__hint">
@@ -283,347 +304,162 @@
 
 <script setup lang="ts">
   import {
-    PRESET_RULES,
-    type FormInstance,
-    type FormConfig,
-    type FormOption,
-  } from '@robot-admin/naive-ui-components/C_Form'
-  import { delayWithSignal } from '@/utils/abort'
-  defineOptions({ name: 'Demo40ActionBar' })
-  import type {
-    ActionItem,
-    ActionDropdownItem,
+    defineActions,
+    resolveActionPreset,
+    type ActionItem,
+    type ActionDropdownItem,
   } from '@robot-admin/naive-ui-components/C_ActionBar'
-  import type { TableInstance } from '@robot-admin/naive-ui-components/C_Table'
+  import { delayWithSignal } from '@/utils/abort'
   import {
     columns,
-    MOCK_TABLE_DATA,
     DEFAULT_CUSTOM_CONFIG,
     ACTION_SIZE_OPTIONS,
     MORE_DROPDOWN_ITEMS,
     SETTINGS_DROPDOWN_ITEMS,
-    type EmployeeRow,
   } from './data'
+  import {
+    FORM_FIELDS,
+    useActionFormDemo,
+    useActionTableDemo,
+  } from './useActionBarDemos'
+
+  defineOptions({ name: 'Demo40ActionBar' })
 
   const message = useMessage()
-
-  // 状态管理
-  const loading = ref(false)
-  const selectedCount = ref(0)
-  const currentStep = ref(0)
-  const states = reactive({
-    hasSelection: false,
-    isEditing: false,
-  })
-  const formRef = ref<FormInstance<{ username: string; email: string }> | null>(
-    null
-  )
-  const formSubmitting = computed(() => formRef.value?.isSubmitting ?? false)
-  const formData = ref({ username: '', email: '' })
+  const { tableRef, table } = useActionTableDemo()
+  const { formRef, form } = useActionFormDemo()
   const customConfig = reactive({ ...DEFAULT_CUSTOM_CONFIG })
-  const tableData = ref([...MOCK_TABLE_DATA])
-  const tableRef = ref<TableInstance<EmployeeRow> | null>(null)
+  const currentStep = ref(0)
+  const states = reactive({ hasSelection: false, isEditing: false })
+  const narrowToolbar = ref(false)
+  const overflowResult = ref('')
+  let exportCount = 0
 
-  const formOptions: FormOption<typeof formData.value>[] = [
-    {
-      prop: 'username',
-      label: '用户名',
-      type: 'input',
-      placeholder: '请输入',
-      rules: [PRESET_RULES.required('用户名')],
-    },
-    {
-      prop: 'email',
-      label: '邮箱',
-      type: 'input',
-      placeholder: '请输入',
-      rules: [PRESET_RULES.optional(PRESET_RULES.email('邮箱'))],
-    },
-  ]
-  const formConfig: FormConfig<typeof formData.value> = {
-    labelPlacement: 'left',
-    labelWidth: 80,
-    showActions: false,
-    submitSuccessText: '提交演示完成，数据未持久化',
-    onSubmit: (_payload, context) => delayWithSignal(1000, context?.signal),
+  const announceAction = (action: ActionItem) => {
+    message.info(`动作演示：${resolveActionPreset(action).label}`)
+  }
+  const announceDropdown = (item: ActionDropdownItem) => {
+    message.info(`菜单演示：${item.label}`)
   }
 
-  // 场景一：表格工具栏
-  const tableActions = computed<ActionItem[]>(() => [
-    {
-      key: 'add',
-      label: '新增',
-      icon: 'mdi:plus-circle',
-      type: 'primary',
-      onClick: () => {
-        message.success('新增用户')
-      },
-    },
-    {
-      key: 'delete',
-      label: '删除',
-      icon: 'mdi:delete',
-      type: 'error',
-      disabled: selectedCount.value === 0,
-      onClick: () => {
-        message.warning(`删除 ${selectedCount.value} 条数据`)
-      },
-    },
-    {
-      key: 'refresh',
-      label: '刷新',
-      icon: 'mdi:refresh',
-      type: 'info',
-      loading: loading.value,
-      onClick: handleRefresh,
-    },
+  const detailActions = defineActions([
+    { key: 'back', label: '返回', icon: 'mdi:arrow-left' },
+    { key: 'edit', type: 'primary' },
+    { key: 'print' },
+    { key: 'share', label: '分享', icon: 'mdi:share-variant' },
+    { key: 'delete' },
   ])
-
-  // 场景二：表单操作栏
-  const formActions = computed<ActionItem[]>(() => [
-    {
-      key: 'save-draft',
-      label: '草稿',
-      icon: 'mdi:content-save-outline',
-      onClick: () => {
-        message.info('保存草稿')
-      },
-    },
-    {
-      key: 'reset',
-      label: '重置',
-      icon: 'mdi:refresh',
-      disabled: formSubmitting.value,
-      onClick: () => {
-        formRef.value?.resetFields()
-        message.warning('表单已重置')
-      },
-    },
-    {
-      key: 'submit',
-      label: '提交',
-      icon: 'mdi:check',
-      type: 'primary',
-      loading: formSubmitting.value,
-      onClick: () => formRef.value?.submit(),
-    },
+  const layoutActions = defineActions([
+    { key: 'add' },
+    { key: 'refresh', type: 'info' },
+    { key: 'edit' },
+    { key: 'import' },
+    { key: 'export' },
+    { key: 'settings' },
   ])
-
-  // 场景三：详情页头部
-  const detailActions = computed<ActionItem[]>(() => [
-    {
-      key: 'back',
-      label: '返回',
-      icon: 'mdi:arrow-left',
-      onClick: () => {
-        message.info('返回列表')
-      },
-    },
-    {
-      key: 'edit',
-      label: '编辑',
-      icon: 'mdi:pencil',
-      type: 'primary',
-      onClick: () => {
-        message.info('进入编辑')
-      },
-    },
-    {
-      key: 'print',
-      label: '打印',
-      icon: 'mdi:printer',
-      onClick: () => {
-        message.info('打印')
-      },
-    },
-    {
-      key: 'share',
-      label: '分享',
-      icon: 'mdi:share-variant',
-      onClick: () => {
-        message.info('分享')
-      },
-    },
-    {
-      key: 'delete',
-      label: '删除',
-      icon: 'mdi:delete',
-      type: 'error',
-      onClick: () => {
-        message.error('删除')
-      },
-    },
+  const dropdownActions = defineActions([
+    { key: 'add', onClick: () => message.info('动作演示：新增') },
+    { key: 'more', dropdown: MORE_DROPDOWN_ITEMS },
+    { key: 'settings', label: '设置', dropdown: SETTINGS_DROPDOWN_ITEMS },
   ])
-
-  // 场景四：步骤条导航
-  const stepActions = computed<ActionItem[]>(() => [
-    {
-      key: 'prev',
-      label: '上一步',
-      icon: 'mdi:arrow-left',
-      disabled: currentStep.value === 0,
-      onClick: () => {
-        currentStep.value--
-        message.info(`步骤 ${currentStep.value + 1}`)
+  const stepActions = computed(() => {
+    const lastStep = currentStep.value === 2
+    return defineActions([
+      {
+        key: 'prev',
+        label: '上一步',
+        icon: 'mdi:arrow-left',
+        disabled: currentStep.value === 0,
+        onClick: () => {
+          currentStep.value--
+        },
       },
-    },
-    {
-      key: 'skip',
-      label: '跳过',
-      icon: 'mdi:skip-next',
-      show: currentStep.value < 2,
-      onClick: () => {
-        currentStep.value = 2
-        message.warning('跳过')
+      {
+        key: 'skip',
+        label: '跳过',
+        icon: 'mdi:skip-next',
+        show: !lastStep,
+        onClick: () => {
+          currentStep.value = 2
+        },
       },
-    },
+      {
+        key: 'next',
+        label: lastStep ? '完成' : '下一步',
+        icon: lastStep ? 'mdi:check' : 'mdi:arrow-right',
+        type: 'primary',
+        onClick: () => {
+          if (lastStep) {
+            currentStep.value = 0
+            message.success('步骤演示完成')
+          } else currentStep.value++
+        },
+      },
+    ])
+  })
+  const reactiveActions = computed(() =>
+    defineActions([
+      {
+        key: 'add',
+        disabled: states.isEditing,
+        onClick: () => message.info('状态演示：新增'),
+      },
+      {
+        key: 'delete',
+        show: states.hasSelection,
+        onClick: () => {
+          states.hasSelection = false
+          message.info('已清除演示选择')
+        },
+      },
+      {
+        key: 'edit',
+        label: states.isEditing ? '保存' : '编辑',
+        icon: states.isEditing ? 'mdi:check' : 'mdi:pencil',
+        type: states.isEditing ? 'success' : 'warning',
+        onClick: () => {
+          states.isEditing = !states.isEditing
+        },
+      },
+      {
+        key: 'refresh',
+        type: 'info',
+        onClick: async () => {
+          await delayWithSignal(2000)
+          message.info('刷新完成')
+        },
+      },
+    ])
+  )
+  const overflowActions = defineActions([
     {
-      key: 'next',
-      label: currentStep.value === 2 ? '完成' : '下一步',
-      icon: currentStep.value === 2 ? 'mdi:check' : 'mdi:arrow-right',
+      key: 'new-ticket',
+      label: '新增工单',
       type: 'primary',
+      icon: 'mdi:plus',
       onClick: () => {
-        if (currentStep.value === 2) {
-          currentStep.value = 0
-          message.success('完成')
-        } else {
-          currentStep.value++
-          message.info(`步骤 ${currentStep.value + 1}`)
-        }
-      },
-    },
-  ])
-
-  // 场景五：响应式按钮
-  const reactiveActionsSimple = computed<ActionItem[]>(() => [
-    {
-      key: 'add',
-      label: '新增',
-      icon: 'mdi:plus-circle',
-      type: 'primary',
-      disabled: states.isEditing,
-      onClick: () => {
-        message.success('新增')
+        overflowResult.value = '已触发新增工单演示'
       },
     },
     {
-      key: 'delete',
-      label: '删除',
-      icon: 'mdi:delete',
-      type: 'error',
-      disabled: !states.hasSelection,
-      show: states.hasSelection,
-      onClick: () => {
-        message.error('删除')
-      },
-    },
-    {
-      key: 'edit',
-      label: states.isEditing ? '保存' : '编辑',
-      icon: states.isEditing ? 'mdi:check' : 'mdi:pencil',
-      type: states.isEditing ? 'success' : 'warning',
-      onClick: () => {
-        states.isEditing = !states.isEditing
-        message.warning(states.isEditing ? '编辑模式' : '保存')
-      },
-    },
-    {
-      key: 'refresh',
-      label: '刷新',
-      icon: 'mdi:refresh',
-      type: 'info',
+      key: 'export-summary',
+      label: '导出汇总',
+      icon: 'mdi:download',
+      overflow: true,
       onClick: async () => {
-        await delayWithSignal(2000)
-        message.success('刷新完成')
+        overflowResult.value = '正在模拟生成汇总…'
+        await delayWithSignal(600)
+        overflowResult.value = `已完成 ${++exportCount} 次模拟导出`
       },
+    },
+    {
+      key: 'archive-ticket',
+      label: '归档工单',
+      icon: 'mdi:archive-outline',
+      overflow: true,
+      disabled: true,
     },
   ])
-
-  // 下拉项的 Promise 交给操作栏管理，事件仅保留为点击通知。
-  const dropdownActionsSimple = computed<ActionItem[]>(() => [
-    {
-      key: 'add',
-      label: '新增',
-      icon: 'mdi:plus-circle',
-      type: 'primary',
-      onClick: () => {
-        message.success('新增')
-      },
-    },
-    {
-      key: 'more',
-      label: '更多',
-      icon: 'mdi:dots-horizontal',
-      dropdown: MORE_DROPDOWN_ITEMS.map(item => ({
-        ...item,
-        onClick: () => handleDropdownClick(item),
-      })),
-    },
-    {
-      key: 'settings',
-      label: '设置',
-      icon: 'mdi:cog',
-      dropdown: SETTINGS_DROPDOWN_ITEMS.map(item => ({
-        ...item,
-        onClick: () => handleDropdownClick(item),
-      })),
-    },
-  ])
-
-  // 场景七：配置选项
-  const basicActions = computed<ActionItem[]>(() => [
-    {
-      key: 'add',
-      label: '新增',
-      icon: 'mdi:plus-circle',
-      type: 'primary',
-      onClick: () => {
-        message.success('新增')
-      },
-    },
-    {
-      key: 'refresh',
-      label: '刷新',
-      icon: 'mdi:refresh',
-      type: 'info',
-      loading: loading.value,
-      onClick: handleRefresh,
-    },
-    ...(['edit', 'import', 'export', 'settings'] as const).map(key => ({
-      key,
-      onClick: () => {
-        message.info('配置预览演示，未执行业务操作')
-      },
-    })),
-  ])
-
-  // 事件处理
-  const handleActionClick = (action: ActionItem) =>
-    console.log('Action:', action)
-  const handleDropdownClick = (item: ActionDropdownItem) => {
-    const msgMap: Record<string, () => void> = {
-      'export-excel': () => message.success('导出Excel'),
-      'export-pdf': () => message.success('导出PDF'),
-      print: () => message.info('打印'),
-      column: () => message.info('列设置'),
-      filter: () => message.info('筛选'),
-    }
-    msgMap[item.key]?.()
-  }
-
-  const handleRefresh = async () => {
-    loading.value = true
-    try {
-      await delayWithSignal(1500)
-      message.success('刷新成功')
-    } finally {
-      loading.value = false
-    }
-  }
-
-  const handleSelectionChange = (keys: Array<string | number>) => {
-    selectedCount.value = keys.length
-  }
 </script>
 
 <style lang="scss" scoped>

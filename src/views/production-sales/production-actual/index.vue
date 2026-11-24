@@ -18,44 +18,44 @@
         description="按炉次录入实绩，核对成分偏差并完成复核追溯。"
       >
         <NTag
-          :type="dirty ? 'warning' : 'success'"
+          :type="entry.dirty ? 'warning' : 'success'"
           size="small"
           :bordered="false"
-          >{{ dirty ? '有未保存实绩' : '已保存' }}</NTag
+          >{{ entry.dirty ? '有未保存实绩' : '已保存' }}</NTag
         ><NButton
-          v-if="!traceVisible"
+          v-if="!trace.visible"
           size="small"
-          :disabled="saving || locked"
-          @click="restore"
+          :disabled="entry.saving || review.locked"
+          @click="entry.restore"
           :render-icon="actionIcons.restore"
           >恢复记录</NButton
         ><NButton
-          v-if="!traceVisible"
+          v-if="!trace.visible"
           type="primary"
           size="small"
-          :loading="saving"
-          :disabled="locked"
-          @click="save"
+          :loading="entry.saving"
+          :disabled="review.locked"
+          @click="entry.save"
           :render-icon="actionIcons.contentSaveOutline"
           >保存实绩</NButton
         >
       </PageHeading>
       <div class="ps-panel ps-toolbar"
         ><C_ActionBar
-          :actions="reviewActions"
+          :actions="review.reviewActions"
           :config="{ compact: true, size: 'small' }"
         /><NSpace :size="8">
           <NButton
             size="small"
-            :type="traceVisible ? 'primary' : 'default'"
-            :aria-pressed="traceVisible"
-            @click="traceVisible = !traceVisible"
+            :type="trace.visible ? 'primary' : 'default'"
+            :aria-pressed="trace.visible"
+            @click="trace.visible = !trace.visible"
             :render-icon="actionIcons.chartTimelineVariant"
             >工序追踪</NButton
           ><NButton
             size="small"
-            :disabled="!previous"
-            @click="referenceVisible = true"
+            :disabled="!comparison.previous"
+            @click="comparison.visible = true"
             :render-icon="actionIcons.history"
             >上一炉参考</NButton
           >
@@ -65,70 +65,61 @@
         <aside class="actual-sidebar">
           <section class="ps-panel"
             ><header class="ps-panel-heading"
-              ><h2>当班炉次</h2><span>{{ HEATS.length }} 炉</span></header
-            ><div class="actual-heat-list"
-              ><button
-                v-for="(heat, index) in heatList"
-                :key="heat.id"
-                type="button"
-                :class="{ 'is-active': currentId === heat.id }"
-                :aria-pressed="currentId === heat.id"
-                @click="chooseHeat(heat.id)"
-                ><div
-                  ><strong
-                    ><span class="actual-heat-index">{{ index + 1 }}</span
-                    >{{ heat.no }}</strong
-                  ><span>{{ heat.time }}</span></div
-                ><p>{{ heat.furnace }} · {{ heat.grade }}</p
-                ><NTag
-                  :type="heat.state === '待复核' ? 'warning' : 'success'"
-                  :bordered="false"
-                  round
-                  size="small"
-                  >{{ heat.state }}</NTag
-                ></button
-              ></div
+              ><h2>当班炉次</h2><span>{{ heats.items.length }} 炉</span></header
+            ><C_RecordList
+              class="actual-heat-list"
+              :items="heats.items"
+              :item-key="heats.key"
+              :item-view="heats.describe"
+              :model-value="heats.current.id"
+              aria-label="当班炉次列表"
+              selectable
+              @update:model-value="heats.select"
+            />
             ></section
           >
           <div
-            v-show="!traceVisible"
+            v-show="!trace.visible"
             class="ps-panel actual-section-nav"
             ><C_SectionNav
-              :items="sections"
-              v-model="activeSection"
+              :items="entry.sections"
+              v-model="entry.activeSection"
               aria-label="实绩分区导航"
-              @select="navigate"
+              @select="entry.navigate"
           /></div>
         </aside>
         <div class="actual-main">
           <section class="actual-context ps-panel"
             ><div
               ><span class="actual-context__label">当前炉次</span
-              ><h2>{{ current.no }}</h2
+              ><h2>{{ heats.current.no }}</h2
               ><p
-                >{{ current.furnace }} · {{ current.grade }} · 连铸 1 号机</p
+                >{{ heats.current.furnace }} · {{ heats.current.grade }} · 连铸
+                1 号机</p
               ></div
             ><dl
               ><div
                 ><dt>出钢量</dt
-                ><dd>{{ model.output ?? '—' }}<small>t</small></dd></div
+                ><dd>{{ entry.model.output ?? '—' }}<small>t</small></dd></div
               ><div
                 ><dt>出钢温度</dt
-                ><dd>{{ model.temperature ?? '—' }}<small>℃</small></dd></div
+                ><dd
+                  >{{ entry.model.temperature ?? '—' }}<small>℃</small></dd
+                ></div
               ><div
                 ><dt>成分偏差</dt
                 ><dd
                   :class="{
-                    'is-warning': chemistryDeviations.length > 0,
+                    'is-warning': chemistry.deviations.length > 0,
                   }"
-                  >{{ chemistryDeviations.length }}<small>项待复核</small></dd
+                  >{{ chemistry.deviations.length }}<small>项待复核</small></dd
                 ></div
               ></dl
             ></section
           >
           <section
-            v-for="(group, index) in ACTUAL_GROUPS"
-            v-show="!traceVisible"
+            v-for="(group, index) in entry.groups"
+            v-show="!trace.visible"
             :key="group.key"
             :data-section="group.key"
             class="ps-panel actual-form-section"
@@ -143,34 +134,34 @@
             >
             <C_Form
               class="ps-form"
-              :ref="instance => setForm(index, instance)"
-              v-model="model"
+              :ref="instance => entry.setForm(group.key, instance)"
+              v-model="entry.model"
               :options="group.fields"
-              :config="actualConfig"
+              :config="entry.config"
             />
             <template v-if="group.key === 'chemistry'">
               <div class="actual-comparison-heading">
                 <h3>关联实绩对照</h3>
-                <p>{{ comparisonCaption }}</p>
+                <p>{{ comparison.caption }}</p>
               </div>
               <div class="actual-comparisons">
                 <article
-                  v-for="comparison in comparisonGroups"
-                  :key="comparison.key"
+                  v-for="section in comparison.data.groups"
+                  :key="section.key"
                   class="actual-comparison-card"
-                  :data-comparison="comparison.key"
-                  :aria-label="`${comparison.title}实绩对照`"
+                  :data-comparison="section.key"
+                  :aria-label="`${section.title}实绩对照`"
                 >
                   <header>
-                    <h4>{{ comparison.title }}</h4>
-                    <span>{{ comparison.rows.length }} 项</span>
+                    <h4>{{ section.title }}</h4>
+                    <span>{{ section.rows.length }} 项</span>
                   </header>
                   <div class="actual-comparison-table">
                     <MachTable
                       preset="detail"
                       row-key="id"
-                      :row-data="comparison.rows"
-                      :column-defs="ACTUAL_COMPARISON_COLUMNS"
+                      :row-data="section.rows"
+                      :column-defs="comparison.summaryColumns"
                       :theme="themeStore.isDark ? 'dark' : 'light'"
                     />
                   </div>
@@ -180,23 +171,23 @@
                 <div>
                   <h3>内控标准核对</h3>
                   <p
-                    >已检测 {{ chemicalRows.length - chemistryPendingCount }} /
-                    {{ chemicalRows.length }} 项 ·
-                    {{ chemistryDeviations.length }} 项偏差</p
+                    >已检测 {{ chemistry.total - chemistry.pendingCount }} /
+                    {{ chemistry.total }} 项 ·
+                    {{ chemistry.deviations.length }} 项偏差</p
                   >
                 </div>
                 <NButton
                   size="small"
-                  :type="onlyChemistryDeviations ? 'primary' : 'default'"
-                  :aria-pressed="onlyChemistryDeviations"
+                  :type="chemistry.onlyDeviations ? 'primary' : 'default'"
+                  :aria-pressed="chemistry.onlyDeviations"
                   :render-icon="
-                    onlyChemistryDeviations
+                    chemistry.onlyDeviations
                       ? actionIcons.restore
                       : actionIcons.filterOutline
                   "
-                  @click="onlyChemistryDeviations = !onlyChemistryDeviations"
+                  @click="chemistry.onlyDeviations = !chemistry.onlyDeviations"
                   >{{
-                    onlyChemistryDeviations ? '显示全部项目' : '仅看成分偏差'
+                    chemistry.onlyDeviations ? '显示全部项目' : '仅看成分偏差'
                   }}</NButton
                 >
               </div>
@@ -206,25 +197,42 @@
                   dom-layout="autoHeight"
                   :max-body-height="330"
                   :pagination="false"
-                  :row-data="visibleChemistryRows"
-                  :locale="chemistryLocale"
-                  :column-defs="chemicalColumns"
-                  :row-style-rules="chemicalStyles"
+                  :row-data="chemistry.rows"
+                  :locale="chemistry.locale"
+                  :column-defs="chemistry.columns"
+                  :row-style-rules="chemistry.rowStyles"
                   :theme="themeStore.isDark ? 'dark' : 'light'"
                 />
               </div>
             </template>
           </section>
           <section
-            v-if="traceVisible"
+            v-if="trace.visible"
             class="ps-panel"
             aria-label="工序轨迹"
             ><header class="ps-panel-heading"
               ><h2>工序轨迹</h2
-              ><span>本地过程记录 · {{ current.no }}</span></header
+              ><span>本地过程记录 · {{ heats.current.no }}</span></header
             ><ProcessTrace
-              :heat="current"
-              @navigate="navigate"
+              :heat="heats.current"
+              @navigate="entry.navigate"
+            />
+          </section>
+          <section
+            v-if="trace.visible"
+            class="ps-panel"
+            aria-label="上下游关系"
+          >
+            <header class="ps-panel-heading">
+              <h2>上下游关系</h2>
+              <span>演示样本 · {{ heats.current.no }}</span>
+            </header>
+            <C_RelationshipExplorer
+              class="actual-relations"
+              v-model="trace.record"
+              :nodes="trace.nodes"
+              :edges="trace.edges"
+              trace-from="heat"
             />
           </section>
         </div>
@@ -232,17 +240,17 @@
       <p
         role="status"
         class="ps-status-line"
-        >{{ notice }}</p
+        >{{ entry.notice }}</p
       >
       <C_FormModal
-        :editor="reviewEditor"
-        :options="REVIEW_FIELDS"
+        :editor="review.reviewEditor"
+        :options="review.fields"
         :config="BUSINESS_FORM"
         :mask-closable="false"
         create-text="提交复核"
       />
       <NModal
-        v-model:show="historyVisible"
+        v-model:show="review.historyVisible"
         preset="card"
         title="炉次复核记录"
         size="small"
@@ -257,20 +265,22 @@
         <NDescriptions
           v-bind="BUSINESS_DETAIL"
           :column="1"
-          ><NDescriptionsItem label="炉号">{{ current.no }}</NDescriptionsItem
+          ><NDescriptionsItem label="炉号">{{
+            heats.current.no
+          }}</NDescriptionsItem
           ><NDescriptionsItem label="当前状态">{{
-            stateOf(current.id, current.state)
+            review.stateOf(heats.current.id, heats.current.state)
           }}</NDescriptionsItem
           ><NDescriptionsItem
-            v-if="latest"
+            v-if="review.latest"
             label="最近意见"
-            >{{ latest.note }}</NDescriptionsItem
+            >{{ review.latest.note }}</NDescriptionsItem
           ></NDescriptions
         >
         <NDivider :style="{ margin: '12px 0' }">复核追溯</NDivider
         ><C_Timeline
-          v-if="historyItems.length"
-          :items="historyItems"
+          v-if="review.historyItems.length"
+          :items="review.historyItems"
           size="small"
         /><NEmpty
           v-else
@@ -279,14 +289,14 @@
         <template #footer
           ><NButton
             size="small"
-            @click="historyVisible = false"
+            @click="review.historyVisible = false"
             :render-icon="actionIcons.close"
             >关闭记录</NButton
           ></template
         >
       </NModal>
       <NModal
-        v-model:show="referenceVisible"
+        v-model:show="comparison.visible"
         preset="card"
         title="上一炉实绩参考"
         size="small"
@@ -302,21 +312,21 @@
           type="info"
           :show-icon="false"
           >参考
-          {{ previous?.no }}
+          {{ comparison.previous?.no }}
           的已保存值；核对后请录入当前炉次的真实测量。</NAlert
         >
         <div class="actual-reference-grid"
           ><MachTable
             preset="detail"
             row-key="id"
-            :row-data="referenceRows"
-            :column-defs="referenceColumns"
+            :row-data="comparison.data.rows"
+            :column-defs="comparison.columns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
         /></div>
         <template #footer
           ><NButton
             size="small"
-            @click="referenceVisible = false"
+            @click="comparison.visible = false"
             :render-icon="actionIcons.close"
             >关闭参考</NButton
           ></template
@@ -330,62 +340,19 @@
   import '@agile-team/mach-table-vue/styles.css'
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
-  import PageHeading from '../components/c_pageHeading/index.vue'
-  import ProcessTrace from './components/c_processTrace/index.vue'
   import {
     BUSINESS_FORM,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
   } from '../shared/presentation'
-  import { REVIEW_FIELDS } from './operations'
-  import {
-    useProductionActual,
-    HEATS,
-    ACTUAL_GROUPS,
-    ACTUAL_COMPARISON_COLUMNS,
-  } from './data'
+  import { useProductionActual } from './useProductionActual'
+  import PageHeading from '../components/PageHeading/index.vue'
+  import ProcessTrace from './components/ProcessTrace/index.vue'
+
   defineOptions({ name: 'ProductionActualWorkbench' })
   const themeStore = s_themeStore()
-  const {
-    container,
-    model,
-    current,
-    currentId,
-    dirty,
-    activeSection,
-    traceVisible,
-    sections,
-    chemicalRows,
-    onlyChemistryDeviations,
-    chemistryDeviations,
-    chemistryPendingCount,
-    visibleChemistryRows,
-    chemistryLocale,
-    chemicalColumns,
-    chemicalStyles,
-    saving,
-    notice,
-    setForm,
-    navigate,
-    chooseHeat,
-    save,
-    restore,
-    actualConfig,
-    heatList,
-    reviewEditor,
-    reviewActions,
-    historyVisible,
-    historyItems,
-    latest,
-    locked,
-    stateOf,
-    referenceVisible,
-    referenceRows,
-    comparisonGroups,
-    comparisonCaption,
-    referenceColumns,
-    previous,
-  } = useProductionActual()
+  const { heats, entry, chemistry, comparison, review, trace } =
+    useProductionActual()
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

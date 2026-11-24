@@ -107,6 +107,13 @@
   height: 24px;
   border-radius: 6px;
   cursor: pointer;
+  padding: 0;
+
+  &[aria-pressed='true'],
+  &:focus-visible {
+    outline: 2px solid var(--app-primary);
+    outline-offset: 2px;
+  }
 }
 .preview-section {
   padding: 20px 0;
@@ -159,5 +166,17 @@
   }
   .preview-info {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+.barcode-reader {
+  margin-top: 20px;
+
+  &__result {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+    color: var(--app-text-secondary);
   }
 }

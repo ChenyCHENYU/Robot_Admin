@@ -51,6 +51,11 @@ const libraryComponentNames: readonly string[] = (() => {
 /** 已迁移到组件库的组件集合 — fallback resolver 必须跳过 */
 const libraryComponents = new Set<string>(libraryComponentNames)
 
+export const projectComponentGlobs = [
+  'src/components/global/C_*/index.vue',
+  'src/components/local/c_*/index.vue',
+]
+
 /** 类型不依赖某次构建实际加载了哪些路由，测试也可输出到独立临时目录。 */
 export const createComponentsConfig = (
   dts: string | false = 'src/types/components.d.ts'
@@ -62,8 +67,8 @@ export const createComponentsConfig = (
       from: `${PKG}/${name}`,
       names: [name],
     })),
-    dirs: ['src/components/local'], // 仅扫描本地组件（C_ 全局组件通过 resolver 解析）
-    extensions: ['vue'], // 扩展名
+    // 项目级组件按目录名导入，views 私有组件由所属模块显式引用。
+    globs: projectComponentGlobs,
     resolvers: [
       NaiveUiResolver(),
       // dev:local: 用目录扫描的全量组件名构建 resolver（不受 npm 版本滞后影响）
@@ -81,24 +86,6 @@ export const createComponentsConfig = (
                 }
               : undefined
         : RobotNaiveUiResolver({ importStyle: 'base' }),
-      componentName => {
-        // 已迁移到组件库的 → 由上方 resolver 处理，此处跳过
-        if (libraryComponents.has(componentName)) return null
-        // 未迁移的 C_ 组件（布局/业务组件）→ 继续从本地解析
-        if (componentName.startsWith('C_')) {
-          return {
-            name: 'default',
-            from: `@/components/global/${componentName}/index.vue`,
-          }
-        }
-        if (componentName.startsWith('c_')) {
-          return {
-            name: 'default',
-            from: `@/components/local/${componentName}/index.vue`,
-          }
-        }
-        return null
-      },
       // 项目历史模板仍使用 <Icon icon="..." />；直接解析到已安装的
       // @iconify/vue，不恢复 unplugin-icons，也不增加新的转换或依赖成本。
       componentName =>

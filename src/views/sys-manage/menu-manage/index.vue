@@ -24,42 +24,42 @@
         </div>
         <C_ActionBar
           class="workspace-actions"
-          :actions="toolbarActions"
+          :actions="page.toolbarActions"
           :config="{ compact: true, wrap: true }"
         />
       </div>
       <div class="workspace-summary">
         <span
-          ><strong>{{ stats.directories }}</strong> 目录</span
+          ><strong>{{ page.tree.stats.directories }}</strong> 目录</span
         >
         <span
-          ><strong>{{ stats.pages }}</strong> 页面</span
+          ><strong>{{ page.tree.stats.pages }}</strong> 页面</span
         >
         <span
-          ><strong>{{ stats.cached }}</strong> 已开启缓存</span
+          ><strong>{{ page.tree.stats.cached }}</strong> 已开启缓存</span
         >
         <NTag
           size="small"
           :bordered="false"
-          :type="isMock ? 'warning' : 'success'"
-          >{{ isMock ? '演示数据' : '已连接服务' }}</NTag
+          :type="page.isMock ? 'warning' : 'success'"
+          >{{ page.isMock ? '演示数据' : '已连接服务' }}</NTag
         >
       </div>
     </NCard>
 
     <NAlert
-      v-if="navigationDirty"
+      v-if="page.navigation.pending"
       type="info"
       :show-icon="true"
       class="navigation-notice"
     >
       {{
-        isMock ? '缓存设置已保存' : '配置已保存'
+        page.isMock ? '缓存设置已保存' : '配置已保存'
       }}，点击“同步导航”应用设置。同步会清空已打开页面的缓存状态。
     </NAlert>
     <div
       class="menu-workspace"
-      :aria-busy="loading || busy"
+      :aria-busy="page.tree.loading || page.busy"
     >
       <NCard
         class="structure-panel"
@@ -70,13 +70,13 @@
           <NButton
             size="tiny"
             quaternary
-            :disabled="loading"
-            @click="toggleExpansion"
-            >{{ expanded ? '收起全部' : '展开全部' }}</NButton
+            :disabled="page.tree.loading"
+            @click="page.tree.toggleExpansion"
+            >{{ page.tree.expanded ? '收起全部' : '展开全部' }}</NButton
           >
         </template>
         <NInput
-          v-model:value="searchPattern"
+          v-model:value="page.tree.search"
           placeholder="搜索名称、路径或权限"
           clearable
           :input-props="{ 'aria-label': '搜索菜单' }"
@@ -89,42 +89,42 @@
           /></template>
         </NInput>
         <p class="panel-hint">{{
-          searchPattern.trim()
+          page.tree.search.trim()
             ? '搜索时暂不支持拖拽，清空后恢复'
             : '拖拽调整顺序；页面节点可移入目录'
         }}</p>
         <NSpin
-          :show="loading || mutating"
+          :show="page.tree.loading || page.mutating"
           :size="48"
           :rotate="false"
           class="tree-loading"
         >
           <template #icon><C_Loading /></template>
           <NResult
-            v-if="loadError"
+            v-if="page.tree.error"
             status="error"
             title="菜单加载失败"
-            :description="loadError"
+            :description="page.tree.error"
           >
             <template #footer
-              ><NButton @click="loadMenus">重新加载</NButton></template
+              ><NButton @click="page.tree.load">重新加载</NButton></template
             >
           </NResult>
           <NEmpty
-            v-else-if="!loading && !filteredMenuList.length"
-            :description="searchPattern ? '没有匹配的菜单' : '暂无菜单'"
+            v-else-if="!page.tree.loading && !page.tree.rows.length"
+            :description="page.tree.search ? '没有匹配的菜单' : '暂无菜单'"
             class="panel-empty"
           >
             <template #extra
               ><NButton
-                v-if="searchPattern"
+                v-if="page.tree.search"
                 size="small"
-                @click="searchPattern = ''"
+                @click="page.tree.search = ''"
                 >清空搜索</NButton
               ><NButton
                 v-else
                 size="small"
-                @click="handleAddMenu()"
+                @click="page.editor.add()"
                 >新增菜单</NButton
               ></template
             >
@@ -133,16 +133,18 @@
             v-else
             ref="treeRef"
             mode="menu"
-            :data="filteredMenuList"
+            :data="page.tree.rows"
             :searchable="false"
             :show-toolbar="false"
-            :actions="treeActions"
-            :draggable="!busy && !loading && !searchPattern.trim()"
-            :status-configs="menuStatusConfigs"
-            :icon-config="menuIconConfig"
-            @node-select="handleNodeSelect"
-            @node-action="handleNodeAction"
-            @node-drop="handleNodeDrop"
+            :actions="page.tree.actions"
+            :draggable="
+              !page.busy && !page.tree.loading && !page.tree.search.trim()
+            "
+            :status-configs="page.menuStatusConfigs"
+            :icon-config="page.tree.iconConfig"
+            @node-select="page.tree.onSelect"
+            @node-action="page.tree.onAction"
+            @node-drop="page.tree.onDrop"
             class="menu-tree"
           />
         </NSpin>
@@ -153,43 +155,47 @@
         size="small"
       >
         <NEmpty
-          v-if="!selectedMenu"
+          v-if="!page.selection.menu"
           description="选择一个菜单，查看路由与页面配置"
           class="panel-empty"
         />
         <template v-else>
           <div class="detail-heading">
             <div class="detail-heading-text">
-              <p class="menu-breadcrumb">{{ breadcrumbs.join(' / ') }}</p>
+              <p class="menu-breadcrumb">{{
+                page.selection.breadcrumbs.join(' / ')
+              }}</p>
               <h2
-                >{{ selectedMenu.name }}
+                >{{ page.selection.menu.name }}
                 <NTag
                   size="small"
-                  :type="getMenuTypeColor(selectedMenu.type)"
-                  >{{ getMenuTypeText(selectedMenu.type) }}</NTag
+                  :type="page.selection.getTypeColor(page.selection.menu.type)"
+                  >{{
+                    page.selection.getTypeText(page.selection.menu.type)
+                  }}</NTag
                 ></h2
               >
             </div>
             <NSpace :size="8">
               <NButton
-                v-if="selectedMenu.type === 'directory'"
+                v-if="page.selection.menu.type === 'directory'"
                 size="small"
-                :disabled="busy"
-                @click="handleAddMenu(selectedMenu.id)"
+                :disabled="page.busy"
+                @click="page.editor.add(page.selection.menu.id)"
                 >新增下级</NButton
               >
               <NButton
                 size="small"
-                :disabled="busy || loading"
-                @click="handleEditMenu(selectedMenu)"
+                :disabled="page.busy || page.tree.loading"
+                @click="page.editor.edit(page.selection.menu)"
                 >编辑菜单</NButton
               >
               <NButton
                 size="small"
                 quaternary
                 type="error"
-                :disabled="busy || loading"
-                @click="handleDeleteMenu(selectedMenu)"
+                :disabled="page.busy || page.tree.loading"
+                @click="page.handleDeleteMenu(page.selection.menu)"
                 >删除</NButton
               >
             </NSpace>
@@ -200,45 +206,50 @@
               <div
                 ><dt>路由标识</dt
                 ><dd
-                  ><code>{{ selectedMenu.id }}</code></dd
+                  ><code>{{ page.selection.menu.id }}</code></dd
                 ></div
               >
               <div
                 ><dt>上级位置</dt
                 ><dd>{{
-                  breadcrumbs.slice(0, -1).join(' / ') || '根目录'
+                  page.selection.breadcrumbs.slice(0, -1).join(' / ') ||
+                  '根目录'
                 }}</dd></div
               >
-              <div v-if="selectedMenu.path"
+              <div v-if="page.selection.menu.path"
                 ><dt>访问路径</dt
                 ><dd
-                  ><code>{{ selectedPath }}</code></dd
+                  ><code>{{ page.selection.path }}</code></dd
                 ></div
               >
-              <div v-if="selectedMenu.component"
+              <div v-if="page.selection.menu.component"
                 ><dt>页面组件</dt
                 ><dd
-                  ><code>{{ selectedMenu.component }}</code></dd
+                  ><code>{{ page.selection.menu.component }}</code></dd
                 ></div
               >
               <div
-                ><dt>排列顺序</dt><dd>{{ selectedMenu.sort }}</dd></div
+                ><dt>排列顺序</dt><dd>{{ page.selection.menu.sort }}</dd></div
               >
               <div
                 ><dt>菜单状态</dt
                 ><dd
                   ><NTag
                     size="small"
-                    :type="selectedMenu.status === 1 ? 'success' : 'error'"
+                    :type="
+                      page.selection.menu.status === 1 ? 'success' : 'error'
+                    "
                     :bordered="false"
-                    >{{ selectedMenu.status === 1 ? '启用' : '禁用' }}</NTag
+                    >{{
+                      page.selection.menu.status === 1 ? '启用' : '禁用'
+                    }}</NTag
                   ></dd
                 ></div
               >
               <div
                 ><dt>导航可见</dt
                 ><dd>{{
-                  selectedMenu.hidden === 1
+                  page.selection.menu.hidden === 1
                     ? '隐藏（仍可通过授权路径访问）'
                     : '显示在导航中'
                 }}</dd></div
@@ -246,17 +257,19 @@
             </dl>
           </section>
           <section
-            v-if="selectedMenu.type === 'menu'"
+            v-if="page.selection.menu.type === 'menu'"
             class="detail-section"
           >
             <div class="section-heading"
               ><h3>页面行为</h3
               ><NTag
-                :type="selectedMenu.keepAlive ? 'success' : 'default'"
+                :type="page.selection.menu.keepAlive ? 'success' : 'default'"
                 size="small"
                 :bordered="false"
                 >{{
-                  selectedMenu.keepAlive ? '缓存已开启' : '每次进入重新加载'
+                  page.selection.menu.keepAlive
+                    ? '缓存已开启'
+                    : '每次进入重新加载'
                 }}</NTag
               ></div
             >
@@ -266,7 +279,7 @@
                 :size="24"
               /><div
                 ><strong>{{
-                  selectedMenu.keepAlive
+                  page.selection.menu.keepAlive
                     ? '切换标签后继续上次操作'
                     : '进入页面时获取最新状态'
                 }}</strong
@@ -277,41 +290,43 @@
             >
           </section>
           <section
-            v-if="selectedMenu.type === 'menu'"
+            v-if="page.selection.menu.type === 'menu'"
             class="detail-section permissions-section"
           >
             <div class="section-heading"
               ><h3
                 >按钮权限
-                <NText depth="3">{{ buttonPermissions.length }}</NText></h3
+                <NText depth="3">{{ page.buttons.rows.length }}</NText></h3
               ><NButton
                 size="small"
                 type="primary"
                 secondary
-                :disabled="busy || permissionsLoading || !!permissionsError"
-                @click="handleAddPermission"
+                :disabled="
+                  page.busy || page.buttons.loading || !!page.buttons.error
+                "
+                @click="page.editor.addPermission"
                 >添加权限</NButton
               ></div
             >
             <NSpin
-              :show="permissionsLoading"
+              :show="page.buttons.loading"
               :size="48"
               :rotate="false"
             >
               <template #icon><C_Loading /></template>
               <NAlert
-                v-if="permissionsError"
+                v-if="page.buttons.error"
                 type="error"
                 title="权限加载失败"
-                ><p>{{ permissionsError }}</p
+                ><p>{{ page.buttons.error }}</p
                 ><NButton
                   size="small"
-                  @click="loadPermissions"
+                  @click="page.buttons.load"
                   >重试</NButton
                 ></NAlert
               >
               <NEmpty
-                v-else-if="!permissionsLoading && !buttonPermissions.length"
+                v-else-if="!page.buttons.loading && !page.buttons.rows.length"
                 description="尚未配置按钮权限，可添加新增、编辑或导出等操作权限"
                 class="permission-empty"
               />
@@ -320,7 +335,7 @@
                 class="permission-list"
               >
                 <div
-                  v-for="permission in buttonPermissions"
+                  v-for="permission in page.buttons.rows"
                   :key="permission.id"
                   class="permission-row"
                 >
@@ -336,7 +351,7 @@
                     }}</p></div
                   >
                   <C_ActionBar
-                    :actions="getPermissionActions(permission)"
+                    :actions="page.buttons.actions(permission)"
                     :config="{ compact: true, size: 'small' }"
                   />
                 </div>
@@ -344,25 +359,25 @@
             </NSpin>
           </section>
           <section
-            v-if="selectedMenu.type === 'directory'"
+            v-if="page.selection.menu.type === 'directory'"
             class="detail-section"
           >
             <div class="section-heading"
               ><h3>直属下级</h3
               ><NText depth="3"
-                >{{ selectedMenu.children?.length || 0 }} 个节点</NText
+                >{{ page.selection.menu.children?.length || 0 }} 个节点</NText
               ></div
             >
             <div
-              v-if="selectedMenu.children?.length"
+              v-if="page.selection.menu.children?.length"
               class="child-list"
             >
               <NButton
-                v-for="child in selectedMenu.children"
+                v-for="child in page.selection.menu.children"
                 :key="child.id"
                 text
                 class="child-link"
-                @click="selectMenu(child.id)"
+                @click="page.tree.select(child.id)"
                 ><C_Icon
                   :name="
                     child.type === 'directory'
@@ -382,12 +397,12 @@
             />
           </section>
           <section
-            v-if="selectedMenu.remark"
+            v-if="page.selection.menu.remark"
             class="detail-section remark-section"
-            ><h3>备注</h3><p>{{ selectedMenu.remark }}</p></section
+            ><h3>备注</h3><p>{{ page.selection.menu.remark }}</p></section
           >
           <p
-            v-if="isMock"
+            v-if="page.isMock"
             class="panel-hint source-hint"
             >演示模式：菜单维护用于演示交互，缓存开关按公司保存；实际权限以服务端授权为准。</p
           >
@@ -396,30 +411,30 @@
     </div>
 
     <NModal
-      v-model:show="showModal"
+      v-model:show="page.editor.visible"
       preset="dialog"
-      :title="modalTitle"
-      :positive-text="modalMode === 'add' ? '确认新增' : '保存配置'"
+      :title="page.editor.title"
+      :positive-text="page.editor.mode === 'add' ? '确认新增' : '保存配置'"
       negative-text="取消"
-      :loading="saving"
-      :closable="!saving"
-      :mask-closable="!saving"
-      :close-on-esc="!saving"
-      :negative-button-props="{ disabled: saving }"
+      :loading="page.editor.saving"
+      :closable="!page.editor.saving"
+      :mask-closable="!page.editor.saving"
+      :close-on-esc="!page.editor.saving"
+      :negative-button-props="{ disabled: page.editor.saving }"
       class="menu-editor"
       style="width: min(640px, calc(100vw - 32px))"
-      @positive-click="handleSaveMenu"
-      @negative-click="handleCancelModal"
+      @positive-click="page.editor.save"
+      @negative-click="page.editor.cancel"
     >
       <C_Form
-        v-if="showModal"
+        v-if="page.editor.visible"
         ref="formRef"
-        :model-value="formData"
-        @update:model-value="Object.assign(formData, $event)"
+        :model-value="page.editor.model"
+        @update:model-value="Object.assign(page.editor.model, $event)"
         :options="formOptions"
-        :config="formConfig"
+        :config="page.editor.config"
         :renderers="formRenderers"
-        @submit="showModal = false"
+        @submit="page.editor.visible = false"
         class="menu-editor-form"
       />
     </NModal>
@@ -434,98 +449,56 @@
     FormRenderer,
   } from '@robot-admin/naive-ui-components/C_Form'
   import type { MenuFormData } from '@/api/menu-manage.contract'
-  import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
-  import '@robot-admin/naive-ui-components/C_Tree/style.css'
   import { useMenuManagement } from './useMenuManagement'
 
   defineOptions({ name: 'MenuManagement' })
 
-  const {
-    loading,
-    loadError,
-    permissionsLoading,
-    permissionsError,
-    saving,
-    mutating,
-    busy,
-    navigationDirty,
-    searchPattern,
-    showModal,
-    modalMode,
-    modalTitle,
-    formRef,
-    treeRef,
-    formData,
-    fieldRules,
-    formConfig,
-    selectedMenu,
-    filteredMenuList,
-    parentMenuOptions,
-    buttonPermissions,
-    breadcrumbs,
-    selectedPath,
-    stats,
-    treeActions,
-    menuIconConfig,
-    menuStatusConfigs,
-    toolbarActions,
-    expanded,
-    isMock,
-    getMenuTypeText,
-    getMenuTypeColor,
-    getPermissionActions,
-    selectMenu,
-    handleNodeSelect,
-    handleNodeAction,
-    handleNodeDrop,
-    toggleExpansion,
-    handleAddMenu,
-    handleAddPermission,
-    handleEditMenu,
-    handleDeleteMenu,
-    handleSaveMenu,
-    handleCancelModal,
-    loadMenus,
-    loadPermissions,
-  } = useMenuManagement()
+  const controller = useMenuManagement()
+  const page = proxyRefs(controller)
+  const { treeRef, formRef } = controller
   const formOptions = computed<FormOption<MenuFormData>[]>(() => [
     {
       prop: 'type',
       layout: { span: 3 },
       label: '节点类型',
-      type: formData.type === 'button' ? 'buttonType' : 'radio',
+      type: controller.editor.model.type === 'button' ? 'buttonType' : 'radio',
       children: [
         { label: '目录', value: 'directory' },
         { label: '页面', value: 'menu' },
       ],
-      disabled: modalMode.value === 'edit' || saving.value,
-      rulesWhen: model => fieldRules('type', model),
+      disabled: controller.editor.mode === 'edit' || controller.editor.saving,
+      rulesWhen: model => controller.editor.rules('type', model),
     },
     {
       prop: 'name',
       layout: { span: 3 },
-      label: formData.type === 'button' ? '权限名称' : '菜单名称',
+      label:
+        controller.editor.model.type === 'button' ? '权限名称' : '菜单名称',
       type: 'input',
       placeholder: '请输入清晰易懂的名称',
       attrs: { maxlength: 60, showCount: true },
-      rulesWhen: model => fieldRules('name', model),
+      rulesWhen: model => controller.editor.rules('name', model),
     },
     {
       prop: 'parentId',
       layout: { span: 3 },
-      label: formData.type === 'button' ? '所属页面' : '上级目录',
+      label:
+        controller.editor.model.type === 'button' ? '所属页面' : '上级目录',
       type: 'treeSelect',
       attrs: {
-        options: parentMenuOptions.value,
-        clearable: formData.type !== 'button',
+        options: controller.editor.parentOptions,
+        clearable: controller.editor.model.type !== 'button',
         filterable: true,
       },
       placeholder:
-        formData.type === 'button' ? '选择所属页面' : '留空表示根目录',
+        controller.editor.model.type === 'button'
+          ? '选择所属页面'
+          : '留空表示根目录',
       disabled:
-        saving.value ||
-        (formData.type === 'button' && modalMode.value === 'edit'),
-      rulesWhen: model => fieldRules('parentId', model),
+        controller.editor.saving ||
+        (controller.editor.model.type === 'button' &&
+          controller.editor.mode === 'edit'),
+      rulesWhen: model => controller.editor.rules('parentId', model),
     },
     {
       prop: 'path',
@@ -533,8 +506,8 @@
       label: '路由路径',
       type: 'input',
       placeholder: '如 /sys-manage/menu-manage',
-      show: formData.type !== 'button',
-      rulesWhen: model => fieldRules('path', model),
+      show: controller.editor.model.type !== 'button',
+      rulesWhen: model => controller.editor.rules('path', model),
     },
     {
       prop: 'component',
@@ -542,8 +515,8 @@
       label: '页面组件',
       type: 'input',
       placeholder: '如 /sys-manage/menu-manage/index',
-      show: formData.type === 'menu',
-      rulesWhen: model => fieldRules('component', model),
+      show: controller.editor.model.type === 'menu',
+      rulesWhen: model => controller.editor.rules('component', model),
     },
     {
       prop: 'permission',
@@ -551,8 +524,8 @@
       label: '权限标识',
       type: 'input',
       placeholder: '如 sys:menu:add',
-      show: formData.type === 'button',
-      rulesWhen: model => fieldRules('permission', model),
+      show: controller.editor.model.type === 'button',
+      rulesWhen: model => controller.editor.rules('permission', model),
     },
     {
       prop: 'icon',
@@ -560,7 +533,7 @@
       label: '菜单图标',
       type: 'menuIcon',
       placeholder: '如 mdi:folder-outline',
-      show: formData.type !== 'button',
+      show: controller.editor.model.type !== 'button',
     },
     {
       prop: 'sort',
@@ -568,8 +541,8 @@
       label: '排列顺序',
       type: 'inputNumber',
       attrs: { min: 0, max: 9999, precision: 0 },
-      show: formData.type !== 'button',
-      rulesWhen: model => fieldRules('sort', model),
+      show: controller.editor.model.type !== 'button',
+      rulesWhen: model => controller.editor.rules('sort', model),
     },
     {
       prop: 'status',
@@ -577,7 +550,7 @@
       label: '菜单状态',
       type: 'menuSwitch',
       attrs: { checkedValue: 1, uncheckedValue: 0 },
-      show: formData.type !== 'button',
+      show: controller.editor.model.type !== 'button',
     },
     {
       prop: 'hidden',
@@ -585,7 +558,7 @@
       label: '导航显示',
       type: 'menuSwitch',
       attrs: { checkedValue: 0, uncheckedValue: 1 },
-      show: formData.type !== 'button',
+      show: controller.editor.model.type !== 'button',
     },
     {
       prop: 'keepAlive',
@@ -593,7 +566,7 @@
       label: '页面缓存',
       type: 'menuSwitch',
       attrs: { 'aria-label': '页面缓存' },
-      show: formData.type === 'menu',
+      show: controller.editor.model.type === 'menu',
       help: '保留切换标签前的筛选、分页和表单状态。保存后同步导航生效；适合需要连续操作的页面。',
     },
     {
@@ -612,7 +585,9 @@
     menuIcon: props =>
       h(NInput, props, {
         suffix: () =>
-          formData.icon ? h(C_Icon, { name: formData.icon, size: 20 }) : null,
+          controller.editor.model.icon
+            ? h(C_Icon, { name: controller.editor.model.icon, size: 20 })
+            : null,
       }),
     menuSwitch: (props, item) =>
       h(NSwitch, props, {

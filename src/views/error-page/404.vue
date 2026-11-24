@@ -6,10 +6,10 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
 -->
 <template>
-  <c_errorPage code="404" />
+  <ErrorPage code="404" />
 </template>
 
 <script setup lang="ts">
-  import c_errorPage from './components/c_errorPage/index.vue'
+  import ErrorPage from './components/ErrorPage/index.vue'
   defineOptions({ name: 'Error404Page' })
 </script>

@@ -37,34 +37,32 @@
                 <NButton
                   v-longpress="{
                     duration: DEMO_CONFIG.DEFAULT_DURATION,
-                    onTrigger: () => state.basicCount.value++,
+                    onTrigger: () => state.basicCount++,
                   }"
                   type="primary"
-                  @click="handlers.handleBasicClick"
                 >
                   长按按钮 (800ms)
                 </NButton>
-                <NText>长按触发次数: {{ state.basicCount.value }}</NText>
+                <NText>长按触发次数: {{ state.basicCount }}</NText>
               </div>
 
               <div class="demo-row">
                 <NButton
                   v-longpress="{
                     duration: DEMO_CONFIG.DEFAULT_DURATION,
-                    onTrigger: () => state.defaultCount.value++,
+                    onTrigger: () => state.defaultCount++,
                   }"
-                  @click="handlers.handleDefaultClick"
                 >
                   默认长按按钮
                 </NButton>
-                <NText>长按触发次数: {{ state.defaultCount.value }}</NText>
+                <NText>长按触发次数: {{ state.defaultCount }}</NText>
               </div>
 
               <div class="demo-row">
-                <NButton @click="state.normalCount.value++">
+                <NButton @click="state.normalCount++">
                   普通按钮 (无长按)
                 </NButton>
-                <NText>点击次数: {{ state.normalCount.value }}</NText>
+                <NText>点击次数: {{ state.normalCount }}</NText>
               </div>
             </NSpace>
           </NCard>
@@ -80,16 +78,16 @@
                   v-longpress="{
                     duration: DEMO_CONFIG.SLOW_DURATION,
                     onStart: () => console.log('慢速长按开始'),
-                    onTrigger: () => state.slowCount.value++,
-                    onCancel: () => state.slowCancelCount.value++,
+                    onTrigger: () => state.slowCount++,
+                    onCancel: () => state.slowCancelCount++,
                   }"
                   type="info"
                 >
                   慢速长按 (2000ms)
                 </NButton>
                 <NSpace>
-                  <NText>触发: {{ state.slowCount.value }}</NText>
-                  <NText>取消: {{ state.slowCancelCount.value }}</NText>
+                  <NText>触发: {{ state.slowCount }}</NText>
+                  <NText>取消: {{ state.slowCancelCount }}</NText>
                 </NSpace>
               </div>
 
@@ -97,17 +95,17 @@
                 <NButton
                   v-longpress="{
                     duration: DEMO_CONFIG.PROGRESS_DURATION,
-                    onProgress: handlers.handleProgress,
-                    onTrigger: handlers.handleProgressComplete,
+                    onProgress: updateProgress,
+                    onTrigger: completeProgress,
                   }"
                   type="error"
                   class="progress-button"
-                  :style="{ '--progress': state.progressValue.value + '%' }"
+                  :style="{ '--progress': state.progressValue + '%' }"
                 >
                   进度长按 (1500ms)
                 </NButton>
                 <NProgress
-                  :percentage="state.progressValue.value"
+                  :percentage="state.progressValue"
                   :show-indicator="false"
                   style="width: 200px"
                 />
@@ -122,10 +120,10 @@
           >
             <NSpace vertical>
               <NSpace>
-                <NSwitch v-model:value="state.enabled.value" />
+                <NSwitch v-model:value="state.enabled" />
                 <NText>启用长按</NText>
                 <NInputNumber
-                  v-model:value="state.duration.value"
+                  v-model:value="state.duration"
                   :min="DEMO_CONFIG.DURATION_MIN"
                   :max="DEMO_CONFIG.DURATION_MAX"
                   :step="DEMO_CONFIG.DURATION_STEP"
@@ -138,20 +136,20 @@
               <div class="demo-row">
                 <NButton
                   v-longpress="{
-                    disabled: !state.enabled.value,
-                    duration: state.duration.value,
-                    onTrigger: () => state.dynamicCount.value++,
+                    disabled: !state.enabled,
+                    duration: state.duration,
+                    onTrigger: () => state.dynamicCount++,
                   }"
                   type="primary"
                 >
                   动态配置按钮
                 </NButton>
-                <NText>触发次数: {{ state.dynamicCount.value }}</NText>
+                <NText>触发次数: {{ state.dynamicCount }}</NText>
               </div>
 
               <NSpace>
-                <NTag>状态: {{ state.enabled.value ? '启用' : '禁用' }}</NTag>
-                <NTag type="info">持续时间: {{ state.duration.value }}ms</NTag>
+                <NTag>状态: {{ state.enabled ? '启用' : '禁用' }}</NTag>
+                <NTag type="info">持续时间: {{ state.duration }}ms</NTag>
               </NSpace>
             </NSpace>
           </NCard>
@@ -166,28 +164,23 @@
                 <NButton
                   v-longpress="{
                     duration: DEMO_CONFIG.DELETE_DURATION,
-                    onTrigger: () => state.deleteCount.value++,
+                    onTrigger: () => state.deleteCount++,
                   }"
                   type="error"
                 >
                   长按删除 (2000ms)
                 </NButton>
-                <NText>删除次数: {{ state.deleteCount.value }}</NText>
+                <NText>删除次数: {{ state.deleteCount }}</NText>
               </div>
 
               <div class="demo-row">
                 <NButton
-                  v-longpress="{
-                    duration: DEMO_CONFIG.QUANTITY_DURATION,
-                    onStart: handlers.startIncrease,
-                    onTrigger: handlers.continuousIncrease,
-                    onCancel: handlers.stopIncrease,
-                  }"
-                  @click="state.quantity.value++"
+                  v-longpress="quantityPress"
+                  @click="clickQuantity"
                 >
                   + 数量调节
                 </NButton>
-                <NText>数量: {{ state.quantity.value }}</NText>
+                <NText>数量: {{ state.quantity }}</NText>
               </div>
             </NSpace>
           </NCard>
@@ -201,7 +194,7 @@
           size="small"
         >
           <NTabs
-            v-model:value="state.activeTab.value"
+            v-model:value="state.activeTab"
             type="line"
             size="small"
           >
@@ -241,16 +234,16 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo26LongpressDirect' })
-  import {
-    createDemoState,
-    createDemoHandlers,
-    CODE_EXAMPLES,
-    DEMO_CONFIG,
-  } from './data'
+  import { useLongPressDemo, CODE_EXAMPLES, DEMO_CONFIG } from './data'
 
   // 创建状态和处理函数
-  const state = createDemoState()
-  const handlers = createDemoHandlers(state)
+  const {
+    state,
+    updateProgress,
+    completeProgress,
+    quantityPress,
+    clickQuantity,
+  } = useLongPressDemo()
 </script>
 
 <style lang="scss" scoped>

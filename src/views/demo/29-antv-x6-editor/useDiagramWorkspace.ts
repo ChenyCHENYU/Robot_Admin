@@ -21,12 +21,6 @@ export function useDiagramWorkspace() {
   const snapshots: Partial<Record<DiagramType, DiagramData>> = {}
   const initialData = shallowRef(createDiagramData(type.value))
   const liveData = shallowRef(initialData.value)
-  const selectedNode = shallowRef<{
-    id: string
-    name: string
-    detail: string
-    position: { x: number; y: number }
-  } | null>(null)
   let active = true
   let graph: Graph | undefined
   let cleanup = () => {}
@@ -68,9 +62,11 @@ export function useDiagramWorkspace() {
         : data.relations.length
       : 0
   })
+  const selectedNode = computed(
+    () => items.value.find(item => item.id === selectedId.value) ?? null
+  )
   const select = (id: string, center = true) => {
     selectedId.value = id
-    selectedNode.value = items.value.find(item => item.id === id) ?? null
     const node = graph?.getCellById(id)
     if (node && center) graph?.centerCell(node)
   }
@@ -88,8 +84,6 @@ export function useDiagramWorkspace() {
   }
   const onChange = (value: DiagramData) => {
     liveData.value = value
-    selectedNode.value =
-      items.value.find(item => item.id === selectedId.value) ?? null
   }
   const capture = () => diagramRef.value?.getData() ?? liveData.value
   const fit = () => graph?.zoomToFit({ padding: 40, maxScale: 1 })
@@ -98,12 +92,16 @@ export function useDiagramWorkspace() {
     const node = graph?.getCellById(selectedId.value)
     if (node?.isNode()) graph?.trigger('node:dblclick', { node })
   }
-  const reset = () => {
-    initialData.value = createDiagramData(type.value)
-    liveData.value = initialData.value
+  const replaceDiagram = (next: DiagramData) => {
+    cleanup()
+    cleanup = () => {}
+    graph = undefined
+    initialData.value = next
+    liveData.value = next
     selectedId.value = ''
     revision.value++
   }
+  const reset = () => replaceDiagram(createDiagramData(type.value))
   const exportJson = () => {
     const url = URL.createObjectURL(
       new Blob([JSON.stringify(capture(), null, 2)], {
@@ -119,10 +117,7 @@ export function useDiagramWorkspace() {
   watch(type, (value, previous) => {
     const data = capture()
     if (data) snapshots[previous] = data
-    initialData.value = snapshots[value] ?? createDiagramData(value)
-    liveData.value = initialData.value
-    selectedId.value = ''
-    revision.value++
+    replaceDiagram(snapshots[value] ?? createDiagramData(value))
   })
   // 只读切换交给组件原位更新权限，保留视口、选中节点与当前编辑数据。
   onBeforeUnmount(() => {

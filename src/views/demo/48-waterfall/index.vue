@@ -24,23 +24,23 @@
           v-for="item in GALLERY_CATEGORIES"
           :key="item"
           type="button"
-          :aria-pressed="category === item"
-          @click="category = item"
+          :aria-pressed="gallery.category === item"
+          @click="gallery.category = item"
           >{{ item }}</button
         ></div
       ><div class="workspace-actions"
         ><NSelect
-          v-model:value="collectionSize"
+          v-model:value="gallery.collectionSize"
           class="gallery-collection-select"
           size="small"
           :options="COLLECTION_OPTIONS"
           aria-label="素材库规模" /><NInput
-          v-model:value="search"
+          v-model:value="gallery.search"
           size="small"
           clearable
           placeholder="搜索素材标题"
           :input-props="{ 'aria-label': '搜索素材标题' }" /><NSelect
-          v-model:value="columns"
+          v-model:value="gallery.columns"
           size="small"
           :options="COLUMN_OPTIONS"
           aria-label="素材列数" /></div
@@ -48,44 +48,45 @@
     <section class="gallery-content"
       ><C_WaterFall
         ref="galleryRef"
-        :items="visibleItems"
-        :columns="columns || undefined"
+        :items="gallery.visibleItems"
+        :columns="gallery.columns || undefined"
         :gap="20"
-        @item-click="openItem"
+        @item-click="gallery.openItem"
       /><div
-        v-if="!visibleItems.length"
+        v-if="!gallery.visibleItems.length"
         class="workspace-empty"
         >没有匹配的素材，换个关键词试试。</div
       ></section
     ><footer class="gallery-footer"
       ><span
-        >已展示 {{ visibleItems.length }} /
-        {{ filteredItems.length }} 份素材</span
+        >已展示 {{ gallery.visibleItems.length }} /
+        {{ gallery.filteredItems.length }} 份素材</span
       ><NButton
         size="small"
-        :disabled="limit >= filteredItems.length"
-        @click="loadMore"
+        :disabled="gallery.limit >= gallery.filteredItems.length"
+        @click="gallery.loadMore"
         >查看更多素材</NButton
       ><span>内置设计示例 · 无需外部图片服务</span></footer
     >
     <NModal
-      v-model:show="showItem"
+      v-model:show="gallery.showItem"
       preset="card"
-      :title="selected?.title"
+      :title="gallery.selected?.title"
       :style="{ width: 'min(720px,calc(100vw - 32px))' }"
       ><img
-        v-if="selected"
-        :src="selected.src"
-        :alt="selected.title"
+        v-if="gallery.selected"
+        :src="gallery.selected.src"
+        :alt="gallery.selected.title"
         class="gallery-preview"
       /><template #footer
         ><div class="workspace-actions"
           ><NButton
             size="small"
-            @click="download"
+            @click="gallery.download"
             >下载 SVG 素材</NButton
           ><span class="workspace-hint"
-            >{{ selected?.width }} × {{ selected?.height }} px</span
+            >{{ gallery.selected?.width }} ×
+            {{ gallery.selected?.height }} px</span
           ></div
         ></template
       ></NModal
@@ -94,27 +95,15 @@
 </template>
 <script setup lang="ts">
   import {
-    GALLERY_CATEGORIES,
-    COLLECTION_OPTIONS,
-    useGalleryWorkspace,
-  } from './data'
-  defineOptions({ name: 'Demo48Waterfall' })
-  const {
-    galleryRef,
-    category,
-    search,
-    columns,
-    collectionSize,
-    limit,
-    selected,
-    showItem,
     COLUMN_OPTIONS,
-    filteredItems,
-    visibleItems,
-    openItem,
-    download,
-    loadMore,
-  } = useGalleryWorkspace()
+    COLLECTION_OPTIONS,
+    GALLERY_CATEGORIES,
+  } from './data'
+  import { useGalleryWorkspace } from './useGalleryWorkspace'
+  defineOptions({ name: 'Demo48Waterfall' })
+  const controller = useGalleryWorkspace()
+  const gallery = proxyRefs(controller)
+  const { galleryRef } = controller
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

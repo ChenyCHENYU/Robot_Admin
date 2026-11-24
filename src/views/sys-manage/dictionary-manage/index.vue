@@ -24,43 +24,43 @@
         </div>
         <C_ActionBar
           class="workspace-actions"
-          :actions="toolbarActions"
+          :actions="page.toolbarActions"
           :config="{ compact: true, wrap: true }"
         />
       </div>
       <div class="workspace-summary">
         <span
-          ><strong>{{ stats.types }}</strong> 字典类型</span
+          ><strong>{{ page.tree.stats.types }}</strong> 字典类型</span
         >
         <span
-          ><strong>{{ stats.items }}</strong> 字典项</span
+          ><strong>{{ page.tree.stats.items }}</strong> 字典项</span
         >
         <NTag
           size="small"
           :bordered="false"
-          :type="isMock ? 'warning' : 'success'"
-          >{{ isMock ? '演示数据' : '已连接服务' }}</NTag
+          :type="page.isMock ? 'warning' : 'success'"
+          >{{ page.isMock ? '演示数据' : '已连接服务' }}</NTag
         >
       </div>
     </NCard>
 
     <NAlert
-      v-if="loadError"
+      v-if="page.tree.error"
       type="error"
       title="字典加载失败"
     >
-      {{ loadError }}
+      {{ page.tree.error }}
       <NButton
         size="small"
-        :loading="loading"
-        @click="loadDicts()"
+        :loading="page.tree.loading"
+        @click="page.tree.load()"
         >重新加载</NButton
       >
     </NAlert>
 
     <div
       class="dictionary-workspace"
-      :aria-busy="loading || busy"
+      :aria-busy="page.tree.loading || page.busy"
     >
       <NCard
         class="dictionary-structure"
@@ -71,13 +71,13 @@
           <NButton
             quaternary
             size="tiny"
-            :disabled="loading"
-            @click="toggleExpansion"
-            >{{ expanded ? '收起全部' : '展开全部' }}</NButton
+            :disabled="page.tree.loading"
+            @click="page.tree.toggleExpansion"
+            >{{ page.tree.expanded ? '收起全部' : '展开全部' }}</NButton
           >
         </template>
         <NInput
-          v-model:value="searchPattern"
+          v-model:value="page.tree.search"
           clearable
           placeholder="搜索名称、编码或存储值"
           :input-props="{ 'aria-label': '搜索字典' }"
@@ -90,29 +90,29 @@
         </NInput>
         <p class="panel-hint">选择类型查看选项；展开可定位到具体字典项</p>
         <NSpin
-          :show="loading || mutating"
+          :show="page.tree.loading || page.mutating"
           :size="48"
           :rotate="false"
           class="tree-loading"
         >
           <template #icon><C_Loading /></template>
           <NEmpty
-            v-if="!loading && !filteredDictList.length"
-            :description="searchPattern ? '没有匹配的字典' : '暂无字典类型'"
+            v-if="!page.tree.loading && !page.tree.rows.length"
+            :description="page.tree.search ? '没有匹配的字典' : '暂无字典类型'"
             class="panel-empty"
           >
             <template #extra>
               <NButton
-                v-if="searchPattern"
+                v-if="page.tree.search"
                 size="small"
-                @click="searchPattern = ''"
+                @click="page.tree.search = ''"
                 >清空搜索</NButton
               >
               <NButton
                 v-else
                 size="small"
-                :disabled="!!loadError"
-                @click="handleAdd()"
+                :disabled="!!page.tree.error"
+                @click="page.editor.add()"
                 >新增字典类型</NButton
               >
             </template>
@@ -122,16 +122,18 @@
             ref="treeRef"
             class="dictionary-tree"
             mode="custom"
-            :data="filteredDictList"
-            :selected-keys="selectedId === null ? [] : [selectedId]"
+            :data="page.tree.rows"
+            :selected-keys="
+              page.selection.id === null ? [] : [page.selection.id]
+            "
             :tree-props="{ cancelable: false }"
             :searchable="false"
             :show-toolbar="false"
-            :actions="treeActions"
-            :status-configs="statusConfigs"
-            :icon-config="iconConfig"
-            @node-select="handleNodeSelect"
-            @node-action="handleNodeAction"
+            :actions="page.tree.actions"
+            :status-configs="page.statusConfigs"
+            :icon-config="page.iconConfig"
+            @node-select="page.tree.onSelect"
+            @node-action="page.tree.onAction"
           />
         </NSpin>
       </NCard>
@@ -141,13 +143,15 @@
         size="small"
       >
         <NSpin
-          :show="(loading || mutating) && !dictItems.length"
+          :show="
+            (page.tree.loading || page.mutating) && !page.selection.items.length
+          "
           :size="48"
           :rotate="false"
         >
           <template #icon><C_Loading /></template>
           <NEmpty
-            v-if="!selectedType"
+            v-if="!page.selection.type"
             description="新增或选择一个字典类型，开始维护选项"
             class="panel-empty"
           />
@@ -156,15 +160,19 @@
               <div class="type-title">
                 <span class="eyebrow">字典类型</span>
                 <h2
-                  >{{ selectedType.name
+                  >{{ page.selection.type.name
                   }}<NTag
                     size="small"
                     :bordered="false"
-                    :type="selectedType.status === 1 ? 'success' : 'default'"
-                    >{{ selectedType.status === 1 ? '已启用' : '已停用' }}</NTag
+                    :type="
+                      page.selection.type.status === 1 ? 'success' : 'default'
+                    "
+                    >{{
+                      page.selection.type.status === 1 ? '已启用' : '已停用'
+                    }}</NTag
                   ></h2
                 >
-                <code>{{ selectedType.code }}</code>
+                <code>{{ page.selection.type.code }}</code>
               </div>
               <NSpace
                 :size="8"
@@ -173,15 +181,15 @@
                 <NButton
                   size="small"
                   :disabled="actionsDisabled"
-                  @click="handleEdit(selectedType)"
+                  @click="page.editor.edit(page.selection.type)"
                   >编辑类型</NButton
                 >
                 <NButton
                   size="small"
                   :disabled="actionsDisabled"
-                  @click="handleToggle(selectedType)"
+                  @click="page.commands.toggle(page.selection.type)"
                   >{{
-                    selectedType.status === 1 ? '停用类型' : '启用类型'
+                    page.selection.type.status === 1 ? '停用类型' : '启用类型'
                   }}</NButton
                 >
                 <NButton
@@ -189,13 +197,13 @@
                   quaternary
                   type="error"
                   :disabled="actionsDisabled"
-                  @click="handleDelete(selectedType)"
+                  @click="page.commands.remove(page.selection.type)"
                   >删除类型</NButton
                 >
               </NSpace>
             </div>
             <NAlert
-              v-if="selectedType.status === 0"
+              v-if="page.selection.type.status === 0"
               type="warning"
               :bordered="false"
               class="type-notice"
@@ -203,9 +211,9 @@
               类型已停用，下级选项暂不生效。重新启用后，各字典项保留原有的启停状态。
             </NAlert>
             <p
-              v-if="selectedType.remark"
+              v-if="page.selection.type.remark"
               class="type-remark"
-              >{{ selectedType.remark }}</p
+              >{{ page.selection.type.remark }}</p
             >
 
             <div class="items-heading">
@@ -213,15 +221,16 @@
                 ><h3
                   >字典项
                   <span
-                    >{{ dictItems.length }} 项 · {{ enabledItems }} 项生效</span
+                    >{{ page.selection.items.length }} 项 ·
+                    {{ page.selection.enabledCount }} 项生效</span
                   ></h3
                 ><p>{{ itemExplanation }}</p></div
               >
               <NButton
                 size="small"
                 type="primary"
-                :disabled="actionsDisabled || selectedType.status === 0"
-                @click="handleAdd(selectedType)"
+                :disabled="actionsDisabled || page.selection.type.status === 0"
+                @click="page.editor.add(page.selection.type)"
               >
                 <template #icon
                   ><C_Icon
@@ -232,17 +241,17 @@
               </NButton>
             </div>
             <C_Table
-              v-if="dictItems.length"
+              v-if="page.selection.items.length"
               class="dictionary-items"
-              :loading="loading || mutating"
+              :loading="page.tree.loading || page.mutating"
               :columns="columns"
-              :data="dictItems"
+              :data="page.selection.items"
               :row-key="row => row.id"
               :row-props="rowProps"
               :config="{
                 toolbar: { show: false },
                 pagination:
-                  dictItems.length > 10
+                  page.selection.items.length > 10
                     ? {
                         pageSize: 10,
                         showSizePicker: false,
@@ -266,14 +275,16 @@
               <template #extra
                 ><NButton
                   size="small"
-                  :disabled="actionsDisabled || selectedType.status === 0"
-                  @click="handleAdd(selectedType)"
+                  :disabled="
+                    actionsDisabled || page.selection.type.status === 0
+                  "
+                  @click="page.editor.add(page.selection.type)"
                   >添加第一个字典项</NButton
                 ></template
               >
             </NEmpty>
             <p class="source-hint">{{
-              isMock
+              page.isMock
                 ? '当前为演示字典，修改在本次服务会话内生效。'
                 : '字典数据由系统服务保存，业务通过类型编码和存储值读取选项。'
             }}</p>
@@ -283,53 +294,53 @@
     </div>
 
     <NModal
-      :show="showModal"
+      :show="page.editor.visible"
       class="dictionary-editor"
       preset="card"
-      :title="modalTitle"
-      :closable="!saving"
-      :mask-closable="!saving"
-      :close-on-esc="!saving"
+      :title="page.editor.title"
+      :closable="!page.editor.saving"
+      :mask-closable="!page.editor.saving"
+      :close-on-esc="!page.editor.saving"
       style="width: min(600px, calc(100vw - 32px))"
-      @update:show="handleCancel"
+      @update:show="page.editor.cancel"
     >
       <C_Form
-        v-if="showModal"
+        v-if="page.editor.visible"
         ref="formRef"
-        :model-value="formData"
-        @update:model-value="Object.assign(formData, $event)"
+        :model-value="page.editor.model"
+        @update:model-value="Object.assign(page.editor.model, $event)"
         :options="formOptions"
-        :config="formConfig"
+        :config="page.editor.config"
         :renderers="formRenderers"
-        @submit="showModal = false"
+        @submit="page.editor.visible = false"
         class="dictionary-editor-form"
       />
       <div
-        v-if="formData.type === 'item'"
+        v-if="page.editor.model.type === 'item'"
         class="effective-preview"
       >
         <span>保存后生效预览</span>
         <NTag
           size="small"
           :bordered="false"
-          :type="formItemState.effective ? 'success' : 'warning'"
+          :type="page.editor.itemState.effective ? 'success' : 'warning'"
           >{{
-            formItemState.effective
+            page.editor.itemState.effective
               ? '可生效'
-              : `不生效 · ${formItemState.reason}`
+              : `不生效 · ${page.editor.itemState.reason}`
           }}</NTag
         >
       </div>
       <template #footer
         ><NSpace justify="end"
           ><NButton
-            :disabled="saving"
-            @click="handleCancel"
+            :disabled="page.editor.saving"
+            @click="page.editor.cancel"
             >取消</NButton
           ><NButton
             type="primary"
-            :loading="saving"
-            @click="handleSave"
+            :loading="page.editor.saving"
+            @click="page.editor.save"
             >保存字典</NButton
           ></NSpace
         ></template
@@ -341,8 +352,6 @@
 <script setup lang="ts">
   import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
 
-  import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
-  import '@robot-admin/naive-ui-components/C_Tree/style.css'
   import type {
     FormOption,
     FormRenderer,
@@ -353,61 +362,27 @@
 
   defineOptions({ name: 'DictionaryManage' })
 
-  const {
-    isMock,
-    loading,
-    busy,
-    saving,
-    mutating,
-    loadError,
-    searchPattern,
-    selectedId,
-    selectedType,
-    dictItems,
-    filteredDictList,
-    stats,
-    enabledItems,
-    treeRef,
-    formRef,
-    formData,
-    fieldRules,
-    formConfig,
-    parentOptions,
-    formItemState,
-    showModal,
-    modalTitle,
-    expanded,
-    toolbarActions,
-    treeActions,
-    statusConfigs,
-    iconConfig,
-    loadDicts,
-    selectDict,
-    toggleExpansion,
-    handleNodeSelect,
-    handleNodeAction,
-    handleAdd,
-    handleEdit,
-    handleCancel,
-    handleSave,
-    handleToggle,
-    handleDelete,
-  } = useDictionaryManagement()
+  const controller = useDictionaryManagement()
+  const page = proxyRefs(controller)
+  const { treeRef, formRef } = controller
   const actionsDisabled = computed(
-    () => busy.value || loading.value || !!loadError.value
+    () =>
+      controller.busy.value ||
+      controller.tree.loading ||
+      !!controller.tree.error
   )
   const itemExplanation = computed(() => {
-    const item = dictItems.value[0]
+    const item = controller.selection.items[0]
     return item
       ? `界面显示“${item.dictLabel || item.name}”，业务保存“${item.dictValue ?? item.value ?? ''}”；编码为 ${item.code}。`
       : '显示标签便于理解，存储值用于业务提交。'
   })
   const rowProps = (row: DictData) => ({
-    class: selectedId.value === row.id ? 'selected-dictionary-item' : '',
+    class: controller.selection.id === row.id ? 'selected-dictionary-item' : '',
   })
   const codeCell = (value?: string) => h('code', null, value ?? '—')
   const renderItemStatus = (row: DictData) => {
-    const state = getDictionaryState(row, selectedType.value)
+    const state = getDictionaryState(row, controller.selection.type)
     return h('div', { class: 'dictionary-item-status' }, [
       h(
         NTag,
@@ -435,7 +410,11 @@
       render: row =>
         h(
           NButton,
-          { text: true, type: 'primary', onClick: () => selectDict(row.id) },
+          {
+            text: true,
+            type: 'primary',
+            onClick: () => controller.tree.select(row.id),
+          },
           () => row.dictLabel || row.name
         ),
     },
@@ -470,7 +449,7 @@
               text: true,
               size: 'small',
               disabled: actionsDisabled.value,
-              onClick: () => handleEdit(row),
+              onClick: () => controller.editor.edit(row),
             },
             () => '编辑'
           ),
@@ -480,7 +459,7 @@
               text: true,
               size: 'small',
               disabled: actionsDisabled.value,
-              onClick: () => handleToggle(row),
+              onClick: () => controller.commands.toggle(row),
             },
             () => (row.status === 1 ? '停用' : '启用')
           ),
@@ -491,7 +470,7 @@
               size: 'small',
               type: 'error',
               disabled: actionsDisabled.value,
-              onClick: () => handleDelete(row),
+              onClick: () => controller.commands.remove(row),
             },
             () => '删除'
           ),
@@ -502,12 +481,14 @@
     {
       prop: 'name',
       layout: { span: 2 },
-      label: formData.type === 'type' ? '类型名称' : '显示标签',
+      label: controller.editor.model.type === 'type' ? '类型名称' : '显示标签',
       type: 'input',
       placeholder:
-        formData.type === 'type' ? '如 用户状态' : '用于界面展示，如 正常',
+        controller.editor.model.type === 'type'
+          ? '如 用户状态'
+          : '用于界面展示，如 正常',
       attrs: { maxlength: 60 },
-      rulesWhen: model => fieldRules('name', model),
+      rulesWhen: model => controller.editor.rules('name', model),
     },
     {
       prop: 'typeCode',
@@ -515,19 +496,19 @@
       label: '类型编码',
       type: 'input',
       placeholder: '如 user_status',
-      show: formData.type === 'type',
+      show: controller.editor.model.type === 'type',
       help: '业务使用类型编码读取字典，请保持稳定且唯一。',
-      rulesWhen: model => fieldRules('typeCode', model),
+      rulesWhen: model => controller.editor.rules('typeCode', model),
     },
     {
       prop: 'parentId',
       layout: { span: 2 },
       label: '所属类型',
       type: 'select',
-      children: parentOptions.value,
+      children: controller.editor.parentOptions,
       placeholder: '选择所属字典类型',
-      show: formData.type === 'item',
-      rulesWhen: model => fieldRules('parentId', model),
+      show: controller.editor.model.type === 'item',
+      rulesWhen: model => controller.editor.rules('parentId', model),
     },
     {
       prop: 'dictValue',
@@ -535,9 +516,9 @@
       label: '存储值',
       type: 'input',
       placeholder: '如 1、0 或 enabled',
-      show: formData.type === 'item',
+      show: controller.editor.model.type === 'item',
       help: '存储值用于业务提交，同一类型下不能重复；修改显示标签不会改写编码。',
-      rulesWhen: model => fieldRules('dictValue', model),
+      rulesWhen: model => controller.editor.rules('dictValue', model),
     },
     {
       prop: 'code',
@@ -545,8 +526,8 @@
       label: '字典项编码（选填）',
       type: 'input',
       placeholder: '如 normal；留空使用存储值',
-      show: formData.type === 'item',
-      rulesWhen: model => fieldRules('code', model),
+      show: controller.editor.model.type === 'item',
+      rulesWhen: model => controller.editor.rules('code', model),
     },
     {
       prop: 'sort',
@@ -554,12 +535,13 @@
       label: '排序',
       type: 'inputNumber',
       attrs: { min: 0, max: 9999, precision: 0 },
-      rulesWhen: model => fieldRules('sort', model),
+      rulesWhen: model => controller.editor.rules('sort', model),
     },
     {
       prop: 'status',
       layout: { span: 1 },
-      label: formData.type === 'item' ? '字典项状态' : '类型状态',
+      label:
+        controller.editor.model.type === 'item' ? '字典项状态' : '类型状态',
       type: 'dictionaryStatus',
       attrs: { checkedValue: 1, uncheckedValue: 0 },
     },

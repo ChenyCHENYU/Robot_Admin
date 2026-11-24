@@ -9,45 +9,28 @@ import type {
   NotificationStatus,
   NotificationQuery,
 } from '@/api/notifications.contract'
+import type { LocationQuery } from 'vue-router'
 import { useMessageInbox } from './useMessageInbox'
 import {
   parseMessageRouteQuery,
   matchesMessageRouteQuery,
   toMessageRouteQuery,
 } from './useMessageRoute'
-import {
-  CATEGORY_OPTIONS,
-  INBOX_TABS,
-  PRIORITY_OPTIONS,
-  TASK_STATUS_OPTIONS,
-  WORKFLOW_STATUS_OPTIONS,
-  WORKFLOW_RELATION_OPTIONS,
-} from '../data'
 import { getNotificationTopicLabel } from '@/utils/d_notificationPresentation'
 import { s_permissionStore } from '@/stores/permission'
 import { resolveNotificationTarget } from '@/utils/d_notificationTarget'
 
 /** 工作台组合收件控制器，并管理页面缓存生命周期。 */
 export function useMessageWorkspace() {
-  const {
-    store,
-    tableRef,
-    selectedIds,
-    detailId,
-    filters,
-    commandLoading,
-    columns,
-    actions,
-    pagination,
-    run,
-    search,
-    resetFilters,
-    changeStatus: updateStatus,
-    changeView,
-    changePage,
-    markAllRead,
-    clearSelection,
-  } = useMessageInbox()
+  const detailId = ref<string | null>(null)
+  const openDetail = (id: string) => {
+    detailId.value = id
+  }
+  const closeDetail = () => {
+    detailId.value = null
+  }
+  const inbox = useMessageInbox(openDetail)
+  const { store, run } = inbox
   const router = useRouter()
   const route = useRoute()
   const message = useMessage()
@@ -66,7 +49,20 @@ export function useMessageWorkspace() {
     { label: '下一次投递', value: 'delivery' },
   ]
   let release: (() => void) | undefined
-  let detailRequest = 0
+  let routeIntent = 0
+  const isInboxRoute = () => route.name === 'account-messages'
+
+  const updateRoute = async (select: () => Promise<boolean>) => {
+    const intent = ++routeIntent
+    if ((await select()) && intent === routeIntent && isInboxRoute())
+      await router.replace({ query: toMessageRouteQuery(store.query) })
+  }
+  const refreshConnection = () =>
+    run(async () => {
+      await store.initialize()
+      await store.refresh()
+    })
+  const retryInbox = () => run(() => store.refresh())
   const statCards = computed(() => [
     {
       key: 'unread',
@@ -165,14 +161,12 @@ export function useMessageWorkspace() {
     patch: Partial<NotificationQuery>
   ): Promise<void> => {
     section.value = 'inbox'
-    await changeView(patch)
-    await router.replace({ query: toMessageRouteQuery(store.query) })
+    await updateRoute(() => inbox.changeView(patch))
   }
 
   /** 状态页签变更同步到 URL，刷新后仍可回到对应业务视图。 */
   const changeStatus = async (status: NotificationStatus): Promise<void> => {
-    await updateStatus(status)
-    await router.replace({ query: toMessageRouteQuery(store.query) })
+    await updateRoute(() => inbox.changeStatus(status))
   }
 
   /** 概览与状态页签使用同一个领域查询。 */
@@ -184,10 +178,6 @@ export function useMessageWorkspace() {
         status: 'todo',
       })
     else await navigateInbox({ status: key as NotificationStatus })
-  }
-  /** 表格勾选仅保留当前页稳定 ID。 */
-  const selectionChange = (keys: (string | number)[]): void => {
-    selectedIds.value = keys.map(String)
   }
   /** 演示故障与数据生成同样执行异步锁和可见反馈。 */
   const demoOperation = async (
@@ -202,6 +192,14 @@ export function useMessageWorkspace() {
       demoBusy.value = false
     }
   }
+  const incomingFeedback = {
+    workflow: '已生成新的演示审批',
+    notification: '已生成演示通知',
+    task: '已生成演示待办',
+  } as const
+  const simulateIncoming = (kind: keyof typeof incomingFeedback) =>
+    demoOperation(() => store.simulateIncoming(kind), incomingFeedback[kind])
+
   /** 手动连接状态只影响当前演示服务。 */
   const toggleOnline = (): void => {
     store.setOnline(!store.connected)
@@ -241,7 +239,7 @@ export function useMessageWorkspace() {
       message.warning(resolved.error)
       return
     }
-    detailId.value = null
+    closeDetail()
     await router.push(resolved.path)
   }
   /** 页面缓存激活时获取引用，离开后释放轮询和监听所有权。 */
@@ -252,8 +250,9 @@ export function useMessageWorkspace() {
   const deactivate = (): void => {
     release?.()
     release = undefined
-    detailId.value = null
-    detailRequest++
+    closeDetail()
+    routeIntent++
+    inbox.invalidateQuery()
   }
   onMounted(activate)
   onActivated(activate)
@@ -270,25 +269,31 @@ export function useMessageWorkspace() {
         await run(() => store.refreshGovernance())
     }
   )
+  const selectLinkedInbox = async (patch: Partial<NotificationQuery> | null) =>
+    !patch ||
+    matchesMessageRouteQuery(store.query, patch) ||
+    inbox.changeView(patch)
+
+  const applyRoute = async (query: LocationQuery, intent: number) => {
+    const id = typeof query.message === 'string' ? query.message : null
+    const patch = parseMessageRouteQuery(query)
+    if (!id && !patch) return
+    try {
+      await store.initialize()
+      if (intent !== routeIntent || !store.scopeKey) return
+      section.value = 'inbox'
+      if (!(await selectLinkedInbox(patch))) return
+      if (id && intent === routeIntent) openDetail(id)
+    } catch {
+      /* 连接错误由统一状态区展示。 */
+    }
+  }
   watch(
-    () => [route.query, store.scopeKey] as const,
-    async ([query]) => {
-      const request = ++detailRequest
-      const value = query.message
-      const patch = parseMessageRouteQuery(query)
-      if (typeof value !== 'string' && !patch) return
-      try {
-        await store.initialize()
-        if (request !== detailRequest || !store.scopeKey) return
-        section.value = 'inbox'
-        if (patch && !matchesMessageRouteQuery(store.query, patch)) {
-          await changeView(patch)
-          if (request !== detailRequest) return
-        }
-        if (typeof value === 'string') detailId.value = value
-      } catch {
-        /* 连接错误由统一状态区展示。 */
-      }
+    () => [route.name, route.query, store.scopeKey] as const,
+    ([, query, scope], previous) => {
+      if (previous?.[2] !== scope) closeDetail()
+      const intent = ++routeIntent
+      if (isInboxRoute()) void applyRoute(query, intent)
     },
     { immediate: true }
   )
@@ -301,44 +306,35 @@ export function useMessageWorkspace() {
   )
   return {
     store,
-    tableRef,
-    selectedIds,
-    detailId,
-    filters,
-    commandLoading,
-    columns,
-    actions,
-    pagination,
-    run,
-    search,
-    resetFilters,
-    changeStatus,
-    navigateInbox,
-    changePage,
-    markAllRead,
-    clearSelection,
+    tableRef: inbox.tableRef,
     section,
-    demoBusy,
-    failureOperation,
-    failureOptions,
-    statCards,
-    topicItems,
-    workflowViews,
-    activeWorkflowView,
-    inboxTitle,
-    advancedFilters,
-    selectStat,
-    selectionChange,
-    demoOperation,
-    toggleOnline,
-    injectFailure,
-    confirmReset,
-    openBusiness,
-    CATEGORY_OPTIONS,
-    INBOX_TABS,
-    PRIORITY_OPTIONS,
-    TASK_STATUS_OPTIONS,
-    WORKFLOW_STATUS_OPTIONS,
-    WORKFLOW_RELATION_OPTIONS,
+    connection: { refresh: refreshConnection, retry: retryInbox },
+    list: inbox.list,
+    reader: proxyRefs({
+      id: detailId,
+      open: openDetail,
+      close: closeDetail,
+      openBusiness,
+    }),
+    navigation: proxyRefs({
+      select: navigateInbox,
+      changeStatus,
+      selectStat,
+      statCards,
+      topicItems,
+      workflowViews,
+      activeWorkflowView,
+      inboxTitle,
+      advancedFilters,
+    }),
+    demo: proxyRefs({
+      busy: demoBusy,
+      failureOperation,
+      failureOptions,
+      simulateIncoming,
+      toggleOnline,
+      injectFailure,
+      confirmReset,
+    }),
   }
 }

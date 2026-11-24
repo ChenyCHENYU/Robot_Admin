@@ -15,11 +15,11 @@
       >
         <NSpace>
           <NInput
-            v-model:value="searchForm.keyword"
+            v-model:value="view.ledger.searchModel.keyword"
             placeholder="搜索用户名、昵称、邮箱"
             clearable
             style="width: 300px"
-            @keyup.enter="handleSearch"
+            @keyup.enter="view.ledger.search"
           >
             <template #prefix>
               <C_Icon
@@ -30,35 +30,35 @@
           </NInput>
 
           <NSelect
-            v-model:value="searchForm.userType"
+            v-model:value="view.ledger.searchModel.userType"
             placeholder="用户类型"
             clearable
             style="width: 120px"
             :options="UI_CONFIG.userType"
-            @update:value="handleSearch"
+            @update:value="view.ledger.search"
           />
 
           <NSelect
-            v-model:value="searchForm.status"
+            v-model:value="view.ledger.searchModel.status"
             placeholder="用户状态"
             clearable
             style="width: 120px"
             :options="UI_CONFIG.userStatus"
-            @update:value="handleSearch"
+            @update:value="view.ledger.search"
           />
 
           <NSelect
-            v-model:value="searchForm.roleId"
+            v-model:value="view.ledger.searchModel.roleId"
             placeholder="用户角色"
             clearable
             style="width: 120px"
-            :options="userRoleOptions"
-            @update:value="handleSearch"
+            :options="view.userRoleOptions"
+            @update:value="view.ledger.search"
           />
         </NSpace>
 
         <C_ActionBar
-          :actions="toolbarActions"
+          :actions="view.ledger.toolbar"
           :config="{ compact: true }"
         />
       </NSpace>
@@ -84,13 +84,13 @@
             <C_Tree
               ref="deptTreeRef"
               mode="custom"
-              :data="deptList"
+              :data="view.departments.rows"
               :searchable="false"
               :show-toolbar="false"
-              :icon-config="deptIconConfig"
-              :default-expanded-keys="expandedDeptKeys"
-              :default-selected-keys="selectedDeptKeys"
-              @node-select="handleDeptSelect"
+              :icon-config="view.departments.iconConfig"
+              :default-expanded-keys="view.departments.expanded"
+              :default-selected-keys="view.departments.selected"
+              @node-select="view.departments.select"
               class="dept-tree"
             />
           </NCard>
@@ -110,8 +110,8 @@
               >
                 <NText>
                   {{
-                    selectedDept
-                      ? `${selectedDept.name} - 用户列表`
+                    view.departments.current
+                      ? `${view.departments.current.name} - 用户列表`
                       : '用户列表'
                   }}
                   <NTag
@@ -119,12 +119,12 @@
                     size="small"
                     style="margin-left: 8px"
                   >
-                    共 {{ pagination.itemCount }} 人
+                    共 {{ view.ledger.pagination.itemCount }} 人
                   </NTag>
                 </NText>
                 <C_ActionBar
-                  v-if="selectedUsers.length > 0"
-                  :actions="batchActions"
+                  v-if="view.ledger.selected.length > 0"
+                  :actions="view.ledger.batchActions"
                   :config="{ compact: true, size: 'small' }"
                 />
               </NSpace>
@@ -133,26 +133,26 @@
             <!-- 用户表格 -->
             <C_Table
               ref="userTableRef"
-              :columns="userColumns"
-              :data="userList"
-              :loading="loading"
-              :row-key="rowKey"
-              :row-class-name="getRowClassName"
+              :columns="view.ledger.columns"
+              :data="view.ledger.rows"
+              :loading="view.ledger.loading"
+              :row-key="view.ledger.rowKey"
+              :row-class-name="view.ledger.rowClass"
               :config="{
-                actions: tableActions,
+                actions: view.ledger.actions,
                 selection: {
                   enabled: true,
                 },
                 pagination: {
-                  page: pagination.page,
-                  pageSize: pagination.pageSize,
-                  total: pagination.itemCount,
+                  page: view.ledger.pagination.page,
+                  pageSize: view.ledger.pagination.pageSize,
+                  total: view.ledger.pagination.itemCount,
                   remote: true,
                 },
                 display: { scrollX: 1500 },
               }"
-              @pagination-change="handlePaginationChange"
-              @selection-change="handleSelectionChange"
+              @pagination-change="view.ledger.changePage"
+              @selection-change="view.ledger.changeSelection"
             />
           </NCard>
         </NGi>
@@ -161,7 +161,7 @@
 
     <!-- 用户详情抽屉 -->
     <NDrawer
-      v-model:show="showUserDetail"
+      v-model:show="view.inspection.visible"
       :width="600"
       placement="right"
     >
@@ -171,7 +171,7 @@
       >
         <div
           class="user-detail"
-          v-if="currentUser"
+          v-if="view.inspection.user"
         >
           <NSpace
             vertical
@@ -181,14 +181,14 @@
             <NCard
               title="基本信息"
               size="small"
-              :class="{ 'disabled-card': currentUser.status === 0 }"
+              :class="{ 'disabled-card': view.inspection.user.status === 0 }"
             >
               <NSpace
                 vertical
                 :size="16"
               >
                 <NAlert
-                  v-if="currentUser.accountStatus === 0"
+                  v-if="view.inspection.user.accountStatus === 0"
                   type="warning"
                   >全局账号已停用；启用本公司成员不会恢复账号访问。</NAlert
                 >
@@ -199,14 +199,16 @@
                 >
                   <NAvatar
                     :size="80"
-                    :src="currentUser.avatar"
+                    :src="view.inspection.user.avatar"
                     :fallback-src="COMPONENT_CONFIG.defaultAvatar"
-                    :class="{ 'disabled-avatar': currentUser.status === 0 }"
+                    :class="{
+                      'disabled-avatar': view.inspection.user.status === 0,
+                    }"
                   >
-                    {{ currentUser.nickname?.charAt(0) }}
+                    {{ view.inspection.user.nickname?.charAt(0) }}
                   </NAvatar>
                   <div
-                    v-if="currentUser.status === 0"
+                    v-if="view.inspection.user.status === 0"
                     class="disabled-overlay"
                   >
                     <C_Icon
@@ -223,7 +225,9 @@
                   :y-gap="12"
                 >
                   <NGi
-                    v-for="field in getUserDetailFields(currentUser)"
+                    v-for="field in view.inspection.fields(
+                      view.inspection.user
+                    )"
                     :key="field.key"
                   >
                     <NSpace align="center">
@@ -244,16 +248,16 @@
             <NCard
               title="角色信息"
               size="small"
-              v-if="currentUser.roleNames?.length"
-              :class="{ 'disabled-card': currentUser.status === 0 }"
+              v-if="view.inspection.user.roleNames?.length"
+              :class="{ 'disabled-card': view.inspection.user.status === 0 }"
             >
               <NSpace>
                 <NTag
-                  v-for="role in currentUser.roleNames"
+                  v-for="role in view.inspection.user.roleNames"
                   :key="role"
                   type="success"
                   size="medium"
-                  :class="{ 'disabled-tag': currentUser.status === 0 }"
+                  :class="{ 'disabled-tag': view.inspection.user.status === 0 }"
                 >
                   <template #icon>
                     <C_Icon
@@ -267,7 +271,7 @@
             </NCard>
 
             <NCard
-              v-if="mockMode"
+              v-if="view.mockMode"
               title="企业归属"
               size="small"
             >
@@ -276,7 +280,9 @@
                 :size="10"
               >
                 <div
-                  v-for="membership in getUserMemberships(currentUser.username)"
+                  v-for="membership in view.membership.getUserMemberships(
+                    view.inspection.user.username
+                  )"
                   :key="membership.contextId"
                   class="membership-summary"
                 >
@@ -286,9 +292,11 @@
                   >
                     {{ membership.isPrimary ? '主公司' : '兼任' }}
                   </NTag>
-                  <strong>{{ getCompanyName(membership.contextId) }}</strong>
+                  <strong>{{
+                    view.membership.getCompanyName(membership.contextId)
+                  }}</strong>
                   <NText depth="3">{{
-                    getCompanyRoleName(membership.roleId)
+                    view.membership.getCompanyRoleName(membership.roleId)
                   }}</NText>
                 </div>
               </NSpace>
@@ -298,20 +306,24 @@
             <NCard
               title="时间信息"
               size="small"
-              :class="{ 'disabled-card': currentUser.status === 0 }"
+              :class="{ 'disabled-card': view.inspection.user.status === 0 }"
             >
               <NGrid
                 :cols="1"
                 :y-gap="12"
               >
                 <NGi
-                  v-for="timeField in getTimeFields(currentUser)"
+                  v-for="timeField in view.inspection.getTimeFields(
+                    view.inspection.user
+                  )"
                   :key="timeField.key"
                 >
                   <NSpace align="center">
                     <NText depth="3">{{ timeField.label }}：</NText>
                     <NText
-                      :class="{ 'disabled-text': currentUser.status === 0 }"
+                      :class="{
+                        'disabled-text': view.inspection.user.status === 0,
+                      }"
                     >
                       {{ timeField.value }}
                     </NText>
@@ -322,13 +334,15 @@
 
             <!-- 备注信息 -->
             <NCard
-              v-if="currentUser.remark"
+              v-if="view.inspection.user.remark"
               title="备注信息"
               size="small"
-              :class="{ 'disabled-card': currentUser.status === 0 }"
+              :class="{ 'disabled-card': view.inspection.user.status === 0 }"
             >
-              <NText :class="{ 'disabled-text': currentUser.status === 0 }">
-                {{ currentUser.remark }}
+              <NText
+                :class="{ 'disabled-text': view.inspection.user.status === 0 }"
+              >
+                {{ view.inspection.user.remark }}
               </NText>
             </NCard>
 
@@ -340,7 +354,7 @@
                   label: '关闭',
                   type: 'primary',
                   onClick: () => {
-                    showUserDetail = false
+                    view.inspection.visible = false
                   },
                 },
               ]"
@@ -353,31 +367,31 @@
 
     <!-- 添加/编辑用户弹窗 -->
     <NModal
-      v-model:show="showModal"
+      v-model:show="view.editor.visible"
       preset="dialog"
-      :title="modalTitle"
-      :positive-text="modalMode === 'add' ? '确认添加' : '确认修改'"
+      :title="view.editor.title"
+      :positive-text="view.editor.mode === 'add' ? '确认添加' : '确认修改'"
       negative-text="取消"
-      @positive-click="() => formRef?.submit() ?? false"
-      :closable="!formRef?.isSubmitting"
-      :mask-closable="!formRef?.isSubmitting"
-      :close-on-esc="!formRef?.isSubmitting"
-      :negative-button-props="{ disabled: !!formRef?.isSubmitting }"
-      @negative-click="handleCancelModal"
+      @positive-click="() => view.formRef?.submit() ?? false"
+      :closable="!view.formRef?.isSubmitting"
+      :mask-closable="!view.formRef?.isSubmitting"
+      :close-on-esc="!view.formRef?.isSubmitting"
+      :negative-button-props="{ disabled: !!view.formRef?.isSubmitting }"
+      @negative-click="view.editor.cancel"
       style="width: 800px"
     >
       <C_Form
-        v-if="showModal"
+        v-if="view.editor.visible"
         ref="formRef"
-        :model-value="formData"
-        @update:model-value="updateUserForm"
-        :options="formOptions"
-        :config="formConfig"
-        :renderers="formRenderers"
-        @submit="showModal = false"
+        :model-value="view.editor.model"
+        @update:model-value="view.editor.update"
+        :options="view.editor.options"
+        :config="view.editor.config"
+        :renderers="view.editor.renderers"
+        @submit="view.editor.visible = false"
       />
       <NCard
-        v-if="mockMode"
+        v-if="view.mockMode"
         title="企业归属与公司内角色"
         size="small"
         class="membership-editor"
@@ -386,29 +400,29 @@
           >登录默认进入主公司；兼任公司可在登录后切换。每个账号必须且只能有一个主公司。</p
         >
         <div
-          v-for="(membership, index) in formData.memberships"
+          v-for="(membership, index) in view.editor.model.memberships"
           :key="index"
           class="membership-editor__row"
         >
           <NSelect
-            :disabled="!!formRef?.isSubmitting"
+            :disabled="!!view.formRef?.isSubmitting"
             :value="membership.contextId"
-            :options="getCompanyOptions(membership.contextId)"
+            :options="view.membership.getCompanyOptions(membership.contextId)"
             placeholder="选择公司"
             @update:value="membership.contextId = $event"
           />
           <NSelect
-            :disabled="!!formRef?.isSubmitting"
+            :disabled="!!view.formRef?.isSubmitting"
             :value="membership.roleId"
-            :options="companyRoleOptions"
+            :options="view.membership.companyRoleOptions"
             placeholder="公司内角色"
             @update:value="membership.roleId = $event"
           />
           <NButton
             size="small"
             :type="membership.isPrimary ? 'primary' : 'default'"
-            :disabled="!!formRef?.isSubmitting"
-            @click="setPrimaryMembership(index)"
+            :disabled="!!view.formRef?.isSubmitting"
+            @click="view.membership.setPrimaryMembership(index)"
           >
             {{ membership.isPrimary ? '主公司' : '设为主公司' }}
           </NButton>
@@ -416,9 +430,10 @@
             size="small"
             quaternary
             :disabled="
-              formData.memberships.length === 1 || !!formRef?.isSubmitting
+              view.editor.model.memberships.length === 1 ||
+              !!view.formRef?.isSubmitting
             "
-            @click="removeCompanyMembership(index)"
+            @click="view.membership.removeCompanyMembership(index)"
             >移除</NButton
           >
         </div>
@@ -426,10 +441,11 @@
           dashed
           block
           :disabled="
-            formData.memberships.length >= companyOptions.length ||
-            !!formRef?.isSubmitting
+            view.editor.model.memberships.length >=
+              view.membership.companyOptions.length ||
+            !!view.formRef?.isSubmitting
           "
-          @click="addCompanyMembership"
+          @click="view.membership.addCompanyMembership"
           >+ 添加兼任公司</NButton
         >
       </NCard>
@@ -437,95 +453,41 @@
 
     <!-- 重置密码弹窗 -->
     <NModal
-      v-model:show="showResetPasswordModal"
+      v-model:show="view.passwordReset.visible"
       preset="dialog"
       title="重置密码"
       positive-text="确认重置"
       negative-text="取消"
-      @positive-click="() => resetPasswordFormRef?.submit() ?? false"
-      :closable="!resetPasswordFormRef?.isSubmitting"
-      :mask-closable="!resetPasswordFormRef?.isSubmitting"
-      :close-on-esc="!resetPasswordFormRef?.isSubmitting"
+      @positive-click="() => view.resetPasswordFormRef?.submit() ?? false"
+      :closable="!view.resetPasswordFormRef?.isSubmitting"
+      :mask-closable="!view.resetPasswordFormRef?.isSubmitting"
+      :close-on-esc="!view.resetPasswordFormRef?.isSubmitting"
       :negative-button-props="{
-        disabled: !!resetPasswordFormRef?.isSubmitting,
+        disabled: !!view.resetPasswordFormRef?.isSubmitting,
       }"
     >
       <C_Form
-        v-if="showResetPasswordModal"
+        v-if="view.passwordReset.visible"
         ref="resetPasswordFormRef"
-        :model-value="resetPasswordForm"
-        @update:model-value="Object.assign(resetPasswordForm, $event)"
-        :options="resetPasswordOptions"
-        :config="resetPasswordConfig"
-        @submit="showResetPasswordModal = false"
+        :model-value="view.passwordReset.model"
+        @update:model-value="Object.assign(view.passwordReset.model, $event)"
+        :options="view.passwordReset.options"
+        :config="view.passwordReset.config"
+        @submit="view.passwordReset.visible = false"
       />
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
-  import '@robot-admin/naive-ui-components/C_Icon/style.css'
-  import { C_Tree } from '@robot-admin/naive-ui-components/C_Tree'
-  import '@robot-admin/naive-ui-components/C_Tree/style.css'
   import { UI_CONFIG, COMPONENT_CONFIG } from './data'
   import { useUserManagement } from './useUserManagement'
 
   defineOptions({ name: 'UserManage' })
-  const {
-    mockMode,
-    companyOptions,
-    companyRoleOptions,
-    getCompanyName,
-    getCompanyRoleName,
-    getUserMemberships,
-    getCompanyOptions,
-    setPrimaryMembership,
-    removeCompanyMembership,
-    addCompanyMembership,
-    loading,
-    showModal,
-    showUserDetail,
-    showResetPasswordModal,
-    modalMode,
-    formRef,
-    resetPasswordFormRef,
-    userTableRef,
-    deptTreeRef,
-    expandedDeptKeys,
-    selectedDeptKeys,
-    selectedUsers,
-    currentUser,
-    userList,
-    deptList,
-    userRoleOptions,
-    formData,
-    resetPasswordForm,
-    searchForm,
-    pagination,
-    modalTitle,
-    toolbarActions,
-    batchActions,
-    selectedDept,
-    deptIconConfig,
-    getRowClassName,
-    rowKey,
-    tableActions,
-    getUserDetailFields,
-    getTimeFields,
-    formOptions,
-    formRenderers,
-    formConfig,
-    resetPasswordOptions,
-    resetPasswordConfig,
-    updateUserForm,
-    handleDeptSelect,
-    handleSearch,
-    handlePaginationChange,
-    handleSelectionChange,
-    handleCancelModal,
-    userColumns,
-  } = useUserManagement()
+  const controller = useUserManagement()
+  const view = proxyRefs(controller)
+  const { deptTreeRef, userTableRef, formRef, resetPasswordFormRef } =
+    controller
 </script>
 
 <style lang="scss" scoped>

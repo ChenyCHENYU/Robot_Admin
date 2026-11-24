@@ -84,7 +84,7 @@
             ><span><i />页面访问</span
             ><span><i class="teal" />登录成功</span></div
           ></div
-        ><ObservatoryChart
+        ><c_chart
           :option="trendOption"
           :empty="!summary?.totals.views && !summary?.totals.loginSuccess"
           label="真实页面访问与成功登录的每日趋势"
@@ -99,7 +99,7 @@
             ><p>横向比较访问、认证与功能操作的真实次数。</p></div
           ><span class="obs-chip">{{ eventTotal }} events</span></div
         ><div class="event-chart"
-          ><ObservatoryChart
+          ><c_chart
             :option="eventsOption"
             :empty="!eventTotal"
             label="已采集事件的类型分布" /></div></section
@@ -111,7 +111,7 @@
             ><h2>最常访问的页面</h2
             ><p>只显示当前范围内实际访问过的页面。</p></div
           ><span class="obs-chip">TOP 8</span></div
-        ><ObservatoryChart
+        ><c_chart
           :option="pagesOption"
           :empty="!summary?.pages.length"
           label="真实页面访问次数排行"
@@ -350,7 +350,6 @@
     },
   ]
 
-  import ObservatoryChart from '../shared/c_chart/index.vue'
   import { useProjectReport } from '../shared/useProjectReport'
   import { formatDuration } from '../shared/d_format'
   import { translateText } from '@/utils/d_i18n'

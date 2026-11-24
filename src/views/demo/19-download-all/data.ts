@@ -6,24 +6,9 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
-import { h } from 'vue'
-import type { DownloadApiFunction } from '@robot-admin/file-utils'
-
-/**
- * * @description 生成Excel兼容的CSV内容
- * ! @return CSV格式的字符串
- */
-export const generateExcelCSV = (): string => {
-  const headers = ['序号', '姓名', '邮箱', '部门', '入职日期', '薪资']
-  const data = [
-    ['1', '张三', 'zhangsan@example.com', '技术部', '2023-01-15', '15000'],
-    ['2', '李四', 'lisi@example.com', '市场部', '2023-02-20', '12000'],
-    ['3', '王五', 'wangwu@example.com', '人事部', '2023-03-10', '10000'],
-    ['4', '赵六', 'zhaoliu@example.com', '财务部', '2023-04-05', '13000'],
-    ['5', '刘七', 'liuqi@example.com', '技术部', '2023-05-12', '16000'],
-  ]
-  return [headers, ...data].map(row => row.join(',')).join('\n')
-}
+import { FileType, type DownloadApiFunction } from '@robot-admin/file-utils'
+import { NTag } from 'naive-ui'
+import { delayWithSignal } from '@/utils/abort'
 
 /**
  * * @description 生成简单的PDF内容（英文避免乱码）
@@ -55,9 +40,11 @@ export const generateSimplePDF = (title: string, content: string): string => {
     .join('\n')}\ntrailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`
 }
 
-/** XLSX 示例提供真实工作簿字节，不把 CSV 文本伪装为 Excel。 */
-const createWorkbookContent = async () => {
-  const response = await fetch('/demo-files/users-report.xlsx')
+const createWorkbookContent = async (
+  _params: Record<string, unknown>,
+  signal?: AbortSignal
+) => {
+  const response = await fetch('/demo-files/users-report.xlsx', { signal })
   if (!response.ok) throw new Error('示例工作簿暂时不可用')
   return {
     content: await response.blob(),
@@ -66,146 +53,139 @@ const createWorkbookContent = async () => {
   }
 }
 
-/**
- * * @description 内容生成器配置
- */
-export const contentGenerators = {
-  excel: createWorkbookContent,
-  csv: () => ({
-    content: generateExcelCSV(),
+type FileFixture = (
+  params: Record<string, unknown>,
+  signal?: AbortSignal
+) =>
+  | { content: Blob | string; mimeType: string }
+  | Promise<{ content: Blob | string; mimeType: string }>
+
+const generators = {
+  [FileType.XLSX]: createWorkbookContent,
+  [FileType.CSV]: () => ({
+    content:
+      'Order ID,Customer,Product,Quantity,Amount,Date\nORD001,John Doe,Keyboard,2,299.00,2024-01-15\nORD002,Jane Smith,Monitor,1,599.00,2024-01-16',
     mimeType: 'text/csv',
   }),
-  json: (params: Record<string, unknown>) => ({
-    content: JSON.stringify(
-      {
-        code: 200,
-        message: 'Success',
-        data: [
-          {
-            id: 1,
-            name: 'Sample Data',
-            type: 'demo',
-            createTime: new Date().toISOString(),
-          },
-          {
-            id: 2,
-            name: 'Test Data',
-            type: 'test',
-            createTime: new Date().toISOString(),
-          },
-        ],
-        meta: { total: 2, params, exportTime: new Date().toISOString() },
-      },
-      null,
-      2
-    ),
-    mimeType: 'application/json',
-  }),
-  pdf: () => ({
+  [FileType.PDF]: () => ({
     content: generateSimplePDF(
       'Product List',
       'Demo products: Keyboard, Monitor, Docking Station'
     ),
     mimeType: 'application/pdf',
   }),
-  users: createWorkbookContent,
-  orders: () => ({
-    content:
-      'Order ID,Customer,Product,Quantity,Amount,Date\nORD001,John Doe,Product A,2,299.00,2024-01-15\nORD002,Jane Smith,Product B,1,599.00,2024-01-16',
-    mimeType: 'text/csv',
-  }),
-  products: () => ({
-    content: generateSimplePDF('Product List', 'Product catalog'),
-    mimeType: 'application/pdf',
-  }),
-  logs: (params: Record<string, unknown>) => ({
-    content: `System Log File\nGenerated: ${new Date().toISOString()}\nParameters: ${JSON.stringify(params)}\n\n[INFO] 2024-01-15 10:00:00 - System started successfully\n[INFO] 2024-01-15 10:01:00 - User login: admin\n[WARN] 2024-01-15 10:02:00 - Memory usage reached 80%\n[INFO] 2024-01-15 10:03:00 - Data backup completed`,
-    mimeType: 'text/plain',
-  }),
-  config: (params: Record<string, unknown>) => ({
+  [FileType.JSON]: params => ({
     content: JSON.stringify(
       {
-        app: {
-          name: 'Robot Admin',
-          version: '1.0.0',
-          environment: 'production',
-        },
-        database: { host: 'localhost', port: 3306, name: 'robot_admin' },
-        features: { download: true, upload: true, export: true },
-        exportTime: new Date().toISOString(),
+        config: { product: 'Robot Admin', environment: 'demo' },
         params,
+        exportTime: new Date().toISOString(),
       },
       null,
       2
     ),
     mimeType: 'application/json',
   }),
-}
+  [FileType.TXT]: params => ({
+    content: `System Log File\nGenerated: ${new Date().toISOString()}\nParameters: ${JSON.stringify(params)}\n\n[INFO] Demo service started`,
+    mimeType: 'text/plain',
+  }),
+} satisfies Partial<Record<FileType, FileFixture>>
 
-/**
- * * @description 创建模拟API函数
- * ? @param fileType - 文件类型
- * ! @return 下载API函数
- */
-export const createMockApi = (fileType: string): DownloadApiFunction => {
-  return async (params = {}) => {
-    await new Promise(resolve =>
-      setTimeout(resolve, 1000 + Math.random() * 2000)
-    )
+export type DemoFileType = keyof typeof generators
 
-    const generator =
-      contentGenerators[fileType as keyof typeof contentGenerators]
-    const { content, mimeType } = generator
-      ? await generator(params)
-      : {
-          content: `File Type: ${fileType}\nGenerated: ${new Date().toISOString()}\nParameters: ${JSON.stringify(params, null, 2)}`,
-          mimeType: 'text/plain',
-        }
+export const DOWNLOAD_FORMATS = {
+  [FileType.XLSX]: {
+    extension: 'XLSX',
+    name: '用户数据报表',
+    action: '下载 Excel',
+    description: '可编辑工作簿，便于整理与协作',
+    icon: 'mdi:microsoft-excel',
+  },
+  [FileType.CSV]: {
+    extension: 'CSV',
+    name: '订单统计',
+    action: '下载 CSV',
+    description: '通用表格格式，适合交换数据',
+    icon: 'mdi:file-csv-outline',
+  },
+  [FileType.PDF]: {
+    extension: 'PDF',
+    name: '商品清单',
+    action: '下载 PDF',
+    description: '固定排版，适合阅读与分享',
+    icon: 'mdi:file-pdf-box',
+  },
+  [FileType.JSON]: {
+    extension: 'JSON',
+    name: '配置信息',
+    action: '下载 JSON',
+    description: '保留数据结构，便于程序处理',
+    icon: 'mdi:code-json',
+  },
+  [FileType.TXT]: {
+    extension: 'TXT',
+    name: '系统日志',
+    action: '下载文本',
+    description: '可直接阅读的纯文本',
+    icon: 'mdi:file-document-outline',
+  },
+} satisfies Record<
+  DemoFileType,
+  {
+    extension: string
+    name: string
+    action: string
+    description: string
+    icon: string
+  }
+>
 
+export const QUICK_DOWNLOAD_TYPES = [
+  FileType.XLSX,
+  FileType.CSV,
+  FileType.PDF,
+  FileType.JSON,
+] as const
+export const BATCH_DOWNLOAD_TYPES = [
+  ...QUICK_DOWNLOAD_TYPES,
+  FileType.TXT,
+] as const
+export const FORM_DOWNLOAD_TYPES = BATCH_DOWNLOAD_TYPES.map(value => ({
+  value,
+  label: DOWNLOAD_FORMATS[value].extension,
+}))
+
+/** 同一格式始终由同一内容源生成，文件类型与实际内容保持一致。 */
+export const createMockApi =
+  (fileType: DemoFileType): DownloadApiFunction =>
+  async (params = {}, context) => {
+    await delayWithSignal(500, context?.signal)
+    const generate: FileFixture = generators[fileType]
+    const { content, mimeType } = await generate(params, context?.signal)
     return new Blob([content], { type: mimeType })
   }
+
+export interface HistoryItem {
+  id: number
+  fileName: string
+  fileType: string
+  status: 'success' | 'failed'
+  downloadTime: string
 }
 
-/**
- * * @description 批量下载文件配置
- */
-export const batchFiles = [
-  { key: 'users', label: '用户数据报表.xlsx' },
-  { key: 'orders', label: '订单统计.csv' },
-  { key: 'products', label: '商品清单.pdf' },
-  { key: 'logs', label: '系统日志.txt' },
-  { key: 'config', label: '配置信息.json' },
-]
-
-/**
- * * @description 历史表格列配置
- */
-export const historyColumns: TableColumn[] = [
+export const historyColumns: TableColumn<HistoryItem>[] = [
   { title: '文件名', key: 'fileName' },
   { title: '类型', key: 'fileType' },
   {
     title: '状态',
     key: 'status',
-    render: (row: any) => {
-      const statusMap = {
-        success: { text: '成功', color: '#18a058' },
-        failed: { text: '失败', color: '#d03050' },
-        pending: { text: '进行中', color: '#f0a020' },
-      }
-      const status = statusMap[row.status as keyof typeof statusMap]
-      return h('span', { style: { color: status.color } }, status.text)
-    },
+    render: row =>
+      h(
+        NTag,
+        { type: row.status === 'success' ? 'success' : 'error', size: 'small' },
+        () => (row.status === 'success' ? '成功' : '失败')
+      ),
   },
   { title: '下载时间', key: 'downloadTime' },
 ]
-
-/**
- * * @description 下载历史数据项类型
- */
-export interface HistoryItem {
-  id: string
-  fileName: string
-  fileType: string
-  status: 'success' | 'failed' | 'pending'
-  downloadTime: string
-}

@@ -14,7 +14,7 @@
     />
 
     <div
-      v-if="!isNewFeatureScenario"
+      v-if="showOrderGrid"
       class="mach-overview"
     >
       <div class="mach-overview__item">
@@ -52,14 +52,14 @@
         />
 
         <C_ActionBar
-          v-if="!isNewFeatureScenario"
-          :actions="featureActions"
+          v-if="showOrderGrid"
+          :actions="feature.openActions"
           :config="{ size: 'tiny' }"
         />
       </div>
 
       <div
-        v-if="!isNewFeatureScenario"
+        v-if="showOrderGrid"
         class="mach-demo-toolbar"
       >
         <NInput
@@ -83,10 +83,10 @@
         >
           <span>模拟保存</span>
           <NSelect
-            v-model:value="reorderSaveMode"
+            v-model:value="reorder.saveMode"
             class="mach-reorder-save-control__select"
             :options="ORDER_REORDER_SAVE_OPTIONS"
-            :disabled="reorderBusy"
+            :disabled="reorder.busy"
             aria-label="模拟排序保存结果"
             size="small"
           />
@@ -100,44 +100,44 @@
       </div>
 
       <NAlert
-        v-if="!isNewFeatureScenario"
+        v-if="showOrderGrid"
         class="mach-tip"
         type="info"
         :show-icon="false"
       >
-        {{ scenarioTip }}
+        {{ currentScenario.tip }}
       </NAlert>
 
       <div
         v-if="isReorderScenario"
         class="mach-reorder-status"
-        :data-status="reorderState.status"
-        :aria-busy="reorderBusy"
+        :data-status="reorder.state.status"
+        :aria-busy="reorder.busy"
       >
         <div class="mach-reorder-status__preview">
           <span>顺序预览</span>
-          <strong>{{ reorderPreview }}</strong>
+          <strong>{{ reorder.preview }}</strong>
         </div>
         <span
           role="status"
           aria-live="polite"
         >
-          {{ reorderMessage }}
+          {{ reorder.statusText }}
         </span>
         <small class="mach-reorder-status__details">
-          客户端 r{{ reorderClientRevision }} · 模拟服务器 r{{
-            reorderServerRevision
+          客户端 r{{ reorder.clientRevision }} · 模拟服务器 r{{
+            reorder.serverRevision
           }}
           · 仅本地模拟，不写业务接口
         </small>
       </div>
 
       <ImportValidation
-        v-if="activeScenario === 'import'"
+        v-if="currentScenario.kind === 'import'"
         :theme="themeStore.isDark ? 'dark' : 'light'"
       />
       <LargeData
-        v-else-if="activeScenario === 'large'"
+        v-else-if="currentScenario.kind === 'large'"
         :theme="themeStore.isDark ? 'dark' : 'light'"
       />
       <div
@@ -145,16 +145,10 @@
         class="mach-grid-shell"
       >
         <MachTable
-          v-bind="isReorderScenario ? reorderTableBindings : tableBindings"
+          v-bind="tableProps"
           :key="isReorderScenario ? 'reorder' : 'orders'"
           :ref="table.ref"
           class="mach-demo-grid"
-          :column-defs="machTableColumns"
-          :row-data="displayRows"
-          :tree-data="isTreeScenario"
-          :default-expand-all="isTreeScenario"
-          :persistence="isReorderScenario ? false : tableBindings.persistence"
-          :pagination="isReorderScenario ? false : tableBindings.pagination"
         />
       </div>
     </NCard>
@@ -171,7 +165,7 @@
     />
 
     <NDrawer
-      v-model:show="showFeatureDrawer"
+      v-model:show="feature.open"
       width="min(600px, 100vw)"
       placement="right"
     >
@@ -204,7 +198,7 @@
           <section class="mach-feature-presets">
             <header class="mach-feature-section-title">
               <strong>从预设开始</strong>
-              <span>{{ currentFeaturePresetLabel }}</span>
+              <span>{{ feature.presetLabel }}</span>
             </header>
             <div class="mach-feature-preset-grid">
               <button
@@ -212,9 +206,9 @@
                 :key="preset.value"
                 type="button"
                 class="mach-feature-preset"
-                :class="{ 'is-active': featurePreset === preset.value }"
-                :aria-pressed="featurePreset === preset.value"
-                @click="applyFeaturePreset(preset.value)"
+                :class="{ 'is-active': feature.preset === preset.value }"
+                :aria-pressed="feature.preset === preset.value"
+                @click="feature.applyPreset(preset.value)"
               >
                 <C_Icon
                   type="unocss"
@@ -225,7 +219,7 @@
                   <small>{{ preset.description }}</small>
                 </span>
                 <C_Icon
-                  v-if="featurePreset === preset.value"
+                  v-if="feature.preset === preset.value"
                   class="mach-feature-preset__check"
                   type="unocss"
                   :name="'i-mdi-check-circle'"
@@ -268,7 +262,7 @@
               <small>{{ group.options.length }} 项</small>
             </header>
             <C_Form
-              v-model="featureSettings"
+              v-model="feature.settings"
               :options="group.options"
               :config="MACH_FEATURE_FORM_CONFIG"
             />
@@ -318,7 +312,7 @@
           <div class="mach-feature-footer">
             <span>配置仅作用于当前演示</span>
             <C_ActionBar
-              :actions="featurePanelActions"
+              :actions="feature.panelActions"
               :config="{ align: 'space-between', size: 'small', wrap: true }"
             />
           </div>
@@ -343,117 +337,64 @@
   import '@agile-team/mach-table-vue/styles.css'
   import { s_themeStore } from '@/stores/theme'
   import {
-    DEFAULT_MACH_FEATURE_SETTINGS,
-    MACH_FEATURE_FORM_CONFIG,
-    MACH_FEATURE_GROUPS,
-    MACH_FEATURE_PRESET_OPTIONS,
-    MACH_FEATURE_PRESETS,
-    MACH_SCENE_CAPABILITIES,
-    ORDER_FORM_CONFIG,
-    ORDER_FORM_OPTIONS,
-    ORDER_REORDER_SAVE_OPTIONS,
     ORDER_TABLE_CONFIG,
-    TABLE_SCENARIOS,
-    TABLE_SCENARIO_TABS,
-    TABLE_PREVIEW_OPTIONS,
     createOrderColumns,
     createOrderReorderColumns,
     createOrderTreeColumns,
-    createOrderTreeRows,
-    exportOrderTable,
-    toMachFeatureOptions,
-    useOrderTable,
-    useOrderReorderDemo,
-    type MachFeaturePreset,
-    type MachFeatureSettings,
-    type OrderRow,
-    type OrderTreeRow,
+  } from './columns'
+  import { createOrderTreeRows, type OrderRow, type OrderTreeRow } from './data'
+  import {
+    MACH_FEATURE_FORM_CONFIG,
+    MACH_FEATURE_GROUPS,
+    MACH_FEATURE_PRESET_OPTIONS,
+  } from './features'
+  import {
+    MACH_SCENE_CAPABILITIES,
+    TABLE_PREVIEW_OPTIONS,
+    TABLE_SCENARIOS,
+    TABLE_SCENARIO_TABS,
     type TablePreviewState,
     type TableScenario,
-  } from './data'
+  } from './scenes'
+  import { useMachTableFeatures } from './useMachTableFeatures'
+  import {
+    ORDER_REORDER_SAVE_OPTIONS,
+    useOrderReorderDemo,
+  } from './useOrderReorderDemo'
+  import {
+    ORDER_FORM_CONFIG,
+    ORDER_FORM_OPTIONS,
+    exportOrderTable,
+    useOrderTable,
+  } from './useOrderTable'
 
   defineOptions({ name: 'MachTableDemo' })
 
   const ImportValidation = defineAsyncComponent(
-    () => import('./components/c_importValidation/index.vue')
+    () => import('./components/ImportValidation/index.vue')
   )
   const LargeData = defineAsyncComponent(
-    () => import('./components/c_largeData/index.vue')
+    () => import('./components/LargeData/index.vue')
   )
   const message = useMessage()
   const dialog = useDialog()
   const themeStore = s_themeStore()
   const orderCrud = useOrderTable()
-  const { rows } = orderCrud
   const activeScenario = ref<TableScenario>('crud')
   const previewState = ref<TablePreviewState>('data')
-  const treeRows = createOrderTreeRows()
-  const reorderDemo = useOrderReorderDemo(() =>
-    isReorderScenario.value ? tableApi.value : null
-  )
-  const {
-    rows: reorderRows,
-    ordering: rowOrdering,
-    state: reorderState,
-    busy: reorderBusy,
-    saveMode: reorderSaveMode,
-    clientRevision: reorderClientRevision,
-    serverRevision: reorderServerRevision,
-    statusText: reorderMessage,
-  } = reorderDemo
-  const reorderPreview = computed(() =>
-    reorderRows.value
-      .slice(0, 3)
-      .map(row => row.orderNo)
-      .join(' → ')
-  )
-  const orderChanged = computed(() =>
-    reorderRows.value.some((row, index) => row.id !== String(index + 1))
-  )
-  const showFeatureDrawer = ref(false)
-  const featureSettings = ref<MachFeatureSettings>({
-    ...DEFAULT_MACH_FEATURE_SETTINGS,
-  })
-  const featurePreset = computed(
-    () =>
-      MACH_FEATURE_PRESET_OPTIONS.find(preset =>
-        (
-          Object.keys(
-            DEFAULT_MACH_FEATURE_SETTINGS
-          ) as (keyof MachFeatureSettings)[]
-        ).every(key => featureSettings.value[key] === preset.settings[key])
-      )?.value
-  )
-  const currentFeaturePresetLabel = computed(() =>
-    featurePreset.value
-      ? `当前：${MACH_FEATURE_PRESETS[featurePreset.value].label}`
-      : '当前：自定义配置'
-  )
   const currentScenario = computed(() => TABLE_SCENARIOS[activeScenario.value])
   const inlineEditMode = computed(() => currentScenario.value.editMode)
-  const scenarioTip = computed(() => currentScenario.value.tip)
-  const isTreeScenario = computed(() => activeScenario.value === 'tree')
-  const isReorderScenario = computed(() => activeScenario.value === 'reorder')
-  const isNewFeatureScenario = computed(
-    () => activeScenario.value === 'import' || activeScenario.value === 'large'
+  const isReorderScenario = computed(
+    () => currentScenario.value.kind === 'reorder'
   )
-  const countTreeRows = (items: OrderTreeRow[]): number =>
-    items.reduce(
-      (total, item) => total + 1 + countTreeRows(item.children ?? []),
-      0
-    )
-  const displayRows = computed(() => {
-    if (previewState.value === 'empty') return []
-    if (isReorderScenario.value) return reorderRows.value
-    return isTreeScenario.value ? treeRows : rows.value
-  })
-  const totalRows = computed(() => {
-    if (previewState.value === 'empty') return 0
-    if (isReorderScenario.value) return reorderRows.value.length
-    return isTreeScenario.value
-      ? countTreeRows(treeRows)
-      : orderCrud.total.value
-  })
+  const showOrderGrid = computed(
+    () =>
+      currentScenario.value.kind !== 'import' &&
+      currentScenario.value.kind !== 'large'
+  )
+  const reorder = useOrderReorderDemo(() =>
+    isReorderScenario.value ? tableApi.value : null
+  )
 
   const handleView = async (
     params: CellRendererParams<OrderRow>
@@ -491,14 +432,14 @@
   const handleCellValueChanged = async (
     event: CellValueChangedEvent<OrderRow>
   ): Promise<void> => {
-    if (activeScenario.value !== 'cell') return
+    if (inlineEditMode.value !== 'cell') return
     await orderCrud.save({ ...event.data })
   }
 
   const handleRowEditingStopped = async (
     event: RowEditingStoppedEvent<OrderRow>
   ): Promise<void> => {
-    if (activeScenario.value !== 'row') return
+    if (inlineEditMode.value !== 'row') return
     if (event.cancelled) {
       message.info(`订单 ${event.data.orderNo} 的整行修改已取消`)
       return
@@ -508,8 +449,8 @@
 
   /** 切换场景时关闭旧配置、取消保存，并结束旧表格的编辑事务。 */
   const handleScenarioChange = async (): Promise<void> => {
-    reorderDemo.cancelPending()
-    showFeatureDrawer.value = false
+    reorder.cancelPending()
+    feature.open = false
     previewState.value = 'data'
     quickFilter.value = ''
     commands.clearSelection()
@@ -520,7 +461,7 @@
   const restoreOrder = (): void => {
     quickFilter.value = ''
     commands.clearSelection()
-    reorderDemo.reset()
+    reorder.reset()
   }
 
   const handleGridError = (event: GridErrorEvent<OrderRow>): void => {
@@ -542,69 +483,10 @@
   const { table, bindings: tableBindings, selectedCount, commands } = grid
   const { api: tableApi, ready } = table
   const quickFilter = grid.search
-  const reorderTableBindings = computed(() => ({
-    ...tableBindings.value,
-    ...rowOrdering.value.bindings,
-    rowSelection: 'multiple' as const,
-  }))
-
-  const syncFeatureSettings = (): void => {
-    const api = tableApi.value
-    if (!api) return
-    api.batch(currentApi => {
-      currentApi.updateOptions({
-        ...toMachFeatureOptions(featureSettings.value),
-        ...(isReorderScenario.value
-          ? { pagination: false as const, rowSelection: 'multiple' as const }
-          : {}),
-      })
-      if (
-        !isReorderScenario.value &&
-        featureSettings.value.rowSelection === 'none'
-      ) {
-        currentApi.selection.clear()
-      }
-    })
-  }
-
-  watch(featureSettings, syncFeatureSettings, { deep: true, flush: 'post' })
+  const feature = useMachTableFeatures(tableApi, ready, isReorderScenario)
   watch(ready, isReady => {
-    if (isReady) {
-      syncFeatureSettings()
-      if (isReorderScenario.value) reorderState.value = rowOrdering.value.state
-    }
+    if (isReady && isReorderScenario.value) reorder.refreshState()
   })
-
-  const applyFeaturePreset = (value: string | number | null): void => {
-    if (typeof value !== 'string' || !(value in MACH_FEATURE_PRESETS)) return
-    const preset = value as MachFeaturePreset
-    featureSettings.value = { ...MACH_FEATURE_PRESETS[preset].settings }
-    message.success(`已应用“${MACH_FEATURE_PRESETS[preset].label}”配置`)
-  }
-
-  const copyFeatureConfig = async (): Promise<void> => {
-    try {
-      const config = toMachFeatureOptions(featureSettings.value)
-      await navigator.clipboard.writeText(JSON.stringify(config, null, 2))
-      message.success('当前最小配置已复制')
-    } catch {
-      message.warning('浏览器未授权剪贴板，请手动复制')
-    }
-  }
-
-  const resetFeatureSettings = (): void => {
-    featureSettings.value = { ...DEFAULT_MACH_FEATURE_SETTINGS }
-    message.success('已恢复企业列表推荐配置')
-  }
-
-  const featureActions = defineActions([
-    {
-      key: 'settings',
-      onClick: () => {
-        showFeatureDrawer.value = true
-      },
-    },
-  ])
 
   const tableActions = defineActions([
     {
@@ -616,17 +498,15 @@
       key: 'columns',
       show: () => activeScenario.value === 'workspace',
       disabled: () => !ready.value,
-      onClick: () => openColumnWorkbench(),
+      onClick: () => commands.openColumns(),
     },
     {
       key: 'select-all',
       label: '全选筛选结果',
       icon: 'mdi:select-all',
       show: () =>
-        isReorderScenario.value ||
-        featureSettings.value.rowSelection === 'multiple',
-      disabled: () =>
-        !ready.value || (isReorderScenario.value && reorderBusy.value),
+        isReorderScenario.value || feature.settings.rowSelection === 'multiple',
+      disabled: () => !ready.value || (isReorderScenario.value && reorder.busy),
       onClick: () => commands.selectAll(),
     },
     {
@@ -634,18 +514,16 @@
       label: '清空选择',
       icon: 'mdi:selection-remove',
       show: () =>
-        isReorderScenario.value ||
-        featureSettings.value.rowSelection !== 'none',
+        isReorderScenario.value || feature.settings.rowSelection !== 'none',
       disabled: () =>
-        !selectedCount.value || (isReorderScenario.value && reorderBusy.value),
+        !selectedCount.value || (isReorderScenario.value && reorder.busy),
       onClick: () => commands.clearSelection(),
     },
     {
       key: 'undo',
       label: '撤销编辑',
       icon: 'mdi:undo-variant',
-      show: () =>
-        activeScenario.value === 'cell' || activeScenario.value === 'row',
+      show: () => inlineEditMode.value !== 'none',
       disabled: () => !ready.value,
       onClick: () => undoEdit(),
     },
@@ -654,26 +532,24 @@
       label: '选中两项订单',
       icon: 'mdi:checkbox-multiple-marked-outline',
       show: () => isReorderScenario.value,
-      disabled: () => !ready.value || reorderBusy.value,
-      onClick: () => selectOrderSample(),
+      disabled: () => !ready.value || reorder.busy,
+      onClick: reorder.selectSample,
     },
     {
       key: 'undo-order',
       label: '撤销顺序',
       icon: 'mdi:undo-variant',
       show: () => isReorderScenario.value,
-      disabled: () =>
-        !ready.value || reorderBusy.value || !reorderState.value.canUndo,
-      onClick: () => restoreRowOrder('undo'),
+      disabled: () => !ready.value || reorder.busy || !reorder.state.canUndo,
+      onClick: () => reorder.restore('undo'),
     },
     {
       key: 'redo-order',
       label: '重做顺序',
       icon: 'mdi:redo-variant',
       show: () => isReorderScenario.value,
-      disabled: () =>
-        !ready.value || reorderBusy.value || !reorderState.value.canRedo,
-      onClick: () => restoreRowOrder('redo'),
+      disabled: () => !ready.value || reorder.busy || !reorder.state.canRedo,
+      onClick: () => reorder.restore('redo'),
     },
     {
       key: 'reload-order',
@@ -682,16 +558,16 @@
       show: () => isReorderScenario.value,
       disabled: () =>
         !ready.value ||
-        reorderBusy.value ||
-        reorderClientRevision.value === reorderServerRevision.value,
-      onClick: () => reorderDemo.reload(),
+        reorder.busy ||
+        reorder.clientRevision === reorder.serverRevision,
+      onClick: reorder.reload,
     },
     {
       key: 'restore-order',
       label: '恢复初始顺序',
       icon: 'mdi:sort-restore',
       show: () => isReorderScenario.value,
-      disabled: () => !ready.value || reorderBusy.value || !orderChanged.value,
+      disabled: () => !ready.value || reorder.busy || !reorder.changed,
       onClick: restoreOrder,
     },
     {
@@ -706,21 +582,6 @@
       type: 'primary',
       disabled: () => !ready.value,
       onClick: () => exportCsv(),
-    },
-  ])
-
-  const featurePanelActions = defineActions([
-    {
-      key: 'reset',
-      label: '恢复推荐配置',
-      onClick: resetFeatureSettings,
-    },
-    {
-      key: 'copy-config',
-      label: '复制当前配置',
-      icon: 'mdi:content-copy',
-      type: 'primary',
-      onClick: copyFeatureConfig,
     },
   ])
 
@@ -741,36 +602,60 @@
   })
   const treeColumns = createOrderTreeColumns()
   const reorderColumns = createOrderReorderColumns()
-  const machTableColumns = computed(() => {
-    if (isReorderScenario.value) return reorderColumns
-    return isTreeScenario.value ? treeColumns : orderColumns
+  const treeRows = createOrderTreeRows()
+  /** 树形分页的概览使用节点总数，各层均计入。 */
+  const countTreeRows = (rows: OrderTreeRow[]): number =>
+    rows.reduce(
+      (total, row) => total + 1 + countTreeRows(row.children ?? []),
+      0
+    )
+  const treeTotal = countTreeRows(treeRows)
+  const currentData = computed(() => {
+    if (currentScenario.value.kind === 'tree') {
+      return {
+        rows: treeRows,
+        columns: treeColumns,
+        total: treeTotal,
+        tree: true,
+      }
+    }
+    if (isReorderScenario.value) {
+      return {
+        rows: reorder.rows,
+        columns: reorderColumns,
+        total: reorder.rows.length,
+        tree: false,
+      }
+    }
+    return {
+      rows: orderCrud.rows.value,
+      columns: orderColumns,
+      total: orderCrud.total.value,
+      tree: false,
+    }
+  })
+  const totalRows = computed(() =>
+    previewState.value === 'empty' ? 0 : currentData.value.total
+  )
+  const tableProps = computed(() => {
+    const data = currentData.value
+    return {
+      ...tableBindings.value,
+      rowData: previewState.value === 'empty' ? [] : data.rows,
+      columnDefs: data.columns,
+      treeData: data.tree,
+      defaultExpandAll: data.tree,
+      ...(isReorderScenario.value && {
+        ...reorder.bindings,
+        rowSelection: 'multiple' as const,
+        pagination: false as const,
+        persistence: false as const,
+      }),
+    }
   })
 
   const undoEdit = (): void => {
     if (!commands.undo()) message.info('当前没有可撤销的编辑')
-  }
-
-  /** 勾选不连续的两项，便于直接体验批量拖拽和内部相对顺序保持。 */
-  const selectOrderSample = (): void => {
-    const api = tableApi.value
-    if (!api) return
-    api.selection.clear()
-    for (const row of [reorderRows.value[0], reorderRows.value[2]]) {
-      if (row) api.selection.setById(row.id, true, false)
-    }
-  }
-
-  /** 排序撤销/重做由包保存；错误仍通过状态区和宿主消息明确展示。 */
-  const restoreRowOrder = async (operation: 'undo' | 'redo'): Promise<void> => {
-    try {
-      await rowOrdering.value[operation]()
-    } catch (error) {
-      message.warning(error instanceof Error ? error.message : '顺序操作未完成')
-    }
-  }
-
-  const openColumnWorkbench = (): void => {
-    commands.openColumns()
   }
 
   const resetTable = (): void => {

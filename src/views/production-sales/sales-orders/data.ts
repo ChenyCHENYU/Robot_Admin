@@ -2,58 +2,22 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-28
  * @FilePath: \Robot_Admin\src\views\production-sales\sales-orders\data.ts
- * @Description: 本地单据工作台：统一字段语义、主从资源、校验导航及可重试批改
+ * @Description: 销售订单类型、示例数据、金额口径与静态组件配置
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import '@robot-admin/naive-ui-components/C_DataPicker/style.css'
-import { useResizeObserver } from '@vueuse/core'
-import { routeLocationKey } from 'vue-router'
-import {
-  createDataPickerField,
-  type DataPickerSourceInput,
-} from '@robot-admin/naive-ui-components/C_DataPicker'
-import {
-  type FormConfig,
-  type FormInstance,
-  type FormOption,
+import type { DataPickerSourceInput } from '@robot-admin/naive-ui-components/C_DataPicker'
+import type {
+  FormConfig,
+  FormOption,
 } from '@robot-admin/naive-ui-components/C_Form'
-import {
-  type SearchConfig,
-  type SearchFormItem,
-} from '@robot-admin/naive-ui-components/C_FormSearch'
-import {
-  useDictionaries,
-  useDictionaryRefresh,
-} from '@robot-admin/dictionary/vue'
-import { ORDER_STATUS_OPTIONS } from '@/config/enums'
-import {
-  createBatchPatch,
-  createNumberCodec,
-  type BatchOperationResult,
-} from '@robot-admin/naive-ui-components/data'
-import {
-  useDataResource,
-  useValidationScope,
-} from '@robot-admin/naive-ui-components/workflows'
-import {
-  defineVueColumns,
-  indexColumn,
-  actionsColumn,
-  type RowClickEvent,
-  selectionColumn,
-  useMachTable,
-  type RowStyleRule,
-} from '@agile-team/mach-table-vue'
+import type { SearchFormItem } from '@robot-admin/naive-ui-components/C_FormSearch'
+import { createNumberCodec } from '@robot-admin/naive-ui-components/data'
 import {
   summarizeRows,
   type SummaryNumericStrategy,
 } from '@agile-team/mach-table-vue/business'
-import {
-  previewContractReview,
-  resolveContractReview,
-  type ContractField,
-} from './contractReview'
-import { useSalesOperations } from './operations'
+import { ORDER_STATUS_OPTIONS } from '@/config/enums'
+import { delayWithSignal } from '@/utils/abort'
 import { CUSTOMERS } from './options'
 export { CUSTOMERS } from './options'
 
@@ -61,6 +25,7 @@ export interface Customer {
   id: string
   code: string
   name: string
+  region: string
 }
 export interface OrderHeader {
   id: string
@@ -90,46 +55,14 @@ export interface BusinessOrder {
   header: OrderHeader
   lines: OrderLine[]
 }
-interface WorkbenchQuery {
+export interface WorkbenchQuery {
   organization: string
   keyword: string
   status: number | null
   deliveryRange: [string, string] | null
 }
-type BatchMode = 'keep' | 'set' | 'clear'
-interface BatchPlan {
-  order: string
-  keys: string[]
-  patch: Partial<OrderLine>
-  before: Map<string, string | null>
-}
-
-/** 成功项不重发；预览后又修改的备注不能被旧批改计划覆盖。 */
-export function getBatchSubmission(
-  plan: BatchPlan,
-  lines: readonly OrderLine[],
-  results: readonly BatchOperationResult[],
-  retry?: readonly (string | number)[]
-) {
-  const requested = retry
-    ? plan.keys.filter(key => retry.includes(key))
-    : plan.keys
-  const completed = new Set(
-    results
-      .filter(result => result.status === 'success')
-      .map(result => result.key)
-  )
-  const keys = requested.filter(key => !completed.has(key))
-  const notes = new Map(lines.map(row => [row.id, row.note]))
-  const stale = keys.some(key => {
-    const expected = retry ? plan.patch.note : plan.before.get(key)
-    return !notes.has(key) || !Object.is(notes.get(key), expected)
-  })
-  return { keys, stale }
-}
-
 export const STATUS_OPTIONS = ORDER_STATUS_OPTIONS
-const customerLabels = new Map(
+export const customerLabels = new Map(
   CUSTOMERS.map(customer => [customer.id, customer.name])
 )
 export const moneyCodec = createNumberCodec({
@@ -142,9 +75,8 @@ export const quantityCodec = createNumberCodec({
   fractionDigits: 3,
 })
 const exactCodec = createNumberCodec({ storage: 'decimal-string' })
-const clone = <T>(value: T): T => structuredClone(toRaw(value))
 /** 订单状态与履约进度保持一致，进行中的进度沿用已有值。 */
-const progressForStatus = (row: OrderHeader): number =>
+export const progressForStatus = (row: OrderHeader): number =>
   row.status === 2 ? 100 : row.status === 0 ? 0 : row.progress || 35
 
 /** 示例数据使用业务主键；零数量与未填写分别保留 '0' 和 null。 */
@@ -165,7 +97,7 @@ export function createBusinessOrders(): BusinessOrder[] {
         section: ['10 × 1500 × 6000', '8 × 1500 × 6000', 'Φ 20 × 9000'][
           index % 3
         ],
-        region: ['华东', '华南', '华北'][index % 3],
+        region: customer.region,
         delivery: `2026-11-${String((index % 12) + 1).padStart(2, '0')}`,
         targetWeight: 128 + index * 12.5,
         progress: status === 2 ? 100 : status === 0 ? 0 : 35 + (index % 5) * 10,
@@ -214,7 +146,7 @@ export function decimalMillis(value: unknown): bigint {
   const result = BigInt(whole) * 1000n + BigInt(fraction.padEnd(3, '0'))
   return negative ? -result : result
 }
-const decimalFromMillis = (value: bigint): string => {
+export const decimalFromMillis = (value: bigint): string => {
   const sign = value < 0n ? '-' : ''
   const raw = (value < 0n ? -value : value).toString().padStart(4, '0')
   return `${sign}${raw.slice(0, -3)}.${raw.slice(-3)}`
@@ -247,45 +179,28 @@ export function summarizeBusinessLines(lines: readonly OrderLine[]) {
     ),
   }))
 }
-/** 本地演示延迟支持中止，不请求任何生产/销售接口。 */
-const waitForExample = (
-  signal: AbortSignal,
-  milliseconds = 100
-): Promise<void> =>
-  new Promise((resolve, reject) => {
-    const abort = () => {
-      clearTimeout(timer)
-      signal.removeEventListener('abort', abort)
-      reject(new DOMException('已取消', 'AbortError'))
-    }
-    const timer = setTimeout(() => {
-      signal.removeEventListener('abort', abort)
-      resolve()
-    }, milliseconds)
-    if (signal.aborted) abort()
-    else signal.addEventListener('abort', abort, { once: true })
-  })
 export const customerSource: DataPickerSourceInput<Customer> = {
   rowKey: 'id',
   label: row => row.name,
   request: async ({ page, pageSize, search, signal }) => {
-    await waitForExample(signal)
+    await delayWithSignal(100, signal)
     const all = CUSTOMERS.filter(row =>
       `${row.code} ${row.name}`.includes(search)
     )
     return {
-      rows: clone(all.slice((page - 1) * pageSize, page * pageSize)),
+      rows: structuredClone(all.slice((page - 1) * pageSize, page * pageSize)),
       total: all.length,
     }
   },
   resolve: async (values, signal) => {
-    await waitForExample(signal)
-    return clone(CUSTOMERS.filter(row => values.includes(row.id)))
+    await delayWithSignal(100, signal)
+    return structuredClone(CUSTOMERS.filter(row => values.includes(row.id)))
   },
 }
 export const CUSTOMER_COLUMNS = [
   { key: 'code', title: '客户编号', width: 130 },
   { key: 'name', title: '客户名称', minWidth: 180 },
+  { key: 'region', title: '销售区域', width: 100 },
 ]
 export const FIELD_DICTIONARIES = { status: 'order-status' } as const
 export const SEARCH_FIELDS: SearchFormItem<WorkbenchQuery>[] = [
@@ -332,6 +247,7 @@ export const HEADER_FIELDS: FormOption<OrderHeader>[] = [
   },
   { type: 'input', prop: 'contractNo', label: '合同编号', readonly: true },
   { type: 'input', prop: 'delivery', label: '交货日期', readonly: true },
+  { type: 'input', prop: 'region', label: '销售区域' },
   { type: 'input', prop: 'note', label: '订单备注' },
 ]
 export const FORM_CONFIG: FormConfig<OrderHeader> = {
@@ -363,882 +279,4 @@ export const ORDER_DETAIL_LOCALE = {
 export const PAYMENT_LOCALE = {
   emptyRows: '暂无可测算的收款金额',
   emptyRowsHint: '填写商品明细金额后按币种汇总',
-}
-
-/** 单据工作台只组合公开协议；保存与模拟部分失败仍属于本地业务数据源。 */
-export function useBusinessWorkbench() {
-  const route = inject(routeLocationKey, undefined)
-  const isPreview = computed(() => route?.path.startsWith('/preview/') ?? false)
-  const fieldDictionaries = useFieldDictionaries(FIELD_DICTIONARIES)
-  const searchFields = fieldDictionaries.search(SEARCH_FIELDS)
-  const headerFields = fieldDictionaries.form(HEADER_FIELDS)
-  const statusSource = useDictionaries().getDictionary(
-    FIELD_DICTIONARIES.status
-  )
-  if (!statusSource) throw new Error('订单状态字典未配置')
-  const orders = ref(createBusinessOrders())
-  const activeId = ref('ORDER-1')
-  const header = ref(clone(orders.value[0].header))
-  const lines = shallowRef<OrderLine[]>([])
-  const form = ref<FormInstance<OrderHeader> | null>(null)
-  const master = useMachTable<BusinessOrder['header']>()
-  useDictionaryRefresh([statusSource], () =>
-    master.api.value?.view.refreshCells()
-  )
-  const detail = useMachTable<OrderLine>()
-  const payments = useMachTable<{ id: string; stage: string; amount: string }>()
-  const activeTab = ref<'lines' | 'payments'>('lines')
-  const detailEditing = ref(false)
-  // stop() 在无活动编辑器时也返回 false；仅对真正的编辑会话判断提交结果。
-  const commitDetailEdit = async (): Promise<boolean> =>
-    !detailEditing.value || (await detail.api.value?.editing.stop()) === true
-  const onDetailTabKeydown = (event: KeyboardEvent) => {
-    const sibling = activeTab.value === 'lines' ? 'payments' : 'lines'
-    const keys: Record<string, 'lines' | 'payments'> = {
-      ArrowLeft: sibling,
-      ArrowRight: sibling,
-      Home: 'lines',
-      End: 'payments',
-    }
-    const next = keys[event.key]
-    if (!next) return
-    event.preventDefault()
-    const tabs = (event.currentTarget as HTMLElement).closest(
-      '[role="tablist"]'
-    )
-    activeTab.value = next
-    void nextTick(() =>
-      tabs
-        ?.querySelector<HTMLElement>(`[role="tab"][data-name="${next}"]`)
-        ?.focus()
-    )
-  }
-  const container = ref<HTMLElement | null>(null)
-  const stacked = ref(false)
-  useResizeObserver(container, ([entry]) => {
-    if (entry)
-      stacked.value =
-        entry.contentRect.width > 0 && entry.contentRect.width < 860
-  })
-  const fullscreen = ref(false)
-  /** Teleport 移动前释放按钮焦点，移动后恢复键盘入口且不拉动祖先滚动区。 */
-  const toggleDetailFullscreen = (event: MouseEvent): void => {
-    const trigger = event.currentTarget as HTMLElement
-    trigger.blur()
-    fullscreen.value = !fullscreen.value
-    void nextTick(() => {
-      if (trigger.isConnected && document.activeElement === document.body)
-        trigger.focus({ preventScroll: true })
-    })
-  }
-  // 首次进入矮窗口时保留两侧可拖余量；后续尺寸变化仍尊重用户已调整的比例。
-  const splitSize = ref(
-    typeof window !== 'undefined' &&
-      window.matchMedia('(max-height: 900px)').matches
-      ? 45
-      : 52
-  )
-  const pendingOrder = ref<string | null>(null)
-  let afterOrderSwitch: (() => void) | undefined
-  const cancelSwitch = () => {
-    pendingOrder.value = null
-    afterOrderSwitch = undefined
-  }
-  const saving = ref(false)
-  const batchBusy = ref(false)
-  const batchVisible = ref(false)
-  const batchMode = ref<BatchMode>('keep')
-  const batchValue = ref('统一交期备注')
-  const batchPreview = shallowRef<
-    Array<{
-      key: string
-      product: string
-      before: string | null
-      after: string | null
-    }>
-  >([])
-  const batchResults = shallowRef<BatchOperationResult[]>([])
-  const initialQuery: WorkbenchQuery = {
-    organization: '001',
-    keyword: '',
-    status: null,
-    deliveryRange: null,
-  }
-  const query = ref(clone(initialQuery))
-  const appliedQuery = ref(clone(query.value))
-  const selected = computed(() =>
-    orders.value.find(order => order.header.id === activeId.value)!
-  )
-  const scope = useValidationScope()
-  const resource = useDataResource({
-    key: activeId,
-    load: async ({ key, signal }) => {
-      await waitForExample(signal)
-      return clone(
-        orders.value.find(order => order.header.id === key)?.lines ?? []
-      )
-    },
-  })
-  watch(resource.data, value => {
-    lines.value = value === undefined ? [] : clone(value)
-  })
-  // 原生 DOM 渲染的操作列按状态刷新，不重建数据列或正在使用的编辑器。
-  watch([saving, batchBusy, resource.loading], () => {
-    void nextTick(() => {
-      master.api.value?.view.refreshCells({ columns: ['op'], force: true })
-      detail.api.value?.view.refreshCells({ columns: ['op'], force: true })
-    })
-  })
-  const dirty = computed(
-    () =>
-      resource.data.value !== undefined &&
-      JSON.stringify({ header: header.value, lines: lines.value }) !==
-        JSON.stringify(selected.value)
-  )
-  const localDemoNotice = '本地示例 · 所有改动仅保留在当前页面'
-  const notice = ref(localDemoNotice)
-  const isDefaultNotice = computed(() => notice.value === localDemoNotice)
-  const contractReviewVisible = ref(false)
-  const contractReview =
-    shallowRef<ReturnType<typeof previewContractReview>>(null)
-  const contractFields = ref<ContractField[]>([])
-  const contractReviewError = ref('')
-  const canEditContract = computed(
-    () => selected.value.header.status === 0 && header.value.status === 0
-  )
-  const canAdoptContractFields = computed(
-    () =>
-      canEditContract.value &&
-      !saving.value &&
-      !batchBusy.value &&
-      !resource.loading.value &&
-      pendingOrder.value === null
-  )
-  /** 始终从当前订单草稿重新预览，不覆盖用户已填写的内容。 */
-  const openContractReview = () => {
-    contractReview.value = previewContractReview(header.value)
-    contractFields.value = []
-    contractReviewError.value = ''
-    contractReviewVisible.value = true
-  }
-  /** 切单、恢复或取消时释放仅属于当前草稿的预览。 */
-  const closeContractReview = () => {
-    contractReviewVisible.value = false
-    contractReview.value = null
-    contractFields.value = []
-    contractReviewError.value = ''
-  }
-  /** 仅允许勾选存在差异的字段。 */
-  const selectContractField = (key: ContractField, checked: boolean) => {
-    if (!canAdoptContractFields.value) return
-    const row = contractReview.value?.rows.find(item => item.key === key)
-    if (!row || row.status === 'same') return
-    if (checked && !contractFields.value.includes(key))
-      contractFields.value.push(key)
-    if (!checked)
-      contractFields.value = contractFields.value.filter(item => item !== key)
-  }
-  /** 冲突时保留整份草稿，成功后仍由现有的整单保存提交。 */
-  const adoptContractFields = () => {
-    if (!canAdoptContractFields.value || !contractReview.value) return false
-    const patch = resolveContractReview(
-      header.value,
-      contractReview.value,
-      contractFields.value
-    )
-    if (!patch) {
-      contractReviewError.value = '草稿已变更，请刷新比对后重新选择字段。'
-      return false
-    }
-    header.value = { ...header.value, ...patch }
-    notice.value = `已采纳 ${contractFields.value.length} 个字段到订单草稿，请保存整单。`
-    closeContractReview()
-    return true
-  }
-  const selectedCount = ref(0)
-  const totals = computed(() => summarizeBusinessLines(lines.value))
-  const orderCount = computed(() => orders.value.length)
-  const currentStatus = computed(() =>
-    fieldDictionaries.label('status', header.value.status)
-  )
-  const filteredOrders = computed(() =>
-    orders.value
-      .map(order => order.header)
-      .filter(row => {
-        const customer = customerLabels.get(row.customer ?? '') ?? ''
-        const range = appliedQuery.value.deliveryRange
-        return (
-          (appliedQuery.value.status === null ||
-            row.status === appliedQuery.value.status) &&
-          (!range || (row.delivery >= range[0] && row.delivery <= range[1])) &&
-          `${row.orderNo} ${customer}`.includes(
-            appliedQuery.value.keyword.trim()
-          )
-        )
-      })
-  )
-  watch([activeId, () => filteredOrders.value.length], () => {
-    void nextTick(() => {
-      const index = filteredOrders.value.findIndex(
-        row => row.id === activeId.value
-      )
-      const api = master.api.value
-      if (index < 0 || !api) return
-      const pageSize = api.pagination.getPageSize()
-      api.pagination.setPage(Math.floor(index / pageSize) + 1)
-      api.view.scrollToRow(index % pageSize, 'nearest')
-    })
-  })
-  const applyOrderQuery = async (params: WorkbenchQuery): Promise<void> => {
-    appliedQuery.value = clone(params)
-    master.api.value?.pagination.setPage(1)
-    await nextTick()
-  }
-  const clearOrderFilters = () => {
-    query.value = clone(initialQuery)
-    master.api.value?.filtering.setModel(null)
-    void applyOrderQuery(query.value)
-  }
-  const activeOutsideQuery = computed(
-    () => !filteredOrders.value.some(row => row.id === activeId.value)
-  )
-  const searchConfig: SearchConfig<WorkbenchQuery> = {
-    density: 'compact',
-    layout: 'grid',
-    columns: 3,
-    fieldMinWidth: 250,
-    labelPlacement: 'left',
-    labelWidth: 96,
-    foldThreshold: 3,
-    requireValue: false,
-    searchOnReset: true,
-    onSearch: applyOrderQuery,
-  }
-  const renderers = {
-    customer: createDataPickerField({
-      source: customerSource,
-      columns: CUSTOMER_COLUMNS,
-      title: '选择订货客户',
-      clearable: true,
-    }),
-  }
-  const activate = (id: string) => {
-    scope.clear()
-    cancelSwitch()
-    closeContractReview()
-    activeId.value = id
-    header.value = clone(selected.value.header)
-    selectedCount.value = 0
-    batchVisible.value = false
-    resetBatch()
-    void nextTick(() => {
-      form.value?.markAsClean()
-      form.value?.clearValidation()
-    })
-  }
-  // 行编辑复用切单保护；保存或放弃后继续打开原先点击的那一行。
-  const chooseOrder = async (id: string, after?: () => void) => {
-    if (saving.value || batchBusy.value || resource.loading.value) return
-    if (!(await commitDetailEdit())) return
-    if (id === activeId.value) {
-      after?.()
-      return
-    }
-    if (dirty.value) {
-      pendingOrder.value = id
-      afterOrderSwitch = after
-    } else {
-      activate(id)
-      after?.()
-    }
-  }
-  const selectOrder = (event: RowClickEvent<OrderHeader>) => {
-    if (event.rowNode.data) void chooseOrder(event.rowNode.data.id)
-  }
-  const masterColumns = defineVueColumns<OrderHeader>([
-    indexColumn({ headerName: '序号', width: 46 }),
-    {
-      field: 'orderNo',
-      headerName: '销售订单号',
-      width: 170,
-      pinned: 'left',
-      filter: true,
-      render: row =>
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'workbench-order-link',
-            onClick: (event: MouseEvent) => {
-              event.stopPropagation()
-              void operations.openDetail(row)
-            },
-            'aria-label': `查看${row.orderNo}详情`,
-          },
-          row.orderNo
-        ),
-    },
-    {
-      field: 'customer',
-      headerName: '客户名称',
-      width: 130,
-      filter: true,
-      valueFormatter: ({ value }) =>
-        customerLabels.get(String(value)) ?? String(value ?? '—'),
-    },
-    { field: 'contractNo', headerName: '合同编号', filter: true },
-    { field: 'grade', headerName: '钢种', filter: true },
-    { field: 'section', headerName: '规格 (mm)', minWidth: 160 },
-    { field: 'region', headerName: '区域', width: 80 },
-    {
-      field: 'targetWeight',
-      headerName: '合同量 (t)',
-      width: 110,
-      valueFormatter: ({ value }) => quantityCodec.format(value),
-    },
-    {
-      field: 'status',
-      headerName: '状态',
-      width: 105,
-      valueFormatter: ({ value }) => fieldDictionaries.label('status', value),
-      valueParser: ({ value }) => fieldDictionaries.parse('status', value),
-      valueSerializer: ({ value, target }) =>
-        target === 'clipboard' || target === 'csv'
-          ? fieldDictionaries.label('status', value)
-          : value,
-      status: true,
-    },
-    {
-      field: 'progress',
-      headerName: '履约进度',
-      width: 145,
-      render: row =>
-        h(
-          'div',
-          {
-            class: 'sales-progress',
-            role: 'progressbar',
-            'aria-valuenow': row.progress,
-            'aria-valuemin': 0,
-            'aria-valuemax': 100,
-            'aria-label': `${row.orderNo}履约进度`,
-          },
-          [
-            h('span', {
-              style: { width: `${row.progress}%` },
-              class: { 'is-complete': row.progress === 100 },
-            }),
-            h('small', `${row.progress}%`),
-          ]
-        ),
-    },
-    { field: 'delivery', headerName: '交货日期', width: 118 },
-    actionsColumn<OrderHeader>({
-      width: 88,
-      actions: [
-        {
-          icon: 'edit',
-          label: '编辑订单',
-          variant: 'warning',
-          disabled: ({ data }) =>
-            data?.status !== 0 ||
-            saving.value ||
-            batchBusy.value ||
-            resource.loading.value,
-          onClick: ({ data }) => data && operations.editOrder(data),
-        },
-        {
-          icon: 'delete',
-          label: '删除订单',
-          variant: 'danger',
-          disabled: ({ data }) =>
-            data?.status !== 0 ||
-            saving.value ||
-            batchBusy.value ||
-            resource.loading.value,
-          onClick: ({ data }) => data && operations.removeOrder(data),
-        },
-        {
-          icon: 'copy',
-          label: '复制订单',
-          disabled: () =>
-            saving.value || batchBusy.value || resource.loading.value,
-          onClick: ({ data }) => data && operations.copyOrder(data),
-        },
-      ],
-    }),
-  ])
-  // 规则只在当前订单变化时更新，保留稳定行身份；取消切单不误高亮另一个订单。
-  const masterRowStyles = computed<readonly RowStyleRule<OrderHeader>[]>(() => {
-    const id = activeId.value
-    return [
-      {
-        when: ({ data }) => data.id === id,
-        tone: 'info',
-        backgroundColor: 'var(--mach-row-selected-bg)',
-      },
-    ]
-  })
-  const lineColumns = defineVueColumns<OrderLine>([
-    { field: 'id', headerName: '明细编号', width: 145, pinned: 'left' },
-    { field: 'product', headerName: '商品', width: 150 },
-    {
-      field: 'quantity',
-      headerName: '数量 (t)',
-      width: 130,
-      editable: true,
-      valueParser: ({ value }) => {
-        const parsed = quantityCodec.parse(value)
-        if (parsed !== null) decimalMillis(parsed)
-        return parsed
-      },
-      valueFormatter: ({ value }) => quantityCodec.format(value),
-      valueSerializer: ({ value }) => value,
-    },
-    {
-      field: 'amount',
-      headerName: '金额 (CNY)',
-      width: 155,
-      valueFormatter: ({ value }) => moneyCodec.format(value),
-      valueSerializer: ({ value }) => value,
-    },
-    {
-      field: 'note',
-      headerName: '备注',
-      minWidth: 160,
-      editable: true,
-    },
-  ])
-  const detailColumns = defineVueColumns<OrderLine>([
-    selectionColumn(),
-    indexColumn({ headerName: '序号', width: 46 }),
-    ...lineColumns.map(column =>
-      'field' in column && column.field === 'id'
-        ? {
-            ...column,
-            render: (row: OrderLine) =>
-              h(
-                'button',
-                {
-                  type: 'button',
-                  class: 'workbench-order-link',
-                  onClick: (event: MouseEvent) => {
-                    event.stopPropagation()
-                    void operations.openLineDetail(row)
-                  },
-                },
-                row.id
-              ),
-          }
-        : column
-    ),
-    actionsColumn<OrderLine>({
-      width: 72,
-      actions: [
-        {
-          icon: 'edit',
-          label: '编辑明细',
-          variant: 'warning',
-          disabled: () =>
-            saving.value || batchBusy.value || resource.loading.value,
-          onClick: ({ data }) => data && operations.editLine(data),
-        },
-        {
-          icon: 'delete',
-          label: '删除明细',
-          variant: 'danger',
-          disabled: () =>
-            saving.value || batchBusy.value || resource.loading.value,
-          onClick: ({ data }) => data && operations.removeLine(data),
-        },
-      ],
-    }),
-  ])
-  const readonlyDetailColumns = [
-    indexColumn({ headerName: '序号', width: 46 }),
-    ...lineColumns.map(column => ({ ...column, editable: false })),
-  ]
-  const paymentColumns = defineVueColumns<{
-    id: string
-    stage: string
-    amount: string
-  }>([
-    indexColumn({ headerName: '序号', width: 46 }),
-    { field: 'stage', headerName: '币种' },
-    {
-      field: 'amount',
-      headerName: '测算金额',
-      width: 160,
-      valueFormatter: ({ value }) => moneyCodec.format(value),
-    },
-  ])
-  const paymentRows = computed(() => {
-    const amounts = new Map<string, bigint>()
-    for (const row of lines.value) {
-      if (row.amount === null) continue
-      amounts.set(
-        row.currency,
-        (amounts.get(row.currency) ?? 0n) + decimalMillis(row.amount)
-      )
-    }
-    return [...amounts].map(([currency, amount]) => ({
-      id: `${activeId.value}-${currency}`,
-      stage: currency,
-      amount: decimalFromMillis(amount),
-    }))
-  })
-  // 内容少时释放表格高度；加载、错误、空态与局部全屏保留分配的可用视口。
-  const shortLines = computed(
-    () =>
-      !fullscreen.value &&
-      !resource.loading.value &&
-      resource.error.value === null &&
-      lines.value.length > 0 &&
-      lines.value.length <= 3
-  )
-  const shortPayments = computed(
-    () =>
-      !fullscreen.value &&
-      !resource.loading.value &&
-      resource.error.value === null &&
-      paymentRows.value.length > 0 &&
-      paymentRows.value.length <= 3
-  )
-  const refreshDetailLayout = () => {
-    void nextTick(() => {
-      detail.api.value?.view.refreshLayout()
-      payments.api.value?.view.refreshLayout()
-    })
-  }
-  watch([activeTab, fullscreen], refreshDetailLayout)
-  scope.register({
-    id: 'header',
-    validate: () => form.value?.validate(),
-    reveal: issue => {
-      const field = issue.target?.field
-      return field === 'customer' || field === 'owner'
-        ? (form.value?.revealField(field) ?? false)
-        : false
-    },
-  })
-  scope.register({
-    id: 'lines',
-    validate: () =>
-      lines.value.flatMap(row => {
-        const invalid =
-          row.quantity === null || decimalMillis(row.quantity) < 0n
-        return invalid
-          ? [
-              {
-                key: `${row.id}:quantity`,
-                source: 'lines',
-                message: `${row.id}：请填写非负数量（零是有效值）`,
-                target: { tab: 'lines', rowKey: row.id, field: 'quantity' },
-              },
-            ]
-          : []
-      }),
-    reveal: async issue => {
-      activeTab.value = 'lines'
-      await nextTick()
-      detail.api.value?.view.refreshLayout()
-      const index = lines.value.findIndex(
-        row => row.id === issue.target?.rowKey
-      )
-      if (index < 0) return false
-      detail.api.value?.view.scrollToRow(index, 'middle')
-      return (
-        detail.api.value?.editing.startCell({
-          rowIndex: index,
-          colId: issue.target?.field ?? 'quantity',
-        }) ?? false
-      )
-    },
-  })
-  const syncLineEdit = () => {
-    const updated: OrderLine[] = []
-    detail.api.value?.rows.forEach(node => {
-      if (node.data) updated.push(clone(node.data))
-    })
-    lines.value = updated
-  }
-  const save = async (): Promise<boolean> => {
-    if (saving.value || batchBusy.value || resource.loading.value) return false
-    if (!(await commitDetailEdit())) return false
-    saving.value = true
-    try {
-      if (!(await scope.validate())) {
-        notice.value = '请点击校验摘要定位并补齐内容'
-        return false
-      }
-      header.value.progress = progressForStatus(header.value)
-      selected.value.header = clone(header.value)
-      selected.value.lines = clone(lines.value)
-      detail.api.value?.editing.markSaved()
-      form.value?.markAsClean()
-      scope.clear()
-      notice.value = '整单保存成功（本地示例）'
-      return true
-    } finally {
-      saving.value = false
-    }
-  }
-  const saveAndSwitch = async () => {
-    const target = pendingOrder.value
-    if (!target) return
-    const after = afterOrderSwitch
-    if (await save()) {
-      activate(target)
-      after?.()
-    } else cancelSwitch()
-  }
-  const discardAndSwitch = () => {
-    const after = afterOrderSwitch
-    if (pendingOrder.value) {
-      activate(pendingOrder.value)
-      after?.()
-    }
-  }
-  const selectAllLines = () => {
-    detail.api.value?.selection.selectAll()
-    selectedCount.value = detail.api.value?.selection.getIds().length ?? 0
-  }
-  let batchPlan: BatchPlan | undefined
-  const resetBatch = () => {
-    batchPlan = undefined
-    batchPreview.value = []
-    batchResults.value = []
-  }
-  const openBatch = () => {
-    if (!selectedCount.value || saving.value || batchBusy.value) return
-    if (batchPlan) {
-      const keys = new Set(detail.api.value?.selection.getIds() ?? [])
-      if (
-        keys.size !== batchPlan.keys.length ||
-        batchPlan.keys.some(key => !keys.has(key))
-      )
-        resetBatch()
-    }
-    batchVisible.value = true
-  }
-  watch([batchMode, batchValue], resetBatch)
-  const attempts = new Map<string, number>()
-  let alive = true
-  let batchController: AbortController | undefined
-  onScopeDispose(() => {
-    alive = false
-    batchController?.abort()
-  })
-  const previewBatch = async () => {
-    if (batchBusy.value) return
-    if (!(await commitDetailEdit())) return
-    batchResults.value = []
-    const keys = detail.api.value?.selection.getIds() ?? []
-    const change =
-      batchMode.value === 'set'
-        ? {
-            field: 'note' as const,
-            operation: 'set' as const,
-            value: batchValue.value,
-          }
-        : { field: 'note' as const, operation: batchMode.value }
-    const patch = createBatchPatch<OrderLine>([change])
-    batchPlan = {
-      order: activeId.value,
-      keys,
-      patch,
-      before: new Map(lines.value.map(row => [row.id, row.note])),
-    }
-    batchPreview.value = lines.value
-      .filter(row => keys.includes(row.id))
-      .map(row => ({
-        key: row.id,
-        product: row.product,
-        before: row.note,
-        after: 'note' in patch ? (patch.note ?? null) : row.note,
-      }))
-    notice.value = keys.length
-      ? '请检查变更预览后执行'
-      : '请先选择需要批改的明细'
-  }
-  const canExecutePlan = (plan: BatchPlan | undefined): plan is BatchPlan =>
-    !!plan && plan.order === activeId.value && !batchBusy.value
-  const acceptBatchResults = (results: BatchOperationResult[]) => {
-    const latest = new Map(
-      batchResults.value.map(result => [result.key, result])
-    )
-    results.forEach(result => latest.set(result.key, result))
-    batchResults.value = [...latest.values()]
-    notice.value = batchResults.value.some(
-      result => result.status !== 'success'
-    )
-      ? '批改已返回分项结果，失败草稿继续保留'
-      : '本次批改已全部保存'
-  }
-  const recordBatchError = (error: unknown) => {
-    if (alive)
-      notice.value =
-        error instanceof Error ? error.message : '批改失败，草稿保留'
-  }
-  const executeBatch = async (retry?: (string | number)[]) => {
-    const plan = batchPlan
-    if (!canExecutePlan(plan)) return
-    const { keys, stale } = getBatchSubmission(
-      plan,
-      lines.value,
-      batchResults.value,
-      retry
-    )
-    if (!keys.length || !Object.keys(plan.patch).length) {
-      notice.value = '没有需要提交的修改'
-      return
-    }
-    if (stale) {
-      notice.value = '预览后备注已修改，请重新预览；较新的草稿已保留'
-      return
-    }
-    batchBusy.value = true
-    lines.value = lines.value.map(row =>
-      keys.includes(row.id) ? { ...row, ...plan.patch } : row
-    )
-    try {
-      const task = new AbortController()
-      batchController = task
-      await waitForExample(task.signal, 80)
-      if (!alive || plan.order !== activeId.value) return
-      const results: BatchOperationResult[] = keys.map(key => {
-        const attempt = (attempts.get(key) ?? 0) + 1
-        attempts.set(key, attempt)
-        if (key.endsWith('L02') && attempt === 1)
-          return {
-            key,
-            status: 'failure',
-            message: '模拟网络暂时失败，草稿保留，可重试',
-            retryable: true,
-          }
-        selected.value.lines = selected.value.lines.map(row =>
-          row.id === key ? { ...row, ...plan.patch } : row
-        )
-        return { key, status: 'success', message: '已保存' }
-      })
-      acceptBatchResults(results)
-    } catch (error) {
-      recordBatchError(error)
-    } finally {
-      batchController = undefined
-      if (alive) batchBusy.value = false
-    }
-  }
-  const restore = () => {
-    scope.clear()
-    closeContractReview()
-    resetBatch()
-    header.value = clone(selected.value.header)
-    form.value?.clearValidation()
-    void resource.reload()
-  }
-  const operations = useSalesOperations({
-    orders,
-    header,
-    lines,
-    activeId,
-    notice,
-    dirty,
-    activate,
-    requestOrder: chooseOrder,
-    blocked: () => saving.value || batchBusy.value || resource.loading.value,
-    commitCell: commitDetailEdit,
-    selectedKeys: () => {
-      return selectedCount.value
-        ? (detail.api.value?.selection.getIds() ?? []).map(String)
-        : []
-    },
-    resetLineState: () => {
-      detail.api.value?.selection.clear()
-      selectedCount.value = 0
-      resetBatch()
-      scope.clear()
-    },
-  })
-  const { labels: detailLabels } = useDictLabels(
-    () => operations.detailOrder.value?.header,
-    FIELD_DICTIONARIES,
-    { enabled: operations.detailVisible }
-  )
-  return {
-    isDefaultNotice,
-    isPreview,
-    detailLabels,
-    searchFields,
-    headerFields,
-    ...operations,
-    selectOrder,
-    cancelSwitch,
-    container,
-    stacked,
-    shortLines,
-    shortPayments,
-    form,
-    master,
-    detail,
-    payments,
-    header,
-    lines,
-    activeId,
-    activeTab,
-    detailEditing,
-    onDetailTabKeydown,
-    fullscreen,
-    toggleDetailFullscreen,
-    splitSize,
-    pendingOrder,
-    saving,
-    batchBusy,
-    batchVisible,
-    openBatch,
-    batchMode,
-    batchValue,
-    batchPreview,
-    batchResults,
-    contractReviewVisible,
-    contractReview,
-    contractFields,
-    contractReviewError,
-    canEditContract,
-    canAdoptContractFields,
-    openContractReview,
-    closeContractReview,
-    selectContractField,
-    adoptContractFields,
-    query,
-    searchConfig,
-    renderers,
-    resource,
-    notice,
-    selectedCount,
-    totals,
-    filteredOrders,
-    orderCount,
-    currentStatus,
-    activeOutsideQuery,
-    clearOrderFilters,
-    dirty,
-    scope,
-    masterColumns,
-    masterRowStyles,
-    detailColumns,
-    readonlyDetailColumns,
-    paymentColumns,
-    paymentRows,
-    chooseOrder,
-    save,
-    saveAndSwitch,
-    discardAndSwitch,
-    selectAllLines,
-    previewBatch,
-    executeBatch,
-    restore,
-    syncLineEdit,
-    refreshDetailLayout,
-  }
 }

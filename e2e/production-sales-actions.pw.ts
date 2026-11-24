@@ -356,6 +356,7 @@ test('订单与明细弹窗连接整单草稿，精确金额、详情只读和�
     .click()
   await picker.getByRole('button', { name: '确定', exact: true }).click()
   await expect(customerTrigger).toHaveText('云帆智造')
+  await expect(field(modal(page), '区域')).toContainText('华南')
   await field(modal(page), '规格').locator('input').fill('8 × 1500 × 6000')
   const delivery = field(modal(page), '交货日期').locator('input')
   await expect(delivery).toHaveValue('2026-11-01')
@@ -521,9 +522,11 @@ test('实绩退回、复核锁定和撤回形成闭环，历史意见按文本�
   await modal(page)
     .getByRole('button', { name: '提交复核', exact: true })
     .click()
-  await expect(page.locator('.actual-heat-list .is-active')).toContainText(
-    '退回补录'
-  )
+  await expect(
+    page
+      .locator('.actual-heat-list li')
+      .filter({ has: page.getByRole('button', { pressed: true }) })
+  ).toContainText('退回补录')
   await expect(carbon).toBeEnabled()
   await page.getByRole('button', { name: '实绩复核', exact: true }).click()
   await field(modal(page), '复核意见')
@@ -564,6 +567,15 @@ test('实绩退回、复核锁定和撤回形成闭环，历史意见按文本�
   await expect(page.locator('.actual-reference-grid')).toContainText('0.6')
   await page.getByRole('button', { name: '关闭参考', exact: true }).click()
   await expect(carbon).toHaveValue('0.180')
+  await page.getByRole('button', { name: '工序追踪', exact: true }).click()
+  const relation = page.getByRole('region', { name: '上下游关系' })
+  await expect(relation).toContainText('追溯路径')
+  await relation
+    .getByRole('list')
+    .first()
+    .getByRole('button', { name: 'QC-102' })
+    .click()
+  await expect(relation).toContainText('出钢成分检测')
 })
 
 test('发运编制与配载连接，取消不改计划，装车后锁定且出厂需要确认', async ({
@@ -619,7 +631,20 @@ test('发运编制与配载连接，取消不改计划，装车后锁定且出�
   await expect(page.locator('.ps-detail-modal')).toContainText('刘强')
   await expect(page.locator('.ps-detail-modal')).toContainText('装车单已建立')
   await page.getByRole('button', { name: '关闭详情', exact: true }).click()
-  await page.getByRole('button', { name: '确认出厂', exact: true }).click()
+  const root = page.getByTestId('shipping-workbench')
+  await root.getByRole('button', { name: '看板与排班' }).click()
+  await root.getByRole('button', { name: '装车排班' }).click()
+  const schedule = root.getByRole('region', { name: '装车位预约' })
+  await expect(
+    schedule.getByRole('button', { name: /DN-261029-001.*预约时间冲突/ })
+  ).toBeVisible()
+  await root.getByRole('button', { name: '发运看板' }).click()
+  const board = root.getByRole('region', { name: '发运任务状态' })
+  await board.getByRole('button', { name: '移动任务 DN-261029-013' }).click()
+  await page
+    .locator('.n-dropdown-menu')
+    .getByText('已出厂', { exact: true })
+    .click()
   await dialog(page).getByRole('button', { name: '取消', exact: true }).click()
   await expect(dialog(page)).toHaveCount(0)
   await expect(
@@ -635,4 +660,9 @@ test('发运编制与配载连接，取消不改计划，装车后锁定且出�
     .getByRole('button', { name: '确认出厂', exact: true })
     .click()
   await expect(page.locator('.shipping-vehicle')).toContainText('已出厂')
+  await expect(
+    board.getByRole('region', { name: '已出厂' }).getByRole('button', {
+      name: 'DN-261029-013',
+    })
+  ).toBeVisible()
 })

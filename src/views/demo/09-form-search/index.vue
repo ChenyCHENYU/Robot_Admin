@@ -43,6 +43,81 @@
       </NSpace>
     </NCard>
 
+    <section
+      class="demo-section tabbed-search-demo"
+      aria-labelledby="tabbed-search-title"
+    >
+      <h3 id="tabbed-search-title">多列客户选择与共享查询</h3>
+      <p
+        >按编码、名称或区域查找客户，提交搜索后两个页签共享条件。只翻页时，各页签保留自己的页码。</p
+      >
+      <C_Density :density="density">
+        <C_FormSearch
+          v-model="orders.draft"
+          :form-item-list="ORDER_SEARCH_FIELDS"
+          :config="{
+            requireValue: false,
+            searchOnReset: true,
+            onSearch: orders.search,
+          }"
+        />
+        <NCollapse class="order-filter-collapse">
+          <NCollapseItem
+            title="组合条件"
+            name="order-filter"
+          >
+            <C_FilterBuilder
+              v-model="orders.filterDraft"
+              :fields="ORDER_FILTER_FIELDS"
+              :max-depth="2"
+            />
+            <NButton
+              type="primary"
+              class="apply-order-filter"
+              @click="orders.applyFilter"
+            >
+              <template #icon
+                ><C_Icon
+                  name="mdi:filter-check-outline"
+                  aria-hidden="true"
+              /></template>
+              应用组合条件并搜索
+            </NButton>
+          </NCollapseItem>
+        </NCollapse>
+        <C_Tabs
+          v-model="orders.tab"
+          :items="ORDER_TABS"
+          tabs-only
+        />
+        <NAlert
+          v-if="orders.error"
+          type="error"
+          title="读取订单失败"
+        >
+          请再次提交搜索。
+        </NAlert>
+        <p
+          class="suggestion-result-count"
+          aria-live="polite"
+          data-testid="tabbed-query-result"
+        >
+          {{
+            orders.loading
+              ? '正在读取当前页签…'
+              : `匹配 ${orders.pagination.total} 条 · 第 ${orders.pagination.page} 页`
+          }}
+        </p>
+        <C_Table
+          :columns="ORDER_COLUMNS"
+          :data="orders.rows"
+          :loading="orders.loading"
+          :config="orders.tableConfig"
+          @pagination-change="orders.setPage"
+        />
+      </C_Density>
+    </section>
+
     <div class="demo-section">
       <h3>基础用法（3个字段）</h3>
       <C_FormSearch
@@ -150,6 +225,7 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo09FormSearch' })
+  import '@robot-admin/naive-ui-components/C_DataPicker/style.css'
   import type { ComponentDensity } from '@robot-admin/naive-ui-components/C_FormSearch'
   import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
   import {
@@ -170,10 +246,19 @@
     SELECTION_SEARCH_FIELDS,
     filterSelectionPreview,
   } from './data'
+  import {
+    ORDER_TABS,
+    ORDER_COLUMNS,
+    ORDER_SEARCH_FIELDS,
+    ORDER_FILTER_FIELDS,
+  } from './tabbedQuery'
+  import { useOrderSearchDemo } from './useOrderSearchDemo'
 
   const message = useMessage()
   const searchResults = ref<SearchResult[]>([])
   const density = ref<ComponentDensity>('compact')
+  const orders = useOrderSearchDemo()
+
   const basicRows = ref<SearchPreviewRow[]>([...SEARCH_PREVIEW_ROWS])
   const suggestedName = ref('')
   const suggestedRows = computed(() =>
@@ -207,11 +292,12 @@
     statuses: [],
     enabled: false,
   })
-  const selectionRows = ref(filterSelectionPreview(selectionSubmitted.value))
+  const selectionRows = computed(() =>
+    filterSelectionPreview(selectionSubmitted.value)
+  )
   /** 列表只使用已提交条件，保留输入草稿与查询结果的边界。 */
   const searchSelection = (params: SelectionSearchParams) => {
     selectionSubmitted.value = structuredClone(toRaw(params))
-    selectionRows.value = filterSelectionPreview(params)
   }
 
   /** 草稿从配置初始化，重置时由 C_FormSearch 为各控件恢复空值。 */

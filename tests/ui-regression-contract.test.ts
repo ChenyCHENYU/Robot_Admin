@@ -42,13 +42,13 @@ describe('UI regression contracts', () => {
     })
     expect(resolveLoginFeatures().captchaVerify).toBe(true)
     expect(loginSource).toContain(
-      ':default-username="workspaceUsername || loginDefaults.username"'
+      ':default-username="page.username || loginDefaults.username"'
     )
     expect(loginSource).toContain(':default-password="loginDefaults.password"')
     expect(loginSource).toContain('class="login-container"')
     expect(loginSource).toContain(':captcha-provider="LOGIN_CAPTCHA_PROVIDER"')
     expect(loginSource).toContain(':captcha-verifier="LOGIN_CAPTCHA_VERIFIER"')
-    expect(loginSource).not.toContain('<ContextPicker')
+    expect(loginSource).not.toContain('<c_contextPicker')
     expect(loginSource).not.toContain('SOCIAL_PROVIDERS')
 
     const loginStyles = await readText('../src/views/login/index.scss')
@@ -96,14 +96,6 @@ describe('UI regression contracts', () => {
   test('manually imported components explicitly load their styles', async () => {
     const contracts = [
       ['../src/composables/useLayoutBridge.ts', 'C_Icon', 'style.css'],
-      ['../src/views/sys-manage/user-manage/index.vue', 'C_Tree', 'style.css'],
-      ['../src/views/sys-manage/role-manage/index.vue', 'C_Icon', 'style.css'],
-      [
-        '../src/views/sys-manage/dictionary-manage/index.vue',
-        'C_Tree',
-        'style.css',
-      ],
-      ['../src/views/sys-manage/menu-manage/index.vue', 'C_Tree', 'style.css'],
       ['../src/views/demo/11-table-expand/index.vue', 'C_Table', 'base.css'],
     ] as const
 
@@ -260,11 +252,26 @@ describe('UI regression contracts', () => {
     const viewSource = await readText(
       '../src/views/demo/57-mach-table/index.vue'
     )
-    const dataSource = await readText('../src/views/demo/57-mach-table/data.ts')
-
-    expect(viewSource).toContain(
-      'v-bind="isReorderScenario ? reorderTableBindings : tableBindings"'
+    const demoPath = '../src/views/demo/57-mach-table/'
+    const [
+      fixtures,
+      orderSource,
+      columnSource,
+      features,
+      featureController,
+      scenes,
+    ] = await Promise.all(
+      [
+        'data.ts',
+        'useOrderTable.ts',
+        'columns.ts',
+        'features.ts',
+        'useMachTableFeatures.ts',
+        'scenes.ts',
+      ].map(file => readText(demoPath + file))
     )
+
+    expect(viewSource).toContain('v-bind="tableProps"')
     expect(viewSource).toContain(
       'config: useScopedMachTableConfig(ORDER_TABLE_CONFIG)'
     )
@@ -278,35 +285,37 @@ describe('UI regression contracts', () => {
     expect(viewSource).not.toContain('<NTabs')
     expect(viewSource).not.toContain('<NTabPane')
     expect(viewSource).toContain('MACH_FEATURE_GROUPS')
-    expect(viewSource).toContain('toMachFeatureOptions(featureSettings.value)')
+    expect(featureController).toContain('toMachFeatureOptions(settings.value)')
     expect(viewSource).not.toContain(
       'mach-demo-toolbar__actions">\n          <NButton'
     )
     expect(viewSource).toContain('<c_detail')
     expect(viewSource).not.toContain('<NFormItem')
     expect(viewSource).not.toContain('<NDescriptions')
-    expect(dataSource).toContain('useAppTableCrud({')
-    expect(dataSource).toContain('PRESET_RULES.required')
-    expect(dataSource).toContain('createMemoryTableSource(createOrderRows)')
-    expect(dataSource).toContain('source:')
-    expect(dataSource).not.toContain('UseTableCrudConfig')
-    expect(dataSource).not.toContain('const common =')
-    expect(dataSource).not.toContain('Promise.resolve')
-    expect(dataSource).not.toContain('interface OrderTableActions')
-    expect(dataSource).toContain('selectionColumn<OrderRow>()')
-    expect(dataSource).toContain('indexColumn<OrderRow>(')
-    expect(dataSource.indexOf('selectionColumn<OrderRow>()')).toBeLessThan(
-      dataSource.indexOf('indexColumn<OrderRow>(')
+    expect(orderSource).toContain('useAppTableCrud({')
+    expect(orderSource).toContain('PRESET_RULES.required')
+    expect(orderSource).toContain('createMemoryTableSource(createOrderRows)')
+    expect(orderSource).toContain('source:')
+    expect(orderSource).not.toContain('UseTableCrudConfig')
+    expect(orderSource).not.toContain('Promise.resolve')
+    expect(columnSource).not.toContain('interface OrderTableActions')
+    expect(columnSource).toContain('selectionColumn<OrderRow>()')
+    expect(columnSource).toContain('indexColumn<OrderRow>(')
+    expect(columnSource.indexOf('selectionColumn<OrderRow>()')).toBeLessThan(
+      columnSource.indexOf('indexColumn<OrderRow>(')
     )
-    expect(dataSource).toContain("align: 'center'")
-    expect(dataSource).toContain("headerAlign: 'center'")
-    expect(dataSource).toContain('watermark: settings.watermark')
-    expect(dataSource).toContain('suppressClipboard: !settings.clipboard')
-    expect(dataSource).toContain('需要专用列或数据结构的能力不伪装成普通开关')
-    expect(dataSource).toContain("label: '树形表格'")
-    expect(dataSource).toContain('defineTabs(')
-    expect(dataSource).toContain('createOrderTreeRows')
-    expect(viewSource).toContain(':tree-data="isTreeScenario"')
+    expect(columnSource).toContain("align: 'center'")
+    expect(columnSource).toContain("headerAlign: 'center'")
+    expect(columnSource).toContain(
+      'toMachFeatureOptions(DEFAULT_MACH_FEATURE_SETTINGS)'
+    )
+    expect(features).toContain('watermark: settings.watermark')
+    expect(features).toContain('suppressClipboard: !settings.clipboard')
+    expect(scenes).toContain("state: '需要数据源'")
+    expect(scenes).toContain("label: '树形表格'")
+    expect(scenes).toContain('defineTabs(')
+    expect(fixtures).toContain('createOrderTreeRows')
+    expect(viewSource).toContain('treeData: data.tree')
     expect(viewSource).toContain('TABLE_PREVIEW_OPTIONS')
     expect(viewSource).not.toContain('<template #empty>')
   })

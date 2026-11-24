@@ -102,7 +102,7 @@ test('演示页计数区分顶层页面与内嵌布局，两版徽章和目录�
     indexFiles.includes(`${entry.name}/index.vue`)
   ).length
   const nestedCount = indexFiles.filter(file =>
-    file.includes('/layouts/')
+    /^07-form\/components\/[^/]+Layout\/index\.vue$/.test(file)
   ).length
   const embeddedCount = indexFiles.length - pageCount - nestedCount
   const names = ['README.md', 'README_EN.md']

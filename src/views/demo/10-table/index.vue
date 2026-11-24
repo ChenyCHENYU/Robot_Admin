@@ -151,7 +151,46 @@
         </NCard>
       </NTabPane>
 
-      <!-- Tab 2: 树形数据 -->
+      <NTabPane
+        name="export"
+        tab="按范围导出"
+      >
+        <NCard data-testid="table-export-scope-demo">
+          <NSpace
+            vertical
+            :size="16"
+          >
+            <NAlert
+              type="info"
+              title="筛选、翻页勾选，再对比三个 CSV"
+            >
+              选择一个部门，依次勾选不同页的记录。导出菜单可分别下载当前页、已选行和该部门全部匹配的记录。
+            </NAlert>
+            <NSpace
+              align="center"
+              size="medium"
+            >
+              <NSelect
+                v-model:value="exportDepartment"
+                aria-label="按部门筛选导出数据"
+                placeholder="全部部门"
+                :options="DEPARTMENT_OPTIONS"
+                :size="controlSize"
+                style="width: 180px"
+                clearable
+              />
+              <span role="status">匹配 {{ exportRows.length }} 条记录</span>
+            </NSpace>
+            <C_Table
+              :data="exportRows"
+              :columns="EXPORT_DEMO_COLUMNS"
+              :config="exportTableConfig"
+            />
+          </NSpace>
+        </NCard>
+      </NTabPane>
+
+      <!-- 树形数据 -->
       <NTabPane
         name="tree"
         tab="树形表格"
@@ -170,7 +209,7 @@
             </NAlert>
 
             <C_Table
-              :columns="treeColumns"
+              :columns="TREE_TABLE_COLUMNS"
               :data="TREE_TABLE_DATA"
               :config="{
                 density,
@@ -209,7 +248,7 @@
       <C_Form
         v-if="showAddModal"
         v-model="addFormData"
-        :options="addFormOptions"
+        :options="ADD_EMPLOYEE_FIELDS"
         :config="addFormConfig"
       >
         <template #action="{ submit, submitting }">
@@ -253,14 +292,9 @@
     type ComponentDensity,
     type EditMode,
     type TableConfig,
-    type TableColumn,
   } from '@robot-admin/naive-ui-components/C_Table'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
-  import {
-    PRESET_RULES,
-    type FormConfig,
-    type FormOption,
-  } from '@robot-admin/naive-ui-components/C_Form'
+  import type { FormConfig } from '@robot-admin/naive-ui-components/C_Form'
   import {
     type Employee,
     type AddEmployeeForm,
@@ -268,14 +302,16 @@
     MODE_CONFIG,
     createEmployeeTableConfig,
     DEPARTMENT_OPTIONS,
-    STATUS_OPTIONS,
-    GENDER_OPTIONS,
-    LEVEL_CONFIG,
-    STATUS_TAG_CONFIG,
     ADD_FORM_DEFAULTS,
-    TREE_TABLE_DATA,
+    ADD_EMPLOYEE_FIELDS,
     DENSITY_OPTIONS,
   } from './data'
+  import {
+    EXPORT_DEMO_COLUMNS,
+    EXPORT_DEMO_ROWS,
+    TREE_TABLE_COLUMNS,
+    TREE_TABLE_DATA,
+  } from './scenes'
 
   // 初始化表格 CRUD
   const tableCrud = useNaiveTableCrud(createEmployeeTableConfig())
@@ -302,72 +338,28 @@
         : editMode.value,
   }))
 
-  const addFormOptions: FormOption<AddEmployeeForm>[] = [
-    {
-      prop: 'name',
-      label: '姓名',
-      type: 'input',
-      placeholder: '请输入姓名',
-      rules: [
-        PRESET_RULES.required('姓名'),
-        PRESET_RULES.length('姓名', 2, 20),
-      ],
+  const exportDepartment = ref<Employee['department'] | null>(null)
+  const exportRows = computed(() =>
+    exportDepartment.value
+      ? EXPORT_DEMO_ROWS.filter(
+          row => row.department === exportDepartment.value
+        )
+      : EXPORT_DEMO_ROWS
+  )
+  const exportTableConfig = computed<
+    TableConfig<(typeof EXPORT_DEMO_ROWS)[number]>
+  >(() => ({
+    density: density.value,
+    selection: true,
+    crossPageSelection: true,
+    pagination: { pageSize: 5, showSizePicker: false },
+    export: {
+      scopes: ['page', 'selected', 'matching'],
+      filename: '员工导出演示',
+      format: 'csv',
     },
-    {
-      prop: 'age',
-      label: '年龄',
-      type: 'inputNumber',
-      placeholder: '请输入年龄',
-      attrs: { min: 18, max: 65, showButton: false, style: { width: '100%' } },
-      rules: [
-        PRESET_RULES.required('年龄', ['blur', 'change']),
-        PRESET_RULES.range('年龄', 18, 65),
-      ],
-    },
-    {
-      prop: 'gender',
-      label: '性别',
-      type: 'radio',
-      children: GENDER_OPTIONS,
-      rules: [PRESET_RULES.required('性别', 'change')],
-    },
-    {
-      prop: 'email',
-      label: '邮箱',
-      type: 'input',
-      placeholder: '请输入邮箱地址',
-      rules: [PRESET_RULES.required('邮箱'), PRESET_RULES.email('邮箱')],
-    },
-    {
-      prop: 'department',
-      label: '部门',
-      type: 'select',
-      children: DEPARTMENT_OPTIONS,
-      placeholder: '请选择部门',
-      rules: [PRESET_RULES.required('部门', 'change')],
-    },
-    {
-      prop: 'joinDate',
-      label: '入职日期',
-      type: 'datePicker',
-      attrs: { type: 'date', style: { width: '100%' } },
-      rules: [PRESET_RULES.required('入职日期', ['blur', 'change'])],
-    },
-    {
-      prop: 'status',
-      label: '状态',
-      type: 'select',
-      children: STATUS_OPTIONS,
-      rules: [PRESET_RULES.required('状态', 'change')],
-    },
-    {
-      prop: 'description',
-      label: '描述',
-      type: 'textarea',
-      placeholder: '请输入员工描述信息（选填）',
-      attrs: { rows: 3 },
-    },
-  ]
+  }))
+
   const addFormConfig = computed<FormConfig<AddEmployeeForm>>(() => ({
     density: density.value,
     labelPlacement: 'left',
@@ -380,47 +372,6 @@
       showAddModal.value = false
     },
   }))
-
-  // ============ 树形表格列 ============
-  const treeColumns = computed<TableColumn<Employee>[]>(() => [
-    { key: 'name', title: '名称', width: 200 },
-    {
-      key: 'department',
-      title: '部门',
-      width: 120,
-      render: (row: Employee) => {
-        const map: Record<string, string> = {
-          tech: '技术部',
-          hr: '人事部',
-          market: '市场部',
-          finance: '财务部',
-        }
-        return map[row.department] || row.department
-      },
-    },
-    {
-      key: 'level',
-      title: '职级',
-      width: 100,
-      render: (row: Employee) =>
-        LEVEL_CONFIG[row.level || 'junior']?.text || '-',
-    },
-    {
-      key: 'salary',
-      title: '薪资',
-      width: 120,
-      render: (row: Employee) =>
-        row.salary ? `¥${row.salary.toLocaleString()}` : '-',
-    },
-    {
-      key: 'status',
-      title: '状态',
-      width: 100,
-      render: (row: Employee) =>
-        STATUS_TAG_CONFIG[row.status]?.text || row.status,
-    },
-    { key: 'email', title: '邮箱', width: 200 },
-  ])
 
   // ============ CRUD 操作 ============
   const handleAddEmployee = (): void => {

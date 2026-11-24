@@ -1,0 +1,152 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2025-06-09 00:21:33
+ * @LastEditors: ChenYu ycyplus@gmail.com
+ * @LastEditTime: 2026-02-16 15:49:18
+ * @FilePath: \\Robot_Admin\\src\\views\\demo\\07-form\\components\\CardLayout\\index.vue
+ * @Description: 卡片布局表单演示 - 修复版本
+ * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
+-->
+
+<template>
+  <div class="card-demo-page">
+    <!-- 表单组件 -->
+    <C_Form
+      ref="formRef"
+      v-model="formData"
+      :options="FORM_OPTIONS"
+      :config="formConfig"
+      @submit="emit('submit', $event)"
+      @validate-success="emit('validate-success', $event)"
+      @validate-error="emit('validate-error', $event)"
+    />
+
+    <!-- 调试面板（开发模式） -->
+    <NCard
+      v-if="isDev"
+      class="debug-panel mt-6"
+      :title="DEBUG_CONFIG.title"
+    >
+      <NTabs>
+        <NTabPane
+          v-for="tab in DEBUG_TABS"
+          :key="tab.name"
+          :name="tab.name"
+          :tab="tab.tab"
+        >
+          <pre
+            v-if="tab.name === 'formData'"
+            class="debug-code"
+            >{{ JSON.stringify(formData, null, 2) }}</pre>
+          <pre
+            v-else-if="tab.name === 'options'"
+            class="debug-code"
+            >{{ JSON.stringify(FORM_OPTIONS, null, 2) }}</pre>
+          <pre
+            v-else-if="tab.name === 'layoutConfig'"
+            class="debug-code"
+            >{{ JSON.stringify(cardLayoutConfig, null, 2) }}</pre>
+        </NTabPane>
+      </NTabs>
+    </NCard>
+  </div>
+</template>
+
+<script setup lang="ts">
+  defineOptions({ name: 'Demo07FormCardLayout' })
+  import type {
+    FormInstance,
+    FormOption,
+    LabelPlacement,
+    FormConfig,
+    SubmitEventPayload,
+  } from '@robot-admin/naive-ui-components'
+  import {
+    FORM_OPTIONS,
+    CARD_LAYOUT_CONFIG,
+    DEMO_FORM_DATA,
+    DEBUG_TABS,
+    DEBUG_CONFIG,
+    MESSAGES,
+    type CardFormData,
+  } from './data'
+
+  // ==================== Props ====================
+  interface Props {
+    labelPlacement?: LabelPlacement
+    validateOnChange?: boolean
+  }
+
+  const props = withDefaults(defineProps<Props>(), {
+    labelPlacement: 'left',
+    validateOnChange: false,
+  })
+
+  // ==================== Emits ====================
+  const emit = defineEmits<{
+    submit: [payload: SubmitEventPayload<CardFormData>]
+    'validate-success': [model: CardFormData]
+    'validate-error': [errors: unknown]
+    'fields-change': [fields: FormOption<CardFormData>[]]
+  }>()
+
+  // ==================== v-model ====================
+  const formData = defineModel<CardFormData>({ required: true })
+
+  // ==================== 响应式状态 ====================
+  const formRef = ref<FormInstance<CardFormData> | null>(null)
+  const isDev = ref(import.meta.env.DEV && DEBUG_CONFIG.showInDev)
+
+  const message = useMessage()
+
+  // ==================== 表单配置 ====================
+  const cardLayoutConfig = CARD_LAYOUT_CONFIG
+
+  // ==================== 计算属性 ====================
+  const { labelPlacement, validateOnChange } = toRefs(props)
+
+  const formConfig = computed<FormConfig<CardFormData>>(() => ({
+    layout: 'card' as const,
+    card: cardLayoutConfig.card,
+    labelPlacement: labelPlacement.value,
+    validateOnChange: validateOnChange.value,
+    resetSuccessText: MESSAGES.resetSuccess,
+  }))
+
+  // ==================== 工具方法 ====================
+  const validate = async (): Promise<void> => {
+    return formRef.value?.validate()
+  }
+
+  const resetFields = (): void => {
+    formRef.value?.resetFields()
+  }
+
+  const setFormData = (data: CardFormData): void => {
+    formRef.value?.setFields(data)
+  }
+
+  // 加载示例数据的方法（可选择性使用）
+  const loadDemoData = (): void => {
+    setFormData(DEMO_FORM_DATA)
+    message.info('已加载示例数据')
+  }
+
+  // ==================== 初始化 ====================
+  onMounted(() => {
+    emit('fields-change', FORM_OPTIONS)
+  })
+
+  // ==================== 暴露方法 ====================
+  defineExpose({
+    validate,
+    resetFields,
+    resetForm: resetFields,
+    setFormData,
+    loadDemoData,
+  })
+</script>
+
+<style scoped lang="scss">
+  @use './index.scss';
+</style>

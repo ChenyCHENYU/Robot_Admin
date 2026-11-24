@@ -64,7 +64,7 @@
             ><option :value="true">gzip 估算</option></select
           ></div
         >
-        <ObservatoryChart
+        <c_chart
           :option="bundleOption"
           :empty="!report?.build"
           label="真实 JS 构建产物体积矩形树图"
@@ -109,7 +109,7 @@
             ><strong>{{ formatDuration(metric.value) }}</strong></div
           ></div
         >
-        <ObservatoryChart
+        <c_chart
           :option="waterfallOption"
           :empty="!browser.stages.length"
           label="文档加载与 Vue 初始化时间区间"
@@ -223,6 +223,7 @@
 </template>
 <script setup lang="ts">
   import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
+  import StructureMap from './components/StructureMap/index.vue'
   const resourceColumns: TableColumn<
     BrowserPerformance['resources'][number]
   >[] = [
@@ -260,8 +261,6 @@
     },
   ]
 
-  import ObservatoryChart from '../shared/c_chart/index.vue'
-  import StructureMap from './components/c_structureMap/index.vue'
   import { useProjectReport } from '../shared/useProjectReport'
   import { formatBytes, formatDuration } from '../shared/d_format'
   import {

@@ -67,24 +67,26 @@ test('真实 CSP 下中文 PDF 有正文、翻页与缩放，损坏文件可重�
   await expect(reader).toHaveAttribute('aria-busy', 'false')
   const canvas = reader.locator('canvas')
   await expect(canvas).toHaveAttribute('width', /^[1-9]\d+$/)
-  // 中文字库缺失时只剩蓝色装饰线；正文必须产生足量深色像素。
-  expect(
-    await canvas.evaluate((node: HTMLCanvasElement) => {
-      const pixels = node
-        .getContext('2d')!
-        .getImageData(0, 0, node.width, node.height).data
-      let ink = 0
-      for (let i = 0; i < pixels.length; i += 4)
-        if (
-          pixels[i] < 150 &&
-          pixels[i + 1] < 150 &&
-          pixels[i + 2] < 150 &&
-          pixels[i + 3] > 200
-        )
-          ink++
-      return ink
-    })
-  ).toBeGreaterThan(2000)
+  // 容器宽度稳定后会重绘；中文字库缺失时深色正文像素仍不足。
+  await expect
+    .poll(() =>
+      canvas.evaluate((node: HTMLCanvasElement) => {
+        const pixels = node
+          .getContext('2d')!
+          .getImageData(0, 0, node.width, node.height).data
+        let ink = 0
+        for (let i = 0; i < pixels.length; i += 4)
+          if (
+            pixels[i] < 150 &&
+            pixels[i + 1] < 150 &&
+            pixels[i + 2] < 150 &&
+            pixels[i + 3] > 200
+          )
+            ink++
+        return ink
+      })
+    )
+    .toBeGreaterThan(2000)
   const originalWidth = await canvas.getAttribute('width')
   await page.getByRole('button', { name: '放大 PDF', exact: true }).click()
   await expect(canvas).not.toHaveAttribute('width', originalWidth!)
@@ -264,13 +266,11 @@ test('下载 PDF 为结构完整文档，可在文件工作台阅读', async ({ 
   const buffer = await readFile((await file.path())!)
   expect(buffer.subarray(0, 8).toString()).toBe('%PDF-1.4')
   await open(page, '/plugins/file-preview', '.document-workspace')
-  await page
-    .getByLabel('选择预览文件')
-    .setInputFiles({
-      name: file.suggestedFilename(),
-      mimeType: 'application/pdf',
-      buffer,
-    })
+  await page.getByLabel('选择预览文件').setInputFiles({
+    name: file.suggestedFilename(),
+    mimeType: 'application/pdf',
+    buffer,
+  })
   await expect(page.locator('.pdf-reader')).toHaveAttribute(
     'aria-busy',
     'false'
@@ -280,6 +280,52 @@ test('下载 PDF 为结构完整文档，可在文件工作台阅读', async ({ 
     /^[1-9]\d+$/
   )
   await expect(page.locator('.pdf-reader__error')).toHaveCount(0)
+})
+
+test('媒体 ZIP 预览与实际路径一致，分类和元数据可单独关闭', async ({
+  page,
+}) => {
+  await open(page, '/hooks/export-zip', '.jszip-demo')
+  await page.getByRole('button', { name: /媒体资源/ }).click()
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'cover.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from('media preview'),
+  })
+  const paths = page.locator('.file-output ul li')
+  await expect(paths).toHaveText(['images/cover.png', 'media-info.json'])
+  await page.getByText('按类别分组', { exact: true }).click()
+  await expect(paths).toHaveText(['cover.png', 'media-info.json'])
+  await page.getByText('按类别分组', { exact: true }).click()
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: /导出媒体包/ }).click()
+  const zip = await useJSZip()
+    .createZip()
+    .loadAsync(await readFile((await (await download).path())!))
+  expect(
+    Object.values(zip.files)
+      .filter(entry => !entry.dir)
+      .map(entry => entry.name)
+  ).toEqual(await paths.allTextContents())
+  await page.getByText('包含元数据', { exact: true }).click()
+  await expect(paths).toHaveText(['images/cover.png'])
+})
+
+test('长按释放后停止递增，键盘短按仍只增加一次', async ({ page }) => {
+  await open(page, '/directives/longpress-direct', '.longpress-demo-page')
+  const button = page.getByRole('button', { name: '数量调节' })
+  const count = page.getByText(/^数量: \d+$/)
+  await expect(count).toHaveText('数量: 1')
+  await page.clock.install()
+  await button.focus()
+  await page.keyboard.down('Space')
+  await page.clock.runFor(450)
+  await expect(count).toHaveText('数量: 3')
+  await page.keyboard.up('Space')
+  await page.clock.runFor(500)
+  await expect(count).toHaveText('数量: 3')
+  await button.press('Enter')
+  await expect(count).toHaveText('数量: 4')
 })
 
 for (const theme of ['light', 'dark'])

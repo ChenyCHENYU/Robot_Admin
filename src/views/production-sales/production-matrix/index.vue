@@ -21,45 +21,46 @@
         <NTag
           size="small"
           :bordered="false"
-          :type="dirty ? 'warning' : 'success'"
-          >{{ dirty ? '有未保存记录' : '已保存' }}</NTag
+          :type="view.dirty ? 'warning' : 'success'"
+          >{{ view.dirty ? '有未保存记录' : '已保存' }}</NTag
         >
         <NButton
           size="small"
-          :disabled="!dirty"
+          :disabled="!view.dirty"
           :render-icon="actionIcons.restore"
-          @click="restore"
+          @click="view.restore"
           >恢复记录</NButton
         >
         <NButton
           size="small"
           type="primary"
           :render-icon="actionIcons.contentSaveOutline"
-          @click="save"
+          @click="view.save"
           >保存检测</NButton
         >
       </PageHeading>
       <dl class="ps-metrics matrix-metrics">
         <div
           ><dt>检测范围</dt
-          ><dd>{{ days }}<small>天 · 每天 3 班</small></dd></div
+          ><dd>{{ view.days }}<small>天 · 每天 3 班</small></dd></div
         >
         <div
           ><dt>已取样</dt
           ><dd
-            >{{ statistics.sampled
-            }}<small>/ {{ statistics.total }} 项</small></dd
+            >{{ view.statistics.sampled
+            }}<small>/ {{ view.statistics.total }} 项</small></dd
           ></div
         >
         <div
           ><dt>待取样</dt
           ><dd
-            >{{ statistics.total - statistics.sampled }}<small>项</small></dd
+            >{{ view.statistics.total - view.statistics.sampled
+            }}<small>项</small></dd
           ></div
         >
-        <div :class="{ 'has-warning': statistics.warning > 0 }"
+        <div :class="{ 'has-warning': view.statistics.warning > 0 }"
           ><dt>超出内控</dt
-          ><dd>{{ statistics.warning }}<small>项 · 请复核</small></dd></div
+          ><dd>{{ view.statistics.warning }}<small>项 · 请复核</small></dd></div
         >
       </dl>
       <section
@@ -76,31 +77,31 @@
               >酸洗一线</NTag
             ></h2
           ><span
-            >结果 / 取样时间 · {{ slots[0]?.date }} 至
-            {{ slots.at(-1)?.date }}</span
+            >结果 / 取样时间 · {{ view.slots[0]?.date }} 至
+            {{ view.slots.at(-1)?.date }}</span
           ></header
         >
         <div class="matrix-toolbar">
           <div class="matrix-toolbar__group"
             ><span class="matrix-field-label">检测周期</span
             ><NSelect
-              :value="days"
+              :value="view.days"
               :options="RANGE_OPTIONS"
               size="small"
               class="matrix-period"
               aria-label="检测周期"
-              @update:value="changeDays"
+              @update:value="view.changeDays"
             /><NButton
               size="small"
-              :disabled="!canUndo"
+              :disabled="!view.canUndo"
               :render-icon="actionIcons.undoVariant"
-              @click="undo"
+              @click="view.undo"
               >撤销</NButton
             ><NButton
               size="small"
-              :disabled="!canRedo"
+              :disabled="!view.canRedo"
               :render-icon="MATRIX_ICONS.redo"
-              @click="redo"
+              @click="view.redo"
               >重做</NButton
             ></div
           >
@@ -108,12 +109,12 @@
             ><NButton
               size="small"
               :render-icon="actionIcons.contentCopy"
-              @click="copy"
+              @click="view.copy"
               >复制选区</NButton
             ><NButton
               size="small"
               :render-icon="actionIcons.clipboardListOutline"
-              @click="openReport"
+              @click="view.openReport"
               >检测报表</NButton
             ></div
           >
@@ -122,9 +123,9 @@
           class="matrix-grid"
           data-testid="matrix-grid"
           ><MachTable
-            v-bind="grid"
-            :row-data="rows"
-            :column-defs="columns"
+            v-bind="view.grid"
+            :row-data="view.rows"
+            :column-defs="view.columns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
             grid-aria-label="酸洗槽检测结果与取样时间矩阵"
         /></div>
@@ -140,7 +141,7 @@
         >
       </section>
       <NModal
-        v-model:show="reportVisible"
+        v-model:show="view.reportVisible"
         preset="card"
         title="检测报表"
         size="small"
@@ -152,14 +153,14 @@
         class="matrix-report-modal"
       >
         <p class="matrix-report-context"
-          >{{ days }} 天 · {{ report.length }} 条记录 ·
+          >{{ view.days }} 天 · {{ view.report.length }} 条记录 ·
           包含未取样项，数值与取样时间分别列示</p
         >
         <div class="matrix-report-grid"
           ><MachTable
             preset="detail"
             :pagination="{ pageSize: 20 }"
-            :row-data="report"
+            :row-data="view.report"
             :column-defs="REPORT_COLUMNS"
             :row-height="30"
             :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -172,24 +173,24 @@
             ><NButton
               size="small"
               :render-icon="actionIcons.close"
-              @click="reportVisible = false"
+              @click="view.reportVisible = false"
               >关闭</NButton
             ><NButton
               size="small"
               :render-icon="MATRIX_ICONS.print"
-              @click="print"
+              @click="view.print"
               >打印</NButton
             ><NButton
               size="small"
               :render-icon="MATRIX_ICONS.download"
-              @click="exportCsv"
+              @click="view.exportCsv"
               >导出 CSV</NButton
             ><NButton
               size="small"
               type="primary"
-              :loading="exporting"
+              :loading="view.exporting"
               :render-icon="MATRIX_ICONS.download"
-              @click="exportXlsx"
+              @click="view.exportXlsx"
               >导出 Excel</NButton
             ></NSpace
           ></template
@@ -201,7 +202,6 @@
 <script setup lang="ts">
   import '@agile-team/mach-table-vue/styles.css'
   import { MachTable } from '@agile-team/mach-table-vue'
-  import PageHeading from '../components/c_pageHeading/index.vue'
   import { actionIcons } from '../shared/actionIcons'
   import { s_themeStore } from '@/stores/theme'
   import {
@@ -210,34 +210,12 @@
     MATRIX_ICONS,
     useProductionMatrix,
   } from './data'
+  import PageHeading from '../components/PageHeading/index.vue'
   defineOptions({ name: 'ProductionMatrixWorkbench' })
   const route = useRoute()
   const isPreview = computed(() => route.path.startsWith('/preview/'))
   const themeStore = s_themeStore()
-  const {
-    rows,
-    days,
-    slots,
-    columns,
-    grid,
-    dirty,
-    canUndo,
-    canRedo,
-    statistics,
-    report,
-    reportVisible,
-    exporting,
-    changeDays,
-    undo,
-    redo,
-    save,
-    restore,
-    openReport,
-    exportCsv,
-    exportXlsx,
-    print,
-    copy,
-  } = useProductionMatrix()
+  const view = proxyRefs(useProductionMatrix())
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

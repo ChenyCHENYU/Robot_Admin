@@ -6,7 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { expect, test } from 'bun:test'
-import { summarizeShipments } from '../src/views/production-sales/shipping/c_report/data'
+import { summarizeShipments } from '../src/views/production-sales/shipping/components/ShippingReport/data'
 import { createShipments } from '../src/views/production-sales/shipping/data'
 
 test('发运汇总按实际维度归并任务，以整数千克守恒', () => {

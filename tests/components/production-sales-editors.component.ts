@@ -13,11 +13,13 @@ import {
   NDialogProvider,
   useDialogReactiveList,
 } from 'naive-ui'
-import { useProductionPlan } from '@/views/production-sales/production-plan/data'
-import { useProductionActual } from '@/views/production-sales/production-actual/data'
-import { useBusinessWorkbench } from '@/views/production-sales/sales-orders/data'
-import { useShippingWorkbench } from '@/views/production-sales/shipping/data'
+import { useProductionPlan } from '@/views/production-sales/production-plan/useProductionPlan'
+import { useProductionActual } from '@/views/production-sales/production-actual/useProductionActual'
+import { useBusinessWorkbench } from '@/views/production-sales/sales-orders/useBusinessWorkbench'
+import type { OrderHeader } from '@/views/production-sales/sales-orders/data'
+import { useShippingWorkbench } from '@/views/production-sales/shipping/useShippingWorkbench'
 import { createDictionaryPlugin } from '@robot-admin/dictionary/vue'
+import type { DescriptionField } from '@robot-admin/naive-ui-components/C_Descriptions'
 import dictionaryConfig from '@/config/dictionary'
 
 /** 保留真实包运行时校验，不 mock 掉编辑器必需的数据源契约。 */
@@ -83,25 +85,31 @@ test('四类页面使用真实已发布编辑器可启动，无需配置远端�
   const actual = mountController(useProductionActual)
   const sales = mountController(useBusinessWorkbench)
   const shipping = mountController(useShippingWorkbench)
-  expect(plan.controller.editor.visible.value).toBe(false)
-  expect(actual.controller.reviewEditor.visible.value).toBe(false)
-  expect(sales.controller.orderEditor.visible.value).toBe(false)
-  expect(sales.controller.lineEditor.visible.value).toBe(false)
-  expect(shipping.controller.taskEditor.visible.value).toBe(false)
+  expect(plan.controller.editing.editor.visible.value).toBe(false)
+  expect(actual.controller.review.reviewEditor.visible.value).toBe(false)
+  expect(sales.controller.ledger.editor.visible.value).toBe(false)
+  expect(sales.controller.lines.editor.visible.value).toBe(false)
+  expect(shipping.controller.tasks.editor.visible.value).toBe(false)
   for (const instance of [plan, actual, sales, shipping])
     instance.wrapper.unmount()
 })
 
 test('详情字段绑定随查看记录切换自动翻译，保留原始订单编码', async () => {
   const { controller: sales, wrapper } = mountController(useBusinessWorkbench)
-  expect(sales.detailLabels.value.status).toBe('—')
-  const pending = sales.filteredOrders.value.find(row => row.status === 0)!
-  const running = sales.filteredOrders.value.find(row => row.status === 1)!
-  await sales.openDetail(pending)
-  expect(sales.detailLabels.value.status).toBe('待下达')
-  await sales.openDetail(running)
-  expect(sales.detailLabels.value.status).toBe('执行中')
-  expect(sales.detailOrder.value?.header.status).toBe(1)
+  const statusField: DescriptionField<OrderHeader> =
+    sales.inspection.descriptions.find(field => field.key === 'status')!
+  const formattedStatus = () => {
+    const order = sales.inspection.order
+    return order ? statusField.format?.(order.header) : undefined
+  }
+  expect(sales.inspection.order).toBeNull()
+  const pending = sales.ledger.rows.find(row => row.status === 0)!
+  const running = sales.ledger.rows.find(row => row.status === 1)!
+  await sales.ledger.openDetail(pending)
+  expect(formattedStatus()).toBe('待下达')
+  await sales.ledger.openDetail(running)
+  expect(formattedStatus()).toBe('执行中')
+  expect(sales.inspection.order?.header.status).toBe(1)
   expect(pending.status).toBe(0)
   expect(running.status).toBe(1)
   wrapper.unmount()
@@ -109,18 +117,18 @@ test('详情字段绑定随查看记录切换自动翻译，保留原始订单�
 
 test('计划编辑副本取消不污染源记录，状态在弹窗打开后变化仍拒绝提交', async () => {
   const { controller: plan } = mountController(useProductionPlan)
-  const source = { ...plan.rows.value[0] }
-  plan.editor.openEdit(plan.rows.value[0])
-  plan.editor.setModel({ ...source, customer: '尚未提交' })
-  plan.editor.close()
-  expect(plan.rows.value[0]).toEqual(source)
-  plan.editor.openEdit(plan.rows.value[0])
-  plan.rows.value[0] = { ...plan.rows.value[0], status: 'running' }
-  expect(await plan.editor.submit({ ...source, customer: '迟到的修改' })).toBe(
-    false
-  )
-  expect(plan.rows.value[0].customer).toBe(source.customer)
-  expect(plan.editor.visible.value).toBe(true)
+  const source = { ...plan.ledger.allRows[0] }
+  plan.editing.editor.openEdit(plan.ledger.allRows[0])
+  plan.editing.editor.setModel({ ...source, customer: '尚未提交' })
+  plan.editing.editor.close()
+  expect(plan.ledger.allRows[0]).toEqual(source)
+  plan.editing.editor.openEdit(plan.ledger.allRows[0])
+  plan.ledger.allRows[0] = { ...plan.ledger.allRows[0], status: 'running' }
+  expect(
+    await plan.editing.editor.submit({ ...source, customer: '迟到的修改' })
+  ).toBe(false)
+  expect(plan.ledger.allRows[0].customer).toBe(source.customer)
+  expect(plan.editing.editor.visible.value).toBe(true)
 })
 
 test('明细弹窗绑定原订单，切换上下文后的提交不写另一个订单', async () => {
@@ -128,50 +136,50 @@ test('明细弹窗绑定原订单，切换上下文后的提交不写另一个�
   const { controller: sales } = mountController(useBusinessWorkbench)
   await vi.advanceTimersByTimeAsync(120)
   await flushPromises()
-  await sales.lineActions.value[0].onClick?.()
-  const draft = { ...sales.lineEditor.model.value!, product: '迟到明细' }
-  await sales.chooseOrder('ORDER-2')
-  expect(await sales.lineEditor.submit(draft)).toBe(false)
+  await sales.lines.actions[0].onClick?.()
+  const draft = { ...sales.lines.editor.model.value!, product: '迟到明细' }
+  await sales.draft.chooseOrder('ORDER-2')
+  expect(await sales.lines.editor.submit(draft)).toBe(false)
   await vi.advanceTimersByTimeAsync(120)
   await flushPromises()
-  expect(sales.lines.value.every(row => row.product !== '迟到明细')).toBe(true)
-  expect(sales.activeId.value).toBe('ORDER-2')
+  expect(sales.lines.rows.every(row => row.product !== '迟到明细')).toBe(true)
+  expect(sales.draft.activeId).toBe('ORDER-2')
 })
 
 test('复核弹窗打开后又修改实绩，拒绝复核并保留真实测量', async () => {
   const { controller: actual } = mountController(useProductionActual)
-  actual.reviewEditor.openCreate()
-  actual.model.value.carbon = 0.6
+  actual.review.reviewEditor.openCreate()
+  actual.entry.model.carbon = 0.6
   expect(
-    await actual.reviewEditor.submit({
-      ...actual.reviewEditor.model.value!,
+    await actual.review.reviewEditor.submit({
+      ...actual.review.reviewEditor.model.value!,
       note: '尚未保存，不能复核',
     })
   ).toBe(false)
-  expect(actual.historyItems.value).toEqual([])
-  expect(actual.model.value.carbon).toBe(0.6)
-  expect(actual.locked.value).toBe(false)
+  expect(actual.review.historyItems).toEqual([])
+  expect(actual.entry.model.carbon).toBe(0.6)
+  expect(actual.review.locked).toBe(false)
 })
 
 test('复制计划仅确认后新增独立待下达记录，取消不占号且重复确认不重复新增', async () => {
   const { controller: plan, dialogs } = mountController(useProductionPlan)
-  const source = plan.rows.value[2]
+  const source = plan.ledger.allRows[2]
   const original = { ...source }
-  plan.copyPlan(source)
-  plan.copyPlan(source)
+  plan.editing.copy(source)
+  plan.editing.copy(source)
   await flushPromises()
-  expect(plan.editor.visible.value).toBe(false)
+  expect(plan.editing.editor.visible.value).toBe(false)
   expect(dialogs.value).toHaveLength(1)
   expect(dialogs.value[0].title).toBe('复制生产计划')
-  expect(plan.rows.value).toHaveLength(18)
+  expect(plan.ledger.allRows).toHaveLength(18)
   await clickDialog('复制生产计划', '取消')
   await vi.waitFor(() => expect(dialogs.value).toHaveLength(0))
-  expect(plan.rows.value).toHaveLength(18)
+  expect(plan.ledger.allRows).toHaveLength(18)
 
-  plan.copyPlan(source)
+  plan.editing.copy(source)
   await clickDialog('复制生产计划', '确认复制', 2)
-  expect(plan.rows.value).toHaveLength(19)
-  const copy = plan.rows.value.at(-1)!
+  expect(plan.ledger.allRows).toHaveLength(19)
+  const copy = plan.ledger.allRows.at(-1)!
   expect(copy).toMatchObject({
     ...original,
     id: 'PLAN-19',
@@ -179,129 +187,164 @@ test('复制计划仅确认后新增独立待下达记录，取消不占号且�
     status: 'draft',
   })
   expect(copy).not.toBe(source)
-  expect(plan.rows.value.find(row => row.id === source.id)).toEqual(original)
-  expect(plan.editor.visible.value).toBe(false)
-  expect(plan.current.value?.id).toBe(copy.id)
+  expect(plan.ledger.allRows.find(row => row.id === source.id)).toEqual(
+    original
+  )
+  expect(plan.editing.editor.visible.value).toBe(false)
+  expect(plan.heats.plan?.id).toBe(copy.id)
 
-  plan.editPlan(copy)
-  expect(await plan.editor.submit({ ...copy, customer: '副本客户' })).toBe(true)
-  expect(plan.rows.value.find(row => row.id === source.id)).toEqual(original)
-  expect(plan.rows.value.find(row => row.id === copy.id)?.customer).toBe(
+  plan.editing.edit(copy)
+  expect(
+    await plan.editing.editor.submit({ ...copy, customer: '副本客户' })
+  ).toBe(true)
+  expect(plan.ledger.allRows.find(row => row.id === source.id)).toEqual(
+    original
+  )
+  expect(plan.ledger.allRows.find(row => row.id === copy.id)?.customer).toBe(
     '副本客户'
   )
 })
 
 test('计划确认前源记录删除或页面卸载，晚到的确认都不能新增', async () => {
   const removed = mountController(useProductionPlan)
-  const source = removed.controller.rows.value[0]
-  removed.controller.copyPlan(source)
+  const source = removed.controller.ledger.allRows[0]
+  removed.controller.editing.copy(source)
   await flushPromises()
   const removedConfirm = removed.dialogs.value[0].onPositiveClick!
-  removed.controller.rows.value = removed.controller.rows.value.filter(
+  removed.controller.ledger.allRows = removed.controller.ledger.allRows.filter(
     row => row.id !== source.id
   )
   await removedConfirm(new MouseEvent('click'))
-  expect(removed.controller.rows.value).toHaveLength(17)
+  expect(removed.controller.ledger.allRows).toHaveLength(17)
   removed.wrapper.unmount()
 
   const disposed = mountController(useProductionPlan)
-  disposed.controller.copyPlan(disposed.controller.rows.value[0])
+  disposed.controller.editing.copy(disposed.controller.ledger.allRows[0])
   await flushPromises()
   const disposedConfirm = disposed.dialogs.value[0].onPositiveClick!
   disposed.wrapper.unmount()
   await disposedConfirm(new MouseEvent('click'))
-  expect(disposed.controller.rows.value).toHaveLength(18)
+  expect(disposed.controller.ledger.allRows).toHaveLength(18)
+})
+
+test('下达确认只更新原计划中仍待下达的记录，实际下达数与台账一致', async () => {
+  const {
+    controller: plan,
+    wrapper,
+    dialogs,
+  } = mountController(useProductionPlan)
+  try {
+    const [first, second] = plan.ledger.allRows.filter(
+      row => row.status === 'draft'
+    )
+    plan.ledger.selectedIds = [first.id, second.id]
+    expect(plan.release.readyCount).toBe(2)
+    plan.release.confirm()
+    plan.ledger.allRows = plan.ledger.allRows.map(row =>
+      row.id === first.id ? { ...row, status: 'running' } : row
+    )
+    await dialogs.value[0].onPositiveClick!(new MouseEvent('click'))
+    expect(plan.ledger.allRows.find(row => row.id === first.id)?.status).toBe(
+      'running'
+    )
+    expect(plan.ledger.allRows.find(row => row.id === second.id)?.status).toBe(
+      'issued'
+    )
+    expect(plan.notice.value).toContain('已下达 1 项')
+  } finally {
+    wrapper.unmount()
+  }
 })
 
 test('复制销售订单重建草稿和明细身份，保留零与三位金额，后续新增不携带复制明细', async () => {
   vi.useFakeTimers()
   const { controller: sales, dialogs } = mountController(useBusinessWorkbench)
   await settleSales()
-  await sales.chooseOrder('ORDER-3')
+  await sales.draft.chooseOrder('ORDER-3')
   await settleSales()
-  const source = sales.filteredOrders.value.find(row => row.id === 'ORDER-3')!
-  const original = { ...sales.header.value }
-  const originalLines = sales.lines.value
-  await sales.copyOrder(source)
-  await sales.copyOrder(source)
+  const source = sales.ledger.rows.find(row => row.id === 'ORDER-3')!
+  const original = { ...sales.draft.header }
+  const originalLines = sales.lines.rows
+  await sales.ledger.copy(source)
+  await sales.ledger.copy(source)
   await flushPromises()
   expect(dialogs.value).toHaveLength(1)
   expect(dialogs.value[0].title).toBe('复制销售订单')
-  expect(sales.orderEditor.visible.value).toBe(false)
+  expect(sales.ledger.editor.visible.value).toBe(false)
   await clickDialog('复制销售订单', '取消')
   await vi.waitFor(() => expect(dialogs.value).toHaveLength(0))
-  expect(sales.filteredOrders.value).toHaveLength(18)
+  expect(sales.ledger.rows).toHaveLength(18)
 
-  await sales.copyOrder(source)
+  await sales.ledger.copy(source)
   await clickDialog('复制销售订单', '确认复制')
   await settleSales()
-  expect(sales.filteredOrders.value).toHaveLength(19)
-  expect(sales.header.value).toMatchObject({
+  expect(sales.ledger.rows).toHaveLength(19)
+  expect(sales.draft.header).toMatchObject({
     ...original,
     id: 'ORDER-19',
     orderNo: 'SO-2026-019',
     status: 0,
     progress: 0,
   })
-  expect(sales.orderEditor.visible.value).toBe(false)
-  expect(sales.lines.value.map(row => row.id)).toEqual([
+  expect(sales.ledger.editor.visible.value).toBe(false)
+  expect(sales.lines.rows.map(row => row.id)).toEqual([
     'ORDER-19-L01',
     'ORDER-19-L02',
     'ORDER-19-L03',
   ])
-  expect(sales.lines.value[0]).toMatchObject({ quantity: '0', amount: '1.005' })
-  expect(sales.lines.value[2].quantity).toBeNull()
-  for (const [index, row] of sales.lines.value.entries())
+  expect(sales.lines.rows[0]).toMatchObject({ quantity: '0', amount: '1.005' })
+  expect(sales.lines.rows[2].quantity).toBeNull()
+  for (const [index, row] of sales.lines.rows.entries())
     expect(row).not.toBe(originalLines[index])
-  sales.header.value.note = '副本自己的修改'
-  sales.lines.value[0].amount = '2.005'
-  await sales.chooseOrder('ORDER-3')
-  await sales.discardAndSwitch()
+  sales.draft.header.note = '副本自己的修改'
+  sales.lines.rows[0].amount = '2.005'
+  await sales.draft.chooseOrder('ORDER-3')
+  await sales.draft.discardAndSwitch()
   await settleSales()
-  expect(sales.header.value).toEqual(original)
-  expect(sales.lines.value[0].amount).toBe('1.005')
+  expect(sales.draft.header).toEqual(original)
+  expect(sales.lines.rows[0].amount).toBe('1.005')
 
-  await sales.orderActions.value[0].onClick?.()
-  expect(sales.orderEditor.visible.value).toBe(true)
-  expect(sales.orderEditor.model.value?.id).toBe('ORDER-20')
+  await sales.ledger.actions[0].onClick?.()
+  expect(sales.ledger.editor.visible.value).toBe(true)
+  expect(sales.ledger.editor.model.value?.id).toBe('ORDER-20')
   expect(
-    await sales.orderEditor.submit({
-      ...sales.orderEditor.model.value!,
+    await sales.ledger.editor.submit({
+      ...sales.ledger.editor.model.value!,
       customer: original.customer,
       contractNo: original.contractNo,
       section: original.section,
     })
   ).toBe(true)
   await settleSales()
-  expect(sales.lines.value).toEqual([])
+  expect(sales.lines.rows).toEqual([])
 })
 
 test('销售复制在打开前及确认期间检查未保存草稿，不清空原输入或占用编号', async () => {
   vi.useFakeTimers()
   const { controller: sales, dialogs } = mountController(useBusinessWorkbench)
   await settleSales()
-  const source = sales.filteredOrders.value[0]
-  sales.header.value.note = '先保留我的输入'
-  await sales.copyOrder(source)
+  const source = sales.ledger.rows[0]
+  sales.draft.header.note = '先保留我的输入'
+  await sales.ledger.copy(source)
   expect(dialogs.value).toHaveLength(0)
-  expect(sales.notice.value).toContain('请先保存或恢复当前订单')
-  expect(sales.header.value.note).toBe('先保留我的输入')
-  expect(sales.filteredOrders.value).toHaveLength(18)
+  expect(sales.draft.notice).toContain('请先保存或恢复当前订单')
+  expect(sales.draft.header.note).toBe('先保留我的输入')
+  expect(sales.ledger.rows).toHaveLength(18)
 
-  sales.restore()
+  sales.draft.restore()
   await settleSales()
-  await sales.copyOrder(source)
+  await sales.ledger.copy(source)
   await flushPromises()
   expect(dialogs.value).toHaveLength(1)
-  sales.header.value.note = '确认期间又填写的内容'
+  sales.draft.header.note = '确认期间又填写的内容'
   await clickDialog('复制销售订单', '确认复制')
-  expect(sales.filteredOrders.value).toHaveLength(18)
-  expect(sales.header.value.note).toBe('确认期间又填写的内容')
-  expect(sales.notice.value).toContain('请先保存或恢复当前订单')
-  sales.restore()
+  expect(sales.ledger.rows).toHaveLength(18)
+  expect(sales.draft.header.note).toBe('确认期间又填写的内容')
+  expect(sales.draft.notice).toContain('请先保存或恢复当前订单')
+  sales.draft.restore()
   await settleSales()
-  await sales.orderActions.value[0].onClick?.()
-  expect(sales.orderEditor.model.value?.id).toBe('ORDER-19')
+  await sales.ledger.actions[0].onClick?.()
+  expect(sales.ledger.editor.model.value?.id).toBe('ORDER-19')
 })
 
 test('销售复制确认只消费一次，源记录删除或页面卸载后回调不写入', async () => {
@@ -312,27 +355,27 @@ test('销售复制确认只消费一次，源记录删除或页面卸载后回�
     dialogs,
   } = mountController(useBusinessWorkbench)
   await settleSales()
-  const source = sales.filteredOrders.value[0]
-  await sales.copyOrder(source)
+  const source = sales.ledger.rows[0]
+  await sales.ledger.copy(source)
   await clickDialog('复制销售订单', '确认复制', 2)
   await settleSales()
   await vi.waitFor(() => expect(dialogs.value).toHaveLength(0))
-  expect(sales.filteredOrders.value).toHaveLength(19)
-  expect(sales.orderEditor.visible.value).toBe(false)
+  expect(sales.ledger.rows).toHaveLength(19)
+  expect(sales.ledger.editor.visible.value).toBe(false)
 
-  await sales.copyOrder(source)
+  await sales.ledger.copy(source)
   await flushPromises()
   const removedConfirm = dialogs.value.at(-1)!.onPositiveClick!
-  sales.removeOrder(source)
+  sales.ledger.remove(source)
   await clickDialog('删除草稿订单', '确认删除')
-  expect(sales.filteredOrders.value).toHaveLength(18)
+  expect(sales.ledger.rows).toHaveLength(18)
   await removedConfirm(new MouseEvent('click'))
-  expect(sales.filteredOrders.value).toHaveLength(18)
+  expect(sales.ledger.rows).toHaveLength(18)
 
-  await sales.copyOrder(sales.filteredOrders.value[0])
+  await sales.ledger.copy(sales.ledger.rows[0])
   await flushPromises()
   const lateConfirm = dialogs.value.at(-1)!.onPositiveClick!
   wrapper.unmount()
   await lateConfirm(new MouseEvent('click'))
-  expect(sales.filteredOrders.value).toHaveLength(18)
+  expect(sales.ledger.rows).toHaveLength(18)
 })

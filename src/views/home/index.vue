@@ -243,6 +243,30 @@
         </section>
 
         <section
+          v-if="demoLinks.length"
+          class="home-panel"
+          aria-label="组件上手"
+        >
+          <C_Guide
+            ref="demoGuide"
+            :steps="demoGuideSteps"
+            :checklist="{ title: '组件上手', completedIds }"
+            :show-trigger="false"
+            :persistence="{ enabled: false }"
+          />
+          <NSpace class="mt-3">
+            <RouterLink
+              v-for="link in demoLinks"
+              :key="link.id"
+              :to="link.path"
+              :data-demo-guide="link.id"
+              class="home-secondary-link"
+              @click="demoGuide?.stopGuide()"
+              >{{ link.link }} <span aria-hidden="true">→</span></RouterLink
+            >
+          </NSpace>
+        </section>
+        <section
           class="home-panel"
           aria-label="项目能力"
         >
@@ -356,6 +380,10 @@
 </template>
 
 <script setup lang="ts">
+  import type {
+    GuideExpose,
+    GuideStep,
+  } from '@robot-admin/naive-ui-components/C_Guide'
   import { recordTelemetry } from '@/utils/d_telemetry'
   import { s_userStore } from '@/stores/user'
   import { s_permissionStore } from '@/stores/permission'
@@ -378,6 +406,36 @@
   const { stats, loading, failed, statusText, refresh } = useRepositoryStats()
   const userStore = s_userStore()
   const permissionStore = s_permissionStore()
+  const { completedIds } = useComponentDemoProgress()
+  const demoGuide = ref<GuideExpose>()
+  const demoLinks = computed(() =>
+    [
+      {
+        id: 'query',
+        path: '/demo/form-manage/form-search',
+        link: '打开搜索表单',
+        title: '完成一次订单查询',
+        description:
+          '打开搜索表单，在「多列客户选择与共享查询」中选择客户并提交查询。回到首页可查看完成状态。',
+      },
+      {
+        id: 'edit',
+        path: '/demo/form-manage/form-modal',
+        link: '打开多模态表单',
+        title: '保存一条表单记录',
+        description:
+          '打开多模态表单，在「模态框表单」中编辑并保存一条记录。回到首页可继续下一项。',
+      },
+    ].filter(link => permissionStore.hasRoutePermission(link.path))
+  )
+  const demoGuideSteps = computed<GuideStep[]>(() =>
+    demoLinks.value.map(link => ({
+      id: link.id,
+      element: `[data-demo-guide="${link.id}"]`,
+      popover: { title: link.title, description: link.description },
+    }))
+  )
+  onDeactivated(() => demoGuide.value?.stopGuide())
   const activeContext = computed(() => userStore.activeContext)
   const displayName = computed(
     () =>

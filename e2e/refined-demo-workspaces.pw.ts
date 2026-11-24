@@ -49,6 +49,33 @@ test('二维码只绘制当前结果，下载为真实 PNG，空内容不能导�
     page.getByRole('button', { name: '下载图片', exact: true })
   ).toBeDisabled()
 })
+
+for (const [route, name, hex] of [
+  ['barcode', '蓝白', '#1890ff'],
+  ['qrcode', '品牌蓝', '#1677ff'],
+]) {
+  test(`${route} 手工改色会取消预设，恢复相同颜色会重新标记`, async ({
+    page,
+  }) => {
+    await page.goto(`/#/plugins/${route}`)
+    const preset = page.getByRole('button', { name, exact: true })
+    await preset.press('Enter')
+    await expect(preset).toHaveAttribute('aria-pressed', 'true')
+
+    const foreground = page.locator('.n-color-picker').first()
+    await foreground.click()
+    const color = page.getByPlaceholder('HEX', { exact: true })
+    await color.fill('#123456')
+    await color.press('Tab')
+    await expect(preset).toHaveAttribute('aria-pressed', 'false')
+
+    if (!(await color.isVisible())) await foreground.click()
+    await color.fill(hex)
+    await color.press('Tab')
+    await expect(preset).toHaveAttribute('aria-pressed', 'true')
+  })
+}
+
 test('单画布签名可保存快照、恢复并下载，修改会使输出过期', async ({ page }) => {
   await page.goto('/#/plugins/signature')
   const canvas = page.locator('.signature-canvas canvas')

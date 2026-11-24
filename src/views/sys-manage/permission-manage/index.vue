@@ -15,7 +15,7 @@
       type="file"
       accept=".json,application/json"
       hidden
-      @change="handleImportFile"
+      @change="view.permissionImport.read"
     />
     <!-- 搜索筛选区域 -->
     <NCard class="header-card">
@@ -25,7 +25,7 @@
       >
         <NSpace class="search-filters">
           <NInput
-            v-model:value="searchForm.keyword"
+            v-model:value="view.resources.searchForm.keyword"
             placeholder="搜索权限名称、编码、描述"
             clearable
             style="width: 300px"
@@ -38,21 +38,21 @@
             </template>
           </NInput>
           <NSelect
-            v-model:value="searchForm.type"
+            v-model:value="view.resources.searchForm.type"
             placeholder="权限类型"
             clearable
             style="width: 120px"
             :options="UI_CONFIG.permissionType"
           />
           <NSelect
-            v-model:value="searchForm.module"
+            v-model:value="view.resources.searchForm.module"
             placeholder="所属模块"
             clearable
             style="width: 120px"
             :options="SYSTEM_MODULES"
           />
           <NSelect
-            v-model:value="searchForm.status"
+            v-model:value="view.resources.searchForm.status"
             placeholder="权限状态"
             clearable
             style="width: 120px"
@@ -62,8 +62,8 @@
         <NSpace>
           <NButton
             type="primary"
-            :disabled="!mockMode"
-            @click="openPermissionModal()"
+            :disabled="!view.mockMode"
+            @click="view.resourceEditor.open()"
           >
             <template #icon>
               <C_Icon
@@ -74,8 +74,8 @@
             新增权限
           </NButton>
           <NButton
-            @click="handleExport"
-            :loading="exportLoading"
+            @click="view.resources.handleExport"
+            :loading="view.resources.exportLoading"
           >
             <template #icon>
               <C_Icon
@@ -86,10 +86,12 @@
             导出
           </NButton>
           <NButton
-            @click="handleImport"
-            :disabled="!mockMode"
+            @click="view.permissionImport.choose"
+            :disabled="!view.mockMode"
             :title="
-              mockMode ? '导入 JSON 权限数据' : '当前数据源暂不支持批量导入'
+              view.mockMode
+                ? '导入 JSON 权限数据'
+                : '当前数据源暂不支持批量导入'
             "
           >
             <template #icon>
@@ -100,7 +102,7 @@
             </template>
             导入
           </NButton>
-          <NButton @click="handleRefresh">
+          <NButton @click="view.handleRefresh">
             <template #icon>
               <C_Icon
                 name="material-symbols:refresh"
@@ -116,8 +118,8 @@
     <!-- 功能标签页 -->
     <NAlert
       v-if="
-        !governanceCapabilities.dataScope.write ||
-        !governanceCapabilities.fieldPermission.write
+        !view.governanceCapabilities.dataScope.write ||
+        !view.governanceCapabilities.fieldPermission.write
       "
       type="info"
       :show-icon="false"
@@ -125,7 +127,7 @@
       数据范围为有效角色的只读摘要；字段规则与通用约束尚不支持保存。临时授权按成员授予现有角色。
     </NAlert>
     <NTabs
-      v-model:value="activeTab"
+      v-model:value="view.activeTab"
       type="card"
       animated
       class="main-tabs"
@@ -141,15 +143,18 @@
           class="stat-grid"
         >
           <NGi
-            v-for="stat in permissionStats"
+            v-for="stat in view.resources.permissionStats"
             :key="stat.type"
           >
             <NCard
               size="small"
               hoverable
-              :class="{ 'stat-card-active': searchForm.type === stat.type }"
+              :class="{
+                'stat-card-active':
+                  view.resources.searchForm.type === stat.type,
+              }"
               class="stat-card-clickable"
-              @click="handleStatCardClick(stat.type)"
+              @click="view.resources.handleStatCardClick(stat.type)"
             >
               <NSpace align="center">
                 <div class="stat-icon-wrapper">
@@ -170,7 +175,7 @@
 
         <!-- 筛选标签显示 -->
         <div
-          v-if="hasActiveFilters"
+          v-if="view.resources.hasActiveFilters"
           class="filter-tags"
         >
           <NSpace>
@@ -181,41 +186,48 @@
               当前筛选：
             </NText>
             <NTag
-              v-if="searchForm.keyword"
+              v-if="view.resources.searchForm.keyword"
               closable
-              @close="clearFilter('keyword')"
+              @close="view.resources.clearFilter('keyword')"
               type="info"
             >
-              关键词: {{ searchForm.keyword }}
+              关键词: {{ view.resources.searchForm.keyword }}
             </NTag>
             <NTag
-              v-if="searchForm.type"
+              v-if="view.resources.searchForm.type"
               closable
-              @close="clearFilter('type')"
+              @close="view.resources.clearFilter('type')"
               type="success"
             >
-              类型: {{ getTypeLabel(searchForm.type) }}
+              类型:
+              {{ view.resources.getTypeLabel(view.resources.searchForm.type) }}
             </NTag>
             <NTag
-              v-if="searchForm.module"
+              v-if="view.resources.searchForm.module"
               closable
-              @close="clearFilter('module')"
+              @close="view.resources.clearFilter('module')"
               type="warning"
             >
-              模块: {{ getModuleName(searchForm.module) }}
+              模块:
+              {{
+                view.resources.getModuleName(view.resources.searchForm.module)
+              }}
             </NTag>
             <NTag
-              v-if="searchForm.status !== null"
+              v-if="view.resources.searchForm.status !== null"
               closable
-              @close="clearFilter('status')"
-              :type="searchForm.status === 1 ? 'success' : 'error'"
+              @close="view.resources.clearFilter('status')"
+              :type="
+                view.resources.searchForm.status === 1 ? 'success' : 'error'
+              "
             >
-              状态: {{ searchForm.status === 1 ? '启用' : '禁用' }}
+              状态:
+              {{ view.resources.searchForm.status === 1 ? '启用' : '禁用' }}
             </NTag>
             <NButton
               text
               size="small"
-              @click="clearAllFilters"
+              @click="view.resources.clearAllFilters"
               type="error"
             >
               清空筛选
@@ -232,28 +244,28 @@
                 size="small"
                 style="margin-left: 8px"
               >
-                {{ searchResultText }}
+                {{ view.resources.searchResultText }}
               </NTag>
             </NText>
           </template>
 
           <C_Table
             ref="tableRef"
-            :data="filteredData"
-            :columns="tableColumns"
-            :loading="loading"
+            :data="view.resources.filteredData"
+            :columns="view.resources.tableColumns"
+            :loading="view.resources.loading"
             :config="{
-              actions: tableActions,
+              actions: view.resources.tableActions,
               edit: {
-                mode: mockMode ? 'modal' : 'none',
+                mode: view.mockMode ? 'modal' : 'none',
                 modalTitle: '编辑权限',
                 modalWidth: 800,
-                onSave: handleSave,
+                onSave: view.resources.handleSave,
               },
               display: { striped: true, bordered: true, size: 'small' },
             }"
-            @row-delete="handleRowDelete"
-            @view-detail="handleViewDetail"
+            @row-delete="view.resources.handleRowDelete"
+            @view-detail="view.resourceDetail.open"
           />
         </NCard>
       </NTabPane>
@@ -264,14 +276,14 @@
         tab="数据权限"
       >
         <NAlert
-          v-if="!governanceCapabilities.fieldPermission.read"
+          v-if="!view.governanceCapabilities.fieldPermission.read"
           type="info"
           :show-icon="false"
         >
           字段权限模型未接入。当前服务仅提供有效角色的数据范围摘要。
         </NAlert>
         <NAlert
-          v-else-if="mockMode"
+          v-else-if="view.mockMode"
           type="info"
           :show-icon="false"
         >
@@ -287,8 +299,8 @@
               <NButton
                 type="primary"
                 size="small"
-                :disabled="!governanceCapabilities.dataScope.write"
-                @click="handleAddDataPermission"
+                :disabled="!view.governanceCapabilities.dataScope.write"
+                @click="view.dataPolicy.add"
               >
                 <template #icon>
                   <C_Icon
@@ -302,10 +314,10 @@
           </template>
 
           <C_Table
-            :columns="dataPermissionColumns"
-            :data="dataPermissionList"
-            :loading="governanceLoading"
-            :row-key="getDataPermissionRowKey"
+            :columns="view.dataPolicy.columns"
+            :data="view.dataPolicy.rows"
+            :loading="view.governanceLoading"
+            :row-key="view.dataPolicy.rowKey"
             :config="{
               toolbar: { show: false },
               pagination: false,
@@ -321,8 +333,8 @@
         <!-- 数据权限详细配置 - 字段级权限 -->
         <NCard
           v-if="
-            selectedDataPermission &&
-            governanceCapabilities.fieldPermission.read
+            view.dataPolicy.selected &&
+            view.governanceCapabilities.fieldPermission.read
           "
           class="content-card"
           style="margin-top: 16px"
@@ -334,7 +346,7 @@
                 :size="18"
               />
               <NText strong>
-                字段权限配置 — {{ selectedDataPermission.moduleName }}
+                字段权限配置 — {{ view.dataPolicy.selected.moduleName }}
               </NText>
             </NSpace>
           </template>
@@ -344,7 +356,7 @@
             :x-gap="24"
           >
             <NGi
-              v-for="field in selectedDataPermission.fieldPermissions"
+              v-for="field in view.dataPolicy.selected.fieldPermissions"
               :key="field.field"
             >
               <NCard
@@ -367,7 +379,7 @@
                     <NSwitch
                       v-model:value="field.visible"
                       size="small"
-                      :disabled="!canEditFields"
+                      :disabled="!view.dataPolicy.canEditFields"
                     >
                       <template #checked>可见</template>
                       <template #unchecked>隐藏</template>
@@ -375,7 +387,9 @@
                     <NSwitch
                       v-model:value="field.editable"
                       size="small"
-                      :disabled="!canEditFields || !field.visible"
+                      :disabled="
+                        !view.dataPolicy.canEditFields || !field.visible
+                      "
                     >
                       <template #checked>可编辑</template>
                       <template #unchecked>只读</template>
@@ -383,7 +397,9 @@
                     <NSwitch
                       v-model:value="field.masked"
                       size="small"
-                      :disabled="!canEditFields || !field.visible"
+                      :disabled="
+                        !view.dataPolicy.canEditFields || !field.visible
+                      "
                     >
                       <template #checked>脱敏</template>
                       <template #unchecked>明文</template>
@@ -398,11 +414,11 @@
             justify="end"
             style="margin-top: 16px"
           >
-            <NButton @click="selectedDataPermission = null">取消</NButton>
+            <NButton @click="view.dataPolicy.selected = null">取消</NButton>
             <NButton
               type="primary"
-              :disabled="!canEditFields"
-              @click="handleSaveFieldPermissions"
+              :disabled="!view.dataPolicy.canEditFields"
+              @click="view.dataPolicy.saveFields"
             >
               保存字段权限
             </NButton>
@@ -427,14 +443,16 @@
                   type="success"
                   size="small"
                 >
-                  生效中: {{ activeTempAuthCount }}
+                  生效中: {{ view.temporaryGrants.activeCount }}
                 </NTag>
               </NSpace>
               <NButton
                 type="primary"
                 size="small"
-                :disabled="!governanceCapabilities.temporaryRoleGrant.write"
-                @click="showTempAuthModal = true"
+                :disabled="
+                  !view.governanceCapabilities.temporaryRoleGrant.write
+                "
+                @click="view.temporaryGrants.visible = true"
               >
                 <template #icon>
                   <C_Icon
@@ -448,10 +466,10 @@
           </template>
 
           <C_Table
-            :columns="tempAuthColumns"
-            :data="tempAuthList"
-            :loading="governanceLoading"
-            :row-key="getTempAuthorizationRowKey"
+            :columns="view.temporaryGrants.columns"
+            :data="view.temporaryGrants.rows"
+            :loading="view.governanceLoading"
+            :row-key="view.temporaryGrants.rowKey"
             :config="{
               toolbar: { show: false },
               pagination: false,
@@ -463,10 +481,10 @@
             </template>
           </C_Table>
           <NPagination
-            v-model:page="tempAuthPage"
-            :item-count="tempAuthTotal"
+            v-model:page="view.temporaryGrants.page"
+            :item-count="view.temporaryGrants.total"
             :page-size="20"
-            @update:page="loadGovernanceData"
+            @update:page="view.loadGovernanceData"
           />
         </NCard>
       </NTabPane>
@@ -482,7 +500,7 @@
           >当前约束仅供配置摘要展示，尚未实现通用约束保存与执行引擎。</NAlert
         >
         <NCard
-          v-for="constraint in readOnlyConstraints"
+          v-for="constraint in view.constraints.readOnly"
           :key="constraint.id"
           size="small"
         >
@@ -508,14 +526,14 @@
                     type="error"
                     size="small"
                   >
-                    {{ mutualExclusionConstraints.length }} 条
+                    {{ view.constraints.mutualExclusion.length }} 条
                   </NTag>
                 </NSpace>
               </template>
 
               <NList bordered>
                 <NListItem
-                  v-for="item in mutualExclusionConstraints"
+                  v-for="item in view.constraints.mutualExclusion"
                   :key="item.id"
                 >
                   <NSpace
@@ -556,7 +574,7 @@
                   </NSpace>
                 </NListItem>
                 <NEmpty
-                  v-if="mutualExclusionConstraints.length === 0"
+                  v-if="view.constraints.mutualExclusion.length === 0"
                   description="暂无互斥关系"
                 />
               </NList>
@@ -578,14 +596,14 @@
                     type="info"
                     size="small"
                   >
-                    {{ inheritanceConstraints.length }} 条
+                    {{ view.constraints.inheritance.length }} 条
                   </NTag>
                 </NSpace>
               </template>
 
               <NList bordered>
                 <NListItem
-                  v-for="item in inheritanceConstraints"
+                  v-for="item in view.constraints.inheritance"
                   :key="item.id"
                 >
                   <NSpace
@@ -626,7 +644,7 @@
                   </NSpace>
                 </NListItem>
                 <NEmpty
-                  v-if="inheritanceConstraints.length === 0"
+                  v-if="view.constraints.inheritance.length === 0"
                   description="暂无继承关系"
                 />
               </NList>
@@ -649,35 +667,35 @@
               <NText strong>权限变更日志</NText>
               <NSpace>
                 <NInput
-                  v-if="!mockMode"
-                  v-model:value="auditFilter.action"
+                  v-if="!view.mockMode"
+                  v-model:value="view.audit.filter.action"
                   placeholder="动作编码（精确匹配）"
                   clearable
-                  @change="applyAuditFilter"
+                  @change="view.audit.applyFilter"
                 />
                 <NInput
-                  v-if="!mockMode"
-                  v-model:value="auditTarget"
+                  v-if="!view.mockMode"
+                  v-model:value="view.audit.target"
                   placeholder="目标对象ID（精确匹配）"
                   clearable
-                  @change="applyAuditFilter"
+                  @change="view.audit.applyFilter"
                 />
 
                 <NSelect
-                  v-if="mockMode"
-                  v-model:value="auditFilter.action"
+                  v-if="view.mockMode"
+                  v-model:value="view.audit.filter.action"
                   placeholder="操作类型"
                   clearable
                   style="width: 120px"
-                  :options="auditActionOptions"
+                  :options="view.audit.actionOptions"
                 />
                 <NSelect
-                  v-if="mockMode"
-                  v-model:value="auditFilter.targetType"
+                  v-if="view.mockMode"
+                  v-model:value="view.audit.filter.targetType"
                   placeholder="目标类型"
                   clearable
                   style="width: 120px"
-                  :options="auditTargetOptions"
+                  :options="view.audit.targetOptions"
                 />
               </NSpace>
             </NSpace>
@@ -685,7 +703,7 @@
 
           <NTimeline>
             <NTimelineItem
-              v-for="log in filteredAuditLogs"
+              v-for="log in view.audit.rows"
               :key="log.id"
               :type="AUDIT_ACTION_CONFIG[log.action]?.type"
               :title="`${log.operatorName} ${log.actionRaw || AUDIT_ACTION_CONFIG[log.action]?.text || log.action} ${AUDIT_TARGET_CONFIG[log.targetType]?.text || '对象'}「${log.targetName}」`"
@@ -694,14 +712,14 @@
             />
           </NTimeline>
           <NEmpty
-            v-if="filteredAuditLogs.length === 0"
+            v-if="view.audit.rows.length === 0"
             description="暂无审计日志"
           />
           <NPagination
-            v-model:page="auditPage"
-            :item-count="auditTotal"
+            v-model:page="view.audit.page"
+            :item-count="view.audit.total"
             :page-size="20"
-            @update:page="loadGovernanceData"
+            @update:page="view.loadGovernanceData"
           />
         </NCard>
       </NTabPane>
@@ -721,31 +739,31 @@
             style="margin-bottom: 16px"
           >
             <NSelect
-              v-model:value="compareRoleA"
+              v-model:value="view.comparison.roleA"
               placeholder="选择角色 A"
               style="width: 200px"
-              :options="compareRoleOptions"
+              :options="view.comparison.roleOptions"
             />
             <C_Icon
               name="mdi:swap-horizontal"
               :size="20"
             />
             <NSelect
-              v-model:value="compareRoleB"
+              v-model:value="view.comparison.roleB"
               placeholder="选择角色 B"
               style="width: 200px"
-              :options="compareRoleOptions"
+              :options="view.comparison.roleOptions"
             />
             <NButton
               type="primary"
-              :disabled="!compareRoleA || !compareRoleB"
-              @click="handleCompare"
+              :disabled="!view.comparison.roleA || !view.comparison.roleB"
+              @click="view.comparison.compare"
             >
               开始对比
             </NButton>
           </NSpace>
 
-          <div v-if="comparisonResult">
+          <div v-if="view.comparison.result">
             <NGrid
               :cols="3"
               :x-gap="16"
@@ -764,7 +782,7 @@
                         共有权限
                       </NTag>
                       <NText depth="3">
-                        {{ comparisonResult.shared.length }} 项
+                        {{ view.comparison.result.shared.length }} 项
                       </NText>
                     </NSpace>
                   </template>
@@ -773,7 +791,7 @@
                     :size="4"
                   >
                     <NTag
-                      v-for="perm in comparisonResult.shared"
+                      v-for="perm in view.comparison.result.shared"
                       :key="perm"
                       type="success"
                       size="small"
@@ -781,7 +799,7 @@
                       {{ perm }}
                     </NTag>
                     <NEmpty
-                      v-if="comparisonResult.shared.length === 0"
+                      v-if="view.comparison.result.shared.length === 0"
                       description="无共有权限"
                       size="small"
                     />
@@ -799,10 +817,10 @@
                         type="info"
                         size="small"
                       >
-                        仅 {{ comparisonResult.roleAName }}
+                        仅 {{ view.comparison.result.roleAName }}
                       </NTag>
                       <NText depth="3">
-                        {{ comparisonResult.onlyA.length }} 项
+                        {{ view.comparison.result.onlyA.length }} 项
                       </NText>
                     </NSpace>
                   </template>
@@ -811,7 +829,7 @@
                     :size="4"
                   >
                     <NTag
-                      v-for="perm in comparisonResult.onlyA"
+                      v-for="perm in view.comparison.result.onlyA"
                       :key="perm"
                       type="info"
                       size="small"
@@ -819,7 +837,7 @@
                       {{ perm }}
                     </NTag>
                     <NEmpty
-                      v-if="comparisonResult.onlyA.length === 0"
+                      v-if="view.comparison.result.onlyA.length === 0"
                       description="无独有权限"
                       size="small"
                     />
@@ -837,10 +855,10 @@
                         type="warning"
                         size="small"
                       >
-                        仅 {{ comparisonResult.roleBName }}
+                        仅 {{ view.comparison.result.roleBName }}
                       </NTag>
                       <NText depth="3">
-                        {{ comparisonResult.onlyB.length }} 项
+                        {{ view.comparison.result.onlyB.length }} 项
                       </NText>
                     </NSpace>
                   </template>
@@ -849,7 +867,7 @@
                     :size="4"
                   >
                     <NTag
-                      v-for="perm in comparisonResult.onlyB"
+                      v-for="perm in view.comparison.result.onlyB"
                       :key="perm"
                       type="warning"
                       size="small"
@@ -857,7 +875,7 @@
                       {{ perm }}
                     </NTag>
                     <NEmpty
-                      v-if="comparisonResult.onlyB.length === 0"
+                      v-if="view.comparison.result.onlyB.length === 0"
                       description="无独有权限"
                       size="small"
                     />
@@ -876,71 +894,74 @@
 
     <!-- ==================== 权限详情抽屉 ==================== -->
     <c_detail
-      v-model:visible="showPermissionDetail"
-      :data="currentPermission || {}"
-      :config="detailConfig"
+      v-model:visible="view.resourceDetail.visible"
+      :data="view.resourceDetail.current || {}"
+      :config="view.resourceDetail.config"
       title="权限详情"
-      :loading="detailLoading"
-      @close="handleDetailClose"
+      :loading="view.resourceDetail.loading"
+      @close="view.resourceDetail.close"
     />
 
     <!-- ==================== 新增/编辑权限模态框 ==================== -->
     <NModal
-      v-model:show="showModal"
+      v-model:show="view.resourceEditor.visible"
       preset="dialog"
-      :title="modalTitle"
-      :positive-text="modalMode === 'add' ? '确认添加' : '确认修改'"
+      :title="view.resourceEditor.title"
+      :positive-text="
+        view.resourceEditor.mode === 'add' ? '确认添加' : '确认修改'
+      "
       negative-text="取消"
-      @positive-click="() => formRef?.submit() ?? false"
-      :closable="!formRef?.isSubmitting"
-      :mask-closable="!formRef?.isSubmitting"
-      :close-on-esc="!formRef?.isSubmitting"
-      :negative-button-props="{ disabled: !!formRef?.isSubmitting }"
-      @negative-click="closePermissionModal"
+      @positive-click="() => view.formRef?.submit() ?? false"
+      :closable="!view.formRef?.isSubmitting"
+      :mask-closable="!view.formRef?.isSubmitting"
+      :close-on-esc="!view.formRef?.isSubmitting"
+      :negative-button-props="{ disabled: !!view.formRef?.isSubmitting }"
+      @negative-click="view.resourceEditor.close"
       style="width: 700px"
     >
       <C_Form
-        v-if="showModal"
+        v-if="view.resourceEditor.visible"
         ref="formRef"
-        :model-value="formData"
-        @update:model-value="updatePermissionForm"
-        :options="formOptions"
-        :config="formConfig"
-        :renderers="formRenderers"
-        @submit="showModal = false"
+        :model-value="view.resourceEditor.data"
+        @update:model-value="view.resourceEditor.update"
+        :options="view.resourceEditor.options"
+        :config="view.resourceEditor.config"
+        :renderers="view.resourceEditor.renderers"
+        @submit="view.resourceEditor.visible = false"
       />
     </NModal>
 
     <!-- ==================== 临时授权模态框 ==================== -->
     <NModal
-      v-model:show="showTempAuthModal"
+      v-model:show="view.temporaryGrants.visible"
       preset="dialog"
       title="新增临时授权"
       positive-text="确认授权"
       negative-text="取消"
-      @positive-click="() => tempAuthFormRef?.submit() ?? false"
-      :closable="!tempAuthFormRef?.isSubmitting"
-      :mask-closable="!tempAuthFormRef?.isSubmitting"
-      :close-on-esc="!tempAuthFormRef?.isSubmitting"
-      :negative-button-props="{ disabled: !!tempAuthFormRef?.isSubmitting }"
+      @positive-click="() => view.tempAuthFormRef?.submit() ?? false"
+      :closable="!view.tempAuthFormRef?.isSubmitting"
+      :mask-closable="!view.tempAuthFormRef?.isSubmitting"
+      :close-on-esc="!view.tempAuthFormRef?.isSubmitting"
+      :negative-button-props="{
+        disabled: !!view.tempAuthFormRef?.isSubmitting,
+      }"
       style="width: 650px"
     >
       <p>有效期按您当前浏览器的时区选择和显示。</p>
       <C_Form
-        v-if="showTempAuthModal"
+        v-if="view.temporaryGrants.visible"
         ref="tempAuthFormRef"
-        :model-value="tempAuthForm"
-        @update:model-value="Object.assign(tempAuthForm, $event)"
-        :options="tempAuthOptions"
-        :config="tempAuthConfig"
-        @submit="showTempAuthModal = false"
+        :model-value="view.temporaryGrants.form"
+        @update:model-value="Object.assign(view.temporaryGrants.form, $event)"
+        :options="view.temporaryGrants.options"
+        :config="view.temporaryGrants.config"
+        @submit="view.temporaryGrants.visible = false"
       />
     </NModal>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
   import {
     UI_CONFIG,
     SYSTEM_MODULES,
@@ -950,86 +971,10 @@
   import { usePermissionManagement } from './usePermissionManagement'
 
   defineOptions({ name: 'PermissionManage' })
-  const {
-    mockMode,
-    governanceCapabilities,
-    canEditFields,
-    readOnlyConstraints,
-    activeTab,
-    exportLoading,
-    showModal,
-    showPermissionDetail,
-    detailLoading,
-    modalMode,
-    formRef,
-    tempAuthFormRef,
-    tableRef,
-    currentPermission,
-    formData,
-    searchForm,
-    loading,
-    dataPermissionList,
-    selectedDataPermission,
-    showTempAuthModal,
-    tempAuthList,
-    tempAuthPage,
-    tempAuthTotal,
-    loadGovernanceData,
-    tempAuthForm,
-    auditFilter,
-    auditPage,
-    auditTotal,
-    auditTarget,
-    applyAuditFilter,
-    compareRoleA,
-    compareRoleB,
-    comparisonResult,
-    modalTitle,
-    hasActiveFilters,
-    filteredData,
-    searchResultText,
-    tableColumns,
-    getDataPermissionRowKey,
-    getTempAuthorizationRowKey,
-    permissionStats,
-    activeTempAuthCount,
-    mutualExclusionConstraints,
-    inheritanceConstraints,
-    filteredAuditLogs,
-    compareRoleOptions,
-    auditActionOptions,
-    auditTargetOptions,
-    detailConfig,
-    tableActions,
-    getModuleName,
-    getTypeLabel,
-    handleStatCardClick,
-    clearFilter,
-    clearAllFilters,
-    handleExport,
-    handleImport,
-    importInputRef,
-    handleImportFile,
-    handleSave,
-    handleRowDelete,
-    handleViewDetail,
-    handleDetailClose,
-    openPermissionModal,
-    closePermissionModal,
-    handleAddDataPermission,
-    handleSaveFieldPermissions,
-    handleCompare,
-    governanceLoading,
-    handleRefresh,
-    formOptions,
-    formConfig,
-    formRenderers,
-    updatePermissionForm,
-    tempAuthOptions,
-    tempAuthConfig,
-    dataPermissionColumns,
-    tempAuthColumns,
-  } = usePermissionManagement()
+  const controller = usePermissionManagement()
+  const view = proxyRefs(controller)
+  const { permissionImport, tableRef, formRef, tempAuthFormRef } = controller
+  const { inputRef: importInputRef } = permissionImport
 </script>
 
 <style scoped lang="scss">

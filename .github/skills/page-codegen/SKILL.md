@@ -18,7 +18,7 @@ description: 'Use when: generating Vue 3 page code from either a page-spec JSON 
 | **模式 1（JSON 输入）** | 来自 prototype-scan 的 page-spec JSON | 有原型/详设文档时    |
 
 - 输出统一：`index.vue` + `data.ts` + `index.scss`（三件套）
-- 可选追加：`layouts/` 目录（多布局变体）、composables（复杂业务逻辑）
+- 可选追加：`components/`（PascalCase 页面私有组件，显式导入）、`composables/`（复杂业务逻辑）
 
 ---
 

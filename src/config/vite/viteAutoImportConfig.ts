@@ -21,6 +21,7 @@ export const createAutoImportConfig = (
       'vue',
       'vue-router',
       'pinia',
+      { vue: ['proxyRefs'] },
       {
         '@vueuse/core': ['useLocalStorage', 'useClipboard', 'useDebounceFn'],
       },

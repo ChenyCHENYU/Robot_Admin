@@ -13,12 +13,17 @@
       ><div class="workspace-actions"
         ><NButton
           size="small"
-          @click="showLink = true"
+          @click="showAttachments = true"
+          ><template #icon><span class="i-mdi-paperclip" /></template
+          >查看附件清单</NButton
+        ><NButton
+          size="small"
+          @click="page.showLink = true"
           >添加链接</NButton
         ><NButton
           size="small"
           type="primary"
-          @click="fileRef?.click()"
+          @click="page.fileRef?.click()"
           >添加本地文件</NButton
         ></div
       ></header
@@ -28,27 +33,29 @@
         ><section class="workspace-section"
           ><h2
             >文件库
-            <span class="workspace-hint">{{ documents.length }} 项</span></h2
+            <span class="workspace-hint"
+              >{{ page.documents.length }} 项</span
+            ></h2
           ><NInput
-            v-model:value="search"
+            v-model:value="page.search"
             size="small"
             clearable
             placeholder="搜索文件"
             :input-props="{ 'aria-label': '搜索文件' }"
           /><button
-            v-for="item in filtered"
+            v-for="item in page.filtered"
             :key="item.id"
             type="button"
             class="workspace-choice"
-            :aria-pressed="selectedId === item.id"
-            @click="selectedId = item.id"
+            :aria-pressed="page.selectedId === item.id"
+            @click="page.selectedId = item.id"
             ><span class="workspace-badge">{{ item.kind }}</span
             ><span class="document-name"
               ><strong>{{ item.name }}</strong
               ><small>{{ item.note }}</small></span
             ></button
           ><p
-            v-if="!filtered.length"
+            v-if="!page.filtered.length"
             class="workspace-hint"
             >没有匹配的文件</p
           ></section
@@ -61,14 +68,14 @@
           ></section
         ><section class="workspace-section workspace-actions">
           <NButton
-            v-if="documents.length"
+            v-if="page.documents.length"
             size="tiny"
-            @click="clearDocuments"
+            @click="page.clearDocuments"
             >清空文件库</NButton
           >
           <NButton
             size="tiny"
-            @click="restoreSamples"
+            @click="page.restoreSamples"
             >恢复示例文件</NButton
           >
         </section></aside
@@ -76,40 +83,40 @@
       <main class="workspace-panel document-main"
         ><header class="workspace-toolbar"
           ><div
-            ><h2>{{ selected?.name ?? '选择一份文档' }}</h2
-            ><small>{{ selected?.note ?? '从左侧文件库开始' }}</small></div
+            ><h2>{{ page.selected?.name ?? '选择一份文档' }}</h2
+            ><small>{{ page.selected?.note ?? '从左侧文件库开始' }}</small></div
           ><div
-            v-if="selected"
+            v-if="page.selected"
             class="workspace-actions"
             ><NButton
               size="tiny"
-              @click="revision++"
+              @click="page.revision++"
               >重新加载</NButton
             ><NButton
               size="tiny"
-              @click="download"
+              @click="page.download"
               >下载原件</NButton
             ><NButton
               size="tiny"
-              @click="removeSelected"
+              @click="page.removeSelected"
               >移出文件库</NButton
             ></div
           ></header
         ><div class="document-preview"
-          ><DocumentPdfReader
-            v-if="selected?.kind === 'PDF'"
-            :key="`${selected.id}-${revision}`"
-            :file="selected.file"
-            :url="selected.url"
-            :name="selected.name" /><C_FilePreview
+          ><PdfReader
+            v-if="page.selected?.kind === 'PDF'"
+            :key="`${page.selected.id}-${page.revision}`"
+            :file="page.selected.file"
+            :url="page.selected.url"
+            :name="page.selected.name" /><C_FilePreview
             v-else
             inline
-            :key="revision"
-            :file="selected?.file"
-            :url="selected?.url"
-            :file-name="selected?.name" /></div
+            :key="page.revision"
+            :file="page.selected?.file"
+            :url="page.selected?.url"
+            :file-name="page.selected?.name" /></div
         ><footer class="workspace-footer"
-          ><span>{{ selected?.kind ?? '文档' }} 预览</span
+          ><span>{{ page.selected?.kind ?? '文档' }} 预览</span
           ><span>远程链接需允许跨域访问；PDF 在本机渲染</span></footer
         ></main
       >
@@ -121,29 +128,43 @@
       multiple
       accept=".pdf,.docx,.xlsx,.xls"
       aria-label="选择预览文件"
-      @change="onFiles"
+      @change="page.onFiles"
     />
     <NModal
-      v-model:show="showLink"
+      v-model:show="showAttachments"
+      preset="card"
+      title="项目附件"
+      class="document-attachments"
+    >
+      <C_Attachments
+        v-if="showAttachments"
+        :items="attachmentItems"
+        title="资料清单"
+        downloadable
+        @download="page.downloadFile"
+      />
+    </NModal>
+    <NModal
+      v-model:show="page.showLink"
       preset="card"
       title="添加文档链接"
       :style="{ width: 'min(480px,calc(100vw - 32px))' }"
       ><NInput
-        v-model:value="link"
+        v-model:value="page.link"
         placeholder="https://…/document.pdf"
         :input-props="{ 'aria-label': '文档链接' }"
-        @keyup.enter="addLink"
+        @keyup.enter="page.addLink"
       /><p class="workspace-hint">支持 PDF、DOCX、XLSX 与 XLS 链接。</p
       ><template #footer
         ><div class="workspace-actions"
           ><NButton
             size="small"
-            @click="showLink = false"
+            @click="page.showLink = false"
             >取消</NButton
           ><NButton
             size="small"
             type="primary"
-            @click="addLink"
+            @click="page.addLink"
             >添加到文件库</NButton
           ></div
         ></template
@@ -152,28 +173,28 @@
   </div>
 </template>
 <script setup lang="ts">
-  const DocumentPdfReader = defineAsyncComponent(
-    () => import('./c_pdfReader/index.vue')
-  )
+  import { SUPPLEMENTAL_ATTACHMENTS } from './data'
   import { useDocumentWorkspace } from './useDocumentWorkspace'
+
+  const PdfReader = defineAsyncComponent(
+    () => import('./components/PdfReader/index.vue')
+  )
   defineOptions({ name: 'Demo32FilePreview' })
-  const {
-    documents,
-    selectedId,
-    search,
-    fileRef,
-    showLink,
-    link,
-    revision,
-    selected,
-    filtered,
-    onFiles,
-    addLink,
-    removeSelected,
-    clearDocuments,
-    restoreSamples,
-    download,
-  } = useDocumentWorkspace()
+  const showAttachments = ref(false)
+  const controller = useDocumentWorkspace()
+  const page = proxyRefs(controller)
+  const { fileRef } = controller
+  const attachmentItems = computed(() => [
+    ...controller.documents.value.map(item => ({
+      ...item,
+      category: '文档',
+      description: item.note,
+    })),
+    ...SUPPLEMENTAL_ATTACHMENTS,
+  ])
+  onDeactivated(() => {
+    showAttachments.value = false
+  })
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

@@ -37,38 +37,32 @@
                 <NButton
                   v-debounce="DEMO_CONFIG.DEFAULT_DELAY"
                   type="primary"
-                  @click="handlers.handleBasicClick"
+                  @click="demo.basic.custom++"
                 >
                   防抖按钮 (300ms)
                 </NButton>
-                <NText depth="3"
-                  >点击计数: {{ state.basicClickCount.value }}</NText
-                >
+                <NText depth="3">点击计数: {{ demo.basic.custom }}</NText>
               </div>
 
               <div class="demo-row">
                 <NButton
                   v-debounce
                   type="default"
-                  @click="handlers.handleDefaultClick"
+                  @click="demo.basic.default++"
                 >
                   默认防抖按钮 (300ms)
                 </NButton>
-                <NText depth="3"
-                  >点击计数: {{ state.defaultClickCount.value }}</NText
-                >
+                <NText depth="3">点击计数: {{ demo.basic.default }}</NText>
               </div>
 
               <div class="demo-row">
                 <NButton
                   type="warning"
-                  @click="handlers.handleNormalClick"
+                  @click="demo.basic.normal++"
                 >
                   普通按钮 (无防抖)
                 </NButton>
-                <NText depth="3"
-                  >点击计数: {{ state.normalClickCount.value }}</NText
-                >
+                <NText depth="3">点击计数: {{ demo.basic.normal }}</NText>
               </div>
             </div>
             <NDivider />
@@ -87,16 +81,13 @@
                 <NButton
                   v-debounce="{
                     delay: DEMO_CONFIG.SLOW_DELAY,
-                    onExecute: handlers.handleSlowExecute,
                   }"
                   type="info"
-                  @click="handlers.handleSlowClick"
+                  @click="demo.config.slow++"
                 >
                   慢速防抖 (1000ms)
                 </NButton>
-                <NText depth="3"
-                  >执行计数: {{ state.slowClickCount.value }}</NText
-                >
+                <NText depth="3">执行计数: {{ demo.config.slow }}</NText>
               </div>
 
               <div class="demo-row">
@@ -104,37 +95,29 @@
                   v-debounce="{
                     delay: DEMO_CONFIG.IMMEDIATE_DELAY,
                     immediate: true,
-                    onExecute: handlers.handleImmediateExecute,
                   }"
                   type="success"
-                  @click="handlers.handleImmediateClick"
+                  @click="demo.config.immediate++"
                 >
                   立即执行防抖 (500ms)
                 </NButton>
-                <NText depth="3"
-                  >执行计数: {{ state.immediateClickCount.value }}</NText
-                >
+                <NText depth="3">执行计数: {{ demo.config.immediate }}</NText>
               </div>
 
               <div class="demo-row">
                 <NButton
                   v-debounce="{
                     delay: DEMO_CONFIG.CALLBACK_DELAY,
-                    onExecute: handlers.handleExecuteCallback,
-                    onCancel: handlers.handleCancelCallback,
+                    handler: () => demo.config.executed++,
+                    onCancel: () => demo.config.canceled++,
                   }"
                   type="error"
-                  @click="handlers.handleCallbackClick"
                 >
                   回调演示 (800ms)
                 </NButton>
                 <NSpace>
-                  <NText depth="3"
-                    >执行: {{ state.callbackExecuteCount.value }}</NText
-                  >
-                  <NText depth="3"
-                    >取消: {{ state.callbackCancelCount.value }}</NText
-                  >
+                  <NText depth="3">执行: {{ demo.config.executed }}</NText>
+                  <NText depth="3">取消: {{ demo.config.canceled }}</NText>
                 </NSpace>
               </div>
             </div>
@@ -151,11 +134,11 @@
           >
             <NSpace vertical>
               <NSpace>
-                <NSwitch v-model:value="state.debounceEnabled.value" />
+                <NSwitch v-model:value="demo.dynamic.enabled" />
                 <NText>启用防抖</NText>
 
                 <NInputNumber
-                  v-model:value="state.debounceDelay.value"
+                  v-model:value="demo.dynamic.delay"
                   :min="DEMO_CONFIG.DELAY_MIN"
                   :max="DEMO_CONFIG.DELAY_MAX"
                   :step="DEMO_CONFIG.DELAY_STEP"
@@ -165,7 +148,7 @@
                 />
                 <NText>ms</NText>
 
-                <NSwitch v-model:value="state.immediateMode.value" />
+                <NSwitch v-model:value="demo.dynamic.immediate" />
                 <NText>立即执行</NText>
               </NSpace>
 
@@ -173,37 +156,31 @@
                 <div class="demo-row">
                   <NButton
                     v-debounce="{
-                      disabled: !state.debounceEnabled.value,
-                      delay: state.debounceDelay.value,
-                      immediate: state.immediateMode.value,
-                      onExecute: handlers.handleDynamicExecute,
-                      onCancel: handlers.handleDynamicCancel,
+                      disabled: !demo.dynamic.enabled,
+                      delay: demo.dynamic.delay,
+                      immediate: demo.dynamic.immediate,
+                      handler: () => demo.dynamic.executed++,
+                      onCancel: () => demo.dynamic.canceled++,
                     }"
                     type="primary"
-                    @click="handlers.handleDynamicClick"
                   >
                     动态配置按钮
                   </NButton>
                   <NSpace>
-                    <NText depth="3"
-                      >执行: {{ state.dynamicExecuteCount.value }}</NText
-                    >
-                    <NText depth="3"
-                      >取消: {{ state.dynamicCancelCount.value }}</NText
-                    >
+                    <NText depth="3">执行: {{ demo.dynamic.executed }}</NText>
+                    <NText depth="3">取消: {{ demo.dynamic.canceled }}</NText>
                   </NSpace>
                 </div>
               </div>
 
               <NSpace>
                 <NTag
-                  >防抖状态:
-                  {{ state.debounceEnabled.value ? '启用' : '禁用' }}</NTag
+                  >防抖状态: {{ demo.dynamic.enabled ? '启用' : '禁用' }}</NTag
                 >
-                <NTag type="info">延迟: {{ state.debounceDelay.value }}ms</NTag>
+                <NTag type="info">延迟: {{ demo.dynamic.delay }}ms</NTag>
                 <NTag type="success">
                   模式:
-                  {{ state.immediateMode.value ? '立即执行' : '延迟执行' }}
+                  {{ demo.dynamic.immediate ? '立即执行' : '延迟执行' }}
                 </NTag>
               </NSpace>
             </NSpace>
@@ -217,7 +194,7 @@
             size="small"
           >
             <NTabs
-              v-model:value="state.scenarioTab.value"
+              v-model:value="demo.tabs.scenario"
               type="line"
               size="small"
             >
@@ -228,7 +205,7 @@
               >
                 <div class="demo-container">
                   <C_Form
-                    v-model="state.formData.value"
+                    v-model="demo.form.model"
                     :options="formOptions"
                     :config="{
                       labelPlacement: 'left',
@@ -238,19 +215,19 @@
                     <template #action>
                       <NSpace>
                         <NButton
+                          :key="demo.form.buttonKey"
                           v-debounce="{
                             delay: DEMO_CONFIG.SUBMIT_DELAY,
-                            onExecute: handlers.handleFormSubmitExecute,
+                            handler: demo.form.submit,
                           }"
                           type="primary"
-                          @click="handlers.handleFormSubmit"
-                          :loading="state.isSubmitting.value"
+                          :loading="demo.form.loading"
                         >
                           提交表单 (防重复点击)
                         </NButton>
                         <NButton
                           type="default"
-                          @click="handlers.handleFormReset"
+                          @click="demo.form.reset"
                         >
                           重置
                         </NButton>
@@ -260,12 +237,12 @@
 
                   <div class="form-status">
                     <NSpace>
-                      <NTag>提交次数: {{ state.formSubmitCount.value }}</NTag>
+                      <NTag>提交次数: {{ demo.form.count }}</NTag>
                       <NTag
                         type="success"
-                        v-if="state.submitSuccess.value"
+                        v-if="demo.form.success"
                       >
-                        提交成功!
+                        模拟提交完成
                       </NTag>
                     </NSpace>
                   </div>
@@ -283,12 +260,12 @@
                       <NButton
                         v-debounce="500"
                         type="error"
-                        @click="handlers.handleDeleteClick"
+                        @click="demo.actions.deleted++"
                       >
                         删除操作 (防误删)
                       </NButton>
                       <NText depth="3"
-                        >删除次数: {{ state.deleteCount.value }}</NText
+                        >删除次数: {{ demo.actions.deleted }}</NText
                       >
                     </div>
 
@@ -299,12 +276,12 @@
                           immediate: false,
                         }"
                         type="warning"
-                        @click="handlers.handleSaveClick"
+                        @click="demo.actions.saved++"
                       >
                         保存数据 (防抖保存)
                       </NButton>
                       <NText depth="3"
-                        >保存次数: {{ state.saveCount.value }}</NText
+                        >保存次数: {{ demo.actions.saved }}</NText
                       >
                     </div>
 
@@ -312,12 +289,12 @@
                       <NButton
                         v-debounce="800"
                         type="info"
-                        @click="handlers.handleRefreshClick"
+                        @click="demo.actions.refreshed++"
                       >
                         刷新数据 (防抖刷新)
                       </NButton>
                       <NText depth="3"
-                        >刷新次数: {{ state.refreshCount.value }}</NText
+                        >刷新次数: {{ demo.actions.refreshed }}</NText
                       >
                     </div>
                   </NSpace>
@@ -337,7 +314,7 @@
           size="small"
         >
           <NTabs
-            v-model:value="state.activeTab.value"
+            v-model:value="demo.tabs.code"
             type="line"
             size="small"
           >
@@ -362,13 +339,9 @@
 <script setup lang="ts">
   import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
   defineOptions({ name: 'Demo24DebounceDirect' })
-  import {
-    CODE_EXAMPLES,
-    createDemoState,
-    createDemoHandlers,
-    TAB_TITLES,
-    DEMO_CONFIG,
-  } from './data'
+  import { CODE_EXAMPLES } from './codeExamples'
+  import { DEMO_CONFIG, TAB_TITLES } from './data'
+  import { useDebounceDemo } from './useDebounceDemo'
   const formOptions: FormOption[] = [
     {
       prop: 'username',
@@ -378,9 +351,7 @@
     },
     { prop: 'email', label: '邮箱', type: 'input', placeholder: '请输入邮箱' },
   ]
-  // 创建状态和处理函数
-  const state = createDemoState()
-  const handlers = createDemoHandlers(state)
+  const demo = useDebounceDemo()
 </script>
 
 <style lang="scss" scoped>

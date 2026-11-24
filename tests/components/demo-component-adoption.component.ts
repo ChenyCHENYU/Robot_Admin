@@ -10,6 +10,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, h, KeepAlive, nextTick, ref } from 'vue'
 import IconDemo from '@/views/demo/01-icon/index.vue'
 import { useProgressDemo } from '@/views/demo/03-progress/data'
+import { CODE_FILES } from '@/views/demo/14-code-editor/data'
 import { useCodeWorkspace } from '@/views/demo/14-code-editor/useCodeWorkspace'
 
 const message = vi.hoisted(() => ({
@@ -103,17 +104,18 @@ test('代码页各文件草稿独立保留，恢复示例只影响当前文件',
       },
     })
   )
-  const original = workspace.code.value
+  const original = workspace.current.value
+  const json = CODE_FILES.find(file => file.language === 'json')!
   workspace.code.value = 'changed javascript'
-  workspace.language.value = 'json'
+  workspace.current.value = json
   await nextTick()
   workspace.code.value = '{"business":true}'
-  workspace.language.value = 'javascript'
+  workspace.current.value = original
   await nextTick()
   expect(workspace.code.value).toBe('changed javascript')
   workspace.reset()
-  expect(workspace.code.value).toBe(original)
-  workspace.language.value = 'json'
+  expect(workspace.code.value).toBe(original.content)
+  workspace.current.value = json
   await flushPromises()
   expect(wrapper.text()).toBe('{"business":true}')
 })

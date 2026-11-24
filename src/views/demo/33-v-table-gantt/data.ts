@@ -8,9 +8,6 @@ import type {
   GanttTask,
   GanttOptions,
   GanttPreset,
-  GanttTaskCellLayout,
-  GanttTaskBarLayout,
-  GanttTimelineLayout,
 } from '@robot-admin/naive-ui-components/C_VtableGantt'
 import type { ButtonProps } from 'naive-ui'
 import type { ComputedRef } from 'vue'
@@ -560,114 +557,6 @@ export const createDataByType = (type: keyof typeof dataCreators) => {
 }
 
 // ==================== 自定义配置函数 ====================
-
-/**
- * 创建自定义甘特图配置
- */
-export const createCustomOptions = (
-  createTaskCellLayout: (
-    colors: string[]
-  ) => GanttTaskCellLayout<DemoGanttTask>,
-  createTaskBarLayout: (
-    light: string[],
-    dark: string[]
-  ) => GanttTaskBarLayout<DemoGanttTask>,
-  createTimelineLayout: () => GanttTimelineLayout
-): GanttOptions<DemoGanttTask> => ({
-  overscrollBehavior: 'none',
-  headerRowHeight: LAYOUT_CONSTANTS.HEADER_ROW_HEIGHT,
-  rowHeight: LAYOUT_CONSTANTS.ROW_HEIGHT,
-  minDate: DATE_CONSTANTS.PROJECT_START,
-  maxDate: DATE_CONSTANTS.PROJECT_END,
-  taskListTable: {
-    columns: [
-      {
-        field: 'title',
-        title: 'TASK',
-        width: LAYOUT_CONSTANTS.TASK_COLUMN_WIDTH,
-        headerStyle: {
-          textAlign: 'center',
-          fontSize: 20,
-          fontWeight: 'bold',
-          color: 'black',
-          bgColor: GANTT_COLORS.BACKGROUND,
-        },
-        style: { bgColor: GANTT_COLORS.BACKGROUND },
-        customLayout: createTaskCellLayout(GANTT_COLORS.BAR_DARK),
-      },
-    ],
-    tableWidth: 'auto',
-    theme: {
-      headerStyle: {
-        borderColor: GANTT_COLORS.BORDER,
-        borderLineWidth: 0,
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: 'red',
-      },
-      bodyStyle: {
-        borderColor: GANTT_COLORS.BORDER,
-        borderLineWidth: 0,
-        fontSize: 16,
-        color: '#4D4D4D',
-        bgColor: '#FFF',
-      },
-    },
-  },
-  frame: {
-    outerFrameStyle: {
-      borderLineWidth: 0,
-      borderColor: 'red',
-      cornerRadius: 8,
-    },
-  },
-  grid: {
-    backgroundColor: GANTT_COLORS.BACKGROUND,
-    horizontalLine: {
-      lineWidth: 2,
-      lineColor: GANTT_COLORS.GRID_LINE,
-    },
-  },
-  taskBar: {
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
-    barStyle: { width: LAYOUT_CONSTANTS.TASK_BAR_WIDTH },
-    customLayout: createTaskBarLayout(
-      GANTT_COLORS.BAR_LIGHT,
-      GANTT_COLORS.BAR_DARK
-    ),
-  },
-  timelineHeader: {
-    backgroundColor: GANTT_COLORS.BACKGROUND,
-    colWidth: LAYOUT_CONSTANTS.TIMELINE_COL_WIDTH,
-    scales: [
-      {
-        unit: 'day',
-        step: 1,
-        format: date => date.dateIndex.toString(),
-        customLayout: createTimelineLayout(),
-      },
-    ],
-  },
-  markLine: [
-    {
-      date: '2024-07-29',
-      style: { lineWidth: 1, lineColor: 'blue', lineDash: [8, 4] },
-    },
-    {
-      date: '2024-08-17',
-      style: { lineWidth: 2, lineColor: 'red', lineDash: [8, 4] },
-    },
-  ],
-  scrollStyle: {
-    scrollRailColor: 'RGBA(246,246,246,0.5)',
-    visible: 'focus',
-    width: 6,
-    scrollSliderCornerRadius: 2,
-    scrollSliderColor: '#5cb85c',
-  },
-})
 
 // ==================== 项目配置 ====================
 

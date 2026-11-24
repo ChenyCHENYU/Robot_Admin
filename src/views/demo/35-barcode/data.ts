@@ -96,6 +96,33 @@ export const COLOR_PRESETS = [
 // 文本位置选项
 export type TextPosition = NonNullable<BarcodeProps['textPosition']>
 
+type EditableBarcode = Required<
+  Pick<
+    BarcodeProps,
+    | 'value'
+    | 'format'
+    | 'width'
+    | 'height'
+    | 'fontSize'
+    | 'textPosition'
+    | 'showText'
+    | 'lineColor'
+    | 'background'
+  >
+>
+
+export const DEFAULT_BARCODE: Readonly<EditableBarcode> = {
+  value: 'DEMO-BARCODE-2025',
+  format: 'CODE128',
+  width: CONFIG_OPTIONS.width.default,
+  height: CONFIG_OPTIONS.height.default,
+  fontSize: CONFIG_OPTIONS.fontSize.default,
+  textPosition: 'bottom',
+  showText: true,
+  lineColor: COLOR_PRESETS[0].value,
+  background: COLOR_PRESETS[0].background,
+}
+
 export const TEXT_POSITIONS: SelectOption[] = [
   { label: '底部', value: 'bottom' },
   { label: '顶部', value: 'top' },
@@ -150,3 +177,4 @@ const validateNumericBarcode = (
     ? ''
     : '校验位不正确，请检查条码内容'
 }
+export const SCAN_EXAMPLE = '00073142'

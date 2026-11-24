@@ -9,11 +9,11 @@ import { expect, test } from 'bun:test'
 import {
   createBusinessOrders,
   decimalMillis,
-  getBatchSubmission,
   moneyCodec,
   quantityCodec,
   summarizeBusinessLines,
 } from '../src/views/production-sales/sales-orders/data'
+import { getBatchSubmission } from '../src/views/production-sales/sales-orders/useOrderBatch'
 
 test('订单和明细拥有跨单据唯一的业务身份，零与空值保持不同', () => {
   const orders = createBusinessOrders()

@@ -372,10 +372,10 @@
                 <span class="temp-large">{{ currentDay }}</span>
                 <div class="temp-small-wrapper">
                   <span class="temp-divider">/</span>
-                  <span class="temp-small">{{ temperature }}°C</span>
+                  <span class="temp-small">{{ weather.temperature }}°C</span>
                 </div>
               </div>
-              <div class="weather-desc">{{ weatherDesc }}</div>
+              <div class="weather-desc">{{ weather.description }}</div>
             </div>
             <div class="weather-details">
               <div class="detail-item">
@@ -384,7 +384,7 @@
                   :size="20"
                 />
                 <div class="detail-text">
-                  <span class="detail-label">湿度: {{ humidity }}</span>
+                  <span class="detail-label">湿度: {{ weather.humidity }}</span>
                 </div>
               </div>
               <div class="detail-item">
@@ -393,7 +393,9 @@
                   :size="20"
                 />
                 <div class="detail-text">
-                  <span class="detail-label">风向:{{ windDirection }}</span>
+                  <span class="detail-label"
+                    >风向:{{ weather.windDirection }}</span
+                  >
                 </div>
               </div>
               <div class="detail-item">
@@ -402,7 +404,7 @@
                   :size="20"
                 />
                 <div class="detail-text">
-                  <span class="detail-label">风力:{{ windPower }}</span>
+                  <span class="detail-label">风力:{{ weather.windPower }}</span>
                 </div>
               </div>
             </div>
@@ -472,7 +474,8 @@
   import { MENU_COLLAPSE_KEY } from '@robot-admin/layout/naive'
   import { s_userStore } from '@/stores/user'
   import { useRouter } from 'vue-router'
-  import C_Header from '@/components/global/C_Header/index.vue'
+  import { usePortalWeather } from './usePortalWeather'
+  import { usePortalMicroApps } from './usePortalMicroApps'
   import {
     systems,
     todoList,
@@ -490,13 +493,6 @@
   }
   const router = useRouter()
   const userStore = s_userStore()
-  const CUSTOM_EVENTS = {
-    MICRO_APP_DATA_UPDATE: 'micro-app-data-update',
-  } as const
-  const STORAGE_KEYS = {
-    MICRO_APP_DATA: 'micro-app-data',
-  } as const
-
   const userName = computed(() => userStore.userInfo?.username || '访客')
 
   // 为 C_Header 提供必要的上下文
@@ -514,154 +510,12 @@
   const isShortcutsExpanded = ref(false)
   const isDataExpanded = ref(false)
 
-  // ===== 天气模块 =====
-  interface WeatherData {
-    temp_C?: string
-    humidity?: string
-    winddir16Point?: string
-    windspeedKmph?: string
-    lang_zh?: Array<{ value: string }>
-    weatherDesc?: Array<{ value: string }>
-  }
-
-  interface MicroAppDataItem {
-    module: string
-    timestamp: number
-    data: unknown
-  }
-
-  const isRecord = (value: unknown): value is Record<string, unknown> =>
-    typeof value === 'object' && value !== null && !Array.isArray(value)
-
-  const normalizeMicroAppData = (value: unknown): MicroAppDataItem[] => {
-    if (!Array.isArray(value)) return []
-    return value.filter(
-      (item): item is MicroAppDataItem =>
-        isRecord(item) &&
-        typeof item.module === 'string' &&
-        typeof item.timestamp === 'number' &&
-        'data' in item
-    )
-  }
-
+  const { weather, fetchWeather } = usePortalWeather()
+  const { microAppData, loadMicroAppData, clearMicroAppData } =
+    usePortalMicroApps()
   const today = ref(new Date())
   const currentDay = computed(() => today.value.getDate().toString())
-  const temperature = ref('--')
-  const weatherDesc = ref('加载中...')
-  const humidity = ref('--')
-  const windDirection = ref('--')
-  const windPower = ref('--')
-
-  const WIND_DIR_MAP: Record<string, string> = {
-    N: '北',
-    NNE: '东北偏北',
-    NE: '东北',
-    ENE: '东北偏东',
-    E: '东',
-    ESE: '东南偏东',
-    SE: '东南',
-    SSE: '东南偏南',
-    S: '南',
-    SSW: '西南偏南',
-    SW: '西南',
-    WSW: '西南偏西',
-    W: '西',
-    WNW: '西北偏西',
-    NW: '西北',
-    NNW: '西北偏北',
-  }
-
-  const WIND_LEVELS: Array<[number, string]> = [
-    [1, '微风'],
-    [5, '≤1'],
-    [11, '≤2'],
-    [19, '≤3'],
-    [28, '≤4'],
-    [38, '≤5'],
-    [49, '≤6'],
-    [Infinity, '7级以上'],
-  ]
-
-  const getWindLevel = (speed: number) =>
-    WIND_LEVELS.find(([max]) => speed < max)?.[1] || '≤3'
-
-  const getWeatherDesc = (w: WeatherData) =>
-    w.lang_zh?.[0]?.value || w.weatherDesc?.[0]?.value || '晴'
-
-  const getWindDir = (w: WeatherData) =>
-    WIND_DIR_MAP[w.winddir16Point || ''] || w.winddir16Point || '西南'
-
-  const setDefaultWeather = () => {
-    temperature.value = '--'
-    weatherDesc.value = '天气暂不可用'
-    humidity.value = '--'
-    windDirection.value = '--'
-    windPower.value = '--'
-  }
-
-  const updateWeatherData = (w: WeatherData) => {
-    temperature.value = w.temp_C || '--'
-    weatherDesc.value = getWeatherDesc(w)
-    humidity.value = w.humidity || '--'
-    windDirection.value = getWindDir(w)
-    windPower.value = getWindLevel(Number(w.windspeedKmph) || 0)
-  }
-
-  let weatherController: AbortController | undefined
-
-  const fetchWeather = async () => {
-    weatherController?.abort()
-    const controller = new AbortController()
-    weatherController = controller
-    let timedOut = false
-    const timeout = setTimeout(() => {
-      timedOut = true
-      controller.abort()
-    }, 6000)
-    try {
-      const res = await fetch('https://wttr.in/西安?format=j1', {
-        signal: controller.signal,
-      })
-      if (!res.ok) throw new Error(`天气服务响应异常：${res.status}`)
-      const data: unknown = await res.json()
-      if (controller.signal.aborted) return
-      const conditions = isRecord(data) ? data.current_condition : undefined
-      const current = Array.isArray(conditions) ? conditions[0] : undefined
-      if (isRecord(current)) {
-        updateWeatherData(current as WeatherData)
-      } else {
-        setDefaultWeather()
-      }
-    } catch {
-      if (controller.signal.aborted && !timedOut) return
-      setDefaultWeather()
-    } finally {
-      clearTimeout(timeout)
-      if (weatherController === controller) weatherController = undefined
-    }
-  }
-
-  // ===== 日历模块 =====
   const currentDate = ref(new Date())
-
-  // ===== 子应用推送数据 =====
-  const microAppData = ref<MicroAppDataItem[]>([])
-
-  const loadMicroAppData = () => {
-    const data = sessionStorage.getItem(STORAGE_KEYS.MICRO_APP_DATA)
-    if (data) {
-      try {
-        microAppData.value = normalizeMicroAppData(JSON.parse(data))
-      } catch (error) {
-        console.error('[门户工作台] 数据解析失败:', error)
-      }
-    }
-  }
-
-  const clearMicroAppData = () => {
-    sessionStorage.removeItem(STORAGE_KEYS.MICRO_APP_DATA)
-    microAppData.value = []
-  }
 
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp)
@@ -749,34 +603,16 @@
 
   let timer: ReturnType<typeof setInterval> | null = null
 
-  const handleDataUpdate = (event: Event) => {
-    const { detail } = event as CustomEvent<unknown>
-    microAppData.value = normalizeMicroAppData(detail)
-  }
-
   onMounted(() => {
     updateDateTime()
-    fetchWeather()
-    loadMicroAppData()
-
-    // 监听子应用数据更新事件
-    window.addEventListener(
-      CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE,
-      handleDataUpdate
-    )
-
+    void fetchWeather()
     timer = setInterval(() => {
       updateDateTime()
-      fetchWeather()
+      void fetchWeather()
     }, 3600000)
   })
 
   onUnmounted(() => {
-    window.removeEventListener(
-      CUSTOM_EVENTS.MICRO_APP_DATA_UPDATE,
-      handleDataUpdate
-    )
-    weatherController?.abort()
     if (timer) clearInterval(timer)
   })
 </script>

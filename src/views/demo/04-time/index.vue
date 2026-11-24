@@ -77,7 +77,7 @@
           :default-start-time="currentTime"
           :default-end-time="currentTime + 3600000"
           :attrs="commonAttrs.medium"
-          @change="value => handleRangeChange('precise', value, true)"
+          @change="value => handleRangeChange('precise', value)"
         />
         <NAlert
           v-if="results.precise"
@@ -148,7 +148,7 @@
           :minute-step="30"
           :enable-time-restriction="true"
           :attrs="commonAttrs.large"
-          @change="value => handleRangeChange('workShift', value, false, true)"
+          @change="value => handleRangeChange('workShift', value)"
         />
         <NAlert
           v-if="results.workShift"
@@ -210,7 +210,12 @@
   defineOptions({ name: 'Demo04Time' })
   import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
   import type { TimeRangeValue } from '@robot-admin/naive-ui-components/C_Time'
-  import { commonAttrs } from './data'
+  import {
+    commonAttrs,
+    formatTime,
+    formatTimeRange,
+    type TimeRangeScenario,
+  } from './data'
 
   // 响应式数据
   const results = reactive({
@@ -226,64 +231,16 @@
   const reminderTime = ref(new Date().setHours(9, 0, 0, 0))
   const customTime = ref<TimeRangeValue | null>([null, null])
 
-  // 格式化时间戳
-  const formatTime = (
-    timestamp: number | null,
-    includeSeconds = false
-  ): string => {
-    if (timestamp === null) return '未选择'
-    const date = new Date(timestamp)
-    return date.toLocaleTimeString('zh-CN', {
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-      ...(includeSeconds && { second: '2-digit' }),
-    })
-  }
-
-  const formatTimeHM = (timestamp: number | null): string =>
-    formatTime(timestamp, false)
-
-  // 计算时长
-  const calculateDuration = (startTime: number, endTime: number): string => {
-    const diffMs = endTime - startTime
-    const hours = Math.floor(diffMs / (1000 * 60 * 60))
-    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
-
-    if (hours === 0) return `${minutes} 分钟`
-    if (minutes === 0) return `${hours} 小时`
-    return `${hours} 小时 ${minutes} 分钟`
-  }
-
-  // 范围选择处理
   const handleRangeChange = (
-    key: keyof typeof results,
-    range: TimeRangeValue | null,
-    includeSeconds = false,
-    showDuration = false
+    scenario: TimeRangeScenario,
+    range: TimeRangeValue | null
   ) => {
-    const [startTime, endTime] = range ?? [null, null]
-    if (startTime === null || endTime === null) {
-      results[key] = ''
-      return
-    }
-
-    const start = formatTime(startTime, includeSeconds)
-    const end = formatTime(endTime, includeSeconds)
-    const prefix = key === 'precise' ? '精确' : key === 'custom' ? '自定义' : ''
-
-    let result = `${prefix}时间段: ${start} - ${end}`
-
-    if (showDuration) {
-      result += ` (时长: ${calculateDuration(startTime, endTime)})`
-    }
-
-    results[key] = result
+    results[scenario] = formatTimeRange(range, scenario)
   }
 
   // 单个时间选择处理
   const handleSingleTimeChange = (time: number | null) => {
-    results.single = time === null ? '' : `提醒设置为: ${formatTimeHM(time)}`
+    results.single = time === null ? '' : `提醒设置为: ${formatTime(time)}`
   }
 
   // 自定义时间操作按钮
@@ -307,7 +264,7 @@
 
   const getCurrentValues = () => {
     const [start, end] = customTime.value ?? [null, null]
-    results.custom = `当前值: 开始=${formatTimeHM(start)}, 结束=${formatTimeHM(end)}`
+    results.custom = `当前值: 开始=${formatTime(start)}, 结束=${formatTime(end)}`
   }
 
   // 生命周期

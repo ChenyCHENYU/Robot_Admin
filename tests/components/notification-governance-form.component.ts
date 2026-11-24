@@ -14,7 +14,7 @@ import type {
   NotificationDispatchDraft,
   NotificationTemplateDraft,
 } from '@/api/notifications.contract'
-import Governance from '@/views/account/messages/components/c_messageGovernance/index.vue'
+import Governance from '@/views/account/messages/components/MessageGovernance/index.vue'
 
 const state = vi.hoisted(() => ({ store: {} as Record<string, unknown> }))
 vi.mock('@/stores/notification', () => ({

@@ -53,8 +53,20 @@
             @file-upload="fileInput?.click()"
             @file-click="downloadAttachment"
             @image-preview="previewImage = $event"
+            @source-click="openSource"
             @emoji-click="message.info('可以在输入框使用系统表情键盘')"
-        /></div>
+          >
+            <template
+              v-if="mode === 'assistant'"
+              #message="{ message: reply }"
+            >
+              <div v-if="reply.sources?.length">
+                <NText depth="3">规则回复</NText>
+                <div>{{ reply.content }}</div>
+              </div>
+            </template>
+          </C_Chat></div
+        >
       </section>
       <aside class="conversation-context"
         ><span class="eyebrow">当前会话</span
@@ -130,11 +142,31 @@
         /><NButton @click="previewImage = ''">关闭预览</NButton></div
       ></NModal
     >
+    <NModal
+      v-model:show="showSource"
+      preset="card"
+      :title="ASSISTANT_SOURCE.label"
+      class="conversation-source-dialog"
+    >
+      <ul>
+        <li
+          v-for="check in ASSISTANT_CHECKS"
+          :key="check"
+          >{{ check }}</li
+        >
+      </ul>
+    </NModal>
   </div>
 </template>
 <script setup lang="ts">
-  import type { ChatMessage } from '@robot-admin/naive-ui-components'
+  import type {
+    ChatMessage,
+    ChatSource,
+  } from '@robot-admin/naive-ui-components/C_Chat'
   import {
+    ASSISTANT_CHECKS,
+    ASSISTANT_DETAILS,
+    ASSISTANT_SOURCE,
     DEMO_CONTACTS,
     SELF_AVATAR,
     STARTERS,
@@ -176,8 +208,14 @@
   const attachments = reactive(new Map<string, File>())
   const fileInput = ref<HTMLInputElement>()
   const previewImage = ref('')
+  const showSource = ref(false)
   const urls = new Set<string>()
   const timers = new Set<ReturnType<typeof setTimeout>>()
+
+  /** 仅打开本页面已登记的演示资料。 */
+  const openSource = (source: ChatSource) => {
+    if (source.id === ASSISTANT_SOURCE.id) showSource.value = true
+  }
 
   /** 接受消息并在所属会话中生成预设回复。 */
   const send = (content: string) => {
@@ -204,6 +242,7 @@
         timestamp: Date.now(),
         username: contact?.name || '脚本助手',
         avatar: contact?.avatar,
+        ...(key === 'assistant' ? ASSISTANT_DETAILS : {}),
       })
     }, 600)
     timers.add(timer)
@@ -251,7 +290,10 @@
     for (const timer of timers) clearTimeout(timer)
     timers.clear()
   }
-  onDeactivated(cancelReplies)
+  onDeactivated(() => {
+    cancelReplies()
+    showSource.value = false
+  })
   onUnmounted(() => {
     cancelReplies()
     for (const url of urls) URL.revokeObjectURL(url)

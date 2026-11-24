@@ -21,7 +21,7 @@ import {
   DATA_SCOPE_OPTIONS,
 } from '../shared/d_permissionPolicy'
 
-import { parsePermissionImport } from './d_permissionImport'
+import { usePermissionImport } from './usePermissionImport'
 import { createGovernanceColumns } from './d_columns'
 import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
 import {
@@ -403,30 +403,30 @@ export function usePermissionManagement() {
     )
   }
 
+  const appendPermissionDrafts = (drafts: PermissionDraft[]) => {
+    const now = Date.now()
+    let id = mockPermissionRecords.value.reduce(
+      (max, row) => (typeof row.id === 'number' ? Math.max(max, row.id) : max),
+      0
+    )
+    mockPermissionRecords.value = [
+      ...drafts.map(row => ({
+        ...row,
+        id: ++id,
+        createTime: now,
+        updateTime: now,
+      })),
+      ...mockPermissionRecords.value,
+    ]
+  }
+
   const createPermissionRecord = async (
     data: PermissionDraft
   ): Promise<void> => {
     if (!mockMode) {
       throw new Error('权限目录为只读摘要，请在菜单和按钮管理中执行版本命令')
     }
-
-    const now = Date.now()
-    const nextId =
-      Math.max(
-        0,
-        ...mockPermissionRecords.value.map(permission =>
-          typeof permission.id === 'number' ? permission.id : 0
-        )
-      ) + 1
-    mockPermissionRecords.value = [
-      {
-        ...data,
-        id: nextId,
-        createTime: now,
-        updateTime: now,
-      },
-      ...mockPermissionRecords.value,
-    ]
+    appendPermissionDrafts([data])
   }
 
   const loadPermissionDetail = async (
@@ -528,84 +528,14 @@ export function usePermissionManagement() {
     }
   }
 
-  const { run: readLatestImport } = useLatestRequest()
-  let importDialog: ReturnType<typeof dialog.warning> | undefined
-  onScopeDispose(() => importDialog?.destroy())
-
-  const importInputRef = ref<HTMLInputElement | null>(null)
-  /** 原生输入留在 Vue 组件树内，确保浏览器可稳定触发文件选择。 */
-  const handleImport = () => {
-    if (!mockMode) return
-    importInputRef.value?.click()
-  }
-  /** 完整校验后展示批次确认；演示模式一次性写入，远端需批量导入契约。 */
-  const handleImportFile = async () => {
-    const input = importInputRef.value
-    const file = input?.files?.[0]
-    if (input) input.value = ''
-    if (!mockMode) return
-    if (!file) return
-    try {
-      if (file.size > 1024 * 1024) throw new Error('导入文件不能超过 1 MB')
-      const drafts = await readLatestImport(async () =>
-        parsePermissionImport(
-          JSON.parse(await file.text()),
-          mockPermissionRecords.value.map(row => row.code)
-        )
-      )
-      if (!drafts) return
-      importDialog?.destroy()
-      importDialog = dialog.warning({
-        title: '确认导入权限',
-        content: `已校验 ${drafts.length} 条权限：${drafts
-          .slice(0, 3)
-          .map(row => row.name)
-          .join(
-            '、'
-          )}${drafts.length > 3 ? '等' : ''}。确认后添加到当前演示列表。`,
-        positiveText: '确认导入',
-        negativeText: '取消',
-        onPositiveClick: async () => {
-          try {
-            // 确认前再检查一次，避免弹窗期间的新建操作造成编码重复。
-            const checked = parsePermissionImport(
-              drafts,
-              mockPermissionRecords.value.map(row => row.code)
-            )
-            const now = Date.now()
-            let id = Math.max(
-              0,
-              ...mockPermissionRecords.value.map(row =>
-                typeof row.id === 'number' ? row.id : 0
-              )
-            )
-            mockPermissionRecords.value = [
-              ...checked.map(row => ({
-                ...row,
-                id: ++id,
-                createTime: now,
-                updateTime: now,
-              })),
-              ...mockPermissionRecords.value,
-            ]
-            await refresh()
-            message.success(`已导入 ${checked.length} 条权限`)
-          } catch (error) {
-            message.error(error instanceof Error ? error.message : '导入失败')
-            return false
-          }
-        },
-      })
-    } catch (error) {
-      message.error(
-        error instanceof SyntaxError
-          ? '文件解析失败，请检查 JSON 格式'
-          : error instanceof Error
-            ? error.message
-            : '导入失败'
-      )
-    }
-  }
+  const permissionImport = usePermissionImport({
+    enabled: mockMode,
+    codes: () => mockPermissionRecords.value.map(row => row.code),
+    commit: async drafts => {
+      appendPermissionDrafts(drafts)
+      await refresh()
+    },
+  })
 
   const copyPermission = (permission: PermissionData) => {
     const next = { ...permission }
@@ -1149,83 +1079,95 @@ export function usePermissionManagement() {
   return {
     mockMode,
     governanceCapabilities,
-    canEditFields,
-    readOnlyConstraints,
-    dialog,
     activeTab,
-    exportLoading,
-    showModal,
-    showPermissionDetail,
-    detailLoading,
-    modalMode,
+    governanceLoading,
+    loadGovernanceData,
+    handleRefresh,
+    permissionImport,
+    tableRef,
     formRef,
     tempAuthFormRef,
-    tableRef,
-    currentPermission,
-    formData,
-    searchForm,
-    loading,
-    refresh,
-    dataPermissionList,
-    selectedDataPermission,
-    showTempAuthModal,
-    tempAuthList,
-    tempAuthPage,
-    tempAuthTotal,
-    loadGovernanceData,
-    tempAuthForm,
-    auditFilter,
-    auditPage,
-    auditTotal,
-    auditTarget,
-    applyAuditFilter,
-    compareRoleA,
-    compareRoleB,
-    comparisonResult,
-    modalTitle,
-    hasActiveFilters,
-    filteredData,
-    searchResultText,
-    tableColumns,
-    getDataPermissionRowKey,
-    getTempAuthorizationRowKey,
-    permissionStats,
-    activeTempAuthCount,
-    mutualExclusionConstraints,
-    inheritanceConstraints,
-    filteredAuditLogs,
-    compareRoleOptions,
-    auditActionOptions,
-    auditTargetOptions,
-    detailConfig,
-    tableActions,
-    getModuleName,
-    getTypeLabel,
-    handleStatCardClick,
-    clearFilter,
-    clearAllFilters,
-    handleExport,
-    handleImport,
-    importInputRef,
-    handleImportFile,
-    handleSave,
-    handleRowDelete,
-    handleViewDetail,
-    handleDetailClose,
-    openPermissionModal,
-    closePermissionModal,
-    handleAddDataPermission,
-    handleSaveFieldPermissions,
-    handleCompare,
-    governanceLoading,
-    handleRefresh,
-    formOptions,
-    formConfig,
-    formRenderers,
-    updatePermissionForm,
-    tempAuthOptions,
-    tempAuthConfig,
-    dataPermissionColumns,
-    tempAuthColumns,
+    resources: proxyRefs({
+      exportLoading,
+      searchForm,
+      loading,
+      hasActiveFilters,
+      filteredData,
+      searchResultText,
+      tableColumns,
+      permissionStats,
+      tableActions,
+      getModuleName,
+      getTypeLabel,
+      handleStatCardClick,
+      clearFilter,
+      clearAllFilters,
+      handleExport,
+      handleSave,
+      handleRowDelete,
+    }),
+    resourceEditor: proxyRefs({
+      visible: showModal,
+      mode: modalMode,
+      data: formData,
+      title: modalTitle,
+      open: openPermissionModal,
+      close: closePermissionModal,
+      options: formOptions,
+      config: formConfig,
+      renderers: formRenderers,
+      update: updatePermissionForm,
+    }),
+    resourceDetail: proxyRefs({
+      visible: showPermissionDetail,
+      loading: detailLoading,
+      current: currentPermission,
+      config: detailConfig,
+      open: handleViewDetail,
+      close: handleDetailClose,
+    }),
+    dataPolicy: proxyRefs({
+      rows: dataPermissionList,
+      selected: selectedDataPermission,
+      canEditFields,
+      add: handleAddDataPermission,
+      saveFields: handleSaveFieldPermissions,
+      columns: dataPermissionColumns,
+      rowKey: getDataPermissionRowKey,
+    }),
+    temporaryGrants: proxyRefs({
+      visible: showTempAuthModal,
+      rows: tempAuthList,
+      page: tempAuthPage,
+      total: tempAuthTotal,
+      form: tempAuthForm,
+      activeCount: activeTempAuthCount,
+      options: tempAuthOptions,
+      config: tempAuthConfig,
+      columns: tempAuthColumns,
+      rowKey: getTempAuthorizationRowKey,
+    }),
+    constraints: proxyRefs({
+      readOnly: readOnlyConstraints,
+      mutualExclusion: mutualExclusionConstraints,
+      inheritance: inheritanceConstraints,
+    }),
+    audit: proxyRefs({
+      filter: auditFilter,
+      page: auditPage,
+      total: auditTotal,
+      target: auditTarget,
+      applyFilter: applyAuditFilter,
+      rows: filteredAuditLogs,
+      actionOptions: auditActionOptions,
+      targetOptions: auditTargetOptions,
+    }),
+    comparison: proxyRefs({
+      roleA: compareRoleA,
+      roleB: compareRoleB,
+      result: comparisonResult,
+      roleOptions: compareRoleOptions,
+      compare: handleCompare,
+    }),
   }
 }

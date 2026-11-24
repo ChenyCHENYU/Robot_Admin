@@ -125,7 +125,7 @@ const dictionaries = useFieldDictionaries(FIELD_DICTIONARIES, { provider })
 const details = useDictLabels(record, FIELD_DICTIONARIES, { provider })
 ```
 
-`localStore` 由页面创建并在卸载时销毁；具体实现见[字典联动体验](../src/views/production-sales/components/c_dictionaryExperience/data.ts)。常规页面不需要局部Store或Provider。
+`localStore` 由页面创建并在卸载时销毁；具体实现见[字典联动体验](../src/views/production-sales/sales-orders/components/DictionaryExperience/data.ts)。常规页面不需要局部Store或Provider。
 
 ## 三、其他项目直接使用
 
