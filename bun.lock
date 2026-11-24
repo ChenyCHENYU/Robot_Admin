@@ -10,7 +10,7 @@
         "@iconify/vue": "^5.0.0",
         "@robot-admin/dictionary": "0.6.1",
         "@robot-admin/directives": "2.1.0",
-        "@robot-admin/file-utils": "3.1.0",
+        "@robot-admin/file-utils": "3.1.1",
         "@robot-admin/form-validate": "3.4.4",
         "@robot-admin/layout": "3.3.4",
         "@robot-admin/naive-ui-components": "0.41.1",
@@ -767,7 +767,7 @@
 
     "@robot-admin/directives": ["@robot-admin/directives@2.1.0", "", { "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-d/QH1DnYiMsyZ/K2+HlJoZsCra41+hsrVAvwQDhyoNq1btBisWYzt2DeESFQXS6t9qqBo11wJhxjFh8fZubA9A=="],
 
-    "@robot-admin/file-utils": ["@robot-admin/file-utils@3.1.0", "", { "dependencies": { "jszip": "^3.10.1" }, "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-uAiV4w61NlUf0pfNHzUhWpl1j7Es2HzPYjXw7KAp4ledm9N9VRIWKA6iyXrSA/Xs8/M/wd+cL5dDQ55QnQLu5A=="],
+    "@robot-admin/file-utils": ["@robot-admin/file-utils@3.1.1", "", { "dependencies": { "jszip": "^3.10.1" }, "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-brZ/MNOGo2AEMcb96qieGhOKGwXcGZXpj8oeZZshOMxZleanmJQCzEA2hWD9H0gHrr7zJuw6JYPbrhfDG6AHLQ=="],
 
     "@robot-admin/form-validate": ["@robot-admin/form-validate@3.4.4", "", {}, "sha512-zATW1C6supeOr4uMr+xOfTmNws7c4KiJkqcv777ime98SZ6Fgohx2hr8xQLdrH2I1CVXKjA7e1nPRFXYHOEQZQ=="],
 
