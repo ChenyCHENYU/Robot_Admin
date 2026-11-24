@@ -35,10 +35,10 @@
           <div class="security-item-action">
             <NSwitch
               v-if="!item.action"
-              v-model:value="item.enabled"
+              :value="item.enabled"
               :loading="updatingSettingKeys.has(item.key)"
               :disabled="!mockMode"
-              @update:value="(val: boolean) => handleToggle(item.key, val)"
+              @update:value="(val: boolean) => handleToggle(item, val)"
             />
             <NButton
               v-else-if="item.key === 'password'"
@@ -158,7 +158,7 @@
 
   // 安全配置项
   const securitySettings = ref<SecuritySetting[]>(
-    isMockDataMode() ? SECURITY_SETTINGS.map(setting => ({ ...setting })) : []
+    mockMode ? SECURITY_SETTINGS.map(setting => ({ ...setting })) : []
   )
 
   // 密码表单
@@ -172,7 +172,7 @@
 
   // 登录记录
   const loginRecords = ref<LoginRecord[]>(
-    isMockDataMode() ? [...MOCK_LOGIN_RECORDS] : []
+    mockMode ? [...MOCK_LOGIN_RECORDS] : []
   )
 
   // 登录记录表格列
@@ -200,21 +200,22 @@
   ]
 
   /** 切换安全开关 */
-  const handleToggle = async (key: string, val: boolean) => {
+  const handleToggle = async (setting: SecuritySetting, val: boolean) => {
+    const { key, enabled: previous } = setting
     if (!mockMode) {
       message.info('当前服务安全配置只读')
       return
     }
     if (updatingSettingKeys.has(key)) return
     updatingSettingKeys.add(key)
+    setting.enabled = val
     try {
       await updateAccountSecuritySettingApi(key, val)
       message.success(
         `${key === 'twoFactor' ? '两步验证' : key}已${val ? '开启' : '关闭'}`
       )
     } catch {
-      const setting = securitySettings.value.find(item => item.key === key)
-      if (setting) setting.enabled = !val
+      setting.enabled = previous
       message.error('安全设置更新失败，已恢复原状态')
     } finally {
       updatingSettingKeys.delete(key)
@@ -226,7 +227,7 @@
     message.info(`${key} 功能开发中...`)
   }
 
-  const passwordConfig = computed<FormConfig<ChangePasswordForm>>(() => ({
+  const passwordConfig: FormConfig<ChangePasswordForm> = {
     labelPlacement: 'left',
     labelWidth: 90,
     onSubmit: async ({ model }, context) => {
@@ -239,7 +240,7 @@
       showPasswordModal.value = false
       await userStore.logout()
     },
-  }))
+  }
 
   const passwordOptions = computed(() =>
     PASSWORD_FORM_OPTIONS.map(option => ({
@@ -256,12 +257,15 @@
       const response = await runLatestRecordsRequest(signal =>
         Promise.all([
           getAccountLoginRecordsApi(MOCK_LOGIN_RECORDS, signal),
-          getAccountSecuritySettingsApi(SECURITY_SETTINGS, signal),
+          mockMode
+            ? undefined
+            : getAccountSecuritySettingsApi(SECURITY_SETTINGS, signal),
         ])
       )
       if (!response) return
-      loginRecords.value = response[0].data
-      securitySettings.value = response[1].data
+      const [records, settings] = response
+      loginRecords.value = records.data
+      if (settings) securitySettings.value = settings.data
     } catch {
       message.error('登录记录加载失败，请稍后重试')
     }

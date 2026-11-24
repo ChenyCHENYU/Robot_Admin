@@ -24,6 +24,16 @@ export interface ActivitySearchForm {
   dateRange: [number, number] | null
 }
 
+/** 日期选择器使用浏览器当地日期，结束边界取次日零点。 */
+export const activityDateBounds = (first: number, last = first) => {
+  const start = new Date(first)
+  const end = new Date(last)
+  start.setHours(0, 0, 0, 0)
+  end.setHours(0, 0, 0, 0)
+  end.setDate(end.getDate() + 1)
+  return { start: start.getTime(), end: end.getTime() }
+}
+
 // ==================== 常量配置 ====================
 export const ACTION_TYPE_MAP: Record<
   ActionType,

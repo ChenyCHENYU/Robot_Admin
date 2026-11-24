@@ -260,7 +260,7 @@ export function useRoleManagement() {
   // ==================== 表格操作配置 ====================
   const tableActions = computed(() => ({
     detail: (row: RoleData) => viewRole(row),
-    edit: (row: RoleData) => editRole(row),
+    edit: openRoleModal,
     delete: async (row: RoleData) => {
       if (row.type === 'system') {
         message.warning('系统角色不能删除')
@@ -355,37 +355,36 @@ export function useRoleManagement() {
     message.success('刷新成功')
   }
 
-  // 角色操作
-  const openRoleModal = (role?: RoleData) => {
-    modalMode.value = role ? 'edit' : 'add'
+  const resetRoleDraft = (role?: RoleData) => {
     delete formData.id
     delete formData.revision
-    if (role) {
-      Object.assign(formData, {
-        id: role.id,
-        revision: role.revision,
-        name: role.name,
-        code: role.code,
-        type: role.type,
-        status: role.status,
-        description: role.description || '',
-        permissionIds: [],
-        sort: role.sort,
-        remark: role.remark || '',
-      })
-    } else {
-      Object.assign(formData, DEFAULT_ROLE_FORM_DATA)
-    }
+    const draft: RoleFormData = role
+      ? {
+          id: role.id,
+          revision: role.revision,
+          name: role.name,
+          code: role.code,
+          type: role.type,
+          status: role.status,
+          description: role.description || '',
+          permissionIds: [],
+          sort: role.sort,
+          remark: role.remark || '',
+        }
+      : { ...DEFAULT_ROLE_FORM_DATA, permissionIds: [] }
+    Object.assign(formData, draft)
+  }
+
+  const openRoleModal = (role?: RoleData) => {
+    modalMode.value = role ? 'edit' : 'add'
+    resetRoleDraft(role)
     showModal.value = true
   }
 
   const closeRoleModal = () => {
     showModal.value = false
-    delete formData.id
-    Object.assign(formData, DEFAULT_ROLE_FORM_DATA)
+    resetRoleDraft()
   }
-
-  const editRole = (role: RoleData) => openRoleModal(role)
 
   const loadRoleGovernanceDetails = async (roleId: string) => {
     currentDataScopes.value = []

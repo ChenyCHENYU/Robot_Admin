@@ -130,7 +130,6 @@ export function useDiagramWorkspace() {
     revision,
     diagramRef,
     initialData,
-    liveData,
     items,
     connections,
     selectedId,

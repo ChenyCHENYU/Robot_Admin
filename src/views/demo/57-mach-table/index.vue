@@ -383,6 +383,9 @@
   const activeScenario = ref<TableScenario>('crud')
   const previewState = ref<TablePreviewState>('data')
   const currentScenario = computed(() => TABLE_SCENARIOS[activeScenario.value])
+  const usesOrderSource = computed(
+    () => currentScenario.value.kind === 'orders'
+  )
   const inlineEditMode = computed(() => currentScenario.value.editMode)
   const isReorderScenario = computed(
     () => currentScenario.value.kind === 'reorder'
@@ -472,7 +475,7 @@
   const grid = useMachTableController({
     config: useScopedMachTableConfig(ORDER_TABLE_CONFIG),
     loading: () =>
-      (!isReorderScenario.value && orderCrud.loading.value) ||
+      (usesOrderSource.value && orderCrud.loading.value) ||
       previewState.value === 'loading',
     theme: () => (themeStore.isDark ? 'dark' : 'light'),
     editMode: inlineEditMode,
@@ -665,10 +668,7 @@
   }
 
   const exportCsv = async (): Promise<void> => {
-    if (
-      import.meta.env.VITE_DATA_MODE === 'remote' &&
-      !isReorderScenario.value
-    ) {
+    if (import.meta.env.VITE_DATA_MODE === 'remote' && usesOrderSource.value) {
       await exportOrderTable()
       return
     }

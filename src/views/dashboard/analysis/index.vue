@@ -264,16 +264,18 @@
   import { useProjectReport } from '../shared/useProjectReport'
   import { formatBytes, formatDuration } from '../shared/d_format'
   import {
-    type BrowserPerformance,
     projectInfo,
     ecosystem,
     architectures,
     createDependencyNodes,
     createCapabilityNodes,
     createBundleOption,
-    readBrowserPerformance,
     createWaterfallOption,
   } from './data'
+  import {
+    readBrowserPerformance,
+    type BrowserPerformance,
+  } from './browserPerformance'
   defineOptions({ name: 'ProjectAnalysis' })
   const { report, failed, loading, refresh } = useProjectReport()
   const compressed = ref(false)

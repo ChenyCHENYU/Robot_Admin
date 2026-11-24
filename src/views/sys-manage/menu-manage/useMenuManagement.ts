@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import { useTreeSearchExpansion } from '../shared/useTreeSearchExpansion'
 import type { ApiResponse } from '@/api/management.contract'
 import type {
   FormInstance,
@@ -255,19 +256,12 @@ export const useMenuManagement = () => {
   const handleNodeSelect = (_node: unknown, keys: (string | number)[]) => {
     selectedId.value = keys[0] == null ? null : String(keys[0])
   }
-  let expandedBeforeSearch: (string | number)[] | undefined
-  watch(
-    () => [searchPattern.value, menuList.value] as const,
-    async ([keyword], [previous]) => {
-      if (!previous.trim() && keyword.trim())
-        expandedBeforeSearch = [...(treeRef.value?.expandedKeys || [])]
-      await nextTick()
-      if (keyword.trim()) treeRef.value?.expandAll()
-      else if (treeRef.value && expandedBeforeSearch) {
-        treeRef.value.expandedKeys = expandedBeforeSearch
-        expandedBeforeSearch = undefined
-        if (selectedId.value) await selectMenu(selectedId.value)
-      }
+  useTreeSearchExpansion(
+    searchPattern,
+    () => menuList.value,
+    () => treeRef.value,
+    () => {
+      if (selectedId.value) void selectMenu(selectedId.value)
     }
   )
   const expanded = ref(false)
@@ -375,43 +369,39 @@ export const useMenuManagement = () => {
   const handleCancelModal = () => {
     if (!saving.value) showModal.value = false
   }
-  const snapshotDraft = (model: MenuFormData): MenuFormData => {
-    const draft = Object.fromEntries(
-      Object.keys(DEFAULT_FORM_DATA).map(key => [
-        key,
-        model[key as keyof MenuFormData],
-      ])
-    ) as unknown as MenuFormData
-    if (model.id) {
-      draft.id = model.id
-      draft.revision = model.revision
-    }
-    for (const field of [
-      'name',
-      'path',
-      'component',
-      'icon',
-      'permission',
-      'remark',
-    ] as const)
-      draft[field] = draft[field].trim()
-    return draft
-  }
+  const snapshotDraft = (model: MenuFormData): MenuFormData => ({
+    name: model.name.trim(),
+    type: model.type,
+    parentId: model.parentId,
+    path: model.path.trim(),
+    component: model.component.trim(),
+    icon: model.icon.trim(),
+    permission: model.permission.trim(),
+    sort: model.sort,
+    status: model.status,
+    hidden: model.hidden,
+    keepAlive: model.keepAlive,
+    remark: model.remark.trim(),
+    ...(model.id ? { id: model.id, revision: model.revision } : {}),
+  })
   const saveDraft = async (
     draft: MenuFormData,
     contextId: string
   ): Promise<boolean> => {
     if (draft.type === 'button') {
+      if (!draft.parentId) throw new Error('请选择按钮所属页面')
       const permission = {
-        id: draft.id,
-        revision: draft.revision,
-        menuId: draft.parentId!,
+        menuId: draft.parentId,
         name: draft.name,
         permission: draft.permission,
         remark: draft.remark,
       }
       if (draft.id)
-        await updateButtonPermissionApi(permission as ButtonPermission)
+        await updateButtonPermissionApi({
+          ...permission,
+          id: draft.id,
+          revision: draft.revision,
+        })
       else await addButtonPermissionApi(permission)
       return false
     } else {

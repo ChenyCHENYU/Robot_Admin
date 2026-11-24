@@ -14,8 +14,8 @@
         ></div
       ><NButton
         size="small"
-        :disabled="page.exporting"
-        @click="page.fileRef?.click()"
+        :disabled="output.exporting"
+        @click="fileRef?.click()"
         ><template #icon><span class="i-mdi:upload" /></template
         >选择本地图片</NButton
       ></header
@@ -35,16 +35,16 @@
         v-for="item in CROP_PRESETS"
         :key="item.key"
         type="button"
-        :aria-pressed="page.preset === item.key"
-        :disabled="page.exporting"
-        @click="page.applyPreset(item.key)"
+        :aria-pressed="editor.preset === item.key"
+        :disabled="output.exporting"
+        @click="editor.applyPreset(item.key)"
         ><span :class="item.icon" /><span
           ><strong>{{ item.label }}</strong
           ><small>{{ item.note }}</small></span
         ><span
           class="crop-presets__check"
           aria-hidden="true"
-          >{{ page.preset === item.key ? '✓' : '' }}</span
+          >{{ editor.preset === item.key ? '✓' : '' }}</span
         ></button
       >
     </div>
@@ -52,48 +52,48 @@
       <section class="crop-editor">
         <header class="crop-source"
           ><img
-            :src="page.src"
+            :src="image.src"
             alt="当前素材缩略图"
           /><div
-            ><strong>{{ page.fileName }}</strong
+            ><strong>{{ image.fileName }}</strong
             ><span
-              >{{ page.sourceInfo.width }} × {{ page.sourceInfo.height }} px
-              <template v-if="page.sourceInfo.size"
-                >· {{ page.formatFileSize(page.sourceInfo.size) }}</template
+              >{{ image.sourceInfo.width }} × {{ image.sourceInfo.height }} px
+              <template v-if="image.sourceInfo.size"
+                >· {{ formatFileSize(image.sourceInfo.size) }}</template
               ></span
             ></div
           ><NButton
             size="tiny"
-            :disabled="!page.ready || page.exporting"
-            @click="page.modalRef?.open(page.src)"
+            :disabled="!editor.ready || output.exporting"
+            @click="editor.openModal"
             >弹窗编辑</NButton
           ></header
         >
         <div
           class="crop-stage"
-          :class="{ 'is-dropping': page.dropping }"
-          @dragover.prevent="page.dropping = true"
-          @dragleave.prevent="page.dropping = false"
-          @drop.prevent="page.onDrop"
-          @pointerup="page.markStale"
-          @wheel.passive="page.markStale"
+          :class="{ 'is-dropping': image.dropping }"
+          @dragover.prevent="image.dropping = true"
+          @dragleave.prevent="image.dropping = false"
+          @drop.prevent="image.onDrop"
+          @pointerup="editor.markStale"
+          @wheel.passive="editor.markStale"
         >
           <C_ImageCropper
             ref="cropperRef"
-            :src="page.src"
-            :aspect-ratio="page.ratio"
-            :output-format="page.format"
-            :output-quality="page.quality / 100"
-            :max-output-width="page.maxWidth || 0"
+            :src="image.src"
+            :aspect-ratio="editor.ratio"
+            :output-format="output.format"
+            :output-quality="output.quality / 100"
+            :max-output-width="output.maxWidth || 0"
             :show-toolbar="false"
             :show-preview="false"
-            :disabled="page.exporting"
+            :disabled="output.exporting"
             :height="440"
-            @ready="page.onReady"
-            @error="page.onError"
+            @ready="editor.onReady"
+            @error="editor.onError"
           />
           <div
-            v-if="page.dropping"
+            v-if="image.dropping"
             class="crop-stage__drop"
             >松开以替换图片</div
           >
@@ -104,7 +104,7 @@
             :config="{ size: 'tiny', wrap: true }"
           /><NButton
             size="tiny"
-            :disabled="!page.ready || page.exporting"
+            :disabled="!editor.ready || output.exporting"
             @click="showAnnotations = true"
           >
             <template #icon><span class="i-mdi-image-outline" /></template>
@@ -121,36 +121,36 @@
           ><header><span>输出设置</span><small>EXPORT</small></header>
           <label
             >文件格式<NSelect
-              v-model:value="page.format"
+              v-model:value="output.format"
               :options="FORMAT_OPTIONS"
               size="small"
-              :disabled="page.exporting"
+              :disabled="output.exporting"
               aria-label="输出文件格式"
           /></label>
           <label
             >最大输出宽度
             <NInputNumber
-              v-model:value="page.maxWidth"
+              v-model:value="output.maxWidth"
               :min="64"
               :max="4096"
               :step="64"
               size="small"
-              :disabled="page.exporting"
+              :disabled="output.exporting"
               aria-label="最大输出宽度"
               ><template #suffix>px</template></NInputNumber
             ><small>保持裁剪比例，原图较小时不放大。</small></label
           >
           <label
-            v-if="page.format !== 'png'"
+            v-if="output.format !== 'png'"
             class="crop-quality"
             ><span
-              >图片质量 <strong>{{ page.quality }}%</strong></span
+              >图片质量 <strong>{{ output.quality }}%</strong></span
             ><NSlider
-              v-model:value="page.quality"
+              v-model:value="output.quality"
               :min="30"
               :max="100"
               :step="5"
-              :disabled="page.exporting"
+              :disabled="output.exporting"
               aria-label="图片质量"
           /></label>
           <p
@@ -159,17 +159,17 @@
             >PNG 保留透明背景，适合 Logo 与需要透明边缘的素材。</p
           >
           <NCheckbox
-            v-model:checked="page.circular"
-            :disabled="page.exporting"
+            v-model:checked="editor.circular"
+            :disabled="output.exporting"
             >圆形预览</NCheckbox
           >
           <NButton
             block
             type="primary"
             size="small"
-            :disabled="!page.ready"
-            :loading="page.exporting"
-            @click="page.exportCrop"
+            :disabled="!editor.ready"
+            :loading="output.exporting"
+            @click="output.exportCrop"
             ><template #icon><span class="i-mdi:crop" /></template
             >生成裁剪结果</NButton
           >
@@ -180,19 +180,19 @@
           ><header
             ><span>输出预览</span
             ><NTag
-              v-if="page.result"
+              v-if="output.result"
               size="small"
-              :type="page.stale ? 'warning' : 'success'"
+              :type="output.stale ? 'warning' : 'success'"
               :bordered="false"
-              >{{ page.stale ? '需要重新生成' : '已生成' }}</NTag
+              >{{ output.stale ? '需要重新生成' : '已生成' }}</NTag
             ></header
           >
           <div
             class="crop-result__canvas"
-            :class="{ 'is-circular': page.circular }"
+            :class="{ 'is-circular': editor.circular }"
             ><img
-              v-if="page.result"
-              :src="page.result.base64"
+              v-if="output.result"
+              :src="output.result.base64"
               alt="裁剪输出结果"
             /><div
               v-else
@@ -202,24 +202,25 @@
               ><p>调整好画面后，点击上方生成按钮</p></div
             ></div
           >
-          <template v-if="page.result"
+          <template v-if="output.result"
             ><div class="crop-result__meta"
-              ><span>{{ page.result.width }} × {{ page.result.height }} px</span
               ><span
-                >{{ page.result.format.toUpperCase() }} ·
-                {{ page.formatFileSize(page.result.blob.size) }}</span
+                >{{ output.result.width }} × {{ output.result.height }} px</span
+              ><span
+                >{{ output.result.format.toUpperCase() }} ·
+                {{ formatFileSize(output.result.blob.size) }}</span
               ></div
             ><NButton
               block
               size="small"
-              :disabled="page.stale || page.exporting"
-              @click="page.download"
+              :disabled="output.stale || output.exporting"
+              @click="output.download"
               ><template #icon><span class="i-mdi:download" /></template
               >下载图片</NButton
             ></template
           >
           <small
-            v-if="page.circular"
+            v-if="editor.circular"
             class="crop-result__hint"
             >圆形仅用于预览，文件保留矩形画布。</small
           >
@@ -234,8 +235,8 @@
         v-for="sample in SAMPLE_IMAGES"
         :key="sample.key"
         type="button"
-        :disabled="page.exporting"
-        @click="page.selectSample(sample)"
+        :disabled="output.exporting"
+        @click="image.selectSample(sample)"
         ><img
           :src="sample.src"
           alt=""
@@ -248,19 +249,19 @@
       accept="image/png,image/jpeg,image/webp"
       class="crop-file-input"
       aria-label="上传裁剪图片"
-      @change="page.onFileChange"
+      @change="image.onFileChange"
     />
     <C_ImageCropper
       ref="modalRef"
       modal
       modal-title="放大编辑图片"
-      :aspect-ratio="page.ratio"
-      :output-format="page.format"
-      :output-quality="page.quality / 100"
-      :max-output-width="page.maxWidth || 0"
-      :circular="page.circular"
-      @confirm="page.acceptModalResult"
-      @error="page.onError"
+      :aspect-ratio="editor.ratio"
+      :output-format="output.format"
+      :output-quality="output.quality / 100"
+      :max-output-width="output.maxWidth || 0"
+      :circular="editor.circular"
+      @confirm="output.acceptModalResult"
+      @error="editor.onError"
     />
     <NModal
       v-model:show="showAnnotations"
@@ -271,8 +272,8 @@
       <C_ImageAnnotator
         v-if="showAnnotations"
         v-model="annotations"
-        :src="page.sourceFile ?? page.src"
-        :alt="page.fileName"
+        :src="image.sourceFile ?? image.src"
+        :alt="image.fileName"
       />
       <output
         v-if="annotations.length"
@@ -287,18 +288,25 @@
 <script setup lang="ts">
   import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
   import type { ImageAnnotation } from '@robot-admin/naive-ui-components/C_ImageAnnotator'
-  import { CROP_PRESETS, SAMPLE_IMAGES, FORMAT_OPTIONS } from './data'
+  import {
+    CROP_PRESETS,
+    SAMPLE_IMAGES,
+    FORMAT_OPTIONS,
+    formatFileSize,
+  } from './data'
   import { useCropWorkspace } from './useCropWorkspace'
   defineOptions({ name: 'Demo45ImageCropper' })
-  const controller = useCropWorkspace()
-  const page = proxyRefs(controller)
-  const { cropperRef, fileRef, modalRef } = controller
+  const { cropperRef, fileRef, modalRef, image, editor, output } =
+    useCropWorkspace()
   const showAnnotations = ref(false)
   const annotations = ref<readonly ImageAnnotation[]>([])
-  watch(controller.src, () => {
-    showAnnotations.value = false
-    annotations.value = []
-  })
+  watch(
+    () => image.src,
+    () => {
+      showAnnotations.value = false
+      annotations.value = []
+    }
+  )
   onDeactivated(() => {
     showAnnotations.value = false
   })
@@ -308,46 +316,46 @@
         key: 'rotate-left',
         label: '左转',
         icon: 'mdi:rotate-left',
-        onClick: () => controller.transform('left'),
+        onClick: () => editor.transform('left'),
       },
       {
         key: 'rotate-right',
         label: '右转',
         icon: 'mdi:rotate-right',
-        onClick: () => controller.transform('right'),
+        onClick: () => editor.transform('right'),
       },
       {
         key: 'zoom-in',
         label: '放大',
         icon: 'mdi:magnify-plus-outline',
-        onClick: () => controller.transform('zoom-in'),
+        onClick: () => editor.transform('zoom-in'),
       },
       {
         key: 'zoom-out',
         label: '缩小',
         icon: 'mdi:magnify-minus-outline',
-        onClick: () => controller.transform('zoom-out'),
+        onClick: () => editor.transform('zoom-out'),
       },
       {
         key: 'flip-x',
         label: '水平翻转',
         icon: 'mdi:flip-horizontal',
-        onClick: () => controller.transform('flip-x'),
+        onClick: () => editor.transform('flip-x'),
       },
       {
         key: 'flip-y',
         label: '垂直翻转',
         icon: 'mdi:flip-vertical',
-        onClick: () => controller.transform('flip-y'),
+        onClick: () => editor.transform('flip-y'),
       },
       {
         key: 'reset',
         label: '重置',
-        onClick: () => controller.transform('reset'),
+        onClick: () => editor.transform('reset'),
       },
     ].map(item => ({
       ...item,
-      disabled: !controller.ready.value || controller.exporting.value,
+      disabled: !editor.ready || output.exporting,
     }))
   )
 </script>

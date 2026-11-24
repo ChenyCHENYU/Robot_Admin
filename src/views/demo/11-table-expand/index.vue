@@ -77,20 +77,13 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo11TableExpand' })
-  import type {
-    DataTableColumns,
-    DataTableProps,
-    DataTableRowKey,
-  } from 'naive-ui'
-  import type { VNodeChild } from 'vue'
+  import type { DataTableRowKey } from 'naive-ui'
   import {
     resolveComponentDensity,
     type ChildSelectionState,
     type TableConfig,
     type TableInstance,
   } from '@robot-admin/naive-ui-components/C_Table'
-  import { C_Loading } from '@robot-admin/naive-ui-components/C_Loading'
-  import { C_ActionBar } from '@robot-admin/naive-ui-components/C_ActionBar'
   import '@robot-admin/naive-ui-components/C_Table/base.css'
   import type { ActionItem } from '@robot-admin/naive-ui-components'
   import { useNaiveTableCrud } from '@robot-admin/request-core/naive'
@@ -98,26 +91,17 @@
   import {
     defaultConfig,
     dataColumns,
-    getChildColumns,
     syncChildSelection,
     type ChildDataType,
     type TestRecord,
     type DemoConfig,
   } from './data'
+  import ExpandedDetails from './components/ExpandedDetails.vue'
 
   const config = reactive<DemoConfig>({ ...defaultConfig })
   const controlSize = computed(
     () => resolveComponentDensity(config.density).size
   )
-  // 原生 Naive small 与生态 compact 留白不同；仅此子表通过公开主题配置继承父表实际几何。
-  const childTableThemeOverrides: DataTableProps['themeOverrides'] = {
-    thPaddingSmall: 'inherit',
-    thPaddingMedium: 'inherit',
-    thPaddingLarge: 'inherit',
-    tdPaddingSmall: 'inherit',
-    tdPaddingMedium: 'inherit',
-    tdPaddingLarge: 'inherit',
-  }
   const tableRef = ref<TableInstance<TestRecord, ChildDataType> | null>(null)
   const expandErrors = reactive(new Map<DataTableRowKey, string>())
   const mainColumns = computed(() =>
@@ -218,78 +202,28 @@
     return row.childData || []
   }
 
-  // 展开内容渲染
   const renderExpandContent = (
     row: TestRecord,
-    childRows: ChildDataType[],
-    isLoading: boolean,
+    rows: ChildDataType[],
+    loading: boolean,
     childSelection?: ChildSelectionState
-  ): VNodeChild => {
-    if (isLoading) {
-      return h('div', { class: 'flex justify-center items-center py-4' }, [
-        h(C_Loading, { size: 32, label: '正在加载子表数据' }),
-      ])
-    }
-
-    const error = expandErrors.get(row.id)
-    if (error) {
-      return h('div', { class: 'p-4', role: 'alert' }, [
-        h('p', error),
-        h(C_ActionBar, {
-          actions: [
-            {
-              key: `retry-${row.id}`,
-              label: '重试',
-              icon: 'mdi:reload',
-              onClick: () => tableRef.value?.retryExpand(row.id),
-            },
-          ],
-        }),
-      ])
-    }
-
-    if (!childRows.length) {
-      return h('div', { class: 'text-center py-4' }, '暂无数据')
-    }
-
-    const childColumns: DataTableColumns<ChildDataType> = [
-      ...(config.enableChildSelection
-        ? [{ type: 'selection' as const, width: 40 }]
-        : []),
-      ...getChildColumns(childRows[0]),
-    ]
-
-    return h(
-      'section',
-      { class: 'nested-table-detail', 'aria-label': `${row.name} 的详细信息` },
-      [
-        h(
-          'div',
-          { class: 'nested-table-detail__heading' },
-          `${row.name} 的详细信息 (${childRows.length} 条)`
-        ),
-        h(NDataTable, {
-          data: childRows,
-          columns: childColumns,
-          rowKey: (child: ChildDataType) => child.id,
-          checkedRowKeys: childSelection?.selectedKeys ?? [],
-          scrollX: 400,
-          tableLayout: 'fixed',
-          pagination: false,
-          size: controlSize.value,
-          themeOverrides: childTableThemeOverrides,
-          onUpdateCheckedRowKeys: keys => {
-            if (!tableRef.value) return
-            syncChildSelection(
-              tableRef.value,
-              row.id,
-              childSelection?.selectedKeys ?? [],
-              keys
-            )
-          },
-        }),
-      ]
-    )
+  ) => {
+    const selectedKeys = childSelection?.selectedKeys ?? []
+    return h(ExpandedDetails, {
+      rowId: row.id,
+      name: row.name,
+      rows,
+      loading,
+      error: expandErrors.get(row.id),
+      selectable: config.enableChildSelection,
+      selectedKeys,
+      size: controlSize.value,
+      onRetry: () => tableRef.value?.retryExpand(row.id),
+      onSelectionChange: keys => {
+        if (tableRef.value)
+          syncChildSelection(tableRef.value, row.id, selectedKeys, keys)
+      },
+    })
   }
 
   watch(

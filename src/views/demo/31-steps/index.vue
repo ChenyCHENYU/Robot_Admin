@@ -238,7 +238,7 @@
     {
       label: '下一步',
       type: 'primary',
-      disabled: demo1.current >= 4,
+      disabled: demo1.current >= basicSteps.length - 1,
       onClick: () => {
         demo1.current++
       },
@@ -255,8 +255,9 @@
       },
     },
     {
-      label: demo2.current === registerSteps.length - 1 ? '完成' : '下一步',
+      label: demo2.current === registerSteps.length - 1 ? '已完成' : '下一步',
       type: 'primary',
+      disabled: demo2.current === registerSteps.length - 1,
       loading: loading.value,
       onClick: handleNext,
     },

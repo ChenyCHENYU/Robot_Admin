@@ -32,8 +32,7 @@ export function useWorkflowWorkspace() {
   const saved = ref('')
   const selectedId = ref('start-1')
   const selectedEdgeId = ref('')
-  const errors = ref<ValidationError[]>([])
-  const validated = ref(false)
+  const validationErrors = ref<ValidationError[] | null>(null)
   const workflowRef = ref<WorkflowExpose | null>(null)
   const current = computed(() =>
     workflowScenarios.find(item => item.id === currentScenario.value)!
@@ -42,7 +41,7 @@ export function useWorkflowWorkspace() {
     get: () => drafts.value[currentScenario.value],
     set: (value: WorkflowData) => {
       drafts.value = { ...drafts.value, [currentScenario.value]: value }
-      validated.value = false
+      validationErrors.value = null
     },
   })
   const selected = computed(() =>
@@ -116,8 +115,8 @@ export function useWorkflowWorkspace() {
       message.error('本机保存失败，请导出 JSON 留存')
     }
   }
-  const selectNode = (node: WorkflowNode) => {
-    selectedId.value = node.id
+  const selectNode = (id: string | null) => {
+    selectedId.value = id ?? ''
     selectedEdgeId.value = ''
   }
   /** 连线点击只接收组件公开快照，详情跟随当前流程数据更新。 */
@@ -133,8 +132,7 @@ export function useWorkflowWorkspace() {
   const validate = () => {
     const editor = workflowRef.value
     if (!editor) return
-    errors.value = editor.validateWorkflow()
-    validated.value = true
+    validationErrors.value = editor.validateWorkflow()
   }
   const restore = () => {
     const scenario = current.value
@@ -147,8 +145,7 @@ export function useWorkflowWorkspace() {
         const template = clone(scenario.template)
         if (currentScenario.value === scenario.id) {
           data.value = template
-          selectedId.value = template.nodes[0]?.id ?? ''
-          selectedEdgeId.value = ''
+          selectNode(template.nodes[0]?.id ?? '')
         } else {
           drafts.value[scenario.id] = template
         }
@@ -185,10 +182,8 @@ export function useWorkflowWorkspace() {
     message.warning('本机草稿无法恢复，已使用内置模板')
   }
   watch(currentScenario, () => {
-    selectedId.value = data.value.nodes[0]?.id ?? ''
-    selectedEdgeId.value = ''
-    errors.value = []
-    validated.value = false
+    selectNode(data.value.nodes[0]?.id ?? '')
+    validationErrors.value = null
   })
   return {
     selectedUsers,
@@ -199,8 +194,7 @@ export function useWorkflowWorkspace() {
     mode,
     saved,
     selectedId,
-    errors,
-    validated,
+    validationErrors,
     workflowRef,
     current,
     data,

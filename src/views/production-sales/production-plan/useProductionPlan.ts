@@ -146,12 +146,16 @@ export function useProductionPlan() {
   const totalHeats = computed(() =>
     rows.value.reduce((sum, row) => sum + row.heats, 0)
   )
-  const applyPlanQuery = (values: PlanQuery): void => {
+  const resetLedgerSelection = () => {
     locatedId.value = undefined
-    applied.value = { ...values }
     selectedIds.value = []
-    table.api.value?.pagination.setPage(1)
-    table.api.value?.selection.clear()
+    const api = table.api.value
+    api?.selection.clear()
+    api?.pagination.setPage(1)
+  }
+  const applyPlanQuery = (values: PlanQuery): void => {
+    applied.value = { ...values }
+    resetLedgerSelection()
   }
   const clearLedgerFilters = () => {
     const api = table.api.value
@@ -162,12 +166,7 @@ export function useProductionPlan() {
     applyPlanQuery(query.value)
     notice.value = `已清除筛选，显示${lineLabel.value}的计划。`
   }
-  watch(line, () => {
-    locatedId.value = undefined
-    selectedIds.value = []
-    table.api.value?.selection.clear()
-    table.api.value?.pagination.setPage(1)
-  })
+  watch(line, resetLedgerSelection)
   const searchConfig: SearchConfig<PlanQuery> = {
     density: 'compact',
     layout: 'grid',

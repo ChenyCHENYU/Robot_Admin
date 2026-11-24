@@ -6,7 +6,6 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import projectInfo from 'virtual:robot-admin-project-info'
-import type { ContextMenuItem } from '@robot-admin/naive-ui-components'
 export interface WorkspaceFile {
   id: string
   name: string
@@ -61,32 +60,5 @@ export const WORKSPACE_FILES: WorkspaceFile[] = [
       null,
       2
     ),
-  },
-]
-export const FILE_MENU: ContextMenuItem[] = [
-  { key: 'preview', label: '查看内容', icon: 'mdi:eye-outline' },
-  {
-    key: 'copy',
-    label: '复制',
-    icon: 'mdi:content-copy',
-    children: [
-      { key: 'copy-name', label: '复制文件名', icon: 'mdi:rename-outline' },
-      { key: 'copy-content', label: '复制内容', icon: 'mdi:code-tags' },
-    ],
-  },
-  { key: 'download', label: '下载副本', icon: 'mdi:download-outline' },
-  { key: 'duplicate', label: '创建副本', icon: 'mdi:file-multiple-outline' },
-  { key: 'divider', label: '', divider: true },
-  {
-    key: 'remote',
-    label: '上传到服务器',
-    icon: 'mdi:cloud-upload-outline',
-    disabled: true,
-  },
-  {
-    key: 'remove',
-    label: '移除本地副本',
-    icon: 'mdi:trash-can-outline',
-    danger: true,
   },
 ]

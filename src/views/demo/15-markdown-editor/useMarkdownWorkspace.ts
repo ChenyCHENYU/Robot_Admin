@@ -110,16 +110,18 @@ export function useMarkdownWorkspace() {
       if (active) message.error('文件读取失败，请重试')
     }
   }
-  const restore = () =>
-    dialog.warning({
+  const restore = () => {
+    const { id, content: example } = current.value
+    return dialog.warning({
       title: '恢复当前文档示例',
       content: '当前文档的修改将被示例替换，其他文档草稿保留。',
       positiveText: '恢复示例',
       negativeText: '保留修改',
       onPositiveClick: () => {
-        content.value = current.value.content
+        if (active) drafts.value[id] = example
       },
     })
+  }
   watch(
     drafts,
     () => {

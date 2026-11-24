@@ -53,7 +53,7 @@ export function useSignatureWorkspace() {
         format: format.value,
         includeBackground: true,
         backgroundColor: '#ffffff',
-        includeWatermark: true,
+        includeWatermark: watermark.value,
       })
       if (typeof value !== 'string') throw new Error('未能生成图片')
       result.value = value

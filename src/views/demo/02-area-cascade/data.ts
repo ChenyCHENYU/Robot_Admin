@@ -17,6 +17,8 @@ export interface CascadeConfig extends CascadeProps {
   id: string
   title: string
   selected: CascadeValue
+  tagText: string
+  resultTitle: string
   tagType?: 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error'
   description?: string
   labels: {
@@ -200,6 +202,8 @@ export const orgData: CascadeItem[] = [
 export const createCascadeConfigs = (): CascadeConfig[] => [
   {
     id: 'city',
+    tagText: '地区选择',
+    resultTitle: '当前选择的城市级联',
     title: '城市级联选择',
     data: cityData,
     selected: {},
@@ -214,6 +218,8 @@ export const createCascadeConfigs = (): CascadeConfig[] => [
   },
   {
     id: 'tech',
+    tagText: '技术栈',
+    resultTitle: '当前选择的技术分类',
     title: '技术分类选择',
     data: techData,
     selected: {},
@@ -228,6 +234,8 @@ export const createCascadeConfigs = (): CascadeConfig[] => [
   },
   {
     id: 'org',
+    tagText: '组织架构',
+    resultTitle: '当前选择的部门组织',
     title: '部门组织选择',
     data: orgData,
     selected: {},

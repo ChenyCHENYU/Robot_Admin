@@ -338,7 +338,6 @@
   const watermarkColor = ref('rgba(180, 180, 180, 0.4)')
   const watermarkSize = ref(16)
   const updateCount = ref(0)
-  const errorCount = ref(0)
 
   // 计算属性
   const currentDate = computed(() => {
@@ -352,7 +351,6 @@
   }
 
   const handleWatermarkError = (error: Error) => {
-    errorCount.value++
     console.error('水印错误:', error)
   }
 

@@ -4,17 +4,19 @@
  * @Description: 独立团队绩效场景，所有指标由演示交付记录计算
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+interface PerformanceWeek {
+  planned: number
+  delivered: number
+  checked: number
+  accepted: number
+  cycleDays: number
+}
+
 export interface PerformanceTeam {
   id: string
   name: string
   note: string
-  weeks: Array<{
-    planned: number
-    delivered: number
-    checked: number
-    accepted: number
-    cycleDays: number
-  }>
+  weeks: PerformanceWeek[]
 }
 export const PERFORMANCE_TEAMS: PerformanceTeam[] = [
   {
@@ -74,6 +76,19 @@ export const PERFORMANCE_WEEKS = Array.from({ length: 6 }, (_, index) => ({
   label: `第 ${index + 1} 周`,
   value: index,
 }))
+
+/** 团队明细和汇总共用相同的分母与无任务时的展示口径。 */
+export const performanceMetrics = ({
+  planned,
+  delivered,
+  checked,
+  accepted,
+  cycleDays,
+}: PerformanceWeek) => ({
+  delivery: planned ? (delivered / planned) * 100 : 0,
+  quality: checked ? (accepted / checked) * 100 : 0,
+  cycle: delivered ? cycleDays / delivered : 0,
+})
 /** 按实际完成量汇总周期，不对团队百分比做简单平均。 */
 export const summarizePerformance = (
   teams: PerformanceTeam[],
@@ -94,8 +109,6 @@ export const summarizePerformance = (
   )
   return {
     ...sums,
-    delivery: sums.planned ? (sums.delivered / sums.planned) * 100 : 0,
-    quality: sums.checked ? (sums.accepted / sums.checked) * 100 : 0,
-    cycle: sums.delivered ? sums.cycleDays / sums.delivered : 0,
+    ...performanceMetrics(sums),
   }
 }

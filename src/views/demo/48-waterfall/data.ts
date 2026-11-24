@@ -75,9 +75,18 @@ export function createGalleryCollection(count: number): GalleryItem[] {
   })
 }
 
+const largeCollectionSize = 1200
 export const COLLECTION_OPTIONS = [
-  { label: '精选素材 · 16 份', value: 16 },
-  { label: '大型素材库 · 1,200 份', value: 1200 },
+  {
+    label: `精选素材 · ${GALLERY_ITEMS.length} 份`,
+    value: GALLERY_ITEMS.length,
+    pageSize: 8,
+  },
+  {
+    label: `大型素材库 · ${largeCollectionSize.toLocaleString('en-US')} 份`,
+    value: largeCollectionSize,
+    pageSize: 200,
+  },
 ]
 
 export const COLUMN_OPTIONS = [

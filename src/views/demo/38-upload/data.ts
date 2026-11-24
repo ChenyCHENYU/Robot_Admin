@@ -8,6 +8,8 @@ import type {
   CustomUploadRequest,
   UploadFileStatus,
 } from '@robot-admin/naive-ui-components/C_Upload'
+export const MAX_QUEUE_FILES = 20
+
 export const UPLOAD_SCENES = [
   {
     value: 'files',

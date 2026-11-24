@@ -95,7 +95,7 @@
             :readonly="page.mode === 'preview'"
             :allow-cycles="false"
             :theme="themeStore.isDark ? 'dark' : 'light'"
-            @node-click="page.selectNode"
+            @node-click="node => page.selectNode(node.id)"
             @edge-click="page.selectEdge"
             @save="page.save" /></div
         ><footer class="workspace-footer"
@@ -140,7 +140,7 @@
                 value: node.id,
               }))
             "
-            @update:value="page.selectedId = $event"
+            @update:value="page.selectNode"
           />
           <template v-if="page.selected">
             <label class="workspace-label"
@@ -253,23 +253,23 @@
         </section>
         <section class="workspace-section"
           ><h2>检查结果</h2
-          ><p v-if="!page.validated"
+          ><p v-if="page.validationErrors === null"
             >点击“检查流程”验证审批人、分支配置和节点连接。</p
           ><NTag
             v-else
-            :type="page.errors.length ? 'warning' : 'success'"
+            :type="page.validationErrors.length ? 'warning' : 'success'"
             size="small"
             >{{
-              page.errors.length
-                ? `${page.errors.length} 项待处理`
+              page.validationErrors.length
+                ? `${page.validationErrors.length} 项待处理`
                 : '当前规则检查通过'
             }}</NTag
           ><button
-            v-for="(issue, index) in page.errors"
+            v-for="(issue, index) in page.validationErrors"
             :key="index"
             class="flow-issue"
             type="button"
-            @click="page.selectedId = issue.nodeId"
+            @click="page.selectNode(issue.nodeId)"
             ><strong>{{ issue.nodeName }}</strong
             ><span>{{ issue.message }}</span></button
           ></section

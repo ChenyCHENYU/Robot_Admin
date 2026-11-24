@@ -776,7 +776,7 @@ export function usePermissionManagement() {
       reason: model.reason,
     })
     tempAuthPage.value = 1
-    await loadGovernanceData()
+    await Promise.all([loadTemporaryGrants(), loadAuditLogs()])
     if (!mockMode) await refreshCurrentAuthorization()
     message.success('临时角色授予已创建')
     tempAuthForm.targetRole = null
@@ -796,15 +796,8 @@ export function usePermissionManagement() {
       onPositiveClick: async () => {
         try {
           await revokeTempAuthorizationApi(auth.id, auth.revision)
-          await loadGovernanceData()
+          await Promise.all([loadTemporaryGrants(), loadAuditLogs()])
           if (!mockMode) await refreshCurrentAuthorization()
-          const idx = tempAuthList.value.findIndex(t => t.id === auth.id)
-          if (idx !== -1) {
-            tempAuthList.value[idx] = {
-              ...tempAuthList.value[idx],
-              status: 'revoked',
-            }
-          }
           message.success('临时授权已撤销')
         } catch {
           message.error('临时授权撤销失败')
@@ -831,8 +824,11 @@ export function usePermissionManagement() {
     }
   }
 
-  const { loading: governanceLoading, run: runLatestGovernanceRequest } =
-    useLatestRequest()
+  const dataPolicyRequest = useLatestRequest()
+  const grantListRequest = useLatestRequest()
+  const auditRequest = useLatestRequest()
+  const constraintRequest = useLatestRequest()
+  const governanceContextRequest = useLatestRequest()
 
   const { run: runLatestGrantUsers } = useLatestRequest()
   /** 可搜索当前公司成员，每次有界读取，避免只允许选择前200名。 */
@@ -855,60 +851,122 @@ export function usePermissionManagement() {
     }
   }
 
-  const loadGovernanceData = async () => {
+  const loadDataPolicy = async () => {
     try {
-      const result = await runLatestGovernanceRequest(signal =>
-        Promise.all([
-          getDataPermissionRulesApi(signal),
-          getTempAuthorizationsPageApi(
-            { page: tempAuthPage.value, pageSize: 20 },
-            signal
-          ),
-          getPermissionConstraintsApi(signal),
-          getPermissionAuditLogsPageApi(
-            {
-              page: auditPage.value,
-              pageSize: 20,
-              action: auditFilter.action || undefined,
-              target: auditTarget.value || undefined,
-            },
-            signal
-          ),
-          getRoleListApi({ page: 1, pageSize: 200 }, signal),
-          getGovernanceCapabilitiesApi(signal),
-        ])
+      const result = await dataPolicyRequest.run(getDataPermissionRulesApi)
+      if (result) dataPermissionList.value = result.data
+    } catch {
+      message.error('数据权限加载失败，请稍后重试')
+    }
+  }
+
+  const loadTemporaryGrants = async () => {
+    try {
+      const result = await grantListRequest.run(signal =>
+        getTempAuthorizationsPageApi(
+          { page: tempAuthPage.value, pageSize: 20 },
+          signal
+        )
       )
       if (!result) return
-      const [rules, tempAuths, constraints, logs, roles, capabilities] = result
-      governanceCapabilities.value = capabilities.data
-      if (!capabilities.data.fieldPermission.read)
-        selectedDataPermission.value = null
-      dataPermissionList.value = rules.data
-      tempAuthList.value = tempAuths.data.list
-      tempAuthTotal.value = tempAuths.data.total
-      constraintList.value = constraints.data
-      auditLogs.value = logs.data.list
-      auditTotal.value = logs.data.total
-      roleList.value = roles.data.list
-      if (capabilities.data.temporaryRoleGrant.write) await searchGrantUsers('')
+      tempAuthList.value = result.data.list
+      tempAuthTotal.value = result.data.total
     } catch {
-      message.error('权限治理扩展数据加载失败，请稍后重试')
+      message.error('临时授权加载失败，请稍后重试')
+    }
+  }
+
+  const loadAuditLogs = async () => {
+    try {
+      const result = await auditRequest.run(signal =>
+        getPermissionAuditLogsPageApi(
+          {
+            page: auditPage.value,
+            pageSize: 20,
+            action: auditFilter.action || undefined,
+            target: auditTarget.value || undefined,
+          },
+          signal
+        )
+      )
+      if (!result) return
+      auditLogs.value = result.data.list
+      auditTotal.value = result.data.total
+    } catch {
+      message.error('审计记录加载失败，请稍后重试')
+    }
+  }
+
+  const loadConstraints = async () => {
+    try {
+      const result = await constraintRequest.run(getPermissionConstraintsApi)
+      if (result) constraintList.value = result.data
+    } catch {
+      message.error('权限约束加载失败，请稍后重试')
+    }
+  }
+
+  const loadGovernanceContext = async () => {
+    const result = await governanceContextRequest.run(signal =>
+      Promise.allSettled([
+        getRoleListApi({ page: 1, pageSize: 200 }, signal),
+        getGovernanceCapabilitiesApi(signal),
+      ])
+    )
+    if (!result) return
+    const [roles, capabilities] = result
+    if (roles.status === 'fulfilled') roleList.value = roles.value.data.list
+    else message.error('治理角色加载失败，请稍后重试')
+    if (capabilities.status === 'fulfilled') {
+      governanceCapabilities.value = capabilities.value.data
+      if (!capabilities.value.data.fieldPermission.read)
+        selectedDataPermission.value = null
+      if (capabilities.value.data.temporaryRoleGrant.write)
+        await searchGrantUsers('')
+    } else {
+      message.error('治理能力加载失败，请稍后重试')
     }
   }
 
   /** 新的审计筛选从第一页检索服务端完整历史。 */
   const applyAuditFilter = () => {
     auditPage.value = 1
-    void loadGovernanceData()
+    void loadAuditLogs()
   }
 
-  /** 刷新当前标签页，资源变更仍只重载资源表格。 */
-  const handleRefresh = async (): Promise<void> => {
-    if (activeTab.value === 'resources') await refresh()
-    else await loadGovernanceData()
+  /** 只刷新当前标签涉及的数据。 */
+  const handleRefresh = async () => {
+    switch (activeTab.value) {
+      case 'resources':
+        await refresh()
+        break
+      case 'data-permission':
+        await Promise.all([loadDataPolicy(), loadGovernanceContext()])
+        break
+      case 'temp-auth':
+        await Promise.all([loadTemporaryGrants(), loadGovernanceContext()])
+        break
+      case 'constraints':
+        await loadConstraints()
+        break
+      case 'audit-log':
+        await loadAuditLogs()
+        break
+      case 'comparison':
+        await loadGovernanceContext()
+        break
+    }
   }
 
-  onMounted(loadGovernanceData)
+  onMounted(() => {
+    void Promise.all([
+      loadDataPolicy(),
+      loadTemporaryGrants(),
+      loadAuditLogs(),
+      loadConstraints(),
+      loadGovernanceContext(),
+    ])
+  })
   const formOptions = computed<FormOption<PermissionFormData>[]>(() => {
     const options: FormOption<PermissionFormData>[] = [
       {
@@ -1080,8 +1138,6 @@ export function usePermissionManagement() {
     mockMode,
     governanceCapabilities,
     activeTab,
-    governanceLoading,
-    loadGovernanceData,
     handleRefresh,
     permissionImport,
     tableRef,
@@ -1127,6 +1183,7 @@ export function usePermissionManagement() {
       close: handleDetailClose,
     }),
     dataPolicy: proxyRefs({
+      loading: dataPolicyRequest.loading,
       rows: dataPermissionList,
       selected: selectedDataPermission,
       canEditFields,
@@ -1136,6 +1193,8 @@ export function usePermissionManagement() {
       rowKey: getDataPermissionRowKey,
     }),
     temporaryGrants: proxyRefs({
+      loading: grantListRequest.loading,
+      load: loadTemporaryGrants,
       visible: showTempAuthModal,
       rows: tempAuthList,
       page: tempAuthPage,
@@ -1153,6 +1212,7 @@ export function usePermissionManagement() {
       inheritance: inheritanceConstraints,
     }),
     audit: proxyRefs({
+      load: loadAuditLogs,
       filter: auditFilter,
       page: auditPage,
       total: auditTotal,

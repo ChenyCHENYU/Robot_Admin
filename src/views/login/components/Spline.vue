@@ -56,41 +56,42 @@
     ...props.style,
   }))
 
-  const canvasStyle = computed(() => ({
+  const canvasStyle = {
     display: 'block',
     width: '100%',
     height: '100%',
-  }))
-
-  // ===== 拦截 Spline 加载时的缓存读取错误（扩展通信错误已由全局 errorHandler 统一过滤）=====
-  const CONNECTION_RE = /ERR_CACHE_READ_FAILURE/
-  let _rejHandler: ((e: PromiseRejectionEvent) => void) | null = null
-  let _errHandler: ((e: ErrorEvent) => void) | null = null
-  let initGeneration = 0
-
-  /** 仅过滤 Spline 已知的缓存读取异常。 */
-  function installErrorGuard() {
-    _rejHandler = (e: PromiseRejectionEvent) => {
-      const msg = String(e.reason?.message || e.reason || '')
-      if (CONNECTION_RE.test(msg)) e.preventDefault()
-    }
-    _errHandler = (e: ErrorEvent) => {
-      const msg = String(e.message || e.error?.message || '')
-      if (CONNECTION_RE.test(msg)) e.preventDefault()
-    }
-    window.addEventListener('unhandledrejection', _rejHandler)
-    window.addEventListener('error', _errHandler)
   }
 
-  /** 卸载时释放全局监听器。 */
-  function removeErrorGuard() {
-    if (_rejHandler) {
-      window.removeEventListener('unhandledrejection', _rejHandler)
-      _rejHandler = null
-    }
-    if (_errHandler) {
-      window.removeEventListener('error', _errHandler)
-      _errHandler = null
+  const CACHE_READ_ERROR = /ERR_CACHE_READ_FAILURE/
+  let initGeneration = 0
+
+  /** 拦截 Spline 运行时引发的已知缓存读取拒绝。 */
+  function ignoreCacheRejection(event: PromiseRejectionEvent) {
+    const message = String(event.reason?.message || event.reason || '')
+    if (CACHE_READ_ERROR.test(message)) event.preventDefault()
+  }
+
+  /** 同一缓存读取错误也可能由浏览器错误事件报告。 */
+  function ignoreCacheError(event: ErrorEvent) {
+    const message = String(event.message || event.error?.message || '')
+    if (CACHE_READ_ERROR.test(message)) event.preventDefault()
+  }
+
+  /** 重新初始化或卸载时释放当前场景实例。 */
+  function disposeSpline() {
+    if (!splineApp.value) return
+    splineApp.value.dispose()
+    splineApp.value = null
+  }
+
+  /** 本次初始化仍有效时，为首次加载失败补一次绕过缓存的重试。 */
+  async function loadScene(app: ApplicationType, generation: number) {
+    try {
+      await app.load(props.scene)
+    } catch {
+      if (generation !== initGeneration) return
+      const separator = props.scene.includes('?') ? '&' : '?'
+      await app.load(`${props.scene}${separator}t=${Date.now()}`)
     }
   }
 
@@ -103,10 +104,7 @@
     isLoading.value = true
 
     try {
-      if (splineApp.value) {
-        splineApp.value.dispose()
-        splineApp.value = null
-      }
+      disposeSpline()
 
       // ⚡ 动态导入 Spline Runtime（4.4MB），避免阻塞首屏 JS 解析
       const { Application } = await import('@splinetool/runtime')
@@ -117,17 +115,7 @@
       })
       splineApp.value = app
 
-      try {
-        await app.load(props.scene)
-      } catch {
-        if (generation !== initGeneration) return
-        // 重试：带 cache-buster
-        const retryUrl = props.scene.includes('?')
-          ? `${props.scene}&t=${Date.now()}`
-          : `${props.scene}?t=${Date.now()}`
-        await app.load(retryUrl)
-      }
-
+      await loadScene(app, generation)
       if (generation !== initGeneration) return
       isLoading.value = false
       if (props.paused) app.stop()
@@ -151,27 +139,20 @@
     }
   }
 
-  /** 浏览器可见性事件复用场景暂停策略。 */
-  function handleVisibilityChange() {
-    syncPlayback()
-  }
-
   watch(() => props.paused, syncPlayback, { flush: 'post' })
 
   onMounted(() => {
-    installErrorGuard()
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('unhandledrejection', ignoreCacheRejection)
+    window.addEventListener('error', ignoreCacheError)
+    document.addEventListener('visibilitychange', syncPlayback)
     initSpline()
   })
 
   onUnmounted(() => {
     initGeneration++
-    removeErrorGuard()
-    document.removeEventListener('visibilitychange', handleVisibilityChange)
-    // 销毁 Spline 实例
-    if (splineApp.value) {
-      splineApp.value.dispose()
-      splineApp.value = null
-    }
+    window.removeEventListener('unhandledrejection', ignoreCacheRejection)
+    window.removeEventListener('error', ignoreCacheError)
+    document.removeEventListener('visibilitychange', syncPlayback)
+    disposeSpline()
   })
 </script>

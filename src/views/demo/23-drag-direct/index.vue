@@ -183,14 +183,14 @@
             </div>
 
             <NSpace>
-              <NTag>拖拽状态: {{ dragStatus }}</NTag>
-              <NTag type="info">拖拽次数: {{ dragCount }}</NTag>
+              <NTag>拖拽状态: {{ dragFeedback.status }}</NTag>
+              <NTag type="info">拖拽次数: {{ dragFeedback.count }}</NTag>
               <NTag
                 type="success"
-                v-if="lastPosition"
+                v-if="dragFeedback.pointer"
               >
-                位置: ({{ Math.round(lastPosition.x) }},
-                {{ Math.round(lastPosition.y) }})
+                位置: ({{ Math.round(dragFeedback.pointer.x) }},
+                {{ Math.round(dragFeedback.pointer.y) }})
               </NTag>
             </NSpace>
             <NDivider />
@@ -211,7 +211,10 @@
                 name="cards"
                 tab="卡片拖拽"
               >
-                <div class="demo-container cards-container">
+                <div
+                  key="drag-cards"
+                  class="demo-container cards-container"
+                >
                   <div
                     v-for="card in cardList"
                     :key="card.id"
@@ -239,19 +242,33 @@
                 name="list"
                 tab="列表排序"
               >
-                <div class="demo-container list-container">
+                <div
+                  key="drag-list"
+                  class="demo-container list-container"
+                >
                   <div
                     v-for="(item, index) in sortableList"
                     :key="item.id"
                     v-drag="{
                       axis: 'y',
                       boundary: '.list-container',
-                      grid: [1, 70],
+                      grid: [1, listRowGap],
+                      onEnd: (
+                        el: HTMLElement,
+                        position: Position,
+                        event: PointerEvent
+                      ) =>
+                        moveListItem(
+                          item.id,
+                          el,
+                          position.y,
+                          event.type === 'pointercancel'
+                        ),
                     }"
                     class="drag-list-item"
                     :style="{
                       left: '0px',
-                      top: index * 70 + 10 + 'px',
+                      top: listItemTop(index),
                       backgroundColor: '#fff',
                     }"
                   >
@@ -284,7 +301,10 @@
                 name="canvas"
                 tab="画布元素"
               >
-                <div class="demo-container canvas-container">
+                <div
+                  key="drag-canvas"
+                  class="demo-container canvas-container"
+                >
                   <div
                     v-for="shape in canvasShapes"
                     :key="shape.id"
@@ -386,14 +406,11 @@
     getAdvancedCode,
     getScenarioCode,
     cardList,
-    sortableList,
-    canvasShapes,
+    sortableItems,
+    initialCanvasShapes,
     axisOptions,
   } from './data'
-  interface Position {
-    x: number
-    y: number
-  }
+  import type { Position } from '@robot-admin/directives/drag'
 
   /** 画布操作按钮 */
   const canvasActions = computed(() => [
@@ -408,24 +425,63 @@
   const dragEnabled = ref(true)
   const dragAxis = ref('both')
   const gridSize = ref(10)
-  const dragStatus = ref('待拖拽')
-  const dragCount = ref(0)
-  const lastPosition = ref<Position | null>(null)
+  const listRowGap = 70
+  const listRowInset = 10
+  const sortableList = ref([...sortableItems])
+  const canvasShapes = reactive(
+    initialCanvasShapes.map(shape => ({ ...shape }))
+  )
+  let nextShapeId = Math.max(...initialCanvasShapes.map(shape => shape.id))
+  const dragFeedback = reactive({
+    status: '待拖拽',
+    count: 0,
+    pointer: null as Position | null,
+  })
 
   // 回调函数
   const handleDragStart = () => {
-    dragStatus.value = '拖拽中'
+    dragFeedback.status = '拖拽中'
   }
 
   const handleDragMove = (el: HTMLElement, position: Position) => {
-    if (el.isConnected) lastPosition.value = position
+    if (el.isConnected) dragFeedback.pointer = position
   }
 
   const handleDragEnd = (el: HTMLElement, position: Position) => {
     if (!el.isConnected) return
-    dragStatus.value = '拖拽完成'
-    dragCount.value++
-    lastPosition.value = position
+    dragFeedback.status = '拖拽完成'
+    dragFeedback.count++
+    dragFeedback.pointer = position
+  }
+
+  const listItemTop = (index: number) =>
+    index * listRowGap + listRowInset + 'px'
+
+  /** 将指令的落点映射为列表顺序，行号和显示位置跟随同一份数据。 */
+  const moveListItem = (
+    id: number,
+    el: HTMLElement,
+    top: number,
+    cancelled: boolean
+  ) => {
+    if (!el.isConnected) return
+    const items = sortableList.value
+    const from = items.findIndex(item => item.id === id)
+    if (from < 0) return
+    const to = cancelled
+      ? from
+      : Math.max(
+          0,
+          Math.min(
+            items.length - 1,
+            Math.round((top - listRowInset) / listRowGap)
+          )
+        )
+    // 未跨过行时 Vue 的样式绑定值不变，仍需将元素吸附到原位置。
+    el.style.top = listItemTop(to)
+    if (from === to) return
+    const [item] = items.splice(from, 1)
+    items.splice(to, 0, item)
   }
 
   const updateShapePosition = (shapeId: number, position: Position) => {
@@ -439,7 +495,7 @@
   const addShape = (type: 'circle' | 'square') => {
     const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57']
     const newShape = {
-      id: Date.now(),
+      id: ++nextShapeId,
       type,
       label: type === 'circle' ? '圆' : '方',
       x: Math.random() * 200 + 50,

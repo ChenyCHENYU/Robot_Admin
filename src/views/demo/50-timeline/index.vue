@@ -67,6 +67,7 @@
                 v-model:value="latestFirst"
                 size="small" /></label
             ><NButton
+              v-if="items.some(item => item.collapsible)"
               size="small"
               @click="toggleDetails"
               >{{ expanded ? '收起详情' : '展开详情' }}</NButton

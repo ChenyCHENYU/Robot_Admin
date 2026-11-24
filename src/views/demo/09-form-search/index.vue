@@ -284,14 +284,12 @@
     },
   ]
 
-  const selectionParams = ref<SelectionSearchParams>({
+  const emptySelection = (): SelectionSearchParams => ({
     statuses: [],
     enabled: false,
   })
-  const selectionSubmitted = ref<SelectionSearchParams>({
-    statuses: [],
-    enabled: false,
-  })
+  const selectionParams = ref(emptySelection())
+  const selectionSubmitted = ref(emptySelection())
   const selectionRows = computed(() =>
     filterSelectionPreview(selectionSubmitted.value)
   )

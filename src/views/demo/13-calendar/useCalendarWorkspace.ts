@@ -30,6 +30,7 @@ import {
   mergeScheduleChanges,
   localDay,
   eventDate,
+  shiftCalendarDay,
   occursOnDay,
   parseScheduleBackup,
   type ScheduleEvent,
@@ -93,6 +94,13 @@ export function useCalendarWorkspace() {
           .includes(search.value.trim().toLowerCase())
     )
   )
+  const categoryCounts = computed(() => {
+    const counts = new Map<ScheduleCategory, number>()
+    for (const { category } of events.value) {
+      counts.set(category, (counts.get(category) ?? 0) + 1)
+    }
+    return counts
+  })
   const agenda = computed(() =>
     filteredEvents.value
       .filter(item => occursOnDay(item, selectedDay.value))
@@ -172,8 +180,9 @@ export function useCalendarWorkspace() {
     events.value = value.id
       ? events.value.map(event => (event.id === value.id ? item : event))
       : [...events.value, item]
-    selectedDay.value = localDay(eventDate(item.start))
-    calendarRef.value?.getApi()?.gotoDate(eventDate(item.start))
+    const start = eventDate(item.start)
+    selectedDay.value = localDay(start)
+    calendarRef.value?.getApi()?.gotoDate(start)
     showEditor.value = false
   }
   const formConfig: FormConfig<ScheduleDraft> = {
@@ -243,10 +252,10 @@ export function useCalendarWorkspace() {
       },
       select: info => {
         if (editable.value) {
-          const end = new Date(info.end)
-          end.setDate(end.getDate() - 1)
-          selectedDay.value = localDay(info.start)
-          if (localDay(info.start) === localDay(end)) {
+          const end = shiftCalendarDay(info.end, -1)
+          const startDay = localDay(info.start)
+          selectedDay.value = startDay
+          if (startDay === localDay(end)) {
             calendarRef.value?.getApi()?.unselect()
             return
           }
@@ -329,12 +338,11 @@ export function useCalendarWorkspace() {
     calendarRef,
     formRef,
     fileRef,
-    events,
+    categoryCounts,
     editable,
     showWeekends,
     search,
     categories,
-    selectedDay,
     selectedDayLabel,
     view,
     calendarTitle,

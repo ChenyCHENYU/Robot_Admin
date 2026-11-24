@@ -139,7 +139,7 @@
                 v-copy="{
                   text: '静默复制内容',
                   successMessage: false,
-                  onSuccess: handleSilentSuccess,
+                  onSuccess: handleCopySuccess,
                 }"
                 quaternary
               >
@@ -242,11 +242,6 @@
 
   // 回调函数
   const handleCopySuccess = (text: string) => {
-    copyCount.value++
-    lastCopyText.value = text
-  }
-
-  const handleSilentSuccess = (text: string) => {
     copyCount.value++
     lastCopyText.value = text
   }

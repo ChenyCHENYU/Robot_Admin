@@ -99,6 +99,71 @@ test('分配可实时预览、撤销和切换独立场景', async ({ page }) => 
   await expect(page.locator('.assignment-editor h2')).toHaveText('模块装配')
 })
 
+test('复制演示保留 JSON 格式、无效 JSON 回退、剪贴板读取和历史清除', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    let copied = ''
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: async (text: string) => {
+          copied = text
+        },
+        readText: async () => copied,
+      },
+    })
+  })
+  await page.goto('/#/hooks/copy-text')
+  const json = page.getByPlaceholder('输入 JSON 数据')
+  const lastCopy = page.locator('.last-copied-content')
+  await json.fill('{"status": 0}')
+  await page.getByRole('button', { name: '格式化复制', exact: true }).click()
+  await expect(lastCopy).toBeVisible()
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    '{\n  "status": 0\n}'
+  )
+  await json.fill('{"status":')
+  await page.getByRole('button', { name: '格式化复制', exact: true }).click()
+  await expect(lastCopy).toHaveText('{"status":')
+  await page.getByRole('button', { name: '读取剪贴板', exact: true }).click()
+  await expect(page.locator('.clipboard-result')).toContainText('{"status":')
+  await page.getByRole('button', { name: '清除历史', exact: true }).click()
+  await expect(lastCopy).toHaveCount(0)
+})
+
+test('头像场景切换同步人员与各自的溢出操作', async ({ page }) => {
+  await page.route('https://i.pravatar.cc/**', route => route.abort())
+  await page.goto('/#/demo/avatar-group')
+  const preview = page.locator('.avatar-preview')
+  const log = page.locator('.click-log__item').first()
+  await expect(preview.locator('.c-avatar-group__overflow')).toHaveText('+3')
+  await page.getByText('任务分配', { exact: true }).click()
+  await preview.locator('.c-avatar-group__item').first().click()
+  await expect(log).toContainText('前端小组')
+  await page.getByText('项目贡献者', { exact: true }).click()
+  const overflow = preview.locator('.c-avatar-group__overflow')
+  await expect(overflow).toHaveText('+7')
+  await overflow.click()
+  await expect(log).toContainText('还有 7 人')
+})
+
+test('拖拽反馈记录移动坐标并在松手时累计次数', async ({ page }) => {
+  await page.goto('/#/directives/drag-direct')
+  const box = page.getByText('动态配置', { exact: true })
+  await box.hover()
+  const bounds = (await box.boundingBox())!
+  const x = bounds.x + bounds.width / 2
+  const y = bounds.y + bounds.height / 2
+  await page.mouse.down()
+  await expect(page.getByText('拖拽状态: 拖拽中')).toBeVisible()
+  await page.mouse.move(x + 50, y + 32, { steps: 5 })
+  await expect(page.getByText(/位置: \(-?\d+,\s*-?\d+\)/)).toBeVisible()
+  await page.mouse.up()
+  await expect(page.getByText('拖拽状态: 拖拽完成')).toBeVisible()
+  await expect(page.getByText('拖拽次数: 1')).toBeVisible()
+})
+
 test('脚本助手展示预设回复，会话标题正确且支持本地附件下载', async ({
   page,
 }) => {

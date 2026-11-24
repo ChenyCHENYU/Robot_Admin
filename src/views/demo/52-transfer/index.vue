@@ -156,14 +156,15 @@
     { label: '舒适', value: 'medium' },
     { label: '宽松', value: 'large' },
   ]
-  const selectedMap = ref<Record<TransferScene, string[]>>({
-    permission: [...TRANSFER_SCENES.permission.defaults],
-    module: [...TRANSFER_SCENES.module.defaults],
-    member: [...TRANSFER_SCENES.member.defaults],
-  })
-  const confirmedMap = ref<Record<TransferScene, string[]>>(
-    structuredClone(toRaw(selectedMap.value))
-  )
+  const initialSelection = () =>
+    Object.fromEntries(
+      Object.entries(TRANSFER_SCENES).map(([key, scene]) => [
+        key,
+        [...scene.defaults],
+      ])
+    ) as Record<TransferScene, string[]>
+  const selectedMap = ref(initialSelection())
+  const confirmedMap = ref(initialSelection())
   const current = computed(() => TRANSFER_SCENES[activeScene.value])
   const currentSelected = computed({
     get: () => selectedMap.value[activeScene.value],
@@ -177,11 +178,14 @@
     )
     return currentSelected.value.flatMap(key => itemsByKey.get(key) ?? [])
   })
-  const changed = computed(
-    () =>
-      [...currentSelected.value].sort().join('|') !==
-      [...confirmedMap.value[activeScene.value]].sort().join('|')
-  )
+  const changed = computed(() => {
+    const draft = [...currentSelected.value].sort()
+    const confirmed = [...confirmedMap.value[activeScene.value]].sort()
+    return (
+      draft.length !== confirmed.length ||
+      draft.some((key, index) => key !== confirmed[index])
+    )
+  })
   /** 撤销尚未确认的选择。 */
   const reset = () => {
     currentSelected.value = [...confirmedMap.value[activeScene.value]]

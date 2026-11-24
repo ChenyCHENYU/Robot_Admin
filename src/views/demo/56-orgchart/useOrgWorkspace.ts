@@ -51,8 +51,9 @@ export function useOrgWorkspace() {
   const entries: OrgEntry[] = []
   const visit = (node: OrgChartNode, path: OrgChartNode[], dept: string) => {
     const department = String(node.data?.dept ?? dept)
-    entries.push({ node, path: [...path, node], department })
-    node.children?.forEach(child => visit(child, [...path, node], department))
+    const currentPath = [...path, node]
+    entries.push({ node, path: currentPath, department })
+    node.children?.forEach(child => visit(child, currentPath, department))
   }
   visit(orgData, [], '总裁办')
   const members: OrganizationMember[] = entries.map(
@@ -80,10 +81,11 @@ export function useOrgWorkspace() {
     }: DataPickerRequest<MemberFilters>) => {
       signal.throwIfAborted()
       const keyword = search.trim().toLowerCase()
+      const organizationId = filters?.organizationId
       const rows = members.filter(
         member =>
-          (filters?.organizationId === undefined ||
-            member.organizationIds.includes(String(filters.organizationId))) &&
+          (organizationId === undefined ||
+            member.organizationIds.includes(String(organizationId))) &&
           `${member.name} ${member.department} ${member.job} ${member.code}`
             .toLowerCase()
             .includes(keyword)
@@ -161,37 +163,50 @@ export function useOrgWorkspace() {
     children: node.children?.map(child => decorate(child, depth + 1)),
   })
   const tree = computed(() => decorate(focused.value.node))
-  const choose = (id: string | number, focus = false) => {
+  const select = (id: OrgChartNode['id']) => {
     selectedId.value = id
-    if (focus) focusId.value = id
   }
+  const focusOn = (id: OrgChartNode['id']) => {
+    focusId.value = id
+  }
+  const inspect = (id: OrgChartNode['id']) => {
+    select(id)
+    focusOn(id)
+  }
+  const fitView = () => chartRef.value?.fitView()
   const reset = () => {
-    focusId.value = orgData.id
-    selectedId.value = orgData.id
+    inspect(orgData.id)
     search.value = ''
-    void nextTick(() => chartRef.value?.fitView())
+    void nextTick(fitView)
   }
   return {
-    memberSource,
-    memberOrganization,
-    memberFields,
-    collaboratorIds,
-    collaborators,
-    selectionFeedback,
-    confirmCollaborators,
-    cancelCollaborators,
-    entries,
-    search,
-    focusId,
-    selectedId,
-    direction,
-    lineStyle,
     chartRef,
-    focused,
-    selected,
-    matches,
-    tree,
-    choose,
-    reset,
+    chart: proxyRefs({
+      memberCount: entries.length,
+      search,
+      focusId,
+      selectedId,
+      direction,
+      lineStyle,
+      focused,
+      selected,
+      matches,
+      tree,
+      select,
+      focusOn,
+      inspect,
+      fitView,
+      reset,
+    }),
+    picker: proxyRefs({
+      memberSource,
+      memberOrganization,
+      memberFields,
+      collaboratorIds,
+      collaborators,
+      selectionFeedback,
+      confirmCollaborators,
+      cancelCollaborators,
+    }),
   }
 }

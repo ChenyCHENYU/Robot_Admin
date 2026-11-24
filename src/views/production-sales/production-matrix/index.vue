@@ -114,7 +114,7 @@
             ><NButton
               size="small"
               :render-icon="actionIcons.clipboardListOutline"
-              @click="view.openReport"
+              @click="view.report.open"
               >检测报表</NButton
             ></div
           >
@@ -141,7 +141,7 @@
         >
       </section>
       <NModal
-        v-model:show="view.reportVisible"
+        v-model:show="view.report.visible"
         preset="card"
         title="检测报表"
         size="small"
@@ -153,14 +153,14 @@
         class="matrix-report-modal"
       >
         <p class="matrix-report-context"
-          >{{ view.days }} 天 · {{ view.report.length }} 条记录 ·
+          >{{ view.days }} 天 · {{ view.report.rows.length }} 条记录 ·
           包含未取样项，数值与取样时间分别列示</p
         >
         <div class="matrix-report-grid"
           ><MachTable
             preset="detail"
             :pagination="{ pageSize: 20 }"
-            :row-data="view.report"
+            :row-data="view.report.rows"
             :column-defs="REPORT_COLUMNS"
             :row-height="30"
             :theme="themeStore.isDark ? 'dark' : 'light'"
@@ -173,24 +173,24 @@
             ><NButton
               size="small"
               :render-icon="actionIcons.close"
-              @click="view.reportVisible = false"
+              @click="view.report.visible = false"
               >关闭</NButton
             ><NButton
               size="small"
               :render-icon="MATRIX_ICONS.print"
-              @click="view.print"
+              @click="view.report.print"
               >打印</NButton
             ><NButton
               size="small"
               :render-icon="MATRIX_ICONS.download"
-              @click="view.exportCsv"
+              @click="view.report.exportCsv"
               >导出 CSV</NButton
             ><NButton
               size="small"
               type="primary"
-              :loading="view.exporting"
+              :loading="view.report.exporting"
               :render-icon="MATRIX_ICONS.download"
-              @click="view.exportXlsx"
+              @click="view.report.exportXlsx"
               >导出 Excel</NButton
             ></NSpace
           ></template

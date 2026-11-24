@@ -99,6 +99,7 @@
           ><h2>{{ selectedFile?.name || '选择一个资源' }}</h2
           >><pre
             v-if="selectedFile"
+            ref="previewContent"
             tabindex="0"
             aria-label="资源内容预览"
           ><code>{{ selectedFile.content }}</code></pre
@@ -117,14 +118,14 @@
     </div>
     <C_ContextMenu
       ref="menu"
-      :items="FILE_MENU"
+      :items="fileMenu"
       :min-width="205"
       @select="execute"
     />
   </div>
 </template>
 <script setup lang="ts">
-  import { FILE_MENU, WORKSPACE_FILES, type WorkspaceFile } from './data'
+  import { WORKSPACE_FILES, type WorkspaceFile } from './data'
   import type {
     C_ContextMenu,
     ContextMenuItem,
@@ -135,8 +136,10 @@
   const selectedId = ref(files.value[0]?.id || '')
   const query = ref('')
   const removed = ref<{ file: WorkspaceFile; index: number } | null>(null)
+  let copySequence = 0
   const activities = ref<string[]>([])
   const menu = ref<InstanceType<typeof C_ContextMenu>>()
+  const previewContent = ref<HTMLPreElement>()
   const selectedFile = computed(() =>
     files.value.find(file => file.id === selectedId.value)
   )
@@ -178,7 +181,7 @@
   const duplicateFile = (file: WorkspaceFile) => {
     const duplicate = {
       ...file,
-      id: crypto.randomUUID(),
+      id: `copy-${++copySequence}`,
       name: file.name.replace(/(\.[^.]+)$/, '-copy$1'),
     }
     files.value.push(duplicate)
@@ -191,25 +194,73 @@
     files.value.splice(index, 1)
     selectedId.value = files.value[index]?.id || files.value[0]?.id || ''
   }
-  const operations: Record<
-    string,
-    (file: WorkspaceFile) => void | Promise<void>
-  > = {
-    preview: () =>
-      document.querySelector<HTMLElement>('.resource-preview pre')?.focus(),
-    'copy-name': file => navigator.clipboard.writeText(file.name),
-    'copy-content': file => navigator.clipboard.writeText(file.content),
-    download: downloadFile,
-    duplicate: duplicateFile,
-    remove: removeFile,
-  }
+  type FileAction = (file: WorkspaceFile) => void | Promise<void>
+  type FileMenuItem = Omit<ContextMenuItem, 'children'> &
+    (
+      | { run: FileAction }
+      | { children: FileMenuItem[] }
+      | { divider: true }
+      | { disabled: true }
+    )
+  const fileMenu: FileMenuItem[] = [
+    {
+      key: 'preview',
+      label: '查看内容',
+      icon: 'mdi:eye-outline',
+      run: () => previewContent.value?.focus(),
+    },
+    {
+      key: 'copy',
+      label: '复制',
+      icon: 'mdi:content-copy',
+      children: [
+        {
+          key: 'copy-name',
+          label: '复制文件名',
+          icon: 'mdi:rename-outline',
+          run: file => navigator.clipboard.writeText(file.name),
+        },
+        {
+          key: 'copy-content',
+          label: '复制内容',
+          icon: 'mdi:code-tags',
+          run: file => navigator.clipboard.writeText(file.content),
+        },
+      ],
+    },
+    {
+      key: 'download',
+      label: '下载副本',
+      icon: 'mdi:download-outline',
+      run: downloadFile,
+    },
+    {
+      key: 'duplicate',
+      label: '创建副本',
+      icon: 'mdi:file-multiple-outline',
+      run: duplicateFile,
+    },
+    { key: 'divider', label: '', divider: true },
+    {
+      key: 'remote',
+      label: '上传到服务器',
+      icon: 'mdi:cloud-upload-outline',
+      disabled: true,
+    },
+    {
+      key: 'remove',
+      label: '移除本地副本',
+      icon: 'mdi:trash-can-outline',
+      danger: true,
+      run: removeFile,
+    },
+  ]
   /** 执行真实的浏览器本地操作；异步复制失败时不伪报成功。 */
-  const execute = async (item: ContextMenuItem) => {
+  const execute = async (item: ContextMenuItem & { run?: FileAction }) => {
     const file = selectedFile.value
-    const operation = operations[item.key]
-    if (!file || !operation) return
+    if (!file || !item.run) return
     try {
-      await operation(file)
+      await item.run(file)
       activities.value.push(`${item.label} · ${file.name}`)
     } catch {
       message.error('浏览器未允许复制，请选择预览内容手动复制')

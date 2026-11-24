@@ -65,8 +65,8 @@
           v-for="scene in DEMO_SCENES"
           :key="scene.key"
           class="scene-card"
-          :class="{ 'is-active': activeScene === scene.key }"
-          @click="activeScene = scene.key"
+          :class="{ 'is-active': activeScene.key === scene.key }"
+          @click="activeScene = scene"
         >
           <C_Icon
             :name="scene.icon"
@@ -123,7 +123,7 @@
       <!-- 预览区域 -->
       <div class="avatar-preview">
         <C_AvatarGroup
-          :items="currentItems"
+          :items="activeScene.items"
           :max="maxCount"
           :size="avatarSize"
           :shape="shape"
@@ -155,26 +155,11 @@
 <script setup lang="ts">
   defineOptions({ name: 'Demo53AvatarGroup' })
   import type { AvatarItem } from '@robot-admin/naive-ui-components'
-  import {
-    CONTRIBUTORS,
-    DEMO_SCENES,
-    FEATURE_LIST,
-    TAG_TYPE_MAP,
-    TASK_ASSIGNEES,
-    TEAM_MEMBERS,
-  } from './data'
+  import { DEMO_SCENES, FEATURE_LIST, TAG_TYPE_MAP } from './data'
 
   // ==================== 场景切换 ====================
 
-  const activeScene = ref<'team' | 'task' | 'contributor'>('team')
-
-  const sceneDataMap = {
-    team: TEAM_MEMBERS,
-    task: TASK_ASSIGNEES,
-    contributor: CONTRIBUTORS,
-  }
-
-  const currentItems = computed(() => sceneDataMap[activeScene.value])
+  const activeScene = shallowRef<(typeof DEMO_SCENES)[number]>(DEMO_SCENES[0])
 
   // ==================== 控制 ====================
 
@@ -188,19 +173,21 @@
 
   const clickLogs = ref<string[]>([])
 
+  /** 交互日志只保留最新十条。 */
+  function logClick(entry: string) {
+    clickLogs.value.unshift(entry)
+    if (clickLogs.value.length > 10) clickLogs.value.length = 10
+  }
+
   /** 头像点击事件处理 */
   function handleItemClick(item: AvatarItem) {
-    clickLogs.value.unshift(
-      `[头像] 点击了 "${item.name}" (${item.status ?? '无状态'})`
-    )
-    if (clickLogs.value.length > 10) clickLogs.value.length = 10
+    logClick(`[头像] 点击了 "${item.name}" (${item.status ?? '无状态'})`)
   }
 
   /** 溢出头像点击事件处理 */
   function handleOverflowClick(items: AvatarItem[]) {
     const names = items.map(i => i.name).join(', ')
-    clickLogs.value.unshift(`[溢出] 还有 ${items.length} 人: ${names}`)
-    if (clickLogs.value.length > 10) clickLogs.value.length = 10
+    logClick(`[溢出] 还有 ${items.length} 人: ${names}`)
   }
 </script>
 

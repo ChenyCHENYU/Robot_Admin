@@ -58,6 +58,7 @@
             size="tiny"
             type="primary"
             quaternary
+            disabled
             >编辑</NButton
           ></td
         >

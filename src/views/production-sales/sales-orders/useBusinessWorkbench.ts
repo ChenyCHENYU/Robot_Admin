@@ -21,11 +21,7 @@ import {
   useValidationScope,
 } from '@robot-admin/naive-ui-components/workflows'
 import {
-  defineVueColumns,
-  indexColumn,
-  actionsColumn,
   type RowClickEvent,
-  selectionColumn,
   useMachTable,
   type RowStyleRule,
 } from '@agile-team/mach-table-vue'
@@ -40,9 +36,7 @@ import {
   customerSource,
   decimalFromMillis,
   decimalMillis,
-  moneyCodec,
   progressForStatus,
-  quantityCodec,
   summarizeBusinessLines,
   type OrderHeader,
   type OrderLine,
@@ -52,6 +46,7 @@ import { formatContractValue } from './contractReview'
 import { useOrderContractReview } from './useOrderContractReview'
 import { useOrderBatch } from './useOrderBatch'
 import { useSalesOperations } from './operations'
+import { createSalesColumns } from './d_columns'
 
 const clone = <T>(value: T): T => structuredClone(toRaw(value))
 
@@ -297,110 +292,6 @@ export function useBusinessWorkbench() {
   const selectOrder = (event: RowClickEvent<OrderHeader>) => {
     if (event.rowNode.data) void chooseOrder(event.rowNode.data.id)
   }
-  const masterColumns = defineVueColumns<OrderHeader>([
-    indexColumn({ headerName: '序号', width: 46 }),
-    {
-      field: 'orderNo',
-      headerName: '销售订单号',
-      width: 170,
-      pinned: 'left',
-      filter: true,
-      render: row =>
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'workbench-order-link',
-            onClick: (event: MouseEvent) => {
-              event.stopPropagation()
-              void operations.openDetail(row)
-            },
-            'aria-label': `查看${row.orderNo}详情`,
-          },
-          row.orderNo
-        ),
-    },
-    {
-      field: 'customer',
-      headerName: '客户名称',
-      width: 130,
-      filter: true,
-      valueFormatter: ({ value }) =>
-        customerLabels.get(String(value)) ?? String(value ?? '—'),
-    },
-    { field: 'contractNo', headerName: '合同编号', filter: true },
-    { field: 'grade', headerName: '钢种', filter: true },
-    { field: 'section', headerName: '规格 (mm)', minWidth: 160 },
-    { field: 'region', headerName: '区域', width: 80 },
-    {
-      field: 'targetWeight',
-      headerName: '合同量 (t)',
-      width: 110,
-      valueFormatter: ({ value }) => quantityCodec.format(value),
-    },
-    {
-      field: 'status',
-      headerName: '状态',
-      width: 105,
-      valueFormatter: ({ value }) => fieldDictionaries.label('status', value),
-      valueParser: ({ value }) => fieldDictionaries.parse('status', value),
-      valueSerializer: ({ value, target }) =>
-        target === 'clipboard' || target === 'csv'
-          ? fieldDictionaries.label('status', value)
-          : value,
-      status: true,
-    },
-    {
-      field: 'progress',
-      headerName: '履约进度',
-      width: 145,
-      render: row =>
-        h(
-          'div',
-          {
-            class: 'sales-progress',
-            role: 'progressbar',
-            'aria-valuenow': row.progress,
-            'aria-valuemin': 0,
-            'aria-valuemax': 100,
-            'aria-label': `${row.orderNo}履约进度`,
-          },
-          [
-            h('span', {
-              style: { width: `${row.progress}%` },
-              class: { 'is-complete': row.progress === 100 },
-            }),
-            h('small', `${row.progress}%`),
-          ]
-        ),
-    },
-    { field: 'delivery', headerName: '交货日期', width: 118 },
-    actionsColumn<OrderHeader>({
-      width: 88,
-      actions: [
-        {
-          icon: 'edit',
-          label: '编辑订单',
-          variant: 'warning',
-          disabled: ({ data }) => data?.status !== 0 || blocked(),
-          onClick: ({ data }) => data && operations.editOrder(data),
-        },
-        {
-          icon: 'delete',
-          label: '删除订单',
-          variant: 'danger',
-          disabled: ({ data }) => data?.status !== 0 || blocked(),
-          onClick: ({ data }) => data && operations.removeOrder(data),
-        },
-        {
-          icon: 'copy',
-          label: '复制订单',
-          disabled: () => blocked(),
-          onClick: ({ data }) => data && operations.copyOrder(data),
-        },
-      ],
-    }),
-  ])
   // 规则只在当前订单变化时更新，保留稳定行身份；取消切单不误高亮另一个订单。
   const masterRowStyles = computed<readonly RowStyleRule<OrderHeader>[]>(() => {
     const id = activeId.value
@@ -412,97 +303,6 @@ export function useBusinessWorkbench() {
       },
     ]
   })
-  const lineColumns = defineVueColumns<OrderLine>([
-    { field: 'id', headerName: '明细编号', width: 145, pinned: 'left' },
-    { field: 'product', headerName: '商品', width: 150 },
-    {
-      field: 'quantity',
-      headerName: '数量 (t)',
-      width: 130,
-      editable: true,
-      valueParser: ({ value }) => {
-        const parsed = quantityCodec.parse(value)
-        if (parsed !== null) decimalMillis(parsed)
-        return parsed
-      },
-      valueFormatter: ({ value }) => quantityCodec.format(value),
-      valueSerializer: ({ value }) => value,
-    },
-    {
-      field: 'amount',
-      headerName: '金额 (CNY)',
-      width: 155,
-      valueFormatter: ({ value }) => moneyCodec.format(value),
-      valueSerializer: ({ value }) => value,
-    },
-    {
-      field: 'note',
-      headerName: '备注',
-      minWidth: 160,
-      editable: true,
-    },
-  ])
-  const detailColumns = defineVueColumns<OrderLine>([
-    selectionColumn(),
-    indexColumn({ headerName: '序号', width: 46 }),
-    ...lineColumns.map(column =>
-      'field' in column && column.field === 'id'
-        ? {
-            ...column,
-            render: (row: OrderLine) =>
-              h(
-                'button',
-                {
-                  type: 'button',
-                  class: 'workbench-order-link',
-                  onClick: (event: MouseEvent) => {
-                    event.stopPropagation()
-                    void operations.openLineDetail(row)
-                  },
-                },
-                row.id
-              ),
-          }
-        : column
-    ),
-    actionsColumn<OrderLine>({
-      width: 72,
-      actions: [
-        {
-          icon: 'edit',
-          label: '编辑明细',
-          variant: 'warning',
-          disabled: () => blocked(),
-          onClick: ({ data }) => data && operations.editLine(data),
-        },
-        {
-          icon: 'delete',
-          label: '删除明细',
-          variant: 'danger',
-          disabled: () => blocked(),
-          onClick: ({ data }) => data && operations.removeLine(data),
-        },
-      ],
-    }),
-  ])
-  const readonlyDetailColumns = [
-    indexColumn({ headerName: '序号', width: 46 }),
-    ...lineColumns.map(column => ({ ...column, editable: false })),
-  ]
-  const paymentColumns = defineVueColumns<{
-    id: string
-    stage: string
-    amount: string
-  }>([
-    indexColumn({ headerName: '序号', width: 46 }),
-    { field: 'stage', headerName: '币种' },
-    {
-      field: 'amount',
-      headerName: '测算金额',
-      width: 160,
-      valueFormatter: ({ value }) => moneyCodec.format(value),
-    },
-  ])
   const paymentRows = computed(() => {
     const amounts = new Map<string, bigint>()
     for (const row of lines.value) {
@@ -661,6 +461,12 @@ export function useBusinessWorkbench() {
       scope.clear()
     },
   })
+  const {
+    masterColumns,
+    detailColumns,
+    readonlyDetailColumns,
+    paymentColumns,
+  } = createSalesColumns(operations, fieldDictionaries, blocked)
   const { labels: detailLabels } = useDictLabels(
     () => operations.detailOrder.value?.header,
     FIELD_DICTIONARIES,

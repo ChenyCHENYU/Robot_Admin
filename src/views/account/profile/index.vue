@@ -126,7 +126,7 @@
   const formRef = ref<FormInstance<ProfileFormData> | null>(null)
 
   const profileData = reactive({
-    ...(isMockDataMode() ? MOCK_PROFILE : EMPTY_PROFILE),
+    ...(mockMode ? MOCK_PROFILE : EMPTY_PROFILE),
   })
 
   // 表单数据
@@ -138,6 +138,13 @@
     bio: profileData.bio,
     avatar: profileData.avatar,
   })
+
+  const syncProfile = async (profile: typeof profileData) => {
+    Object.assign(profileData, profile)
+    Object.assign(formData.value, profile)
+    await nextTick()
+    formRef.value?.markAsClean()
+  }
 
   const formConfig = computed<FormConfig<ProfileFormData>>(() => ({
     disabled: profileLoading.value,
@@ -164,10 +171,7 @@
         context?.signal
       )
       if (context?.signal.aborted) return
-      Object.assign(profileData, updated.data)
-      Object.assign(formData.value, updated.data)
-      await nextTick()
-      formRef.value?.markAsClean()
+      await syncProfile(updated.data)
       message.success('个人资料已更新')
     },
   }))
@@ -178,10 +182,7 @@
         getAccountProfileApi(MOCK_PROFILE, signal)
       )
       if (!response) return
-      Object.assign(profileData, response.data)
-      Object.assign(formData.value, response.data)
-      await nextTick()
-      formRef.value?.markAsClean()
+      await syncProfile(response.data)
     } catch {
       message.error('个人资料加载失败，请稍后重试')
     }

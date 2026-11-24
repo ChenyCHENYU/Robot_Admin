@@ -61,8 +61,9 @@ async function clickDialogButton(label: string): Promise<void> {
 
 test('同一组织目录覆盖子部门、模糊搜索、分页、回显与取消信号', async () => {
   const { workspace } = mountDirectory()
+  const { memberSource } = workspace.picker
   const { signal } = new AbortController()
-  const result = await workspace.memberSource.request({
+  const result = await memberSource.request({
     search: '前端',
     page: 1,
     pageSize: 2,
@@ -71,7 +72,7 @@ test('同一组织目录覆盖子部门、模糊搜索、分页、回显与取�
   })
   expect(result.total).toBe(4)
   expect(result.rows.map(row => row.name)).toEqual(['王主管', '赵工'])
-  const outside = await workspace.memberSource.request({
+  const outside = await memberSource.request({
     search: '前端',
     page: 1,
     pageSize: 20,
@@ -79,13 +80,13 @@ test('同一组织目录覆盖子部门、模糊搜索、分页、回显与取�
     filters: { organizationId: '3' },
   })
   expect(outside.rows).toEqual([])
-  expect(await workspace.memberSource.resolve!(['9'], signal)).toMatchObject([
+  expect(await memberSource.resolve!(['9'], signal)).toMatchObject([
     { id: '9', name: '赵工', department: '前端组' },
   ])
   const aborted = new AbortController()
   aborted.abort()
   await expect(
-    workspace.memberSource.request({
+    memberSource.request({
       search: '',
       page: 1,
       pageSize: 20,

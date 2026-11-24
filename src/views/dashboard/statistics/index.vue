@@ -14,17 +14,17 @@
         ><p>页面访问、登录与功能使用，来自实际发生的事件。</p></div
       ><div class="obs-controls"
         ><select
-          v-model="source"
+          v-model="usage.source"
           class="obs-select"
           aria-label="统计数据范围"
           ><option value="browser">本机记录</option
           ><option
             value="site"
-            :disabled="!endpointConfigured"
+            :disabled="!usage.endpointConfigured"
             >全站汇总</option
           ></select
         ><select
-          v-model="days"
+          v-model="usage.days"
           class="obs-select"
           aria-label="统计时间范围"
           ><option :value="1">今天</option
@@ -32,14 +32,14 @@
         ><button
           class="obs-button"
           type="button"
-          :disabled="loading"
-          @click="refresh"
+          :disabled="usage.loading"
+          @click="usage.refresh"
           ><span class="i-mdi:refresh" />刷新</button
         ><button
           class="obs-button"
           type="button"
-          :disabled="!summary"
-          @click="exportReport"
+          :disabled="!usage.summary"
+          @click="usage.exportReport"
           ><span class="i-mdi:download-outline" />导出报告</button
         ></div
       ></header
@@ -47,18 +47,18 @@
     <div class="obs-status"
       ><span
         ><i />{{
-          source === 'browser'
+          usage.source === 'browser'
             ? config.enabled
               ? '本机真实记录 · 实时更新'
               : '本机历史记录 · 采集已停用'
-            : loading
+            : usage.loading
               ? '正在查询全站汇总'
-              : failed
+              : usage.failed
                 ? '全站汇总获取失败，请重试'
                 : '服务端全站汇总'
         }}</span
       ><span>{{
-        source === 'browser'
+        usage.source === 'browser'
           ? '最多保留 7 天 / 1000 条，不代表其他访客'
           : '权限与数据范围由服务端核验'
       }}</span></div
@@ -86,7 +86,9 @@
           ></div
         ><c_chart
           :option="trendOption"
-          :empty="!summary?.totals.views && !summary?.totals.loginSuccess"
+          :empty="
+            !usage.summary?.totals.views && !usage.summary?.totals.loginSuccess
+          "
           label="真实页面访问与成功登录的每日趋势"
         /><div class="obs-note"
           >会话指匿名标签页会话；刷新不会再计登录成功，恢复已有会话也不会计为新登录。</div
@@ -113,13 +115,13 @@
           ><span class="obs-chip">TOP 8</span></div
         ><c_chart
           :option="pagesOption"
-          :empty="!summary?.pages.length"
+          :empty="!usage.summary?.pages.length"
           label="真实页面访问次数排行"
         /><div class="obs-table-wrap"
           ><C_Table
             class="obs-table page-timings"
             :columns="pageColumns"
-            :data="summary?.pages.slice(0, 5) ?? []"
+            :data="usage.summary?.pages.slice(0, 5) ?? []"
             row-key="route"
             :config="{
               toolbar: { show: false },
@@ -148,14 +150,14 @@
           ><span class="collection-icon i-mdi:cloud-outline" /><div
             ><h3>全站汇总接口</h3
             ><p>{{
-              endpointConfigured
+              usage.endpointConfigured
                 ? '已配置统一查询，选择全站汇总后读取。'
                 : '尚未连接；接入后可汇总其他访客的数据。'
             }}</p></div
           ><span
             class="source-state"
-            :class="{ muted: !endpointConfigured }"
-            >{{ endpointConfigured ? '已配置' : '未连接' }}</span
+            :class="{ muted: !usage.endpointConfigured }"
+            >{{ usage.endpointConfigured ? '已配置' : '未连接' }}</span
           ></div
         >
         <div class="collection-source"
@@ -182,13 +184,13 @@
         <div class="device-distribution"
           ><h3>访问窗口分布</h3
           ><div
-            v-for="device in summary?.devices"
+            v-for="device in usage.summary?.devices"
             :key="device.device"
             ><span>{{ deviceLabels[device.device] }}</span
             ><div class="device-track"
               ><i
                 :style="{
-                  width: `${summary?.totals.views ? (device.count / summary.totals.views) * 100 : 0}%`,
+                  width: `${usage.summary?.totals.views ? (device.count / usage.summary.totals.views) * 100 : 0}%`,
                 }" /></div
             ><strong>{{ device.count }}</strong></div
           ><p>按访问时的窗口宽度分类，不推断设备身份。</p></div
@@ -196,19 +198,23 @@
         <div class="collection-summary"
           ><div
             ><span>公司切换</span
-            ><strong>{{ summary?.totals.companySwitches ?? '—' }}</strong></div
+            ><strong>{{
+              usage.summary?.totals.companySwitches ?? '—'
+            }}</strong></div
           ><div
             ><span>功能使用</span
-            ><strong>{{ summary?.totals.actions ?? '—' }}</strong></div
+            ><strong>{{ usage.summary?.totals.actions ?? '—' }}</strong></div
           ><div
             ><span>登录失败</span
-            ><strong>{{ summary?.totals.loginFailure ?? '—' }}</strong></div
+            ><strong>{{
+              usage.summary?.totals.loginFailure ?? '—'
+            }}</strong></div
           ></div
         >
       </section></div
     >
     <section
-      v-if="source === 'browser'"
+      v-if="usage.source === 'browser'"
       class="obs-panel recent-panel"
       ><div class="obs-panel__head"
         ><div
@@ -216,7 +222,7 @@
           ><p>不记录账号、密码、令牌、公司名称与 URL 查询参数。</p></div
         ><div class="obs-controls"
           ><select
-            v-model="mode"
+            v-model="usage.mode"
             class="obs-select"
             aria-label="事件来源"
             ><option value="all">全部来源</option
@@ -270,7 +276,9 @@
       ><span
         >本机记录保存在当前浏览器，清理缓存会重置；全站汇总不会回退为本机数据。</span
       ><span>{{
-        summary ? new Date(summary.updatedAt).toLocaleString() : '等待真实数据'
+        usage.summary
+          ? new Date(usage.summary.updatedAt).toLocaleString()
+          : '等待真实数据'
       }}</span></footer
     >
   </div>
@@ -365,55 +373,49 @@
   } from './data'
   defineOptions({ name: 'UsageStatistics' })
   const { report } = useProjectReport()
-  const {
-    source,
-    days,
-    mode,
-    samples,
-    summary,
-    endpointConfigured,
-    failed,
-    loading,
-    refresh,
-    exportReport,
-  } = useUsageStats()
+  const usageStats = useUsageStats()
+  const usage = proxyRefs(usageStats)
+  const eventPageSize = 6
   const eventFilter = ref<TelemetryEventType | 'all'>('all')
   const eventPage = ref(1)
   const filteredEvents = computed(() =>
-    [...samples.value]
+    [...usage.samples]
       .reverse()
       .filter(
         event => eventFilter.value === 'all' || event.type === eventFilter.value
       )
   )
   const pageCount = computed(() =>
-    Math.max(1, Math.ceil(filteredEvents.value.length / 6))
+    Math.max(1, Math.ceil(filteredEvents.value.length / eventPageSize))
   )
   const currentEvents = computed(() =>
-    filteredEvents.value.slice((eventPage.value - 1) * 6, eventPage.value * 6)
+    filteredEvents.value.slice(
+      (eventPage.value - 1) * eventPageSize,
+      eventPage.value * eventPageSize
+    )
   )
   const metrics = computed(() => [
     {
       label: '页面访问 PV',
-      value: summary.value?.totals.views.toLocaleString() ?? '—',
+      value: usage.summary?.totals.views.toLocaleString() ?? '—',
       note: '成功进入页面计一次访问',
       icon: 'i-mdi:eye-outline',
     },
     {
       label: '匿名会话',
-      value: summary.value?.totals.sessions.toLocaleString() ?? '—',
+      value: usage.summary?.totals.sessions.toLocaleString() ?? '—',
       note: '标签页会话，不等同于独立用户',
       icon: 'i-mdi:account-multiple-outline',
     },
     {
       label: '登录成功',
-      value: summary.value?.totals.loginSuccess.toLocaleString() ?? '—',
+      value: usage.summary?.totals.loginSuccess.toLocaleString() ?? '—',
       note: '完整公司会话与权限路由就绪',
       icon: 'i-mdi:shield-check-outline',
     },
     {
       label: '功能使用',
-      value: summary.value?.totals.actions.toLocaleString() ?? '—',
+      value: usage.summary?.totals.actions.toLocaleString() ?? '—',
       note: '仓库、主题、语言与报告操作',
       icon: 'i-mdi:cursor-default-click-outline',
     },
@@ -430,14 +432,14 @@
             : route)
     )
   const eventTotal = computed(
-    () => summary.value?.events.reduce((sum, item) => sum + item.count, 0) ?? 0
+    () => usage.summary?.events.reduce((sum, item) => sum + item.count, 0) ?? 0
   )
-  const trendOption = computed(() => createTrendOption(summary.value))
+  const trendOption = computed(() => createTrendOption(usage.summary))
   const pagesOption = computed(() =>
-    createPagesOption(summary.value, routeTitle)
+    createPagesOption(usage.summary, routeTitle)
   )
-  const eventsOption = computed(() => createEventsOption(summary.value))
-  watch([eventFilter, mode, days], () => {
+  const eventsOption = computed(() => createEventsOption(usage.summary))
+  watch([eventFilter, usageStats.mode, usageStats.days], () => {
     eventPage.value = 1
   })
   watch(pageCount, count => {

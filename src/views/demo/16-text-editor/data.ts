@@ -54,7 +54,7 @@ export function useTextEditorDemo() {
       const content = editorRef.value.getContent()
       dialog.info({
         title: '编辑器内容',
-        content: `内容长度：${content.length} 字符\n\n${content}`,
+        content: `HTML 长度：${content.length} 字符\n\n${content}`,
         positiveText: '确定',
       })
     }

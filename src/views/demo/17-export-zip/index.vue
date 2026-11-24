@@ -28,7 +28,7 @@
         :key="item.id"
         type="button"
         :aria-pressed="activeExport === item.id"
-        :disabled="jszip.state.value.loading"
+        :disabled="exportBusy"
         @click="activeExport = item.id"
         ><span :class="item.icon" /><span
           ><strong>{{ item.name }}</strong
@@ -38,22 +38,22 @@
     >
     <!-- 全局进度 -->
     <NCard
-      v-if="jszip.state.value.loading"
+      v-if="exportBusy"
       class="progress-card"
     >
       <div class="flex items-center gap-4">
         <NSpin size="small" />
         <div class="flex-1">
           <div class="text-sm text-gray-600 mb-1">
-            {{ jszip.state.value.currentFile || '准备中...' }}
+            {{ exportState.currentFile || '准备中...' }}
           </div>
           <NProgress
-            :percentage="jszip.state.value.progress"
+            :percentage="exportState.progress"
             :show-indicator="false"
           />
         </div>
         <div class="text-lg font-bold">
-          {{ Math.round(jszip.state.value.progress) }}%
+          {{ Math.round(exportState.progress) }}%
         </div>
       </div>
     </NCard>
@@ -95,7 +95,7 @@
           <div class="actions">
             <NButton
               type="primary"
-              :loading="jszip.state.value.loading"
+              :loading="exportBusy"
               @click="handleCodeExport"
             >
               <template #icon>
@@ -153,7 +153,7 @@
           <div class="actions">
             <NButton
               type="success"
-              :loading="jszip.state.value.loading"
+              :loading="exportBusy"
               @click="handleReportExport"
             >
               <template #icon>
@@ -214,7 +214,7 @@
           <div class="actions">
             <NButton
               type="warning"
-              :loading="jszip.state.value.loading"
+              :loading="exportBusy"
               :disabled="!mediaExport.files.length || Boolean(mediaPlan.error)"
               @click="handleMediaExport"
             >
@@ -270,11 +270,19 @@
             </div>
           </div>
 
+          <NAlert
+            v-if="templatePlan.error"
+            type="error"
+          >
+            {{ templatePlan.error }}
+          </NAlert>
           <div class="actions">
             <NButton
               type="info"
-              :loading="jszip.state.value.loading"
-              :disabled="!selectedTemplates.length"
+              :loading="exportBusy"
+              :disabled="
+                !selectedTemplates.length || Boolean(templatePlan.error)
+              "
               @click="handleTemplateExport"
             >
               <template #icon>
@@ -286,8 +294,9 @@
         </NCard> </div
       ><aside class="file-output"
         ><h2>即将生成</h2
-        ><span class="file-output__icon i-mdi-folder-zip-outline" /><h3
-          >{{ outputName }}.zip</h3
+        ><span class="file-output__icon i-mdi-folder-zip-outline" /><h3>{{
+          outputName
+        }}</h3
         ><small>{{ outputFiles.length }} 个文件 · 按当前配置生成</small
         ><ul
           ><li
@@ -311,6 +320,8 @@
   import { setupFileUtils } from '@/plugins/file-utils'
   import {
     planMediaArchive,
+    sanitizeFileName,
+    sanitizeZipPath,
     useJSZip,
     type CodeProjectConfig,
     type ReportConfig,
@@ -333,7 +344,7 @@
     availableTemplates,
     mockDataList,
     defaultCodeContent,
-    getTemplateFiles,
+    createTemplateArchiveEntries,
     getFileCategory,
     isValidUploadFile,
   } from './data'
@@ -341,14 +352,21 @@
   setupFileUtils()
 
   const jszip = useJSZip()
-  const activeExport = ref('code')
+  const message = useMessage()
+  const activeTemplateZip = shallowRef<ReturnType<typeof useJSZip>>()
+  const exportState = computed(
+    () => activeTemplateZip.value?.state.value ?? jszip.state.value
+  )
+  const exportBusy = computed(
+    () => Boolean(activeTemplateZip.value) || exportState.value.loading
+  )
+  const activeExport = ref<(typeof EXPORT_SCENARIOS)[number]['id']>('code')
 
-  const codeConfig = ref<CodeProjectConfig>({
+  const codeConfig = ref<Omit<CodeProjectConfig, 'files'>>({
     projectName: 'my-awesome-app',
     framework: 'vue' as FrameworkType,
     includeConfig: true,
     includeReadme: true,
-    files: [],
   })
 
   const reportConfig = ref<ReportConfigExtended>({
@@ -365,11 +383,10 @@
     maxFileSize: 10,
   })
 
-  const templateConfig = ref<TemplateConfig>({
+  const templateConfig = ref<Omit<TemplateConfig, 'templates'>>({
     libraryName: 'my-template-library',
     bundleMode: 'separate' as BundleModeType,
     includeDocumentation: true,
-    templates: [],
   })
 
   const codeContent = ref(defaultCodeContent)
@@ -432,42 +449,56 @@
         })
       : mockData.value
   })
-  const outputName = computed(
-    () =>
-      ({
-        code: codeConfig.value.projectName,
-        report: `${reportConfig.value.title}_report`,
-        media: mediaConfig.value.packageName,
-        template: templateConfig.value.libraryName,
-      })[activeExport.value] ?? 'archive'
+
+  const templatePlan = computed(() => {
+    try {
+      return {
+        entries: createTemplateArchiveEntries(
+          templateConfig.value,
+          selectedTemplates.value
+        ),
+        error: '',
+      }
+    } catch (error) {
+      return {
+        entries: null,
+        error: error instanceof Error ? error.message : '无法生成模板清单',
+      }
+    }
+  })
+  const outputName = computed(() =>
+    sanitizeFileName(
+      {
+        code: `${codeConfig.value.projectName}.zip`,
+        report: `${reportConfig.value.title}_report.zip`,
+        media: `${mediaConfig.value.packageName}.zip`,
+        template: `${templateConfig.value.libraryName}_templates.zip`,
+      }[activeExport.value]
+    )
   )
-  const codeOutputFiles = computed(() => {
+  const codeFiles = computed<CodeProjectConfig['files']>(() => {
     const entry = CODE_ENTRIES[codeConfig.value.framework ?? 'vue']
     return [
-      `src/${entry.file}`,
-      ...(entry.entry ? [`src/${entry.entry}`] : []),
-      ...(codeConfig.value.includeConfig ? ['package.json'] : []),
-      ...(codeConfig.value.includeReadme ? ['README.md'] : []),
+      { path: entry.file, content: codeContent.value },
+      ...(entry.entry
+        ? [{ path: entry.entry, content: entry.entryContent ?? '' }]
+        : []),
     ]
   })
   const outputFiles = computed(() => {
-    if (activeExport.value === 'code') return codeOutputFiles.value
+    if (activeExport.value === 'code')
+      return [
+        ...codeFiles.value.map(({ path }) => `src/${sanitizeZipPath(path)}`),
+        ...(codeConfig.value.includeConfig ? ['package.json'] : []),
+        ...(codeConfig.value.includeReadme ? ['README.md'] : []),
+      ]
     if (activeExport.value === 'report')
       return [
         `${reportConfig.value.title}.${reportConfig.value.format === 'excel' ? 'xlsx' : reportConfig.value.format}`,
         ...(reportConfig.value.includeSummary ? ['summary.json'] : []),
       ]
     if (activeExport.value === 'media') return mediaPlan.value.files
-    const files = availableTemplates
-      .filter(item => selectedTemplates.value.includes(item.id))
-      .flatMap(item =>
-        Object.keys(getTemplateFiles(item.id)).map(
-          file => `${item.name}/${file}`
-        )
-      )
-    return templateConfig.value.includeDocumentation
-      ? [...files, 'README.md']
-      : files
+    return [...(templatePlan.value.entries?.keys() ?? [])]
   })
   /**
    * * @description: 执行 ZIP 导出并消费 file-utils 已通知过的异常，避免事件处理器产生未处理拒绝
@@ -489,22 +520,10 @@
     }
   }
 
-  const handleCodeExport = async () => {
-    const source = CODE_ENTRIES[codeConfig.value.framework ?? 'vue']
-    const files = [
-      { path: source.file, content: codeContent.value },
-      ...(source.entry
-        ? [{ path: source.entry, content: source.entryContent ?? '' }]
-        : []),
-    ]
-
-    const config: CodeProjectConfig = {
-      ...codeConfig.value,
-      files,
-    }
-
-    await safelyExport(() => jszip.exportCodeProject(config))
-  }
+  const handleCodeExport = () =>
+    safelyExport(() =>
+      jszip.exportCodeProject({ ...codeConfig.value, files: codeFiles.value })
+    )
 
   const handleReportExport = async () => {
     const config: ReportConfig = {
@@ -521,20 +540,22 @@
     safelyExport(() => jszip.exportMedia(mediaExport.value))
 
   const handleTemplateExport = async () => {
-    const templates = availableTemplates
-      .filter(t => selectedTemplates.value.includes(t.id))
-      .map(t => ({
-        id: t.id,
-        name: t.name,
-        files: getTemplateFiles(t.id),
-      }))
+    const { entries } = templatePlan.value
+    if (exportBusy.value || !entries || !selectedTemplates.value.length) return
 
-    const config: TemplateConfig = {
-      ...templateConfig.value,
-      templates,
+    const exporter = useJSZip()
+    activeTemplateZip.value = exporter
+    try {
+      const zip = exporter.createZip()
+      for (const [path, content] of entries)
+        exporter.addFile(zip, path, content)
+      await exporter.downloadZip(zip, outputName.value)
+      message.success('模板库导出成功')
+    } catch (error) {
+      message.error(error instanceof Error ? error.message : '模板库导出失败')
+    } finally {
+      activeTemplateZip.value = undefined
     }
-
-    await safelyExport(() => jszip.exportTemplates(config))
   }
 </script>
 

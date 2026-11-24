@@ -115,9 +115,12 @@ export function getScenarioCode(): string {
 
 <!-- 列表排序 -->
 <div v-for="item in list"
+     :key="item.id"
      v-drag="{
        axis: 'y',
-       grid: [1, 60]
+       grid: [1, 70],
+       onEnd: (el, position, event) =>
+         moveListItem(item.id, el, position.y, event.type === 'pointercancel')
      }"
      class="list-item">
   {{ item.name }}
@@ -146,7 +149,7 @@ export const axisOptions = [
 /**
  * * @description 卡片数据
  */
-export const cardList = reactive([
+export const cardList = [
   {
     id: 1,
     title: '项目计划',
@@ -165,12 +168,12 @@ export const cardList = reactive([
     content: '确定技术栈和开发工具',
     color: '#45b7d1',
   },
-])
+]
 
 /**
  * * @description 可排序列表数据
  */
-export const sortableList = reactive([
+export const sortableItems = [
   {
     id: 1,
     name: '首页设计',
@@ -196,12 +199,12 @@ export const sortableList = reactive([
     name: '测试部署',
     description: '进行功能测试和系统部署',
   },
-])
+]
 
 /**
  * * @description 画布形状数据
  */
-export const canvasShapes = reactive([
+export const initialCanvasShapes = [
   {
     id: 1,
     type: 'circle',
@@ -226,4 +229,4 @@ export const canvasShapes = reactive([
     y: 150,
     color: '#45b7d1',
   },
-])
+]

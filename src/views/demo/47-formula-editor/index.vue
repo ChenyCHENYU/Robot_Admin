@@ -27,7 +27,7 @@
         :key="item.id"
         type="button"
         :aria-pressed="scenario.id === item.id"
-        @click="selectScenario(item.id)"
+        @click="selectScenario(item)"
         ><strong>{{ item.label }}</strong
         ><span>{{ item.description }}</span
         ><C_Icon
@@ -57,9 +57,8 @@
   const scenario = ref(formulaScenarios[0]!)
   const formula = ref(scenario.value.expression)
   /** 场景使用独立初始状态，组件内负责编辑和试算反馈。 */
-  function selectScenario(id: string): void {
-    const selected = formulaScenarios.find(item => item.id === id)
-    if (!selected || selected.id === scenario.value.id) return
+  function selectScenario(selected: (typeof formulaScenarios)[number]): void {
+    if (selected.id === scenario.value.id) return
     scenario.value = selected
     formula.value = selected.expression
   }
