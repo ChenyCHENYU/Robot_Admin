@@ -19,7 +19,7 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 5 个关联仓�
 | 仓库                     | 简称     | 用途                                          | npm 包名                           |
 | ------------------------ | -------- | --------------------------------------------- | ---------------------------------- |
 | **Robot_Admin**          | 主项目   | Vue 3 SPA 后台应用                            | —                                  |
-| **naive-ui-components**  | 组件库   | 63 个业务组件（基于 Naive UI）                | `@robot-admin/naive-ui-components` |
+| **naive-ui-components**  | 组件库   | 78 个业务组件（基于 Naive UI）                | `@robot-admin/naive-ui-components` |
 | **robot-admin-packages** | 包集合   | 8 个独立 npm 包（字典/指令/请求/布局/主题等） | `@robot-admin/*`                   |
 | **MachTable**            | 网格引擎 | 独立 Core 与 Vue / React / XLSX 适配          | `@agile-team/mach-table` 等        |
 | **AgileTeam_Doc**        | 文档库   | VitePress 2.0 团队文档站                      | —                                  |
@@ -55,14 +55,14 @@ Robot Admin 是一个**企业级后台管理系统**生态，由 5 个关联仓�
 
 | 包名                               | 版本   | 功能                                   |
 | ---------------------------------- | ------ | -------------------------------------- |
-| `@robot-admin/naive-ui-components` | 0.40.5 | 63 个业务组件                          |
+| `@robot-admin/naive-ui-components` | 0.41.1 | 78 个业务组件                          |
 | `@robot-admin/layout`              | 3.3.4  | 6 种布局 + 精简适配 + 核心协议         |
 | `@robot-admin/dictionary`          | 0.6.1  | 枚举、远程字典、详情字段绑定与隔离状态 |
 | `@robot-admin/request-core`        | 0.7.0  | 实例化请求编排 + 函数式 Headless CRUD  |
 | `@robot-admin/theme`               | 0.6.1  | 分层核心 + Vue Store + Naive UI 适配   |
-| `@robot-admin/directives`          | 2.0.1  | 11 个 Vue 指令                         |
+| `@robot-admin/directives`          | 2.1.0  | 11 个 Vue 指令                         |
 | `@robot-admin/form-validate`       | 3.4.4  | 双框架验证、组合与批量校验             |
-| `@robot-admin/file-utils`          | 3.0.4  | 文件处理（Excel/ZIP/CSV/分片）         |
+| `@robot-admin/file-utils`          | 3.1.0  | 文件处理（Excel/ZIP/CSV/分片）         |
 | `@robot-admin/git-standards`       | 1.0.5  | Git 工程化标准                         |
 
 ### 开发工具链
@@ -160,7 +160,7 @@ Robot_Admin/
 │   │   │   ├── C_Login/           # 登录组件
 │   │   │   ├── C_Settings/        # 设置面板
 │   │   │   └── ...
-│   │   └── local/                 # 局部业务组件（c_ 小写前缀）
+│   │   └── local/                 # 项目内跨页面复用组件（c_ 小写前缀）
 │   │       ├── c_detail/          # 详情组件
 │   │       ├── c_role/            # 角色组件
 │   │       └── ...
@@ -251,18 +251,19 @@ Robot_Admin/
 
 ### 命名约定总结
 
-| 类型         | 约定                       | 示例                                    |
-| ------------ | -------------------------- | --------------------------------------- |
-| 全局组件目录 | `C_` + PascalCase          | `C_Header/`, `C_Settings/`              |
-| 局部组件目录 | `c_` + snake_case          | `c_detail/`, `c_role/`                  |
-| 组件库组件   | `C_` + PascalCase          | `C_Form`, `C_Table`, `C_Upload`         |
-| Composable   | `use` + PascalCase         | `useLoginController`, `useLayoutBridge` |
-| Hook         | `use` + PascalCase         | `useCopy`, `useLatestRequest`           |
-| Store        | `s_` + camelCase + `Store` | `s_userStore`, `s_themeStore`           |
-| 工具函数     | `d_` 前缀（domain 工具）   | `d_authSession.ts`, `d_route.ts`        |
-| Demo 目录    | `数字编号-功能名`          | `01-icon/`, `07-form/`, `10-table/`     |
-| 类型文件     | `.d.ts` 后缀               | `form.d.ts`, `table.d.ts`               |
-| 样式文件     | `index.scss`               | 与组件同目录                            |
+| 类型             | 约定                                     | 示例                                    |
+| ---------------- | ---------------------------------------- | --------------------------------------- |
+| 全局组件目录     | `C_` + PascalCase                        | `C_Header/`, `C_Settings/`              |
+| 项目复用组件目录 | `c_` + camelCase                         | `c_detail/`, `c_role/`                  |
+| 页面私有组件     | PascalCase，放在所属模块的 `components/` | `components/ProcessTrace/`              |
+| 组件库组件       | `C_` + PascalCase                        | `C_Form`, `C_Table`, `C_Upload`         |
+| Composable       | `use` + PascalCase                       | `useLoginController`, `useLayoutBridge` |
+| Hook             | `use` + PascalCase                       | `useCopy`, `useLatestRequest`           |
+| Store            | `s_` + camelCase + `Store`               | `s_userStore`, `s_themeStore`           |
+| 工具函数         | `d_` 前缀（domain 工具）                 | `d_authSession.ts`, `d_route.ts`        |
+| Demo 目录        | `数字编号-功能名`                        | `01-icon/`, `07-form/`, `10-table/`     |
+| 类型文件         | `.d.ts` 后缀                             | `form.d.ts`, `table.d.ts`               |
+| 样式文件         | `index.scss`                             | 与组件同目录                            |
 
 ---
 
@@ -332,7 +333,7 @@ import type { LoginResponse } from '@/api/auth'
 
 // 7. 相对路径
 import { layoutOptions, testDataConfig } from './data'
-import DefaultLayout from './layouts/DefaultLayout/index.vue'
+import DefaultLayout from './components/DefaultLayout/index.vue'
 ```
 
 ### 路径别名
@@ -595,7 +596,7 @@ views/demo/XX-feature-name/
 ├── index.vue           # 页面主文件
 ├── index.scss          # 页面样式（scoped）
 ├── data.ts             # 配置数据、常量、mock 数据
-└── layouts/            # 布局变体组件（可选）
+└── components/         # 页面私有组件（可选）
     ├── DefaultLayout/
     │   └── index.vue
     └── GridLayout/
@@ -871,7 +872,10 @@ const rules = {
 `src/router/dynamicRouter.ts` 对所有页面使用按需导入，包括首页和仪表盘：
 
 ```typescript
-const LAZY_MODULES = import.meta.glob('@/views/**/*.vue')
+const LAZY_MODULES = import.meta.glob([
+  '@/views/**/*.vue',
+  '!@/views/**/components/**/*.vue',
+])
 ```
 
 意图与空闲预取由 `src/router/routePrefetch.ts` 统一处理，遵循网络、设备和重页面策略。不要将首页/仪表盘恢复为 eager 导入，也不要为演示页单独引入第二套预加载状态。
@@ -1355,17 +1359,13 @@ optimizeDeps: {
 - Naive UI: `NCard`, `NButton`, `NModal`, `NSpace`, `useMessage`, `useDialog` ...
 - 自定义: `src/composables/*` 下的导出；领域 Store 和页面控制器使用显式 import，避免隐式跨域依赖
 
-### 3. C\_ 组件自动解析优先级
+### 3. 项目组件与页面私有组件
 
-```
-RobotNaiveUiResolver（组件库 C_ 组件）
-  ↓ 若不匹配
-NaiveUiResolver（Naive UI 原生组件）
-  ↓ 若不匹配
-本地 global/ fallback（主项目 C_ 组件）
-  ↓ 若不匹配
-本地 local/ fallback（小写 c_ 组件）
-```
+- 全局组件使用 `C_`，例如 `<C_Header />` 和组件库的 `<C_Form />`。项目内跨页面复用的本地组件使用 `c_`，例如 `<c_detail />`。两类项目组件均按原名在模板中自动导入。
+- 页面或模块私有组件放在所属 `src/views/<模块>/components/`，以 PascalCase 命名，由消费页面显式导入，例如 `import ProcessTrace from './components/ProcessTrace/index.vue'`。模块中的多个页面共用时放在最近的共同模块。重型私有组件仍可用同名 `defineAsyncComponent`。私有组件目录不参与自动导入和动态页面路由扫描。
+- 简单页面优先保留现有页面结构，遇到独立职责或模块内部复用需求再拆组件。脚本中的 `h()`、动态配置和类型按实际依赖导入。
+
+页面有较多状态和操作时，通过 `const view = proxyRefs(useWorkspace())` 直接使用控制器。存在多个独立功能区时，由控制器提供对应的状态和操作对象，页面按功能区取用。只为确需原始 Ref 的模板引用或脚本逻辑保留相应绑定。
 
 ### 4. 样式导入顺序
 

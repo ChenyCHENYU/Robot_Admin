@@ -19,7 +19,7 @@ import { useLatestRequest } from '@/composables/useLatestRequest'
 import { isMockDataMode } from '@/config/dataMode'
 import { s_userStore } from '@/stores/user'
 import { s_permissionStore } from '@/stores/permission'
-import { useDictionaries } from '@robot-admin/dictionary/vue'
+import { useDictionaryCommit } from './useDictionaryCommit'
 import {
   filterDictionaries,
   getDictionaryState,
@@ -50,9 +50,6 @@ const sortDictionaries = (dicts: DictData[]): DictData[] =>
     }))
 
 export const useDictionaryManagement = () => {
-  const dictionaries = useDictionaries()
-  /** 服务端确认成功后，使正在消费的远程字典按需刷新。 */
-  const invalidateDictionaries = () => dictionaries.invalidate()
   const message = useMessage()
   const dialog = useDialog()
   const userStore = s_userStore()
@@ -77,6 +74,12 @@ export const useDictionaryManagement = () => {
     alive &&
     permissionStore.requestGeneration === generation &&
     contextId() === context
+  const captureSession = () => {
+    const generation = permissionStore.requestGeneration
+    const context = contextId()
+    return () => isCurrentSession(generation, context)
+  }
+  const commit = useDictionaryCommit()
   const dismissConfirms = () => {
     for (const confirm of confirms) confirm.destroy()
     confirms.clear()
@@ -161,6 +164,7 @@ export const useDictionaryManagement = () => {
   const selectDict = async (id: string) => {
     selectedId.value = id
     await nextTick()
+    if (selectedId.value !== id) return
     const parentId = findDictionary(dictList.value, id)?.parentId
     if (parentId && treeRef.value)
       treeRef.value.expandedKeys = [
@@ -262,21 +266,16 @@ export const useDictionaryManagement = () => {
     return refreshed
   }
   const saveDraft = async (draft: DictFormData): Promise<boolean> => {
-    const generation = permissionStore.requestGeneration
-    const context = contextId()
+    const isCurrent = captureSession()
     try {
-      if (draft.id) await updateDictApi(draft)
-      else await addDictApi(draft)
-      if (!isCurrentSession(generation, context)) return false
-      invalidateDictionaries()
-      const refreshed = await reloadSavedDraft(draft)
-      if (!isCurrentSession(generation, context)) return false
-      if (refreshed) message.success('字典已保存')
-      else message.warning('已保存，列表刷新失败，请重新加载')
-      return true
+      return await commit(
+        () => (draft.id ? updateDictApi(draft) : addDictApi(draft)),
+        () => reloadSavedDraft(draft),
+        '字典已保存',
+        isCurrent
+      )
     } catch (error) {
-      if (isCurrentSession(generation, context))
-        throw new Error(describeError(error, '保存失败，请重试'))
+      if (isCurrent()) throw new Error(describeError(error, '保存失败，请重试'))
       return false
     }
   }
@@ -313,20 +312,16 @@ export const useDictionaryManagement = () => {
   ): Promise<boolean> => {
     if (busy.value || loading.value || loadError.value) return false
     mutating.value = true
-    const generation = permissionStore.requestGeneration
-    const context = contextId()
+    const isCurrent = captureSession()
     try {
-      await operation()
-      if (!isCurrentSession(generation, context)) return false
-      invalidateDictionaries()
-      const refreshed = await loadDicts(preferredId)
-      if (!isCurrentSession(generation, context)) return false
-      if (refreshed) message.success(success)
-      else message.warning('操作已成功，列表刷新失败，请重新加载')
-      return true
+      return await commit(
+        operation,
+        () => loadDicts(preferredId),
+        success,
+        isCurrent
+      )
     } catch (error) {
-      if (isCurrentSession(generation, context))
-        message.error(describeError(error, '操作失败，请重试'))
+      if (isCurrent()) message.error(describeError(error, '操作失败，请重试'))
       return false
     } finally {
       mutating.value = false
@@ -340,6 +335,7 @@ export const useDictionaryManagement = () => {
     )
   const handleDelete = (dict: DictData) => {
     if (busy.value || loadError.value) return
+    const isCurrent = captureSession()
     const count = dict.children?.length || 0
     const confirm = dialog.warning({
       title: `删除“${dict.name}”？`,
@@ -349,6 +345,7 @@ export const useDictionaryManagement = () => {
       positiveText: '确认删除',
       negativeText: '取消',
       onPositiveClick: async () => {
+        if (!isCurrent() || !confirms.has(confirm)) return false
         const done = await mutate(
           () => deleteDictApi(dict.id, dict.revision),
           '字典已删除',
@@ -415,44 +412,52 @@ export const useDictionaryManagement = () => {
 
   return {
     isMock: isMockDataMode(),
-    loading,
     busy,
-    saving,
     mutating,
-    loadError,
-    searchPattern,
-    selectedId,
-    selectedType,
-    dictItems,
-    filteredDictList,
-    stats,
-    enabledItems,
     treeRef,
     formRef,
-    formData,
-    fieldRules,
-    formConfig,
-    parentOptions,
-    formItemState,
-    showModal,
-    modalTitle,
-    expanded,
     toolbarActions,
-    treeActions,
     statusConfigs: DICT_STATUS_CONFIGS,
     iconConfig: {
       typeMap: { type: 'mdi:folder-table-outline', item: 'mdi:tag-outline' },
     },
-    loadDicts,
-    selectDict,
-    toggleExpansion,
-    handleNodeSelect,
-    handleNodeAction,
-    handleAdd,
-    handleEdit,
-    handleCancel,
-    handleSave,
-    handleToggle,
-    handleDelete,
+    tree: proxyRefs({
+      loading,
+      error: loadError,
+      search: searchPattern,
+      rows: filteredDictList,
+      stats,
+      expanded,
+      actions: treeActions,
+      load: loadDicts,
+      select: selectDict,
+      toggleExpansion,
+      onSelect: handleNodeSelect,
+      onAction: handleNodeAction,
+    }),
+    selection: proxyRefs({
+      id: selectedId,
+      type: selectedType,
+      items: dictItems,
+      enabledCount: enabledItems,
+    }),
+    editor: proxyRefs({
+      model: formData,
+      rules: fieldRules,
+      config: formConfig,
+      parentOptions,
+      itemState: formItemState,
+      visible: showModal,
+      title: modalTitle,
+      saving,
+      add: handleAdd,
+      edit: handleEdit,
+      cancel: handleCancel,
+      save: handleSave,
+    }),
+    commands: proxyRefs({
+      toggle: handleToggle,
+      remove: handleDelete,
+    }),
   }
 }

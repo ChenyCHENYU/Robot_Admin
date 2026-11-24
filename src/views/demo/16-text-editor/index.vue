@@ -30,8 +30,8 @@
             <div class="button-group">
               <NButton
                 type="primary"
-                @click="handleSetContent"
-                :disabled="!isEditorReady"
+                @click="editor.handleSetContent"
+                :disabled="!editor.isEditorReady"
               >
                 <template #icon>
                   <i class="i-mdi-document"></i>
@@ -41,8 +41,8 @@
 
               <NButton
                 type="info"
-                @click="handleGetContent"
-                :disabled="!isEditorReady"
+                @click="editor.handleGetContent"
+                :disabled="!editor.isEditorReady"
               >
                 <template #icon>
                   <i class="i-mdi-view-arrow-right-outline"></i>
@@ -52,8 +52,8 @@
 
               <NButton
                 type="warning"
-                @click="handleClearContent"
-                :disabled="!isEditorReady"
+                @click="editor.handleClearContent"
+                :disabled="!editor.isEditorReady"
               >
                 <template #icon>
                   <i class="i-mdi-vacuum-cleaner-outline"></i>
@@ -71,16 +71,16 @@
             <div class="switch-group">
               <div class="switch-item">
                 <NSwitch
-                  v-model:value="editorConfig.disabled"
-                  :disabled="!isEditorReady"
+                  v-model:value="editor.editorConfig.disabled"
+                  :disabled="!editor.isEditorReady"
                 />
                 <span class="switch-label">禁用编辑器</span>
               </div>
 
               <div class="switch-item">
                 <NSwitch
-                  v-model:value="editorConfig.readonly"
-                  :disabled="!isEditorReady"
+                  v-model:value="editor.editorConfig.readonly"
+                  :disabled="!editor.isEditorReady"
                 />
                 <span class="switch-label">只读模式</span>
               </div>
@@ -98,29 +98,29 @@
 
           <div class="status-item">
             <span class="status-label">初始化状态:</span>
-            <NTag :type="isEditorReady ? 'success' : 'warning'">
+            <NTag :type="editor.isEditorReady ? 'success' : 'warning'">
               <template #icon>
                 <i
                   :class="
-                    isEditorReady
+                    editor.isEditorReady
                       ? 'mdi:check'
                       : 'i-mdi-clock-time-four-outline'
                   "
                 ></i>
               </template>
-              {{ isEditorReady ? '已就绪' : '初始化中' }}
+              {{ editor.isEditorReady ? '已就绪' : '初始化中' }}
             </NTag>
           </div>
 
           <div class="status-item">
             <span class="status-label">内容长度:</span>
-            <NTag type="info"> {{ contentLength }} 字符 </NTag>
+            <NTag type="info"> {{ editor.contentLength }} 字符 </NTag>
           </div>
 
           <div class="status-item">
             <span class="status-label">编辑器ID:</span>
             <NTag type="default">
-              {{ editorId }}
+              {{ editor.editorId }}
             </NTag>
           </div>
         </NCard>
@@ -137,14 +137,14 @@
 
           <C_Editor
             ref="editorRef"
-            :editor-id="editorId"
-            v-model="editorContent"
-            v-bind="editorConfig"
-            @editor-mounted="handleEditorMounted"
+            :editor-id="editor.editorId"
+            v-model="editor.editorContent"
+            v-bind="editor.editorConfig"
+            @editor-mounted="editor.handleEditorMounted"
             class="demo-editor"
             :class="{
-              'demo-editor--disabled': editorConfig.disabled,
-              'demo-editor--readonly': editorConfig.readonly,
+              'demo-editor--disabled': editor.editorConfig.disabled,
+              'demo-editor--readonly': editor.editorConfig.readonly,
             }"
           />
         </NCard>
@@ -156,18 +156,9 @@
 <script setup lang="ts">
   import { useTextEditorDemo } from './data'
   defineOptions({ name: 'Demo16TextEditor' })
-  const {
-    editorRef,
-    editorId,
-    editorContent,
-    isEditorReady,
-    editorConfig,
-    contentLength,
-    handleEditorMounted,
-    handleSetContent,
-    handleGetContent,
-    handleClearContent,
-  } = useTextEditorDemo()
+  const controller = useTextEditorDemo()
+  const editor = proxyRefs(controller)
+  const { editorRef } = controller
 </script>
 
 <style lang="scss" scoped>

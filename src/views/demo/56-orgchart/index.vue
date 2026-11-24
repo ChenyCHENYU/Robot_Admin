@@ -12,15 +12,15 @@
         ><p>从组织全景找到成员，再沿汇报关系查看团队。</p></div
       ><div class="workspace-actions"
         ><C_UserPicker
-          v-model="collaboratorIds"
-          :source="memberSource"
-          :organization="memberOrganization"
-          :fields="memberFields"
+          v-model="page.collaboratorIds"
+          :source="page.memberSource"
+          :organization="page.memberOrganization"
+          :fields="page.memberFields"
           multiple
           :max-selection="5"
           title="选择协作成员"
-          @select="confirmCollaborators"
-          @cancel="cancelCollaborators"
+          @select="page.confirmCollaborators"
+          @cancel="page.cancelCollaborators"
           ><template #trigger="{ open }"
             ><NButton
               size="small"
@@ -36,10 +36,10 @@
         ><NTag
           size="small"
           :bordered="false"
-          >演示组织 · {{ entries.length }} 名成员</NTag
+          >演示组织 · {{ page.entries.length }} 名成员</NTag
         ><NButton
           size="small"
-          @click="reset"
+          @click="page.reset"
           >返回组织全景</NButton
         ></div
       ></header
@@ -50,7 +50,7 @@
       aria-live="polite"
     >
       <div>
-        <strong>{{ selectionFeedback }}</strong>
+        <strong>{{ page.selectionFeedback }}</strong>
         <p
           >按组织筛选，可跨部门选取最多 5
           人；确认空选可清空，取消保留原结果。</p
@@ -58,7 +58,7 @@
       </div>
       <div class="org-collaborators__members">
         <NTag
-          v-for="member in collaborators"
+          v-for="member in page.collaborators"
           :key="member.id"
           size="small"
           :bordered="false"
@@ -72,19 +72,19 @@
         ><section class="workspace-section"
           ><h2>查找成员与部门</h2
           ><NInput
-            v-model:value="search"
+            v-model:value="page.search"
             size="small"
             clearable
             placeholder="姓名、职位或部门"
             :input-props="{ 'aria-label': '搜索组织成员' }"
           /><div class="org-search-results"
             ><button
-              v-for="item in matches"
+              v-for="item in page.matches"
               :key="item.node.id"
               type="button"
               class="workspace-choice"
-              :aria-pressed="selectedId === item.node.id"
-              @click="choose(item.node.id, true)"
+              :aria-pressed="page.selectedId === item.node.id"
+              @click="page.choose(item.node.id, true)"
               ><span class="org-initial">{{ item.node.label.slice(0, 1) }}</span
               ><span
                 ><strong>{{ item.node.label }}</strong
@@ -93,7 +93,7 @@
                 ></span
               ></button
             ><p
-              v-if="!matches.length"
+              v-if="!page.matches.length"
               class="workspace-hint"
               >没有匹配的成员</p
             ></div
@@ -104,22 +104,24 @@
         ><header class="workspace-toolbar"
           ><div class="org-breadcrumb"
             ><button
-              v-for="(node, index) in focused.path"
+              v-for="(node, index) in page.focused.path"
               :key="node.id"
               type="button"
-              @click="focusId = node.id"
+              @click="page.focusId = node.id"
               >{{ node.label
-              }}<span v-if="index < focused.path.length - 1"> / </span></button
+              }}<span v-if="index < page.focused.path.length - 1">
+                /
+              </span></button
             ></div
           ><div class="workspace-actions"
             ><NSelect
-              v-model:value="direction"
+              v-model:value="page.direction"
               size="small"
               :options="DIRECTION_OPTIONS"
               aria-label="组织布局"
             /><NButton
               size="tiny"
-              @click="chartRef?.fitView()"
+              @click="page.chartRef?.fitView()"
               >适配视野</NButton
             ></div
           ></header
@@ -127,22 +129,22 @@
         <div class="org-canvas"
           ><C_OrgChart
             ref="chartRef"
-            :key="focusId"
-            :data="tree"
-            :direction="direction"
-            :line-style="lineStyle"
+            :key="page.focusId"
+            :data="page.tree"
+            :direction="page.direction"
+            :line-style="page.lineStyle"
             :min-zoom="0.1"
             :node-spacing="20"
             :level-spacing="44"
             fit-on-init
-            @node-click="node => choose(node.id)"
+            @node-click="node => page.choose(node.id)"
             ><template #node="{ node }"
               ><button
                 type="button"
                 class="org-person"
-                :class="{ 'is-selected': selectedId === node.id }"
+                :class="{ 'is-selected': page.selectedId === node.id }"
                 :aria-label="`查看 ${node.label}`"
-                @click.stop="choose(node.id)"
+                @click.stop="page.choose(node.id)"
                 ><span class="org-initial">{{ node.label.slice(0, 1) }}</span
                 ><span
                   ><strong>{{ node.label }}</strong
@@ -163,35 +165,36 @@
           ><h2>成员详情</h2
           ><div class="org-person-heading"
             ><span class="org-initial">{{
-              selected.node.label.slice(0, 1)
+              page.selected.node.label.slice(0, 1)
             }}</span
             ><div
-              ><h3>{{ selected.node.label }}</h3
-              ><p>{{ selected.node.subtitle }}</p></div
+              ><h3>{{ page.selected.node.label }}</h3
+              ><p>{{ page.selected.node.subtitle }}</p></div
             ></div
           ><dl
-            ><dt>所属部门</dt><dd>{{ selected.department }}</dd
+            ><dt>所属部门</dt><dd>{{ page.selected.department }}</dd
             ><dt>汇报对象</dt
-            ><dd>{{ selected.path.at(-2)?.label ?? '组织负责人' }}</dd
-            ><dt>邮箱</dt><dd>{{ selected.node.data?.email ?? '未填写' }}</dd
+            ><dd>{{ page.selected.path.at(-2)?.label ?? '组织负责人' }}</dd
+            ><dt>邮箱</dt
+            ><dd>{{ page.selected.node.data?.email ?? '未填写' }}</dd
             ><dt>直属成员</dt
-            ><dd>{{ selected.node.children?.length ?? 0 }} 人</dd></dl
+            ><dd>{{ page.selected.node.children?.length ?? 0 }} 人</dd></dl
           ><NButton
             size="small"
             block
-            :disabled="focusId === selectedId"
-            @click="focusId = selectedId"
+            :disabled="page.focusId === page.selectedId"
+            @click="page.focusId = page.selectedId"
             >查看此成员的团队</NButton
           ></section
         ><section class="workspace-section"
           ><h2>汇报路径</h2
           ><ol class="org-path"
             ><li
-              v-for="node in selected.path"
+              v-for="node in page.selected.path"
               :key="node.id"
               ><button
                 type="button"
-                @click="choose(node.id, true)"
+                @click="page.choose(node.id, true)"
                 >{{ node.label }}<small>{{ node.subtitle }}</small></button
               ></li
             ></ol
@@ -205,29 +208,9 @@
   import { DIRECTION_OPTIONS } from './data'
   import { useOrgWorkspace } from './useOrgWorkspace'
   defineOptions({ name: 'Demo56OrgChart' })
-  const {
-    memberSource,
-    memberOrganization,
-    memberFields,
-    collaboratorIds,
-    collaborators,
-    selectionFeedback,
-    confirmCollaborators,
-    cancelCollaborators,
-    entries,
-    search,
-    focusId,
-    selectedId,
-    direction,
-    lineStyle,
-    chartRef,
-    focused,
-    selected,
-    matches,
-    tree,
-    choose,
-    reset,
-  } = useOrgWorkspace()
+  const controller = useOrgWorkspace()
+  const page = proxyRefs(controller)
+  const { chartRef } = controller
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

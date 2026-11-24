@@ -13,13 +13,13 @@
       ><div class="workspace-actions"
         ><NButton
           size="small"
-          @click="reset"
+          @click="view.reset"
           >恢复当前示例</NButton
         ><NButton
           size="small"
           type="primary"
-          :disabled="!code"
-          @click="download"
+          :disabled="!view.code"
+          @click="view.download"
           >下载当前文件</NButton
         ></div
       ></header
@@ -33,8 +33,8 @@
             :key="file.language"
             type="button"
             class="workspace-choice"
-            :aria-pressed="language === file.language"
-            @click="language = file.language"
+            :aria-pressed="view.current === file"
+            @click="view.current = file"
             ><span
               ><strong>{{ file.name }}</strong
               ><small>{{ file.language }}</small></span
@@ -43,11 +43,11 @@
         ><section class="workspace-section"
           ><h2>阅读设置</h2
           ><label class="workspace-label"
-            ><NCheckbox v-model:checked="lineNumbers"
+            ><NCheckbox v-model:checked="view.lineNumbers"
               >显示行号</NCheckbox
             ></label
           ><label class="workspace-label"
-            ><NCheckbox v-model:checked="wrap">自动换行</NCheckbox></label
+            ><NCheckbox v-model:checked="view.wrap">自动换行</NCheckbox></label
           ><p
             >每份文件的修改在当前页面分别保留。此工作台只编辑与高亮文本，不执行代码。</p
           ></section
@@ -56,9 +56,10 @@
       <main class="workspace-panel"
         ><header class="workspace-toolbar"
           ><div
-            ><h2>{{ current.name }}</h2
+            ><h2>{{ view.current.name }}</h2
             ><small
-              >{{ code.split('\n').length }} 行 · {{ code.length }} 字符</small
+              >{{ view.code.split('\n').length }} 行 ·
+              {{ view.code.length }} 字符</small
             ></div
           ></header
         ><div class="code-split"
@@ -74,7 +75,7 @@
               ><section class="code-pane"
                 ><h3>编辑文本</h3
                 ><NInput
-                  v-model:value="code"
+                  v-model:value="view.code"
                   type="textarea"
                   :input-props="{ 'aria-label': '代码文本', spellcheck: false }"
                   :resizable="false" /></section></template
@@ -82,11 +83,11 @@
               ><section class="code-pane"
                 ><h3>语法预览</h3
                 ><C_Code
-                  :code="code"
-                  :language="language"
-                  :title="current.name"
-                  :show-line-numbers="lineNumbers"
-                  :word-wrap="wrap"
+                  :code="view.code"
+                  :language="view.current.language"
+                  :title="view.current.name"
+                  :show-line-numbers="view.lineNumbers"
+                  :word-wrap="view.wrap"
                   :max-height="600"
                   :show-fullscreen="
                     true
@@ -101,20 +102,12 @@
 </template>
 <script setup lang="ts">
   import { useWindowSize } from '@vueuse/core'
+  import { CODE_FILES } from './data'
   import { useCodeWorkspace } from './useCodeWorkspace'
   defineOptions({ name: 'Demo14CodeEditor' })
   const { width } = useWindowSize()
   const splitSize = ref(50)
-  const {
-    CODE_FILES,
-    language,
-    lineNumbers,
-    wrap,
-    current,
-    code,
-    reset,
-    download,
-  } = useCodeWorkspace()
+  const view = proxyRefs(useCodeWorkspace())
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

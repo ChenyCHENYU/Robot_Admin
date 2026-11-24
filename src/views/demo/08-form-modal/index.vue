@@ -119,28 +119,16 @@
     </div>
 
     <!-- 模态框 -->
-    <NModal
-      v-model:show="showModal"
-      preset="card"
-      title="用户信息管理"
-      :style="{ width: '600px' }"
-      size="large"
-    >
-      <template #header-extra>
-        <NTag
-          type="info"
-          size="small"
-          >网格布局</NTag
-        >
-      </template>
-      <C_Form
-        v-if="showModal"
-        :options="modalOptions"
-        :config="modalConfig"
-        v-model="modalData"
-        @submit="showModal = false"
-      />
-    </NModal>
+    <C_FormModal
+      ref="modalRef"
+      :editor="editor"
+      :options="modalOptions"
+      :config="modalConfig"
+      :session-key="activeIndex"
+      :before-close="confirmDiscard"
+      :renderers="renderers"
+      save-text="保存用户资料"
+    />
 
     <!-- 抽屉 -->
     <NDrawer
@@ -284,11 +272,19 @@
     wizardOptions,
     wizardConfig,
   } from './data'
+  import { useUserModalDemo } from './useUserModalDemo'
 
   defineOptions({ name: 'FormModalDemo' })
 
   // ============ 容器显隐 ============
-  const showModal = ref(false)
+  const {
+    editor,
+    modalRef,
+    activeIndex,
+    renderers,
+    openUserModal,
+    confirmDiscard,
+  } = useUserModalDemo()
   const showDrawer = ref(false)
   const showSidebar = ref(false)
   const showPopover = ref(false)
@@ -306,7 +302,6 @@
   )
 
   // ============ 表单数据 ============
-  const modalData = ref({})
   const drawerData = ref({})
   const sidebarData = ref({})
   const popoverData = ref({})
@@ -318,12 +313,13 @@
    */
   const openContainer = (key: string) => {
     const map: Record<string, Ref<boolean>> = {
-      modal: showModal,
       drawer: showDrawer,
       popover: showPopover,
       wizard: showWizard,
     }
-    if (key === 'sidebar') {
+    if (key === 'modal') {
+      openUserModal()
+    } else if (key === 'sidebar') {
       showSidebar.value = !showSidebar.value
     } else if (map[key]) {
       map[key].value = true

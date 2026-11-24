@@ -85,7 +85,7 @@
 
 草稿、导出、筛选条件等业务状态仍由页面维护。自定义按钮应根据 `submitting` 禁用会修改模型的操作，提交调用组件提供的 `submit()`；不要另建 loading、防抖、二次校验和重复提示。
 
-示例位于 `src/views/demo/07-form/layouts/`：默认和步骤布局直接配置，网格和动态布局展示 `action-extra`，自定义布局展示异步 `onSubmit`。
+示例位于 `src/views/demo/07-form/components/`：默认和步骤布局直接配置，网格和动态布局展示 `action-extra`，自定义布局展示异步 `onSubmit`。
 
 ## 页面接入约定
 

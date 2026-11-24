@@ -8,7 +8,7 @@ import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { defineComponent, h, reactive } from 'vue'
 import type { NotificationRecord } from '@/api/notifications.contract'
-import { useMessageDetail } from '@/views/account/messages/components/c_messageDetail/useMessageDetail'
+import { useMessageDetail } from '@/views/account/messages/components/MessageDetail/useMessageDetail'
 import { deferred } from './d_deferred'
 
 const state = vi.hoisted(() => ({

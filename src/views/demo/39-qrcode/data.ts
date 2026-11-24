@@ -10,8 +10,9 @@
 
 import type {
   ErrorCorrectionLevel,
+  QRCodeProps,
   RenderMode,
-} from '@robot-admin/naive-ui-components'
+} from '@robot-admin/naive-ui-components/C_QRCode'
 import type { SelectOption } from 'naive-ui'
 
 // 纠错等级选项
@@ -89,6 +90,36 @@ export const LOGO_SIZE_OPTIONS = {
   max: 0.35,
   step: 0.05,
   default: 0.2,
+}
+
+type EditableQRCode = Required<
+  Pick<
+    QRCodeProps,
+    | 'value'
+    | 'mode'
+    | 'errorCorrectionLevel'
+    | 'size'
+    | 'margin'
+    | 'color'
+    | 'bgColor'
+  >
+> & {
+  enableLogo: boolean
+  logoSrc: string
+  logoSize: number
+}
+
+export const DEFAULT_QRCODE: Readonly<EditableQRCode> = {
+  value: QRCODE_EXAMPLES[0].value,
+  mode: 'canvas',
+  errorCorrectionLevel: 'M',
+  size: SIZE_OPTIONS.default,
+  margin: MARGIN_OPTIONS.default,
+  color: COLOR_PRESETS[0].color,
+  bgColor: COLOR_PRESETS[0].bgColor,
+  enableLogo: false,
+  logoSrc: '/robot-avatar.png',
+  logoSize: LOGO_SIZE_OPTIONS.default,
 }
 
 // 导出格式选项

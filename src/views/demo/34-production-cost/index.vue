@@ -127,14 +127,14 @@
               ><span class="panel-index">02</span
               ><div><h2>吨成本走势</h2><p>近 30 日演示趋势 · 元 / 吨</p></div
               ><span class="trend-legend"><i />实际 <i />预算参考</span></header
-            ><ObservatoryChart
+            ><c_chart
               :option="trendOption"
               label="选中范围近30日演示吨成本与当期预算参考" /></section
           ><section class="cost-panel deviation-panel"
             ><header
               ><span class="panel-index">03</span
               ><div><h2>预算偏差</h2><p>按偏差金额排序 · 万元</p></div></header
-            ><ObservatoryChart
+            ><c_chart
               :option="deviationOption"
               label="选中范围成本中心的预算偏差金额" /></section></div
         ><section class="cost-panel cost-ledger"
@@ -333,7 +333,6 @@
   ]
 
   import type { EChartsCoreOption } from 'echarts/core'
-  import ObservatoryChart from '@/views/dashboard/shared/c_chart/index.vue'
   import {
     type FactoryData,
     COST_DEMO_DATE,

@@ -13,7 +13,7 @@
       ><NButton
         size="small"
         type="primary"
-        @click="exportJson"
+        @click="page.exportJson"
         >导出当前图数据</NButton
       ></header
     >
@@ -24,8 +24,8 @@
         v-for="item in DIAGRAM_TYPES"
         :key="item.value"
         type="button"
-        :aria-pressed="type === item.value"
-        @click="type = item.value"
+        :aria-pressed="page.type === item.value"
+        @click="page.type = item.value"
         ><C_Icon
           :name="item.icon"
           :size="22"
@@ -40,14 +40,15 @@
         ><header class="workspace-toolbar"
           ><div
             ><h2>{{
-              DIAGRAM_TYPES.find(item => item.value === type)?.label
+              DIAGRAM_TYPES.find(item => item.value === page.type)?.label
             }}</h2
             ><small
-              >{{ items.length }} 个节点 · {{ connections }} 条关系</small
+              >{{ page.items.length }} 个节点 ·
+              {{ page.connections }} 条关系</small
             ></div
           ><div class="workspace-actions"
             ><NRadioGroup
-              v-model:value="mode"
+              v-model:value="page.mode"
               size="small"
               ><NRadioButton value="edit">编辑</NRadioButton
               ><NRadioButton value="preview"
@@ -55,11 +56,11 @@
               ></NRadioGroup
             ><NButton
               size="tiny"
-              @click="fit"
+              @click="page.fit"
               >适配视野</NButton
             ><NButton
               size="tiny"
-              :disabled="mode !== 'edit'"
+              :disabled="page.mode !== 'edit'"
               @click="showReset = true"
               >恢复示例</NButton
             ></div
@@ -67,19 +68,19 @@
         ><div class="diagram-canvas"
           ><C_AntV
             ref="diagramRef"
-            :key="`${type}-${revision}`"
-            :type="type"
-            :data="initialData"
+            :key="`${page.type}-${page.revision}`"
+            :type="page.type"
+            :data="page.initialData"
             width="100%"
             height="100%"
-            :readonly="mode === 'preview'"
-            :show-toolbar="mode === 'edit'"
+            :readonly="page.mode === 'preview'"
+            :show-toolbar="page.mode === 'edit'"
             :theme="themeStore.isDark ? 'dark' : 'light'"
-            @ready="onReady"
-            @data-change="onChange" /></div
+            @ready="page.onReady"
+            @data-change="page.onChange" /></div
         ><footer class="workspace-footer"
           ><span>{{
-            mode === 'edit'
+            page.mode === 'edit'
               ? '拖动节点调整位置，双击节点编辑内容'
               : '只读预览 · 已禁用节点编辑'
           }}</span
@@ -90,27 +91,29 @@
         ><section class="workspace-section"
           ><h2>节点检查器</h2>
           <NSelect
-            :value="selectedId"
-            :options="items.map(item => ({ label: item.name, value: item.id }))"
+            :value="page.selectedId"
+            :options="
+              page.items.map(item => ({ label: item.name, value: item.id }))
+            "
             size="small"
             aria-label="选择图节点"
-            @update:value="select" />
-          <template v-if="selectedNode"
-            ><span class="workspace-badge">{{ type.toUpperCase() }}</span
-            ><h3>{{ selectedNode.name }}</h3
-            ><p>{{ selectedNode.detail }}</p
+            @update:value="page.select" />
+          <template v-if="page.selectedNode"
+            ><span class="workspace-badge">{{ page.type.toUpperCase() }}</span
+            ><h3>{{ page.selectedNode.name }}</h3
+            ><p>{{ page.selectedNode.detail }}</p
             ><dl
-              ><dt>标识</dt><dd>{{ selectedNode.id }}</dd
+              ><dt>标识</dt><dd>{{ page.selectedNode.id }}</dd
               ><dt>坐标</dt
               ><dd
-                >{{ Math.round(selectedNode.position.x) }},
-                {{ Math.round(selectedNode.position.y) }}</dd
+                >{{ Math.round(page.selectedNode.position.x) }},
+                {{ Math.round(page.selectedNode.position.y) }}</dd
               ></dl
             ><NButton
               size="small"
               block
-              :disabled="mode !== 'edit'"
-              @click="editSelected"
+              :disabled="page.mode !== 'edit'"
+              @click="page.editSelected"
               >编辑选中节点</NButton
             ></template
           ><NEmpty
@@ -132,7 +135,7 @@
       content="当前模型的修改将被示例替换，其他场景草稿会保留。"
       positive-text="恢复示例"
       negative-text="保留修改"
-      @positive-click="reset"
+      @positive-click="page.reset"
     />
   </div>
 </template>
@@ -143,24 +146,9 @@
   defineOptions({ name: 'Demo29AntvX6Editor' })
   const themeStore = s_themeStore()
   const showReset = ref(false)
-  const {
-    type,
-    mode,
-    revision,
-    diagramRef,
-    initialData,
-    items,
-    connections,
-    selectedId,
-    selectedNode,
-    select,
-    onReady,
-    onChange,
-    fit,
-    editSelected,
-    reset,
-    exportJson,
-  } = useDiagramWorkspace()
+  const controller = useDiagramWorkspace()
+  const page = proxyRefs(controller)
+  const { diagramRef } = controller
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

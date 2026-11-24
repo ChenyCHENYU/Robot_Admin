@@ -32,7 +32,7 @@ The SPA mainline **v2.7.0** includes company-context authentication, system gove
 | Area               | Available today                                                                                                                  |
 | ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | Business scenarios | 6 production/sales workspaces with master/detail grids, dense forms, dynamic reports, grouped summaries and a measurement matrix |
-| Ecosystem          | 63 business components, 11 directives; 8 runtime `@robot-admin/*` packages and 1 Git tooling package                             |
+| Ecosystem          | 78 business components, 11 directives; 8 runtime `@robot-admin/*` packages and 1 Git tooling package                             |
 | Examples           | 58 demo pages covering forms, search, selection, grids, trees, workflows, files and media                                        |
 | Engineering        | Types, dual lint, logic/component tests, bundle budgets, browser regression and build identity                                   |
 
@@ -120,7 +120,7 @@ These pages use explicitly labeled local sources. “Remote order workbench” d
 | Dictionary composition | Sales coordination → “字典联动体验”                            | Shared requests, empty dictionaries, retries, scope switching, `0/false/"0"/"001"` and multiple values                |
 | Workflow               | `/#/editor/work-flow-editor`                                   | Nodes, approval modes, conditions, read-only preview, local drafts and export                                         |
 
-The demo directory contains **58 demo pages + 8 form layouts + 3 embedded components (69 index.vue files)**, counted separately from the six production/sales pages. See the [current integration guide](./docs/core-components.md) (Chinese) for further entries and composition examples.
+The demo directory contains **58 demo pages + 8 form layouts + 4 embedded components (70 index.vue files)**, counted separately from the six production/sales pages. See the [current integration guide](./docs/core-components.md) (Chinese) for further entries and composition examples.
 
 MachTable ordering supports multi-item drag, keyboard movement, undo/redo and simulated save failure/version conflicts. Import validation previews normalized values and row problems before committing. The large-data viewport generates logical data in blocks of 200 rows and caches at most 8 blocks; it does not allocate a ten-million-row array.
 
@@ -199,21 +199,21 @@ flowchart TB
 
 These are **the versions pinned by this application**. Full APIs and upstream capabilities follow each package's documentation.
 
-Pages bind public props to business data and reuse package types when extracting configuration. Search reset shares the query callback, nested selection belongs to the table, and editors and waterfalls manage their own internal lifecycle. See the [integration guide](./docs/core-components.md) and [0.40.5 adoption checks](./docs/component-adoption-0.40.5.md) (Chinese).
+Pages bind public props to business data and reuse package types when extracting configuration. Search reset shares the query callback, nested selection belongs to the table, and editors and waterfalls manage their own internal lifecycle. See the [integration guide](./docs/core-components.md) for [0.41.0 demo routes](./docs/core-components.md#0410-演示入口). Earlier adoption checks are recorded for [0.40.5](./docs/component-adoption-0.40.5.md) (Chinese).
 
 | Package                                                                                              | Pinned version | Core capabilities                                                                       | Application responsibility                                        |
 | ---------------------------------------------------------------------------------------------------- | -------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.40.5`       | 63 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.41.1`       | 78 business components, subpath imports, auto-import Resolver and independent styles    | Forms, tables, menus, editors and shared feedback                 |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`        | Static enums, resilient remote dictionaries, scoped cache and detail field bindings     | Shared translation for forms, search, details and both grids      |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`        | Instance-based request orchestration, auth recovery, cancellation and Headless CRUD     | Typed APIs, session consistency, list and editor state            |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`        | Core rules, composition, batch validation, Naive UI / Element Plus adapters             | Integrated into `C_Form`; configure rules directly                |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.3.4`        | 6 layouts, framework-independent settings protocol, Vue Headless and Naive entry points | Host-owned menus, routes and slots; package-owned layout behavior |
 | [`@robot-admin/theme`](https://www.npmjs.com/package/@robot-admin/theme)                             | `0.6.1`        | Theme core, Vue state, Naive UI adapter, light / dark / system                          | Shared component appearance and theme state                       |
-| [`@robot-admin/directives`](https://www.npmjs.com/package/@robot-admin/directives)                   | `2.0.1`        | 11 directives for permissions, copy, drag, debounce, throttle and more                  | Declarative interactions with unmount cleanup                     |
-| [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.0.4`        | Isolated instances, Excel / CSV / ZIP, cancellable chunks and file processing           | Reusable file scenarios with heavy dependencies loaded on demand  |
+| [`@robot-admin/directives`](https://www.npmjs.com/package/@robot-admin/directives)                   | `2.1.0`        | 11 directives for permissions, copy, drag, debounce, throttle and more                  | Declarative interactions with unmount cleanup                     |
+| [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.1.0`        | Isolated instances, Excel / CSV / ZIP, cancellable chunks and file processing           | Reusable file scenarios with heavy dependencies loaded on demand  |
 | [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`        | Configuration protection and Git engineering standards                                  | Development-time commit conventions and initialization            |
 
-The grid integration uses **MachTable 0.42.0** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue). Robot Admin currently integrates Vue. See [MachTable](https://github.com/ChenyCHENYU/MachTable) for Core, React, XLSX and other optional capabilities; [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages) host the component and runtime sources.
+The grid integration uses **MachTable 0.42.2** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue). Robot Admin currently integrates Vue. See [MachTable](https://github.com/ChenyCHENYU/MachTable) for Core, React, XLSX and other optional capabilities; [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages) host the component and runtime sources.
 
 ## Engineering and verification
 
@@ -285,7 +285,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.42.0** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.42.2** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

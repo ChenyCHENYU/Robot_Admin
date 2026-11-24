@@ -259,9 +259,6 @@ test('动态 C++ 与 Rust 语法复用应用高亮器，切换文件保留各自
   const code = workspace.locator('.n-code')
   await cppFile.click()
   await expect(cppFile).toHaveAttribute('aria-pressed', 'true')
-  await expect(workspace.locator('.workspace-hint')).toHaveText(
-    '语法高亮已就绪'
-  )
   await expect(title).toHaveText('main.cpp')
   await expect(code).toContainText('class NumberProcessor')
   await expect(code.locator('.hljs-keyword').first()).toBeVisible()
@@ -272,9 +269,6 @@ test('动态 C++ 与 Rust 语法复用应用高亮器，切换文件保留各自
 
   await rustFile.click()
   await expect(rustFile).toHaveAttribute('aria-pressed', 'true')
-  await expect(workspace.locator('.workspace-hint')).toHaveText(
-    '语法高亮已就绪'
-  )
   await expect(title).toHaveText('main.rs')
   await expect(code).toContainText('struct Calculator')
   await expect(code.locator('.hljs-keyword').first()).toBeVisible()

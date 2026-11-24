@@ -66,7 +66,11 @@
 
     &.is-active {
       border-color: var(--primary-color);
-      background: color-mix(in srgb, var(--primary-color) 6%, var(--card-color));
+      background: color-mix(
+        in srgb,
+        var(--primary-color) 6%,
+        var(--card-color)
+      );
     }
 
     &__icon {
@@ -200,51 +204,6 @@
       max-height: 100px;
       overflow: hidden;
       border-radius: 4px;
-    }
-  }
-
-  // ─── 已加载内容样式 ───
-  .loaded-text {
-    h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
-      color: var(--text-color-1);
-    }
-
-    p {
-      margin: 0;
-      font-size: 14px;
-      color: var(--text-color-2);
-      line-height: 1.6;
-    }
-  }
-
-  .loaded-avatar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    &__icon {
-      color: var(--primary-color);
-    }
-  }
-
-  .loaded-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .loaded-list__item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--primary-color);
-
-    &:last-child {
-      border-bottom: none;
     }
   }
 

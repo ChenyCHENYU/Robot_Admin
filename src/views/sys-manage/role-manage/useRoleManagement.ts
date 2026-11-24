@@ -12,7 +12,6 @@ import { compareRolePermissions } from '@/utils/d_permissionComparison'
 import {
   getRoleListApi,
   getPermissionListApi,
-  getRoleUsersPageApi,
   getRoleDataScopesApi,
   getRoleTempAuthorizationsApi,
   createRoleApi,
@@ -31,14 +30,13 @@ import type {
 import { useLatestRequest } from '@/composables/useLatestRequest'
 import '@robot-admin/naive-ui-components/C_Icon/style.css'
 import { defineActions } from '@robot-admin/naive-ui-components/C_ActionBar'
-import type { TableColumn } from '@robot-admin/naive-ui-components'
+import { useRoleMembers } from './useRoleMembers'
 import {
   type RoleData,
   type RoleFormData,
   type PermissionData,
   type SearchForm,
   type PermissionTemplate,
-  type RoleUserData,
   type RoleDataScope,
   type RoleTempAuth,
   type PermissionPreviewItem,
@@ -59,23 +57,11 @@ export function useRoleManagement() {
   // ==================== 响应式数据 ====================
   const { loading, run: runLatestRoleRequest } = useLatestRequest()
   const { run: runLatestRoleDetailRequest } = useLatestRequest()
-  const {
-    loading: roleUsersLoading,
-    run: runLatestRoleUsersRequest,
-    cancel: cancelRoleUsersRequest,
-  } = useLatestRequest()
+  const members = useRoleMembers()
   const showModal = ref(false)
   const showRoleDetail = ref(false)
   const showPermissionDrawer = ref(false)
   const showPermissionTemplate = ref(false)
-  const showRoleUsers = ref(false)
-  watch(showRoleUsers, visible => {
-    if (!visible) cancelRoleUsersRequest()
-  })
-  onDeactivated(() => {
-    showRoleUsers.value = false
-    cancelRoleUsersRequest()
-  })
   const modalMode = ref<'add' | 'edit'>('add')
   const formRef = ref<FormInstance<RoleFormData> | null>(null)
   const tableRef = ref()
@@ -89,7 +75,6 @@ export function useRoleManagement() {
   const permissionTemplates = reactive<PermissionTemplate[]>([
     ...PERMISSION_TEMPLATES,
   ])
-  const roleUserList = reactive<RoleUserData[]>([])
   const currentDataScopes = ref<RoleDataScope[]>([])
   const currentTempAuths = ref<RoleTempAuth[]>([])
 
@@ -315,25 +300,6 @@ export function useRoleManagement() {
   }))
 
   // ==================== 表格用户列配置 ====================
-  const roleUserColumns: TableColumn<RoleUserData>[] = [
-    { title: '用户名', key: 'username', width: 120 },
-    { title: '昵称', key: 'nickname', width: 120 },
-    { title: '邮箱', key: 'email', width: 200 },
-    { title: '手机号', key: 'phone', width: 120 },
-    { title: '部门', key: 'deptName', width: 120 },
-    {
-      title: '状态',
-      key: 'status',
-      width: 80,
-      render: (row: RoleUserData) =>
-        h(
-          NTag,
-          { type: row.status === 1 ? 'success' : 'error', size: 'small' },
-          { default: () => (row.status === 1 ? '正常' : '禁用') }
-        ),
-    },
-  ]
-
   // ==================== 工具栏按钮配置 ====================
   const toolbarActions = defineActions([
     {
@@ -547,31 +513,6 @@ export function useRoleManagement() {
     }
   }
 
-  const roleUsersPage = ref(1)
-  const roleUsersTotal = ref(0)
-  /** 服务端分页读取当前角色的公司成员。 */
-  const loadRoleUsersPage = async (page: number) => {
-    const role = currentRole.value
-    if (!role) return
-    roleUsersPage.value = page
-    try {
-      const response = await runLatestRoleUsersRequest(signal =>
-        getRoleUsersPageApi(role.id, { page, pageSize: 20 }, signal)
-      )
-      if (!response || currentRole.value?.id !== role.id) return
-      roleUserList.splice(0, roleUserList.length, ...response.data.list)
-      roleUsersTotal.value = response.data.total
-    } catch {
-      message.error('获取角色成员失败，请刷新后重试')
-    }
-  }
-  const handleViewRoleUsers = async (role: RoleData) => {
-    currentRole.value = role
-    roleUserList.splice(0)
-    showRoleUsers.value = true
-    await loadRoleUsersPage(1)
-  }
-
   // ==================== 数据加载 ====================
   const loadRoles = async () => {
     try {
@@ -607,58 +548,62 @@ export function useRoleManagement() {
     await Promise.all([loadRoles(), loadPermissions()])
   })
 
-  const { tableColumns } = createRoleColumns(row => handleViewRoleUsers(row))
+  const { tableColumns } = createRoleColumns(members.open)
 
   return {
-    loading,
-    roleUsersLoading,
-    roleUsersPage,
-    roleUsersTotal,
-    loadRoleUsersPage,
-    showModal,
-    showRoleDetail,
-    showPermissionDrawer,
-    showPermissionTemplate,
-    showRoleUsers,
-    modalMode,
     formRef,
     tableRef,
-    selectedPermissionIds,
-    selectedTemplate,
-    currentRole,
-    permissionRole,
-    roleList,
-    permissionList,
-    permissionTemplates,
-    roleUserList,
-    currentDataScopes,
-    currentTempAuths,
-    formData,
-    searchForm,
-    detailTab,
-    showCompareModal,
-    compareRoleA,
-    compareRoleB,
-    compareResult,
-    groupedPreview,
-    roleOptions,
-    pagination,
-    modalTitle,
-    roleDetailFields,
-    formOptions,
-    formConfig,
-    rowKey,
-    tableActions,
-    roleUserColumns,
-    toolbarActions,
-    getPermissionNameById,
-    handleTableSave,
-    handleSearch,
-    handlePaginationChange,
-    closeRoleModal,
-    handleCompareRoles,
-    handleSavePermissions,
-    applyPermissionTemplate,
-    tableColumns,
+    members,
+    ledger: proxyRefs({
+      loading,
+      rows: roleList,
+      searchModel: searchForm,
+      pagination,
+      rowKey,
+      actions: tableActions,
+      toolbar: toolbarActions,
+      search: handleSearch,
+      changePage: handlePaginationChange,
+      saveRow: handleTableSave,
+      columns: tableColumns,
+    }),
+    editor: proxyRefs({
+      visible: showModal,
+      mode: modalMode,
+      model: formData,
+      title: modalTitle,
+      options: formOptions,
+      config: formConfig,
+      close: closeRoleModal,
+    }),
+    inspection: proxyRefs({
+      visible: showRoleDetail,
+      role: currentRole,
+      tab: detailTab,
+      preview: groupedPreview,
+      dataScopes: currentDataScopes,
+      temporaryGrants: currentTempAuths,
+      fields: roleDetailFields,
+    }),
+    grants: proxyRefs({
+      visible: showPermissionDrawer,
+      showTemplates: showPermissionTemplate,
+      role: permissionRole,
+      available: permissionList,
+      selected: selectedPermissionIds,
+      template: selectedTemplate,
+      templates: permissionTemplates,
+      getPermissionName: getPermissionNameById,
+      save: handleSavePermissions,
+      applyTemplate: applyPermissionTemplate,
+    }),
+    comparison: proxyRefs({
+      visible: showCompareModal,
+      roleA: compareRoleA,
+      roleB: compareRoleB,
+      options: roleOptions,
+      result: compareResult,
+      compare: handleCompareRoles,
+    }),
   }
 }

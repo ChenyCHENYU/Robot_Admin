@@ -14,15 +14,15 @@
       >
       <div class="calendar-heading__actions">
         <span class="calendar-storage"
-          ><i :class="{ 'is-session': !storageAvailable }" />{{
-            storageAvailable ? '本机自动保存' : '仅当前会话'
+          ><i :class="{ 'is-session': !page.storageAvailable }" />{{
+            page.storageAvailable ? '本机自动保存' : '仅当前会话'
           }}</span
         >
         <NButton
           size="small"
           type="primary"
-          :disabled="!editable"
-          @click="openEditor()"
+          :disabled="!page.editable"
+          @click="page.openEditor()"
           ><template #icon><span class="i-mdi:plus" /></template
           >新建日程</NButton
         >
@@ -30,13 +30,13 @@
     </header>
     <div class="calendar-summary"
       ><div
-        ><strong>{{ stats.today }}</strong
+        ><strong>{{ page.stats.today }}</strong
         ><span>今日安排</span></div
       ><div
-        ><strong>{{ stats.week }}</strong
+        ><strong>{{ page.stats.week }}</strong
         ><span>本周日程</span></div
       ><div
-        ><strong>{{ stats.total }}</strong
+        ><strong>{{ page.stats.total }}</strong
         ><span>全部日程</span></div
       ><p>点击日期查看安排 · 支持跨日与全天日程 · 框选多天创建全天安排</p></div
     >
@@ -45,49 +45,54 @@
         <section class="calendar-sidebar__section">
           <h2
             >我的日历
-            <small>{{ categories.length }} / {{ CATEGORIES.length }}</small></h2
+            <small
+              >{{ page.categories.length }} / {{ CATEGORIES.length }}</small
+            ></h2
           >
           <button
             v-for="category in CATEGORIES"
             :key="category.value"
             class="calendar-category"
             type="button"
-            :aria-pressed="categories.includes(category.value)"
-            @click="toggleCategory(category.value)"
+            :aria-pressed="page.categories.includes(category.value)"
+            @click="page.toggleCategory(category.value)"
           >
             <span
               class="calendar-category__check"
               aria-hidden="true"
               :style="{ '--category-color': category.color }"
-              >{{ categories.includes(category.value) ? '✓' : '' }}</span
+              >{{ page.categories.includes(category.value) ? '✓' : '' }}</span
             ><span>{{ category.label }}</span
             ><small>{{
-              events.filter(event => event.category === category.value).length
+              page.events.filter(event => event.category === category.value)
+                .length
             }}</small>
           </button>
         </section>
         <section class="calendar-sidebar__section calendar-agenda">
           <div class="calendar-agenda__heading"
             ><div
-              ><span>当日安排</span><h2>{{ selectedDayLabel }}</h2></div
-            ><strong>{{ agenda.length }}</strong></div
+              ><span>当日安排</span><h2>{{ page.selectedDayLabel }}</h2></div
+            ><strong>{{ page.agenda.length }}</strong></div
           >
           <div
-            v-if="agenda.length"
+            v-if="page.agenda.length"
             class="calendar-agenda__items"
           >
             <button
-              v-for="event in agenda"
+              v-for="event in page.agenda"
               :key="event.id"
               type="button"
               class="calendar-agenda__event"
-              :style="{ '--event-color': categoryMeta(event.category).color }"
-              @click="openEditor(event)"
+              :style="{
+                '--event-color': page.categoryMeta(event.category).color,
+              }"
+              @click="page.openEditor(event)"
             >
-              <small>{{ eventTime(event) }}</small
+              <small>{{ page.eventTime(event) }}</small
               ><strong>{{ event.title }}</strong
               ><span>{{
-                event.location || categoryMeta(event.category).label
+                event.location || page.categoryMeta(event.category).label
               }}</span>
             </button>
           </div>
@@ -104,8 +109,8 @@
           ><NButton
             text
             size="tiny"
-            :disabled="!editable"
-            @click="restoreSamples"
+            :disabled="!page.editable"
+            @click="page.restoreSamples"
             >恢复示例</NButton
           ></footer
         >
@@ -119,17 +124,17 @@
             ><button
               type="button"
               aria-label="上一时段"
-              @click="navigate('prev')"
+              @click="page.navigate('prev')"
               >‹</button
-            ><h2>{{ calendarTitle }}</h2
+            ><h2>{{ page.calendarTitle }}</h2
             ><button
               type="button"
               aria-label="下一时段"
-              @click="navigate('next')"
+              @click="page.navigate('next')"
               >›</button
             ><NButton
               size="tiny"
-              @click="navigate('today')"
+              @click="page.navigate('today')"
               >今天</NButton
             ></div
           >
@@ -140,47 +145,49 @@
               v-for="item in VIEW_OPTIONS"
               :key="item.value"
               type="button"
-              :aria-pressed="view === item.value"
-              @click="view = item.value"
+              :aria-pressed="page.view === item.value"
+              @click="page.view = item.value"
               >{{ item.label }}</button
             ></div
           >
         </div>
         <div class="calendar-filters"
           ><NInput
-            v-model:value="search"
+            v-model:value="page.search"
             size="small"
             clearable
             placeholder="搜索标题、地点或备注"
             :input-props="{ 'aria-label': '搜索日程' }"
             ><template #prefix><span class="i-mdi:magnify" /></template></NInput
-          ><NCheckbox v-model:checked="showWeekends">显示周末</NCheckbox
-          ><NCheckbox v-model:checked="editable">允许编辑</NCheckbox></div
+          ><NCheckbox v-model:checked="page.showWeekends">显示周末</NCheckbox
+          ><NCheckbox v-model:checked="page.editable">允许编辑</NCheckbox></div
         >
         <C_FullCalendar
           ref="calendarRef"
-          :events="filteredEvents"
-          :initial-view="view"
-          :editable="editable"
-          :config="calendarConfig"
+          :events="page.filteredEvents"
+          :initial-view="page.view"
+          :editable="page.editable"
+          :config="page.calendarConfig"
           :show-add-dialog="false"
           :show-edit-dialog="false"
-          @update:events="updateVisibleEvents"
+          @update:events="page.updateVisibleEvents"
         />
         <footer class="calendar-main__footer"
           ><span
-            >{{ filteredEvents.length }} 条可见日程<span v-if="!editable">
+            >{{ page.filteredEvents.length }} 条可见日程<span
+              v-if="!page.editable"
+            >
               · 只读模式</span
             ></span
           ><div
             ><NButton
               size="tiny"
-              :disabled="!editable"
-              @click="fileRef?.click()"
+              :disabled="!page.editable"
+              @click="page.fileRef?.click()"
               >导入备份</NButton
             ><NButton
               size="tiny"
-              @click="exportBackup"
+              @click="page.exportBackup"
               >导出备份</NButton
             ></div
           ></footer
@@ -193,29 +200,47 @@
       accept="application/json,.json"
       class="calendar-file-input"
       aria-label="选择日程备份"
-      @change="importBackup"
+      @change="page.importBackup"
     />
     <NModal
-      v-model:show="showEditor"
+      v-model:show="page.showEditor"
       preset="card"
-      :title="editable ? (draft.id ? '编辑日程' : '新建日程') : '日程详情'"
+      :title="
+        page.editable ? (page.draft.id ? '编辑日程' : '新建日程') : '日程详情'
+      "
       class="calendar-editor"
       :style="{ width: 'min(560px, calc(100vw - 32px))' }"
       :bordered="false"
     >
-      <template v-if="editable"
+      <template v-if="page.editable"
         ><C_Form
           ref="formRef"
-          v-model="draft"
-          :options="fields"
-          :config="formConfig"
-        /><NAlert
-          v-if="conflicts.length"
+          v-model="page.draft"
+          :options="page.fields"
+          :config="page.formConfig"
+        />
+        <section
+          class="calendar-recurrence"
+          aria-label="日程重复规则"
+        >
+          <C_RecurrenceEditor
+            v-model="page.recurrence"
+            density="compact"
+          />
+          <p>重复规则随日程保存，日历展示起始日程。</p>
+          <output
+            v-if="page.recurrenceText"
+            data-testid="calendar-recurrence-rule"
+            >{{ page.recurrenceText }}</output
+          >
+        </section>
+        <NAlert
+          v-if="page.conflicts.length"
           type="warning"
           :bordered="false"
           class="calendar-conflict"
-          >同一时间还有 {{ conflicts.length }} 条日程：{{
-            conflicts.map(event => event.title).join('、')
+          >同一时间还有 {{ page.conflicts.length }} 条日程：{{
+            page.conflicts.map(event => event.title).join('、')
           }}。请确认时间安排。</NAlert
         ></template
       >
@@ -224,53 +249,60 @@
         label-placement="top"
         :column="1"
         bordered
-        ><NDescriptionsItem label="标题">{{ draft.title }}</NDescriptionsItem
+        ><NDescriptionsItem label="标题">{{
+          page.draft.title
+        }}</NDescriptionsItem
         ><NDescriptionsItem label="分类">{{
-          categoryMeta(draft.category).label
+          page.categoryMeta(page.draft.category).label
         }}</NDescriptionsItem
         ><NDescriptionsItem label="日程类型">{{
-          draft.allDay ? '全天日程' : '时间段日程'
-        }}</NDescriptionsItem
-        ><NDescriptionsItem :label="draft.allDay ? '开始日期' : '开始时间'">{{
-          draftDateLabel(draft.start)
+          page.draft.allDay ? '全天日程' : '时间段日程'
         }}</NDescriptionsItem
         ><NDescriptionsItem
-          :label="draft.allDay ? '结束日期（含当天）' : '结束时间'"
-          >{{ draftDateLabel(draft.end) }}</NDescriptionsItem
+          :label="page.draft.allDay ? '开始日期' : '开始时间'"
+          >{{ page.draftDateLabel(page.draft.start) }}</NDescriptionsItem
+        ><NDescriptionsItem
+          :label="page.draft.allDay ? '结束日期（含当天）' : '结束时间'"
+          >{{ page.draftDateLabel(page.draft.end) }}</NDescriptionsItem
         ><NDescriptionsItem label="地点">{{
-          draft.location || '—'
+          page.draft.location || '—'
         }}</NDescriptionsItem
         ><NDescriptionsItem label="备注">{{
-          draft.description || '—'
-        }}</NDescriptionsItem></NDescriptions
-      >
+          page.draft.description || '—'
+        }}</NDescriptionsItem>
+        <NDescriptionsItem
+          v-if="page.recurrenceText"
+          label="重复规则"
+          >{{ page.recurrenceText }}</NDescriptionsItem
+        >
+      </NDescriptions>
       <template #footer
         ><div class="calendar-editor__footer"
           ><div
             ><NButton
-              v-if="draft.id && editable"
+              v-if="page.draft.id && page.editable"
               size="small"
               type="error"
               quaternary
-              @click="deleteSchedule"
+              @click="page.deleteSchedule"
               >删除</NButton
             ><NButton
-              v-if="draft.id && editable"
+              v-if="page.draft.id && page.editable"
               size="small"
               quaternary
-              @click="duplicateSchedule"
+              @click="page.duplicateSchedule"
               >复制日程</NButton
             ></div
           ><div
             ><NButton
               size="small"
-              @click="showEditor = false"
-              >{{ editable ? '取消' : '关闭' }}</NButton
+              @click="page.showEditor = false"
+              >{{ page.editable ? '取消' : '关闭' }}</NButton
             ><NButton
-              v-if="editable"
+              v-if="page.editable"
               size="small"
               type="primary"
-              @click="formRef?.submit()"
+              @click="page.formRef?.submit()"
               >保存日程</NButton
             ></div
           ></div
@@ -290,41 +322,9 @@
     { label: '日', value: 'dayGridDay' },
     { label: '日程', value: 'listWeek' },
   ]
-  const {
-    calendarRef,
-    formRef,
-    fileRef,
-    events,
-    editable,
-    showWeekends,
-    search,
-    categories,
-    selectedDayLabel,
-    view,
-    calendarTitle,
-    showEditor,
-    draft,
-    filteredEvents,
-    agenda,
-    stats,
-    fields,
-    formConfig,
-    conflicts,
-    calendarConfig,
-    storageAvailable,
-    categoryMeta,
-    eventTime,
-    draftDateLabel,
-    toggleCategory,
-    openEditor,
-    deleteSchedule,
-    duplicateSchedule,
-    updateVisibleEvents,
-    navigate,
-    exportBackup,
-    importBackup,
-    restoreSamples,
-  } = useCalendarWorkspace()
+  const controller = useCalendarWorkspace()
+  const page = proxyRefs(controller)
+  const { calendarRef, fileRef, formRef } = controller
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

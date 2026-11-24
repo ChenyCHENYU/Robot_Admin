@@ -23,6 +23,12 @@ export interface OperationHistoryItem {
   status: 'success' | 'error'
 }
 
+export type RecordOperation = (
+  operation: string,
+  description: string,
+  status?: OperationHistoryItem['status']
+) => void
+
 export const hasNonEmptyCell = (row: ExcelRow): boolean =>
   Object.entries(row).some(
     ([key, value]) =>
@@ -87,6 +93,12 @@ export const EXCEL_STEPS = [
     name: '导入与预览',
     note: '工作表切换与内容检查',
     icon: 'i-mdi-file-upload',
+  },
+  {
+    id: 'workflow',
+    name: '导入向导与任务',
+    note: '字段映射、预检与异步下载',
+    icon: 'i-mdi-file-check',
   },
   {
     id: 'process',

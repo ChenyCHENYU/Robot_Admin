@@ -126,9 +126,6 @@
   import { createSidebarMenuTheme } from '@/config/theme/sidebar-menu'
   import { buildGroupedMenuData, getMenuGroupColor } from './data'
   import { SETTINGS_DRAWER_KEY } from './d_context'
-  import C_Settings from '@/components/global/C_Settings/index.vue'
-  import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
-  import C_MenuGrouped from '@/components/global/C_MenuGrouped/index.vue'
 
   defineOptions({ name: 'C_Layout' })
 

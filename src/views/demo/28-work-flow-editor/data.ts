@@ -1,18 +1,77 @@
 /*
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-19
- * @Description: 审批流场景、用户和本机草稿契约
+ * @Description: 审批流场景、用户和审批样例
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import type {
   WorkflowData,
-  WorkflowNode,
   User,
   Department,
   WorkflowConditionField,
 } from '@robot-admin/naive-ui-components/C_WorkFlow'
 
 import { createPersonAvatar } from '@/utils/d_avatar'
+import type {
+  ApprovalInstanceDetail,
+  ApprovalViewerSource,
+} from '@robot-admin/naive-ui-components/C_ApprovalViewer'
+
+export const demoApprovalKey = 'workflow-studio:leave-request'
+const requestStartedAt = Date.UTC(2026, 10, 20, 1)
+const demoApprovalInstances: ApprovalInstanceDetail[] = [
+  {
+    id: 'demo-leave-2',
+    label: '请假审批 · 补充材料后提交',
+    status: 'running',
+    startedAt: requestStartedAt,
+    initiator: '林晓',
+    currentHandler: '部门主管',
+    history: [
+      {
+        id: 'submit-2',
+        title: '重新提交申请',
+        occurredAt: requestStartedAt,
+        actor: '林晓',
+        comment: '已上传补充说明。',
+      },
+    ],
+  },
+  {
+    id: 'demo-leave-1',
+    label: '请假审批 · 首次提交',
+    status: 'withdrawn',
+    startedAt: requestStartedAt - 86_400_000,
+    finishedAt: requestStartedAt - 82_800_000,
+    initiator: '林晓',
+    history: [
+      {
+        id: 'withdraw-1',
+        title: '撤回申请',
+        occurredAt: requestStartedAt - 82_800_000,
+        actor: '林晓',
+        comment: '准备补充交接说明。',
+      },
+    ],
+  },
+]
+
+export const demoApprovalSource: ApprovalViewerSource = {
+  /** 只返回工作流设计页登记的请假样本。 */
+  async listInstances(businessKey, signal) {
+    signal.throwIfAborted()
+    return businessKey === demoApprovalKey ? demoApprovalInstances : []
+  },
+  /** 切换时查找本次选中的独立提交记录。 */
+  async getInstance(instanceId, signal) {
+    signal.throwIfAborted()
+    const instance = demoApprovalInstances.find(
+      entry => entry.id === instanceId
+    )
+    if (!instance) throw new Error('未找到演示审批实例')
+    return instance
+  },
+}
 
 // ============ 类型定义 ============
 export interface WorkflowScenario {
@@ -538,53 +597,3 @@ export const USER_OPTIONS = userList.map(user => ({
   label: user.name,
   value: user.id,
 }))
-
-const validStoredPosition = (position: WorkflowNode['position'] | undefined) =>
-  Number.isFinite(position?.x) && Number.isFinite(position?.y)
-
-const validStoredNode = (value: unknown): value is WorkflowNode => {
-  if (!value || typeof value !== 'object') return false
-  const node = value as Partial<WorkflowNode>
-  return (
-    typeof node.id === 'string' &&
-    typeof node.type === 'string' &&
-    ['start', 'approval', 'copy', 'condition'].includes(node.type) &&
-    typeof node.data?.title === 'string' &&
-    validStoredPosition(node.position)
-  )
-}
-const validStoredFlow = (value: unknown): value is WorkflowData => {
-  if (!value || typeof value !== 'object') return false
-  const flow = value as Partial<WorkflowData>
-  return (
-    Array.isArray(flow.nodes) &&
-    flow.nodes.length <= 300 &&
-    flow.nodes.every(validStoredNode) &&
-    Array.isArray(flow.edges) &&
-    flow.edges.length <= 500 &&
-    flow.edges.every(
-      edge =>
-        typeof edge?.id === 'string' &&
-        typeof edge.source === 'string' &&
-        typeof edge.target === 'string'
-    )
-  )
-}
-/** 只恢复已知场景和可渲染草稿，不让损坏的本机记录阻断工作台。 */
-export const restoreWorkflowDrafts = (
-  raw: string
-): Record<string, WorkflowData> => {
-  const stored = JSON.parse(raw)
-  if (
-    stored?.version !== 1 ||
-    !stored.drafts ||
-    typeof stored.drafts !== 'object'
-  )
-    throw new Error('草稿结构无效')
-  const result: Record<string, WorkflowData> = {}
-  workflowScenarios.forEach(scenario => {
-    const item = stored.drafts[scenario.id]
-    if (validStoredFlow(item)) result[scenario.id] = item
-  })
-  return result
-}

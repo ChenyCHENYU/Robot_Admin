@@ -139,3 +139,21 @@
     line-height: 1.6;
   }
 }
+.action-bar-responsive {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+
+  &__frame {
+    box-sizing: border-box;
+    width: min(100%, 640px);
+    min-width: 0;
+    padding: 10px;
+    border: 1px dashed var(--app-border-default);
+    border-radius: 8px;
+
+    &.is-narrow {
+      width: min(100%, 320px);
+    }
+  }
+}

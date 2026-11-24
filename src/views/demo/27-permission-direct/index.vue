@@ -540,46 +540,12 @@
   const handlers = createPermissionDemoHandlers(state)
 
   /**
-   * * @description 检查当前用户是否有指定权限
-   * ? @param permission - 权限名称
-   * ! @return 是否有权限
-   */
-  const hasPermission = (permission: string): boolean => {
-    const permissions = state.currentPermissions.value
-    if (permissions[permission]) return true
-
-    // 检查通配符权限
-    for (const key of Object.keys(permissions)) {
-      if (key.endsWith('*') && permission.startsWith(key.slice(0, -1))) {
-        return permissions[key]
-      }
-    }
-    return false
-  }
-
-  /**
-   * * @description 检查多个权限
-   * ? @param permissionList - 权限列表
-   * ? @param mode - 检查模式
-   * ! @return 是否有权限
-   */
-  const hasMultiPermissions = (
-    permissionList: string[],
-    mode: 'AND' | 'OR'
-  ): boolean => {
-    const matches = permissionList.filter(perm => hasPermission(perm))
-    return mode === 'AND'
-      ? matches.length === permissionList.length
-      : matches.length > 0
-  }
-
-  /**
    * * @description 获取权限状态CSS类
    * ? @param permission - 权限名称
    * ! @return CSS类名
    */
   const getPermissionStatus = (permission: string) => {
-    return hasPermission(permission) ? 'status-granted' : 'status-denied'
+    return handlers.allows(permission) ? 'status-granted' : 'status-denied'
   }
 
   /**
@@ -588,7 +554,7 @@
    * ! @return 状态文本
    */
   const getPermissionText = (permission: string) => {
-    return hasPermission(permission) ? '✅ 有权限' : '❌ 无权限'
+    return handlers.allows(permission) ? '✅ 有权限' : '❌ 无权限'
   }
 
   /**
@@ -601,7 +567,7 @@
     permissions: string[],
     mode: 'AND' | 'OR'
   ) => {
-    return hasMultiPermissions(permissions, mode)
+    return handlers.allows(permissions, mode)
       ? 'status-granted'
       : 'status-denied'
   }
@@ -616,7 +582,7 @@
     permissions: string[],
     mode: 'AND' | 'OR'
   ) => {
-    return hasMultiPermissions(permissions, mode) ? '✅ 有权限' : '❌ 无权限'
+    return handlers.allows(permissions, mode) ? '✅ 有权限' : '❌ 无权限'
   }
 
   /**

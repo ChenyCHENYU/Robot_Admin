@@ -12,20 +12,20 @@ import type {
   LayoutType,
 } from '@robot-admin/naive-ui-components/C_Form'
 import { testDataConfig } from '../src/views/demo/07-form/data'
-import { formOptions as defaultFields } from '../src/views/demo/07-form/layouts/DefaultLayout/data'
-import { formOptions as inlineFields } from '../src/views/demo/07-form/layouts/InlineLayout/data'
-import { formOptions as gridFields } from '../src/views/demo/07-form/layouts/GridLayout/data'
+import { formOptions as defaultFields } from '../src/views/demo/07-form/components/DefaultLayout/data'
+import { formOptions as inlineFields } from '../src/views/demo/07-form/components/InlineLayout/data'
+import { formOptions as gridFields } from '../src/views/demo/07-form/components/GridLayout/data'
 import {
   FORM_OPTIONS,
   DEMO_FORM_DATA,
-} from '../src/views/demo/07-form/layouts/CardLayout/data'
+} from '../src/views/demo/07-form/components/CardLayout/data'
 import {
   createFormOptions,
   getLayoutConfig,
-} from '../src/views/demo/07-form/layouts/TabsLayout/data'
-import { getFormOptions } from '../src/views/demo/07-form/layouts/StepsLayout/data'
-import { BASE_FORM_OPTIONS } from '../src/views/demo/07-form/layouts/DynamicLayout/data'
-import { employeeFormOptions } from '../src/views/demo/07-form/layouts/CustomLayout/data'
+} from '../src/views/demo/07-form/components/TabsLayout/data'
+import { getFormOptions } from '../src/views/demo/07-form/components/StepsLayout/data'
+import { BASE_FORM_OPTIONS } from '../src/views/demo/07-form/components/DynamicLayout/data'
+import { employeeFormOptions } from '../src/views/demo/07-form/components/CustomLayout/data'
 
 const layouts: { layout: LayoutType; fields: readonly FormOption[] }[] = [
   { layout: 'default', fields: defaultFields },

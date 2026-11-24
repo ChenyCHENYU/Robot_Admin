@@ -138,7 +138,6 @@ export function useMarkdownWorkspace() {
     active = false
   })
   return {
-    WORKSPACE_DOCUMENTS,
     drafts,
     selectedId,
     mode,

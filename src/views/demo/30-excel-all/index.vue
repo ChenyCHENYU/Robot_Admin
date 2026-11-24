@@ -14,12 +14,12 @@
       ><div class="workspace-actions"
         ><NButton
           size="small"
-          :loading="loading"
+          :loading="workbook.loading"
           @click="loadSample"
           >载入示例工作簿</NButton
         ><NButton
           size="small"
-          @click="handleExportSample"
+          @click="output.exportSample"
           >下载示例数据</NButton
         ></div
       ></header
@@ -27,15 +27,18 @@
     <div class="file-summary"
       ><div
         ><span>当前文件</span
-        ><strong>{{ fileList[0]?.name ?? '等待导入工作簿' }}</strong></div
+        ><strong>{{
+          workbook.fileList[0]?.name ?? '等待导入工作簿'
+        }}</strong></div
       ><div
-        ><span>工作表</span><strong>{{ sheets.length }} 张</strong></div
+        ><span>工作表</span
+        ><strong>{{ workbook.sheets.length }} 张</strong></div
       ><div
         ><span>当前表记录</span
-        ><strong>{{ currentSheetData.length }} 行</strong></div
+        ><strong>{{ workbook.rows.length }} 行</strong></div
       ><div
         ><span>处理结果</span
-        ><strong>{{ processedData.length }} 行</strong></div
+        ><strong>{{ workbook.processed.length }} 行</strong></div
       ></div
     >
     <nav
@@ -54,6 +57,56 @@
       ></nav
     >
     <div class="demo-content">
+      <NCard
+        v-if="excelMode === 'workflow'"
+        title="导入向导与后台任务"
+        class="demo-card demo-section"
+      >
+        <NSpace
+          vertical
+          :size="20"
+        >
+          <NAlert
+            type="info"
+            :show-icon="false"
+          >
+            本地演示。下载样本再导入，可查看缺少编码、重复编码和有效行的不同结果。
+          </NAlert>
+          <NButton
+            secondary
+            @click="workflow.downloadSample"
+          >
+            <template #icon><span class="i-mdi-download" /></template>
+            下载向导样本
+          </NButton>
+          <C_ImportWizard
+            title="导入物料"
+            :fields="importFields"
+            :adapter="workflow.adapter"
+            accept=".xlsx,.xls"
+          />
+          <NSpace align="center">
+            <NButton
+              secondary
+              type="primary"
+              @click="workflow.queueExport(workbook.rows)"
+            >
+              <template #icon><span class="i-mdi-download" /></template>
+              创建演示导出任务
+            </NButton>
+            <NCheckbox v-model:checked="workflow.failOnce"
+              >模拟下一次导出失败</NCheckbox
+            >
+          </NSpace>
+          <C_TaskPanel
+            title="导出任务"
+            :tasks="workflow.tasks"
+            :pending-keys="workflow.pendingKeys"
+            @retry="workflow.retry"
+            @download="workflow.download"
+          />
+        </NSpace>
+      </NCard>
       <!-- 文件导入区域 -->
       <NCard
         v-show="excelMode === 'import'"
@@ -65,7 +118,7 @@
         </template>
 
         <NSpin
-          :show="loading && !currentSheetData.length"
+          :show="workbook.loading && !workbook.rows.length"
           :size="48"
           :rotate="false"
           description="正在读取 Excel 文件"
@@ -74,11 +127,11 @@
           <NSpace vertical>
             <div class="upload-area">
               <NUpload
-                :file-list="fileList"
-                :on-change="handleFileUpload"
+                :file-list="workbook.fileList"
+                :on-change="workbook.upload"
                 :show-file-list="false"
                 accept=".xlsx,.xls"
-                :disabled="loading"
+                :disabled="workbook.loading"
                 drag
                 class="upload-dragger"
               >
@@ -96,21 +149,21 @@
               </NUpload>
 
               <NSpace
-                v-if="fileList.length > 0"
+                v-if="workbook.fileList.length > 0"
                 class="mt-4"
               >
                 <NTag type="success">
                   <template #icon>
                     <span class="i-mdi-file-check"></span>
                   </template>
-                  {{ fileList[0].name }}
+                  {{ workbook.fileList[0].name }}
                 </NTag>
                 <NButton
                   quaternary
                   type="error"
                   size="small"
-                  :disabled="loading"
-                  @click="clearFileData"
+                  :disabled="workbook.loading"
+                  @click="workbook.clear"
                 >
                   <template #icon>
                     <span class="i-mdi-close"></span>
@@ -121,13 +174,13 @@
             </div>
 
             <!-- 工作表选择和数据预览 -->
-            <div v-if="sheets.length > 0">
+            <div v-if="workbook.sheets.length > 0">
               <div class="sheet-selector mb-3">
                 <NText class="font-semibold mr-2">选择工作表：</NText>
                 <NSelect
-                  v-model:value="selectedSheet"
-                  :options="sheetOptions"
-                  :disabled="loading"
+                  v-model:value="workbook.selectedSheet"
+                  :options="workbook.sheetOptions"
+                  :disabled="workbook.loading"
                   class="w-48"
                   placeholder="请选择工作表"
                 />
@@ -135,35 +188,33 @@
                   depth="3"
                   class="ml-4"
                 >
-                  共 {{ sheets.length }} 个工作表
+                  共 {{ workbook.sheets.length }} 个工作表
                 </NText>
               </div>
 
               <NCard
-                v-if="currentSheetData.length > 0"
+                v-if="workbook.rows.length > 0"
                 title="数据预览"
                 size="small"
                 class="mb-4"
               >
                 <template #header-extra>
                   <NSpace>
-                    <NText depth="3"
-                      >总计 {{ currentSheetData.length }} 行</NText
-                    >
+                    <NText depth="3">总计 {{ workbook.rows.length }} 行</NText>
                     <NButton
                       text
                       type="primary"
-                      @click="showAllData = !showAllData"
+                      @click="workbook.showAll = !workbook.showAll"
                     >
-                      {{ showAllData ? '收起' : '查看全部' }}
+                      {{ workbook.showAll ? '收起' : '查看全部' }}
                     </NButton>
                   </NSpace>
                 </template>
 
                 <C_Table
-                  :columns="tableColumns"
-                  :data="keyedPreviewData"
-                  :loading="loading"
+                  :columns="workbook.preview.columns"
+                  :data="workbook.preview.rows"
+                  :loading="workbook.loading"
                   class="preview-table"
                   row-key="__previewRowKey"
                   :config="{
@@ -172,7 +223,10 @@
                     display: {
                       size: 'small',
                       striped: true,
-                      scrollX: Math.max(600, tableColumns.length * 120),
+                      scrollX: Math.max(
+                        600,
+                        workbook.preview.columns.length * 120
+                      ),
                     },
                   }"
                 >
@@ -206,12 +260,12 @@
               <div class="export-form">
                 <NSpace vertical>
                   <NInput
-                    v-model:value="exportConfig.fileName"
+                    v-model:value="output.config.fileName"
                     placeholder="文件名"
                     clearable
                   />
                   <NInput
-                    v-model:value="exportConfig.sheetName"
+                    v-model:value="output.config.sheetName"
                     placeholder="工作表名"
                     clearable
                   />
@@ -219,9 +273,11 @@
               </div>
               <NButton
                 type="primary"
-                :loading="loading"
-                :disabled="!selectedSheet || currentSheetData.length === 0"
-                @click="handleExportSingle"
+                :loading="workbook.loading"
+                :disabled="
+                  !workbook.selectedSheet || workbook.rows.length === 0
+                "
+                @click="output.exportSheet"
                 block
                 class="export-button"
               >
@@ -240,12 +296,12 @@
           >
             <div class="export-card-content">
               <div class="export-form">
-                <div v-if="sheets.length > 1">
+                <div v-if="workbook.sheets.length > 1">
                   <NText class="text-sm mb-2">选择要导出的工作表：</NText>
-                  <NCheckboxGroup v-model:value="selectedSheetsForExport">
+                  <NCheckboxGroup v-model:value="output.selectedSheets">
                     <div class="checkbox-grid">
                       <NCheckbox
-                        v-for="sheet in sheets"
+                        v-for="sheet in workbook.sheets"
                         :key="sheet"
                         :value="sheet"
                         :label="sheet"
@@ -264,9 +320,9 @@
               </div>
               <NButton
                 type="info"
-                :loading="loading"
-                :disabled="selectedSheetsForExport.length === 0"
-                @click="handleExportMultiple"
+                :loading="workbook.loading"
+                :disabled="output.selectedSheets.length === 0"
+                @click="output.exportSheets"
                 block
                 class="export-button"
               >
@@ -295,7 +351,7 @@
               </div>
               <NButton
                 type="success"
-                @click="handleExportSample"
+                @click="output.exportSample"
                 block
                 class="export-button"
               >
@@ -321,7 +377,7 @@
 
         <div class="template-grid">
           <NCard
-            v-for="template in getPresetTemplates()"
+            v-for="template in output.templates"
             :key="template.name"
             :title="template.name"
             size="small"
@@ -353,8 +409,8 @@
               <NButton
                 type="primary"
                 size="small"
-                @click="downloadTemplate(template)"
-                :loading="loading"
+                @click="output.downloadTemplate(template)"
+                :loading="workbook.loading"
                 block
               >
                 <template #icon>
@@ -394,13 +450,13 @@
 
           <!-- 处理结果显示 -->
           <div
-            v-if="processedData.length > 0"
+            v-if="workbook.processed.length > 0"
             class="processed-data"
           >
             <NText class="font-semibold mb-2">处理结果预览：</NText>
             <C_Table
-              :columns="processedDataColumns"
-              :data="keyedProcessedData"
+              :columns="workbook.processedPreview.columns"
+              :data="workbook.processedPreview.rows"
               row-key="__previewRowKey"
               :config="{
                 toolbar: { show: false },
@@ -412,21 +468,25 @@
               depth="3"
               class="mt-2"
             >
-              处理后数据共 {{ processedData.length }} 条
+              处理后数据共 {{ workbook.processed.length }} 条
             </NText>
           </div>
 
           <!-- 数据统计 -->
           <div
-            v-if="dataSummary"
+            v-if="workbook.summary"
             class="data-summary"
           >
             <NText class="font-semibold mb-2">数据统计：</NText>
             <NSpace>
-              <NTag type="info">总行数: {{ dataSummary.totalRows }}</NTag>
-              <NTag type="success">非空行: {{ dataSummary.validRows }}</NTag>
-              <NTag type="warning">空行: {{ dataSummary.emptyRows }}</NTag>
-              <NTag type="primary">字段数: {{ dataSummary.totalFields }}</NTag>
+              <NTag type="info">总行数: {{ workbook.summary.totalRows }}</NTag>
+              <NTag type="success"
+                >非空行: {{ workbook.summary.validRows }}</NTag
+              >
+              <NTag type="warning">空行: {{ workbook.summary.emptyRows }}</NTag>
+              <NTag type="primary"
+                >字段数: {{ workbook.summary.totalFields }}</NTag
+              >
             </NSpace>
           </div>
         </NSpace>
@@ -478,440 +538,83 @@
 
     <!-- 状态提示 -->
     <NAlert
-      v-if="error"
+      v-if="workbook.error"
       type="error"
-      :title="error"
+      :title="workbook.error"
       closable
-      @close="clearError"
+      @close="workbook.dismissError"
       class="mt-4"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-  import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
-
-  defineOptions({ name: 'Demo30ExcelAll' })
+  import { useExcel } from '@robot-admin/file-utils'
   import { setupFileUtils } from '@/plugins/file-utils'
-  import { type UploadFileInfo, type SelectOption } from 'naive-ui/es'
-  import {
-    useExcel,
-    type ExcelRow,
-    type ExcelTemplate,
-  } from '@robot-admin/file-utils'
-
   import {
     EXCEL_STEPS,
-    PREVIEW_ROWS,
-    sampleData,
     historyColumns,
-    hasNonEmptyCell,
-    type DataSummary,
     type OperationHistoryItem,
+    type RecordOperation,
   } from './data'
+  import { useExcelExports } from './useExcelExports'
+  import { useExcelWorkbook } from './useExcelWorkbook'
+  import { importFields, useExcelWorkflowDemo } from './useExcelWorkflowDemo'
+
+  defineOptions({ name: 'Demo30ExcelAll' })
 
   setupFileUtils()
-
-  // Hooks
-  const {
-    loading,
-    error,
-    sheets,
-    data,
-    readFile,
-    exportToExcel,
-    exportMultipleSheets,
-    getPresetTemplates,
-    generateTemplate,
-    clearData,
-    clearError,
-  } = useExcel()
-
   const message = useMessage()
   const excelMode = ref('import')
-
-  // 响应式状态
-  const fileList = ref<UploadFileInfo[]>([])
-  const selectedSheet = ref('')
-  const showAllData = ref(false)
-  const selectedSheetsForExport = ref<string[]>([])
-  const processedData = ref<ExcelRow[]>([])
-  // 仅给展示副本补行键，不把内部标识写入导入、处理或导出数据。
-  const keyedPreviewData = computed(() =>
-    previewData.value.map((row, index) => ({ ...row, __previewRowKey: index }))
-  )
-  const keyedProcessedData = computed(() =>
-    processedData.value
-      .slice(0, 5)
-      .map((row, index) => ({ ...row, __previewRowKey: index }))
-  )
-  const dataSummary = ref<DataSummary | null>(null)
   const operationHistory = ref<OperationHistoryItem[]>([])
-
-  // 导出配置
-  const exportConfig = reactive({
-    fileName: '',
-    sheetName: '',
-  })
-
-  /**
-   * * @description 工作表选项
-   */
-  const sheetOptions = computed((): SelectOption[] => {
-    return sheets.value.map(sheet => ({
-      label: sheet,
-      value: sheet,
-    }))
-  })
-
-  /**
-   * * @description 当前选中工作表的数据
-   */
-  const currentSheetData = computed(() => {
-    if (!selectedSheet.value || !data.value[selectedSheet.value]) {
-      return []
-    }
-    return data.value[selectedSheet.value]
-  })
-
-  /**
-   * * @description 预览数据
-   */
-  const previewData = computed(() => {
-    if (showAllData.value) {
-      return currentSheetData.value
-    }
-    return currentSheetData.value.slice(0, PREVIEW_ROWS)
-  })
-
-  /**
-   * * @description 数据处理操作按钮配置
-   */
-  const dataProcessActions = computed(() => [
-    {
-      label: '筛选非空行',
-      icon: 'mdi:filter',
-      disabled: !selectedSheet.value || currentSheetData.value.length === 0,
-      onClick: handleFilterEmptyRows,
-    },
-    {
-      label: '数据统计',
-      icon: 'mdi:chart-bar',
-      disabled: !selectedSheet.value || currentSheetData.value.length === 0,
-      onClick: handleShowDataSummary,
-    },
-    ...(processedData.value.length > 0
-      ? [
-          {
-            label: '导出处理结果',
-            type: 'success' as const,
-            onClick: handleExportProcessedData,
-          },
-        ]
-      : []),
-  ])
-
-  /**
-   * * @description 表格列配置
-   */
-  const tableColumns = computed((): TableColumn[] => {
-    if (currentSheetData.value.length === 0) return []
-
-    const firstRow = currentSheetData.value[0]
-    return Object.keys(firstRow)
-      .filter(key => key !== '__rowIndex')
-      .map(key => ({
-        title: key,
-        key,
-        width: 120,
-        ellipsis: true,
-      }))
-  })
-
-  /**
-   * * @description 处理后数据的列配置
-   */
-  const processedDataColumns = computed((): TableColumn[] => {
-    if (processedData.value.length === 0) return []
-
-    const firstRow = processedData.value[0]
-    return Object.keys(firstRow)
-      .filter(key => key !== '__rowIndex')
-      .map(key => ({
-        title: key,
-        key,
-        width: 120,
-        ellipsis: true,
-      }))
-  })
-
-  /**
-   * * @description 添加操作历史
-   * ? @param operation - 操作类型
-   * ? @param description - 操作描述
-   * ? @param status - 操作状态
-   */
-  const addOperationHistory = (
-    operation: string,
-    description: string,
-    status: 'success' | 'error' = 'success'
+  let nextRecordId = 0
+  const record: RecordOperation = (
+    operation,
+    description,
+    status = 'success'
   ) => {
     operationHistory.value.unshift({
-      id: Date.now(),
+      id: ++nextRecordId,
       time: new Date().toLocaleString('zh-CN'),
       operation,
       description,
       status,
     })
-
-    // 保持最新 50 条记录
-    if (operationHistory.value.length > 50) {
-      operationHistory.value = operationHistory.value.slice(0, 50)
-    }
+    if (operationHistory.value.length > 50) operationHistory.value.pop()
   }
-
-  /**
-   * * @description 文件上传处理
-   */
-  const handleFileUpload = async ({ file }: { file: UploadFileInfo }) => {
-    if (!file.file) return
-
-    try {
-      await readFile(file.file)
-      fileList.value = [file]
-
-      // 自动选择第一个工作表
-      if (sheets.value.length > 0) {
-        selectedSheet.value = sheets.value[0]
-        selectedSheetsForExport.value = [sheets.value[0]]
-      }
-
-      // 设置默认导出配置
-      exportConfig.fileName = file.name?.replace(/\.[^/.]+$/, '') || '导出数据'
-      exportConfig.sheetName = selectedSheet.value
-
-      // 清空之前的处理结果
-      processedData.value = []
-      dataSummary.value = null
-
-      addOperationHistory('文件导入', `成功导入文件：${file.name}`)
-    } catch (err) {
-      addOperationHistory(
-        '文件导入',
-        `导入失败：${err instanceof Error ? err.message : '未知错误'}`,
-        'error'
-      )
-    }
-  }
-
-  /** 随项目提供的示例工作簿通过相同导入链路读取，支持离线体验。 */
-  const loadSample = async () => {
-    try {
-      const response = await fetch('/demo-files/delivery-plan.xlsx')
-      if (!response.ok) throw new Error('示例文件不可用')
-      const file = new File([await response.blob()], '迭代交付计划.xlsx', {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      })
-      await handleFileUpload({
-        file: {
-          id: crypto.randomUUID(),
-          name: file.name,
-          status: 'finished',
-          file,
-        },
-      })
-      excelMode.value = 'import'
-    } catch {
-      message.error('示例工作簿读取失败，请选择本地文件')
-    }
-  }
-
-  /**
-   * * @description 清除文件数据
-   */
-  const clearFileData = () => {
-    fileList.value = []
-    selectedSheet.value = ''
-    selectedSheetsForExport.value = []
-    processedData.value = []
-    dataSummary.value = null
-    clearData()
-    addOperationHistory('清除数据', '清除所有文件数据')
-  }
-
-  /**
-   * * @description 单表导出
-   */
-  const handleExportSingle = async () => {
-    if (!selectedSheet.value || currentSheetData.value.length === 0) {
-      message.warning('请先选择包含数据的工作表')
-      return
-    }
-
-    try {
-      await exportToExcel(currentSheetData.value, {
-        fileName: exportConfig.fileName || '导出数据.xlsx',
-        sheetName: exportConfig.sheetName || selectedSheet.value,
-      })
-      addOperationHistory('单表导出', `导出工作表：${selectedSheet.value}`)
-    } catch (err) {
-      addOperationHistory(
-        '单表导出',
-        `导出失败：${err instanceof Error ? err.message : '未知错误'}`,
-        'error'
-      )
-    }
-  }
-
-  /**
-   * * @description 多表导出
-   */
-  const handleExportMultiple = async () => {
-    if (selectedSheetsForExport.value.length === 0) {
-      message.warning('请选择要导出的工作表')
-      return
-    }
-
-    try {
-      const exportData: Record<string, ExcelRow[]> = {}
-      selectedSheetsForExport.value.forEach(sheetName => {
-        if (data.value[sheetName]) {
-          exportData[sheetName] = data.value[sheetName]
-        }
-      })
-
-      await exportMultipleSheets(exportData)
-      addOperationHistory(
-        '多表导出',
-        `导出${selectedSheetsForExport.value.length}个工作表`
-      )
-    } catch (err) {
-      addOperationHistory(
-        '多表导出',
-        `导出失败：${err instanceof Error ? err.message : '未知错误'}`,
-        'error'
-      )
-    }
-  }
-
-  /**
-   * * @description 导出示例数据
-   */
-  const handleExportSample = async () => {
-    try {
-      await exportToExcel(sampleData, {
-        fileName: '员工信息示例.xlsx',
-        sheetName: '员工列表',
-      })
-      addOperationHistory('示例导出', '导出员工信息示例数据')
-    } catch (err) {
-      addOperationHistory(
-        '示例导出',
-        `导出失败：${err instanceof Error ? err.message : '未知错误'}`,
-        'error'
-      )
-    }
-  }
-
-  /**
-   * * @description 下载模板
-   */
-  const downloadTemplate = async (template: ExcelTemplate) => {
-    try {
-      await generateTemplate(template)
-      addOperationHistory('模板下载', `下载模板：${template.name}`)
-    } catch (err) {
-      addOperationHistory(
-        '模板下载',
-        `下载失败：${err instanceof Error ? err.message : '未知错误'}`,
-        'error'
-      )
-    }
-  }
-
-  /**
-   * * @description 筛选非空行（业务层处理示例）
-   */
-  const handleFilterEmptyRows = () => {
-    if (currentSheetData.value.length === 0) return
-
-    const filtered = currentSheetData.value.filter(hasNonEmptyCell)
-
-    processedData.value = filtered
-    message.success(`筛选完成，共 ${filtered.length} 条有效数据`)
-    addOperationHistory('数据筛选', `筛选出${filtered.length}条非空数据`)
-  }
-
-  /**
-   * * @description 显示数据统计（业务层处理示例）
-   */
-  const handleShowDataSummary = () => {
-    if (currentSheetData.value.length === 0) return
-
-    const totalRows = currentSheetData.value.length
-    const validRows = currentSheetData.value.filter(hasNonEmptyCell).length
-    const emptyRows = totalRows - validRows
-    const totalFields =
-      currentSheetData.value.length > 0
-        ? Object.keys(currentSheetData.value[0]).filter(
-            key => key !== '__rowIndex'
-          ).length
-        : 0
-
-    dataSummary.value = {
-      totalRows,
-      validRows,
-      emptyRows,
-      totalFields,
-    }
-
-    message.info(`统计完成：总计 ${totalRows} 行，有效 ${validRows} 行`)
-    addOperationHistory(
-      '数据统计',
-      `统计${totalRows}行数据，有效${validRows}行`
-    )
-  }
-
-  /**
-   * * @description 导出处理结果
-   */
-  const handleExportProcessedData = async () => {
-    if (processedData.value.length === 0) return
-
-    try {
-      await exportToExcel(processedData.value, {
-        fileName: `处理结果_${new Date().toISOString().split('T')[0]}.xlsx`,
-        sheetName: '处理结果',
-      })
-      addOperationHistory(
-        '导出处理结果',
-        `导出${processedData.value.length}条处理后数据`
-      )
-    } catch (err) {
-      addOperationHistory(
-        '导出处理结果',
-        `导出失败：${err instanceof Error ? err.message : '未知错误'}`,
-        'error'
-      )
-    }
-  }
-
-  /**
-   * * @description 清空操作历史
-   */
   const clearHistory = () => {
     operationHistory.value = []
     message.success('操作历史已清空')
   }
 
-  // 监听选中工作表变化
-  watch(selectedSheet, newSheet => {
-    if (newSheet) {
-      exportConfig.sheetName = newSheet
-      processedData.value = []
-      dataSummary.value = null
-    }
-  })
+  const excel = useExcel()
+  const workbook = useExcelWorkbook(excel, record)
+  const output = useExcelExports(excel, workbook, record)
+  const workflow = proxyRefs(useExcelWorkflowDemo())
+  const loadSample = async () => {
+    if (await workbook.loadSample()) excelMode.value = 'import'
+  }
+
+  const dataProcessActions = computed(() => [
+    {
+      label: '筛选非空行',
+      icon: 'mdi:filter',
+      disabled: !workbook.rows.length,
+      onClick: workbook.filterEmpty,
+    },
+    {
+      label: '数据统计',
+      icon: 'mdi:chart-bar',
+      disabled: !workbook.rows.length,
+      onClick: workbook.summarize,
+    },
+    {
+      label: '导出处理结果',
+      type: 'success' as const,
+      show: () => workbook.processed.length > 0,
+      onClick: output.exportProcessed,
+    },
+  ])
 </script>
 
 <style lang="scss" scoped>

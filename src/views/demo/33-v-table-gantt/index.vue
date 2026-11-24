@@ -163,28 +163,20 @@
 </template>
 <script setup lang="ts">
   defineOptions({ name: 'Demo33VTableGantt' })
+  import { s_themeStore } from '@/stores/theme'
   import {
-    appendGanttGroup,
     type GanttExpose,
     type GanttOptions,
     type GanttTaskChanges,
-    type GanttTaskCellLayout,
-    type GanttTaskBarLayout,
-    type GanttTimelineLayout,
   } from '@robot-admin/naive-ui-components/C_VtableGantt'
-  import { VRender } from '@visactor/vtable-gantt'
   import {
     type TabConfig,
     type DemoGanttTask,
     PRESET_DESCRIPTIONS as presetDescriptions,
     createInitialData,
-    createCustomOptions,
     PROJECT_OPTIONS,
   } from './data'
-
-  // ==================== 响应式数据 ====================
-
-  import { s_themeStore } from '@/stores/theme'
+  import { createCustomGanttOptions } from './customRendering'
 
   const message = useMessage()
   const activeTab = ref('project')
@@ -202,215 +194,6 @@
 
   // 初始化甘特图数据 - 利用类型推导
   const ganttData = ref(createInitialData())
-
-  // ==================== 自定义布局函数 ====================
-
-  // 任务单元格自定义布局
-  const createTaskCellLayout =
-    (barColors: string[]): GanttTaskCellLayout<DemoGanttTask> =>
-    args => {
-      const { table, row, col, rect } = args
-      const taskRecord = table.getCellOriginRecord(col, row)
-      const { height, width } = rect ?? table.getCellRect(col, row)
-      const container = new VRender.Group({
-        y: 10,
-        x: 20,
-        height: height - 20,
-        width: width - 40,
-        fill: 'white',
-        display: 'flex',
-        flexDirection: 'column',
-        cornerRadius: 30,
-      })
-
-      if (!taskRecord) {
-        return { rootContainer: container, renderDefault: true }
-      }
-
-      container.add(
-        new VRender.Text({
-          text: taskRecord.developer,
-          fontSize: 16,
-          fontFamily: 'sans-serif',
-          fill: barColors[args.row % barColors.length],
-          fontWeight: 'bold',
-          maxLineWidth: width - 120,
-          boundsPadding: [10, 0, 0, 0],
-          alignSelf: 'center',
-        })
-      )
-
-      container.add(
-        new VRender.Text({
-          text: `${new Date(taskRecord.start).toLocaleDateString()}-${new Date(taskRecord.end ?? taskRecord.start).toLocaleDateString()}`,
-          fontSize: 12,
-          fontFamily: 'sans-serif',
-          fontWeight: 'bold',
-          fill: 'black',
-          boundsPadding: [10, 0, 0, 0],
-          alignSelf: 'center',
-        })
-      )
-
-      return { rootContainer: container, expectedWidth: 160 }
-    }
-
-  // 任务条自定义布局
-  const createTaskBarLayout =
-    (
-      barColors0: string[],
-      barColors: string[]
-    ): GanttTaskBarLayout<DemoGanttTask> =>
-    args => {
-      const { width, height, index, taskDays, progress, taskRecord } = args
-      const colorLength = barColors.length
-      const container = new VRender.Group({
-        width,
-        height,
-        cornerRadius: 30,
-        fill: {
-          gradient: 'linear',
-          x0: 0,
-          y0: 0,
-          x1: 1,
-          y1: 0,
-          stops: [
-            { offset: 0, color: barColors0[index % colorLength] },
-            { offset: 0.5, color: barColors[index % colorLength] },
-            { offset: 1, color: barColors0[index % colorLength] },
-          ],
-        },
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'nowrap',
-      })
-
-      // 左侧头像
-      const containerLeft = new VRender.Group({
-        height,
-        width: 60,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-      })
-      containerLeft.add(
-        new VRender.Image({
-          width: 50,
-          height: 50,
-          image: taskRecord.avatar,
-          cornerRadius: 25,
-        })
-      )
-      appendGanttGroup(container, containerLeft)
-
-      // 中间信息
-      const containerCenter = new VRender.Group({
-        height,
-        width: width - (width >= 120 ? 120 : 60),
-        display: 'flex',
-        flexDirection: 'column',
-      })
-
-      containerCenter.add(
-        new VRender.Text({
-          text: taskRecord.developer,
-          fontSize: 16,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          fontWeight: 'bold',
-          maxLineWidth: width - (width >= 120 ? 120 : 60),
-          boundsPadding: [10, 0, 0, 0],
-        })
-      )
-
-      containerCenter.add(
-        new VRender.Text({
-          text: `${taskDays || 1}天`,
-          fontSize: 13,
-          fontFamily: 'sans-serif',
-          fill: 'white',
-          boundsPadding: [10, 0, 0, 0],
-        })
-      )
-      appendGanttGroup(container, containerCenter)
-
-      // 右侧进度
-      if (width >= 120) {
-        const containerRight = new VRender.Group({
-          cornerRadius: 20,
-          fill: 'white',
-          height: 40,
-          width: 40,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boundsPadding: [10, 0, 0, 0],
-        })
-        containerRight.add(
-          new VRender.Text({
-            text: `${progress || 0}%`,
-            fontSize: 12,
-            fontFamily: 'sans-serif',
-            fill: 'black',
-            alignSelf: 'center',
-            fontWeight: 'bold',
-            maxLineWidth: (width - 60) / 2,
-            boundsPadding: [0, 0, 0, 0],
-          })
-        )
-        appendGanttGroup(container, containerRight)
-      }
-
-      return { rootContainer: container }
-    }
-
-  // 时间轴头部自定义布局
-  const createTimelineLayout = (): GanttTimelineLayout => args => {
-    const { width, height, dateIndex } = args
-    const container = new VRender.Group({
-      width,
-      height,
-      fill: '#f0f0fb',
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
-    })
-
-    const containerLeft = new VRender.Group({
-      height,
-      width: 30,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'space-around',
-    })
-    containerLeft.add(new VRender.Text({ text: '📅', fontSize: 16 }))
-    appendGanttGroup(container, containerLeft)
-
-    const containerCenter = new VRender.Group({
-      height,
-      width: width - 30,
-      display: 'flex',
-      flexDirection: 'column',
-    })
-    containerCenter.add(
-      new VRender.Text({
-        text: String(dateIndex).padStart(2, '0'),
-        fontSize: 20,
-        fontWeight: 'bold',
-        fontFamily: 'sans-serif',
-        fill: 'black',
-        textAlign: 'right',
-        maxLineWidth: width - 30,
-        boundsPadding: [15, 0, 0, 0],
-      })
-    )
-    appendGanttGroup(container, containerCenter)
-
-    return { rootContainer: container }
-  }
 
   // ==================== Tab 配置 ====================
 
@@ -510,13 +293,7 @@
         '展示自定义渲染的强大功能，包含头像、进度、渐变色等高级视觉效果。',
       ganttTitle: '团队任务看板',
       height: '710px',
-      options: computed(() =>
-        createCustomOptions(
-          createTaskCellLayout,
-          createTaskBarLayout,
-          createTimelineLayout
-        )
-      ),
+      options: createCustomGanttOptions(),
     },
   ]
 

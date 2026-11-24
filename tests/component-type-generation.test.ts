@@ -29,6 +29,12 @@ test('空入口两次生成仍保留完整库组件与组合函数类型，不�
         `${name}: typeof import('@robot-admin/naive-ui-components/${name}')['${name}']`
       )
     }
+    for (const name of ['C_Header', 'C_contextPicker', 'C_chart']) {
+      expect(first).toContain(`${name}: typeof import(`)
+      expect(second).toContain(`${name}: typeof import(`)
+    }
+    expect(first).not.toContain('/views/')
+    expect(second).not.toContain('/views/')
     const auto = await readFile(join(directory, 'auto-imports.d.ts'), 'utf8')
     expect(auto).toContain("typeof import('vue')['ref']")
     expect(auto).toContain("typeof import('naive-ui')['useMessage']")

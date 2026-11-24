@@ -5,6 +5,8 @@
  * @Description: 与项目模块对应的穿梭选择示例配置
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import type { TransferColumn } from '@robot-admin/naive-ui-components/C_Transfer'
+
 /** 分配范围由业务定义，组件从 data 推导记录和字符串键。 */
 export interface AssignmentItem {
   key: string
@@ -12,7 +14,18 @@ export interface AssignmentItem {
   description: string
   icon: string
   disabled?: boolean
+  section?: string
+  group?: string
 }
+
+export const PERMISSION_COLUMNS = [
+  { key: 'label', title: '权限名称' },
+  { key: 'description', title: '权限说明' },
+] satisfies TransferColumn<AssignmentItem>[]
+
+/** 权限候选先按模块、再按权限分组。 */
+export const permissionPath = (item: AssignmentItem) =>
+  item.section && item.group ? [item.section, item.group] : []
 
 /** 搜索名称和业务描述，保持页面提示与实际筛选行为一致。 */
 export const filterAssignmentItems = (
@@ -40,30 +53,40 @@ export const TRANSFER_SCENES = {
         label: '首页工作台',
         icon: 'mdi:home-outline',
         description: '项目概览与工作空间',
+        section: '核心功能',
+        group: '工作台',
       },
       {
         key: 'analysis',
         label: '工程分析',
         icon: 'mdi:chart-box-outline',
         description: '依赖、构建与性能指标',
+        section: '核心功能',
+        group: '工程指标',
       },
       {
         key: 'usage',
         label: '使用统计',
         icon: 'mdi:chart-line',
         description: '访问与交互事件',
+        section: '核心功能',
+        group: '工程指标',
       },
       {
         key: 'users',
         label: '用户管理',
         icon: 'mdi:account-outline',
         description: '账号与状态维护',
+        section: '系统管理',
+        group: '组织权限',
       },
       {
         key: 'roles',
         label: '角色管理',
         icon: 'mdi:shield-account-outline',
         description: '平台管理员保留',
+        section: '系统管理',
+        group: '组织权限',
         disabled: true,
       },
       {
@@ -71,6 +94,8 @@ export const TRANSFER_SCENES = {
         label: '菜单管理',
         icon: 'mdi:menu',
         description: '平台管理员保留',
+        section: '系统管理',
+        group: '组织权限',
         disabled: true,
       },
       {
@@ -78,6 +103,8 @@ export const TRANSFER_SCENES = {
         label: '操作日志',
         icon: 'mdi:text-box-search-outline',
         description: '行为追踪与审计',
+        section: '系统管理',
+        group: '审计',
       },
     ] satisfies AssignmentItem[],
   },

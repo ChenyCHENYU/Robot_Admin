@@ -23,14 +23,15 @@ npm / yarn / pnpm
 
 ### 命名规范（违反则不合规）
 
-| 类型         | 约定                       | 正确                 | 错误              |
-| ------------ | -------------------------- | -------------------- | ----------------- |
-| Store 导出   | `s_` + camelCase + `Store` | `s_userStore`        | `useUserStore`    |
-| 全局组件目录 | `C_` + PascalCase          | `C_Header/`          | `header/`         |
-| 局部组件目录 | `c_` + camelCase           | `c_detail/`          | `Detail/`         |
-| 工具函数文件 | `d_` 前缀                  | `d_authSession.ts`   | `auth.ts`         |
-| Composable   | `use` + PascalCase         | `useLoginController` | `loginController` |
-| API 函数     | 动词 + 资源 + `Api`        | `getUserListApi`     | `getUsers`        |
+| 类型             | 约定                                     | 正确                       | 错误                         |
+| ---------------- | ---------------------------------------- | -------------------------- | ---------------------------- |
+| Store 导出       | `s_` + camelCase + `Store`               | `s_userStore`              | `useUserStore`               |
+| 全局组件目录     | `C_` + PascalCase                        | `C_Header/`                | `header/`                    |
+| 项目复用组件目录 | `c_` + camelCase                         | `c_detail/`                | `Detail/`                    |
+| 页面私有组件     | PascalCase，放在所属模块的 `components/` | `components/ProcessTrace/` | `components/c_processTrace/` |
+| 工具函数文件     | `d_` 前缀                                | `d_authSession.ts`         | `auth.ts`                    |
+| Composable       | `use` + PascalCase                       | `useLoginController`       | `loginController`            |
+| API 函数         | 动词 + 资源 + `Api`                      | `getUserListApi`           | `getUsers`                   |
 
 ### 组件必须声明 name
 
@@ -61,10 +62,12 @@ Pinia:   defineStore · storeToRefs
 VueUse:  useLocalStorage · useClipboard · useDebounceFn
 NaiveUI: NCard · NButton · NSpace · NInput · NSelect · NTag · NModal · NDrawer
          NGrid · NGi · NTabs · NTabPane · useMessage · useDialog · useNotification
-C_*:     C_Table · C_Form · C_ActionBar · C_Icon · C_Tree … (63 个，用 MCP 查询)
+C_*:     C_Table · C_Form · C_ActionBar · C_Icon · C_Tree … (78 个，用 MCP 查询)
 ```
 
-领域 Store 和页面控制器显式导入；只自动扫描 `src/composables/`。
+`src/components/global` 的 `C_` 和 `src/components/local` 的 `c_` 在模板中按原名自动导入。仅服务当前页面或业务模块的组件放在 `src/views/<模块>/components/`，使用 PascalCase，由消费页面显式导入。大型页面在确有独立职责或内部复用需求时再拆组件。
+
+领域 Store 和页面控制器显式导入。通用组合函数自动扫描 `src/composables/`。
 
 ---
 
@@ -76,7 +79,7 @@ C_*:     C_Table · C_Form · C_ActionBar · C_Icon · C_Tree … (63 个，用 
 
 | 包                                 | 用途                                                   |
 | ---------------------------------- | ------------------------------------------------------ |
-| `@robot-admin/naive-ui-components` | 63 业务组件（C_Form / C_Table / C_ActionBar…）         |
+| `@robot-admin/naive-ui-components` | 78 业务组件（C_Form / C_Table / C_ActionBar…）         |
 | `@robot-admin/request-core`        | HTTP 请求（getData / postData / useTableCrud）         |
 | `@robot-admin/form-validate`       | 表单验证（Naive / Element 双框架，48+ 规则）           |
 | `@robot-admin/directives`          | 11 个 Vue 指令（v-copy / v-permission / v-watermark…） |

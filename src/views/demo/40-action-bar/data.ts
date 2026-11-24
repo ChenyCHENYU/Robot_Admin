@@ -54,13 +54,6 @@ export const MOCK_TABLE_DATA: EmployeeRow[] = [
   },
 ]
 
-// 日志条目类型
-export interface LogItem {
-  time: string
-  message: string
-  type: string
-}
-
 // 自定义配置初始值
 export const DEFAULT_CUSTOM_CONFIG: ActionBarConfig = {
   align: 'left',
@@ -79,7 +72,7 @@ export const ACTION_SIZE_OPTIONS = [
   { label: '大型', value: 'large' },
 ]
 
-// 场景六：「更多」下拉子选项配置，页面为每项绑定可等待的 onClick。
+// 「更多」和「设置」的演示事件由页面统一展示。
 export const MORE_DROPDOWN_ITEMS: ActionDropdownItem[] = [
   { key: 'export-excel', label: '导出Excel', icon: 'mdi:file-excel' },
   { key: 'export-pdf', label: '导出PDF', icon: 'mdi:file-pdf' },

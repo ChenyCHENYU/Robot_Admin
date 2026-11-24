@@ -11,15 +11,23 @@ import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import { createAutoImportConfig } from './src/config/vite/viteAutoImportConfig.ts'
+import { projectComponentGlobs } from './src/config/vite/viteComponentsConfig.ts'
 
 export default defineConfig({
   plugins: [
     vue(),
     createAutoImportConfig(false),
-    Components({ dts: false, dirs: [], resolvers: [NaiveUiResolver()] }),
+    Components({
+      dts: false,
+      globs: projectComponentGlobs,
+      resolvers: [NaiveUiResolver()],
+    }),
   ],
   resolve: {
-    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      _views: fileURLToPath(new URL('./src/views', import.meta.url)),
+    },
     dedupe: ['vue'],
   },
   test: {

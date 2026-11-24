@@ -7,6 +7,17 @@
  */
 @use '../shared/workspace';
 @include workspace.page;
+.shipping-views {
+  padding: 12px;
+}
+
+.shipping-card-customer {
+  display: block;
+  margin-block-start: 4px;
+  color: var(--app-text-secondary);
+  font-size: 12px;
+}
+
 .shipping-stages {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

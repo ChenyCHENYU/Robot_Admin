@@ -18,44 +18,48 @@
       >
         <NButton
           size="small"
-          @click="tab = 'capacity'"
+          @click="view.heats.tab = 'capacity'"
           :render-icon="actionIcons.chartBar"
           >查看产能负荷</NButton
         ><NButton
           type="primary"
           size="small"
-          :disabled="releaseReadyCount === 0"
-          @click="release"
+          :disabled="view.release.readyCount === 0"
+          @click="view.release.confirm"
           :render-icon="actionIcons.sendOutline"
           >下达选中计划</NButton
         >
       </PageHeading>
       <dl class="ps-metrics"
         ><div
-          ><dt>当班排产</dt><dd>{{ rows.length }}<small>项计划</small></dd></div
+          ><dt>当班排产</dt
+          ><dd>{{ view.ledger.allRows.length }}<small>项计划</small></dd></div
         ><div
-          ><dt>计划总量</dt><dd>{{ totalWeight }}<small>t</small></dd></div
+          ><dt>计划总量</dt
+          ><dd>{{ view.metrics.weight }}<small>t</small></dd></div
         ><div
-          ><dt>待下达</dt><dd>{{ pending }}<small>项待办</small></dd></div
+          ><dt>待下达</dt
+          ><dd>{{ view.metrics.pending }}<small>项待办</small></dd></div
         ><div
-          ><dt>当班炉次</dt><dd>{{ totalHeats }}<small>炉</small></dd></div
+          ><dt>当班炉次</dt
+          ><dd>{{ view.metrics.heats }}<small>炉</small></dd></div
         ></dl
       >
       <C_FormSearch
         class="ps-search"
-        v-model="query"
+        v-model="view.search.query"
         :form-item-list="PLAN_FIELDS"
-        :config="searchConfig"
+        :config="view.search.config"
       >
         <template #actions>
           <C_DataPicker
-            :source="planPickerSource"
+            :source="view.picker.source"
             :columns="PLAN_PICKER_COLUMNS"
-            :initial-values="planPickerInitial"
+            :initial-values="view.picker.initial"
             :page-size="6"
             require-selection
             title="进阶查询 · 定位计划"
-            @select="locatePlan"
+            @select="view.picker.locate"
           >
             <template #trigger="{ open, disabled }">
               <NButton
@@ -69,7 +73,7 @@
             <template #query="{ initialValues, submit }">
               <C_FormSearch
                 class="plan-picker-query"
-                :model-value="initialValues ?? planPickerInitial"
+                :model-value="initialValues ?? view.picker.initial"
                 :form-item-list="PLAN_PICKER_FIELDS"
                 :config="PLAN_PICKER_SEARCH"
                 :bordered="false"
@@ -79,6 +83,53 @@
           </C_DataPicker>
         </template>
       </C_FormSearch>
+      <section
+        class="ps-panel plan-picker-tools"
+        aria-label="生产计划选择"
+      >
+        <C_DataPicker
+          :source="view.picker.source"
+          :columns="PLAN_PICKER_COLUMNS"
+          :initial-values="view.picker.initial"
+          :page-size="6"
+          :popup="{ width: 560, maxHeight: 280 }"
+          placeholder="输入计划号或客户，快速定位"
+          title="快捷计划定位"
+          presentation="popover"
+          commit-on-select
+          @select="view.picker.locate"
+        />
+        <C_DataPicker
+          v-model="view.picker.batchValue"
+          :source="view.picker.batchSource"
+          :columns="PLAN_PICKER_COLUMNS"
+          :max-selection="20"
+          title="批量核对计划编号"
+          multiple
+          batch-paste
+        >
+          <template #trigger="{ open, disabled }">
+            <NButton
+              size="small"
+              :disabled="disabled"
+              :render-icon="actionIcons.clipboardListOutline"
+              @click="open"
+              >批量核对计划</NButton
+            >
+          </template>
+        </C_DataPicker>
+        <span
+          class="ps-footnote"
+          role="status"
+          >{{
+            view.picker.batchLabels.length
+              ? `已核对 ${view.picker.batchLabels.length} 项 · ${view.picker.batchLabels.join('、')}`
+              : view.ledger.allRows.length
+                ? `可复制计划号 ${view.ledger.allRows[0].planNo}，在批量选择中按行粘贴。`
+                : '可在批量选择中按行粘贴计划号。'
+          }}</span
+        >
+      </section>
       <div class="plan-workspace">
         <aside
           class="ps-panel plan-resources"
@@ -87,8 +138,8 @@
             ><h2>生产资源</h2><span>钢后 · 连铸</span></header
           >
           <C_Tree
-            v-model:selected-keys="selectedLines"
-            v-model:expanded-keys="expandedLines"
+            v-model:selected-keys="view.lines.selected"
+            v-model:expanded-keys="view.lines.expanded"
             :data="LINE_TREE"
             :tree-props="LINE_TREE_PROPS"
             :show-toolbar="false"
@@ -111,16 +162,16 @@
             ><header class="ps-panel-heading"
               ><h2>排产计划台账</h2
               ><span
-                >{{ displayedPlans }} 项 · 已选
-                {{ selectedIds.length }} 项</span
+                >{{ view.ledger.displayedCount }} 项 · 已选
+                {{ view.ledger.selectedIds.length }} 项</span
               ></header
             >
             <div class="ps-toolbar plan-ledger-toolbar">
-              <C_ActionBar :actions="actions" />
+              <C_ActionBar :actions="view.editing.actions" />
               <span class="plan-scope">
-                {{ lineLabel }}
-                <template v-if="releaseReadyCount">
-                  · {{ releaseReadyCount }} 项可下达</template
+                {{ view.lines.label }}
+                <template v-if="view.release.readyCount">
+                  · {{ view.release.readyCount }} 项可下达</template
                 >
               </span>
             </div>
@@ -128,46 +179,48 @@
               class="ps-grid plan-main-grid"
               :class="{
                 'plan-main-grid--short':
-                  displayedPlans > 0 && displayedPlans <= 3,
-                'plan-main-grid--empty': gridEmpty,
+                  view.ledger.displayedCount > 0 &&
+                  view.ledger.displayedCount <= 3,
+                'plan-main-grid--empty': view.ledger.empty,
               }"
               ><MachTable
                 v-bind="BUSINESS_GRID"
                 :pagination="BUSINESS_PAGINATION"
-                :ref="table.ref"
+                :ref="view.ledger.grid.ref"
                 column-layout="normal"
                 :dom-layout="
-                  displayedPlans > 0 && displayedPlans <= 3
+                  view.ledger.displayedCount > 0 &&
+                  view.ledger.displayedCount <= 3
                     ? 'autoHeight'
                     : 'normal'
                 "
-                :row-data="visibleRows"
-                :column-defs="columns"
-                :locale="ledgerLocale"
-                @row-clicked="selectPlan"
-                @model-updated="onLedgerModelUpdated"
-                :row-style-rules="rowStyles"
+                :row-data="view.ledger.rows"
+                :column-defs="view.ledger.columns"
+                :locale="view.ledger.locale"
+                @row-clicked="view.ledger.selectRow"
+                @model-updated="view.ledger.modelUpdated"
+                :row-style-rules="view.ledger.rowStyles"
                 row-selection="multiple"
-                :row-drag="reorderEnabled"
-                :row-drag-policy="dragPolicy"
+                :row-drag="view.ledger.canReorder"
+                :row-drag-policy="view.ledger.dragPolicy"
                 :theme="themeStore.isDark ? 'dark' : 'light'"
-                @selection-changed="syncSelection"
-                @row-drag-end="onReorder"
+                @selection-changed="view.ledger.syncSelection"
+                @row-drag-end="view.ledger.onReorder"
             /></div>
             <div
-              v-if="gridEmpty && lineHasPlans"
+              v-if="view.ledger.empty && view.lines.hasPlans"
               class="plan-empty-action"
             >
               <NButton
                 size="small"
                 secondary
                 :render-icon="actionIcons.restore"
-                @click="clearLedgerFilters"
+                @click="view.search.clear"
                 >清除台账筛选</NButton
               >
             </div>
             <p
-              v-if="!gridEmpty"
+              v-if="!view.ledger.empty"
               class="ps-footnote"
               >点击行联动炉次，蓝色计划号查看详情。淡黄色表示已下达；未筛选时可拖动待下达计划的顺序。</p
             >
@@ -177,14 +230,17 @@
             aria-label="计划协同详情"
             ><header class="ps-panel-heading"
               ><h2>{{
-                current ? `${current.planNo} · 计划协同` : '计划协同'
+                view.heats.plan
+                  ? `${view.heats.plan.planNo} · 计划协同`
+                  : '计划协同'
               }}</h2
-              ><span v-if="current"
-                >{{ current.grade }} / {{ current.section }} mm</span
+              ><span v-if="view.heats.plan"
+                >{{ view.heats.plan.grade }} /
+                {{ view.heats.plan.section }} mm</span
               ></header
             >
             <NTabs
-              v-model:value="tab"
+              v-model:value="view.heats.tab"
               type="line"
               size="small"
               class="plan-tabs"
@@ -192,25 +248,25 @@
               ><NTab name="capacity">产能负荷</NTab></NTabs
             >
             <div
-              v-if="tab === 'heats' && current"
+              v-if="view.heats.tab === 'heats' && view.heats.plan"
               class="plan-heat-context"
             >
               <div class="plan-heat-meta">
                 <NTag
                   size="small"
                   :bordered="false"
-                  :type="PLAN_STATES[current.status].type"
+                  :type="PLAN_STATES[view.heats.plan.status].type"
                 >
-                  {{ PLAN_STATES[current.status].label }}
+                  {{ PLAN_STATES[view.heats.plan.status].label }}
                 </NTag>
-                <span>{{ current.cast }} 浇次</span>
-                <span>{{ current.customer }}</span>
+                <span>{{ view.heats.plan.cast }} 浇次</span>
+                <span>{{ view.heats.plan.customer }}</span>
                 <span
-                  >{{ current.heats }} 炉 /
-                  {{ formatWeight(current.weight) }} t</span
+                  >{{ view.heats.plan.heats }} 炉 /
+                  {{ formatWeight(view.heats.plan.weight) }} t</span
                 >
                 <span
-                  v-if="locatedOutsideLedger"
+                  v-if="view.heats.outsideLedger"
                   class="plan-located"
                   >已定位 · 台账未显示</span
                 >
@@ -219,21 +275,21 @@
                 size="small"
                 text
                 :render-icon="actionIcons.eyeOutline"
-                @click="openDetail(current)"
+                @click="view.inspection.open(view.heats.plan)"
                 >查看计划详情</NButton
               >
             </div>
             <div
-              v-if="tab === 'heats' && current"
+              v-if="view.heats.tab === 'heats' && view.heats.plan"
               class="ps-grid"
               ><MachTable
                 v-bind="BUSINESS_CONTENT_GRID"
-                :row-data="heatRows"
-                :column-defs="heatColumns"
+                :row-data="view.heats.rows"
+                :column-defs="view.heats.columns"
                 :theme="themeStore.isDark ? 'dark' : 'light'"
             /></div>
             <NEmpty
-              v-else-if="tab === 'heats'"
+              v-else-if="view.heats.tab === 'heats'"
               class="plan-detail-empty"
               size="small"
               description="暂无可关联的炉次编排"
@@ -242,7 +298,7 @@
               v-else
               class="plan-capacity"
               ><div
-                v-for="load in loads"
+                v-for="load in view.lines.capacity"
                 :key="load.line"
                 ><header
                   ><strong>{{ load.label }}</strong
@@ -278,7 +334,7 @@
                     size="small"
                     text
                     :render-icon="actionIcons.arrowRight"
-                    @click="focusLine(load.line)"
+                    @click="view.lines.focus(load.line)"
                     >查看产线计划</NButton
                   >
                 </footer>
@@ -290,18 +346,18 @@
       <p
         role="status"
         class="ps-status-line"
-        >{{ notice }}</p
+        >{{ view.notice }}</p
       >
       <C_FormModal
-        :editor="editor"
+        :editor="view.editing.editor"
         :options="PLAN_EDIT_FIELDS"
         :config="BUSINESS_FORM"
         :mask-closable="false"
         create-text="保存计划"
       />
       <NModal
-        v-model:show="detailVisible"
-        v-if="detailPlan"
+        v-model:show="view.inspection.visible"
+        v-if="view.inspection.plan"
         preset="card"
         title="生产计划详情"
         size="small"
@@ -318,38 +374,39 @@
           :column="2"
         >
           <NDescriptionsItem label="计划号">{{
-            detailPlan.planNo
+            view.inspection.plan.planNo
           }}</NDescriptionsItem>
           <NDescriptionsItem label="状态">{{
-            PLAN_STATES[detailPlan.status].label
+            PLAN_STATES[view.inspection.plan.status].label
           }}</NDescriptionsItem>
           <NDescriptionsItem label="产线 / 浇次"
-            >{{ detailPlan.line }} / {{ detailPlan.cast }}</NDescriptionsItem
+            >{{ view.inspection.plan.line }} /
+            {{ view.inspection.plan.cast }}</NDescriptionsItem
           >
           <NDescriptionsItem label="客户">{{
-            detailPlan.customer
+            view.inspection.plan.customer
           }}</NDescriptionsItem>
           <NDescriptionsItem label="钢种 / 断面"
-            >{{ detailPlan.grade }} /
-            {{ detailPlan.section }}</NDescriptionsItem
+            >{{ view.inspection.plan.grade }} /
+            {{ view.inspection.plan.section }}</NDescriptionsItem
           >
           <NDescriptionsItem label="计划量 / 炉数"
-            >{{ detailPlan.weight }} t /
-            {{ detailPlan.heats }} 炉</NDescriptionsItem
+            >{{ view.inspection.plan.weight }} t /
+            {{ view.inspection.plan.heats }} 炉</NDescriptionsItem
           >
         </NDescriptions>
         <NDivider :style="{ margin: '12px 0' }">炉次编排</NDivider>
         <div class="ps-grid"
           ><MachTable
             v-bind="BUSINESS_CONTENT_GRID"
-            :row-data="detailHeatRows"
-            :column-defs="heatColumns"
+            :row-data="view.inspection.heats"
+            :column-defs="view.heats.columns"
             :theme="themeStore.isDark ? 'dark' : 'light'"
         /></div>
         <template #footer
           ><NButton
             size="small"
-            @click="detailVisible = false"
+            @click="view.inspection.visible = false"
             :render-icon="actionIcons.close"
             >关闭详情</NButton
           ></template
@@ -363,7 +420,6 @@
   import '@agile-team/mach-table-vue/styles.css'
   import { MachTable } from '@agile-team/mach-table-vue'
   import { s_themeStore } from '@/stores/theme'
-  import PageHeading from '../components/c_pageHeading/index.vue'
   import {
     BUSINESS_GRID,
     BUSINESS_PAGINATION,
@@ -376,7 +432,6 @@
   import { PLAN_EDIT_FIELDS } from './operations'
   import '@robot-admin/naive-ui-components/C_DataPicker/style.css'
   import {
-    useProductionPlan,
     PLAN_FIELDS,
     PLAN_PICKER_COLUMNS,
     PLAN_PICKER_FIELDS,
@@ -385,55 +440,12 @@
     LINE_TREE_PROPS,
     PLAN_STATES,
   } from './data'
+  import { useProductionPlan } from './useProductionPlan'
+  import PageHeading from '../components/PageHeading/index.vue'
   defineOptions({ name: 'ProductionPlanWorkbench' })
   const themeStore = s_themeStore()
   const formatWeight = weightCodec.format
-  const {
-    rows,
-    query,
-    searchConfig,
-    planPickerInitial,
-    planPickerSource,
-    locatePlan,
-    selectedLines,
-    lineLabel,
-    expandedLines,
-    visibleRows,
-    current,
-    locatedOutsideLedger,
-    displayedPlans,
-    gridEmpty,
-    lineHasPlans,
-    ledgerLocale,
-    clearLedgerFilters,
-    onLedgerModelUpdated,
-    pending,
-    totalWeight,
-    totalHeats,
-    selectedIds,
-    columns,
-    selectPlan,
-    detailPlan,
-    openDetail,
-    detailHeatRows,
-    table,
-    rowStyles,
-    heatRows,
-    heatColumns,
-    loads,
-    focusLine,
-    releaseReadyCount,
-    tab,
-    notice,
-    release,
-    syncSelection,
-    reorderEnabled,
-    dragPolicy,
-    onReorder,
-    editor,
-    actions,
-    detailVisible,
-  } = useProductionPlan()
+  const view = proxyRefs(useProductionPlan())
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

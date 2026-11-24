@@ -83,19 +83,23 @@ export function useAudioWorkspace() {
     playing.value = false
   })
   return {
-    tracks,
-    activeIndex,
-    activeTrack,
-    cover,
-    theme,
-    showPlaylist,
-    playing,
-    lastEvent,
-    handlePlay,
-    handleError,
-    replaceSource,
-    removeCurrent,
-    clearTracks,
-    restoreTracks,
+    playlist: proxyRefs({
+      tracks,
+      activeIndex,
+      activeTrack,
+      cover,
+      replaceSource,
+      removeCurrent,
+      clearTracks,
+      restoreTracks,
+    }),
+    playback: proxyRefs({
+      theme,
+      showPlaylist,
+      playing,
+      lastEvent,
+      handlePlay,
+      handleError,
+    }),
   }
 }

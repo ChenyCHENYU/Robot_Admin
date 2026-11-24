@@ -17,6 +17,7 @@ import {
 import {
   PRESET_RULES,
   type OptionItem,
+  type FormOption,
 } from '@robot-admin/naive-ui-components/C_Form'
 
 /** 表格、搜索与编辑表单使用同一密度协议。 */
@@ -163,6 +164,70 @@ export const ADD_FORM_DEFAULTS: AddEmployeeForm = {
   description: '',
 }
 
+export const ADD_EMPLOYEE_FIELDS: FormOption<AddEmployeeForm>[] = [
+  {
+    prop: 'name',
+    label: '姓名',
+    type: 'input',
+    placeholder: '请输入姓名',
+    rules: [PRESET_RULES.required('姓名'), PRESET_RULES.length('姓名', 2, 20)],
+  },
+  {
+    prop: 'age',
+    label: '年龄',
+    type: 'inputNumber',
+    placeholder: '请输入年龄',
+    attrs: { min: 18, max: 65, showButton: false, style: { width: '100%' } },
+    rules: [
+      PRESET_RULES.required('年龄', ['blur', 'change']),
+      PRESET_RULES.range('年龄', 18, 65),
+    ],
+  },
+  {
+    prop: 'gender',
+    label: '性别',
+    type: 'radio',
+    children: GENDER_OPTIONS,
+    rules: [PRESET_RULES.required('性别', 'change')],
+  },
+  {
+    prop: 'email',
+    label: '邮箱',
+    type: 'input',
+    placeholder: '请输入邮箱地址',
+    rules: [PRESET_RULES.required('邮箱'), PRESET_RULES.email('邮箱')],
+  },
+  {
+    prop: 'department',
+    label: '部门',
+    type: 'select',
+    children: DEPARTMENT_OPTIONS,
+    placeholder: '请选择部门',
+    rules: [PRESET_RULES.required('部门', 'change')],
+  },
+  {
+    prop: 'joinDate',
+    label: '入职日期',
+    type: 'datePicker',
+    attrs: { type: 'date', style: { width: '100%' } },
+    rules: [PRESET_RULES.required('入职日期', ['blur', 'change'])],
+  },
+  {
+    prop: 'status',
+    label: '状态',
+    type: 'select',
+    children: STATUS_OPTIONS,
+    rules: [PRESET_RULES.required('状态', 'change')],
+  },
+  {
+    prop: 'description',
+    label: '描述',
+    type: 'textarea',
+    placeholder: '请输入员工描述信息（选填）',
+    attrs: { rows: 3 },
+  },
+]
+
 // ================= 简化的格式化函数 =================
 const formatGender = (gender: string) =>
   gender === 'male' ? '男' : gender === 'female' ? '女' : gender
@@ -170,24 +235,12 @@ const formatGender = (gender: string) =>
 const formatDate = (timestamp: number) =>
   timestamp ? new Date(timestamp).toLocaleDateString() : '-'
 
-const formatDepartment = (department: string) => {
-  const map: Record<string, string> = {
-    tech: '技术部',
-    hr: '人事部',
-    market: '市场部',
-    finance: '财务部',
-  }
-  return map[department] || department
-}
+export const formatDepartment = (department: string) =>
+  DEPARTMENT_OPTIONS.find(option => option.value === department)?.label ??
+  department
 
-const formatStatus = (status: string) => {
-  const map: Record<string, string> = {
-    active: '在职',
-    inactive: '离职',
-    probation: '试用期',
-  }
-  return map[status] || status
-}
+const formatStatus = (status: string) =>
+  STATUS_TAG_CONFIG[status]?.text ?? status
 
 const formatDescription = (desc?: string) =>
   desc ? (desc.length > 30 ? desc.substring(0, 30) + '...' : desc) : '暂无描述'
@@ -464,10 +517,10 @@ export const createEmployeeTableConfig = (): UseTableCrudConfig<Employee> => {
         handler: (row, ctx) => {
           ctx.dialog.info({
             title: '员工授权',
-            content: `正在为员工 "${row.name}" 配置系统权限...`,
+            content: `正在演示员工 "${row.name}" 的授权入口。`,
             positiveText: '确定',
             onPositiveClick: () => {
-              ctx.message.success('授权配置完成')
+              ctx.message.success('演示确认完成，未修改权限')
             },
           })
         },
@@ -520,73 +573,3 @@ export const generateMockEmployees = (count: number): Employee[] => {
     description: `员工 ${i + 1} 的描述信息`,
   }))
 }
-
-/** 带子节点的树形数据演示 */
-export const TREE_TABLE_DATA: Employee[] = [
-  {
-    id: 9001,
-    name: '技术部',
-    age: 0,
-    gender: 'male',
-    email: 'tech@example.com',
-    department: 'tech',
-    joinDate: Date.now() - 365 * 86400000,
-    status: 'active',
-    level: 'lead',
-    salary: 0,
-    description: '技术部门',
-    children: [
-      {
-        id: 9011,
-        name: '前端组长',
-        age: 32,
-        gender: 'male',
-        email: 'frontend-lead@example.com',
-        department: 'tech',
-        joinDate: Date.now() - 300 * 86400000,
-        status: 'active',
-        level: 'senior',
-        salary: 25000,
-      },
-      {
-        id: 9012,
-        name: '后端组长',
-        age: 34,
-        gender: 'male',
-        email: 'backend-lead@example.com',
-        department: 'tech',
-        joinDate: Date.now() - 350 * 86400000,
-        status: 'active',
-        level: 'senior',
-        salary: 28000,
-      },
-    ],
-  },
-  {
-    id: 9002,
-    name: '市场部',
-    age: 0,
-    gender: 'female',
-    email: 'market@example.com',
-    department: 'market',
-    joinDate: Date.now() - 200 * 86400000,
-    status: 'active',
-    level: 'lead',
-    salary: 0,
-    description: '市场部门',
-    children: [
-      {
-        id: 9021,
-        name: '品牌经理',
-        age: 29,
-        gender: 'female',
-        email: 'brand@example.com',
-        department: 'market',
-        joinDate: Date.now() - 150 * 86400000,
-        status: 'active',
-        level: 'mid',
-        salary: 18000,
-      },
-    ],
-  },
-]

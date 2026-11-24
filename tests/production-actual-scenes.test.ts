@@ -7,19 +7,19 @@
  */
 import { expect, test } from 'bun:test'
 import {
-  createActualComparisonGroups,
+  createActualComparison,
   createActualRecord,
-  type ActualComparisonRow,
 } from '../src/views/production-sales/production-actual/data'
 
 test('三张实绩对照表按业务分区派生，零值、缺测与上一炉零值分别保留', () => {
   const model = { ...createActualRecord(), received: 0, scrap: null }
-  const references: ActualComparisonRow[] = [
-    { id: 'received', name: '受钢量', previous: 0, current: 99 },
-    { id: 'scrap', name: '废钢量', previous: 18, current: 20 },
-    { id: 'unknown', name: '无关项目', previous: 1, current: 1 },
-  ]
-  const groups = createActualComparisonGroups(model, references)
+  const previous = { ...createActualRecord(), received: 0, scrap: 18 }
+  const { groups, rows: referenceRows } = createActualComparison(
+    model,
+    previous
+  )
+  expect(referenceRows).toHaveLength(23)
+  expect(referenceRows.some(row => row.id === 'carbon')).toBe(true)
   expect(groups.map(group => group.key)).toEqual([
     'charge',
     'energy',
@@ -36,16 +36,14 @@ test('三张实绩对照表按业务分区派生，零值、缺测与上一炉�
     current: null,
     previous: 18,
   })
-  expect(rows.some(row => row.id === 'carbon' || row.id === 'unknown')).toBe(
-    false
-  )
+  expect(rows.some(row => row.id === 'carbon')).toBe(false)
 })
 
 test('首炉缺少上一炉快照时仍展示当前实绩，不伪造上一炉数值', () => {
   const model = { ...createActualRecord(), oxygen: 0 }
-  const rows = createActualComparisonGroups(model, []).flatMap(
-    group => group.rows
-  )
+  const { groups, rows: referenceRows } = createActualComparison(model)
+  const rows = groups.flatMap(group => group.rows)
+  expect(referenceRows).toEqual([])
   expect(rows).toHaveLength(18)
   expect(rows.every(row => row.previous === null)).toBe(true)
   expect(rows.find(row => row.id === 'oxygen')?.current).toBe(0)
@@ -53,18 +51,12 @@ test('首炉缺少上一炉快照时仍展示当前实绩，不伪造上一炉�
 
 test('对照投影不写当前模型或上一炉保存快照，重算始终读取原值', () => {
   const model = Object.freeze(createActualRecord())
-  const previous = Object.freeze({
-    id: 'received',
-    name: '受钢量',
-    previous: 120,
-    current: model.received,
-  })
-  const references = Object.freeze([previous])
-  const groups = createActualComparisonGroups(model, references)
+  const previous = Object.freeze({ ...createActualRecord(), received: 120 })
+  const { groups } = createActualComparison(model, previous)
   Object.assign(groups[0].rows[0], { previous: 999, current: 999 })
   expect(model.received).toBe(122.8)
-  expect(previous.previous).toBe(120)
+  expect(previous.received).toBe(120)
   expect(
-    createActualComparisonGroups(model, references)[0].rows[0]
+    createActualComparison(model, previous).groups[0].rows[0]
   ).toMatchObject({ previous: 120, current: 122.8 })
 })

@@ -102,9 +102,10 @@ export function useDocumentWorkspace() {
     documents.value = [...SAMPLE_DOCUMENTS]
     selectedId.value = SAMPLE_DOCUMENTS[0]?.id ?? ''
   }
-  const download = () => {
-    const item = selected.value
-    if (!item) return
+  /** 文档工具栏和附件清单共用原件下载。 */
+  const downloadFile = (
+    item: Pick<PreviewDocument, 'name' | 'url' | 'file'>
+  ) => {
     const url = item.file ? URL.createObjectURL(item.file) : item.url
     if (!url) return
     const anchor = document.createElement('a')
@@ -114,6 +115,9 @@ export function useDocumentWorkspace() {
     anchor.target = '_blank'
     anchor.click()
     if (item.file) setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+  const download = () => {
+    if (selected.value) downloadFile(selected.value)
   }
   return {
     documents,
@@ -131,6 +135,7 @@ export function useDocumentWorkspace() {
     clearDocuments,
     restoreSamples,
     download,
+    downloadFile,
     addFiles,
   }
 }

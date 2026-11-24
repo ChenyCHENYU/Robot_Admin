@@ -6,6 +6,11 @@
  */
 import type { CalendarEvent } from '@robot-admin/naive-ui-components/C_FullCalendar'
 import type { FormOption } from '@robot-admin/naive-ui-components/C_Form'
+import {
+  formatRecurrenceRule,
+  parseRecurrenceRule,
+  type RecurrenceRule,
+} from '@robot-admin/naive-ui-components/C_RecurrenceEditor'
 
 export const CALENDAR_STORAGE_KEY = 'robot-admin:calendar-workspace:v2'
 export const CATEGORIES = [
@@ -20,6 +25,7 @@ export interface ScheduleEvent extends CalendarEvent {
   location: string
   description: string
   allDay: boolean
+  recurrence?: string
 }
 export interface ScheduleDraft {
   id: string
@@ -110,6 +116,7 @@ export const createScheduleEvents = (now = new Date()): ScheduleEvent[] => {
         category,
         location,
         description: '',
+        ...(index === 0 ? { recurrence: 'FREQ=WEEKLY;COUNT=6' } : {}),
         allDay,
         start: allDay ? localDay(begin) : begin.toISOString(),
         end: allDay ? localDay(finish) : finish.toISOString(),
@@ -200,19 +207,28 @@ const draftRange = (value: ScheduleDraft) => {
   }
 }
 /** 创建日程时集中规范时间边界与分类颜色。 */
-export const buildScheduleEvent = (value: ScheduleDraft): ScheduleEvent => {
+export const buildScheduleEvent = (
+  value: ScheduleDraft,
+  rule: RecurrenceRule | null = null
+): ScheduleEvent => {
   if (!value.title.trim()) throw new Error('请输入日程标题')
   const category = CATEGORIES.find(item => item.value === value.category)
   if (!category) throw new Error('请选择有效分类')
+  const range = draftRange(value)
+  const recurrence = formatRecurrenceRule(rule)
+  const end = rule?.end
+  if (end?.type === 'until' && end.date < localDay(eventDate(range.start)))
+    throw new Error('重复截止日期不能早于日程开始日期')
   return {
     id: value.id || crypto.randomUUID(),
     title: value.title.trim(),
-    ...draftRange(value),
+    ...range,
     allDay: value.allDay,
     category: category.value,
     color: category.color,
     location: value.location.trim(),
     description: value.description.trim(),
+    ...(recurrence ? { recurrence } : {}),
   }
 }
 /** 已有日程映射为表单时，全天结束日期恢复为用户可见的最后一天。 */
@@ -270,6 +286,7 @@ const readScheduleEntry = (value: unknown, ids: Set<string>): ScheduleEvent => {
   if (!category || typeof value.allDay !== 'boolean')
     throw new Error('日程分类或全天标记不正确')
   const range = readStoredRange(value)
+  const recurrence = readStoredRecurrence(value.recurrence)
   ids.add(value.id)
   return {
     id: value.id,
@@ -280,6 +297,19 @@ const readScheduleEntry = (value: unknown, ids: Set<string>): ScheduleEvent => {
     color: category.color,
     location: optionalText(value.location, 200),
     description: optionalText(value.description, 2000),
+    ...(recurrence ? { recurrence } : {}),
+  }
+}
+
+/** 旧备份可缺省重复规则，新备份沿用组件库的编辑契约。 */
+function readStoredRecurrence(value: unknown) {
+  if (value === undefined) return ''
+  if (typeof value !== 'string' || value.length > 120)
+    throw new Error('日程重复规则不正确')
+  try {
+    return formatRecurrenceRule(parseRecurrenceRule(value))
+  } catch {
+    throw new Error('日程重复规则不正确')
   }
 }
 /** 将日历视图的交互结果合并回完整集合，全天拖动后的 Date 恢复为日期字符串。 */

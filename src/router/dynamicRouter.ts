@@ -50,7 +50,10 @@ const COMPONENTS = {
 } as const
 
 // 所有动态页面统一懒加载；登录页无需预取首页的 3D、图表等重依赖。
-const LAZY_MODULES = import.meta.glob('@/views/**/*.vue')
+const LAZY_MODULES = import.meta.glob([
+  '@/views/**/*.vue',
+  '!@/views/**/components/**/*.vue',
+])
 let dynamicRouteRemovers: Array<() => void> = []
 type RouteComponentLoader = () => Promise<unknown>
 const dynamicRouteLoaders = new Map<string, RouteComponentLoader>()

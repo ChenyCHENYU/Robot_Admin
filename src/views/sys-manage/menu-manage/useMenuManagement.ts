@@ -21,12 +21,11 @@ import {
 } from '@robot-admin/naive-ui-components/C_ActionBar'
 import type { DropInfo } from '@robot-admin/naive-ui-components'
 import { useLatestRequest } from '@/composables/useLatestRequest'
-import { clearExistingRoutes, initDynamicRouter } from '@/router/dynamicRouter'
-import { getAuthMenuListApi, type AuthMenuResponse } from '@/api/auth'
 import { isMockDataMode } from '@/config/dataMode'
 import { s_userStore } from '@/stores/user'
 import { s_permissionStore } from '@/stores/permission'
 import { filterMenus, getParentOptions } from './d_menuTree'
+import { useMenuNavigationSync } from './useMenuNavigationSync'
 import { DEFAULT_FORM_DATA, MENU_STATUS_CONFIGS } from './data'
 import type {
   MenuData,
@@ -55,11 +54,6 @@ const checkResponse = <T>(response: ApiResponse<T>): T => {
   return response.data
 }
 
-const checkNavigationResponse = (response: AuthMenuResponse): void => {
-  if (!['0', '200'].includes(String(response.code)) || !response.data?.length)
-    throw new Error(response.msg || response.message || '导航配置加载失败')
-}
-
 export const useMenuManagement = () => {
   const message = useMessage()
   const dialog = useDialog()
@@ -67,6 +61,8 @@ export const useMenuManagement = () => {
   const confirmDeletion = (options: DialogOptions) => {
     const confirm = dialog.warning({
       ...options,
+      onPositiveClick: event =>
+        confirms.has(confirm) ? options.onPositiveClick?.(event) : false,
       onAfterLeave: () => confirms.delete(confirm),
     })
     confirms.add(confirm)
@@ -80,21 +76,17 @@ export const useMenuManagement = () => {
     alive = false
     dismissConfirms()
   })
-  const router = useRouter()
-  const route = useRoute()
   const userStore = s_userStore()
   const permissionStore = s_permissionStore()
   const currentContextId = () => userStore.activeContext?.id || 'default'
-  const isCurrentAuthSession = (
-    generation: number,
-    contextId = currentContextId()
-  ) =>
-    permissionStore.requestGeneration === generation &&
-    currentContextId() === contextId
-  const isCurrentSession = (
-    generation: number,
-    contextId = currentContextId()
-  ) => alive && isCurrentAuthSession(generation, contextId)
+  const captureSession = () => {
+    const generation = permissionStore.requestGeneration
+    const context = currentContextId()
+    return () =>
+      alive &&
+      permissionStore.requestGeneration === generation &&
+      currentContextId() === context
+  }
   const menuRequest = useLatestRequest()
   const buttonRequest = useLatestRequest()
   const { loading } = menuRequest
@@ -103,8 +95,7 @@ export const useMenuManagement = () => {
   const permissionsError = ref('')
   const saving = ref(false)
   const mutating = ref(false)
-  const syncing = ref(false)
-  const navigationDirty = ref(false)
+  const navigation = useMenuNavigationSync(() => busy.value)
   const searchPattern = ref('')
   const showModal = ref(false)
   const modalMode = ref<'add' | 'edit'>('add')
@@ -124,7 +115,9 @@ export const useMenuManagement = () => {
   const parentMenuOptions = computed(() =>
     getParentOptions(menuList.value, formData)
   )
-  const busy = computed(() => saving.value || mutating.value || syncing.value)
+  const busy = computed(
+    () => saving.value || mutating.value || navigation.syncing
+  )
   const stats = computed(() => ({
     directories: allMenus.value.filter(menu => menu.type === 'directory')
       .length,
@@ -222,14 +215,15 @@ export const useMenuManagement = () => {
     buttonPermissions.value = []
     permissionsError.value = ''
     if (!id) return
+    const isCurrent = captureSession()
     try {
       const response = await buttonRequest.run(signal =>
         getButtonPermissionsApi(id, signal)
       )
-      if (response && selectedId.value === id)
+      if (response && isCurrent() && selectedId.value === id)
         buttonPermissions.value = checkResponse(response)
     } catch (error) {
-      if (selectedId.value === id)
+      if (isCurrent() && selectedId.value === id)
         permissionsError.value = describeError(error, '加载按钮权限失败')
     }
   }
@@ -240,6 +234,7 @@ export const useMenuManagement = () => {
   const selectMenu = async (id: string): Promise<void> => {
     selectedId.value = id
     await nextTick()
+    if (selectedId.value !== id) return
     treeRef.value?.selectNode(id)
     if (treeRef.value) {
       // C_Tree 的公开 exposed refs 在组件实例上自动解包。
@@ -288,27 +283,30 @@ export const useMenuManagement = () => {
     menuList.value[0]?.id
 
   const loadMenus = async (): Promise<boolean> => {
+    const isCurrent = captureSession()
     loadError.value = ''
     try {
       const contextId = currentContextId()
       const response = await menuRequest.run(signal =>
         getMenuListApi(signal, contextId)
       )
-      if (!response) return false
+      if (!response || !isCurrent()) return false
       menuList.value = checkResponse(response)
       const id = chooseSelection()
       if (id) await selectMenu(id)
       else selectedId.value = null
       return true
     } catch (error) {
-      loadError.value = describeError(error, '加载菜单失败')
+      if (isCurrent()) loadError.value = describeError(error, '加载菜单失败')
       return false
     }
   }
   const refreshMenus = async () => {
+    const isCurrent = captureSession()
     if (await loadMenus()) {
+      if (!isCurrent()) return
       await loadPermissions()
-      message.success('菜单已刷新')
+      if (isCurrent()) message.success('菜单已刷新')
     }
   }
   const resetForm = () => {
@@ -402,7 +400,7 @@ export const useMenuManagement = () => {
   const saveDraft = async (
     draft: MenuFormData,
     contextId: string
-  ): Promise<void> => {
+  ): Promise<boolean> => {
     if (draft.type === 'button') {
       const permission = {
         id: draft.id,
@@ -415,13 +413,13 @@ export const useMenuManagement = () => {
       if (draft.id)
         await updateButtonPermissionApi(permission as ButtonPermission)
       else await addButtonPermissionApi(permission)
+      return false
     } else {
       const changedCache =
         findMenu(menuList.value, draft.id)?.keepAlive !== draft.keepAlive
       if (draft.id) await updateMenuApi(draft, contextId)
       else await addMenuApi(draft)
-      navigationDirty.value ||=
-        !isMockDataMode() || (!!draft.id && changedCache)
+      return !!draft.id && changedCache
     }
   }
   const formConfig = computed<FormConfig<MenuFormData>>(() => ({
@@ -445,23 +443,25 @@ export const useMenuManagement = () => {
     saving.value = true
     const draft = snapshotDraft(model)
     const contextId = currentContextId()
-    const generation = permissionStore.requestGeneration
+    const isCurrent = captureSession()
     try {
-      await saveDraft(draft, contextId)
-      if (!isCurrentSession(generation)) return
+      const changedCache = await saveDraft(draft, contextId)
+      if (!isCurrent()) return
       message.success('配置已保存')
       if (draft.type === 'button') await loadPermissions()
-      else await loadMenus()
+      else {
+        navigation.markChanged(changedCache)
+        await loadMenus()
+      }
     } catch (error) {
-      if (isCurrentSession(generation))
-        throw new Error(describeError(error, '保存失败，请重试'))
+      if (isCurrent()) throw new Error(describeError(error, '保存失败，请重试'))
     } finally {
       saving.value = false
     }
   }
   const handleDeleteMenu = (menu: MenuData) => {
     if (busy.value) return
-    const generation = permissionStore.requestGeneration
+    const isCurrent = captureSession()
     const descendants = flattenMenus(menu.children || []).length
     confirmDeletion({
       title: `删除“${menu.name}”？`,
@@ -471,16 +471,16 @@ export const useMenuManagement = () => {
       positiveText: '确认删除',
       negativeText: '取消',
       onPositiveClick: async () => {
-        if (busy.value) return false
+        if (busy.value || !isCurrent()) return false
         mutating.value = true
         try {
           await deleteMenuApi(menu.id, menu.revision)
-          if (!isCurrentSession(generation)) return false
-          navigationDirty.value ||= !isMockDataMode()
+          if (!isCurrent()) return false
+          navigation.markChanged()
           await loadMenus()
-          message.success('菜单已删除')
+          if (isCurrent()) message.success('菜单已删除')
         } catch (error) {
-          message.error(describeError(error, '删除失败'))
+          if (isCurrent()) message.error(describeError(error, '删除失败'))
           return false
         } finally {
           mutating.value = false
@@ -489,22 +489,22 @@ export const useMenuManagement = () => {
     })
   }
   const handleDeletePermission = (permission: ButtonPermission) => {
-    const generation = permissionStore.requestGeneration
+    const isCurrent = captureSession()
     confirmDeletion({
       title: `删除权限“${permission.name}”？`,
       content: permission.permission,
       positiveText: '确认删除',
       negativeText: '取消',
       onPositiveClick: async () => {
-        if (busy.value) return false
+        if (busy.value || !isCurrent()) return false
         mutating.value = true
         try {
           await deleteButtonPermissionApi(permission.id, permission.revision)
-          if (!isCurrentSession(generation)) return false
+          if (!isCurrent()) return false
           await loadPermissions()
-          message.success('权限已删除')
+          if (isCurrent()) message.success('权限已删除')
         } catch (error) {
-          message.error(describeError(error, '删除失败'))
+          if (isCurrent()) message.error(describeError(error, '删除失败'))
           return false
         } finally {
           mutating.value = false
@@ -519,59 +519,37 @@ export const useMenuManagement = () => {
     if (action === 'delete') handleDeleteMenu(menu)
     if (action === 'add' && menu.type === 'directory') handleAddMenu(menu.id)
   }
-  const handleNodeDrop = async ({
+  const moveMenuNode = ({
     node,
     dragNode,
     dropPosition,
   }: DropInfo<MenuData>) => {
+    const source = findMenu(menuList.value, String(dragNode.id))
+    const target = findMenu(menuList.value, String(node.id))
+    if (!source || !target) throw new Error('菜单节点不存在')
+    const parentId = dropPosition === 'inside' ? target.id : target.parentId
+    const errors = validateMenuDraft(
+      { ...DEFAULT_FORM_DATA, ...source, parentId },
+      menuList.value
+    )
+    if (errors.parentId) throw new Error(errors.parentId)
+    return moveMenuApi(source.id, target.id, dropPosition, source.revision)
+  }
+  const handleNodeDrop = async (drop: DropInfo<MenuData>) => {
     if (busy.value || searchPattern.value.trim()) return
+    const isCurrent = captureSession()
     mutating.value = true
     try {
-      const source = findMenu(menuList.value, String(dragNode.id))
-      const target = findMenu(menuList.value, String(node.id))
-      if (!source || !target) throw new Error('菜单节点不存在')
-      const parentId = dropPosition === 'inside' ? target.id : target.parentId
-      const errors = validateMenuDraft(
-        { ...DEFAULT_FORM_DATA, ...source, parentId },
-        menuList.value
-      )
-      if (errors.parentId) throw new Error(errors.parentId)
-      await moveMenuApi(source.id, target.id, dropPosition, source.revision)
-      navigationDirty.value ||= !isMockDataMode()
+      await moveMenuNode(drop)
+      if (!isCurrent()) return
+      navigation.markChanged()
       message.success('菜单顺序已更新')
     } catch (error) {
-      message.error(describeError(error, '移动失败，已恢复顺序'))
+      if (isCurrent())
+        message.error(describeError(error, '移动失败，已恢复顺序'))
     } finally {
-      await loadMenus()
+      if (isCurrent()) await loadMenus()
       mutating.value = false
-    }
-  }
-  const syncNavigation = async () => {
-    if (busy.value) return
-    syncing.value = true
-    const currentPath = route.fullPath
-    const context = userStore.activeContext
-    const generation = permissionStore.requestGeneration
-    try {
-      // 先验证接口可用，再清理缓存；失败时保留当前可用导航。
-      const response = await getAuthMenuListApi(context)
-      checkNavigationResponse(response)
-      if (!isCurrentAuthSession(generation, context?.id)) return
-      clearExistingRoutes()
-      permissionStore.resetPermissions()
-      if (!(await initDynamicRouter())) throw new Error('同步失败，请重试')
-      // 同步本身会重建布局，允许旧组件销毁后完成本次同会话导航。
-      if (!isCurrentAuthSession(generation + 1, context?.id)) return
-      await router.replace(
-        permissionStore.hasRoutePermission(route.path) ? currentPath : '/home'
-      )
-      message.success(
-        isMockDataMode() ? '页面缓存配置已应用' : '导航与页面缓存配置已应用'
-      )
-    } catch (error) {
-      message.error(describeError(error, '同步失败，请重试'))
-    } finally {
-      syncing.value = false
     }
   }
   // 菜单加载失败时仍可重试；新增依赖已加载的菜单树。
@@ -586,7 +564,7 @@ export const useMenuManagement = () => {
       label: '同步导航',
       icon: 'mdi:sync',
       disabled: () => busy.value || loading.value,
-      onClick: syncNavigation,
+      onClick: navigation.sync,
     },
     {
       key: 'add',
@@ -621,55 +599,59 @@ export const useMenuManagement = () => {
     dismissConfirms()
   })
   return {
-    loading,
-    loadError,
-    permissionsLoading,
-    permissionsError,
-    saving,
-    mutating,
     busy,
-    syncing,
-    navigationDirty,
-    searchPattern,
-    showModal,
-    modalMode,
-    modalTitle,
+    mutating,
     formRef,
     treeRef,
-    formData,
-    fieldRules,
-    formConfig,
-    menuList,
-    selectedMenu,
-    filteredMenuList,
-    parentMenuOptions,
-    buttonPermissions,
-    breadcrumbs,
-    selectedPath,
-    stats,
-    treeActions,
-    menuIconConfig,
+    navigation,
     menuStatusConfigs: MENU_STATUS_CONFIGS,
-    toolbarActions,
-    expanded,
     isMock: isMockDataMode(),
-    getMenuTypeText,
-    getMenuTypeColor,
-    getPermissionActions,
-    selectMenu,
-    handleNodeSelect,
-    handleNodeAction,
-    handleNodeDrop,
-    toggleExpansion,
-    handleAddMenu,
-    handleAddPermission,
-    handleEditMenu,
-    handleEditPermission,
+    toolbarActions,
     handleDeleteMenu,
-    handleSaveMenu,
-    handleCancelModal,
-    loadMenus,
-    loadPermissions,
-    syncNavigation,
+    tree: proxyRefs({
+      loading,
+      error: loadError,
+      search: searchPattern,
+      rows: filteredMenuList,
+      stats,
+      actions: treeActions,
+      iconConfig: menuIconConfig,
+      expanded,
+      select: selectMenu,
+      onSelect: handleNodeSelect,
+      onAction: handleNodeAction,
+      onDrop: handleNodeDrop,
+      toggleExpansion,
+      load: loadMenus,
+    }),
+    selection: proxyRefs({
+      menu: selectedMenu,
+      breadcrumbs,
+      path: selectedPath,
+      getTypeText: getMenuTypeText,
+      getTypeColor: getMenuTypeColor,
+    }),
+    buttons: proxyRefs({
+      loading: permissionsLoading,
+      error: permissionsError,
+      rows: buttonPermissions,
+      actions: getPermissionActions,
+      load: loadPermissions,
+    }),
+    editor: proxyRefs({
+      model: formData,
+      rules: fieldRules,
+      config: formConfig,
+      parentOptions: parentMenuOptions,
+      visible: showModal,
+      title: modalTitle,
+      mode: modalMode,
+      saving,
+      add: handleAddMenu,
+      addPermission: handleAddPermission,
+      edit: handleEditMenu,
+      save: handleSaveMenu,
+      cancel: handleCancelModal,
+    }),
   }
 }

@@ -48,17 +48,17 @@
               最基础的城市选择器，适用于大多数场景，支持搜索和分类切换
             </NText>
 
-            <C_City v-model="city1" />
+            <C_City v-model="cities.defaultTrigger" />
 
             <NAlert
-              v-if="city1"
+              v-if="cities.defaultTrigger"
               type="success"
               :bordered="false"
             >
               <template #icon>
                 <span class="i-mdi-city" />
               </template>
-              已选择: {{ city1 }}
+              已选择: {{ cities.defaultTrigger }}
             </NAlert>
           </NSpace>
         </NCard>
@@ -91,7 +91,7 @@
               适用于表单场景，与其他输入框保持一致的视觉风格
             </NText>
 
-            <C_City v-model="city2">
+            <C_City v-model="cities.deliveryInput">
               <template #trigger="{ value }">
                 <NInput
                   :value="value"
@@ -109,14 +109,14 @@
             </C_City>
 
             <NAlert
-              v-if="city2"
+              v-if="cities.deliveryInput"
               type="warning"
               :bordered="false"
             >
               <template #icon>
                 <span class="i-mdi-truck-delivery-outline" />
               </template>
-              配送至: {{ city2 }}
+              配送至: {{ cities.deliveryInput }}
             </NAlert>
           </NSpace>
         </NCard>
@@ -147,7 +147,7 @@
             <NText depth="2"> 适用于操作栏或工具栏，突出操作意图 </NText>
 
             <NSpace>
-              <C_City v-model="city3">
+              <C_City v-model="cities.clearableButton">
                 <template #trigger="{ value }">
                   <NButton
                     type="primary"
@@ -164,8 +164,8 @@
               </C_City>
 
               <NButton
-                @click="city3 = ''"
-                :disabled="!city3"
+                @click="cities.clearableButton = ''"
+                :disabled="!cities.clearableButton"
                 size="small"
               >
                 清除
@@ -173,14 +173,14 @@
             </NSpace>
 
             <NAlert
-              v-if="city3"
+              v-if="cities.clearableButton"
               type="success"
               :bordered="false"
             >
               <template #icon>
                 <span class="i-mdi-city" />
               </template>
-              已选择: {{ city3 }}
+              已选择: {{ cities.clearableButton }}
             </NAlert>
           </NSpace>
         </NCard>
@@ -213,7 +213,7 @@
             </NText>
 
             <NSpace>
-              <C_City v-model="city4">
+              <C_City v-model="cities.cityTag">
                 <template #trigger="{ value }">
                   <NTag
                     :type="value ? 'info' : 'default'"
@@ -221,7 +221,7 @@
                     round
                     style="cursor: pointer"
                     :closable="!!value"
-                    @close="city4 = ''"
+                    @close="cities.cityTag = ''"
                   >
                     <template #icon>
                       <NIcon>
@@ -237,11 +237,11 @@
             </NSpace>
 
             <NAlert
-              v-if="city4"
+              v-if="cities.cityTag"
               type="info"
               :bordered="false"
             >
-              当前城市标签: {{ city4 }}
+              当前城市标签: {{ cities.cityTag }}
             </NAlert>
           </NSpace>
         </NCard>
@@ -273,7 +273,7 @@
 
             <NText>
               <span>您当前的位置是</span>
-              <C_City v-model="city5">
+              <C_City v-model="cities.serviceRegion">
                 <template #trigger="{ value }">
                   <NButton
                     text
@@ -293,12 +293,12 @@
             </NText>
 
             <NAlert
-              v-if="city5"
+              v-if="cities.serviceRegion"
               type="default"
               :bordered="false"
             >
               <span class="i-mdi-city vertical--10%"></span>
-              服务地区: {{ city5 }}
+              服务地区: {{ cities.serviceRegion }}
             </NAlert>
           </NSpace>
         </NCard>
@@ -344,9 +344,9 @@
                   <td>收货地址</td>
                   <td>
                     <NTag
-                      v-if="city6"
+                      v-if="cities.tableCell"
                       type="success"
-                      >{{ city6 }}</NTag
+                      >{{ cities.tableCell }}</NTag
                     >
                     <NText
                       v-else
@@ -355,7 +355,7 @@
                     >
                   </td>
                   <td>
-                    <C_City v-model="city6">
+                    <C_City v-model="cities.tableCell">
                       <template #trigger="{ value }">
                         <NButton
                           text
@@ -401,7 +401,7 @@
             </NText>
 
             <NSelect
-              v-model:value="city7"
+              v-model:value="cities.quickSelect"
               :options="cityOptions"
               placeholder="请选择城市"
               filterable
@@ -410,14 +410,14 @@
             />
 
             <NAlert
-              v-if="city7"
+              v-if="cities.quickSelect"
               type="warning"
               :bordered="false"
             >
               <template #icon>
                 <span class="i-mdi-city-switch" />
               </template>
-              快速选择: {{ city7 }}
+              快速选择: {{ cities.quickSelect }}
             </NAlert>
           </NSpace>
         </NCard>
@@ -449,7 +449,7 @@
               完全自定义的触发器样式，展示组件的扩展能力
             </NText>
 
-            <C_City v-model="city8">
+            <C_City v-model="cities.addressCard">
               <template #trigger="{ value }">
                 <NCard
                   size="small"
@@ -563,15 +563,16 @@
   defineOptions({ name: 'Demo06City' })
   import { cityOptions } from './data'
 
-  // 各种样式的数据
-  const city1 = ref('')
-  const city2 = ref('')
-  const city3 = ref('')
-  const city4 = ref('')
-  const city5 = ref('')
-  const city6 = ref('')
-  const city7 = ref('')
-  const city8 = ref('')
+  const cities = reactive({
+    defaultTrigger: '',
+    deliveryInput: '',
+    clearableButton: '',
+    cityTag: '',
+    serviceRegion: '',
+    tableCell: '',
+    quickSelect: ref<string | null>(''),
+    addressCard: '',
+  })
 </script>
 
 <style scoped lang="scss">

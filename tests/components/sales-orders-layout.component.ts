@@ -20,7 +20,7 @@ import { C_Density } from '@robot-admin/naive-ui-components/C_Density'
 import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
 import dictionaryConfig from '@/config/dictionary'
 import SalesOrders from '@/views/production-sales/sales-orders/index.vue'
-import * as controllerModule from '@/views/production-sales/sales-orders/data'
+import * as controllerModule from '@/views/production-sales/sales-orders/useBusinessWorkbench'
 
 vi.mock('@/stores/theme', () => ({ s_themeStore: () => ({ isDark: false }) }))
 let instanceCount = 0
@@ -105,33 +105,33 @@ function setup() {
 test('短明细按内容高度，全屏/空结果保持可用视口；Tab/分栏/窄屏均保留草稿和网格实例', async () => {
   const { wrapper, view } = setup()
   try {
-    expect(view.shortLines.value).toBe(false)
+    expect(view.layout.shortLines).toBe(false)
     await vi.advanceTimersByTimeAsync(120)
     await flushPromises()
-    expect(view.shortLines.value).toBe(true)
-    expect(view.shortPayments.value).toBe(true)
+    expect(view.layout.shortLines).toBe(true)
+    expect(view.layout.shortPayments).toBe(true)
     expect(wrapper.find('.workbench-header .c-form').exists()).toBe(true)
     const line = wrapper.get('.sales-grid-probe[data-label="当前订单商品明细"]')
     expect(line.attributes('data-layout')).toBe('autoHeight')
     const identity = line.attributes('data-instance')
-    view.header.value.note = '窗口重排仍保留销售草稿'
+    view.draft.header.note = '窗口重排仍保留销售草稿'
     const split = wrapper.getComponent(C_SplitPane)
     split.vm.setSize(51)
-    view.activeTab.value = 'payments'
+    view.layout.tab = 'payments'
     await nextTick()
-    view.activeTab.value = 'lines'
-    view.stacked.value = true
+    view.layout.tab = 'lines'
+    view.layout.stacked = true
     await nextTick()
     await flushPromises()
     expect(wrapper.get('.business-workbench').classes()).toContain(
       'business-workbench--stacked'
     )
-    expect(view.header.value.note).toBe('窗口重排仍保留销售草稿')
+    expect(view.draft.header.note).toBe('窗口重排仍保留销售草稿')
     expect(line.attributes('data-instance')).toBe(identity)
-    view.fullscreen.value = true
+    view.layout.fullscreen = true
     await nextTick()
     await flushPromises()
-    expect(view.shortLines.value).toBe(false)
+    expect(view.layout.shortLines).toBe(false)
     expect(
       document
         .querySelector(
@@ -139,7 +139,7 @@ test('短明细按内容高度，全屏/空结果保持可用视口；Tab/分栏
         )
         ?.getAttribute('data-instance')
     ).toBe(identity)
-    view.fullscreen.value = false
+    view.layout.fullscreen = false
     await nextTick()
     await flushPromises()
     expect(
@@ -147,10 +147,10 @@ test('短明细按内容高度，全屏/空结果保持可用视口；Tab/分栏
         .get('.sales-grid-probe[data-label="当前订单商品明细"]')
         .attributes('data-layout')
     ).toBe('autoHeight')
-    view.lines.value = []
+    view.lines.rows = []
     await nextTick()
     await flushPromises()
-    expect(view.shortLines.value).toBe(false)
+    expect(view.layout.shortLines).toBe(false)
     expect(
       wrapper
         .get('.sales-grid-probe[data-label="当前订单商品明细"]')

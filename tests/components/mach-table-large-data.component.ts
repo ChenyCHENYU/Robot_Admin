@@ -13,11 +13,11 @@ import type {
   GridAsyncOptions,
   InfiniteGetRowsParams,
 } from '@agile-team/mach-table-vue'
-import { useLargeData } from '@/views/demo/57-mach-table/components/c_largeData/useLargeData'
+import { useLargeData } from '@/views/demo/57-mach-table/components/LargeData/useLargeData'
 import {
   LARGE_COLUMNS,
   type LargeDataRow,
-} from '@/views/demo/57-mach-table/components/c_largeData/data'
+} from '@/views/demo/57-mach-table/components/LargeData/data'
 import { deferred } from './d_deferred'
 
 const bridge = vi.hoisted(() => ({

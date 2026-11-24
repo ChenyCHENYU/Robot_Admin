@@ -14,6 +14,22 @@ import type { MenuOptions } from '@/types/modules/menu'
 import type { MenuOption } from 'naive-ui/es'
 import { translateRouteTitle } from '@/utils/plugins/i18n-route'
 
+export const workspaceSearchCommands = [
+  {
+    key: 'pending-approval',
+    label: '查看待我审批',
+    description: '打开消息中心的待审批列表',
+    path: '/account/messages',
+    query: { topic: 'workflow', relationship: 'assignee', status: 'todo' },
+  },
+  {
+    key: 'shipping-workspace',
+    label: '打开发运协同指挥台',
+    description: '前往发运任务池、看板与装车排班',
+    path: '/production-sales/shipping',
+  },
+]
+
 /** 将 Naive UI 菜单节点收窄为全局搜索可消费的数据结构。 */
 function toSearchMenuItem(item: MenuOption): SearchMenuItem | null {
   if (
