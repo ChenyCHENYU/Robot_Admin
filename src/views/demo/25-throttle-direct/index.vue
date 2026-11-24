@@ -37,38 +37,32 @@
                 <NButton
                   v-throttle="DEMO_CONFIG.DEFAULT_DELAY"
                   type="primary"
-                  @click="handlers.handleBasicClick"
+                  @click="demo.basic.custom++"
                 >
                   节流按钮 (300ms)
                 </NButton>
-                <NText depth="3"
-                  >点击计数: {{ state.basicClickCount.value }}</NText
-                >
+                <NText depth="3">点击计数: {{ demo.basic.custom }}</NText>
               </div>
 
               <div class="demo-row">
                 <NButton
                   v-throttle
                   type="default"
-                  @click="handlers.handleDefaultClick"
+                  @click="demo.basic.default++"
                 >
                   默认节流按钮 (300ms)
                 </NButton>
-                <NText depth="3"
-                  >点击计数: {{ state.defaultClickCount.value }}</NText
-                >
+                <NText depth="3">点击计数: {{ demo.basic.default }}</NText>
               </div>
 
               <div class="demo-row">
                 <NButton
                   type="warning"
-                  @click="handlers.handleNormalClick"
+                  @click="demo.basic.normal++"
                 >
                   普通按钮 (无节流)
                 </NButton>
-                <NText depth="3"
-                  >点击计数: {{ state.normalClickCount.value }}</NText
-                >
+                <NText depth="3">点击计数: {{ demo.basic.normal }}</NText>
               </div>
             </div>
             <NDivider />
@@ -87,21 +81,16 @@
                 <NButton
                   v-throttle="{
                     delay: DEMO_CONFIG.SLOW_DELAY,
-                    onExecute: handlers.handleSlowExecute,
-                    onThrottle: handlers.handleSlowThrottle,
+                    handler: () => demo.config.executed++,
+                    onThrottle: () => demo.config.throttled++,
                   }"
                   type="info"
-                  @click="handlers.handleSlowClick"
                 >
                   慢速节流 (1000ms)
                 </NButton>
                 <NSpace>
-                  <NText depth="3"
-                    >执行: {{ state.slowExecuteCount.value }}</NText
-                  >
-                  <NText depth="3"
-                    >节流: {{ state.slowThrottleCount.value }}</NText
-                  >
+                  <NText depth="3">执行: {{ demo.config.executed }}</NText>
+                  <NText depth="3">节流: {{ demo.config.throttled }}</NText>
                 </NSpace>
               </div>
 
@@ -111,16 +100,13 @@
                     delay: DEMO_CONFIG.LEADING_DELAY,
                     leading: true,
                     trailing: false,
-                    onExecute: handlers.handleLeadingExecute,
+                    handler: () => demo.config.leading++,
                   }"
                   type="success"
-                  @click="handlers.handleLeadingClick"
                 >
                   仅前缘执行 (500ms)
                 </NButton>
-                <NText depth="3"
-                  >执行计数: {{ state.leadingClickCount.value }}</NText
-                >
+                <NText depth="3">执行计数: {{ demo.config.leading }}</NText>
               </div>
 
               <div class="demo-row">
@@ -129,16 +115,13 @@
                     delay: DEMO_CONFIG.TRAILING_DELAY,
                     leading: false,
                     trailing: true,
-                    onExecute: handlers.handleTrailingExecute,
+                    handler: () => demo.config.trailing++,
                   }"
                   type="error"
-                  @click="handlers.handleTrailingClick"
                 >
                   仅后缘执行 (600ms)
                 </NButton>
-                <NText depth="3"
-                  >执行计数: {{ state.trailingClickCount.value }}</NText
-                >
+                <NText depth="3">执行计数: {{ demo.config.trailing }}</NText>
               </div>
             </div>
             <NDivider />
@@ -154,11 +137,11 @@
           >
             <NSpace vertical>
               <NSpace>
-                <NSwitch v-model:value="state.throttleEnabled.value" />
+                <NSwitch v-model:value="demo.dynamic.enabled" />
                 <NText>启用节流</NText>
 
                 <NInputNumber
-                  v-model:value="state.throttleDelay.value"
+                  v-model:value="demo.dynamic.delay"
                   :min="DEMO_CONFIG.DELAY_MIN"
                   :max="DEMO_CONFIG.DELAY_MAX"
                   :step="DEMO_CONFIG.DELAY_STEP"
@@ -170,10 +153,10 @@
               </NSpace>
 
               <NSpace>
-                <NSwitch v-model:value="state.leadingMode.value" />
+                <NSwitch v-model:value="demo.dynamic.leading" />
                 <NText>前缘执行</NText>
 
-                <NSwitch v-model:value="state.trailingMode.value" />
+                <NSwitch v-model:value="demo.dynamic.trailing" />
                 <NText>后缘执行</NText>
               </NSpace>
 
@@ -181,40 +164,34 @@
                 <div class="demo-row">
                   <NButton
                     v-throttle="{
-                      disabled: !state.throttleEnabled.value,
-                      delay: state.throttleDelay.value,
-                      leading: state.leadingMode.value,
-                      trailing: state.trailingMode.value,
-                      onExecute: handlers.handleDynamicExecute,
-                      onThrottle: handlers.handleDynamicThrottle,
+                      disabled: !demo.dynamic.enabled,
+                      delay: demo.dynamic.delay,
+                      leading: demo.dynamic.leading,
+                      trailing: demo.dynamic.trailing,
+                      handler: () => demo.dynamic.executed++,
+                      onThrottle: () => demo.dynamic.throttled++,
                     }"
                     type="primary"
-                    @click="handlers.handleDynamicClick"
                   >
                     动态配置按钮
                   </NButton>
                   <NSpace>
-                    <NText depth="3"
-                      >执行: {{ state.dynamicExecuteCount.value }}</NText
-                    >
-                    <NText depth="3"
-                      >节流: {{ state.dynamicThrottleCount.value }}</NText
-                    >
+                    <NText depth="3">执行: {{ demo.dynamic.executed }}</NText>
+                    <NText depth="3">节流: {{ demo.dynamic.throttled }}</NText>
                   </NSpace>
                 </div>
               </div>
 
               <NSpace>
                 <NTag
-                  >节流状态:
-                  {{ state.throttleEnabled.value ? '启用' : '禁用' }}</NTag
+                  >节流状态: {{ demo.dynamic.enabled ? '启用' : '禁用' }}</NTag
                 >
-                <NTag type="info">延迟: {{ state.throttleDelay.value }}ms</NTag>
+                <NTag type="info">延迟: {{ demo.dynamic.delay }}ms</NTag>
                 <NTag type="success">
-                  前缘: {{ state.leadingMode.value ? '开启' : '关闭' }}
+                  前缘: {{ demo.dynamic.leading ? '开启' : '关闭' }}
                 </NTag>
                 <NTag type="warning">
-                  后缘: {{ state.trailingMode.value ? '开启' : '关闭' }}
+                  后缘: {{ demo.dynamic.trailing ? '开启' : '关闭' }}
                 </NTag>
               </NSpace>
             </NSpace>
@@ -228,7 +205,7 @@
             size="small"
           >
             <NTabs
-              v-model:value="state.scenarioTab.value"
+              v-model:value="demo.tabs.scenario"
               type="line"
               size="small"
             >
@@ -241,18 +218,18 @@
                   <NSpace vertical>
                     <NSpace>
                       <NInput
-                        v-model:value="state.searchKeyword.value"
+                        v-model:value="demo.search.keyword"
                         placeholder="输入搜索关键词"
                         style="width: 300px"
                       />
                       <NButton
+                        :key="demo.tabs.buttonKey"
                         v-throttle="{
                           delay: DEMO_CONFIG.SEARCH_DELAY,
-                          onExecute: handlers.handleSearchExecute,
+                          handler: demo.search.execute,
                         }"
                         type="primary"
-                        @click="handlers.handleSearch"
-                        :loading="state.isSearching.value"
+                        :loading="demo.search.loading"
                       >
                         搜索 (节流 500ms)
                       </NButton>
@@ -260,21 +237,21 @@
 
                     <div class="search-stats">
                       <NSpace>
-                        <NTag>搜索次数: {{ state.searchCount.value }}</NTag>
+                        <NTag>搜索次数: {{ demo.search.count }}</NTag>
                         <NTag type="info"
                           >关键词:
-                          {{ state.lastSearchKeyword.value || '暂无' }}</NTag
+                          {{ demo.search.appliedKeyword || '暂无' }}</NTag
                         >
                       </NSpace>
                     </div>
 
                     <div
                       class="search-results"
-                      v-if="state.searchResults.value.length > 0"
+                      v-if="demo.search.results.length > 0"
                     >
                       <NList>
                         <NListItem
-                          v-for="result in state.searchResults.value"
+                          v-for="result in demo.search.results"
                           :key="result.id"
                         >
                           <NThing
@@ -284,6 +261,10 @@
                         </NListItem>
                       </NList>
                     </div>
+                    <NEmpty
+                      v-else-if="!demo.search.loading"
+                      description="没有符合关键词的条目"
+                    />
                   </NSpace>
                 </div>
               </NTabPane>
@@ -294,12 +275,9 @@
                 tab="滚动加载"
               >
                 <div class="demo-container">
-                  <div
-                    class="scroll-container"
-                    ref="scrollContainer"
-                  >
+                  <div class="scroll-container">
                     <div
-                      v-for="item in state.scrollItems.value"
+                      v-for="item in demo.list.items"
                       :key="item.id"
                       class="scroll-item"
                     >
@@ -313,13 +291,13 @@
 
                     <div class="load-more-container">
                       <NButton
+                        :key="demo.tabs.buttonKey"
                         v-throttle="{
                           delay: DEMO_CONFIG.LOAD_DELAY,
-                          onExecute: handlers.handleLoadMoreExecute,
+                          handler: demo.list.loadMore,
                         }"
                         type="default"
-                        @click="handlers.handleLoadMore"
-                        :loading="state.isLoading.value"
+                        :loading="demo.list.loading"
                         block
                       >
                         加载更多 (节流 800ms)
@@ -329,9 +307,9 @@
 
                   <div class="load-stats">
                     <NSpace>
-                      <NTag>加载次数: {{ state.loadCount.value }}</NTag>
+                      <NTag>加载次数: {{ demo.list.count }}</NTag>
                       <NTag type="success"
-                        >总数据: {{ state.scrollItems.value.length }}</NTag
+                        >总数据: {{ demo.list.items.length }}</NTag
                       >
                     </NSpace>
                   </div>
@@ -349,13 +327,11 @@
                       <NButton
                         v-throttle="400"
                         type="primary"
-                        @click="handlers.handleLikeClick"
+                        @click="demo.actions.liked++"
                       >
                         点赞 ❤️ (节流 400ms)
                       </NButton>
-                      <NText depth="3"
-                        >点赞数: {{ state.likeCount.value }}</NText
-                      >
+                      <NText depth="3">点赞数: {{ demo.actions.liked }}</NText>
                     </div>
 
                     <div class="demo-row">
@@ -366,12 +342,12 @@
                           trailing: false,
                         }"
                         type="info"
-                        @click="handlers.handleShareClick"
+                        @click="demo.actions.shared++"
                       >
                         分享 📤 (前缘节流 600ms)
                       </NButton>
                       <NText depth="3"
-                        >分享次数: {{ state.shareCount.value }}</NText
+                        >分享次数: {{ demo.actions.shared }}</NText
                       >
                     </div>
 
@@ -383,12 +359,12 @@
                           trailing: true,
                         }"
                         type="warning"
-                        @click="handlers.handleDownloadClick"
+                        @click="demo.actions.downloaded++"
                       >
                         下载 📥 (后缘节流 1000ms)
                       </NButton>
                       <NText depth="3"
-                        >下载次数: {{ state.downloadCount.value }}</NText
+                        >下载次数: {{ demo.actions.downloaded }}</NText
                       >
                     </div>
                   </NSpace>
@@ -408,7 +384,7 @@
           size="small"
         >
           <NTabs
-            v-model:value="state.activeTab.value"
+            v-model:value="demo.tabs.code"
             type="line"
             size="small"
           >
@@ -432,17 +408,11 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo25ThrottleDirect' })
-  import {
-    CODE_EXAMPLES,
-    createDemoState,
-    createDemoHandlers,
-    TAB_TITLES,
-    DEMO_CONFIG,
-  } from './data'
+  import { CODE_EXAMPLES } from './codeExamples'
+  import { DEMO_CONFIG, TAB_TITLES } from './data'
+  import { useThrottleDemo } from './useThrottleDemo'
 
-  // 创建状态和处理函数
-  const state = createDemoState()
-  const handlers = createDemoHandlers(state)
+  const demo = useThrottleDemo()
 </script>
 
 <style lang="scss" scoped>

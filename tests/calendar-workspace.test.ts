@@ -27,6 +27,30 @@ describe('日程工作台数据边界', () => {
     ).toHaveLength(3)
     expect(parseScheduleBackup(wrap(events))).toEqual(events)
   })
+  test('重复规则随编辑和备份一起保存，旧日程仍可还原', () => {
+    const [sample] = createScheduleEvents(new Date(2026, 9, 18))
+    const draft = editScheduleDraft(sample)
+    const weekly = buildScheduleEvent(draft, {
+      frequency: 'weekly',
+      weekdays: ['WE', 'MO'],
+      end: { type: 'count', count: 6 },
+    })
+    expect(weekly.recurrence).toBe('FREQ=WEEKLY;BYDAY=MO,WE;COUNT=6')
+    expect(parseScheduleBackup(wrap([weekly]))).toEqual([weekly])
+    const old = buildScheduleEvent(draft)
+    expect(parseScheduleBackup(wrap([old]))[0]).not.toHaveProperty('recurrence')
+    expect(() =>
+      parseScheduleBackup(
+        wrap([{ ...weekly, recurrence: 'FREQ=EVERY_SECOND' }])
+      )
+    ).toThrow('日程重复规则不正确')
+    expect(() =>
+      buildScheduleEvent(draft, {
+        frequency: 'weekly',
+        end: { type: 'until', date: '2026-10-17' },
+      })
+    ).toThrow('重复截止日期不能早于日程开始日期')
+  })
   test('全天结束日期排他，跨天日程不会漏计中间日期', () => {
     const event: ScheduleEvent = {
       ...createScheduleEvents()[0],

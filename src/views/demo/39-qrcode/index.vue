@@ -24,8 +24,8 @@
         v-for="example in QRCODE_EXAMPLES"
         :key="example.title"
         type="button"
-        :aria-pressed="customValue === example.value"
-        @click="customValue = example.value"
+        :aria-pressed="options.value === example.value"
+        @click="options.value = example.value"
         ><strong>{{ example.title }}</strong
         ><small>{{ example.description }}</small></button
       ></nav
@@ -50,7 +50,7 @@
             <span class="control-label">内容:</span>
             <div class="control-content">
               <NInput
-                v-model:value="customValue"
+                v-model:value="options.value"
                 type="textarea"
                 placeholder="请输入二维码内容（文本或 URL）"
                 :autosize="{ minRows: 1, maxRows: 3 }"
@@ -64,7 +64,7 @@
             <span class="control-label">模式:</span>
             <div class="control-content">
               <NRadioGroup
-                v-model:value="customMode"
+                v-model:value="options.mode"
                 name="render-mode"
               >
                 <NRadioButton
@@ -75,7 +75,7 @@
                 />
               </NRadioGroup>
               <NSelect
-                v-model:value="customLevel"
+                v-model:value="options.errorCorrectionLevel"
                 :options="ERROR_LEVELS"
                 style="width: 130px"
               />
@@ -88,21 +88,21 @@
             <span class="control-label">尺寸:</span>
             <div class="control-content">
               <NSlider
-                v-model:value="customSize"
+                v-model:value="options.size"
                 :min="SIZE_OPTIONS.min"
                 :max="SIZE_OPTIONS.max"
                 :step="SIZE_OPTIONS.step"
                 style="width: 160px"
               />
-              <span class="slider-label">{{ customSize }}px</span>
+              <span class="slider-label">{{ options.size }}px</span>
               <NSlider
-                v-model:value="customMargin"
+                v-model:value="options.margin"
                 :min="MARGIN_OPTIONS.min"
                 :max="MARGIN_OPTIONS.max"
                 :step="MARGIN_OPTIONS.step"
                 style="width: 100px"
               />
-              <span class="slider-label">边距: {{ customMargin }}</span>
+              <span class="slider-label">边距: {{ options.margin }}</span>
             </div>
           </div>
 
@@ -111,26 +111,30 @@
             <span class="control-label">颜色:</span>
             <div class="control-content">
               <div class="color-presets">
-                <div
-                  v-for="(preset, index) in COLOR_PRESETS"
-                  :key="index"
+                <button
+                  v-for="preset in COLOR_PRESETS"
+                  :key="preset.label"
+                  type="button"
                   class="color-preset"
-                  :class="{ active: selectedColorIndex === index }"
+                  :aria-label="preset.label"
+                  :aria-pressed="selectedColor === preset"
                   :style="{
                     backgroundColor: preset.bgColor,
                     border: `2px solid ${preset.color}`,
                   }"
                   :title="preset.label"
-                  @click="selectColorPreset(index)"
+                  @click="selectColorPreset(preset)"
                 />
               </div>
               <NColorPicker
-                v-model:value="customColor"
+                v-model:value="options.color"
+                :modes="['hex']"
                 style="margin-left: 12px"
               />
               <span class="hint-text">前景</span>
               <NColorPicker
-                v-model:value="customBgColor"
+                v-model:value="options.bgColor"
+                :modes="['hex']"
                 style="margin-left: 8px"
               />
               <span class="hint-text">背景</span>
@@ -141,22 +145,24 @@
           <div class="control-row">
             <span class="control-label">Logo:</span>
             <div class="control-content">
-              <NCheckbox v-model:checked="enableLogo">启用 Logo</NCheckbox>
-              <template v-if="enableLogo">
+              <NCheckbox v-model:checked="options.enableLogo"
+                >启用 Logo</NCheckbox
+              >
+              <template v-if="options.enableLogo">
                 <NInput
-                  v-model:value="logoSrc"
+                  v-model:value="options.logoSrc"
                   placeholder="Logo 图片地址"
                   style="width: 200px"
                 />
                 <NSlider
-                  v-model:value="logoSize"
+                  v-model:value="options.logoSize"
                   :min="LOGO_SIZE_OPTIONS.min"
                   :max="LOGO_SIZE_OPTIONS.max"
                   :step="LOGO_SIZE_OPTIONS.step"
                   style="width: 100px"
                 />
                 <span class="slider-label"
-                  >{{ Math.round(logoSize * 100) }}%</span
+                  >{{ Math.round(options.logoSize * 100) }}%</span
                 >
               </template>
             </div>
@@ -177,13 +183,13 @@
           <div class="preview-qrcode">
             <C_QRCode
               ref="qrRef"
-              :value="customValue"
-              :size="customSize"
-              :color="customColor"
-              :bg-color="customBgColor"
-              :error-correction-level="customLevel"
-              :margin="customMargin"
-              :mode="customMode"
+              :value="options.value"
+              :size="options.size"
+              :color="options.color"
+              :bg-color="options.bgColor"
+              :error-correction-level="options.errorCorrectionLevel"
+              :margin="options.margin"
+              :mode="options.mode"
               :logo="logoOptions"
               :show-border="true"
               @error="handleError"
@@ -193,20 +199,20 @@
             <div class="info-item">
               <span class="info-label">模式:</span>
               <span class="info-value">{{
-                customMode === 'canvas' ? 'Canvas' : 'SVG'
+                options.mode === 'canvas' ? 'Canvas' : 'SVG'
               }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">纠错:</span>
-              <span class="info-value">{{ customLevel }}</span>
+              <span class="info-value">{{ options.errorCorrectionLevel }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">尺寸:</span>
-              <span class="info-value">{{ customSize }}px</span>
+              <span class="info-value">{{ options.size }}px</span>
             </div>
             <div class="info-item">
               <span class="info-label">内容长度:</span>
-              <span class="info-value">{{ customValue.length }} 字符</span>
+              <span class="info-value">{{ options.value.length }} 字符</span>
             </div>
           </div>
         </div>
@@ -222,13 +228,11 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo39Qrcode' })
-  import type { QRCodeExpose } from '@robot-admin/naive-ui-components/C_QRCode'
   import type {
-    ActionItem,
-    ErrorCorrectionLevel,
     LogoOptions,
-    RenderMode,
-  } from '@robot-admin/naive-ui-components'
+    QRCodeExpose,
+  } from '@robot-admin/naive-ui-components/C_QRCode'
+  import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
   import {
     QRCODE_EXAMPLES,
     ERROR_LEVELS,
@@ -236,6 +240,7 @@
     SIZE_OPTIONS,
     MARGIN_OPTIONS,
     COLOR_PRESETS,
+    DEFAULT_QRCODE,
     LOGO_SIZE_OPTIONS,
   } from './data'
 
@@ -244,38 +249,31 @@
   // 二维码组件 ref
   const qrRef = ref<QRCodeExpose | null>(null)
 
-  // 自定义配置
-  const customValue = ref('https://vuejs.org')
-  const customMode = ref<RenderMode>('canvas')
-  const customLevel = ref<ErrorCorrectionLevel>('M')
-  const customSize = ref(SIZE_OPTIONS.default)
-  const customMargin = ref(MARGIN_OPTIONS.default)
-  const customColor = ref('#000000')
-  const customBgColor = ref('#FFFFFF')
-  const selectedColorIndex = ref(0)
-
-  // Logo 配置
-  const enableLogo = ref(false)
-  const logoSrc = ref('/robot-avatar.png')
-  const logoSize = ref(LOGO_SIZE_OPTIONS.default)
+  const options = reactive({ ...DEFAULT_QRCODE })
+  const normalizeColor = (color: string) =>
+    color.toLowerCase().replace(/^(#[\da-f]{6})ff$/, '$1')
+  const selectedColor = computed(() =>
+    COLOR_PRESETS.find(
+      preset =>
+        normalizeColor(options.color) === normalizeColor(preset.color) &&
+        normalizeColor(options.bgColor) === normalizeColor(preset.bgColor)
+    )
+  )
 
   const logoOptions = computed<LogoOptions | undefined>(() => {
-    if (!enableLogo.value || !logoSrc.value) return undefined
+    if (!options.enableLogo || !options.logoSrc) return undefined
     return {
-      src: logoSrc.value,
-      size: logoSize.value,
+      src: options.logoSrc,
+      size: options.logoSize,
       borderRadius: 4,
       padding: 4,
       bgColor: '#ffffff',
     }
   })
 
-  // 选择颜色预设
-  const selectColorPreset = (index: number) => {
-    selectedColorIndex.value = index
-    const preset = COLOR_PRESETS[index]
-    customColor.value = preset.color
-    customBgColor.value = preset.bgColor
+  const selectColorPreset = (preset: (typeof COLOR_PRESETS)[number]) => {
+    options.color = preset.color
+    options.bgColor = preset.bgColor
   }
 
   // 错误处理
@@ -286,7 +284,7 @@
   // 下载二维码
   const downloadQRCode = async () => {
     try {
-      if (!qrRef.value || !customValue.value.trim()) return
+      if (!qrRef.value || !options.value.trim()) return
       await qrRef.value.download('qrcode', 'png')
       message.success('二维码已下载')
     } catch {
@@ -297,7 +295,7 @@
   // 复制内容
   const copyValue = async () => {
     try {
-      await navigator.clipboard.writeText(customValue.value)
+      await navigator.clipboard.writeText(options.value)
       message.success('内容已复制到剪贴板')
     } catch {
       message.error('复制失败，请手动复制')
@@ -306,17 +304,7 @@
 
   // 重置配置
   const resetConfig = () => {
-    customValue.value = 'https://vuejs.org'
-    customMode.value = 'canvas'
-    customLevel.value = 'M'
-    customSize.value = SIZE_OPTIONS.default
-    customMargin.value = MARGIN_OPTIONS.default
-    customColor.value = '#000000'
-    customBgColor.value = '#FFFFFF'
-    selectedColorIndex.value = 0
-    enableLogo.value = false
-    logoSrc.value = '/robot-avatar.png'
-    logoSize.value = LOGO_SIZE_OPTIONS.default
+    Object.assign(options, DEFAULT_QRCODE)
     message.success('配置已重置')
   }
 
@@ -328,7 +316,7 @@
       icon: 'mdi:download',
       type: 'primary',
       onClick: downloadQRCode,
-      disabled: !customValue.value.trim(),
+      disabled: !options.value.trim(),
     },
     {
       key: 'copy',

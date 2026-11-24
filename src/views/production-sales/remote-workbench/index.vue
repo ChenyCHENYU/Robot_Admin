@@ -10,8 +10,8 @@
     ref="container"
     class="ps-page remote-page"
     :class="{
-      'remote-page--stacked': stacked,
-      'remote-page--preview': isPreview,
+      'remote-page--stacked': view.layout.stacked,
+      'remote-page--preview': view.isPreview,
     }"
     data-testid="remote-workbench"
   >
@@ -42,36 +42,36 @@
           <NButton
             size="small"
             :render-icon="actionIcons.history"
-            @click="exercise('slow')"
-            :disabled="!activeOrder"
+            @click="view.exercises.run('slow')"
+            :disabled="!view.editor.order"
             >慢速明细后切换订单</NButton
           >
           <NButton
             size="small"
             :render-icon="actionIcons.alertCircleOutline"
-            @click="exercise('orders')"
-            :disabled="orders.loading.value"
+            @click="view.exercises.run('orders')"
+            :disabled="view.ledger.query.loading.value"
             >订单查询失败一次</NButton
           >
           <NButton
             size="small"
             :render-icon="actionIcons.alertCircleOutline"
-            @click="exercise('details')"
-            :disabled="!activeOrder || details.loading.value"
+            @click="view.exercises.run('details')"
+            :disabled="!view.editor.order || view.details.query.loading.value"
             >明细查询失败一次</NButton
           >
           <NButton
             size="small"
             :render-icon="actionIcons.inboxOutline"
-            @click="exercise('empty')"
-            :disabled="!activeOrder || details.loading.value"
+            @click="view.exercises.run('empty')"
+            :disabled="!view.editor.order || view.details.query.loading.value"
             >返回空明细</NButton
           >
           <NButton
             size="small"
             :render-icon="actionIcons.bookOpenVariantOutline"
-            @click="exercise('dictionary')"
-            :disabled="status.loading.value"
+            @click="view.exercises.run('dictionary')"
+            :disabled="view.dictionary.status.loading.value"
             >状态字典失败一次</NButton
           >
         </section>
@@ -79,37 +79,41 @@
     </PageHeading>
     <C_FormSearch
       class="ps-search"
-      v-model="query"
-      :form-item-list="searchFields"
-      :config="searchConfig"
-      :loading="orders.loading.value"
+      v-model="view.search.model"
+      :form-item-list="view.search.fields"
+      :config="view.search.config"
+      :loading="view.ledger.query.loading.value"
     />
     <div
-      v-if="status.loading.value || urgent.loading.value || status.error.value"
+      v-if="
+        view.dictionary.status.loading.value ||
+        view.dictionary.urgent.loading.value ||
+        view.dictionary.status.error.value
+      "
       class="remote-dictionary"
       role="status"
       aria-live="polite"
     >
-      <span v-if="status.error.value"
+      <span v-if="view.dictionary.status.error.value"
         >状态字典暂不可用，保留已有翻译和原始值。</span
       ><span v-else>字典同步中 · 订单和明细可正常查看，翻译稍后自动补齐。</span>
       <NButton
-        v-if="status.error.value"
+        v-if="view.dictionary.status.error.value"
         text
         size="small"
         :render-icon="actionIcons.refresh"
-        :loading="status.loading.value"
-        @click="retryDictionary"
+        :loading="view.dictionary.status.loading.value"
+        @click="view.dictionary.retry"
         >重载字典</NButton
       >
     </div>
     <div class="remote-workspace">
       <C_SplitPane
         class="remote-main-split"
-        :direction="stacked ? 'vertical' : 'horizontal'"
+        :direction="view.layout.stacked ? 'vertical' : 'horizontal'"
         :default-size="40"
-        :min-first-size="stacked ? 240 : 360"
-        :min-second-size="stacked ? 500 : 520"
+        :min-first-size="view.layout.stacked ? 240 : 360"
+        :min-second-size="view.layout.stacked ? 500 : 520"
         :gutter-size="10"
         aria-label="订单列表与单据协同分栏"
       >
@@ -120,25 +124,27 @@
           >
             <header class="ps-panel-heading"
               ><h2>订单台账</h2
-              ><span>{{ orders.total.value }} 笔订单</span></header
+              ><span>{{ view.ledger.query.total.value }} 笔订单</span></header
             >
             <div class="ps-toolbar"
               ><span>点击行联动明细，点击蓝色单号查看详情</span
               ><NButton
                 size="small"
                 :render-icon="actionIcons.refresh"
-                :loading="orders.loading.value"
-                @click="orders.retry"
-                >{{ orders.error.value ? '重试订单' : '刷新订单' }}</NButton
+                :loading="view.ledger.query.loading.value"
+                @click="view.ledger.query.retry"
+                >{{
+                  view.ledger.query.error.value ? '重试订单' : '刷新订单'
+                }}</NButton
               ></div
             >
             <div class="ps-grid remote-order-grid">
               <MachTable
-                :ref="masterGrid.ref"
-                v-bind="{ ...GRID_CONFIG, ...orders.bindings.value }"
-                :column-defs="orderColumns"
-                :row-style-rules="rowStyles"
-                @row-clicked="onOrderClicked"
+                :ref="view.ledger.grid.ref"
+                v-bind="{ ...GRID_CONFIG, ...view.ledger.query.bindings.value }"
+                :column-defs="view.ledger.columns"
+                :row-style-rules="view.ledger.rowStyles"
+                @row-clicked="view.ledger.select"
               />
             </div>
           </section>
@@ -160,53 +166,54 @@
               >
                 <header class="ps-panel-heading"
                   ><h2 data-testid="remote-active-order">{{
-                    activeOrder?.orderNo ?? '选择一笔订单'
+                    view.editor.order?.orderNo ?? '选择一笔订单'
                   }}</h2
                   ><NTag
-                    v-if="activeOrder"
-                    :type="dirty ? 'warning' : 'success'"
+                    v-if="view.editor.order"
+                    :type="view.editor.dirty ? 'warning' : 'success'"
                     size="small"
                     :bordered="false"
-                    >{{ dirty ? '未保存' : '已保存' }}</NTag
+                    >{{ view.editor.dirty ? '未保存' : '已保存' }}</NTag
                   ></header
                 >
-                <template v-if="activeOrder">
+                <template v-if="view.editor.order">
                   <div class="remote-document-body">
                     <p
-                      v-if="currentOutsidePage"
+                      v-if="view.ledger.currentOutsidePage"
                       class="remote-current-note"
                       role="status"
                       >当前单据不在本页查询结果中，仍保留右侧协同与草稿。</p
                     >
                     <div class="remote-document-context"
-                      ><strong>{{ activeOrder.customer }}</strong
-                      ><span>交付日期 {{ activeOrder.delivery }}</span
+                      ><strong>{{ view.editor.order.customer }}</strong
+                      ><span>交付日期 {{ view.editor.order.delivery }}</span
                       ><span
-                        >订货量 {{ activeOrder.weight.toFixed(3) }} t</span
+                        >订货量
+                        {{ view.editor.order.weight.toFixed(3) }} t</span
                       ></div
                     >
                     <div class="remote-form"
                       ><C_Form
                         ref="form"
-                        v-model="draft"
-                        :options="formFields"
-                        :config="formConfig"
+                        v-model="view.editor.draft"
+                        :options="view.editor.fields"
+                        :config="view.editor.config"
                     /></div>
                   </div>
                   <div class="remote-document-actions"
                     ><NButton
                       size="small"
                       :render-icon="actionIcons.restore"
-                      :disabled="!dirty || busy"
-                      @click="restoreDraft"
+                      :disabled="!view.editor.dirty || view.editor.busy"
+                      @click="view.editor.restore"
                       >恢复草稿</NButton
                     ><NButton
                       size="small"
                       type="primary"
                       :render-icon="actionIcons.contentSaveOutline"
-                      :disabled="!dirty || busy"
-                      :loading="saving"
-                      @click="saveDraft"
+                      :disabled="!view.editor.dirty || view.editor.busy"
+                      :loading="view.editor.saving"
+                      @click="view.editor.save"
                       >保存当前订单</NButton
                     ></div
                   >
@@ -215,7 +222,7 @@
                   v-else
                   class="remote-document-body remote-await"
                   >{{
-                    orders.loading.value
+                    view.ledger.query.loading.value
                       ? '正在查询订单…'
                       : '从左侧订单台账选择一笔订单'
                   }}</div
@@ -230,38 +237,41 @@
                 <header class="ps-panel-heading"
                   ><h2>商品明细</h2
                   ><span
-                    >{{ details.total.value }} 项 · 已选
-                    {{ details.selectedKeys.value.length }} 项</span
+                    >{{ view.details.query.total.value }} 项 · 已选
+                    {{ view.details.query.selectedKeys.value.length }} 项</span
                   ></header
                 >
                 <div class="ps-toolbar remote-detail-toolbar"
                   ><NSelect
-                    v-model:value="variant"
+                    v-model:value="view.details.variant"
                     :options="VARIANTS"
                     size="small"
-                    :disabled="!activeOrder"
+                    :disabled="!view.editor.order"
                     aria-label="明细字段方案"
                   /><span>{{
-                    acceptedVariant === 'quality'
+                    view.details.acceptedVariant === 'quality'
                       ? '质量追溯字段'
                       : '交付明细字段'
                   }}</span
                   ><NButton
                     size="small"
                     :render-icon="actionIcons.refresh"
-                    :loading="details.loading.value"
-                    :disabled="!activeOrder"
-                    @click="details.retry"
+                    :loading="view.details.query.loading.value"
+                    :disabled="!view.editor.order"
+                    @click="view.details.query.retry"
                     >{{
-                      details.error.value ? '重试明细' : '刷新明细'
+                      view.details.query.error.value ? '重试明细' : '刷新明细'
                     }}</NButton
                   ></div
                 >
                 <div class="ps-grid remote-detail-grid"
                   ><MachTable
-                    :ref="detailGrid.ref"
-                    v-bind="{ ...GRID_CONFIG, ...details.bindings.value }"
-                    :column-defs="detailColumns"
+                    :ref="view.details.grid.ref"
+                    v-bind="{
+                      ...GRID_CONFIG,
+                      ...view.details.query.bindings.value,
+                    }"
+                    :column-defs="view.details.columns"
                     row-selection="multiple"
                 /></div>
               </section>
@@ -271,7 +281,7 @@
       </C_SplitPane>
     </div>
     <NModal
-      v-model:show="detailVisible"
+      v-model:show="view.inspection.visible"
       preset="card"
       class="remote-order-modal ps-detail-modal"
       title="销售订单详情"
@@ -279,40 +289,40 @@
       v-bind="BUSINESS_DETAIL_DIALOG"
     >
       <NDescriptions
-        v-if="detailRecord"
+        v-if="view.inspection.record"
         v-bind="BUSINESS_DETAIL"
         :column="2"
       >
         <NDescriptionsItem label="订单编号">{{
-          detailRecord.orderNo
+          view.inspection.record.orderNo
         }}</NDescriptionsItem
         ><NDescriptionsItem label="计划状态">{{
-          detailLabels.status
+          view.inspection.labels.status
         }}</NDescriptionsItem>
         <NDescriptionsItem label="订货客户">{{
-          detailRecord.customer
+          view.inspection.record.customer
         }}</NDescriptionsItem
         ><NDescriptionsItem label="业务人员">{{
-          detailRecord.owner
+          view.inspection.record.owner
         }}</NDescriptionsItem>
         <NDescriptionsItem label="交付日期">{{
-          detailRecord.delivery
+          view.inspection.record.delivery
         }}</NDescriptionsItem
         ><NDescriptionsItem label="交付要求">{{
-          detailLabels.urgent
+          view.inspection.labels.urgent
         }}</NDescriptionsItem>
         <NDescriptionsItem label="订货量 (t)">{{
-          detailRecord.weight.toFixed(3)
+          view.inspection.record.weight.toFixed(3)
         }}</NDescriptionsItem
         ><NDescriptionsItem label="订单备注">{{
-          detailRecord.note || '—'
+          view.inspection.record.note || '—'
         }}</NDescriptionsItem>
       </NDescriptions>
       <template #footer
         ><NButton
           size="small"
           :render-icon="actionIcons.close"
-          @click="detailVisible = false"
+          @click="view.inspection.visible = false"
           >关闭详情</NButton
         ></template
       >
@@ -321,52 +331,19 @@
 </template>
 <script setup lang="ts">
   import '@agile-team/mach-table-vue/styles.css'
-  import PageHeading from '../components/c_pageHeading/index.vue'
   import {
-    useRemoteWorkbench,
     actionIcons,
     GRID_CONFIG,
     VARIANTS,
     BUSINESS_DETAIL,
     BUSINESS_DETAIL_DIALOG,
   } from './data'
+  import { useRemoteWorkbench } from './useRemoteWorkbench'
+  import PageHeading from '../components/PageHeading/index.vue'
   defineOptions({ name: 'RemoteOrderWorkbench' })
-  const {
-    isPreview,
-    container,
-    stacked,
-    query,
-    orders,
-    details,
-    masterGrid,
-    detailGrid,
-    activeOrder,
-    currentOutsidePage,
-    variant,
-    acceptedVariant,
-    orderColumns,
-    detailColumns,
-    rowStyles,
-    searchFields,
-    searchConfig,
-    form,
-    draft,
-    dirty,
-    saving,
-    busy,
-    formFields,
-    formConfig,
-    detailVisible,
-    detailRecord,
-    detailLabels,
-    status,
-    urgent,
-    onOrderClicked,
-    restoreDraft,
-    saveDraft,
-    exercise,
-    retryDictionary,
-  } = useRemoteWorkbench()
+  const controller = useRemoteWorkbench()
+  const view = proxyRefs(controller)
+  const { container, form } = controller
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

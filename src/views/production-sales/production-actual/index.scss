@@ -20,54 +20,9 @@
   display: grid;
   gap: 14px;
 }
-.actual-heat-list {
-  display: grid;
+.actual-heat-list,
+.actual-relations {
   padding: 8px;
-  gap: 5px;
-  > button {
-    padding: 11px 12px;
-    color: var(--app-text-primary);
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 7px;
-    text-align: left;
-    cursor: pointer;
-    > div {
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-    }
-    strong {
-      font-size: 12px;
-    }
-    > div > span {
-      color: var(--app-text-tertiary);
-      font-size: 10px;
-    }
-    p {
-      margin: 5px 0 7px;
-      font-size: 11px;
-      color: var(--app-text-secondary);
-    }
-    &:hover {
-      background: var(--ps-soft);
-    }
-    &.is-active {
-      background: color-mix(
-        in srgb,
-        var(--app-primary) 8%,
-        var(--app-bg-content)
-      );
-      border-color: color-mix(
-        in srgb,
-        var(--app-primary) 28%,
-        var(--app-border-default)
-      );
-    }
-    &:focus-visible {
-      outline: 2px solid var(--app-primary);
-    }
-  }
 }
 .actual-section-nav {
   padding: 8px;
@@ -226,7 +181,7 @@
   .actual-sidebar {
     grid-template-columns: minmax(0, 1fr);
   }
-  .actual-heat-list {
+  .actual-heat-list :deep(.c-record-list__items) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     max-height: 180px;
     overflow: auto;
@@ -239,25 +194,10 @@
   }
 }
 @media (max-width: 680px) {
-  .actual-heat-list {
+  .actual-heat-list :deep(.c-record-list__items) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .actual-context dl {
     gap: 18px;
   }
-}
-
-.actual-heat-list :deep(.n-tag) {
-  width: max-content;
-}
-
-.actual-heat-index {
-  display: inline-grid;
-  place-items: center;
-  min-width: 18px;
-  margin-right: 6px;
-  border-radius: 4px;
-  color: var(--app-primary);
-  background: var(--ps-soft);
-  font-size: 10px;
 }

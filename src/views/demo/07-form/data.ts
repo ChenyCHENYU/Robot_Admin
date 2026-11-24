@@ -40,7 +40,7 @@ export const layoutDescriptions: Record<
   default: {
     title: '默认布局',
     content:
-      '标准的垂直表单布局，适用于大多数场景，支持富文本编辑器等复杂组件。',
+      '标准的垂直表单布局。试着选择部门、清空后提交，查看必填校验和数字部门编码。',
   },
   inline: {
     title: '内联布局',
@@ -89,6 +89,7 @@ const birthday = new Date(1995, 5, 15).getTime()
 const testDataByLayout: Record<LayoutType, FormModel> = {
   default: {
     ...baseTestData,
+    departmentId: 101,
     description: '<p>这是<strong>富文本编辑器</strong>示例</p>',
   },
   inline: {

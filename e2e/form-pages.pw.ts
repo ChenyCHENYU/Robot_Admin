@@ -7,6 +7,7 @@
  */
 
 import { expect, test, type Locator, type Page } from '@playwright/test'
+import { readFile } from 'node:fs/promises'
 import { installMockAdminSession } from './auth-fixture'
 
 /** 按业务标签找到字段，兼容字段提示和动态布局。 */
@@ -336,6 +337,57 @@ test('下载 JSON 参数错误显示在字段，不发起下载', async ({ page 
   ).toBeVisible()
 })
 
+test('自定义 JSON 使用真实格式并以最终文件名记入下载历史', async ({ page }) => {
+  await page.goto('/#/hooks/download-all')
+  const form = page.locator('.n-form')
+  await form.getByPlaceholder('请输入文件名称').fill('自定义样本.json')
+  await select(page, form, '文件类型', 'JSON')
+  await field(form, '自定义参数')
+    .getByRole('textbox')
+    .fill('{"category":"report"}')
+
+  const download = page.waitForEvent('download')
+  await form.getByRole('button', { name: '自定义下载', exact: true }).click()
+  const result = await download
+  expect(result.suggestedFilename()).toBe('自定义样本.json')
+  const path = await result.path()
+  if (!path) throw new Error('未获得自定义下载文件')
+  expect(JSON.parse(await readFile(path, 'utf8')).params).toEqual({
+    category: 'report',
+  })
+  await expect(page.locator('.file-history tbody')).toContainText(
+    '自定义样本.json'
+  )
+})
+
+test('批量下载如实记录单项失败并完成其余文件', async ({ page }) => {
+  await page.route('**/demo-files/users-report.xlsx', route =>
+    route.fulfill({ status: 503, body: 'Unavailable' })
+  )
+  await page.goto('/#/hooks/download-all')
+  await page
+    .getByRole('navigation', { name: '下载方式' })
+    .getByRole('button', { name: /批量下载/ })
+    .click()
+  await page
+    .getByRole('checkbox', { name: '用户数据报表.xlsx', exact: true })
+    .check()
+  await page
+    .getByRole('checkbox', { name: '订单统计.csv', exact: true })
+    .check()
+
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: '批量下载 (2)', exact: true }).click()
+  expect((await download).suggestedFilename()).toBe('订单统计.csv')
+  const history = page.locator('.file-history tbody')
+  await expect(
+    history.getByRole('row', { name: /用户数据报表\.xlsx/ })
+  ).toContainText('失败')
+  await expect(
+    history.getByRole('row', { name: /订单统计\.csv/ })
+  ).toContainText('成功')
+})
+
 test('操作栏演示复用提交锁，可选邮箱留空并在结束后重置', async ({ page }) => {
   await page.goto('/#/demo/action-bar')
   const card = page.locator('.n-card').filter({ has: page.locator('.n-form') })
@@ -412,9 +464,13 @@ test('搜索表单精简模板后条件、历史和展开状态互不串联', as
   const sections = page
     .locator('.demo-section')
     .filter({ has: page.locator('.form-search') })
-  await expect(sections).toHaveCount(4)
-  const basic = sections.nth(0)
-  const advanced = sections.nth(1)
+  await expect(sections).toHaveCount(5)
+  const basic = sections.filter({
+    has: page.getByRole('heading', { name: /^基础用法/ }),
+  })
+  const advanced = sections.filter({
+    has: page.getByRole('heading', { name: /^高级用法/ }),
+  })
   const searchButtons = (container: Locator) =>
     container.locator('.form-search-item-box').last().getByRole('button')
   await basic.getByPlaceholder('请输入用户名称').fill('张三')
@@ -445,7 +501,7 @@ test('防抖表单保留指令行为，快速重复点击只执行一次', async
   })
   await submit.dblclick()
   await expect(page.getByText('提交次数: 1', { exact: true })).toBeVisible()
-  await expect(page.getByText('提交成功!', { exact: true })).toBeVisible()
+  await expect(page.getByText('模拟提交完成', { exact: true })).toBeVisible()
   await form.getByRole('button', { name: '重置', exact: true }).click()
   await expect(form.getByPlaceholder('请输入用户名')).toHaveValue('')
   await expect(form.getByPlaceholder('请输入邮箱')).toHaveValue('')

@@ -13,15 +13,15 @@
       ><div class="workspace-actions"
         ><NButton
           size="small"
-          @click="showSettings = true"
+          @click="settings.showSettings = true"
           >地图服务设置</NButton
         ><NButton
           size="small"
           type="primary"
-          :disabled="!mapReady"
-          :aria-pressed="isPicking"
-          @click="addMarker"
-          >{{ isPicking ? '取消选点' : '添加标记' }}</NButton
+          :disabled="!status.mapReady"
+          :aria-pressed="placement.isPicking"
+          @click="landmarks.addMarker"
+          >{{ placement.isPicking ? '取消选点' : '添加标记' }}</NButton
         ></div
       ></header
     >
@@ -34,8 +34,8 @@
             :key="city.title"
             type="button"
             class="workspace-choice"
-            :aria-pressed="cityIndex === index"
-            @click="selectCity(index)"
+            :aria-pressed="location.cityIndex === index"
+            @click="location.selectCity(index)"
             ><span class="workspace-badge">0{{ index + 1 }}</span
             ><span
               ><strong>{{ city.title }}</strong
@@ -43,21 +43,21 @@
             ></button
           ></section
         ><section class="workspace-section"
-          ><h2>标记列表 · {{ markers.length }}</h2
+          ><h2>标记列表 · {{ landmarks.markers.length }}</h2
           ><NInput
-            v-model:value="search"
+            v-model:value="landmarks.search"
             size="small"
             clearable
             placeholder="搜索标记"
             :input-props="{ 'aria-label': '搜索地图标记' }"
           /><div class="map-marker-list"
             ><button
-              v-for="marker in filteredMarkers"
+              v-for="marker in landmarks.filteredMarkers"
               :key="marker.id"
               type="button"
               class="workspace-choice"
-              :aria-pressed="selectedId === marker.id"
-              @click="selectMarker(marker)"
+              :aria-pressed="landmarks.selectedId === marker.id"
+              @click="landmarks.selectMarker(marker)"
               ><span class="map-dot" /><span
                 ><strong>{{ marker.popup }}</strong
                 ><small
@@ -66,7 +66,7 @@
                 ></span
               ></button
             ><p
-              v-if="!filteredMarkers.length"
+              v-if="!landmarks.filteredMarkers.length"
               class="workspace-hint"
               >没有匹配标记</p
             ></div
@@ -76,13 +76,13 @@
       <main class="workspace-panel"
         ><header class="workspace-toolbar"
           ><div
-            ><h2>{{ MAP_EXAMPLES[cityIndex].title }}</h2
+            ><h2>{{ MAP_EXAMPLES[location.cityIndex].title }}</h2
             ><small
-              >{{ mapType === 'osm' ? 'OpenStreetMap' : '高德地图' }}
+              >{{ layers.mapType === 'osm' ? 'OpenStreetMap' : '高德地图' }}
               ·
               {{
-                mapReady
-                  ? mapType === 'amap' || tilesLoaded
+                status.mapReady
+                  ? layers.mapType === 'amap' || status.tilesLoaded
                     ? '底图已就绪'
                     : '正在连接底图'
                   : '等待地图初始化'
@@ -91,31 +91,31 @@
           ><div class="workspace-actions"
             ><NButton
               size="tiny"
-              :disabled="!markers.length || !mapReady"
-              @click="fit"
+              :disabled="!landmarks.markers.length || !status.mapReady"
+              @click="landmarks.fit"
               >适配全部标记</NButton
             ><NButton
               size="tiny"
-              @click="selectCity(cityIndex)"
+              @click="location.selectCity(location.cityIndex)"
               >恢复示例</NButton
             ></div
           ></header
         >
         <NAlert
-          v-if="error || tileWarning"
+          v-if="status.error || status.tileWarning"
           class="map-alert"
-          :type="error ? 'error' : 'warning'"
+          :type="status.error ? 'error' : 'warning'"
           :bordered="false"
-          ><div>{{ error || tileWarning }}</div
+          ><div>{{ status.error || status.tileWarning }}</div
           ><NButton
             size="tiny"
             class="map-retry"
-            @click="retry"
+            @click="status.retry"
             >重试加载</NButton
           ></NAlert
         >
         <div
-          v-if="isPicking"
+          v-if="placement.isPicking"
           class="map-picking-hint"
           role="status"
           >点击地图空白处选择位置，可拖动或缩放地图；按 Esc 取消。</div
@@ -123,44 +123,44 @@
         <div
           ref="canvasRef"
           class="map-canvas"
-          :class="{ 'map-canvas--picking': isPicking }"
+          :class="{ 'map-canvas--picking': placement.isPicking }"
           @mousedown.capture="focusCanvas"
           ><C_Map
             ref="mapRef"
-            :key="revision"
+            :key="layers.revision"
             class="map-view"
             height="100%"
-            :center="center"
-            :zoom="zoom"
-            :markers="displayedMarkers"
-            :map-type="mapType"
-            :amap-key="apiKey"
-            :amap-security-config="securityConfig"
-            :tile-config="tileConfig"
+            :center="location.center"
+            :zoom="location.zoom"
+            :markers="landmarks.displayedMarkers"
+            :map-type="layers.mapType"
+            :amap-key="layers.apiKey"
+            :amap-security-config="layers.securityConfig"
+            :tile-config="layers.tileConfig"
             fit-markers-on-init
             aria-label="城市地标地图"
-            @ready="onReady"
-            @error="onError"
-            @marker-click="onMarkerClick"
+            @ready="layers.onReady"
+            @error="layers.onError"
+            @marker-click="landmarks.onMarkerClick"
         /></div>
         <section
-          v-if="selected"
+          v-if="landmarks.selected"
           class="map-detail"
           ><div
             ><span class="workspace-hint">当前标记</span
-            ><h3>{{ selected.popup }}</h3
+            ><h3>{{ landmarks.selected.popup }}</h3
             ><p
-              >纬度 {{ selected.lat.toFixed(6) }} · 经度
-              {{ selected.lng.toFixed(6) }}</p
+              >纬度 {{ landmarks.selected.lat.toFixed(6) }} · 经度
+              {{ landmarks.selected.lng.toFixed(6) }}</p
             ></div
           ><div class="workspace-actions"
             ><NButton
               size="tiny"
-              @click="selectMarker(selected)"
+              @click="landmarks.selectMarker(landmarks.selected)"
               >定位标记</NButton
             ><NButton
               size="tiny"
-              @click="removeSelected"
+              @click="landmarks.removeSelected"
               >移除标记</NButton
             ></div
           ></section
@@ -171,64 +171,64 @@
       >
     </div>
     <NModal
-      :show="!!pendingPosition"
+      :show="!!placement.pendingPosition"
       preset="card"
       title="确认标记位置"
       class="map-marker-dialog"
       :style="{ width: 'min(420px, calc(100vw - 32px))' }"
       :mask-closable="false"
-      @update:show="onDialogChange"
+      @update:show="placement.onDialogChange"
       ><p class="workspace-hint">标记将添加到刚才点选的位置，确认后才会保存。</p
       ><dl
-        v-if="pendingPosition"
+        v-if="placement.pendingPosition"
         class="map-coordinates"
         ><div
           ><dt>纬度</dt
           ><dd
             ><output aria-label="选中纬度">{{
-              pendingPosition[0].toFixed(6)
+              placement.pendingPosition[0].toFixed(6)
             }}</output></dd
           ></div
         ><div
           ><dt>经度</dt
           ><dd
             ><output aria-label="选中经度">{{
-              pendingPosition[1].toFixed(6)
+              placement.pendingPosition[1].toFixed(6)
             }}</output></dd
           ></div
         ></dl
       ><label class="workspace-label"
         ><span>标记名称</span
         ><NInput
-          v-model:value="markerName"
+          v-model:value="placement.markerName"
           :maxlength="40"
           show-count
           clearable
           placeholder="输入标记名称"
           :input-props="{ 'aria-label': '标记名称' }"
-          @keydown.enter="confirmOnEnter" /></label
+          @keydown.enter="placement.confirmOnEnter" /></label
       ><template #footer
         ><div class="workspace-actions"
           ><NButton
             size="small"
-            @click="cancelPlacement"
+            @click="placement.cancelPlacement"
             >取消添加</NButton
           ><NButton
             size="small"
-            @click="chooseAgain"
+            @click="placement.chooseAgain"
             >重新选点</NButton
           ><NButton
             size="small"
             type="primary"
-            :disabled="!canConfirm"
-            @click="confirmPlacement"
+            :disabled="!placement.canConfirm"
+            @click="placement.confirmPlacement"
             >确认添加</NButton
           ></div
         ></template
       ></NModal
     >
     <NDrawer
-      v-model:show="showSettings"
+      v-model:show="settings.showSettings"
       :width="380"
       ><NDrawerContent
         title="地图服务设置"
@@ -236,23 +236,23 @@
         ><label class="workspace-label"
           ><span>地图服务</span
           ><NSelect
-            v-model:value="providerDraft"
+            v-model:value="settings.providerDraft"
             :options="[
               { label: 'OpenStreetMap', value: 'osm' },
               { label: '高德地图', value: 'amap' },
             ]" /></label
-        ><template v-if="providerDraft === 'amap'"
+        ><template v-if="settings.providerDraft === 'amap'"
           ><label class="workspace-label"
             ><span>高德 Web 端 API Key</span
             ><NInput
-              v-model:value="keyDraft"
+              v-model:value="settings.keyDraft"
               type="password"
               show-password-on="click"
               placeholder="完整填写 Key 后点击应用设置" /></label
           ><label class="workspace-label"
             ><span>本地开发安全码</span
             ><NInput
-              v-model:value="securityDraft"
+              v-model:value="settings.securityDraft"
               type="password"
               show-password-on="click"
               placeholder="securityJsCode" /></label
@@ -268,7 +268,7 @@
           ><NButton
             size="small"
             type="primary"
-            @click="applySettings"
+            @click="settings.applySettings"
             >应用设置</NButton
           ></template
         ></NDrawerContent
@@ -281,50 +281,15 @@
   import { useMapWorkspace } from './useMapWorkspace'
   defineOptions({ name: 'Demo36Map' })
   const {
-    isPicking,
-    pendingPosition,
-    markerName,
-    canConfirm,
-    displayedMarkers,
-    cancelPlacement,
-    chooseAgain,
-    confirmPlacement,
-    confirmOnEnter,
-    onDialogChange,
-    tilesLoaded,
-    providerDraft,
-    keyDraft,
-    securityDraft,
-    applySettings,
     canvasRef,
-    focusCanvas,
     mapRef,
-    cityIndex,
-    mapType,
-    center,
-    zoom,
-    markers,
-    selectedId,
-    search,
-    showSettings,
-    apiKey,
-    mapReady,
-    error,
-    tileWarning,
-    revision,
-    selected,
-    filteredMarkers,
-    securityConfig,
-    tileConfig,
-    onReady,
-    onError,
-    retry,
-    selectCity,
-    selectMarker,
-    onMarkerClick,
-    addMarker,
-    removeSelected,
-    fit,
+    focusCanvas,
+    status,
+    layers,
+    settings,
+    location,
+    landmarks,
+    placement,
   } = useMapWorkspace()
 </script>
 <style lang="scss" scoped>

@@ -5,14 +5,12 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 import { test, expect } from 'bun:test'
+import { restoreWorkflowDrafts } from '../src/views/demo/28-work-flow-editor/workflowDrafts'
 import {
   PERFORMANCE_TEAMS,
   summarizePerformance,
 } from '../src/views/demo/58-performance/data'
-import {
-  workflowScenarios,
-  restoreWorkflowDrafts,
-} from '../src/views/demo/28-work-flow-editor/data'
+import { workflowScenarios } from '../src/views/demo/28-work-flow-editor/data'
 import {
   BARCODE_EXAMPLES,
   validateBarcodeValue,

@@ -32,11 +32,11 @@ export const cards: CardInfo[] = [
   {
     key: 'modal',
     title: '模态框表单',
-    description: '适用于新增/编辑单个实体，快速配置操作',
+    description: '修改用户资料后尝试关闭或换一位用户，查看未保存草稿保护。',
     icon: 'mdi:book-information-variant',
     tag: 'Grid',
     tagType: 'info',
-    features: ['空间有限', '聚焦操作', '网格布局', '快进快出'],
+    features: ['网格布局', '切换记录', '草稿保护'],
     buttonText: '打开模态框',
     buttonIcon: 'i-carbon-launch',
   },
@@ -88,7 +88,33 @@ export const cards: CardInfo[] = [
 
 // =================== 模态框 - 用户信息（Grid） ===================
 
-export const modalOptions: FormOption[] = [
+export interface ModalUser {
+  id: number
+  username: string
+  email: string
+  role: 'admin' | 'user' | 'guest'
+  phone: string
+}
+
+export const modalUsers: readonly ModalUser[] = [
+  {
+    id: 1,
+    username: 'lin_qi',
+    email: 'lin.qi@example.com',
+    role: 'admin',
+    phone: '13800138001',
+  },
+  {
+    id: 2,
+    username: 'zhang_yu',
+    email: 'zhang.yu@example.com',
+    role: 'user',
+    phone: '13800138002',
+  },
+]
+
+export const modalOptions: FormOption<ModalUser>[] = [
+  { type: 'demoUserSwitcher', prop: 'id', label: '演示记录' },
   {
     type: 'input',
     prop: 'username',
@@ -123,10 +149,10 @@ export const modalOptions: FormOption[] = [
     rules: NAIVE_COMBOS.mobile('手机号'),
   },
 ]
-export const modalConfig: FormConfig = {
+export const modalConfig: FormConfig<ModalUser> = {
   layout: 'grid',
   submitText: '保存',
-  submitSuccessText: '已接收用户信息（演示，不会持久化）',
+  submitSuccessText: '已保存到当前演示页面',
 }
 
 // =================== 抽屉 - 商品配置（Default） ===================

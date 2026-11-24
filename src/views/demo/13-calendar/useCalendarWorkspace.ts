@@ -16,6 +16,11 @@ import type {
 } from '@robot-admin/naive-ui-components/C_Form'
 import type { DateClickArg } from '@fullcalendar/interaction'
 import {
+  formatRecurrenceRule,
+  parseRecurrenceRule,
+  type RecurrenceRule,
+} from '@robot-admin/naive-ui-components/C_RecurrenceEditor'
+import {
   CALENDAR_STORAGE_KEY,
   CATEGORIES,
   createScheduleEvents,
@@ -67,6 +72,8 @@ export function useCalendarWorkspace() {
   const view = ref<CalendarViewType>('dayGridMonth')
   const calendarTitle = ref('')
   const showEditor = ref(false)
+  const recurrence = ref<RecurrenceRule | null>(null)
+  const recurrenceText = computed(() => formatRecurrenceRule(recurrence.value))
   const draft = ref<ScheduleDraft>({
     id: '',
     title: '',
@@ -138,6 +145,9 @@ export function useCalendarWorkspace() {
   }
   const openEditor = (event?: ScheduleEvent, start?: Date, end?: Date) => {
     if (!event && !editable.value) return
+    recurrence.value = event?.recurrence
+      ? parseRecurrenceRule(event.recurrence)
+      : null
     const initial = start ?? eventDate(selectedDay.value)
     const begin = new Date(initial)
     if (!start) begin.setHours(9, 0, 0, 0)
@@ -158,7 +168,7 @@ export function useCalendarWorkspace() {
   }
   const saveSchedule = (value: ScheduleDraft) => {
     if (!editable.value) throw new Error('当前为只读模式')
-    const item = buildScheduleEvent(value)
+    const item = buildScheduleEvent(value, recurrence.value)
     events.value = value.id
       ? events.value.map(event => (event.id === value.id ? item : event))
       : [...events.value, item]
@@ -329,6 +339,8 @@ export function useCalendarWorkspace() {
     view,
     calendarTitle,
     showEditor,
+    recurrence,
+    recurrenceText,
     draft,
     filteredEvents,
     agenda,

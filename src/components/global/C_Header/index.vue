@@ -112,7 +112,6 @@
   import { s_permissionStore } from '@/stores/permission'
   import { MENU_COLLAPSE_KEY } from '@robot-admin/layout/naive'
   import { translateRouteTitle } from '@/utils/plugins/i18n-route'
-  import C_NavbarRight from '@/components/global/C_NavbarRight/index.vue'
   import { SETTINGS_DRAWER_KEY } from '@/components/global/C_Layout/d_context'
 
   defineOptions({ name: 'C_Header' })

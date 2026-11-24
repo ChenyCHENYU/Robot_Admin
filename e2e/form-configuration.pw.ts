@@ -25,19 +25,27 @@ test('重复选择当前布局保留模型和字段统计，仍可填充测试�
     .locator('.layout-buttons')
     .getByRole('button', { name: '默认布局', exact: true })
 
-  await expect(fieldBadge).toHaveText('9 字段')
+  await expect(fieldBadge).toHaveText('10 字段')
   await username.fill('draft_01')
   await currentLayout.click()
   await currentLayout.click()
   await expect(username).toHaveValue('draft_01')
-  await expect(fieldBadge).toHaveText('9 字段')
+  await expect(fieldBadge).toHaveText('10 字段')
 
   await page.getByRole('button', { name: '填充测试', exact: true }).click()
   await expect(username).toHaveValue('cheny_888')
   await expect(form.getByPlaceholder('请输入邮箱地址')).toHaveValue(
     'demo@cheny-test.com'
   )
-  await expect(fieldBadge).toHaveText('9 字段')
+  const department = form.locator('.n-tree-select')
+  await department.click()
+  await page.getByText('质量工程组', { exact: true }).click()
+  await expect(department).toContainText('质量工程组')
+  await page.getByRole('button', { name: '预览数据', exact: true }).click()
+  await expect(page.locator('.json-display')).toContainText(
+    '"departmentId": 102'
+  )
+  await expect(fieldBadge).toHaveText('10 字段')
 })
 
 test('默认按钮使用正式验证规则，成功只报告演示结果，重置清空模型', async ({

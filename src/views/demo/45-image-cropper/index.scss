@@ -202,6 +202,10 @@
   }
 }
 .crop-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
   padding: 16px 0;
 }
 .crop-output {
@@ -493,4 +497,13 @@
   .crop-output :deep(.n-checkbox__label) {
     white-space: normal;
   }
+}
+.crop-annotation-dialog {
+  width: min(840px, calc(100vw - 32px));
+}
+
+.crop-annotation-result {
+  display: block;
+  margin-top: 12px;
+  color: var(--app-text-secondary);
 }

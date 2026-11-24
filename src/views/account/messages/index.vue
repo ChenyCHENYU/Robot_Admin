@@ -16,10 +16,10 @@
         ><div class="message-heading"
           ><h1>消息中心</h1
           ><NTag
-            :type="store.mode === 'demo' ? 'warning' : 'info'"
+            :type="view.store.mode === 'demo' ? 'warning' : 'info'"
             :bordered="false"
             size="small"
-            >{{ store.mode === 'demo' ? '演示模式' : '接口模式' }}</NTag
+            >{{ view.store.mode === 'demo' ? '演示模式' : '接口模式' }}</NTag
           ></div
         ><p
           >聚合通用消息、审批流程与业务待办，让每一项工作都有清晰进展。</p
@@ -28,11 +28,11 @@
       <NSpace align="center"
         ><span
           class="connection-status"
-          :class="{ 'is-online': store.connected }"
-          ><i />{{ store.connected ? '已同步' : '连接待恢复' }}</span
+          :class="{ 'is-online': view.store.connected }"
+          ><i />{{ view.store.connected ? '已同步' : '连接待恢复' }}</span
         ><NButton
-          :loading="store.loading"
-          @click="run(() => store.initialize().then(() => store.refresh()))"
+          :loading="view.store.loading"
+          @click="view.connection.refresh"
           ><template #icon><span class="i-mdi-refresh" /></template
           >刷新</NButton
         ></NSpace
@@ -43,11 +43,11 @@
       aria-label="消息概览"
     >
       <button
-        v-for="stat in statCards"
+        v-for="stat in view.navigation.statCards"
         :key="stat.key"
         class="message-stat"
         :class="`message-stat--${stat.key}`"
-        @click="selectStat(stat.key)"
+        @click="view.navigation.selectStat(stat.key)"
         ><span class="stat-symbol"
           ><span
             :class="stat.icon"
@@ -59,22 +59,22 @@
       /></button>
     </section>
     <NAlert
-      v-if="store.error"
+      v-if="view.store.error"
       type="error"
       :bordered="false"
       class="message-error"
       ><div class="message-error-content"
-        ><span>{{ store.error }}</span
+        ><span>{{ view.store.error }}</span
         ><NButton
           size="small"
-          :loading="store.loading"
-          @click="run(() => store.initialize().then(() => store.refresh()))"
+          :loading="view.store.loading"
+          @click="view.connection.refresh"
           >重试连接</NButton
         ></div
       ></NAlert
     >
     <NTabs
-      v-model:value="section"
+      v-model:value="view.section"
       type="line"
       animated
       class="message-sections"
@@ -82,22 +82,22 @@
       <NTab name="inbox">收件箱</NTab>
       <NTab
         name="sending"
-        :disabled="!store.capabilities.manage"
+        :disabled="!view.store.capabilities.manage"
         >发送与记录</NTab
       >
       <NTab
         name="templates"
-        :disabled="!store.capabilities.manage"
+        :disabled="!view.store.capabilities.manage"
         >消息模板</NTab
       >
       <NTab
         name="preferences"
-        :disabled="!store.capabilities.preferences"
+        :disabled="!view.store.capabilities.preferences"
         >通知偏好</NTab
       >
     </NTabs>
     <div
-      v-if="section === 'inbox'"
+      v-if="view.section === 'inbox'"
       class="message-inbox-layout"
     >
       <aside
@@ -106,20 +106,22 @@
       >
         <div class="navigation-heading">我的消息<span>收件总数</span></div>
         <button
-          v-for="item in topicItems"
+          v-for="item in view.navigation.topicItems"
           :key="item.key"
           class="inbox-navigation-item"
           :class="{
             'is-active':
-              (store.query.topic ?? 'all') === item.key && !activeWorkflowView,
+              (view.store.query.topic ?? 'all') === item.key &&
+              !view.navigation.activeWorkflowView,
           }"
           :aria-current="
-            (store.query.topic ?? 'all') === item.key && !activeWorkflowView
+            (view.store.query.topic ?? 'all') === item.key &&
+            !view.navigation.activeWorkflowView
               ? 'page'
               : undefined
           "
           @click="
-            navigateInbox({
+            view.navigation.select({
               topic:
                 item.key === 'all'
                   ? undefined
@@ -137,12 +139,16 @@
           >审批工作台</div
         >
         <button
-          v-for="item in workflowViews"
+          v-for="item in view.navigation.workflowViews"
           :key="item.key"
           class="inbox-navigation-item"
-          :class="{ 'is-active': activeWorkflowView === item.key }"
-          :aria-current="activeWorkflowView === item.key ? 'page' : undefined"
-          @click="navigateInbox(item.patch)"
+          :class="{
+            'is-active': view.navigation.activeWorkflowView === item.key,
+          }"
+          :aria-current="
+            view.navigation.activeWorkflowView === item.key ? 'page' : undefined
+          "
+          @click="view.navigation.select(item.patch)"
         >
           <span
             :class="item.icon"
@@ -157,12 +163,12 @@
           <p>阅读与办理分别记录。<br />已读的事项也可能仍待处理。</p>
         </div>
         <div
-          v-if="store.stats.overdue"
+          v-if="view.store.stats.overdue"
           class="navigation-overdue"
           ><span
             class="i-mdi-clock-outline"
             aria-hidden="true"
-          />{{ store.stats.overdue }} 项待办已超期</div
+          />{{ view.store.stats.overdue }} 项待办已超期</div
         >
       </aside>
       <NCard
@@ -171,23 +177,42 @@
       >
         <div class="inbox-heading">
           <div class="inbox-title"
-            ><h2>{{ inboxTitle }}</h2
-            ><span>共 {{ store.total }} 条消息</span></div
+            ><h2>{{ view.navigation.inboxTitle }}</h2
+            ><span>共 {{ view.store.total }} 条消息</span></div
           >
-          <NButton
-            text
-            type="primary"
-            :disabled="!store.stats.unread || store.loading || commandLoading"
-            @click="markAllRead"
-            >全部标为已读</NButton
+          <NSpace
+            align="center"
+            size="small"
           >
+            <NRadioGroup
+              :value="inboxLayout"
+              size="small"
+              aria-label="消息列表视图"
+              @update:value="setInboxLayout"
+            >
+              <NRadioButton value="table">批量处理</NRadioButton>
+              <NRadioButton value="compact">消息速览</NRadioButton>
+            </NRadioGroup>
+            <NButton
+              text
+              type="primary"
+              :disabled="
+                !view.store.stats.unread ||
+                view.store.loading ||
+                view.list.commandLoading
+              "
+              @click="view.list.markAllRead"
+              >全部标为已读</NButton
+            >
+          </NSpace>
         </div>
         <NTabs
-          :value="store.query.status"
+          v-if="inboxLayout === 'table'"
+          :value="view.store.query.status"
           type="line"
           size="small"
           class="inbox-status-tabs"
-          @update:value="changeStatus"
+          @update:value="view.navigation.changeStatus"
         >
           <NTab
             v-for="tab in INBOX_TABS"
@@ -198,23 +223,23 @@
         </NTabs>
         <div class="message-filters">
           <NInput
-            v-model:value="filters.keyword"
+            v-model:value="view.list.filters.keyword"
             clearable
             placeholder="搜索标题、正文、业务编号"
             :input-props="{ 'aria-label': '消息关键词' }"
-            @keyup.enter="search"
+            @keyup.enter="view.list.search"
           >
             <template #prefix><span class="i-mdi-magnify" /></template>
           </NInput>
           <NSelect
-            v-model:value="filters.category"
+            v-model:value="view.list.filters.category"
             clearable
             placeholder="全部消息类型"
             :options="CATEGORY_OPTIONS"
             aria-label="消息分类"
           />
           <NSelect
-            v-model:value="filters.priority"
+            v-model:value="view.list.filters.priority"
             clearable
             placeholder="全部优先级"
             :options="PRIORITY_OPTIONS"
@@ -223,43 +248,45 @@
           <NSpace :wrap="false">
             <NButton
               type="primary"
-              :loading="store.loading"
-              @click="search"
+              :loading="view.store.loading"
+              @click="view.list.search"
               >查询</NButton
             >
             <NButton
-              :disabled="store.loading"
-              @click="resetFilters"
+              :disabled="view.store.loading"
+              @click="view.list.resetFilters"
               >重置</NButton
             >
           </NSpace>
           <NButton
             text
             class="advanced-filter-toggle"
-            :aria-expanded="advancedFilters"
-            @click="advancedFilters = !advancedFilters"
+            :aria-expanded="view.navigation.advancedFilters"
+            @click="
+              view.navigation.advancedFilters = !view.navigation.advancedFilters
+            "
           >
             <template #icon><span class="i-mdi-tune-variant" /></template
-            >{{ advancedFilters ? '收起筛选' : '更多筛选' }}
+            >{{ view.navigation.advancedFilters ? '收起筛选' : '更多筛选' }}
           </NButton>
         </div>
         <div
-          v-if="advancedFilters"
+          v-if="view.navigation.advancedFilters"
           class="message-advanced-filters"
         >
           <label
             ><span>消息来源</span
             ><NInput
-              v-model:value="filters.source"
+              v-model:value="view.list.filters.source"
               clearable
               placeholder="输入来源名称"
               :input-props="{ 'aria-label': '消息来源' }"
-              @keyup.enter="search"
+              @keyup.enter="view.list.search"
           /></label>
           <label
             ><span>办理状态</span
             ><NSelect
-              v-model:value="filters.taskStatus"
+              v-model:value="view.list.filters.taskStatus"
               clearable
               placeholder="全部办理状态"
               :options="TASK_STATUS_OPTIONS"
@@ -268,7 +295,7 @@
           <label
             ><span>审批状态</span
             ><NSelect
-              v-model:value="filters.workflowStatus"
+              v-model:value="view.list.filters.workflowStatus"
               clearable
               placeholder="全部审批状态"
               :options="WORKFLOW_STATUS_OPTIONS"
@@ -277,7 +304,7 @@
           <label
             ><span>参与关系</span
             ><NSelect
-              v-model:value="filters.relationship"
+              v-model:value="view.list.filters.relationship"
               clearable
               placeholder="全部参与关系"
               :options="WORKFLOW_RELATION_OPTIONS"
@@ -286,48 +313,86 @@
           <label class="filter-date"
             ><span>收到日期</span
             ><NDatePicker
-              v-model:value="filters.dateRange"
+              v-model:value="view.list.filters.dateRange"
               type="daterange"
               clearable
               aria-label="收到日期范围"
           /></label>
         </div>
-        <div class="inbox-toolbar">
+        <div
+          v-if="inboxLayout === 'table'"
+          class="inbox-toolbar"
+        >
           <C_ActionBar
-            :actions="actions"
+            :actions="view.list.actions"
             :config="{ size: 'small', wrap: true }"
           />
           <span class="selection-summary"
             >{{
-              selectedIds.length
-                ? `已选 ${selectedIds.length} 条`
+              view.list.selectedIds.length
+                ? `已选 ${view.list.selectedIds.length} 条`
                 : '可勾选消息进行批量操作'
             }}
             <NButton
-              v-if="selectedIds.length"
+              v-if="view.list.selectedIds.length"
               text
               size="small"
-              @click="clearSelection"
+              @click="view.list.clearSelection"
               >清空选择</NButton
             >
           </span>
         </div>
         <C_Table
+          v-if="inboxLayout === 'table'"
           ref="tableRef"
-          :columns="columns"
-          :data="store.items"
-          :loading="store.loading"
+          :columns="view.list.columns"
+          :data="view.store.items"
+          :loading="view.store.loading"
           row-key="id"
           :row-number="false"
           :config="{
             toolbar: { show: false },
             selection: { enabled: true },
-            pagination,
+            pagination: view.list.pagination,
             display: { scrollX: 1210, bordered: false, size: 'medium' },
           }"
-          @pagination-change="changePage"
-          @selection-change="selectionChange"
+          @pagination-change="view.list.changePage"
+          @selection-change="view.list.selectionChange"
         />
+        <C_NotificationInbox
+          v-else
+          :views="compactViews"
+          :active-view="view.store.query.status"
+          :items="view.store.loading ? [] : compactItems"
+          :selected-id="view.reader.id ?? undefined"
+          :loading="view.store.loading"
+          :error="view.store.error"
+          :start-index="
+            (view.list.pagination.page - 1) * view.list.pagination.pageSize
+          "
+          :actions="compactActions"
+          :badges="compactBadges"
+          @update:active-view="view.navigation.changeStatus"
+          @select="view.reader.open($event.id)"
+          @action="handleCompactAction"
+          @retry="view.connection.retry"
+        >
+          <template #footer>
+            <NPagination
+              :page="view.list.pagination.page"
+              :page-size="view.list.pagination.pageSize"
+              :item-count="view.list.pagination.total"
+              :page-sizes="view.list.pagination.pageSizes"
+              :disabled="view.store.loading"
+              size="small"
+              show-size-picker
+              @update:page="
+                view.list.changePage($event, view.list.pagination.pageSize)
+              "
+              @update:page-size="view.list.changePage(1, $event)"
+            />
+          </template>
+        </C_NotificationInbox>
         <div class="inbox-legend"
           ><span><i class="legend-unread-dot" />未读消息</span
           ><span>阅读状态、待办办理与审批结果分别跟踪</span></div
@@ -335,18 +400,18 @@
       </NCard>
     </div>
     <MessageGovernance
-      v-else-if="section === 'sending' || section === 'templates'"
-      :section="section"
+      v-else-if="view.section === 'sending' || view.section === 'templates'"
+      :section="view.section"
     />
-    <NotificationPreferences v-else-if="section === 'preferences'" />
+    <NotificationPreferences v-else-if="view.section === 'preferences'" />
     <NText
-      v-if="!store.capabilities.manage && !store.loading"
+      v-if="!view.store.capabilities.manage && !view.store.loading"
       depth="3"
       class="capability-note"
       >发送治理由消息服务按当前账户授权开放。</NText
     >
     <NCard
-      v-if="store.mode === 'demo'"
+      v-if="view.store.mode === 'demo'"
       :bordered="false"
       class="demo-controls-card"
     >
@@ -358,45 +423,30 @@
             >本区域仅在演示模式可见。数据按当前用户与公司保存在此浏览器，可验证离线、失败恢复和新消息同步。</p
           ><div class="demo-controls"
             ><NButton
-              :loading="demoBusy"
-              @click="
-                demoOperation(
-                  () => store.simulateIncoming('workflow'),
-                  '已生成新的演示审批'
-                )
-              "
+              :loading="view.demo.busy"
+              @click="view.demo.simulateIncoming('workflow')"
               >生成新审批</NButton
             ><NButton
-              :loading="demoBusy"
-              @click="
-                demoOperation(
-                  () => store.simulateIncoming('notification'),
-                  '已生成演示通知'
-                )
-              "
+              :loading="view.demo.busy"
+              @click="view.demo.simulateIncoming('notification')"
               >生成新通知</NButton
             ><NButton
-              :loading="demoBusy"
-              @click="
-                demoOperation(
-                  () => store.simulateIncoming('task'),
-                  '已生成演示待办'
-                )
-              "
+              :loading="view.demo.busy"
+              @click="view.demo.simulateIncoming('task')"
               >生成新待办</NButton
-            ><NButton @click="toggleOnline">{{
-              store.connected ? '模拟离线' : '恢复连接'
+            ><NButton @click="view.demo.toggleOnline">{{
+              view.store.connected ? '模拟离线' : '恢复连接'
             }}</NButton
             ><NSelect
-              v-model:value="failureOperation"
-              :options="failureOptions"
+              v-model:value="view.demo.failureOperation"
+              :options="view.demo.failureOptions"
               aria-label="模拟失败类型"
-            /><NButton @click="injectFailure">下一次操作失败</NButton
+            /><NButton @click="view.demo.injectFailure">下一次操作失败</NButton
             ><NButton
               type="error"
               secondary
-              :disabled="demoBusy"
-              @click="confirmReset"
+              :disabled="view.demo.busy"
+              @click="view.demo.confirmReset"
               >重置本作用域</NButton
             ></div
           ></NCollapseItem
@@ -404,62 +454,92 @@
       >
     </NCard>
     <MessageDetail
-      :id="detailId"
-      @close="detailId = null"
-      @action="openBusiness"
+      :id="view.reader.id"
+      @close="view.reader.close"
+      @action="view.reader.openBusiness"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { useMessageWorkspace } from './composables/useMessageWorkspace'
-  import MessageDetail from './components/c_messageDetail/index.vue'
-  import MessageGovernance from './components/c_messageGovernance/index.vue'
-  import NotificationPreferences from './components/c_notificationPreferences/index.vue'
-
-  defineOptions({ name: 'AccountMessages' })
-  const {
-    store,
-    tableRef,
-    selectedIds,
-    detailId,
-    filters,
-    commandLoading,
-    columns,
-    actions,
-    pagination,
-    run,
-    search,
-    resetFilters,
-    changeStatus,
-    navigateInbox,
-    changePage,
-    markAllRead,
-    clearSelection,
-    section,
-    demoBusy,
-    failureOperation,
-    failureOptions,
-    statCards,
-    topicItems,
-    workflowViews,
-    activeWorkflowView,
-    inboxTitle,
-    advancedFilters,
-    selectStat,
-    selectionChange,
-    demoOperation,
-    toggleOnline,
-    injectFailure,
-    confirmReset,
-    openBusiness,
+  import type { NotificationMutation } from '@/api/notifications.contract'
+  import type {
+    NotificationInboxAction,
+    NotificationInboxBadge,
+  } from '@robot-admin/naive-ui-components/C_NotificationInbox'
+  import {
+    getNotificationTaskLabel,
+    getNotificationWorkflowLabel,
+  } from '@/utils/d_notificationPresentation'
+  import {
     CATEGORY_OPTIONS,
     INBOX_TABS,
     PRIORITY_OPTIONS,
     TASK_STATUS_OPTIONS,
-    WORKFLOW_STATUS_OPTIONS,
     WORKFLOW_RELATION_OPTIONS,
-  } = useMessageWorkspace()
+    WORKFLOW_STATUS_OPTIONS,
+  } from './data'
+  import { useMessageWorkspace } from './composables/useMessageWorkspace'
+  import MessageDetail from './components/MessageDetail/index.vue'
+  import MessageGovernance from './components/MessageGovernance/index.vue'
+  import NotificationPreferences from './components/NotificationPreferences/index.vue'
+
+  defineOptions({ name: 'AccountMessages' })
+  const controller = useMessageWorkspace()
+  const view = proxyRefs(controller)
+  const { tableRef } = controller
+
+  const inboxLayout = ref<'table' | 'compact'>('table')
+  const compactViews = INBOX_TABS.map(({ value, label }) => ({
+    key: value,
+    label,
+  }))
+  const compactItems = computed(() =>
+    controller.store.items.map(item => ({
+      ...item,
+      timestamp: item.createdAt,
+      status: item.archivedAt
+        ? ('archived' as const)
+        : item.readAt
+          ? ('read' as const)
+          : ('unread' as const),
+    }))
+  )
+  type CompactItem = (typeof compactItems.value)[number]
+  const compactBadges = (item: CompactItem): NotificationInboxBadge[] => {
+    if (item.workflow)
+      return [
+        {
+          label: getNotificationWorkflowLabel(item.workflow.status),
+          type: item.workflow.status === 'pending' ? 'warning' : 'info',
+        },
+      ]
+    if (item.taskStatus)
+      return [{ label: getNotificationTaskLabel(item.taskStatus) }]
+    return []
+  }
+  const compactActions = (
+    item: CompactItem
+  ): NotificationInboxAction<NotificationMutation>[] => [
+    {
+      key: item.starred ? 'unstar' : 'star',
+      label: item.starred ? '取消星标' : '加星标',
+      disabled: controller.list.commandLoading,
+    },
+    {
+      key: item.readAt ? 'unread' : 'read',
+      label: item.readAt ? '标为未读' : '标为已读',
+      disabled: controller.list.commandLoading,
+    },
+  ]
+  const handleCompactAction = (
+    action: NotificationMutation,
+    item: CompactItem
+  ) => controller.list.mutate(action, [item.id])
+  const setInboxLayout = (layout: 'table' | 'compact') => {
+    controller.list.clearSelection()
+    inboxLayout.value = layout
+  }
 </script>
 
 <style lang="scss" scoped>

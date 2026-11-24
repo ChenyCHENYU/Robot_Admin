@@ -23,42 +23,44 @@
           ><label class="workspace-label"
             ><span>画笔颜色</span
             ><NColorPicker
-              v-model:value="penColor"
+              v-model:value="page.penColor"
               :show-alpha="false"
-              :disabled="readonly"
+              :disabled="page.readonly"
               size="small" /></label
           ><label class="workspace-label"
-            ><span>笔画粗细 · {{ penWidth }} px</span
+            ><span>笔画粗细 · {{ page.penWidth }} px</span
             ><NSlider
-              v-model:value="penWidth"
+              v-model:value="page.penWidth"
               :min="1"
               :max="8"
               :step="1"
-              :disabled="readonly" /></label
+              :disabled="page.readonly" /></label
           ><label class="workspace-label"
-            ><span>橡皮尺寸 · {{ eraserSize }} px</span
+            ><span>橡皮尺寸 · {{ page.eraserSize }} px</span
             ><NSlider
-              v-model:value="eraserSize"
+              v-model:value="page.eraserSize"
               :min="10"
               :max="80"
               :step="5"
-              :disabled="readonly || exporting"
+              :disabled="page.readonly || page.exporting"
               aria-label="橡皮尺寸" /></label
           ><p class="workspace-hint"
             >选择工具栏中的橡皮擦使用；调整尺寸不会改变已经擦除的笔迹。</p
           ><label class="workspace-label"
-            ><NCheckbox v-model:checked="watermark"
+            ><NCheckbox v-model:checked="page.watermark"
               >添加演示水印</NCheckbox
             ></label
           ><label class="workspace-label"
-            ><NCheckbox v-model:checked="readonly">只读预览</NCheckbox></label
+            ><NCheckbox v-model:checked="page.readonly"
+              >只读预览</NCheckbox
+            ></label
           ><p class="workspace-hint"
             >只读模式可查看和导出，不能改动笔迹。</p
           ></section
         ><section class="workspace-section"
           ><h2>输出格式</h2
           ><NSelect
-            v-model:value="format"
+            v-model:value="page.format"
             :options="SIGNATURE_FORMATS"
             size="small"
           /><p
@@ -72,24 +74,24 @@
           ><div
             ><h2>签名画布</h2
             ><small
-              >{{ strokes.length }} 笔 ·
-              {{ readonly ? '只读模式' : '可编辑' }}</small
+              >{{ page.strokes.length }} 笔 ·
+              {{ page.readonly ? '只读模式' : '可编辑' }}</small
             ></div
           ><div class="workspace-actions"
             ><NButton
               size="tiny"
-              :disabled="!strokes.length"
-              @click="save"
+              :disabled="!page.strokes.length"
+              @click="page.save"
               >保存笔迹快照</NButton
             ><NButton
               size="tiny"
-              :disabled="!saved || readonly"
-              @click="restore"
+              :disabled="!page.saved || page.readonly"
+              @click="page.restore"
               >恢复快照</NButton
             ><NButton
               size="tiny"
-              :disabled="!strokes.length || readonly"
-              @click="clear"
+              :disabled="!page.strokes.length || page.readonly"
+              @click="page.clear"
               >清空画布</NButton
             ></div
           ></header
@@ -98,22 +100,25 @@
             ref="signatureRef"
             width="100%"
             :height="330"
-            :readonly="readonly"
-            :disabled="exporting"
-            :pen-config="{ color: penColor, width: penWidth }"
-            :eraser-config="{ size: eraserSize }"
-            :watermark="{ show: watermark, text: 'Robot Admin · 演示签名' }"
+            :readonly="page.readonly"
+            :disabled="page.exporting"
+            :pen-config="{ color: page.penColor, width: page.penWidth }"
+            :eraser-config="{ size: page.eraserSize }"
+            :watermark="{
+              show: page.watermark,
+              text: 'Robot Admin · 演示签名',
+            }"
             background-color="#ffffff"
-            @change="changed"
+            @change="page.changed"
         /></div>
         <footer class="workspace-footer"
           ><span>鼠标、触控笔与触摸均可书写 · 工具栏支持撤销、恢复和橡皮擦</span
           ><NButton
             size="small"
             type="primary"
-            :loading="exporting"
-            :disabled="!strokes.length"
-            @click="generate"
+            :loading="page.exporting"
+            :disabled="!page.strokes.length"
+            @click="page.generate"
             >生成签名图片</NButton
           ></footer
         >
@@ -123,16 +128,22 @@
             ><NTag
               size="small"
               :bordered="false"
-              :type="stale ? 'warning' : result ? 'success' : 'default'"
+              :type="
+                page.stale ? 'warning' : page.result ? 'success' : 'default'
+              "
               >{{
-                stale ? '需要重新生成' : result ? '已生成' : '尚未生成'
+                page.stale
+                  ? '需要重新生成'
+                  : page.result
+                    ? '已生成'
+                    : '尚未生成'
               }}</NTag
             ></header
           ><div
-            v-if="result"
+            v-if="page.result"
             class="signature-result"
             ><img
-              :src="result"
+              :src="page.result"
               alt="生成的签名图片" /></div
           ><div
             v-else
@@ -141,8 +152,8 @@
           ><div class="workspace-actions"
             ><NButton
               size="small"
-              :disabled="!result || stale"
-              @click="download"
+              :disabled="!page.result || page.stale"
+              @click="page.download"
               >下载签名图片</NButton
             ><span class="workspace-hint"
               >修改笔迹、水印或格式后需重新生成。</span
@@ -157,26 +168,9 @@
   import { SIGNATURE_FORMATS } from './data'
   import { useSignatureWorkspace } from './useSignatureWorkspace'
   defineOptions({ name: 'Demo42Signature' })
-  const {
-    signatureRef,
-    penColor,
-    penWidth,
-    eraserSize,
-    watermark,
-    readonly,
-    format,
-    strokes,
-    saved,
-    result,
-    stale,
-    exporting,
-    changed,
-    save,
-    restore,
-    clear,
-    generate,
-    download,
-  } = useSignatureWorkspace()
+  const controller = useSignatureWorkspace()
+  const page = proxyRefs(controller)
+  const { signatureRef } = controller
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

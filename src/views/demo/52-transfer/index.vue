@@ -70,10 +70,20 @@
           :data="current.data"
           :titles="current.titles"
           :filterable="filterable"
-          :filter-method="filterAssignmentItems"
+          :filter-method="
+            activeScene === 'permission' ? undefined : filterAssignmentItems
+          "
+          :columns="
+            activeScene === 'permission' ? PERMISSION_COLUMNS : undefined
+          "
+          :group-by="activeScene === 'permission' ? permissionPath : undefined"
           :show-select-all="showSelectAll"
           :size="size"
-          filter-placeholder="搜索名称或描述"
+          :filter-placeholder="
+            activeScene === 'permission'
+              ? '搜索权限、说明或分组'
+              : '搜索名称或描述'
+          "
           target-empty-text="从左侧选择要分配的项目"
         />
         <footer
@@ -129,8 +139,11 @@
 </template>
 <script setup lang="ts">
   import {
+    PERMISSION_COLUMNS,
     TRANSFER_SCENES,
     filterAssignmentItems,
+    permissionPath,
+    type AssignmentItem,
     type TransferScene,
   } from './data'
   defineOptions({ name: 'Demo52Transfer' })
@@ -158,9 +171,12 @@
       selectedMap.value[activeScene.value] = value
     },
   })
-  const selectedItems = computed(() =>
-    current.value.data.filter(item => currentSelected.value.includes(item.key))
-  )
+  const selectedItems = computed(() => {
+    const itemsByKey = new Map<string, AssignmentItem>(
+      current.value.data.map(item => [item.key, item])
+    )
+    return currentSelected.value.flatMap(key => itemsByKey.get(key) ?? [])
+  })
   const changed = computed(
     () =>
       [...currentSelected.value].sort().join('|') !==

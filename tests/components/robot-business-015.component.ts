@@ -8,7 +8,12 @@
 import { beforeEach, expect, test, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { defineComponent, h, nextTick, ref, type VNodeChild } from 'vue'
-import { NDialogProvider, NMessageProvider, NInput } from 'naive-ui'
+import {
+  NDialogProvider,
+  NMessageProvider,
+  NInput,
+  useDialogReactiveList,
+} from 'naive-ui'
 import {
   C_Form,
   type SubmitEventPayload,
@@ -17,24 +22,39 @@ import { useDictionaryManagement } from '@/views/sys-manage/dictionary-manage/us
 import { useMenuManagement } from '@/views/sys-manage/menu-manage/useMenuManagement'
 import { useRoleManagement } from '@/views/sys-manage/role-manage/useRoleManagement'
 import { usePermissionManagement } from '@/views/sys-manage/permission-manage/usePermissionManagement'
+import { useUserPasswordReset } from '@/views/sys-manage/user-manage/useUserPasswordReset'
 import { useUserManagement } from '@/views/sys-manage/user-manage/useUserManagement'
 import { C_Table } from '@robot-admin/naive-ui-components/C_Table'
 import { DEFAULT_DICT_FORM_DATA } from '@/views/sys-manage/dictionary-manage/data'
 import { DEFAULT_FORM_DATA } from '@/views/sys-manage/menu-manage/data'
 import { MOCK_PERMISSION_RESOURCES } from '@/views/sys-manage/permission-manage/data'
-import { addDictApi } from '@/api/dictionary-manage'
-import { addMenuApi, updateMenuApi } from '@/api/menu-manage'
-import { createRoleApi, updateRoleApi } from '@/api/role-manage'
+import { addDictApi, deleteDictApi } from '@/api/dictionary-manage'
+import { addMenuApi, deleteMenuApi, updateMenuApi } from '@/api/menu-manage'
+import {
+  createRoleApi,
+  getRoleUsersPageApi,
+  updateRoleApi,
+} from '@/api/role-manage'
 import type { RoleFormData } from '@/api/role-manage.contract'
-import type { UserData } from '@/api/user-manage.contract'
-import { getUserListApi, updateUserStatusApi } from '@/api/user-manage'
+import type { ResetPasswordForm, UserData } from '@/api/user-manage.contract'
+import {
+  getUserListApi,
+  resetUserPasswordApi,
+  updateUserStatusApi,
+} from '@/api/user-manage'
 import { deferred } from './d_deferred'
 import { createDictionaryPlugin } from '@robot-admin/dictionary/vue'
 import dictionaryConfig from '@/config/dictionary'
 
+let activeCompanyId = 'company-a'
 vi.mock('@/config/dataMode', () => ({ isMockDataMode: () => true }))
 vi.mock('@/stores/user', () => ({
-  s_userStore: () => ({ activeContext: { id: 'company-a' } }),
+  s_userStore: () => ({
+    /** 保留生产 Store 的读取语义，已创建控制器能观察切公司。 */
+    get activeContext() {
+      return { id: activeCompanyId }
+    },
+  }),
 }))
 vi.mock('@/stores/permission', () => ({
   s_permissionStore: () => ({ requestGeneration: 1 }),
@@ -118,6 +138,7 @@ vi.mock('@/api/permission-governance', () => ({
 }))
 
 beforeEach(() => {
+  activeCompanyId = 'company-a'
   vi.mocked(addDictApi).mockResolvedValue(undefined)
   vi.mocked(addMenuApi).mockResolvedValue(undefined)
   vi.mocked(createRoleApi).mockResolvedValue(undefined)
@@ -130,10 +151,12 @@ function mountController<T>(
   render: (controller: T) => VNodeChild = () => h('div')
 ) {
   let controller!: T
+  let dialogs!: ReturnType<typeof useDialogReactiveList>
   const child = defineComponent({
     name: 'BusinessControllerHarness',
     /** 运行原有页面控制器，使用真实表单及 Naive 上下文。 */
     setup() {
+      dialogs = useDialogReactiveList()
       controller = create()
       return () => render(controller)
     },
@@ -149,27 +172,27 @@ function mountController<T>(
     }),
     { global: { plugins: [createDictionaryPlugin(dictionaryConfig)] } }
   )
-  return { controller, wrapper }
+  return { controller, wrapper, dialogs }
 }
 
 test('菜单与字典保存使用已校验模型，并保留领域归一化与公司上下文', async () => {
   const dictionary = mountController(useDictionaryManagement).controller
   const menu = mountController(useMenuManagement).controller
   await flushPromises()
-  dictionary.formData.name = '未校验的新输入'
-  menu.formData.name = '未校验的新输入'
+  dictionary.editor.model.name = '未校验的新输入'
+  menu.editor.model.name = '未校验的新输入'
 
-  await dictionary.formConfig.value.onSubmit?.({
+  await dictionary.editor.config.onSubmit?.({
     model: {
       ...DEFAULT_DICT_FORM_DATA,
       name: ' 已校验字典 ',
       typeCode: 'USER_STATUS',
     },
-  } as SubmitEventPayload<typeof dictionary.formData>)
-  await menu.formConfig.value.onSubmit?.({
+  } as SubmitEventPayload<typeof dictionary.editor.model>)
+  await menu.editor.config.onSubmit?.({
     model: { ...DEFAULT_FORM_DATA, name: ' 已校验菜单 ', path: ' /saved ' },
-  } as SubmitEventPayload<typeof menu.formData>)
-  await menu.formConfig.value.onSubmit?.({
+  } as SubmitEventPayload<typeof menu.editor.model>)
+  await menu.editor.config.onSubmit?.({
     model: {
       ...DEFAULT_FORM_DATA,
       id: 'menu-a',
@@ -177,7 +200,7 @@ test('菜单与字典保存使用已校验模型，并保留领域归一化与�
       name: ' 已校验菜单 ',
       path: ' /saved ',
     },
-  } as SubmitEventPayload<typeof menu.formData>)
+  } as SubmitEventPayload<typeof menu.editor.model>)
 
   expect(addDictApi).toHaveBeenCalledWith(
     expect.objectContaining({ name: '已校验字典', code: 'USER_STATUS' })
@@ -189,8 +212,8 @@ test('菜单与字典保存使用已校验模型，并保留领域归一化与�
     expect.objectContaining({ id: 'menu-a', revision: 9, name: '已校验菜单' }),
     'company-a'
   )
-  expect(dictionary.formData.name).toBe('未校验的新输入')
-  expect(menu.formData.name).toBe('未校验的新输入')
+  expect(dictionary.editor.model.name).toBe('未校验的新输入')
+  expect(menu.editor.model.name).toBe('未校验的新输入')
 })
 
 test('角色表单通过真实校验后只提交一次，锁定输入且提交状态不会反向禁用提交入口', async () => {
@@ -199,10 +222,10 @@ test('角色表单通过真实校验后只提交一次，锁定输入且提交�
   const { controller, wrapper } = mountController(useRoleManagement, role =>
     h(C_Form<RoleFormData>, {
       ref: role.formRef,
-      modelValue: role.formData,
-      options: role.formOptions.value,
-      config: role.formConfig.value,
-      'onUpdate:modelValue': model => Object.assign(role.formData, model),
+      modelValue: role.editor.model,
+      options: role.editor.options,
+      config: role.editor.config,
+      'onUpdate:modelValue': model => Object.assign(role.editor.model, model),
     })
   )
   await flushPromises()
@@ -218,7 +241,7 @@ test('角色表单通过真实校验后只提交一次，锁定输入且提交�
   await flushPromises()
   expect(createRoleApi).toHaveBeenCalledTimes(1)
   expect(controller.formRef.value!.isSubmitting).toBe(true)
-  expect(controller.formConfig.value.disabled).not.toBe(true)
+  expect(controller.editor.config.disabled).not.toBe(true)
   expect(
     wrapper.findAllComponents(NInput).every(input => input.props('disabled'))
   ).toBe(true)
@@ -229,13 +252,44 @@ test('角色表单通过真实校验后只提交一次，锁定输入且提交�
   expect(controller.formRef.value!.isSubmitting).toBe(false)
 })
 
+test('旧公司打开的菜单和字典确认在切公司后均不能写入', async () => {
+  const menu = mountController(useMenuManagement)
+  const dictionary = mountController(useDictionaryManagement)
+  try {
+    await flushPromises()
+    menu.controller.handleDeleteMenu({
+      ...DEFAULT_FORM_DATA,
+      id: 'menu-a',
+      name: '菜单甲',
+      revision: 2,
+    })
+    dictionary.controller.commands.remove({
+      ...DEFAULT_DICT_FORM_DATA,
+      id: 'dict-a',
+      name: '字典甲',
+      revision: 2,
+    })
+    expect(menu.dialogs.value).toHaveLength(1)
+    expect(dictionary.dialogs.value).toHaveLength(1)
+    activeCompanyId = 'company-b'
+    const event = new MouseEvent('click')
+    await menu.dialogs.value[0].onPositiveClick?.(event)
+    await dictionary.dialogs.value[0].onPositiveClick?.(event)
+    expect(deleteMenuApi).not.toHaveBeenCalled()
+    expect(deleteDictApi).not.toHaveBeenCalled()
+  } finally {
+    menu.wrapper.unmount()
+    dictionary.wrapper.unmount()
+  }
+})
+
 test('角色内置表格保存拒绝向组件传播，失败不会被误判为保存成功', async () => {
   const { controller } = mountController(useRoleManagement)
   await flushPromises()
   vi.mocked(updateRoleApi).mockRejectedValueOnce(new Error('版本已变化'))
   await expect(
-    controller.handleTableSave({
-      ...controller.formData,
+    controller.ledger.saveRow({
+      ...controller.editor.model,
       id: 'role-a',
       name: '审核员',
       code: 'auditor',
@@ -244,17 +298,96 @@ test('角色内置表格保存拒绝向组件传播，失败不会被误判为�
   ).rejects.toThrow('版本已变化')
 })
 
+test('角色成员弹窗换人和关闭时终止旧分页，旧结果无法覆盖新列表', async () => {
+  const old = deferred<Awaited<ReturnType<typeof getRoleUsersPageApi>>>()
+  const latest = deferred<Awaited<ReturnType<typeof getRoleUsersPageApi>>>()
+  const hidden = deferred<Awaited<ReturnType<typeof getRoleUsersPageApi>>>()
+  vi.mocked(getRoleUsersPageApi)
+    .mockReturnValueOnce(old.promise)
+    .mockReturnValueOnce(latest.promise)
+    .mockReturnValueOnce(hidden.promise)
+  const { controller, wrapper } = mountController(useRoleManagement)
+  try {
+    const { members } = controller
+    const previous = members.open({ id: 'role-a', name: '编辑员' })
+    const current = members.open({ id: 'role-b', name: '审核员' })
+    latest.resolve({
+      code: 0,
+      msg: '',
+      data: { list: [], total: 21, page: 1, pageSize: 20 },
+    })
+    await current
+    old.resolve({
+      code: 0,
+      msg: '',
+      data: { list: [], total: 3, page: 1, pageSize: 20 },
+    })
+    await previous
+    expect(members.role?.id).toBe('role-b')
+    expect(members.total).toBe(21)
+    expect(controller.inspection.role).toBeNull()
+
+    const paging = members.loadPage(2)
+    members.visible = false
+    hidden.resolve({
+      code: 0,
+      msg: '',
+      data: { list: [], total: 18, page: 2, pageSize: 20 },
+    })
+    await paging
+    expect(members.role).toBeNull()
+    expect(members.total).toBe(21)
+  } finally {
+    wrapper.unmount()
+  }
+})
+
+test('密码草稿关闭即清空，切公司后旧目标不能发起密码重置', async () => {
+  const { controller, wrapper } = mountController(() =>
+    useUserPasswordReset(
+      () => activeCompanyId,
+      async () => undefined
+    )
+  )
+  try {
+    controller.open({
+      id: 'user-test',
+      status: 1,
+      revision: 8,
+      membershipRevision: 3,
+    })
+    Object.assign(controller.panel.model, {
+      newPassword: 'unit-example-key',
+      confirmPassword: 'unit-example-key',
+    })
+    activeCompanyId = 'company-b'
+    await expect(
+      controller.panel.config.onSubmit?.({
+        model: { ...controller.panel.model },
+      } as SubmitEventPayload<ResetPasswordForm>)
+    ).rejects.toThrow('当前公司已切换')
+    expect(resetUserPasswordApi).not.toHaveBeenCalled()
+    controller.panel.visible = false
+    expect(controller.panel.model).toEqual({
+      newPassword: '',
+      confirmPassword: '',
+    })
+  } finally {
+    wrapper.unmount()
+  }
+})
+
 test('权限表格编辑打开领域表单并保留记录，点击编辑不会执行原行保存', async () => {
   const { controller } = mountController(usePermissionManagement)
   await flushPromises()
   const permission = { ...MOCK_PERMISSION_RESOURCES[0] }
-  const { edit } = controller.tableActions.value
+  const { edit } = controller.resources.tableActions
   expect(typeof edit).toBe('function')
   if (typeof edit === 'function') await edit(permission)
-  expect(controller.showModal.value).toBe(true)
-  expect(controller.modalMode.value).toBe('edit')
-  expect(controller.formData.id).toBe(permission.id)
-  expect(controller.formData.name).toBe(permission.name)
+  expect(controller.resourceEditor.visible).toBe(true)
+  expect(controller.resourceEditor.mode).toBe('edit')
+  expect(controller.resourceEditor.data.id).toBe(permission.id)
+  expect(controller.resourceEditor.data.name).toBe(permission.name)
   expect(permission).toEqual(MOCK_PERMISSION_RESOURCES[0])
 })
 
@@ -276,23 +409,23 @@ test('用户批量操作成功后清空表格真实勾选，列表刷新不会�
   const { controller } = mountController(useUserManagement, users =>
     h(C_Table<UserData>, {
       ref: users.userTableRef,
-      data: users.userList,
+      data: users.ledger.rows,
       columns: [{ type: 'selection' }, { key: 'username', title: '账号' }],
-      rowKey: users.rowKey,
+      rowKey: users.ledger.rowKey,
       config: {
         selection: { enabled: true },
         pagination: false,
         toolbar: { show: false },
       },
-      onSelectionChange: users.handleSelectionChange,
+      onSelectionChange: users.ledger.changeSelection,
     })
   )
   await flushPromises()
   controller.userTableRef.value!.selectRow(user.id)
   await nextTick()
-  expect(controller.selectedUsers.value).toEqual([user.id])
+  expect(controller.ledger.selected).toEqual([user.id])
 
-  controller.batchActions.value[0].onClick?.()
+  controller.ledger.batchActions[0].onClick?.()
   await nextTick()
   const confirm = [...document.body.querySelectorAll('button')].find(
     button => button.textContent?.trim() === '确认'
@@ -301,6 +434,6 @@ test('用户批量操作成功后清空表格真实勾选，列表刷新不会�
   confirm!.click()
   await flushPromises()
   expect(updateUserStatusApi).toHaveBeenCalledWith(user.id, 0, 3, 'company-a')
-  expect(controller.selectedUsers.value).toEqual([])
+  expect(controller.ledger.selected).toEqual([])
   expect(controller.userTableRef.value!.getSelectedRows()).toEqual([])
 })

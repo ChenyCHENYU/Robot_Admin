@@ -10,11 +10,11 @@ import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import { defineComponent, h, KeepAlive, ref } from 'vue'
 import { MachTable, type GridApi } from '@agile-team/mach-table-vue'
 import * as importEntry from '@agile-team/mach-table-vue/import'
-import ImportValidation from '@/views/demo/57-mach-table/components/c_importValidation/index.vue'
+import ImportValidation from '@/views/demo/57-mach-table/components/ImportValidation/index.vue'
 import {
   IMPORT_SAMPLES,
   type ImportDemoRow,
-} from '@/views/demo/57-mach-table/components/c_importValidation/data'
+} from '@/views/demo/57-mach-table/components/ImportValidation/data'
 import { deferred } from './d_deferred'
 
 vi.mock('@agile-team/mach-table-vue/import', async importOriginal => {

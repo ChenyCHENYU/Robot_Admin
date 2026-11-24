@@ -16,17 +16,19 @@
     <section class="sound-console">
       <div class="sound-artwork"
         ><img
-          :src="cover"
-          :alt="activeTrack?.title ?? '播放列表为空'"
+          :src="playlist.cover"
+          :alt="playlist.activeTrack?.title ?? '播放列表为空'"
           width="320"
           height="320"
         /><div class="sound-identity"
           ><span
             >{{
-              String(tracks.length ? activeIndex + 1 : 0).padStart(2, '0')
+              String(
+                playlist.tracks.length ? playlist.activeIndex + 1 : 0
+              ).padStart(2, '0')
             }}
-            / {{ String(tracks.length).padStart(2, '0') }}</span
-          ><h2>{{ activeTrack?.title ?? '暂无曲目' }}</h2
+            / {{ String(playlist.tracks.length).padStart(2, '0') }}</span
+          ><h2>{{ playlist.activeTrack?.title ?? '暂无曲目' }}</h2
           ><p>代码生成的合成音色</p></div
         ></div
       >
@@ -35,32 +37,33 @@
           ><span class="eyebrow">PLAYER CONSOLE</span
           ><span
             class="playback-state"
-            :class="{ playing }"
-            ><i />{{ playing ? '正在播放' : '等待播放' }}</span
+            :class="{ playing: playback.playing }"
+            ><i />{{ playback.playing ? '正在播放' : '等待播放' }}</span
           ></header
         ><h2>按你的节奏，开始播放</h2
         ><p>{{
-          activeTrack?.extra?.description ?? '恢复示例曲目后，即可继续试听。'
+          playlist.activeTrack?.extra?.description ??
+          '恢复示例曲目后，即可继续试听。'
         }}</p
         ><div class="sound-player"
           ><C_AudioPlayer
-            :tracks="tracks"
-            :initial-index="activeIndex"
-            :theme="theme"
+            :tracks="playlist.tracks"
+            :initial-index="playlist.activeIndex"
+            :theme="playback.theme"
             :show-cover="false"
-            :show-playlist="showPlaylist"
+            :show-playlist="playback.showPlaylist"
             :autoplay="false"
             mode="single"
-            @play="handlePlay"
-            @pause="playing = false"
-            @ended="playing = false"
-            @mode-change="lastEvent = '播放模式已切换'"
-            @error="handleError" /></div
+            @play="playback.handlePlay"
+            @pause="playback.playing = false"
+            @ended="playback.playing = false"
+            @mode-change="playback.lastEvent = '播放模式已切换'"
+            @error="playback.handleError" /></div
         ><div class="sound-settings"
           ><div
             ><span>界面模式</span
             ><NRadioGroup
-              v-model:value="theme"
+              v-model:value="playback.theme"
               size="small"
               ><NRadioButton value="default">完整</NRadioButton
               ><NRadioButton value="minimal">迷你</NRadioButton></NRadioGroup
@@ -68,36 +71,36 @@
           ><label
             ><span>播放列表</span
             ><NSwitch
-              v-model:value="showPlaylist"
-              :disabled="theme === 'minimal'"
+              v-model:value="playback.showPlaylist"
+              :disabled="playback.theme === 'minimal'"
               size="small" /></label></div
         ><div class="sound-library-actions">
           <NButton
             size="small"
-            :disabled="!activeTrack"
-            @click="replaceSource"
+            :disabled="!playlist.activeTrack"
+            @click="playlist.replaceSource"
             >切换当前音源</NButton
           >
           <NButton
             size="small"
-            :disabled="!activeTrack"
-            @click="removeCurrent"
+            :disabled="!playlist.activeTrack"
+            @click="playlist.removeCurrent"
             >移除当前曲目</NButton
           >
           <NButton
             size="small"
-            :disabled="!tracks.length"
-            @click="clearTracks"
+            :disabled="!playlist.tracks.length"
+            @click="playlist.clearTracks"
             >清空播放列表</NButton
           >
           <NButton
             size="small"
-            @click="restoreTracks"
+            @click="playlist.restoreTracks"
             >恢复示例曲目</NButton
           > </div
         ><div class="sound-event"
           ><span class="i-mdi:information-outline" />{{
-            lastEvent || '默认不自动播放，点击播放按钮即可试听。'
+            playback.lastEvent || '默认不自动播放，点击播放按钮即可试听。'
           }}</div
         ></div
       >
@@ -113,9 +116,9 @@
         ><span class="eyebrow">LOCAL SOURCE</span><strong>可重建，可下载</strong
         ><p>由项目音频生成脚本制作</p
         ><a
-          v-if="activeTrack"
-          :href="activeTrack.src"
-          :download="`${activeTrack.id}.wav`"
+          v-if="playlist.activeTrack"
+          :href="playlist.activeTrack.src"
+          :download="`${playlist.activeTrack.id}.wav`"
           >下载当前样例 <span class="i-mdi:arrow-down" /></a></div
     ></section>
     <p class="sound-note"
@@ -126,22 +129,7 @@
 <script setup lang="ts">
   import { useAudioWorkspace } from './useAudioWorkspace'
   defineOptions({ name: 'Demo54AudioPlayer' })
-  const {
-    tracks,
-    activeIndex,
-    activeTrack,
-    cover,
-    theme,
-    showPlaylist,
-    playing,
-    lastEvent,
-    handlePlay,
-    handleError,
-    replaceSource,
-    removeCurrent,
-    clearTracks,
-    restoreTracks,
-  } = useAudioWorkspace()
+  const { playlist, playback } = useAudioWorkspace()
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

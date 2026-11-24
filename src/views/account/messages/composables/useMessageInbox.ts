@@ -17,15 +17,15 @@ import { s_notificationStore } from '@/stores/notification'
 import { CATEGORY_OPTIONS, getOptionLabel } from '../data'
 import { useMessageColumns } from './useMessageColumns'
 import { getNotificationTopicLabel } from '@/utils/d_notificationPresentation'
+import { isAbortError } from '@/utils/abort'
 
 /** 消息列表仅消费领域 Store，查询表单和当前页选择保留在视图。 */
-export function useMessageInbox() {
+export function useMessageInbox(open: (id: string) => void) {
   const store = s_notificationStore()
   const message = useMessage()
   const dialog = useDialog()
   const tableRef = ref<TableInstance<NotificationRecord> | null>(null)
   const selectedIds = ref<string[]>([])
-  const detailId = ref<string | null>(null)
   const filters = reactive({
     keyword: '',
     category: null as string | null,
@@ -37,6 +37,30 @@ export function useMessageInbox() {
     relationship: null as NotificationQuery['relationship'] | null,
   })
   const commandLoading = ref(false)
+  let queryRequest = 0
+  const invalidateQuery = () => {
+    queryRequest++
+  }
+
+  const queryList = async (request: () => Promise<void>) => {
+    const version = ++queryRequest
+    const scope = store.scopeKey
+    const current = () => version === queryRequest && scope === store.scopeKey
+    try {
+      await request()
+      return current()
+    } catch (error) {
+      if (current() && !isAbortError(error))
+        message.error(
+          error instanceof Error ? error.message : '查询失败，请重试'
+        )
+      return false
+    }
+  }
+
+  const selectionChange = (keys: (string | number)[]) => {
+    selectedIds.value = keys.map(String)
+  }
 
   /** 命令边界展示错误，失败时保留选择便于重试。 */
   const run = async (
@@ -48,7 +72,10 @@ export function useMessageInbox() {
       if (success) message.success(success)
       return true
     } catch (error) {
-      message.error(error instanceof Error ? error.message : '操作失败，请重试')
+      if (!isAbortError(error))
+        message.error(
+          error instanceof Error ? error.message : '操作失败，请重试'
+        )
       return false
     }
   }
@@ -65,7 +92,7 @@ export function useMessageInbox() {
     const [start, end] = filters.dateRange ?? []
     const endDate = end === undefined ? undefined : new Date(end)
     endDate?.setHours(23, 59, 59, 999)
-    await run(() =>
+    await queryList(() =>
       store.search({
         keyword: filters.keyword.trim(),
         category: (filters.category || undefined) as
@@ -100,15 +127,13 @@ export function useMessageInbox() {
   }
 
   /** 状态切换始终重新查询第一页。 */
-  const changeStatus = async (status: NotificationStatus): Promise<void> => {
+  const changeStatus = (status: NotificationStatus) => {
     clearSelection()
-    await run(() => store.search({ status, page: 1 }))
+    return queryList(() => store.search({ status, page: 1 }))
   }
 
   /** 业务入口对应完整的新查询，失败保留原列表与已提交条件。 */
-  const changeView = async (
-    patch: Partial<NotificationQuery>
-  ): Promise<void> => {
+  const changeView = async (patch: Partial<NotificationQuery>) => {
     clearSelection()
     const next: NotificationQuery = {
       status: 'all',
@@ -126,7 +151,7 @@ export function useMessageInbox() {
       relationship: undefined,
       ...patch,
     }
-    if (!(await run(() => store.search(next)))) return
+    if (!(await queryList(() => store.search(next)))) return false
     Object.assign(filters, {
       keyword: next.keyword,
       category: next.category ?? null,
@@ -137,12 +162,13 @@ export function useMessageInbox() {
       taskStatus: next.taskStatus ?? null,
       relationship: next.relationship ?? null,
     })
+    return true
   }
 
   /** 翻页前清理当前页选择，远端总数由领域服务提供。 */
   const changePage = async (page: number, pageSize: number): Promise<void> => {
     clearSelection()
-    await run(() => store.changePage(page, pageSize))
+    await queryList(() => store.changePage(page, pageSize))
   }
 
   /** 基于稳定 ID 提交单条或批量命令。 */
@@ -152,10 +178,14 @@ export function useMessageInbox() {
   ): Promise<void> => {
     if (!ids.length || commandLoading.value) return
     commandLoading.value = true
+    const request = queryRequest
     const snapshot = [...ids]
     try {
-      if (await run(() => store.mutate(type, snapshot), '消息状态已更新'))
-        clearSelection()
+      const updated = await run(
+        () => store.mutate(type, snapshot),
+        '消息状态已更新'
+      )
+      if (updated && request === queryRequest) clearSelection()
     } finally {
       commandLoading.value = false
     }
@@ -193,9 +223,7 @@ export function useMessageInbox() {
   const columns = useMessageColumns({
     store,
     busy: () => commandLoading.value,
-    open: id => {
-      detailId.value = id
-    },
+    open,
     star: row => {
       void mutate(row.starred ? 'unstar' : 'star', [row.id])
     },
@@ -242,27 +270,31 @@ export function useMessageInbox() {
   watch(
     () => store.scopeKey,
     () => {
+      invalidateQuery()
       clearSelection()
-      detailId.value = null
     }
   )
   return {
     store,
     tableRef,
-    selectedIds,
-    detailId,
-    filters,
-    commandLoading,
-    columns,
-    actions,
-    pagination,
     run,
-    search,
-    resetFilters,
-    changeStatus,
     changeView,
-    changePage,
-    markAllRead,
-    clearSelection,
+    changeStatus,
+    invalidateQuery,
+    list: proxyRefs({
+      filters,
+      columns,
+      pagination,
+      search,
+      resetFilters,
+      changePage,
+      actions,
+      selectedIds,
+      commandLoading,
+      clearSelection,
+      selectionChange,
+      mutate,
+      markAllRead,
+    }),
   }
 }

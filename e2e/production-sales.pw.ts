@@ -315,6 +315,11 @@ test('实绩保留成分偏差、跨炉次保存快照和未保存切换保护',
     page.locator('[data-section="chemistry"]'),
     '碳 C'
   ).locator('input')
+  await page
+    .locator('.actual-chemistry-grid .mach-row[data-id="carbon"]')
+    .getByRole('button', { name: '定位实测录入' })
+    .click()
+  await expect(carbon).toBeFocused()
   await carbon.fill('0.6')
   await carbon.press('Tab')
   await expect(

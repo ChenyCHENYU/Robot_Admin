@@ -17,13 +17,13 @@
           >导入到当前文档</NButton
         ><NButton
           size="small"
-          :disabled="!content"
-          @click="exportFile"
+          :disabled="!view.content"
+          @click="view.exportFile"
           >导出 Markdown</NButton
         ><NButton
           size="small"
           type="primary"
-          @click="save(true)"
+          @click="view.save(true)"
           >保存到本机</NButton
         ></div
       ></header
@@ -37,23 +37,23 @@
             :key="item.id"
             type="button"
             class="workspace-choice"
-            :aria-pressed="selectedId === item.id"
-            @click="selectedId = item.id"
+            :aria-pressed="view.selectedId === item.id"
+            @click="view.selectedId = item.id"
             ><span class="workspace-badge">MD</span
             ><span
               ><strong>{{ item.name }}</strong
-              ><small>{{ drafts[item.id].length }} 字符</small></span
+              ><small>{{ view.drafts[item.id].length }} 字符</small></span
             ></button
           ></section
         ><section class="workspace-section"
           ><h2>草稿与留存</h2
-          ><NCheckbox v-model:checked="autoSave">自动保存到本机</NCheckbox
+          ><NCheckbox v-model:checked="view.autoSave">自动保存到本机</NCheckbox
           ><p
             >每份文档单独保留修改。保存使用当前浏览器，跨设备分享请导出 Markdown
             文件。</p
           ><NButton
             size="tiny"
-            @click="restore"
+            @click="view.restore"
             >恢复当前示例</NButton
           ></section
         ></aside
@@ -61,13 +61,13 @@
       <main class="workspace-panel"
         ><header class="workspace-toolbar"
           ><div
-            ><h2>{{ current.name }}</h2
+            ><h2>{{ view.current.name }}</h2
             ><small
-              >{{ content.split('\n').length }} 行 ·
-              {{ content.length }} 字符</small
+              >{{ view.content.split('\n').length }} 行 ·
+              {{ view.content.length }} 字符</small
             ></div
           ><NRadioGroup
-            v-model:value="mode"
+            v-model:value="view.mode"
             size="small"
             ><NRadioButton value="edit">专注编辑</NRadioButton
             ><NRadioButton value="editable">编辑与预览</NRadioButton
@@ -75,16 +75,16 @@
           ></header
         ><div class="markdown-stage"
           ><C_Markdown
-            v-model="content"
+            v-model="view.content"
             editor-id="robot-document-workspace"
-            :mode="mode"
+            :mode="view.mode"
             height="640px"
             :auto-save="false"
             :max-length="100000"
             :show-word-count="true"
-            @save="() => save(true)" /></div
+            @save="() => view.save(true)" /></div
         ><footer class="workspace-footer"
-          ><span>{{ dirty ? '有尚未保存的修改' : savedState }}</span
+          ><span>{{ view.dirty ? '有尚未保存的修改' : view.savedState }}</span
           ><span>支持同步预览与全屏 · 文本不超过 100000 字符</span></footer
         ></main
       ></div
@@ -94,29 +94,17 @@
       accept=".md,.markdown,.txt"
       class="markdown-file"
       aria-label="选择 Markdown 文件"
-      @change="importFile"
+      @change="view.importFile"
     />
   </div>
 </template>
 <script setup lang="ts">
+  import { WORKSPACE_DOCUMENTS } from './data'
   import { useMarkdownWorkspace } from './useMarkdownWorkspace'
   defineOptions({ name: 'Demo15MarkdownEditor' })
-  const {
-    WORKSPACE_DOCUMENTS,
-    drafts,
-    selectedId,
-    mode,
-    autoSave,
-    fileRef,
-    savedState,
-    current,
-    content,
-    dirty,
-    save,
-    exportFile,
-    importFile,
-    restore,
-  } = useMarkdownWorkspace()
+  const workspace = useMarkdownWorkspace()
+  const view = proxyRefs(workspace)
+  const { fileRef } = workspace
 </script>
 <style lang="scss" scoped>
   @use './index.scss';

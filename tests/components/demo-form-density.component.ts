@@ -7,6 +7,7 @@
 import { expect, test, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, h } from 'vue'
+import { createPinia } from 'pinia'
 import { NButton, NDataTable, NForm, NInput, NMessageProvider } from 'naive-ui'
 import { C_Density } from '@robot-admin/naive-ui-components/C_Density'
 import { C_Form } from '@robot-admin/naive-ui-components/C_Form'
@@ -32,6 +33,7 @@ const mountDemo = (page: typeof FormDemo | typeof SearchDemo) =>
     }),
     {
       global: {
+        plugins: [createPinia()],
         components: {
           C_Density,
           C_Form,

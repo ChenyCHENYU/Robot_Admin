@@ -24,12 +24,13 @@ description: 'Use when: reviewing code for compliance with Robot Admin project c
 
 **目录命名：**
 
-| 类型         | 约定               | 示例                       | 反例                    |
-| ------------ | ------------------ | -------------------------- | ----------------------- |
-| 全局组件目录 | `C_` + PascalCase  | `C_Header/`, `C_Settings/` | `header/`, `cHeader/`   |
-| 局部组件目录 | `c_` + camelCase   | `c_detail/`, `c_role/`     | `Detail/`, `c-detail/`  |
-| Demo 目录    | `数字编号-功能名`  | `01-icon/`, `10-table/`    | `icon/`, `table-demo/`  |
-| Store 目录   | 领域名(kebab-case) | `user/`, `theme/`          | `userStore/`, `s_user/` |
+| 类型             | 约定                 | 示例                                    | 反例                                      |
+| ---------------- | -------------------- | --------------------------------------- | ----------------------------------------- |
+| 全局组件目录     | `C_` + PascalCase    | `C_Header/`, `C_Settings/`              | `header/`, `cHeader/`                     |
+| 项目复用组件目录 | `c_` + camelCase     | `src/components/local/c_detail/`        | `src/views/**/c_detail/`                  |
+| 页面私有组件     | PascalCase，显式导入 | `views/<模块>/components/ProcessTrace/` | `views/<模块>/components/c_processTrace/` |
+| Demo 目录        | `数字编号-功能名`    | `01-icon/`, `10-table/`                 | `icon/`, `table-demo/`                    |
+| Store 目录       | 领域名(kebab-case)   | `user/`, `theme/`                       | `userStore/`, `s_user/`                   |
 
 **文件三件套：**
 

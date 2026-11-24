@@ -8,117 +8,75 @@
  * Copyright (c) 2025 by CHENY, All Rights Reserved 😎.
  */
 
-/**
- * * @description 创建演示页面的响应式数据状态
- * ! @return 包含所有演示状态的响应式对象
- */
-export function createDemoState() {
-  return {
-    // UI 状态
-    activeTab: ref('basic'),
+import type { LongPressOptions } from '@robot-admin/directives/longpress'
 
-    // 基础演示状态
-    basicCount: ref(0),
-    defaultCount: ref(0),
-    normalCount: ref(0),
+/** 长按进度与数量示例共享页面的停用和卸载边界。 */
+export function useLongPressDemo() {
+  const state = reactive({
+    activeTab: 'basic',
+    basicCount: 0,
+    defaultCount: 0,
+    normalCount: 0,
+    slowCount: 0,
+    slowCancelCount: 0,
+    progressValue: 0,
+    enabled: true,
+    duration: 800,
+    dynamicCount: 0,
+    deleteCount: 0,
+    quantity: 1,
+  })
+  let progressTimer: ReturnType<typeof setTimeout> | undefined
+  let repeatTimer: ReturnType<typeof setInterval> | undefined
+  let triggered = false
 
-    // 高级配置状态
-    slowCount: ref(0),
-    slowCancelCount: ref(0),
-    progressValue: ref(0),
-
-    // 动态配置状态
-    enabled: ref(true),
-    duration: ref(800),
-    dynamicCount: ref(0),
-
-    // 应用场景状态
-    deleteCount: ref(0),
-    quantity: ref(1),
-    isIncreasing: ref(false),
+  const increaseOnce = () => {
+    if (state.quantity < 999) state.quantity++
   }
-}
-
-/**
- * * @description 创建演示页面的处理函数集合
- * ? @param state - 演示页面的状态对象
- * ! @return 包含所有处理函数的对象
- */
-export function createDemoHandlers(state: ReturnType<typeof createDemoState>) {
-  let increaseTimer: ReturnType<typeof setTimeout> | null = null
-
+  const stopRepeating = () => {
+    clearInterval(repeatTimer)
+    repeatTimer = undefined
+  }
+  const quantityPress: LongPressOptions = {
+    duration: DEMO_CONFIG.QUANTITY_DURATION,
+    onStart: () => {
+      triggered = false
+    },
+    onTrigger: () => {
+      triggered = true
+      increaseOnce()
+      repeatTimer = setInterval(increaseOnce, 100)
+    },
+    onEnd: (event, didTrigger) => {
+      stopRepeating()
+      if (event.type === 'keyup' && !didTrigger) increaseOnce()
+    },
+  }
+  const clickQuantity = () => {
+    if (!triggered) increaseOnce()
+    triggered = false
+  }
+  const updateProgress = (progress: number) => {
+    state.progressValue = Math.round(progress * 100)
+  }
+  const completeProgress = () => {
+    clearTimeout(progressTimer)
+    state.progressValue = 100
+    progressTimer = setTimeout(() => (state.progressValue = 0), 1000)
+  }
+  const clearTimers = () => {
+    clearTimeout(progressTimer)
+    stopRepeating()
+    state.progressValue = 0
+  }
+  onDeactivated(clearTimers)
+  onScopeDispose(clearTimers)
   return {
-    /**
-     * * @description 处理基础长按按钮点击
-     * ! @return void
-     */
-    handleBasicClick: () => {
-      console.log('基础按钮点击')
-    },
-
-    /**
-     * * @description 处理默认长按按钮点击
-     * ! @return void
-     */
-    handleDefaultClick: () => {
-      console.log('默认按钮点击')
-    },
-
-    /**
-     * * @description 处理进度长按进度回调
-     * ? @param progress - 进度百分比 (0-1)
-     * ? @param elapsed - 已用时间 (ms)
-     * ! @return void
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handleProgress: (progress: number, elapsed: number) => {
-      state.progressValue.value = Math.round(progress * 100)
-    },
-
-    /**
-     * * @description 进度条完成回调
-     * ! @return void
-     */
-    handleProgressComplete: () => {
-      state.progressValue.value = 100
-      setTimeout(() => (state.progressValue.value = 0), 1000)
-    },
-
-    /**
-     * * @description 开始连续增加操作
-     * ! @return void
-     */
-    startIncrease: () => {
-      state.isIncreasing.value = true
-    },
-
-    /**
-     * * @description 执行连续增加操作
-     * ! @return void
-     */
-    continuousIncrease: () => {
-      if (state.isIncreasing.value) {
-        const increase = () => {
-          if (state.isIncreasing.value && state.quantity.value < 999) {
-            state.quantity.value++
-            increaseTimer = setTimeout(increase, 100)
-          }
-        }
-        increase()
-      }
-    },
-
-    /**
-     * * @description 停止连续增加操作
-     * ! @return void
-     */
-    stopIncrease: () => {
-      state.isIncreasing.value = false
-      if (increaseTimer) {
-        clearTimeout(increaseTimer)
-        increaseTimer = null
-      }
-    },
+    state,
+    updateProgress,
+    completeProgress,
+    quantityPress,
+    clickQuantity,
   }
 }
 
@@ -182,7 +140,7 @@ export const CODE_EXAMPLES = {
   duration: 300,
   onStart: startIncrease,
   onTrigger: continuousIncrease,
-  onCancel: stopIncrease
+  onEnd: stopIncrease
 }" @click="quantity++">
   + 数量调节
 </NButton>

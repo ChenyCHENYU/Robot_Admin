@@ -15,7 +15,7 @@ import {
   LARGE_ROW_COUNT,
   normalizeLargeRow,
   type LargeDataRow,
-} from '../src/views/demo/57-mach-table/components/c_largeData/data'
+} from '../src/views/demo/57-mach-table/components/LargeData/data'
 
 /** 构造单个表格请求，不启动 DOM、浏览器或真实后端。 */
 function request(

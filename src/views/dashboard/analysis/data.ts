@@ -9,7 +9,7 @@ import projectInfo from 'virtual:robot-admin-project-info'
 import type { EChartsCoreOption } from 'echarts/core'
 import type { ProjectMetrics } from '@/types/observability'
 import { categoryAxis, valueAxis, formatBytes } from '../shared/d_format'
-import type { StructureNode } from './components/c_structureMap/types'
+import type { StructureNode } from './components/StructureMap/types'
 
 export { projectInfo }
 export const ecosystem = [

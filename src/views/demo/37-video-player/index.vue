@@ -16,9 +16,9 @@
         ><p>先播放，再探索章节、字幕与学习交互。</p></div
       ><NTag
         size="small"
-        :type="stateTagType"
+        :type="view.stateTagType"
         :bordered="false"
-        >{{ stateLabels[playerState] ?? playerState }}</NTag
+        >{{ stateLabels[view.playerState] ?? view.playerState }}</NTag
       ></header
     >
     <div class="video-workbench">
@@ -26,56 +26,56 @@
         <header class="workspace-toolbar"
           ><div
             ><h2>{{
-              DEMO_SCENES.find(item => item.key === activeScene)?.title
+              DEMO_SCENES.find(item => item.key === view.activeScene)?.title
             }}</h2
             ><small>{{
-              sourceChoice === 'local'
+              view.sourceChoice === 'local'
                 ? '本地 WebM · 无需外网'
                 : '公开演示视频 · 需要网络连接'
             }}</small></div
           ><NButton
             size="small"
-            :disabled="sourceCleared"
-            @click="restartPlayback"
+            :disabled="view.sourceCleared"
+            @click="view.restartPlayback"
             >从头播放</NButton
           ></header
         >
         <div class="player-wrapper">
           <C_VideoPlayer
             ref="playerRef"
-            v-bind="playerProps"
-            @ready="onReady"
-            @state-change="onStateChange"
-            @time-update="onTimeUpdate"
-            @ended="onEnded"
-            @error="onError"
-            @quality-change="onQualityChange"
-            @chapter-change="onChapterChange"
-            @quiz-answer="onQuizAnswer"
-            @bookmark-change="onBookmarkChange"
-            @progress-update="onProgressUpdate"
+            v-bind="view.playerProps"
+            @ready="view.onReady"
+            @state-change="view.onStateChange"
+            @time-update="view.onTimeUpdate"
+            @ended="view.onEnded"
+            @error="view.onError"
+            @quality-change="view.onQualityChange"
+            @chapter-change="view.onChapterChange"
+            @quiz-answer="view.onQuizAnswer"
+            @bookmark-change="view.onBookmarkChange"
+            @progress-update="view.onProgressUpdate"
           />
           <div
-            v-if="sourceCleared"
+            v-if="view.sourceCleared"
             class="player-empty"
             ><span class="i-mdi-video-off-outline" /><h3>视频源已清空</h3
             ><p>恢复上一个视频，或从右侧选择其他来源。</p
             ><NButton
               size="small"
               type="primary"
-              @click="toggleSource"
+              @click="view.toggleSource"
               >恢复视频源</NButton
             ></div
           >
         </div>
         <div
-          v-if="playerState === 'error' && sourceChoice !== 'local'"
+          v-if="view.playerState === 'error' && view.sourceChoice !== 'local'"
           class="video-recovery"
           role="status"
           ><span>公开源暂时无法播放，可以先体验内置视频。</span
           ><NButton
             size="small"
-            @click="changeSource('local')"
+            @click="view.changeSource('local')"
             >切换内置视频</NButton
           ></div
         >
@@ -83,18 +83,21 @@
           ><div
             ><span>当前时间</span
             ><strong
-              >{{ formatTime(currentTime) }}
-              <small>/ {{ formatTime(videoDuration) }}</small></strong
+              >{{ view.formatTime(view.currentTime) }}
+              <small>/ {{ view.formatTime(view.videoDuration) }}</small></strong
             ></div
           ><div class="video-progress__track"
             ><NProgress
               type="line"
-              :percentage="progressPercent"
+              :percentage="view.progressPercent"
               :show-indicator="false"
-            /><small>{{ progressPercent }}% 已播放</small></div
-          ><div v-if="activeScene === 'education'"
-            ><span>学习完成率</span><strong>{{ completionPercent }}%</strong
-            ><small>{{ currentChapterTitle || '等待进入章节' }}</small></div
+            /><small>{{ view.progressPercent }}% 已播放</small></div
+          ><div v-if="view.activeScene === 'education'"
+            ><span>学习完成率</span
+            ><strong>{{ view.completionPercent }}%</strong
+            ><small>{{
+              view.currentChapterTitle || '等待进入章节'
+            }}</small></div
           ></div
         >
         <footer class="workspace-footer"
@@ -110,8 +113,8 @@
             :key="scene.key"
             type="button"
             class="video-scene"
-            :aria-pressed="activeScene === scene.key"
-            @click="switchScene(scene.key)"
+            :aria-pressed="view.activeScene === scene.key"
+            @click="view.switchScene(scene.key)"
             ><span class="video-scene__icon"
               ><span :class="SCENE_ICONS[scene.key]" /></span
             ><span
@@ -123,16 +126,16 @@
         <section class="workspace-section"
           ><h2>视频来源</h2
           ><NSelect
-            :value="sourceChoice"
+            :value="view.sourceChoice"
             :options="VIDEO_SOURCE_OPTIONS"
             aria-label="演示视频源"
-            @update:value="changeSource"
+            @update:value="view.changeSource"
           /><p
             >外网不可用时，选择项目内置视频即可播放。章节与测验只跟随原场景视频。</p
           ><NButton
             size="small"
-            :disabled="sourceCleared"
-            @click="toggleSource"
+            :disabled="view.sourceCleared"
+            @click="view.toggleSource"
             >清空视频源</NButton
           ></section
         >
@@ -148,7 +151,8 @@
     </div>
     <details class="video-details"
       ><summary
-        >播放事件与快捷键 <span>{{ eventLogs.length }} 条事件</span></summary
+        >播放事件与快捷键
+        <span>{{ view.eventLogs.length }} 条事件</span></summary
       ><div class="video-detail-grid"
         ><section
           ><div class="video-detail-title"
@@ -156,12 +160,12 @@
             ><NButton
               text
               size="small"
-              @click="eventLogs = []"
+              @click="view.eventLogs = []"
               >清空</NButton
             ></div
           ><ul class="event-log-panel"
             ><li
-              v-for="(log, index) in eventLogs.slice(-8).reverse()"
+              v-for="(log, index) in view.eventLogs.slice(-8).reverse()"
               :key="index"
               ><time>{{ log.time }}</time
               ><NTag
@@ -170,7 +174,7 @@
                 :bordered="false"
                 >{{ log.event }}</NTag
               ><span>{{ log.detail }}</span></li
-            ><li v-if="!eventLogs.length"
+            ><li v-if="!view.eventLogs.length"
               >播放视频后，事件将在这里显示。</li
             ></ul
           ></section
@@ -207,36 +211,9 @@
     ended: '播放结束',
     error: '加载失败',
   }
-  const {
-    activeScene,
-    sourceChoice,
-    sourceCleared,
-    playerRef,
-    playerProps,
-    playerState,
-    currentTime,
-    videoDuration,
-    completionPercent,
-    currentChapterTitle,
-    eventLogs,
-    progressPercent,
-    stateTagType,
-    formatTime,
-    switchScene,
-    changeSource,
-    toggleSource,
-    restartPlayback,
-    onReady,
-    onStateChange,
-    onTimeUpdate,
-    onEnded,
-    onError,
-    onQualityChange,
-    onChapterChange,
-    onQuizAnswer,
-    onBookmarkChange,
-    onProgressUpdate,
-  } = useVideoWorkspace()
+  const controller = useVideoWorkspace()
+  const view = proxyRefs(controller)
+  const { playerRef } = controller
 </script>
 
 <style lang="scss" scoped>

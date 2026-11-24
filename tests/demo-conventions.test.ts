@@ -12,6 +12,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const demoRoot = fileURLToPath(new URL('../src/views/demo/', import.meta.url))
+const viewsRoot = fileURLToPath(new URL('../src/views/', import.meta.url))
 
 const listDemoPages = (directory: string): string[] =>
   readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
@@ -36,4 +37,18 @@ test('每个演示页均声明唯一的 PascalCase 组件名', async () => {
 
   expect(pages.length).toBeGreaterThanOrEqual(60)
   expect(new Set(names).size).toBe(pages.length)
+})
+
+test('页面私有组件使用 PascalCase，项目级前缀只用于 src/components', () => {
+  for (const file of new Bun.Glob('**/*.vue').scanSync(viewsRoot)) {
+    const segments = file.split('/')
+    expect(
+      segments.find(segment => /^[Cc]_/.test(segment)),
+      file
+    ).toBeUndefined()
+    const componentDirectory = segments.lastIndexOf('components')
+    if (componentDirectory < 0) continue
+    const name = segments[componentDirectory + 1].replace(/\.vue$/, '')
+    expect(name, file).toMatch(/^[A-Z][A-Za-z0-9]*$/)
+  }
 })

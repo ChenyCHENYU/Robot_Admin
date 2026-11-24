@@ -5,6 +5,7 @@
  * @Description: 合同版本与订单草稿逐字段比对及选择性采纳
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
+import type { ChangeReviewField } from '@robot-admin/naive-ui-components/C_ChangeReview'
 import type { OrderHeader } from './data'
 
 const CONTRACT_FIELDS = {
@@ -16,12 +17,14 @@ const CONTRACT_FIELDS = {
 } as const
 
 export type ContractField = keyof typeof CONTRACT_FIELDS
-export const CONTRACT_FIELD_STATUS = {
-  same: { label: '一致', type: 'default' },
-  missing: { label: '待补齐', type: 'info' },
-  different: { label: '有差异', type: 'warning' },
-} as const
 type ContractValues = Pick<OrderHeader, ContractField>
+const contractFieldKeys = Object.keys(CONTRACT_FIELDS) as ContractField[]
+export const CONTRACT_REVIEW_FIELDS = contractFieldKeys.map(key => ({
+  key,
+  label: CONTRACT_FIELDS[key],
+  format: (value: ContractValues[ContractField] | undefined) =>
+    typeof value === 'number' ? formatContractValue(value) : undefined,
+})) satisfies ChangeReviewField<ContractValues>[]
 
 interface ContractSnapshot {
   orderId: string
@@ -63,20 +66,19 @@ export function previewContractReview(draft: OrderHeader) {
     item => item.orderId === draft.id && item.contractNo === draft.contractNo
   )
   if (!source) return null
-  const rows = (Object.keys(CONTRACT_FIELDS) as ContractField[]).map(key => {
-    const current = draft[key]
+  const { grade, section, delivery, targetWeight, note } = draft
+  const before = { grade, section, delivery, targetWeight, note }
+  const rows = contractFieldKeys.map(key => {
+    const current = before[key]
     const reference = source.values[key]
-    const status: keyof typeof CONTRACT_FIELD_STATUS = Object.is(
-      current,
-      reference
-    )
+    const status = Object.is(current, reference)
       ? 'same'
       : current === null || current === ''
         ? 'missing'
         : 'different'
     return { key, label: CONTRACT_FIELDS[key], current, reference, status }
   })
-  return { source, rows }
+  return { source, rows, before }
 }
 
 /** 检查所有已选字段仍与预览一致，再返回可一次写入的草稿变更。 */

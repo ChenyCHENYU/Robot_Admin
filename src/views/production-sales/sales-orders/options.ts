@@ -8,7 +8,7 @@
 import type { Customer } from './data'
 
 export const CUSTOMERS: Customer[] = [
-  { id: 'CU-001', code: '0001', name: '星海科技' },
-  { id: 'CU-002', code: '0002', name: '云帆智造' },
-  { id: 'CU-003', code: '0003', name: '远川能源' },
+  { id: 'CU-001', code: '0001', name: '星海科技', region: '华东' },
+  { id: 'CU-002', code: '0002', name: '云帆智造', region: '华南' },
+  { id: 'CU-003', code: '0003', name: '远川能源', region: '华北' },
 ]

@@ -26,9 +26,9 @@
             :key="item.value"
             type="button"
             class="workspace-choice"
-            :aria-pressed="scene === item.value"
-            :disabled="files.length > 0"
-            @click="scene = item.value"
+            :aria-pressed="page.scene === item.value"
+            :disabled="page.files.length > 0"
+            @click="page.scene = item.value"
             ><span class="workspace-badge">{{
               item.value === 'images'
                 ? 'IMG'
@@ -47,11 +47,11 @@
           ></section
         ><section class="workspace-section"
           ><h2>体验设置</h2
-          ><NCheckbox v-model:checked="pasteable">允许粘贴文件</NCheckbox
+          ><NCheckbox v-model:checked="page.pasteable">允许粘贴文件</NCheckbox
           ><label class="workspace-label"
             ><NCheckbox
-              v-model:checked="failFirst"
-              :disabled="busy"
+              v-model:checked="page.failFirst"
+              :disabled="page.busy"
               >模拟首次失败</NCheckbox
             ></label
           ><p
@@ -64,24 +64,24 @@
           ><div
             ><h2>传输队列</h2
             ><small
-              >{{ files.length }} 个文件 · {{ successful }} 已完成 ·
-              {{ errors }} 失败</small
+              >{{ page.files.length }} 个文件 · {{ page.successful }} 已完成 ·
+              {{ page.errors }} 失败</small
             ></div
           ><div class="workspace-actions"
             ><NButton
               size="tiny"
-              :disabled="!busy"
-              @click="uploadRef?.pauseAll()"
+              :disabled="!page.busy"
+              @click="page.uploadRef?.pauseAll()"
               >全部暂停</NButton
             ><NButton
               size="tiny"
-              :disabled="!paused"
-              @click="uploadRef?.resumeAll()"
+              :disabled="!page.paused"
+              @click="page.uploadRef?.resumeAll()"
               >继续传输</NButton
             ><NButton
               size="tiny"
-              :disabled="!errors"
-              @click="retryErrors"
+              :disabled="!page.errors"
+              @click="page.retryErrors"
               >重试失败项</NButton
             ></div
           ></header
@@ -90,37 +90,37 @@
           ><C_Upload
             ref="uploadRef"
             multiple
-            :directory="scene === 'directory'"
-            :accept="currentScene.accept"
-            :pasteable="pasteable"
-            :chunked="scene === 'chunked'"
+            :directory="page.scene === 'directory'"
+            :accept="page.currentScene.accept"
+            :pasteable="page.pasteable"
+            :chunked="page.scene === 'chunked'"
             :chunk-size="2 * 1024 * 1024"
             :concurrency="3"
             :max-count="20"
-            :max-size="currentScene.maxSize"
-            :custom-request="customRequest"
+            :max-size="page.currentScene.maxSize"
+            :custom-request="page.customRequest"
             :show-file-list="false"
             :show-thumbnail="false"
-            :tip="`单个文件不超过 ${fileSize(currentScene.maxSize)}，队列最多 20 项`"
-            @change="updateFiles"
-            @exceed="onExceed"
+            :tip="`单个文件不超过 ${fileSize(page.currentScene.maxSize)}，队列最多 20 项`"
+            @change="page.updateFiles"
+            @exceed="page.onExceed"
         /></div>
         <div class="upload-list-heading"
           ><NSelect
-            v-model:value="filter"
+            v-model:value="page.filter"
             size="small"
             :options="FILTER_OPTIONS"
             aria-label="队列状态"
           /><div class="workspace-actions"
             ><NButton
               size="tiny"
-              :disabled="!successful"
-              @click="clearCompleted"
+              :disabled="!page.successful"
+              @click="page.clearCompleted"
               >清理已完成</NButton
             ><NButton
               size="tiny"
-              :disabled="!files.length"
-              @click="clearQueue"
+              :disabled="!page.files.length"
+              @click="page.clearQueue"
               >清空队列</NButton
             ></div
           ></div
@@ -129,7 +129,7 @@
           class="upload-queue"
           aria-live="polite"
           ><article
-            v-for="file in visibleFiles"
+            v-for="file in page.visibleFiles"
             :key="file.uid"
             class="upload-row"
             ><span class="workspace-badge">{{
@@ -154,20 +154,20 @@
               ><NButton
                 v-if="file.status === 'error'"
                 size="tiny"
-                @click="uploadRef?.retryFile(file.uid)"
+                @click="page.uploadRef?.retryFile(file.uid)"
                 >重试</NButton
               ><NButton
                 size="tiny"
                 :aria-label="`移除 ${file.name}`"
-                @click="uploadRef?.removeFile(file.uid)"
+                @click="page.uploadRef?.removeFile(file.uid)"
                 >移除</NButton
               ></div
             ></article
           ><div
-            v-if="!visibleFiles.length"
+            v-if="!page.visibleFiles.length"
             class="workspace-empty"
             >{{
-              files.length
+              page.files.length
                 ? '当前筛选下没有文件'
                 : '拖入文件，即可体验完整传输流程'
             }}</div
@@ -185,26 +185,9 @@
   import { UPLOAD_SCENES, STATUS_LABELS, fileSize } from './data'
   import { useUploadWorkspace } from './useUploadWorkspace'
   defineOptions({ name: 'Demo38Upload' })
-  const {
-    uploadRef,
-    scene,
-    failFirst,
-    pasteable,
-    files,
-    filter,
-    currentScene,
-    busy,
-    paused,
-    successful,
-    errors,
-    visibleFiles,
-    customRequest,
-    updateFiles,
-    retryErrors,
-    clearCompleted,
-    clearQueue,
-    onExceed,
-  } = useUploadWorkspace()
+  const controller = useUploadWorkspace()
+  const page = proxyRefs(controller)
+  const { uploadRef } = controller
   const FILTER_OPTIONS = [
     { label: '全部文件', value: 'all' },
     { label: '已完成', value: 'done' },

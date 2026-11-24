@@ -58,7 +58,8 @@ test('模态框表单只在成功提交后关闭', async ({ page }) => {
   await page.getByRole('heading', { name: '模态框表单', exact: true }).click()
   const modal = page.locator('.n-modal').filter({ hasText: '用户信息管理' })
   await expect(modal).toBeVisible()
-  await modal.getByRole('button', { name: '保存', exact: true }).click()
+  await modal.getByPlaceholder('请输入用户名').clear()
+  await modal.getByRole('button', { name: '保存用户资料', exact: true }).click()
   await expect(modal).toBeVisible()
 
   await modal.getByPlaceholder('请输入用户名').fill('tester123')
@@ -70,7 +71,7 @@ test('模态框表单只在成功提交后关闭', async ({ page }) => {
     .click()
   await page.getByText('普通用户', { exact: true }).last().click()
   await modal.getByPlaceholder('请输入手机号').fill('13800138000')
-  await modal.getByRole('button', { name: '保存', exact: true }).click()
+  await modal.getByRole('button', { name: '保存用户资料', exact: true }).click()
   await expect(modal).not.toBeVisible()
 })
 

@@ -205,17 +205,23 @@
             </NButton>
           </NUpload>
 
+          <NAlert
+            v-if="mediaPlan.error"
+            type="warning"
+          >
+            {{ mediaPlan.error }}
+          </NAlert>
           <div class="actions">
             <NButton
               type="warning"
               :loading="jszip.state.value.loading"
-              :disabled="!mediaFiles.length"
+              :disabled="!mediaExport.files.length || Boolean(mediaPlan.error)"
               @click="handleMediaExport"
             >
               <template #icon>
                 <div class="i-mdi-image-multiple"></div>
               </template>
-              导出媒体包 ({{ mediaFiles.length }})
+              导出媒体包 ({{ mediaExport.files.length }})
             </NButton>
           </div>
         </NCard>
@@ -282,7 +288,7 @@
         ><h2>即将生成</h2
         ><span class="file-output__icon i-mdi-folder-zip-outline" /><h3
           >{{ outputName }}.zip</h3
-        ><small>{{ outputFiles.length }} 项内容 · 按当前配置生成</small
+        ><small>{{ outputFiles.length }} 个文件 · 按当前配置生成</small
         ><ul
           ><li
             v-for="file in outputFiles"
@@ -304,6 +310,7 @@
   defineOptions({ name: 'Demo17ExportZip' })
   import { setupFileUtils } from '@/plugins/file-utils'
   import {
+    planMediaArchive,
     useJSZip,
     type CodeProjectConfig,
     type ReportConfig,
@@ -334,7 +341,6 @@
   setupFileUtils()
 
   const jszip = useJSZip()
-  const message = useMessage()
   const activeExport = ref('code')
 
   const codeConfig = ref<CodeProjectConfig>({
@@ -378,6 +384,40 @@
   )
   const mockData = ref(mockDataList)
   const mediaFiles = ref<UploadFileInfo[]>([])
+  const mediaExport = computed<MediaConfig>(() => {
+    const { packageName, organizeByCategory, includeMetadata } =
+      mediaConfig.value
+    return {
+      packageName,
+      organizeByCategory,
+      includeMetadata,
+      files: mediaFiles.value
+        .filter(isValidUploadFile)
+        .map(({ name, file }) => ({
+          name,
+          file,
+          category: getFileCategory(file.type),
+        })),
+    }
+  })
+  const mediaPlan = computed(() => {
+    const limit = mediaConfig.value.maxFileSize
+    if (
+      mediaExport.value.files.some(
+        ({ file }) => file.size > limit * 1024 * 1024
+      )
+    ) {
+      return { files: [], error: `单个文件不能超过 ${limit} MB` }
+    }
+    try {
+      return { files: planMediaArchive(mediaExport.value), error: '' }
+    } catch (error) {
+      return {
+        files: [],
+        error: error instanceof Error ? error.message : '无法生成媒体清单',
+      }
+    }
+  })
   const selectedTemplates = ref<TemplateId[]>([
     'vue-component',
     'typescript-utils',
@@ -417,15 +457,17 @@
         `${reportConfig.value.title}.${reportConfig.value.format === 'excel' ? 'xlsx' : reportConfig.value.format}`,
         ...(reportConfig.value.includeSummary ? ['summary.json'] : []),
       ]
-    if (activeExport.value === 'media')
-      return mediaFiles.value.map(item => item.name)
-    return availableTemplates
+    if (activeExport.value === 'media') return mediaPlan.value.files
+    const files = availableTemplates
       .filter(item => selectedTemplates.value.includes(item.id))
       .flatMap(item =>
         Object.keys(getTemplateFiles(item.id)).map(
           file => `${item.name}/${file}`
         )
       )
+    return templateConfig.value.includeDocumentation
+      ? [...files, 'README.md']
+      : files
   })
   /**
    * * @description: 执行 ZIP 导出并消费 file-utils 已通知过的异常，避免事件处理器产生未处理拒绝
@@ -475,32 +517,8 @@
     await safelyExport(() => jszip.exportReport(config))
   }
 
-  const handleMediaExport = async () => {
-    const validFiles = mediaFiles.value.filter(isValidUploadFile)
-    if (
-      validFiles.some(
-        item => item.file.size > mediaConfig.value.maxFileSize * 1024 * 1024
-      )
-    ) {
-      message.warning(`单个文件不能超过 ${mediaConfig.value.maxFileSize} MB`)
-      return
-    }
-
-    const files = validFiles.map(fileItem => ({
-      name: fileItem.name,
-      file: fileItem.file,
-      category: getFileCategory(fileItem.file.type || ''),
-    }))
-
-    const config: MediaConfig = {
-      packageName: mediaConfig.value.packageName,
-      organizeByCategory: mediaConfig.value.organizeByCategory,
-      includeMetadata: mediaConfig.value.includeMetadata,
-      files,
-    }
-
-    await safelyExport(() => jszip.exportMedia(config))
-  }
+  const handleMediaExport = () =>
+    safelyExport(() => jszip.exportMedia(mediaExport.value))
 
   const handleTemplateExport = async () => {
     const templates = availableTemplates

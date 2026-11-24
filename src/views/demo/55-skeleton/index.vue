@@ -203,10 +203,8 @@
 </template>
 
 <script setup lang="ts">
-  import '@robot-admin/naive-ui-components/C_Icon/style.css'
-  import { NTable } from 'naive-ui'
-  import { C_Icon } from '@robot-admin/naive-ui-components/C_Icon'
-  import { DEMO_SCENES, ANIMATION_OPTIONS, LOADED_CONTENT } from './data'
+  import { DEMO_SCENES, ANIMATION_OPTIONS } from './data'
+  import LoadedContent from './components/LoadedContent/index.vue'
   import type {
     SkeletonPreset,
     SkeletonAnimation,
@@ -256,120 +254,6 @@
 
   onUnmounted(() => {
     if (loadTimer) clearTimeout(loadTimer)
-  })
-
-  /**
-   * * @description: 已加载内容渲染组件
-   */
-  const LoadedContent = defineComponent({
-    props: {
-      preset: { type: String as () => SkeletonPreset, default: 'text' },
-    },
-    /**
-     *
-     */
-    setup(props) {
-      return () => {
-        switch (props.preset) {
-          case 'text':
-            return h('div', { class: 'loaded-text' }, [
-              h('h3', LOADED_CONTENT.text.title),
-              h('p', LOADED_CONTENT.text.content),
-            ])
-          case 'avatar':
-            return h('div', { class: 'loaded-avatar' }, [
-              h('div', { class: 'loaded-avatar__icon' }, [
-                h(C_Icon, {
-                  name: 'mdi:account-circle',
-                  size: 40,
-                }),
-              ]),
-              h('div', [
-                h('strong', LOADED_CONTENT.avatar.name),
-                h(
-                  'p',
-                  {
-                    style:
-                      'margin:4px 0 0;color:var(--text-color-3);font-size:13px',
-                  },
-                  `${LOADED_CONTENT.avatar.role} · ${LOADED_CONTENT.avatar.desc}`
-                ),
-              ]),
-            ])
-          case 'table':
-            return h(
-              NTable,
-              { size: 'small', bordered: true },
-              {
-                default: () => [
-                  h('thead', [
-                    h(
-                      'tr',
-                      LOADED_CONTENT.table.columns.map(col => h('th', col))
-                    ),
-                  ]),
-                  h(
-                    'tbody',
-                    LOADED_CONTENT.table.rows.map(row =>
-                      h('tr', [
-                        ...row.map(cell => h('td', cell)),
-                        h('td', [
-                          h(
-                            NButton,
-                            { size: 'tiny', type: 'primary', quaternary: true },
-                            { default: () => '编辑' }
-                          ),
-                        ]),
-                      ])
-                    )
-                  ),
-                ],
-              }
-            )
-          case 'list':
-            return h(
-              'div',
-              { class: 'loaded-list' },
-              LOADED_CONTENT.list.map(item =>
-                h('div', { class: 'loaded-list__item' }, [
-                  h(C_Icon, {
-                    name: 'mdi:bell-outline',
-                    size: 20,
-                  }),
-                  h('div', [
-                    h('strong', { style: 'font-size:14px' }, item.title),
-                    h(
-                      'p',
-                      {
-                        style:
-                          'margin:2px 0 0;color:var(--text-color-3);font-size:12px',
-                      },
-                      item.desc
-                    ),
-                  ]),
-                  h(
-                    'span',
-                    {
-                      style:
-                        'margin-left:auto;color:var(--text-color-3);font-size:12px;white-space:nowrap',
-                    },
-                    item.time
-                  ),
-                ])
-              )
-            )
-          default:
-            return h(
-              'div',
-              {
-                style:
-                  'padding:20px;text-align:center;color:var(--text-color-3)',
-              },
-              `${props.preset} 模式数据加载完成 ✅`
-            )
-        }
-      }
-    },
   })
 </script>
 

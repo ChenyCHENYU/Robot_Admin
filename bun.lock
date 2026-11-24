@@ -5,15 +5,15 @@
     "": {
       "name": "robot-admin",
       "dependencies": {
-        "@agile-team/mach-table-vue": "0.42.1",
+        "@agile-team/mach-table-vue": "0.42.2",
         "@antv/x6": "^2.19.2",
         "@iconify/vue": "^5.0.0",
         "@robot-admin/dictionary": "0.6.1",
-        "@robot-admin/directives": "2.0.1",
-        "@robot-admin/file-utils": "3.0.4",
+        "@robot-admin/directives": "2.1.0",
+        "@robot-admin/file-utils": "3.1.0",
         "@robot-admin/form-validate": "3.4.4",
         "@robot-admin/layout": "3.3.4",
-        "@robot-admin/naive-ui-components": "0.40.5",
+        "@robot-admin/naive-ui-components": "0.41.1",
         "@robot-admin/request-core": "0.7.0",
         "@robot-admin/theme": "0.6.1",
         "@splinetool/runtime": "^1.12.68",
@@ -129,9 +129,9 @@
     "zod": "4.6.6",
   },
   "packages": {
-    "@agile-team/mach-table": ["@agile-team/mach-table@0.42.1", "", {}, "sha512-ds5YoiHAX6kiI/xg6f8P3NevAEF7MZ99/nn9fmFWM9wh3aftyfVeU7VMVppQBdL7KPFtpWPDi0sSg4oWet2/hw=="],
+    "@agile-team/mach-table": ["@agile-team/mach-table@0.42.2", "", {}, "sha512-lmzNUb4b4jhZIGHo6Gyf+6ou+JTr9CTwMJM4XFEHzM4bMt/Aw87CvOSqjJdKpeLPCvDXzTbFL1X3cTPUmxcqmw=="],
 
-    "@agile-team/mach-table-vue": ["@agile-team/mach-table-vue@0.42.1", "", { "dependencies": { "@agile-team/mach-table": "0.42.1" }, "peerDependencies": { "vue": ">=3.2.0" } }, "sha512-inHcgv1+FKoRxWxP8CHoJpWs//VyRDKf6+NDRxeVtOsZCz14jZWPKFCiInEcma/MJAgX6Rv3Cgz78f9XpcZIwQ=="],
+    "@agile-team/mach-table-vue": ["@agile-team/mach-table-vue@0.42.2", "", { "dependencies": { "@agile-team/mach-table": "0.42.2" }, "peerDependencies": { "vue": ">=3.2.0" } }, "sha512-wAn0anrfqAtAXEaw/LmNf6lwhQO4g9QnIktIfjiqIJq1OqBV6RG+oF40HLrrRpvrIFgBNw2VTiZeEIcyLZoMPg=="],
 
     "@antfu/install-pkg": ["@antfu/install-pkg@1.1.0", "", { "dependencies": { "package-manager-detector": "^1.3.0", "tinyexec": "^1.0.1" } }, "sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ=="],
 
@@ -765,9 +765,9 @@
 
     "@robot-admin/dictionary": ["@robot-admin/dictionary@0.6.1", "", { "peerDependencies": { "vue": "^3.4.0" }, "optionalPeers": ["vue"] }, "sha512-Ln+Ayfk12E6AM5q+9knC+Rw6vRKb3lug8aMmG7zdBGV43ntOtwgsgf+iFViwQRs/Csn9oT+qzfcZRBni9vbF+A=="],
 
-    "@robot-admin/directives": ["@robot-admin/directives@2.0.1", "", { "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-Q4zPlCLp/gPEwa5sB37pZNC2dk+/ARzgGzFXN4ug6XgpAJcmIQaqXRUQVjU+6bw3rJ11jcNdz3Hx+ogmmmdh6w=="],
+    "@robot-admin/directives": ["@robot-admin/directives@2.1.0", "", { "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-d/QH1DnYiMsyZ/K2+HlJoZsCra41+hsrVAvwQDhyoNq1btBisWYzt2DeESFQXS6t9qqBo11wJhxjFh8fZubA9A=="],
 
-    "@robot-admin/file-utils": ["@robot-admin/file-utils@3.0.4", "", { "dependencies": { "jszip": "^3.10.1" }, "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-wg9igRIy61tGUAs/HvdJC1mXGhuGnV3qVFMr4kwXbkkNiKIpYO8LFhJkqf/++RA19SLTm4aYnqCuM5+WYDXMzQ=="],
+    "@robot-admin/file-utils": ["@robot-admin/file-utils@3.1.0", "", { "dependencies": { "jszip": "^3.10.1" }, "peerDependencies": { "vue": ">=3.3.0" } }, "sha512-uAiV4w61NlUf0pfNHzUhWpl1j7Es2HzPYjXw7KAp4ledm9N9VRIWKA6iyXrSA/Xs8/M/wd+cL5dDQ55QnQLu5A=="],
 
     "@robot-admin/form-validate": ["@robot-admin/form-validate@3.4.4", "", {}, "sha512-zATW1C6supeOr4uMr+xOfTmNws7c4KiJkqcv777ime98SZ6Fgohx2hr8xQLdrH2I1CVXKjA7e1nPRFXYHOEQZQ=="],
 
@@ -775,7 +775,7 @@
 
     "@robot-admin/layout": ["@robot-admin/layout@3.3.4", "", { "peerDependencies": { "naive-ui": "^2.38.0", "pinia": "^2.0.0 || ^3.0.0", "vue": "^3.4.0", "vue-router": "^4.0.0" }, "optionalPeers": ["naive-ui"] }, "sha512-5ZyBisLk+NrNDTP9JP1uWn8Vs/ikzy+wLeUQ9m6pc1TPoxitTVsKaBh4xm9jThETi2HlXHC22nSCNcnJOjUXJQ=="],
 
-    "@robot-admin/naive-ui-components": ["@robot-admin/naive-ui-components@0.40.5", "", { "dependencies": { "@antv/x6": "^2.19.2", "@chenfengyuan/vue-barcode": "^2.0.2", "@fullcalendar/core": "^6.1.21", "@fullcalendar/daygrid": "^6.1.21", "@fullcalendar/interaction": "^6.1.21", "@fullcalendar/list": "^6.1.21", "@fullcalendar/vue3": "^6.1.21", "@iconify/vue": "^5.0.1", "@robot-admin/form-validate": "3.4.4", "@types/leaflet": "^1.9.22", "@visactor/vtable": "^1.26.7", "@visactor/vtable-editors": "^1.26.7", "@visactor/vtable-gantt": "^1.26.7", "@vue-flow/core": "^1.48.2", "@wangeditor-next/editor": "6.2.0", "@wangeditor-next/editor-for-vue": "6.2.0", "altcha": "3.2.2", "async-validator": "4.2.5", "date-fns": "^4.1.0", "dompurify": "^3.4.17", "driver.js": "^1.8.0", "highlight.js": "^11.12.0", "html2canvas": "^1.4.1", "leaflet": "^1.9.4", "mammoth": "^1.12.2", "md-editor-v3": "6.5.6", "print-js": "^1.6.0", "qrcode": "^1.5.4", "spark-md5": "^3.0.2", "vue-cropper": "^1.1.4", "vue-draggable-plus": "^0.6.1", "vue3-puzzle-vcode": "^1.1.7", "vueuc": "^0.4.66", "xgplayer": "3.0.26", "xgplayer-hls": "3.0.26" }, "peerDependencies": { "naive-ui": "^2.35.0", "sortablejs": "^1.15.7", "vue": "^3.5.3", "vue-router": "^4.6.4 || ^5.3.1" }, "optionalPeers": ["sortablejs", "vue-router"] }, "sha512-DzpraOLtHL9SVOJ10gmsKb1rGPnHGfCCvutWZk0wyplxOlChWaPUSJQC6te7FNR4p5CHZNf5pLSWG5NVoEjQ5g=="],
+    "@robot-admin/naive-ui-components": ["@robot-admin/naive-ui-components@0.41.1", "", { "dependencies": { "@antv/x6": "^2.19.2", "@chenfengyuan/vue-barcode": "^2.0.2", "@fullcalendar/core": "^6.1.21", "@fullcalendar/daygrid": "^6.1.21", "@fullcalendar/interaction": "^6.1.21", "@fullcalendar/list": "^6.1.21", "@fullcalendar/vue3": "^6.1.21", "@iconify/vue": "^5.0.1", "@robot-admin/form-validate": "3.4.4", "@types/leaflet": "^1.9.22", "@visactor/vtable": "^1.26.7", "@visactor/vtable-editors": "^1.26.7", "@visactor/vtable-gantt": "^1.26.7", "@vue-flow/core": "^1.48.2", "@wangeditor-next/editor": "6.2.0", "@wangeditor-next/editor-for-vue": "6.2.0", "altcha": "3.2.2", "async-validator": "4.2.5", "date-fns": "^4.1.0", "dompurify": "^3.4.17", "driver.js": "^1.8.0", "highlight.js": "^11.12.0", "html2canvas": "^1.4.1", "leaflet": "^1.9.4", "mammoth": "^1.12.2", "md-editor-v3": "6.5.6", "print-js": "^1.6.0", "qrcode": "^1.5.4", "spark-md5": "^3.0.2", "vue-cropper": "^1.1.4", "vue-draggable-plus": "^0.6.1", "vue3-puzzle-vcode": "^1.1.7", "vueuc": "^0.4.66", "xgplayer": "3.0.26", "xgplayer-hls": "3.0.26" }, "peerDependencies": { "naive-ui": "^2.35.0", "sortablejs": "^1.15.7", "vue": "^3.5.3", "vue-router": "^4.6.4 || ^5.3.1" }, "optionalPeers": ["sortablejs", "vue-router"] }, "sha512-lvZ3g9XPFwDrJiYg7utCMi/z/uESggleteLqZ1GS1ADU9Lo2h/eXc9uC4pWZyG2hXahKj02xAhzTwjNdzICijQ=="],
 
     "@robot-admin/request-core": ["@robot-admin/request-core@0.7.0", "", { "peerDependencies": { "axios": "^1.7.0", "naive-ui": "^2.38.0", "vue": "^3.4.0" }, "optionalPeers": ["naive-ui", "vue"] }, "sha512-f9RMprbHOY7pkGYNf8IWrY1L/unsoWBzwih+RsENyxujt7ZVN32qr/74OFt5ztRSrqA6ykFQJdTpQrOy9LXBGA=="],
 

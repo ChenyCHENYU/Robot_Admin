@@ -124,19 +124,11 @@
           <NDivider style="margin: 12px 0" />
           <div class="action-buttons">
             <NButton
-              v-for="action in FORM_ACTIONS"
+              v-for="action in formActions"
               :key="action.key"
-              :type="
-                action.type === 'fill'
-                  ? 'success'
-                  : action.type === 'preview'
-                    ? 'info'
-                    : action.type === 'clear'
-                      ? 'warning'
-                      : 'primary'
-              "
+              :type="action.type"
               size="small"
-              @click="handleAction(action.key)"
+              @click="action.run"
             >
               {{ action.label }}
             </NButton>
@@ -152,7 +144,7 @@
     >
       <div class="form-header">
         <h3>{{ currentLayoutInfo.title }} - 演示</h3>
-        <span class="field-badge">{{ formStats.totalFields }} 字段</span>
+        <span class="field-badge">{{ currentFields.length }} 字段</span>
       </div>
       <div class="layout-info">
         <strong>{{ currentLayoutInfo.title }}</strong> -
@@ -168,8 +160,6 @@
           :label-placement="labelPlacement"
           :validate-on-change="validateOnChange"
           @submit="handleSubmit"
-          @validate-success="errorCount = 0"
-          @validate-error="handleValidateError"
           @fields-change="handleFieldsChange"
         />
       </C_Density>
@@ -326,6 +316,7 @@
 </template>
 
 <script setup lang="ts">
+  import { downloadBlob } from '@robot-admin/file-utils'
   import type { TableColumn } from '@robot-admin/naive-ui-components/C_Table'
   import type { ComponentDensity } from '@robot-admin/naive-ui-components/C_Density'
   interface PreviewRow {
@@ -386,14 +377,14 @@
   } from './data'
 
   // 导入布局组件
-  import DefaultLayout from './layouts/DefaultLayout/index.vue'
-  import InlineLayout from './layouts/InlineLayout/index.vue'
-  import GridLayout from './layouts/GridLayout/index.vue'
-  import CardLayout from './layouts/CardLayout/index.vue'
-  import TabsLayout from './layouts/TabsLayout/index.vue'
-  import StepsLayout from './layouts/StepsLayout/index.vue'
-  import DynamicLayout from './layouts/DynamicLayout/index.vue'
-  import CustomLayout from './layouts/CustomLayout/index.vue'
+  import DefaultLayout from './components/DefaultLayout/index.vue'
+  import InlineLayout from './components/InlineLayout/index.vue'
+  import GridLayout from './components/GridLayout/index.vue'
+  import CardLayout from './components/CardLayout/index.vue'
+  import TabsLayout from './components/TabsLayout/index.vue'
+  import StepsLayout from './components/StepsLayout/index.vue'
+  import DynamicLayout from './components/DynamicLayout/index.vue'
+  import CustomLayout from './components/CustomLayout/index.vue'
 
   const message = useMessage()
   const density = ref<ComponentDensity>('compact')
@@ -417,13 +408,6 @@
     { value: 'top' as const, label: '顶部' },
   ]
 
-  const FORM_ACTIONS = [
-    { key: 'fill', type: 'fill', label: '填充测试' },
-    { key: 'preview', type: 'preview', label: '预览数据' },
-    { key: 'clear', type: 'clear', label: '重置数据' },
-    { key: 'validate', type: 'validate', label: '验证表单' },
-  ] as const
-
   const PREVIEW_MODES = [
     { value: 'json', label: 'JSON', icon: '🔍' },
     { value: 'table', label: '表格', icon: '📊' },
@@ -435,8 +419,8 @@
   // 响应式状态
   // ========================================
   interface LayoutExpose {
-    validate?: () => Promise<void>
-    resetFields?: () => void
+    validate: () => Promise<void>
+    resetFields: () => void
   }
 
   type PreviewMode = (typeof PREVIEW_MODES)[number]['value']
@@ -446,8 +430,7 @@
   const currentLayout = ref<LayoutType>('default')
   const labelPlacement = ref<LabelPlacement>('left')
   const validateOnChange = ref(false)
-  const currentFields = ref<FormOption[]>([])
-  const errorCount = ref(0)
+  const currentFields = shallowRef<readonly string[]>([])
   const showModal = ref(false)
   const previewMode = ref<PreviewMode>('json')
   const copying = ref(false)
@@ -491,11 +474,6 @@
     () => layoutDescriptions[currentLayout.value] || { title: '', content: '' }
   )
 
-  // 表单统计
-  const formStats = computed(() => ({
-    totalFields: currentFields.value.length,
-  }))
-
   // 预览相关计算属性
   const jsonData = computed(() => JSON.stringify(formData.value, null, 2))
 
@@ -528,58 +506,58 @@ export default formData;`
 
   const resetForm = () => {
     formData.value = {}
-    errorCount.value = 0
     currentFields.value = []
   }
 
-  // 统一的动作处理器
-  const handleAction = (
-    actionKey: 'fill' | 'preview' | 'clear' | 'validate'
-  ) => {
-    const actions = {
-      fill: () => {
-        const testData = testDataConfig.getTestData(currentLayout.value)
-        const values = Object.fromEntries(
-          currentFields.value
-            .filter(field =>
-              Object.prototype.hasOwnProperty.call(testData, field.prop)
-            )
-            .map(field => [field.prop, testData[field.prop]])
-        )
-        if (Object.keys(values).length === 0) {
-          message.warning('请先等待表单加载或添加可填写字段')
-          return
-        }
-        formData.value = { ...formData.value, ...values }
-        message.success('已填充测试数据')
-      },
-      preview: () => {
+  const fillTestValues = () => {
+    const testData = testDataConfig.getTestData(currentLayout.value)
+    const values = Object.fromEntries(
+      currentFields.value
+        .filter(key => Object.prototype.hasOwnProperty.call(testData, key))
+        .map(key => [key, testData[key]])
+    )
+    if (!Object.keys(values).length) {
+      message.warning('请先等待表单加载或添加可填写字段')
+      return
+    }
+    formData.value = { ...formData.value, ...values }
+    message.success('已填充测试数据')
+  }
+
+  const resetValues = () => {
+    if (!layoutRef.value) return
+    layoutRef.value.resetFields()
+    message.info('已恢复表单初始值')
+  }
+
+  const validateValues = async () => {
+    if (!layoutRef.value) return
+    try {
+      await layoutRef.value.validate()
+      message.success('表单验证通过')
+    } catch {
+      message.error('表单验证失败')
+    }
+  }
+
+  const formActions = [
+    { key: 'fill', type: 'success', label: '填充测试', run: fillTestValues },
+    {
+      key: 'preview',
+      type: 'info',
+      label: '预览数据',
+      run: () => {
         showModal.value = true
       },
-      clear: () => {
-        layoutRef.value?.resetFields?.()
-        errorCount.value = 0
-        message.info('已恢复表单初始值')
-      },
-      validate: async () => {
-        try {
-          if (!layoutRef.value?.validate) {
-            message.warning('当前布局不支持验证功能')
-            return
-          }
-
-          await layoutRef.value.validate()
-          errorCount.value = 0
-          message.success('表单验证通过')
-        } catch (errors) {
-          errorCount.value = Array.isArray(errors) ? errors.length : 1
-          message.error('表单验证失败')
-        }
-      },
-    }
-
-    actions[actionKey]?.()
-  }
+    },
+    { key: 'clear', type: 'warning', label: '重置数据', run: resetValues },
+    {
+      key: 'validate',
+      type: 'primary',
+      label: '验证表单',
+      run: validateValues,
+    },
+  ] as const
 
   // ========================================
   // 预览功能方法
@@ -610,14 +588,7 @@ export default formData;`
     const fileName = `form-data-${currentLayout.value}-${new Date().toISOString().slice(0, 10)}.json`
     const dataBlob = new Blob([jsonData.value], { type: 'application/json' })
 
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(dataBlob)
-    link.download = fileName
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(link.href)
-
+    downloadBlob(dataBlob, fileName)
     message.success(`数据已下载为 ${fileName}`)
   }
 
@@ -628,13 +599,9 @@ export default formData;`
     message.success('已接收表单数据（演示，不会持久化）')
   }
 
-  const handleValidateError = (errors: unknown): void => {
-    errorCount.value = Array.isArray(errors) ? errors.length : 1
-  }
-
   const handleFieldsChange = (fields: unknown): void => {
     currentFields.value = Array.isArray(fields)
-      ? fields.filter(isFormOption)
+      ? fields.filter(isFormOption).map(field => field.prop)
       : []
   }
 

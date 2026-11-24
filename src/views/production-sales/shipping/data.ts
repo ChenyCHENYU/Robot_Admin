@@ -2,31 +2,20 @@
  * @Author: ChenYu ycyplus@gmail.com
  * @Date: 2026-10-29
  * @FilePath: \Robot_Admin\src\views\production-sales\shipping\data.ts
- * @Description: 发运协同的任务池、库存匹配、车辆校验与本地状态流转
+ * @Description: 发运任务、班次预约、库存及车辆校验契约
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import { actionIcons, BUSINESS_DIALOG_BUTTONS } from '../shared/actionIcons'
-import {
-  defineTableColumns,
-  defineTableConfig,
-} from '@robot-admin/naive-ui-components/C_Table'
+import { actionIcons } from '../shared/actionIcons'
+import { defineTableConfig } from '@robot-admin/naive-ui-components/C_Table'
 import type {
   FormConfig,
   FormOption,
-  FormInstance,
 } from '@robot-admin/naive-ui-components/C_Form'
+import type { SearchFormItem } from '@robot-admin/naive-ui-components/C_FormSearch'
 import type {
-  SearchConfig,
-  SearchFormItem,
-} from '@robot-admin/naive-ui-components/C_FormSearch'
-import {
-  defineVueColumns,
-  selectionColumn,
-  indexColumn,
-  useMachTable,
-} from '@agile-team/mach-table-vue'
-import { recordLink, statusTag, weightCodec } from '../shared/presentation'
-import { useShipmentOperations } from './operations'
+  ResourceScheduleBooking,
+  ResourceScheduleRange,
+} from '@robot-admin/naive-ui-components/C_ResourceSchedule'
 
 export interface Shipment {
   id: string
@@ -40,23 +29,63 @@ export interface Shipment {
   status: 'waiting' | 'loading' | 'departed'
   vehicle?: VehicleForm
 }
-interface ShippingQuery {
+export type ShippingBoardTask = {
+  key: string
+  title: string
+  status: Shipment['status']
+  disabled: boolean
+  shipment: Shipment
+}
+
+const atShiftTime = (hour: number, minute = 0) =>
+  Date.UTC(2026, 9, 29, hour - 8, minute)
+
+export const SHIPPING_SHIFT: ResourceScheduleRange = [
+  atShiftTime(8),
+  atShiftTime(16),
+]
+
+/** 未完成配载的预约使用演示班次预排的装车位。 */
+export function getShippingBooking(row: Shipment) {
+  const time = row.window.match(
+    /^(\d{1,2}):(\d{2})\s*[—–-]\s*(\d{1,2}):(\d{2})$/
+  )
+  if (!time) return []
+  const [startHour, startMinute, endHour, endMinute] = time.slice(1).map(Number)
+  if (startHour > 23 || endHour > 23 || startMinute > 59 || endMinute > 59)
+    return []
+  const start = atShiftTime(startHour, startMinute)
+  const end = atShiftTime(endHour, endMinute)
+  if (end <= start) return []
+  return [
+    {
+      key: row.id,
+      label: row.no,
+      resourceKey:
+        row.vehicle?.gate || (row.destination === '南通港' ? 'A-02' : 'A-01'),
+      start,
+      end,
+      shipment: row,
+    } satisfies ResourceScheduleBooking & { shipment: Shipment },
+  ]
+}
+export interface ShippingQuery {
   keyword: string
   destination: string | null
   status: string | null
 }
-const INITIAL_QUERY: ShippingQuery = {
+export const INITIAL_QUERY: ShippingQuery = {
   keyword: '',
   destination: null,
   status: null,
 }
 
 // 两个演示任务来自独立的库存快照，覆盖部分放行与整批待放行。
-const STOCK_LIMITS = new Map([
+export const STOCK_LIMITS = new Map([
   ['SHIP-5', 18600],
   ['SHIP-6', 0],
 ])
-interface VehicleForm {
+export interface VehicleForm {
   plate: string
   driver: string
   phone: string
@@ -203,360 +232,6 @@ export function validateLoad(
     return '当前配载超过车辆额定载重，请调整车辆或载重。'
   return null
 }
-/** 库存、车辆与任务状态只在本页模型中协同，不产生任何后端写入。 */
-export function useShippingWorkbench() {
-  const dialog = useDialog()
-  const rows = ref(createShipments())
-  const currentId = ref('SHIP-1')
-  const pagination = reactive({ page: 1, pageSize: 10 })
-  /** 分页状态留在页面，新增或切换任务时可以定位到对应页。 */
-  const syncTaskPagination = (page: number, pageSize: number) => {
-    Object.assign(pagination, { page, pageSize })
-  }
-  const query = ref<ShippingQuery>({ ...INITIAL_QUERY })
-  const applied = ref<ShippingQuery>({ ...query.value })
-  const form = ref<FormInstance<VehicleForm> | null>(null)
-  const vehicle = ref<VehicleForm>({
-    plate: '苏A·K3510',
-    driver: '王建国',
-    phone: '13800001234',
-    capacity: 32,
-    gate: 'A-01',
-    note: '',
-  })
-  const stock = useMachTable<ReturnType<typeof createCargoLots>[number]>()
-  const selectedLots = ref<string[]>([])
-  const notice = ref('选择任务后推荐配载，核对库存与车辆，再生成装车单。')
-  const busy = ref(false)
-  const current = computed(
-    () => rows.value.find(row => row.id === currentId.value) ?? rows.value[0]
-  )
-  const lots = computed(() => {
-    const task = current.value
-    return task ? createCargoLots(task, STOCK_LIMITS.get(task.id)) : []
-  })
-  const availableKg = computed(() =>
-    lots.value.reduce((sum, lot) => sum + lot.weightKg, 0)
-  )
-  const selectedKg = computed(() =>
-    lots.value
-      .filter(row => selectedLots.value.includes(row.id))
-      .reduce((sum, row) => sum + row.weightKg, 0)
-  )
-  const visibleRows = computed(() =>
-    rows.value.filter(
-      row =>
-        (!applied.value.keyword ||
-          `${row.no}${row.customer}${row.plate}`.includes(
-            applied.value.keyword.trim()
-          )) &&
-        (!applied.value.destination ||
-          row.destination === applied.value.destination) &&
-        (!applied.value.status || row.status === applied.value.status)
-    )
-  )
-  const currentOutsideFilter = computed(
-    () =>
-      current.value &&
-      !visibleRows.value.some(row => row.id === current.value.id)
-  )
-  const missingStockKg = computed(() =>
-    Math.max(0, (current.value?.weightKg ?? 0) - availableKg.value)
-  )
-  const unallocatedKg = computed(() =>
-    Math.max(0, (current.value?.weightKg ?? 0) - selectedKg.value)
-  )
-  const excessAllocationKg = computed(() =>
-    Math.max(0, selectedKg.value - (current.value?.weightKg ?? 0))
-  )
-  const overloaded = computed(
-    () =>
-      vehicle.value.capacity !== null &&
-      Math.round(vehicle.value.capacity * 1000) < selectedKg.value
-  )
-  watch([currentId, () => visibleRows.value.length], () => {
-    const index = visibleRows.value.findIndex(row => row.id === currentId.value)
-    if (index >= 0)
-      pagination.page = Math.floor(index / pagination.pageSize) + 1
-  })
-  const stages = computed(() =>
-    Object.entries(SHIPMENT_STATES).map(([key, item]) => ({
-      key,
-      ...item,
-      count: rows.value.filter(row => row.status === key).length,
-    }))
-  )
-  const searchConfig: SearchConfig<ShippingQuery> = {
-    density: 'compact',
-    layout: 'grid',
-    columns: 4,
-    labelPlacement: 'left',
-    fieldMinWidth: 230,
-    labelWidth: 94,
-    searchOnReset: true,
-    onSearch: values => {
-      applied.value = { ...values }
-      pagination.page = 1
-    },
-  }
-  const clearTaskFilters = () => {
-    query.value = { ...INITIAL_QUERY }
-    applied.value = { ...INITIAL_QUERY }
-    pagination.page = 1
-  }
-  const activate = (id: string) => {
-    const row = rows.value.find(item => item.id === id)
-    if (!row || busy.value) return
-    currentId.value = id
-    selectedLots.value = []
-    stock.api.value?.selection.clear()
-    vehicle.value = row.vehicle
-      ? { ...row.vehicle }
-      : {
-          plate: row.plate || '苏A·K3510',
-          driver: '王建国',
-          phone: '13800001234',
-          capacity: 32,
-          gate: 'A-01',
-          note: '',
-        }
-    form.value?.clearValidation()
-    void nextTick(() => form.value?.markAsClean())
-  }
-  const choose = (id: string) => {
-    if (id === currentId.value || busy.value) return
-    if (form.value?.isDirty) {
-      dialog.warning({
-        ...BUSINESS_DIALOG_BUTTONS,
-        title: '车辆安排有未保存修改',
-        content: '切换任务将放弃当前尚未生成装车单的车辆修改。',
-        positiveText: '放弃并切换',
-        negativeText: '保留当前任务',
-        onPositiveClick: () => activate(id),
-      })
-    } else activate(id)
-  }
-  const vehicleConfig = computed(() => ({
-    ...VEHICLE_CONFIG,
-    disabled: current.value?.status !== 'waiting',
-  }))
-  const filterStage = (status: string | null) => {
-    query.value.status = status
-    applied.value = { ...query.value }
-    pagination.page = 1
-  }
-  const operations = useShipmentOperations({
-    rows,
-    currentId,
-    notice,
-    activate,
-    vehicleDirty: () => form.value?.isDirty === true || busy.value,
-  })
-  const rowProps = (row: Shipment) => ({
-    'aria-selected': row.id === currentId.value,
-    'data-shipment-id': row.id,
-    tabindex: 0,
-    onKeydown: (event: KeyboardEvent) => {
-      if (
-        event.target !== event.currentTarget ||
-        !['Enter', ' '].includes(event.key)
-      )
-        return
-      event.preventDefault()
-      choose(row.id)
-    },
-    onClick: () => choose(row.id),
-  })
-  const isRowActionDisabled = (row: Shipment) =>
-    row.status !== 'waiting' || form.value?.isDirty === true || busy.value
-  const taskTableConfig = computed(() => ({
-    ...SHIPMENT_TABLE_CONFIG,
-    pagination: { page: pagination.page, pageSize: pagination.pageSize },
-    actions: {
-      inline: [
-        {
-          key: 'edit',
-          type: 'warning' as const,
-          disabled: isRowActionDisabled,
-          onClick: operations.editShipment,
-        },
-        {
-          key: 'delete',
-          disabled: isRowActionDisabled,
-          onClick: operations.removeShipment,
-        },
-      ],
-    },
-  }))
-  const columns = defineTableColumns<Shipment>([
-    { type: 'index', title: '序号', width: 48, fixed: 'left' },
-    {
-      key: 'no',
-      title: '发运单号',
-      fixed: 'left',
-      render: row => recordLink(row.no, () => operations.openDetail(row)),
-    },
-    { key: 'customer', title: '客户名称', resizable: true },
-    { key: 'grade', title: '钢种' },
-    {
-      key: 'weightKg',
-      title: '计划量 (t)',
-      render: row => weightCodec.format(row.weightKg / 1000),
-    },
-    { key: 'destination', title: '目的地' },
-    { key: 'window', title: '装车窗口', resizable: true },
-    {
-      key: 'plate',
-      title: '车辆',
-      render: row => row.plate || '待安排',
-    },
-    {
-      key: 'status',
-      title: '状态',
-      status: Object.fromEntries(
-        Object.entries(SHIPMENT_STATES).map(([code, state]) => [
-          code,
-          { label: state.label, color: state.type },
-        ])
-      ),
-    },
-    { key: '_actions', title: '操作', fixed: 'right' },
-  ])
-  const lotColumns = defineVueColumns<(typeof lots.value)[number]>([
-    selectionColumn(),
-    indexColumn({ headerName: '序号', width: 46 }),
-    { field: 'batch', headerName: '库存批号' },
-    { field: 'location', headerName: '库位' },
-    { field: 'grade', headerName: '钢种' },
-    { field: 'specification', headerName: '规格 (mm)', minWidth: 170 },
-    {
-      field: 'weightKg',
-      headerName: '可配重量 (t)',
-      valueFormatter: ({ value }) => weightCodec.format(Number(value) / 1000),
-    },
-    {
-      field: 'quality',
-      headerName: '质量状态',
-      width: 120,
-      render: row => statusTag(row.quality, 'success'),
-    },
-  ])
-  const syncLots = () => {
-    selectedLots.value = (stock.api.value?.selection.getIds() ?? []).map(String)
-  }
-  const recommend = () => {
-    if (!lots.value.length || current.value?.status !== 'waiting') return
-    stock.api.value?.selection.selectAll()
-    syncLots()
-    const total = weightCodec.format(selectedKg.value / 1000)
-    notice.value = missingStockKg.value
-      ? `已选全部可用库存 ${total} t，仍缺 ${weightCodec.format(missingStockKg.value / 1000)} t。`
-      : `已匹配 ${lots.value.length} 个可追溯批次，共 ${total} t。`
-  }
-  const assign = async () => {
-    if (
-      busy.value ||
-      current.value?.status !== 'waiting' ||
-      missingStockKg.value
-    )
-      return
-    busy.value = true
-    try {
-      if (!form.value) return
-      try {
-        await form.value.validate()
-      } catch {
-        notice.value = '请补齐车辆与驾驶员信息。'
-        return
-      }
-      const error = validateLoad(
-        current.value.weightKg,
-        selectedKg.value,
-        vehicle.value.capacity
-      )
-      if (error) {
-        notice.value = error
-        return
-      }
-      const { id } = current.value
-      rows.value = rows.value.map(row =>
-        row.id === id
-          ? {
-              ...row,
-              plate: vehicle.value.plate,
-              vehicle: { ...vehicle.value },
-              status: 'loading',
-            }
-          : row
-      )
-      form.value.markAsClean()
-      notice.value = `${current.value.no} 已生成装车单，安排至 ${vehicle.value.gate}（本地演示）。`
-    } finally {
-      busy.value = false
-    }
-  }
-  const depart = () => {
-    if (current.value?.status !== 'loading' || busy.value) return
-    const { id } = current.value
-    dialog.info({
-      ...BUSINESS_DIALOG_BUTTONS,
-      title: '确认车辆出厂',
-      content: `${current.value.no} · ${current.value.plate}，请确认装车与出厂校核已完成。`,
-      positiveText: '确认出厂',
-      negativeText: '取消',
-      onPositiveClick: () => {
-        rows.value = rows.value.map(row =>
-          row.id === id && row.status === 'loading'
-            ? { ...row, status: 'departed' }
-            : row
-        )
-        notice.value = '发运任务已确认出厂（本地演示）。'
-      },
-    })
-  }
-  return {
-    ...operations,
-    rowProps,
-    rows,
-    current,
-    currentId,
-    query,
-    appliedStage: computed(() => applied.value.status),
-    searchConfig,
-    clearTaskFilters,
-    visibleRows,
-    currentOutsideFilter,
-    taskTableConfig,
-    syncTaskPagination,
-    stages,
-    form,
-    vehicle,
-    vehicleConfig,
-    stock,
-    lots,
-    availableKg,
-    missingStockKg,
-    unallocatedKg,
-    excessAllocationKg,
-    overloaded,
-    selectedLots,
-    selectedKg,
-    columns,
-    lotColumns,
-    busy,
-    notice,
-    choose,
-    filterStage,
-    syncLots,
-    recommend,
-    assign,
-    depart,
-    restoreVehicle: () => {
-      if (!busy.value) activate(currentId.value)
-    },
-  }
-}
-
 export const STAGE_NOTES: Record<string, string> = {
   waiting: '核对库存与车辆，生成装车单',
   loading: '关注装车进度与车辆额定载重',

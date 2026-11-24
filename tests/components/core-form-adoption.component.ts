@@ -7,12 +7,13 @@
 import { expect, test, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, h } from 'vue'
+import { createPinia } from 'pinia'
 import { NDataTable, NGrid, NMessageProvider, NSwitch } from 'naive-ui'
 import { C_Form } from '@robot-admin/naive-ui-components/C_Form'
 import { C_FormSearch } from '@robot-admin/naive-ui-components/C_FormSearch'
 import { C_AutoComplete } from '@robot-admin/naive-ui-components/C_AutoComplete'
 import { C_Table } from '@robot-admin/naive-ui-components/C_Table'
-import GridLayout from '@/views/demo/07-form/layouts/GridLayout/index.vue'
+import GridLayout from '@/views/demo/07-form/components/GridLayout/index.vue'
 import SearchDemo from '@/views/demo/09-form-search/index.vue'
 
 vi.mock('@iconify/vue', () => ({
@@ -61,6 +62,7 @@ test('多选搜索重置经同一查询入口提交一次并恢复默认布尔�
     }),
     {
       global: {
+        plugins: [createPinia()],
         components: { C_FormSearch, C_AutoComplete, C_Table },
         stubs: { c_vTitle: true },
       },

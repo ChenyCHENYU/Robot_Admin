@@ -24,7 +24,7 @@
         v-for="example in BARCODE_EXAMPLES"
         :key="example.title"
         type="button"
-        :aria-pressed="customValue === example.value"
+        :aria-pressed="options.value === example.value"
         @click="applyExample(example)"
         ><strong>{{ example.title }}</strong
         ><small>{{ example.description }}</small></button
@@ -48,12 +48,12 @@
             <span class="control-label">条形码值:</span>
             <div class="control-content">
               <NInput
-                v-model:value="customValue"
+                v-model:value="options.value"
                 placeholder="请输入条形码值"
                 style="width: 200px"
               />
               <NSelect
-                v-model:value="customFormat"
+                v-model:value="options.format"
                 :options="BARCODE_FORMATS"
                 style="width: 150px"
               />
@@ -64,21 +64,21 @@
             <span class="control-label">尺寸:</span>
             <div class="control-content">
               <NSlider
-                v-model:value="customWidth"
+                v-model:value="options.width"
                 :min="CONFIG_OPTIONS.width.min"
                 :max="CONFIG_OPTIONS.width.max"
                 :step="CONFIG_OPTIONS.width.step"
                 style="width: 120px"
               />
-              <span class="slider-label">宽: {{ customWidth }}</span>
+              <span class="slider-label">宽: {{ options.width }}</span>
               <NSlider
-                v-model:value="customHeight"
+                v-model:value="options.height"
                 :min="CONFIG_OPTIONS.height.min"
                 :max="CONFIG_OPTIONS.height.max"
                 :step="CONFIG_OPTIONS.height.step"
                 style="width: 120px"
               />
-              <span class="slider-label">高: {{ customHeight }}</span>
+              <span class="slider-label">高: {{ options.height }}</span>
             </div>
           </div>
 
@@ -86,19 +86,19 @@
             <span class="control-label">文本:</span>
             <div class="control-content">
               <NSlider
-                v-model:value="customFontSize"
+                v-model:value="options.fontSize"
                 :min="CONFIG_OPTIONS.fontSize.min"
                 :max="CONFIG_OPTIONS.fontSize.max"
                 :step="CONFIG_OPTIONS.fontSize.step"
                 style="width: 120px"
               />
-              <span class="slider-label">字号: {{ customFontSize }}</span>
+              <span class="slider-label">字号: {{ options.fontSize }}</span>
               <NSelect
-                v-model:value="customTextPosition"
+                v-model:value="options.textPosition"
                 :options="TEXT_POSITIONS"
                 style="width: 100px"
               />
-              <NCheckbox v-model:checked="customShowText">显示文本</NCheckbox>
+              <NCheckbox v-model:checked="options.showText">显示文本</NCheckbox>
             </div>
           </div>
 
@@ -106,25 +106,29 @@
             <span class="control-label">颜色:</span>
             <div class="control-content">
               <div class="color-presets">
-                <div
-                  v-for="(preset, index) in COLOR_PRESETS"
-                  :key="index"
+                <button
+                  v-for="preset in COLOR_PRESETS"
+                  :key="preset.label"
+                  type="button"
                   class="color-preset"
-                  :class="{ active: selectedColorIndex === index }"
+                  :aria-label="preset.label"
+                  :aria-pressed="selectedColor === preset"
                   :style="{
                     backgroundColor: preset.background,
                     border: `2px solid ${preset.value}`,
                   }"
-                  @click="selectColorPreset(index)"
+                  @click="selectColorPreset(preset)"
                 />
               </div>
               <NColorPicker
-                v-model:value="customLineColor"
+                v-model:value="options.lineColor"
+                :modes="['hex']"
                 style="margin-left: 12px"
               />
               <span>线条</span>
               <NColorPicker
-                v-model:value="customBackground"
+                v-model:value="options.background"
+                :modes="['hex']"
                 style="margin-left: 8px"
               />
               <span>背景</span>
@@ -156,15 +160,7 @@
           >
             <C_Barcode
               v-if="!validationError"
-              :value="customValue"
-              :format="customFormat"
-              :width="customWidth"
-              :height="customHeight"
-              :show-text="customShowText"
-              :font-size="customFontSize"
-              :text-position="customTextPosition"
-              :line-color="customLineColor"
-              :background="customBackground"
+              v-bind="options"
               :show-border="false"
               @error="handleBarcodeError"
             />
@@ -172,16 +168,16 @@
           <div class="preview-info">
             <div class="info-item">
               <span class="info-label">格式:</span>
-              <span class="info-value">{{ customFormat }}</span>
+              <span class="info-value">{{ options.format }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">值:</span>
-              <span class="info-value">{{ customValue || '空' }}</span>
+              <span class="info-value">{{ options.value || '空' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">尺寸:</span>
               <span class="info-value"
-                >{{ customWidth }} × {{ customHeight }}</span
+                >{{ options.width }} × {{ options.height }}</span
               >
             </div>
           </div>
@@ -193,59 +189,106 @@
         />
       </div>
     </div>
+    <section
+      class="demo-section barcode-reader"
+      aria-labelledby="barcode-reader-title"
+    >
+      <h2
+        id="barcode-reader-title"
+        class="section-title"
+      >
+        <C_Icon name="mdi:barcode-scan" />
+        扫码录入
+      </h2>
+      <p class="section-desc"
+        >用扫码枪或键盘录入后按回车，也可以先填入示例编号。编码按原字符串保存。</p
+      >
+      <C_ScanInput
+        v-model="scanValue"
+        camera
+        photo
+        @submit="recordScan"
+        @scan="recordDetectedScan"
+      />
+      <div class="barcode-reader__result">
+        <NButton
+          size="small"
+          @click="scanValue = SCAN_EXAMPLE"
+        >
+          <template #icon><span class="i-mdi-magnify" /></template>
+          填入示例编码
+        </NButton>
+        <output
+          aria-live="polite"
+          data-testid="barcode-scan-result"
+        >
+          {{ submittedScan ? `已录入 ${submittedScan}` : '等待录入' }}
+        </output>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo35Barcode' })
-  import type { ActionItem } from '@robot-admin/naive-ui-components'
+  import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
+  import type { ScanResult } from '@robot-admin/naive-ui-components/C_ScanInput'
   import {
     BARCODE_FORMATS,
     BARCODE_EXAMPLES,
     CONFIG_OPTIONS,
     COLOR_PRESETS,
+    DEFAULT_BARCODE,
+    SCAN_EXAMPLE,
     TEXT_POSITIONS,
     validateBarcodeValue,
-    type BarcodeFormat,
-    type TextPosition,
   } from './data'
 
   const message = useMessage()
+  const scanValue = ref('')
+  const submittedScan = ref('')
+
+  /** 条码按字符串记录，保留编号前导零。 */
+  const recordScan = (value: string) => {
+    submittedScan.value = value
+  }
+
+  /** 相机和照片识别复用扫码枪的录入结果。 */
+  const recordDetectedScan = (result: ScanResult) => recordScan(result.value)
 
   const previewRef = ref<HTMLElement | null>(null)
   const renderError = ref('')
-  // 自定义配置
-  const customValue = ref('DEMO-BARCODE-2025')
-  const customFormat = ref<BarcodeFormat>('CODE128')
-  const customWidth = ref(CONFIG_OPTIONS.width.default)
-  const customHeight = ref(CONFIG_OPTIONS.height.default)
-  const customFontSize = ref(CONFIG_OPTIONS.fontSize.default)
-  const customTextPosition = ref<TextPosition>('bottom')
-  const customShowText = ref(true)
-  const customLineColor = ref('#000000')
-  const customBackground = ref('#FFFFFF')
-  const selectedColorIndex = ref(0)
+  const options = reactive({ ...DEFAULT_BARCODE })
+  const normalizeColor = (color: string) =>
+    color.toLowerCase().replace(/^(#[\da-f]{6})ff$/, '$1')
+  const selectedColor = computed(() =>
+    COLOR_PRESETS.find(
+      preset =>
+        normalizeColor(options.lineColor) === normalizeColor(preset.value) &&
+        normalizeColor(options.background) === normalizeColor(preset.background)
+    )
+  )
 
   const validationError = computed(
     () =>
-      renderError.value ||
-      validateBarcodeValue(customValue.value, customFormat.value)
+      renderError.value || validateBarcodeValue(options.value, options.format)
   )
-  watch([customValue, customFormat], () => {
-    renderError.value = ''
-  })
+  watch(
+    options,
+    () => {
+      renderError.value = ''
+    },
+    { flush: 'sync' }
+  )
 
   const applyExample = (example: (typeof BARCODE_EXAMPLES)[number]) => {
-    customValue.value = example.value
-    customFormat.value = example.format
+    options.value = example.value
+    options.format = example.format
   }
 
-  // 选择颜色预设
-  const selectColorPreset = (index: number) => {
-    selectedColorIndex.value = index
-    const preset = COLOR_PRESETS[index]
-    customLineColor.value = preset.value
-    customBackground.value = preset.background
+  const selectColorPreset = (preset: (typeof COLOR_PRESETS)[number]) => {
+    options.lineColor = preset.value
+    options.background = preset.background
   }
 
   // 条形码错误处理
@@ -272,7 +315,7 @@
     }
     const anchor = document.createElement('a')
     anchor.href = url
-    anchor.download = `barcode-${customFormat.value}.${svg ? 'svg' : 'png'}`
+    anchor.download = `barcode-${options.format}.${svg ? 'svg' : 'png'}`
     anchor.click()
     if (svg) setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
@@ -280,7 +323,7 @@
   // 复制条形码值
   const copyBarcodeValue = async () => {
     try {
-      await navigator.clipboard.writeText(customValue.value)
+      await navigator.clipboard.writeText(options.value)
       message.success('条形码值已复制到剪贴板')
     } catch {
       message.error('复制失败，请手动复制')
@@ -289,16 +332,7 @@
 
   // 重置配置
   const resetConfig = () => {
-    customValue.value = 'DEMO-BARCODE-2025'
-    customFormat.value = 'CODE128'
-    customWidth.value = CONFIG_OPTIONS.width.default
-    customHeight.value = CONFIG_OPTIONS.height.default
-    customFontSize.value = CONFIG_OPTIONS.fontSize.default
-    customTextPosition.value = 'bottom'
-    customShowText.value = true
-    customLineColor.value = '#000000'
-    customBackground.value = '#FFFFFF'
-    selectedColorIndex.value = 0
+    Object.assign(options, DEFAULT_BARCODE)
     message.success('配置已重置')
   }
 

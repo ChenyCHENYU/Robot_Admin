@@ -32,7 +32,7 @@
 | 维度     | 当前提供                                                                   |
 | -------- | -------------------------------------------------------------------------- |
 | 业务场景 | 6 个产销工作台；主从表、密集表单、动态报表、分组汇总与检测矩阵             |
-| 组件生态 | 63 个业务组件、11 个指令；8 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
+| 组件生态 | 78 个业务组件、11 个指令；8 个运行时 `@robot-admin/*` 包 + 1 个 Git 工程包 |
 | 示例入口 | 58 个演示页面，覆盖表单、搜索、选择、表格、树、流程、文件和媒体            |
 | 工程保障 | 类型检查、双 Lint、逻辑与组件测试、构建预算、浏览器回归与构建身份          |
 
@@ -120,7 +120,7 @@ bun run dev
 | 字典联动    | 销售订单协同 →「字典联动体验」                                 | 共享请求、空字典、失败重试、作用域切换、`0/false/"0"/"001"` 与多选               |
 | 工作流      | `/#/editor/work-flow-editor`                                   | 节点配置、审批方式、条件、只读预览、本机草稿及导出                               |
 
-演示目录包含 **58 个演示页 + 8 个表单布局 + 3 个页内组件（69 个 index.vue）**，与产销六页分别计数。更多交互入口和组合写法见[当前组件接入指南](./docs/core-components.md)。
+演示目录包含 **58 个演示页 + 8 个表单布局 + 4 个页内组件（70 个 index.vue）**，与产销六页分别计数。更多交互入口和组合写法见[当前组件接入指南](./docs/core-components.md)。
 
 MachTable 的「顺序调整」提供多项拖动、键盘移动、撤销/重做及本地保存失败/版本冲突演练。「导入校验」先预览规范值和逐行问题，再确认导入。「千万行视口」使用按块生成的逻辑数据源，每次生成 200 行、最多缓存 8 块，不预先创建千万行数组。
 
@@ -199,21 +199,21 @@ flowchart TB
 
 以下是**本项目锁定的接入版本**，完整 API 与上游能力以各包文档为准。
 
-页面直接绑定公开属性与业务数据；抽出配置时复用组件包的公开类型。搜索重置复用统一查询入口，展开表的父子选择交给组件，编辑器和瀑布流各自维护内部生命周期。具体组合见[接入指南](./docs/core-components.md)，本轮接入与验证见 [0.40.5 核对记录](./docs/component-adoption-0.40.5.md)。
+页面直接绑定公开属性与业务数据；抽出配置时复用组件包的公开类型。搜索重置复用统一查询入口，展开表的父子选择交给组件，编辑器和瀑布流各自维护内部生命周期。具体组合见[接入指南](./docs/core-components.md)，本版演示入口见 [0.41.0 演示清单](./docs/core-components.md#0410-演示入口)，历史接入见 [0.40.5 核对记录](./docs/component-adoption-0.40.5.md)。
 
 | 包                                                                                                   | 接入版本 | 核心能力                                                   | 在项目中的职责                         |
 | ---------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- | -------------------------------------- |
-| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.40.5` | 63 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
+| [`@robot-admin/naive-ui-components`](https://www.npmjs.com/package/@robot-admin/naive-ui-components) | `0.41.1` | 78 个业务组件、子路径加载、自动导入 Resolver、独立样式入口 | 表单、表格、菜单、编辑器和全局反馈     |
 | [`@robot-admin/dictionary`](https://www.npmjs.com/package/@robot-admin/dictionary)                   | `0.6.1`  | 静态枚举、远程字典、隔离缓存及详情字段绑定                 | 表单、搜索、详情与两种表格共享翻译     |
 | [`@robot-admin/request-core`](https://www.npmjs.com/package/@robot-admin/request-core)               | `0.7.0`  | 实例化请求编排、认证恢复、取消与 Headless CRUD             | 类型化 API、会话一致性、列表与编辑状态 |
 | [`@robot-admin/form-validate`](https://www.npmjs.com/package/@robot-admin/form-validate)             | `3.4.4`  | 规则核心、组合与批量校验、Naive UI / Element Plus 适配     | 已内置于 `C_Form`，页面直接配置规则    |
 | [`@robot-admin/layout`](https://www.npmjs.com/package/@robot-admin/layout)                           | `3.3.4`  | 6 种布局、框架无关设置协议、Vue Headless 与 Naive 入口     | 宿主提供菜单、路由和插槽，布局由包实现 |
 | [`@robot-admin/theme`](https://www.npmjs.com/package/@robot-admin/theme)                             | `0.6.1`  | 主题核心、Vue 状态、Naive UI 适配、亮／暗／跟随系统        | 统一组件外观与主题状态                 |
-| [`@robot-admin/directives`](https://www.npmjs.com/package/@robot-admin/directives)                   | `2.0.1`  | 11 个指令：权限、复制、拖拽、防抖、节流等                  | 声明式交互，组件卸载时回收资源         |
-| [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.0.4`  | 隔离实例、Excel / CSV / ZIP、可取消分片与文件处理          | 文件场景复用，按需加载重型依赖         |
+| [`@robot-admin/directives`](https://www.npmjs.com/package/@robot-admin/directives)                   | `2.1.0`  | 11 个指令：权限、复制、拖拽、防抖、节流等                  | 声明式交互，组件卸载时回收资源         |
+| [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.1.0`  | 隔离实例、Excel / CSV / ZIP、可取消分片与文件处理          | 文件场景复用，按需加载重型依赖         |
 | [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`  | 配置保护与 Git 工程标准                                    | 开发期提交规范与初始化工具             |
 
-数据网格使用 **MachTable 0.42.1** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)。Robot Admin 目前接入 Vue；Core、React、XLSX 及其他可选能力见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。组件源码见 [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components)，其余运行时包见 [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages)。
+数据网格使用 **MachTable 0.42.2** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)。Robot Admin 目前接入 Vue；Core、React、XLSX 及其他可选能力见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。组件源码见 [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components)，其余运行时包见 [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages)。
 
 ## 工程机制与质量保障
 
@@ -285,7 +285,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.42.1** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.42.2** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

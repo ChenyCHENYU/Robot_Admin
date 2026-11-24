@@ -13,7 +13,6 @@ import type {
   DeptData,
   DeptTreeOption,
   SearchForm,
-  ResetPasswordForm,
   UserType,
   RoleData,
 } from '@/api/user-manage.contract'
@@ -25,12 +24,11 @@ import {
   updateUserApi,
   deleteUserApi,
   updateUserStatusApi,
-  resetUserPasswordApi,
 } from '@/api/user-manage'
 import { createUserActions, createUserColumns } from './d_columns'
 import { createUserRoleOptions } from './d_roleOptions'
+import { useUserPasswordReset } from './useUserPasswordReset'
 import {
-  PRESET_RULES,
   type FormInstance,
   type FormOption,
   type FormConfig,
@@ -54,7 +52,6 @@ import type { TableInstance } from '@robot-admin/naive-ui-components/C_Table'
 import {
   USER_FORM_RULES,
   DEFAULT_USER_FORM_DATA,
-  DEFAULT_RESET_PASSWORD_FORM,
   UI_CONFIG,
   COMPONENT_CONFIG,
   findDeptById,
@@ -70,6 +67,10 @@ export function useUserManagement() {
   const dialog = useDialog()
   const mockMode = isMockDataMode()
   const userStore = s_userStore()
+  const passwordReset = useUserPasswordReset(
+    () => userStore.activeContext?.id,
+    () => loadUsers()
+  )
   const companyOptions = getMockCompanies().map(company => ({
     label: `${company.tenantName} · ${company.companyName}`,
     value: company.id,
@@ -116,10 +117,8 @@ export function useUserManagement() {
   const { loading, run: runLatestUserRequest } = useLatestRequest()
   const showModal = ref(false)
   const showUserDetail = ref(false)
-  const showResetPasswordModal = ref(false)
   const modalMode = ref<'add' | 'edit'>('add')
   const formRef = ref<FormInstance<UserFormData> | null>(null)
-  const resetPasswordFormRef = ref<FormInstance<ResetPasswordForm> | null>(null)
   const userTableRef = ref<TableInstance<UserData> | null>(null)
   const deptTreeRef = ref<TreeExpose<DeptData> | null>(null)
   const expandedDeptKeys = ref<string[]>([])
@@ -127,9 +126,6 @@ export function useUserManagement() {
   const selectedUsers = ref<string[]>([])
   const isAllExpanded = ref(false)
   const currentUser = ref<UserData | null>(null)
-  const currentResetUserId = ref<string>('')
-  const resetRevision = ref<number>()
-  const resetMembershipRevision = ref<number>()
 
   const userList = reactive<UserData[]>([])
   const deptList = reactive<DeptData[]>([])
@@ -137,9 +133,6 @@ export function useUserManagement() {
   const userRoleOptions = computed(() => createUserRoleOptions(userRoles.value))
 
   const formData = reactive<UserFormData>({ ...DEFAULT_USER_FORM_DATA })
-  const resetPasswordForm = reactive<ResetPasswordForm>({
-    ...DEFAULT_RESET_PASSWORD_FORM,
-  })
   const searchForm = reactive<SearchForm>({
     keyword: '',
     status: null,
@@ -225,7 +218,7 @@ export function useUserManagement() {
     edit: row => handleEditUser(row),
     delete: row => handleDeleteUser(row.id),
     toggle: row => handleToggleUserStatus(row),
-    reset: row => handleShowResetPassword(row),
+    reset: row => passwordReset.open(row),
   })
 
   // ==================== 表格列配置 ====================
@@ -461,37 +454,6 @@ export function useUserManagement() {
     preserveRemovedFields: true,
     onSubmit: handleSaveUser,
   }))
-  const resetPasswordOptions: FormOption<ResetPasswordForm>[] = [
-    {
-      prop: 'newPassword',
-      disabled: () => !!resetPasswordFormRef.value?.isSubmitting,
-      label: '新密码',
-      type: 'input',
-      placeholder: '请输入新密码',
-      attrs: { type: 'password', showPasswordOn: 'click' },
-      rules: USER_FORM_RULES.password,
-    },
-    {
-      prop: 'confirmPassword',
-      disabled: () => !!resetPasswordFormRef.value?.isSubmitting,
-      label: '确认密码',
-      type: 'input',
-      placeholder: '请再次输入新密码',
-      attrs: { type: 'password', showPasswordOn: 'click' },
-      rules: [PRESET_RULES.required('确认密码')],
-      dependsOn: ['newPassword'],
-      crossFieldValidator: model =>
-        model.confirmPassword !== model.newPassword
-          ? '两次密码输入不一致'
-          : null,
-    },
-  ]
-  const resetPasswordConfig = computed<FormConfig<ResetPasswordForm>>(() => ({
-    labelPlacement: 'left',
-    labelWidth: 100,
-    showActions: false,
-    onSubmit: handleResetPassword,
-  }))
   /** 先同步模型再处理类型联动，避免旧字段覆盖部门和角色的清理。 */
   function updateUserForm(model: UserFormData) {
     const typeChanged = model.userType !== formData.userType
@@ -709,38 +671,6 @@ export function useUserManagement() {
     }
   }
 
-  const handleShowResetPassword = (user: UserData) => {
-    if (user.status === 0) {
-      message.warning('禁用用户无法重置密码')
-      return
-    }
-    currentResetUserId.value = user.id
-    resetRevision.value = user.revision
-    resetMembershipRevision.value = user.membershipRevision
-    Object.assign(resetPasswordForm, DEFAULT_RESET_PASSWORD_FORM)
-    showResetPasswordModal.value = true
-  }
-
-  /** 重置当前用户密码，失败交由组件统一反馈。 */
-  async function handleResetPassword({
-    model,
-  }: SubmitEventPayload<ResetPasswordForm>): Promise<void> {
-    try {
-      if (!currentResetUserId.value) throw new Error('未选择需要重置的用户')
-      await resetUserPasswordApi(
-        currentResetUserId.value,
-        model.newPassword,
-        resetRevision.value,
-        resetMembershipRevision.value,
-        userStore.activeContext?.id
-      )
-      message.success('密码重置成功')
-      await loadUsers()
-    } catch (error) {
-      throw error instanceof Error ? error : new Error('密码重置失败')
-    }
-  }
-
   /** 提交用户快照，校验企业归属并刷新用户列表。 */
   async function handleSaveUser({
     model,
@@ -816,58 +746,64 @@ export function useUserManagement() {
   const userColumns = createUserColumns()
 
   return {
-    dialog,
     mockMode,
-    companyOptions,
-    companyRoleOptions,
-    getCompanyName,
-    getCompanyRoleName,
-    getUserMemberships,
-    getCompanyOptions,
-    setPrimaryMembership,
-    removeCompanyMembership,
-    addCompanyMembership,
-    loading,
-    showModal,
-    showUserDetail,
-    showResetPasswordModal,
-    modalMode,
     formRef,
-    resetPasswordFormRef,
+    resetPasswordFormRef: passwordReset.form,
     userTableRef,
     deptTreeRef,
-    expandedDeptKeys,
-    selectedDeptKeys,
-    selectedUsers,
-    currentUser,
-    userList,
-    deptList,
+    passwordReset: passwordReset.panel,
     userRoleOptions,
-    formData,
-    resetPasswordForm,
-    searchForm,
-    pagination,
-    modalTitle,
-    toolbarActions,
-    batchActions,
-    selectedDept,
-    deptIconConfig,
-    getRowClassName,
-    rowKey,
-    tableActions,
-    getUserDetailFields,
-    getTimeFields,
-    formOptions,
-    formRenderers,
-    formConfig,
-    resetPasswordOptions,
-    resetPasswordConfig,
-    updateUserForm,
-    handleDeptSelect,
-    handleSearch,
-    handlePaginationChange,
-    handleSelectionChange,
-    handleCancelModal,
-    userColumns,
+    membership: {
+      companyOptions,
+      companyRoleOptions,
+      getCompanyName,
+      getCompanyRoleName,
+      getUserMemberships,
+      getCompanyOptions,
+      setPrimaryMembership,
+      removeCompanyMembership,
+      addCompanyMembership,
+    },
+    ledger: proxyRefs({
+      loading,
+      selected: selectedUsers,
+      rows: userList,
+      searchModel: searchForm,
+      pagination,
+      toolbar: toolbarActions,
+      batchActions,
+      rowClass: getRowClassName,
+      rowKey,
+      actions: tableActions,
+      search: handleSearch,
+      changePage: handlePaginationChange,
+      changeSelection: handleSelectionChange,
+      columns: userColumns,
+    }),
+    departments: proxyRefs({
+      rows: deptList,
+      expanded: expandedDeptKeys,
+      selected: selectedDeptKeys,
+      current: selectedDept,
+      iconConfig: deptIconConfig,
+      select: handleDeptSelect,
+    }),
+    editor: proxyRefs({
+      visible: showModal,
+      mode: modalMode,
+      model: formData,
+      title: modalTitle,
+      options: formOptions,
+      renderers: formRenderers,
+      config: formConfig,
+      update: updateUserForm,
+      cancel: handleCancelModal,
+    }),
+    inspection: proxyRefs({
+      visible: showUserDetail,
+      user: currentUser,
+      fields: getUserDetailFields,
+      getTimeFields,
+    }),
   }
 }

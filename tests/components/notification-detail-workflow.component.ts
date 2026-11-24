@@ -16,8 +16,8 @@ import type {
   NotificationWorkflowRelationship,
   NotificationWorkflowStatus,
 } from '@/api/notifications.contract'
-import { useMessageDetail } from '@/views/account/messages/components/c_messageDetail/useMessageDetail'
-import MessageDetail from '@/views/account/messages/components/c_messageDetail/index.vue'
+import { useMessageDetail } from '@/views/account/messages/components/MessageDetail/useMessageDetail'
+import MessageDetail from '@/views/account/messages/components/MessageDetail/index.vue'
 import { deferred } from './d_deferred'
 
 const state = vi.hoisted(() => ({

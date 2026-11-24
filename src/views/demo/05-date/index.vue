@@ -35,14 +35,14 @@
           <p class="card-desc">选择单个日期，支持禁用今天之前的日期</p>
         </template>
         <C_Date
-          v-model="singleDateResult"
+          v-model="dates.singleDate"
           mode="date"
           placeholder="请选择日期"
           :disabled-before-today="true"
           value-format="yyyy-MM-dd"
         />
         <div class="result-box">
-          {{ singleDateResult || '未选择' }}
+          {{ dates.singleDate || '未选择' }}
         </div>
       </NCard>
 
@@ -64,13 +64,13 @@
           <p class="card-desc">选择日期和时间，精确到秒</p>
         </template>
         <C_Date
-          v-model="singleDateTimeResult"
+          v-model="dates.singleDateTime"
           mode="datetime"
           placeholder="请选择日期时间"
           value-format="yyyy-MM-dd HH:mm:ss"
         />
         <div class="result-box">
-          {{ singleDateTimeResult || '未选择' }}
+          {{ dates.singleDateTime || '未选择' }}
         </div>
       </NCard>
 
@@ -92,7 +92,7 @@
           <p class="card-desc">选择日期范围，支持禁用今天之前的日期</p>
         </template>
         <C_Date
-          v-model="dateRangeResult"
+          v-model="dates.dateRange"
           mode="daterange"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -100,7 +100,7 @@
           value-format="yyyy-MM-dd"
         />
         <div class="result-box">
-          {{ formatRange(dateRangeResult) }}
+          {{ formatRange(dates.dateRange) }}
         </div>
       </NCard>
 
@@ -122,14 +122,14 @@
           <p class="card-desc">选择日期时间范围，精确到秒</p>
         </template>
         <C_Date
-          v-model="dateTimeRangeResult"
+          v-model="dates.dateTimeRange"
           mode="datetimerange"
           start-placeholder="开始日期时间"
           end-placeholder="结束日期时间"
           value-format="yyyy-MM-dd HH:mm:ss"
         />
         <div class="result-box">
-          {{ formatRange(dateTimeRangeResult) }}
+          {{ formatRange(dates.dateTimeRange) }}
         </div>
       </NCard>
 
@@ -153,7 +153,7 @@
           >
         </template>
         <C_Date
-          v-model="smartRangeResult"
+          v-model="dates.smartRange"
           mode="smart-range"
           start-placeholder="请选择开始日期"
           end-placeholder="请选择结束日期"
@@ -161,7 +161,7 @@
           value-format="yyyy-MM-dd"
         />
         <div class="result-box">
-          {{ formatRange(smartRangeResult) }}
+          {{ formatRange(dates.smartRange) }}
         </div>
         <NAlert
           type="info"
@@ -190,14 +190,14 @@
           <p class="card-desc">只能选择今天及以前的日期</p>
         </template>
         <C_Date
-          v-model="pastDateResult"
+          v-model="dates.pastDate"
           mode="date"
           placeholder="请选择日期（不能超过今天）"
           :disabled-after-today="true"
           value-format="yyyy-MM-dd"
         />
         <div class="result-box">
-          {{ pastDateResult || '未选择' }}
+          {{ dates.pastDate || '未选择' }}
         </div>
       </NCard>
 
@@ -221,7 +221,7 @@
           <div class="format-item">
             <label>时间戳格式:</label>
             <C_Date
-              v-model="timestampDateResult"
+              v-model="dates.timestamp"
               mode="date"
               placeholder="选择日期（时间戳）"
             />
@@ -231,12 +231,12 @@
           <div class="format-item">
             <label>中文格式:</label>
             <C_Date
-              v-model="chineseDateResult"
+              v-model="dates.chineseDate"
               mode="date"
               placeholder="选择日期（中文格式）"
               value-format="yyyy年MM月dd日"
             />
-            <div class="result-box">{{ chineseDateResult || '未选择' }}</div>
+            <div class="result-box">{{ dates.chineseDate || '未选择' }}</div>
           </div>
         </div>
       </NCard>
@@ -271,19 +271,11 @@
 
 <script lang="ts" setup>
   defineOptions({ name: 'Demo05Date' })
-  import { createDateActions } from './data'
+  import { createDateActions, emptyDates, fillDateDefaults } from './data'
 
   const message = useMessage()
 
-  // 各模式数据（formatted-value 绑定，类型统一为 string）
-  const singleDateResult = ref<string | null>(null)
-  const singleDateTimeResult = ref<string | null>(null)
-  const dateRangeResult = ref<[string, string] | null>(null)
-  const dateTimeRangeResult = ref<[string, string] | null>(null)
-  const smartRangeResult = ref<[string, string] | null>(null)
-  const pastDateResult = ref<string | null>(null)
-  const timestampDateResult = ref<string | null>(null)
-  const chineseDateResult = ref<string | null>(null)
+  const dates = reactive({ ...emptyDates })
 
   /**
    * * @description: 格式化范围显示
@@ -295,56 +287,23 @@
    * * @description: 时间戳展示（从格式化日期计算）
    */
   const timestampDisplay = computed(() => {
-    if (!timestampDateResult.value) return '未选择'
-    const ts = new Date(timestampDateResult.value).getTime()
-    return `${timestampDateResult.value} (时间戳: ${ts})`
+    if (!dates.timestamp) return '未选择'
+    const ts = new Date(dates.timestamp).getTime()
+    return `${dates.timestamp} (时间戳: ${ts})`
   })
 
-  /**
-   * * @description: 所有结果汇总
-   */
   const allResults = computed(() => ({
-    singleDate: singleDateResult.value,
-    singleDateTime: singleDateTimeResult.value,
-    dateRange: dateRangeResult.value,
-    dateTimeRange: dateTimeRangeResult.value,
-    smartRange: smartRangeResult.value,
-    pastDate: pastDateResult.value,
+    ...dates,
     timestamp: timestampDisplay.value,
-    chineseDate: chineseDateResult.value,
   }))
 
-  /**
-   * * @description: 清空所有日期（受控模式，直接置空 ref 即可驱动组件）
-   */
   const clearAllDates = () => {
-    singleDateResult.value = null
-    singleDateTimeResult.value = null
-    dateRangeResult.value = null
-    dateTimeRangeResult.value = null
-    smartRangeResult.value = null
-    pastDateResult.value = null
-    timestampDateResult.value = null
-    chineseDateResult.value = null
+    Object.assign(dates, emptyDates)
     message.success('所有日期已清空')
   }
 
-  /**
-   * * @description: 设置默认日期（仅对前三个选择器）
-   */
   const setDefaultDates = () => {
-    const emptyCount = [
-      !singleDateResult.value,
-      !singleDateTimeResult.value,
-      !dateRangeResult.value,
-    ].filter(Boolean).length
-
-    if (!singleDateResult.value) singleDateResult.value = '2024-01-15'
-    if (!singleDateTimeResult.value)
-      singleDateTimeResult.value = '2024-01-15 14:30:00'
-    if (!dateRangeResult.value)
-      dateRangeResult.value = ['2024-01-10', '2024-01-20']
-
+    const emptyCount = fillDateDefaults(dates)
     if (emptyCount === 0) message.info('前三个选择器已有值')
     else message.success(`已设置 ${emptyCount} 个默认日期`)
   }
@@ -357,8 +316,10 @@
     message.info('数据已输出到控制台')
   }
 
-  const dateActions = computed(() =>
-    createDateActions(clearAllDates, setDefaultDates, getComponentData)
+  const dateActions = createDateActions(
+    clearAllDates,
+    setDefaultDates,
+    getComponentData
   )
 </script>
 

@@ -1,3 +1,8 @@
+import {
+  hasPermission,
+  type PermissionMode,
+} from '@robot-admin/directives/permission'
+
 /**
  * * @description 模拟权限数据
  */
@@ -57,7 +62,7 @@ export function createPermissionDemoState() {
     )
   })
 
-  const currentPermissions = computed((): Record<string, boolean> => {
+  const currentPermissions = computed<Record<string, boolean>>(() => {
     return (
       MOCK_PERMISSIONS[currentUserId.value as keyof typeof MOCK_PERMISSIONS] ||
       {}
@@ -84,83 +89,26 @@ export function createPermissionDemoHandlers(
 ) {
   const message = useMessage()
 
-  /**
-   * * @description 检查单个权限
-   * ? @param permission - 权限名称
-   * ? @param permissions - 权限数据
-   * ! @return 是否有权限
-   */
-  const checkSinglePermission = (
-    permission: string,
-    permissions: Record<string, any>
-  ): boolean => {
-    if (permissions[permission]) return true
+  const allows = (
+    permissions: string | readonly string[],
+    mode?: PermissionMode
+  ) => hasPermission(permissions, state.currentPermissions.value, mode)
 
-    // 检查通配符权限
-    for (const key of Object.keys(permissions)) {
-      if (key.endsWith('*') && permission.startsWith(key.slice(0, -1))) {
-        return permissions[key]
-      }
-    }
-    return false
-  }
-
-  /**
-   * * @description 检查权限并执行操作
-   * ? @param permission - 需要的权限
-   * ? @param operation - 操作名称
-   * ? @param action - 实际执行的操作
-   * ! @return void
-   */
-  const checkPermissionAndExecute = (
-    permission: string,
+  const perform = (
+    permissions: string | string[],
     operation: string,
-    action?: () => void
+    mode: PermissionMode = 'OR'
   ) => {
-    const permissions = state.currentPermissions.value
-
-    if (checkSinglePermission(permission, permissions)) {
+    if (allows(permissions, mode)) {
       state.operationCount.value++
       message.success(`执行操作: ${operation}`)
-      action?.()
-    } else {
-      message.warning(`权限不足，无法执行"${operation}"操作`)
+      return
     }
-  }
-
-  /**
-   * * @description 检查多个权限并执行操作
-   * ? @param permissionList - 权限列表
-   * ? @param operation - 操作名称
-   * ? @param mode - 检查模式
-   * ? @param action - 实际执行的操作
-   * ! @return void
-   */
-  const checkMultiPermissionAndExecute = (
-    permissionList: string[],
-    operation: string,
-    mode: 'AND' | 'OR' = 'OR',
-    action?: () => void
-  ) => {
-    const permissions = state.currentPermissions.value
-    const matches = permissionList.filter(perm =>
-      checkSinglePermission(perm, permissions)
-    )
-    const hasPermission =
-      mode === 'AND'
-        ? matches.length === permissionList.length
-        : matches.length > 0
-
-    if (hasPermission) {
-      state.operationCount.value++
-      message.success(`执行操作: ${operation}`)
-      action?.()
-    } else {
-      const modeText = mode === 'AND' ? '且' : '或'
-      message.warning(
-        `权限不足，需要"${permissionList.join(`"${modeText}"`)}权限才能执行"${operation}"操作`
-      )
-    }
+    const requirement =
+      typeof permissions === 'string'
+        ? permissions
+        : permissions.join(mode === 'AND' ? ' 且 ' : ' 或 ')
+    message.warning(`权限不足，执行「${operation}」需要 ${requirement}`)
   }
 
   return {
@@ -176,30 +124,9 @@ export function createPermissionDemoHandlers(
       message.info(`用户已切换: ${user?.name}`)
     },
 
-    /**
-     * * @description 执行需要权限检查的操作
-     * ? @param permission - 需要的权限
-     * ? @param operation - 操作名称
-     * ! @return void
-     */
-    performSecureOperation: (permission: string, operation: string) => {
-      checkPermissionAndExecute(permission, operation)
-    },
-
-    /**
-     * * @description 执行需要多权限检查的操作
-     * ? @param permissions - 权限列表
-     * ? @param operation - 操作名称
-     * ? @param mode - 检查模式
-     * ! @return void
-     */
-    performMultiSecureOperation: (
-      permissions: string[],
-      operation: string,
-      mode: 'AND' | 'OR' = 'OR'
-    ) => {
-      checkMultiPermissionAndExecute(permissions, operation, mode)
-    },
+    allows,
+    performSecureOperation: perform,
+    performMultiSecureOperation: perform,
 
     /**
      * * @description 重置演示

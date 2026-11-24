@@ -13,12 +13,8 @@ import type {
   ApprovalMode,
   Condition,
 } from '@robot-admin/naive-ui-components/C_WorkFlow'
-import {
-  workflowScenarios,
-  userList,
-  restoreWorkflowDrafts,
-  hydrateWorkflowPeople,
-} from './data'
+import { workflowScenarios, userList, hydrateWorkflowPeople } from './data'
+import { restoreWorkflowDrafts } from './workflowDrafts'
 const STORAGE_KEY = 'robot-admin:workflow-workspace:v1'
 const clone = (data: WorkflowData): WorkflowData =>
   JSON.parse(JSON.stringify(data))
@@ -67,51 +63,44 @@ export function useWorkflowWorkspace() {
         ? (node.data.copyUsers ?? [])
         : (node.data.initiators ?? [])
   })
-  /** 修改选中节点的人员，发起、审批与抄送分别写入自己的契约字段。 */
+  const updateSelected = (update: (node: WorkflowNode) => WorkflowNode) => {
+    if (mode.value !== 'edit' || !selected.value) return
+    const node = selected.value
+    const next = update(node)
+    if (next === node) return
+    data.value = {
+      ...data.value,
+      nodes: data.value.nodes.map(item => (item.id === node.id ? next : item)),
+    }
+  }
+
+  /** 顺序审批沿用用户的选择顺序。 */
   const updateMembers = (ids: string[]) => {
-    if (mode.value !== 'edit') return
-    // 顺序审批沿用用户的选择顺序，不能按目录顺序重新排列。
     const members = ids.flatMap(
       id => userList.find(user => user.id === id) ?? []
     )
-    data.value = {
-      ...data.value,
-      nodes: data.value.nodes.map(node => {
-        if (node.id !== selectedId.value) return node
-        if (node.type === 'approval')
-          return { ...node, data: { ...node.data, approvers: members } }
-        if (node.type === 'copy')
-          return { ...node, data: { ...node.data, copyUsers: members } }
-        if (node.type === 'start')
-          return { ...node, data: { ...node.data, initiators: members } }
-        return node
-      }),
-    }
+    updateSelected(node => {
+      if (node.type === 'approval')
+        return { ...node, data: { ...node.data, approvers: members } }
+      if (node.type === 'copy')
+        return { ...node, data: { ...node.data, copyUsers: members } }
+      if (node.type === 'start')
+        return { ...node, data: { ...node.data, initiators: members } }
+      return node
+    })
   }
-  /** 会签、或签及顺序审批直接写回画布，预览不允许修改。 */
-  const updateApprovalMode = (approvalMode: ApprovalMode) => {
-    if (mode.value !== 'edit') return
-    data.value = {
-      ...data.value,
-      nodes: data.value.nodes.map(node =>
-        node.id === selectedId.value && node.type === 'approval'
-          ? { ...node, data: { ...node.data, approvalMode } }
-          : node
-      ),
-    }
-  }
-  /** 条件编辑与组件原生配置共用数据，校验结果随修改失效。 */
-  const setConditions = (conditions: Condition[]) => {
-    if (mode.value !== 'edit') return
-    data.value = {
-      ...data.value,
-      nodes: data.value.nodes.map(node =>
-        node.id === selectedId.value && node.type === 'condition'
-          ? { ...node, data: { ...node.data, conditions } }
-          : node
-      ),
-    }
-  }
+  const updateApprovalMode = (approvalMode: ApprovalMode) =>
+    updateSelected(node =>
+      node.type === 'approval'
+        ? { ...node, data: { ...node.data, approvalMode } }
+        : node
+    )
+  const setConditions = (conditions: Condition[]) =>
+    updateSelected(node =>
+      node.type === 'condition'
+        ? { ...node, data: { ...node.data, conditions } }
+        : node
+    )
   const save = () => {
     try {
       localStorage.setItem(
@@ -135,33 +124,37 @@ export function useWorkflowWorkspace() {
   const selectEdge = (edge: WorkflowEdge) => {
     selectedEdgeId.value = edge.id
   }
-  const updateTitle = (title: string) => {
-    if (mode.value !== 'edit') return
-    data.value = {
-      ...data.value,
-      nodes: data.value.nodes.map(node => {
-        if (node.id !== selectedId.value) return node
-        const updated = { ...node }
-        updated.data = { ...node.data, title }
-        return updated
-      }),
-    }
-  }
+  const updateTitle = (title: string) =>
+    updateSelected(node => {
+      const updated = { ...node }
+      updated.data = { ...node.data, title }
+      return updated
+    })
   const validate = () => {
-    errors.value = workflowRef.value?.validateWorkflow() ?? []
+    const editor = workflowRef.value
+    if (!editor) return
+    errors.value = editor.validateWorkflow()
     validated.value = true
   }
-  const restore = () =>
+  const restore = () => {
+    const scenario = current.value
     dialog.warning({
       title: '恢复当前场景模板',
       content: '当前场景的修改将被示例模板替换，其他场景草稿会保留。',
       positiveText: '恢复模板',
       negativeText: '保留修改',
       onPositiveClick: () => {
-        data.value = clone(current.value.template)
-        selectedId.value = data.value.nodes[0]?.id ?? ''
+        const template = clone(scenario.template)
+        if (currentScenario.value === scenario.id) {
+          data.value = template
+          selectedId.value = template.nodes[0]?.id ?? ''
+          selectedEdgeId.value = ''
+        } else {
+          drafts.value[scenario.id] = template
+        }
       },
     })
+  }
   const exportJson = () => {
     const blob = new Blob([JSON.stringify(data.value, null, 2)], {
       type: 'application/json',

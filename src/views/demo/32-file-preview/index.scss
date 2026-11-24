@@ -29,3 +29,6 @@
     min-height: 420px;
   }
 }
+.document-attachments {
+  width: min(980px, calc(100vw - 32px));
+}

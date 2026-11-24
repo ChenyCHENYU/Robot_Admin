@@ -66,11 +66,11 @@ test('音频页面原地切换音源、清空和恢复直接驱动正式组件�
         workspace = useAudioWorkspace()
         return () =>
           h(C_AudioPlayer, {
-            tracks: workspace.tracks.value,
-            initialIndex: workspace.activeIndex.value,
-            theme: workspace.theme.value,
-            onPlay: workspace.handlePlay,
-            onError: workspace.handleError,
+            tracks: workspace.playlist.tracks,
+            initialIndex: workspace.playlist.activeIndex,
+            theme: workspace.playback.theme,
+            onPlay: workspace.playback.handlePlay,
+            onError: workspace.playback.handleError,
           })
       },
     })
@@ -78,22 +78,22 @@ test('音频页面原地切换音源、清空和恢复直接驱动正式组件�
   await wrapper.get('button.is-play').trigger('click')
   await flushPromises()
   const initial = media[0]
-  workspace.theme.value = 'minimal'
+  workspace.playback.theme = 'minimal'
   await flushPromises()
   expect(media).toHaveLength(1)
   expect(initial.paused).toBe(false)
-  workspace.replaceSource()
+  workspace.playlist.replaceSource()
   await flushPromises()
   expect(initial.paused).toBe(true)
-  expect(media.at(-1)?.src).toBe(workspace.activeTrack.value.src)
-  workspace.clearTracks()
+  expect(media.at(-1)?.src).toBe(workspace.playlist.activeTrack.src)
+  workspace.playlist.clearTracks()
   await flushPromises()
   expect(media.every(item => item.paused)).toBe(true)
   expect(wrapper.text()).toContain('未选择曲目')
-  expect(workspace.playing.value).toBe(false)
-  workspace.restoreTracks()
+  expect(workspace.playback.playing).toBe(false)
+  workspace.playlist.restoreTracks()
   await flushPromises()
-  expect(workspace.tracks.value).toHaveLength(3)
+  expect(workspace.playlist.tracks).toHaveLength(3)
   expect(media.at(-1)?.paused).toBe(true)
 })
 

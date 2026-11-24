@@ -23,17 +23,15 @@ test('合同字段在工作台内选择性采纳，旧预览不能覆盖新草�
   await expect(review.getByRole('heading')).toBeFocused()
   await expect(review.getByText(/补充协议 02 · 本地合同样例/)).toBeVisible()
   await expect(page.getByRole('dialog')).toHaveCount(0)
+  await review.getByRole('checkbox', { name: '仅看变更' }).uncheck()
   await expect(
     review.getByRole('row', { name: /钢种/ }).getByText('一致')
   ).toBeVisible()
   const adopt = review.getByRole('button', { name: '采纳所选字段' })
   await expect(adopt).toBeDisabled()
-  await expect(
-    adopt.locator('.n-button__icon svg[aria-hidden="true"] path')
-  ).toBeVisible()
-  const delivery = review.getByRole('checkbox', { name: '采纳交货日期' })
+  const delivery = review.getByRole('checkbox', { name: /采纳\s*交货日期/ })
   await delivery.check()
-  await review.getByRole('checkbox', { name: '采纳订单备注' }).check()
+  await review.getByRole('checkbox', { name: /采纳\s*订单备注/ }).check()
   await review.screenshot({
     path: testInfo.outputPath('contract-review.png'),
     animations: 'disabled',

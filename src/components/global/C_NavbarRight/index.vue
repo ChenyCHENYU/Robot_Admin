@@ -283,7 +283,7 @@
       :style="{ width: 'min(480px, calc(100vw - 32px))' }"
       :bordered="false"
     >
-      <ContextPicker
+      <c_contextPicker
         :contexts="userStore.availableContexts"
         :active-context-id="userStore.activeContext?.id"
         :loading-context-id="switchingContextId"
@@ -305,7 +305,6 @@
   import { switchAuthContextApi } from '@/api/auth'
   import { recordTelemetry } from '@/utils/d_telemetry'
   import { applyAuthSession } from '@/utils/d_authSession'
-  import ContextPicker from '@/components/local/c_contextPicker/index.vue'
   import { s_settingsStore } from '@/stores/settings'
   import type { GuideExpose } from '@robot-admin/naive-ui-components/C_Guide'
   import { createWorkspaceGuideSteps } from './data'
@@ -315,6 +314,7 @@
     createSearchMenuOptions,
     flattenMenuItems,
     findFirstChildKey,
+    workspaceSearchCommands,
   } from './d_searchMenu'
   import packageJson from '../../../../package.json'
 
@@ -501,8 +501,48 @@
     createSearchMenuOptions(permissionStore.showMenuListGet)
   )
   const searchItems = computed(() => flattenMenuItems(searchMenuOptions.value))
+  const availableCommands = computed(() =>
+    workspaceSearchCommands.filter(command =>
+      permissionStore.hasRoutePermission(command.path)
+    )
+  )
   const searchOptions: GlobalSearchOptions = {
     menuItems: () => searchItems.value,
+    commands: {
+      /** 权限变化后让组件丢弃上一上下文的命令结果。 */
+      get scope() {
+        return JSON.stringify([
+          userStore.userInfo.id,
+          userStore.activeContext?.id,
+          availableCommands.value.map(command => command.key),
+        ])
+      },
+      sources: [
+        {
+          key: 'workspace-shortcuts',
+          title: '工作台快捷操作',
+          /** 只搜索当前申请人可访问的本地工作台命令。 */
+          search(query) {
+            const keyword = query.trim().toLocaleLowerCase()
+            return availableCommands.value.filter(command =>
+              `${command.label} ${command.description}`
+                .toLocaleLowerCase()
+                .includes(keyword)
+            )
+          },
+        },
+      ],
+      /** 执行前再次核对权限，避免使用已失效的搜索结果。 */
+      onSelect(_source, item) {
+        const command = availableCommands.value.find(
+          entry => entry.key === item.key
+        )
+        if (command)
+          void router
+            .push({ path: command.path, query: command.query })
+            .catch(() => undefined)
+      },
+    },
     /** 选中菜单项后跳转路由 */
     onSelect(key: string, hasChildren: boolean) {
       if (hasChildren) {

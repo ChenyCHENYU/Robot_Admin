@@ -19,7 +19,7 @@
       <div class="density-control">
         <span>显示密度</span>
         <NSelect
-          v-model:value="density"
+          v-model:value="view.density"
           :options="DENSITY_OPTIONS"
           aria-label="树显示密度"
           class="density-select"
@@ -45,20 +45,20 @@
         >
         <C_Tree
           ref="treeRef"
-          v-model:selected-keys="selectedKeys"
-          v-model:expanded-keys="expandedKeys"
-          v-model:checked-keys="checkedKeys"
-          v-model:search-pattern="keyword"
-          :data="departments"
-          :density="density"
+          v-model:selected-keys="view.selectedKeys"
+          v-model:expanded-keys="view.expandedKeys"
+          v-model:checked-keys="view.checkedKeys"
+          v-model:search-pattern="view.keyword"
+          :data="view.departments"
+          :density="view.density"
           :tree-props="CONTROLLED_TREE_PROPS"
           :addable="false"
           :refreshable="false"
           mode="org"
           :actions="[]"
           class="controlled-tree"
-          @update:checked-keys="handleChecked"
-          @update:selected-keys="handleSelected"
+          @update:checked-keys="view.handleChecked"
+          @update:selected-keys="view.handleSelected"
         >
           <template #empty
             ><NEmpty description="没有匹配的部门，清空关键词后重试"
@@ -67,17 +67,17 @@
         <div class="demo-commands">
           <NButton
             size="small"
-            @click="pickFrontend"
+            @click="view.pickFrontend"
             >外部选择前端组</NButton
           >
           <NButton
             size="small"
-            @click="checkLoadedLeaves"
+            @click="view.checkLoadedLeaves"
             >勾选已加载叶节点</NButton
           >
           <NButton
             size="small"
-            @click="clearState"
+            @click="view.clearState"
             >清空状态与搜索</NButton
           >
         </div>
@@ -88,15 +88,17 @@
           <div
             ><dt>当前选择</dt
             ><dd data-testid="tree-selected-state">{{
-              selectedSummary
+              view.selectedSummary
             }}</dd></div
           >
           <div
             ><dt>勾选节点</dt
-            ><dd data-testid="tree-checked-state">{{ checkedSummary }}</dd></div
+            ><dd data-testid="tree-checked-state">{{
+              view.checkedSummary
+            }}</dd></div
           >
           <div
-            ><dt>最近操作</dt><dd>{{ lastAction }}</dd></div
+            ><dt>最近操作</dt><dd>{{ view.lastAction }}</dd></div
           >
         </dl>
       </NCard>
@@ -109,11 +111,11 @@
             >固定容器高度，滚动时按可视范围渲染；可搜索项目编号，如“1999”。</p
           >
           <C_Tree
-            v-model:selected-keys="virtualSelectedKeys"
-            v-model:expanded-keys="largeExpandedKeys"
-            :data="largeTree"
-            :tree-props="virtualTreeProps"
-            :density="density"
+            v-model:selected-keys="view.virtualSelectedKeys"
+            v-model:expanded-keys="view.largeExpandedKeys"
+            :data="view.largeTree"
+            :tree-props="view.virtualTreeProps"
+            :density="view.density"
             :addable="false"
             :refreshable="false"
             class="virtual-tree"
@@ -127,35 +129,35 @@
             >本地模拟延迟，首次展开会失败一次；重试后加载资料，无需后端。</p
           >
           <NAlert
-            v-if="lazyFailure"
+            v-if="view.lazyFailure"
             type="warning"
             :show-icon="false"
             class="lazy-error"
             data-testid="tree-lazy-error"
           >
             <div class="lazy-error-content">
-              <span>{{ lazyFailure }}</span>
+              <span>{{ view.lazyFailure }}</span>
               <NButton
                 size="small"
-                @click="retryLoad"
+                @click="view.retryLoad"
                 >重新加载</NButton
               >
             </div>
           </NAlert>
           <C_Tree
-            v-model:expanded-keys="lazyExpandedKeys"
-            :data="lazyData"
-            :tree-props="lazyTreeProps"
-            :density="density"
+            v-model:expanded-keys="view.lazyExpandedKeys"
+            :data="view.lazyData"
+            :tree-props="view.lazyTreeProps"
+            :density="view.density"
             :show-toolbar="false"
             class="lazy-tree"
-            @load-error="handleLoadError"
+            @load-error="view.handleLoadError"
           />
           <div class="lazy-footer"
-            ><NText depth="3">已发起 {{ loadCount }} 次加载</NText
+            ><NText depth="3">已发起 {{ view.loadCount }} 次加载</NText
             ><NButton
               size="small"
-              @click="resetLazy"
+              @click="view.resetLazy"
               >重置演示</NButton
             ></div
           >
@@ -172,35 +174,9 @@
 <script setup lang="ts">
   import { DENSITY_OPTIONS, CONTROLLED_TREE_PROPS, useTreeDemo } from './data'
   defineOptions({ name: 'TreeDemo' })
-  const {
-    density,
-    treeRef,
-    selectedKeys,
-    expandedKeys,
-    checkedKeys,
-    keyword,
-    lastAction,
-    departments,
-    largeTree,
-    largeExpandedKeys,
-    virtualSelectedKeys,
-    virtualTreeProps,
-    lazyData,
-    lazyExpandedKeys,
-    lazyFailure,
-    loadCount,
-    lazyTreeProps,
-    checkedSummary,
-    selectedSummary,
-    handleChecked,
-    handleSelected,
-    clearState,
-    pickFrontend,
-    checkLoadedLeaves,
-    handleLoadError,
-    retryLoad,
-    resetLazy,
-  } = useTreeDemo()
+  const controller = useTreeDemo()
+  const view = proxyRefs(controller)
+  const { treeRef } = controller
 </script>
 <style scoped lang="scss">
   @use './index.scss';

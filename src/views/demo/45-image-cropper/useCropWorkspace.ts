@@ -23,6 +23,7 @@ export function useCropWorkspace() {
   const modalRef = ref<ImageCropperExpose | null>(null)
   const fileRef = ref<HTMLInputElement | null>(null)
   const src = ref<string>(SAMPLE_IMAGES[0].src)
+  const sourceFile = shallowRef<File>()
   const fileName = ref('robot-logo.png')
   const sourceInfo = ref({ width: 0, height: 0, size: 0 })
   const preset = ref<string>('free')
@@ -48,6 +49,7 @@ export function useCropWorkspace() {
   const releaseFileUrl = () => {
     if (currentFileUrl) URL.revokeObjectURL(currentFileUrl)
     currentFileUrl = undefined
+    sourceFile.value = undefined
   }
   const probeImage = (url: string, bytes = 0) => {
     const request = ++sourceSequence
@@ -101,6 +103,7 @@ export function useCropWorkspace() {
         throw new Error('图片像素过大，请选择 4000 万像素以内的图片')
       releaseFileUrl()
       currentFileUrl = candidate
+      sourceFile.value = file
       ready.value = false
       result.value = null
       stale.value = false
@@ -205,6 +208,7 @@ export function useCropWorkspace() {
     acceptModalResult,
     fileRef,
     src,
+    sourceFile,
     fileName,
     sourceInfo,
     preset,

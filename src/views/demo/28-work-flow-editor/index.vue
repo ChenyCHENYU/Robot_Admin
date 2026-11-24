@@ -12,16 +12,23 @@
         ><p>选择场景、配置节点、检查流程，再保存到本机或导出。</p></div
       ><div class="workspace-actions"
         ><span class="workspace-hint">{{
-          saved ? `本机保存 ${saved}` : '演示流程 · 尚未保存到本机'
+          page.saved ? `本机保存 ${page.saved}` : '演示流程 · 尚未保存到本机'
         }}</span
         ><NButton
           size="small"
-          @click="exportJson"
+          secondary
+          @click="showApprovalSample = true"
+        >
+          <template #icon><span class="i-mdi-history" /></template>
+          查看审批实例 </NButton
+        ><NButton
+          size="small"
+          @click="page.exportJson"
           >导出当前流程</NButton
         ><NButton
           size="small"
           type="primary"
-          @click="save"
+          @click="page.save"
           >保存到本机</NButton
         ></div
       ></header
@@ -34,8 +41,8 @@
         v-for="item in workflowScenarios"
         :key="item.id"
         type="button"
-        :aria-pressed="currentScenario === item.id"
-        @click="currentScenario = item.id"
+        :aria-pressed="page.currentScenario === item.id"
+        @click="page.currentScenario = item.id"
       >
         <C_Icon
           :name="item.icon"
@@ -50,14 +57,14 @@
       <main class="workspace-panel"
         ><header class="workspace-toolbar"
           ><div
-            ><h2>{{ current.name }}</h2
+            ><h2>{{ page.current.name }}</h2
             ><small
-              >{{ data.nodes.length }} 个节点 ·
-              {{ data.edges.length }} 条连接</small
+              >{{ page.data.nodes.length }} 个节点 ·
+              {{ page.data.edges.length }} 条连接</small
             ></div
           ><div class="workspace-actions"
             ><NRadioGroup
-              v-model:value="mode"
+              v-model:value="page.mode"
               size="small"
               ><NRadioButton value="edit">编辑</NRadioButton
               ><NRadioButton value="preview"
@@ -65,35 +72,35 @@
               ></NRadioGroup
             ><NButton
               size="tiny"
-              @click="validate"
+              @click="page.validate"
               >检查流程</NButton
             ><NButton
               size="tiny"
-              :disabled="mode !== 'edit'"
-              @click="restore"
+              :disabled="page.mode !== 'edit'"
+              @click="page.restore"
               >恢复模板</NButton
             ></div
           ></header
         >
         <div
           class="flow-canvas"
-          :class="{ 'is-preview': mode === 'preview' }"
+          :class="{ 'is-preview': page.mode === 'preview' }"
           ><C_WorkFlow
             ref="workflowRef"
-            :key="currentScenario"
-            v-model="data"
+            :key="page.currentScenario"
+            v-model="page.data"
             :users="userList"
             :departments="deptList"
             :condition-fields="CONDITION_FIELDS"
-            :readonly="mode === 'preview'"
+            :readonly="page.mode === 'preview'"
             :allow-cycles="false"
             :theme="themeStore.isDark ? 'dark' : 'light'"
-            @node-click="selectNode"
-            @edge-click="selectEdge"
-            @save="save" /></div
+            @node-click="page.selectNode"
+            @edge-click="page.selectEdge"
+            @save="page.save" /></div
         ><footer class="workspace-footer"
           ><span>{{
-            mode === 'edit'
+            page.mode === 'edit'
               ? '点击画布节点打开完整配置；节点下方 + 添加后续步骤'
               : '只读预览中，拖动和配置操作已禁用'
           }}</span
@@ -102,70 +109,70 @@
       >
       <aside class="workspace-panel flow-inspector">
         <section
-          v-if="selectedEdge"
+          v-if="page.selectedEdge"
           class="workspace-section"
           aria-label="选中连线"
         >
           <h2>连线详情</h2>
           <p
-            >{{ nodeTitle(selectedEdge.source) }} →
-            {{ nodeTitle(selectedEdge.target) }}</p
+            >{{ page.nodeTitle(page.selectedEdge.source) }} →
+            {{ page.nodeTitle(page.selectedEdge.target) }}</p
           >
           <p class="workspace-hint">{{
-            selectedEdge.label || '未设置连线标签'
+            page.selectedEdge.label || '未设置连线标签'
           }}</p>
-          <small>{{ selectedEdge.id }}</small>
+          <small>{{ page.selectedEdge.id }}</small>
         </section>
         <section class="workspace-section">
           <div class="flow-inspector-heading"
             ><span class="i-mdi-tune-variant" /><h2>节点属性</h2
             ><span class="flow-node-type">{{
-              selected ? NODE_LABELS[selected.type] : '未选择'
+              page.selected ? NODE_LABELS[page.selected.type] : '未选择'
             }}</span></div
           >
           <NSelect
-            :value="selectedId"
+            :value="page.selectedId"
             size="small"
             aria-label="选择流程节点"
             :options="
-              data.nodes.map(node => ({
+              page.data.nodes.map(node => ({
                 label: node.data.title,
                 value: node.id,
               }))
             "
-            @update:value="selectedId = $event"
+            @update:value="page.selectedId = $event"
           />
-          <template v-if="selected">
+          <template v-if="page.selected">
             <label class="workspace-label"
               ><span>节点名称</span
               ><NInput
-                :value="selected.data.title"
-                :disabled="mode !== 'edit'"
+                :value="page.selected.data.title"
+                :disabled="page.mode !== 'edit'"
                 :maxlength="80"
                 :input-props="{ 'aria-label': '节点名称' }"
-                @update:value="updateTitle"
+                @update:value="page.updateTitle"
             /></label>
-            <template v-if="selected.type !== 'condition'">
+            <template v-if="page.selected.type !== 'condition'">
               <label class="workspace-label"
                 ><span>{{
-                  selected.type === 'start'
+                  page.selected.type === 'start'
                     ? '发起人员'
-                    : selected.type === 'copy'
+                    : page.selected.type === 'copy'
                       ? '抄送人员'
                       : '审批人员'
                 }}</span
                 ><NSelect
-                  :value="selectedUsers.map(user => user.id)"
+                  :value="page.selectedUsers.map(user => user.id)"
                   multiple
                   filterable
-                  :disabled="mode !== 'edit'"
+                  :disabled="page.mode !== 'edit'"
                   :options="USER_OPTIONS"
                   aria-label="配置节点人员"
-                  @update:value="updateMembers"
+                  @update:value="page.updateMembers"
               /></label>
               <div class="flow-people"
                 ><div
-                  v-for="user in selectedUsers"
+                  v-for="user in page.selectedUsers"
                   :key="user.id"
                   class="flow-person"
                   ><img
@@ -178,41 +185,42 @@
                     ></span
                   ></div
                 ><p
-                  v-if="!selectedUsers.length"
+                  v-if="!page.selectedUsers.length"
                   class="workspace-hint"
                   >选择人员后，头像会同步显示在画布。</p
                 ></div
               >
             </template>
             <label
-              v-if="selected.type === 'approval'"
+              v-if="page.selected.type === 'approval'"
               class="workspace-label"
               ><span>审批方式</span
               ><NSelect
-                :value="selected.data.approvalMode ?? 'any'"
-                :disabled="mode !== 'edit'"
+                :value="page.selected.data.approvalMode ?? 'any'"
+                :disabled="page.mode !== 'edit'"
                 :options="[
                   { label: '或签 · 一人同意即可', value: 'any' },
                   { label: '会签 · 所有人同意', value: 'all' },
                   { label: '顺序 · 按人员顺序审批', value: 'sequence' },
                 ]"
                 aria-label="审批方式"
-                @update:value="updateApprovalMode"
+                @update:value="page.updateApprovalMode"
             /></label>
-            <template v-if="selected.type === 'condition'">
+            <template v-if="page.selected.type === 'condition'">
               <div
-                v-for="(condition, index) in selected.data.conditions ?? []"
+                v-for="(condition, index) in page.selected.data.conditions ??
+                []"
                 :key="condition.id"
                 class="flow-condition"
               >
                 <NInput
                   :value="condition.name"
                   placeholder="分支名称"
-                  :disabled="mode !== 'edit'"
+                  :disabled="page.mode !== 'edit'"
                   :input-props="{ 'aria-label': `分支名称 ${index + 1}` }"
                   @update:value="
-                    setConditions(
-                      (selected.data.conditions ?? []).map((item, i) =>
+                    page.setConditions(
+                      (page.selected.data.conditions ?? []).map((item, i) =>
                         i === index ? { ...item, name: $event } : item
                       )
                     )
@@ -226,7 +234,7 @@
                 ><span class="workspace-hint"
                   >去向：{{
                     condition.targetNodeId
-                      ? nodeTitle(condition.targetNodeId)
+                      ? page.nodeTitle(condition.targetNodeId)
                       : '尚未绑定'
                   }}。点击条件节点可编辑规则与去向。</span
                 >
@@ -245,21 +253,23 @@
         </section>
         <section class="workspace-section"
           ><h2>检查结果</h2
-          ><p v-if="!validated"
+          ><p v-if="!page.validated"
             >点击“检查流程”验证审批人、分支配置和节点连接。</p
           ><NTag
             v-else
-            :type="errors.length ? 'warning' : 'success'"
+            :type="page.errors.length ? 'warning' : 'success'"
             size="small"
             >{{
-              errors.length ? `${errors.length} 项待处理` : '当前规则检查通过'
+              page.errors.length
+                ? `${page.errors.length} 项待处理`
+                : '当前规则检查通过'
             }}</NTag
           ><button
-            v-for="(issue, index) in errors"
+            v-for="(issue, index) in page.errors"
             :key="index"
             class="flow-issue"
             type="button"
-            @click="selectedId = issue.nodeId"
+            @click="page.selectedId = issue.nodeId"
             ><strong>{{ issue.nodeName }}</strong
             ><span>{{ issue.message }}</span></button
           ></section
@@ -267,6 +277,13 @@
       >
     </div>
   </div>
+  <C_ApprovalViewer
+    v-if="showApprovalSample"
+    v-model:show="showApprovalSample"
+    :business-key="demoApprovalKey"
+    :source="demoApprovalSource"
+    title="请假审批 · 演示实例"
+  />
 </template>
 <script setup lang="ts">
   import '@vue-flow/core/dist/style.css'
@@ -279,35 +296,19 @@
     CONDITION_FIELDS,
     NODE_LABELS,
     USER_OPTIONS,
+    demoApprovalKey,
+    demoApprovalSource,
   } from './data'
   import { useWorkflowWorkspace } from './useWorkflowWorkspace'
   defineOptions({ name: 'Demo28WorkFlowEditor' })
   const themeStore = s_themeStore()
-  const {
-    selectedUsers,
-    updateMembers,
-    updateApprovalMode,
-    setConditions,
-    currentScenario,
-    mode,
-    saved,
-    selectedId,
-    errors,
-    validated,
-    workflowRef,
-    current,
-    data,
-    selected,
-    selectedEdge,
-    nodeTitle,
-    save,
-    selectNode,
-    selectEdge,
-    updateTitle,
-    validate,
-    restore,
-    exportJson,
-  } = useWorkflowWorkspace()
+  const showApprovalSample = ref(false)
+  onDeactivated(() => {
+    showApprovalSample.value = false
+  })
+  const controller = useWorkflowWorkspace()
+  const page = proxyRefs(controller)
+  const { workflowRef } = controller
 </script>
 <style lang="scss" scoped>
   @use './index.scss';
