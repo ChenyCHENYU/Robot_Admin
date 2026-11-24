@@ -184,16 +184,28 @@ export const createScheduleFields = (
     },
   },
 ]
+/** 以当地日历日偏移，保留夏令时切换前后的本地时间。 */
+export const shiftCalendarDay = (date: Date, days: number): Date => {
+  const result = new Date(date)
+  result.setDate(result.getDate() + days)
+  return result
+}
+
+const formatRange = (start: Date, end: Date, allDay: boolean) => ({
+  start: allDay ? localDay(start) : start.toISOString(),
+  end: allDay ? localDay(end) : end.toISOString(),
+})
+
 /** 全天日期的结束日转为 FullCalendar 使用的排他边界。 */
 const draftRange = (value: ScheduleDraft) => {
   if (value.start === null || value.end === null)
     throw new Error('请选择完整的起止时间')
   const begin = new Date(value.start)
-  const end = new Date(value.end)
+  let end = new Date(value.end)
   if (value.allDay) {
     begin.setHours(0, 0, 0, 0)
     end.setHours(0, 0, 0, 0)
-    end.setDate(end.getDate() + 1)
+    end = shiftCalendarDay(end, 1)
   }
   if (
     !Number.isFinite(begin.getTime()) ||
@@ -201,10 +213,7 @@ const draftRange = (value: ScheduleDraft) => {
     end <= begin
   )
     throw new Error('结束时间必须晚于开始时间')
-  return {
-    start: value.allDay ? localDay(begin) : begin.toISOString(),
-    end: value.allDay ? localDay(end) : end.toISOString(),
-  }
+  return formatRange(begin, end, value.allDay)
 }
 /** 创建日程时集中规范时间边界与分类颜色。 */
 export const buildScheduleEvent = (
@@ -234,13 +243,13 @@ export const buildScheduleEvent = (
 /** 已有日程映射为表单时，全天结束日期恢复为用户可见的最后一天。 */
 export const editScheduleDraft = (event: ScheduleEvent): ScheduleDraft => {
   const end = eventDate(event.end ?? event.start)
-  if (event.allDay && event.end) end.setDate(end.getDate() - 1)
+  const visibleEnd = event.allDay && event.end ? shiftCalendarDay(end, -1) : end
   return {
     id: event.id,
     title: event.title,
     category: event.category,
     start: eventDate(event.start).getTime(),
-    end: end.getTime(),
+    end: visibleEnd.getTime(),
     allDay: event.allDay,
     location: event.location,
     description: event.description,
@@ -329,8 +338,7 @@ export const mergeScheduleChanges = (
       ...event,
       ...change,
       allDay,
-      start: allDay ? localDay(start) : start.toISOString(),
-      end: allDay ? localDay(end) : end.toISOString(),
+      ...formatRange(start, end, allDay),
     }
   })
 }

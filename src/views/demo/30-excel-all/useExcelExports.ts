@@ -21,21 +21,14 @@ export function useExcelExports(
   const selectedSheets = ref<string[]>([])
 
   watch(
-    () => workbook.selectedSheet,
-    sheet => {
+    [() => workbook.fileList[0], () => workbook.selectedSheet],
+    ([file, sheet], [previousFile]) => {
       config.sheetName = sheet
-    }
-  )
-  watch(
-    () => workbook.fileList[0],
-    file => {
+      if (file === previousFile) return
       config.fileName = file
         ? file.name.replace(/\.[^/.]+$/, '') || '导出数据'
         : ''
-      config.sheetName = workbook.selectedSheet
-      selectedSheets.value = workbook.selectedSheet
-        ? [workbook.selectedSheet]
-        : []
+      selectedSheets.value = sheet ? [sheet] : []
     }
   )
 

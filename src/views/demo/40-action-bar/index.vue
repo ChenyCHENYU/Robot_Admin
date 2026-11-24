@@ -309,7 +309,7 @@
     type ActionItem,
     type ActionDropdownItem,
   } from '@robot-admin/naive-ui-components/C_ActionBar'
-  import { delayWithSignal } from '@/utils/abort'
+  import { delayWithSignal, isAbortError } from '@/utils/abort'
   import {
     columns,
     DEFAULT_CUSTOM_CONFIG,
@@ -334,6 +334,19 @@
   const narrowToolbar = ref(false)
   const overflowResult = ref('')
   let exportCount = 0
+  const scope = new AbortController()
+  onScopeDispose(() => scope.abort())
+
+  /** 只在演示页仍打开时完成本地计时任务。 */
+  const waitForDemo = async (duration: number) => {
+    try {
+      await delayWithSignal(duration, scope.signal)
+      return !scope.signal.aborted
+    } catch (error) {
+      if (isAbortError(error)) return false
+      throw error
+    }
+  }
 
   const announceAction = (action: ActionItem) => {
     message.info(`动作演示：${resolveActionPreset(action).label}`)
@@ -425,8 +438,7 @@
         key: 'refresh',
         type: 'info',
         onClick: async () => {
-          await delayWithSignal(2000)
-          message.info('刷新完成')
+          if (await waitForDemo(2000)) message.info('刷新完成')
         },
       },
     ])
@@ -448,8 +460,9 @@
       overflow: true,
       onClick: async () => {
         overflowResult.value = '正在模拟生成汇总…'
-        await delayWithSignal(600)
-        overflowResult.value = `已完成 ${++exportCount} 次模拟导出`
+        if (await waitForDemo(600)) {
+          overflowResult.value = `已完成 ${++exportCount} 次模拟导出`
+        }
       },
     },
     {

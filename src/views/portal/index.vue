@@ -1,3 +1,10 @@
+<!--
+ * @Author: ChenYu ycyplus@gmail.com
+ * @Date: 2026-11-24
+ * @FilePath: \Robot_Admin\src\views\portal\index.vue
+ * @Description: 统一门户的工作台入口
+ * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
+-->
 <template>
   <div class="portal-workspace">
     <!-- 使用统一的 C_Header 组件，控制显示内容 -->
@@ -286,7 +293,7 @@
                 :key="app.id"
                 type="button"
                 class="app-cell"
-                @click="handleAppClick(app)"
+                @click="handleShortcutClick(app)"
               >
                 <div
                   class="app-icon-box"
@@ -469,11 +476,9 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'PortalPage' })
-  import { ref, computed, onMounted, onUnmounted, provide } from 'vue'
   import { Icon } from '@iconify/vue'
   import { MENU_COLLAPSE_KEY } from '@robot-admin/layout/naive'
   import { s_userStore } from '@/stores/user'
-  import { useRouter } from 'vue-router'
   import { usePortalWeather } from './usePortalWeather'
   import { usePortalMicroApps } from './usePortalMicroApps'
   import {
@@ -593,8 +598,6 @@
       router.push(`/micro-app/${app.id}`)
     }
   }
-
-  const handleAppClick = handleShortcutClick
 
   // ===== 定时器 =====
   const updateDateTime = () => {

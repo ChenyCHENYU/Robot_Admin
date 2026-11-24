@@ -144,6 +144,7 @@
     ACTION_TYPE_OPTIONS,
     RESULT_OPTIONS,
     createColumns,
+    activityDateBounds,
     type ActivitySearchForm,
   } from './data'
   import { getAccountActivityLogsApi } from '@/api/account'
@@ -153,13 +154,13 @@
   defineOptions({ name: 'AccountActivityLog' })
   const message = useMessage()
 
-  // 搜索表单
-  const searchForm = reactive<ActivitySearchForm>({
+  const defaultSearch: ActivitySearchForm = {
     keyword: '',
     actionType: null,
     result: null,
     dateRange: null,
-  })
+  }
+  const searchForm = reactive({ ...defaultSearch })
 
   // 表格列
   const columns = createColumns()
@@ -203,10 +204,10 @@
     }
 
     if (searchForm.dateRange) {
-      const [start, end] = searchForm.dateRange
+      const { start, end } = activityDateBounds(...searchForm.dateRange)
       data = data.filter(r => {
         const t = new Date(r.time).getTime()
-        return t >= start && t <= end + 86400000
+        return t >= start && t < end
       })
     }
 
@@ -216,12 +217,15 @@
   // 统计
   const stats = computed(() => {
     const all = allRecords.value
-    const todayStr = new Date().toISOString().slice(0, 10)
+    const { start, end } = activityDateBounds(Date.now())
     return {
       total: all.length,
       success: all.filter(r => r.result === 'success').length,
       failed: all.filter(r => r.result === 'failed').length,
-      today: all.filter(r => r.time.startsWith(todayStr)).length,
+      today: all.filter(r => {
+        const time = new Date(r.time).getTime()
+        return time >= start && time < end
+      }).length,
     }
   })
 
@@ -232,11 +236,8 @@
 
   /** 重置 */
   const handleReset = () => {
-    searchForm.keyword = ''
-    searchForm.actionType = null
-    searchForm.result = null
-    searchForm.dateRange = null
-    pagination.page = 1
+    Object.assign(searchForm, defaultSearch)
+    handleSearch()
   }
 
   const { loading: recordsLoading, run: runLatestActivityRequest } =

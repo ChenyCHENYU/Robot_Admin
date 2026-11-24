@@ -9,6 +9,7 @@
 import {
   FileType,
   useDownload,
+  sanitizeFileName,
   type DownloadConfig,
 } from '@robot-admin/file-utils'
 import { defineActions } from '@robot-admin/naive-ui-components/C_ActionBar'
@@ -122,7 +123,7 @@ export function useDownloadDemo() {
       const expectedName = plan.fileName.toLowerCase().endsWith(plan.fileType)
         ? plan.fileName
         : plan.fileName + plan.fileType
-      record(expectedName, plan.fileType, 'failed')
+      record(sanitizeFileName(expectedName), plan.fileType, 'failed')
       throw error
     }
   }

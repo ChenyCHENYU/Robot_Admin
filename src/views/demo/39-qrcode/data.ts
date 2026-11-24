@@ -121,12 +121,3 @@ export const DEFAULT_QRCODE: Readonly<EditableQRCode> = {
   logoSrc: '/robot-avatar.png',
   logoSize: LOGO_SIZE_OPTIONS.default,
 }
-
-// 导出格式选项
-export const EXPORT_FORMATS = [
-  { label: 'PNG', value: 'png' },
-  { label: 'JPEG', value: 'jpeg' },
-  { label: 'SVG', value: 'svg' },
-] as const
-
-export type ExportFormat = (typeof EXPORT_FORMATS)[number]['value']

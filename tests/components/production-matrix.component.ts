@@ -106,7 +106,8 @@ async function runAction(
   action: 'changeDays' | 'openReport' | 'save'
 ) {
   if (action === 'changeDays') await view.changeDays(28)
-  else await view[action]()
+  else if (action === 'openReport') await view.report.open()
+  else await view.save()
 }
 /** 等待校验承诺与表格提交收尾，不使用动画时长等待。 */
 async function settle() {
@@ -157,9 +158,9 @@ describe('复合矩阵真实表格交互', () => {
     expect(await api.editing.stop()).toBe(false)
     await view.changeDays(28)
     expect(view.days.value).toBe(28)
-    await view.openReport()
-    expect(view.reportVisible.value).toBe(true)
-    expect(view.report.value).toHaveLength(1008)
+    await view.report.open()
+    expect(view.report.visible).toBe(true)
+    expect(view.report.rows).toHaveLength(1008)
     api.editing.startCell({ rowIndex: 0, colId: '2026-11-06_0' })
     host.querySelector<HTMLInputElement>(
       '[data-testid="matrix-value-input"]'
@@ -191,7 +192,7 @@ describe('复合矩阵真实表格交互', () => {
       ).toBeNull()
       if (action === 'changeDays') expect(view.days.value).toBe(28)
       if (action === 'openReport')
-        expect(view.report.value[0]).toMatchObject({
+        expect(view.report.rows[0]).toMatchObject({
           检测值: 0,
           取样时间: '00:00',
         })
@@ -224,7 +225,7 @@ describe('复合矩阵真实表格交互', () => {
       await runAction(view, action)
       expect(view.rows[0].samples[slot]).toBe(original)
       expect(view.days.value).toBe(7)
-      expect(view.reportVisible.value).toBe(false)
+      expect(view.report.visible).toBe(false)
       expect(api.editing.getChanges()).toEqual(priorChanges)
       expect(
         host.querySelector('[data-testid="matrix-value-input"]')

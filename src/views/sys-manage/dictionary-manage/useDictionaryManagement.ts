@@ -6,6 +6,7 @@
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
 
+import { useTreeSearchExpansion } from '../shared/useTreeSearchExpansion'
 import type { ApiResponse } from '@/api/management.contract'
 import type {
   FormInstance,
@@ -196,19 +197,10 @@ export const useDictionaryManagement = () => {
       return false
     }
   }
-  let expandedBeforeSearch: (string | number)[] | undefined
-  watch(
-    () => [searchPattern.value, dictList.value] as const,
-    async ([keyword], [previous]) => {
-      if (!previous.trim() && keyword.trim())
-        expandedBeforeSearch = [...(treeRef.value?.expandedKeys || [])]
-      await nextTick()
-      if (keyword.trim()) treeRef.value?.expandAll()
-      else if (treeRef.value && expandedBeforeSearch) {
-        treeRef.value.expandedKeys = expandedBeforeSearch
-        expandedBeforeSearch = undefined
-      }
-    }
+  useTreeSearchExpansion(
+    searchPattern,
+    () => dictList.value,
+    () => treeRef.value
   )
   const expanded = ref(false)
   const toggleExpansion = () => {

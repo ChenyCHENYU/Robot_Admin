@@ -40,7 +40,7 @@
               :key="task.id"
               type="button"
               class="workspace-choice"
-              :aria-pressed="selectedTask?.id === task.id"
+              :aria-pressed="selectedTaskKey === taskKey(task)"
               @click="onTaskClick(task)"
               ><span
                 ><strong>{{ task.title }}</strong
@@ -84,10 +84,10 @@
           class="gantt-actions workspace-actions"
           ><NButton
             v-for="control in currentTab.controls"
-            :key="control.action"
+            :key="control.key"
             size="small"
             :type="control.type || 'default'"
-            @click="handleAction(control.action)"
+            @click="control.onClick"
             >{{
               typeof control.label === 'string'
                 ? control.label
@@ -149,7 +149,7 @@
                 :key="tip"
                 >{{ tip }}</p
               ><p
-                v-for="config in presetDescriptions"
+                v-for="config in PRESET_DESCRIPTIONS"
                 :key="config.name"
                 ><strong>{{ config.name }}</strong> ·
                 {{ config.description }}</p
@@ -171,26 +171,24 @@
   } from '@robot-admin/naive-ui-components/C_VtableGantt'
   import {
     type TabConfig,
+    type GanttScene,
     type DemoGanttTask,
-    PRESET_DESCRIPTIONS as presetDescriptions,
+    PRESET_DESCRIPTIONS,
     createInitialData,
     PROJECT_OPTIONS,
   } from './data'
   import { createCustomGanttOptions } from './customRendering'
 
   const message = useMessage()
-  const activeTab = ref('project')
+  const activeTab = ref<GanttScene>('project')
   const taskSearch = ref('')
   const timeScale = ref<'week' | 'day'>('week')
-  const selectedTask = shallowRef<DemoGanttTask | null>(null)
+  const selectedTaskKey = ref<string | null>(null)
   const ganttError = ref('')
   const themeStore = s_themeStore()
   const isDark = computed(() => themeStore.isDark)
   const ganttRef = shallowRef<GanttExpose<DemoGanttTask> | null>(null)
-  const expandStates = reactive<Record<string, boolean>>({
-    basic: true,
-    project: true,
-  })
+  const projectExpanded = ref(true)
 
   // 初始化甘特图数据 - 利用类型推导
   const ganttData = ref(createInitialData())
@@ -201,34 +199,35 @@
     {
       name: 'basic',
       label: '基础甘特图',
-      title: '基础甘特图 (preset="basic")',
+
       description: '简洁的基础配置，适用于简单的任务管理和项目概览。',
       preset: 'basic',
       ganttTitle: '基础项目管理',
-      height: '580px',
+
       controls: [
         {
-          action: 'addBasicTask',
+          key: 'addBasicTask',
+          onClick: () => addTask('basic'),
           label: '添加任务',
-          icon: 'carbon:add',
+
           type: 'primary',
         },
         {
-          action: 'updateBasicProgress',
+          key: 'updateBasicProgress',
+          onClick: () => updateProgress('basic'),
           label: '更新进度',
-          icon: 'carbon:chart-line',
         },
       ],
     },
     {
       name: 'project',
       label: '项目管理',
-      title: '项目管理甘特图 (preset="project")',
+
       description:
         '功能完整的项目管理配置，包含编辑器、优先级、行序号等专业功能。',
       preset: 'project',
       ganttTitle: '软件开发项目',
-      height: '680px',
+
       tips: [
         '双击表格单元格可以编辑任务信息（任务名称、开始时间、结束时间、优先级、进度）',
         '拖拽任务条可以移动任务时间，支持实时调整项目进度',
@@ -238,22 +237,23 @@
       ],
       controls: [
         {
-          action: 'addProjectSubTask',
+          key: 'addProjectSubTask',
+          onClick: () => addTask('project'),
           label: '添加子任务',
-          icon: 'carbon:add-alt',
+
           type: 'primary',
         },
         {
-          action: 'updateProjectProgress',
+          key: 'updateProjectProgress',
+          onClick: () => updateProgress('project'),
           label: '更新进度',
-          icon: 'carbon:chart-histogram',
         },
         {
-          action: 'toggleProjectExpand',
+          key: 'toggleProjectExpand',
+          onClick: toggleProjectExpand,
           label: computed(() =>
-            expandStates.project ? '收起全部' : '展开全部'
+            projectExpanded.value ? '收起全部' : '展开全部'
           ),
-          icon: 'carbon:tree-view',
         },
       ],
       options: PROJECT_OPTIONS,
@@ -261,38 +261,35 @@
     {
       name: 'timeline',
       label: '时间线',
-      title: '时间线甘特图 (preset="timeline")',
+
       description: '适用于事件时间线、历史记录展示和重要事件跟踪。',
       preset: 'timeline',
       ganttTitle: '公司发展历程',
-      height: '610px',
     },
     {
       name: 'milestone',
       label: '里程碑',
-      title: '里程碑甘特图 (preset="milestone")',
+
       description: '专门用于重要节点和里程碑的展示，突出关键时间点。',
       preset: 'milestone',
       ganttTitle: '项目关键节点',
-      height: '560px',
     },
     {
       name: 'official',
       label: '官方示例',
-      title: '官方示例甘特图 (preset="official")',
+
       description: '完全复刻官方演示的配置和数据，展示最真实的效果和完整功能。',
       preset: 'official',
       ganttTitle: 'Official Demo',
-      height: '750px',
     },
     {
       name: 'custom',
       label: '自定义渲染',
-      title: '自定义渲染甘特图',
+
       description:
         '展示自定义渲染的强大功能，包含头像、进度、渐变色等高级视觉效果。',
       ganttTitle: '团队任务看板',
-      height: '710px',
+
       options: createCustomGanttOptions(),
     },
   ]
@@ -300,30 +297,36 @@
   const currentTab = computed(
     () => demoTabs.find(tab => tab.name === activeTab.value) ?? demoTabs[0]
   )
-  const taskEntries = computed(() => {
-    const result: DemoGanttTask[] = []
+  const activeTasks = computed(() => ganttData.value[activeTab.value])
+  const taskKey = (task: Pick<DemoGanttTask, 'id'>) => String(task.id)
+  const tasksByKey = computed(() => {
+    const index = new Map<string, DemoGanttTask>()
     const visit = (tasks: DemoGanttTask[]) =>
       tasks.forEach(task => {
-        result.push(task)
+        index.set(taskKey(task), task)
         if (task.children) visit(task.children)
       })
-    visit(ganttData.value[activeTab.value] ?? [])
-    return result.filter(task =>
-      task.title.toLowerCase().includes(taskSearch.value.trim().toLowerCase())
-    )
+    visit(activeTasks.value)
+    return index
   })
+  const selectedTask = computed(() =>
+    selectedTaskKey.value === null
+      ? undefined
+      : tasksByKey.value.get(selectedTaskKey.value)
+  )
+  const searchTerm = computed(() => taskSearch.value.trim().toLowerCase())
+  const matchesSearch = (task: DemoGanttTask) =>
+    task.title.toLowerCase().includes(searchTerm.value)
+  const taskEntries = computed(() =>
+    [...tasksByKey.value.values()].filter(matchesSearch)
+  )
   const filterTasks = (tasks: DemoGanttTask[]): DemoGanttTask[] =>
     tasks.flatMap(task => {
-      if (
-        task.title.toLowerCase().includes(taskSearch.value.trim().toLowerCase())
-      )
-        return [task]
+      if (matchesSearch(task)) return [task]
       const children = task.children ? filterTasks(task.children) : []
       return children.length ? [{ ...task, children }] : []
     })
-  const visibleData = computed(() =>
-    filterTasks(ganttData.value[activeTab.value] ?? [])
-  )
+  const visibleData = computed(() => filterTasks(activeTasks.value))
   const workspaceOptions = computed<GanttOptions<DemoGanttTask>>(() => {
     const base = unref(currentTab.value.options) ?? {}
     if (currentTab.value.name === 'custom') return base
@@ -332,7 +335,8 @@
       taskListTable: {
         ...base.taskListTable,
         tableWidth: 400,
-        hierarchyExpandLevel: expandStates.project ? 99 : 1,
+        hierarchyExpandLevel:
+          activeTab.value !== 'project' || projectExpanded.value ? 99 : 1,
         theme: {
           headerStyle: { fontSize: 12, fontWeight: 'normal' },
           bodyStyle: { fontSize: 12 },
@@ -382,26 +386,12 @@
       ganttRef.value?.ganttInstance?.scrollToMarkLine(date)
   }
   watch(activeTab, () => {
-    selectedTask.value = null
+    selectedTaskKey.value = null
     taskSearch.value = ''
     ganttError.value = ''
   })
 
   // ==================== 事件处理函数 ====================
-
-  // 统一的动作处理器
-  const actionHandlers = {
-    addBasicTask: () => addTask('basic'),
-    updateBasicProgress: () => updateProgress('basic'),
-    addProjectSubTask: () => addTask('project'),
-    updateProjectProgress: () => updateProgress('project'),
-    toggleProjectExpand: () => toggleExpand('project'),
-  }
-
-  const handleAction = (action: string) => {
-    const handler = actionHandlers[action as keyof typeof actionHandlers]
-    handler?.()
-  }
 
   // 添加任务
   const addTask = (type: 'basic' | 'project') => {
@@ -445,16 +435,16 @@
     message.success(`批量更新了${type === 'basic' ? '基础' : '项目'}任务进度`)
   }
 
-  // 切换展开/收起状态
-  const toggleExpand = (type: 'basic' | 'project') => {
+  /** 用公开任务表入口切换项目树的展开状态。 */
+  function toggleProjectExpand() {
     const gantt = ganttRef.value?.ganttInstance
-    if (!gantt || activeTab.value !== type) {
+    if (!gantt || activeTab.value !== 'project') {
       message.warning('甘特图实例未找到')
       return
     }
 
     try {
-      const isExpanded = expandStates[type]
+      const isExpanded = projectExpanded.value
       const table = gantt.taskListTableInstance
       if (!table) {
         message.warning('任务表尚未就绪')
@@ -462,7 +452,7 @@
       }
       if (isExpanded) table.collapseAllTreeNode()
       else table.expandAllTreeNode()
-      expandStates[type] = !isExpanded
+      projectExpanded.value = !isExpanded
       message.success(`已${isExpanded ? '收起' : '展开'}所有任务`)
     } catch (error) {
       console.warn('展开/收起操作失败:', error)
@@ -474,20 +464,14 @@
     task: DemoGanttTask,
     changes: GanttTaskChanges<DemoGanttTask>
   ) => {
-    const visit = (tasks: DemoGanttTask[]) =>
-      tasks.forEach(item => {
-        if (String(item.id) === String(task.id)) Object.assign(item, changes)
-        if (item.children) visit(item.children)
-      })
-    visit(ganttData.value[activeTab.value] ?? [])
-    if (selectedTask.value?.id === task.id)
-      selectedTask.value = { ...task, ...changes }
+    const record = tasksByKey.value.get(taskKey(task))
+    if (record) Object.assign(record, changes)
   }
 
   // ==================== 甘特图事件回调 ====================
 
   const onTaskClick = (task: DemoGanttTask) => {
-    selectedTask.value = task
+    selectedTaskKey.value = taskKey(task)
   }
 
   /** 失败状态交给图内重试入口恢复，页面动作不再操作已释放实例。 */

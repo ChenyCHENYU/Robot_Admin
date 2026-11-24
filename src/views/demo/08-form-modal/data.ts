@@ -16,8 +16,10 @@ import {
 
 // =================== 卡片展示数据 ===================
 
+export type ContainerKey = 'modal' | 'drawer' | 'sidebar' | 'popover' | 'wizard'
+
 export interface CardInfo {
-  key: string
+  key: ContainerKey
   title: string
   description: string
   icon: string

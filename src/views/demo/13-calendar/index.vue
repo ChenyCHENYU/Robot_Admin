@@ -63,10 +63,7 @@
               :style="{ '--category-color': category.color }"
               >{{ page.categories.includes(category.value) ? '✓' : '' }}</span
             ><span>{{ category.label }}</span
-            ><small>{{
-              page.events.filter(event => event.category === category.value)
-                .length
-            }}</small>
+            ><small>{{ page.categoryCounts.get(category.value) ?? 0 }}</small>
           </button>
         </section>
         <section class="calendar-sidebar__section calendar-agenda">

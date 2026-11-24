@@ -164,6 +164,8 @@ export const ADD_FORM_DEFAULTS: AddEmployeeForm = {
   description: '',
 }
 
+const employeeAgeLimits = { min: 18, max: 65 }
+
 export const ADD_EMPLOYEE_FIELDS: FormOption<AddEmployeeForm>[] = [
   {
     prop: 'name',
@@ -177,10 +179,14 @@ export const ADD_EMPLOYEE_FIELDS: FormOption<AddEmployeeForm>[] = [
     label: '年龄',
     type: 'inputNumber',
     placeholder: '请输入年龄',
-    attrs: { min: 18, max: 65, showButton: false, style: { width: '100%' } },
+    attrs: {
+      ...employeeAgeLimits,
+      showButton: false,
+      style: { width: '100%' },
+    },
     rules: [
       PRESET_RULES.required('年龄', ['blur', 'change']),
-      PRESET_RULES.range('年龄', 18, 65),
+      PRESET_RULES.range('年龄', employeeAgeLimits.min, employeeAgeLimits.max),
     ],
   },
   {
@@ -269,8 +275,7 @@ export const getTableColumns = () =>
       required: true,
       editType: 'number',
       editProps: {
-        min: 18,
-        max: 65,
+        ...employeeAgeLimits,
         step: 1,
         showButton: false,
         placeholder: '请输入年龄',

@@ -316,7 +316,7 @@
           <C_Table
             :columns="view.dataPolicy.columns"
             :data="view.dataPolicy.rows"
-            :loading="view.governanceLoading"
+            :loading="view.dataPolicy.loading"
             :row-key="view.dataPolicy.rowKey"
             :config="{
               toolbar: { show: false },
@@ -468,7 +468,7 @@
           <C_Table
             :columns="view.temporaryGrants.columns"
             :data="view.temporaryGrants.rows"
-            :loading="view.governanceLoading"
+            :loading="view.temporaryGrants.loading"
             :row-key="view.temporaryGrants.rowKey"
             :config="{
               toolbar: { show: false },
@@ -484,7 +484,7 @@
             v-model:page="view.temporaryGrants.page"
             :item-count="view.temporaryGrants.total"
             :page-size="20"
-            @update:page="view.loadGovernanceData"
+            @update:page="view.temporaryGrants.load"
           />
         </NCard>
       </NTabPane>
@@ -719,7 +719,7 @@
             v-model:page="view.audit.page"
             :item-count="view.audit.total"
             :page-size="20"
-            @update:page="view.loadGovernanceData"
+            @update:page="view.audit.load"
           />
         </NCard>
       </NTabPane>

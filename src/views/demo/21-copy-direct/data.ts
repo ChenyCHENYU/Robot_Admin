@@ -72,6 +72,6 @@ export function getAdvancedCode(): string {
 <NButton v-copy="{
   text: '内容',
   successMessage: false,
-  onSuccess: handleSilentSuccess
+  onSuccess: handleCopySuccess
 }">静默模式</NButton>`
 }

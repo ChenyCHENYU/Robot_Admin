@@ -32,13 +32,7 @@
             <NButton
               type="primary"
               :loading="loadingStates.text"
-              @click="
-                () =>
-                  handleCopy(
-                    () => copyText(textInput, '自定义文本复制成功！'),
-                    'text'
-                  )
-              "
+              @click="copyInputText"
             >
               <template #icon>
                 <i class="i-mdi-content-copy" />
@@ -54,8 +48,8 @@
               :loading="loadingStates.demoText"
               @click="
                 () =>
-                  handleCopy(
-                    () => copyText(DEMO_TEXT, '示例文本复制成功！'),
+                  runAction(
+                    () => clipboard.copyText(DEMO_TEXT, '示例文本复制成功！'),
                     'demoText'
                   )
               "
@@ -83,7 +77,7 @@
             <NButton
               type="info"
               :loading="loadingStates.url"
-              @click="() => handleCopy(() => copyURL(urlInput), 'url')"
+              @click="copyLink(urlInput, 'url')"
             >
               <template #icon>
                 <i class="i-mdi-link" />
@@ -103,7 +97,8 @@
                 size="small"
                 type="info"
                 :loading="loadingStates[`url-${url}`]"
-                @click="() => handleCopy(() => copyURL(url), `url-${url}`)"
+                :aria-label="`复制链接 ${url}`"
+                @click="copyLink(url, `url-${url}`)"
               >
                 <template #icon>
                   <i class="i-mdi-link-variant" />
@@ -148,7 +143,11 @@
               type="success"
               :loading="loadingStates[`json-${index}`]"
               @click="
-                () => handleCopy(() => copyJSON(example.data), `json-${index}`)
+                () =>
+                  runAction(
+                    () => clipboard.copyJSON(example.data),
+                    `json-${index}`
+                  )
               "
             >
               <template #icon>
@@ -180,8 +179,8 @@
               :loading="loadingStates[`code-${index}`]"
               @click="
                 () =>
-                  handleCopy(
-                    () => copyCode(code.content, code.language),
+                  runAction(
+                    () => clipboard.copyCode(code.content, code.language),
                     `code-${index}`
                   )
               "
@@ -245,9 +244,9 @@
               :loading="loadingStates[`contact-${index}`]"
               @click="
                 () =>
-                  handleCopy(
+                  runAction(
                     () =>
-                      copy(contact.value, {
+                      clipboard.copy(contact.value, {
                         dataType: contact.type,
                         successTip: `${contact.label}复制成功！`,
                       }),
@@ -303,7 +302,7 @@
           </div>
           <NButton
             type="error"
-            @click="clearHistory"
+            @click="clipboard.clearHistory"
           >
             <template #icon>
               <i class="i-mdi-delete" />
@@ -335,6 +334,7 @@
 
 <script setup lang="ts">
   defineOptions({ name: 'Demo18CopyText' })
+  import type { ActionItem } from '@robot-admin/naive-ui-components/C_ActionBar'
   import { useCopy } from '@/composables/useCopy'
   import {
     DEMO_TEXT,
@@ -346,33 +346,35 @@
     CONTACTS,
   } from './data'
 
-  // 使用 useCopy Hook
-  const {
-    state,
-    copy,
-    copyText,
-    copyJSON,
-    copyURL,
-    copyCode,
-    readClipboard,
-    clearHistory,
-  } = useCopy({
-    showMessage: true,
-  })
+  const clipboard = useCopy({ showMessage: true })
+  const { state } = clipboard
   const message = useMessage()
 
-  // ==================== 响应式数据 ====================
-  const loadingStates = reactive<Record<string, boolean>>({})
+  type CopyAction =
+    | 'text'
+    | 'demoText'
+    | 'url'
+    | 'jsonFormatted'
+    | 'jsonCompressed'
+    | 'csv'
+    | 'csvJson'
+    | 'readClipboard'
+    | `url-${string}`
+    | `json-${number}`
+    | `code-${number}`
+    | `contact-${number}`
+
+  const loadingStates = reactive<Partial<Record<CopyAction, boolean>>>({})
   const textInput = ref('Hello, World!')
   const urlInput = ref('www.example.com')
   const jsonInput = ref('{"name": "张三", "age": 25, "city": "北京"}')
   const clipboardContent = ref('')
 
   // ==================== 按钮组配置（C_ActionBar） ====================
-  const jsonCopyActions = computed(() => [
+  const jsonCopyActions = computed<ActionItem[]>(() => [
     {
       label: '格式化复制',
-      type: 'success' as const,
+      type: 'success',
       icon: 'mdi:code-json',
       loading: loadingStates.jsonFormatted,
       onClick: () => handleCopyJSON(true, 'jsonFormatted'),
@@ -385,17 +387,17 @@
     },
   ])
 
-  const csvCopyActions = computed(() => [
+  const csvCopyActions = computed<ActionItem[]>(() => [
     {
       label: '复制 CSV',
-      type: 'warning' as const,
+      type: 'warning',
       icon: 'mdi:file-delimited',
       loading: loadingStates.csv,
-      buttonProps: { size: 'small' as const },
+      buttonProps: { size: 'small' },
       onClick: () =>
-        handleCopy(
+        runAction(
           () =>
-            copy(CSV_DATA, {
+            clipboard.copy(CSV_DATA, {
               dataType: 'csv',
               successTip: 'CSV 数据复制成功！',
             }),
@@ -404,52 +406,57 @@
     },
     {
       label: '复制 JSON',
-      type: 'info' as const,
+      type: 'info',
       icon: 'mdi:code-json',
       loading: loadingStates.csvJson,
-      buttonProps: { size: 'small' as const },
-      onClick: () => handleCopy(() => copyJSON(CSV_DATA), 'csvJson'),
+      buttonProps: { size: 'small' },
+      onClick: () => runAction(() => clipboard.copyJSON(CSV_DATA), 'csvJson'),
     },
   ])
 
-  // ==================== 通用处理函数 ====================
-  const handleCopy = async (copyFn: () => Promise<unknown>, key: string) => {
-    if (key.includes('text') && !textInput.value.trim()) return
-    if (key.includes('url') && !urlInput.value.trim()) return
-
+  const runAction = async (action: () => Promise<unknown>, key: CopyAction) => {
     loadingStates[key] = true
     try {
-      await copyFn()
+      await action()
     } finally {
       loadingStates[key] = false
     }
   }
 
-  const handleCopyJSON = async (formatted: boolean, key: string) => {
+  const copyInputText = () => {
+    if (textInput.value.trim()) {
+      return runAction(
+        () => clipboard.copyText(textInput.value, '自定义文本复制成功！'),
+        'text'
+      )
+    }
+  }
+
+  const copyLink = (url: string, key: 'url' | `url-${string}`) => {
+    if (url.trim()) return runAction(() => clipboard.copyURL(url), key)
+  }
+
+  const handleCopyJSON = (formatted: boolean, key: CopyAction) => {
     if (!jsonInput.value.trim()) return
-
-    loadingStates[key] = true
-    try {
-      const data = JSON.parse(jsonInput.value)
-      await copyJSON(data, formatted)
-    } catch {
-      await copyText(jsonInput.value, 'JSON 文本复制成功')
-    } finally {
-      loadingStates[key] = false
-    }
+    return runAction(async () => {
+      try {
+        const parsed: unknown = JSON.parse(jsonInput.value)
+        const value = typeof parsed === 'string' ? jsonInput.value : parsed
+        await clipboard.copyJSON(value, formatted)
+      } catch {
+        await clipboard.copyText(jsonInput.value, 'JSON 文本复制成功')
+      }
+    }, key)
   }
 
-  const handleReadClipboard = async () => {
-    loadingStates.readClipboard = true
-    try {
-      const content = await readClipboard()
-      clipboardContent.value = content
-    } catch (error) {
-      message.error(error instanceof Error ? error.message : '读取剪贴板失败')
-    } finally {
-      loadingStates.readClipboard = false
-    }
-  }
+  const handleReadClipboard = () =>
+    runAction(async () => {
+      try {
+        clipboardContent.value = await clipboard.readClipboard()
+      } catch (error) {
+        message.error(error instanceof Error ? error.message : '读取剪贴板失败')
+      }
+    }, 'readClipboard')
 
   const formatTime = (date: Date): string => {
     return date.toLocaleString('zh-CN', {

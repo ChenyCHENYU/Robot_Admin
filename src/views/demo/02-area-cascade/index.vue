@@ -28,15 +28,7 @@
         hoverable
       >
         <template #header-extra>
-          <NTag :type="config.tagType">
-            {{
-              config.id === 'city'
-                ? '地区选择'
-                : config.id === 'tech'
-                  ? '技术栈'
-                  : '组织架构'
-            }}
-          </NTag>
+          <NTag :type="config.tagType">{{ config.tagText }}</NTag>
         </template>
 
         <NSpace vertical>
@@ -66,7 +58,7 @@
           <NAlert
             v-if="config.selected.primary"
             type="success"
-            :title="`当前选择的${config.title.replace('选择', '')}`"
+            :title="config.resultTitle"
           >
             <NSpace
               vertical

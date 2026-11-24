@@ -21,10 +21,7 @@
         </div>
       </template>
 
-      <div
-        ref="tableContainer"
-        class="c-table-wrapper relative"
-      >
+      <div class="c-table-wrapper relative">
         <C_Table
           ref="tableRef"
           v-model:data="tableData"
@@ -36,7 +33,7 @@
           @row-delete="handleRowDelete"
           @save="handleSave"
           @view-detail="handleViewDetail"
-          @row-selection-change="handleRowSelectionChange"
+          @row-selection-change="selectedEmployeeKey = $event"
         />
 
         <!-- 自动铺满水印 -->
@@ -139,7 +136,12 @@
   const tableRef = ref<TableInstance<DynamicEmployee> | null>(null)
   const selectedEmployeeKey = ref<DataTableRowKey | null>(null)
   const logs = ref<Log[]>([])
-  const watermarkStyle = ref('')
+  const watermark = {
+    text: 'Robot Admin',
+    textSize: 16,
+    textColor: 'rgba(100, 100, 100, 0.25)',
+    rotate: -45,
+  }
 
   // 表格数据管理
   const source = createDemoEmployeeSource('employees/dynamicList')
@@ -156,22 +158,20 @@
       tableData.value.find(row => row.id === selectedEmployeeKey.value) ?? null
   )
 
-  // 水印生成
-  const createWatermark = () => {
-    const text = 'Robot Admin'
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="180" height="100">
-        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
-          font-family="Arial" font-size="16" fill="rgba(100,100,100,0.25)"
-          transform="rotate(-45 90 50)">${text}</text>
-      </svg>
-    `
-    const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
-    watermarkStyle.value = `background-image: url("${svgUrl}"); background-repeat: repeat;`
+  const watermarkSvg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="180" height="100">
+      <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
+        font-family="Arial" font-size="${watermark.textSize}" fill="${watermark.textColor}"
+        transform="rotate(${watermark.rotate} 90 50)">${watermark.text}</text>
+    </svg>
+  `
+  const watermarkStyle = {
+    backgroundImage: `url("data:image/svg+xml;charset=utf-8,${encodeURIComponent(watermarkSvg)}")`,
+    backgroundRepeat: 'repeat',
   }
 
   // 表格操作
-  const tableActions = computed((): SimpleTableActions<DynamicEmployee> => ({
+  const tableActions: SimpleTableActions<DynamicEmployee> = {
     detail: async (row: DynamicEmployee) => {
       await delayWithSignal(200)
       return { data: row }
@@ -180,7 +180,7 @@
       await delayWithSignal(200)
       return { success: true }
     },
-  }))
+  }
 
   // 表格配置
   const tableConfig: TableConfig<DynamicEmployee> = {
@@ -196,13 +196,10 @@
       printTargetSelector: '.c-table-wrapper',
       printOptions: {
         watermark: {
-          text: 'Robot Admin',
-          position: 'repeat' as const,
-          textSize: 16,
-          textColor: 'rgba(100, 100, 100, 0.25)',
+          ...watermark,
+          position: 'repeat',
           xGap: 200,
           yGap: 120,
-          rotate: -45,
         },
       },
       defaultRowData: createDefaultEmployee,
@@ -220,8 +217,7 @@
   }
 
   // 事件处理
-  const handleViewDetail = (data: DynamicEmployee) => {
-    const employee = data
+  const handleViewDetail = (employee: DynamicEmployee) => {
     message.info(`查看 ${employee.name} 的详细信息`)
     addLog('select', `查看了 ${employee.name} 的详情`)
   }
@@ -237,8 +233,7 @@
       selectedEmployeeKey.value = null
   }
 
-  const handleSave = (rowData: DynamicEmployee) => {
-    const employee = rowData
+  const handleSave = (employee: DynamicEmployee) => {
     message.success(`保存成功：${employee.name}`)
     addLog('edit', `编辑了员工 ${employee.name} 的信息`)
   }
@@ -262,12 +257,6 @@
     tableRef.value?.clearRowSelection()
     message.info('已清空选择')
   }
-
-  const handleRowSelectionChange = (key: DataTableRowKey | null) => {
-    selectedEmployeeKey.value = key
-  }
-
-  onMounted(createWatermark)
 </script>
 
 <style lang="scss" scoped>

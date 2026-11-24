@@ -185,17 +185,20 @@ export const DEMO_SCENES = [
     title: '团队协作',
     description: '查看在线团队成员',
     icon: 'mdi:account-group',
+    items: TEAM_MEMBERS,
   },
   {
     key: 'task',
     title: '任务分配',
     description: '首字母头像展示',
     icon: 'mdi:clipboard-account',
+    items: TASK_ASSIGNEES,
   },
   {
     key: 'contributor',
     title: '项目贡献者',
     description: '混合头像 + 大量溢出',
     icon: 'mdi:source-branch',
+    items: CONTRIBUTORS,
   },
 ] as const

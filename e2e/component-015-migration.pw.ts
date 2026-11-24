@@ -27,10 +27,12 @@ test('状态 0 独立查询一次，重置后提交使用已清空的最终条�
   page,
 }) => {
   await page.goto('/#/demo/form-manage/form-search')
-  const basic = page
-    .locator('.demo-section')
-    .filter({ has: page.locator('.form-search') })
-    .first()
+  const basic = page.locator('.demo-section').filter({
+    has: page.getByRole('heading', {
+      name: '基础用法（3个字段）',
+      exact: true,
+    }),
+  })
   const buttons = basic
     .locator('.form-search-item-box')
     .last()

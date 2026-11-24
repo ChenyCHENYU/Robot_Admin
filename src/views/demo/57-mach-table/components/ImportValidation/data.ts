@@ -5,9 +5,9 @@
  * @Description: 本地导入样例、规范值解析与共享列校验
  * Copyright (c) 2026 by CHENY, All Rights Reserved 😎.
  */
-import {
-  defineVueColumns,
-  type RowEditValidationParams,
+import type {
+  RowEditValidationParams,
+  VueColDef,
 } from '@agile-team/mach-table-vue'
 import type { ImportIssue } from '@agile-team/mach-table-vue/import'
 
@@ -20,22 +20,6 @@ export interface ImportDemoRow {
   enabled: boolean
 }
 export type ImportMode = 'replace' | 'append'
-export const IMPORT_FIELDS = [
-  'id',
-  'name',
-  'quantity',
-  'amount',
-  'deliveryDate',
-  'enabled',
-] as const
-export const IMPORT_LABELS = [
-  '编号',
-  '订单名称',
-  '数量',
-  '金额',
-  '交付日期',
-  '启用',
-]
 export const IMPORT_SAMPLES = {
   valid: [
     ['000001', '精密控制器', 12, 1280.5, '2026-10-27', true],
@@ -114,7 +98,7 @@ export function createInitialImportRows(): ImportDemoRow[] {
 }
 
 /** 列解析与列校验同时供导入计划和表格输入使用。 */
-export const IMPORT_COLUMNS = defineVueColumns<ImportDemoRow>([
+export const IMPORT_COLUMNS = [
   {
     field: 'id',
     headerName: '编号',
@@ -162,7 +146,14 @@ export const IMPORT_COLUMNS = defineVueColumns<ImportDemoRow>([
     valueParser: ({ value }) => parseBoolean(value),
     valueFormatter: ({ value }) => (value ? '启用' : '停用'),
   },
-])
+] satisfies Array<
+  VueColDef<ImportDemoRow> & {
+    field: keyof ImportDemoRow
+    headerName: string
+  }
+>
+export const IMPORT_FIELDS = IMPORT_COLUMNS.map(column => column.field)
+export const IMPORT_LABELS = IMPORT_COLUMNS.map(column => column.headerName)
 
 /** 整行规则检查解析后的规范值，避免另建一套导入业务校验。 */
 export function validateImportRow({

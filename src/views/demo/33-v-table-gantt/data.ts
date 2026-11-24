@@ -21,14 +21,14 @@ export interface DemoGanttTask extends GanttTask {
   children?: DemoGanttTask[]
 }
 
+export type GanttScene = keyof ReturnType<typeof createInitialData>
+
 export interface TabConfig {
-  name: string
+  name: GanttScene
   label: string
-  title: string
   description: string
   preset?: GanttPreset
   ganttTitle: string
-  height?: string
   tips?: string[]
   controls?: ControlConfig[]
   options?:
@@ -36,9 +36,9 @@ export interface TabConfig {
 }
 
 export interface ControlConfig {
-  action: string
+  key: string
   label: string | ComputedRef<string>
-  icon: string
+  onClick: () => void
   type?: ButtonProps['type']
 }
 
@@ -525,38 +525,15 @@ export const createCustomData = (): DemoGanttTask[] => {
 // ==================== 数据工厂 ====================
 
 // 数据创建器映射
-const dataCreators = {
-  basic: createBasicData,
-  project: createProjectData,
-  timeline: createTimelineData,
-  milestone: createMilestoneData,
-  official: createOfficialData,
-  custom: createCustomData,
-}
-
-/**
- * 创建所有甘特图初始数据
- */
-export const createInitialData = () => {
-  const result: Record<string, DemoGanttTask[]> = {}
-  Object.entries(dataCreators).forEach(([key, creator]) => {
-    result[key] = creator()
-  })
-  return result
-}
-
-/**
- * 根据类型创建特定的甘特图数据
- */
-export const createDataByType = (type: keyof typeof dataCreators) => {
-  const creator = dataCreators[type]
-  if (!creator) {
-    throw new Error(`Unsupported data type: ${type}`)
-  }
-  return creator()
-}
-
-// ==================== 自定义配置函数 ====================
+/** 每个场景获得一份独立的可编辑初始任务。 */
+export const createInitialData = () => ({
+  basic: createBasicData(),
+  project: createProjectData(),
+  timeline: createTimelineData(),
+  milestone: createMilestoneData(),
+  official: createOfficialData(),
+  custom: createCustomData(),
+})
 
 // ==================== 项目配置 ====================
 
@@ -575,10 +552,3 @@ export const PROJECT_OPTIONS: GanttOptions<DemoGanttTask> = {
     },
   ],
 }
-
-// ==================== 向后兼容导出 ====================
-
-export const barColors0 = GANTT_COLORS.BAR_LIGHT
-export const barColors = GANTT_COLORS.BAR_DARK
-export const presetDescriptions = PRESET_DESCRIPTIONS
-export const projectOptions = PROJECT_OPTIONS
