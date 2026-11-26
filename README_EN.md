@@ -213,7 +213,7 @@ Pages bind public props to business data and reuse package types when extracting
 | [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.1.1`        | Isolated instances, Excel / CSV / ZIP, cancellable chunks and file processing           | Reusable file scenarios with heavy dependencies loaded on demand  |
 | [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`        | Configuration protection and Git engineering standards                                  | Development-time commit conventions and initialization            |
 
-The grid integration uses **MachTable 0.42.2** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue). Robot Admin currently integrates Vue. See [MachTable](https://github.com/ChenyCHENYU/MachTable) for Core, React, XLSX and other optional capabilities; [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages) host the component and runtime sources.
+The grid integration uses **MachTable 0.42.3** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue). Robot Admin currently integrates Vue. See [MachTable](https://github.com/ChenyCHENYU/MachTable) for Core, React, XLSX and other optional capabilities; [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages) host the component and runtime sources.
 
 ## Engineering and verification
 
@@ -285,7 +285,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.42.2** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.42.3** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text
