@@ -213,7 +213,7 @@ flowchart TB
 | [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.1.1`  | 隔离实例、Excel / CSV / ZIP、可取消分片与文件处理          | 文件场景复用，按需加载重型依赖         |
 | [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`  | 配置保护与 Git 工程标准                                    | 开发期提交规范与初始化工具             |
 
-数据网格使用 **MachTable 0.42.2** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)。Robot Admin 目前接入 Vue；Core、React、XLSX 及其他可选能力见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。组件源码见 [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components)，其余运行时包见 [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages)。
+数据网格使用 **MachTable 0.42.3** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)。Robot Admin 目前接入 Vue；Core、React、XLSX 及其他可选能力见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。组件源码见 [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components)，其余运行时包见 [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages)。
 
 ## 工程机制与质量保障
 
@@ -285,7 +285,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.42.2** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.42.3** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

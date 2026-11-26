@@ -137,6 +137,17 @@ test('自定义炉数的目标量精确守恒，跨计划炉号仍唯一', () =>
   expect(new Set(heats.map(row => row.heatNo)).size).toBe(40)
 })
 
+test('最大炉数跨零点时使用次日时刻，排产分钟继续递增', () => {
+  const [plan] = createProductionPlans()
+  const heats = createHeatSchedule({ ...plan, heats: 20 })
+
+  expect(heats[16].start).toBe('次日 00:30')
+  expect(heats[19].start).toBe('次日 03:30')
+  expect(heats[0].start).toBe('08:30')
+  expect(heats[15].start).toBe('23:30')
+  expect(heats[16].startMinutes - heats[15].startMinutes).toBe(60)
+})
+
 test('商品明细录入保留零和原始三位金额，拒绝空值、负数与精度越界', () => {
   expect(isLineDecimal('0')).toBe(true)
   expect(isLineDecimal('1.005')).toBe(true)
