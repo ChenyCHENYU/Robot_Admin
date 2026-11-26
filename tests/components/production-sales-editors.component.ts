@@ -8,6 +8,7 @@
 import { expect, test, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { defineComponent, h } from 'vue'
+import { createGrid } from '@agile-team/mach-table-vue'
 import {
   NMessageProvider,
   NDialogProvider,
@@ -113,6 +114,34 @@ test('详情字段绑定随查看记录切换自动翻译，保留原始订单�
   expect(pending.status).toBe(0)
   expect(running.status).toBe(1)
   wrapper.unmount()
+})
+
+test('炉次详情跨日可按开炉时刻排序、按显示文本筛选', async () => {
+  const { controller: plan, wrapper } = mountController(useProductionPlan)
+  plan.inspection.open({ ...plan.ledger.allRows[0], heats: 20 })
+  const api = createGrid(document.createElement('div'), {
+    rowData: plan.inspection.heats.slice(15, 17).reverse(),
+    columnDefs: plan.heats.columns,
+    rowKey: 'id',
+    pagination: false,
+  })
+  try {
+    await api.whenReady()
+    api.sorting.setModel([{ colId: 'start', direction: 'asc' }])
+    expect(api.rows.getAt(0)?.data?.start).toBe('23:30')
+    expect(api.rows.getAt(1)?.data?.start).toBe('次日 00:30')
+    api.filtering.setModel({
+      start: {
+        type: 'text',
+        conditions: [{ match: 'contains', value: '00:30' }],
+      },
+    })
+    expect(api.rows.getCount()).toBe(1)
+    expect(api.rows.getAt(0)?.data?.start).toBe('次日 00:30')
+  } finally {
+    api.destroy()
+    wrapper.unmount()
+  }
 })
 
 test('计划编辑副本取消不污染源记录，状态在弹窗打开后变化仍拒绝提交', async () => {

@@ -171,21 +171,41 @@ export function createProductionPlans(): ProductionPlan[] {
     )[index % 6],
   }))
 }
+const MINUTES_PER_HOUR = 60
+const MINUTES_PER_DAY = 24 * MINUTES_PER_HOUR
+
+/** 跨零点后显示次日时刻，原始排产分钟用于排序。 */
+function formatHeatStart(startMinutes: number): string {
+  const timeInDay = startMinutes % MINUTES_PER_DAY
+  const hours = String(Math.floor(timeInDay / MINUTES_PER_HOUR)).padStart(
+    2,
+    '0'
+  )
+  const minutes = String(timeInDay % MINUTES_PER_HOUR).padStart(2, '0')
+  const time = `${hours}:${minutes}`
+  return startMinutes >= MINUTES_PER_DAY ? `次日 ${time}` : time
+}
+
 /** 炉次编号按计划预留 20 个位置，目标量按千分吨分摊并守恒。 */
 export function createHeatSchedule(plan: ProductionPlan) {
   const total = Math.round(plan.weight * 1000)
   const base = Math.floor(total / plan.heats)
-  return Array.from({ length: plan.heats }, (_, index) => ({
-    id: `${plan.id}-H${index}`,
-    heatNo: `L261029${String(Number(plan.id.slice(5)) * 20 + index).padStart(4, '0')}`,
-    sequence: index + 1,
-    furnace: `${(index % 2) + 1}# 转炉`,
-    grade: plan.grade,
-    target: (base + Number(index < total % plan.heats)) / 1000,
-    start: `${8 + index}:30`,
-    process: 'BOF → LF → CC',
-    status: index === 0 ? '就绪' : '待开炉',
-  }))
+  const firstStartMinutes = 8 * MINUTES_PER_HOUR + 30
+  return Array.from({ length: plan.heats }, (_, index) => {
+    const startMinutes = firstStartMinutes + index * MINUTES_PER_HOUR
+    return {
+      id: `${plan.id}-H${index}`,
+      heatNo: `L261029${String(Number(plan.id.slice(5)) * 20 + index).padStart(4, '0')}`,
+      sequence: index + 1,
+      furnace: `${(index % 2) + 1}# 转炉`,
+      grade: plan.grade,
+      target: (base + Number(index < total % plan.heats)) / 1000,
+      start: formatHeatStart(startMinutes),
+      startMinutes,
+      process: 'BOF → LF → CC',
+      status: index === 0 ? '就绪' : '待开炉',
+    }
+  })
 }
 /** 批量下达只改变尚未下达的目标计划，重复执行不回退生产状态。 */
 export function releaseProductionPlans(
