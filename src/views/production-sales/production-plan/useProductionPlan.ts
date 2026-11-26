@@ -343,7 +343,14 @@ export function useProductionPlan() {
       width: 130,
       valueFormatter: ({ value }) => weightCodec.format(value),
     },
-    { field: 'start', headerName: '计划开炉', width: 100 },
+    {
+      field: 'start',
+      headerName: '计划开炉',
+      width: 100,
+      // 文本继续用于筛选，排序沿用跨日累计分钟。
+      comparator: (_left, _right, leftRow, rightRow) =>
+        (leftRow.data?.startMinutes ?? 0) - (rightRow.data?.startMinutes ?? 0),
+    },
     { field: 'process', headerName: '工艺路线', minWidth: 160 },
     { field: 'status', headerName: '准备状态', width: 100 },
   ])
