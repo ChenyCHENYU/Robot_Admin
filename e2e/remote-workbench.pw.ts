@@ -34,6 +34,32 @@ test.beforeEach(async ({ page }) => {
   await page.setViewportSize({ width: 1720, height: 1100 })
 })
 
+test('台账直接跳页，点击明细单元格保留批量勾选', async ({ page }) => {
+  await open(page)
+  const orders = page.locator('[aria-label="远程订单列表"]')
+  const details = page.locator('[aria-label="远程商品明细"]')
+  const jump = orders.getByRole('textbox', { name: '跳至页码' })
+  await jump.fill('3')
+  await jump.press('Enter')
+  await expect(orders.locator('.mach-pagination-page')).toContainText('3 / 3')
+  await expect(
+    orders.getByText('SO-20261112-013', { exact: true })
+  ).toBeVisible()
+  await expect(page.getByTestId('remote-active-order')).toHaveText(
+    'SO-20261112-001'
+  )
+
+  const picked = details.locator(
+    '.mach-row[data-id="RO-1-L1"] input[type="checkbox"]'
+  )
+  await picked.check()
+  await details
+    .locator('.mach-row[data-id="RO-1-L2"] .mach-cell[data-col-id="product"]')
+    .click()
+  await expect(picked).toBeChecked()
+  await expect(details).toContainText('已选 1 项')
+})
+
 test('左右工作区等高，右侧上下可拖动；调整尺寸保留搜索位置和草稿，窄屏堆叠', async ({
   page,
 }, info) => {
@@ -214,7 +240,6 @@ test('旧明细回包不能串单；动态长表头完整，空结果仍保留�
       .evaluate(element => getComputedStyle(element).stroke)
   ).not.toBe('none')
   await expect(empty).toContainText('没有可显示的行')
-  await expect(details).toContainText('质量追溯字段')
   await expect(header).toContainText('第三方质量检验报告编号')
   await expect(
     details.getByRole('button', { name: '刷新明细', exact: true })

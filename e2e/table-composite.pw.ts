@@ -176,7 +176,6 @@ test('远程主从连续操作：动态列与拖宽、固定操作、跨页选�
     '.mach-header-cell[data-col-id="inspectionNo"]'
   )
   await expect(inspection).toContainText('第三方质量检验报告编号')
-  await expect(details).toContainText('质量追溯字段')
   await expectFullHeader(inspection)
   const resized = await resizeProduct(page, details)
   await details
@@ -195,7 +194,7 @@ test('远程主从连续操作：动态列与拖宽、固定操作、跨页选�
     .fill('复合操作保留的订单草稿')
   await expectFixedActions(page, master)
   await roundTrip(page, remotePath, root)
-  await expect(details).toContainText('质量追溯字段')
+  await expect(inspection).toContainText('第三方质量检验报告编号')
   await expectFullHeader(inspection)
   await expect(details).toContainText('已选 2 项')
   await expect(

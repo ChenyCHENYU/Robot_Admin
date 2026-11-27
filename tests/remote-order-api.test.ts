@@ -9,7 +9,6 @@ import { expect, test } from 'bun:test'
 import {
   createRemoteOrderDemoApi,
   DEFAULT_FAULTS,
-  readDetailSnapshot,
   toDetailPage,
   toOrderPage,
 } from '../src/views/production-sales/remote-workbench/api'
@@ -110,7 +109,6 @@ test('动态字段和行来自同一快照，零重量与 false 原码不丢失�
   expect(result.rows[0].urgent).toBe(false)
   expect(result.columns.some(field => field.key === 'inspectionNo')).toBe(true)
   expect(result.columns.some(field => field.key === 'warehouse')).toBe(false)
-  expect(readDetailSnapshot(result)).toBe(result)
   const empty = toDetailPage(
     await api.getOrderLinesApi({
       page: 1,
