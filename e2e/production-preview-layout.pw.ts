@@ -77,8 +77,12 @@ async function expectReadableSearch(root: Locator, selector: string) {
     .click({ trial: true })
 }
 
-/** 横轨必须位于自己的网格根内且可真实命中；不通过改变业务数据制造滚动。 */
-async function expectGridReachable(grid: Locator, paged: boolean) {
+/** 经典滚动条检查命中区域，浮动滚动条用实际横向滚轮验证。 */
+async function expectGridReachable(
+  grid: Locator,
+  paged: boolean,
+  browserName: string
+) {
   const root = grid.locator('.mach-root')
   const viewport = root.locator('.mach-body-viewport--scroll')
   await viewport.scrollIntoViewIfNeeded()
@@ -122,12 +126,21 @@ async function expectGridReachable(grid: Locator, paged: boolean) {
     }
   })
   expect(track.inside, '正文与横轨应在本网格根内').toBe(true)
-  if (overflow) {
+  if (overflow && (track.height > 0 || browserName === 'chromium')) {
     expect(track.height, '溢出时应保留可操作横轨').toBeGreaterThan(0)
     expect(
       track.hit,
       `原生横轨中点应命中自己的视口：${JSON.stringify(track)}`
     ).toBe(true)
+  } else if (overflow) {
+    await viewport.evaluate(element => {
+      element.scrollLeft = 0
+    })
+    await viewport.hover()
+    await viewport.page().mouse.wheel(420, 0)
+    await expect
+      .poll(() => viewport.evaluate(element => element.scrollLeft))
+      .toBeGreaterThan(0)
   }
   const pagination = root.locator('.mach-pagination')
   if (paged) {
@@ -144,6 +157,7 @@ for (const scene of scenes) {
   ]) {
     test(`预发免登录 ${scene.route} ${size.name}：搜索、分页及横轨实际可用`, async ({
       page,
+      browserName,
     }, info) => {
       const errors: string[] = []
       page.on('pageerror', error => errors.push(error.message))
@@ -161,7 +175,11 @@ for (const scene of scenes) {
       // 各表会滚动外层页面；顺序验收，避免并行滚动相互抢占命中坐标。
       for (const grid of scene.grids)
         // eslint-disable-next-line no-await-in-loop
-        await expectGridReachable(root.locator(grid.selector), grid.paged)
+        await expectGridReachable(
+          root.locator(grid.selector),
+          grid.paged,
+          browserName
+        )
       await expectReadableSearch(root, scene.search)
       expect(
         await root.evaluate(

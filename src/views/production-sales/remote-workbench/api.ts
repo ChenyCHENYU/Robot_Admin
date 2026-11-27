@@ -139,14 +139,6 @@ function isRemoteField(value: unknown): value is RemoteField {
   return validText && (!('kind' in value) || FIELD_KINDS.has(value.kind))
 }
 
-/** 仅恢复 toDetailPage 已校验的项目元数据，不重复解析或复制接受后的快照。 */
-export function readDetailSnapshot(result: {
-  rows: readonly RemoteLine[]
-  total: number
-}): DetailPage {
-  return result as DetailPage
-}
-
 /** 使用实际 SortModel 的 direction 协议，逐列比较以保留稳定的多列排序。 */
 function compareRows<T extends object>(
   left: T,

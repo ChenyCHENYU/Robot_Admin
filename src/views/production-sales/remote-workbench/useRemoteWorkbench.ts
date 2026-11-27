@@ -117,6 +117,7 @@ export function useRemoteWorkbench() {
     query: appliedQuery,
     pageSize: 6,
     pageSizeOptions: [6, 12],
+    showPageJump: true,
     keepPreviousData: true,
     request: async params => toOrderPage(await api.getOrdersApi(params)),
     errorOverlay: () => '订单查询暂不可用，请点击上方“重试订单”。',
