@@ -18,8 +18,8 @@
     <PageHeading
       title="远程订单协同"
       eyebrow="产销业务 / 销售中心"
-      description="按订单核对交付明细，切换质量追溯字段，独立维护单据草稿。"
-      badge="本地异步示例"
+      description="点击订单行查看明细，点击单号打开详情。"
+      badge="本地示例"
     >
       <NPopover
         trigger="click"
@@ -122,13 +122,12 @@
             class="ps-panel remote-orders"
             aria-label="远程订单列表"
           >
-            <header class="ps-panel-heading"
-              ><h2>订单台账</h2
-              ><span>{{ view.ledger.query.total.value }} 笔订单</span></header
-            >
-            <div class="ps-toolbar"
-              ><span>点击行联动明细，点击蓝色单号查看详情</span
-              ><NButton
+            <header class="ps-panel-heading">
+              <div class="remote-panel-title">
+                <h2>订单台账</h2>
+                <span>{{ view.ledger.query.total.value }} 笔订单</span>
+              </div>
+              <NButton
                 size="small"
                 :render-icon="actionIcons.refresh"
                 :loading="view.ledger.query.loading.value"
@@ -136,8 +135,8 @@
                 >{{
                   view.ledger.query.error.value ? '重试订单' : '刷新订单'
                 }}</NButton
-              ></div
-            >
+              >
+            </header>
             <div class="ps-grid remote-order-grid">
               <MachTable
                 :ref="view.ledger.grid.ref"
@@ -234,36 +233,46 @@
                 class="ps-panel remote-lines"
                 aria-label="远程商品明细"
               >
-                <header class="ps-panel-heading"
-                  ><h2>商品明细</h2
-                  ><span
-                    >{{ view.details.query.total.value }} 项 · 已选
-                    {{ view.details.query.selectedKeys.value.length }} 项</span
-                  ></header
+                <header class="ps-panel-heading remote-lines-heading">
+                  <div class="remote-panel-title">
+                    <h2>商品明细</h2>
+                    <span aria-live="polite"
+                      >{{ view.details.query.total.value }} 项 · 已选
+                      {{ view.details.query.selectedKeys.value.length }}
+                      项</span
+                    >
+                  </div>
+                  <div class="remote-detail-tools">
+                    <NSelect
+                      v-model:value="view.details.variant"
+                      :options="VARIANTS"
+                      size="small"
+                      :disabled="!view.editor.order"
+                      aria-label="明细字段方案"
+                    />
+                    <NButton
+                      size="small"
+                      :render-icon="actionIcons.refresh"
+                      :loading="view.details.query.loading.value"
+                      :disabled="!view.editor.order"
+                      @click="view.details.query.retry"
+                      >{{
+                        view.details.query.error.value ? '重试明细' : '刷新明细'
+                      }}</NButton
+                    >
+                  </div>
+                </header>
+                <p
+                  v-if="view.details.variant !== view.details.acceptedVariant"
+                  class="remote-schema-note"
+                  role="status"
                 >
-                <div class="ps-toolbar remote-detail-toolbar"
-                  ><NSelect
-                    v-model:value="view.details.variant"
-                    :options="VARIANTS"
-                    size="small"
-                    :disabled="!view.editor.order"
-                    aria-label="明细字段方案"
-                  /><span>{{
+                  当前显示{{
                     view.details.acceptedVariant === 'quality'
-                      ? '质量追溯字段'
-                      : '交付明细字段'
-                  }}</span
-                  ><NButton
-                    size="small"
-                    :render-icon="actionIcons.refresh"
-                    :loading="view.details.query.loading.value"
-                    :disabled="!view.editor.order"
-                    @click="view.details.query.retry"
-                    >{{
-                      view.details.query.error.value ? '重试明细' : '刷新明细'
-                    }}</NButton
-                  ></div
-                >
+                      ? '质量追溯'
+                      : '交付明细'
+                  }}
+                </p>
                 <div class="ps-grid remote-detail-grid"
                   ><MachTable
                     :ref="view.details.grid.ref"
@@ -273,6 +282,7 @@
                     }"
                     :column-defs="view.details.columns"
                     row-selection="multiple"
+                    :select-on-row-click="false"
                 /></div>
               </section>
             </template>

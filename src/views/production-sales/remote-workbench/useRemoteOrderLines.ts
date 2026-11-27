@@ -14,7 +14,6 @@ import {
 import { useMachTableQuery } from '@agile-team/mach-table-vue/workflows'
 import { weightCodec } from '../shared/presentation'
 import {
-  readDetailSnapshot,
   toDetailPage,
   type createRemoteOrderDemoApi,
   type DetailVariant,
@@ -49,10 +48,7 @@ export function useRemoteOrderLines({
     variant: 'delivery',
     columns: [],
   })
-  const query = useMachTableQuery<
-    RemoteLine,
-    { orderId: string; variant: DetailVariant }
-  >({
+  const query = useMachTableQuery({
     rowKey: 'id',
     query: () => ({ orderId: orderId.value, variant: variant.value }),
     immediate: false,
@@ -62,8 +58,19 @@ export function useRemoteOrderLines({
     request: async params => toDetailPage(await request(params)),
     errorOverlay: () =>
       '明细加载失败，请点击上方“重试明细”；订单列表仍可使用。',
-    onSuccess: result => {
-      accepted.value = readDetailSnapshot(result)
+    onSuccess: ({ columns, variant }) => {
+      const current = accepted.value
+      // 同一方案翻页时沿用原列定义，避免反复生成格式化和渲染函数。
+      if (
+        current.variant === variant &&
+        current.columns.length === columns.length &&
+        columns.every(({ key, title, kind }, index) => {
+          const old = current.columns[index]
+          return old.key === key && old.title === title && old.kind === kind
+        })
+      )
+        return
+      accepted.value = { columns, variant }
     },
   })
   const clearRows = () => {

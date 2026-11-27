@@ -99,7 +99,7 @@ The production/sales menu corresponds to [src/views/production-sales](./src/view
 | [Production actuals](./src/views/production-sales/production-actual/index.vue) · `/#/production-sales/production-actual`   | Dense numeric entry, composition limits and process trace; draft protection on heat changes, save/review/return, read-only previous-heat reference and adjacent small tables                             |
 | [Sales coordination](./src/views/production-sales/sales-orders/index.vue) · `/#/production-sales/sales-orders`             | Resizable vertical workspace, order header and product/payment details, contract comparison and inline customer selection; precise totals, whole-order validation, batch changes and failed-item retries |
 | [Shipping coordination](./src/views/production-sales/shipping/index.vue) · `/#/production-sales/shipping`                  | C_Table task queue, MachTable stock matching, vehicle form and grouped reports; weight conservation, overload checks, loading locks and confirmed departure                                              |
-| [Remote order workbench](./src/views/production-sales/remote-workbench/index.vue) · `/#/production-sales/remote-workbench` | Async master/detail regions with independent paging/loading/retry; delivery/quality schemas return columns and rows together; slow/error/empty-detail and late-dictionary scenarios                      |
+| [Remote order workbench](./src/views/production-sales/remote-workbench/index.vue) · `/#/production-sales/remote-workbench` | Jump to an order page, browse details without clearing checked rows, and switch delivery or quality columns together with their data                                                                     |
 | [Measurement matrix](./src/views/production-sales/production-matrix/index.vue) · `/#/production-sales/production-matrix`   | Date/shift groups, fixed metrics, compound value/time editors, batch paste and undo; hidden-date edits retained, full snapshot preview/CSV/XLSX/print                                                    |
 
 Business lists show row numbers, pinned edit/delete actions and blue identifiers opening read-only detail dialogs. Row clicks update the workspace. Copy creates independent records only after confirmation; cancellation consumes no ID. Switching records and cross-row edits retain save/discard/cancel protection. Business actions use semantic icons.
@@ -213,7 +213,7 @@ Pages bind public props to business data and reuse package types when extracting
 | [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.1.1`        | Isolated instances, Excel / CSV / ZIP, cancellable chunks and file processing           | Reusable file scenarios with heavy dependencies loaded on demand  |
 | [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`        | Configuration protection and Git engineering standards                                  | Development-time commit conventions and initialization            |
 
-The grid integration uses **MachTable 0.42.3** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue). Robot Admin currently integrates Vue. See [MachTable](https://github.com/ChenyCHENYU/MachTable) for Core, React, XLSX and other optional capabilities; [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages) host the component and runtime sources.
+The grid integration uses **MachTable 0.42.4** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue). Robot Admin currently integrates Vue. See [MachTable](https://github.com/ChenyCHENYU/MachTable) for Core, React, XLSX and other optional capabilities; [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components) and [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages) host the component and runtime sources.
 
 ## Engineering and verification
 
@@ -285,7 +285,7 @@ Exact versions reflect the current lockfile. Declared ranges and the full depend
 | Application  | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | UI           | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | Build        | **Vite 8.2.4** · Bun · Sass · Auto-import and component Resolver                        |
-| Data grid    | **MachTable 0.42.3** · Vue adapter                                                      |
+| Data grid    | **MachTable 0.42.4** · Vue adapter                                                      |
 | Verification | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text

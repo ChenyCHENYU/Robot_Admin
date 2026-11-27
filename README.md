@@ -99,7 +99,7 @@ bun run dev
 | [炉次实绩记录](./src/views/production-sales/production-actual/index.vue) · `/#/production-sales/production-actual` | 密集数值录入、成分上下限核对、工序追踪；切炉草稿保护、保存/复核/退回、上一炉只读参考及并排小表            |
 | [销售订单协同](./src/views/production-sales/sales-orders/index.vue) · `/#/production-sales/sales-orders`           | 可调上下区域、订单主档与商品/收款双明细、合同差异采纳、弹窗客户选择；精确合计、整单校验、批改和失败项重试 |
 | [发运协同指挥台](./src/views/production-sales/shipping/index.vue) · `/#/production-sales/shipping`                 | C_Table 任务池、MachTable 库存匹配、车辆表单及分组汇总；重量守恒、超载拦截、装车锁定与确认出厂            |
-| [远程订单协同](./src/views/production-sales/remote-workbench/index.vue) · `/#/production-sales/remote-workbench`   | 异步主从表独立分页/加载/重试，交付与质量方案动态返回列和数据；慢响应、失败、空明细及字典晚到演练          |
+| [远程订单协同](./src/views/production-sales/remote-workbench/index.vue) · `/#/production-sales/remote-workbench`   | 订单台账可跳页，点明细保留勾选，交付与质量方案同步切换列和数据                                            |
 | [生产检测矩阵](./src/views/production-sales/production-matrix/index.vue) · `/#/production-sales/production-matrix` | 日期/班次分组、固定指标、数值与时间复合编辑、整批粘贴与撤销；隐藏日期保留修改，完整快照预览/CSV/XLSX/打印 |
 
 业务列表默认带序号；编辑/删除位于固定行操作列，蓝色单号打开只读详情，点击行联动工作区。复制确认后才生成独立记录，取消不占编号；跨行编辑与切单继续经过保存/放弃/取消保护。操作按钮使用语义图标。
@@ -213,7 +213,7 @@ flowchart TB
 | [`@robot-admin/file-utils`](https://www.npmjs.com/package/@robot-admin/file-utils)                   | `3.1.1`  | 隔离实例、Excel / CSV / ZIP、可取消分片与文件处理          | 文件场景复用，按需加载重型依赖         |
 | [`@robot-admin/git-standards`](https://www.npmjs.com/package/@robot-admin/git-standards)             | `1.0.5`  | 配置保护与 Git 工程标准                                    | 开发期提交规范与初始化工具             |
 
-数据网格使用 **MachTable 0.42.3** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)。Robot Admin 目前接入 Vue；Core、React、XLSX 及其他可选能力见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。组件源码见 [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components)，其余运行时包见 [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages)。
+数据网格使用 **MachTable 0.42.4** · [`@agile-team/mach-table-vue`](https://www.npmjs.com/package/@agile-team/mach-table-vue)。Robot Admin 目前接入 Vue；Core、React、XLSX 及其他可选能力见 [MachTable](https://github.com/ChenyCHENYU/MachTable)。组件源码见 [naive-ui-components](https://github.com/ChenyCHENYU/naive-ui-components)，其余运行时包见 [robot-admin-packages](https://github.com/ChenyCHENYU/robot-admin-packages)。
 
 ## 工程机制与质量保障
 
@@ -285,7 +285,7 @@ API_PROXY_TARGET=https://your-api.example.com
 | 应用     | **Vue 3.5.42** · **TypeScript 5.8.3** · **Pinia 4.0.3** · **Vue Router 5.3.1**          |
 | 界面     | **Naive UI 2.45.3** · **UnoCSS 66.9.1** · **VueUse 14.4.0**                             |
 | 构建     | **Vite 8.2.4** · Bun · Sass · 自动导入与按需组件 Resolver                               |
-| 数据网格 | **MachTable 0.42.3** · Vue 适配层                                                       |
+| 数据网格 | **MachTable 0.42.4** · Vue 适配层                                                       |
 | 验证     | Oxlint / ESLint · vue-tsc · Bun Test · Vitest / Vue Test Utils / happy-dom · Playwright |
 
 ```text
